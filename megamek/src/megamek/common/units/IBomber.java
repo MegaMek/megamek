@@ -229,7 +229,7 @@ public interface IBomber {
      */
     default void applyBombs() {
         Game game = ((Entity) this).getGame();
-        int gameTL = TechConstants.getSimpleLevel(game.getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
+        int gameTL = TechConstants.getSimpleLevel(game.getOptions().stringOption(OptionsConstants.ALLOWED_TECH_LEVEL));
 
         // Apply the largest bombs first because we need to fit larger bombs into a
         // single location in LAMs.

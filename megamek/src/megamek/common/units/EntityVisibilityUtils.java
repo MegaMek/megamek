@@ -33,9 +33,9 @@
 
 package megamek.common.units;
 
-import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -79,10 +79,10 @@ public class EntityVisibilityUtils {
     public static boolean onlyDetectedBySensors(@Nullable Player localPlayer, Entity entity) {
         boolean usesAdvancedTacOpsSensors = entity.getGame()
               .getOptions()
-              .booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS);
+              .booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS);
         boolean usesAdvancedStratOpsSensors = entity.getGame()
               .getOptions()
-              .booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS);
+              .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS);
 
         boolean usesSensors = usesAdvancedTacOpsSensors || usesAdvancedStratOpsSensors;
 

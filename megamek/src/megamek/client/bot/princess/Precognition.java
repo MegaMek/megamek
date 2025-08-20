@@ -184,10 +184,10 @@ public class Precognition implements Runnable {
                 case SENDING_MINEFIELDS:
                     receiveSendingMinefields(c);
                     break;
-                case SENDING_ILLUM_HEXES:
+                case SENDING_ILLUMINATED_HEXES:
                     receiveIlluminatedHexes(c);
                     break;
-                case CLEAR_ILLUM_HEXES:
+                case CLEAR_ILLUMINATED_HEXES:
                     getGame().clearIlluminatedPositions();
                     break;
                 case UPDATE_MINEFIELDS:
@@ -308,7 +308,7 @@ public class Precognition implements Runnable {
                     GameVictoryEvent gve = new GameVictoryEvent(this, getGame());
                     getGame().processGameEvent(gve);
                     break;
-                case ENTITY_MULTIUPDATE:
+                case ENTITY_MULTI_UPDATE:
                     receiveEntitiesUpdate(c);
                     break;
                 case UPDATE_GROUND_OBJECTS:

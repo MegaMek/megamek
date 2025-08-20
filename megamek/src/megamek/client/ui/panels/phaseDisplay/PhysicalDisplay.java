@@ -672,7 +672,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             if ((en instanceof Mek)
                   && (target instanceof Entity)
                   && game.getOptions()
-                  .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RETRACTABLE_BLADES)
+                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES)
                   && (leftArm.getValue() != TargetRoll.IMPOSSIBLE)
                   && ((Mek) ce()).hasRetractedBlade(Mek.LOC_LARM)) {
                 leftBladeExtend = clientgui.doYesNoDialog(
@@ -684,7 +684,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                   && (target instanceof Entity)
                   && (rightArm.getValue() != TargetRoll.IMPOSSIBLE)
                   && game.getOptions()
-                  .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RETRACTABLE_BLADES)
+                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES)
                   && ((Mek) en).hasRetractedBlade(Mek.LOC_RARM)) {
                 rightBladeExtend = clientgui.doYesNoDialog(
                       Messages.getString("PhysicalDisplay.ExtendBladeDialog" + ".title"),

@@ -389,10 +389,10 @@ public class TeamLoadOutGenerator {
     public void updateOptionValues(GameOptions gameOpts) {
         gameOptions = gameOpts;
         allowedYear = gameOptions.intOption(OptionsConstants.ALLOWED_YEAR);
-        gameTechLevel = TechConstants.getSimpleLevel(gameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
+        gameTechLevel = TechConstants.getSimpleLevel(gameOptions.stringOption(OptionsConstants.ALLOWED_TECH_LEVEL));
         legalLevel = SimpleTechLevel.getGameTechLevel(game);
         eraBasedTechLevel = gameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED);
-        advAeroRules = gameOptions.booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS);
+        advAeroRules = gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_ARTILLERY_MUNITIONS);
         showExtinct = gameOptions.booleanOption((OptionsConstants.ALLOWED_SHOW_EXTINCT));
     }
 
@@ -432,7 +432,7 @@ public class TeamLoadOutGenerator {
 
         // Nukes are not allowed... unless they are!
         legal &= (!aType.hasFlag(AmmoType.F_NUCLEAR) ||
-              gameOptions.booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES));
+              gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AT2_NUKES));
 
         return legal;
     }

@@ -448,7 +448,7 @@ public class Client extends AbstractClient {
      * Sends a "set Artillery AutoHit Hexes" packet
      */
     public void sendArtyAutoHitHexes(List<BoardLocation> hexes) {
-        send(new Packet(PacketCommand.SET_ARTILLERY_AUTOHIT_HEXES, hexes));
+        send(new Packet(PacketCommand.SET_ARTILLERY_AUTO_HIT_HEXES, hexes));
     }
 
     /**
@@ -462,7 +462,7 @@ public class Client extends AbstractClient {
      * Sends a packet containing multiple entity updates. Should only be used in the lobby phase.
      */
     public void sendUpdateEntity(Collection<Entity> entities) {
-        send(new Packet(PacketCommand.ENTITY_MULTIUPDATE, entities));
+        send(new Packet(PacketCommand.ENTITY_MULTI_UPDATE, entities));
     }
 
     /**
@@ -925,7 +925,7 @@ public class Client extends AbstractClient {
             case ENTITY_UPDATE:
                 receiveEntityUpdate(packet);
                 break;
-            case ENTITY_MULTIUPDATE:
+            case ENTITY_MULTI_UPDATE:
                 receiveEntitiesUpdate(packet);
                 break;
             case ENTITY_REMOVE:
@@ -943,10 +943,10 @@ public class Client extends AbstractClient {
             case SENDING_MINEFIELDS:
                 receiveSendingMinefields(packet);
                 break;
-            case SENDING_ILLUM_HEXES:
+            case SENDING_ILLUMINATED_HEXES:
                 receiveIlluminatedHexes(packet);
                 break;
-            case CLEAR_ILLUM_HEXES:
+            case CLEAR_ILLUMINATED_HEXES:
                 game.clearIlluminatedPositions();
                 break;
             case UPDATE_MINEFIELDS:
@@ -1347,7 +1347,7 @@ public class Client extends AbstractClient {
      * Send mode-change data to the server
      */
     public void sendModeChange(int nEntity, int nEquip, int nMode) {
-        send(new Packet(PacketCommand.ENTITY_MODECHANGE, nEntity, nEquip, nMode));
+        send(new Packet(PacketCommand.ENTITY_MODE_CHANGE, nEntity, nEquip, nMode));
     }
 
     /**
@@ -1361,35 +1361,35 @@ public class Client extends AbstractClient {
      * Send called shot change data to the server
      */
     public void sendCalledShotChange(int nEntity, int nEquip) {
-        send(new Packet(PacketCommand.ENTITY_CALLEDSHOTCHANGE, nEntity, nEquip));
+        send(new Packet(PacketCommand.ENTITY_CALLED_SHOT_CHANGE, nEntity, nEquip));
     }
 
     /**
      * Send system mode-change data to the server
      */
     public void sendSystemModeChange(int nEntity, int nSystem, int nMode) {
-        send(new Packet(PacketCommand.ENTITY_SYSTEMMODECHANGE, nEntity, nSystem, nMode));
+        send(new Packet(PacketCommand.ENTITY_SYSTEM_MODE_CHANGE, nEntity, nSystem, nMode));
     }
 
     /**
      * Send mode-change data to the server
      */
     public void sendAmmoChange(int nEntity, int nWeapon, int nAmmo, int reason) {
-        send(new Packet(PacketCommand.ENTITY_AMMOCHANGE, nEntity, nWeapon, nAmmo, reason));
+        send(new Packet(PacketCommand.ENTITY_AMMO_CHANGE, nEntity, nWeapon, nAmmo, reason));
     }
 
     /**
      * Send sensor-change data to the server
      */
     public void sendSensorChange(int nEntity, int nSensor) {
-        send(new Packet(PacketCommand.ENTITY_SENSORCHANGE, nEntity, nSensor));
+        send(new Packet(PacketCommand.ENTITY_SENSOR_CHANGE, nEntity, nSensor));
     }
 
     /**
      * Send sinks-change data to the server
      */
     public void sendSinksChange(int nEntity, int activeSinks) {
-        send(new Packet(PacketCommand.ENTITY_SINKSCHANGE, nEntity, activeSinks));
+        send(new Packet(PacketCommand.ENTITY_SINKS_CHANGE, nEntity, activeSinks));
     }
 
     /**

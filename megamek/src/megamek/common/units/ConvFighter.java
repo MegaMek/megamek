@@ -102,7 +102,7 @@ public class ConvFighter extends AeroSpaceFighter {
         int used = safeThrust + (2 * overThrust);
         if (!getEngine().isFusion()) {
             used = (int) Math.floor(safeThrust * 0.5) + overThrust;
-        } else if (gameOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CONV_FUSION_BONUS)) {
+        } else if (gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_CONV_FUSION_BONUS)) {
             used = (int) Math.floor(safeThrust * 0.5) + (2 * overThrust);
         }
         return used;

@@ -104,12 +104,12 @@ public class MGHandler extends AmmoWeaponHandler {
                 toReturn = applyGlancingBlowModifier(toReturn, false);
             }
         }
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
               && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn *= .75;
             toReturn = (int) Math.floor(toReturn);
         }
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
               && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
         }

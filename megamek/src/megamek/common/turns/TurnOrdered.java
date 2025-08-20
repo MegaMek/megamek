@@ -107,23 +107,25 @@ public abstract class TurnOrdered implements ITurnOrdered {
         if (turns_multi == null) {
             turns_multi = new HashMap<>();
         }
-        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT)) {
-            double lanceSize = game.getOptions().intOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER);
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT)) {
+            double lanceSize = game.getOptions()
+                  .intOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT_NUMBER);
             Integer numMekMultis = turns_multi.get(EntityClassTurn.CLASS_MEK);
             if (numMekMultis != null) {
                 turns += (int) Math.ceil(numMekMultis / lanceSize);
             }
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT)) {
-            double lanceSize = game.getOptions().intOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER);
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_LANCE_MOVEMENT)) {
+            double lanceSize = game.getOptions()
+                  .intOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_LANCE_MOVEMENT_NUMBER);
             Integer numTankMultis = turns_multi.get(EntityClassTurn.CLASS_TANK);
             if (numTankMultis != null) {
                 turns += (int) Math.ceil(numTankMultis / lanceSize);
             }
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI)) {
+        if (game.getOptions().booleanOption(OptionsConstants.INIT_PROTOMEKS_MOVE_MULTI)) {
             double lanceSize = game.getOptions().intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI);
             Integer numProtoMultis = turns_multi.get(EntityClassTurn.CLASS_PROTOMEK);
             if (numProtoMultis != null) {

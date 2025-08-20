@@ -36,7 +36,9 @@ package megamek.common.weapons.handlers;
 
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.HitData;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeSideTable;
@@ -72,7 +74,7 @@ public class NarcHandler extends MissileWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         bSalvo = true;
         getAMSHitsMod(vPhaseReport);
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             // Or bay AMS if Aero Sanity is on
             Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                   : null;

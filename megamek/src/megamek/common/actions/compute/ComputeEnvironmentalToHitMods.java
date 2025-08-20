@@ -127,7 +127,7 @@ public class ComputeEnvironmentalToHitMods {
         }
 
         if (weatherToHitMods.getValue() > 0) {
-            if ((attacker.getCrew() != null) && attacker.hasAbility(OptionsConstants.UNOFF_WEATHERED)) {
+            if ((attacker.getCrew() != null) && attacker.hasAbility(OptionsConstants.UNOFFICIAL_WEATHERED)) {
                 weatherToHitMods.addModifier(-1, Messages.getString("WeaponAttackAction.Weathered"));
             }
             toHit.append(weatherToHitMods);

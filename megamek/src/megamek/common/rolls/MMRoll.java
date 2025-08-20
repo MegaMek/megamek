@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,6 +38,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import megamek.codeUtilities.MathUtility;
 import megamek.common.MMRandom;
 import megamek.logging.MMLogger;
 
@@ -58,7 +59,7 @@ public class MMRoll extends Roll {
     /**
      * a vector of the result for each roll of the dice
      */
-    private Vector<Integer> all = new Vector<>();
+    private final Vector<Integer> all = new Vector<>();
 
     /**
      * In some cases, we may only keep the highest subset of the total dice
@@ -161,7 +162,7 @@ public class MMRoll extends Roll {
     @Override
     public String toString() {
         // Build a buffer as we go.
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         // Start off the report (this is all the report a single die needs).
         buffer.append(this.total);
@@ -238,36 +239,32 @@ public class MMRoll extends Roll {
         MMRandom rng;
 
         // Parse the input.
-        int count = 2;
+        int count;
         int sides = 6;
         int start = 1;
         int whichRNG = MMRandom.R_DEFAULT;
-        try {
-            if (null == args || 0 == args.length) {
-                count = 2;
-            } else if (1 == args.length) {
-                count = Integer.parseInt(args[0]);
-            } else if (2 == args.length) {
-                count = Integer.parseInt(args[0]);
-                sides = Integer.parseInt(args[1]);
-                start = 0;
-            } else {
-                count = Integer.parseInt(args[0]);
-                sides = Integer.parseInt(args[1]);
-                start = Integer.parseInt(args[2]);
-            }
 
-            // Make sure that we got good input.
-            if (count < 1) {
-                logger.error("You must specify at least one roll.");
-                System.exit(2);
-            } else if (sides < 2) {
-                logger.error("You must specify at least two faces.");
-                System.exit(3);
-            }
-        } catch (Exception ex) {
-            logger.error("You must only supply integers.", ex);
-            System.exit(1);
+        if (null == args || 0 == args.length) {
+            count = 2;
+        } else if (1 == args.length) {
+            count = MathUtility.parseInt(args[0]);
+        } else if (2 == args.length) {
+            count = MathUtility.parseInt(args[0]);
+            sides = MathUtility.parseInt(args[1]);
+            start = 0;
+        } else {
+            count = MathUtility.parseInt(args[0]);
+            sides = MathUtility.parseInt(args[1]);
+            start = MathUtility.parseInt(args[2]);
+        }
+
+        // Make sure that we got good input.
+        if (count < 1) {
+            logger.error("You must specify at least one roll.");
+            System.exit(2);
+        } else if (sides < 2) {
+            logger.error("You must specify at least two faces.");
+            System.exit(3);
         }
 
         count = 2;

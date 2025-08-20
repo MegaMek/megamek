@@ -262,7 +262,9 @@ public class TWPhasePreparationManager {
                     }
                     // fix the armor and SI of aeros if using aero sanity rules for
                     // the MUL
-                    if (gameManager.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+                    if (gameManager.getGame()
+                          .getOptions()
+                          .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)
                           && (entity instanceof Aero)) {
                         // need to rescale SI and armor
                         int scale = 1;

@@ -36,12 +36,12 @@ package megamek.common.weapons.handlers;
 
 import java.util.Vector;
 
-import megamek.common.compute.Compute;
-import megamek.common.game.Game;
 import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.server.totalwarfare.TWGameManager;
@@ -82,11 +82,11 @@ public class CLLBXPrototypeHandler extends LBXHandler {
 
         if (allShotsHit()) {
             shotsHit = wtype.getRackSize();
-            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
                   && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
                 shotsHit = (int) Math.ceil(shotsHit * .75);
             }
-            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
                   && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
                 shotsHit = (int) Math.ceil(shotsHit * .5);
             }

@@ -34,9 +34,10 @@ package megamek.common.moves;
 
 import java.util.Set;
 
-import megamek.common.units.Entity;
+import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
 import megamek.common.pathfinder.CachedEntityState;
+import megamek.common.units.Entity;
 
 /**
  * Interface for a phase pass. A phase pass is a step in the move compilation.
@@ -51,7 +52,7 @@ interface PhasePass {
      *
      * @return a set of move step types
      */
-    Set<MovePath.MoveStepType> getTypesOfInterest();
+    Set<MoveStepType> getTypesOfInterest();
 
     /**
      * Check if the phase pass is interested in the move step.

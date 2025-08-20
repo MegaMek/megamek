@@ -41,15 +41,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import megamek.common.units.Entity;
-import megamek.common.interfaces.ForceAssignable;
-import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ForceAssignable;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -206,7 +206,7 @@ public class ServerLobbyHelper {
      * Creates a packet for an update for the given entities. Only valid in the lobby.
      */
     public static Packet createMultiEntityPacket(Collection<Entity> entities) {
-        return new Packet(PacketCommand.ENTITY_MULTIUPDATE, entities);
+        return new Packet(PacketCommand.ENTITY_MULTI_UPDATE, entities);
     }
 
     /**

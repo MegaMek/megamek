@@ -40,13 +40,13 @@ import java.util.List;
 
 import megamek.client.commands.ClientCommand;
 import megamek.common.board.Coords;
+import megamek.common.enums.MoveStepType;
+import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.units.IAero;
 import megamek.common.units.UnitType;
-import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.logging.MMLogger;
 
 /**
@@ -118,7 +118,7 @@ public class AeroPathUtil {
 
         return (isSpheroid && (movePath.getFinalNDown() == 0) &&
               (movePath.getMpUsed() == 0) &&
-              !movePath.contains(MoveStepType.VLAND));
+              !movePath.contains(MoveStepType.VERTICAL_LAND));
     }
 
     /**
@@ -132,7 +132,7 @@ public class AeroPathUtil {
         return movePath.getEntity().isAero() &&
               movePath.isOnAtmosphericGroundMap() &&
               (movePath.getFinalAltitude() < 1) &&
-              !movePath.contains(MoveStepType.VLAND) &&
+              !movePath.contains(MoveStepType.VERTICAL_LAND) &&
               !movePath.contains(MoveStepType.LAND);
     }
 

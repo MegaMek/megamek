@@ -318,7 +318,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         // ...but vehicles and ASFs just have one CASE item for the whole unit, so we need to look at whether there's
         // CASE anywhere at all.
         if (ammoExplosion &&
-              game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMMUNITION) &&
+              game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMMUNITION) &&
               !(entity.locationHasCase(hit.getLocation()) || entity.hasCASEII(hit.getLocation())) &&
               !(((entity instanceof Tank) || (entity instanceof Aero)) && entity.hasCase()) &&
               (entity.isDestroyed() || entity.isDoomed()) &&
@@ -445,7 +445,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                                     ((ammoExplosion && !autoEject) || areaSatArty))) {
                             proto.getCrew().setDoomed(true);
                         }
-                        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
+                        if (game.getOptions()
+                              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT)) {
                             reportVec.addAll(manager.abandonEntity(proto));
                         }
 
@@ -887,7 +888,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                                   !mek.getCrew().isDead() &&
                                   !mek.getCrew().isDoomed() &&
                                   game.getOptions()
-                                        .booleanOption(OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION)) {
+                                        .booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SKIN_OF_THE_TEETH_EJECTION)) {
                                 if (mek.isAutoEject() &&
                                       (!game.getOptions()
                                             .booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
@@ -920,7 +921,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                                         ((ammoExplosion && !autoEject) || areaSatArty))) {
                                 mek.getCrew().setDoomed(true);
                             }
-                            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
+                            if (game.getOptions()
+                                  .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT)) {
                                 reportVec.addAll(manager.abandonEntity(mek));
                             }
                         }
@@ -1013,7 +1015,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     if (!engineExploded && (numEngineHits >= hitsToDestroy)) {
                         // the third engine hit
                         reportVec.addAll(manager.destroyEntity(mek, "engine destruction"));
-                        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
+                        if (game.getOptions()
+                              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT)) {
                             reportVec.addAll(manager.abandonEntity(mek));
                         }
                         mek.setSelfDestructing(false);
@@ -1078,7 +1081,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         int damageThisAttack = aero.damageThisPhase;
 
         // weapon groups only get the damage of one weapon
-        if ((hit.getSingleAV() > -1) && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if ((hit.getSingleAV() > -1) && !game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             damage = hit.getSingleAV();
         }
 
@@ -1088,12 +1092,12 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         // check capital/standard damage
         if (isCapital &&
               (!aero.isCapitalScale() ||
-                    game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY))) {
+                    game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY))) {
             damage = 10 * damage;
         }
         if (!isCapital &&
               aero.isCapitalScale() &&
-              !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+              !game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             damage = (int) Math.round(damage / 10.0);
         }
         int damage_orig = damage;
@@ -1231,7 +1235,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             }
 
             // check for overpenetration
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_OVER_PENETRATE)) {
                 int opRoll = Compute.d6(1);
                 if (((aero instanceof Jumpship) && !(aero instanceof Warship) && (opRoll > 3)) ||
                       ((aero instanceof Dropship) && (opRoll > 4)) ||
@@ -1267,7 +1271,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             // Minimum SI damage is now 1 (per errata: https://bg.battletech.com/forums/index.php?topic=81913.0 )
             if (!ammoExplosion &&
                   !nukeS2S &&
-                  !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+                  !game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
                 damage = (int) Math.round(damage / 2.0);
                 critSI = true;
             }
@@ -1338,7 +1342,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         if ((tank instanceof VTOL) &&
               (hit.getLocation() == VTOL.LOC_ROTOR) &&
               (hit.getGeneralDamageType() != HitData.DAMAGE_PHYSICAL) &&
-              !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_FULL_ROTOR_HITS)) {
+              !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_FULL_ROTOR_HITS)) {
             damage = (damage + 9) / 10;
         }
 
@@ -1407,7 +1411,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             // For optional tank damage thresholds, the `overthresh` flag won't be set if the internal structure is
             // damaged, so set it here.
             if (((tank.getArmor(hit) < 1) || damageIS) &&
-                  game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD) &&
+                  game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD) &&
                   !((tank instanceof VTOL) || (tank instanceof GunEmplacement))) {
                 tank.setOverThresh(true);
             }
@@ -1504,7 +1508,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                                   ((hit.getLocation() == Mek.LOC_CT) && (ammoExplosion || areaSatArty))) {
                                 tank.getCrew().setDoomed(true);
                             }
-                            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
+                            if (game.getOptions()
+                                  .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT)) {
                                 reportVec.addAll(manager.abandonEntity(tank));
                             }
                         }
@@ -2120,7 +2125,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                               ((hit.getLocation() == Mek.LOC_CT) && (ammoExplosion || areaSatArty))) {
                             infantry.getCrew().setDoomed(true);
                         }
-                        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
+                        if (game.getOptions()
+                              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT)) {
                             reportVec.addAll(manager.abandonEntity(infantry));
                         }
 
@@ -2175,7 +2181,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         // the bonus to the crit roll if using the
         // "advanced determining critical hits rule"
         int critBonus = 0;
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CRIT_ROLL) &&
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CRIT_ROLL) &&
               (damageOriginal > 0) &&
               ((entity instanceof Mek) || (entity instanceof ProtoMek))) {
             critBonus = Math.min((damageOriginal - 1) / 5, 4);
@@ -2722,14 +2728,14 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             // If we're using optional tank damage thresholds, set up our hit
             // effects now...
             if ((entity instanceof Tank) &&
-                  game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD) &&
+                  game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD) &&
                   !((entity instanceof VTOL) || (entity instanceof GunEmplacement))) {
                 int thresh = (int) Math.ceil((game.getOptions()
-                      .booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE) ?
+                      .booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD_VARIABLE) ?
                       entity.getArmor(hit) :
                       entity.getOArmor(hit)) /
                       (double) game.getOptions()
-                            .intOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR));
+                            .intOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD_DIVISOR));
 
                 // adjust for hardened armor
                 if (hardenedArmor &&

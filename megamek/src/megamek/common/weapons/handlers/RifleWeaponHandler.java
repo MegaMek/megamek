@@ -36,7 +36,11 @@ package megamek.common.weapons.handlers;
 
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.HitData;
+import megamek.common.RangeType;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeSideTable;
@@ -101,11 +105,11 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
 
         toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
               && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
               && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
         }

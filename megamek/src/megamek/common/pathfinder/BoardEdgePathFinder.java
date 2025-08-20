@@ -41,18 +41,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import megamek.common.Hex;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
-import megamek.common.units.Building;
 import megamek.common.board.Coords;
+import megamek.common.enums.MoveStepType;
+import megamek.common.equipment.MiscType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
+import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
-import megamek.common.Hex;
-import megamek.common.equipment.MiscType;
 import megamek.common.units.Terrains;
-import megamek.common.annotations.Nullable;
-import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
-import megamek.common.moves.MoveStep;
 
 /**
  * This class is intended to be used to find a (potentially long) legal path given a movement type from a particular hex
@@ -195,9 +195,6 @@ public class BoardEdgePathFinder {
      * edge. The reason being that a particular path may technically lead to an edge, but we cut the path generation
      * short when it reaches another path that already goes to that edge.
      *
-     * @param entity
-     *
-     * @return
      */
     public MovePath findCombinedPath(Entity entity) {
         MovePath currentPath = null;
@@ -284,8 +281,6 @@ public class BoardEdgePathFinder {
      * Helper function that, given a unit facing and a move step, adds turns to the given path until the facing of the
      * path matches the facing of the step.
      *
-     * @param initialPath
-     * @param intersectionStep
      */
     private void matchFacingToPath(MovePath initialPath, MoveStep intersectionStep) {
         // algorithm: from initial facing, two rotation paths: add and subtract one
@@ -317,7 +312,7 @@ public class BoardEdgePathFinder {
         }
 
         MoveStepType turnDirection = leftTurnCount > rightTurnCount ? MoveStepType.TURN_RIGHT : MoveStepType.TURN_LEFT;
-        int turnCount = leftTurnCount > rightTurnCount ? rightTurnCount : leftTurnCount;
+        int turnCount = Math.min(leftTurnCount, rightTurnCount);
 
         for (int count = 0; count < turnCount; count++) {
             initialPath.addStep(turnDirection);
@@ -328,7 +323,6 @@ public class BoardEdgePathFinder {
      * Invalidate all paths that go through this set of coordinates (because of a building or bridge collapse), or some
      * other terrain change either directly or by connecting to a path that goes through this set of coordinates.
      *
-     * @param coords
      */
     public void invalidatePaths(Coords coords) {
         // identify if this set of coordinates has a path that leads to an edge
@@ -562,7 +556,7 @@ public class BoardEdgePathFinder {
      *
      * @param movePath The move path to process
      *
-     * @return Whether or not the given move path is "legal" in the context of this pathfinder.
+     * @return Whether the given move path is "legal" in the context of this pathfinder.
      */
     protected MoveLegalityIndicator isLegalMove(MovePath movePath) {
         Coords dest = movePath.getFinalCoords();
@@ -580,7 +574,7 @@ public class BoardEdgePathFinder {
      * @param destHex             the hex at the end of the path
      * @param destinationBuilding the building at the end of the path, can be null
      *
-     * @return Whether or not the given move path is "legal" in the context of this pathfinder.
+     * @return Whether the given move path is "legal" in the context of this pathfinder.
      */
     private MoveLegalityIndicator isLegalMove(MovePath movePath, Hex destHex, Building destinationBuilding) {
         Coords dest = movePath.getFinalCoords();
@@ -682,7 +676,7 @@ public class BoardEdgePathFinder {
               !isAmphibious && !destHex.containsTerrain(Terrains.BRIDGE);
 
         // naval units cannot go out of water
-        mli.shipOutofWater = entity.isNaval() &&
+        mli.shipOutOfWater = entity.isNaval() &&
               (!destHex.containsTerrain(Terrains.WATER) || destHex.depth() < 1);
 
         // for future expansion of this functionality, we may consider the possibility
@@ -757,18 +751,15 @@ public class BoardEdgePathFinder {
     protected boolean isOnBoardEdge(MovePath movePath, int destinationRegion) {
         Coords coords = movePath.getFinalCoords();
 
-        switch (destinationRegion) {
-            case Board.START_N:
-                return coords.getY() == 0;
-            case Board.START_S:
-                return coords.getY() == movePath.getGame().getBoard(movePath.getFinalBoardId()).getHeight() - 1;
-            case Board.START_E:
-                return coords.getX() == movePath.getGame().getBoard(movePath.getFinalBoardId()).getWidth() - 1;
-            case Board.START_W:
-                return coords.getX() == 0;
-            default:
-                return false;
-        }
+        return switch (destinationRegion) {
+            case Board.START_N -> coords.getY() == 0;
+            case Board.START_S ->
+                  coords.getY() == movePath.getGame().getBoard(movePath.getFinalBoardId()).getHeight() - 1;
+            case Board.START_E ->
+                  coords.getX() == movePath.getGame().getBoard(movePath.getFinalBoardId()).getWidth() - 1;
+            case Board.START_W -> coords.getX() == 0;
+            default -> false;
+        };
     }
 
     /**
@@ -777,16 +768,13 @@ public class BoardEdgePathFinder {
      *
      * @author NickAragua
      */
-    private class SortByDistanceToEdge implements Comparator<MovePath> {
-        private int targetRegion;
-
+    private record SortByDistanceToEdge(int targetRegion) implements Comparator<MovePath> {
         /**
          * Constructor - initializes the destination edge.
          *
          * @param targetRegion Destination edge
          */
-        public SortByDistanceToEdge(int targetRegion) {
-            this.targetRegion = targetRegion;
+        private SortByDistanceToEdge {
         }
 
         /**
@@ -797,30 +785,18 @@ public class BoardEdgePathFinder {
         public int compare(MovePath first, MovePath second) {
             // normalize MP cost difference over max MP cost
             int costDifference = first.getMpUsed() - second.getMpUsed();
-            int distanceDifference;
-
-            switch (targetRegion) {
+            int distanceDifference = switch (targetRegion) {
                 // if we're heading south, the one with the bigger y coordinate is further along
-                case Board.START_S:
-                    distanceDifference = second.getFinalCoords().getY() - first.getFinalCoords().getY();
-                    break;
+                case Board.START_S -> second.getFinalCoords().getY() - first.getFinalCoords().getY();
                 // if we're heading north, the one with the smaller y coordinate is further
                 // along
-                case Board.START_N:
-                    distanceDifference = first.getFinalCoords().getY() - second.getFinalCoords().getY();
-                    break;
+                case Board.START_N -> first.getFinalCoords().getY() - second.getFinalCoords().getY();
                 // if we're heading east, the one with the bigger x coordinate is further along
-                case Board.START_E:
-                    distanceDifference = second.getFinalCoords().getX() - first.getFinalCoords().getX();
-                    break;
+                case Board.START_E -> second.getFinalCoords().getX() - first.getFinalCoords().getX();
                 // if we're heading west, the one with the smaller x coordinate is further along
-                case Board.START_W:
-                    distanceDifference = first.getFinalCoords().getX() - second.getFinalCoords().getX();
-                    break;
-                default:
-                    distanceDifference = 0;
-                    break;
-            }
+                case Board.START_W -> first.getFinalCoords().getX() - second.getFinalCoords().getX();
+                default -> 0;
+            };
 
             return distanceDifference != 0 ? distanceDifference : costDifference;
         }
@@ -836,7 +812,7 @@ public class BoardEdgePathFinder {
         public boolean weakTankIntoWoods;
         public boolean wheeledTankRestriction;
         public boolean groundTankIntoWater;
-        public boolean shipOutofWater;
+        public boolean shipOutOfWater;
         public boolean tankGoingThroughBuilding;
         public boolean outOfBounds;
 
@@ -859,7 +835,7 @@ public class BoardEdgePathFinder {
                   !weakTankIntoWoods &&
                   !wheeledTankRestriction &&
                   !groundTankIntoWater &&
-                  !shipOutofWater &&
+                  !shipOutOfWater &&
                   !tankGoingThroughBuilding;
         }
     }

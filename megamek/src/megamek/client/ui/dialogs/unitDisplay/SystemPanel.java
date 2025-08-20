@@ -60,7 +60,8 @@ import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PicMap;
-import megamek.common.*;
+import megamek.common.Configuration;
+import megamek.common.CriticalSlot;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentMode;
@@ -832,9 +833,9 @@ class SystemPanel extends PicMap
                     } // if the max tech eccm option is not set then the ECM
                     // should not show anything.
                     if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_ECM)
-                          && !(client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)
+                          && !(client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_ECCM)
                           || client.getGame().getOptions()
-                          .booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET))) {
+                          .booleanOption(OptionsConstants.ADVANCED_TAC_OPS_GHOST_TARGET))) {
                         return;
                     }
                     for (Enumeration<EquipmentMode> e = m.getType()
@@ -844,7 +845,7 @@ class SystemPanel extends PicMap
                         // be overwritten by every entity update if made also in the client
                         if (em.equals("HotLoad") && en instanceof Mek
                               && !client.getGame().getOptions()
-                              .booleanOption(OptionsConstants.ADVCOMBAT_HOTLOAD_IN_GAME)) {
+                              .booleanOption(OptionsConstants.ADVANCED_COMBAT_HOT_LOAD_IN_GAME)) {
                             continue;
                         }
                         m_chMode.addItem(em.getDisplayableName());

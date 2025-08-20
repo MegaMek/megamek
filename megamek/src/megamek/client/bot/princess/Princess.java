@@ -79,6 +79,7 @@ import megamek.common.board.ElevationOption;
 import megamek.common.compute.Compute;
 import megamek.common.containers.PlayerIDAndList;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.GunEmplacement;
@@ -91,7 +92,6 @@ import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.game.IGame;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
@@ -1016,7 +1016,7 @@ public class Princess extends BotClient {
                                 primaryFire.getToHit().getCover())) {
 
                         Entity aimTarget = (Mek) primaryFire.getTarget();
-                        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS) &&
+                        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CALLED_SHOTS) &&
                               (!aimTarget.isImmobile() || useCalledShotsOnImmobileTarget)) {
                             isCalledShot = true;
                         }
@@ -1564,7 +1564,7 @@ public class Princess extends BotClient {
             }
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CALLED_SHOTS)) {
             // Called shots against immobile targets can be a little too effective, so only use
             // when enabled
             if (!target.isImmobile() || useCalledShotsOnImmobileTarget) {
@@ -2272,7 +2272,7 @@ public class Princess extends BotClient {
                 return true;
             }
 
-            final MoveStepType type = getBooleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND) ?
+            final MoveStepType type = getBooleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CAREFUL_STAND) ?
                   MoveStepType.CAREFUL_STAND :
                   MoveStepType.GET_UP;
             final MoveStep getUp = new MoveStep(movePath, type);
@@ -3516,7 +3516,7 @@ public class Princess extends BotClient {
 
         // Get conventional infantry if manual mode is available
         List<Entity> enemyInfantry = new ArrayList<>();
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_MANUAL_AMS)) {
             for (Entity curEnemy : getEnemyEntities()
                   .stream()
                   .filter(Entity::isDeployed)

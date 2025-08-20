@@ -34,12 +34,12 @@
 
 package megamek.common.weapons.ppc;
 
-import megamek.common.game.Game;
-import megamek.common.equipment.MiscType;
-import megamek.common.equipment.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.handlers.AttackHandler;
@@ -109,7 +109,7 @@ public abstract class PPCWeapon extends EnergyWeapon {
         // The benefit is removing the minimum range, so only PPCs with a minimum range
         // get the modes.
         if (minimumRange > 0) {
-            if (gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)) {
+            if (gameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PPC_INHIBITORS)) {
                 addMode("Field Inhibitor ON");
                 addMode("Field Inhibitor OFF");
             } else {

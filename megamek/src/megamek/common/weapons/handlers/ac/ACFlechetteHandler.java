@@ -36,14 +36,14 @@ package megamek.common.weapons.handlers.ac;
 
 import java.util.Vector;
 
-import megamek.common.units.Building;
-import megamek.common.game.Game;
 import megamek.common.RangeType;
 import megamek.common.Report;
-import megamek.common.rolls.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Building;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
@@ -81,11 +81,11 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
 
         toReturn = applyGlancingBlowModifier(toReturn, false);
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
               && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
               && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
         }

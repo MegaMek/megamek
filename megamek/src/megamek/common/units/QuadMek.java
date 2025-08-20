@@ -138,7 +138,8 @@ public class QuadMek extends Mek {
                         if (legHasHipCrit(i)) {
                             hipHits++;
                             if ((game == null) ||
-                                  !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                                  !game.getOptions()
+                                        .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
                                 continue;
                             }
                         }
@@ -161,7 +162,8 @@ public class QuadMek extends Mek {
             if (mp > 0) {
                 if (hipHits > 0) {
                     if ((game != null) &&
-                          game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                          game.getOptions()
+                                .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
                         mp = mp - (2 * hipHits);
                     } else {
                         for (int i = 0; i < hipHits; i++) {
@@ -183,7 +185,7 @@ public class QuadMek extends Mek {
 
         if (!mpCalculationSetting.ignoreHeat) {
             // factor in heat
-            if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
+            if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT)) {
                 if (heat < 30) {
                     mp -= (heat / 5);
                 } else if (heat >= 49) {
@@ -352,7 +354,8 @@ public class QuadMek extends Mek {
                 // check for damaged hip actuators
                 if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
                     roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
-                    if (!game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                    if (!game.getOptions()
+                          .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
                         continue;
                     }
                 }
@@ -422,7 +425,7 @@ public class QuadMek extends Mek {
             }
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
             if ((table == ToHitData.HIT_NORMAL) || (table == ToHitData.HIT_PARTIAL_COVER)) {
                 roll = Compute.d6(2);
                 try {
@@ -443,7 +446,7 @@ public class QuadMek extends Mek {
                     switch (roll) {
                         case 2:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
-                                  !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                                  !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                                 result.setUndoneLocation(tac(table, side, Mek.LOC_CT, cover, false));
@@ -467,7 +470,7 @@ public class QuadMek extends Mek {
                         case 11:
                             return new HitData(Mek.LOC_RLEG);
                         case 12:
-                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
+                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                                 result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
@@ -479,7 +482,7 @@ public class QuadMek extends Mek {
                     switch (roll) {
                         case 2:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
-                                  !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                                  !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                                 result.setUndoneLocation(tac(table, side, Mek.LOC_CT, cover, true));
@@ -503,7 +506,7 @@ public class QuadMek extends Mek {
                         case 11:
                             return new HitData(Mek.LOC_RARM, true);
                         case 12:
-                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
+                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                                 result.setUndoneLocation(new HitData(Mek.LOC_HEAD, true));
@@ -515,7 +518,7 @@ public class QuadMek extends Mek {
                     switch (roll) {
                         case 2:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
-                                  !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                                  !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                                 result.setUndoneLocation(tac(table, side, Mek.LOC_LT, cover, false));
@@ -539,7 +542,7 @@ public class QuadMek extends Mek {
                         case 11:
                             return new HitData(Mek.LOC_RLEG);
                         case 12:
-                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
+                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                                 result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
@@ -551,7 +554,7 @@ public class QuadMek extends Mek {
                     switch (roll) {
                         case 2:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
-                                  !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                                  !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                                 result.setUndoneLocation(tac(table, side, Mek.LOC_RT, cover, false));
@@ -575,7 +578,7 @@ public class QuadMek extends Mek {
                         case 11:
                             return new HitData(Mek.LOC_LLEG);
                         case 12:
-                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
+                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                                 result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
@@ -615,7 +618,7 @@ public class QuadMek extends Mek {
                     case 5:
                         return new HitData(Mek.LOC_RARM);
                     case 6:
-                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
+                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD, true));
@@ -636,7 +639,7 @@ public class QuadMek extends Mek {
                     case 5:
                         return new HitData(Mek.LOC_RLEG, true);
                     case 6:
-                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
+                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD, true));
@@ -656,7 +659,7 @@ public class QuadMek extends Mek {
                     case 5:
                         return new HitData(Mek.LOC_LLEG);
                     case 6:
-                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
+                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD, true));
@@ -676,7 +679,7 @@ public class QuadMek extends Mek {
                     case 5:
                         return new HitData(Mek.LOC_RLEG);
                     case 6:
-                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
+                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD, true));
@@ -745,7 +748,7 @@ public class QuadMek extends Mek {
             // Swarm attack locations.
             switch (roll) {
                 case 2:
-                    if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
+                    if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                         getCrew().decreaseEdge();
                         HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                         result.setUndoneLocation(new HitData(Mek.LOC_HEAD, false, effects));
@@ -771,7 +774,7 @@ public class QuadMek extends Mek {
                 case 11:
                     return new HitData(Mek.LOC_LT, false, effects);
                 case 12:
-                    if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
+                    if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                         getCrew().decreaseEdge();
                         HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                         result.setUndoneLocation(new HitData(Mek.LOC_HEAD, false, effects));
@@ -836,7 +839,7 @@ public class QuadMek extends Mek {
     @Override
     public boolean canGoHullDown() {
         // check the option
-        boolean retVal = game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
+        boolean retVal = game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN);
         if (!retVal) {
             return false;
         }

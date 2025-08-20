@@ -36,8 +36,8 @@
 package megamek.common;
 
 import megamek.common.board.Board;
+import megamek.common.enums.MoveStepType;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 
 /**

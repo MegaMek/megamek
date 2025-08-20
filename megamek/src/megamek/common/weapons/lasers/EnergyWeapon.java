@@ -34,15 +34,15 @@
 
 package megamek.common.weapons.lasers;
 
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
-import megamek.common.equipment.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.EnergyWeaponHandler;
-import megamek.common.weapons.Weapon;
 import megamek.common.weapons.lasers.innerSphere.ISBombastLaser;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -73,7 +73,7 @@ public abstract class EnergyWeapon extends Weapon {
         // The bombast laser has its own rules with to-hit modifiers and does not
         // get additional dial-down
         if (!(this instanceof ISBombastLaser)) {
-            if (gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)) {
+            if (gameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ENERGY_WEAPONS)) {
                 int dmg = (damage == WeaponType.DAMAGE_VARIABLE) ? damageShort : damage;
                 for (; dmg >= 0; dmg--) {
                     addMode("Damage " + dmg);

@@ -52,7 +52,8 @@ import megamek.client.bot.princess.coverage.Builder;
 import megamek.client.bot.princess.geometry.ConvexBoardArea;
 import megamek.client.bot.princess.geometry.CoordFacingCombo;
 import megamek.client.bot.princess.geometry.HexLine;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.LosEffects;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
@@ -989,11 +990,11 @@ public class BasicPathRanker extends PathRanker {
     }
 
     protected boolean isLosRange(Game game) {
-        return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE);
     }
 
     protected boolean isExtremeRange(Game game) {
-        return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE);
     }
 
     /**

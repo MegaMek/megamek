@@ -46,12 +46,12 @@ import megamek.common.board.Coords;
 import megamek.common.board.CrossBoardAttackHelper;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
+import megamek.common.enums.MoveStepType;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.*;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.Atmosphere;
@@ -1190,8 +1190,8 @@ public class Compute {
         boolean isWeaponInfantry = (weaponType instanceof InfantryWeapon) && !weaponType.hasFlag(WeaponType.F_TAG);
         boolean isSwarmOrLegAttack = (weaponType instanceof InfantryAttack);
         boolean isIndirect = weaponType.hasIndirectFire() && weapon.curMode().equals("Indirect");
-        boolean useExtremeRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
-        boolean useLOSRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
+        boolean useExtremeRange = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE);
+        boolean useLOSRange = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE);
         // Naval C3 only provides full C3 range benefits to energy weapons and guided
         // missiles
         boolean nc3EnergyGuided = ((weaponType.hasFlag(WeaponType.F_ENERGY))
@@ -1239,7 +1239,7 @@ public class Compute {
         // TODO: See above, it should be coded elsewhere...
         //
         if (weaponType.hasFlag(WeaponType.F_PPC)) {
-            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PPC_INHIBITORS)) {
                 if ((weapon.curMode() != null)
                       && weapon.curMode().equals("Field Inhibitor OFF")) {
                     weaponRanges[RangeType.RANGE_MINIMUM] = 0;
@@ -1248,7 +1248,8 @@ public class Compute {
         }
 
         // Hot loaded weapons
-        if (weapon.isHotLoaded() && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) {
+        if (weapon.isHotLoaded() && game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HOT_LOAD)) {
             weaponRanges[RangeType.RANGE_MINIMUM] = 0;
         }
 
@@ -2079,7 +2080,7 @@ public class Compute {
             int l3ProneFiringArm = Entity.LOC_NONE;
 
             if (attacker.isLocationBad(Mek.LOC_RARM) || attacker.isLocationBad(Mek.LOC_LARM)) {
-                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PRONE_FIRE)) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PRONE_FIRE)) {
                     // Can fire with only one arm
                     if (attacker.isLocationBad(Mek.LOC_RARM) && attacker.isLocationBad(Mek.LOC_LARM)) {
                         return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone with both arms destroyed.");
@@ -2317,7 +2318,7 @@ public class Compute {
                 // first front arc target is our primary.
                 // if first target is non-front, and either a later target or
                 // the current one is in front, use that instead.
-                if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_FORCED_PRIMARY_TARGETS)) {
+                if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_FORCED_PRIMARY_TARGETS)) {
                     Targetable pte = game.getTarget(prevAttack.getTargetType(), prevAttack.getTargetId());
                     // in double-blind play, we might not have the target in our
                     // local copy of the game. In that case, the sprite won't
@@ -2352,7 +2353,7 @@ public class Compute {
         if (attacker.getCrew().hasDedicatedGunner()) {
             maxPrimary = attacker.getCrew().getCrewType().getMaxPrimaryTargets();
         }
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_TANK_CREWS)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_TANK_CREWS)
               && (attacker instanceof Tank)) {
 
             // If we are a tank, and only have 1 crew then we have some special
@@ -2530,7 +2531,7 @@ public class Compute {
             toHit.addModifier(-1, "Frogman");
         }
 
-        if (attacker.hasAbility(OptionsConstants.UNOFF_CLAN_PILOT_TRAINING)) {
+        if (attacker.hasAbility(OptionsConstants.UNOFFICIAL_CLAN_PILOT_TRAINING)) {
             toHit.addModifier(1, "clan pilot training");
         }
 
@@ -2567,7 +2568,7 @@ public class Compute {
             return getTargetMovementModifier(game, entity.getTractor());
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_STANDING_STILL)
               && (entity.mpUsed == 0)
               && !entity.isImmobile()
               && !((entity instanceof Infantry) || (entity instanceof VTOL) || (entity instanceof GunEmplacement))) {
@@ -2652,7 +2653,7 @@ public class Compute {
         }
 
         if ((game != null)
-              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_MAXTECH_MOVEMENT_MODS)) {
+              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_MAX_TECH_MOVEMENT_MODS)) {
             if ((distance >= 3) && (distance <= 4)) {
                 toHit.addModifier(1, "target moved 3-4 hexes");
             } else if ((distance >= 5) && (distance <= 6)) {
@@ -2798,7 +2799,7 @@ public class Compute {
             woodsText = "target in ultra heavy " + woodsText;
         }
 
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER)
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_WOODS_COVER)
               && !isAboveWoods
               && !((targetable.getTargetType() == Targetable.TYPE_HEX_CLEAR)
               || (targetable.getTargetType() == Targetable.TYPE_HEX_IGNITE)
@@ -2889,7 +2890,7 @@ public class Compute {
             woodsText = "heavy " + woodsText;
         }
 
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER)) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_WOODS_COVER)) {
             if ((woodsLevel == 1) && (eiStatus != 2)) {
                 toHit.addModifier(1, woodsText);
             } else if (woodsLevel > 1) {
@@ -3669,12 +3670,12 @@ public class Compute {
                                 if ((target instanceof Tank)
                                       && !(game.getOptions()
                                       .booleanOption(
-                                            OptionsConstants.ADVCOMBAT_VEHICLES_SAFE_FROM_INFERNOS))) {
+                                            OptionsConstants.ADVANCED_COMBAT_VEHICLES_SAFE_FROM_INFERNOS))) {
                                     ammoMultiple = 1.1;
                                 }
                                 if ((target instanceof ProtoMek)
                                       && !(game.getOptions()
-                                      .booleanOption(OptionsConstants.ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS))) {
+                                      .booleanOption(OptionsConstants.ADVANCED_COMBAT_PROTOMEKS_SAFE_FROM_INFERNOS))) {
                                     ammoMultiple = 1.1;
                                 }
                             }
@@ -3804,7 +3805,7 @@ public class Compute {
         weaponType = (WeaponType) shooter.getEquipment(atk.getWeaponId()).getType();
 
         boolean rapidAC = (weaponType.getAmmoType() == AmmoTypeEnum.AC)
-              && cgame.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC);
+              && cgame.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RAPID_AC);
 
         if (!((weaponType.getAmmoType() == AmmoTypeEnum.AC_ULTRA)
               || (weaponType.getAmmoType() == AmmoTypeEnum.AC_ULTRA_THB)
@@ -3899,7 +3900,7 @@ public class Compute {
     public static boolean inVisualRange(Game game, LosEffects los, Entity attackingEntity,
           Targetable target) {
         // Use firing solution if Advanced Sensors is on
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS)
               && target.getTargetType() == Targetable.TYPE_ENTITY
               && game.getBoard(target).isSpace()) {
             Entity te = (Entity) target;
@@ -4268,7 +4269,7 @@ public class Compute {
         }
 
         // Apply Sensor Geek SPA, if present
-        if (ae.hasAbility(OptionsConstants.UNOFF_SENSOR_GEEK)) {
+        if (ae.hasAbility(OptionsConstants.UNOFFICIAL_SENSOR_GEEK)) {
             tn -= 2;
         }
 
@@ -4277,12 +4278,12 @@ public class Compute {
         tn += (distance / rangeIncrement);
 
         // Apply ECM/ECCM effects
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM)) {
             tn += calcSpaceECM(game, ae, target);
         }
 
         // Apply large craft sensor shadows
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_SENSOR_SHADOW)) {
             tn += calcSensorShadow(game, ae, target);
         }
 
@@ -4370,7 +4371,7 @@ public class Compute {
         }
 
         // Apply Sensor Geek SPA, if present
-        if (attacker.hasAbility(OptionsConstants.UNOFF_SENSOR_GEEK)) {
+        if (attacker.hasAbility(OptionsConstants.UNOFFICIAL_SENSOR_GEEK)) {
             tn -= 2;
         }
 
@@ -4379,12 +4380,12 @@ public class Compute {
         tn += (distance / rangeIncrement);
 
         // Apply ECM/ECCM effects
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM)) {
             tn += calcSpaceECM(game, attacker, target);
         }
 
         // Apply large craft sensor shadows
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_SENSOR_SHADOW)) {
             tn += calcSensorShadow(game, attacker, target);
         }
 
@@ -4480,7 +4481,7 @@ public class Compute {
         }
 
         // Apply Sensor Geek SPA, if present
-        if (ae.hasAbility(OptionsConstants.UNOFF_SENSOR_GEEK)) {
+        if (ae.hasAbility(OptionsConstants.UNOFFICIAL_SENSOR_GEEK)) {
             tn -= 2;
         }
 
@@ -4489,12 +4490,12 @@ public class Compute {
         tn += (distance / rangeIncrement);
 
         // Apply ECM/ECCM effects
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM)) {
             tn += calcSpaceECM(game, ae, target);
         }
 
         // Apply large craft sensor shadows
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_SENSOR_SHADOW)) {
             tn += calcSensorShadow(game, ae, target);
         }
 
@@ -4524,7 +4525,7 @@ public class Compute {
 
         int visualRange;
         if (entity.isSpaceborne() && entity.getGame().getOptions()
-              .booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
+              .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS)) {
             visualRange = 0;
             // For squadrons. Default to the passive thermal/optical value used by component
             // fighters
@@ -4564,14 +4565,14 @@ public class Compute {
         }
 
         // For Space games with this option, return something different
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS)
               && target.getTargetType() == Targetable.TYPE_ENTITY
               && game.getBoard(target).isSpace()) {
             Entity te = (Entity) target;
             return hasSensorContact(ae, te.getId());
         }
 
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS)) {
             return false;
         }
 
@@ -4694,7 +4695,7 @@ public class Compute {
         }
 
         int check = ae.getSensorCheck();
-        if ((null != ae.getCrew()) && ae.hasAbility(OptionsConstants.UNOFF_SENSOR_GEEK)) {
+        if ((null != ae.getCrew()) && ae.hasAbility(OptionsConstants.UNOFFICIAL_SENSOR_GEEK)) {
             check -= 2;
         }
         if (null != te) {
@@ -4830,7 +4831,7 @@ public class Compute {
         }
 
         int check = e.getSensorCheck();
-        if ((null != e.getCrew()) && e.hasAbility(OptionsConstants.UNOFF_SENSOR_GEEK)) {
+        if ((null != e.getCrew()) && e.hasAbility(OptionsConstants.UNOFFICIAL_SENSOR_GEEK)) {
             check -= 2;
         }
 
@@ -6522,7 +6523,7 @@ public class Compute {
             return -1;
         }
 
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER)) {
             return -1;
         }
 
@@ -7035,7 +7036,7 @@ public class Compute {
               && (altDif < 1);
 
         return game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)
-              && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE)
+              && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_INDIRECT_ALWAYS_POSSIBLE)
               && LosEffects.calculateLOS(game, ae, target).canSee()
               && (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
               || Compute.canSee(game, ae, target))

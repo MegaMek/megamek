@@ -553,7 +553,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
 
         // elevation
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_CLUBS_PUNCH)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_CLUBS_PUNCH)
               && (target instanceof Mek)) {
             toHit.setHitTable(ToHitData.HIT_PUNCH);
             if ((attackerHeight == targetElevation) && !ae.isHullDown()) {

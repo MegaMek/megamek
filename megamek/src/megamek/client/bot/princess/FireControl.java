@@ -376,7 +376,7 @@ public class FireControl {
         if (targetState.isImmobile() && !target.isHexBeingBombed()) {
             toHitData.addModifier(TH_TAR_IMMOBILE);
         }
-        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_STANDING_STILL)
               && (EntityMovementType.MOVE_NONE == targetState.getMovementType())
               && !targetState.isImmobile()
               && !((target instanceof Infantry) || (target instanceof VTOL) ||
@@ -595,7 +595,7 @@ public class FireControl {
             }
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_PHYSICAL_ATTACK_PSR)) {
             if (EntityWeightClass.WEIGHT_LIGHT == shooter.getWeightClass()) {
                 toHitData.addModifier(TH_PHY_LIGHT);
             } else if (EntityWeightClass.WEIGHT_MEDIUM == shooter.getWeightClass()) {
@@ -833,8 +833,8 @@ public class FireControl {
         }
         // BayWeapons do range differently
         int range = RangeType.rangeBracket(distance, weaponType.getRanges(weapon, ammo),
-              game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE),
-              game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE));
+              game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE),
+              game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE));
         if (RangeType.RANGE_OUT == range) {
             return new ToHitData(TH_OUT_OF_RANGE);
         } else if ((RangeType.RANGE_MINIMUM == range) && targetState.isAirborneAero()) {
@@ -1082,13 +1082,13 @@ public class FireControl {
         }
 
         // weapon quirks
-        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_POS_ACCURATE)) {
+        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_ACCURATE)) {
             toHit.addModifier(TH_ACCURATE_WEAPON);
         }
-        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_INACCURATE)) {
+        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_INACCURATE)) {
             toHit.addModifier(TH_INACCURATE_WEAPON);
         }
-        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON)
+        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_STABLE_WEAPON)
               && (EntityMovementType.MOVE_RUN == shooter.moved)) {
             toHit.addModifier(TH_STABLE_WEAPON);
         }
@@ -1734,7 +1734,7 @@ public class FireControl {
         for (final WeaponMounted weapon : shooter.getWeaponList()) {
             // respect restriction on manual AMS firing.
             if (weapon.getType().hasFlag(WeaponType.F_AMS) &&
-                  (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) ||
+                  (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_MANUAL_AMS) ||
                         !weapon.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
                 continue;
             }
@@ -2100,7 +2100,7 @@ public class FireControl {
 
             // respect restriction on manual AMS firing.
             if (weapon.getType().hasFlag(WeaponType.F_AMS) &&
-                  (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) ||
+                  (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_MANUAL_AMS) ||
                         !weapon.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
                 continue;
             }

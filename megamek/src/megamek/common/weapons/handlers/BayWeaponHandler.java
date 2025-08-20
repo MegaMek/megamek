@@ -36,7 +36,9 @@ package megamek.common.weapons.handlers;
 
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.RangeType;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
@@ -111,7 +113,7 @@ public class BayWeaponHandler extends WeaponHandler {
             return;
         }
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_HEAT_BY_BAY)) {
                 for (WeaponMounted m : weapon.getBayWeapons()) {
                     ae.heatBuildup += m.getCurrentHeat();
                 }
@@ -135,7 +137,7 @@ public class BayWeaponHandler extends WeaponHandler {
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             return handleAeroSanity(phase, vPhaseReport);
         }
 
@@ -229,7 +231,7 @@ public class BayWeaponHandler extends WeaponHandler {
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
-        bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
+        bDirect = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
               && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
@@ -477,7 +479,7 @@ public class BayWeaponHandler extends WeaponHandler {
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
-        bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
+        bDirect = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
               && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);

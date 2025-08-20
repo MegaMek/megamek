@@ -36,16 +36,16 @@ package megamek.common.weapons.handlers;
 
 import java.util.Vector;
 
-import megamek.common.compute.Compute;
 import megamek.common.CriticalSlot;
-import megamek.common.game.Game;
-import megamek.common.units.Infantry;
-import megamek.common.equipment.Mounted;
 import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Infantry;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class HyperLaserHandler extends EnergyWeaponHandler {
@@ -100,13 +100,13 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
         int[] nRanges = wtype.getRanges(weapon);
         double toReturn = wtype.getDamage(nRange);
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ENERGY_WEAPONS)
               && weapon.hasModes()) {
             toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
         }
 
         // Check for Altered Damage from Energy Weapons (TacOp, pg.83)
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ALTDMG)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ALTERNATIVE_DAMAGE)) {
             if (nRange <= 1) {
                 toReturn++;
             } else if (nRange <= wtype.getMediumRange()) {
@@ -133,7 +133,7 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
               && (nRange > nRanges[RangeType.RANGE_LONG])) {
             // Against conventional infantry, treat as direct fire energy
             if (target.isConventionalInfantry()) {
@@ -142,7 +142,7 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
                 toReturn = (int) Math.floor(toReturn / 2.0);
             }
         }
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
               && (nRange > nRanges[RangeType.RANGE_EXTREME])) {
             // Against conventional infantry, treat as direct fire energy
             if (target.isConventionalInfantry()) {

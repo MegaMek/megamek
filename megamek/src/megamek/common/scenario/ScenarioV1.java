@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,17 +37,23 @@ import java.util.regex.Pattern;
 
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.*;
+import megamek.common.Configuration;
+import megamek.common.CriticalSlot;
+import megamek.common.HitData;
+import megamek.common.Player;
+import megamek.common.SimpleTechLevel;
+import megamek.common.TechConstants;
+import megamek.common.ToHitData;
+import megamek.common.annotations.Nullable;
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
-import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.AmmoType.AmmoTypeEnum;
-import megamek.common.annotations.Nullable;
-import megamek.common.battleArmor.BattleArmor;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.Gender;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.Mounted;
@@ -987,7 +993,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     }
 
     /**
-     * Load board files and create the megaboard.
+     * Load board files and create the mega board.
      */
     private Board createBoard(ScenarioV1 scenarioV1) throws ScenarioLoaderException {
         int mapWidth = 16, mapHeight = 17;
@@ -1224,18 +1230,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     /**
      * This is used specify the one damage location
      */
-    private static class SpecDam {
-        public final int loc;
-        public final int setArmorTo;
-        public final boolean rear;
-        public final boolean internal;
-
-        public SpecDam(int Location, int SetArmorTo, boolean RearHit, boolean Internal) {
-            loc = Location;
-            setArmorTo = SetArmorTo;
-            rear = RearHit;
-            internal = Internal;
-        }
+    private record SpecDam(int loc, int setArmorTo, boolean rear, boolean internal) {
     }
 
     /**

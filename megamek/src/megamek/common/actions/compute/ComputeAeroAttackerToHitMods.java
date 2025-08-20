@@ -173,7 +173,7 @@ public class ComputeAeroAttackerToHitMods {
 
             // Space ECM
             if (attacker.isSpaceborne() && game.onTheSameBoard(attacker, target)
-                  && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+                  && game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM)) {
                 int ecm = ComputeECM.getLargeCraftECM(attacker, attacker.getPosition(), target.getPosition());
                 if (!attacker.isLargeCraft()) {
                     ecm += ComputeECM.getSmallCraftECM(attacker, attacker.getPosition(), target.getPosition());

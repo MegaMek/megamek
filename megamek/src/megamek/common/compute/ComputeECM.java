@@ -412,7 +412,7 @@ public class ComputeECM {
         Collections.reverse(allEcmInfo);
 
         // If ECCM is on, we may have to remove some ECM that is negated
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_ECCM)
               && !allEccmInfo.isEmpty()) {
             Iterator<ECMInfo> ecmIterator = allEcmInfo.iterator();
             Iterator<ECMInfo> eccmIterator;
@@ -561,7 +561,7 @@ public class ComputeECM {
         // E(C)CM operates differently in space (SO pg 110)
         if (entity.isSpaceborne()) {
             // No ECM in space unless SO rule is on
-            if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM)) {
                 return null;
             }
             int range = entity.getECMRange();
@@ -640,7 +640,7 @@ public class ComputeECM {
         // E(C)CM operates differently in space (SO pg 110)
         if (entity.isSpaceborne()) {
             // No ECCM in space unless SO rule is on
-            if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM)) {
                 return null;
             }
             int bapRange = entity.getBAPRange();

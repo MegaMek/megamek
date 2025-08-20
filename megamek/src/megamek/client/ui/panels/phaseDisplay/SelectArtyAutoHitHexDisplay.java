@@ -192,8 +192,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         player = clientgui.getClient().getLocalPlayer();
         // By default, we should get 5 hexes per 4 map sheets (4 map sheets is 16*17*4 = 1088 hexes)
         Board board = game().getBoard();
-        int preDesignateArea = game().getOptions().intOption(OptionsConstants.ADVCOMBAT_MAP_AREA_PREDESIGNATE);
-        int hexesPer = game().getOptions().intOption(OptionsConstants.ADVCOMBAT_NUM_HEXES_PREDESIGNATE);
+        int preDesignateArea = game().getOptions().intOption(OptionsConstants.ADVANCED_COMBAT_MAP_AREA_PREDESIGNATE);
+        int hexesPer = game().getOptions().intOption(OptionsConstants.ADVANCED_COMBAT_NUM_HEXES_PREDESIGNATE);
         double mapArea = board.getWidth() * board.getHeight();
         allowedNumberOfHexes = (int) Math.ceil(mapArea / preDesignateArea) * hexesPer;
         plannedAutoHits.clear();

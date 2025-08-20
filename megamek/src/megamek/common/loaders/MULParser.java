@@ -1369,7 +1369,7 @@ public class MULParser {
             // fatigue
             int fatigueVal = 0;
 
-            if ((options != null) && options.booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)
+            if ((options != null) && options.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_FATIGUE)
                   && (attributes.containsKey(ATTR_FATIGUE)) && !attributes.get(ATTR_FATIGUE).isBlank()) {
                 try {
                     fatigueVal = Integer.parseInt(attributes.get(ATTR_FATIGUE));

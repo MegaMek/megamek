@@ -37,15 +37,15 @@ package megamek.common.weapons.handlers.srm;
 import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.battleArmor.BattleArmor;
-import megamek.common.compute.Compute;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.Report;
-import megamek.common.units.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 import megamek.common.weapons.DamageType;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -79,7 +79,7 @@ public class SRMAntiTSMHandler extends SRMSmokeWarheadHandler {
         // Add ams mod
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                   : null;
             if (entityTarget != null && entityTarget.isLargeCraft()) {

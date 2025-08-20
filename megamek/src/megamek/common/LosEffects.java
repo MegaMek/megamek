@@ -770,7 +770,8 @@ public class LosEffects {
             return los;
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES) && isDeadZone(game, ai)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DEAD_ZONES) && isDeadZone(game,
+              ai)) {
             LosEffects los = new LosEffects();
             los.blocked = true;
             los.blockedByHill = true;
@@ -780,8 +781,8 @@ public class LosEffects {
             return los;
         }
 
-        boolean diagramLos = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS1);
-        boolean partialCover = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER);
+        boolean diagramLos = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS1);
+        boolean partialCover = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PARTIAL_COVER);
         double degree = ai.attackPos.degree(ai.targetPos);
         LosEffects finalLoS;
         if (degree % 60 == 30) {
@@ -914,7 +915,7 @@ public class LosEffects {
 
         // partial cover modifiers apply unless the target is oversized
         if ((targetCover != COVER_NONE) && !targetIsOversized) {
-            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PARTIAL_COVER)) {
                 if ((targetCover == COVER_75LEFT) || (targetCover == COVER_75RIGHT)) {
                     modifiers.addModifier(1, "target has 75% cover");
                 } else if (targetCover >= COVER_HORIZONTAL) {
@@ -1049,7 +1050,8 @@ public class LosEffects {
             }
 
             // Check for advanced cover, only 'meks can get partial cover
-            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER) && ai.targetIsMek) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PARTIAL_COVER)
+                  && ai.targetIsMek) {
                 // 75% and vertical cover will have blocked LoS
                 boolean losBlockedByCover = false;
                 if (leftLos.targetCover == COVER_HORIZONTAL && rightLos.targetCover == COVER_NONE) {
@@ -1112,7 +1114,8 @@ public class LosEffects {
                 }
             }
 
-            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER) && ai.attackerIsMek) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PARTIAL_COVER)
+                  && ai.attackerIsMek) {
                 // 75% and vertical cover will have blocked LoS
                 boolean losBlockedByCover = false;
                 if (leftLos.attackerCover == COVER_HORIZONTAL && rightLos.attackerCover == COVER_NONE) {
@@ -1669,8 +1672,8 @@ public class LosEffects {
      */
     public static int dividedLeftBetter(ArrayList<Coords> in, Game game, AttackInfo ai, boolean targetInBuilding,
           LosEffects los) {
-        boolean diagramLos = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS1);
-        boolean partialCover = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER);
+        boolean diagramLos = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS1);
+        boolean partialCover = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PARTIAL_COVER);
         LosEffects leftTotal = new LosEffects();
         LosEffects rightTotal = new LosEffects();
         for (int i = 1; i < in.size() - 2; i += 3) {

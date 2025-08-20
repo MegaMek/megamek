@@ -1006,7 +1006,9 @@ public class UnitEditorDialog extends JDialog {
 
             // K-F Drive Components (Optional)
             // Drive Coil
-            if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE)) {
+            if (entity.getGame()
+                  .getOptions()
+                  .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_EXPANDED_KF_DRIVE_DAMAGE)) {
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy++;
                 gridBagConstraints.weightx = 0.0;

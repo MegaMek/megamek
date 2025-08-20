@@ -35,6 +35,7 @@ package megamek.common.moves;
 import java.util.EnumSet;
 import java.util.Set;
 
+import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
 import megamek.common.pathfinder.CachedEntityState;
 import megamek.common.units.Entity;
@@ -47,11 +48,11 @@ import megamek.common.units.Entity;
  * @since 0.50.07
  */
 class LaunchDropStep implements PhasePass {
-    private static final EnumSet<MovePath.MoveStepType> TYPES = EnumSet.of(MovePath.MoveStepType.LAUNCH,
-          MovePath.MoveStepType.DROP);
+    private static final EnumSet<MoveStepType> TYPES = EnumSet.of(MoveStepType.LAUNCH,
+          MoveStepType.DROP);
 
     @Override
-    public Set<MovePath.MoveStepType> getTypesOfInterest() {
+    public Set<MoveStepType> getTypesOfInterest() {
         return TYPES;
     }
 

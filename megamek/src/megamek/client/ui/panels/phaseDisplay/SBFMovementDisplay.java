@@ -53,7 +53,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.pathfinder.AbstractPathFinder;
+import megamek.common.pathfinder.StopConditionTimeout;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFFormationTurn;
@@ -379,7 +379,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
 
         final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
         SBFMovePathFinder pf = SBFMovePathFinder.aStarFinder(dest, game());
-        AbstractPathFinder.StopConditionTimeout<SBFMovePath> timeoutCondition = new AbstractPathFinder.StopConditionTimeout<>(
+        StopConditionTimeout<SBFMovePath> timeoutCondition = new StopConditionTimeout<>(
               timeLimit);
         pf.addStopCondition(timeoutCondition);
         pf.run(SBFMovePath.createMovePathShallow(currentPath));

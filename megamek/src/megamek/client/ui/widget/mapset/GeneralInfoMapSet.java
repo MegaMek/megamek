@@ -54,7 +54,7 @@ import megamek.client.ui.widget.picmap.PMAreasGroup;
 import megamek.client.ui.widget.picmap.PMMultiLineLabel;
 import megamek.client.ui.widget.picmap.PMSimpleLabel;
 import megamek.client.ui.widget.picmap.PMUtil;
-import megamek.common.*;
+import megamek.common.Configuration;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.options.IGameOptions;
@@ -333,7 +333,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         }
 
         if ((null != en.getGame())
-              && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS)) {
+              && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIAL_REPAIRS)) {
             // skip a line for readability
             quirksAndPartReps.addString("");
 
@@ -437,7 +437,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
         if ((en.getGame() != null) && en.getGame()
               .getOptions()
-              .booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+              .booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS)) {
             curSensorsR.setVisible(true);
             visualRangeR.setVisible(true);
             curSensorsL.setVisible(true);

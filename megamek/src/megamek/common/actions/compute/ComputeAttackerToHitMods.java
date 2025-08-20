@@ -106,7 +106,7 @@ public class ComputeAttackerToHitMods {
         toHit.append(Compute.getProneMods(game, attacker, weaponId));
 
         // add penalty for called shots and change hit table, if necessary
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS) && weapon != null) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CALLED_SHOTS) && weapon != null) {
             int call = weapon.getCalledShot().getCall();
             if ((call > CalledShot.CALLED_NONE) && !aimingMode.isNone()) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
@@ -351,7 +351,7 @@ public class ComputeAttackerToHitMods {
         }
 
         // Fatigue
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE) &&
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_FATIGUE) &&
               attacker.getCrew().isGunneryFatigued()) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.Fatigue"));
         }

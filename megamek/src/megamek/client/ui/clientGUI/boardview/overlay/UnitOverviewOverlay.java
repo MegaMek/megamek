@@ -55,7 +55,7 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.widget.picmap.PMUtil;
-import megamek.common.*;
+import megamek.common.Configuration;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.IArmorState;
@@ -333,7 +333,7 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
         boolean mtHeat = false;
         int mHeat = 30;
         if ((entity.getGame() != null)
-              && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
+              && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT)) {
             mHeat = 50;
             mtHeat = true;
         }

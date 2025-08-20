@@ -134,7 +134,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
         }
 
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_JUMP_JET_ATTACK)) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_JUMP_JET_ATTACK)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "no Jump Jet attack");
         }
 

@@ -111,7 +111,7 @@ public class StreakHandler extends MissileWeaponHandler {
         int missilesHit;
         int amsMod = getAMSHitsMod(vPhaseReport);
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                   : null;
             if (entityTarget != null && entityTarget.isLargeCraft()) {

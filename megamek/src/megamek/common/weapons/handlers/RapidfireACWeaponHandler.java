@@ -37,10 +37,10 @@ package megamek.common.weapons.handlers;
 import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.game.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -62,7 +62,7 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
         }
 
         int jamLevel = 4;
-        boolean kindRapidFire = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC);
+        boolean kindRapidFire = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_KIND_RAPID_AC);
         if (kindRapidFire) {
             jamLevel = 2;
         }

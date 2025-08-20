@@ -35,9 +35,10 @@ package megamek.common.moves;
 import java.util.EnumSet;
 import java.util.Set;
 
-import megamek.common.units.Entity;
+import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
 import megamek.common.pathfinder.CachedEntityState;
+import megamek.common.units.Entity;
 
 /**
  * This class handles the roll step of a unit. It is used in the MoveStep compilation to calculate the movement of a
@@ -47,10 +48,10 @@ import megamek.common.pathfinder.CachedEntityState;
  * @since 0.50.07
  */
 class RollStep implements PhasePass {
-    private static final EnumSet<MovePath.MoveStepType> TYPES = EnumSet.of(MovePath.MoveStepType.ROLL);
+    private static final EnumSet<MoveStepType> TYPES = EnumSet.of(MoveStepType.ROLL);
 
     @Override
-    public Set<MovePath.MoveStepType> getTypesOfInterest() {
+    public Set<MoveStepType> getTypesOfInterest() {
         return TYPES;
     }
 
@@ -59,7 +60,7 @@ class RollStep implements PhasePass {
           final CachedEntityState cachedEntityState) {
         moveStep.setRolled(!prev.isRolled());
         // doesn't cost anything if previous was a yaw
-        if (prev.getType() != MovePath.MoveStepType.YAW) {
+        if (prev.getType() != MoveStepType.YAW) {
             moveStep.setMp(1);
             moveStep.setNRolls(moveStep.getNRolls() + 1);
         } else {

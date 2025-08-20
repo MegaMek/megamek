@@ -37,7 +37,8 @@ package megamek.common.weapons.handlers.srm;
 import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
@@ -143,7 +144,7 @@ public class SRMInfernoHandler extends SRMHandler {
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
-        bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
+        bDirect = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
               && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
@@ -215,7 +216,7 @@ public class SRMInfernoHandler extends SRMHandler {
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                   : null;
             if (entityTarget != null && entityTarget.isLargeCraft()) {

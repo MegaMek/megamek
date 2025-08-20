@@ -161,7 +161,7 @@ class AmmoRowPanel extends JPanel implements ChangeListener {
     private boolean includeMunition(AmmoType ammoType) {
         if (!ammoType
               .canAeroUse(bayMunitionsChoicePanel.getGame().getOptions()
-                    .booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))
+                    .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_ARTILLERY_MUNITIONS))
               || (ammoType.getAmmoType() != at)
               || (ammoType.getRackSize() != rackSize)
               || ((ammoType.getTechBase() != techBase)
@@ -178,7 +178,7 @@ class AmmoRowPanel extends JPanel implements ChangeListener {
         }
         if (ammoType.hasFlag(AmmoType.F_NUCLEAR)
               && !bayMunitionsChoicePanel.getGame().getOptions().booleanOption(
-              OptionsConstants.ADVAERORULES_AT2_NUKES)) {
+              OptionsConstants.ADVANCED_AERO_RULES_AT2_NUKES)) {
             return false;
         }
         if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE)) {
@@ -235,7 +235,7 @@ class AmmoRowPanel extends JPanel implements ChangeListener {
         }
 
         if (bayMunitionsChoicePanel.getGame().getOptions()
-              .booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS)) {
+              .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_ARTILLERY_MUNITIONS)) {
             if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV
                   || ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LONG_TOM
                   || ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SNIPER

@@ -69,7 +69,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
               && curMode().equals("Powered Down")) {
             return 0;
         }
-        if ((isHotLoaded() || hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS))
+        if ((isHotLoaded() || hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_AMMO_FEED_PROBLEMS))
               && (getLinked() != null) && (getLinked().getUsableShotsLeft() > 0)) {
             Mounted<?> link = getLinked();
             AmmoType ammoType = ((AmmoType) link.getType());
@@ -124,13 +124,13 @@ public class WeaponMounted extends Mounted<WeaponType> {
         }
         // multiply by number of shots and number of weapons
         heat = heat * getCurrentShots() * getNWeapons();
-        if (hasQuirk(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)) {
+        if (hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_IMP_COOLING)) {
             heat = Math.max(1, heat - 1);
         }
-        if (hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)) {
+        if (hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_POOR_COOLING)) {
             heat += 1;
         }
-        if (hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)) {
+        if (hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_NO_COOLING)) {
             heat += 2;
         }
         if (hasChargedCapacitor() == 2) {

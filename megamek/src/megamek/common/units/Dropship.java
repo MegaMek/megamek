@@ -484,7 +484,7 @@ public class Dropship extends SmallCraft {
      */
     @Override
     public boolean hasActiveECM() {
-        if (isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) && isSpaceborne()) {
+        if (isActiveOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM) && isSpaceborne()) {
             return getECMRange() > Entity.NONE;
         } else {
             return super.hasActiveECM();
@@ -499,7 +499,7 @@ public class Dropship extends SmallCraft {
      */
     @Override
     public int getECMRange() {
-        if (!isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) || !isSpaceborne()) {
+        if (!isActiveOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM) || !isSpaceborne()) {
             return super.getECMRange();
         }
         if (!isMilitary()) {

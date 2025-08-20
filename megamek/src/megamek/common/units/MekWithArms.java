@@ -406,7 +406,7 @@ public abstract class MekWithArms extends Mek {
             return;
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_ATTEMPTING_STAND)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ATTEMPTING_STAND)) {
             for (int loc : List.of(Mek.LOC_RARM, Mek.LOC_LARM)) {
                 if (isLocationBad(loc)) {
                     roll.addModifier(2, getLocationName(loc) + " destroyed");

@@ -53,7 +53,8 @@ import megamek.client.ui.dialogs.phaseDisplay.VibrabombSettingDialog;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.MegaMekButton;
-import megamek.common.*;
+import megamek.common.HexTarget;
+import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -361,7 +362,7 @@ public class PointblankShotDisplay extends FiringDisplay {
         if (numButtonGroups > 1) {
             buttons.get(FiringCommand.FIRE_MORE).setEnabled(true);
         }
-        setFireCalledEnabled(game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS));
+        setFireCalledEnabled(game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CALLED_SHOTS));
         setStatusBarText(Messages.getString("StatusBarPhaseDisplay.pointblankShot"));
     }
 

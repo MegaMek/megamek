@@ -59,9 +59,9 @@ import megamek.client.ui.widget.picmap.PMSimplePolygonArea;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PMValueLabel;
 import megamek.common.Configuration;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
-import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
@@ -239,7 +239,7 @@ public class TripodMekMapSet implements DisplayMapSet {
     public void setEntity(Entity e) {
         Mek m = (Mek) e;
         boolean mtHeat = (e.getGame() != null)
-              && e.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT);
+              && e.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT);
         int a;
         int a0;
         for (int i = 0; i < m.locations(); i++) {

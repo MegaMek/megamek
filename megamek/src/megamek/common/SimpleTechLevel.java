@@ -143,7 +143,7 @@ public enum SimpleTechLevel {
     }
 
     public static SimpleTechLevel getGameTechLevel(Game game) {
-        return SimpleTechLevel.parse(game.getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
+        return SimpleTechLevel.parse(game.getOptions().stringOption(OptionsConstants.ALLOWED_TECH_LEVEL));
     }
 
     public static Map<Integer, String> getAllSimpleTechLevelCodeName() {

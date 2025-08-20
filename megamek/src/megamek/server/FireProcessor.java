@@ -42,7 +42,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.Report;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
@@ -196,7 +197,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                     boolean bInferno = currentHex.terrainLevel(Terrains.FIRE) == 2;
                     PlanetaryConditions conditions = game.getPlanetaryConditions();
                     if (conditions.getWind().isWeakerThan(Wind.TORNADO_F1_TO_F3)
-                          && !(game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_FOREST_FIRES_NO_SMOKE)
+                          && !(game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_FOREST_FIRES_NO_SMOKE)
                           && containsForest
                           && (bldg == null))) {
                         ArrayList<Coords> smokeList = new ArrayList<>();

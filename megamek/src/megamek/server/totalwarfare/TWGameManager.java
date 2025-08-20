@@ -68,6 +68,7 @@ import megamek.common.containers.PlayerIDAndList;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.MoveStepType;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.equipment.*;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
@@ -89,7 +90,6 @@ import megamek.common.interfaces.ReportEntry;
 import megamek.common.internationalization.I18n;
 import megamek.common.loaders.MapSettings;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
@@ -782,7 +782,7 @@ public class TWGameManager extends AbstractGameManager {
                 receiveEntityUpdate(packet, connId);
                 resetPlayersDone();
                 break;
-            case ENTITY_MULTIUPDATE:
+            case ENTITY_MULTI_UPDATE:
                 receiveEntitiesUpdate(packet, connId);
                 resetPlayersDone();
                 break;
@@ -822,13 +822,13 @@ public class TWGameManager extends AbstractGameManager {
                 receiveEntityTow(packet, connId);
                 resetPlayersDone();
                 break;
-            case ENTITY_MODECHANGE:
+            case ENTITY_MODE_CHANGE:
                 receiveEntityModeChange(packet, connId);
                 break;
-            case ENTITY_SENSORCHANGE:
+            case ENTITY_SENSOR_CHANGE:
                 receiveEntitySensorChange(packet, connId);
                 break;
-            case ENTITY_SINKSCHANGE:
+            case ENTITY_SINKS_CHANGE:
                 receiveEntitySinksChange(packet, connId);
                 break;
             case ENTITY_ACTIVATE_HIDDEN:
@@ -840,13 +840,13 @@ public class TWGameManager extends AbstractGameManager {
             case ENTITY_MOUNTED_FACING_CHANGE:
                 receiveEntityMountedFacingChange(packet, connId);
                 break;
-            case ENTITY_CALLEDSHOTCHANGE:
+            case ENTITY_CALLED_SHOT_CHANGE:
                 receiveEntityCalledShotChange(packet, connId);
                 break;
-            case ENTITY_SYSTEMMODECHANGE:
+            case ENTITY_SYSTEM_MODE_CHANGE:
                 receiveEntitySystemModeChange(packet, connId);
                 break;
-            case ENTITY_AMMOCHANGE:
+            case ENTITY_AMMO_CHANGE:
                 receiveEntityAmmoChange(packet, connId);
                 break;
             case ENTITY_REMOVE:
@@ -917,7 +917,7 @@ public class TWGameManager extends AbstractGameManager {
             case UNLOAD_STRANDED:
                 receiveUnloadStranded(packet, connId);
                 break;
-            case SET_ARTILLERY_AUTOHIT_HEXES:
+            case SET_ARTILLERY_AUTO_HIT_HEXES:
                 receiveArtyAutoHitHexes(packet, connId);
                 break;
             case CUSTOM_INITIATIVE:
@@ -1141,7 +1141,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         game.clearIlluminatedPositions();
-        send(new Packet(PacketCommand.CLEAR_ILLUM_HEXES));
+        send(new Packet(PacketCommand.CLEAR_ILLUMINATED_HEXES));
     }
 
     /**
@@ -1470,12 +1470,13 @@ public class TWGameManager extends AbstractGameManager {
         boolean infMoveMulti = gameOpts.booleanOption(OptionsConstants.INIT_INF_MOVE_MULTI) &&
               (currPhase.isMovement() || currPhase.isDeployment() || currPhase.isInitiative());
         boolean protosMoved = entityUsed instanceof ProtoMek;
-        boolean protosMoveMulti = gameOpts.booleanOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI);
+        boolean protosMoveMulti = gameOpts.booleanOption(OptionsConstants.INIT_PROTOMEKS_MOVE_MULTI);
         boolean tanksMoved = entityUsed instanceof Tank;
-        boolean tanksMoveMulti = gameOpts.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT) &&
+        boolean tanksMoveMulti = gameOpts.booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_LANCE_MOVEMENT)
+              &&
               (currPhase.isMovement() || currPhase.isDeployment() || currPhase.isInitiative());
         boolean meksMoved = entityUsed instanceof Mek;
-        boolean meksMoveMulti = gameOpts.booleanOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT) &&
+        boolean meksMoveMulti = gameOpts.booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT) &&
               (currPhase.isMovement() || currPhase.isDeployment() || currPhase.isInitiative());
 
         // If infantry or protos move multi see if any
@@ -1579,7 +1580,8 @@ public class TWGameManager extends AbstractGameManager {
             if (usedEntityNotDone) {
                 remaining--;
             }
-            int moreVeeTurns = Math.min(gameOpts.intOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER) -
+            int moreVeeTurns = Math.min(gameOpts.intOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_LANCE_MOVEMENT_NUMBER)
+                  -
                   1, remaining);
 
             // Add the correct number of turns for the right unit classes.
@@ -1596,7 +1598,8 @@ public class TWGameManager extends AbstractGameManager {
             if (usedEntityNotDone) {
                 remaining--;
             }
-            int moreMekTurns = Math.min(gameOpts.intOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER) - 1,
+            int moreMekTurns = Math.min(gameOpts.intOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT_NUMBER)
+                        - 1,
                   remaining);
 
             // Add the correct number of turns for the right unit classes.
@@ -2001,7 +2004,8 @@ public class TWGameManager extends AbstractGameManager {
                 entity.setLoadedKeepers(v);
             }
 
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY) && (entity.isAero())) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)
+                  && (entity.isAero())) {
                 Aero a = null;
                 if (entity instanceof Aero) {
                     a = (Aero) entity;
@@ -2039,7 +2043,7 @@ public class TWGameManager extends AbstractGameManager {
             entityUpdate(entity.getId());
 
             // Remove hot-loading some from LRMs for meks
-            if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_HOTLOAD_IN_GAME)) {
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_HOT_LOAD_IN_GAME)) {
                 for (Entity e : game.getEntitiesVector()) {
                     // Vehicles are allowed to hot load, just meks cannot
                     if (!(e instanceof Mek)) {
@@ -2369,8 +2373,8 @@ public class TWGameManager extends AbstractGameManager {
               mapSettings.getMapHeight(),
               sheetBoards,
               mapSettings.getMedium());
-        if (game.getOptions().getOption(OptionsConstants.BASE_BRIDGECF).intValue() > 0) {
-            newBoard.setBridgeCF(game.getOptions().getOption(OptionsConstants.BASE_BRIDGECF).intValue());
+        if (game.getOptions().getOption(OptionsConstants.BASE_BRIDGE_CF).intValue() > 0) {
+            newBoard.setBridgeCF(game.getOptions().getOption(OptionsConstants.BASE_BRIDGE_CF).intValue());
         }
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_RANDOM_BASEMENTS)) {
             newBoard.setRandomBasementsOff();
@@ -2463,7 +2467,7 @@ public class TWGameManager extends AbstractGameManager {
         // Need to adjust entities vector otherwise we'll have too many turns
         // when first proto in a unit moves, new turns get added so rest of the
         // unit will move
-        boolean protosMoveMulti = game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI);
+        boolean protosMoveMulti = game.getOptions().booleanOption(OptionsConstants.INIT_PROTOMEKS_MOVE_MULTI);
         if (!protosMoveMulti) {
             entities = new ArrayList<>(game.getEntitiesVector().size());
             Set<Short> movedUnits = new HashSet<>();
@@ -2539,19 +2543,21 @@ public class TWGameManager extends AbstractGameManager {
               (game.getPhase().isInitiative() ||
                     game.getPhase().isMovement() ||
                     game.getPhase().isDeployment());
-        boolean protosMoveEven = (game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN) &&
+        boolean protosMoveEven = (game.getOptions().booleanOption(OptionsConstants.INIT_PROTOMEKS_MOVE_EVEN) &&
               (game.getPhase().isInitiative() ||
                     game.getPhase().isMovement() ||
                     game.getPhase().isDeployment())) ||
-              (game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN) &&
+              (game.getOptions().booleanOption(OptionsConstants.INIT_PROTOMEKS_MOVE_EVEN) &&
                     game.getPhase().isDeployment());
-        boolean protosMoveMulti = game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI);
+        boolean protosMoveMulti = game.getOptions().booleanOption(OptionsConstants.INIT_PROTOMEKS_MOVE_MULTI);
         boolean protosMoveByPoint = !protosMoveMulti;
-        boolean tankMoveByLance = game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT) &&
+        boolean tankMoveByLance = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_LANCE_MOVEMENT) &&
               (game.getPhase().isInitiative() ||
                     game.getPhase().isMovement() ||
                     game.getPhase().isDeployment());
-        boolean mekMoveByLance = game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT) &&
+        boolean mekMoveByLance = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT) &&
               (game.getPhase().isInitiative() ||
                     game.getPhase().isMovement() ||
                     game.getPhase().isDeployment());
@@ -2926,7 +2932,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (hasEven) {
                     r = new Report(1021, Report.PUBLIC);
                     r.choose((game.getOptions().booleanOption(OptionsConstants.INIT_INF_DEPLOY_EVEN) ||
-                          game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)) &&
+                          game.getOptions().booleanOption(OptionsConstants.INIT_PROTOMEKS_MOVE_EVEN)) &&
                           !game.getLastPhase().isEndReport());
                     r.indent();
                     r.newlines = 2;
@@ -3396,7 +3402,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // Check for zip lines PSR -- MOVE_WALK implies ziplines
         if (unit.moved == EntityMovementType.MOVE_WALK) {
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES) &&
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES) &&
                   (unit instanceof Infantry) &&
                   !((Infantry) unit).isMechanized()) {
 
@@ -4652,7 +4658,7 @@ public class TWGameManager extends AbstractGameManager {
                 // ASSUMPTION: you don't charge the building
                 // if Tanks or Meks were charged.
                 int chargeDamage = ChargeAttackAction.getDamageFor(entity,
-                      game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE),
+                      game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE),
                       entity.delta_distance);
                 if (!bldgSuffered) {
                     Vector<Report> reports = damageBuilding(bldg, chargeDamage, nextPos);
@@ -5593,7 +5599,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         if (destroyDropShip &&
-              !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_CRASHED_DROPSHIPS_SURVIVE)) {
+              !game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_CRASHED_DROPSHIPS_SURVIVE)) {
             // Out-of-control DropShips that impact the surface without making a landing attempt
             // are automatically destroyed (TW pg 81)
             r = new Report(9708, Report.PUBLIC);
@@ -8064,10 +8070,11 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
 
-            // check for the OptionsConstants.ADVGRNDMOV_NO_PREMOVE_VIBRA option
+            // check for the OptionsConstants.ADVANCED_GROUND_MOVEMENT_NO_PRE_MOVE_VIBRA option
             // If it's set, and the target has not yet moved,
             // it doesn't get damaged.
-            if (!entity.isDone() && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_PREMOVE_VIBRA)) {
+            if (!entity.isDone() && game.getOptions()
+                  .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_NO_PRE_MOVE_VIBRA)) {
                 r = new Report(2157);
                 r.subject = entity.getId();
                 r.add(entity.getShortName(), true);
@@ -8560,7 +8567,7 @@ public class TWGameManager extends AbstractGameManager {
             r.choose(false);
             skillReport.add(r);
             if ((entity instanceof Mek) &&
-                  game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED) &&
+                  game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FALLING_EXPANDED) &&
                   (entity.getCrew().getPiloting() < 6) &&
                   !entity.isHullDown() &&
                   entity.canGoHullDown()) {
@@ -10153,7 +10160,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     void detectSpacecraft() {
         // Don't bother if the game option isn't on
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS)) {
             return;
         }
 
@@ -10251,7 +10258,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     void updateSpacecraftDetection() {
         // Don't bother if the game option isn't on
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS)) {
             return;
         }
         // Run through our list of units and remove any entities from the plotting board that have moved out of range
@@ -10283,7 +10290,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     void resolveWhatPlayersCanSeeWhatUnits() {
         List<ECMInfo> allECMInfo = null;
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS)) {
             allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game.getEntitiesVector());
         }
         Map<UnitTargetPair, LosEffects> losCache = new HashMap<>();
@@ -10511,7 +10518,7 @@ public class TWGameManager extends AbstractGameManager {
      * Reports ECCM Control rolls for large craft in space, SO:AA p.100, if the rule is in use.
      */
     void reportLargeCraftECCMRolls() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM)) {
             return;
         }
         for (Entity ent : game.inGameTWEntities()) {
@@ -10776,7 +10783,7 @@ public class TWGameManager extends AbstractGameManager {
 
         Report r;
         final int TN = entity.getCrew().getGunnery() + 3;
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC)) {
             r = new Report(3026);
         } else {
             r = new Report(3025);
@@ -10812,7 +10819,7 @@ public class TWGameManager extends AbstractGameManager {
                       (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP) ||
                       (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.PAC) ||
                       (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.LAC)) &&
-                      game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {
+                      game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC)) {
                     Roll diceRoll = Compute.rollD6(2);
                     r = new Report(3030);
                     r.indent();
@@ -10967,7 +10974,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Ignore if fire is not enabled as a game option
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE)) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_START_FIRE)) {
             return false;
         }
 
@@ -11404,14 +11411,16 @@ public class TWGameManager extends AbstractGameManager {
         final ToHitData toHit = paa.getArm() == PunchAttackAction.LEFT ? pr.toHit : pr.toHitRight;
         int rollValue = paa.getArm() == PunchAttackAction.LEFT ? pr.roll.getIntValue() : pr.rollRight.getIntValue();
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
-        final boolean glancing = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS) &&
+        final boolean glancing = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS) &&
               (rollValue == toHit.getValue());
 
         Report r;
 
         // Set Margin of Success/Failure.
         toHit.setMoS(rollValue - Math.max(2, toHit.getValue()));
-        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW) &&
+        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
+              &&
               ((toHit.getMoS() / 3) >= 1);
 
         // Which building takes the damage?
@@ -11704,12 +11713,14 @@ public class TWGameManager extends AbstractGameManager {
         final ToHitData toHit = pr.toHit;
         int rollValue = pr.roll.getIntValue();
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
-        final boolean glancing = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS) &&
+        final boolean glancing = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS) &&
               (rollValue == toHit.getValue());
 
         // Set Margin of Success/Failure.
         toHit.setMoS(rollValue - Math.max(2, toHit.getValue()));
-        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW) &&
+        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
+              &&
               ((toHit.getMoS() / 3) >= 1);
 
         // Which building takes the damage?
@@ -11952,12 +11963,14 @@ public class TWGameManager extends AbstractGameManager {
         final ToHitData toHit = pr.toHit;
         int roll = pr.roll.getIntValue();
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
-        final boolean glancing = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS) &&
+        final boolean glancing = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS) &&
               (roll == toHit.getValue());
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
-        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW) &&
+        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
+              &&
               ((toHit.getMoS() / 3) >= 1);
 
         // Which building takes the damage?
@@ -12158,11 +12171,13 @@ public class TWGameManager extends AbstractGameManager {
             throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
         }
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
-        final boolean glancing = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS) &&
+        final boolean glancing = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS) &&
               (rollValue == toHit.getValue());
         // Set Margin of Success/Failure.
         toHit.setMoS(rollValue - Math.max(2, toHit.getValue()));
-        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW) &&
+        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
+              &&
               ((toHit.getMoS() / 3) >= 1);
 
         Report r;
@@ -12540,12 +12555,14 @@ public class TWGameManager extends AbstractGameManager {
         int hits = pr.damage;
         final ToHitData toHit = pr.toHit;
         int rollValue = pr.roll.getIntValue();
-        final boolean glancing = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS) &&
+        final boolean glancing = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS) &&
               (rollValue == toHit.getValue());
 
         // Set Margin of Success/Failure.
         toHit.setMoS(rollValue - Math.max(2, toHit.getValue()));
-        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW) &&
+        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
+              &&
               ((toHit.getMoS() / 3) >= 1);
 
         // PLEASE NOTE: buildings are *never* the target of a "thrash".
@@ -12687,12 +12704,14 @@ public class TWGameManager extends AbstractGameManager {
         int hits = pr.damage;
         final ToHitData toHit = pr.toHit;
         int rollValue = pr.roll.getIntValue();
-        final boolean glancing = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS) &&
+        final boolean glancing = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS) &&
               (rollValue == toHit.getValue());
 
         // Set Margin of Success/Failure.
         toHit.setMoS(rollValue - Math.max(2, toHit.getValue()));
-        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW) &&
+        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
+              &&
               ((toHit.getMoS() / 3) >= 1);
 
         // PLEASE NOTE: buildings are *never* the target of a BA vibroclaw attack.
@@ -12845,14 +12864,16 @@ public class TWGameManager extends AbstractGameManager {
             throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
         }
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
-        final boolean glancing = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS) &&
+        final boolean glancing = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS) &&
               (rollValue == toHit.getValue());
 
         // Set Margin of Success/Failure.
         // Make sure the MoS is zero for *automatic* hits in case direct blows
         // are in force.
         toHit.setMoS((rollValue == Integer.MAX_VALUE) ? 0 : rollValue - Math.max(2, toHit.getValue()));
-        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW) &&
+        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
+              &&
               ((toHit.getMoS() / 3) >= 1);
 
         Report r;
@@ -13890,12 +13911,14 @@ public class TWGameManager extends AbstractGameManager {
             throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
         }
 
-        final boolean glancing = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS) &&
+        final boolean glancing = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS) &&
               (rollValue == toHit.getValue());
 
         // Set Margin of Success/Failure.
         toHit.setMoS(rollValue - Math.max(2, toHit.getValue()));
-        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW) &&
+        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
+              &&
               ((toHit.getMoS() / 3) >= 1);
 
         Report r;
@@ -14085,12 +14108,14 @@ public class TWGameManager extends AbstractGameManager {
         if (te != null) {
             throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
         }
-        final boolean glancing = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS) &&
+        final boolean glancing = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS) &&
               (rollValue == toHit.getValue());
 
         // Set Margin of Success/Failure.
         toHit.setMoS(rollValue - Math.max(2, toHit.getValue()));
-        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW) &&
+        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
+              &&
               ((toHit.getMoS() / 3) >= 1);
 
         Report r;
@@ -14506,11 +14531,11 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // are they capital scale?
-        if (te.isCapitalScale() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if (te.isCapitalScale() && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             damage = (int) Math.floor(damage / 10.0);
         }
 
-        if (ae.isCapitalScale() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if (ae.isCapitalScale() && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             damageTaken = (int) Math.floor(damageTaken / 10.0);
         }
 
@@ -14584,11 +14609,11 @@ public class TWGameManager extends AbstractGameManager {
         } else {
             damage = ChargeAttackAction.getDamageFor(ae,
                   te,
-                  game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE),
+                  game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE),
                   toHit.getMoS());
             damageTaken = ChargeAttackAction.getDamageTakenBy(ae,
                   te,
-                  game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE));
+                  game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE));
         }
         if (ae.hasWorkingMisc(MiscType.F_RAM_PLATE)) {
             damage = (int) Math.ceil(damage * 1.5);
@@ -14602,7 +14627,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         boolean bDirect = false;
         int directBlowCritMod = toHit.getMoS() / 3;
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW) &&
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW) &&
               ((toHit.getMoS() / 3) >= 1)) {
             damage += toHit.getMoS() / 3;
         }
@@ -15000,11 +15025,13 @@ public class TWGameManager extends AbstractGameManager {
               .map(te -> Compute.isThroughFrontHex(game, ae.getPosition(), te))
               .orElse(true);
 
-        final boolean glancing = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS) &&
+        final boolean glancing = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS) &&
               (rollValue == toHit.getValue());
         // Set Margin of Success/Failure.
         toHit.setMoS(rollValue - Math.max(2, toHit.getValue()));
-        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW) &&
+        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
+              &&
               ((toHit.getMoS() / 3) >= 1);
 
         Report r;
@@ -15331,7 +15358,7 @@ public class TWGameManager extends AbstractGameManager {
         if (psrEntity.hasQuirk(OptionsConstants.QUIRK_POS_STABLE)) {
             psr.addModifier(-1, "stable", false);
         }
-        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_PSR)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_PHYSICAL_PSR)) {
 
             mod = switch (target.getWeightClass()) {
                 case EntityWeightClass.WEIGHT_LIGHT -> 1;
@@ -15824,12 +15851,13 @@ public class TWGameManager extends AbstractGameManager {
                 psrThreshold = 30;
             }
             if ((entity.damageThisPhase >= psrThreshold) && !entity.isHullDown()) {
-                if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_TAKING_DAMAGE)) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_TAKING_DAMAGE)) {
                     PilotingRollData damPRD = new PilotingRollData(entity.getId());
                     int damMod = entity.damageThisPhase / psrThreshold;
                     damPRD.addModifier(damMod, (damMod * psrThreshold) + "+ damage");
                     int weightMod = 0;
-                    if (getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_PSR)) {
+                    if (getGame().getOptions()
+                          .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_PHYSICAL_PSR)) {
                         weightMod = switch (entity.getWeightClass()) {
                             case EntityWeightClass.WEIGHT_LIGHT -> 1;
                             case EntityWeightClass.WEIGHT_MEDIUM -> 0;
@@ -15864,8 +15892,8 @@ public class TWGameManager extends AbstractGameManager {
         if (entity.isAero() && entity.isAirborne() && !entity.isSpaceborne()) {
             // check if aero unit meets conditions for control rolls and add to the list
             if (entity.damageThisPhase > 0) {
-                if (!getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL) &&
-                      !getGame().getOptions().booleanOption(OptionsConstants.UNOFF_ADV_ATMOSPHERIC_CONTROL)) {
+                if (!getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_ATMOSPHERIC_CONTROL) &&
+                      !getGame().getOptions().booleanOption(OptionsConstants.UNOFFICIAL_ADV_ATMOSPHERIC_CONTROL)) {
                     int damMod = entity.damageThisPhase / 20;
                     PilotingRollData damPRD = new PilotingRollData(entity.getId(),
                           damMod,
@@ -15889,7 +15917,8 @@ public class TWGameManager extends AbstractGameManager {
                         rollNeeded = true;
                         getGame().addControlRoll(damThresh);
                     }
-                    if (getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL) &&
+                    if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_ATMOSPHERIC_CONTROL)
+                          &&
                           entity.damageThisPhase > ((IAero) entity).getHighestThresh()) {
                         // did the total damage this round exceed the unit's highest threshold?
                         PilotingRollData damThresh = new PilotingRollData(entity.getId(),
@@ -16239,11 +16268,11 @@ public class TWGameManager extends AbstractGameManager {
             r.add(diceRoll);
 
             if ((diceRoll.getIntValue() < rollTarget.getValue()) ||
-                  (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FUMBLES) &&
+                  (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_FUMBLES) &&
                         (diceRoll.getIntValue() == 2))) {
                 r.choose(false);
                 // Report the fumble
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FUMBLES) &&
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_FUMBLES) &&
                       (diceRoll.getIntValue() == 2)) {
                     r.messageId = 2306;
                 }
@@ -16395,7 +16424,7 @@ public class TWGameManager extends AbstractGameManager {
             if (moving) {
                 vPhaseReport.addAll(doEntityFallsInto(entity, entity.getElevation(), src, dest, base, true));
             } else if ((entity instanceof Mek) &&
-                  game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED) &&
+                  game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FALLING_EXPANDED) &&
                   (entity.getCrew().getPiloting() < 6) &&
                   !entity.isHullDown() &&
                   entity.canGoHullDown()) {
@@ -16442,7 +16471,8 @@ public class TWGameManager extends AbstractGameManager {
                     vPhaseReport.addAll(doEntityFallsInto(entity, entity.getElevation(), src, dest, roll, true));
                 } else {
                     if ((entity instanceof Mek) &&
-                          game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED) &&
+                          game.getOptions()
+                                .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FALLING_EXPANDED) &&
                           (entity.getCrew().getPiloting() < 6) &&
                           !entity.isHullDown() &&
                           entity.canGoHullDown()) {
@@ -16470,11 +16500,11 @@ public class TWGameManager extends AbstractGameManager {
             r.subject = entity.getId();
 
             if ((diceRoll.getIntValue() < roll.getValue()) ||
-                  (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FUMBLES) &&
+                  (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_FUMBLES) &&
                         (diceRoll.getIntValue() == 2))) {
                 r.choose(false);
                 // Report the fumble
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FUMBLES) &&
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_FUMBLES) &&
                       (diceRoll.getIntValue() == 2)) {
                     r.messageId = 2306;
                 }
@@ -16483,7 +16513,8 @@ public class TWGameManager extends AbstractGameManager {
                     vPhaseReport.addAll(doEntityFallsInto(entity, entity.getElevation(), src, dest, roll, true));
                 } else {
                     if ((entity instanceof Mek) &&
-                          game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED) &&
+                          game.getOptions()
+                                .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FALLING_EXPANDED) &&
                           (entity.getCrew().getPiloting() < 6) &&
                           !entity.isHullDown() &&
                           entity.canGoHullDown()) {
@@ -16616,7 +16647,7 @@ public class TWGameManager extends AbstractGameManager {
             if (e.isUsingManAce()) {
                 target.addModifier(-1, "maneuvering ace");
             }
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_ATMOSPHERIC_CONTROL)) {
                 addControlWithAdvAtmospheric(e, rolls, reasons);
             } else {
                 for (Enumeration<PilotingRollData> j = game.getControlRolls(); j.hasMoreElements(); ) {
@@ -17281,7 +17312,7 @@ public class TWGameManager extends AbstractGameManager {
             IAero ship = (IAero) en;
             int damage = ship.getCurrentDamage();
             double divisor = 2.0;
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
                 divisor = 20.0;
             }
             if (damage >= ship.getFatalThresh()) {
@@ -17652,7 +17683,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         // ICE can always explode and roll every time hit
         if (engine.isFusion() &&
-              (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENGINE_EXPLOSIONS) ||
+              (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ENGINE_EXPLOSIONS) ||
                     (en.engineHitsThisPhase < hitsPerRound))) {
             return false;
         }
@@ -19013,7 +19044,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (!engineExploded && (numEngineHits >= hitsToDestroy)) {
                     // third engine hit
                     reports.addAll(destroyEntity(en, "engine destruction"));
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT)) {
                         reports.addAll(abandonEntity(en));
                     }
                     en.setSelfDestructing(false);
@@ -19427,7 +19458,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 if (aero.isLargeCraft() &&
                       aero.isClan() &&
-                      game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_HARJEL)) {
+                      game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_HARJEL)) {
                     boomTarget = 12;
                 }
                 // check for possible explosion
@@ -19493,7 +19524,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 if (aero.isLargeCraft() &&
                       aero.isClan() &&
-                      game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_HARJEL) &&
+                      game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_HARJEL) &&
                       (aero.getIgnoredCrewHits() < 2)) {
                     aero.setIgnoredCrewHits(aero.getIgnoredCrewHits() + 1);
                     r = new Report(9198);
@@ -19660,8 +19691,10 @@ public class TWGameManager extends AbstractGameManager {
                     Mounted<?> equipmentHit = hittable.get(Compute.randomInt(hittable.size()));
                     // possibly check for an ammo explosion
                     // don't allow ammo explosions on fighter squadrons
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AMMO_EXPLOSIONS) &&
-                          !(aero instanceof FighterSquadron) &&
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_AMMO_EXPLOSIONS)
+                          &&
+                          !(aero instanceof FighterSquadron)
+                          &&
                           (equipmentHit.getType() instanceof WeaponType wtype)) {
                         // Bay Weapons
                         if ((equipmentHit instanceof WeaponMounted) && aero.usesWeaponBays()) {
@@ -19916,7 +19949,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 // KF Drive hit - damage the drive integrity
                 js.setKFIntegrity(Math.max(0, (js.getKFIntegrity() - 1)));
-                if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE)) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_EXPANDED_KF_DRIVE_DAMAGE)) {
                     // Randomize the component struck - probabilities taken from the old BattleSpace
                     // record sheets
                     switch (Compute.d6(2)) {
@@ -20022,7 +20055,7 @@ public class TWGameManager extends AbstractGameManager {
         double mult = 2.0;
         if (aero.isLargeCraft() &&
               aero.isClan() &&
-              game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_HARJEL)) {
+              game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_HARJEL)) {
             mult = 4.0;
         }
         if (damageCaused > 0) {
@@ -20996,7 +21029,7 @@ public class TWGameManager extends AbstractGameManager {
         // now look up on vehicle crits table
         int critType = t.getCriticalEffect(roll, loc, damagedByFire);
         if ((critType == Tank.CRIT_NONE) &&
-              game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD) &&
+              game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD) &&
               !((t instanceof VTOL) || (t instanceof GunEmplacement)) &&
               !t.getOverThresh()) {
             r = new Report(6006);
@@ -21280,7 +21313,7 @@ public class TWGameManager extends AbstractGameManager {
             r.add(rollString);
             r.newlines = 0;
             vDesc.addElement(r);
-            boolean advancedCrit = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CRIT_ROLL);
+            boolean advancedCrit = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CRIT_ROLL);
             if ((!advancedCrit && (roll <= 7)) || (advancedCrit && (roll <= 8))) {
                 // no effect
                 r = new Report(6005);
@@ -21759,7 +21792,7 @@ public class TWGameManager extends AbstractGameManager {
             // Check location for engine/cockpit breach and report accordingly
             if (loc == Mek.LOC_CT) {
                 vDesc.addAll(destroyEntity(entity, "hull breach"));
-                if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT)) {
                     vDesc.addAll(abandonEntity(entity));
                 }
             }
@@ -21792,7 +21825,7 @@ public class TWGameManager extends AbstractGameManager {
                   entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, Mek.LOC_RT)) >=
                   hitsToDestroy) {
                 vDesc.addAll(destroyEntity(entity, "engine destruction"));
-                if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT)) {
                     vDesc.addAll(abandonEntity(entity));
                 }
             }
@@ -21988,7 +22021,7 @@ public class TWGameManager extends AbstractGameManager {
         // if using battlefield wreckage rules, then the destruction of this unit might convert the hex to rough
         Coords curPos = entity.getPosition();
         Hex entityHex = game.getHexOf(entity);
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BATTLE_WRECK) &&
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_BATTLE_WRECK) &&
               (entityHex != null) &&
               game.isOnGroundMap(entity) &&
               !entityHex.containsTerrain(Terrains.ULTRA_SUBLEVEL) &&
@@ -22527,7 +22560,7 @@ public class TWGameManager extends AbstractGameManager {
         if (en instanceof Aero) {
             pilotDamage = 1;
         }
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_CASE_PILOT_DAMAGE) &&
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_CASE_PILOT_DAMAGE) &&
               (en.locationHasCase(hit.getLocation()) || en.hasCASEII(hit.getLocation()))) {
             pilotDamage = 1;
         }
@@ -23288,7 +23321,7 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
 
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE)) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_START_FIRE)) {
             if (null != vReport) {
                 Report r = new Report(3008);
                 r.indent(2);
@@ -23605,7 +23638,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         List<ECMInfo> allECMInfo = null;
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS) && useSensors) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS) && useSensors) {
             allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game.getEntitiesVector());
         }
 
@@ -23773,7 +23806,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         List<ECMInfo> allECMInfo = null;
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS)) {
             allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game.getEntitiesVector());
         }
 
@@ -23946,7 +23979,7 @@ public class TWGameManager extends AbstractGameManager {
               ((entity != null) && !entity.hasSeenEntity(p)) ||
               ((r.type == Report.PLAYER) && (p.getId() != r.player));
         // If suppressing double blind messages, don't send this report at all.
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_SUPRESS_ALL_DB_MESSAGES) && shouldObscure) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_SUPPRESS_ALL_DB_MESSAGES) && shouldObscure) {
             // Mark the original report to indicate it was filtered
             if (p != null) {
                 r.addObscuredRecipient(p.getName());
@@ -24013,7 +24046,7 @@ public class TWGameManager extends AbstractGameManager {
             losCache = new HashMap<>();
         }
         List<ECMInfo> allECMInfo = null;
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS)) {
             allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game.getEntitiesVector());
         }
 
@@ -24315,7 +24348,7 @@ public class TWGameManager extends AbstractGameManager {
             fs.applyBombs();
         }
         if (!formerCarriers.isEmpty()) {
-            send(new Packet(PacketCommand.ENTITY_MULTIUPDATE, formerCarriers));
+            send(new Packet(PacketCommand.ENTITY_MULTI_UPDATE, formerCarriers));
         }
         send(createAddEntityPacket(fs.getId()));
     }
@@ -24380,7 +24413,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
         }
-        send(new Packet(PacketCommand.ENTITY_MULTIUPDATE, newEntities));
+        send(new Packet(PacketCommand.ENTITY_MULTI_UPDATE, newEntities));
     }
 
     /**
@@ -25264,7 +25297,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     private Packet createIlluminatedHexesPacket() {
-        return new Packet(PacketCommand.SENDING_ILLUM_HEXES, getGame().getIlluminatedPositions());
+        return new Packet(PacketCommand.SENDING_ILLUMINATED_HEXES, getGame().getIlluminatedPositions());
     }
 
     /**
@@ -26459,7 +26492,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (caa.getTarget(game) instanceof Entity) {
                     damage = ChargeAttackAction.getDamageFor(ae,
                           target,
-                          game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE),
+                          game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE),
                           toHit.getMoS());
                 } else {
                     damage = ChargeAttackAction.getDamageFor(ae);
@@ -26938,7 +26971,7 @@ public class TWGameManager extends AbstractGameManager {
                     send(createRemoveEntityPacket(pilot.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
                     // }
                 }
-                if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_EJECTED_PILOTS_FLEE)
                       // Don't create a pilot entity on low-atmospheric maps
                       || game.isOnAtmosphericMap(entity)) {
                     game.removeEntity(pilot.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
@@ -27006,7 +27039,7 @@ public class TWGameManager extends AbstractGameManager {
                   entity.getPosition(),
                   entity.getPosition(),
                   entity.getElevation()));
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_EJECTED_PILOTS_FLEE)) {
                 game.removeEntity(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }
@@ -27169,7 +27202,7 @@ public class TWGameManager extends AbstractGameManager {
             send(createAddEntityPacket(pods.getId()));
             // Sent entity info to clients
             entityUpdate(pods.getId());
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_EJECTED_PILOTS_FLEE)) {
                 game.removeEntity(pods.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(pods.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }
@@ -27267,7 +27300,7 @@ public class TWGameManager extends AbstractGameManager {
                   entity.getPosition(),
                   entity.getPosition(),
                   entity.getElevation()));
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_EJECTED_PILOTS_FLEE)) {
                 game.removeEntity(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }
@@ -27520,12 +27553,12 @@ public class TWGameManager extends AbstractGameManager {
                   entity.getPosition(),
                   targetCoords,
                   entity.getElevation()));
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_EJECTED_PILOTS_FLEE)) {
                 game.removeEntity(pilot.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(pilot.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }
         } // End entity-is-Mek or Aero
-        else if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT) &&
+        else if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT) &&
               (entity instanceof Tank)) {
             // Don't make them abandon into vacuum
             PlanetaryConditions conditions = game.getPlanetaryConditions();
@@ -27550,7 +27583,7 @@ public class TWGameManager extends AbstractGameManager {
                   entity.getPosition(),
                   entity.getPosition(),
                   entity.getElevation()));
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_EJECTED_PILOTS_FLEE)) {
                 game.removeEntity(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }
@@ -27959,7 +27992,8 @@ public class TWGameManager extends AbstractGameManager {
                 break;
         }
         // Apply vehicle effectiveness...except for hits from jumps.
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE) && !jumpDamage) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_EFFECTIVE)
+              && !jumpDamage) {
             modifier = Math.max(modifier - 1, 0);
         }
 

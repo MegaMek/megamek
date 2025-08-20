@@ -37,18 +37,18 @@ package megamek.common.weapons.handlers;
 import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.compute.Compute;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.units.Infantry;
 import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
-import megamek.common.equipment.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
 import megamek.common.weapons.Weapon;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -67,7 +67,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
-        twoRollsUltra = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)
+        twoRollsUltra = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_UAC_TWO_ROLLS)
               && ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA)
               || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB));
     }
@@ -207,11 +207,11 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             toReturn = applyGlancingBlowModifier(toReturn, false);
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
               && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
               && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
         }
@@ -220,7 +220,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     @Override
     protected boolean usesClusterTable() {
-        return !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS);
+        return !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_UAC_TWO_ROLLS);
     }
 
     @Override

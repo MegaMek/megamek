@@ -281,7 +281,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             return handleAeroSanity(phase, vPhaseReport);
         }
 
@@ -372,7 +372,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
-        bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
+        bDirect = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
               && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);

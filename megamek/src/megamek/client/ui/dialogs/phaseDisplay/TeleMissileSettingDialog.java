@@ -66,7 +66,7 @@ public class TeleMissileSettingDialog extends JDialog implements ActionListener 
     public TeleMissileSettingDialog(JFrame p, Game game) {
         super(p, Messages.getString("SetTeleMissileVolcityDialog.title"), true);
         super.setResizable(false);
-        maxVelocity = game.getOptions().intOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY);
+        maxVelocity = game.getOptions().intOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_BEARINGS_ONLY_VELOCITY);
         frame = p;
         butOk.addActionListener(this);
         JLabel labMessage = new JLabel(Messages.getString("SetTeleMissileVelocityDialog.labSetVelocity"));

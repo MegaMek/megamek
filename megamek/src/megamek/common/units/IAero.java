@@ -49,13 +49,13 @@ import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
@@ -245,7 +245,8 @@ public interface IAero {
      */
     default void updateWeaponGroups() {
         if ((this instanceof Entity entity) && (entity.game != null)
-              && entity.game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER)) {
+              && entity.game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_CAPITAL_FIGHTER)) {
             // first we need to reset all the weapons in our existing mounts to zero
             // until proven otherwise
             Set<String> set = getWeaponGroups().keySet();
@@ -382,7 +383,7 @@ public interface IAero {
             // going off board
         } else if ((md.getFinalVelocity() == 0) && !md.contains(MoveStepType.HOVER) && isAirborne() && !isSpheroid()
               && !thisEntity.getGame().getBoard(md.getFinalBoardId()).isSpace() && !md.contains(MoveStepType.LAND)
-              && !md.contains(MoveStepType.VLAND) && !md.contains(MoveStepType.RETURN)
+              && !md.contains(MoveStepType.VERTICAL_LAND) && !md.contains(MoveStepType.RETURN)
               && !md.contains(MoveStepType.OFF) && !md.contains(MoveStepType.FLEE)) {
             roll.append(new PilotingRollData(thisEntity.getId(), 0, "stalled out"));
         } else {
@@ -457,7 +458,7 @@ public interface IAero {
     /**
      * Computes the PilotingRollData for a landing control roll (see TW pg 86).
      *
-     * @param path The landing move path to process (must contain a LAND or VLAND move step)
+     * @param path The landing move path to process (must contain a LAND or VERTICAL_LAND move step)
      *
      * @return A PilotingRollData tha represents the landing control roll that must be passed
      */
@@ -465,7 +466,7 @@ public interface IAero {
         return getLandingControlRoll(path.getFinalVelocity(),
               path.getFinalCoords(),
               path.getFinalFacing(),
-              path.contains(MoveStepType.VLAND));
+              path.contains(MoveStepType.VERTICAL_LAND));
     }
 
     /**

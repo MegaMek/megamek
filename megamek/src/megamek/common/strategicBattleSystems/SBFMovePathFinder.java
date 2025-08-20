@@ -44,11 +44,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.game.Game;
-import megamek.common.annotations.Nullable;
 import megamek.common.pathfinder.AbstractPathFinder;
+import megamek.common.pathfinder.AdjacencyMap;
+import megamek.common.pathfinder.DestinationMap;
+import megamek.common.pathfinder.EdgeRelaxer;
+import megamek.common.pathfinder.StopCondition;
+import megamek.common.pathfinder.filters.Filter;
 
 public class SBFMovePathFinder extends AbstractPathFinder<BoardLocation, SBFMovePath, SBFMovePath> {
 
@@ -198,7 +203,7 @@ public class SBFMovePathFinder extends AbstractPathFinder<BoardLocation, SBFMove
      * Relaxes edge by favouring MovePaths that end in a not prone stance.
      */
     public static class MovePathRelaxer
-          implements AbstractPathFinder.EdgeRelaxer<SBFMovePath, SBFMovePath> {
+          implements EdgeRelaxer<SBFMovePath, SBFMovePath> {
         @Override
         public SBFMovePath doRelax(SBFMovePath v, SBFMovePath e, Comparator<SBFMovePath> comparator) {
             if (v == null) {
@@ -262,7 +267,7 @@ public class SBFMovePathFinder extends AbstractPathFinder<BoardLocation, SBFMove
         return getCostOf(coords);
     }
 
-    private static class MovePathLegalityFilter extends AbstractPathFinder.Filter<SBFMovePath> {
+    private static class MovePathLegalityFilter extends Filter<SBFMovePath> {
 
         @Override
         public boolean shouldStay(SBFMovePath mp) {

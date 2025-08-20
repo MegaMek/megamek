@@ -44,9 +44,10 @@ import megamek.client.bot.princess.FireControl;
 import megamek.client.bot.princess.MinefieldUtil;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
-import megamek.common.pathfinder.BoardClusterTracker.MovementType;
+import megamek.common.pathfinder.MovementType;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Terrains;
@@ -126,8 +127,8 @@ public class BulldozerMovePath extends MovePath {
             // between walking and running speed
             if (hexWaterDepth > 0) {
                 MovementType mType = MovementType.getMovementType(mp.getEntity());
-                if (mType == MovementType.Walker || mType == MovementType.WheeledAmphi
-                      || mType == MovementType.TrackedAmphi) {
+                if (mType == MovementType.Walker || mType == MovementType.WheeledAmphibious
+                      || mType == MovementType.TrackedAmphibious) {
                     additionalCosts.put(mp.getFinalCoords(), 1);
                 }
             }

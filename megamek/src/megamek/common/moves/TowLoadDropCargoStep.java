@@ -35,9 +35,10 @@ package megamek.common.moves;
 import java.util.EnumSet;
 import java.util.Set;
 
-import megamek.common.units.Entity;
+import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
 import megamek.common.pathfinder.CachedEntityState;
+import megamek.common.units.Entity;
 
 /**
  * This class handles the tow, load and drop cargo step of a unit. It is used in the MoveStep compilation to calculate
@@ -48,12 +49,12 @@ import megamek.common.pathfinder.CachedEntityState;
  */
 class TowLoadDropCargoStep implements PhasePass {
 
-    private static final EnumSet<MovePath.MoveStepType> TYPES = EnumSet.of(MovePath.MoveStepType.TOW,
-          MovePath.MoveStepType.LOAD,
-          MovePath.MoveStepType.DROP_CARGO);
+    private static final EnumSet<MoveStepType> TYPES = EnumSet.of(MoveStepType.TOW,
+          MoveStepType.LOAD,
+          MoveStepType.DROP_CARGO);
 
     @Override
-    public Set<MovePath.MoveStepType> getTypesOfInterest() {
+    public Set<MoveStepType> getTypesOfInterest() {
         return TYPES;
     }
 

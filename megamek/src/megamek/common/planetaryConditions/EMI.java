@@ -70,15 +70,15 @@ public enum EMI {
     }
 
     public static EMI getEMI(int i) {
-        return EMI.values()[i];
+        return values()[i];
     }
 
     public static EMI getEMI(String s) {
-        for (EMI condition : EMI.values()) {
+        for (EMI condition : values()) {
             if (condition.getExternalId().equals(s)) {
                 return condition;
             }
         }
-        return EMI.EMI_NONE;
+        return EMI_NONE;
     }
 }

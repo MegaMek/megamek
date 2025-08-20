@@ -153,7 +153,7 @@ public class ComputeTargetToHitMods {
         // Special Equipment and Quirks that the target possesses
 
         // ECM suite generating Ghost Targets
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_GHOST_TARGET)
               && !isIndirect
               && !isArtilleryIndirect
               && !isArtilleryDirect) {
@@ -234,11 +234,11 @@ public class ComputeTargetToHitMods {
         // Ground-to-air attacks against a target flying at any other altitude (if
         // StratOps Velocity mods are on)
         if (Compute.isGroundToAir(attacker, target)
-              && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AA_FIRE)
+              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_AA_FIRE)
               && (null != entityTarget)
               && entityTarget.isAero()) {
             int vMod = ((IAero) entityTarget).getCurrentVelocity();
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AA_MOVE_MOD)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AA_MOVE_MOD)) {
                 vMod = Math.min(vMod / 2, 4);
             }
             toHit.addModifier(vMod, Messages.getString("WeaponAttackAction.TeVelocity"));
@@ -340,7 +340,7 @@ public class ComputeTargetToHitMods {
             }
 
             // Target hidden in the sensor shadow of a larger spacecraft
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW) &&
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_SENSOR_SHADOW) &&
                   iAeroTarget.isSpaceborne()) {
                 for (Entity other : Compute.getAdjacentEntitiesAlongAttack(attacker.getPosition(),
                       target.getPosition(),

@@ -201,7 +201,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             WeaponAttackAction prevAttack = attackHandler.getWaa();
             if (prevAttack.getEntityId() == entity.getId()) {
                 WeaponMounted prevWeapon = (WeaponMounted) entity.getEquipment(prevAttack.getWeaponId());
-                if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
+                if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_HEAT_BY_BAY)) {
                     totalHeat += prevWeapon.getHeatByBay();
                 } else {
                     boolean rearMount = prevWeapon.isRearMounted();
@@ -237,7 +237,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * a TeleMissile entity in the physical phase
      */
     protected boolean checkPDConditions() {
-        advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
+        advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);
         if ((target == null)
               || (target.getTargetType() != Targetable.TYPE_ENTITY)
               || !advancedPD
@@ -600,7 +600,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // this will work differently for cluster and non-cluster
         // weapons, and differently for capital fighter/fighter
         // squadrons
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             // everything will use the normal hits and clusters for hits weapon
             // unless
             // we have a squadron or capital scale entity
@@ -844,7 +844,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         boolean heatAdded = false;
         int numAttacks = 1;
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_UAC_TWO_ROLLS)
               && ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA) || (wtype
               .getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB))
               && !weapon.curMode().equals("Single")) {
@@ -900,7 +900,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
             // Set Margin of Success/Failure and check for Direct Blows
             toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
-            bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
+            bDirect = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
                   && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
 
             // This has to be up here so that we don't screw up glancing/direct blow reports
@@ -1077,7 +1077,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
 
             if (bMissed && !missReported) {
-                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_UAC_TWO_ROLLS)
                       && ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA) || (wtype
                       .getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB))
                       && (i == 2)) {
@@ -1230,7 +1230,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 }
             }
 
-            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_UAC_TWO_ROLLS)
                   && ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA) || (wtype
                   .getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB))
                   && (i == 2)) {
@@ -1271,7 +1271,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         double toReturn = wtype.getDamage(nRange);
 
         // Check for BA vs BA weapon effectiveness, if option is on
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BA_VS_BA)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BA_VS_BA)
               && (target instanceof BattleArmor)) {
             // We don't check to make sure the attacker is BA, as most weapons
             // will return their normal damage.
@@ -1292,11 +1292,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
               && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
               && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
         }
@@ -1312,7 +1312,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         int av = 0;
         // if we have a ground firing unit, then AV should not be determined by
         // aero range brackets
-        if (!ae.isAirborne() || game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)) {
+        if (!ae.isAirborne() || game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_UAC_TWO_ROLLS)) {
             if (usesClusterTable()) {
                 // for cluster weapons just use the short range AV
                 av = wtype.getRoundShortAV();
@@ -1789,7 +1790,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             return true;
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)
               && target.getTargetType() == Targetable.TYPE_ENTITY
               && ((Entity) target).isCapitalScale()
               && !((Entity) target).isCapitalFighter()
@@ -1922,7 +1923,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             return;
         }
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
-            if (ae.isLargeCraft() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
+            if (ae.isLargeCraft() && !game.getOptions()
+                  .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_HEAT_BY_BAY)) {
                 int loc = weapon.getLocation();
                 boolean rearMount = weapon.isRearMounted();
                 if (!ae.hasArcFired(loc, rearMount)) {
@@ -1978,7 +1980,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         boolean isAboveWoods = (entityTarget.relHeight() + 1 > hex.terrainLevel(Terrains.FOLIAGE_ELEV))
               || entityTarget.isAirborne() || !hasWoods;
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_WOODS_COVER)
               && hasWoods && !isAboveWoods
               && !(entityTarget.getSwarmAttackerId() == ae.getId())) {
             Terrain woodHex = hex.getTerrain(Terrains.WOODS);
@@ -2118,7 +2120,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         int nMissilesModifier = getSalvoBonus();
 
         int[] ranges = wtype.getRanges(weapon);
-        if (clusterRangePenalty && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CLUSTERHITPEN)) {
+        if (clusterRangePenalty && game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CLUSTER_HIT_PEN)) {
             if (nRange <= 1) {
                 nMissilesModifier += 1;
             } else if (nRange <= ranges[RangeType.RANGE_MEDIUM]) {
@@ -2128,11 +2131,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
               && (nRange > ranges[RangeType.RANGE_LONG])) {
             nMissilesModifier -= 2;
         }
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
               && (nRange > ranges[RangeType.RANGE_EXTREME])) {
             nMissilesModifier -= 3;
         }
@@ -2229,7 +2232,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      */
     protected void setGlancingBlowFlags(Entity entityTarget) {
         // are we a glancing hit? Check for this here, report it later
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS)) {
             if (roll.getIntValue() == toHit.getValue()) {
                 bGlancing = true;
             } else {

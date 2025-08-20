@@ -1145,7 +1145,7 @@ public class Jumpship extends Aero {
      */
     @Override
     public boolean hasActiveECM() {
-        if (isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) && isSpaceborne()) {
+        if (isActiveOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM) && isSpaceborne()) {
             return getECMRange() >= 0;
         } else {
             return super.hasActiveECM();
@@ -1154,7 +1154,7 @@ public class Jumpship extends Aero {
 
     @Override
     public int getECMRange() {
-        if (!isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) || !isSpaceborne()) {
+        if (!isActiveOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM) || !isSpaceborne()) {
             return super.getECMRange();
         }
         if (!isMilitary()) {

@@ -115,7 +115,8 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
      */
     private boolean checkPDConditions(Game game, Targetable target) {
         // true if advanced StratOps game rule is on
-        boolean advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
+        boolean advancedPD = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);
         return (target != null) && (target.getTargetType() == Targetable.TYPE_ENTITY) && advancedPD;
     }
 

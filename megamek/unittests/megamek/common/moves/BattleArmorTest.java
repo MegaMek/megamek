@@ -36,9 +36,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.client.ui.SharedUtility;
-import megamek.common.battleArmor.BattleArmor;
-import megamek.common.units.EntityMovementMode;
 import megamek.common.GameBoardTestCase;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.enums.MoveStepType;
+import megamek.common.units.EntityMovementMode;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -87,11 +88,11 @@ public class BattleArmorTest extends GameBoardTestCase {
             setBoard("ROLL_ANTI_MEK_TO_ENTER");
             MovePath movePath = getMovePathFor(new BattleArmor(),
                   EntityMovementMode.INF_LEG,
-                  MovePath.MoveStepType.START_JUMP,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.DOWN,
-                  MovePath.MoveStepType.DOWN,
-                  MovePath.MoveStepType.DOWN
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.DOWN,
+                  MoveStepType.DOWN,
+                  MoveStepType.DOWN
             );
 
             assertTrue(movePath.isMoveLegal(),
@@ -107,8 +108,8 @@ public class BattleArmorTest extends GameBoardTestCase {
             setBoard("ROLL_ANTI_MEK_TO_ENTER_TALL_BUILDINGS");
             MovePath movePath = getMovePathFor(new BattleArmor(),
                   EntityMovementMode.INF_LEG,
-                  MovePath.MoveStepType.START_JUMP,
-                  MovePath.MoveStepType.FORWARDS
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS
             );
 
             assertTrue(movePath.isMoveLegal(),
@@ -124,10 +125,10 @@ public class BattleArmorTest extends GameBoardTestCase {
             setBoard("ROLL_ANTI_MEK_TO_ENTER_LOWER_BUILDINGS");
             MovePath movePath = getMovePathFor(new BattleArmor(),
                   EntityMovementMode.INF_LEG,
-                  MovePath.MoveStepType.START_JUMP,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.DOWN
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.DOWN
             );
 
             assertTrue(movePath.isMoveLegal(),

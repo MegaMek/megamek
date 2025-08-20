@@ -152,7 +152,7 @@ public class SpaceStation extends Jumpship {
 
     @Override
     public int getECMRange() {
-        if (!isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) || !isSpaceborne()) {
+        if (!isActiveOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM) || !isSpaceborne()) {
             return super.getECMRange();
         }
         if (!isMilitary()) {

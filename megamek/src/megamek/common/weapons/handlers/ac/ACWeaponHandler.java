@@ -36,14 +36,14 @@ package megamek.common.weapons.handlers.ac;
 
 import java.io.Serial;
 
-import megamek.common.battleArmor.BattleArmor;
-import megamek.common.compute.Compute;
-import megamek.common.game.Game;
-import megamek.common.units.Infantry;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Infantry;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -80,11 +80,11 @@ public class ACWeaponHandler extends AmmoWeaponHandler {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
         toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
               && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
               && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
         }

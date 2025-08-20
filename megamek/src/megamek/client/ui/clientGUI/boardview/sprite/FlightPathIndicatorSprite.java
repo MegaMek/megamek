@@ -44,9 +44,9 @@ import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.units.Entity;
-import megamek.common.moves.MovePath.MoveStepType;
+import megamek.common.enums.MoveStepType;
 import megamek.common.moves.MoveStep;
+import megamek.common.units.Entity;
 
 /**
  * The Flight Path Indicator Sprite paints a path in front of an aerospace movement path and indicates the turn status

@@ -37,18 +37,18 @@ package megamek.common.weapons.handlers;
 import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.compute.Compute;
 import megamek.common.CriticalSlot;
-import megamek.common.game.Game;
 import megamek.common.HitData;
-import megamek.common.units.IBomber;
-import megamek.common.equipment.Mounted;
 import megamek.common.Report;
-import megamek.common.rolls.Roll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.Roll;
+import megamek.common.units.IBomber;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -130,7 +130,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
     @Override
     protected boolean doAmmoFeedProblemCheck(Vector<Report> vPhaseReport) {
         // don't have neg ammo feed problem quirk
-        if (!weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS)) {
+        if (!weapon.hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_AMMO_FEED_PROBLEMS)) {
             return false;
         } else if ((roll.getIntValue() <= 2) && !ae.isConventionalInfantry()) {
             // attack roll was a 2, may explode

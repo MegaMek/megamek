@@ -35,9 +35,10 @@ package megamek.common.moves;
 import java.util.EnumSet;
 import java.util.Set;
 
-import megamek.common.units.Entity;
+import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
 import megamek.common.pathfinder.CachedEntityState;
+import megamek.common.units.Entity;
 
 /**
  * This class handles the land and vertical land step of a unit. It is used in the MoveStep compilation to calculate the
@@ -47,11 +48,11 @@ import megamek.common.pathfinder.CachedEntityState;
  * @since 0.50.07
  */
 class LandVLandStep implements PhasePass {
-    private static final EnumSet<MovePath.MoveStepType> TYPES = EnumSet.of(MovePath.MoveStepType.LAND,
-          MovePath.MoveStepType.VLAND);
+    private static final EnumSet<MoveStepType> TYPES = EnumSet.of(MoveStepType.LAND,
+          MoveStepType.VERTICAL_LAND);
 
     @Override
-    public Set<MovePath.MoveStepType> getTypesOfInterest() {
+    public Set<MoveStepType> getTypesOfInterest() {
         return TYPES;
     }
 

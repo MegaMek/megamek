@@ -538,7 +538,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 buttons.get(FiringCommand.FIRE_MORE).setEnabled(true);
             }
             setFireCalledEnabled(game.getOptions()
-                  .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS));
+                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CALLED_SHOTS));
             clientgui.boardViews().forEach(bv -> bv.select(null));
             initDonePanelForNewTurn();
         }
@@ -1194,7 +1194,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         // check if we now shoot at a target in the front arc and previously
         // shot a target in side/rear arc that then was primary target
         // if so, ask and tell the user that to-hits will change
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_FORCED_PRIMARY_TARGETS)
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_FORCED_PRIMARY_TARGETS)
               && (ce() instanceof Mek) || (ce() instanceof Tank)
               || (ce() instanceof ProtoMek)) {
             EntityAction lastAction = null;

@@ -80,9 +80,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     public MissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_MISSILE;
-        advancedAMS = g.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMS);
-        advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
-        multiAMS = g.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_MULTI_USE_AMS);
+        advancedAMS = g.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS);
+        advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);
+        multiAMS = g.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_MULTI_USE_AMS);
         sSalvoType = " missile(s) ";
     }
 
@@ -248,7 +248,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)
               && entityTarget != null && entityTarget.isLargeCraft()) {
             nMissilesModifier -= getAeroSanityAMSHitsMod();
         }
@@ -804,7 +804,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
-        bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
+        bDirect = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
               && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
@@ -833,7 +833,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // Don't use this if Aero Sanity is on...
         if (entityTarget != null
               && entityTarget.hasETypeFlag(Entity.ETYPE_DROPSHIP)
-              && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+              && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)
               && (waa.isAirToAir(game) || (waa.isAirToGround(game) && !ae.usesWeaponBays()))) {
             nDamPerHit = attackValue;
         } else {
@@ -896,7 +896,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             }
 
             // This is for aero attacks as attack value. Does not apply if Aero Sanity is on
-            if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
                 if (!bMissed && amsEngaged && !isTbolt() && !ae.isCapitalFighter()) {
                     // handle single AMS action against standard missiles
                     Roll diceRoll = Compute.rollD6(1);
@@ -1095,7 +1095,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
     protected boolean isAdvancedAMS() {
         // Cluster hits calculation in Compute needs this to be on
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)
               && getParentBayHandler() != null) {
             WeaponHandler bayHandler = getParentBayHandler();
             return advancedPD && (bayHandler.amsBayEngaged || bayHandler.pdBayEngaged);

@@ -51,15 +51,15 @@ import megamek.client.generator.TeamLoadOutGenerator;
 import megamek.client.ratgenerator.FactionRecord;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.common.equipment.BombLoadout;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.units.IBomber;
 import megamek.common.Player;
 import megamek.common.Team;
 import megamek.common.containers.MunitionTree;
+import megamek.common.equipment.BombLoadout;
 import megamek.common.force.Force;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.IBomber;
 import megamek.common.util.StringUtil;
 
 /** The ActionListener for the lobby popup menu for both the MekTable and MekTrees. */
@@ -424,7 +424,7 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
         // Extra nuke controls don't apply in the context menu; rely on game option!
         reconfigurationParameters.nukesBannedForMe = lobby.game()
               .getOptions()
-              .booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES);
+              .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AT2_NUKES);
         // Reduce Pirate ammo somewhat; others get full loadouts
         reconfigurationParameters.isPirate = faction.equalsIgnoreCase("PIR");
         reconfigurationParameters.binFillPercent = (reconfigurationParameters.isPirate) ?

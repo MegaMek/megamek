@@ -177,8 +177,8 @@ public class QuadVee extends QuadMek {
     }
 
     /**
-     * In vehicle mode the QuadVee ignores actuator and hip criticalSlots, but is subject to track/wheel damage and various
-     * effects of vehicle motive damage.
+     * In vehicle mode the QuadVee ignores actuator and hip criticalSlots, but is subject to track/wheel damage and
+     * various effects of vehicle motive damage.
      */
     public int getCruiseMP(MPCalculationSetting mpCalculationSetting) {
         int mp = getOriginalWalkMP();
@@ -206,7 +206,7 @@ public class QuadVee extends QuadMek {
         }
 
         if (!mpCalculationSetting.ignoreHeat) {
-            if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
+            if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT)) {
                 if (heat < 30) {
                     mp -= (heat / 5);
                 } else if (heat >= 49) {
@@ -248,7 +248,7 @@ public class QuadVee extends QuadMek {
     public int getSprintMP(MPCalculationSetting mpCalculationSetting) {
         if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_VEHICLE)
               && ((game == null) ||
-              !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS))) {
+              !game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_ADVANCED_MANEUVERS))) {
             return getRunMP(mpCalculationSetting);
         } else {
             return super.getSprintMP(mpCalculationSetting);
@@ -508,7 +508,7 @@ public class QuadVee extends QuadMek {
                 roll.addModifier(-1, "VDNI");
             }
             if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)
-                  && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
+                  && !hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {
                 roll.addModifier(1, "cramped cockpit");
             }
 
@@ -528,7 +528,7 @@ public class QuadVee extends QuadMek {
     @Override
     public boolean usesTurnMode() {
         return getConversionMode() == CONV_MODE_VEHICLE && !convertingNow
-              && game != null && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TURN_MODE);
+              && game != null && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TURN_MODE);
     }
 
     /**
@@ -542,7 +542,7 @@ public class QuadVee extends QuadMek {
         if (getConversionMode() == CONV_MODE_VEHICLE != convertingNow) {
             Hex occupiedHex = game.getHexOf(this);
             return occupiedHex.containsTerrain(Terrains.FORTIFIED)
-                  && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
+                  && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN);
         }
         return super.canGoHullDown();
     }

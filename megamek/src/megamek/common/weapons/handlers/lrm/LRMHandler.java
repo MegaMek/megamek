@@ -39,7 +39,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
@@ -261,7 +262,7 @@ public class LRMHandler extends MissileWeaponHandler {
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)
               && entityTarget != null && entityTarget.isLargeCraft()) {
             nMissilesModifier -= getAeroSanityAMSHitsMod();
         }

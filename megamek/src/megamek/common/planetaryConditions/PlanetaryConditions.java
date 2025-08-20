@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,10 +34,11 @@
 
 package megamek.common.planetaryConditions;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import megamek.common.*;
+import megamek.common.Messages;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
@@ -58,6 +59,7 @@ import megamek.common.units.VTOL;
 @JsonDeserialize(using = PlanetaryConditionsDeserializer.class)
 public class PlanetaryConditions implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 6838624193286089781L;
 
     // set up the specific conditions
@@ -459,31 +461,13 @@ public class PlanetaryConditions implements Serializable {
      */
     public boolean putOutFire() {
         int roll = Compute.d6(2);
-        switch (weather) {
-            case LIGHT_HAIL:
-            case LIGHT_RAIN:
-            case LIGHT_SNOW:
-                roll = roll + 1;
-                break;
-            case HEAVY_HAIL:
-            case MOD_RAIN:
-            case MOD_SNOW:
-            case SNOW_FLURRIES:
-            case LIGHTNING_STORM:
-                roll = roll + 2;
-                break;
-            case HEAVY_RAIN:
-            case GUSTING_RAIN:
-            case HEAVY_SNOW:
-                roll = roll + 3;
-                break;
-            case DOWNPOUR:
-                roll = roll + 4;
-                break;
-            default:
-                roll = -1;
-                break;
-        }
+        roll = switch (weather) {
+            case LIGHT_HAIL, LIGHT_RAIN, LIGHT_SNOW -> roll + 1;
+            case HEAVY_HAIL, MOD_RAIN, MOD_SNOW, SNOW_FLURRIES, LIGHTNING_STORM -> roll + 2;
+            case HEAVY_RAIN, GUSTING_RAIN, HEAVY_SNOW -> roll + 3;
+            case DOWNPOUR -> roll + 4;
+            default -> -1;
+        };
 
         return roll > 10;
     }
@@ -636,12 +620,12 @@ public class PlanetaryConditions implements Serializable {
 
         // anything else is infantry
 
-        // Beyond altitude 9, Aeros can't see. No need to repeat this test.
+        // Beyond altitude 9, Aerospace can't see. No need to repeat this test.
         if (isAero && (en.getAltitude() > 9)) {
             return 0;
         }
 
-        int lightRange = 0;
+        int lightRange;
 
         // TO:AR v6 p189
         // Illuminated?  Flat 45 hex distance
@@ -708,7 +692,7 @@ public class PlanetaryConditions implements Serializable {
             }
         }
 
-        int otherRange = 0;
+        int otherRange;
 
         if (getFog().isFogHeavy()) {
             if (isMekOrVee || isLowAltitudeAero) {
@@ -778,18 +762,13 @@ public class PlanetaryConditions implements Serializable {
 
     public int getDropRate() {
         // atmospheric pressure mods
-        switch (atmosphere) {
-            case TRACE:
-                return 8;
-            case THIN:
-                return 5;
-            case HIGH:
-                return 2;
-            case VERY_HIGH:
-                return 1;
-            default:
-                return 3;
-        }
+        return switch (atmosphere) {
+            case TRACE -> 8;
+            case THIN -> 5;
+            case HIGH -> 2;
+            case VERY_HIGH -> 1;
+            default -> 3;
+        };
     }
 
     public void setShiftingWindDirection(boolean b) {
@@ -860,16 +839,11 @@ public class PlanetaryConditions implements Serializable {
     }
 
     public static Wind setWindFromWeather(Weather weather, Wind wind) {
-        switch (weather) {
-            case ICE_STORM:
-            case SNOW_FLURRIES:
-            case LIGHTNING_STORM:
-                return Wind.MOD_GALE;
-            case GUSTING_RAIN:
-                return Wind.STRONG_GALE;
-            default:
-                return wind;
-        }
+        return switch (weather) {
+            case ICE_STORM, SNOW_FLURRIES, LIGHTNING_STORM -> Wind.MOD_GALE;
+            case GUSTING_RAIN -> Wind.STRONG_GALE;
+            default -> wind;
+        };
     }
 
     private void setWindFromWeather() {

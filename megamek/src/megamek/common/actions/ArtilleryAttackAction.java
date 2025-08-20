@@ -112,7 +112,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
         if (mounted.isInBearingsOnlyMode()
               && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
             this.launchVelocity = game.getOptions()
-                  .intOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY);
+                  .intOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_BEARINGS_ONLY_VELOCITY);
             turnsTilHit = distance / launchVelocity;
             return;
         }

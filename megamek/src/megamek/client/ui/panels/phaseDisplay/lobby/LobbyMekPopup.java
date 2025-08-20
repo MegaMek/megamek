@@ -162,9 +162,9 @@ class LobbyMekPopup {
         Game game = lobby.game();
         var opts = game.getOptions();
 
-        boolean optBurstMG = opts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST);
-        boolean optLRMHotLoad = opts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD);
-        boolean optCapFighters = opts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER);
+        boolean optBurstMG = opts.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BURST);
+        boolean optLRMHotLoad = opts.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HOT_LOAD);
+        boolean optCapFighters = opts.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_CAPITAL_FIGHTER);
 
         // A set of all selected entities and all entities in selected forces and their
         // subForces
@@ -558,7 +558,7 @@ class LobbyMekPopup {
             menu.add(menuItem("Standing", LMP_STAND + "|" + LMP_STAND + eIds, true, listener));
             menu.add(menuItem("Prone", LMP_STAND + "|" + LMP_PRONE + eIds, true, listener));
             if (clientGui.getClient().getGame().getOptions()
-                  .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN)) {
+                  .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN)) {
                 menu.add(menuItem("Hull-Down", LMP_STAND + "|" + LMP_HULL_DOWN + eIds, true, listener));
             }
             menu.add(ScalingPopup.spacer());

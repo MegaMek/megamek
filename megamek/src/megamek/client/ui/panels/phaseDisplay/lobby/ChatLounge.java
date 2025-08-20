@@ -1416,7 +1416,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                 entity.getCrew().clearOptions(PilotOptions.MD_ADVANTAGES);
             }
 
-            if (!opts.booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS)) {
+            if (!opts.booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIAL_REPAIRS)) {
                 entity.clearPartialRepairs();
             }
 
@@ -2400,7 +2400,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         lblGameYear.setToolTipText(Messages.getString("ChatLounge.tooltip.techYear"));
 
         String tlString = TechConstants.getLevelDisplayableName(TechConstants.T_TECH_UNKNOWN);
-        IOption tlOpt = opts.getOption(OptionsConstants.ALLOWED_TECHLEVEL);
+        IOption tlOpt = opts.getOption(OptionsConstants.ALLOWED_TECH_LEVEL);
         if (tlOpt != null) {
             tlString = tlOpt.stringValue();
         }

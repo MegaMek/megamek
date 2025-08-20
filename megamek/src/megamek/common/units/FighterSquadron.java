@@ -210,7 +210,7 @@ public class FighterSquadron extends AeroSpaceFighter {
 
     @Override
     public boolean hasActiveECM() {
-        if (isSpaceborne() && isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+        if (isSpaceborne() && isActiveOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM)) {
             return getActiveSubEntities().stream().anyMatch(Entity::hasActiveECM);
         } else {
             return super.hasActiveECM();
@@ -677,7 +677,7 @@ public class FighterSquadron extends AeroSpaceFighter {
      * Adds space bomb attack if conditions are met.
      */
     private void addSpaceBombAttack() {
-        if (isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB) &&
+        if (isActiveOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_SPACE_BOMB) &&
               isSpaceborne() &&
               !getBombs(AmmoType.F_SPACE_BOMB).isEmpty()) {
 
@@ -719,7 +719,7 @@ public class FighterSquadron extends AeroSpaceFighter {
      * @return The maximum fighter count of a fighter squadron. This depends on game options ("Large Squadrons").
      */
     public int getMaxSize() {
-        return game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS)
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_ALLOW_LARGE_SQUADRONS)
               ? ALTERNATE_MAX_SIZE
               : MAX_SIZE;
     }

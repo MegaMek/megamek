@@ -196,7 +196,7 @@ public class CLIATMHandler extends ATMHandler {
         // the streak system enabled, this is not used
         int[] ranges = wtype.getRanges(weapon);
         boolean tacopscluster = game.getOptions().booleanOption(
-              OptionsConstants.ADVCOMBAT_TACOPS_CLUSTERHITPEN);
+              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CLUSTER_HIT_PEN);
 
         // Only apply if not all shots hit. IATM IMP have HE ranges and thus
         // suffer from spread too
@@ -214,11 +214,11 @@ public class CLIATMHandler extends ATMHandler {
 
         // //////
         // This applies even with streaks.
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
               && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             nMissilesModifier -= 2;
         }
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
               && (nRange > ranges[RangeType.RANGE_EXTREME])) {
             nMissilesModifier -= 3;
         }
@@ -270,7 +270,7 @@ public class CLIATMHandler extends ATMHandler {
         int amsMod = getAMSHitsMod(vPhaseReport);
         nMissilesModifier += amsMod;
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                   : null;
             if (entityTarget != null && entityTarget.isLargeCraft()) {
@@ -535,7 +535,7 @@ public class CLIATMHandler extends ATMHandler {
 
             // Set Margin of Success/Failure.
             toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
-            bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
+            bDirect = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
                   && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
             if (bDirect) {
                 r = new Report(3189);
@@ -705,7 +705,7 @@ public class CLIATMHandler extends ATMHandler {
 
             // Set Margin of Success/Failure.
             toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
-            bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
+            bDirect = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
                   && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
             if (bDirect) {
                 r = new Report(3189);

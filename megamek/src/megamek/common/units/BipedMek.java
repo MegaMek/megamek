@@ -106,7 +106,8 @@ public class BipedMek extends MekWithArms {
                         if (legHasHipCrit(i)) {
                             hipHits++;
                             if ((game == null) ||
-                                  !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                                  !game.getOptions()
+                                        .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
                                 continue;
                             }
                         }
@@ -123,7 +124,8 @@ public class BipedMek extends MekWithArms {
             } else {
                 if (hipHits > 0) {
                     if ((game != null) &&
-                          game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                          game.getOptions()
+                                .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
                         mp = mp - 2 * hipHits;
                     } else {
                         mp = (hipHits == 1) ? (int) Math.ceil(mp / 2.0) : 0;
@@ -148,7 +150,7 @@ public class BipedMek extends MekWithArms {
 
         if (!mpCalculationSetting.ignoreHeat) {
             // factor in heat
-            if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
+            if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT)) {
                 if (heat < 30) {
                     mp -= (heat / 5);
                 } else if (heat >= 49) {
@@ -227,7 +229,8 @@ public class BipedMek extends MekWithArms {
             } else {
                 if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
                     roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
-                    if (!game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                    if (!game.getOptions()
+                          .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
                         continue;
                     }
                 }
@@ -293,7 +296,7 @@ public class BipedMek extends MekWithArms {
     @Override
     public boolean canGoHullDown() {
         return (game != null) &&
-              game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN) &&
+              game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN) &&
               ((!isLocationBad(Mek.LOC_LLEG) &&
                     !isLocationBad(Mek.LOC_RLEG) &&
                     !isLocationDoomed(Mek.LOC_LLEG) &&

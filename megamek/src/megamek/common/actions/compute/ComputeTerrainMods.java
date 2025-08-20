@@ -186,7 +186,7 @@ public class ComputeTerrainMods {
                 toHit.setHitTable(HIT_PARTIAL_COVER);
                 toHit.setCover(LosEffects.COVER_UPPER);
             } else {
-                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER)) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PARTIAL_COVER)) {
                     toHit.setCover(los.getTargetCover());
                 } else {
                     toHit.setCover(LosEffects.COVER_HORIZONTAL);
@@ -242,13 +242,13 @@ public class ComputeTerrainMods {
         // have line of sight and there are woods in our way
         // we have BAP in range or C3 member has BAP in range
         // we reduce the BTH by 1
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_BAP)) {
             boolean targetWoodsAffectModifier = (entityTarget != null)
                   && !entityTarget.isOffBoard()
                   && (entityTarget.getPosition() != null)
                   && (targetHex != null)
                   && targetHex.hasVegetation()
-                  && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER);
+                  && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_WOODS_COVER);
             if (los.canSee() && (targetWoodsAffectModifier || los.thruWoods())) {
                 if (bapInRange(game, attacker, entityTarget)) {
                     toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BAPInWoods"));

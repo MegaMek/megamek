@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,11 +36,11 @@ package megamek.common.pathfinder;
 import java.util.HashMap;
 import java.util.Map;
 
-import megamek.common.units.Entity;
-import megamek.common.equipment.EquipmentFlag;
 import megamek.common.MPCalculationSetting;
-import megamek.common.units.Mek;
+import megamek.common.equipment.EquipmentFlag;
 import megamek.common.equipment.MiscType;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 import megamek.common.units.QuadMek;
 import megamek.common.units.TripodMek;
 
@@ -48,7 +48,7 @@ import megamek.common.units.TripodMek;
  * A transient class used to lazy-load "calculated" information from an entity
  */
 public class CachedEntityState {
-    private Entity backingEntity;
+    private final Entity backingEntity;
 
     private Integer walkMP;
     private Integer runMP;
@@ -60,7 +60,7 @@ public class CachedEntityState {
     private Integer sprintMPWithoutMasc;
     private Integer jumpMP;
     private Integer jumpMPWithTerrain;
-    private Map<EquipmentFlag, Boolean> hasWorkingMisc;
+    private final Map<EquipmentFlag, Boolean> hasWorkingMisc;
     private Integer torsoJumpJets;
     private Integer jumpMPNoGravity;
     private Integer numBreachedLegs;
@@ -86,7 +86,7 @@ public class CachedEntityState {
         return runMP;
     }
 
-    public int getRunMPwithoutMASC() {
+    public int getRunMPWithoutMASC() {
         if (runMPWithoutMasc == null) {
             runMPWithoutMasc = backingEntity.getRunMPwithoutMASC();
         }
@@ -94,7 +94,7 @@ public class CachedEntityState {
         return runMPWithoutMasc;
     }
 
-    public int getRunMPwithOneMASC() {
+    public int getRunMPWithOneMASC() {
         if (runMPWithOneMasc == null) {
             runMPWithOneMasc = backingEntity.getRunMP(MPCalculationSetting.ONE_MASC);
         }
@@ -110,7 +110,7 @@ public class CachedEntityState {
         return sprintMP;
     }
 
-    public int getSprintMPwithOneMASC() {
+    public int getSprintMPWithOneMASC() {
         if (sprintMPWithOneMasc == null) {
             sprintMPWithOneMasc = backingEntity.getSprintMPwithOneMASC();
         }
@@ -118,7 +118,7 @@ public class CachedEntityState {
         return sprintMPWithOneMasc;
     }
 
-    public int getSprintMPwithoutMASC() {
+    public int getSprintMPWithoutMASC() {
         if (sprintMPWithoutMasc == null) {
             sprintMPWithoutMasc = backingEntity.getSprintMPwithoutMASC();
         }

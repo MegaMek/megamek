@@ -1014,7 +1014,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                 return ms.getFullChassis();
             } else if (col == COL_WEIGHT) {
                 if ((gameOptions != null) && ms.getUnitType().equals("BattleArmor")) {
-                    if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT)) {
+                    if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_BA_WEIGHT)) {
                         return ms.getTOWeight();
                     } else {
                         return ms.getTWWeight();

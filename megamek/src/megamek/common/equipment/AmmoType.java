@@ -2208,7 +2208,7 @@ public class AmmoType extends EquipmentType {
               || (this.getAmmoType() == AmmoTypeEnum.ARROWIV_PROTO))
               && (gameOptions != null)
               && (amsWeapon != null)
-              && (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF))
+              && (gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE))
               && (amsWeapon.getType().hasFlag(WeaponType.F_AMS_BAY)
               || (amsWeapon.getType().hasFlag(WeaponType.F_PD_BAY) && amsWeapon.hasModes() && amsWeapon.curMode()
               .equals(Weapon.MODE_POINT_DEFENSE)))) {
@@ -2222,7 +2222,7 @@ public class AmmoType extends EquipmentType {
         if (this.capital) {
             // Only with Advanced Point Defense rules AMS Bay can counter capital missiles. Standard rules don't (TW, p130)
             if ((gameOptions == null)
-                  || !gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF)) {
+                  || !gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE)) {
                 return false;
             }
             return (amsWeapon != null)
@@ -16131,7 +16131,7 @@ public class AmmoType extends EquipmentType {
         boolean otherBinCaseless = otherAmmo.getMunitionType().contains(Munitions.M_CASELESS);
         boolean caselessMismatch = caselessLoaded != otherBinCaseless;
 
-        boolean hasStaticFeed = weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED);
+        boolean hasStaticFeed = weapon.hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_STATIC_FEED);
         boolean staticFeedMismatch = hasStaticFeed &&
               (currentAmmoType.getMunitionType() != otherAmmo.getMunitionType());
 

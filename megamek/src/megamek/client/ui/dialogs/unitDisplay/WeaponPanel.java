@@ -909,8 +909,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         entity = en;
 
         // Check Game Options for max external heat
-        int max_ext_heat = game != null ? game.getOptions().intOption(OptionsConstants.ADVCOMBAT_MAX_EXTERNAL_HEAT)
-              : 15;
+        int max_ext_heat = game != null ?
+              game.getOptions().intOption(OptionsConstants.ADVANCED_COMBAT_MAX_EXTERNAL_HEAT)
+              :
+              15;
         if (max_ext_heat < 0) {
             max_ext_heat = 15; // Standard value specified in TW p.159
         }
@@ -1021,7 +1023,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 // add heat from weapons fire to heat tracker
                 if (entity.isLargeCraft()) {
                     // if using bay heat option then don't add total arc
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_HEAT_BY_BAY)) {
                         currentHeatBuildup += mounted.getHeatByBay();
                     } else {
                         // check whether arc has fired
@@ -1097,7 +1099,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             wBayWeapon.setVisible(false);
         }
         if ((!entity.isLargeCraft())
-              || ((game != null) && (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)))) {
+              || ((game != null) && (game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_HEAT_BY_BAY)))) {
             wArcHeatL.setVisible(false);
             wArcHeatR.setVisible(false);
         } else {
@@ -1139,7 +1142,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
 
         // If MaxTech range rules are in play, display the extreme range.
-        if (((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE))
+        if (((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE))
               || (entity.isAero() && (entity.isAirborne() || entity.usesWeaponBays()))) {
             wExtL.setVisible(true);
             wExtR.setVisible(true);
@@ -1648,7 +1651,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 wMinR.setVisible(true);
             }
             if (((entity.getGame() != null)
-                  && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE))
+                  && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE))
                   || aerospaceAttack) {
                 wExtL.setVisible(true);
                 wExtR.setVisible(true);
@@ -1697,7 +1700,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
               && mounted.hasModes()
               && (unitDisplayPanel.getClientGUI() != null)
               && unitDisplayPanel.getClientGUI().getClient().getGame().getOptions().booleanOption(
-              OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)) {
+              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ENERGY_WEAPONS)) {
             if (mounted.hasChargedCapacitor() != 0) {
                 if (mounted.hasChargedCapacitor() == 1) {
                     wDamR.setText(Integer.toString(Compute.dialDownDamage(
@@ -2113,7 +2116,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             maxRange = (int) changes[4];
         }
 
-        if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+        if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)
               && weaponType.isCapital()) {
             avShort *= 10;
             avMed *= 10;
@@ -2374,7 +2377,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         avLong = multiplier * avLong;
         avExt = multiplier * avExt;
 
-        if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+        if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)
               && weaponType.isCapital()) {
             avShort *= 10;
             avMed *= 10;

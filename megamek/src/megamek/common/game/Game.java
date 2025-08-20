@@ -2180,7 +2180,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 }
             }
             // Same thing but for ProtoMeks
-            if (getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI) &&
+            if (getOptions().booleanOption(OptionsConstants.INIT_PROTOMEKS_MOVE_MULTI) &&
                   (entity instanceof ProtoMek) &&
                   getPhase().isMovement()) {
                 if ((getProtoMeksLeft(entity.getOwnerId()) %
@@ -2201,11 +2201,12 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             }
 
             // Same thing but for vehicles
-            if (getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT) &&
+            if (getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_LANCE_MOVEMENT) &&
                   (entity instanceof Tank) &&
                   getPhase().isMovement()) {
                 if ((getVehiclesLeft(entity.getOwnerId()) %
-                      getOptions().intOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER)) != 1) {
+                      getOptions().intOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_LANCE_MOVEMENT_NUMBER))
+                      != 1) {
                     // exception, if the _next_ turn is a tank turn, remove that contrived, but may come up e.g. one tank
                     // accidentally kills another
                     if (hasMoreTurns()) {
@@ -2222,11 +2223,12 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             }
 
             // Same thing but for meks
-            if (getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT) &&
+            if (getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT) &&
                   (entity instanceof Mek) &&
                   getPhase().isMovement()) {
                 if ((getMeksLeft(entity.getOwnerId()) %
-                      getOptions().intOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER)) != 1) {
+                      getOptions().intOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT_NUMBER))
+                      != 1) {
                     // exception, if the _next_ turn is a mek turn, remove that contrived, but may come up e.g. one mek
                     // accidentally kills another
                     if (hasMoreTurns()) {
@@ -2246,7 +2248,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             // infantry unit that would be considered invalid unless we don't consider the extra validity checks.
             boolean useInfantryMoveLaterCheck = (!getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER) ||
                   (!(entity instanceof Infantry))) &&
-                  (!getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER) ||
+                  (!getOptions().booleanOption(OptionsConstants.INIT_PROTOMEKS_MOVE_LATER) ||
                         (!(entity instanceof ProtoMek)));
 
             for (int i = turnVector.size() - 1; i >= turnIndex; i--) {
@@ -3020,7 +3022,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             if ((entity instanceof Infantry) && getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER)) {
                 excluded = true;
             } else if ((entity instanceof ProtoMek) &&
-                  getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)) {
+                  getOptions().booleanOption(OptionsConstants.INIT_PROTOMEKS_MOVE_LATER)) {
                 excluded = true;
             }
 
@@ -3219,7 +3221,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     // a shortcut function for determining whether vectored movement is
     // applicable
     public boolean useVectorMove() {
-        return getOptions().booleanOption(OptionsConstants.ADVAERORULES_ADVANCED_MOVEMENT) && getBoard().isSpace();
+        return getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_ADVANCED_MOVEMENT)
+              && getBoard().isSpace();
     }
 
     /**

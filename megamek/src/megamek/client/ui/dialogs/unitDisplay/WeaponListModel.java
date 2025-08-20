@@ -212,7 +212,7 @@ class WeaponListModel extends AbstractListModel<String> {
             }
         }
         if ((game != null)
-              && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS)) {
+              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CALLED_SHOTS)) {
             wn.append(' ');
             wn.append(mounted.getCalledShot().getDisplayableName());
         }

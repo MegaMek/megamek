@@ -35,13 +35,13 @@ package megamek.client.commands;
 
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
+import megamek.common.ManeuverType;
 import megamek.common.board.Coords;
+import megamek.common.enums.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
-import megamek.common.ManeuverType;
-import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
-import megamek.common.options.OptionsConstants;
 
 /**
  * @author dirk
@@ -150,7 +150,7 @@ public class MoveCommand extends ClientCommand {
                     return "Trying to get up but the Mek is not prone.";
                 } else if (args[1].equalsIgnoreCase("CAREFULSTAND")) {
                     if (cmd.getFinalProne() || cmd.getFinalHullDown() && getClient().getGame().getOptions()
-                          .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND)) {
+                          .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CAREFUL_STAND)) {
                         cmd.addStep(MoveStepType.CAREFUL_STAND);
                         return "Mek will try to stand up. this requires a piloting roll.";
                     }

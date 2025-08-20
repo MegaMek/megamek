@@ -63,7 +63,8 @@ public final class PilotSPAHelper {
      * @return True when the given EquipmentType is a valid choice for the Weapons Specialist SPA.
      */
     public static boolean isWeaponSpecialistValid(EquipmentType equipmentType, @Nullable GameOptions options) {
-        boolean amsAsWeapon = (options != null) && options.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)
+        boolean amsAsWeapon = (options != null)
+              && options.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_MANUAL_AMS)
               && (equipmentType.hasFlag(WeaponType.F_AMS));
 
         return (equipmentType instanceof WeaponType) && !(equipmentType instanceof BayWeapon)
@@ -122,7 +123,8 @@ public final class PilotSPAHelper {
      * @return True when the given EquipmentType is a valid choice for the Sandblaster SPA.
      */
     public static boolean isSandblasterValid(EquipmentType equipmentType, @Nullable GameOptions options) {
-        boolean rapidFireAC = (options != null) && options.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC)
+        boolean rapidFireAC = (options != null)
+              && options.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RAPID_AC)
               && (equipmentType instanceof ACWeapon);
 
         return (equipmentType instanceof WeaponType)

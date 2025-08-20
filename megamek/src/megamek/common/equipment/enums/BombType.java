@@ -158,11 +158,11 @@ public class BombType extends AmmoType {
          */
         public boolean isAllowedByGameOptions(GameOptions gameOptions) {
             if (this == BombTypeEnum.ALAMO &&
-                  !gameOptions.booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
+                  !gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AT2_NUKES)) {
                 return false;
             }
             int gameTL = TechConstants.getSimpleLevel(
-                  gameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)
+                  gameOptions.stringOption(OptionsConstants.ALLOWED_TECH_LEVEL)
             );
             return !this.isAdvancedAmmo() || (gameTL >= TechConstants.T_SIMPLE_ADVANCED);
         }

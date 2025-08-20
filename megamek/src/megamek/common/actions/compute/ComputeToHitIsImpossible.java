@@ -310,7 +310,7 @@ class ComputeToHitIsImpossible {
         }
 
         // Vehicles with a single crewman can't shoot and unjam a RAC in the same turn (like meks...)
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_TANK_CREWS)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_TANK_CREWS)
               && (attacker instanceof Tank)
               && attacker.isUnjammingRAC()
               && (attacker.getCrew().getSize() == 1)) {
@@ -385,10 +385,10 @@ class ComputeToHitIsImpossible {
         // if those options are checked.
         if (isInferno &&
               (((entityTarget instanceof Tank) &&
-                    game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_SAFE_FROM_INFERNOS)) ||
+                    game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_SAFE_FROM_INFERNOS)) ||
                     ((entityTarget instanceof ProtoMek) &&
                           game.getOptions()
-                                .booleanOption(OptionsConstants.ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS)))) {
+                                .booleanOption(OptionsConstants.ADVANCED_COMBAT_PROTOMEKS_SAFE_FROM_INFERNOS)))) {
             return Messages.getString("WeaponAttackAction.CantShootWithInferno");
         }
 
@@ -469,7 +469,7 @@ class ComputeToHitIsImpossible {
 
         // If using SO advanced sensors, the firing unit or one on its NC3 network must
         // have a valid firing solution
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS) &&
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS) &&
               game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
               attacker.isSpaceborne()) {
             boolean networkFiringSolution = false;
@@ -609,7 +609,7 @@ class ComputeToHitIsImpossible {
               && usesAmmo
               && (ammo != null)
               && !ammo.getType().canAeroUse(
-              game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))) {
+              game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_ARTILLERY_MUNITIONS))) {
             return Messages.getString("WeaponAttackAction.InvalidAmmoForFighter");
         }
 
@@ -673,7 +673,7 @@ class ComputeToHitIsImpossible {
                     if (prevWeapon != null) {
                         int loc = prevWeapon.getLocation();
                         boolean rearMount = prevWeapon.isRearMounted();
-                        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
+                        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_HEAT_BY_BAY)) {
                             totalHeat += prevWeapon.getHeatByBay();
                         } else {
                             if (!rearMount) {
@@ -696,7 +696,7 @@ class ComputeToHitIsImpossible {
             int loc = weapon.getLocation();
             boolean rearMount = weapon.isRearMounted();
             int currentHeat = attacker.getHeatInArc(loc, rearMount);
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_HEAT_BY_BAY)) {
                 currentHeat = 0;
                 currentHeat += weapon.getHeatByBay();
             }
@@ -712,7 +712,7 @@ class ComputeToHitIsImpossible {
                 }
             }
 
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_HEAT_BY_BAY)) {
                 if ((totalHeat + currentHeat) > heatCapacity) {
                     // FIXME: This is causing weird problems (try firing all the Suffen's nose weapons)
                     return Messages.getString("WeaponAttackAction.HeatOverCap");
@@ -1401,7 +1401,7 @@ class ComputeToHitIsImpossible {
             }
 
             // Called shots
-            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CALLED_SHOTS)) {
                 String reason = weapon.getCalledShot().isValid(target);
                 if (reason != null) {
                     return reason;
@@ -1473,7 +1473,8 @@ class ComputeToHitIsImpossible {
                     return Messages.getString("WeaponAttackAction.0MPInf");
                 }
                 // Can't shoot if platoon used fast movement
-                if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE) &&
+                if (game.getOptions()
+                      .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FAST_INFANTRY_MOVE) &&
                       (attacker.moved == EntityMovementType.MOVE_RUN)) {
                     return Messages.getString("WeaponAttackAction.CantShootAndFastMove");
                 }

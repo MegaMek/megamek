@@ -36,7 +36,11 @@ package megamek.common.weapons.handlers;
 
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.HitData;
+import megamek.common.RangeType;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeSideTable;
@@ -77,7 +81,7 @@ public class MGAWeaponHandler extends MGHandler {
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport, howManyShots);
             damage = applyGlancingBlowModifier(damage, true);
-            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)) {
                 if (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
                     damage = (int) Math.floor(damage * 0.75);
                 } else if (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME]) {

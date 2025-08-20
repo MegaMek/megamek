@@ -191,7 +191,7 @@ public class TechConstants {
      * @return the Game's tech level as an integer.
      */
     public static int getSimpleLevel(Game game) {
-        return getSimpleLevel(game.getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
+        return getSimpleLevel(game.getOptions().stringOption(OptionsConstants.ALLOWED_TECH_LEVEL));
     }
 
     /**

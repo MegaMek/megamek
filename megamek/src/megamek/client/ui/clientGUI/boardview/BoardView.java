@@ -108,6 +108,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeECM;
+import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.Mounted;
@@ -115,7 +116,6 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.event.*;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
@@ -3714,8 +3714,8 @@ public final class BoardView extends AbstractBoardView
                   || (step.getType() == MoveStepType.DOWN)
                   || (step.getType() == MoveStepType.ACC)
                   || (step.getType() == MoveStepType.DEC)
-                  || (step.getType() == MoveStepType.ACCN)
-                  || (step.getType() == MoveStepType.DECN))) {
+                  || (step.getType() == MoveStepType.ACCELERATION)
+                  || (step.getType() == MoveStepType.DECELERATION))) {
                 // Mark the previous elevation change sprite hidden so that we can draw a new one in its place
                 // without having overlap.
                 pathSprites.get(pathSprites.size() - 1).setHidden(true);

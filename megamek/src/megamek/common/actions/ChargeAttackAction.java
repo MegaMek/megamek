@@ -44,11 +44,11 @@ import megamek.common.Player;
 import megamek.common.ToHitData;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
@@ -376,7 +376,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         }
 
         // Attacking Weight Class Modifier.
-        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_PHYSICAL_ATTACK_PSR)) {
             if (attackingEntity.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) {
                 toHit.addModifier(-2, "Weight Class Attack Modifier");
             } else if (attackingEntity.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {

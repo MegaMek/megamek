@@ -67,41 +67,27 @@ public enum WindDirection {
     }
 
     public WindDirection rotateClockwise() {
-        switch (this) {
-            case NORTH:
-                return NORTHEAST;
-            case NORTHEAST:
-                return SOUTHEAST;
-            case SOUTHEAST:
-                return SOUTH;
-            case SOUTH:
-                return SOUTHWEST;
-            case SOUTHWEST:
-                return NORTHWEST;
-            case NORTHWEST:
-                return NORTH;
-            default:
-                return RANDOM;
-        }
+        return switch (this) {
+            case NORTH -> NORTHEAST;
+            case NORTHEAST -> SOUTHEAST;
+            case SOUTHEAST -> SOUTH;
+            case SOUTH -> SOUTHWEST;
+            case SOUTHWEST -> NORTHWEST;
+            case NORTHWEST -> NORTH;
+            default -> RANDOM;
+        };
     }
 
     public WindDirection rotateCounterClockwise() {
-        switch (this) {
-            case NORTH:
-                return NORTHWEST;
-            case NORTHWEST:
-                return SOUTHWEST;
-            case SOUTHWEST:
-                return SOUTH;
-            case SOUTH:
-                return SOUTHEAST;
-            case SOUTHEAST:
-                return NORTHEAST;
-            case NORTHEAST:
-                return NORTH;
-            default:
-                return RANDOM;
-        }
+        return switch (this) {
+            case NORTH -> NORTHWEST;
+            case NORTHWEST -> SOUTHWEST;
+            case SOUTHWEST -> SOUTH;
+            case SOUTH -> SOUTHEAST;
+            case SOUTHEAST -> NORTHEAST;
+            case NORTHEAST -> NORTH;
+            default -> RANDOM;
+        };
     }
 
     public boolean isRandomWindDirection() {

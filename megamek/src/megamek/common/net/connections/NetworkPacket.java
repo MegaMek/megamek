@@ -33,37 +33,15 @@
 
 package megamek.common.net.connections;
 
-class NetworkPacket implements INetworkPacket {
-
-    private final boolean isCompressed;
-    private final int marshallingType;
-    private final byte[] data;
+record NetworkPacket(boolean isCompressed, int marshallingType, byte[] data) implements INetworkPacket {
 
     /**
      * Creates new packet
      *
-     * @param compressed      True when the data is compressed
-     * @param marshallingType The marhsalling type used
+     * @param isCompressed    True when the data is compressed
+     * @param marshallingType The Marshalling type used
      * @param data            The packet data
      */
-    NetworkPacket(boolean compressed, int marshallingType, byte[] data) {
-        isCompressed = compressed;
-        this.marshallingType = marshallingType;
-        this.data = data;
-    }
-
-    @Override
-    public int getMarshallingType() {
-        return marshallingType;
-    }
-
-    @Override
-    public byte[] getData() {
-        return data;
-    }
-
-    @Override
-    public boolean isCompressed() {
-        return isCompressed;
+    NetworkPacket {
     }
 }

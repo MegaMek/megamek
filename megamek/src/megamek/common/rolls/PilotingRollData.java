@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,9 +35,12 @@
 
 package megamek.common.rolls;
 
+import java.io.Serial;
+
 public class PilotingRollData extends TargetRoll {
+    @Serial
     private static final long serialVersionUID = -8965684775619336323L;
-    private int entityId;
+    private final int entityId;
 
     public PilotingRollData(int entityId) {
         this.entityId = entityId;

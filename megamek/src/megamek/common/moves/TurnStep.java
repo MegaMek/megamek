@@ -36,11 +36,12 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import megamek.common.compute.Compute;
-import megamek.common.units.Entity;
+import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
+import megamek.common.pathfinder.CachedEntityState;
+import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.TripodMek;
-import megamek.common.pathfinder.CachedEntityState;
 
 /**
  * This class handles the turn step of a unit. It is used in the MoveStep compilation to calculate the movement of a
@@ -51,11 +52,11 @@ import megamek.common.pathfinder.CachedEntityState;
  */
 class TurnStep implements PhasePass {
 
-    private static final EnumSet<MovePath.MoveStepType> TYPES = EnumSet.of(MovePath.MoveStepType.TURN_LEFT,
-          MovePath.MoveStepType.TURN_RIGHT);
+    private static final EnumSet<MoveStepType> TYPES = EnumSet.of(MoveStepType.TURN_LEFT,
+          MoveStepType.TURN_RIGHT);
 
     @Override
-    public Set<MovePath.MoveStepType> getTypesOfInterest() {
+    public Set<MoveStepType> getTypesOfInterest() {
         return TYPES;
     }
 

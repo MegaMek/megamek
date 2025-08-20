@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,12 +41,12 @@ import java.util.Set;
 
 import megamek.client.bot.princess.AeroPathUtil;
 import megamek.client.bot.princess.FireControl;
-import megamek.common.board.Coords;
-import megamek.common.game.Game;
 import megamek.common.Hex;
-import megamek.common.units.Terrains;
+import megamek.common.board.Coords;
+import megamek.common.enums.MoveStepType;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
+import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 
 /**
@@ -58,10 +58,10 @@ import megamek.logging.MMLogger;
 public class InfantryPathFinder {
     private static final MMLogger logger = MMLogger.create(InfantryPathFinder.class);
 
-    private Game game;
+    private final Game game;
     private List<MovePath> infantryPaths;
 
-    private Set<Coords> visitedCoords = new HashSet<>();
+    private final Set<Coords> visitedCoords = new HashSet<>();
 
     private InfantryPathFinder(Game game) {
         this.game = game;
@@ -143,12 +143,9 @@ public class InfantryPathFinder {
      * already visited. Generates *shortest* paths to destination hexes, because, look, infantry isn't going to get
      * beyond a move 1 mod anyway.
      *
-     * @param startingPath
-     *
-     * @return
      */
     private List<MovePath> generateChildren(MovePath startingPath) {
-        List<MovePath> retval = new ArrayList<>();
+        List<MovePath> retVal = new ArrayList<>();
 
         // terminator conditions:
         // - we've visited this hex already
@@ -163,7 +160,7 @@ public class InfantryPathFinder {
             mp = startingPath.getEntity().getRunMP();
         }
         if (visitedCoords.contains(startingPath.getFinalCoords()) || (startingPath.getMpUsed() >= mp)) {
-            return retval;
+            return retVal;
         }
 
         visitedCoords.add(startingPath.getFinalCoords());
@@ -220,10 +217,10 @@ public class InfantryPathFinder {
                 continue;
             }
 
-            retval.add(childPath.clone());
-            retval.addAll(generateChildren(childPath));
+            retVal.add(childPath.clone());
+            retVal.addAll(generateChildren(childPath));
         }
 
-        return retval;
+        return retVal;
     }
 }

@@ -127,7 +127,7 @@ public abstract class ACWeapon extends AmmoWeapon {
 
         if (Server.getServerInstance() != null) {
             IOption increasedAc = Server.getServerInstance().getGame()
-                  .getOptions().getOption(OptionsConstants.ADVCOMBAT_INCREASED_AC_DMG);
+                  .getOptions().getOption(OptionsConstants.ADVANCED_COMBAT_INCREASED_AC_DMG);
             if ((increasedAc != null) && increasedAc.booleanValue()) {
                 dmg++;
             }
@@ -158,7 +158,7 @@ public abstract class ACWeapon extends AmmoWeapon {
         super.adaptToGameOptions(gameOptions);
 
         // Modes for allowing standard and light AC rapid fire
-        IOption rapidAc = gameOptions.getOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC);
+        IOption rapidAc = gameOptions.getOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RAPID_AC);
         if ((rapidAc != null) && rapidAc.booleanValue()) {
             addMode("");
             addMode(Weapon.MODE_AC_RAPID);

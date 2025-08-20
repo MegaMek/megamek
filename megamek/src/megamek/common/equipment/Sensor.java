@@ -177,9 +177,9 @@ public record Sensor(int type) implements Serializable {
               && (type != TYPE_MEK_SEISMIC)
               && (type != TYPE_VEE_SEISMIC)
               && ((type != TYPE_MEK_MAG_SCAN) || game.getOptions()
-              .booleanOption(OptionsConstants.ADVANCED_MAGSCAN_NOHILLS))
+              .booleanOption(OptionsConstants.ADVANCED_MAG_SCAN_NO_HILLS))
               && ((type != TYPE_VEE_MAG_SCAN) || game.getOptions()
-              .booleanOption(OptionsConstants.ADVANCED_MAGSCAN_NOHILLS)) && !isBAP()) {
+              .booleanOption(OptionsConstants.ADVANCED_MAG_SCAN_NO_HILLS)) && !isBAP()) {
             return 0;
         }
 

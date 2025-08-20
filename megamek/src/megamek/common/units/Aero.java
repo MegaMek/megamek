@@ -785,7 +785,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public void autoSetCapArmor() {
         double divisor = 10.0;
-        if ((null != game) && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if ((null != game) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             divisor = 1.0;
         }
         capitalArmor_orig = (int) Math.round(getTotalOArmor() / divisor);
@@ -795,7 +795,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public void autoSetFatalThresh() {
         int baseThresh = 2;
-        if ((null != game) && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if ((null != game) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             baseThresh = 20;
         }
         fatalThresh = Math.max(baseThresh, (int) Math.ceil(capitalArmor / 4.0));
@@ -1138,7 +1138,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         setCurrentVelocity(getNextVelocity());
 
         // if using variable damage thresholds then autoset them
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_VARIABLE_DAMAGE_THRESH)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_VARIABLE_DAMAGE_THRESH)) {
             autoSetThresh();
             autoSetFatalThresh();
         }
@@ -1539,18 +1539,19 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         // Small/torso-mounted cockpit penalty?
         if ((getCockpitType() == Aero.COCKPIT_SMALL) &&
               !hasAbility(OptionsConstants.MD_BVDNI) &&
-              !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
+              !hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {
             prd.addModifier(1, "Small Cockpit");
         }
 
         // quirks?
-        if (hasQuirk(OptionsConstants.QUIRK_POS_ATMO_FLYER) && !isSpaceborne()) {
+        if (hasQuirk(OptionsConstants.QUIRK_POS_ATMOSPHERE_FLYER) && !isSpaceborne()) {
             prd.addModifier(-1, "atmospheric flyer");
         }
-        if (hasQuirk(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY) && !isSpaceborne()) {
+        if (hasQuirk(OptionsConstants.QUIRK_NEG_ATMOSPHERE_INSTABILITY) && !isSpaceborne()) {
             prd.addModifier(+1, "atmospheric flight instability");
         }
-        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT) && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
+        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)
+              && !hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {
             prd.addModifier(1, "cramped cockpit");
         }
 
@@ -1675,8 +1676,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public int getThresh(int loc) {
         if (isCapitalFighter()) {
-            if ((null != game) && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
-                if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_VARIABLE_DAMAGE_THRESH)) {
+            if ((null != game) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_VARIABLE_DAMAGE_THRESH)) {
                     return (int) Math.round(getCapArmor() / 40.0) + 1;
                 } else {
                     return (int) Math.round(getCap0Armor() / 40.0) + 1;
@@ -2278,7 +2279,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
      */
     @Override
     public int getECMRange() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) ||
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM) ||
               !isSpaceborne()) {
             return super.getECMRange();
         }
@@ -2290,7 +2291,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
      */
     @Override
     public double getECCMStrength() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) ||
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM) ||
               !isSpaceborne()) {
             return super.getECCMStrength();
         }
@@ -2672,7 +2673,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         // Move on to actual damage...
         int damage = getCap0Armor() - getCapArmor();
         // Fix for #587. Only multiply if Aero Sanity is off
-        if ((null != game) && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if ((null != game) && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             damage *= 10;
         }
         damage -= dealt; // We already dealt a bunch of damage, move on.

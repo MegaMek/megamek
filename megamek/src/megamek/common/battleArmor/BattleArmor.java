@@ -517,7 +517,7 @@ public class BattleArmor extends Infantry {
     @Override
     public int getRunMP(MPCalculationSetting mpCalculationSetting) {
         boolean fastMove = !mpCalculationSetting.ignoreOptionalRules && (game != null) &&
-              game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE);
+              game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FAST_INFANTRY_MOVE);
         return getWalkMP(mpCalculationSetting) + (fastMove ? 1 : 0);
     }
 
@@ -666,7 +666,7 @@ public class BattleArmor extends Infantry {
 
         // TO:AR p.108: Trooper takes a crit if a second roll is the same location as
         // the first.
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BA_CRITICALS)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BA_CRITICAL_SLOTS)
               && (loc == Compute.d6()) && !isAttackingConvInfantry) {
             return new HitData(loc, false, HitData.EFFECT_CRITICAL);
         }
@@ -1429,7 +1429,7 @@ public class BattleArmor extends Infantry {
     public double getWeight() {
         // If following Total Warfare rules each BA trooper will weigh a ton for transport purposes. Following
         // Tactical Operations gives us a more realistic weight per trooper
-        if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT)) {
+        if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_BA_WEIGHT)) {
             return getTrooperTon();
         } else {
             return troopers;

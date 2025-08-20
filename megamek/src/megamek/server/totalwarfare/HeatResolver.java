@@ -345,7 +345,7 @@ class HeatResolver extends AbstractTWRuleHandler {
             }
 
             // Add heat from external sources to the heat buildup
-            int max_ext_heat = getGame().getOptions().intOption(OptionsConstants.ADVCOMBAT_MAX_EXTERNAL_HEAT);
+            int max_ext_heat = getGame().getOptions().intOption(OptionsConstants.ADVANCED_COMBAT_MAX_EXTERNAL_HEAT);
             // Check Game Options
             if (max_ext_heat < 0) {
                 max_ext_heat = 15; // standard value specified in TW p.159
@@ -386,7 +386,7 @@ class HeatResolver extends AbstractTWRuleHandler {
             // how much heat can we sink?
             int toSink = entity.getHeatCapacityWithWater() + radicalHSBonus;
 
-            if (getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE) &&
+            if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_COOLANT_FAILURE) &&
                   entity.getCoolantFailureAmount() > 0) {
                 int failureAmount = entity.getCoolantFailureAmount();
                 r = new Report(5520);
@@ -482,7 +482,7 @@ class HeatResolver extends AbstractTWRuleHandler {
             int autoShutDownHeat;
             boolean mtHeat;
 
-            if (getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
+            if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT)) {
                 autoShutDownHeat = 50;
                 mtHeat = true;
             } else {
@@ -861,7 +861,7 @@ class HeatResolver extends AbstractTWRuleHandler {
             // heat sink capacity has already been offset by previous coolant failures,
             // further
             // reductions in capacity will have no effect.
-            if (getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE) &&
+            if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_COOLANT_FAILURE) &&
                   (entity.heat >= 5) &&
                   (entity.getCoolantFailureAmount() <
                         ((Mek) entity).getNumberOfSinks() * (((Mek) entity).hasDoubleHeatSinks() ? 2 : 1))) {
@@ -945,7 +945,7 @@ class HeatResolver extends AbstractTWRuleHandler {
 
         // Add heat from external sources to the heat buildup
         int max_ext_heat = getGame().getOptions().intOption(
-              OptionsConstants.ADVCOMBAT_MAX_EXTERNAL_HEAT); // Check Game Options
+              OptionsConstants.ADVANCED_COMBAT_MAX_EXTERNAL_HEAT); // Check Game Options
         if (max_ext_heat < 0) {
             max_ext_heat = 15; // standard value specified in TW p.159
         }
@@ -1037,7 +1037,7 @@ class HeatResolver extends AbstractTWRuleHandler {
         }
 
         int autoShutDownHeat = 30;
-        boolean mtHeat = getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT);
+        boolean mtHeat = getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT);
         if (mtHeat) {
             autoShutDownHeat = 50;
         }

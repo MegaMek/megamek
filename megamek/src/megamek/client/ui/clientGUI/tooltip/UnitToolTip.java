@@ -234,7 +234,7 @@ public final class UnitToolTip {
     public static String getTargetTipDetail(Targetable target, @Nullable Client client) {
         if (target instanceof Entity) {
             return UnitToolTip.getEntityTipAsTarget((Entity) target, (client != null) ? client.getLocalPlayer() : null)
-                         .toString();
+                  .toString();
         } else if (target instanceof BuildingTarget buildingTarget) {
             Board board = (client != null) ? client.getBoard(target.getBoardId()) : null;
             return HexTooltip.getBuildingTargetTip(buildingTarget, board);
@@ -307,8 +307,8 @@ public final class UnitToolTip {
 
     private static String getOwnerInfo(Entity entity, Player owner) {
         String ownerName = (owner != null) ?
-                                 owner.getName() :
-                                 ReportMessages.getString("BoardView1.Tooltip.unknownOwner");
+              owner.getName() :
+              ReportMessages.getString("BoardView1.Tooltip.unknownOwner");
         String msg_id = MessageFormat.format(" [ID: {0}]", entity.getId());
         String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
         ownerName += UIUtil.tag("FONT", attr, msg_id);
@@ -422,16 +422,16 @@ public final class UnitToolTip {
 
     private static boolean hideArmorLocation(Entity entity, int location) {
         return ((entity.getOArmor(location) <= 0) &&
-                      (entity.getOInternal(location) <= 0) &&
-                      !entity.hasRearArmor(location)) ||
-                     (entity.isConventionalInfantry() && (location != Infantry.LOC_INFANTRY));
+              (entity.getOInternal(location) <= 0) &&
+              !entity.hasRearArmor(location)) ||
+              (entity.isConventionalInfantry() && (location != Infantry.LOC_INFANTRY));
     }
 
     private static String locationHeader(Entity entity, int location) {
         String msgActiveTroopers = Messages.getString("BoardView1.Tooltip.ActiveTroopers");
         return entity.isConventionalInfantry() ?
-                     ((Infantry) entity).getShootingStrength() + " " + msgActiveTroopers :
-                     entity.getLocationAbbr(location);
+              ((Infantry) entity).getShootingStrength() + " " + msgActiveTroopers :
+              entity.getLocationAbbr(location);
     }
 
     private static StringBuilder sysCrits(Entity entity, int type, int index, int loc, String locAbbr) {
@@ -683,8 +683,8 @@ public final class UnitToolTip {
                 case SuperHeavyTank.LOC_TURRET_2:
                     result = sysStabilizers(tank, loc, msgAbbrStabilizers).toString();
                     result += tank.getTurretCount() > 0 ?
-                                    sysTurretLocked(tank, loc, msgAbbrTurretLocked).toString() :
-                                    "&nbsp;";
+                          sysTurretLocked(tank, loc, msgAbbrTurretLocked).toString() :
+                          "&nbsp;";
                     break;
                 default:
                     result = "&nbsp;";
@@ -703,8 +703,8 @@ public final class UnitToolTip {
                 case Tank.LOC_TURRET_2:
                     result = sysStabilizers(tank, loc, msgAbbrStabilizers).toString();
                     result += tank.getTurretCount() > 0 ?
-                                    sysTurretLocked(tank, loc, msgAbbrTurretLocked).toString() :
-                                    "&nbsp;";
+                          sysTurretLocked(tank, loc, msgAbbrTurretLocked).toString() :
+                          "&nbsp;";
                     break;
                 default:
                     result = "&nbsp;";
@@ -747,7 +747,7 @@ public final class UnitToolTip {
             }
 
             boolean locDestroyed = (entity.getInternal(loc) == IArmorState.ARMOR_DOOMED ||
-                                          entity.getInternal(loc) == IArmorState.ARMOR_DESTROYED);
+                  entity.getInternal(loc) == IArmorState.ARMOR_DESTROYED);
 
             if (locDestroyed) {
                 // Destroyed location
@@ -964,8 +964,8 @@ public final class UnitToolTip {
      */
     private static boolean isNotTTRelevant(WeaponType weaponType) {
         return weaponType.hasFlag(WeaponType.F_C3M) ||
-                     weaponType.hasFlag(WeaponType.F_C3MBS) ||
-                     weaponType.hasFlag(WeaponTypeFlag.INTERNAL_REPRESENTATION);
+              weaponType.hasFlag(WeaponType.F_C3MBS) ||
+              weaponType.hasFlag(WeaponTypeFlag.INTERNAL_REPRESENTATION);
     }
 
     /**
@@ -1088,7 +1088,7 @@ public final class UnitToolTip {
 
                 int maxRange = RangeType.RANGE_LONG;
 
-                if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
+                if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)) {
                     maxRange = RangeType.RANGE_EXTREME;
                 }
 
@@ -1103,7 +1103,9 @@ public final class UnitToolTip {
                 WeaponType wpT = curWp.getType();
 
                 if (!wpT.hasFlag(WeaponType.F_AMS) ||
-                          entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)) {
+                      entity.getGame()
+                            .getOptions()
+                            .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_MANUAL_AMS)) {
                     currentWp.range = rangeString.toString();
                 }
 
@@ -1114,9 +1116,9 @@ public final class UnitToolTip {
                 // Check wpInfos for dual entries to avoid displaying ammo twice for
                 // non/rapid-fire
                 if ((weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.NA) &&
-                          (!weaponType.hasFlag(WeaponType.F_ONE_SHOT) ||
-                                 weaponType.hasFlag(WeaponType.F_BA_INDIVIDUAL)) &&
-                          (weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.INFANTRY)) {
+                      (!weaponType.hasFlag(WeaponType.F_ONE_SHOT) ||
+                            weaponType.hasFlag(WeaponType.F_BA_INDIVIDUAL)) &&
+                      (weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.INFANTRY)) {
                     String msg_ammo = Messages.getString("BoardView1.Tooltip.Ammo");
 
                     if (wpInfos.containsKey(curWp.getName() + msg_ammo)) {
@@ -1143,15 +1145,15 @@ public final class UnitToolTip {
                                 String msgHotLoadedParens = Messages.getString("BoardView1.Tooltip.HotLoadedParens");
 
                                 String name = amounted.getName()
-                                                    .replace(msgAntiPersonnel, msgAP)
-                                                    .replace(msg_ammo, "")
-                                                    .replace(msgISBracket, "")
-                                                    .replace(msgClanBrackets, "")
-                                                    .replace(msgClanParens, "")
-                                                    .replace(msgHalfBrackets, "")
-                                                    .replace(msgHalf, "")
-                                                    .replace(curWp.getDesc(), "")
-                                                    .trim();
+                                      .replace(msgAntiPersonnel, msgAP)
+                                      .replace(msg_ammo, "")
+                                      .replace(msgISBracket, "")
+                                      .replace(msgClanBrackets, "")
+                                      .replace(msgClanParens, "")
+                                      .replace(msgHalfBrackets, "")
+                                      .replace(msgHalf, "")
+                                      .replace(curWp.getDesc(), "")
+                                      .trim();
 
                                 if (name.isBlank()) {
                                     name = msgStandard;
@@ -1336,8 +1338,8 @@ public final class UnitToolTip {
             for (Entry<String, Integer> ammo : ammoInfo.ammunition.entrySet()) {
                 String msg_standard = Messages.getString("BoardView1.Tooltip.Standard");
                 String ammoName = ammo.getKey().equals(msg_standard) && ammoInfo.ammunition.size() == 1 ?
-                                        "" :
-                                        ammo.getKey() + ": ";
+                      "" :
+                      ammo.getKey() + ": ";
 
                 // No entry when no ammo of this type left but some other type left
                 if (ammo.getValue() == 0) {
@@ -1544,18 +1546,18 @@ public final class UnitToolTip {
 
         if (e.isAirborneAeroOnGroundMap()) {
             return e.getActiveSensor().getDisplayName() +
-                         " (" +
-                         srh.minSensorRange +
-                         "-" +
-                         srh.maxSensorRange +
-                         ")" +
-                         " {" +
-                         Messages.getString("BoardView1.Tooltip.sensor_range_vs_ground_target") +
-                         " (" +
-                         srh.minGroundSensorRange +
-                         "-" +
-                         srh.maxGroundSensorRange +
-                         ")}";
+                  " (" +
+                  srh.minSensorRange +
+                  "-" +
+                  srh.maxSensorRange +
+                  ")" +
+                  " {" +
+                  Messages.getString("BoardView1.Tooltip.sensor_range_vs_ground_target") +
+                  " (" +
+                  srh.minGroundSensorRange +
+                  "-" +
+                  srh.maxGroundSensorRange +
+                  ")}";
         }
         return e.getActiveSensor().getDisplayName() + " (" + srh.minSensorRange + "-" + srh.maxSensorRange + ")";
     }
@@ -1593,7 +1595,7 @@ public final class UnitToolTip {
             // Hidden for invisible units when in double-blind and hide enemy bv is selected
             // Also not shown in the lobby as BV is shown there outside the tooltip
             boolean showEnemyBV = !(gameOptions.booleanOption(OptionsConstants.ADVANCED_SUPPRESS_DB_BV) &&
-                                          gameOptions.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND));
+                  gameOptions.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND));
             boolean isVisible = EntityVisibilityUtils.trackThisEntitiesVisibilityInfo(localPlayer, entity);
 
             if (isVisible || showEnemyBV) {
@@ -1617,11 +1619,11 @@ public final class UnitToolTip {
             sNotYetMoved = UIUtil.tag("FONT", attr, sNotYetMoved);
             result += UIUtil.tag("I", "", sNotYetMoved);
         } else if ((entity.isDone() && game.getPhase().isMovement()) ||
-                         (game.getPhase().isMovementReport()) ||
-                         (game.getPhase().isFiring()) ||
-                         (game.getPhase().isFiringReport()) ||
-                         (game.getPhase().isPhysical()) ||
-                         (game.getPhase().isPhysicalReport())) {
+              (game.getPhase().isMovementReport()) ||
+              (game.getPhase().isFiring()) ||
+              (game.getPhase().isFiringReport()) ||
+              (game.getPhase().isPhysical()) ||
+              (game.getPhase().isPhysicalReport())) {
             int tmm = Compute.getTargetMovementModifier(game, entity.getId()).getValue();
             String sMove;
 
@@ -1669,7 +1671,7 @@ public final class UnitToolTip {
                 String sUnJamming = " ";
                 String msgUnjammingRAC = Messages.getString("BoardView1.Tooltip.UnjammingRAC");
                 sUnJamming += msgUnjammingRAC;
-                if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {
+                if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC)) {
                     String msgAndAC = Messages.getString("BoardView1.Tooltip.AndAC");
                     sUnJamming += msgAndAC;
                 }
@@ -1831,9 +1833,9 @@ public final class UnitToolTip {
         // Towing
         if (!entity.getAllTowedUnits().isEmpty()) {
             String unitList = entity.getAllTowedUnits()
-                                    .stream()
-                                    .map(id -> Objects.requireNonNull(entity.getGame().getEntity(id)).getShortName())
-                                    .collect(Collectors.joining(", "));
+                  .stream()
+                  .map(id -> Objects.requireNonNull(entity.getGame().getEntity(id)).getShortName())
+                  .collect(Collectors.joining(", "));
             if (unitList.length() > 1) {
                 result += addToTT("Towing", NOBR, unitList) + " ";
             }
@@ -1893,9 +1895,9 @@ public final class UnitToolTip {
     private static String getSensorInfo(GameOptions gameOptions, Entity entity, PlanetaryConditions conditions) {
         String sensors = "";
         // If sensors, display what sensors this unit is using
-        if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS) ||
-                  (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) &&
-                        entity.isSpaceborne()) {
+        if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS) ||
+              (gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS)) &&
+                    entity.isSpaceborne()) {
             String visualRange = Compute.getMaxVisualRange(entity, false) + "";
             if (conditions.getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
                 visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";
@@ -1908,7 +1910,7 @@ public final class UnitToolTip {
             }
             sensors += addToTT("Visual", NOBR, visualRange);
         }
-        if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP) && entity.hasBAP()) {
+        if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_BAP) && entity.hasBAP()) {
             sensors += addToTT("BAPRange", NOBR, entity.getBAPRange());
         }
 
@@ -2059,9 +2061,9 @@ public final class UnitToolTip {
                                 if (((Mek) entity).legHasHipCrit(i)) {
                                     hipHits++;
                                     if ((entity.getGame() == null) ||
-                                              (!entity.getGame()
-                                                      .getOptions()
-                                                      .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE))) {
+                                          (!entity.getGame()
+                                                .getOptions()
+                                                .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE))) {
                                         continue;
                                     }
                                 }
@@ -2105,7 +2107,7 @@ public final class UnitToolTip {
 
                         if (entity instanceof Mek mek) {
                             partialWingWeatherMod = mek.getPartialWingJumpAtmoBonus() -
-                                                          mek.getPartialWingJumpWeightClassBonus();
+                                  mek.getPartialWingJumpWeightClassBonus();
                         }
                     }
                 }
@@ -2190,13 +2192,13 @@ public final class UnitToolTip {
             }
 
             if ((legsDestroyed > 0) ||
-                      (hipHits > 0) ||
-                      (actuatorHits > 0) ||
-                      (jumpJetDestroyed > 0) ||
-                      (partialWingDestroyed > 0) ||
-                      (jumpBoosterDestroyed > 0) ||
-                      (entity.isImmobile()) ||
-                      (entity.isGyroDestroyed())) {
+                  (hipHits > 0) ||
+                  (actuatorHits > 0) ||
+                  (jumpJetDestroyed > 0) ||
+                  (partialWingDestroyed > 0) ||
+                  (jumpBoosterDestroyed > 0) ||
+                  (entity.isImmobile()) ||
+                  (entity.isGyroDestroyed())) {
                 sMove += DOT_SPACER;
                 String sDamage = "\uD83D\uDD27";
                 String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getWarningColor())));
@@ -2227,7 +2229,7 @@ public final class UnitToolTip {
             }
             // Display SI for Aerodynes, and LAMs only if in Fighter mode
             if (entity instanceof IAero unit &&
-                      !(entity instanceof LandAirMek && !(entity.getConversionMode() == CONV_MODE_FIGHTER))) {
+                  !(entity instanceof LandAirMek && !(entity.getConversionMode() == CONV_MODE_FIGHTER))) {
                 sMove += DOT_SPACER;
                 sMove += String.format(" SI: %d", unit.getSI());
             }
@@ -2341,9 +2343,9 @@ public final class UnitToolTip {
         if (entity.getGame().getPlanetaryConditions().whyDoomed(entity, entity.getGame()) != null) {
             String msgCannotSurvive = Messages.getString("BoardView1.Tooltip.CannotSurvive");
             sWarnings += "<BR>" +
-                               msgCannotSurvive +
-                               " " +
-                               entity.getGame().getPlanetaryConditions().whyDoomed(entity, entity.getGame());
+                  msgCannotSurvive +
+                  " " +
+                  entity.getGame().getPlanetaryConditions().whyDoomed(entity, entity.getGame());
         }
         if (entity.doomedInAtmosphere() && mapSettings.getMedium() == MapSettings.MEDIUM_ATMOSPHERE) {
             String msgCannotSurviveAtmosphere = Messages.getString("BoardView1.Tooltip.CannotSurviveAtmo");
@@ -2363,8 +2365,8 @@ public final class UnitToolTip {
         String sNonCritical = "";
         // Non-critical (yellow) warnings
         if (((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5)) ||
-                  ((entity.getC3Master() == null) && entity.hasC3S()) ||
-                  (entity.hasNovaCEWS() && (entity.calculateFreeC3Nodes() == 2))) {
+              ((entity.getC3Master() == null) && entity.hasC3S()) ||
+              (entity.hasNovaCEWS() && (entity.calculateFreeC3Nodes() == 2))) {
             String msgUnconnectedC3Computer = Messages.getString("BoardView1.Tooltip.UnconnectedC3Computer");
             sNonCritical += "<BR>" + msgUnconnectedC3Computer;
         }
@@ -2496,12 +2498,12 @@ public final class UnitToolTip {
 
         if (details && entity.hasAnyC3System()) {
             List<String> members = entity.getGame()
-                                         .getEntitiesVector()
-                                         .stream()
-                                         .filter(e -> e.onSameC3NetworkAs(entity))
-                                         .sorted(Comparator.comparingInt(Entity::getId))
-                                         .map(e -> c3UnitName(e, entity))
-                                         .collect(Collectors.toList());
+                  .getEntitiesVector()
+                  .stream()
+                  .filter(e -> e.onSameC3NetworkAs(entity))
+                  .sorted(Comparator.comparingInt(Entity::getId))
+                  .map(e -> c3UnitName(e, entity))
+                  .collect(Collectors.toList());
             if (members.size() > 1) {
                 if (entity.hasNhC3()) {
                     String msg_c3i = Messages.getString("BoardView1.Tooltip.C3i");
@@ -2578,12 +2580,12 @@ public final class UnitToolTip {
 
     /** Returns true when Hot-Loading LRMs is on. */
     static boolean isHotLoadActive(Game game) {
-        return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD);
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HOT_LOAD);
     }
 
     /** Returns true when Hot-Loading LRMs is on. */
     static boolean isRapidFireActive(Game game) {
-        return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST);
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BURST);
     }
 
     private UnitToolTip() {

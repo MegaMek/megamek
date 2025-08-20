@@ -45,11 +45,11 @@ import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscType;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
@@ -406,7 +406,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
             toHit.setHitTable(ToHitData.HIT_PUNCH);
         }
         // Attacking Weight Class Modifier.
-        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_PHYSICAL_ATTACK_PSR)) {
             if (ae.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) {
                 toHit.addModifier(-2, "Weight Class Attack Modifier");
             } else if (ae.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {

@@ -44,7 +44,7 @@ public interface Scenario {
 
     String COMMENT_MARK = "#";
     String FILE_SUFFIX_BOARD = ".board";
-    String MMSVERSION = "MMSVersion";
+    String MMS_VERSION = "MMSVersion";
 
     String NAME = "name";
     String DESCRIPTION = "description";
@@ -58,8 +58,8 @@ public interface Scenario {
     String PARAM_SINGLEPLAYER = "singleplayer";
 
 
-    String MMS_PLANETCOND = "planetaryconditions";
-    String PARAM_PLANETCOND_FIXED = "fixedplanetaryconditions";
+    String MMS_PLANET_CONDITIONS = "planetaryconditions";
+    String PARAM_PLANET_CONDITIONS_FIXED = "fixedplanetaryconditions";
 
     String PARAM_MAP_WIDTH = "MapWidth";
     String PARAM_MAP_HEIGHT = "MapHeight";

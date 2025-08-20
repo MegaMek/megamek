@@ -57,7 +57,7 @@ public abstract class GaussWeapon extends AmmoWeapon {
         super.adaptToGameOptions(gameOptions);
 
         // Add modes for powering down Gauss weapons PPC field inhibitors according to TacOps, p.102
-        if (gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GAUSS_WEAPONS)) {
+        if (gameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GAUSS_WEAPONS)) {
             addMode("Powered Up");
             addMode("Powered Down");
             setInstantModeSwitch(false);

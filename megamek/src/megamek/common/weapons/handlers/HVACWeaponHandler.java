@@ -37,19 +37,19 @@ package megamek.common.weapons.handlers;
 import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.board.Board;
-import megamek.common.board.Coords;
 import megamek.common.CriticalSlot;
-import megamek.common.game.Game;
 import megamek.common.Hex;
-import megamek.common.equipment.Mounted;
 import megamek.common.Report;
-import megamek.common.units.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.units.Terrains;
 import megamek.common.weapons.handlers.ac.ACWeaponHandler;
 import megamek.server.SmokeCloud;
 import megamek.server.totalwarfare.TWGameManager;
@@ -68,7 +68,7 @@ public class HVACWeaponHandler extends ACWeaponHandler {
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         PlanetaryConditions conditions = game.getPlanetaryConditions();
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_START_FIRE)
               && !conditions.getAtmosphere().isVacuum()) {
             int rear = (ae.getFacing() + 3 + (weapon.isMekTurretMounted() ? weapon.getFacing() : 0)) % 6;
             Coords src = ae.getPosition();

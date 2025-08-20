@@ -45,11 +45,11 @@ import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.EscapePods;
 import megamek.common.game.Game;
 import megamek.common.internationalization.I18n;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
@@ -129,7 +129,7 @@ public class SharedUtility {
             curFacing = step.getFacing();
 
             // check for vertical takeoff
-            if (step.getType() == MoveStepType.VTAKEOFF) {
+            if (step.getType() == MoveStepType.VERTICAL_TAKE_OFF) {
                 rollTarget = ((IAero) entity).checkVerticalTakeOff();
                 checkNag(rollTarget, nagReport, psrList);
             }
@@ -140,7 +140,7 @@ public class SharedUtility {
                 checkNag(rollTarget, nagReport, psrList);
             }
 
-            if (step.getType() == MoveStepType.VLAND) {
+            if (step.getType() == MoveStepType.VERTICAL_LAND) {
                 rollTarget = ((IAero) entity).getLandingControlRoll(step.getVelocity(), curPos, curFacing, true);
                 checkNag(rollTarget, nagReport, psrList);
             }
@@ -161,7 +161,7 @@ public class SharedUtility {
 
         // Atmospheric checks
         if (!game.getBoard(md.getFinalBoardId()).isSpace() && !md.contains(MoveStepType.LAND)
-              && !md.contains(MoveStepType.VLAND)) {
+              && !md.contains(MoveStepType.VERTICAL_LAND)) {
             // check to see if velocity is 2x thrust
             rollTarget = a.checkVelocityDouble(md.getFinalVelocity(),
                   overallMoveType);
@@ -261,7 +261,7 @@ public class SharedUtility {
             final Hex curHex = board.getHex(curPos);
 
             // check for vertical takeoff
-            if ((step.getType() == MoveStepType.VTAKEOFF)
+            if ((step.getType() == MoveStepType.VERTICAL_TAKE_OFF)
                   && entity.isAero()) {
                 rollTarget = ((IAero) entity).checkVerticalTakeOff();
                 checkNag(rollTarget, nagReport, psrList);
@@ -273,7 +273,7 @@ public class SharedUtility {
                 rollTarget = ((IAero) entity).getLandingControlRoll(step.getVelocity(), curPos, curFacing, false);
                 checkNag(rollTarget, nagReport, psrList);
             }
-            if ((step.getType() == MoveStepType.VLAND)
+            if ((step.getType() == MoveStepType.VERTICAL_LAND)
                   && entity.isAero()) {
                 rollTarget = ((IAero) entity).getLandingControlRoll(step.getVelocity(), curPos, curFacing, true);
                 checkNag(rollTarget, nagReport, psrList);
@@ -282,7 +282,7 @@ public class SharedUtility {
             // check for leap
             if (!lastPos.equals(curPos) && (moveType != EntityMovementType.MOVE_JUMP) && (entity instanceof Mek)
                   && !entity.isAirborne() && (step.getClearance() <= 0) // Don't check airborne LAMs
-                  && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING)) {
+                  && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING)) {
                 int leapDistance = (lastElevation + board.getHex(lastPos).getLevel())
                       - (curElevation + curHex.getLevel());
                 if (leapDistance > 2) {
@@ -555,7 +555,7 @@ public class SharedUtility {
 
             if (step.getType() == MoveStepType.UNLOAD) {
                 Targetable targ = step.getTarget(game);
-                if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES)
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES)
                       && (entity instanceof VTOL)
                       && (md.getFinalElevation() > 0)
                       && (targ instanceof Infantry)
@@ -624,7 +624,7 @@ public class SharedUtility {
             // jumped into water?
             Hex hex = game.getBoard(curBoardId).getHex(curPos);
             // check for jumping into heavy woods
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_PSR_JUMP_HEAVY_WOODS)) {
                 rollTarget = entity.checkLandingInHeavyWoods(overallMoveType,
                       hex);
                 checkNag(rollTarget, nagReport, psrList);
@@ -670,7 +670,7 @@ public class SharedUtility {
 
             // Atmospheric checks
             if (!game.getBoard(curBoardId).isSpace() && !md.contains(MoveStepType.LAND)
-                  && !md.contains(MoveStepType.VLAND)) {
+                  && !md.contains(MoveStepType.VERTICAL_LAND)) {
                 // check to see if velocity is 2x thrust
                 rollTarget = a.checkVelocityDouble(md.getFinalVelocity(), overallMoveType);
                 checkNag(rollTarget, nagReport, psrList);
@@ -806,7 +806,7 @@ public class SharedUtility {
                 }
                 if (!game.getBoard().contains(movePath.getFinalCoords())) {
                     movePath.removeLastStep();
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER)) {
                         // Telemissiles shouldn't get aero return option
                         if (entity instanceof TeleMissile) {
                             movePath.addStep(MoveStepType.OFF);
@@ -933,7 +933,7 @@ public class SharedUtility {
             }
 
             if (!game.getBoard().contains(c)) {
-                if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER)) {
                     // Telemissiles shouldn't get a return option
                     if (en instanceof TeleMissile) {
                         md.addStep(MoveStepType.OFF);

@@ -84,7 +84,7 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
         }
 
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GRAPPLING)) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GRAPPLING)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "grappling attack not allowed");
         }
 

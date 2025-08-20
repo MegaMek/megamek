@@ -227,7 +227,8 @@ public class TWDamageManager implements IDamageManager {
         // get the relevant damage for damage thresholding
         int threshDamage = damage;
         // weapon groups only get the damage of one weapon
-        if ((hit.getSingleAV() > -1) && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if ((hit.getSingleAV() > -1) && !game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             threshDamage = hit.getSingleAV();
         }
 
@@ -237,13 +238,13 @@ public class TWDamageManager implements IDamageManager {
         // check capital/standard damage
         if (isCapital &&
               (!entity.isCapitalScale() ||
-                    game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY))) {
+                    game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY))) {
             damage = 10 * damage;
             threshDamage = 10 * threshDamage;
         }
         if (!isCapital &&
               entity.isCapitalScale() &&
-              !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+              !game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             damage = (int) Math.round(damage / 10.0);
             threshDamage = (int) Math.round(threshDamage / 10.0);
         }
@@ -333,7 +334,7 @@ public class TWDamageManager implements IDamageManager {
         // the bonus to the crit roll if using the
         // "advanced determining critical hits rule"
         int critBonus = 0;
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CRIT_ROLL) &&
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CRIT_ROLL) &&
               (damage_orig > 0) &&
               ((entity instanceof Mek) || (entity instanceof ProtoMek))) {
             critBonus = Math.min((damage_orig - 1) / 5, 4);
@@ -542,7 +543,7 @@ public class TWDamageManager implements IDamageManager {
         if ((entity instanceof VTOL) &&
               (hit.getLocation() == VTOL.LOC_ROTOR) &&
               (hit.getGeneralDamageType() != HitData.DAMAGE_PHYSICAL) &&
-              !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_FULL_ROTOR_HITS)) {
+              !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_FULL_ROTOR_HITS)) {
             damage = (damage + 9) / 10;
         }
 
@@ -1036,14 +1037,14 @@ public class TWDamageManager implements IDamageManager {
                 // If we're using optional tank damage thresholds, setup our hit
                 // effects now...
                 if ((entity instanceof Tank) &&
-                      game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD) &&
+                      game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD) &&
                       !((entity instanceof VTOL) || (entity instanceof GunEmplacement))) {
                     int thresh = (int) Math.ceil((game.getOptions()
-                          .booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE) ?
+                          .booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD_VARIABLE) ?
                           entity.getArmor(hit) :
                           entity.getOArmor(hit)) /
                           (double) game.getOptions()
-                                .intOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR));
+                                .intOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD_DIVISOR));
 
                     // adjust for hardened armor
                     if (hardenedArmor &&
@@ -1221,7 +1222,7 @@ public class TWDamageManager implements IDamageManager {
             // be set if IS is damaged, so set it here.
             if ((entity instanceof Tank) &&
                   ((entity.getArmor(hit) < 1) || damageIS) &&
-                  game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD) &&
+                  game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD) &&
                   !((entity instanceof VTOL) || (entity instanceof GunEmplacement))) {
                 ((Tank) entity).setOverThresh(true);
             }
@@ -1278,7 +1279,7 @@ public class TWDamageManager implements IDamageManager {
                     }
 
                     // check for overpenetration
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE)) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_OVER_PENETRATE)) {
                         int opRoll = Compute.d6(1);
                         if (((entity instanceof Jumpship) && !(entity instanceof Warship) && (opRoll > 3)) ||
                               ((entity instanceof Dropship) && (opRoll > 4)) ||
@@ -1315,7 +1316,7 @@ public class TWDamageManager implements IDamageManager {
                     // https://bg.battletech.com/forums/index.php?topic=81913.0 )
                     if (!ammoExplosion &&
                           !nukeS2S &&
-                          !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+                          !game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
                         damage = (int) Math.round(damage / 2.0);
                         critSI = true;
                     }
@@ -1693,7 +1694,7 @@ public class TWDamageManager implements IDamageManager {
                                   !entity.getCrew().isDead() &&
                                   !entity.getCrew().isDoomed() &&
                                   game.getOptions()
-                                        .booleanOption(OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION)) {
+                                        .booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SKIN_OF_THE_TEETH_EJECTION)) {
                                 if (mek.isAutoEject() &&
                                       (!game.getOptions()
                                             .booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
@@ -1727,7 +1728,8 @@ public class TWDamageManager implements IDamageManager {
                                         ((ammoExplosion && !autoEject) || areaSatArty))) {
                                 entity.getCrew().setDoomed(true);
                             }
-                            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
+                            if (game.getOptions()
+                                  .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT)) {
                                 reportVec.addAll(manager.abandonEntity(entity));
                             }
                         }
@@ -1882,7 +1884,8 @@ public class TWDamageManager implements IDamageManager {
                     if (!engineExploded && (numEngineHits >= hitsToDestroy)) {
                         // third engine hit
                         reportVec.addAll(manager.destroyEntity(entity, "engine destruction"));
-                        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
+                        if (game.getOptions()
+                              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT)) {
                             reportVec.addAll(manager.abandonEntity(entity));
                         }
                         entity.setSelfDestructing(false);
@@ -1990,7 +1993,7 @@ public class TWDamageManager implements IDamageManager {
         // ammo explosion
         // destroyed the unit
         if (ammoExplosion &&
-              game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMMUNITION)
+              game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMMUNITION)
               // For 'Meks we care whether there was CASE specifically in the
               // location that went boom...
               &&

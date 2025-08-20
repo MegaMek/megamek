@@ -37,9 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-import megamek.common.units.Entity;
+import megamek.common.enums.MoveStepType;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
+import megamek.common.units.Entity;
 import megamek.utils.MockGenerators;
 import org.junit.jupiter.api.Test;
 
@@ -68,7 +68,7 @@ class AeroPathUtilTest {
         when(mockPath.getFinalVelocity()).thenReturn(0);
         when(mockPath.getFinalNDown()).thenReturn(0);
         when(mockPath.getMpUsed()).thenReturn(0);
-        when(mockPath.contains(MoveStepType.VLAND)).thenReturn(true);
+        when(mockPath.contains(MoveStepType.VERTICAL_LAND)).thenReturn(true);
 
         boolean result = AeroPathUtil.willStall(mockPath);
         assertFalse(result);
@@ -92,7 +92,7 @@ class AeroPathUtilTest {
 
         final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
         when(mockPath.getFinalVelocity()).thenReturn(0);
-        when(mockPath.contains(MoveStepType.VLAND)).thenReturn(true);
+        when(mockPath.contains(MoveStepType.VERTICAL_LAND)).thenReturn(true);
         when(mockPath.contains(MoveStepType.LAND)).thenReturn(true);
 
         boolean result = AeroPathUtil.willCrash(mockPath);

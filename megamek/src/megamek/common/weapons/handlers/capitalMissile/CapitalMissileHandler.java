@@ -36,7 +36,9 @@ package megamek.common.weapons.handlers.capitalMissile;
 
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.RangeType;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
@@ -67,7 +69,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
      */
     public CapitalMissileHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
-        advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
+        advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);
     }
 
     /*
@@ -118,8 +120,8 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             vPhaseReport.addElement(r);
 
             // are we a glancing hit?  Check for this here, report it later
-            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
-                if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS)) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
                     if (getParentBayHandler() != null) {
                         //Use the to-hit value for the bay handler, otherwise toHit is set to Automatic Success
                         WeaponHandler bayHandler = getParentBayHandler();
@@ -132,7 +134,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             }
 
             // Set Margin of Success/Failure and check for Direct Blows
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)
                   && getParentBayHandler() != null) {
                 //Use the to-hit value for the bay handler, otherwise toHit is set to Automatic Success
                 WeaponHandler bayHandler = getParentBayHandler();
@@ -140,7 +142,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             } else {
                 toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
             }
-            bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
+            bDirect = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
                   && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
 
             // Used when using a grounded DropShip with individual weapons
@@ -148,7 +150,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             nDamPerHit = calcDamagePerHit();
 
             // Point Defense fire vs Capital Missiles
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)
                   && getParentBayHandler() != null) {
                 WeaponHandler bayHandler = getParentBayHandler();
                 CounterAV = bayHandler.getCounterAV();

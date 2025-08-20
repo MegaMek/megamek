@@ -40,7 +40,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.LosEffects;
+import megamek.common.Report;
+import megamek.common.SpecialHexDisplay;
+import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.NukeDetonatedAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -105,7 +109,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             int shots = bayW.getCurrentShots();
             // if this option is on, we may have odd amounts of ammo in multiple bins. Only
             // fire rounds that we have.
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_ARTILLERY_MUNITIONS)) {
                 if (bayWAmmo.getUsableShotsLeft() < 1) {
                     nweaponsHit--;
                 } else {

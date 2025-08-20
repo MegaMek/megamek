@@ -35,10 +35,11 @@ package megamek.common.moves;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import megamek.common.GameBoardTestCase;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.enums.MoveStepType;
 import megamek.common.units.BipedMek;
 import megamek.common.units.EntityMovementMode;
-import megamek.common.GameBoardTestCase;
 import megamek.common.units.SupportTank;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -98,17 +99,17 @@ public class JumpTest extends GameBoardTestCase {
             MovePath movePath = getMovePathFor(new BattleArmor(),
                   startingElevation,
                   EntityMovementMode.INF_LEG,
-                  MovePath.MoveStepType.START_JUMP,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.DOWN,
-                  MovePath.MoveStepType.DOWN,
-                  MovePath.MoveStepType.DOWN,
-                  MovePath.MoveStepType.DOWN,
-                  MovePath.MoveStepType.DOWN,
-                  MovePath.MoveStepType.DOWN,
-                  MovePath.MoveStepType.DOWN,
-                  MovePath.MoveStepType.DOWN
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.DOWN,
+                  MoveStepType.DOWN,
+                  MoveStepType.DOWN,
+                  MoveStepType.DOWN,
+                  MoveStepType.DOWN,
+                  MoveStepType.DOWN,
+                  MoveStepType.DOWN,
+                  MoveStepType.DOWN
             );
 
             assertTrue(movePath.isMoveLegal(),
@@ -124,8 +125,8 @@ public class JumpTest extends GameBoardTestCase {
             MovePath movePath = getMovePathFor(new BattleArmor(),
                   startingElevation,
                   EntityMovementMode.INF_LEG,
-                  MovePath.MoveStepType.START_JUMP,
-                  MovePath.MoveStepType.FORWARDS
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS
             );
 
             assertTrue(movePath.isMoveLegal(),
@@ -142,10 +143,10 @@ public class JumpTest extends GameBoardTestCase {
             MovePath movePath = getMovePathFor(new BattleArmor(),
                   startingElevation,
                   EntityMovementMode.INF_LEG,
-                  MovePath.MoveStepType.START_JUMP,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS
             );
 
             assertFalse(movePath.isMoveLegal(),
@@ -161,9 +162,9 @@ public class JumpTest extends GameBoardTestCase {
             MovePath movePath = getMovePathFor(new BattleArmor(),
                   startingElevation,
                   EntityMovementMode.INF_LEG,
-                  MovePath.MoveStepType.START_JUMP,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.UP
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.UP
             );
 
             assertFalse(movePath.isMoveLegal(),
@@ -177,11 +178,11 @@ public class JumpTest extends GameBoardTestCase {
             setBoard("BOARD_MORE_FORGIVING");
             MovePath movePath = getMovePathFor(new BattleArmor(),
                   EntityMovementMode.INF_LEG,
-                  MovePath.MoveStepType.START_JUMP,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.DOWN
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.DOWN
             );
 
             assertTrue(movePath.isMoveLegal(),
@@ -195,12 +196,12 @@ public class JumpTest extends GameBoardTestCase {
             setBoard("BOARD_1x6_START_LOW");
             MovePath movePath = getMovePathFor(new BattleArmor(),
                   EntityMovementMode.INF_LEG,
-                  MovePath.MoveStepType.START_JUMP,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.DOWN
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.DOWN
             );
 
             assertFalse(movePath.isMoveLegal(),
@@ -213,11 +214,11 @@ public class JumpTest extends GameBoardTestCase {
         void cantJumpIntoTheBuildingThroughTheWindowWithNoLOS() {
             setBoard("BOARD_1x6_START_LOW");
             MovePath movePath = getMovePathFor(new BattleArmor(), EntityMovementMode.INF_LEG,
-                  MovePath.MoveStepType.START_JUMP,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.DOWN
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.DOWN
             );
 
             assertFalse(movePath.isMoveLegal(), "A BA can jump into a building lower floors coming from an exit side" +
@@ -229,12 +230,12 @@ public class JumpTest extends GameBoardTestCase {
         void cantJumpIntoTheBuildingThroughTheWindowButItsOnSameLevelOfNeighboringBuilding() {
             setBoard("BOARD_1x6_START_LOW");
             MovePath movePath = getMovePathFor(new BattleArmor(), EntityMovementMode.INF_LEG,
-                  MovePath.MoveStepType.START_JUMP,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.DOWN,
-                  MovePath.MoveStepType.DOWN
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.DOWN,
+                  MoveStepType.DOWN
             );
 
             assertFalse(movePath.isMoveLegal(), "A BA cant jump into a building lower floors coming from a side " +
@@ -248,13 +249,13 @@ public class JumpTest extends GameBoardTestCase {
             setBoard("BOARD_1x6_START_LOW");
             MovePath movePath = getMovePathFor(new BattleArmor(),
                   EntityMovementMode.INF_LEG,
-                  MovePath.MoveStepType.START_JUMP,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.DOWN
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.DOWN
             );
 
             assertFalse(movePath.isMoveLegal(),
@@ -268,12 +269,12 @@ public class JumpTest extends GameBoardTestCase {
             setBoard("BOARD_1x6_START_LOW");
             MovePath movePath = getMovePathFor(new BattleArmor(),
                   EntityMovementMode.INF_LEG,
-                  MovePath.MoveStepType.START_JUMP,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS
             );
 
             assertTrue(movePath.isMoveLegal(),
@@ -286,14 +287,14 @@ public class JumpTest extends GameBoardTestCase {
             setBoard("BOARD_1x6_START_LOW");
             MovePath movePath = getMovePathFor(new BattleArmor(),
                   EntityMovementMode.INF_LEG,
-                  MovePath.MoveStepType.START_JUMP,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.DOWN,
-                  MovePath.MoveStepType.DOWN,
-                  MovePath.MoveStepType.DOWN,
-                  MovePath.MoveStepType.DOWN
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.DOWN,
+                  MoveStepType.DOWN,
+                  MoveStepType.DOWN,
+                  MoveStepType.DOWN
             );
             assertFalse(movePath.isMoveLegal(),
                   "A BA cannot jump into a building lower floors comming from an exit side");
@@ -304,13 +305,13 @@ public class JumpTest extends GameBoardTestCase {
         void bipedMekJumpPath() {
             setBoard("BOARD_1x6_START_LOW");
             MovePath movePath = getMovePathFor(new BipedMek(), EntityMovementMode.BIPED,
-                  MovePath.MoveStepType.START_JUMP,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.DOWN
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.DOWN
             );
 
             assertFalse(movePath.isMoveLegal(), "A Mek cannot jump into a building lower floors");
@@ -337,11 +338,11 @@ public class JumpTest extends GameBoardTestCase {
         void bipedMekJumpPath() {
             setBoard("BOARD_JUMP_INTO_BUILDING");
             MovePath movePath = getMovePathFor(new BipedMek(), EntityMovementMode.BIPED,
-                  MovePath.MoveStepType.START_JUMP,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS);
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS);
             assertMovePathElevations(movePath,
                   ExpectedElevation.of(0, "Jumping from the ground, level 0"),
                   ExpectedElevation.of(4, "Jumping from the ground, level 0 with height 4"),
@@ -354,11 +355,11 @@ public class JumpTest extends GameBoardTestCase {
         void wigeJumpMovePath() {
             setBoard("BOARD_JUMP_INTO_BUILDING");
             MovePath movePath = getMovePathFor(new SupportTank(), EntityMovementMode.WIGE,
-                  MovePath.MoveStepType.START_JUMP,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS);
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS);
             assertMovePathElevations(movePath,
                   ExpectedElevation.of(1, "Jumping from the ground, level 0, wige +1 elevation"),
                   ExpectedElevation.of(5, "Jumping from the ground, level 0 with height 4, wige +1 elevation"),
@@ -372,11 +373,11 @@ public class JumpTest extends GameBoardTestCase {
         void hoverJumpPath() {
             setBoard("BOARD_JUMP_INTO_BUILDING");
             MovePath movePath = getMovePathFor(new SupportTank(), EntityMovementMode.HOVER,
-                  MovePath.MoveStepType.START_JUMP,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS);
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS);
             assertMovePathElevations(movePath,
                   ExpectedElevation.of(0, "Jumping from the ground, level 0"),
                   ExpectedElevation.of(4, "Jumping from the ground, level 0 with height 4"),
@@ -405,11 +406,11 @@ public class JumpTest extends GameBoardTestCase {
         void testJumpMovePath() {
             setBoard("BOARD_MISC_TILES");
             MovePath movePath = getMovePathFor(new BipedMek(), EntityMovementMode.BIPED,
-                  MovePath.MoveStepType.START_JUMP,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS);
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS);
             assertMovePathElevations(movePath, 4, 4, 2, -2, 1);
         }
 
@@ -417,11 +418,11 @@ public class JumpTest extends GameBoardTestCase {
         void wigeJumpMovePath() {
             setBoard("BOARD_MISC_TILES");
             MovePath movePath = getMovePathFor(new SupportTank(), EntityMovementMode.WIGE,
-                  MovePath.MoveStepType.START_JUMP,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS);
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS);
             assertMovePathElevations(movePath, 5, 5, 3, 1, 2);
         }
 
@@ -429,11 +430,11 @@ public class JumpTest extends GameBoardTestCase {
         void testHoverJumpMovePath() {
             setBoard("BOARD_MISC_TILES");
             MovePath movePath = getMovePathFor(new SupportTank(), EntityMovementMode.HOVER,
-                  MovePath.MoveStepType.START_JUMP,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS,
-                  MovePath.MoveStepType.FORWARDS);
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS);
             assertMovePathElevations(movePath, 4, 4, 2, 0, 1);
         }
     }

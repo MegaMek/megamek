@@ -456,7 +456,7 @@ public class WeaponFireInfo {
             }
 
             // Handle woods blocking cluster shots
-            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_WOODS_COVER)) {
                 // SRMs, LB-X, Flak AC, AC-2 derivatives, MGs, smaller LRMs,
                 // and Silver Bullet Gauss are among the weapons
                 // that lose all effectiveness if this rule is
@@ -498,7 +498,7 @@ public class WeaponFireInfo {
             int bayBuilding = 0;
             for (WeaponMounted bayWeapon : weapon.getBayWeapons()) {
                 WeaponType weaponType = bayWeapon.getType();
-                int maxRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
+                int maxRange = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
                       ? weaponType.getExtremeRange()
                       : weaponType.getLongRange();
                 int targetDistance = getShooter().getPosition().distance(getTarget().getPosition());

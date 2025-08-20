@@ -282,7 +282,7 @@ public class EquipChoicePanel extends JPanel {
         }
 
         // Set up rapid fire mg; per errata infantry of any kind cannot use them
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST) &&
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BURST) &&
               !(entity instanceof Infantry)) {
             setupRapidFireMGs();
             add(panRapidFireMGs, GBC.eop().anchor(GridBagConstraints.CENTER));
@@ -603,7 +603,7 @@ public class EquipChoicePanel extends JPanel {
             for (AmmoType atCheck : vAllTypes) {
                 if (entity.hasETypeFlag(Entity.ETYPE_AERO) &&
                       !atCheck.canAeroUse(game.getOptions()
-                            .booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))) {
+                            .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_ARTILLERY_MUNITIONS))) {
                     continue;
                 }
                 SimpleTechLevel legalLevel = SimpleTechLevel.getGameTechLevel(game);
@@ -678,7 +678,7 @@ public class EquipChoicePanel extends JPanel {
             }
             if ((vTypes.isEmpty()) &&
                   !client.getGame().getOptions().booleanOption(OptionsConstants.BASE_LOBBY_AMMO_DUMP) &&
-                  !client.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) {
+                  !client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HOT_LOAD)) {
                 continue;
             }
             MunitionChoicePanel munitionChoicePanel = new MunitionChoicePanel(ammoMounted,
@@ -716,8 +716,10 @@ public class EquipChoicePanel extends JPanel {
         panBombs.setLayout(gbl);
 
         int techLevel = Arrays.binarySearch(TechConstants.T_SIMPLE_NAMES,
-              client.getGame().getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
-        boolean allowNukes = client.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES);
+              client.getGame().getOptions().stringOption(OptionsConstants.ALLOWED_TECH_LEVEL));
+        boolean allowNukes = client.getGame()
+              .getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AT2_NUKES);
         m_bombs = new BombChoicePanel((IBomber) entity, allowNukes, techLevel >= TechConstants.T_SIMPLE_ADVANCED);
         panBombs.add(m_bombs, GBC.std());
     }

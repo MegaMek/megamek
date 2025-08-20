@@ -42,14 +42,14 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.SensorRangeSprite;
 import megamek.common.board.Board;
-import megamek.common.compute.Compute;
 import megamek.common.board.Coords;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
+import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
+import megamek.common.units.Entity;
 
 public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements IPreferenceChangeListener {
 
@@ -108,8 +108,8 @@ public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements 
         int maxAirSensorRange = 0;
         var gameOptions = game.getOptions();
 
-        if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
-              || (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS))
+        if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS)
+              || (gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS))
               && entity.isSpaceborne()) {
             Compute.SensorRangeHelper srh = Compute.getSensorRanges(entity.getGame(), entity);
 

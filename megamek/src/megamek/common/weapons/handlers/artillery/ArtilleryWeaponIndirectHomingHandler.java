@@ -40,14 +40,18 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
 
-import megamek.common.*;
-import megamek.common.board.Coords;
-import megamek.common.compute.Compute;
-import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.AmmoType.AmmoTypeEnum;
+import megamek.common.Hex;
+import megamek.common.Messages;
+import megamek.common.Report;
+import megamek.common.TagInfo;
+import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
@@ -77,8 +81,8 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
     public ArtilleryWeaponIndirectHomingHandler(ToHitData toHitData,
           WeaponAttackAction weaponAttackAction, Game game, TWGameManager gameManager) {
         super(toHitData, weaponAttackAction, game, gameManager);
-        advancedAMS = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMS);
-        advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
+        advancedAMS = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS);
+        advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);
     }
 
     /*
@@ -187,7 +191,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
-        bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
+        bDirect = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
               && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
@@ -456,7 +460,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
      */
     @Override
     protected boolean checkPDConditions() {
-        advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
+        advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);
         return (target != null) && advancedPD && (target.getTargetType() == Targetable.TYPE_ENTITY);
     }
 

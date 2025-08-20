@@ -35,9 +35,10 @@ package megamek.common.moves;
 import java.util.EnumSet;
 import java.util.Set;
 
-import megamek.common.units.Entity;
+import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
 import megamek.common.pathfinder.CachedEntityState;
+import megamek.common.units.Entity;
 
 /**
  * This class handles the careful stand step of a unit. It is used in the MoveStep compilation to calculate the movement
@@ -47,10 +48,10 @@ import megamek.common.pathfinder.CachedEntityState;
  * @since 0.50.07
  */
 class CarefulStandStep implements PhasePass {
-    private static final EnumSet<MovePath.MoveStepType> TYPES = EnumSet.of(MovePath.MoveStepType.CAREFUL_STAND);
+    private static final EnumSet<MoveStepType> TYPES = EnumSet.of(MoveStepType.CAREFUL_STAND);
 
     @Override
-    public Set<MovePath.MoveStepType> getTypesOfInterest() {
+    public Set<MoveStepType> getTypesOfInterest() {
         return TYPES;
     }
 

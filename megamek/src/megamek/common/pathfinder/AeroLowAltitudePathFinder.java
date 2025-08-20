@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,12 +38,11 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.client.bot.princess.AeroPathUtil;
+import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
-import megamek.common.units.IAero;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
-import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
+import megamek.common.units.IAero;
 
 /**
  * This class is intended to be used by the bot for generating possible paths for aerospace units on a low-altitude
@@ -58,11 +57,6 @@ public class AeroLowAltitudePathFinder extends AeroGroundPathFinder {
 
     public static AeroLowAltitudePathFinder getInstance(Game game) {
         return new AeroLowAltitudePathFinder(game);
-    }
-
-    @Override
-    protected int getMinimumVelocity(IAero mover) {
-        return 1;
     }
 
     @Override
@@ -104,7 +98,7 @@ public class AeroLowAltitudePathFinder extends AeroGroundPathFinder {
     }
 
     /**
-     * Get a list of movement paths with end-of-path altitude adjustments. Irrelevant for low-atmo maps, so simply
+     * Get a list of movement paths with end-of-path altitude adjustments. Irrelevant for low-atmosphere maps, so simply
      * returns the passed-in list.
      */
     @Override
@@ -114,11 +108,11 @@ public class AeroLowAltitudePathFinder extends AeroGroundPathFinder {
 
     // this data structure maps a set of coordinates with facing
     // to a map between height and "used MP".
-    private Map<CoordsWithFacing, Map<Integer, Integer>> visitedCoords = new HashMap<>();
+    private final Map<CoordsWithFacing, Map<Integer, Integer>> visitedCoords = new HashMap<>();
 
     /**
-     * Determines whether or not the given move path is "redundant". In this situation, "redundant" means "there is
-     * already a shorter path that goes to the ending coordinates/facing/height" combo.
+     * Determines whether the given move path is "redundant". In this situation, "redundant" means "there is already a
+     * shorter path that goes to the ending coordinates/facing/height" combo.
      */
     @Override
     protected boolean pathIsRedundant(MovePath mp) {

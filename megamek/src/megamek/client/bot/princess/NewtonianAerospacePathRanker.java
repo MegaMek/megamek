@@ -38,18 +38,18 @@ import java.util.List;
 
 import megamek.client.bot.princess.coverage.Builder;
 import megamek.client.bot.princess.geometry.ConvexBoardArea;
-import megamek.common.board.Board;
-import megamek.common.compute.Compute;
-import megamek.common.compute.ComputeArc;
-import megamek.common.board.Coords;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.units.IAero;
 import megamek.common.LosEffects;
 import megamek.common.OffBoardDirection;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeArc;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.IAero;
 
 public class NewtonianAerospacePathRanker extends BasicPathRanker {
     public NewtonianAerospacePathRanker(Princess owningPrincess) {
@@ -198,7 +198,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker {
      * @return 0 if there's no
      */
     int calculateSensorShadowMod(MovePath path) {
-        if (!path.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)) {
+        if (!path.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_SENSOR_SHADOW)) {
             return 0;
         }
 

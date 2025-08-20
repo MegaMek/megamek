@@ -76,24 +76,24 @@ class ComputeAbilityMods {
         if (null != weapon) {
 
             // Flat -1 for Accurate Weapon
-            if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_POS_ACCURATE)) {
+            if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_ACCURATE)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.AccWeapon"));
             }
             // Flat +1 for Inaccurate Weapon
-            if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_INACCURATE)) {
+            if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_INACCURATE)) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.InAccWeapon"));
             }
             // Stable Weapon - Reduces running/flanking penalty by 1
-            if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON) &&
+            if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_STABLE_WEAPON) &&
                   (attacker.moved == EntityMovementType.MOVE_RUN)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.StableWeapon"));
             }
             // +1 for a Mis-repaired Weapon - See StratOps Partial Repairs
-            if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_MISREPAIRED)) {
+            if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_MISREPAIRED)) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.MisrepairedWeapon"));
             }
             // +1 for a Mis-replaced Weapon - See StratOps Partial Repairs
-            if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_MISREPLACED)) {
+            if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_MIS_REPLACED)) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.MisreplacedWeapon"));
             }
         }
@@ -118,16 +118,17 @@ class ComputeAbilityMods {
             WeaponType weaponType = weapon.getType();
 
             // Unofficial weapon class specialist - Does not have an unspecialized penalty
-            if (attacker.hasAbility(OptionsConstants.UNOFF_GUNNERY_LASER) && weaponType.hasFlag(WeaponType.F_ENERGY)) {
+            if (attacker.hasAbility(OptionsConstants.UNOFFICIAL_GUNNERY_LASER)
+                  && weaponType.hasFlag(WeaponType.F_ENERGY)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunLSkill"));
             }
 
-            if (attacker.hasAbility(OptionsConstants.UNOFF_GUNNERY_BALLISTIC)
+            if (attacker.hasAbility(OptionsConstants.UNOFFICIAL_GUNNERY_BALLISTIC)
                   && weaponType.hasFlag(WeaponType.F_BALLISTIC)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunBSkill"));
             }
 
-            if (attacker.hasAbility(OptionsConstants.UNOFF_GUNNERY_MISSILE)
+            if (attacker.hasAbility(OptionsConstants.UNOFFICIAL_GUNNERY_MISSILE)
                   && weaponType.hasFlag(WeaponType.F_MISSILE)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunMSkill"));
             }

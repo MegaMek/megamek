@@ -87,7 +87,9 @@ import megamek.client.ui.util.UIUtil.OptionPanel;
 import megamek.client.ui.util.UIUtil.TipButton;
 import megamek.client.ui.util.UIUtil.TipLabel;
 import megamek.client.ui.util.UIUtil.TipTextField;
-import megamek.common.*;
+import megamek.common.OffBoardDirection;
+import megamek.common.Player;
+import megamek.common.Team;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -612,7 +614,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         // the newly selected home edge.
         OffBoardDirection direction = OffBoardDirection.translateStartPosition(getStartPos());
         if (direction != OffBoardDirection.NONE &&
-              gOpts.booleanOption(OptionsConstants.BASE_SET_ARTY_PLAYER_HOMEEDGE)) {
+              gOpts.booleanOption(OptionsConstants.BASE_SET_ARTY_PLAYER_HOME_EDGE)) {
             for (Entity entity : client.getGame().getPlayerEntities(client.getLocalPlayer(), false)) {
                 if (entity.getOffBoardDirection() != OffBoardDirection.NONE) {
                     entity.setOffBoard(entity.getOffBoardDistance(), direction);

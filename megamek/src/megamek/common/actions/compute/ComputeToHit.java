@@ -1197,7 +1197,7 @@ public class ComputeToHit {
 
         // reset cover
         if (swarmLOS.getTargetCover() != LosEffects.COVER_NONE) {
-            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PARTIAL_COVER)) {
                 toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
                 toHit.setCover(swarmLOS.getTargetCover());
             } else {
@@ -1507,7 +1507,7 @@ public class ComputeToHit {
         // +1 to hit if the Kinder Rapid-Fire ACs optional rule is turned on, but only
         // Jams on a 2.
         // See TacOps Autocannons for the rest of the rules
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC) &&
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_KIND_RAPID_AC) &&
               weapon.curMode().equals(Weapon.MODE_AC_RAPID)) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.AcRapid"));
         }

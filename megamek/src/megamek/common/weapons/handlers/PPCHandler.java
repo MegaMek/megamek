@@ -36,7 +36,11 @@ package megamek.common.weapons.handlers;
 
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.CriticalSlot;
+import megamek.common.HitData;
+import megamek.common.RangeType;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
@@ -83,7 +87,7 @@ public class PPCHandler extends EnergyWeaponHandler {
     protected int calcDamagePerHit() {
         double toReturn = wtype.getDamage(nRange);
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ENERGY_WEAPONS)
               && weapon.hasModes()) {
             toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
         }
@@ -100,7 +104,7 @@ public class PPCHandler extends EnergyWeaponHandler {
         }
 
         // Check for Altered Damage from Energy Weapons (TacOps, pg.83)
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ALTDMG)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ALTERNATIVE_DAMAGE)) {
             if (nRange <= 1) {
                 toReturn++;
             } else if (nRange <= wtype.getMediumRange()) {
@@ -110,12 +114,12 @@ public class PPCHandler extends EnergyWeaponHandler {
             }
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
               && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn -= 1;
         }
         if (game.getOptions().booleanOption(
-              OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
+              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
               && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
@@ -148,7 +152,7 @@ public class PPCHandler extends EnergyWeaponHandler {
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         // Resolve roll for disengaged field inhibitors on PPCs, if needed
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PPC_INHIBITORS)
               && weapon.hasModes()
               && weapon.curMode().equals("Field Inhibitor OFF")) {
             int rollTarget = 0;

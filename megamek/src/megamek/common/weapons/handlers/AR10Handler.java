@@ -36,17 +36,17 @@ package megamek.common.weapons.handlers;
 
 import java.util.Vector;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.units.Building;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.Report;
-import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -123,7 +123,7 @@ public class AR10Handler extends AmmoWeaponHandler {
 
             // Set Margin of Success/Failure and check for Direct Blows
             toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
-            bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
+            bDirect = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
                   && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
 
             //This has to be up here so that we don't screw up glancing/direct blow reports

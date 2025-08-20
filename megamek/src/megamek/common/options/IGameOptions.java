@@ -73,7 +73,7 @@ public interface IGameOptions {
     String getOptionListString(String separator, String groupKey);
 
     /**
-     * Returns the <code>Enumeration</code> of the option groups in thioptions container.
+     * Returns the <code>Enumeration</code> of the option groups in the options container.
      *
      * @return <code>Enumeration</code> of the <code>IOptionGroup</code>
      */
@@ -88,9 +88,9 @@ public interface IGameOptions {
     Enumeration<IOption> getOptions();
 
     /**
-     * Returns a collection of all of the options in this options container, regardless of whether they're
-     * active/selected or not. Note that this Collection is unmodifiable, but the contained IOptions are not copied, so
-     * changing their state will affect this options object.
+     * Returns a collection of all the options in this options container, regardless of whether they're active/selected
+     * or not. Note that this Collection is unmodifiable, but the contained IOptions are not copied, so changing their
+     * state will affect this options object.
      *
      * @return A collection containing all IOptions of this options object
      */

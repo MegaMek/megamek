@@ -67,20 +67,20 @@ import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
 import megamek.client.ui.panels.phaseDisplay.PhysicalDisplay;
 import megamek.client.ui.panels.phaseDisplay.TargetingPhaseDisplay;
 import megamek.client.ui.panels.phaseDisplay.commands.MoveCommand;
-import megamek.common.*;
-import megamek.common.board.Board;
-import megamek.common.board.BoardLocation;
-import megamek.common.board.Coords;
-import megamek.common.comparators.WeaponComparatorDamage;
-import megamek.common.game.Game;
-import megamek.common.rolls.TargetRoll;
-import megamek.common.units.*;
-import megamek.common.units.Building.DemolitionCharge;
+import megamek.common.Hex;
+import megamek.common.HexTarget;
+import megamek.common.Player;
+import megamek.common.SpecialHexDisplay;
+import megamek.common.ToHitData;
 import megamek.common.actions.BAVibroClawAttackAction;
 import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.GrappleAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.comparators.WeaponComparatorDamage;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentFlag;
 import megamek.common.equipment.EquipmentMode;
@@ -90,7 +90,11 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.*;
+import megamek.common.units.Building.DemolitionCharge;
 import megamek.common.weapons.other.clan.CLFireExtinguisher;
 import megamek.common.weapons.other.innerSphere.ISFireExtinguisher;
 import megamek.logging.MMLogger;
@@ -907,7 +911,7 @@ public class MapMenu extends JPopupMenu {
                 menu.add(item);
             }
 
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_EVADE)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_EVADE)) {
                 item = new JMenuItem(Messages.getString("MovementDisplay.butEvade"));
                 item.setActionCommand(MoveCommand.MOVE_EVADE.getCmd());
                 item.addActionListener(evt -> {
@@ -920,7 +924,7 @@ public class MapMenu extends JPopupMenu {
                 menu.add(item);
             }
 
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_ADVANCED_MANEUVERS)) {
                 item = new JMenuItem(Messages.getString("MovementDisplay.butEvade"));
                 item.setActionCommand(MoveCommand.MOVE_BOOTLEGGER.getCmd());
                 item.addActionListener(evt -> {
@@ -935,7 +939,7 @@ public class MapMenu extends JPopupMenu {
 
             if (game.getPlanetaryConditions().isRecklessConditions()
                   && !board.isSpace()
-                  && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {
+                  && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_NO_NIGHT_MOVE_PEN)) {
                 item = new JMenuItem(Messages.getString("MovementDisplay.butReckless"));
                 item.setActionCommand(MoveCommand.MOVE_RECKLESS.getCmd());
                 item.addActionListener(evt -> {
@@ -1010,7 +1014,7 @@ public class MapMenu extends JPopupMenu {
 
             menu.add(item);
 
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_EVADE)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_EVADE)) {
                 item = new JMenuItem(Messages.getString("MovementDisplay.butEvade"));
                 item.setActionCommand(MoveCommand.MOVE_EVADE.getCmd());
                 item.addActionListener(evt -> {
@@ -1025,7 +1029,7 @@ public class MapMenu extends JPopupMenu {
 
             if (game.getPlanetaryConditions().isRecklessConditions()
                   && !board.isSpace()
-                  && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {
+                  && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_NO_NIGHT_MOVE_PEN)) {
                 item = new JMenuItem(Messages.getString("MovementDisplay.butReckless"));
                 item.setActionCommand(MoveCommand.MOVE_RECKLESS.getCmd());
                 item.addActionListener(evt -> {
@@ -1281,13 +1285,13 @@ public class MapMenu extends JPopupMenu {
             menu.setText("Stand");
             menu.add(createStandJMenuItem(false));
 
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND) &&
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CAREFUL_STAND) &&
                   (myEntity.getWalkMP() > 2) &&
                   (myEntity.moved == EntityMovementType.MOVE_NONE)) {
                 menu.add(createStandJMenuItem(true));
             }
 
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN)) {
                 menu.add(createHullDownJMenuItem());
             }
 
@@ -1295,7 +1299,7 @@ public class MapMenu extends JPopupMenu {
             menu.setText("Stand");
             menu.add(createStandJMenuItem(false));
 
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CAREFUL_STAND)) {
                 menu.add(createStandJMenuItem(true));
             }
 
@@ -1304,7 +1308,7 @@ public class MapMenu extends JPopupMenu {
             menu.setText("Prone");
             menu.add(createProneJMenuItem());
 
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN)) {
                 menu.add(createHullDownJMenuItem());
             }
         }
@@ -1432,7 +1436,7 @@ public class MapMenu extends JPopupMenu {
         final boolean isTargetingDisplay = (currentPanel instanceof TargetingPhaseDisplay);
         final boolean canStartFires = client.getGame()
               .getOptions()
-              .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE);
+              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_START_FIRE);
 
         Player localPlayer = client.getLocalPlayer();
 

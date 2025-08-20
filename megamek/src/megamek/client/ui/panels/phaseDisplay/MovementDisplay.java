@@ -36,7 +36,7 @@ package megamek.client.ui.panels.phaseDisplay;
 import static megamek.common.LandingDirection.HORIZONTAL;
 import static megamek.common.LandingDirection.VERTICAL;
 import static megamek.common.equipment.MiscType.F_CHAFF_POD;
-import static megamek.common.options.OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES;
+import static megamek.common.options.OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -97,6 +97,7 @@ import megamek.common.board.BoardHelper;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.DockingCollar;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
@@ -109,14 +110,13 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.game.GameTurn;
 import megamek.common.game.IGame;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.pathfinder.AbstractPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
+import megamek.common.pathfinder.StopConditionTimeout;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
@@ -727,7 +727,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // Infantry - Digging in, TO:AR p.106; could add terrain checking and restrict to first action here
         boolean canDigIn = (selectedUnit instanceof Infantry infantry)
-              && gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_DIG_IN)
+              && gameOptions.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_DIG_IN)
               && game.isOnGroundMap(selectedUnit)
               && (selectedUnit.getAltitude() == 0)
               && (selectedUnit.getElevation() == 0)
@@ -755,7 +755,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         updateFleeButton();
 
-        if (gameOptions.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT) &&
+        if (gameOptions.booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT) &&
               (selectedUnit instanceof Tank)) {
             // Vehicles don't have ejection systems, so crews abandon, and must enter a valid hex. If they cannot,
             // they can't abandon as per TO pg 197.
@@ -1443,7 +1443,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // check for unsafe takeoffs
         if (needNagForPSR()) {
-            boolean verticalTakeoffOrTakeoff = cmd.contains(MoveStepType.VTAKEOFF) ||
+            boolean verticalTakeoffOrTakeoff = cmd.contains(MoveStepType.VERTICAL_TAKE_OFF) ||
                   cmd.contains(MoveStepType.TAKEOFF);
             if ((currentlySelectedEntity != null) && verticalTakeoffOrTakeoff) {
                 boolean unsecure = false;
@@ -1479,7 +1479,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (needNagForPSR()) {
             if (Compute.useSpheroidAtmosphere(game, currentlySelectedEntity) &&
                   !cmd.contains(MoveStepType.HOVER) &&
-                  !cmd.contains(MoveStepType.VLAND) &&
+                  !cmd.contains(MoveStepType.VERTICAL_LAND) &&
                   !cmd.contains(MoveStepType.UP) &&
                   !cmd.contains(MoveStepType.DOWN)) {
                 String title = Messages.getString("MovementDisplay.areYouSure");
@@ -1545,7 +1545,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       unusedVelocity &&
                       !offOrReturn &&
                       !cmd.contains(MoveStepType.LAND) &&
-                      !cmd.contains(MoveStepType.VLAND) &&
+                      !cmd.contains(MoveStepType.VERTICAL_LAND) &&
                       !cmd.contains(MoveStepType.EJECT) &&
                       !cmd.contains(MoveStepType.FLEE)) {
                     String title = Messages.getString("MovementDisplay.VelocityLeft.title");
@@ -1597,9 +1597,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         if (needNagForOther()) {
-            boolean landOrVerticalLand = cmd.contains(MoveStepType.LAND) || cmd.contains(MoveStepType.VLAND);
+            boolean landOrVerticalLand = cmd.contains(MoveStepType.LAND) || cmd.contains(MoveStepType.VERTICAL_LAND);
             if ((currentlySelectedEntity != null) && landOrVerticalLand) {
-                Set<Coords> landingPath = ((IAero) currentlySelectedEntity).getLandingCoords(cmd.contains(MoveStepType.VLAND),
+                Set<Coords> landingPath = ((IAero) currentlySelectedEntity).getLandingCoords(cmd.contains(MoveStepType.VERTICAL_LAND),
                       cmd.getFinalCoords(),
                       cmd.getFinalFacing());
                 if (landingPath.stream()
@@ -1821,7 +1821,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 lpf = LongestPathFinder.newInstanceOfLongestPath(maxMp, stepType, ce().getGame());
             }
             final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
-            lpf.addStopCondition(new AbstractPathFinder.StopConditionTimeout<>(timeLimit * 4));
+            lpf.addStopCondition(new StopConditionTimeout<>(timeLimit * 4));
 
             lpf.run(cmd);
             MovePath lPath = lpf.getComputedPath(dest);
@@ -2050,7 +2050,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     } else {
                         toDefender = ChargeAttackAction.getDamageFor(
                               currentlySelectedEntity, game.getOptions()
-                                    .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE),
+                                    .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE),
                               cmd.getHexesMoved());
                         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
                             Entity te = (Entity) target;
@@ -2058,7 +2058,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                   te,
                                   game
                                         .getOptions()
-                                        .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE),
+                                        .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE),
                                   cmd.getHexesMoved());
                         } else if ((target.getTargetType() == Targetable.TYPE_FUEL_TANK) ||
                               (target.getTargetType() == Targetable.TYPE_BUILDING)) {
@@ -2193,7 +2193,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         boolean isInfantry = (ce() instanceof Infantry);
 
         // Infantry - Taking Cover
-        if (isInfantry && gOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_TAKE_COVER)) {
+        if (isInfantry && gOpts.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_TAKE_COVER)) {
             // Determine the current position of the infantry
             Coords pos;
             int elevation;
@@ -2257,7 +2257,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 if (cmd.getLastStep() != null) {
                     boolean hullDownEnabled = game
                           .getOptions()
-                          .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
+                          .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN);
                     Hex occupiedHex = game.getBoard(ce)
                           .getHex(cmd.getLastStep().getPosition());
                     boolean fortifiedHex = occupiedHex.containsTerrain(Terrains.FORTIFIED);
@@ -2285,7 +2285,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
               ((cmd.getMpUsed() <= ce.getWalkMP()) ||
                     (cmd.getLastStep().isOnlyPavementOrRoad() &&
                           (cmd.getMpUsed() <= (ce.getWalkMP() + 1)))) &&
-              !(opts.booleanOption(OptionsConstants.ADVANCED_TACOPS_TANK_CREWS) &&
+              !(opts.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_TANK_CREWS) &&
                     (cmd.getMpUsed() > 0) &&
                     (ce instanceof Tank) &&
                     (ce.getCrew().getSize() < 2)));
@@ -2348,7 +2348,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private boolean usingAeroOnGroundMovement() {
-        return game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_GROUND_MOVE);
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_GROUND_MOVE);
     }
 
     /**
@@ -2515,14 +2515,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // allow to accelerate/decelerate next if acceleration/deceleration hasn't been used
         setAccNEnabled(false);
         setDecNEnabled(false);
-        if (Stream.of(MoveStepType.ACC, MoveStepType.DEC, MoveStepType.DECN)
+        if (Stream.of(MoveStepType.ACC, MoveStepType.DEC, MoveStepType.DECELERATION)
               .noneMatch(moveStepType -> cmd.contains(moveStepType))) {
             setAccNEnabled(true);
         }
 
         if (!cmd.contains(MoveStepType.ACC) &&
               !cmd.contains(MoveStepType.DEC) &&
-              !cmd.contains(MoveStepType.ACCN) &&
+              !cmd.contains(MoveStepType.ACCELERATION) &&
               (nextVelocity > 0)) {
             setDecNEnabled(true);
         }
@@ -2714,7 +2714,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_EVADE)) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_EVADE)) {
             return;
         }
 
@@ -2735,7 +2735,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         if (!game
               .getOptions()
-              .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
+              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_ADVANCED_MANEUVERS)) {
             return;
         }
 
@@ -2789,7 +2789,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         if (!game
               .getOptions()
-              .booleanOption(OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT)) {
+              .booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SELF_DESTRUCT)) {
             return;
         }
 
@@ -2931,7 +2931,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private void updateStrafeButton() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VTOL_STRAFING)) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VTOL_STRAFING)) {
             return;
         }
 
@@ -2953,7 +2953,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (ce().isBomber()
               && ((ce() instanceof LandAirMek)
               || game.getOptions()
-              .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS))
+              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VTOL_ATTACKS))
               && ((IBomber) ce()).getBombPoints() > 0) {
             setBombEnabled(true);
         }
@@ -3040,7 +3040,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             canUnloadHere = unloadableUnits.stream()
                   .anyMatch(en -> en.isElevationValid(unloadEl, hex) || (en.getJumpMP() > 0));
             // Zip lines, TO pg 219
-            if (game.getOptions().booleanOption(ADVGRNDMOV_TACOPS_ZIPLINES) && (ce instanceof VTOL)) {
+            if (game.getOptions().booleanOption(ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES) && (ce instanceof VTOL)) {
                 canUnloadHere |= unloadableUnits.stream()
                       .filter(Entity::isInfantry)
                       .anyMatch(en -> !((Infantry) en).isMechanized());
@@ -3726,7 +3726,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
      * Joining a squadron - Similar to fighter recovery. You can fly up and join a squadron or another solo fighter
      */
     private synchronized void updateJoinButton() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER)) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_CAPITAL_FIGHTER)) {
             return;
         }
 
@@ -4605,7 +4605,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // A non-QuadVee `Mek that is using tracked movement is limited to walking
             maxMP = en.getWalkMP();
         } else {
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_SPRINT)) {
                 maxMP = en.getSprintMP();
             } else {
                 maxMP = en.getRunMP();
@@ -4760,7 +4760,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         LongestPathFinder lpf = LongestPathFinder.newInstanceOfLongestPath(maxMP, stepType, currentEntity.getGame());
         final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
-        AbstractPathFinder.StopConditionTimeout<MovePath> timeoutCondition = new AbstractPathFinder.StopConditionTimeout<>(
+        StopConditionTimeout<MovePath> timeoutCondition = new StopConditionTimeout<>(
               timeLimit * 10);
         lpf.addStopCondition(timeoutCondition);
         lpf.run(movePath);
@@ -5045,7 +5045,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 clear();
             }
 
-            if (opts.booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND) && (entity.getWalkMP() > 2)) {
+            if (opts.booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CAREFUL_STAND)
+                  && (entity.getWalkMP() > 2)) {
                 String title = Messages.getString("MovementDisplay.CarefulStand.title");
                 String body = Messages.getString("MovementDisplay.CarefulStand.message");
                 boolean response = clientgui.doYesNoDialog(title, body);
@@ -5113,7 +5114,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_FLY_OFF.getCmd()) &&
               clientgui.doYesNoDialog(Messages.getString("MovementDisplay.FlyOffDialog.title"),
                     Messages.getString("MovementDisplay.FlyOffDialog.message"))) {
-            if (opts.booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER) &&
+            if (opts.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER) &&
                   clientgui.doYesNoDialog(Messages.getString("MovementDisplay.ReturnFly.title"),
                         Messages.getString("MovementDisplay.ReturnFly.message"))) {
                 addStepToMovePath(MoveStepType.RETURN);
@@ -5316,10 +5317,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
             updateMove();
         } else if (actionCmd.equals(MoveCommand.MOVE_ACCELERATION.getCmd())) {
             removeIllegalSteps();
-            addStepToMovePath(MoveStepType.ACCN);
+            addStepToMovePath(MoveStepType.ACCELERATION);
         } else if (actionCmd.equals(MoveCommand.MOVE_DECELERATION.getCmd())) {
             removeIllegalSteps();
-            addStepToMovePath(MoveStepType.DECN);
+            addStepToMovePath(MoveStepType.DECELERATION);
         } else if (actionCmd.equals(MoveCommand.MOVE_ACC.getCmd())) {
             addStepToMovePath(MoveStepType.ACC);
             computeMovementEnvelope(entity);
@@ -5449,7 +5450,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.TakeOffDialog.title"),
                   Messages.getString("MovementDisplay.TakeOffDialog.message"))) {
                 clear();
-                addStepToMovePath(MoveStepType.VTAKEOFF);
+                addStepToMovePath(MoveStepType.VERTICAL_TAKE_OFF);
                 ready();
             }
 
@@ -6207,6 +6208,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private boolean hasLandingMoveStep() {
-        return (cmd != null) && (cmd.contains(MoveStepType.LAND) || cmd.contains(MoveStepType.VLAND));
+        return (cmd != null) && (cmd.contains(MoveStepType.LAND) || cmd.contains(MoveStepType.VERTICAL_LAND));
     }
 }

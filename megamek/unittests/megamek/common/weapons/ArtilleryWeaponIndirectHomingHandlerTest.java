@@ -115,9 +115,9 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
 
         // GameOptions
         GameOptions options = mock(GameOptions.class);
-        when(options.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMS)).thenReturn(false);
-        when(options.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF)).thenReturn(false);
-        when(options.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)).thenReturn("Experimental");
+        when(options.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS)).thenReturn(false);
+        when(options.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE)).thenReturn(false);
+        when(options.stringOption(OptionsConstants.ALLOWED_TECH_LEVEL)).thenReturn("Experimental");
         game.setOptions(options);
 
         // Board

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -227,7 +227,6 @@ public class TargetRoll implements Serializable {
     /**
      * Base removal method
      *
-     * @param modifier
      */
     public void removeModifier(TargetRollModifier modifier) {
         modifiers.remove(modifier);
@@ -239,7 +238,6 @@ public class TargetRoll implements Serializable {
      *
      * @param fragment of mod description to match
      *
-     * @return
      */
     public TargetRollModifier removeModifier(String fragment) {
         List<TargetRollModifier> mods = removeModifiers(List.of(fragment));
@@ -304,7 +302,7 @@ public class TargetRoll implements Serializable {
     /**
      * Remove all automatic failures or successes, and possibly also remove impossibles.
      *
-     * @param removeImpossibles When true, IMPOSSIBLEs are also removed
+     * @param removeImpossibles When true, IMPOSSIBLEEs are also removed
      */
     public void removeAutos(boolean removeImpossibles) {
         if (removeImpossibles) {

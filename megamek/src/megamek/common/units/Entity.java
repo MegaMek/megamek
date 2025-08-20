@@ -100,7 +100,6 @@ import megamek.common.interfaces.RoundUpdated;
 import megamek.common.jacksonAdapters.EntityDeserializer;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IGameOptions;
@@ -2944,7 +2943,7 @@ public abstract class Entity extends TurnOrdered
                   (ammotype == AmmoType.AmmoTypeEnum.PAC)) &&
                   mounted.isJammed() &&
                   !mounted.isDestroyed() &&
-                  game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {
+                  game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC)) {
                 return true;
             }
         }
@@ -3145,7 +3144,7 @@ public abstract class Entity extends TurnOrdered
      * @return The number of movement points (MP) lost due to the current heat level of the unit
      */
     public int getHeatMPReduction() {
-        if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
+        if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT)) {
             if (heat < 30) {
                 return heat / 5;
             } else if (heat >= 49) {
@@ -4010,7 +4009,7 @@ public abstract class Entity extends TurnOrdered
         if (heat >= 24) {
             mod++;
         }
-        boolean mtHeat = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT);
+        boolean mtHeat = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT);
         if (mtHeat && (heat >= 33)) {
             mod++;
         }
@@ -4020,7 +4019,7 @@ public abstract class Entity extends TurnOrdered
         if (mtHeat && (heat >= 48)) {
             mod++;
         }
-        if ((mod > 0) && (getCrew() != null) && hasAbility(OptionsConstants.UNOFF_SOME_LIKE_IT_HOT)) {
+        if ((mod > 0) && (getCrew() != null) && hasAbility(OptionsConstants.UNOFFICIAL_SOME_LIKE_IT_HOT)) {
             mod--;
         }
 
@@ -4687,7 +4686,7 @@ public abstract class Entity extends TurnOrdered
         for (BombMounted m : getBombs()) {
             // Add the space bomb attack
             if (!foundSpaceBomb &&
-                  game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB) &&
+                  game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_SPACE_BOMB) &&
                   m.getType().hasFlag(AmmoType.F_SPACE_BOMB) &&
                   isBomber() &&
                   isSpaceborne()) {
@@ -5619,7 +5618,7 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean hasActiveECM(boolean stealth) {
         // no ECM in space unless strat op option enabled
-        if (isSpaceborne() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+        if (isSpaceborne() && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM)) {
             return false;
         }
         if (!isShutDown()) {
@@ -5695,11 +5694,11 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean hasActiveECCM() {
         // no ECM in space unless strat op option enabled
-        if (isSpaceborne() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+        if (isSpaceborne() && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM)) {
             return false;
         }
-        if ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM) ||
-              game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) && !isShutDown()) {
+        if ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_ECCM) ||
+              game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM)) && !isShutDown()) {
             for (MiscMounted m : getMisc()) {
                 MiscType type = m.getType();
                 // TacOps p. 100 Angle ECM can have 1 ECM and 1 ECCM at the same
@@ -5728,7 +5727,7 @@ public abstract class Entity extends TurnOrdered
         }
 
         // no ECM in space unless strat op option enabled
-        if (isSpaceborne() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+        if (isSpaceborne() && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM)) {
             return NONE;
         }
         // If we have stealth up and running, there's no bubble.
@@ -6994,7 +6993,7 @@ public abstract class Entity extends TurnOrdered
             // AMS Bays can fire at all incoming attacks each round So can standard AMS if the unofficial option is
             // turned on
             if ((ams.getType().hasFlag(WeaponType.F_AMS_BAY)) ||
-                  (getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_MULTI_USE_AMS) &&
+                  (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_MULTI_USE_AMS) &&
                         ams.getType().hasFlag(WeaponType.F_AMS))) {
                 attacksInArc.forEach(waa -> waa.addCounterEquipment(ams));
             } else if (ams.getType().hasFlag(WeaponType.F_PD_BAY)) {
@@ -7377,7 +7376,7 @@ public abstract class Entity extends TurnOrdered
             }
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE) && crew.isPilotingFatigued()) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_FATIGUE) && crew.isPilotingFatigued()) {
             roll.addModifier(1, "fatigue");
         }
 
@@ -7408,7 +7407,7 @@ public abstract class Entity extends TurnOrdered
         }
         // check weather conditions for all entities
         int weatherMod = conditions.getWeatherPilotPenalty();
-        boolean hasAllWeather = (null == crew) || !hasAbility(OptionsConstants.UNOFF_ALLWEATHER);
+        boolean hasAllWeather = (null == crew) || !hasAbility(OptionsConstants.UNOFFICIAL_ALL_WEATHER);
         if ((weatherMod != 0) && !isSpaceborne() && hasAllWeather) {
             roll.addModifier(weatherMod, conditions.getWeather().toString());
         }
@@ -7419,7 +7418,7 @@ public abstract class Entity extends TurnOrdered
             roll.addModifier(windMod, conditions.getWind().toString());
         }
 
-        if (!hasAbility(OptionsConstants.UNOFF_ALLWEATHER) &&
+        if (!hasAbility(OptionsConstants.UNOFFICIAL_ALL_WEATHER) &&
               getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
             if (conditions.getWeather().isGustingRain()) {
                 if ((this instanceof Mek) || isAirborne() || getMovementMode().isTrackedOrWheeled()) {
@@ -7436,7 +7435,7 @@ public abstract class Entity extends TurnOrdered
             }
         }
 
-        if (!hasAbility(OptionsConstants.UNOFF_ALLWEATHER) &&
+        if (!hasAbility(OptionsConstants.UNOFFICIAL_ALL_WEATHER) &&
               getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
             if (conditions.getWeather().isHeavySnow()) {
                 roll.addModifier(-1, Messages.getString("PilotingSPA.EnvSpec.SnowSpec"));
@@ -7448,7 +7447,7 @@ public abstract class Entity extends TurnOrdered
             }
         }
 
-        if (!hasAbility(OptionsConstants.UNOFF_ALLWEATHER) &&
+        if (!hasAbility(OptionsConstants.UNOFFICIAL_ALL_WEATHER) &&
               conditions.getWeather().isClear() &&
               getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)) {
             if ((conditions.getWind().isModerateGale()) && isAirborneVTOLorWIGE()) {
@@ -7609,7 +7608,7 @@ public abstract class Entity extends TurnOrdered
     public PilotingRollData checkGunningIt(EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ACCELERATION) &&
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_ACCELERATION) &&
               (this instanceof Tank ||
                     (this instanceof QuadVee && getConversionMode() == QuadVee.CONV_MODE_VEHICLE))) {
             if (((overallMoveType == EntityMovementType.MOVE_SPRINT ||
@@ -9772,7 +9771,7 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean hasDetectedEntity(Player p) {
         // No sensors - no one detects anything
-        if ((game == null) || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+        if ((game == null) || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS)) {
             return false;
         }
         // Null players detect nothing
@@ -9821,9 +9820,9 @@ public abstract class Entity extends TurnOrdered
               (getOwner().getTeam() == spotter.getTeam() &&
                     game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION));
 
-        boolean sensors = (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS) ||
+        boolean sensors = (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS) ||
               game.getOptions()
-                    .booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS));
+                    .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS));
         boolean sensorsDetectAll = game.getOptions().booleanOption(OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
         boolean doubleBlind = game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
 
@@ -10013,7 +10012,7 @@ public abstract class Entity extends TurnOrdered
               (!isImmobile() ||
                     isManualShutdown() ||
                     canUnjamRAC() ||
-                    game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT));
+                    game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT));
     }
 
     public boolean isEligibleForOffboard() {
@@ -10178,7 +10177,7 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean isEligibleForArtyAutoHitHexes() {
         return isEligibleForTargetingPhase() &&
-              (isOffBoard() || game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_ON_MAP_PREDESIGNATE));
+              (isOffBoard() || game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_ON_MAP_PREDESIGNATE));
     }
 
     public boolean isEligibleForTargetingPhase() {
@@ -11006,7 +11005,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     public boolean hasActiveEiCockpit() {
-        return (hasEiCockpit() && hasAbility(OptionsConstants.UNOFF_EI_IMPLANT));
+        return (hasEiCockpit() && hasAbility(OptionsConstants.UNOFFICIAL_EI_IMPLANT));
     }
 
     public boolean isLayingMines() {
@@ -11082,7 +11081,7 @@ public abstract class Entity extends TurnOrdered
 
         boolean targetIsTank = (this instanceof Tank) ||
               (game.getOptions()
-                    .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS) &&
+                    .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS) &&
                     (this instanceof QuadMek));
         if (targetIsTank) {
             if ((leftBetter == 1) && (fa == 150)) {
@@ -11343,7 +11342,7 @@ public abstract class Entity extends TurnOrdered
      * @return The appropriate directional roll modifier.
      */
     public int getMotiveSideMod(int side) {
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_EFFECTIVE)) {
             return 0;
         }
         return switch (side) {
@@ -11650,12 +11649,13 @@ public abstract class Entity extends TurnOrdered
         // squadron... then false.
         if (!lounge &&
               isFighter() &&
-              game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_SINGLE_NO_CAP) &&
+              game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_SINGLE_NO_CAP) &&
               !isPartOfFighterSquadron()) {
             return false;
         }
 
-        return game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER) && isFighter();
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_CAPITAL_FIGHTER)
+              && isFighter();
     }
 
     /** @return True when this unit has capital-scale armor. */
@@ -12053,7 +12053,7 @@ public abstract class Entity extends TurnOrdered
         for (MiscMounted misc : getMisc()) {
             if (misc.getType().hasFlag(MiscType.F_BAP) &&
                   (this instanceof Aero || this instanceof LandAirMek) &&
-                  gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+                  gameOpts.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM)) {
                 ArrayList<String> modes = new ArrayList<>();
                 String[] stringArray = {};
                 modes.add("Short");
@@ -12066,12 +12066,12 @@ public abstract class Entity extends TurnOrdered
                 ArrayList<String> modes = new ArrayList<>();
                 modes.add("ECM");
                 String[] stringArray = {};
-                if (gameOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)) {
+                if (gameOpts.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_ECCM)) {
                     modes.add("ECCM");
                     if (misc.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                         modes.add("ECM & ECCM");
                     }
-                } else if (gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) &&
+                } else if (gameOpts.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM) &&
                       (this instanceof Aero || this instanceof LandAirMek)) {
                     modes.add("ECCM");
                     if (misc.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
@@ -12079,10 +12079,10 @@ public abstract class Entity extends TurnOrdered
                     }
                 }
 
-                if (gameOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET)) {
+                if (gameOpts.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_GHOST_TARGET)) {
                     if (misc.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                         modes.add("ECM & Ghost Targets");
-                        if (gameOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)) {
+                        if (gameOpts.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_ECCM)) {
                             modes.add("ECCM & Ghost Targets");
                         }
                     } else {
@@ -12131,7 +12131,7 @@ public abstract class Entity extends TurnOrdered
         } else if (isAero()) {
             return 3;
         } else {
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SKILLED_EVASION)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_SKILLED_EVASION)) {
                 int piloting = crew.getPiloting();
                 if (piloting < 2) {
                     return 3;
@@ -12779,7 +12779,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     public int countPartialRepairs() {
-        if ((null == game) || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS)) {
+        if ((null == game) || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIAL_REPAIRS)) {
             return 0;
         }
 
@@ -14372,7 +14372,8 @@ public abstract class Entity extends TurnOrdered
 
                 range = WeaponType.AIRBORNE_WEAPON_RANGES[type.getMaxRange(weapon)] * rangeMultiplier;
             } else {
-                range = (game != null && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE) ?
+                range = (game != null && game.getOptions()
+                      .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE) ?
                       type.getExtremeRange() :
                       type.getLongRange());
             }
@@ -15792,7 +15793,7 @@ public abstract class Entity extends TurnOrdered
      * Returns true when this Entity's game is not null and the given boolean game option is active in the game. This is
      * a convenience method to avoid NPEs.
      *
-     * @param optionName The name of the game option, e.g. OptionsConstants.ADVAERORULES_STRATOPS_ECM
+     * @param optionName The name of the game option, e.g. OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM
      *
      * @return True when the Entity is part of a game and the option is active in that game
      */

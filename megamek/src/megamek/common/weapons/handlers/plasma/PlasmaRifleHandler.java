@@ -37,7 +37,10 @@ package megamek.common.weapons.handlers.plasma;
 import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.HitData;
+import megamek.common.RangeType;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
@@ -115,11 +118,11 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         if (target.tracksHeat()) {
             int toReturn = 10;
             toReturn = applyGlancingBlowModifier(toReturn, false);
-            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE) &&
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE) &&
                   (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
                 toReturn -= 1;
             }
-            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE) &&
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE) &&
                   (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
                 toReturn = (int) Math.floor(toReturn / 2.0);
             }

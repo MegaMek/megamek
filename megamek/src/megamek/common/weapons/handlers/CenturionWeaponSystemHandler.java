@@ -36,15 +36,15 @@ package megamek.common.weapons.handlers;
 
 import java.util.Vector;
 
-import megamek.common.battleArmor.BattleArmor;
-import megamek.common.units.Building;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.Report;
-import megamek.common.rolls.Roll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.Roll;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -109,7 +109,7 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
                 entityTarget.setTaserShutdownRounds(1);
             }
         } else { // Otherwise, there's a shutdown check
-            boolean mtHeat = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT);
+            boolean mtHeat = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT);
             int hotDogMod = 0;
             if (entityTarget.hasAbility(OptionsConstants.PILOT_HOT_DOG)) {
                 hotDogMod = 1;

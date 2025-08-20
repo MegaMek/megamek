@@ -106,7 +106,7 @@ class TeamLoadOutGeneratorTest {
         game.setOptions(mockGameOptions);
 
         when(mockGameOptions.booleanOption(eq(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL))).thenReturn(false);
-        when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)).thenReturn("Experimental");
+        when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECH_LEVEL)).thenReturn("Experimental");
         when(mockGameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED)).thenReturn(true);
         when(mockGameOptions.booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT)).thenReturn(false);
         Option mockTrueBoolOpt = mock(Option.class);
@@ -466,7 +466,7 @@ class TeamLoadOutGeneratorTest {
               .findFirst()
               .orElse(null);
         // Set game tech level to Standard and update generator
-        when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)).thenReturn("Standard");
+        when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECH_LEVEL)).thenReturn("Standard");
         tlg.updateOptionValues();
 
         // Should not be available to anyone
@@ -477,7 +477,7 @@ class TeamLoadOutGeneratorTest {
         Assertions.assertFalse(tlg.checkLegality(mType, "CLAN", "CL", true));
 
         // Should be available to everyone
-        when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)).thenReturn("Advanced");
+        when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECH_LEVEL)).thenReturn("Advanced");
         tlg.updateOptionValues();
         Assertions.assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
         Assertions.assertTrue(tlg.checkLegality(mType, "FS", "IS", false));

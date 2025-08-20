@@ -40,7 +40,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.RangeType;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Coords;
@@ -202,7 +204,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
 
         // Set Margin of Success/Failure and check for Direct Blows
         toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
-        bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW) &&
+        bDirect = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW) &&
               ((toHit.getMoS() / 3) >= 1) &&
               (entityTarget != null);
 
@@ -321,7 +323,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             reportMiss(vPhaseReport);
         }
         // Aero Sanity Handling
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY) && !bMissed) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY) && !bMissed) {
             // New toHit data to hold our bay auto hit. We want to be able to get
             // glacing/direct blow
             // data from the 'real' toHit data of this bay handler
@@ -692,7 +694,8 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
 
         // Space ECM
-        if (game.getBoard().isSpace() && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+        if (game.getBoard().isSpace() && game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM)) {
             int ecm = ComputeECM.getLargeCraftECM(ae, targetCoords, target.getPosition());
             ecm = Math.min(4, ecm);
             if (ecm > 0) {

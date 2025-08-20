@@ -34,16 +34,16 @@
 
 package megamek.common.weapons.handlers;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.battleArmor.BattleArmor;
-import megamek.common.compute.Compute;
-import megamek.common.game.Game;
 import megamek.common.HitData;
-import megamek.common.units.Infantry;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Infantry;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class ChemicalLaserHandler extends AmmoWeaponHandler {
@@ -77,7 +77,7 @@ public class ChemicalLaserHandler extends AmmoWeaponHandler {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // Check for Altered Damage from Energy Weapons (TacOp, pg.83)
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ALTDMG)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ALTERNATIVE_DAMAGE)) {
             if (nRange <= 1) {
                 toReturn++;
             } else if (nRange <= wtype.getMediumRange()) {
@@ -87,11 +87,11 @@ public class ChemicalLaserHandler extends AmmoWeaponHandler {
             }
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
               && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn -= 1;
         }
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
               && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }

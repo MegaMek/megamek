@@ -160,7 +160,7 @@ public class ScenarioV2 implements Scenario {
 
     @Override
     public boolean hasFixedPlanetaryConditions() {
-        return !node.has(PARAM_PLANETCOND_FIXED) || node.get(PARAM_PLANETCOND_FIXED).booleanValue();
+        return !node.has(PARAM_PLANET_CONDITIONS_FIXED) || node.get(PARAM_PLANET_CONDITIONS_FIXED).booleanValue();
     }
 
     @Override
@@ -249,8 +249,8 @@ public class ScenarioV2 implements Scenario {
     }
 
     private void parsePlanetaryConditions(PlanetaryConditionsUsing plGame) throws JsonProcessingException {
-        if (node.has(MMS_PLANETCOND)) {
-            PlanetaryConditions conditions = yamlMapper.treeToValue(node.get(MMS_PLANETCOND),
+        if (node.has(MMS_PLANET_CONDITIONS)) {
+            PlanetaryConditions conditions = yamlMapper.treeToValue(node.get(MMS_PLANET_CONDITIONS),
                   PlanetaryConditions.class);
             conditions.determineWind();
             plGame.setPlanetaryConditions(conditions);

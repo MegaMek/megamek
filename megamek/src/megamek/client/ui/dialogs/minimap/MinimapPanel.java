@@ -1551,7 +1551,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         int ecmRange = entity.getECMRange();
         boolean ecmActive = entity.hasActiveECM();
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS)) {
             int bracket = Compute.getSensorRangeBracket(entity, null, null);
             int range = Compute.getSensorRangeByBracket(game, entity, null, null);
 

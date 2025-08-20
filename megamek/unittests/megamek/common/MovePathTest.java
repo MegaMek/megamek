@@ -42,6 +42,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Vector;
 
+import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
@@ -103,7 +104,7 @@ class MovePathTest {
 
         MovePath movePath = new MovePath(mockGame, mockMek);
         try {
-            for (MovePath.MoveStepType stepType : MovePath.MoveStepType.values()) {
+            for (MoveStepType stepType : MoveStepType.values()) {
                 MovePath pathToTest = movePath.clone();
                 pathToTest.addStep(stepType);
             }

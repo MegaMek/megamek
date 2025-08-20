@@ -69,7 +69,8 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.overlay.IFF;
 import megamek.client.ui.clientGUI.overlay.OverlayPainter;
 import megamek.client.ui.clientGUI.overlay.OverlayPanel;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.Player;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.board.BoardLocation;
@@ -586,7 +587,7 @@ public class BoardViewLessMinimapPanel extends JPanel implements OverlayPainter 
         int maxSensorRange = 0;
         int minSensorRange = 0;
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS)) {
             int bracket = Compute.getSensorRangeBracket(entity, null, null);
             // noinspection ConstantConditions
             int range = Compute.getSensorRangeByBracket((Game) game, entity, null, null);

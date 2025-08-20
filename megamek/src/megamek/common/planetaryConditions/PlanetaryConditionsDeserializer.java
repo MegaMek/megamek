@@ -109,7 +109,7 @@ public class PlanetaryConditionsDeserializer extends StdDeserializer<PlanetaryCo
     }
 
     @Override
-    public PlanetaryConditions deserialize(JsonParser jp, DeserializationContext ctxt)
+    public PlanetaryConditions deserialize(JsonParser jp, DeserializationContext context)
           throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
         PlanetaryConditions result = new PlanetaryConditions();

@@ -61,6 +61,7 @@ import megamek.common.board.BoardHelper;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EscapePods;
@@ -72,7 +73,6 @@ import megamek.common.equipment.Transporter;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
@@ -177,7 +177,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             entity.aTracker.clearHitHexMods();
         }
 
-        if (md.contains(MovePath.MoveStepType.EJECT)) {
+        if (md.contains(MoveStepType.EJECT)) {
             if (entity.isLargeCraft() && !entity.isCarcass()) {
                 r = new Report(2026);
                 r.subject = entity.getId();
@@ -191,7 +191,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 for (final Enumeration<MoveStep> i = md.getSteps(); i
                       .hasMoreElements(); ) {
                     final MoveStep step = i.nextElement();
-                    if (step.getType() == MovePath.MoveStepType.EJECT) {
+                    if (step.getType() == MoveStepType.EJECT) {
                         legalPos = step.getTargetPosition();
                     }
                 }
@@ -219,20 +219,20 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
         }
 
-        if (md.contains(MovePath.MoveStepType.CAREFUL_STAND)) {
+        if (md.contains(MoveStepType.CAREFUL_STAND)) {
             entity.setCarefulStand(true);
         }
 
         entity.setJumpingWithMechanicalBoosters(md.contains(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER));
 
-        if (md.contains(MovePath.MoveStepType.BACKWARDS)) {
+        if (md.contains(MoveStepType.BACKWARDS)) {
             entity.setMovedBackwards(true);
             if (md.getMpUsed() > entity.getWalkMP()) {
                 entity.setPowerReverse(true);
             }
         }
 
-        if (md.contains(MovePath.MoveStepType.TAKEOFF) && entity.isAero()) {
+        if (md.contains(MoveStepType.TAKEOFF) && entity.isAero()) {
             if (!usingAeroOnGroundMovement() && !MovementDisplay.hasAtmosphericMapForLiftOff(getGame(), entity)) {
                 logger.warn("Received lift off without aero-on-ground movement and without atmospheric map.");
             } else {
@@ -256,7 +256,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             return;
         }
 
-        if (md.contains(MovePath.MoveStepType.VTAKEOFF) && entity.isAero() && (entity instanceof IAero aero)) {
+        if (md.contains(MoveStepType.VERTICAL_TAKE_OFF) && entity.isAero() && (entity instanceof IAero aero)) {
             if (!usingAeroOnGroundMovement() && !MovementDisplay.hasAtmosphericMapForLiftOff(getGame(), entity)) {
                 logger.warn("Received lift off without aero-on-ground movement and without atmospheric map.");
             } else {
@@ -279,9 +279,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
             return;
         }
 
-        if ((md.contains(MovePath.MoveStepType.LAND) || md.contains(MovePath.MoveStepType.VLAND)) && entity.isAero()) {
+        if ((md.contains(MoveStepType.LAND) || md.contains(MoveStepType.VERTICAL_LAND)) && entity.isAero()) {
             IAero aero = (IAero) entity;
-            boolean isVertical = md.contains(MovePath.MoveStepType.VLAND);
+            boolean isVertical = md.contains(MoveStepType.VERTICAL_LAND);
             entity.setBoardId(md.getFinalBoardId());
             rollTarget = aero.getLandingControlRoll(md);
             gameManager.attemptLanding(entity, rollTarget, gameManager.getMainPhaseReport());
@@ -374,7 +374,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         }
 
         // check for dropping troops and drop them
-        if (entity.isDropping() && !md.contains(MovePath.MoveStepType.HOVER)) {
+        if (entity.isDropping() && !md.contains(MoveStepType.HOVER)) {
             entity.setAltitude(entity.getAltitude() - getGame().getPlanetaryConditions().getDropRate());
             // they may have changed their facing
             if (md.length() > 0) {
@@ -385,7 +385,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             passedThroughFacing.add(entity.getFacing());
             entity.setPassedThroughFacing(passedThroughFacing);
             // We may still need to process any conversions for dropping LAMs
-            if (entity instanceof LandAirMek && md.contains(MovePath.MoveStepType.CONVERT_MODE)) {
+            if (entity instanceof LandAirMek && md.contains(MoveStepType.CONVERT_MODE)) {
                 entity.setMovementMode(md.getFinalConversionMode());
                 entity.setConvertingNow(true);
                 r = new Report(1210);
@@ -528,7 +528,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // consume fuel
             if (((entity.isAero())
-                  && getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION))
+                  && getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_FUEL_CONSUMPTION))
                   || (entity instanceof TeleMissile)) {
                 int fuelUsed = ((IAero) entity).getFuelUsed(thrust);
 
@@ -551,7 +551,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 double penalty = 0.0;
                 // JumpShips do not accumulate thrust when they make a turn or
                 // change velocity
-                if (md.contains(MovePath.MoveStepType.TURN_LEFT) || md.contains(MovePath.MoveStepType.TURN_RIGHT)) {
+                if (md.contains(MoveStepType.TURN_LEFT) || md.contains(MoveStepType.TURN_RIGHT)) {
                     // I need to subtract the station keeping thrust from their
                     // accumulated thrust
                     // because they did not actually use it
@@ -649,7 +649,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // If the entity is being swarmed, erratic movement may dislodge the
         // fleas.
         final int swarmerId = entity.getSwarmAttackerId();
-        if ((Entity.NONE != swarmerId) && md.contains(MovePath.MoveStepType.SHAKE_OFF_SWARMERS)) {
+        if ((Entity.NONE != swarmerId) && md.contains(MoveStepType.SHAKE_OFF_SWARMERS)) {
             final Entity swarmer = getGame().getEntity(swarmerId);
             rollTarget = entity.getBasePilotingRoll(overallMoveType);
 
@@ -750,7 +750,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // check for jumping into heavy woods
-            if (getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
+            if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_PSR_JUMP_HEAVY_WOODS)) {
                 rollTarget = entity.checkLandingInHeavyWoods(overallMoveType, curHex);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     gameManager.doSkillCheckInPlace(entity, rollTarget);
@@ -1046,7 +1046,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // here because 'fellDuringMovement' is sometimes abused just to force
         // another turn and so doesn't reliably tell us.
         boolean continueTurnFromFall = !(getGame().getOptions()
-              .booleanOption(OptionsConstants.ADVGRNDMOV_FALLS_END_MOVEMENT)
+              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_FALLS_END_MOVEMENT)
               && (entity instanceof Mek) && !wasProne && entity.isProne())
               && (fellDuringMovement && !entity.isCarefulStand()) // Careful standing takes up the whole turn
               && !turnOver && (entity.mpUsed < entity.getRunMP())
@@ -1301,7 +1301,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         }
 
         // check for fleeing
-        if (md.contains(MovePath.MoveStepType.FLEE)) {
+        if (md.contains(MoveStepType.FLEE)) {
             if (entity.canFlee(entity.getPosition())) {
                 addReport(gameManager.processLeaveMap(md));
             } else {
@@ -1435,12 +1435,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             if (entity.getMovementMode() == EntityMovementMode.WIGE) {
-                if (step.getType() == MovePath.MoveStepType.UP && !entity.isAirborneVTOLorWIGE()) {
+                if (step.getType() == MoveStepType.UP && !entity.isAirborneVTOLorWIGE()) {
                     entity.setWigeLiftoffHover(true);
-                } else if (step.getType() == MovePath.MoveStepType.HOVER) {
+                } else if (step.getType() == MoveStepType.HOVER) {
                     entity.setWigeLiftoffHover(true);
                     entity.setAssaultDropInProgress(false);
-                } else if (step.getType() == MovePath.MoveStepType.DOWN && step.getClearance() == 0) {
+                } else if (step.getType() == MoveStepType.DOWN && step.getClearance() == 0) {
                     // If this is the first step, use the Entity's starting elevation
                     int elevation = (prevStep == null) ? entity.getElevation() : prevStep.getElevation();
                     if (entity instanceof LandAirMek) {
@@ -1542,7 +1542,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
-            if (step.getType() == MovePath.MoveStepType.CONVERT_MODE) {
+            if (step.getType() == MoveStepType.CONVERT_MODE) {
                 entity.setConvertingNow(true);
 
                 // Non-omni QuadVees converting to vehicle mode dump any riding BA in the
@@ -1650,14 +1650,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     thrustUsed = 0;
                 }
 
-                if (step.getType() == MovePath.MoveStepType.RETURN) {
+                if (step.getType() == MoveStepType.RETURN) {
                     a.setCurrentVelocity(md.getFinalVelocity());
                     entity.setAltitude(curAltitude);
                     gameManager.processLeaveMap(md, true, Compute.roundsUntilReturn(getGame(), entity));
                     return;
                 }
 
-                if (step.getType() == MovePath.MoveStepType.OFF) {
+                if (step.getType() == MoveStepType.OFF) {
                     a.setCurrentVelocity(md.getFinalVelocity());
                     entity.setAltitude(curAltitude);
                     gameManager.processLeaveMap(md, true, -1);
@@ -1823,7 +1823,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
 
                 // handle fighter launching
-                if (step.getType() == MovePath.MoveStepType.LAUNCH) {
+                if (step.getType() == MoveStepType.LAUNCH) {
                     TreeMap<Integer, Vector<Integer>> launched = step.getLaunched();
                     Set<Integer> bays = launched.keySet();
                     Iterator<Integer> bayIter = bays.iterator();
@@ -1902,7 +1902,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
 
                 // handle DropShip undocking
-                if (step.getType() == MovePath.MoveStepType.UNDOCK) {
+                if (step.getType() == MoveStepType.UNDOCK) {
                     TreeMap<Integer, Vector<Integer>> launched = step.getLaunched();
                     Set<Integer> collars = launched.keySet();
                     Iterator<Integer> collarIter = collars.iterator();
@@ -1933,7 +1933,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
 
                 // handle combat drops
-                if (step.getType() == MovePath.MoveStepType.DROP) {
+                if (step.getType() == MoveStepType.DROP) {
                     TreeMap<Integer, Vector<Integer>> dropped = step.getLaunched();
                     Set<Integer> bays = dropped.keySet();
                     Iterator<Integer> bayIter = bays.iterator();
@@ -2006,7 +2006,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 entity.setHullDown(false);
             }
 
-            if (step.getType() == MovePath.MoveStepType.UNJAM_RAC) {
+            if (step.getType() == MoveStepType.UNJAM_RAC) {
                 entity.setUnjammingRAC(true);
                 getGame().addAction(new UnjamAction(entity.getId()));
 
@@ -2017,19 +2017,19 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
-            if (step.getType() == MovePath.MoveStepType.LAY_MINE) {
+            if (step.getType() == MoveStepType.LAY_MINE) {
                 gameManager.layMine(entity, step.getMineToLay(), step.getPosition());
                 continue;
             }
 
-            if (step.getType() == MovePath.MoveStepType.CLEAR_MINEFIELD) {
+            if (step.getType() == MoveStepType.CLEAR_MINEFIELD) {
                 ClearMinefieldAction cma = new ClearMinefieldAction(entity.getId(), step.getMinefield());
                 entity.setClearingMinefield(true);
                 getGame().addAction(cma);
                 break;
             }
 
-            if ((step.getType() == MovePath.MoveStepType.SEARCHLIGHT)
+            if ((step.getType() == MoveStepType.SEARCHLIGHT)
                   && entity.hasSearchlight()) {
                 final boolean SearchOn = !entity.isUsingSearchlight();
                 entity.setSearchlightState(SearchOn);
@@ -2069,7 +2069,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                       : entity.getRunningGravityLimit();
             }
             // check for charge
-            if (step.getType() == MovePath.MoveStepType.CHARGE) {
+            if (step.getType() == MoveStepType.CHARGE) {
                 if (entity.canCharge()) {
                     gameManager.checkExtremeGravityMovement(entity, step, lastStepMoveType,
                           curPos, cachedGravityLimit);
@@ -2123,7 +2123,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // check for dfa
-            if (step.getType() == MovePath.MoveStepType.DFA) {
+            if (step.getType() == MoveStepType.DFA) {
                 if (entity.canDFA()) {
                     gameManager.checkExtremeGravityMovement(entity, step, lastStepMoveType, curPos, cachedGravityLimit);
                     Targetable target = step.getTarget(getGame());
@@ -2175,7 +2175,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // check for ram
-            if (step.getType() == MovePath.MoveStepType.RAM) {
+            if (step.getType() == MoveStepType.RAM) {
                 if (entity.canRam()) {
                     Targetable target = step.getTarget(getGame());
                     RamAttackAction raa = new RamAttackAction(entity.getId(),
@@ -2205,10 +2205,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 ((VTOL) entity).getStrafingCoords().add(step.getPosition());
             }
 
-            if ((step.getType() == MovePath.MoveStepType.ACC) || (step.getType() == MovePath.MoveStepType.ACCN)) {
+            if ((step.getType() == MoveStepType.ACC) || (step.getType() == MoveStepType.ACCELERATION)) {
                 if (entity.isAero()) {
                     IAero a = (IAero) entity;
-                    if (step.getType() == MovePath.MoveStepType.ACCN) {
+                    if (step.getType() == MoveStepType.ACCELERATION) {
                         a.setAccLast(true);
                     } else {
                         a.setAccDecNow(true);
@@ -2218,10 +2218,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
-            if ((step.getType() == MovePath.MoveStepType.DEC) || (step.getType() == MovePath.MoveStepType.DECN)) {
+            if ((step.getType() == MoveStepType.DEC) || (step.getType() == MoveStepType.DECELERATION)) {
                 if (entity.isAero()) {
                     IAero a = (IAero) entity;
-                    if (step.getType() == MovePath.MoveStepType.DECN) {
+                    if (step.getType() == MoveStepType.DECELERATION) {
                         a.setAccLast(true);
                     } else {
                         a.setAccDecNow(true);
@@ -2231,29 +2231,29 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
-            if (step.getType() == MovePath.MoveStepType.EVADE) {
+            if (step.getType() == MoveStepType.EVADE) {
                 entity.setEvading(true);
             }
 
-            if (step.getType() == MovePath.MoveStepType.BRACE) {
+            if (step.getType() == MoveStepType.BRACE) {
                 entity.setBraceLocation(step.getBraceLocation());
             }
 
-            if (step.getType() == MovePath.MoveStepType.SHUTDOWN) {
+            if (step.getType() == MoveStepType.SHUTDOWN) {
                 entity.performManualShutdown();
                 gameManager.sendServerChat(entity.getDisplayName() + " has shutdown.");
             }
 
-            if (step.getType() == MovePath.MoveStepType.STARTUP) {
+            if (step.getType() == MoveStepType.STARTUP) {
                 entity.performManualStartup();
                 gameManager.sendServerChat(entity.getDisplayName() + " has started up.");
             }
 
-            if (step.getType() == MovePath.MoveStepType.SELF_DESTRUCT) {
+            if (step.getType() == MoveStepType.SELF_DESTRUCT) {
                 entity.setSelfDestructing(true);
             }
 
-            if (step.getType() == MovePath.MoveStepType.ROLL) {
+            if (step.getType() == MoveStepType.ROLL) {
                 if (entity.isAero()) {
                     IAero a = (IAero) entity;
                     a.setRolled(!a.isRolled());
@@ -2263,23 +2263,23 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // check for dig in or fortify
             if (entity instanceof Infantry) {
                 Infantry inf = (Infantry) entity;
-                if (step.getType() == MovePath.MoveStepType.DIG_IN) {
+                if (step.getType() == MoveStepType.DIG_IN) {
                     inf.setDugIn(Infantry.DUG_IN_WORKING);
                     continue;
-                } else if (step.getType() == MovePath.MoveStepType.FORTIFY) {
+                } else if (step.getType() == MoveStepType.FORTIFY) {
                     if (!inf.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
                         gameManager.sendServerChat(entity.getDisplayName()
                               + " failed to fortify because it is missing suitable equipment");
                     }
                     inf.setDugIn(Infantry.DUG_IN_FORTIFYING1);
                     continue;
-                } else if ((step.getType() != MovePath.MoveStepType.TURN_LEFT)
-                      && (step.getType() != MovePath.MoveStepType.TURN_RIGHT)) {
+                } else if ((step.getType() != MoveStepType.TURN_LEFT)
+                      && (step.getType() != MoveStepType.TURN_RIGHT)) {
                     // other movement clears dug in status
                     inf.setDugIn(Infantry.DUG_IN_NONE);
                 }
 
-                if (step.getType() == MovePath.MoveStepType.TAKE_COVER) {
+                if (step.getType() == MoveStepType.TAKE_COVER) {
                     if (Infantry.hasValidCover(getGame(), step.getPosition(),
                           step.getElevation())) {
                         inf.setTakingCover(true);
@@ -2295,7 +2295,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // check for tank fortify
             if (entity instanceof Tank) {
                 Tank tnk = (Tank) entity;
-                if (step.getType() == MovePath.MoveStepType.FORTIFY) {
+                if (step.getType() == MoveStepType.FORTIFY) {
                     if (!tnk.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
                         gameManager.sendServerChat(entity.getDisplayName()
                               + " failed to fortify because it is missing suitable equipment");
@@ -2306,8 +2306,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // If we have turned, check whether we have fulfilled any turn mode
             // requirements.
-            if ((step.getType() == MovePath.MoveStepType.TURN_LEFT
-                  || step.getType() == MovePath.MoveStepType.TURN_RIGHT)
+            if ((step.getType() == MoveStepType.TURN_LEFT
+                  || step.getType() == MoveStepType.TURN_RIGHT)
                   && entity.usesTurnMode()) {
                 int straight = 0;
                 if (prevStep != null) {
@@ -2343,7 +2343,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
-            if (step.getType() == MovePath.MoveStepType.BOOTLEGGER) {
+            if (step.getType() == MoveStepType.BOOTLEGGER) {
                 rollTarget = entity.getBasePilotingRoll();
                 entity.addPilotingModifierForTerrain(rollTarget);
                 rollTarget.addModifier(0, "bootlegger maneuver");
@@ -2403,7 +2403,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if (!lastPos.equals(curPos)
                   && (stepMoveType != EntityMovementType.MOVE_JUMP) && (entity instanceof Mek)
                   && !entity.isAirborne() && (step.getClearance() <= 0) // Don't check airborne LAMs
-                  && getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING)) {
+                  && getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING)) {
                 int leapDistance = (lastElevation
                       + getGame().getBoard(curBoardId).getHex(lastPos).getLevel())
                       - (curElevation + curHex.getLevel());
@@ -2536,10 +2536,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         int sideslipDistance;
                         int skidDirection;
                         Coords start;
-                        if (step.getType() == MovePath.MoveStepType.LATERAL_LEFT
-                              || step.getType() == MovePath.MoveStepType.LATERAL_RIGHT
-                              || step.getType() == MovePath.MoveStepType.LATERAL_LEFT_BACKWARDS
-                              || step.getType() == MovePath.MoveStepType.LATERAL_RIGHT_BACKWARDS) {
+                        if (step.getType() == MoveStepType.LATERAL_LEFT
+                              || step.getType() == MoveStepType.LATERAL_RIGHT
+                              || step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS
+                              || step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS) {
                             // A failed controlled sideslip always results in moving one additional hex
                             // in the direction of the intentional sideslip.
                             elev = step.getElevation();
@@ -2650,7 +2650,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
-            if (step.getType() == MovePath.MoveStepType.CHAFF) {
+            if (step.getType() == MoveStepType.CHAFF) {
                 List<Mounted<?>> chaffDispensers = entity.getMiscEquipment(MiscType.F_CHAFF_POD)
                       .stream().filter(dispenser -> dispenser.isReady())
                       .collect(Collectors.toList());
@@ -2778,7 +2778,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // every time we enter a new hex
             // Also perform per-step Hidden Unit checks if TacOps Advanced Active Probe is enabled.
             // Aerospace BAP hidden unit detection also occurs here (with or without the above option)
-            if ((getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP) || entity.isAerospace())
+            if ((getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_BAP) || entity.isAerospace())
                   && !lastPos.equals(curPos)) {
                 if (ServerHelper.detectMinefields(getGame(),
                       entity,
@@ -2971,7 +2971,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // Handle loading units.
-            if (step.getType() == MovePath.MoveStepType.LOAD) {
+            if (step.getType() == MoveStepType.LOAD) {
 
                 // Find the unit being loaded.
                 Entity loaded = null;
@@ -3018,7 +3018,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             } // End STEP_LOAD
 
             // Handle towing units.
-            if (step.getType() == MovePath.MoveStepType.TOW) {
+            if (step.getType() == MoveStepType.TOW) {
 
                 // Find the unit being loaded.
                 Entity loaded;
@@ -3048,7 +3048,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             } // End STEP_TOW
 
             // Handle mounting units to small craft/DropShip
-            if (step.getType() == MovePath.MoveStepType.MOUNT) {
+            if (step.getType() == MoveStepType.MOUNT) {
                 Targetable targetToMountInto = step.getTarget(getGame());
                 if (targetToMountInto instanceof Entity entityToMountInto) {
                     if (!entityToMountInto.canLoad(entity)) {
@@ -3076,7 +3076,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             } // End STEP_MOUNT
 
-            if (step.getType() == MovePath.MoveStepType.PICKUP_CARGO) {
+            if (step.getType() == MoveStepType.PICKUP_CARGO) {
                 var groundObjects = getGame().getGroundObjects(step.getPosition());
                 Integer cargoPickupIndex;
 
@@ -3124,7 +3124,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
-            if (step.getType() == MovePath.MoveStepType.DROP_CARGO) {
+            if (step.getType() == MoveStepType.DROP_CARGO) {
                 Integer cargoLocation = step.getAdditionalData(MoveStep.CARGO_LOCATION_KEY);
                 ICarryable cargo;
 
@@ -3163,7 +3163,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // handle fighter recovery, and also DropShip docking with another large craft
-            if (step.getType() == MovePath.MoveStepType.RECOVER) {
+            if (step.getType() == MoveStepType.RECOVER) {
 
                 loader = getGame().getEntity(step.getRecoveryUnit());
                 boolean isDS = (entity instanceof Dropship);
@@ -3218,13 +3218,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // handle fighter squadron joining
-            if (step.getType() == MovePath.MoveStepType.JOIN) {
+            if (step.getType() == MoveStepType.JOIN) {
                 loader = getGame().getEntity(step.getRecoveryUnit());
                 recovered = true;
             }
 
             // Handle unloading units.
-            if (step.getType() == MovePath.MoveStepType.UNLOAD) {
+            if (step.getType() == MoveStepType.UNLOAD) {
                 Targetable unloaded = step.getTarget(getGame());
                 Bay currentBay = (unloaded instanceof Entity ulEntity) ? entity.getBay(ulEntity) : null;
                 Coords unloadPos = curPos;
@@ -3289,7 +3289,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // Handle disconnecting trailers.
-            if (step.getType() == MovePath.MoveStepType.DISCONNECT) {
+            if (step.getType() == MoveStepType.DISCONNECT) {
                 Targetable unloaded = step.getTarget(getGame());
                 Coords unloadPos = curPos;
                 if (null != step.getTargetPosition()) {
@@ -3303,9 +3303,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // moving backwards over elevation change
-            if (((step.getType() == MovePath.MoveStepType.BACKWARDS)
-                  || (step.getType() == MovePath.MoveStepType.LATERAL_LEFT_BACKWARDS)
-                  || (step.getType() == MovePath.MoveStepType.LATERAL_RIGHT_BACKWARDS))
+            if (((step.getType() == MoveStepType.BACKWARDS)
+                  || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
+                  || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
                   && !(md.isJumping() && step.isUsingMekJumpBooster())
                   && (lastHex.getLevel() + lastElevation != curHex.getLevel() + step.getElevation())
                   && !(entity instanceof VTOL)
@@ -3507,7 +3507,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // dropping prone intentionally?
-            if (step.getType() == MovePath.MoveStepType.GO_PRONE) {
+            if (step.getType() == MoveStepType.GO_PRONE) {
                 mpUsed = step.getMpUsed();
                 rollTarget = entity.checkDislodgeSwarmers(step, overallMoveType);
                 if (rollTarget.getValue() == TargetRoll.CHECK_FALSE) {
@@ -3534,7 +3534,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // going hull down
-            if (step.getType() == MovePath.MoveStepType.HULL_DOWN) {
+            if (step.getType() == MoveStepType.HULL_DOWN) {
                 mpUsed = step.getMpUsed();
                 entity.setHullDown(true);
             }
@@ -3583,7 +3583,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // if we moved at all, we are no longer bracing "for free", except for when
             // the current step IS bracing
-            if ((mpUsed > 0) && (step.getType() != MovePath.MoveStepType.BRACE)) {
+            if ((mpUsed > 0) && (step.getType() != MoveStepType.BRACE)) {
                 entity.setBraceLocation(Entity.LOC_NONE);
             }
         }
@@ -3642,6 +3642,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
     }
 
     private boolean usingAeroOnGroundMovement() {
-        return getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_GROUND_MOVE);
+        return getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_GROUND_MOVE);
     }
 }

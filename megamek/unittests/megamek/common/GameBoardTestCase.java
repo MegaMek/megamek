@@ -47,6 +47,7 @@ import java.util.function.Function;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
@@ -221,7 +222,7 @@ public abstract class GameBoardTestCase {
                 }
 
                 // Try all possible move types
-                for (MovePath.MoveStepType moveStepType : MovePath.MoveStepType.values()) {
+                for (MoveStepType moveStepType : MoveStepType.values()) {
                     // Skip irrelevant or invalid movement types for this entity
                     if (!isValidStepType(currentPath, moveStepType)) {
                         continue;
@@ -256,7 +257,7 @@ public abstract class GameBoardTestCase {
      *
      * @return true if valid, false otherwise
      */
-    private boolean isValidStepType(MovePath path, MovePath.MoveStepType stepType) {
+    private boolean isValidStepType(MovePath path, MoveStepType stepType) {
         Entity entity = path.getEntity();
 
         // Filter out irrelevant move types based on entity type and capabilities
@@ -283,7 +284,7 @@ public abstract class GameBoardTestCase {
      * @return the MovePath
      */
     protected MovePath getMovePathFor(Entity entity, int startingElevation, @Nullable EntityMovementMode movementMode,
-          MovePath.MoveStepType... steps) {
+          MoveStepType... steps) {
         return getMovePath(new MovePath(getGame(), initializeUnit(entity, getGame(), movementMode, startingElevation)),
               steps);
     }
@@ -296,7 +297,7 @@ public abstract class GameBoardTestCase {
      *
      * @return the MovePath
      */
-    protected MovePath getMovePathFor(Entity entity, MovePath.MoveStepType... steps) {
+    protected MovePath getMovePathFor(Entity entity, MoveStepType... steps) {
         return getMovePathFor(entity, Integer.MAX_VALUE, null, steps);
     }
 
@@ -310,7 +311,7 @@ public abstract class GameBoardTestCase {
      * @return the MovePath
      */
     protected MovePath getMovePathFor(Entity entity, @Nullable EntityMovementMode movementMode,
-          MovePath.MoveStepType... steps) {
+          MoveStepType... steps) {
         return getMovePathFor(entity, Integer.MAX_VALUE, movementMode, steps);
     }
 
@@ -321,7 +322,7 @@ public abstract class GameBoardTestCase {
      *
      * @return the MovePath
      */
-    private static MovePath getMovePath(final MovePath path, final MovePath.MoveStepType... steps) {
+    private static MovePath getMovePath(final MovePath path, final MoveStepType... steps) {
         MovePath movePath = path.clone();
         for (var step : steps) {
             movePath = movePath.addStep(step);

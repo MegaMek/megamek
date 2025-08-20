@@ -36,16 +36,16 @@ package megamek.common.weapons.handlers;
 
 import java.util.Vector;
 
-import megamek.common.battleArmor.BattleArmor;
-import megamek.common.compute.Compute;
-import megamek.common.game.Game;
-import megamek.common.units.Infantry;
 import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.compute.Compute;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Infantry;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
@@ -75,7 +75,7 @@ public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
     protected int calcDamagePerHit() {
         double toReturn = wtype.getDamage();
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ENERGY_WEAPONS)
               && weapon.hasModes()) {
             toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
         }
@@ -88,7 +88,7 @@ public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // Check for Altered Damage from Energy Weapons (TacOp, pg.83)
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ALTDMG)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ALTERNATIVE_DAMAGE)) {
             if (nRange <= 1) {
                 toReturn++;
             } else if (nRange <= wtype.getMediumRange()) {
@@ -98,11 +98,11 @@ public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
             }
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
               && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
               && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn / 3.0);
         }

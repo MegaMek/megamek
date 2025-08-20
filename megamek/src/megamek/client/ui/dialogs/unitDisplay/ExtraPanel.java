@@ -567,7 +567,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
                     hasTSM = true;
                 }
 
-                if (gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
+                if (gameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT)) {
                     mtHeat = true;
                 }
                 heatR.setForeground(GUIPreferences.getInstance().getColorForHeat(en.heat));
@@ -583,8 +583,8 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
             if (null != en.getActiveSensor()) {
                 String sensorDesc = "";
-                if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
-                      || (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS))
+                if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS)
+                      || (gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS))
                       && en.isSpaceborne()) {
                     sensorDesc = UnitToolTip.getSensorDesc(en);
                 }

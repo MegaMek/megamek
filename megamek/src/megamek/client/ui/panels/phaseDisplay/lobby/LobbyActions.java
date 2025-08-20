@@ -1038,7 +1038,8 @@ public class LobbyActions {
             LobbyErrors.showLoadOnlyAllied(frame());
             return;
         }
-        boolean largeSquadrons = game().getOptions().booleanOption(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS);
+        boolean largeSquadrons = game().getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_ALLOW_LARGE_SQUADRONS);
         if ((!largeSquadrons && entities.size() > FighterSquadron.MAX_SIZE)
               || entities.size() > FighterSquadron.ALTERNATE_MAX_SIZE) {
             LobbyErrors.showSquadronTooMany(frame());

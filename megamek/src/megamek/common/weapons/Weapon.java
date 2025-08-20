@@ -36,20 +36,20 @@ package megamek.common.weapons;
 
 import java.io.Serializable;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
-import megamek.common.rolls.TargetRoll;
 import megamek.common.ToHitData;
-import megamek.common.equipment.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.weapons.bayweapons.capital.CapitalLaserBayWeapon;
 import megamek.common.weapons.bayweapons.subCapital.SubCapLaserBayWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
-import megamek.common.weapons.handlers.lrm.LRMSwarmHandler;
 import megamek.common.weapons.handlers.WeaponHandler;
+import megamek.common.weapons.handlers.lrm.LRMSwarmHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -158,7 +158,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
 
                 if ((this instanceof CapitalLaserBayWeapon)
                       || (this instanceof SubCapLaserBayWeapon)) {
-                    if (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AAA_LASER)) {
+                    if (gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_AAA_LASER)) {
                         addMode("");
                         addMode("AAA");
                         addEndTurnMode("AAA");
@@ -166,7 +166,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
                         removeMode("AAA");
                     }
                 }
-                if (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BRACKET_FIRE)) {
+                if (gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_BRACKET_FIRE)) {
                     addMode("");
                     addMode("Bracket 80%");
                     addMode("Bracket 60%");
@@ -188,11 +188,11 @@ public abstract class Weapon extends WeaponType implements Serializable {
                     addMode(MODE_CAP_MISSILE_TELE_OPERATED);
                 }
 
-                if (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH)) {
+                if (gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_WAYPOINT_LAUNCH)) {
                     setInstantModeSwitch(true);
                     addMode(MODE_NORMAL);
                     addMode(MODE_CAP_MISSILE_WAYPOINT);
-                    if (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
+                    if (gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
                         addMode(MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT);
                         addMode(MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG);
                         addMode(MODE_CAP_MISSILE_WAYPOINT_BEARING_MED);
@@ -207,7 +207,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
                     removeMode(MODE_CAP_MISSILE_WAYPOINT);
                 }
 
-                if (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
+                if (gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
                     setInstantModeSwitch(true);
                     addMode(MODE_NORMAL);
                     addMode(MODE_CAP_MISSILE_BEARING_EXT);
@@ -224,7 +224,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
         }
 
         if (hasFlag(WeaponType.F_AMS)) {
-            if (gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)) {
+            if (gameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_MANUAL_AMS)) {
                 addMode(Weapon.MODE_AMS_MANUAL);
             }
             if (gameOptions.booleanOption(OptionsConstants.BASE_AUTO_AMS)) {

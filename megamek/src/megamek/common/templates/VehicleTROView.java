@@ -38,14 +38,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.units.Entity;
-import megamek.common.units.EntityFluff;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.Messages;
+import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.Mounted;
-import megamek.common.units.SuperHeavyTank;
-import megamek.common.units.Tank;
 import megamek.common.equipment.Transporter;
+import megamek.common.units.Entity;
+import megamek.common.units.SuperHeavyTank;
+import megamek.common.units.System;
+import megamek.common.units.Tank;
 import megamek.common.units.VTOL;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestTank;
@@ -146,7 +146,7 @@ public class VehicleTROView extends TROView {
     private void addFluff() {
         addMekVeeAeroFluff(tank);
         if (tank.getJumpMP() > 0) {
-            setModelData("jjDesc", formatSystemFluff(EntityFluff.System.JUMPJET, tank.getFluff(),
+            setModelData("jjDesc", formatSystemFluff(System.JUMP_JET, tank.getFluff(),
                   () -> Messages.getString("TROView.jjVehicle")));
             setModelData("jumpCapacity", tank.getJumpMP() * 30);
         }
@@ -157,8 +157,9 @@ public class VehicleTROView extends TROView {
                                                      { VTOL.LOC_ROTOR } };
 
     private static final int[][] SH_TANK_ARMOR_LOCS = { { SuperHeavyTank.LOC_FRONT },
-                                                        { SuperHeavyTank.LOC_FRONTRIGHT, SuperHeavyTank.LOC_FRONTLEFT },
-                                                        { SuperHeavyTank.LOC_REARRIGHT, SuperHeavyTank.LOC_REARLEFT },
+                                                        { SuperHeavyTank.LOC_FRONT_RIGHT,
+                                                          SuperHeavyTank.LOC_FRONT_LEFT },
+                                                        { SuperHeavyTank.LOC_REAR_RIGHT, SuperHeavyTank.LOC_REAR_LEFT },
                                                         { SuperHeavyTank.LOC_REAR },
                                                         { SuperHeavyTank.LOC_TURRET },
                                                         { SuperHeavyTank.LOC_TURRET_2 } };

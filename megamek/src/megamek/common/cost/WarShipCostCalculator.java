@@ -59,7 +59,7 @@ public class WarShipCostCalculator {
         // Fire Control Computer
         costs[costIdx++] += 100000;
         // Gunnery Control Systems
-        costs[costIdx++] += 10000 * warShip.getArcswGuns();
+        costs[costIdx++] += 10000 * warShip.getArcsWithGuns();
         // Structural Integrity
         costs[costIdx++] += 100000 * warShip.getSI();
 

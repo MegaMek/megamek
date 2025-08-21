@@ -1,6 +1,6 @@
 /*
- * MegaAero - Copyright (C) 2007 Jay Lawson
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007 Jay Lawson
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.units;
 
+import java.io.Serial;
+
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
@@ -50,6 +52,7 @@ import megamek.common.options.OptionsConstants;
  * @since Jun 12, 2008
  */
 public class ConvFighter extends AeroSpaceFighter {
+    @Serial
     private static final long serialVersionUID = 6297668284292929409L;
 
     @Override
@@ -137,7 +140,7 @@ public class ConvFighter extends AeroSpaceFighter {
     public double getPriceMultiplier() {
         double priceMultiplier = 1.0;
         // omni multiplier (leaving this in for now even though conventional fighters
-        // don't make for legal omnis)
+        // don't make for legal OmniMeks)
         if (isOmni()) {
             priceMultiplier *= 1.25f;
         }

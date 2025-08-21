@@ -34,12 +34,9 @@
 package megamek.common.strategicBattleSystems;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -52,7 +49,6 @@ import megamek.common.pathfinder.AbstractPathFinder;
 import megamek.common.pathfinder.AdjacencyMap;
 import megamek.common.pathfinder.DestinationMap;
 import megamek.common.pathfinder.EdgeRelaxer;
-import megamek.common.pathfinder.StopCondition;
 import megamek.common.pathfinder.filters.Filter;
 
 public class SBFMovePathFinder extends AbstractPathFinder<BoardLocation, SBFMovePath, SBFMovePath> {
@@ -62,7 +58,7 @@ public class SBFMovePathFinder extends AbstractPathFinder<BoardLocation, SBFMove
      * @param edgeRelaxer        functional interface for calculating relaxed cost.
      * @param edgeAdjacencyMap   functional interface for retrieving neighbouring edges.
      * @param edgeComparator     implementation of path comparator. Each path is defined by its last edge. <i>(path:=
-     *                           edge concatenated with best path to the source of the edge)</i>
+     *                           edge concatenated with the best path to the source of the edge)</i>
      */
     public SBFMovePathFinder(SBFGame game,
           DestinationMap<BoardLocation, SBFMovePath> edgeDestinationMap,
@@ -93,8 +89,7 @@ public class SBFMovePathFinder extends AbstractPathFinder<BoardLocation, SBFMove
      * <p>
      * Current implementation uses AStar algorithm.
      *
-     * @param destination
-     * @param game        The current {@link Game}
+     * @param game The current {@link Game}
      */
     public static SBFMovePathFinder aStarFinder(BoardLocation destination, SBFGame game) {
         SBFMovePathFinder spf = new SBFMovePathFinder(game, SBFMovePath::getLastPosition, new MovePathRelaxer(),
@@ -103,128 +98,6 @@ public class SBFMovePathFinder extends AbstractPathFinder<BoardLocation, SBFMove
         spf.addStopCondition(new DestinationReachedStopCondition(destination));
         spf.addFilter(new MovePathLegalityFilter());
         return spf;
-    }
-
-    /**
-     * Returns true if last processed move path had final position equal to destination.
-     */
-    public static class DestinationReachedStopCondition implements StopCondition<SBFMovePath> {
-        private final BoardLocation destination;
-
-        public DestinationReachedStopCondition(BoardLocation destination) {
-            this.destination = Objects.requireNonNull(destination);
-        }
-
-        @Override
-        public boolean shouldStop(SBFMovePath e) {
-            return destination.equals(e.getLastPosition());
-        }
-    }
-
-    /**
-     * This filter removes MovePaths that need more movement points than specified in constructor invocation.
-     */
-    public static class MovePathLengthFilter extends Filter<SBFMovePath> {
-        private final int maxMP;
-
-        public MovePathLengthFilter(int maxMP) {
-            this.maxMP = maxMP;
-        }
-
-        @Override
-        public boolean shouldStay(SBFMovePath mp) {
-            return (mp.getMpUsed() <= maxMP);
-
-        }
-    }
-
-    /**
-     * A MovePath comparator that compares movement points spent.
-     * <p>
-     * Order paths with fewer used MP first.
-     */
-    public static class MovePathMPCostComparator implements Comparator<SBFMovePath> {
-        @Override
-        public int compare(final SBFMovePath first, final SBFMovePath second) {
-            return Integer.compare(first.getMpUsed(), second.getMpUsed());
-        }
-    }
-
-    public static class GroundMovementAdjacency implements AdjacencyMap<SBFMovePath> {
-        private final SBFGame game;
-
-        public GroundMovementAdjacency(SBFGame game) {
-            this.game = game;
-        }
-
-        /**
-         * Produces set of MovePaths by extending MovePath mp with MoveSteps. The set of extending steps include {F, L,
-         * R, UP, ShL, ShR} if applicable. If stepType is equal to MoveStepType.BACKWARDS then extending steps include
-         * also {B, ShBL, ShBR}. If stepType is equal to MoveStep.DFA or MoveStep.CHARGE then it is added to the
-         * resulting set.
-         *
-         * @param mp the MovePath to be extended
-         *
-         * @see AdjacencyMap
-         */
-        @Override
-        public Collection<SBFMovePath> getAdjacent(SBFMovePath mp) {
-            List<SBFMovePath> result = new ArrayList<>();
-            BoardLocation currentDestination = mp.getLastPosition();
-            List<BoardLocation> possibleDestinations = currentDestination.allAdjacent();
-            possibleDestinations.removeIf(bl -> !game.hasBoardLocation(bl));
-            for (BoardLocation newDestination : possibleDestinations) {
-                SBFMovePath newPath = SBFMovePath.createMovePathShallow(mp);
-                newPath.addStep(SurfaceSBFMoveStep.createSurfaceMoveStep(game, mp.getEntityId(),
-                      currentDestination, newDestination));
-                result.add(newPath);
-            }
-
-            /*
-             * If the unit is prone or hull-down it limits movement options,
-             * such units can only turn or get up. (unless it's a tank; tanks
-             * can just drive out of hull-down and they cannot be prone)
-             */
-            //            if ((mp.getFinalHullDown() && !(entity instanceof Tank))) {
-            //                if (entity.isCarefulStand()) {
-            //                    result.add(mp.clone().addStep(MovePath.MoveStepType.CAREFUL_STAND));
-            //                } else {
-            //                    result.add(mp.clone().addStep(MovePath.MoveStepType.GET_UP));
-            //                }
-            //                return result;
-            //            }
-
-
-            return result;
-        }
-    }
-
-    /**
-     * Relaxes edge by favouring MovePaths that end in a not prone stance.
-     */
-    public static class MovePathRelaxer
-          implements EdgeRelaxer<SBFMovePath, SBFMovePath> {
-        @Override
-        public SBFMovePath doRelax(SBFMovePath v, SBFMovePath e, Comparator<SBFMovePath> comparator) {
-            if (v == null) {
-                return e;
-            }
-
-            // We have to be standing to be able to move
-            // Maybe I should replace this extra condition with a flag in node(?)
-            //            boolean vprone = v.getFinalProne(), eprone = e.getFinalProne();
-            //            if (vprone != eprone) {
-            //                return vprone ? e : null;
-            //            }
-            //            if (!(v.getEntity() instanceof Tank)) {
-            //                boolean vhdown = v.getFinalHullDown(), ehdown = e.getFinalHullDown();
-            //                if (vhdown != ehdown) {
-            //                    return vhdown ? e : null;
-            //                }
-            //            }
-
-            return comparator.compare(e, v) < 0 ? e : null;
-        }
     }
 
     /**
@@ -254,16 +127,11 @@ public class SBFMovePathFinder extends AbstractPathFinder<BoardLocation, SBFMove
      * Returns computed cost to reach the hex at c coordinates. If multiple path are present with different final
      * facings, the one minimal one is chosen. If none paths are present then {@code null} is returned.
      *
-     * @param coords
-     * @param comp   comparator used if multiple paths are present
+     * @param comp comparator used if multiple paths are present
      *
      * @return shortest path to the hex at c coordinates or {@code null}
      */
     protected @Nullable SBFMovePath getCost(BoardLocation coords, Comparator<SBFMovePath> comp) {
-        //        List<SBFMovePath> paths = new ArrayList<>();
-        //        SBFMovePath cost = getCostOf(coords);
-        //        paths.add(cost);
-
         return getCostOf(coords);
     }
 
@@ -294,22 +162,6 @@ public class SBFMovePathFinder extends AbstractPathFinder<BoardLocation, SBFMove
         @Override
         public int compare(SBFMovePath first, SBFMovePath second) {
             int h1 = 0, h2 = 0;
-            //            if (first.getEntity().getWalkMP() == 0) {
-            //                // current implementation of movement cost allows a 0mp moves
-            //                // for units with 0 mp.
-            //            } else {
-            //                boolean backwards = stepType == MovePath.MoveStepType.BACKWARDS;
-            //                h1 = first.getFinalCoords().distance(destination)
-            //                        + getFacingDiff(first, destination, backwards)
-            //                        + getLevelDiff(first, destination, board, first.isJumping())
-            //                        + getElevationDiff(first, destination, board,
-            //                        first.getEntity());
-            //                h2 = second.getFinalCoords().distance(destination)
-            //                        + getFacingDiff(second, destination, backwards)
-            //                        + getLevelDiff(second, destination, board, second.isJumping())
-            //                        + getElevationDiff(second, destination, board,
-            //                        second.getEntity());
-            //            }
 
             int dd = (first.getMpUsed() + h1) - (second.getMpUsed() + h2);
 

@@ -94,7 +94,6 @@ import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
-import megamek.common.units.Building.DemolitionCharge;
 import megamek.common.weapons.other.clan.CLFireExtinguisher;
 import megamek.common.weapons.other.innerSphere.ISFireExtinguisher;
 import megamek.logging.MMLogger;
@@ -1225,13 +1224,13 @@ public class MapMenu extends JPopupMenu {
             }
 
             if ((myEntity instanceof BipedMek) &&
-                  (!myEntity.isLocationBad(Mek.LOC_LARM) || !myEntity.isLocationBad(Mek.LOC_RARM))) {
+                  (!myEntity.isLocationBad(Mek.LOC_LEFT_ARM) || !myEntity.isLocationBad(Mek.LOC_RIGHT_ARM))) {
                 menu.add(createPunchJMenuItem());
             }
 
             if ((myEntity instanceof BipedMek) &&
-                  !myEntity.isLocationBad(Mek.LOC_LARM) &&
-                  !myEntity.isLocationBad(Mek.LOC_RARM)) {
+                  !myEntity.isLocationBad(Mek.LOC_LEFT_ARM) &&
+                  !myEntity.isLocationBad(Mek.LOC_RIGHT_ARM)) {
                 menu.add(createPushJMenuItem());
             }
 
@@ -1386,9 +1385,9 @@ public class MapMenu extends JPopupMenu {
             if (((LandAirMek) myEntity).getLAMType() == LandAirMek.LAM_STANDARD) {
                 item = createConvertMenuItem("MovementDisplay.moveModeAirMek",
                       MoveCommand.MOVE_MODE_VEE,
-                      currentMode == LandAirMek.CONV_MODE_AIRMEK);
-                item.setEnabled(currentMode == LandAirMek.CONV_MODE_AIRMEK ||
-                      ((LandAirMek) myEntity).canConvertTo(currentMode, LandAirMek.CONV_MODE_AIRMEK));
+                      currentMode == LandAirMek.CONV_MODE_AIR_MEK);
+                item.setEnabled(currentMode == LandAirMek.CONV_MODE_AIR_MEK ||
+                      ((LandAirMek) myEntity).canConvertTo(currentMode, LandAirMek.CONV_MODE_AIR_MEK));
                 menu.add(item);
             }
             item = createConvertMenuItem("MovementDisplay.moveModeFighter",

@@ -92,16 +92,16 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
         }
 
         if (entity.hasVibroblades()) {
-            Mounted<?> vibroblade = getVibroblade(Mek.LOC_LARM);
+            Mounted<?> vibroblade = getVibroblade(Mek.LOC_LEFT_ARM);
             if (vibroblade != null) {
-                double weaponHeat = entity.getActiveVibrobladeHeat(Mek.LOC_LARM, true);
+                double weaponHeat = entity.getActiveVibrobladeHeat(Mek.LOC_LEFT_ARM, true);
                 double thisWeaponBV = processWeapon(vibroblade, false, false);
                 weaponRecords.add(new WeaponBvHeatRecord(vibroblade, thisWeaponBV, weaponHeat));
             }
 
-            vibroblade = getVibroblade(Mek.LOC_RARM);
+            vibroblade = getVibroblade(Mek.LOC_RIGHT_ARM);
             if (vibroblade != null) {
-                double weaponHeat = entity.getActiveVibrobladeHeat(Mek.LOC_LARM, true);
+                double weaponHeat = entity.getActiveVibrobladeHeat(Mek.LOC_LEFT_ARM, true);
                 double thisWeaponBV = processWeapon(vibroblade, false, false);
                 weaponRecords.add(new WeaponBvHeatRecord(vibroblade, thisWeaponBV, weaponHeat));
             }

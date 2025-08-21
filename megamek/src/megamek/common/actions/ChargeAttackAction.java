@@ -321,10 +321,12 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         // It gets a =4 penalty for being blind!
         if ((attackingEntity instanceof Mek)
               && (((Mek) attackingEntity).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED)) {
-            int sensorHits = attackingEntity.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+            int sensorHits = attackingEntity.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM,
                   Mek.SYSTEM_SENSORS,
                   Mek.LOC_HEAD);
-            int sensorHits2 = attackingEntity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_CT);
+            int sensorHits2 = attackingEntity.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM,
+                  Mek.SYSTEM_SENSORS,
+                  Mek.LOC_CENTER_TORSO);
             if ((sensorHits + sensorHits2) == 3) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                       "Sensors Completely Destroyed for Torso-Mounted Cockpit");

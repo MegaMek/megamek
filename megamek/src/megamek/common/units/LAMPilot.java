@@ -33,6 +33,7 @@
 
 package megamek.common.units;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -49,6 +50,7 @@ import megamek.common.util.CrewSkillSummaryUtil;
  * @author Neoancient
  */
 public class LAMPilot extends Crew {
+    @Serial
     private static final long serialVersionUID = -5081079779376940577L;
 
     final private LandAirMek lam;
@@ -224,7 +226,7 @@ public class LAMPilot extends Crew {
     @Override
     public int getPiloting() {
         if (lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER
-              || (lam.getConversionMode() == LandAirMek.CONV_MODE_AIRMEK && lam.isAirborneVTOLorWIGE())) {
+              || (lam.getConversionMode() == LandAirMek.CONV_MODE_AIR_MEK && lam.isAirborneVTOLorWIGE())) {
             return pilotingAero;
         } else {
             return super.getPiloting();
@@ -234,7 +236,7 @@ public class LAMPilot extends Crew {
     @Override
     public int getPiloting(EntityMovementType moveType) {
         if (lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER || (lam
-              .getConversionMode() == LandAirMek.CONV_MODE_AIRMEK
+              .getConversionMode() == LandAirMek.CONV_MODE_AIR_MEK
               && (moveType == EntityMovementType.MOVE_VTOL_WALK || moveType == EntityMovementType.MOVE_VTOL_RUN))) {
             return pilotingAero;
         } else {

@@ -33,13 +33,14 @@
 
 package megamek.common.units;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
-import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
@@ -61,9 +62,10 @@ public class EjectedCrew extends Infantry {
 
     // Maps "transported" crew, passengers to a host ship, so we can match them up
     // again post-game
-    private Map<String, Integer> nOtherCrew = new HashMap<>();
-    private Map<String, Integer> passengers = new HashMap<>();
+    private final Map<String, Integer> nOtherCrew = new HashMap<>();
+    private final Map<String, Integer> passengers = new HashMap<>();
 
+    @Serial
     private static final long serialVersionUID = 8136710237585797372L;
 
     public static final String VEE_EJECT_NAME = "Vehicle Crew";
@@ -75,7 +77,7 @@ public class EjectedCrew extends Infantry {
     public EjectedCrew(Entity originalRide) {
         super();
         setCrew(originalRide.getCrew());
-        logger.debug("Ejecting crew size: " + originalRide.getCrew().getSize());
+        logger.debug("Ejecting crew size: {}", originalRide.getCrew().getSize());
         setChassis(VEE_EJECT_NAME);
         setModel(originalRide.getCrew().getName());
         setInitiative(originalRide.getInitiative());
@@ -165,13 +167,10 @@ public class EjectedCrew extends Infantry {
             }
             setInternal(crew.getSize() - dead, Infantry.LOC_INFANTRY);
         }
-        Game tmpGame = game;
-        if (tmpGame != null
-              && (!(this instanceof MekWarrior)
-              || tmpGame.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MEKWARRIORS))) {
+        if (game != null && (!(this instanceof MekWarrior)
+              || game.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MEKWARRIORS))) {
             try {
-                addEquipment(EquipmentType.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE),
-                      Infantry.LOC_INFANTRY);
+                addEquipment(EquipmentType.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE), Infantry.LOC_INFANTRY);
                 setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
             } catch (Exception ex) {
                 logger.error("", ex);
@@ -226,7 +225,6 @@ public class EjectedCrew extends Infantry {
     /**
      * Convenience method to return all crew from other craft aboard from the above Map
      *
-     * @return
      */
     public int getTotalOtherCrew() {
         int toReturn = 0;
@@ -261,7 +259,6 @@ public class EjectedCrew extends Infantry {
     /**
      * Convenience method to return all passengers aboard from the above Map
      *
-     * @return
      */
     public int getTotalPassengers() {
         int toReturn = 0;
@@ -315,7 +312,7 @@ public class EjectedCrew extends Infantry {
         return true;
     }
 
-    // Handle pilot/escape pod velocity for Aeros
+    // Handle pilot/escape pod velocity for Aerospace
 
     public int getCurrentVelocity() {
         // if using advanced movement then I just want to sum up

@@ -143,7 +143,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                         throw new IllegalStateException("Server.resolveHeat(): " +
                               "Could not find Radical Heat Sink mount on unit that used RHS!");
                     }
-                    for (int s = 0; s < entity.getNumberOfCriticals(loc); s++) {
+                    for (int s = 0; s < entity.getNumberOfCriticalSlots(loc); s++) {
                         CriticalSlot slot = entity.getCritical(loc, s);
                         if ((slot.getType() == CriticalSlot.TYPE_EQUIPMENT) &&
                               slot.getMount().getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
@@ -315,8 +315,8 @@ class HeatResolver extends AbstractTWRuleHandler {
             if (entity.hasVibroblades()) {
                 int vibroHeat;
 
-                vibroHeat = entity.getActiveVibrobladeHeat(Mek.LOC_RARM);
-                vibroHeat += entity.getActiveVibrobladeHeat(Mek.LOC_LARM);
+                vibroHeat = entity.getActiveVibrobladeHeat(Mek.LOC_RIGHT_ARM);
+                vibroHeat += entity.getActiveVibrobladeHeat(Mek.LOC_LEFT_ARM);
 
                 if (vibroHeat > 0) {
                     r = new Report(5018);
@@ -668,12 +668,17 @@ class HeatResolver extends AbstractTWRuleHandler {
                             hits++;
 
                             for (int j = 0; (j < 12) && (hits > 0); j++) {
-                                var crit = mek.getCritical(Mek.LOC_CT, j);
+                                var crit = mek.getCritical(Mek.LOC_CENTER_TORSO, j);
                                 if ((crit != null) &&
                                       (crit.getType() == CriticalSlot.TYPE_SYSTEM) &&
                                       (crit.getIndex() == Mek.SYSTEM_ENGINE) &&
                                       crit.isHittable()) {
-                                    addReport(gameManager.applyCriticalHit(entity, Mek.LOC_CT, crit, true, 0, false));
+                                    addReport(gameManager.applyCriticalHit(entity,
+                                          Mek.LOC_CENTER_TORSO,
+                                          crit,
+                                          true,
+                                          0,
+                                          false));
                                     hits--;
                                 }
                             }
@@ -726,14 +731,14 @@ class HeatResolver extends AbstractTWRuleHandler {
             int lifeSupportCritCount;
             boolean torsoMountedCockpit = ((Mek) entity).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED;
             if (torsoMountedCockpit) {
-                lifeSupportCritCount = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                lifeSupportCritCount = entity.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM,
                       Mek.SYSTEM_LIFE_SUPPORT,
-                      Mek.LOC_RT);
-                lifeSupportCritCount += entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                      Mek.LOC_RIGHT_TORSO);
+                lifeSupportCritCount += entity.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM,
                       Mek.SYSTEM_LIFE_SUPPORT,
-                      Mek.LOC_LT);
+                      Mek.LOC_LEFT_TORSO);
             } else {
-                lifeSupportCritCount = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                lifeSupportCritCount = entity.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM,
                       Mek.SYSTEM_LIFE_SUPPORT,
                       Mek.LOC_HEAD);
             }

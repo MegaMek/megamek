@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,9 +34,11 @@
 
 package megamek.common.units;
 
+import java.io.Serial;
+
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.game.Game;
 import megamek.common.Player;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -45,6 +47,7 @@ import megamek.common.options.OptionsConstants;
 
 public class MekWarrior extends EjectedCrew {
 
+    @Serial
     private static final long serialVersionUID = 6227549671448329770L;
     private int pickedUpById = Entity.NONE;
     private String pickedUpByExternalId = "-1";
@@ -124,7 +127,6 @@ public class MekWarrior extends EjectedCrew {
      * Ejected pilots do not get killed by ammo/fusion engine explosions so that means they are still up in the air and
      * do not land until the end of the turn.
      *
-     * @param landed
      */
     public void setLanded(boolean landed) {
         this.landed = landed;

@@ -172,7 +172,7 @@ class ComputeAbilityMods {
                 if (attacker.getCrew()
                       .getOptions()
                       .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
-                      .equals(Crew.ENVSPC_FOG)
+                      .equals(Crew.ENVIRONMENT_SPECIALIST_FOG)
                       && weaponType.hasFlag(WeaponType.F_ENERGY)
                       && !targetEntity.isSpaceborne()
                       && conditions.getFog().isFogHeavy()) {
@@ -183,7 +183,7 @@ class ComputeAbilityMods {
                 if (attacker.getCrew()
                       .getOptions()
                       .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
-                      .equals(Crew.ENVSPC_LIGHT)) {
+                      .equals(Crew.ENVIRONMENT_SPECIALIST_LIGHT)) {
                     if (!targetEntity.isIlluminated() &&
                           conditions.getLight().isDuskOrFullMoonOrGlareOrMoonlessOrSolarFlareOrPitchBack()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.LightSpec"));
@@ -196,7 +196,7 @@ class ComputeAbilityMods {
                 if (attacker.getCrew()
                       .getOptions()
                       .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
-                      .equals(Crew.ENVSPC_RAIN)) {
+                      .equals(Crew.ENVIRONMENT_SPECIALIST_RAIN)) {
                     if (conditions.getWeather().isLightRain() && attacker.isConventionalInfantry()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
                     }
@@ -210,7 +210,7 @@ class ComputeAbilityMods {
                 if (attacker.getCrew()
                       .getOptions()
                       .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
-                      .equals(Crew.ENVSPC_SNOW)) {
+                      .equals(Crew.ENVIRONMENT_SPECIALIST_SNOW)) {
                     if (conditions.getWeather().isLightSnow() && attacker.isConventionalInfantry()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }
@@ -228,7 +228,7 @@ class ComputeAbilityMods {
                 if (attacker.getCrew()
                       .getOptions()
                       .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
-                      .equals(Crew.ENVSPC_WIND)) {
+                      .equals(Crew.ENVIRONMENT_SPECIALIST_WIND)) {
                     if (conditions.getWind().isModerateGale() && weaponType.hasFlag(WeaponType.F_MISSILE)) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }

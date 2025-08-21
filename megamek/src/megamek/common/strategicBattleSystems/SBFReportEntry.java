@@ -39,7 +39,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JTextPane;
-import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -66,9 +65,7 @@ public class SBFReportEntry implements ReportEntry {
     }
 
     public static void setupStylesheet(JTextPane pane) {
-        pane.setContentType("text/html");
-        StyleSheet styleSheet = ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet();
-        Report.setupStylesheet(styleSheet);
+        Report.setupStylesheet(pane);
     }
 
     public static void setupStylesheet(StyleSheet styleSheet) {
@@ -85,33 +82,6 @@ public class SBFReportEntry implements ReportEntry {
               + (int) (1.2 * size) + "pt; padding:10 0; margin:0; text-decoration: underline; }");
         styleSheet.addRule("span.info { color: " + hexColor(GUIP.getReportInfoColor()) + " }");
     }
-
-    // public static String styles() {
-    // float base = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
-    // int labelSize = (int) (0.8 * base);
-    // int valueSize = (int) (1.1 * base);
-    // int nameSize = (int) (1.3 * base);
-    //
-    // return ".value { font-family:Exo; font-size:20; }" +
-    // ".label { font-family:Noto Sans; font-size:" + labelSize + "; color:gray; }"
-    // +
-    // ".idnum { font-family:Exo; font-size:" + labelSize + "; color:gray;
-    // text-align:right; }" +
-    // ".valuecell { padding-right:10; font-family:Exo; font-size:" + valueSize + ";
-    // text-align: center; }" +
-    // ".armornodmg { font-family:Exo; font-size:" + valueSize + "; text-align:
-    // center; }" +
-    // ".valuedmg { font-family:Exo; font-size:" + valueSize + "; text-align:
-    // center; color: #FAA; }" +
-    // ".valuedeemph { font-family:Exo; font-size:" + labelSize + "; color:gray; }"
-    // +
-    // ".pvcell { font-family:Exo; font-size:" + nameSize + "; text-align: right; }"
-    // +
-    // ".speccell { font-family:Exo; font-size:" + labelSize + "; }" +
-    // ".fullwidth { width:100%; }" +
-    // ".formation { font-family:Noto Sans; font-size:" + nameSize + "; }" +
-    // "th, td { padding:0 2; }";
-    // }
 
     /**
      * Add the given int to the list of data that will be substituted for the &lt;data&gt; tags in the report. The order

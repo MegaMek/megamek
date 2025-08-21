@@ -122,7 +122,7 @@ class ComputeECMTest {
         // Add ECM
         EquipmentType eType = EquipmentType.get("ISGuardianECMSuite");
         try {
-            archer.addEquipment(eType, Mek.LOC_RT);
+            archer.addEquipment(eType, Mek.LOC_RIGHT_TORSO);
         } catch (LocationFullException e) {
             fail(e.getMessage());
         }
@@ -160,7 +160,7 @@ class ComputeECMTest {
 
         // Add a second ECM
         try {
-            archer.addEquipment(eType, Mek.LOC_RT);
+            archer.addEquipment(eType, Mek.LOC_RIGHT_TORSO);
         } catch (LocationFullException e) {
             fail(e.getMessage());
         }
@@ -172,7 +172,7 @@ class ComputeECMTest {
         // Add an Angel ECM
         eType = EquipmentType.get("ISAngelECMSuite");
         try {
-            archer.addEquipment(eType, Mek.LOC_LT);
+            archer.addEquipment(eType, Mek.LOC_LEFT_TORSO);
         } catch (LocationFullException e) {
             fail(e.getMessage());
         }
@@ -185,7 +185,7 @@ class ComputeECMTest {
         // Add a second Angel ECM (adding a second Angel ECM shouldn't have
         // any effect)
         try {
-            archer.addEquipment(eType, Mek.LOC_LARM);
+            archer.addEquipment(eType, Mek.LOC_LEFT_ARM);
         } catch (LocationFullException e) {
             fail(e.getMessage());
         }

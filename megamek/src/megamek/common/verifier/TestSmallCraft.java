@@ -66,14 +66,14 @@ public class TestSmallCraft extends TestAero {
 
     // Indices used to specify firing arcs with aliases for AeroDyne and spheroid
     public static final int ARC_NOSE = SmallCraft.LOC_NOSE;
-    public static final int ARC_LWING = SmallCraft.LOC_LWING;
-    public static final int ARC_RWING = SmallCraft.LOC_RWING;
+    public static final int ARC_LWING = SmallCraft.LOC_LEFT_WING;
+    public static final int ARC_RWING = SmallCraft.LOC_RIGHT_WING;
     public static final int ARC_AFT = SmallCraft.LOC_AFT;
     public static final int REAR_ARC_OFFSET = SmallCraft.LOC_HULL;
-    public static final int ARC_FWD_LEFT = SmallCraft.LOC_LWING;
-    public static final int ARC_FWD_RIGHT = SmallCraft.LOC_RWING;
-    public static final int ARC_AFT_LEFT = SmallCraft.LOC_LWING + REAR_ARC_OFFSET;
-    public static final int ARC_AFT_RIGHT = SmallCraft.LOC_RWING + REAR_ARC_OFFSET;
+    public static final int ARC_FWD_LEFT = SmallCraft.LOC_LEFT_WING;
+    public static final int ARC_FWD_RIGHT = SmallCraft.LOC_RIGHT_WING;
+    public static final int ARC_AFT_LEFT = SmallCraft.LOC_LEFT_WING + REAR_ARC_OFFSET;
+    public static final int ARC_AFT_RIGHT = SmallCraft.LOC_RIGHT_WING + REAR_ARC_OFFSET;
 
     private final SmallCraft smallCraft;
 
@@ -611,13 +611,13 @@ public class TestSmallCraft extends TestAero {
                 buff.append("Cannot mount ").append(m.getType().getName()).append("\n");
                 illegal = true;
             } else if (m.getType() instanceof WeaponType) {
-                if (m.getLocation() == SmallCraft.LOC_LWING) {
+                if (m.getLocation() == SmallCraft.LOC_LEFT_WING) {
                     if (m.isRearMounted()) {
                         leftAft.merge(m.getType(), 1, Integer::sum);
                     } else {
                         leftFwd.merge(m.getType(), 1, Integer::sum);
                     }
-                } else if (m.getLocation() == SmallCraft.LOC_RWING) {
+                } else if (m.getLocation() == SmallCraft.LOC_RIGHT_WING) {
                     if (m.isRearMounted()) {
                         rightAft.merge(m.getType(), 1, Integer::sum);
                     } else {
@@ -799,10 +799,10 @@ public class TestSmallCraft extends TestAero {
             String locationName = getEntity().getLocationName(i);
             buff.append(locationName).append(":");
             buff.append("\n");
-            for (int j = 0; j < getEntity().getNumberOfCriticals(i); j++) {
+            for (int j = 0; j < getEntity().getNumberOfCriticalSlots(i); j++) {
                 CriticalSlot slot = getEntity().getCritical(i, j);
                 if (slot == null) {
-                    j = getEntity().getNumberOfCriticals(i);
+                    j = getEntity().getNumberOfCriticalSlots(i);
                 } else if (slot.getType() == CriticalSlot.TYPE_SYSTEM) {
                     buff.append(j).append(". UNKNOWN SYSTEM NAME");
                     buff.append("\n");

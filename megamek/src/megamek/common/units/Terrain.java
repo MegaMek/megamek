@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,7 @@ package megamek.common.units;
 
 import static megamek.common.units.Terrains.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
@@ -47,13 +48,14 @@ import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 
 /**
- * Represents a single type of terrain or condition in a hex. The type of a terrain is immutable, once created, but the
+ * Represents a single type of terrain or condition in a hex. The type of terrain is immutable, once created, but the
  * level and exits are changeable. Each type of terrain should only be represented once in a hex.
  *
  * @author Ben
  */
 public class Terrain implements Serializable {
     //region Variable Declarations
+    @Serial
     private static final long serialVersionUID = -7624691566755134033L;
 
     /**
@@ -61,15 +63,15 @@ public class Terrain implements Serializable {
      */
     public static final int LEVEL_NONE = Integer.MIN_VALUE;
     public static final int WILDCARD = Integer.MAX_VALUE;
-    public static final int ATLEAST = Integer.MAX_VALUE - 1000;
+    public static final int AT_LEAST = Integer.MAX_VALUE - 1000;
 
     private final int type;
     /**
      * Terrain level, which is used to indicate varying severity of terrain types (ie, Light Woods vs Heavy woods). Not
      * to be confused with Hex levels.
      */
-    private int level;
-    private boolean exitsSpecified;
+    private final int level;
+    private final boolean exitsSpecified;
     private int exits;
     private int terrainFactor;
     //endregion Variable Declarations
@@ -293,9 +295,6 @@ public class Terrain implements Serializable {
         }
         final Terrain other = (Terrain) object;
         return (type == other.type) && (level == other.level);
-        // Ints don't need special handling. For more complex objects use:
-        // return Objects.equals(level, other.level) && Objects.equals(type,
-        // other.type);
     }
 
     @Override
@@ -606,16 +605,12 @@ public class Terrain implements Serializable {
      * The fire ignition modifier for this terrain
      */
     public int ignitionModifier() {
-        switch (type) {
-            case JUNGLE:
-                return 1;
-            case SNOW:
-                return (level == 2) ? 2 : 0;
-            case FIELDS:
-                return -1;
-            default:
-                return 0;
-        }
+        return switch (type) {
+            case JUNGLE -> 1;
+            case SNOW -> (level == 2) ? 2 : 0;
+            case FIELDS -> -1;
+            default -> 0;
+        };
     }
 
     public int getBogDownModifier(EntityMovementMode moveMode, boolean largeVee) {
@@ -689,7 +684,7 @@ public class Terrain implements Serializable {
     /**
      * Returns true when this terrain is valid, i.e. if its level is an allowed value for its type. Exits have no
      * limitations and are not checked. If an error is found, a line detailing the error is added to the given errors
-     * list if it not null.
+     * list if it is not null.
      *
      * @param errors A list of errors to append new errors to if it is not null
      *

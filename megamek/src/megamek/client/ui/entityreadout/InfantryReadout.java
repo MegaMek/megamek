@@ -38,14 +38,14 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import megamek.client.ui.Messages;
-import megamek.common.equipment.EquipmentType;
-import megamek.common.units.Infantry;
-import megamek.common.units.InfantryMount;
-import megamek.common.equipment.Mounted;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.Mounted;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
+import megamek.common.units.Infantry;
+import megamek.common.units.InfantryMount;
 import megamek.common.verifier.TestInfantry;
 
 /**
@@ -77,7 +77,7 @@ class InfantryReadout extends GeneralEntityReadout {
         int jumpMP = infantry.getJumpMP();
         int umuMP = infantry.getAllUMUCount();
         StringJoiner movement = new StringJoiner("/");
-        if (!infantry.getMovementMode().isSubmarine() || ((mount != null) && (mount.getSecondaryGroundMP() > 0))) {
+        if (!infantry.getMovementMode().isSubmarine() || ((mount != null) && (mount.secondaryGroundMP() > 0))) {
             movement.add(walkMP + "");
         }
         if (runMP > walkMP) {
@@ -109,27 +109,27 @@ class InfantryReadout extends GeneralEntityReadout {
         InfantryMount mount = infantry.getMount();
         if (mount != null) {
             StringJoiner mountFeatures = new StringJoiner(", ", " (", ")");
-            mountFeatures.add(mount.getSize().displayName());
-            if (mount.getMovementMode().isSubmarine()) {
+            mountFeatures.add(mount.size().displayName());
+            if (mount.movementMode().isSubmarine()) {
                 mountFeatures.add(megamek.client.ui.Messages.getString("MekView.Submarine"));
-            } else if (mount.getMovementMode().isVTOL()) {
+            } else if (mount.movementMode().isVTOL()) {
                 mountFeatures.add(megamek.client.ui.Messages.getString("MekView.VTOL"));
             }
             result.add(new LabeledLine(
                   megamek.client.ui.Messages.getString("MekView.Mount"),
-                  "%s%s".formatted(mount.getName(), mountFeatures)));
+                  "%s%s".formatted(mount.name(), mountFeatures)));
 
-            if ((mount.getBurstDamageDice() > 0) || (mount.getVehicleDamage() > 0)) {
+            if ((mount.getBurstDamageDice() > 0) || (mount.vehicleDamage() > 0)) {
                 result.add(new LabeledLine(
                       megamek.client.ui.Messages.getString("MekView.MountBonusDamage"),
-                      "+%dD6 (%d)".formatted(mount.getBurstDamageDice(), mount.getVehicleDamage())));
+                      "+%dD6 (%d)".formatted(mount.getBurstDamageDice(), mount.vehicleDamage())));
             }
-            if ((mount.getMaxWaterDepth() > 0) && (mount.getMaxWaterDepth() < Integer.MAX_VALUE)) {
+            if ((mount.maxWaterDepth() > 0) && (mount.maxWaterDepth() < Integer.MAX_VALUE)) {
                 result.add(new LabeledLine(
                       megamek.client.ui.Messages.getString("MekView.MountWaterDepth"),
-                      mount.getMaxWaterDepth() + ""));
+                      mount.maxWaterDepth() + ""));
             }
-            if (mount.getMovementMode().isSubmarine() && (mount.getUWEndurance() < Integer.MAX_VALUE)) {
+            if (mount.movementMode().isSubmarine() && (mount.getUWEndurance() < Integer.MAX_VALUE)) {
                 result.add(new LabeledLine(
                       megamek.client.ui.Messages.getString("MekView.MountWaterEndurance"),
                       Messages.getString("MekView.MountWaterEnduranceValue")
@@ -238,7 +238,7 @@ class InfantryReadout extends GeneralEntityReadout {
         result.add(new LabeledLine(Messages.getString("MekView.Men"), troopers));
 
         String squadCompositionFormat =
-              (infantry.getMount() != null) && (infantry.getMount().getSize() != InfantryMount.BeastSize.LARGE)
+              (infantry.getMount() != null) && (infantry.getMount().size() != InfantryMount.BeastSize.LARGE)
                     ? Messages.getString("MekView.CreaturesComposition")
                     : Messages.getString("MekView.SquadComposition");
         String squadComposition = squadCompositionFormat.formatted(infantry.getSquadCount());

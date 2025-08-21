@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org), Cord Awtry (kipsta@bs-interactive.com)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -53,7 +53,7 @@ public class BipedMek extends MekWithArms {
     private static final String[] LOCATION_NAMES = { "Head", "Center Torso", "Right Torso", "Left Torso", "Right Arm",
                                                      "Left Arm", "Right Leg", "Left Leg" };
 
-    private static final String[] LOCATION_ABBRS = { "HD", "CT", "RT", "LT", "RA", "LA", "RL", "LL" };
+    private static final String[] LOCATION_ABBREVIATIONS = { "HD", "CT", "RT", "LT", "RA", "LA", "RL", "LL" };
 
     private static final int[] NUM_OF_SLOTS = { 6, 12, 12, 12, 12, 12, 6, 6 };
 
@@ -71,15 +71,15 @@ public class BipedMek extends MekWithArms {
         movementMode = EntityMovementMode.BIPED;
         originalMovementMode = EntityMovementMode.BIPED;
 
-        setCritical(LOC_RARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_SHOULDER));
-        setCritical(LOC_RARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_ARM));
-        setCritical(LOC_RARM, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_ARM));
-        setCritical(LOC_RARM, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HAND));
+        setCritical(LOC_RIGHT_ARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_SHOULDER));
+        setCritical(LOC_RIGHT_ARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_ARM));
+        setCritical(LOC_RIGHT_ARM, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_ARM));
+        setCritical(LOC_RIGHT_ARM, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HAND));
 
-        setCritical(LOC_LARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_SHOULDER));
-        setCritical(LOC_LARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_ARM));
-        setCritical(LOC_LARM, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_ARM));
-        setCritical(LOC_LARM, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HAND));
+        setCritical(LOC_LEFT_ARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_SHOULDER));
+        setCritical(LOC_LEFT_ARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_ARM));
+        setCritical(LOC_LEFT_ARM, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_ARM));
+        setCritical(LOC_LEFT_ARM, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HAND));
     }
 
     @Override
@@ -191,7 +191,9 @@ public class BipedMek extends MekWithArms {
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 
-            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND) &&
+            if (getCrew().getOptions()
+                  .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
+                  .equals(Crew.ENVIRONMENT_SPECIALIST_WIND) &&
                   conditions.getWeather().isClear() &&
                   conditions.getWind().isTornadoF1ToF3()) {
                 mp += 1;
@@ -208,13 +210,13 @@ public class BipedMek extends MekWithArms {
     @Override
     public void setInternal(int head, int ct, int t, int arm, int leg) {
         initializeInternal(head, LOC_HEAD);
-        initializeInternal(ct, LOC_CT);
-        initializeInternal(t, LOC_RT);
-        initializeInternal(t, LOC_LT);
-        initializeInternal(arm, LOC_RARM);
-        initializeInternal(arm, LOC_LARM);
-        initializeInternal(leg, LOC_RLEG);
-        initializeInternal(leg, LOC_LLEG);
+        initializeInternal(ct, LOC_CENTER_TORSO);
+        initializeInternal(t, LOC_RIGHT_TORSO);
+        initializeInternal(t, LOC_LEFT_TORSO);
+        initializeInternal(arm, LOC_RIGHT_ARM);
+        initializeInternal(arm, LOC_LEFT_ARM);
+        initializeInternal(leg, LOC_RIGHT_LEG);
+        initializeInternal(leg, LOC_LEFT_LEG);
     }
 
     @Override
@@ -223,24 +225,24 @@ public class BipedMek extends MekWithArms {
             roll.addModifier(-2, "AES bonus");
         }
 
-        for (int loc : List.of(Mek.LOC_RLEG, Mek.LOC_LLEG)) {
+        for (int loc : List.of(Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_LEG)) {
             if (isLocationBad(loc)) {
                 roll.addModifier(5, getLocationName(loc) + " destroyed");
             } else {
-                if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
+                if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
                     roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
                     if (!game.getOptions()
                           .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
                         continue;
                     }
                 }
-                if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, loc) > 0) {
+                if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, loc) > 0) {
                     roll.addModifier(1, getLocationName(loc) + " Upper Leg Actuator destroyed");
                 }
-                if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, loc) > 0) {
+                if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, loc) > 0) {
                     roll.addModifier(1, getLocationName(loc) + " Lower Leg Actuator destroyed");
                 }
-                if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc) > 0) {
+                if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc) > 0) {
                     roll.addModifier(1, getLocationName(loc) + " Foot Actuator destroyed");
                 }
             }
@@ -260,8 +262,8 @@ public class BipedMek extends MekWithArms {
     }
 
     @Override
-    public String[] getLocationAbbrs() {
-        return LOCATION_ABBRS;
+    public String[] getLocationAbbreviations() {
+        return LOCATION_ABBREVIATIONS;
     }
 
     @Override
@@ -272,47 +274,40 @@ public class BipedMek extends MekWithArms {
     @Override
     public boolean hasActiveShield(int location, boolean rear) {
 
-        switch (location) {
-            case Mek.LOC_CT:
-            case Mek.LOC_HEAD:
-                // no rear head location so must be rear CT which is not proected by any shield
+        return switch (location) {
+            case Mek.LOC_CENTER_TORSO, Mek.LOC_HEAD -> {
+                // no rear head location so must be rear CT which is not projected by any shield
                 if (rear) {
-                    return false;
+                    yield false;
                 }
-                if (hasActiveShield(Mek.LOC_LARM) || hasActiveShield(Mek.LOC_RARM)) {
-                    return true;
-                }
-                // else
-                return false;
-            case Mek.LOC_LARM:
-            case Mek.LOC_LT:
-            case Mek.LOC_LLEG:
-                return hasActiveShield(Mek.LOC_LARM);
-            default:
-                return hasActiveShield(Mek.LOC_RARM);
-        }
+                yield hasActiveShield(Mek.LOC_LEFT_ARM) || hasActiveShield(Mek.LOC_RIGHT_ARM);
+            }
+            // else
+            case Mek.LOC_LEFT_ARM, Mek.LOC_LEFT_TORSO, Mek.LOC_LEFT_LEG -> hasActiveShield(Mek.LOC_LEFT_ARM);
+            default -> hasActiveShield(Mek.LOC_RIGHT_ARM);
+        };
     }
 
     @Override
     public boolean canGoHullDown() {
         return (game != null) &&
               game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN) &&
-              ((!isLocationBad(Mek.LOC_LLEG) &&
-                    !isLocationBad(Mek.LOC_RLEG) &&
-                    !isLocationDoomed(Mek.LOC_LLEG) &&
-                    !isLocationDoomed(Mek.LOC_RLEG))) &&
+              ((!isLocationBad(Mek.LOC_LEFT_LEG) &&
+                    !isLocationBad(Mek.LOC_RIGHT_LEG) &&
+                    !isLocationDoomed(Mek.LOC_LEFT_LEG) &&
+                    !isLocationDoomed(Mek.LOC_RIGHT_LEG))) &&
               !isGyroDestroyed();
     }
 
     @Override
     public boolean cannotStandUpFromHullDown() {
-        return isLocationBad(LOC_LLEG) || isLocationBad(LOC_RLEG) || isGyroDestroyed();
+        return isLocationBad(LOC_LEFT_LEG) || isLocationBad(LOC_RIGHT_LEG) || isGyroDestroyed();
     }
 
     @Override
     public boolean hasMPReducingHardenedArmor() {
-        return (armorType[LOC_LLEG] == EquipmentType.T_ARMOR_HARDENED) ||
-              (armorType[LOC_RLEG] == EquipmentType.T_ARMOR_HARDENED);
+        return (armorType[LOC_LEFT_LEG] == EquipmentType.T_ARMOR_HARDENED) ||
+              (armorType[LOC_RIGHT_LEG] == EquipmentType.T_ARMOR_HARDENED);
     }
 
     @Override
@@ -326,12 +321,12 @@ public class BipedMek extends MekWithArms {
     public boolean canZweihander() {
         return (getCrew() != null) &&
               hasAbility(OptionsConstants.PILOT_ZWEIHANDER) &&
-              hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM) &&
-              hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM) &&
-              !isLocationBad(Mek.LOC_RARM) &&
-              !isLocationBad(Mek.LOC_LARM) &&
-              !weaponFiredFrom(Mek.LOC_LARM) &&
-              !weaponFiredFrom(Mek.LOC_RARM) &&
+              hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM) &&
+              hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM) &&
+              !isLocationBad(Mek.LOC_RIGHT_ARM) &&
+              !isLocationBad(Mek.LOC_LEFT_ARM) &&
+              !weaponFiredFrom(Mek.LOC_LEFT_ARM) &&
+              !weaponFiredFrom(Mek.LOC_RIGHT_ARM) &&
               !isProne();
     }
 }

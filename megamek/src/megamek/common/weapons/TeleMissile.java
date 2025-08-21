@@ -170,7 +170,7 @@ public class TeleMissile extends Aero {
     }
 
     @Override
-    public String[] getLocationAbbrs() {
+    public String[] getLocationAbbreviations() {
         return LOCATION_ABBRS;
     }
 

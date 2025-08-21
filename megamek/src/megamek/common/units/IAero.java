@@ -35,7 +35,6 @@
 package megamek.common.units;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -68,8 +67,7 @@ import megamek.logging.MMLogger;
  * @author Neoancient
  */
 public interface IAero {
-
-    static final MMLogger logger = MMLogger.create(IAero.class);
+    MMLogger LOGGER = MMLogger.create(IAero.class);
 
     int getCurrentThrust();
 
@@ -101,15 +99,15 @@ public interface IAero {
 
     boolean isOutControl();
 
-    void setOutControl(boolean ocontrol);
+    void setOutControl(boolean outControl);
 
-    boolean isOutCtrlHeat();
+    boolean isOutControlHeat();
 
-    void setOutCtrlHeat(boolean octrlheat);
+    void setOutControlHeat(boolean outControlHeat);
 
     boolean isRandomMove();
 
-    void setRandomMove(boolean randmove);
+    void setRandomMove(boolean randomMove);
 
     boolean didAccLast();
 
@@ -155,7 +153,7 @@ public interface IAero {
 
     int getLandingGearPartialRepairs();
 
-    int getAvionicsMisreplaced();
+    int getAvionicsMisReplaced();
 
     int getAvionicsMisrepaired();
 
@@ -201,7 +199,7 @@ public interface IAero {
      * @return True when this aero requires fuel to move. Note that the result is undefined when the unit has no engine.
      *       Callers should consider this case themselves. Also note that this method does not check whether fuel use as
      *       a game option is active, only if the unit technically requires fuel to move. For example, returns false for
-     *       solar powered prop-driven fixed wing support (TM p129).
+     *       solar-powered prop-driven fixed wing support (TM p129).
      */
     default boolean requiresFuel() {
         return true;
@@ -250,9 +248,7 @@ public interface IAero {
             // first we need to reset all the weapons in our existing mounts to zero
             // until proven otherwise
             Set<String> set = getWeaponGroups().keySet();
-            Iterator<String> iter = set.iterator();
-            while (iter.hasNext()) {
-                String key = iter.next();
+            for (String key : set) {
                 ((Entity) this).getEquipment(getWeaponGroups().get(key)).setNWeapons(0);
             }
             // now collect a hash of all the same weapons in each location by id
@@ -260,9 +256,7 @@ public interface IAero {
             // now we just need to traverse the hash and either update our existing
             // equipment or add new ones if there is none
             Set<String> newSet = groups.keySet();
-            Iterator<String> newIter = newSet.iterator();
-            while (newIter.hasNext()) {
-                String key = newIter.next();
+            for (String key : newSet) {
                 if (null != getWeaponGroups().get(key)) {
                     // then this equipment is already loaded, so we just need to
                     // correctly update the number of weapons
@@ -272,14 +266,14 @@ public interface IAero {
                     String name = key.split(":")[0];
                     int loc = Integer.parseInt(key.split(":")[1]);
                     EquipmentType etype = EquipmentType.get(name);
-                    Mounted<?> newmount;
+                    Mounted<?> newMount;
                     if (etype != null) {
                         try {
-                            newmount = ((Entity) this).addWeaponGroup(etype, loc);
-                            newmount.setNWeapons(groups.get(key));
-                            getWeaponGroups().put(key, ((Entity) this).getEquipmentNum(newmount));
+                            newMount = ((Entity) this).addWeaponGroup(etype, loc);
+                            newMount.setNWeapons(groups.get(key));
+                            getWeaponGroups().put(key, ((Entity) this).getEquipmentNum(newMount));
                         } catch (LocationFullException ex) {
-                            logger.error("Unable to compile weapon groups", ex);
+                            LOGGER.error("Unable to compile weapon groups", ex);
                             return;
                         }
                     } else if (!"0".equals(name)) {
@@ -474,7 +468,7 @@ public interface IAero {
      *
      * @param velocity   Velocity when the check is to be made, this needs to be passed as the check could happen as
      *                   part of a Move Path
-     * @param landingPos The touch down position (for a horizontal landing, that is not the final position)
+     * @param landingPos The touch-down position (for a horizontal landing, that is not the final position)
      * @param isVertical If this a vertical or horizontal landing
      *
      * @return A PilotingRollData tha represents the landing control roll that must be passed
@@ -486,14 +480,14 @@ public interface IAero {
               "Base piloting skill");
 
         // Apply critical hit effects, TW pg 239
-        int avihits = getAvionicsHits();
-        if ((avihits > 0) && (avihits < 3)) {
-            roll.addModifier(avihits, "Avionics Damage");
+        int aviationHits = getAvionicsHits();
+        if ((aviationHits > 0) && (aviationHits < 3)) {
+            roll.addModifier(aviationHits, "Avionics Damage");
         }
 
         // this should probably be replaced with some kind of AVI_DESTROYED
         // boolean
-        if (avihits >= 3) {
+        if (aviationHits >= 3) {
             roll.addModifier(5, "Avionics Destroyed");
         }
 
@@ -507,28 +501,28 @@ public interface IAero {
             if (getLandingGearPartialRepairs() == 2) {
                 roll.addModifier(getLandingGearPartialRepairs(), "landing gear misrepaired");
             } else if (getLandingGearPartialRepairs() == 1) {
-                roll.addModifier(getLandingGearPartialRepairs(), "landing gear misreplaced");
+                roll.addModifier(getLandingGearPartialRepairs(), "landing gear mis-replaced");
             }
         }
 
         // Avionics Partial Repairs, only apply if the Avionics package isn't destroyed
-        if (avihits < 3) {
+        if (aviationHits < 3) {
             if (getAvionicsMisrepaired() == 1) {
                 roll.addModifier(1, "misrepaired avionics");
             }
-            if (getAvionicsMisreplaced() == 1) {
-                roll.addModifier(1, "misreplaced avionics");
+            if (getAvionicsMisReplaced() == 1) {
+                roll.addModifier(1, "mis-replaced avionics");
             }
         }
         // Landing Modifiers table, TW pg 86
-        int velmod;
+        int velocityModifiers;
         if (isVertical) {
-            velmod = Math.max(0, velocity - 1);
+            velocityModifiers = Math.max(0, velocity - 1);
         } else {
-            velmod = Math.max(0, velocity - 2);
+            velocityModifiers = Math.max(0, velocity - 2);
         }
-        if (velmod > 0) {
-            roll.addModifier(velmod, "excess velocity");
+        if (velocityModifiers > 0) {
+            roll.addModifier(velocityModifiers, "excess velocity");
         }
         if (getLeftThrustHits() + getRightThrustHits() > 0) {
             roll.addModifier(+4, "Maneuvering thrusters damaged");
@@ -557,7 +551,8 @@ public interface IAero {
         Set<Coords> landingPositions = getLandingCoords(isVertical, landingPos, face);
         // Any hex without terrain is clear, which is a +2 modifier.
         boolean clear = false;
-        // FIXME I suspect this going to fail when an aero flies in from an atmo board into a ground board and lands
+        // FIXME I suspect this going to fail when an aero flies in from an atmosphere board into a ground board and
+        //  lands
         //  in a single movement.
         Board board = ((Entity) this).getGame().getBoard(((Entity) this).getBoardId());
         for (Coords pos : landingPositions) {
@@ -600,7 +595,7 @@ public interface IAero {
     }
 
     default Set<Coords> getLandingCoords(boolean isVertical, Coords landingPos, int facing) {
-        Set<Coords> landingPositions = new HashSet<Coords>();
+        Set<Coords> landingPositions = new HashSet<>();
         if (isVertical) {
             landingPositions.add(landingPos);
             // Dropships must also check the adjacent 6 hexes
@@ -782,7 +777,7 @@ public interface IAero {
         int elev = hex.getLevel();
         int facing = thisEntity.getFacing();
         String lenString = " (" + getLandingLength() + " hexes required)";
-        // dropships need a a landing strip three hexes wide
+        // dropships need a landing strip three hexes wide
         Vector<Coords> startingPos = new Vector<>();
         startingPos.add(assumedPosition);
         if (this instanceof Dropship) {
@@ -888,7 +883,7 @@ public interface IAero {
         setCurrentVelocity(0);
         setNextVelocity(0);
         setOutControl(false);
-        setOutCtrlHeat(false);
+        setOutControlHeat(false);
         setRandomMove(false);
         aero.delta_distance = 0;
     }
@@ -932,7 +927,6 @@ public interface IAero {
     /**
      * Set round that engines were completely destroyed; needed for crash-landing check
      *
-     * @param round
      */
     void setEnginesLostRound(int round);
 

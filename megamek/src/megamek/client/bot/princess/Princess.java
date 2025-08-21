@@ -34,6 +34,7 @@
 package megamek.client.bot.princess;
 
 import java.io.File;
+import java.lang.System;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
@@ -1553,7 +1554,7 @@ public class Princess extends BotClient {
               UnitType.TANK,
               UnitType.VTOL,
               UnitType.CONV_FIGHTER,
-              UnitType.AEROSPACEFIGHTER));
+              UnitType.AEROSPACE_FIGHTER));
 
         if (validAimTypes.contains(target.getUnitType())) {
 
@@ -1600,7 +1601,7 @@ public class Princess extends BotClient {
               UnitType.TANK,
               UnitType.VTOL,
               UnitType.CONV_FIGHTER,
-              UnitType.AEROSPACEFIGHTER));
+              UnitType.AEROSPACE_FIGHTER));
 
         if (!validAimTypes.contains(((Entity) target).getUnitType())) {
             return aimLocation;
@@ -1720,16 +1721,16 @@ public class Princess extends BotClient {
                   .filter(w -> w.isOperable() && isBigGun(w))
                   .collect(Collectors.toSet())) {
 
-                if (!rankedLocations.contains(Mek.LOC_RARM) &&
-                      curWeapon.getLocation() == Mek.LOC_RARM &&
-                      target.getInternal(Mek.LOC_RARM) > 0) {
-                    rankedLocations.add(Mek.LOC_RARM);
-                } else if (!rankedLocations.contains(Mek.LOC_LARM) &&
-                      curWeapon.getLocation() == Mek.LOC_LARM &&
-                      target.getInternal(Mek.LOC_LARM) > 0) {
-                    rankedLocations.add(Mek.LOC_LARM);
+                if (!rankedLocations.contains(Mek.LOC_RIGHT_ARM) &&
+                      curWeapon.getLocation() == Mek.LOC_RIGHT_ARM &&
+                      target.getInternal(Mek.LOC_RIGHT_ARM) > 0) {
+                    rankedLocations.add(Mek.LOC_RIGHT_ARM);
+                } else if (!rankedLocations.contains(Mek.LOC_LEFT_ARM) &&
+                      curWeapon.getLocation() == Mek.LOC_LEFT_ARM &&
+                      target.getInternal(Mek.LOC_LEFT_ARM) > 0) {
+                    rankedLocations.add(Mek.LOC_LEFT_ARM);
                 }
-                if (rankedLocations.contains(Mek.LOC_RARM) && rankedLocations.contains(Mek.LOC_LARM)) {
+                if (rankedLocations.contains(Mek.LOC_RIGHT_ARM) && rankedLocations.contains(Mek.LOC_LEFT_ARM)) {
                     break;
                 }
 
@@ -1739,32 +1740,32 @@ public class Princess extends BotClient {
             // so going after the right torso first solves both conditions. Putting the right torso
             // first ensures the left torso and other locations will only supersede it if they have
             // taken more damage and make for a better target.
-            if (target.getInternal(Mek.LOC_RT) > 0) {
-                rankedLocations.add(Mek.LOC_RT);
-            } else if (target.getInternal(Mek.LOC_LT) > 0) {
-                rankedLocations.add(Mek.LOC_LT);
+            if (target.getInternal(Mek.LOC_RIGHT_TORSO) > 0) {
+                rankedLocations.add(Mek.LOC_RIGHT_TORSO);
+            } else if (target.getInternal(Mek.LOC_LEFT_TORSO) > 0) {
+                rankedLocations.add(Mek.LOC_LEFT_TORSO);
             }
 
-            if (!rankedLocations.contains(Mek.LOC_LT)) {
-                if (target.getInternal(Mek.LOC_LT) > 0) {
-                    rankedLocations.add((Mek.LOC_LT));
+            if (!rankedLocations.contains(Mek.LOC_LEFT_TORSO)) {
+                if (target.getInternal(Mek.LOC_LEFT_TORSO) > 0) {
+                    rankedLocations.add((Mek.LOC_LEFT_TORSO));
                 }
             }
 
-            rankedLocations.add(Mek.LOC_CT);
+            rankedLocations.add(Mek.LOC_CENTER_TORSO);
         }
 
         // Favor right leg over left due to damage transfer to right torso, except if right leg is
         // completely gone
-        if (target.getInternal(Mek.LOC_RLEG) > 0) {
-            rankedLocations.add(Mek.LOC_RLEG);
-        } else if (target.getInternal(Mek.LOC_LLEG) > 0) {
-            rankedLocations.add(Mek.LOC_LLEG);
+        if (target.getInternal(Mek.LOC_RIGHT_LEG) > 0) {
+            rankedLocations.add(Mek.LOC_RIGHT_LEG);
+        } else if (target.getInternal(Mek.LOC_LEFT_LEG) > 0) {
+            rankedLocations.add(Mek.LOC_LEFT_LEG);
         }
 
-        if (!rankedLocations.contains(Mek.LOC_LLEG)) {
-            if (target.getInternal(Mek.LOC_LLEG) > 0) {
-                rankedLocations.add(Mek.LOC_LLEG);
+        if (!rankedLocations.contains(Mek.LOC_LEFT_LEG)) {
+            if (target.getInternal(Mek.LOC_LEFT_LEG) > 0) {
+                rankedLocations.add(Mek.LOC_LEFT_LEG);
             }
         }
 
@@ -1787,7 +1788,9 @@ public class Princess extends BotClient {
 
             // Doesn't get any better than a torso with no armor
             if (lowestArmor == 0 &&
-                  (aimLocation == Mek.LOC_RT || aimLocation == Mek.LOC_LT || aimLocation == Mek.LOC_CT)) {
+                  (aimLocation == Mek.LOC_RIGHT_TORSO
+                        || aimLocation == Mek.LOC_LEFT_TORSO
+                        || aimLocation == Mek.LOC_CENTER_TORSO)) {
                 break;
             }
         }
@@ -1856,7 +1859,9 @@ public class Princess extends BotClient {
 
         if (attackSide == ToHitData.SIDE_FRONT || attackSide == ToHitData.SIDE_REAR) {
 
-            List<Integer> upperLocations = new ArrayList<>(Arrays.asList(Mek.LOC_RT, Mek.LOC_LT, Mek.LOC_CT));
+            List<Integer> upperLocations = new ArrayList<>(Arrays.asList(Mek.LOC_RIGHT_TORSO,
+                  Mek.LOC_LEFT_TORSO,
+                  Mek.LOC_CENTER_TORSO));
 
             // Only consider the arms if they have 'big' weapons
             for (WeaponMounted curWeapon : target.getWeaponList()
@@ -1864,16 +1869,16 @@ public class Princess extends BotClient {
                   .filter(w -> w.isOperable() && isBigGun(w))
                   .collect(Collectors.toSet())) {
 
-                if (!upperLocations.contains(Mek.LOC_RARM) &&
-                      curWeapon.getLocation() == Mek.LOC_RARM &&
-                      target.getInternal(Mek.LOC_RARM) > 0) {
-                    upperLocations.add(Mek.LOC_RARM);
-                } else if (!upperLocations.contains(Mek.LOC_LARM) &&
-                      curWeapon.getLocation() == Mek.LOC_LARM &&
-                      target.getInternal(Mek.LOC_LARM) > 0) {
-                    upperLocations.add(Mek.LOC_LARM);
+                if (!upperLocations.contains(Mek.LOC_RIGHT_ARM) &&
+                      curWeapon.getLocation() == Mek.LOC_RIGHT_ARM &&
+                      target.getInternal(Mek.LOC_RIGHT_ARM) > 0) {
+                    upperLocations.add(Mek.LOC_RIGHT_ARM);
+                } else if (!upperLocations.contains(Mek.LOC_LEFT_ARM) &&
+                      curWeapon.getLocation() == Mek.LOC_LEFT_ARM &&
+                      target.getInternal(Mek.LOC_LEFT_ARM) > 0) {
+                    upperLocations.add(Mek.LOC_LEFT_ARM);
                 }
-                if (upperLocations.contains(Mek.LOC_RARM) && upperLocations.contains(Mek.LOC_LARM)) {
+                if (upperLocations.contains(Mek.LOC_RIGHT_ARM) && upperLocations.contains(Mek.LOC_LEFT_ARM)) {
                     break;
                 }
 
@@ -1904,11 +1909,11 @@ public class Princess extends BotClient {
 
             // Only consider shooting low if both legs are intact
             double lowerTargets = 0;
-            if (target.getInternal(Mek.LOC_RLEG) > 0 && target.getInternal(Mek.LOC_LLEG) > 0) {
-                if (target.getArmor(Mek.LOC_RLEG) <= armorThreshold) {
+            if (target.getInternal(Mek.LOC_RIGHT_LEG) > 0 && target.getInternal(Mek.LOC_LEFT_LEG) > 0) {
+                if (target.getArmor(Mek.LOC_RIGHT_LEG) <= armorThreshold) {
                     lowerTargets++;
                 }
-                if (target.getArmor(Mek.LOC_LLEG) <= armorThreshold) {
+                if (target.getArmor(Mek.LOC_LEFT_LEG) <= armorThreshold) {
                     lowerTargets++;
                 }
             }

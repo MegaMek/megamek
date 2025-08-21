@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2017-2025 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,6 +32,8 @@
  */
 package megamek.common.units;
 
+import java.io.Serial;
+
 import megamek.common.CriticalSlot;
 import megamek.common.Hex;
 import megamek.common.MPCalculationSetting;
@@ -54,6 +56,7 @@ import megamek.common.rolls.PilotingRollData;
  * @author Neoancient
  */
 public class QuadVee extends QuadMek {
+    @Serial
     private static final long serialVersionUID = 1283551018632228647L;
 
     public static final int CONV_MODE_MEK = 0;
@@ -61,10 +64,9 @@ public class QuadVee extends QuadMek {
 
     public static final int SYSTEM_CONVERSION_GEAR = 15;
 
-    public static final String[] systemNames = { "Life Support", "Sensors",
-                                                 "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm",
-                                                 "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot",
-                                                 "Conversion Gear" };
+    public static final String[] systemNames = { "Life Support", "Sensors", "Cockpit", "Engine", "Gyro", null, null,
+                                                 "Shoulder", "Upper Arm", "Lower Arm", "Hand", "Hip", "Upper Leg",
+                                                 "Lower Leg", "Foot", "Conversion Gear" };
 
     public static final int MOTIVE_UNKNOWN = -1;
     public static final int MOTIVE_TRACK = 0;
@@ -83,10 +85,10 @@ public class QuadVee extends QuadMek {
 
         motiveType = inMotiveType;
 
-        setCritical(LOC_RARM, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_CONVERSION_GEAR));
-        setCritical(LOC_LARM, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_CONVERSION_GEAR));
-        setCritical(LOC_RLEG, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_CONVERSION_GEAR));
-        setCritical(LOC_LLEG, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_CONVERSION_GEAR));
+        setCritical(LOC_RIGHT_ARM, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_CONVERSION_GEAR));
+        setCritical(LOC_LEFT_ARM, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_CONVERSION_GEAR));
+        setCritical(LOC_RIGHT_LEG, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_CONVERSION_GEAR));
+        setCritical(LOC_LEFT_LEG, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_CONVERSION_GEAR));
     }
 
     @Override
@@ -167,7 +169,7 @@ public class QuadVee extends QuadMek {
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         // Current MP is calculated differently depending on whether the QuadVee is in MEK
-        // or vehicle mode. During conversion we use the mode we started in:
+        // or vehicle mode. During conversion, we use the mode we started in:
         // bg.battletech.com/forums/index.php?topic=55261.msg1271935#msg1271935
         if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_VEHICLE)) {
             return getCruiseMP(mpCalculationSetting);
@@ -230,7 +232,9 @@ public class QuadVee extends QuadMek {
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 
-            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
+            if (getCrew().getOptions()
+                  .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
+                  .equals(Crew.ENVIRONMENT_SPECIALIST_WIND)
                   && conditions.getWeather().isClear()
                   && conditions.getWind().isTornadoF1ToF3()) {
                 mp += 1;
@@ -408,7 +412,7 @@ public class QuadVee extends QuadMek {
     public int conversionCost() {
         int cost = 2;
         // Base cost 2, +1 for each damaged leg actuator, conversion equipment, or track slot
-        for (int loc = LOC_RARM; loc <= LOC_LLEG; loc++) {
+        for (int loc = LOC_RIGHT_ARM; loc <= LOC_LEFT_LEG; loc++) {
             for (int slot = 0; slot < 5; slot++) {
                 if (getCritical(loc, slot).isHit()) {
                     cost++;

@@ -38,22 +38,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import megamek.common.bays.*;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.loaders.MekSummary;
-import megamek.common.bays.SuperHeavyVehicleBay;
-import megamek.common.bays.ASFBay;
-import megamek.common.bays.BattleArmorBay;
-import megamek.common.bays.Bay;
-import megamek.common.bays.HeavyVehicleBay;
-import megamek.common.bays.InfantryBay;
-import megamek.common.bays.LightVehicleBay;
-import megamek.common.bays.MekBay;
-import megamek.common.bays.ProtoMekBay;
-import megamek.common.bays.SmallCraftBay;
-import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
-import megamek.common.units.InfantryTransporter;
+import megamek.common.units.PlatoonType;
 import megamek.common.units.UnitType;
 
 /**
@@ -107,14 +98,14 @@ public class TransportCalculator {
             } else if (en.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
                 // Here we need to count the transport weight of the platoon rather than just the number
                 unitCounts.merge(UnitType.INFANTRY,
-                      InfantryTransporter.PlatoonType.getPlatoonType(en).getWeight(),
+                      PlatoonType.getPlatoonType(en).getWeight(),
                       Integer::sum);
             } else if (en.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
                 unitCounts.merge(UnitType.DROPSHIP, 1, Integer::sum);
             } else if (en.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
                 unitCounts.merge(UnitType.SMALL_CRAFT, 1, Integer::sum);
             } else if (en.isFighter()) {
-                unitCounts.merge(UnitType.AEROSPACEFIGHTER, 1, Integer::sum);
+                unitCounts.merge(UnitType.AEROSPACE_FIGHTER, 1, Integer::sum);
             }
         }
         return unitCounts;
@@ -269,7 +260,7 @@ public class TransportCalculator {
             } else if (bay instanceof InfantryBay) {
                 bayCount.merge(UnitType.BATTLE_ARMOR, (int) bay.getCapacity(), Integer::sum);
             } else if (bay instanceof ASFBay) {
-                bayCount.merge(UnitType.AEROSPACEFIGHTER, (int) bay.getCapacity(), Integer::sum);
+                bayCount.merge(UnitType.AEROSPACE_FIGHTER, (int) bay.getCapacity(), Integer::sum);
             } else if (bay instanceof SmallCraftBay) {
                 bayCount.merge(UnitType.SMALL_CRAFT, (int) bay.getCapacity(), Integer::sum);
             }

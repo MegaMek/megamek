@@ -1130,7 +1130,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 int bldgAbsorbs = 0;
                 if (targetInBuilding && (bldg != null)
                       && (toHit.getThruBldg() == null)) {
-                    bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
+                    bldgAbsorbs = bldg.getAbsorption(target.getPosition());
                 }
 
                 // Attacking infantry in buildings from same building
@@ -1434,8 +1434,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             int hitLoc = pcHit.getLocation();
             // Primary stores the left side, from the perspective of the
             // attacker
-            if (hitLoc == Mek.LOC_RLEG || hitLoc == Mek.LOC_RT
-                  || hitLoc == Mek.LOC_RARM) {
+            if (hitLoc == Mek.LOC_RIGHT_LEG || hitLoc == Mek.LOC_RIGHT_TORSO
+                  || hitLoc == Mek.LOC_RIGHT_ARM) {
                 // Left side is primary
                 damageableCoverType = toHit.getDamagableCoverTypePrimary();
                 coverBuilding = toHit.getCoverBuildingPrimary();

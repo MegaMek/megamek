@@ -169,9 +169,9 @@ public class ThrashAttackAction extends AbstractAttackAction {
         }
 
         // Mek must have at least one working arm or leg.
-        if (ae.isLocationBad(Mek.LOC_RARM) && ae.isLocationBad(Mek.LOC_LARM)
-              && ae.isLocationBad(Mek.LOC_RLEG)
-              && ae.isLocationBad(Mek.LOC_LLEG)) {
+        if (ae.isLocationBad(Mek.LOC_RIGHT_ARM) && ae.isLocationBad(Mek.LOC_LEFT_ARM)
+              && ae.isLocationBad(Mek.LOC_RIGHT_LEG)
+              && ae.isLocationBad(Mek.LOC_LEFT_LEG)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Mek has no arms or legs to thrash");
         }
 

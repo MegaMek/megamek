@@ -91,7 +91,7 @@ public enum MissionRole {
 
             // SPOTTER role applies to all ground units plus VTOL, blue water naval, gun
             // emplacements, and fixed wing aircraft.
-            case SPOTTER -> unitType <= UnitType.AEROSPACEFIGHTER;
+            case SPOTTER -> unitType <= UnitType.AEROSPACE_FIGHTER;
 
             // COMMAND role applies to all ground units, VTOLs, blue water naval,
             // conventional
@@ -199,13 +199,13 @@ public enum MissionRole {
             // armor but other uses may be added later.
             case OMNI -> unitType == UnitType.MEK ||
                   unitType == UnitType.TANK ||
-                  unitType == UnitType.AEROSPACEFIGHTER;
+                  unitType == UnitType.AEROSPACE_FIGHTER;
 
             // Roles for conventional and aerospace fighters
             case BOMBER, INTERCEPTOR -> unitType == UnitType.CONV_FIGHTER ||
-                  unitType == UnitType.AEROSPACEFIGHTER;
+                  unitType == UnitType.AEROSPACE_FIGHTER;
             case GROUND_SUPPORT, ESCORT -> unitType == UnitType.CONV_FIGHTER ||
-                  unitType == UnitType.AEROSPACEFIGHTER ||
+                  unitType == UnitType.AEROSPACE_FIGHTER ||
                   unitType == UnitType.SMALL_CRAFT;
 
             // Roles for DropShips
@@ -260,7 +260,7 @@ public enum MissionRole {
             // combat units.
             case CIVILIAN -> unitType != UnitType.PROTOMEK &&
                   unitType != UnitType.GUN_EMPLACEMENT &&
-                  unitType != UnitType.AEROSPACEFIGHTER &&
+                  unitType != UnitType.AEROSPACE_FIGHTER &&
                   unitType != UnitType.WARSHIP;
 
             // CARGO applies to ground vehicles, VTOLs, blue water naval, conventional

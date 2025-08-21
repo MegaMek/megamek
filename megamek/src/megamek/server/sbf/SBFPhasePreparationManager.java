@@ -221,7 +221,7 @@ record SBFPhasePreparationManager(SBFGameManager gameManager) implements SBFGame
                 // );
                 // mailer.send(message);
                 // } catch (Exception ex) {
-                // logger.error("Error sending email" + ex);
+                // LOGGER.error("Error sending email" + ex);
                 // }
                 // }
                 // }

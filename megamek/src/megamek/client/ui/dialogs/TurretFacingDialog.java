@@ -56,9 +56,9 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Hex;
-import megamek.common.units.Mek;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 
 /**
@@ -94,16 +94,16 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         }
         int turretFacing = 0;
         if (turret.getType().hasFlag(MiscType.F_SHOULDER_TURRET) || turret.getType().hasFlag(MiscType.F_QUAD_TURRET)) {
-            if (turret.getLocation() == Mek.LOC_LT) {
+            if (turret.getLocation() == Mek.LOC_LEFT_TORSO) {
                 for (Mounted<?> mount : mek.getEquipment()) {
-                    if ((mount.getLocation() == Mek.LOC_LT) && mount.isMekTurretMounted()) {
+                    if ((mount.getLocation() == Mek.LOC_LEFT_TORSO) && mount.isMekTurretMounted()) {
                         turretFacing = mount.getFacing();
                         break;
                     }
                 }
-            } else if (turret.getLocation() == Mek.LOC_RT) {
+            } else if (turret.getLocation() == Mek.LOC_RIGHT_TORSO) {
                 for (Mounted<?> mount : mek.getEquipment()) {
-                    if ((mount.getLocation() == Mek.LOC_RT) && mount.isMekTurretMounted()) {
+                    if ((mount.getLocation() == Mek.LOC_RIGHT_TORSO) && mount.isMekTurretMounted()) {
                         turretFacing = mount.getFacing();
                         break;
                     }
@@ -139,10 +139,10 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         // for shoulder turrets, we need to disable the appropriate facings
         // opposite of the shoulder the turret is mounted on
         if (turret.getType().hasFlag(MiscType.F_SHOULDER_TURRET)) {
-            if (turret.getLocation() == Mek.LOC_LT) {
+            if (turret.getLocation() == Mek.LOC_LEFT_TORSO) {
                 facings.get((frontFacing + 1) % 6).setEnabled(false);
                 facings.get((frontFacing + 2) % 6).setEnabled(false);
-            } else if (turret.getLocation() == Mek.LOC_RT) {
+            } else if (turret.getLocation() == Mek.LOC_RIGHT_TORSO) {
                 facings.get((frontFacing + 4) % 6).setEnabled(false);
                 facings.get((frontFacing + 5) % 6).setEnabled(false);
             }
@@ -262,7 +262,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
                 facing = ((6 - mek.getFacing()) + facing) % 6;
                 turret.setFacing(facing);
                 clientgui.getClient().sendMountFacingChange(mek.getId(), mek.getEquipmentNum(turret), facing);
-                if (turret.getLocation() == Mek.LOC_CT) {
+                if (turret.getLocation() == Mek.LOC_CENTER_TORSO) {
                     locToChange = Mek.LOC_HEAD;
                 } else {
                     locToChange = turret.getLocation();

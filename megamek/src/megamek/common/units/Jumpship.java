@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Jay Lawson
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -96,7 +96,7 @@ public class Jumpship extends Aero {
     // computed.
     private static final double[] DRIVE_CORE_WEIGHT_PCT = { 0.95, 0.4525, 0.5, 0.0, 0.95 };
 
-    private static final String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "HULL" };
+    private static final String[] LOCATION_ABBREVIATIONS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "HULL" };
     private static final String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side", "Aft",
                                                      "Aft Left Side", "Aft Right Side", "Hull" };
 
@@ -135,7 +135,7 @@ public class Jumpship extends Aero {
     private boolean hasHPG = false;
 
     /**
-     * Keep track of all of the grav decks and their sizes.
+     * Keep track of all the grav decks and their sizes.
      * <p>
      * This is a new approach for storing grav decks, which allows the size of each deck to be stored. Previously, we
      * just stored the number of standard, large and huge grav decks, and could not specify the exact size of the deck.
@@ -143,7 +143,7 @@ public class Jumpship extends Aero {
     private final List<Integer> gravDecks = new ArrayList<>();
 
     /**
-     * Keep track of all of the grav decks and their damage status
+     * Keep track of all the grav decks and their damage status
      * <p>
      * Stores the number of hits on each grav deck by the index value from the list gravDecks
      */
@@ -668,8 +668,8 @@ public class Jumpship extends Aero {
     }
 
     @Override
-    public String[] getLocationAbbrs() {
-        return LOCATION_ABBRS;
+    public String[] getLocationAbbreviations() {
+        return LOCATION_ABBREVIATIONS;
     }
 
     @Override
@@ -873,7 +873,7 @@ public class Jumpship extends Aero {
 
         /*
          * Unlike other units, ASFs determine potential crits based on the
-         * to-hit roll so I need to set this potential value as well as return
+         * to-hit roll, so I need to set this potential value as well as return
          * the to hit data
          */
 
@@ -1032,7 +1032,7 @@ public class Jumpship extends Aero {
         return 6;
     }
 
-    public int getArcswGuns() {
+    public int getArcsWithGuns() {
         int nArcs = 0;
         for (int i = 0; i < locations(); i++) {
             if (hasWeaponInArc(i)) {
@@ -1098,8 +1098,8 @@ public class Jumpship extends Aero {
     @Override
     public boolean loadWeapon(WeaponMounted mounted, AmmoMounted mountedAmmo) {
         // need to check bay location before loading ammo
-        WeaponType wtype = mounted.getType();
-        AmmoType atype = mountedAmmo.getType();
+        WeaponType weaponType = mounted.getType();
+        AmmoType ammoType = mountedAmmo.getType();
 
         if (mounted.getLocation() != mountedAmmo.getLocation()) {
             return false;
@@ -1112,9 +1112,9 @@ public class Jumpship extends Aero {
         }
 
         if (mountedAmmo.isAmmoUsable() &&
-              !wtype.hasFlag(WeaponType.F_ONE_SHOT) &&
-              (atype.getAmmoType() == wtype.getAmmoType()) &&
-              (atype.getRackSize() == wtype.getRackSize())) {
+              !weaponType.hasFlag(WeaponType.F_ONE_SHOT) &&
+              (ammoType.getAmmoType() == weaponType.getAmmoType()) &&
+              (ammoType.getRackSize() == weaponType.getRackSize())) {
             mounted.setLinked(mountedAmmo);
             return true;
         }

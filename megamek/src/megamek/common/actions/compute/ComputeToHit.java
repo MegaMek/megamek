@@ -1238,7 +1238,7 @@ public class ComputeToHit {
                 if (!isECMAffected &&
                       (ammoType != null) &&
                       !oldEnt.isEnemyOf(ae) &&
-                      !(oldEnt.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD) > 0) &&
+                      !(oldEnt.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD) > 0) &&
                       (munition.contains(AmmoType.Munitions.M_SWARM_I))) {
                     toHit.addModifier(+2, Messages.getString("WeaponAttackAction.SwarmIFriendly"));
                 }

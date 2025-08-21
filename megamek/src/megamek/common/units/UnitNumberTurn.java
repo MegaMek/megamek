@@ -33,6 +33,8 @@
 
 package megamek.common.units;
 
+import java.io.Serial;
+
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 
@@ -40,6 +42,7 @@ import megamek.common.game.GameTurn;
  * A type of game turn that allows only entities belonging to certain units to move.
  */
 public class UnitNumberTurn extends GameTurn {
+    @Serial
     private static final long serialVersionUID = -681892308327846884L;
     private final short unitNumber;
 

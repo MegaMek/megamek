@@ -34,6 +34,7 @@
 
 package megamek.common.units;
 
+import java.io.Serial;
 import java.text.DecimalFormat;
 
 import megamek.common.SimpleTechLevel;
@@ -53,6 +54,7 @@ import megamek.common.util.RoundWeight;
  */
 public class NavalRepairFacility extends UnitBay {
 
+    @Serial
     private static final long serialVersionUID = -5983197195382933671L;
 
     // No more than one bay is allowed per armor facing
@@ -151,10 +153,10 @@ public class NavalRepairFacility extends UnitBay {
         }
         // We can carry two dropships or one JS/WS/SS.
         if (unit.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
-            return troops.isEmpty()
-                  || ((troops.size() == 1)
-                  && (null != unit.getGame().getEntity(troops.get(0)))
-                  && (unit.getGame().getEntity(troops.get(0)).hasETypeFlag(Entity.ETYPE_DROPSHIP)));
+            Entity troop = unit.getGame().getEntity(troops.get(0));
+
+            return troops.isEmpty() || ((troops.size() == 1)
+                  && (null != troop) && (troop.hasETypeFlag(Entity.ETYPE_DROPSHIP)));
         } else if (unit.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
             return troops.isEmpty();
         } else {

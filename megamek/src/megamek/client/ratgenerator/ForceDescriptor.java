@@ -36,16 +36,16 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import megamek.client.ratgenerator.Ruleset.ProgressListener;
+import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityMovementMode;
-import megamek.common.units.EntityWeightClass;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.loaders.MekSummary;
 import megamek.common.loaders.MekSummaryCache;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.EntityWeightClass;
 import megamek.common.units.UnitType;
-import megamek.common.annotations.Nullable;
-import megamek.common.loaders.EntityLoadingException;
 import megamek.logging.MMLogger;
 
 /**
@@ -595,10 +595,10 @@ public class ForceDescriptor {
         ModelRecord baseModel = null;
         /* Generate base model using weight class of entire formation */
         if (ut != null) {
-            if (!(ut == UnitType.MEK || (ut == UnitType.AEROSPACEFIGHTER && subs.size() > 3))) {
+            if (!(ut == UnitType.MEK || (ut == UnitType.AEROSPACE_FIGHTER && subs.size() > 3))) {
                 baseModel = subs.get(0).generate();
             }
-            if (ut == UnitType.AEROSPACEFIGHTER || ut == UnitType.CONV_FIGHTER || ut == UnitType.AERO) {
+            if (ut == UnitType.AEROSPACE_FIGHTER || ut == UnitType.CONV_FIGHTER || ut == UnitType.AERO) {
                 target -= 3;
             }
             if (roles.contains(MissionRole.ARTILLERY)) {
@@ -778,7 +778,7 @@ public class ForceDescriptor {
                 unitType = unit.getUnitType();
             }
             if (((unitType == UnitType.MEK) ||
-                  (unitType == UnitType.AEROSPACEFIGHTER) ||
+                  (unitType == UnitType.AEROSPACE_FIGHTER) ||
                   (unitType == UnitType.TANK)) && unit.isOmni()) {
                 flags.add("omni");
             }
@@ -1013,7 +1013,7 @@ public class ForceDescriptor {
                 movementModes.addAll(fd.getMovementModes());
                 if ((fd.getUnitType() == null ||
                       !((UnitType.MEK == fd.getUnitType()) ||
-                            (UnitType.AEROSPACEFIGHTER == fd.getUnitType()) ||
+                            (UnitType.AEROSPACE_FIGHTER == fd.getUnitType()) ||
                             (UnitType.TANK == fd.getUnitType()))) || !fd.getFlags().contains("omni")) {
                     isOmni = false;
                 }
@@ -1248,7 +1248,7 @@ public class ForceDescriptor {
         return ut != null &&
               !(roles.contains(MissionRole.ARTILLERY) || roles.contains(MissionRole.MISSILE_ARTILLERY)) &&
               (ut == UnitType.MEK ||
-                    ut == UnitType.AEROSPACEFIGHTER ||
+                    ut == UnitType.AEROSPACE_FIGHTER ||
                     ut == UnitType.TANK ||
                     ut == UnitType.BATTLE_ARMOR);
     }

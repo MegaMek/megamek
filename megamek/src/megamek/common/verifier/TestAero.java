@@ -225,7 +225,7 @@ public class TestAero extends TestEntity {
             }
             // Remove space for each location until we've allocated the armor
             int spaceUsedByArmor = armor.getFighterSlots();
-            int loc = (spaceUsedByArmor != 2) ? Aero.LOC_AFT : Aero.LOC_RWING;
+            int loc = (spaceUsedByArmor != 2) ? Aero.LOC_AFT : Aero.LOC_RIGHT_WING;
             while (spaceUsedByArmor > 0) {
                 availSpace[loc]--;
                 spaceUsedByArmor--;
@@ -303,7 +303,7 @@ public class TestAero extends TestEntity {
         int rating;
         if (unit.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
             rating = (tonnage * desiredSafeThrust);
-        } else if (unit.hasETypeFlag(Entity.ETYPE_AEROSPACEFIGHTER)) {
+        } else if (unit.hasETypeFlag(Entity.ETYPE_AEROSPACE_FIGHTER)) {
             rating = (tonnage * (desiredSafeThrust - 2));
         } else {
             rating = 0;
@@ -798,13 +798,13 @@ public class TestAero extends TestEntity {
         Map<EquipmentType, Integer> rightWingRear = new HashMap<>();
         for (Mounted<?> m : aero.getEquipment()) {
             if (m.getType() instanceof WeaponType) {
-                if (m.getLocation() == Aero.LOC_LWING) {
+                if (m.getLocation() == Aero.LOC_LEFT_WING) {
                     if (m.isRearMounted()) {
                         leftWingRear.merge(m.getType(), 1, Integer::sum);
                     } else {
                         leftWing.merge(m.getType(), 1, Integer::sum);
                     }
-                } else if (m.getLocation() == SmallCraft.LOC_RWING) {
+                } else if (m.getLocation() == SmallCraft.LOC_RIGHT_WING) {
                     if (m.isRearMounted()) {
                         rightWingRear.merge(m.getType(), 1, Integer::sum);
                     } else {
@@ -1056,10 +1056,10 @@ public class TestAero extends TestEntity {
             String locationName = getEntity().getLocationName(i);
             buff.append(locationName + ":");
             buff.append("\n");
-            for (int j = 0; j < getEntity().getNumberOfCriticals(i); j++) {
+            for (int j = 0; j < getEntity().getNumberOfCriticalSlots(i); j++) {
                 CriticalSlot slot = getEntity().getCritical(i, j);
                 if (slot == null) {
-                    j = getEntity().getNumberOfCriticals(i);
+                    j = getEntity().getNumberOfCriticalSlots(i);
                 } else if (slot.getType() == CriticalSlot.TYPE_SYSTEM) {
                     buff.append(j).append(". UNKNOWN SYSTEM NAME").append("\n");
                 } else if (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) {

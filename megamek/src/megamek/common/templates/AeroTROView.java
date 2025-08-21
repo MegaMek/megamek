@@ -40,17 +40,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import megamek.common.units.Aero;
-import megamek.common.equipment.AmmoType;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityFluff;
-import megamek.common.units.FighterSquadron;
 import megamek.common.Messages;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
-import megamek.common.equipment.WeaponType;
-import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.FighterSquadron;
+import megamek.common.units.System;
 import megamek.common.util.AeroAVModCalculator;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
@@ -138,12 +138,12 @@ public class AeroTROView extends TROView {
     private void addFluff() {
         addMekVeeAeroFluff(aero);
         setModelData("frameDesc",
-              formatSystemFluff(EntityFluff.System.CHASSIS,
+              formatSystemFluff(System.CHASSIS,
                     aero.getFluff(),
                     () -> Messages.getString("TROView.Unknown")));
     }
 
-    private static final int[][] AERO_ARMOR_LOCS = { { Aero.LOC_NOSE }, { Aero.LOC_RWING, Aero.LOC_LWING },
+    private static final int[][] AERO_ARMOR_LOCS = { { Aero.LOC_NOSE }, { Aero.LOC_RIGHT_WING, Aero.LOC_LEFT_WING },
                                                      { Aero.LOC_AFT } };
 
     private void addArmorAndStructure() {
@@ -199,7 +199,7 @@ public class AeroTROView extends TROView {
     private Map<String, Object> createBayRow(WeaponMounted bay) {
         final Map<EquipmentKey, Integer> weaponCount = new HashMap<>();
         int heat = 0;
-        int baysrv = 0;
+        int baySrv = 0;
         int srv = 0;
         int mrv = 0;
         int lrv = 0;
@@ -213,22 +213,22 @@ public class AeroTROView extends TROView {
               .collect(Collectors.groupingBy(AmmoMounted::getType,
                     Collectors.summingInt(Mounted::getBaseShotsLeft)));
         for (final WeaponMounted wMount : bay.getBayWeapons()) {
-            final WeaponType wtype = wMount.getType();
+            final WeaponType weaponType = wMount.getType();
             if ((wMount.getLinkedBy() != null) && (wMount.getLinkedBy().getType() instanceof MiscType)) {
                 linker = wMount.getLinkedBy();
             }
-            weaponCount.merge(new EquipmentKey(wtype, wMount.getSize()), 1, Integer::sum);
+            weaponCount.merge(new EquipmentKey(weaponType, wMount.getSize()), 1, Integer::sum);
             int bonus = 0;
-            heat += wtype.getHeat();
-            int av = (int) (wtype.getShortAV() * multiplier) + bonus;
+            heat += weaponType.getHeat();
+            int av = (int) (weaponType.getShortAV() * multiplier) + bonus;
             if (!isCapital) {
-                if (wtype instanceof ATMWeapon || wtype instanceof CLIATMWeapon) {
-                    if (wtype instanceof CLIATMWeapon) {
-                        av = (int) wtype.getShortAV() * multiplier;
+                if (weaponType instanceof ATMWeapon || weaponType instanceof CLIATMWeapon) {
+                    if (weaponType instanceof CLIATMWeapon) {
+                        av = (int) weaponType.getShortAV() * multiplier;
                     } else {
-                        av = (int) Math.ceil(wtype.getShortAV() * multiplier * 0.5);
+                        av = (int) Math.ceil(weaponType.getShortAV() * multiplier * 0.5);
                     }
-                    baysrv += (int) Math.round(Math.ceil(av * 1.5) / 10.0);
+                    baySrv += (int) Math.round(Math.ceil(av * 1.5) / 10.0);
                     srv += (int) Math.ceil(av * 1.5);
                     mrv += av;
                     lrv += (int) Math.ceil(av * 0.5);
@@ -236,17 +236,17 @@ public class AeroTROView extends TROView {
                     continue;
                 }
                 if (linker != null) {
-                    bonus = AeroAVModCalculator.calculateBonus(wtype, linker.getType(), true);
+                    bonus = AeroAVModCalculator.calculateBonus(weaponType, linker.getType(), true);
                 }
-                if (wtype instanceof MMLWeapon) {
-                    av *= 2; // SRM ammo, this is simulating the 2x damage of the MML when using SRM ammo at short range
+                if (weaponType instanceof MMLWeapon) {
+                    av *= 2; // SRM ammo, this is simulating the 2x damage to the MML when using SRM ammo at short range
                 }
             }
-            baysrv += (int) Math.round(av / 10.0);
-            srv += (int) (wtype.getShortAV() * multiplier) + bonus;
-            mrv += (int) (wtype.getMedAV() * multiplier) + bonus;
-            lrv += (int) (wtype.getLongAV() * multiplier) + bonus;
-            erv += (int) (wtype.getExtAV() * multiplier) + bonus;
+            baySrv += (int) Math.round(av / 10.0);
+            srv += (int) (weaponType.getShortAV() * multiplier) + bonus;
+            mrv += (int) (weaponType.getMedAV() * multiplier) + bonus;
+            lrv += (int) (weaponType.getLongAV() * multiplier) + bonus;
+            erv += (int) (weaponType.getExtAV() * multiplier) + bonus;
         }
         final Map<String, Object> retVal = new HashMap<>();
         final List<String> weapons = new ArrayList<>();
@@ -264,7 +264,7 @@ public class AeroTROView extends TROView {
               Messages.getString("TROView.shots"))));
         retVal.put("weapons", weapons);
         retVal.put("heat", heat);
-        retVal.put("srv", baysrv + "(" + srv + ")");
+        retVal.put("srv", baySrv + "(" + srv + ")");
         retVal.put("mrv", Math.round(mrv / 10.0) + "(" + mrv + ")");
         retVal.put("lrv", Math.round(lrv / 10.0) + "(" + lrv + ")");
         retVal.put("erv", Math.round(erv / 10.0) + "(" + erv + ")");

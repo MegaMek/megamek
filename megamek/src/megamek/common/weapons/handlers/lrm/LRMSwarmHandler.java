@@ -205,7 +205,7 @@ public class LRMSwarmHandler extends LRMHandler {
         int bldgAbsorbs = 0;
         if (targetInBuilding && (bldg != null)
               && (toHit.getThruBldg() == null)) {
-            bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
+            bldgAbsorbs = bldg.getAbsorption(target.getPosition());
         }
 
         // Attacking infantry in buildings from same building

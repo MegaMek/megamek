@@ -436,10 +436,10 @@ public final class UnitToolTip {
 
     private static StringBuilder sysCrits(Entity entity, int type, int index, int loc, String locAbbr) {
         String result;
-        int total = entity.getNumberOfCriticals(type, index, loc);
-        int hits = entity.getHitCriticals(type, index, loc);
+        int total = entity.getNumberOfCriticalSlots(type, index, loc);
+        int hits = entity.getHitCriticalSlots(type, index, loc);
         int good = total - hits;
-        boolean bad = (entity.getBadCriticals(type, index, loc) > 0);
+        boolean bad = (entity.getBadCriticalSlots(type, index, loc) > 0);
 
         if ((good + hits) > 0) {
             result = "&nbsp;&nbsp;" + locAbbr + ":&nbsp;";
@@ -573,7 +573,7 @@ public final class UnitToolTip {
                           loc,
                           msgAbbrLifeSupport).toString();
                     break;
-                case Mek.LOC_CT:
+                case Mek.LOC_CENTER_TORSO:
                     result = sysCrits(entity,
                           CriticalSlot.TYPE_SYSTEM,
                           Mek.SYSTEM_ENGINE,
@@ -591,8 +591,8 @@ public final class UnitToolTip {
                           loc,
                           msgAbbrLifeSupport).toString();
                     break;
-                case Mek.LOC_RT:
-                case Mek.LOC_LT:
+                case Mek.LOC_RIGHT_TORSO:
+                case Mek.LOC_LEFT_TORSO:
                     result = sysCrits(entity,
                           CriticalSlot.TYPE_SYSTEM,
                           Mek.SYSTEM_ENGINE,
@@ -604,8 +604,8 @@ public final class UnitToolTip {
                           loc,
                           msgAbbrLifeSupport).toString();
                     break;
-                case Mek.LOC_RARM:
-                case Mek.LOC_LARM:
+                case Mek.LOC_RIGHT_ARM:
+                case Mek.LOC_LEFT_ARM:
                     result = sysCrits(entity,
                           CriticalSlot.TYPE_SYSTEM,
                           Mek.ACTUATOR_SHOULDER,
@@ -643,9 +643,9 @@ public final class UnitToolTip {
                           loc,
                           msgAbbrFoot).toString();
                     break;
-                case Mek.LOC_RLEG:
-                case Mek.LOC_LLEG:
-                case Mek.LOC_CLEG:
+                case Mek.LOC_RIGHT_LEG:
+                case Mek.LOC_LEFT_LEG:
+                case Mek.LOC_CENTER_LEG:
                     result = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc, msgAbbrHip).toString();
                     result += sysCrits(entity,
                           CriticalSlot.TYPE_SYSTEM,
@@ -674,8 +674,8 @@ public final class UnitToolTip {
                 case SuperHeavyTank.LOC_FRONT:
                 case SuperHeavyTank.LOC_RIGHT:
                 case SuperHeavyTank.LOC_LEFT:
-                case SuperHeavyTank.LOC_REARRIGHT:
-                case SuperHeavyTank.LOC_REARLEFT:
+                case SuperHeavyTank.LOC_REAR_RIGHT:
+                case SuperHeavyTank.LOC_REAR_LEFT:
                 case SuperHeavyTank.LOC_REAR:
                     result = sysStabilizers(tank, loc, msgAbbrStabilizers).toString();
                     break;
@@ -2100,13 +2100,21 @@ public final class UnitToolTip {
                     }
                     if (mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
                         int eNum = entity.getEquipmentNum(mounted);
-                        partialWing += entity.getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mek.LOC_RT);
-                        partialWing += entity.getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mek.LOC_LT);
-                        partialWingDestroyed += entity.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mek.LOC_RT);
-                        partialWingDestroyed += entity.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mek.LOC_LT);
+                        partialWing += entity.getGoodCriticalSlots(CriticalSlot.TYPE_EQUIPMENT,
+                              eNum,
+                              Mek.LOC_RIGHT_TORSO);
+                        partialWing += entity.getGoodCriticalSlots(CriticalSlot.TYPE_EQUIPMENT,
+                              eNum,
+                              Mek.LOC_LEFT_TORSO);
+                        partialWingDestroyed += entity.getBadCriticalSlots(CriticalSlot.TYPE_EQUIPMENT,
+                              eNum,
+                              Mek.LOC_RIGHT_TORSO);
+                        partialWingDestroyed += entity.getBadCriticalSlots(CriticalSlot.TYPE_EQUIPMENT,
+                              eNum,
+                              Mek.LOC_LEFT_TORSO);
 
                         if (entity instanceof Mek mek) {
-                            partialWingWeatherMod = mek.getPartialWingJumpAtmoBonus() -
+                            partialWingWeatherMod = mek.getPartialWingJumpAtmosphereBonus() -
                                   mek.getPartialWingJumpWeightClassBonus();
                         }
                     }

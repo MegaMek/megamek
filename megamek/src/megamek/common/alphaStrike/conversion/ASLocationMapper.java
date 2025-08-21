@@ -140,10 +140,10 @@ public class ASLocationMapper {
 
     public static String locationName(Entity en, int index) {
         if ((en instanceof Warship) || (en instanceof SmallCraft)) {
-            return en.getLocationAbbrs()[index];
+            return en.getLocationAbbreviations()[index];
         } else if (en instanceof Jumpship) {
             // Remove leading F from FLS and FRS
-            String retVal = en.getLocationAbbrs()[index];
+            String retVal = en.getLocationAbbreviations()[index];
             if (retVal.charAt(0) == 'F') {
                 return retVal.substring(1);
             }
@@ -170,7 +170,7 @@ public class ASLocationMapper {
             if (index == 0) {
                 return "";
             }
-            return en.getLocationAbbrs()[index];
+            return en.getLocationAbbreviations()[index];
         } else if ((en instanceof Mek) || (en instanceof Tank)) {
             if (index == 1) {
                 return "REAR";
@@ -224,7 +224,7 @@ public class ASLocationMapper {
                 if (location == SmallCraft.LOC_NOSE) {
                     return 1;
                 }
-                if (en.isSpheroid() && (location == SmallCraft.LOC_LWING || location == SmallCraft.LOC_RWING)
+                if (en.isSpheroid() && (location == SmallCraft.LOC_LEFT_WING || location == SmallCraft.LOC_RIGHT_WING)
                       && !rearMounted) {
                     return 0.5;
                 }
@@ -244,7 +244,7 @@ public class ASLocationMapper {
                 if (location == SmallCraft.LOC_AFT) {
                     return 1;
                 }
-                if (rearMounted && (location == SmallCraft.LOC_LWING || location == SmallCraft.LOC_RWING)) {
+                if (rearMounted && (location == SmallCraft.LOC_LEFT_WING || location == SmallCraft.LOC_RIGHT_WING)) {
                     return en.isSpheroid() ? 0.5 : 1.0;
                 }
                 break;
@@ -310,7 +310,9 @@ public class ASLocationMapper {
         if ((index == 0 && !rearMounted || (index == 1) && rearMounted)) {
             return 1;
         } else if (index == 2) {
-            if (location != TripodMek.LOC_CLEG && location != TripodMek.LOC_RLEG && location != TripodMek.LOC_LLEG) {
+            if (location != TripodMek.LOC_CENTER_LEG
+                  && location != TripodMek.LOC_RIGHT_LEG
+                  && location != TripodMek.LOC_LEFT_LEG) {
                 return 1;
             }
         }

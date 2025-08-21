@@ -36,7 +36,10 @@ package megamek.common.weapons.handlers.plasma;
 
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.HitData;
+import megamek.common.LosEffects;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
@@ -121,8 +124,8 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             int hitLoc = hit.getLocation();
             // Primary stores the left side, from the perspective of the
             // attacker
-            if (hitLoc == Mek.LOC_RLEG || hitLoc == Mek.LOC_RT
-                  || hitLoc == Mek.LOC_RARM) {
+            if (hitLoc == Mek.LOC_RIGHT_LEG || hitLoc == Mek.LOC_RIGHT_TORSO
+                  || hitLoc == Mek.LOC_RIGHT_ARM) {
                 // Left side is primary
                 damageableCoverType = toHit.getDamagableCoverTypePrimary();
                 coverBuilding = toHit.getCoverBuildingPrimary();

@@ -187,7 +187,7 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    public String[] getLocationAbbrs() {
+    public String[] getLocationAbbreviations() {
         return LOCATION_ABBREVIATIONS;
     }
 
@@ -411,7 +411,7 @@ public class GunEmplacement extends Tank {
      * and 0 otherwise.
      */
     @Override
-    public int getDamagedCriticals(int type, int index, int loc) {
+    public int getDamagedCriticalSlots(int type, int index, int loc) {
         Mounted<?> m;
         if (type == CriticalSlot.TYPE_EQUIPMENT) {
             m = getEquipment(index);

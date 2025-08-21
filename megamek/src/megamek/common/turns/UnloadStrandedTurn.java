@@ -33,8 +33,10 @@
 
 package megamek.common.turns;
 
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 import megamek.common.Player;
@@ -53,11 +55,12 @@ import megamek.common.units.Entity;
  * used to be an ancient link to a forum post here].
  */
 public class UnloadStrandedTurn extends GameTurn {
+    @Serial
     private static final long serialVersionUID = 2403095752478007872L;
-    private int[] entityIds;
+    private final int[] entityIds;
 
     /**
-     * Any player that owns an entity whose ID is in the passed array should be given a chance to unload it.
+     * Any player that owns an entity whose ID is in the past array should be given a chance to unload it.
      *
      * @param ids the array of <code>int</code> IDs of stranded entities. This value must not be
      *            <code>null</code> or empty.
@@ -80,7 +83,7 @@ public class UnloadStrandedTurn extends GameTurn {
     }
 
     /**
-     * Any player that owns an entity in the passed enumeration should be given a chance to unload it.
+     * Any player that owns an entity in the past enumeration should be given a chance to unload it.
      *
      * @param entities the <code>Enumeration</code> of stranded entities. This value must not be
      *                 <code>null</code> or empty.
@@ -104,7 +107,7 @@ public class UnloadStrandedTurn extends GameTurn {
         if (entities.hasNext()) {
             // It's a bit of a hack, but get the Game from the first/ entity, and create a
             // temporary array that can hold the IDs of every entity in the game.
-            int[] ids = new int[entity.game.getNoOfEntities()];
+            int[] ids = new int[entity.getGame().getNoOfEntities()];
             int length = 0;
 
             // Store the first entity's ID.
@@ -165,7 +168,8 @@ public class UnloadStrandedTurn extends GameTurn {
         Game actualGame = (Game) game;
         return IntStream.range(0, entityIds.length)
               .anyMatch(index -> (actualGame.getEntity(entityIds[index]) != null)
-                    && (playerId == actualGame.getEntity(entityIds[index]).getOwnerId()));
+                    && (playerId == Objects.requireNonNull(actualGame.getEntity(entityIds[index]))
+                    .getOwnerId()));
     }
 
     @Override

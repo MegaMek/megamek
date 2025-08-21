@@ -1029,7 +1029,8 @@ public class SharedUtility {
               movingEntity.getDisplayName(),
               odds,
               fallHeight);
-        int[] legLocations = { BipedMek.LOC_LLEG, BipedMek.LOC_RLEG, QuadMek.LOC_LARM, QuadMek.LOC_RARM };
+        int[] legLocations = { BipedMek.LOC_LEFT_LEG, BipedMek.LOC_RIGHT_LEG, QuadMek.LOC_LEFT_ARM,
+                               QuadMek.LOC_RIGHT_ARM };
 
         // Add required crits; say the effective leg "damage" from a crit is 20 for now.
         int CRIT_VALUE = 100;

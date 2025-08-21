@@ -78,7 +78,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
     @Override
     protected double addTorsoMountedCockpit() {
         if (mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
-            return entity.getArmor(Mek.LOC_CT) + entity.getArmor(Mek.LOC_CT, true);
+            return entity.getArmor(Mek.LOC_CENTER_TORSO) + entity.getArmor(Mek.LOC_CENTER_TORSO, true);
         } else {
             return 0;
         }
@@ -143,14 +143,14 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
         // Handle Blue Shield Logic
         if (hasBlueShield) {
             int unProtectedCrits = 0;
-            for (int loc = Mek.LOC_CT; loc <= Mek.LOC_LLEG; loc++) {
+            for (int loc = Mek.LOC_CENTER_TORSO; loc <= Mek.LOC_LEFT_LEG; loc++) {
                 if (entity.hasCASEII(loc)) {
                     continue;
                 }
                 if (entity.isClan()) {
                     // Clan-specific rules for locations
-                    if (((loc != Mek.LOC_CT) && (loc != Mek.LOC_RLEG) && (loc != Mek.LOC_LLEG)) &&
-                          !(((loc == Mek.LOC_RT) || (loc == Mek.LOC_LT)) &&
+                    if (((loc != Mek.LOC_CENTER_TORSO) && (loc != Mek.LOC_RIGHT_LEG) && (loc != Mek.LOC_LEFT_LEG)) &&
+                          !(((loc == Mek.LOC_RIGHT_TORSO) || (loc == Mek.LOC_LEFT_TORSO)) &&
                                 entity.hasEngine() &&
                                 (entity.getEngine().getSideTorsoCriticalSlots().length > 2))) {
                         continue;
@@ -158,13 +158,14 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                 } else {
                     // Inner Sphere-specific rules for XLS/XXLS engines
                     if (entity.hasEngine() && (entity.getEngine().getSideTorsoCriticalSlots().length <= 2)) {
-                        if (((loc == Mek.LOC_RT) || (loc == Mek.LOC_LT)) && entity.locationHasCase(loc)) {
+                        if (((loc == Mek.LOC_RIGHT_TORSO) || (loc == Mek.LOC_LEFT_TORSO))
+                              && entity.locationHasCase(loc)) {
                             continue;
-                        } else if ((loc == Mek.LOC_LARM) &&
-                              (entity.locationHasCase(loc) || entity.locationHasCase(Mek.LOC_LT))) {
+                        } else if ((loc == Mek.LOC_LEFT_ARM) &&
+                              (entity.locationHasCase(loc) || entity.locationHasCase(Mek.LOC_LEFT_TORSO))) {
                             continue;
-                        } else if ((loc == Mek.LOC_RARM) &&
-                              (entity.locationHasCase(loc) || entity.locationHasCase(Mek.LOC_RT))) {
+                        } else if ((loc == Mek.LOC_RIGHT_ARM) &&
+                              (entity.locationHasCase(loc) || entity.locationHasCase(Mek.LOC_RIGHT_TORSO))) {
                             continue;
                         }
                     }
@@ -248,7 +249,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                 criticalSlots = 0;
                 for (int l = 0; l < entity.locations(); l++) {
                     List<CriticalSlot> criticalSlotsCopy = new ArrayList<>();
-                    for (int i = 0; i < entity.getNumberOfCriticals(l); i++) {
+                    for (int i = 0; i < entity.getNumberOfCriticalSlots(l); i++) {
                         CriticalSlot slot = entity.getCritical(l, i);
                         if (slot != null && mounted.equals(slot.getMount())) {
                             criticalSlotsCopy.add(slot);
@@ -425,10 +426,10 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
     @Override
     protected void processWeight() {
         double aesMultiplier = 1;
-        if (entity.hasFunctionalArmAES(Mek.LOC_LARM)) {
+        if (entity.hasFunctionalArmAES(Mek.LOC_LEFT_ARM)) {
             aesMultiplier += 0.1;
         }
-        if (entity.hasFunctionalArmAES(Mek.LOC_RARM)) {
+        if (entity.hasFunctionalArmAES(Mek.LOC_RIGHT_ARM)) {
             aesMultiplier += 0.1;
         }
         if (entity.hasFunctionalLegAES()) {
@@ -517,9 +518,9 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
         if ((loc == Entity.LOC_NONE) || entity.hasCASEII(loc)) {
             return false;
         }
-        if (!entity.entityIsQuad() && ((loc == Mek.LOC_RARM) || (loc == Mek.LOC_LARM))) {
+        if (!entity.entityIsQuad() && ((loc == Mek.LOC_RIGHT_ARM) || (loc == Mek.LOC_LEFT_ARM))) {
             return !entity.locationHasCase(loc) && hasExplosiveEquipmentPenalty(entity.getTransferLocation(loc));
-        } else if ((loc == Mek.LOC_RT) || (loc == Mek.LOC_LT)) {
+        } else if ((loc == Mek.LOC_RIGHT_TORSO) || (loc == Mek.LOC_LEFT_TORSO)) {
             return !entity.locationHasCase(loc) || (entity.getEngine().getSideTorsoCriticalSlots().length >= 3);
         } else {
             return true;
@@ -539,7 +540,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
         if (location == Entity.LOC_NONE) {
             return null;
         }
-        for (int slot = 0; slot < entity.getNumberOfCriticals(location); slot++) {
+        for (int slot = 0; slot < entity.getNumberOfCriticalSlots(location); slot++) {
             CriticalSlot cs = entity.getCritical(location, slot);
             if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
                 if (cs.getMount().equals(mounted) || ((cs.getMount2() != null) && (cs.getMount2().equals(mounted)))) {

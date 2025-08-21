@@ -37,13 +37,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 
-import megamek.common.*;
-import megamek.common.units.DropshuttleBay;
-import megamek.common.units.Entity;
-import megamek.common.units.InfantryTransporter.PlatoonType;
+import megamek.common.TechAdvancement;
 import megamek.common.annotations.Nullable;
 import megamek.common.bays.*;
+import megamek.common.units.DropShuttleBay;
+import megamek.common.units.Entity;
 import megamek.common.units.NavalRepairFacility;
+import megamek.common.units.PlatoonType;
 import megamek.common.units.ReinforcedRepairFacility;
 import megamek.common.util.RoundWeight;
 
@@ -81,8 +81,8 @@ public enum BayData {
           (size, num) -> new ASFBay(size, 1, num)),
     SMALL_CRAFT("Small Craft", 200.0, 5, SmallCraftBay.techAdvancement(),
           (size, num) -> new SmallCraftBay(size, 1, num)),
-    DROPSHUTTLE("Dropshuttle", 11000.0, 0, DropshuttleBay.techAdvancement(),
-          (size, num) -> new DropshuttleBay(1, num, 0)),
+    DROPSHUTTLE("Dropshuttle", 11000.0, 0, DropShuttleBay.techAdvancement(),
+          (size, num) -> new DropShuttleBay(1, num, 0)),
     REPAIR_UNPRESSURIZED("Standard Repair Facility (Unpressurized)", 0.025, 0, NavalRepairFacility.techAdvancement(),
           (size, num) -> new NavalRepairFacility(size, 1, num, 0, false)),
     REPAIR_PRESSURIZED("Standard Repair Facility (Pressurized)", 0.075, 0, NavalRepairFacility.techAdvancement(),
@@ -230,7 +230,7 @@ public enum BayData {
             return IS_BATTLE_ARMOR;
         } else if (bay instanceof ASFBay) {
             return ((ASFBay) bay).hasARTS() ? ARTS_FIGHTER : FIGHTER;
-        } else if (bay instanceof DropshuttleBay) {
+        } else if (bay instanceof DropShuttleBay) {
             return DROPSHUTTLE;
         } else if (bay instanceof ReinforcedRepairFacility) {
             return REPAIR_REINFORCED;

@@ -40,14 +40,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityFluff;
-import megamek.common.equipment.EquipmentType;
 import megamek.common.Messages;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.units.Entity;
 import megamek.common.units.ProtoMek;
+import megamek.common.units.System;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestProtoMek;
 
@@ -84,10 +84,10 @@ public class ProtoMekTROView extends TROView {
         addFluff();
         setModelData("isGlider", proto.isGlider());
         setModelData("isQuad", proto.isQuad());
-        final TestProtoMek testproto = new TestProtoMek(proto, verifier.protomekOption, null);
-        setModelData("isMass", NumberFormat.getInstance().format(testproto.getWeightStructure() * 1000));
+        final TestProtoMek testProtoMek = new TestProtoMek(proto, verifier.protomekOption, null);
+        setModelData("isMass", NumberFormat.getInstance().format(testProtoMek.getWeightStructure() * 1000));
         setModelData("engineRating", proto.getEngine().getRating());
-        setModelData("engineMass", NumberFormat.getInstance().format(testproto.getWeightEngine() * 1000));
+        setModelData("engineMass", NumberFormat.getInstance().format(testProtoMek.getWeightEngine() * 1000));
         setModelData("walkMP", proto.getWalkMP());
         setModelData("runMP", proto.getRunMPasString());
         final List<Mounted<?>> umu = proto.getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_UMU))
@@ -102,9 +102,9 @@ public class ProtoMekTROView extends TROView {
             setModelData("umuMass",
                   Math.round(1000 * umu.stream().mapToDouble(Mounted::getTonnage).sum()));
         }
-        setModelData("hsCount", testproto.getCountHeatSinks());
-        setModelData("hsMass", NumberFormat.getInstance().format(testproto.getWeightHeatSinks() * 1000));
-        setModelData("cockpitMass", NumberFormat.getInstance().format(testproto.getWeightControls() * 1000));
+        setModelData("hsCount", testProtoMek.getCountHeatSinks());
+        setModelData("hsMass", NumberFormat.getInstance().format(testProtoMek.getWeightHeatSinks() * 1000));
+        setModelData("cockpitMass", NumberFormat.getInstance().format(testProtoMek.getWeightControls() * 1000));
         final String atName = formatArmorType(proto, true);
         if (!atName.isBlank()) {
             setModelData("armorType", " (" + atName + ")");
@@ -112,16 +112,16 @@ public class ProtoMekTROView extends TROView {
             setModelData("armorType", "");
         }
         setModelData("armorFactor", proto.getTotalOArmor());
-        setModelData("armorMass", NumberFormat.getInstance().format(testproto.getWeightArmor() * 1000));
+        setModelData("armorMass", NumberFormat.getInstance().format(testProtoMek.getWeightArmor() * 1000));
     }
 
     private void addFluff() {
         addMekVeeAeroFluff(proto);
         if (proto.getOriginalJumpMP() > 0) {
-            setModelData("chassisDesc", formatSystemFluff(EntityFluff.System.CHASSIS, proto.getFluff(), () -> ""));
+            setModelData("chassisDesc", formatSystemFluff(System.CHASSIS, proto.getFluff(), () -> ""));
         }
         if (!proto.isGlider()) {
-            setModelData("jjDesc", formatSystemFluff(EntityFluff.System.JUMPJET, proto.getFluff(), () -> ""));
+            setModelData("jjDesc", formatSystemFluff(System.JUMP_JET, proto.getFluff(), () -> ""));
             setModelData("jumpCapacity", proto.getJumpMP() * 30);
         }
         if (proto.isGlider()) {
@@ -132,8 +132,9 @@ public class ProtoMekTROView extends TROView {
     }
 
     private static final int[][] PROTO_ARMOR_LOCS = { { ProtoMek.LOC_HEAD }, { ProtoMek.LOC_TORSO },
-                                                      { ProtoMek.LOC_RARM, ProtoMek.LOC_LARM }, { ProtoMek.LOC_LEG },
-                                                      { ProtoMek.LOC_MAINGUN } };
+                                                      { ProtoMek.LOC_RIGHT_ARM, ProtoMek.LOC_LEFT_ARM },
+                                                      { ProtoMek.LOC_LEG },
+                                                      { ProtoMek.LOC_MAIN_GUN } };
 
     private void addArmorAndStructure() {
         setModelData("structureValues",
@@ -181,7 +182,7 @@ public class ProtoMekTROView extends TROView {
                 if (eq instanceof AmmoType) {
                     fields.put("mass", Math.round((((AmmoType) eq).getKgPerShot()) * count));
                 } else {
-                    fields.put("mass", Math.round(eq.getTonnage(entity, entry.getKey().getSize()) * 1000 * count));
+                    fields.put("mass", Math.round(eq.getTonnage(entity, entry.getKey().size()) * 1000 * count));
                 }
                 fields.put("location", loc);
                 eqList.add(fields);

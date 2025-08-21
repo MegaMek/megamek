@@ -541,7 +541,7 @@ public class PointblankShotDisplay extends FiringDisplay {
         // close aimed shot display, if any
         ash.closeDialog();
 
-        if ((ce() != null) && ce().isWeapOrderChanged()) {
+        if ((ce() != null) && ce().isWeaponOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }
         endMyTurn();

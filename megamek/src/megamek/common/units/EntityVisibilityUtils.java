@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,13 +47,13 @@ import megamek.common.options.OptionsConstants;
 public class EntityVisibilityUtils {
     /**
      * Logic lifted from BoardView1.redrawEntity() that checks whether the given player playing the given game can see
-     * the given entity. Takes into account double blind, hidden units, team vision, etc. Game Master is excluded.
+     * the given entity. Takes into account double-blind, hidden units, team vision, etc. Game Master is excluded.
      *
      * @param localPlayer The player to check.
      * @param game        The current {@link Game}
      * @param entity      The entity to check
      *
-     * @return Whether or not the player can see the entity.
+     * @return Whether the player can see the entity.
      */
     public static boolean detectedOrHasVisual(Player localPlayer, Game game, Entity entity) {
         boolean canSee = (localPlayer == null)
@@ -74,7 +74,6 @@ public class EntityVisibilityUtils {
      * Used to determine if this entity is only detected by an enemies sensors and hence should only be a sensor
      * return.
      *
-     * @return
      */
     public static boolean onlyDetectedBySensors(@Nullable Player localPlayer, Entity entity) {
         boolean usesAdvancedTacOpsSensors = entity.getGame()
@@ -104,15 +103,11 @@ public class EntityVisibilityUtils {
         boolean doesNotTrackThisEntitiesVisibilityInfo = !EntityVisibilityUtils.trackThisEntitiesVisibilityInfo(
               localPlayer,
               entity);
-        if (usesSensors
+        return usesSensors
               && !sensorsDetectAll
               && doesNotTrackThisEntitiesVisibilityInfo
               && hasDetected
-              && !hasVisual) {
-            return true;
-        } else {
-            return false;
-        }
+              && !hasVisual;
     }
 
     /**
@@ -124,13 +119,9 @@ public class EntityVisibilityUtils {
             return false;
         }
 
-        if (e.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
+        return e.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
               && ((e.getOwner().getId() == localPlayer.getId()) ||
               (e.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)
-                    && (e.getOwner().getTeam() == localPlayer.getTeam())))) {
-            return true;
-        }
-
-        return false;
+                    && (e.getOwner().getTeam() == localPlayer.getTeam())));
     }
 }

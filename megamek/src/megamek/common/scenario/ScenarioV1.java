@@ -507,7 +507,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                         // Is this a valid slot number?
                         else if ((criticalHit.slot < 0) ||
                               (criticalHit.slot >
-                                    criticalHitPlan.entity.getNumberOfCriticals(criticalHit.loc))) {
+                                    criticalHitPlan.entity.getNumberOfCriticalSlots(criticalHit.loc))) {
                             LOGGER.error("{} - invalid slot specified (Slot < 0 OR Slot > Number of Critical Slots) " +
                                         "{}: {}",
                                   criticalHitPlan.entity.getShortName(),
@@ -557,7 +557,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
             for (SetAmmoType setAmmoType : setAmmoPlan.ammoSetType) {
                 // Limit to `Meks for now (needs to be extended later)
                 if (setAmmoPlan.entity instanceof Mek) {
-                    if (setAmmoType.slot < setAmmoPlan.entity.getNumberOfCriticals(setAmmoType.loc)) {
+                    if (setAmmoType.slot < setAmmoPlan.entity.getNumberOfCriticalSlots(setAmmoType.loc)) {
                         CriticalSlot criticalSlot = setAmmoPlan.entity.getCritical(setAmmoType.loc, setAmmoType.slot);
                         if (criticalSlot != null) {
                             AmmoMounted ammo = (AmmoMounted) setAmmoPlan.entity.getCritical(setAmmoType.loc,
@@ -588,7 +588,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
             for (SetAmmoTo setAmmoTo : setAmmoPlan.ammoSetTo) {
                 // Only can be done against Meks
                 if (setAmmoPlan.entity instanceof Mek) {
-                    if (setAmmoTo.slot < setAmmoPlan.entity.getNumberOfCriticals(setAmmoTo.loc)) {
+                    if (setAmmoTo.slot < setAmmoPlan.entity.getNumberOfCriticalSlots(setAmmoTo.loc)) {
                         // Get the piece of equipment and check to make sure it is an ammo item then set its amount!
                         CriticalSlot criticalSlot = setAmmoPlan.entity.getCritical(setAmmoTo.loc, setAmmoTo.slot);
                         if (criticalSlot != null) {

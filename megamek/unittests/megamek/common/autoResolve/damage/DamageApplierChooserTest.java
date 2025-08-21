@@ -98,29 +98,31 @@ class DamageApplierChooserTest {
     void testDestroyLeg() {
         var entity = entities.get(MekType.OSR5D);
         var damageApplier = DamageApplierChooser.choose(entities.get(MekType.OSR5D));
-        var hitDetails = damageApplier.setupHitDetails(new HitData(Mek.LOC_LLEG, false, HitData.EFFECT_NONE), 1000);
+        var hitDetails = damageApplier.setupHitDetails(new HitData(Mek.LOC_LEFT_LEG, false, HitData.EFFECT_NONE), 1000);
         damageApplier.applyDamage(hitDetails);
-        assertEquals(IArmorState.ARMOR_DESTROYED, entity.getInternal(Mek.LOC_LLEG));
+        assertEquals(IArmorState.ARMOR_DESTROYED, entity.getInternal(Mek.LOC_LEFT_LEG));
     }
 
     @Test
     void testDestroyRightTorsoWithoutCase() {
         var atlas = entities.get(MekType.AS7KDC);
         var damageApplier = DamageApplierChooser.choose(atlas);
-        var hitDetails = damageApplier.setupHitDetails(new HitData(Mek.LOC_RT, false, HitData.EFFECT_NONE), 1000);
+        var hitDetails = damageApplier.setupHitDetails(new HitData(Mek.LOC_RIGHT_TORSO, false, HitData.EFFECT_NONE),
+              1000);
         damageApplier.applyDamage(hitDetails);
-        assertEquals(IArmorState.ARMOR_DESTROYED, atlas.getInternal(Mek.LOC_RT));
-        assertTrue(atlas.isLocationBlownOff(Mek.LOC_RARM));
+        assertEquals(IArmorState.ARMOR_DESTROYED, atlas.getInternal(Mek.LOC_RIGHT_TORSO));
+        assertTrue(atlas.isLocationBlownOff(Mek.LOC_RIGHT_ARM));
     }
 
     @Test
     void testDestroyCenterTorso() {
         var shadowHawk = entities.get(MekType.SHD5D);
         var damageApplier = DamageApplierChooser.choose(shadowHawk);
-        var hitDetails = damageApplier.setupHitDetails(new HitData(Mek.LOC_CT, false, HitData.EFFECT_NONE), 1000);
+        var hitDetails = damageApplier.setupHitDetails(new HitData(Mek.LOC_CENTER_TORSO, false, HitData.EFFECT_NONE),
+              1000);
         damageApplier.applyDamage(hitDetails);
-        assertEquals(IArmorState.ARMOR_DESTROYED, shadowHawk.getInternal(Mek.LOC_CT));
-        assertCriticalSlotsDestroyed(shadowHawk, Mek.LOC_CT);
+        assertEquals(IArmorState.ARMOR_DESTROYED, shadowHawk.getInternal(Mek.LOC_CENTER_TORSO));
+        assertCriticalSlotsDestroyed(shadowHawk, Mek.LOC_CENTER_TORSO);
         assertEquals(IEntityRemovalConditions.REMOVE_DEVASTATED, shadowHawk.getRemovalCondition());
     }
 
@@ -128,12 +130,13 @@ class DamageApplierChooserTest {
     void testDestroySideTorsoWithCase() {
         var atlas = entities.get(MekType.AS7KDC);
         var damageApplier = DamageApplierChooser.choose(atlas);
-        var hitDetails = damageApplier.setupHitDetails(new HitData(Mek.LOC_RT, false, HitData.EFFECT_NONE), 1000);
+        var hitDetails = damageApplier.setupHitDetails(new HitData(Mek.LOC_RIGHT_TORSO, false, HitData.EFFECT_NONE),
+              1000);
         damageApplier.applyDamage(hitDetails);
-        assertEquals(IArmorState.ARMOR_DESTROYED, atlas.getInternal(Mek.LOC_RT));
-        assertCriticalSlotsDestroyed(atlas, Mek.LOC_RT);
+        assertEquals(IArmorState.ARMOR_DESTROYED, atlas.getInternal(Mek.LOC_RIGHT_TORSO));
+        assertCriticalSlotsDestroyed(atlas, Mek.LOC_RIGHT_TORSO);
         assertEquals(IEntityRemovalConditions.REMOVE_UNKNOWN, atlas.getRemovalCondition());
-        assertTrue(atlas.isLocationBlownOff(Mek.LOC_RARM));
+        assertTrue(atlas.isLocationBlownOff(Mek.LOC_RIGHT_ARM));
     }
 
     @Test
@@ -151,11 +154,12 @@ class DamageApplierChooserTest {
     void testDestroyBackArmor() {
         var enforcer = entities.get(MekType.ENF6M);
         var damageApplier = DamageApplierChooser.choose(enforcer);
-        var hitDetails = damageApplier.setupHitDetails(new HitData(Mek.LOC_CT, true, HitData.EFFECT_NONE), 23);
+        var hitDetails = damageApplier.setupHitDetails(new HitData(Mek.LOC_CENTER_TORSO, true, HitData.EFFECT_NONE),
+              23);
         damageApplier.applyDamage(hitDetails);
-        assertEquals(IArmorState.ARMOR_DESTROYED, enforcer.getArmor(Mek.LOC_CT, true));
-        assertEquals(IArmorState.ARMOR_DESTROYED, enforcer.getInternal(Mek.LOC_CT));
-        assertCriticalSlotsDestroyed(enforcer, Mek.LOC_CT);
+        assertEquals(IArmorState.ARMOR_DESTROYED, enforcer.getArmor(Mek.LOC_CENTER_TORSO, true));
+        assertEquals(IArmorState.ARMOR_DESTROYED, enforcer.getInternal(Mek.LOC_CENTER_TORSO));
+        assertCriticalSlotsDestroyed(enforcer, Mek.LOC_CENTER_TORSO);
         assertEquals(IEntityRemovalConditions.REMOVE_DEVASTATED, enforcer.getRemovalCondition());
     }
 
@@ -163,10 +167,11 @@ class DamageApplierChooserTest {
     void testBlowOffArmorAndInternalsNoDestruction() {
         var enforcer = entities.get(MekType.ENF6M);
         var damageApplier = DamageApplierChooser.choose(enforcer);
-        var hitDetails = damageApplier.setupHitDetails(new HitData(Mek.LOC_CT, true, HitData.EFFECT_NONE), 21);
+        var hitDetails = damageApplier.setupHitDetails(new HitData(Mek.LOC_CENTER_TORSO, true, HitData.EFFECT_NONE),
+              21);
         damageApplier.applyDamage(hitDetails);
-        assertEquals(0, enforcer.getArmor(Mek.LOC_CT, true));
-        assertEquals(2, enforcer.getInternal(Mek.LOC_CT));
+        assertEquals(0, enforcer.getArmor(Mek.LOC_CENTER_TORSO, true));
+        assertEquals(2, enforcer.getInternal(Mek.LOC_CENTER_TORSO));
         assertFalse(enforcer.isDestroyed());
         assertEquals(IEntityRemovalConditions.REMOVE_UNKNOWN, enforcer.getRemovalCondition());
     }
@@ -176,11 +181,11 @@ class DamageApplierChooserTest {
         var osiris = entities.get(MekType.OSR5D);
         var damageApplier = DamageApplierChooser.choose(osiris);
 
-        var hitDetails = damageApplier.setupHitDetails(new HitData(Mek.LOC_LLEG, false, HitData.EFFECT_NONE), 1000);
+        var hitDetails = damageApplier.setupHitDetails(new HitData(Mek.LOC_LEFT_LEG, false, HitData.EFFECT_NONE), 1000);
         damageApplier.applyDamage(hitDetails);
 
-        assertEquals(IArmorState.ARMOR_DESTROYED, osiris.getInternal(Mek.LOC_LLEG));
-        assertCriticalSlotsDestroyed(osiris, Mek.LOC_LLEG);
+        assertEquals(IArmorState.ARMOR_DESTROYED, osiris.getInternal(Mek.LOC_LEFT_LEG));
+        assertCriticalSlotsDestroyed(osiris, Mek.LOC_LEFT_LEG);
     }
 
     @Test
@@ -188,18 +193,18 @@ class DamageApplierChooserTest {
         var osiris = entities.get(MekType.OSR5D);
         var damageApplier = DamageApplierChooser.choose(osiris);
 
-        var hitDetails = damageApplier.setupHitDetails(new HitData(Mek.LOC_LLEG, false, HitData.EFFECT_NONE), 1000);
+        var hitDetails = damageApplier.setupHitDetails(new HitData(Mek.LOC_LEFT_LEG, false, HitData.EFFECT_NONE), 1000);
         // damage will destroy leg, then left torso then center torso
         while (!osiris.isDestroyed()) {
             hitDetails = damageApplier.applyDamage(hitDetails);
         }
 
-        assertEquals(IArmorState.ARMOR_DESTROYED, osiris.getInternal(Mek.LOC_LLEG));
-        assertEquals(IArmorState.ARMOR_DESTROYED, osiris.getInternal(Mek.LOC_LT));
-        assertEquals(IArmorState.ARMOR_DESTROYED, osiris.getInternal(Mek.LOC_CT));
-        assertCriticalSlotsDestroyed(osiris, Mek.LOC_LLEG);
-        assertCriticalSlotsDestroyed(osiris, Mek.LOC_LT);
-        assertCriticalSlotsDestroyed(osiris, Mek.LOC_CT);
+        assertEquals(IArmorState.ARMOR_DESTROYED, osiris.getInternal(Mek.LOC_LEFT_LEG));
+        assertEquals(IArmorState.ARMOR_DESTROYED, osiris.getInternal(Mek.LOC_LEFT_TORSO));
+        assertEquals(IArmorState.ARMOR_DESTROYED, osiris.getInternal(Mek.LOC_CENTER_TORSO));
+        assertCriticalSlotsDestroyed(osiris, Mek.LOC_LEFT_LEG);
+        assertCriticalSlotsDestroyed(osiris, Mek.LOC_LEFT_TORSO);
+        assertCriticalSlotsDestroyed(osiris, Mek.LOC_CENTER_TORSO);
     }
 
     private static void assertCriticalSlotsDestroyed(Entity osiris, int loc) {

@@ -437,7 +437,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             return;
         }
 
-        if ((ce() != null) && ce().isWeapOrderChanged()) {
+        if ((ce() != null) && ce().isWeaponOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }
 
@@ -593,7 +593,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         removeAllAttacks();
         // close aimed shot display, if any
         ash.closeDialog();
-        if (ce().isWeapOrderChanged()) {
+        if (ce().isWeaponOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }
         endMyTurn();
@@ -674,22 +674,22 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                   && game.getOptions()
                   .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES)
                   && (leftArm.getValue() != TargetRoll.IMPOSSIBLE)
-                  && ((Mek) ce()).hasRetractedBlade(Mek.LOC_LARM)) {
+                  && ((Mek) ce()).hasRetractedBlade(Mek.LOC_LEFT_ARM)) {
                 leftBladeExtend = clientgui.doYesNoDialog(
                       Messages.getString("PhysicalDisplay.ExtendBladeDialog.title"),
                       Messages.getString("PhysicalDisplay.ExtendBladeDialog.message",
-                            ce().getLocationName(Mek.LOC_LARM)));
+                            ce().getLocationName(Mek.LOC_LEFT_ARM)));
             }
             if ((en instanceof Mek)
                   && (target instanceof Entity)
                   && (rightArm.getValue() != TargetRoll.IMPOSSIBLE)
                   && game.getOptions()
                   .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES)
-                  && ((Mek) en).hasRetractedBlade(Mek.LOC_RARM)) {
+                  && ((Mek) en).hasRetractedBlade(Mek.LOC_RIGHT_ARM)) {
                 rightBladeExtend = clientgui.doYesNoDialog(
                       Messages.getString("PhysicalDisplay.ExtendBladeDialog" + ".title"),
                       Messages.getString("PhysicalDisplay.ExtendBladeDialog.message",
-                            en.getLocationName(Mek.LOC_RARM)));
+                            en.getLocationName(Mek.LOC_RIGHT_ARM)));
             }
 
             boolean zweihandering = false;
@@ -1307,7 +1307,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
 
         // Build the rest of the warning string.
         // Use correct text when the target is an iNarc pod.
-        if (Targetable.TYPE_INARC_POD == target.getTargetType()) {
+        if (Targetable.TYPE_I_NARC_POD == target.getTargetType()) {
             warn.append(Messages.getString("PhysicalDisplay.brushOff1", target));
         } else {
             warn.append(Messages.getString("PhysicalDisplay.brushOff2"));
@@ -1501,7 +1501,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         if ((currentEntity != Entity.NONE) &&
               ce().equals(clientgui.getUnitDisplay().getCurrentEntity()) &&
               (target != null)) {
-            if (target.getTargetType() != Targetable.TYPE_INARC_POD) {
+            if (target.getTargetType() != Targetable.TYPE_I_NARC_POD) {
                 // punch?
                 final ToHitData leftArm = PunchAttackAction.toHit(clientgui.getClient().getGame(),
                       currentEntity,

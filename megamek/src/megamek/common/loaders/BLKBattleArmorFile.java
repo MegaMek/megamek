@@ -165,7 +165,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
         }
         t.recalculateTechAdvancement();
 
-        String[] abbreviations = t.getLocationAbbrs();
+        String[] abbreviations = t.getLocationAbbreviations();
         for (int loop = 0; loop < t.locations(); loop++) {
             loadEquipment(t, abbreviations[loop], loop);
         }

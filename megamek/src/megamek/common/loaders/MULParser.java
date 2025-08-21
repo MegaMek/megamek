@@ -1739,7 +1739,7 @@ public class MULParser {
             }
 
             // Is this index valid for this entity?
-            if (indexVal > entity.getNumberOfCriticals(loc)) {
+            if (indexVal > entity.getNumberOfCriticalSlots(loc)) {
                 warning.append("The entity, ")
                       .append(entity.getShortName())
                       .append(" does not have ").append(index)
@@ -2606,7 +2606,7 @@ public class MULParser {
             // We need to make sure that the weapon has been removed
             // from the criticalSlots, otherwise it can cause issues
             for (int loc = 0; loc < entity.locations(); loc++) {
-                for (int c = 0; c < entity.getNumberOfCriticals(loc); c++) {
+                for (int c = 0; c < entity.getNumberOfCriticalSlots(loc); c++) {
                     CriticalSlot crit = entity.getCritical(loc, c);
                     if ((crit != null) && (crit.getMount() != null) && crit.getMount().equals(apWeapon)) {
                         entity.setCritical(loc, c, null);
@@ -2782,7 +2782,7 @@ public class MULParser {
             }
         }
         // all critical slots set as missing
-        for (int i = 0; i < en.getNumberOfCriticals(loc); i++) {
+        for (int i = 0; i < en.getNumberOfCriticalSlots(loc); i++) {
             final CriticalSlot cs = en.getCritical(loc, i);
             if (cs != null) {
                 cs.setDestroyed(true);
@@ -2798,7 +2798,7 @@ public class MULParser {
             }
         }
         // all critical slots set as breached
-        for (int i = 0; i < en.getNumberOfCriticals(loc); i++) {
+        for (int i = 0; i < en.getNumberOfCriticalSlots(loc); i++) {
             final CriticalSlot cs = en.getCritical(loc, i);
             if (cs != null) {
                 cs.setBreached(true);
@@ -2814,7 +2814,7 @@ public class MULParser {
                 mounted.setMissing(true);
             }
         }
-        for (int i = 0; i < en.getNumberOfCriticals(loc); i++) {
+        for (int i = 0; i < en.getNumberOfCriticalSlots(loc); i++) {
             final CriticalSlot cs = en.getCritical(loc, i);
             if (cs != null) {
                 cs.setMissing(true);

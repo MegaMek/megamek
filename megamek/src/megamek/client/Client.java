@@ -113,6 +113,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.turns.UnloadStrandedTurn;
 import megamek.common.units.Building;
 import megamek.common.units.Crew;
+import megamek.common.units.DemolitionCharge;
 import megamek.common.units.Entity;
 import megamek.common.units.EntitySelector;
 import megamek.common.units.FighterSquadron;
@@ -399,7 +400,7 @@ public class Client extends AbstractClient {
         } else {
             send(new Packet(PacketCommand.ENTITY_WORDER_UPDATE, entity.getId(), entity.getWeaponSortOrder()));
         }
-        entity.setWeapOrderChanged(false);
+        entity.setWeaponOrderChanged(false);
     }
 
     /**
@@ -508,7 +509,7 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.ENTITY_TOW, id, tractorId));
     }
 
-    public void sendExplodeBuilding(Building.DemolitionCharge charge) {
+    public void sendExplodeBuilding(DemolitionCharge charge) {
         send(new Packet(PacketCommand.BLDG_EXPLODE, charge));
     }
 

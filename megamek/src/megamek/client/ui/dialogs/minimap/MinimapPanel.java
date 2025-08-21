@@ -53,6 +53,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
 import java.io.StreamTokenizer;
+import java.lang.System;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1239,7 +1240,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
             return;
         }
 
-        if (attack.getTargetType() == Targetable.TYPE_INARC_POD) {
+        if (attack.getTargetType() == Targetable.TYPE_I_NARC_POD) {
             // iNarc pods don't have a position
             return;
         }

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2003 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.units;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.enums.AvailabilityValue;
@@ -48,6 +50,7 @@ import megamek.common.equipment.MiscType;
  * @author beerockxs
  */
 public class SupportVTOL extends VTOL {
+    @Serial
     private static final long serialVersionUID = 2771230410747098997L;
     private final int[] barRating;
     private double fuelTonnage = 0;

@@ -92,14 +92,14 @@ class SharedUtilityTest {
 
     @BeforeEach
     void setUp() {
-        bipedMek.setArmor(10, Mek.LOC_LLEG);
-        bipedMek.setArmor(10, Mek.LOC_RLEG);
+        bipedMek.setArmor(10, Mek.LOC_LEFT_LEG);
+        bipedMek.setArmor(10, Mek.LOC_RIGHT_LEG);
         bipedMek.setWeight(50.0);
 
-        quadMek.setArmor(10, Mek.LOC_LLEG);
-        quadMek.setArmor(10, Mek.LOC_RLEG);
-        quadMek.setArmor(10, Mek.LOC_LARM);
-        quadMek.setArmor(10, Mek.LOC_RARM);
+        quadMek.setArmor(10, Mek.LOC_LEFT_LEG);
+        quadMek.setArmor(10, Mek.LOC_RIGHT_LEG);
+        quadMek.setArmor(10, Mek.LOC_LEFT_ARM);
+        quadMek.setArmor(10, Mek.LOC_RIGHT_ARM);
         quadMek.setWeight(85.0);
     }
 

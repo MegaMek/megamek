@@ -39,6 +39,7 @@ import java.io.Serial;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.InfantryTransporter;
+import megamek.common.units.PlatoonType;
 
 /**
  * Represents a volume of space set aside for carrying infantry platoons aboard large spacecraft and mobile structures.

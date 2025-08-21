@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Jason Tighe
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.units;
 
+import java.io.Serial;
+
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
@@ -53,13 +55,14 @@ import megamek.common.util.RoundWeight;
  * @since 10/31/2010
  */
 public class FixedWingSupport extends ConvFighter {
+    @Serial
     private static final long serialVersionUID = 347113432982248518L;
 
     public static final int LOC_BODY = 5;
 
-    private static String[] LOCATION_ABBRS = { "NOS", "LWG", "RWG", "AFT", "WNG", "BOD" };
-    private static String[] LOCATION_NAMES = { "Nose", "Left Wing", "Right Wing", "Aft", "Wings", "Body" };
-    private int[] barRating;
+    private static final String[] LOCATION_ABBREVIATIONS = { "NOS", "LWG", "RWG", "AFT", "WNG", "BOD" };
+    private static final String[] LOCATION_NAMES = { "Nose", "Left Wing", "Right Wing", "Aft", "Wings", "Body" };
+    private final int[] barRating;
 
     public FixedWingSupport() {
         super();
@@ -115,18 +118,13 @@ public class FixedWingSupport extends ConvFighter {
     }
 
     @Override
-    public String[] getLocationAbbrs() {
-        return LOCATION_ABBRS;
+    public String[] getLocationAbbreviations() {
+        return LOCATION_ABBREVIATIONS;
     }
 
     @Override
     public String[] getLocationNames() {
         return LOCATION_NAMES;
-    }
-
-    @Override
-    public int locations() {
-        return 6;
     }
 
     @Override
@@ -136,7 +134,7 @@ public class FixedWingSupport extends ConvFighter {
 
     @Override
     public void autoSetSI() {
-        initializeSI(getOriginalWalkMP());
+        setOSI(getOriginalWalkMP());
     }
 
     @Override

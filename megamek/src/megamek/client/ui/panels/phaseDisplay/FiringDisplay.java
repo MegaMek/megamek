@@ -408,7 +408,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             refreshAll();
         }
 
-        if ((ce() != null) && ce().isWeapOrderChanged()) {
+        if ((ce() != null) && ce().isWeaponOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }
 
@@ -925,7 +925,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         // close aimed shot display, if any
         ash.closeDialog();
 
-        if ((ce() != null) && ce().isWeapOrderChanged()) {
+        if ((ce() != null) && ce().isWeaponOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }
         endMyTurn();

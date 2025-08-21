@@ -39,18 +39,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import megamek.common.board.Coords;
 import megamek.common.Facing;
+import megamek.common.board.Coords;
 
 
-public class UnitPosition {
-
-    private final Coords position;
-    private final Set<Coords> secondaryPositions;
-    private final Facing facing;
-    private final int elevation;
-    private final int altitude;
-    private final int height;
+public record UnitPosition(Coords position, Set<Coords> secondaryPositions, Facing facing, int elevation, int altitude,
+      int height) {
 
     /**
      * Unit Position Data Object
@@ -64,18 +58,7 @@ public class UnitPosition {
      *
      * @author Luana Coppio
      */
-    private UnitPosition(Coords position,
-          Set<Coords> secondaryPositions,
-          Facing facing,
-          int elevation,
-          int altitude,
-          int height) {
-        this.position = position;
-        this.secondaryPositions = secondaryPositions;
-        this.facing = facing;
-        this.elevation = elevation;
-        this.altitude = altitude;
-        this.height = height;
+    public UnitPosition {
     }
 
     public static UnitPosition of(Coords coords) {
@@ -141,29 +124,5 @@ public class UnitPosition {
 
     public Collection<Coords> getCoords() {
         return secondaryPositions;
-    }
-
-    public Coords getPosition() {
-        return position;
-    }
-
-    public Set<Coords> getSecondaryPositions() {
-        return secondaryPositions;
-    }
-
-    public Facing getFacing() {
-        return facing;
-    }
-
-    public int getElevation() {
-        return elevation;
-    }
-
-    public int getAltitude() {
-        return altitude;
-    }
-
-    public int getHeight() {
-        return height;
     }
 }

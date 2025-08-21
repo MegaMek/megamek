@@ -266,7 +266,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
             // The amount is based upon the building's CF at the phase's start.
             int bldgAbsorbs = 0;
             if (targetInBuilding && (bldg != null)) {
-                bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
+                bldgAbsorbs = bldg.getAbsorption(target.getPosition());
             }
             if ((bldg != null) && (bldgAbsorbs > 0)) {
                 // building absorbs some damage
@@ -321,7 +321,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
 
             bldg = null;
             bldg = game.getBoard().getBuildingAt(coords);
-            bldgAbsorbs = (bldg != null) ? bldg.getAbsorbtion(coords) : 0;
+            bldgAbsorbs = (bldg != null) ? bldg.getAbsorption(coords) : 0;
             bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
             // assumption: homing artillery splash damage is area effect.
             // do damage to woods, 2 * normal damage (TW page 112)

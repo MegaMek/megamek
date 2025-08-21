@@ -93,11 +93,11 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
 
         int[] kickLegs = new int[2];
         if (entity.entityIsQuad() && !entity.isProne()) {
-            kickLegs[0] = Mek.LOC_RARM;
-            kickLegs[1] = Mek.LOC_LARM;
+            kickLegs[0] = Mek.LOC_RIGHT_ARM;
+            kickLegs[1] = Mek.LOC_LEFT_ARM;
         } else {
-            kickLegs[0] = Mek.LOC_RLEG;
-            kickLegs[1] = Mek.LOC_LLEG;
+            kickLegs[0] = Mek.LOC_RIGHT_LEG;
+            kickLegs[1] = Mek.LOC_LEFT_LEG;
         }
 
         final int legLoc = kickLegs[(leg == RIGHT) ? 0 : 1];
@@ -158,11 +158,11 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
 
         int[] kickLegs = new int[2];
         if (ae.entityIsQuad() && !ae.isProne()) {
-            kickLegs[0] = Mek.LOC_RARM;
-            kickLegs[1] = Mek.LOC_LARM;
+            kickLegs[0] = Mek.LOC_RIGHT_ARM;
+            kickLegs[1] = Mek.LOC_LEFT_ARM;
         } else {
-            kickLegs[0] = Mek.LOC_RLEG;
-            kickLegs[1] = Mek.LOC_LLEG;
+            kickLegs[0] = Mek.LOC_RIGHT_LEG;
+            kickLegs[1] = Mek.LOC_LEFT_LEG;
         }
 
         ToHitData toHit;

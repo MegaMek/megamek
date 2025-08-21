@@ -50,10 +50,10 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import megamek.common.Configuration;
-import megamek.common.units.Entity;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.loaders.MekSummary;
 import megamek.common.loaders.MekSummaryCache;
+import megamek.common.units.Entity;
 import megamek.common.units.UnitType;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
@@ -272,7 +272,7 @@ public class EntityVerifier implements MekSummaryCache.Listener {
               failedByType.getOrDefault(UnitType.TANK, 0),
               failedByType.getOrDefault(UnitType.VTOL, 0),
               failedByType.getOrDefault(UnitType.NAVAL, 0),
-              failedByType.getOrDefault(UnitType.AEROSPACEFIGHTER, 0),
+              failedByType.getOrDefault(UnitType.AEROSPACE_FIGHTER, 0),
               failedByType.getOrDefault(UnitType.AERO, 0),
               failedByType.getOrDefault(UnitType.CONV_FIGHTER, 0),
               failedByType.getOrDefault(UnitType.SMALL_CRAFT, 0),

@@ -762,7 +762,7 @@ public abstract class TestEntity implements TestEntityOption {
             String locationName = getEntity().getLocationName(i);
             sb.append(locationName).append(":");
             sb.append("\n");
-            for (int j = 0; j < getEntity().getNumberOfCriticals(i); j++) {
+            for (int j = 0; j < getEntity().getNumberOfCriticalSlots(i); j++) {
                 CriticalSlot slot = getEntity().getCritical(i, j);
                 if (slot == null) {
                     sb.append(j).append(". -Empty-");
@@ -1987,7 +1987,7 @@ public abstract class TestEntity implements TestEntityOption {
     public int totalCritSlotCount() {
         int slotCount = 0;
         for (int i = 0; i < getEntity().locations(); i++) {
-            slotCount += getEntity().getNumberOfCriticals(i);
+            slotCount += getEntity().getNumberOfCriticalSlots(i);
         }
         return slotCount;
     }

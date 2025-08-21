@@ -78,7 +78,7 @@ public class ProtoMekClampMount extends BattleArmorHandles {
 
     @Override
     public boolean isWeaponBlockedAt(int loc, boolean isRear) {
-        return (rear == isRear) && (loc == Mek.LOC_CT) && (carriedUnit != Entity.NONE);
+        return (rear == isRear) && (loc == Mek.LOC_CENTER_TORSO) && (carriedUnit != Entity.NONE);
     }
 
     @Override

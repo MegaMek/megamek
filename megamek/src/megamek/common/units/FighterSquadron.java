@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2007 - Jay Lawson
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.units;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,8 +68,9 @@ import megamek.logging.MMLogger;
  * @author Jay Lawson
  */
 public class FighterSquadron extends AeroSpaceFighter {
-    private static final MMLogger logger = MMLogger.create(FighterSquadron.class);
+    private static final MMLogger LOGGER = MMLogger.create(FighterSquadron.class);
 
+    @Serial
     private static final long serialVersionUID = 3491212296982370726L;
 
     public static final int MAX_SIZE = 6;
@@ -231,9 +233,9 @@ public class FighterSquadron extends AeroSpaceFighter {
             prd.addModifier(+1, "Used more than safe thrust");
         }
         int vel = getCurrentVelocity();
-        int vmod = vel - (2 * getWalkMP());
-        if (!isSpaceborne() && (vmod > 0)) {
-            prd.addModifier(vmod, "Velocity greater than 2x safe thrust");
+        int velocityModifier = vel - (2 * getWalkMP());
+        if (!isSpaceborne() && (velocityModifier > 0)) {
+            prd.addModifier(velocityModifier, "Velocity greater than 2x safe thrust");
         }
 
         // add in atmospheric effects later
@@ -248,13 +250,13 @@ public class FighterSquadron extends AeroSpaceFighter {
         // penalties are added up across the fighter squadron
         fighters.stream()
               .map(fid -> game.getEntity(fid))
-              .filter(ACTIVE_CHECK).map(ent -> (IAero) ent)
+              .filter(ACTIVE_CHECK).map(ent -> (IAero) ent).filter(Objects::nonNull)
               .forEachOrdered(
                     ent -> {
-                        int avihits = ent.getAvionicsHits();
-                        if ((avihits > 0) && (avihits < 3)) {
-                            prd.addModifier(avihits, "Avionics Damage");
-                        } else if (avihits >= 3) {
+                        int avionicsHits = ent.getAvionicsHits();
+                        if ((avionicsHits > 0) && (avionicsHits < 3)) {
+                            prd.addModifier(avionicsHits, "Avionics Damage");
+                        } else if (avionicsHits >= 3) {
                             // this should probably be replaced with some kind of AVI_DESTROYED boolean
                             prd.addModifier(5, "Avionics Destroyed");
                         }
@@ -375,7 +377,7 @@ public class FighterSquadron extends AeroSpaceFighter {
         // first we need to reset all the weapons in our existing mounts to zero
         // until proven otherwise
         for (Integer group : weaponGroups.values()) {
-            Mounted groupEquipment = getEquipment(group);
+            Mounted<?> groupEquipment = getEquipment(group);
             if (groupEquipment != null) {
                 groupEquipment.setNWeapons(0);
             }
@@ -417,14 +419,14 @@ public class FighterSquadron extends AeroSpaceFighter {
                 String name = key.split(":")[0];
                 int loc = Integer.parseInt(key.split(":")[1]);
                 EquipmentType etype = EquipmentType.get(name);
-                WeaponMounted newmount;
+                WeaponMounted newMount;
                 if (etype != null) {
                     try {
-                        newmount = addWeaponGroup(etype, loc);
-                        newmount.setNWeapons(groups.get(key));
-                        weaponGroups.put(key, getEquipmentNum(newmount));
+                        newMount = addWeaponGroup(etype, loc);
+                        newMount.setNWeapons(groups.get(key));
+                        weaponGroups.put(key, getEquipmentNum(newMount));
                     } catch (LocationFullException ex) {
-                        logger.error("Unable to compile weapon groups.", ex);
+                        LOGGER.error("Unable to compile weapon groups.", ex);
                         return;
                     }
                 } else if (!Objects.equals(name, "0")) {
@@ -507,7 +509,7 @@ public class FighterSquadron extends AeroSpaceFighter {
     }
 
     /**
-     * Produce an int array of the number of bombs of each type based on the current bomblist. Since this is a
+     * Produce an int array of the number of bombs of each type based on the current bomb list. Since this is a
      * FighterSquadron, these numbers represent the number of bombs in a salvo. That is, it is a count of the number of
      * fighters in the squadron that have a bomb of the particular type mounted.
      */
@@ -524,7 +526,7 @@ public class FighterSquadron extends AeroSpaceFighter {
 
     @Override
     public void applyBombs() {
-        // Make sure all of the aeros have their bombs applied, otherwise problems
+        // Make sure all the aerospace have their bombs applied, otherwise problems
         // once the bombs are applied, the choices are cleared, so it's not an
         // issue if the bombs are applied twice for an Aero
         for (Entity fighter : getSubEntities()) {
@@ -593,7 +595,7 @@ public class FighterSquadron extends AeroSpaceFighter {
      */
     private int countBombsOfType(Entity fighter, BombTypeEnum bombType) {
         return (int) fighter.getBombs().stream()
-              .filter(mounted -> ((BombType) mounted.getType()).getBombType() == bombType)
+              .filter(mounted -> mounted.getType().getBombType() == bombType)
               .count();
     }
 
@@ -621,7 +623,8 @@ public class FighterSquadron extends AeroSpaceFighter {
                                 addBomb(weaponType, LOC_NOSE);
                             }
                         } catch (Exception ignored) {
-                            logger.warn("Failed to add bomb ammo for type: {}", bombType.getDisplayName(), ignored);
+                            LOGGER.warn("Failed to add bomb ammo for type for Requires weapon: {}",
+                                  bombType.getDisplayName());
                         }
                     }
 
@@ -633,11 +636,12 @@ public class FighterSquadron extends AeroSpaceFighter {
                                 addEquipment(ammoType, LOC_NOSE, false);
                             }
                         } catch (Exception ignored) {
-                            logger.warn("Failed to add bomb ammo for type: {}", bombType.getDisplayName(), ignored);
+                            LOGGER.warn("Failed to add bomb ammo for type for Requires Ammo: {}",
+                                  bombType.getDisplayName());
                         }
                     }
                 } catch (Exception e) {
-                    logger.warn("Failed to add bomb equipment for type: {}, iteration: {}",
+                    LOGGER.warn("Failed to add bomb equipment for type: {}, iteration: {}",
                           bombType.getDisplayName(), i, e);
                 }
             }
@@ -684,7 +688,7 @@ public class FighterSquadron extends AeroSpaceFighter {
             try {
                 addEquipment(EquipmentType.get(SPACE_BOMB_ATTACK), LOC_NOSE, false);
             } catch (Exception ignored) {
-                logger.warn("Failed to add space bomb attack", ignored);
+                LOGGER.warn("Failed to add space bomb attack - Space Bomb Attack");
             }
         }
     }
@@ -701,7 +705,7 @@ public class FighterSquadron extends AeroSpaceFighter {
         try {
             addEquipment(EquipmentType.get(DIVE_BOMB_ATTACK), LOC_NOSE, false);
         } catch (Exception ignored) {
-            logger.warn("Failed to add dive bomb attack", ignored);
+            LOGGER.warn("Failed to add dive bomb attack - Ground Bomb Attack");
         }
 
         // Add altitude bomb attacks (up to 10)
@@ -710,7 +714,7 @@ public class FighterSquadron extends AeroSpaceFighter {
             try {
                 addEquipment(EquipmentType.get(ALT_BOMB_ATTACK), LOC_NOSE, false);
             } catch (Exception ignored) {
-                logger.warn("Failed to add altitude bomb attack {}", i, ignored);
+                LOGGER.warn("Failed to add altitude bomb attack {}", i);
             }
         }
     }
@@ -731,16 +735,12 @@ public class FighterSquadron extends AeroSpaceFighter {
         }
         // fighter squadrons can also load other fighter squadrons provided there is
         // enough space
-        // and the loadee is not empty
-        if ((unit instanceof FighterSquadron)
+        // and the loaded is not empty
+        return (unit instanceof FighterSquadron)
               && !unit.isEnemyOf(this)
               && (getId() != unit.getId())
               && !((FighterSquadron) unit).fighters.isEmpty()
-              && ((fighters.size() + ((FighterSquadron) unit).fighters.size()) <= getMaxSize())) {
-            return true;
-        }
-
-        return false;
+              && ((fighters.size() + ((FighterSquadron) unit).fighters.size()) <= getMaxSize());
     }
 
     @Override
@@ -848,7 +848,7 @@ public class FighterSquadron extends AeroSpaceFighter {
         EntityMovementMode moveMode = entities.get(0).getMovementMode();
         for (Entity fighter : entities) {
             if (moveMode != fighter.getMovementMode()) {
-                logger.error("Error: Fighter squadron movement mode doesn't agree!");
+                LOGGER.error("Error: Fighter squadron movement mode doesn't agree!");
                 return EntityMovementMode.NONE;
             }
         }
@@ -886,7 +886,7 @@ public class FighterSquadron extends AeroSpaceFighter {
     }
 
     /**
-     * Override of Entity method. This needs to be set or we can't do a reverse lookup from a Capital Fighter to its
+     * Override of Entity method. This needs to be set, or we can't do a reverse lookup from a Capital Fighter to its
      * Squadron.
      *
      * @param transportId - the <code>int</code> ID of our transport. The ID is
@@ -895,7 +895,7 @@ public class FighterSquadron extends AeroSpaceFighter {
      */
     @Override
     public void setTransportId(int transportId) {
-        fighters.stream().map(fid -> game.getEntity(fid))
+        fighters.stream().map(fid -> game.getEntity(fid)).filter(Objects::nonNull)
               .forEach(f -> f.setTransportId(transportId));
     }
 
@@ -907,8 +907,10 @@ public class FighterSquadron extends AeroSpaceFighter {
      */
     public void damageCapFighterWeapons(int loc) {
         for (int fid : fighters) {
-            AeroSpaceFighter fighter = (AeroSpaceFighter) game.getEntity(fid);
-            fighter.damageLocation(loc);
+            Entity fighter = game.getEntity(fid);
+            if (fighter instanceof AeroSpaceFighter aeroSpaceFighter) {
+                aeroSpaceFighter.damageLocation(loc);
+            }
         }
     }
 

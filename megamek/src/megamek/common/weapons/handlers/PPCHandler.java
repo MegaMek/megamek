@@ -183,7 +183,7 @@ public class PPCHandler extends EnergyWeaponHandler {
                 int wlocation = weapon.getLocation();
                 weapon.setHit(true);
                 // Destroy the first unmarked critical for the PPC
-                for (int i = 0; i < ae.getNumberOfCriticals(wlocation); i++) {
+                for (int i = 0; i < ae.getNumberOfCriticalSlots(wlocation); i++) {
                     CriticalSlot slot1 = ae.getCritical(wlocation, i);
                     if ((slot1 == null)
                           || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)
@@ -228,7 +228,7 @@ public class PPCHandler extends EnergyWeaponHandler {
                 // Oops, we ruined our day...
                 int wlocation = weapon.getLocation();
                 weapon.setHit(true);
-                for (int i = 0; i < ae.getNumberOfCriticals(wlocation); i++) {
+                for (int i = 0; i < ae.getNumberOfCriticalSlots(wlocation); i++) {
                     CriticalSlot slot = ae.getCritical(wlocation, i);
                     if ((slot == null)
                           || (slot.getType() == CriticalSlot.TYPE_SYSTEM)) {

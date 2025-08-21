@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Jay Lawson
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -62,10 +62,11 @@ public class Warship extends Jumpship {
     public static final int LOC_LBS = 7;
     public static final int LOC_RBS = 8;
 
-    private static final String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "HULL", "LBS", "RBS" };
-    private static final String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side",
-                                                     "Aft", "Aft Left Side", "Aft Right Side", "Hull",
-                                                     "Left Broadsides", "Right Broadsides" };
+    private static final String[] LOCATION_ABBREVIATIONS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "HULL", "LBS",
+                                                             "RBS" };
+    private static final String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side", "Aft",
+                                                     "Aft Left Side", "Aft Right Side", "Hull", "Left Broadsides",
+                                                     "Right Broadsides" };
 
     public Warship() {
         super();
@@ -101,8 +102,8 @@ public class Warship extends Jumpship {
     }
 
     @Override
-    public String[] getLocationAbbrs() {
-        return LOCATION_ABBRS;
+    public String[] getLocationAbbreviations() {
+        return LOCATION_ABBREVIATIONS;
     }
 
     @Override

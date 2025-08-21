@@ -75,8 +75,8 @@ public final class PilotSPAHelper {
     }
 
     /**
-     * Returns a List of distinct (each occuring only once) weapon names of weapons present on the given Entity that are
-     * valid choices for the Weapon Specialist SPA.
+     * Returns a List of distinct (each occurring only once) weapon names of weapons present on the given Entity that
+     * are valid choices for the Weapon Specialist SPA.
      *
      * @return A list of weapon names from the given Entity that are valid choices for the Weapon Specialist SPA
      */
@@ -129,12 +129,12 @@ public final class PilotSPAHelper {
 
         return (equipmentType instanceof WeaponType)
               && ((equipmentType instanceof UACWeapon) || (equipmentType instanceof LBXACWeapon) || rapidFireAC
-              || ((WeaponType) equipmentType).damage == WeaponType.DAMAGE_BY_CLUSTER_TABLE);
+              || ((WeaponType) equipmentType).getDamage() == WeaponType.DAMAGE_BY_CLUSTER_TABLE);
     }
 
     /**
-     * Returns a List of distinct (each occuring only once) weapon names of weapons present on the given Entity that are
-     * valid choices for the Sandblaster SPA.
+     * Returns a List of distinct (each occurring only once) weapon names of weapons present on the given Entity that
+     * are valid choices for the Sandblaster SPA.
      *
      * @return A list of weapon names from the given Entity that are valid choices for the Sandblaster SPA
      */

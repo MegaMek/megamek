@@ -442,21 +442,21 @@ public class CustomMekDialog extends AbstractButtonDialog
         }
 
         if (OptionsConstants.MISC_HUMAN_TRO.equals(option.getName())) {
-            optionComp.addValue(Crew.HUMANTRO_NONE);
-            optionComp.addValue(Crew.HUMANTRO_MEK);
-            optionComp.addValue(Crew.HUMANTRO_AERO);
-            optionComp.addValue(Crew.HUMANTRO_VEE);
-            optionComp.addValue(Crew.HUMANTRO_BA);
+            optionComp.addValue(Crew.HUMAN_TRO_NONE);
+            optionComp.addValue(Crew.HUMAN_TRO_MEK);
+            optionComp.addValue(Crew.HUMAN_TRO_AERO);
+            optionComp.addValue(Crew.HUMAN_TRO_VEE);
+            optionComp.addValue(Crew.HUMAN_TRO_BA);
             optionComp.setSelected(option.stringValue());
         }
 
         if (OptionsConstants.MISC_ENV_SPECIALIST.equals(option.getName())) {
-            optionComp.addValue(Crew.ENVSPC_NONE);
-            optionComp.addValue(Crew.ENVSPC_FOG);
-            optionComp.addValue(Crew.ENVSPC_LIGHT);
-            optionComp.addValue(Crew.ENVSPC_RAIN);
-            optionComp.addValue(Crew.ENVSPC_SNOW);
-            optionComp.addValue(Crew.ENVSPC_WIND);
+            optionComp.addValue(Crew.ENVIRONMENT_SPECIALIST_NONE);
+            optionComp.addValue(Crew.ENVIRONMENT_SPECIALIST_FOG);
+            optionComp.addValue(Crew.ENVIRONMENT_SPECIALIST_LIGHT);
+            optionComp.addValue(Crew.ENVIRONMENT_SPECIALIST_RAIN);
+            optionComp.addValue(Crew.ENVIRONMENT_SPECIALIST_SNOW);
+            optionComp.addValue(Crew.ENVIRONMENT_SPECIALIST_WIND);
         }
 
         gridBagLayout.setConstraints(optionComp, gridBagConstraints);
@@ -511,7 +511,7 @@ public class CustomMekDialog extends AbstractButtonDialog
                 choStartingMode.addItem(Messages.getString("CustomMekDialog.ModeAirMek"));
             }
             choStartingMode.addItem(Messages.getString("CustomMekDialog.ModeFighter"));
-            if (entity.getConversionMode() == LandAirMek.CONV_MODE_AIRMEK) {
+            if (entity.getConversionMode() == LandAirMek.CONV_MODE_AIR_MEK) {
                 choStartingMode.setSelectedIndex(1);
             } else if (entity.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER) {
                 choStartingMode.setSelectedIndex(choStartingMode.getItemCount() - 1);
@@ -1013,7 +1013,7 @@ public class CustomMekDialog extends AbstractButtonDialog
                     entity.setConversionMode(LandAirMek.CONV_MODE_FIGHTER);
                     entity.setConversionMode(((LandAirMek) entity).getLAMType() == LandAirMek.LAM_BIMODAL ?
                           LandAirMek.CONV_MODE_FIGHTER :
-                          LandAirMek.CONV_MODE_AIRMEK);
+                          LandAirMek.CONV_MODE_AIR_MEK);
                 } else {
                     entity.setConversionMode(LandAirMek.CONV_MODE_MEK);
                 }
@@ -1108,15 +1108,15 @@ public class CustomMekDialog extends AbstractButtonDialog
         } else if (entities.get(0) instanceof LandAirMek) {
             int mode = index;
             if (((LandAirMek) entities.get(0)).getLAMType() == LandAirMek.LAM_BIMODAL &&
-                  mode == LandAirMek.CONV_MODE_AIRMEK) {
+                  mode == LandAirMek.CONV_MODE_AIR_MEK) {
                 mode = LandAirMek.CONV_MODE_FIGHTER;
             }
             labDeployProne.setEnabled(mode < LandAirMek.CONV_MODE_FIGHTER);
             chDeployProne.setEnabled(mode < LandAirMek.CONV_MODE_FIGHTER);
             labDeployHullDown.setEnabled(mode == LandAirMek.CONV_MODE_MEK);
             chDeployHullDown.setEnabled(mode == LandAirMek.CONV_MODE_MEK);
-            labStartHeight.setEnabled(mode == LandAirMek.CONV_MODE_AIRMEK);
-            fldStartHeight.setEnabled(mode == LandAirMek.CONV_MODE_AIRMEK);
+            labStartHeight.setEnabled(mode == LandAirMek.CONV_MODE_AIR_MEK);
+            fldStartHeight.setEnabled(mode == LandAirMek.CONV_MODE_AIR_MEK);
             labStartVelocity.setEnabled(mode == LandAirMek.CONV_MODE_FIGHTER);
             fldStartVelocity.setEnabled(mode == LandAirMek.CONV_MODE_FIGHTER);
             labStartAltitude.setEnabled(mode == LandAirMek.CONV_MODE_FIGHTER);

@@ -33,6 +33,8 @@
 
 package megamek.common.turns;
 
+import java.io.Serial;
+
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
 
@@ -40,6 +42,7 @@ import megamek.common.units.Entity;
  * A type of game turn that allows only one specific entity to counterattack a break grapple by the original attacker
  */
 public class CounterGrappleTurn extends SpecificEntityTurn {
+    @Serial
     private static final long serialVersionUID = 5248356977626018582L;
 
     public CounterGrappleTurn(int playerId, int entityId) {
@@ -51,10 +54,10 @@ public class CounterGrappleTurn extends SpecificEntityTurn {
      */
     @Override
     public boolean isValidEntity(Entity entity, Game game, boolean useValidNonInfantryCheck) {
-        final boolean oldDone = entity.done;
-        entity.done = false;
+        final boolean oldDone = entity.isDone();
+        entity.setDone(false);
         final boolean result = super.isValidEntity(entity, game, useValidNonInfantryCheck);
-        entity.done = oldDone;
+        entity.setDone(oldDone);
         return result;
     }
 }

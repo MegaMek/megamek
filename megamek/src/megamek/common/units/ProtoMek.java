@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -83,7 +83,7 @@ public class ProtoMek extends Entity {
 
     private static final String[] LOCATION_NAMES = { "Body", "Head", "Torso", "Right Arm", "Left Arm", "Legs",
                                                      "Main Gun" };
-    private static final String[] LOCATION_ABBRS = { "BD", "HD", "T", "RA", "LA", "L", "MG" };
+    private static final String[] LOCATION_ABBREVIATIONS = { "BD", "HD", "T", "RA", "LA", "L", "MG" };
 
     // Crew damage caused so far by crits to this location.
     // Needed for location destruction pilot damage.
@@ -99,21 +99,21 @@ public class ProtoMek extends Entity {
     public static final int LOC_BODY = 0;
     public static final int LOC_HEAD = 1;
     public static final int LOC_TORSO = 2;
-    public static final int LOC_RARM = 3;
-    public static final int LOC_LARM = 4;
+    public static final int LOC_RIGHT_ARM = 3;
+    public static final int LOC_LEFT_ARM = 4;
     public static final int LOC_LEG = 5;
-    public static final int LOC_MAINGUN = 6;
+    public static final int LOC_MAIN_GUN = 6;
 
-    // Near miss reprs.
-    public static final int LOC_NMISS = 7;
+    // Near miss repairs.
+    public static final int LOC_NEAR_MISS = 7;
 
     // "Systems". These represent protoMek critical hits; which remain constant regardless of proto. doesn't matter
     // what gets hit in a proto section, just the number of times it's been critted so just have the right number of
     // these systems and it works.
-    public static final int SYSTEM_ARMCRIT = 0;
-    public static final int SYSTEM_LEGCRIT = 1;
-    public static final int SYSTEM_HEADCRIT = 2;
-    public static final int SYSTEM_TORSOCRIT = 3;
+    public static final int SYSTEM_ARM_CRIT = 0;
+    public static final int SYSTEM_LEG_CRIT = 1;
+    public static final int SYSTEM_HEAD_CRIT = 2;
+    public static final int SYSTEM_TORSO_CRIT = 3;
     public static final int SYSTEM_TORSO_WEAPON_A = 4;
     public static final int SYSTEM_TORSO_WEAPON_B = 5;
     public static final int SYSTEM_TORSO_WEAPON_C = 6;
@@ -134,13 +134,13 @@ public class ProtoMek extends Entity {
 
     static {
         BLOCKED_FIRING_LOCATIONS = new HashMap<>();
-        BLOCKED_FIRING_LOCATIONS.put(LOC_LARM, new ArrayList<>());
-        BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_LARM);
-        BLOCKED_FIRING_LOCATIONS.get(LOC_LARM).add(LOC_TORSO);
+        BLOCKED_FIRING_LOCATIONS.put(LOC_LEFT_ARM, new ArrayList<>());
+        BLOCKED_FIRING_LOCATIONS.get(LOC_LEFT_ARM).add(LOC_LEFT_ARM);
+        BLOCKED_FIRING_LOCATIONS.get(LOC_LEFT_ARM).add(LOC_TORSO);
 
-        BLOCKED_FIRING_LOCATIONS.put(LOC_RARM, new ArrayList<>());
-        BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_RARM);
-        BLOCKED_FIRING_LOCATIONS.get(LOC_RARM).add(LOC_TORSO);
+        BLOCKED_FIRING_LOCATIONS.put(LOC_RIGHT_ARM, new ArrayList<>());
+        BLOCKED_FIRING_LOCATIONS.get(LOC_RIGHT_ARM).add(LOC_RIGHT_ARM);
+        BLOCKED_FIRING_LOCATIONS.get(LOC_RIGHT_ARM).add(LOC_TORSO);
     }
 
     // For grapple attacks
@@ -172,18 +172,18 @@ public class ProtoMek extends Entity {
      */
     public ProtoMek() {
         super();
-        setCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_HEADCRIT));
-        setCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_HEADCRIT));
-        setCritical(LOC_RARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ARMCRIT));
-        setCritical(LOC_RARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ARMCRIT));
-        setCritical(LOC_LARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ARMCRIT));
-        setCritical(LOC_LARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ARMCRIT));
-        setCritical(LOC_TORSO, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_TORSOCRIT));
-        setCritical(LOC_TORSO, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_TORSOCRIT));
-        setCritical(LOC_TORSO, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_TORSOCRIT));
-        setCritical(LOC_LEG, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LEGCRIT));
-        setCritical(LOC_LEG, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LEGCRIT));
-        setCritical(LOC_LEG, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LEGCRIT));
+        setCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_HEAD_CRIT));
+        setCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_HEAD_CRIT));
+        setCritical(LOC_RIGHT_ARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ARM_CRIT));
+        setCritical(LOC_RIGHT_ARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ARM_CRIT));
+        setCritical(LOC_LEFT_ARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ARM_CRIT));
+        setCritical(LOC_LEFT_ARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ARM_CRIT));
+        setCritical(LOC_TORSO, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_TORSO_CRIT));
+        setCritical(LOC_TORSO, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_TORSO_CRIT));
+        setCritical(LOC_TORSO, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_TORSO_CRIT));
+        setCritical(LOC_LEG, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LEG_CRIT));
+        setCritical(LOC_LEG, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LEG_CRIT));
+        setCritical(LOC_LEG, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LEG_CRIT));
         hasNoMainGun = true;
     }
 
@@ -207,7 +207,7 @@ public class ProtoMek extends Entity {
     /**
      * Get the weapon in the given torso location (if any).
      *
-     * @param torsoNum - a <code>int</code> that corresponds to SYSTEM_TORSO_WEAPON_A through SYSTEM_TORSO_WEAPON_F
+     * @param torsoNum - a <code>int</code> that corresponds to SYSTEM_TORSO_WEAPON_A thorough SYSTEM_TORSO_WEAPON_F
      *
      * @return the <code>Mounted</code> weapon at the needed location. This value will be <code>null</code> if no weapon
      *       is in the indicated location.
@@ -247,9 +247,9 @@ public class ProtoMek extends Entity {
      */
     public boolean shaded(int loc, int numHit) {
         return switch (loc) {
-            case LOC_HEAD, LOC_LARM, LOC_RARM -> (2 == numHit);
+            case LOC_HEAD, LOC_LEFT_ARM, LOC_RIGHT_ARM -> (2 == numHit);
             case LOC_TORSO -> (0 < numHit);
-            case LOC_MAINGUN, LOC_NMISS, LOC_LEG -> (3 == numHit);
+            case LOC_MAIN_GUN, LOC_NEAR_MISS, LOC_LEG -> (3 == numHit);
             default -> false;
         };
     }
@@ -309,8 +309,8 @@ public class ProtoMek extends Entity {
      */
     public int getCritsHit(int loc) {
         int count = 0;
-        int numberOfCriticals = this.getNumberOfCriticals(loc);
-        for (int i = 0; i < numberOfCriticals; i++) {
+        int numberOfCriticalSlots = this.getNumberOfCriticalSlots(loc);
+        for (int i = 0; i < numberOfCriticalSlots; i++) {
             CriticalSlot ccs = getCritical(loc, i);
             if (ccs.isDamaged() || ccs.isBreached()) {
                 count++;
@@ -325,9 +325,9 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    public int getNumberOfCriticals(int loc) {
+    public int getNumberOfCriticalSlots(int loc) {
         return switch (loc) {
-            case LOC_HEAD, LOC_LARM, LOC_RARM -> 2;
+            case LOC_HEAD, LOC_LEFT_ARM, LOC_RIGHT_ARM -> 2;
             case LOC_LEG, LOC_TORSO -> 3;
             case LOC_BODY ->
                 // This is needed to keep everything ordered in the unit display system tab
@@ -461,11 +461,11 @@ public class ProtoMek extends Entity {
                 break;
         }
         if (!mpCalculationSetting.ignoreWeather && hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
-            Atmosphere atmo = Atmosphere.STANDARD;
+            Atmosphere atmosphere = Atmosphere.STANDARD;
             if (game != null) {
-                atmo = game.getPlanetaryConditions().getAtmosphere();
+                atmosphere = game.getPlanetaryConditions().getAtmosphere();
             }
-            switch (atmo) {
+            switch (atmosphere) {
                 case VERY_HIGH:
                 case HIGH:
                     jump += 3;
@@ -490,8 +490,8 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    public String getMovementString(EntityMovementType mtype) {
-        return switch (mtype) {
+    public String getMovementString(EntityMovementType movementType) {
+        return switch (movementType) {
             case MOVE_NONE -> "None";
             case MOVE_WALK, MOVE_VTOL_WALK -> "Walked";
             case MOVE_VTOL_RUN, MOVE_RUN -> "Ran";
@@ -501,8 +501,8 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    public String getMovementAbbr(EntityMovementType mtype) {
-        return switch (mtype) {
+    public String getMovementAbbr(EntityMovementType movementType) {
+        return switch (movementType) {
             case MOVE_NONE -> "N";
             case MOVE_WALK, MOVE_VTOL_WALK -> "W";
             case MOVE_RUN, MOVE_VTOL_RUN -> "R";
@@ -545,18 +545,18 @@ public class ProtoMek extends Entity {
 
     @Override
     public boolean canPickupGroundObject() {
-        return !isLocationBad(ProtoMek.LOC_LARM) && (getCarriedObject(ProtoMek.LOC_LARM) == null) ||
-              !isLocationBad(ProtoMek.LOC_RARM) && (getCarriedObject(ProtoMek.LOC_RARM) == null);
+        return !isLocationBad(ProtoMek.LOC_LEFT_ARM) && (getCarriedObject(ProtoMek.LOC_LEFT_ARM) == null) ||
+              !isLocationBad(ProtoMek.LOC_RIGHT_ARM) && (getCarriedObject(ProtoMek.LOC_RIGHT_ARM) == null);
     }
 
     @Override
     public double maxGroundObjectTonnage() {
         double percentage = 0.0;
 
-        if (!isLocationBad(ProtoMek.LOC_LARM) && (getCarriedObject(ProtoMek.LOC_LARM) == null)) {
+        if (!isLocationBad(ProtoMek.LOC_LEFT_ARM) && (getCarriedObject(ProtoMek.LOC_LEFT_ARM) == null)) {
             percentage += 0.05;
         }
-        if (!isLocationBad(ProtoMek.LOC_RARM) && (getCarriedObject(ProtoMek.LOC_RARM) == null)) {
+        if (!isLocationBad(ProtoMek.LOC_RIGHT_ARM) && (getCarriedObject(ProtoMek.LOC_RIGHT_ARM) == null)) {
             percentage += 0.05;
         }
 
@@ -569,11 +569,11 @@ public class ProtoMek extends Entity {
     public List<Integer> getDefaultPickupLocations() {
         List<Integer> result = new ArrayList<>();
 
-        if ((getCarriedObject(ProtoMek.LOC_LARM) == null) && !isLocationBad(ProtoMek.LOC_LARM)) {
-            result.add(ProtoMek.LOC_LARM);
+        if ((getCarriedObject(ProtoMek.LOC_LEFT_ARM) == null) && !isLocationBad(ProtoMek.LOC_LEFT_ARM)) {
+            result.add(ProtoMek.LOC_LEFT_ARM);
         }
-        if ((getCarriedObject(ProtoMek.LOC_RARM) == null) && !isLocationBad(ProtoMek.LOC_RARM)) {
-            result.add(ProtoMek.LOC_RARM);
+        if ((getCarriedObject(ProtoMek.LOC_RIGHT_ARM) == null) && !isLocationBad(ProtoMek.LOC_RIGHT_ARM)) {
+            result.add(ProtoMek.LOC_RIGHT_ARM);
         }
 
         return result;
@@ -583,14 +583,14 @@ public class ProtoMek extends Entity {
     public List<Integer> getValidHalfWeightPickupLocations(ICarryable cargo) {
         List<Integer> result = new ArrayList<>();
 
-        // if we can pick the object up according to "one handed pick up rules" in TacOps
+        // if we can pick the object up according to "one-handed pick up rules" in TacOps
         if (cargo.getTonnage() <= (getWeight() / 20)) {
-            if ((getCarriedObject(ProtoMek.LOC_LARM) == null) && !isLocationBad(ProtoMek.LOC_LARM)) {
-                result.add(ProtoMek.LOC_LARM);
+            if ((getCarriedObject(ProtoMek.LOC_LEFT_ARM) == null) && !isLocationBad(ProtoMek.LOC_LEFT_ARM)) {
+                result.add(ProtoMek.LOC_LEFT_ARM);
             }
 
-            if ((getCarriedObject(ProtoMek.LOC_RARM) == null) && !isLocationBad(ProtoMek.LOC_RARM)) {
-                result.add(ProtoMek.LOC_RARM);
+            if ((getCarriedObject(ProtoMek.LOC_RIGHT_ARM) == null) && !isLocationBad(ProtoMek.LOC_RIGHT_ARM)) {
+                result.add(ProtoMek.LOC_RIGHT_ARM);
             }
         }
 
@@ -627,9 +627,9 @@ public class ProtoMek extends Entity {
             // front mounted
             return switch (mounted.getLocation()) {
                 case LOC_TORSO -> Compute.ARC_FORWARD;
-                case LOC_RARM -> Compute.ARC_RIGHT_ARM;
-                case LOC_LARM -> Compute.ARC_LEFT_ARM;
-                case LOC_MAINGUN -> Compute.ARC_MAIN_GUN;
+                case LOC_RIGHT_ARM -> Compute.ARC_RIGHT_ARM;
+                case LOC_LEFT_ARM -> Compute.ARC_LEFT_ARM;
+                case LOC_MAIN_GUN -> Compute.ARC_MAIN_GUN;
                 default -> Compute.ARC_360;
             };
         }
@@ -638,7 +638,7 @@ public class ProtoMek extends Entity {
     @Override
     public boolean isSecondaryArcWeapon(int weaponId) {
         // for quads, only the main gun weapons can rotate
-        return !isQuad() || getEquipment(weaponId).getLocation() == LOC_MAINGUN;
+        return !isQuad() || getEquipment(weaponId).getLocation() == LOC_MAIN_GUN;
     }
 
     @Override
@@ -676,26 +676,26 @@ public class ProtoMek extends Entity {
 
         switch (roll) {
             case 2:
-                return new HitData(ProtoMek.LOC_MAINGUN);
+                return new HitData(ProtoMek.LOC_MAIN_GUN);
             case 3:
             case 11:
                 if (table == ToHitData.HIT_SPECIAL_PROTO) {
                     return new HitData(ProtoMek.LOC_LEG);
                 }
-                return new HitData(ProtoMek.LOC_NMISS);
+                return new HitData(ProtoMek.LOC_NEAR_MISS);
             case 4:
                 if (table == ToHitData.HIT_SPECIAL_PROTO) {
                     return new HitData(ProtoMek.LOC_LEG);
                 }
                 if (!isQuad()) {
-                    return new HitData(ProtoMek.LOC_RARM);
+                    return new HitData(ProtoMek.LOC_RIGHT_ARM);
                 } else {
                     return new HitData(ProtoMek.LOC_LEG);
                 }
             case 5:
                 if (table == ToHitData.HIT_SPECIAL_PROTO) {
                     if (!isQuad()) {
-                        return new HitData(ProtoMek.LOC_RARM);
+                        return new HitData(ProtoMek.LOC_RIGHT_ARM);
                     } else {
                         return new HitData(ProtoMek.LOC_LEG);
                     }
@@ -703,7 +703,7 @@ public class ProtoMek extends Entity {
             case 9:
                 if (table == ToHitData.HIT_SPECIAL_PROTO) {
                     if (!isQuad()) {
-                        return new HitData(ProtoMek.LOC_LARM);
+                        return new HitData(ProtoMek.LOC_LEFT_ARM);
                     } else {
                         return new HitData(ProtoMek.LOC_LEG);
                     }
@@ -718,7 +718,7 @@ public class ProtoMek extends Entity {
                     return new HitData(ProtoMek.LOC_LEG);
                 }
                 if (!isQuad()) {
-                    return new HitData(ProtoMek.LOC_LARM);
+                    return new HitData(ProtoMek.LOC_LEFT_ARM);
                 } else {
                     return new HitData(ProtoMek.LOC_LEG);
                 }
@@ -729,15 +729,15 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    public boolean canTransferCriticals(int loc) {
+    public boolean canTransferCriticalSlots(int loc) {
         return false;
     }
 
     @Override
     public HitData getTransferLocation(HitData hit) {
         return switch (hit.getLocation()) {
-            case LOC_NMISS -> new HitData(LOC_NONE);
-            case LOC_LARM, LOC_LEG, LOC_RARM, LOC_HEAD, LOC_MAINGUN -> new HitData(LOC_TORSO,
+            case LOC_NEAR_MISS -> new HitData(LOC_NONE);
+            case LOC_LEFT_ARM, LOC_LEG, LOC_RIGHT_ARM, LOC_HEAD, LOC_MAIN_GUN -> new HitData(LOC_TORSO,
                   hit.isRear(),
                   hit.getEffect(),
                   hit.hitAimedLocation(),
@@ -768,10 +768,10 @@ public class ProtoMek extends Entity {
         initializeInternal(IArmorState.ARMOR_NA, LOC_BODY);
         initializeInternal(head, LOC_HEAD);
         initializeInternal(torso, LOC_TORSO);
-        initializeInternal(arm, LOC_RARM);
-        initializeInternal(arm, LOC_LARM);
+        initializeInternal(arm, LOC_RIGHT_ARM);
+        initializeInternal(arm, LOC_LEFT_ARM);
         initializeInternal(legs, LOC_LEG);
-        initializeInternal(mainGun, LOC_MAINGUN);
+        initializeInternal(mainGun, LOC_MAIN_GUN);
     }
 
     @Override
@@ -879,10 +879,10 @@ public class ProtoMek extends Entity {
 
     public int maxWeapons(int location) {
         switch (location) {
-            case LOC_LARM:
-            case LOC_RARM:
+            case LOC_LEFT_ARM:
+            case LOC_RIGHT_ARM:
                 return 1;
-            case LOC_MAINGUN:
+            case LOC_MAIN_GUN:
                 if (hasNoMainGun) {
                     return 0;
                 } else if (isQuad()) {
@@ -953,7 +953,7 @@ public class ProtoMek extends Entity {
 
     @Override
     public int getArmor(int loc, boolean rear) {
-        if ((loc == LOC_BODY) || (loc == LOC_NMISS)) {
+        if ((loc == LOC_BODY) || (loc == LOC_NEAR_MISS)) {
             return IArmorState.ARMOR_NA;
         }
         return super.getArmor(loc, rear);
@@ -961,20 +961,20 @@ public class ProtoMek extends Entity {
 
     @Override
     public int getInternal(int loc) {
-        if ((loc == LOC_BODY) || (loc == LOC_NMISS)) {
+        if ((loc == LOC_BODY) || (loc == LOC_NEAR_MISS)) {
             return IArmorState.ARMOR_NA;
         }
         return super.getInternal(loc);
     }
 
     @Override
-    public String[] getLocationAbbrs() {
-        return LOCATION_ABBRS;
+    public String[] getLocationAbbreviations() {
+        return LOCATION_ABBREVIATIONS;
     }
 
     @Override
     public String getLocationAbbr(int loc) {
-        return (loc == LOC_NMISS) ? "a near miss" : super.getLocationAbbr(loc);
+        return (loc == LOC_NEAR_MISS) ? "a near miss" : super.getLocationAbbr(loc);
     }
 
     /**
@@ -1263,8 +1263,8 @@ public class ProtoMek extends Entity {
 
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
-        for (Mounted<?> weap : getTotalWeaponList()) {
-            if (weap.isCrippled()) {
+        for (Mounted<?> weapon : getTotalWeaponList()) {
+            if (weapon.isCrippled()) {
                 totalInoperable++;
             }
         }
@@ -1283,8 +1283,8 @@ public class ProtoMek extends Entity {
 
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
-        for (Mounted<?> weap : getTotalWeaponList()) {
-            if (weap.isCrippled()) {
+        for (Mounted<?> weapon : getTotalWeaponList()) {
+            if (weapon.isCrippled()) {
                 totalInoperable++;
             }
         }
@@ -1328,8 +1328,8 @@ public class ProtoMek extends Entity {
     public List<Integer> getValidBraceLocations() {
         List<Integer> validLocations = new ArrayList<>();
 
-        if (!isLocationBad(ProtoMek.LOC_MAINGUN)) {
-            validLocations.add(ProtoMek.LOC_MAINGUN);
+        if (!isLocationBad(ProtoMek.LOC_MAIN_GUN)) {
+            validLocations.add(ProtoMek.LOC_MAIN_GUN);
         }
 
         return validLocations;
@@ -1337,7 +1337,7 @@ public class ProtoMek extends Entity {
 
     @Override
     public boolean canBrace() {
-        return !isProne() && getCrew().isActive() && !isLocationBad(ProtoMek.LOC_MAINGUN);
+        return !isProne() && getCrew().isActive() && !isLocationBad(ProtoMek.LOC_MAIN_GUN);
     }
 
     @Override

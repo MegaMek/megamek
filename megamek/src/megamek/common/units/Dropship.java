@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Jay Lawson
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -290,7 +290,7 @@ public class Dropship extends SmallCraft {
         // central hex and then move around clockwise and compare the two hexes
         // to see if they share an elevation. We need to have a number of these
         // adjacency equal to the number of secondary elevation hexes - 1.
-        int numAdjacencies = 0;
+        int numAdjacency = 0;
         int centralElev = hex.getLevel();
         int secondElev = centralElev;
         Hex currHex = game.getBoard(testBoardId).getHex(c.translated(5));
@@ -308,11 +308,11 @@ public class Dropship extends SmallCraft {
                 return true;
             }
             if ((currHex.getLevel() != centralElev) && (currHex.getLevel() == nextHex.getLevel())) {
-                numAdjacencies++;
+                numAdjacency++;
             }
             currHex = nextHex;
         }
-        if (numAdjacencies < (elevations.get(secondElev) - 1)) {
+        if (numAdjacency < (elevations.get(secondElev) - 1)) {
             return true;
         }
 
@@ -446,21 +446,23 @@ public class Dropship extends SmallCraft {
     @Override
     public boolean loadWeapon(WeaponMounted mounted, AmmoMounted mountedAmmo) {
         boolean success = false;
-        WeaponType wtype = mounted.getType();
-        AmmoType atype = mountedAmmo.getType();
+        WeaponType weaponType = mounted.getType();
+        AmmoType ammoType = mountedAmmo.getType();
 
         if (mounted.getLocation() != mountedAmmo.getLocation()) {
-            return success;
+            return false;
         }
 
         // for large craft, ammo must be in the same bay
         WeaponMounted bay = whichBay(getEquipmentNum(mounted));
         if ((bay != null) && !bay.ammoInBay(getEquipmentNum(mountedAmmo))) {
-            return success;
+            return false;
         }
 
-        if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponType.F_ONE_SHOT)
-              && (atype.getAmmoType() == wtype.getAmmoType()) && (atype.getRackSize() == wtype.getRackSize())) {
+        if (mountedAmmo.isAmmoUsable()
+              && !weaponType.hasFlag(WeaponType.F_ONE_SHOT)
+              && (ammoType.getAmmoType() == weaponType.getAmmoType())
+              && (ammoType.getRackSize() == weaponType.getRackSize())) {
             mounted.setLinked(mountedAmmo);
             success = true;
         }
@@ -650,21 +652,18 @@ public class Dropship extends SmallCraft {
                     case 4:
                         setPotCrit(CRIT_DOCK_COLLAR);
                         return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-                    case 5:
+                    case 5, 9:
                         setPotCrit(CRIT_LEFT_THRUSTER);
-                        return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                        return new HitData(LOC_LEFT_WING, false, HitData.EFFECT_NONE);
                     case 6:
                         setPotCrit(CRIT_CARGO);
-                        return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                        return new HitData(LOC_LEFT_WING, false, HitData.EFFECT_NONE);
                     case 7:
                         setPotCrit(CRIT_WEAPON);
-                        return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                        return new HitData(LOC_LEFT_WING, false, HitData.EFFECT_NONE);
                     case 8:
                         setPotCrit(CRIT_DOOR);
-                        return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-                    case 9:
-                        setPotCrit(CRIT_LEFT_THRUSTER);
-                        return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                        return new HitData(LOC_LEFT_WING, false, HitData.EFFECT_NONE);
                     case 10:
                         setPotCrit(CRIT_AVIONICS);
                         return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
@@ -686,21 +685,18 @@ public class Dropship extends SmallCraft {
                     case 4:
                         setPotCrit(CRIT_DOCK_COLLAR);
                         return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-                    case 5:
+                    case 5, 9:
                         setPotCrit(CRIT_RIGHT_THRUSTER);
-                        return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                        return new HitData(LOC_RIGHT_WING, false, HitData.EFFECT_NONE);
                     case 6:
                         setPotCrit(CRIT_CARGO);
-                        return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                        return new HitData(LOC_RIGHT_WING, false, HitData.EFFECT_NONE);
                     case 7:
                         setPotCrit(CRIT_WEAPON);
-                        return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                        return new HitData(LOC_RIGHT_WING, false, HitData.EFFECT_NONE);
                     case 8:
                         setPotCrit(CRIT_DOOR);
-                        return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-                    case 9:
-                        setPotCrit(CRIT_RIGHT_THRUSTER);
-                        return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                        return new HitData(LOC_RIGHT_WING, false, HitData.EFFECT_NONE);
                     case 10:
                         setPotCrit(CRIT_AVIONICS);
                         return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
@@ -792,7 +788,7 @@ public class Dropship extends SmallCraft {
     }
 
     /**
-     * Depsite being VSTOL in other respects, aerodyne dropships are explicitely forbidden from vertical landings in
+     * Depsite being VSTOL in other respects, aerodyne dropships are explicitly forbidden from vertical landings in
      * atmosphere.
      */
     @Override
@@ -803,7 +799,7 @@ public class Dropship extends SmallCraft {
     }
 
     /**
-     * Depsite being VSTOL in other respects, aerodyne dropships are explicitely forbidden from vertical takeoff in
+     * Depsite being VSTOL in other respects, aerodyne dropships are explicitly forbidden from vertical takeoff in
      * atmosphere.
      */
     @Override

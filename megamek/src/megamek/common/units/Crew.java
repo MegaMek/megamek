@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,7 +46,6 @@ import java.util.Vector;
 import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Report;
-import megamek.common.rolls.Roll;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.enums.Gender;
@@ -55,6 +54,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
+import megamek.common.rolls.Roll;
 import megamek.common.util.CrewSkillSummaryUtil;
 
 /**
@@ -152,20 +152,20 @@ public class Crew implements Serializable {
     public static final String RANGEMASTER_EXTREME = "Extreme";
 
     // SPA Human TRO entity types
-    public static final String HUMANTRO_NONE = "None";
-    public static final String HUMANTRO_MEK = "Mek";
-    public static final String HUMANTRO_AERO = "Aero";
-    public static final String HUMANTRO_VEE = "Vee";
-    public static final String HUMANTRO_BA = "BA";
+    public static final String HUMAN_TRO_NONE = "None";
+    public static final String HUMAN_TRO_MEK = "Mek";
+    public static final String HUMAN_TRO_AERO = "Aero";
+    public static final String HUMAN_TRO_VEE = "Vee";
+    public static final String HUMAN_TRO_BA = "BA";
 
     // SPA Environmental Specialist types
-    public static final String ENVSPC_NONE = "None";
-    public static final String ENVSPC_FOG = "Fog";
-    public static final String ENVSPC_HAIL = "Hail";
-    public static final String ENVSPC_LIGHT = "Light";
-    public static final String ENVSPC_RAIN = "Rain";
-    public static final String ENVSPC_SNOW = "Snow";
-    public static final String ENVSPC_WIND = "Wind";
+    public static final String ENVIRONMENT_SPECIALIST_NONE = "None";
+    public static final String ENVIRONMENT_SPECIALIST_FOG = "Fog";
+    public static final String ENVIRONMENT_SPECIALIST_HAIL = "Hail";
+    public static final String ENVIRONMENT_SPECIALIST_LIGHT = "Light";
+    public static final String ENVIRONMENT_SPECIALIST_RAIN = "Rain";
+    public static final String ENVIRONMENT_SPECIALIST_SNOW = "Snow";
+    public static final String ENVIRONMENT_SPECIALIST_WIND = "Wind";
 
     public static final String SPECIAL_NONE = "None";
     public static final String SPECIAL_ENERGY = "Energy";
@@ -175,7 +175,7 @@ public class Crew implements Serializable {
     // region extraData inner map keys
     public static final String MAP_GIVEN_NAME = "givenName";
     public static final String MAP_SURNAME = "surname";
-    public static final String MAP_BLOODNAME = "bloodname";
+    public static final String MAP_BLOOD_NAME = "bloodname";
     public static final String MAP_PHENOTYPE = "phenotype";
     // endregion extraData inner map keys
 

@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -70,45 +70,45 @@ public class EntityWeightClass {
     // number above.
     public static final int SIZE = 15;
 
-    private static String[] classAppends = { "0", "1", "2", "3", "4", "5", "SC", "DS.7", "DS.8", "DS.9", "JS.10",
-                                             "JS.11", "SV.12", "SV.13", "SV.14" };
+    private static final String[] classAppends = { "0", "1", "2", "3", "4", "5", "SC", "DS.7", "DS.8", "DS.9", "JS.10",
+                                                   "JS.11", "SV.12", "SV.13", "SV.14" };
 
     private static final double LESS_THAN_5 = Math.nextAfter(5.0, Double.NEGATIVE_INFINITY);
-    private static double[] BAWeightLimits = { 0.4, 0.75, 1, 1.5, 2 };
-    private static double[] mekWeightLimits = { 15, 35, 55, 75, 100, 135 };
-    private static double[] vehicleWeightLimits = { 0, 39, 59, 79, 100, 300 }; // One padding 0
-    private static double[] wheeledSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 80,
-                                                                  160 }; // Twelve padding 0s
-    private static double[] trackedSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 100,
-                                                                  200 }; // Twelve padding 0s
-    private static double[] hoverSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 50,
-                                                                100 }; // Twelve padding 0s
-    private static double[] vtolSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 30,
-                                                               60 }; // Twelve padding 0s
-    private static double[] wigeSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 80,
-                                                               160 }; // Twelve padding 0s
-    private static double[] airshipSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 300,
-                                                                  1000 }; // Twelve padding 0s
-    private static double[] fixedwingSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5,
-                                                                    100, 200 }; // Twelve padding 0s
-    private static double[] navalSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 300,
-                                                                100000 }; // Twelve padding 0s
-    private static double[] railSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 300,
-                                                               600 }; // Twelve padding 0s
-    private static double[] satelliteSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5,
-                                                                    100, 300 }; // Twelve padding 0s
-    // private static double[] mobilestructuresSupportVehicleWeightLimits = { 0, 0,
-    // 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 80, 160 }; // Twelve padding 0s
-    private static double[] ASFWeightLimits = { 0, 45, 70, 100 }; // One padding 0
-    private static double[] dropshipWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 2499, 9999, 100000 }; // Seven padding 0s
-    private static double[] jumpshipWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 749999, 2500000 }; // Ten padding 0s
-    private static double[] GEWeightLimits = { 0, 15, 40, 90, 150 }; // One padding 0
-    private static double[] protoWeightLimits = { 0, 3, 5, 7, 9, 10 }; // One padding 0
+    private static final double[] BAWeightLimits = { 0.4, 0.75, 1, 1.5, 2 };
+    private static final double[] mekWeightLimits = { 15, 35, 55, 75, 100, 135 };
+    private static final double[] vehicleWeightLimits = { 0, 39, 59, 79, 100, 300 }; // One padding 0
+    private static final double[] wheeledSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5,
+                                                                        80, 160 }; // Twelve padding 0s
+    private static final double[] trackedSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5,
+                                                                        100, 200 }; // Twelve padding 0s
+    private static final double[] hoverSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5,
+                                                                      50, 100 }; // Twelve padding 0s
+    private static final double[] vtolSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5,
+                                                                     30, 60 }; // Twelve padding 0s
+    private static final double[] wigeSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5,
+                                                                     80, 160 }; // Twelve padding 0s
+    private static final double[] airshipSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5,
+                                                                        300, 1000 }; // Twelve padding 0s
+    private static final double[] fixedWingSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                                                          LESS_THAN_5, 100, 200 }; // Twelve padding 0s
+    private static final double[] navalSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5,
+                                                                      300, 100000 }; // Twelve padding 0s
+    private static final double[] railSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5,
+                                                                     300, 600 }; // Twelve padding 0s
+    private static final double[] satelliteSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                                                          LESS_THAN_5, 100, 300 }; // Twelve padding 0s
+    private static final double[] ASFWeightLimits = { 0, 45, 70, 100 }; // One padding 0
+    private static final double[] dropshipWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 2499, 9999,
+                                                           100000 }; // Seven padding 0s
+    private static final double[] jumpshipWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 749999,
+                                                           2500000 }; // Ten padding 0s
+    private static final double[] GEWeightLimits = { 0, 15, 40, 90, 150 }; // One padding 0
+    private static final double[] protoWeightLimits = { 0, 3, 5, 7, 9, 10 }; // One padding 0
 
     public static double[] getWeightLimitByType(String type) {
         if (type.equals(UnitType.getTypeName(UnitType.MEK))) {
             return mekWeightLimits;
-        } else if (type.equals(UnitType.getTypeName(UnitType.AEROSPACEFIGHTER))) {
+        } else if (type.equals(UnitType.getTypeName(UnitType.AEROSPACE_FIGHTER))) {
             return ASFWeightLimits;
         } else if (type.equals(UnitType.getTypeName(UnitType.AERO))) {
             return ASFWeightLimits;
@@ -254,7 +254,7 @@ public class EntityWeightClass {
                 weightLimits = railSupportVehicleWeightLimits;
                 break;
             case AERODYNE:
-                weightLimits = fixedwingSupportVehicleWeightLimits;
+                weightLimits = fixedWingSupportVehicleWeightLimits;
                 break;
             case AIRSHIP:
                 weightLimits = airshipSupportVehicleWeightLimits;
@@ -300,10 +300,10 @@ public class EntityWeightClass {
                 }
             }
         } else if (en instanceof FixedWingSupport) {
-            for (i = WEIGHT_LIGHT; i < (fixedwingSupportVehicleWeightLimits.length - 1); i++) { // Started late to
+            for (i = WEIGHT_LIGHT; i < (fixedWingSupportVehicleWeightLimits.length - 1); i++) { // Started late to
                 // bypass padding & save
                 // a loop execution
-                if (tonnage <= fixedwingSupportVehicleWeightLimits[i]) {
+                if (tonnage <= fixedWingSupportVehicleWeightLimits[i]) {
                     break;
                 }
             }
@@ -368,21 +368,7 @@ public class EntityWeightClass {
                         }
                     }
                     break;
-                case NAVAL:
-                    for (i = WEIGHT_SMALL_SUPPORT; i < (navalSupportVehicleWeightLimits.length - 1); i++) {
-                        if (tonnage <= navalSupportVehicleWeightLimits[i]) {
-                            break;
-                        }
-                    }
-                    break;
-                case SUBMARINE:
-                    for (i = WEIGHT_SMALL_SUPPORT; i < (navalSupportVehicleWeightLimits.length - 1); i++) {
-                        if (tonnage <= navalSupportVehicleWeightLimits[i]) {
-                            break;
-                        }
-                    }
-                    break;
-                case HYDROFOIL:
+                case NAVAL, SUBMARINE, HYDROFOIL:
                     for (i = WEIGHT_SMALL_SUPPORT; i < (navalSupportVehicleWeightLimits.length - 1); i++) {
                         if (tonnage <= navalSupportVehicleWeightLimits[i]) {
                             break;
@@ -477,10 +463,6 @@ public class EntityWeightClass {
      * Get the weight class name given a weight class define and a unitType. The unitType is a string that matches the
      * unit type returned from a MekSummary.
      *
-     * @param wClass
-     * @param unitType
-     *
-     * @return
      */
     public static String getClassName(int wClass, String unitType, boolean isSupport) {
         if (unitType.equals(UnitType.getTypeName(UnitType.SPACE_STATION))) {

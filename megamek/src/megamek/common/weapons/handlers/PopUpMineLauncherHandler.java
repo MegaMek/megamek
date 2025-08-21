@@ -119,7 +119,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
               waa.getAimingMode(), toHit.getCover());
         hit.setAttackerId(getAttackerId());
         if (target instanceof Mek) {
-            hit = new HitData(Mek.LOC_CT);
+            hit = new HitData(Mek.LOC_CENTER_TORSO);
         } else { // te instanceof Tank
             hit = new HitData(Tank.LOC_FRONT);
         }

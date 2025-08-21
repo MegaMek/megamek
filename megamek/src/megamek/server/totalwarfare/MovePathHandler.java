@@ -1154,7 +1154,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // If we've somehow gotten here as an airborne LAM with a destroyed side torso
             // (such as conversion while dropping), crash now.
             if (entity instanceof LandAirMek
-                  && (entity.isLocationBad(Mek.LOC_RT) || entity.isLocationBad(Mek.LOC_LT))) {
+                  && (entity.isLocationBad(Mek.LOC_RIGHT_TORSO) || entity.isLocationBad(Mek.LOC_LEFT_TORSO))) {
                 r = new Report(9710);
                 r.subject = entity.getId();
                 r.addDesc(entity);
@@ -1483,7 +1483,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             if (md.hasActiveMASC() || md.hasActiveSupercharger()) {
                                 mpUsed = entity.getRunMP();
                             } else {
-                                mpUsed = entity.getRunMPwithoutMASC();
+                                mpUsed = entity.getRunMPWithoutMASC();
                             }
 
                             turnOver = true;
@@ -1522,7 +1522,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             if (md.hasActiveMASC() || md.hasActiveSupercharger()) {
                                 mpUsed = entity.getRunMP();
                             } else {
-                                mpUsed = entity.getRunMPwithoutMASC();
+                                mpUsed = entity.getRunMPWithoutMASC();
                             }
 
                             turnOver = true;
@@ -1602,7 +1602,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         if (!gameManager.doSkillCheckInSpace(entity, rollTarget)) {
                             a.setSI(a.getSI() - 1);
                             if (entity instanceof LandAirMek) {
-                                addReport(gameManager.criticalEntity(entity, Mek.LOC_CT, false, 0, 1));
+                                addReport(gameManager.criticalEntity(entity, Mek.LOC_CENTER_TORSO, false, 0, 1));
                             }
                             // check for destruction
                             if (a.getSI() == 0) {
@@ -2327,7 +2327,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             if (md.hasActiveMASC() || md.hasActiveSupercharger()) {
                                 mpUsed = entity.getRunMP();
                             } else {
-                                mpUsed = entity.getRunMPwithoutMASC();
+                                mpUsed = entity.getRunMPWithoutMASC();
                             }
 
                             turnOver = true;
@@ -2416,19 +2416,19 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     if (0 < gameManager.doSkillCheckWhileMoving(entity, lastElevation,
                           lastPos, curPos, rollTarget, false)) {
                         // do leg damage
-                        addReport(gameManager.damageEntity(entity, new HitData(Mek.LOC_LLEG), leapDistance));
-                        addReport(gameManager.damageEntity(entity, new HitData(Mek.LOC_RLEG), leapDistance));
+                        addReport(gameManager.damageEntity(entity, new HitData(Mek.LOC_LEFT_LEG), leapDistance));
+                        addReport(gameManager.damageEntity(entity, new HitData(Mek.LOC_RIGHT_LEG), leapDistance));
                         addNewLines();
-                        addReport(gameManager.criticalEntity(entity, Mek.LOC_LLEG, false, 0, 0));
+                        addReport(gameManager.criticalEntity(entity, Mek.LOC_LEFT_LEG, false, 0, 0));
                         addNewLines();
-                        addReport(gameManager.criticalEntity(entity, Mek.LOC_RLEG, false, 0, 0));
+                        addReport(gameManager.criticalEntity(entity, Mek.LOC_RIGHT_LEG, false, 0, 0));
                         if (entity instanceof QuadMek) {
-                            addReport(gameManager.damageEntity(entity, new HitData(Mek.LOC_LARM), leapDistance));
-                            addReport(gameManager.damageEntity(entity, new HitData(Mek.LOC_RARM), leapDistance));
+                            addReport(gameManager.damageEntity(entity, new HitData(Mek.LOC_LEFT_ARM), leapDistance));
+                            addReport(gameManager.damageEntity(entity, new HitData(Mek.LOC_RIGHT_ARM), leapDistance));
                             addNewLines();
-                            addReport(gameManager.criticalEntity(entity, Mek.LOC_LARM, false, 0, 0));
+                            addReport(gameManager.criticalEntity(entity, Mek.LOC_LEFT_ARM, false, 0, 0));
                             addNewLines();
-                            addReport(gameManager.criticalEntity(entity, Mek.LOC_RARM, false, 0, 0));
+                            addReport(gameManager.criticalEntity(entity, Mek.LOC_RIGHT_ARM, false, 0, 0));
                         }
                     }
                     // skill check for fall
@@ -2503,7 +2503,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     if (md.hasActiveMASC() || md.hasActiveSupercharger()) {
                         mpUsed = entity.getRunMP();
                     } else {
-                        mpUsed = entity.getRunMPwithoutMASC();
+                        mpUsed = entity.getRunMPWithoutMASC();
                     }
 
                     entity.moved = moveType;

@@ -436,7 +436,7 @@ public class ModelRecord extends AbstractUnitRecord {
               unitType == UnitType.TANK ||
               unitType == UnitType.VTOL ||
               unitType == UnitType.CONV_FIGHTER ||
-              unitType == UnitType.AEROSPACEFIGHTER) {
+              unitType == UnitType.AEROSPACE_FIGHTER) {
             omni = unitData.getOmni();
         }
 
@@ -501,7 +501,7 @@ public class ModelRecord extends AbstractUnitRecord {
         // (advanced)
         if (!clan &&
               !basePrimitive &&
-              unitType <= UnitType.AEROSPACEFIGHTER &&
+              unitType <= UnitType.AEROSPACE_FIGHTER &&
               unitType != UnitType.INFANTRY) {
             losTech = unitHasLosTech(unitData, false);
         }
@@ -546,7 +546,7 @@ public class ModelRecord extends AbstractUnitRecord {
                 }
 
                 // Add the spotter role to all units which carry TAG
-                if (unitType <= UnitType.AEROSPACEFIGHTER && eq.hasFlag(WeaponType.F_TAG)) {
+                if (unitType <= UnitType.AEROSPACE_FIGHTER && eq.hasFlag(WeaponType.F_TAG)) {
                     roles.add(MissionRole.SPOTTER);
                     losTech = true;
                     continue;
@@ -713,7 +713,7 @@ public class ModelRecord extends AbstractUnitRecord {
         // Calculate BV proportions for all ground units, VTOL, blue water naval, gun
         // emplacements and fixed wing aircraft. Exclude Small craft, DropShips, and
         // large spacecraft.
-        if (unitType <= UnitType.AEROSPACEFIGHTER) {
+        if (unitType <= UnitType.AEROSPACE_FIGHTER) {
             if (totalWeaponBV > 0) {
                 flakBVProportion = flakBV / totalWeaponBV;
                 artilleryBVProportion = artilleryBV / totalWeaponBV;
@@ -793,7 +793,7 @@ public class ModelRecord extends AbstractUnitRecord {
               checkArmor != EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL) {
             return false;
         } else if ((unitType == UnitType.CONV_FIGHTER ||
-              unitType == UnitType.AEROSPACEFIGHTER ||
+              unitType == UnitType.AEROSPACE_FIGHTER ||
               unitType == UnitType.SMALL_CRAFT ||
               unitType == UnitType.DROPSHIP) &&
               checkArmor != EquipmentType.T_ARMOR_STANDARD &&
@@ -820,7 +820,7 @@ public class ModelRecord extends AbstractUnitRecord {
                   checkCockpit == Mek.COCKPIT_PRIMITIVE_INDUSTRIAL) {
                 hasPrimitive = true;
             }
-        } else if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
+        } else if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACE_FIGHTER) {
             if (checkCockpit == Aero.COCKPIT_SMALL ||
                   checkCockpit == Aero.COCKPIT_COMMAND_CONSOLE) {
                 return false;
@@ -863,7 +863,7 @@ public class ModelRecord extends AbstractUnitRecord {
             return true;
         } else if ((unitType == UnitType.TANK ||
               unitType == UnitType.CONV_FIGHTER ||
-              unitType == UnitType.AEROSPACEFIGHTER) &&
+              unitType == UnitType.AEROSPACE_FIGHTER) &&
               checkEngine == Engine.FISSION) {
             return true;
         }
@@ -883,7 +883,7 @@ public class ModelRecord extends AbstractUnitRecord {
             return true;
         } else {
             return (unitType == UnitType.CONV_FIGHTER ||
-                  unitType == UnitType.AEROSPACEFIGHTER) &&
+                  unitType == UnitType.AEROSPACE_FIGHTER) &&
                   unitData.getCockpitType() == Aero.COCKPIT_PRIMITIVE;
         }
     }
@@ -916,7 +916,7 @@ public class ModelRecord extends AbstractUnitRecord {
               unitType == UnitType.TANK ||
               unitType == UnitType.VTOL ||
               unitType == UnitType.CONV_FIGHTER ||
-              unitType == UnitType.AEROSPACEFIGHTER) {
+              unitType == UnitType.AEROSPACE_FIGHTER) {
             int checkEngine = unitData.getEngineType();
             if (starLeagueOnly) {
                 if (checkEngine == Engine.XL_ENGINE) {
@@ -973,7 +973,7 @@ public class ModelRecord extends AbstractUnitRecord {
                       checkCockpit != Mek.COCKPIT_PRIMITIVE_INDUSTRIAL;
             }
         } else if (unitType == UnitType.CONV_FIGHTER ||
-              unitType == UnitType.AEROSPACEFIGHTER) {
+              unitType == UnitType.AEROSPACE_FIGHTER) {
             return checkCockpit != Aero.COCKPIT_STANDARD &&
                   checkCockpit != Aero.COCKPIT_PRIMITIVE;
         }
@@ -997,7 +997,7 @@ public class ModelRecord extends AbstractUnitRecord {
 
         // Use a limited version for checking air-to-air capability, including potential
         // for thresholding heavily armored targets
-        if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
+        if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACE_FIGHTER) {
             if (checkWeapon.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX ||
                   checkWeapon.getAmmoType() == AmmoType.AmmoTypeEnum.HAG ||
                   checkWeapon.getAmmoType() == AmmoType.AmmoTypeEnum.SBGAUSS) {
@@ -1098,7 +1098,7 @@ public class ModelRecord extends AbstractUnitRecord {
         double minRange = 0.4;
         double shortRange = 0.0;
 
-        if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
+        if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACE_FIGHTER) {
             if (checkWeapon.getExtAV() > 0 ||
                   checkWeapon.getLongAV() > 0 ||
                   checkWeapon instanceof MMLWeapon ||
@@ -1147,7 +1147,7 @@ public class ModelRecord extends AbstractUnitRecord {
         double mediumRange = 0.6;
         double longRange = 0.0;
 
-        if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
+        if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACE_FIGHTER) {
             if (checkWeapon.getMedAV() == 0 ||
                   checkWeapon instanceof MMLWeapon ||
                   checkWeapon instanceof ATMWeapon) {

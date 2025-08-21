@@ -40,14 +40,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import megamek.common.units.BipedMek;
 import megamek.common.CriticalSlot;
 import megamek.common.equipment.Engine;
-import megamek.common.units.Entity;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
-import megamek.common.units.Mek;
 import megamek.common.equipment.Mounted;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 import megamek.common.units.TripodMek;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -76,10 +76,10 @@ class MtfFileTest {
         mount.setOmniPodMounted(true);
         mount.setMekTurretMounted(true);
         mount.setArmored(true);
-        mek.addEquipment(mount, Mek.LOC_LT, true);
+        mek.addEquipment(mount, Mek.LOC_LEFT_TORSO, true);
 
         MtfFile loader = toMtfFile(mek);
-        Mounted<?> found = loader.getEntity().getCritical(Mek.LOC_LT, 0).getMount();
+        Mounted<?> found = loader.getEntity().getCritical(Mek.LOC_LEFT_TORSO, 0).getMount();
 
         assertEquals(mount.getType(), found.getType());
         assertTrue(found.isRearMounted());
@@ -91,22 +91,22 @@ class MtfFileTest {
     void setVGLFacing() throws Exception {
         Mek mek = new BipedMek();
         EquipmentType vgl = EquipmentType.get("ISVehicularGrenadeLauncher");
-        mek.addEquipment(vgl, Mek.LOC_LT).setFacing(0);
-        mek.addEquipment(vgl, Mek.LOC_LT).setFacing(1);
-        mek.addEquipment(vgl, Mek.LOC_LT).setFacing(2);
-        mek.addEquipment(vgl, Mek.LOC_LT, true).setFacing(3);
-        mek.addEquipment(vgl, Mek.LOC_LT).setFacing(4);
-        mek.addEquipment(vgl, Mek.LOC_LT).setFacing(5);
+        mek.addEquipment(vgl, Mek.LOC_LEFT_TORSO).setFacing(0);
+        mek.addEquipment(vgl, Mek.LOC_LEFT_TORSO).setFacing(1);
+        mek.addEquipment(vgl, Mek.LOC_LEFT_TORSO).setFacing(2);
+        mek.addEquipment(vgl, Mek.LOC_LEFT_TORSO, true).setFacing(3);
+        mek.addEquipment(vgl, Mek.LOC_LEFT_TORSO).setFacing(4);
+        mek.addEquipment(vgl, Mek.LOC_LEFT_TORSO).setFacing(5);
 
         MtfFile loader = toMtfFile(mek);
         Entity loaded = loader.getEntity();
 
-        assertEquals(0, loaded.getCritical(Mek.LOC_LT, 0).getMount().getFacing());
-        assertEquals(1, loaded.getCritical(Mek.LOC_LT, 1).getMount().getFacing());
-        assertEquals(2, loaded.getCritical(Mek.LOC_LT, 2).getMount().getFacing());
-        assertEquals(3, loaded.getCritical(Mek.LOC_LT, 3).getMount().getFacing());
-        assertEquals(4, loaded.getCritical(Mek.LOC_LT, 4).getMount().getFacing());
-        assertEquals(5, loaded.getCritical(Mek.LOC_LT, 5).getMount().getFacing());
+        assertEquals(0, loaded.getCritical(Mek.LOC_LEFT_TORSO, 0).getMount().getFacing());
+        assertEquals(1, loaded.getCritical(Mek.LOC_LEFT_TORSO, 1).getMount().getFacing());
+        assertEquals(2, loaded.getCritical(Mek.LOC_LEFT_TORSO, 2).getMount().getFacing());
+        assertEquals(3, loaded.getCritical(Mek.LOC_LEFT_TORSO, 3).getMount().getFacing());
+        assertEquals(4, loaded.getCritical(Mek.LOC_LEFT_TORSO, 4).getMount().getFacing());
+        assertEquals(5, loaded.getCritical(Mek.LOC_LEFT_TORSO, 5).getMount().getFacing());
     }
 
     @Test
@@ -115,10 +115,10 @@ class MtfFileTest {
         mek.setWeight(120.0);
         mek.setEngine(new Engine(360, Engine.NORMAL_ENGINE, 0));
         EquipmentType hs = EquipmentType.get(EquipmentTypeLookup.SINGLE_HS);
-        mek.addEquipment(hs, hs, Mek.LOC_LT, true, true);
+        mek.addEquipment(hs, hs, Mek.LOC_LEFT_TORSO, true, true);
 
         MtfFile loader = toMtfFile(mek);
-        CriticalSlot slot = loader.getEntity().getCritical(Mek.LOC_LT, 0);
+        CriticalSlot slot = loader.getEntity().getCritical(Mek.LOC_LEFT_TORSO, 0);
 
         assertEquals(hs, slot.getMount().getType());
         assertEquals(hs, slot.getMount2().getType());
@@ -138,11 +138,11 @@ class MtfFileTest {
         mek.setWeight(150.0);
         mek.setEngine(new Engine(300, Engine.NORMAL_ENGINE, 0));
         EquipmentType commsGear = EquipmentType.get("CommsGear");
-        Mounted<?> mount = mek.addEquipment(commsGear, Mek.LOC_LT, false);
+        Mounted<?> mount = mek.addEquipment(commsGear, Mek.LOC_LEFT_TORSO, false);
         mount.setSize(varSize);
 
         MtfFile loader = toMtfFile(mek);
-        CriticalSlot slot = loader.getEntity().getCritical(Mek.LOC_LT, 0);
+        CriticalSlot slot = loader.getEntity().getCritical(Mek.LOC_LEFT_TORSO, 0);
 
         assertEquals(commsGear, slot.getMount().getType());
         assertEquals(varSize, slot.getMount().getSize());
@@ -159,13 +159,13 @@ class MtfFileTest {
         mek.setWeight(150.0);
         mek.setEngine(new Engine(300, Engine.NORMAL_ENGINE, 0));
         EquipmentType commo = EquipmentType.get("CommsGear");
-        Mounted<?> mount = mek.addEquipment(commo, Mek.LOC_LT, false);
+        Mounted<?> mount = mek.addEquipment(commo, Mek.LOC_LEFT_TORSO, false);
         mount.setSize(varSize);
         MtfFile loader = toMtfFile(mek);
 
         Exception e = assertThrowsExactly(
               Exception.class,
-              () -> loader.getEntity().getCritical(Mek.LOC_LT, 0));
+              () -> loader.getEntity().getCritical(Mek.LOC_LEFT_TORSO, 0));
         assertEquals(
               "java.lang.ArrayIndexOutOfBoundsException: Index 12 out of bounds for length 12",
               e.getMessage());

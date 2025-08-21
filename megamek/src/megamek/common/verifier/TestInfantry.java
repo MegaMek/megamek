@@ -39,17 +39,17 @@ import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.fo
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.TextCalculationReport;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityMovementMode;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
-import megamek.common.units.Infantry;
-import megamek.common.units.InfantryMount;
-import megamek.common.exceptions.LocationFullException;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
-import megamek.common.annotations.Nullable;
+import megamek.common.exceptions.LocationFullException;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Infantry;
+import megamek.common.units.InfantryMount;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 
@@ -291,7 +291,7 @@ public class TestInfantry extends TestEntity {
     public static int maxSecondaryWeapons(Infantry inf) {
         int max;
         if (inf.getMount() != null) {
-            max = inf.getMount().getSize().supportWeaponsPerCreature;
+            max = inf.getMount().size().supportWeaponsPerCreature;
         } else if (inf.getMovementMode() == EntityMovementMode.VTOL) {
             max = inf.hasMicrolite() ? 0 : 1;
         } else if (inf.getMovementMode() == EntityMovementMode.INF_UMU) {
@@ -343,10 +343,10 @@ public class TestInfantry extends TestEntity {
                 default:
                     return 10;
             }
-        } else if (mount.getSize().troopsPerCreature == 1) {
+        } else if (mount.size().troopsPerCreature == 1) {
             return 10; // use foot infantry limit
         } else {
-            return mount.getSize().troopsPerCreature;
+            return mount.size().troopsPerCreature;
         }
     }
 
@@ -386,10 +386,10 @@ public class TestInfantry extends TestEntity {
 
         } else {
             // For Very Large and Monstrous (but not Large) creatures, each creature is one squad.
-            if (mount.getSize() == InfantryMount.BeastSize.LARGE) {
+            if (mount.size() == InfantryMount.BeastSize.LARGE) {
                 return 5;
             }
-            return mount.getSize().creaturesPerPlatoon;
+            return mount.size().creaturesPerPlatoon;
         }
     }
 
@@ -423,7 +423,7 @@ public class TestInfantry extends TestEntity {
                     break;
             }
         } else {
-            max = mount.getSize().creaturesPerPlatoon * mount.getSize().troopsPerCreature;
+            max = mount.size().creaturesPerPlatoon * mount.size().troopsPerCreature;
         }
         if (engOrMountain) {
             max = Math.min(max, 20);
@@ -514,15 +514,15 @@ public class TestInfantry extends TestEntity {
 
         if (mount != null) {
             String calculation;
-            report.addLine("Mounted: " + mount.getName() + ", "
-                  + mount.getSize().troopsPerCreature + " trooper(s) per mount", "");
-            if (mount.getSize().troopsPerCreature > 1) {
-                weight = (mount.getWeight() + 0.2 * infantry.getSquadSize()) * infantry.getSquadCount();
-                calculation = "(" + formatForReport(mount.getWeight()) + " + 0.2 x "
+            report.addLine("Mounted: " + mount.name() + ", "
+                  + mount.size().troopsPerCreature + " trooper(s) per mount", "");
+            if (mount.size().troopsPerCreature > 1) {
+                weight = (mount.weight() + 0.2 * infantry.getSquadSize()) * infantry.getSquadCount();
+                calculation = "(" + formatForReport(mount.weight()) + " + 0.2 x "
                       + infantry.getSquadSize() + ") x " + infantry.getSquadCount();
             } else {
-                weight = (mount.getWeight() + 0.2) * activeTroopers;
-                calculation = "(" + formatForReport(mount.getWeight()) + " + 0.2) x " + activeTroopers;
+                weight = (mount.weight() + 0.2) * activeTroopers;
+                calculation = "(" + formatForReport(mount.weight()) + " + 0.2) x " + activeTroopers;
             }
             report.addLine("", calculation, formatForReport(weight) + " t");
 
@@ -608,11 +608,11 @@ public class TestInfantry extends TestEntity {
             removeAntiMekAttacks(infantry);
             if (infantry.canMakeAntiMekAttacks()) {
                 InfantryMount mount = infantry.getMount();
-                if ((mount == null) || mount.getSize().canMakeSwarmAttacks) {
+                if ((mount == null) || mount.size().canMakeSwarmAttacks) {
                     infantry.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), Infantry.LOC_INFANTRY);
                     infantry.addEquipment(EquipmentType.get(Infantry.STOP_SWARM), Infantry.LOC_INFANTRY);
                 }
-                if ((mount == null) || mount.getSize().canMakeLegAttacks) {
+                if ((mount == null) || mount.size().canMakeLegAttacks) {
                     infantry.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK), Infantry.LOC_INFANTRY);
                 }
             }

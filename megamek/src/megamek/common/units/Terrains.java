@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.units;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -45,6 +46,7 @@ import megamek.common.enums.HazardousLiquidPoolType;
 import megamek.server.SmokeCloud;
 
 public class Terrains implements Serializable {
+    @Serial
     private static final long serialVersionUID = -4333807226569945079L;
 
     // base terrain types
@@ -114,7 +116,7 @@ public class Terrains implements Serializable {
     public static final int FUEL_TANK = 31;
     public static final int FUEL_TANK_CF = 32;
     public static final int FUEL_TANK_ELEV = 33;
-    public static final int FUEL_TANK_MAGN = 34;
+    public static final int FUEL_TANK_MAG_N = 34;
 
     // special types
     public static final int IMPASSABLE = 35;
@@ -131,7 +133,7 @@ public class Terrains implements Serializable {
     // = number of legs in that hex
 
     public static final int METAL_CONTENT = 42; // Is there metal content that
-    // will block magscan sensors?
+    // will block mag scan sensors?
     public static final int BLDG_BASE_COLLAPSED = 43; // 1 means collapsed
 
     // Additional fluff types so that stacking of special images is possible
@@ -358,21 +360,14 @@ public class Terrains implements Serializable {
                 }
                 return "Fire (unknown)";
             case SMOKE:
-                switch (level) {
-                    case SmokeCloud.SMOKE_LIGHT:
-                        return "Light smoke";
-                    case SmokeCloud.SMOKE_HEAVY:
-                        return "Heavy smoke";
-                    case SmokeCloud.SMOKE_LI_LIGHT:
-                    case SmokeCloud.SMOKE_LI_HEAVY:
-                        return "LASER inhibiting smoke";
-                    case SmokeCloud.SMOKE_CHAFF_LIGHT:
-                        return "Chaff (ECM)";
-                    case SmokeCloud.SMOKE_GREEN:
-                        return "Green smoke (anti-TSM)";
-                    default:
-                        return "Smoke (unknown)";
-                }
+                return switch (level) {
+                    case SmokeCloud.SMOKE_LIGHT -> "Light smoke";
+                    case SmokeCloud.SMOKE_HEAVY -> "Heavy smoke";
+                    case SmokeCloud.SMOKE_LI_LIGHT, SmokeCloud.SMOKE_LI_HEAVY -> "LASER inhibiting smoke";
+                    case SmokeCloud.SMOKE_CHAFF_LIGHT -> "Chaff (ECM)";
+                    case SmokeCloud.SMOKE_GREEN -> "Green smoke (anti-TSM)";
+                    default -> "Smoke (unknown)";
+                };
             case SWAMP:
                 if ((level == 2) || (level == 3)) {
                     return "Quicksand";
@@ -467,16 +462,12 @@ public class Terrains implements Serializable {
                 return "Deployment Zone";
             case HAZARDOUS_LIQUID:
                 HazardousLiquidPoolType hazardousLiquidPoolType = HazardousLiquidPoolType.getType(level);
-                switch (hazardousLiquidPoolType) {
-                    case WIND_BLOWN:
-                        return "Hazardous Liquid (Wind Blown)";
-                    case FLOWS:
-                        return "Hazardous Liquid (Flows)";
-                    case FLOWS_AND_WIND_BLOWN:
-                        return "Hazardous Liquid (Flows and Wind Blown)";
-                    default:
-                        return "Hazardous Liquid";
-                }
+                return switch (hazardousLiquidPoolType) {
+                    case WIND_BLOWN -> "Hazardous Liquid (Wind Blown)";
+                    case FLOWS -> "Hazardous Liquid (Flows)";
+                    case FLOWS_AND_WIND_BLOWN -> "Hazardous Liquid (Flows and Wind Blown)";
+                    default -> "Hazardous Liquid";
+                };
             case ULTRA_SUBLEVEL:
                 return "Ultra Sublevel";
             default:
@@ -585,25 +576,17 @@ public class Terrains implements Serializable {
     public static int getTerrainElevation(int terrainType, int terrainLevel, boolean inAtmosphere) {
         if (inAtmosphere) {
             // Handle altitudes
-            switch (terrainType) {
-                case FOLIAGE_ELEV:
-                    return 1;
-                default:
-                    return 0;
+            if (terrainType == FOLIAGE_ELEV) {
+                return 1;
             }
+            return 0;
         } else {
             // Handle elevations
-            switch (terrainType) {
-                case INDUSTRIAL:
-                case BLDG_ELEV:
-                case BRIDGE_ELEV:
-                case FOLIAGE_ELEV:
-                    return terrainLevel;
-                case FIELDS:
-                    return 1;
-                default:
-                    return 0;
-            }
+            return switch (terrainType) {
+                case INDUSTRIAL, BLDG_ELEV, BRIDGE_ELEV, FOLIAGE_ELEV -> terrainLevel;
+                case FIELDS -> 1;
+                default -> 0;
+            };
         }
     }
 
@@ -616,50 +599,28 @@ public class Terrains implements Serializable {
      * @return The control roll modifier
      */
     public static int landingModifier(int terrainType, int terrainLevel) {
-        switch (terrainType) {
-            case WOODS:
-            case JUNGLE:
-                return (terrainLevel == 3) ? 7 : terrainLevel + 3;
-            case WATER:
-                return (terrainLevel > 0) ? 3 : 2;
-            case ROUGH:
-                return terrainLevel == 2 ? 5 : 3;
-            case RUBBLE:
-                return terrainLevel == 6 ? 5 : 3;
-            case SAND:
-            case TUNDRA:
-            case MAGMA:
-            case FIELDS:
-            case SWAMP:
-                return 2;
-            case BUILDING:
-                return terrainLevel + 1;
-            case ROAD:
-                switch (terrainLevel) {
-                    case ROAD_LVL_DIRT:
-                        return 2;
-                    case ROAD_LVL_GRAVEL:
-                        return 1;
-                    default:
-                        return 0;
-                }
-            case SNOW:
-                return (terrainLevel == 2) ? 1 : 0;
-            case ICE:
-            case MUD:
-                return 1;
-            default:
-                return 0;
-        }
+        return switch (terrainType) {
+            case WOODS, JUNGLE -> (terrainLevel == 3) ? 7 : terrainLevel + 3;
+            case WATER -> (terrainLevel > 0) ? 3 : 2;
+            case ROUGH -> terrainLevel == 2 ? 5 : 3;
+            case RUBBLE -> terrainLevel == 6 ? 5 : 3;
+            case SAND, TUNDRA, MAGMA, FIELDS, SWAMP -> 2;
+            case BUILDING -> terrainLevel + 1;
+            case ROAD -> switch (terrainLevel) {
+                case ROAD_LVL_DIRT -> 2;
+                case ROAD_LVL_GRAVEL -> 1;
+                default -> 0;
+            };
+            case SNOW -> (terrainLevel == 2) ? 1 : 0;
+            case ICE, MUD -> 1;
+            default -> 0;
+        };
     }
 
 
     /**
      * Returns true if the terrain is a base terrain type, excluding "Clear"
      *
-     * @param terrainType
-     *
-     * @return
      */
     public static boolean isBaseTerrain(int terrainType) {
         return terrainType == WOODS || terrainType == WATER || terrainType == ROUGH

@@ -65,7 +65,7 @@ class HullDownStep implements PhasePass {
             int mpUsed = 1;
             if (entity instanceof BipedMek) {
                 // TODO - make unit test to evaluate if we can safely change this for loop
-                for (int location = Mek.LOC_RLEG; location <= Mek.LOC_LLEG; location++) {
+                for (int location = Mek.LOC_RIGHT_LEG; location <= Mek.LOC_LEFT_LEG; location++) {
                     if (entity.isLocationBad(location)) {
                         mpUsed += 99;
                         break;
@@ -78,7 +78,7 @@ class HullDownStep implements PhasePass {
                 moveStep.setHasJustStood(true);
             } else {
                 // TODO - make unit test to evaluate if we can safely change this for loop
-                for (int location = Mek.LOC_RARM; location <= Mek.LOC_LLEG; location++) {
+                for (int location = Mek.LOC_RIGHT_ARM; location <= Mek.LOC_LEFT_LEG; location++) {
                     if (entity.isLocationBad(location)) {
                         mpUsed += 99;
                         break;

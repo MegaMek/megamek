@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,7 @@ package megamek.common.units;
 
 import static megamek.common.units.Terrains.*;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +69,7 @@ import megamek.common.rolls.TargetRoll;
  * @since Jun 1, 2005
  */
 public class VTOL extends Tank implements IBomber {
+    @Serial
     private static final long serialVersionUID = -7406911547399249173L;
 
     public static final int LOC_ROTOR = 5;
@@ -76,10 +78,8 @@ public class VTOL extends Tank implements IBomber {
 
     // VTOLs can have at most one (chin) turret, sponsons don't count and dual
     // turrets aren't allowed.
-    private final static String[] LOCATION_ABBRS = { "BD", "FR", "RS", "LS", "RR",
-                                                     "RO", "TU" };
-    private static final String[] LOCATION_NAMES = { "Body", "Front", "Right",
-                                                     "Left", "Rear", "Rotor", "Turret" };
+    private final static String[] LOCATION_ABBREVIATIONS = { "BD", "FR", "RS", "LS", "RR", "RO", "TU" };
+    private static final String[] LOCATION_NAMES = { "Body", "Front", "Right", "Left", "Rear", "Rotor", "Turret" };
 
     // critical hits
     public static final int CRIT_COPILOT = 15;
@@ -90,7 +90,7 @@ public class VTOL extends Tank implements IBomber {
 
     public VTOL() {
         super();
-        // need to set elevation to something different than entity
+        // need to set elevation to something different from entity
         elevation = 1;
     }
 
@@ -100,8 +100,8 @@ public class VTOL extends Tank implements IBomber {
     }
 
     @Override
-    public String[] getLocationAbbrs() {
-        return LOCATION_ABBRS;
+    public String[] getLocationAbbreviations() {
+        return LOCATION_ABBREVIATIONS;
     }
 
     @Override
@@ -181,9 +181,7 @@ public class VTOL extends Tank implements IBomber {
             if (hex.containsTerrain(WATER) && (elevation == 0)) {
                 return true;
             }
-            if (elevation > 0) {
-                return true;
-            }
+            return elevation > 0;
         }
 
         return false;
@@ -191,15 +189,15 @@ public class VTOL extends Tank implements IBomber {
 
     @Override
     public boolean isRepairable() {
-        boolean retval = isSalvage();
+        boolean retVal = isSalvage();
         int loc = Tank.LOC_FRONT;
-        while (retval && (loc < VTOL.LOC_ROTOR)) {
+        while (retVal && (loc < VTOL.LOC_ROTOR)) {
             int loc_is = this.getInternal(loc);
             loc++;
-            retval = (loc_is != IArmorState.ARMOR_DOOMED)
+            retVal = (loc_is != IArmorState.ARMOR_DOOMED)
                   && (loc_is != IArmorState.ARMOR_DESTROYED);
         }
-        return retval;
+        return retVal;
     }
 
     @Override
@@ -230,7 +228,7 @@ public class VTOL extends Tank implements IBomber {
                 case 2:
                     rv.setEffect(HitData.EFFECT_CRITICAL);
                     break;
-                case 3:
+                case 3, 10, 11:
                     rv = new HitData(LOC_ROTOR, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     break;
                 case 4:
@@ -263,10 +261,6 @@ public class VTOL extends Tank implements IBomber {
                     } else {
                         rv = new HitData(LOC_LEFT);
                     }
-                    break;
-                case 10:
-                case 11:
-                    rv = new HitData(LOC_ROTOR, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     break;
                 case 12:
                     rv = new HitData(LOC_ROTOR, false, HitData.EFFECT_CRITICAL
@@ -662,7 +656,9 @@ public class VTOL extends Tank implements IBomber {
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 
-            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
+            if (getCrew().getOptions()
+                  .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
+                  .equals(Crew.ENVIRONMENT_SPECIALIST_SNOW)) {
                 if (conditions.getWeather().isIceStorm()) {
                     mp += 2;
                 }

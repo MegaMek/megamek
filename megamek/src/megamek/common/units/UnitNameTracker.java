@@ -63,7 +63,7 @@ public class UnitNameTracker {
      *
      * @param entity The entity to remove from the name tracker.
      *
-     * @return A value indicating whether or not the entity was removed.
+     * @return A value indicating whether the entity was removed.
      */
     public boolean remove(Entity entity) {
         return remove(entity, null);
@@ -75,7 +75,7 @@ public class UnitNameTracker {
      * @param entity          The entity to remove from the name tracker.
      * @param onEntityUpdated An optional function to execute when an entity is updated due to a duplicate name change.
      *
-     * @return A value indicating whether or not the entity was removed.
+     * @return A value indicating whether the entity was removed.
      */
     public boolean remove(Entity entity, @Nullable Consumer<Entity> onEntityUpdated) {
         String rawName = entity.getShortNameRaw();
@@ -87,7 +87,7 @@ public class UnitNameTracker {
             return false;
         }
 
-        // If there are more than one entities with this raw name,
+        // If there are more than one entity with this raw name,
         // go through the list of matching entities and update their
         // duplicate number
         for (Entity e : entities) {

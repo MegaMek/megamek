@@ -381,7 +381,7 @@ public class TestProtoMek extends TestEntity {
           @Nullable StringBuffer buffer) {
         if (eq instanceof MiscType) {
             if (eq.hasFlag(MiscType.F_PROTOMEK_MELEE) && eq.hasSubType(MiscType.S_PROTOMEK_WEAPON)
-                  && (location != ProtoMek.LOC_LARM) && (location != ProtoMek.LOC_RARM)) {
+                  && (location != ProtoMek.LOC_LEFT_ARM) && (location != ProtoMek.LOC_RIGHT_ARM)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in an arm.\n");
                 }
@@ -611,10 +611,10 @@ public class TestProtoMek extends TestEntity {
                 }
                 return slots;
             }
-            case ProtoMek.LOC_LARM:
-            case ProtoMek.LOC_RARM:
+            case ProtoMek.LOC_LEFT_ARM:
+            case ProtoMek.LOC_RIGHT_ARM:
                 return quad ? 0 : 1;
-            case ProtoMek.LOC_MAINGUN:
+            case ProtoMek.LOC_MAIN_GUN:
                 return (quad && ultra) ? 2 : 1;
             case ProtoMek.LOC_HEAD:
             case ProtoMek.LOC_LEG:
@@ -652,13 +652,13 @@ public class TestProtoMek extends TestEntity {
                 } else {
                     return ultra ? 4.0 : 2.0;
                 }
-            case ProtoMek.LOC_LARM:
-            case ProtoMek.LOC_RARM:
+            case ProtoMek.LOC_LEFT_ARM:
+            case ProtoMek.LOC_RIGHT_ARM:
                 if (quad) {
                     return 0;
                 }
                 return ultra ? 1.0 : 0.5;
-            case ProtoMek.LOC_MAINGUN:
+            case ProtoMek.LOC_MAIN_GUN:
                 return Double.MAX_VALUE;
             case ProtoMek.LOC_HEAD:
             case ProtoMek.LOC_LEG:
@@ -708,14 +708,14 @@ public class TestProtoMek extends TestEntity {
     public static int maxArmorFactor(ProtoMek proto, int location) {
         if (location == ProtoMek.LOC_HEAD) {
             return 2 + (int) proto.getWeight() / 2;
-        } else if (location == ProtoMek.LOC_MAINGUN) {
+        } else if (location == ProtoMek.LOC_MAIN_GUN) {
             if (proto.hasMainGun()) {
                 return proto.getOInternal(location) * 3;
             } else {
                 return 0;
             }
-        } else if ((location == ProtoMek.LOC_LARM)
-              || (location == ProtoMek.LOC_RARM)) {
+        } else if ((location == ProtoMek.LOC_LEFT_ARM)
+              || (location == ProtoMek.LOC_RIGHT_ARM)) {
             if (proto.isQuad()) {
                 return 0;
             } else if (proto.getWeight() < 6) {

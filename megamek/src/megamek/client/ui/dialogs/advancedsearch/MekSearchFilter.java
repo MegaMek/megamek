@@ -877,7 +877,7 @@ public class MekSearchFilter {
             entityTypes = entityTypes | Entity.ETYPE_SUPER_HEAVY_TANK;
         }
         if (f.iAerospaceFighter == 1) {
-            entityTypes = entityTypes | Entity.ETYPE_AEROSPACEFIGHTER;
+            entityTypes = entityTypes | Entity.ETYPE_AEROSPACE_FIGHTER;
         }
 
         if ((!((entityType & entityTypes) > 0) && (entityTypes != 0))) {
@@ -959,7 +959,7 @@ public class MekSearchFilter {
             entityTypes = entityTypes | Entity.ETYPE_SUPER_HEAVY_TANK;
         }
         if (f.iAerospaceFighter == 2) {
-            entityTypes = entityTypes | Entity.ETYPE_AEROSPACEFIGHTER;
+            entityTypes = entityTypes | Entity.ETYPE_AEROSPACE_FIGHTER;
         }
 
         return ((entityType & entityTypes) <= 0) || (entityTypes == 0);

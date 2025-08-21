@@ -177,7 +177,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         }
 
         // Some "hits" on a ProtoMek are actually misses.
-        if ((entity instanceof ProtoMek proto) && (hit.getLocation() == ProtoMek.LOC_NMISS)) {
+        if ((entity instanceof ProtoMek proto) && (hit.getLocation() == ProtoMek.LOC_NEAR_MISS)) {
             report = new Report(6035);
             report.subject = entity.getId();
             report.indent(2);
@@ -441,7 +441,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         // If the head is destroyed, kill the crew.
 
                         if ((hit.getLocation() == Mek.LOC_HEAD) ||
-                              ((hit.getLocation() == Mek.LOC_CT) &&
+                              ((hit.getLocation() == Mek.LOC_CENTER_TORSO) &&
                                     ((ammoExplosion && !autoEject) || areaSatArty))) {
                             proto.getCrew().setDoomed(true);
                         }
@@ -683,7 +683,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             if (mek.hasSearchlight()) {
                 boolean spotlightHittable = true;
                 int loc = hit.getLocation();
-                if ((loc != Mek.LOC_CT) && (loc != Mek.LOC_LT) && (loc != Mek.LOC_RT)) {
+                if ((loc != Mek.LOC_CENTER_TORSO) && (loc != Mek.LOC_LEFT_TORSO) && (loc != Mek.LOC_RIGHT_TORSO)) {
                     spotlightHittable = false;
                 }
 
@@ -716,7 +716,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     return;
                 }
                 // is this a mek dumping ammo being hit in the rear torso?
-                if (List.of(Mek.LOC_CT, Mek.LOC_RT, Mek.LOC_LT).contains(hit.getLocation())) {
+                if (List.of(Mek.LOC_CENTER_TORSO, Mek.LOC_RIGHT_TORSO, Mek.LOC_LEFT_TORSO)
+                      .contains(hit.getLocation())) {
                     for (Mounted<?> mAmmo : mek.getAmmo()) {
                         if (mAmmo.isDumping() && !mAmmo.isDestroyed() && !mAmmo.isHit()) {
                             // doh. explode it
@@ -789,13 +790,13 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
 
                         // If a side torso got destroyed, and the corresponding arm is not yet destroyed, add it as a
                         // club to that hex (p.35 BMRr)
-                        if ((((hit.getLocation() == Mek.LOC_RT) && (mek.getInternal(Mek.LOC_RARM) > 0)) ||
-                              ((hit.getLocation() == Mek.LOC_LT) && (mek.getInternal(Mek.LOC_LARM) > 0)))) {
+                        if ((((hit.getLocation() == Mek.LOC_RIGHT_TORSO) && (mek.getInternal(Mek.LOC_RIGHT_ARM) > 0)) ||
+                              ((hit.getLocation() == Mek.LOC_LEFT_TORSO) && (mek.getInternal(Mek.LOC_LEFT_ARM) > 0)))) {
                             int blownOffLocation;
-                            if (hit.getLocation() == Mek.LOC_RT) {
-                                blownOffLocation = Mek.LOC_RARM;
+                            if (hit.getLocation() == Mek.LOC_RIGHT_TORSO) {
+                                blownOffLocation = Mek.LOC_RIGHT_ARM;
                             } else {
-                                blownOffLocation = Mek.LOC_LARM;
+                                blownOffLocation = Mek.LOC_LEFT_ARM;
                             }
                             mek.destroyLocation(blownOffLocation, true);
                             report = new Report(6120);
@@ -864,12 +865,12 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     nextHit = mek.getTransferLocation(hit);
                     if (nextHit.getLocation() == Entity.LOC_DESTROYED) {
                         // Start with the number of engine crits in this location, if any...
-                        mek.engineHitsThisPhase += mek.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM,
+                        mek.engineHitsThisPhase += mek.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM,
                               Mek.SYSTEM_ENGINE,
                               hit.getLocation());
                         // ...then deduct the ones destroyed previously or critically hit this round already. That
                         // leaves the ones actually destroyed with the location.
-                        mek.engineHitsThisPhase -= mek.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                        mek.engineHitsThisPhase -= mek.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM,
                               Mek.SYSTEM_ENGINE,
                               hit.getLocation());
 
@@ -882,7 +883,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                             reportVec.addAll(manager.destroyEntity(mek,
                                   "damage",
                                   !ammoExplosion,
-                                  !((ammoExplosion || areaSatArty) && (hit.getLocation() == Mek.LOC_CT))));
+                                  !((ammoExplosion || areaSatArty) && (hit.getLocation() == Mek.LOC_CENTER_TORSO))));
                             // If the head is destroyed, kill the crew.
                             if ((hit.getLocation() == Mek.LOC_HEAD) &&
                                   !mek.getCrew().isDead() &&
@@ -900,7 +901,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                                 }
                             }
 
-                            if ((hit.getLocation() == Mek.LOC_CT) &&
+                            if ((hit.getLocation() == Mek.LOC_CENTER_TORSO) &&
                                   !mek.getCrew().isDead() &&
                                   !mek.getCrew().isDoomed()) {
                                 if (mek.isAutoEject() &&
@@ -917,7 +918,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                             }
 
                             if ((hit.getLocation() == Mek.LOC_HEAD) ||
-                                  ((hit.getLocation() == Mek.LOC_CT) &&
+                                  ((hit.getLocation() == Mek.LOC_CENTER_TORSO) &&
                                         ((ammoExplosion && !autoEject) || areaSatArty))) {
                                 mek.getCrew().setDoomed(true);
                             }
@@ -1000,7 +1001,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 mek.destroyLocation(hit.getLocation());
 
                 // Check for possible engine destruction here
-                if (((hit.getLocation() == Mek.LOC_RT) || (hit.getLocation() == Mek.LOC_LT))) {
+                if (((hit.getLocation() == Mek.LOC_RIGHT_TORSO) || (hit.getLocation() == Mek.LOC_LEFT_TORSO))) {
 
                     int numEngineHits = mek.getEngineHits();
                     boolean engineExploded = manager.checkEngineExplosion(mek, reportVec, numEngineHits);
@@ -1505,7 +1506,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                                   !((ammoExplosion || areaSatArty))));
 
                             if ((hit.getLocation() == Mek.LOC_HEAD) ||
-                                  ((hit.getLocation() == Mek.LOC_CT) && (ammoExplosion || areaSatArty))) {
+                                  ((hit.getLocation() == Mek.LOC_CENTER_TORSO) && (ammoExplosion || areaSatArty))) {
                                 tank.getCrew().setDoomed(true);
                             }
                             if (game.getOptions()
@@ -1601,18 +1602,18 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         int loc = hit.getLocation();
         if (tank instanceof SuperHeavyTank) {
             if ((loc != Tank.LOC_FRONT) &&
-                  (loc != SuperHeavyTank.LOC_FRONTRIGHT) &&
-                  (loc != SuperHeavyTank.LOC_FRONTLEFT) &&
-                  (loc != SuperHeavyTank.LOC_REARRIGHT) &&
-                  (loc != SuperHeavyTank.LOC_REARLEFT)) {
+                  (loc != SuperHeavyTank.LOC_FRONT_RIGHT) &&
+                  (loc != SuperHeavyTank.LOC_FRONT_LEFT) &&
+                  (loc != SuperHeavyTank.LOC_REAR_RIGHT) &&
+                  (loc != SuperHeavyTank.LOC_REAR_LEFT)) {
                 spotlightHittable = false;
             }
         } else if (tank instanceof LargeSupportTank) {
             if ((loc != Tank.LOC_FRONT) &&
-                  (loc != LargeSupportTank.LOC_FRONTRIGHT) &&
-                  (loc != LargeSupportTank.LOC_FRONTLEFT) &&
-                  (loc != LargeSupportTank.LOC_REARRIGHT) &&
-                  (loc != LargeSupportTank.LOC_REARLEFT)) {
+                  (loc != LargeSupportTank.LOC_FRONT_RIGHT) &&
+                  (loc != LargeSupportTank.LOC_FRONT_LEFT) &&
+                  (loc != LargeSupportTank.LOC_REAR_RIGHT) &&
+                  (loc != LargeSupportTank.LOC_REAR_LEFT)) {
                 spotlightHittable = false;
             }
         } else {
@@ -2122,7 +2123,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         // If the head is destroyed, kill the crew.
 
                         if ((hit.getLocation() == Mek.LOC_HEAD) ||
-                              ((hit.getLocation() == Mek.LOC_CT) && (ammoExplosion || areaSatArty))) {
+                              ((hit.getLocation() == Mek.LOC_CENTER_TORSO) && (ammoExplosion || areaSatArty))) {
                             infantry.getCrew().setDoomed(true);
                         }
                         if (game.getOptions()
@@ -2189,16 +2190,16 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
 
         // Find out if Human TRO plays a part it crit bonus
         if ((attacker != null) && !areaSatArty) {
-            if ((entity instanceof Mek) && attacker.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_MEK)) {
+            if ((entity instanceof Mek) && attacker.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMAN_TRO_MEK)) {
                 critBonus += 1;
             } else if ((entity instanceof Aero) &&
-                  attacker.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_AERO)) {
+                  attacker.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMAN_TRO_AERO)) {
                 critBonus += 1;
             } else if ((entity instanceof Tank) &&
-                  attacker.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_VEE)) {
+                  attacker.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMAN_TRO_VEE)) {
                 critBonus += 1;
             } else if ((entity instanceof BattleArmor) &&
-                  attacker.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_BA)) {
+                  attacker.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMAN_TRO_BA)) {
                 critBonus += 1;
             }
         }
@@ -2537,7 +2538,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             extantDamage = manager.damageExternalPassenger(entity, hit, damage, reportVec, passenger);
         }
 
-        boolean bTorso = (nLoc == Mek.LOC_CT) || (nLoc == Mek.LOC_RT) || (nLoc == Mek.LOC_LT);
+        boolean bTorso = (nLoc == Mek.LOC_CENTER_TORSO) || (nLoc == Mek.LOC_RIGHT_TORSO) || (nLoc
+              == Mek.LOC_LEFT_TORSO);
 
         // Does a swarming unit absorb damage?
         int swarmer = entity.getSwarmAttackerId();

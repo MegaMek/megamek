@@ -48,15 +48,15 @@ import java.util.function.Function;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
-import megamek.common.units.Entity;
-import megamek.common.interfaces.ForceAssignable;
-import megamek.common.game.IGame;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.game.IGame;
+import megamek.common.interfaces.ForceAssignable;
+import megamek.common.units.Entity;
 
 public abstract class BaseFormationConverter<T extends SBFFormation> {
     protected final Force force;
@@ -90,18 +90,18 @@ public abstract class BaseFormationConverter<T extends SBFFormation> {
         // The force must not have direct subordinate entities
         boolean invalid = !force.getEntities().isEmpty();
         List<ForceAssignable> entities = forces.getFullEntities(force);
-        List<Force> subforces = forces.getFullSubForces(force);
+        List<Force> subForces = forces.getFullSubForces(force);
         invalid |= entities.size() > 20;
-        invalid |= (subforces.size() > 4) || subforces.isEmpty();
-        invalid |= subforces.stream().anyMatch(f -> f.getEntities().isEmpty());
-        invalid |= subforces.stream().anyMatch(f -> f.getEntities().size() > 6);
-        invalid |= subforces.stream().anyMatch(f -> !f.getSubForces().isEmpty());
+        invalid |= (subForces.size() > 4) || subForces.isEmpty();
+        invalid |= subForces.stream().anyMatch(f -> f.getEntities().isEmpty());
+        invalid |= subForces.stream().anyMatch(f -> f.getEntities().size() > 6);
+        invalid |= subForces.stream().anyMatch(f -> !f.getSubForces().isEmpty());
         invalid |= entities.stream().anyMatch(e -> !ASConverter.canConvert((Entity) e));
         // Avoid some checks in the code below
         if (invalid) {
             return false;
         }
-        for (Force subforce : subforces) {
+        for (Force subforce : subForces) {
             var elementsList = new ArrayList<AlphaStrikeElement>();
             forces.getFullEntities(subforce)
                   .stream()
@@ -123,7 +123,7 @@ public abstract class BaseFormationConverter<T extends SBFFormation> {
     /**
      * Returns an SBF Formation formed from the given force. When the force cannot be converted to an SBF Formation
      * according to the rules, returns null. The given force must be approximately company-shaped to work, i.e. it has
-     * to contain some subForces with some entities in each subforce but no further subForces.
+     * to contain some subForces with some entities in each sub force but no further subForces.
      */
     public abstract T convert();
 
@@ -191,7 +191,7 @@ public abstract class BaseFormationConverter<T extends SBFFormation> {
     }
 
     void calcFormationSpecialAbilities() {
-        report.addLine("Special Abilites:", "");
+        report.addLine("Special Abilities:", "");
         addFormationSpasIfAny(formation, DN, XMEC, COM, HPG, MCS, UCS, MEC, MAS, LMAS,
               MSW, MFB, SAW, SDS, TRN, FD, HELI, SDCS);
         addFormationSpasIf2Thirds(formation, AC3, PRB, AECM, ECM, ENG, LPRB, LECM, ORO, RCN, SRCH, SHLD, TAG, WAT);

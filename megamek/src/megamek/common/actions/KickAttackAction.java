@@ -99,11 +99,11 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
         int[] kickLegs = new int[2];
         if (entity.entityIsQuad() && (leg != LEFT_MULE) && (leg != RIGHT_MULE)) {
-            kickLegs[0] = Mek.LOC_RARM;
-            kickLegs[1] = Mek.LOC_LARM;
+            kickLegs[0] = Mek.LOC_RIGHT_ARM;
+            kickLegs[1] = Mek.LOC_LEFT_ARM;
         } else {
-            kickLegs[0] = Mek.LOC_RLEG;
-            kickLegs[1] = Mek.LOC_LLEG;
+            kickLegs[0] = Mek.LOC_RIGHT_LEG;
+            kickLegs[1] = Mek.LOC_LEFT_LEG;
         }
 
         final int legLoc = ((leg == RIGHT) || (leg == RIGHT_MULE)) ? kickLegs[0]
@@ -183,16 +183,16 @@ public class KickAttackAction extends PhysicalAttackAction {
         if (ae.entityIsQuad()) {
             if ((leg == KickAttackAction.LEFT_MULE)
                   || (leg == KickAttackAction.RIGHT_MULE)) {
-                kickLegs[0] = Mek.LOC_RLEG;
-                kickLegs[1] = Mek.LOC_LLEG;
+                kickLegs[0] = Mek.LOC_RIGHT_LEG;
+                kickLegs[1] = Mek.LOC_LEFT_LEG;
                 mule = 1; // To-hit modifier
             } else {
-                kickLegs[0] = Mek.LOC_RARM;
-                kickLegs[1] = Mek.LOC_LARM;
+                kickLegs[0] = Mek.LOC_RIGHT_ARM;
+                kickLegs[1] = Mek.LOC_LEFT_ARM;
             }
         } else {
-            kickLegs[0] = Mek.LOC_RLEG;
-            kickLegs[1] = Mek.LOC_LLEG;
+            kickLegs[0] = Mek.LOC_RIGHT_LEG;
+            kickLegs[1] = Mek.LOC_LEFT_LEG;
         }
         final int legLoc = ((leg == KickAttackAction.RIGHT_MULE) || (leg == KickAttackAction.RIGHT)) ? kickLegs[0]
               : kickLegs[1];
@@ -209,19 +209,19 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         // check if all legs are present & working
-        if (ae.isLocationBad(Mek.LOC_LLEG) || ae.isLocationBad(Mek.LOC_RLEG)
+        if (ae.isLocationBad(Mek.LOC_LEFT_LEG) || ae.isLocationBad(Mek.LOC_RIGHT_LEG)
               || (ae.entityIsQuad()
-              && (ae.isLocationBad(Mek.LOC_LARM)
-              || ae.isLocationBad(Mek.LOC_RARM)))) {
+              && (ae.isLocationBad(Mek.LOC_LEFT_ARM)
+              || ae.isLocationBad(Mek.LOC_RIGHT_ARM)))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Leg missing");
         }
 
         // check if all hips are operational
-        if (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LLEG)
-              || !ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RLEG)
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_LEG)
+              || !ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_LEG)
               || (ae.entityIsQuad()
-              && (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LARM)
-              || !ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RARM)))) {
+              && (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_ARM)
+              || !ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_ARM)))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Hip destroyed");
         }
         // check if attacker has fired leg-mounted weapons

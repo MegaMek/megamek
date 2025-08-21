@@ -253,7 +253,7 @@ public class MekTileset {
         } else if (entity instanceof LandAirMek) {
             return switch (entity.getConversionMode()) {
                 case LandAirMek.CONV_MODE_FIGHTER -> default_lam_fighter;
-                case LandAirMek.CONV_MODE_AIRMEK -> default_lam_air_mek;
+                case LandAirMek.CONV_MODE_AIR_MEK -> default_lam_air_mek;
                 default -> default_lam_mek;
             };
         } else if (entity instanceof Mek) {

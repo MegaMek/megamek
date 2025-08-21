@@ -452,7 +452,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     flag = CMD_TANK | CMD_CONVERTER;
                 }
             } else if (currentlySelectedEntity instanceof LandAirMek) {
-                if (currentlySelectedEntity.getConversionMode() == LandAirMek.CONV_MODE_AIRMEK) {
+                if (currentlySelectedEntity.getConversionMode() == LandAirMek.CONV_MODE_AIR_MEK) {
                     flag = CMD_TANK | CMD_CONVERTER | CMD_AIR_MEK;
                 } else {
                     flag = CMD_MEK | CMD_CONVERTER;
@@ -530,7 +530,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        if (selectedEntity.isWeapOrderChanged()) {
+        if (selectedEntity.isWeaponOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(selectedEntity);
         }
 
@@ -1671,7 +1671,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clientgui.getClient().sendUpdateEntity(ce);
         }
         clientgui.getClient().moveEntity(currentEntity, cmd);
-        if (ce.isWeapOrderChanged()) {
+        if (ce.isWeaponOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce);
         }
         endMyTurn();
@@ -1809,7 +1809,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 stepType = MoveStepType.BACKWARDS;
                 gear = GEAR_BACKUP;
             } else {
-                maxMp = ce().getRunMPwithoutMASC();
+                maxMp = ce().getRunMPWithoutMASC();
                 stepType = MoveStepType.FORWARDS;
                 gear = GEAR_LAND;
             }
@@ -2434,7 +2434,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 return;
             }
         } else if (!(ce instanceof ProtoMek) &&
-              !(ce instanceof LandAirMek && (ce.getConversionMode() == LandAirMek.CONV_MODE_AIRMEK)) &&
+              !(ce instanceof LandAirMek && (ce.getConversionMode() == LandAirMek.CONV_MODE_AIR_MEK)) &&
               (ce.getAltitude() <= 3)) {
             return;
         }

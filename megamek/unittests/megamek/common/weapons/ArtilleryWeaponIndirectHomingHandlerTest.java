@@ -293,7 +293,7 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         AeroSpaceFighter attacker = createASF("ATT-10", "Buzzsaw", "Alyce", aPlayer);
         loadBombOnASF(attacker, BombTypeEnum.HOMING);
         Mek tagger = createMek("TAG-3R", "Taggity", "Taggart", aPlayer, 1, 1);
-        Mounted<?> tagWeapon = tagger.addEquipment(tagType, Mek.LOC_CT);
+        Mounted<?> tagWeapon = tagger.addEquipment(tagType, Mek.LOC_CENTER_TORSO);
         Mek defender = createMek("TGT-1A", "Targeto", "Bob", dPlayer);
         Infantry crunchies = createInfantry("LittleGreen", "ArmyMen", "Elgato", dPlayer);
 

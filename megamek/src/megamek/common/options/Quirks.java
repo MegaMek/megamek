@@ -209,12 +209,12 @@ public class Quirks extends AbstractOptions {
 
         if (en instanceof Mek) {
             return switch (qName) {
-                case QUIRK_POS_BATTLE_FIST_LA -> en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM);
-                case QUIRK_POS_BATTLE_FIST_RA -> en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM);
-                case QUIRK_POS_BARREL_FIST_RA -> en.hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RARM)
-                      && !en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM);
-                case QUIRK_POS_BARREL_FIST_LA -> en.hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LARM)
-                      && !en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM);
+                case QUIRK_POS_BATTLE_FIST_LA -> en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM);
+                case QUIRK_POS_BATTLE_FIST_RA -> en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM);
+                case QUIRK_POS_BARREL_FIST_RA -> en.hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RIGHT_ARM)
+                      && !en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM);
+                case QUIRK_POS_BARREL_FIST_LA -> en.hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LEFT_ARM)
+                      && !en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM);
                 case QUIRK_NEG_OVERSIZED -> en.getWeight() >= 60;
                 case QUIRK_POS_COMPACT -> en.getWeight() <= 55;
                 default -> quirk.isNoneOf(QUIRK_POS_ATMOSPHERE_FLYER,

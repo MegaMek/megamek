@@ -95,13 +95,13 @@ import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
-import megamek.common.board.Board;
-import megamek.common.units.Building;
 import megamek.common.Configuration;
+import megamek.common.Hex;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
-import megamek.common.Hex;
 import megamek.common.loaders.MapSettings;
+import megamek.common.units.Building;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.common.util.BoardUtilities;
@@ -765,7 +765,7 @@ public class BoardEditorPanel extends JPanel
             if (!curHex.containsTerrain(Terrains.FUEL_TANK) &&
                   !curHex.containsTerrain(Terrains.FUEL_TANK_CF) &&
                   !curHex.containsTerrain(Terrains.FUEL_TANK_ELEV) &&
-                  !curHex.containsTerrain(Terrains.FUEL_TANK_MAGN)) {
+                  !curHex.containsTerrain(Terrains.FUEL_TANK_MAG_N)) {
                 curHex.removeAllTerrains();
             }
             setBasicFuelTank();
@@ -778,7 +778,7 @@ public class BoardEditorPanel extends JPanel
                 int oldLevel = curHex.getTerrain(terrainType).getLevel();
                 newLevel = Math.max(10, oldLevel + wheelDir * 10);
             } else if (e.isControlDown()) {
-                terrainType = Terrains.FUEL_TANK_MAGN;
+                terrainType = Terrains.FUEL_TANK_MAG_N;
                 int oldLevel = curHex.getTerrain(terrainType).getLevel();
                 newLevel = Math.max(10, oldLevel + wheelDir * 10);
             } else {
@@ -1272,7 +1272,7 @@ public class BoardEditorPanel extends JPanel
               (type == Terrains.BRIDGE_ELEV) ||
               (type == Terrains.FUEL_TANK_CF) ||
               (type == Terrains.FUEL_TANK_ELEV) ||
-              (type == Terrains.FUEL_TANK_MAGN)) {
+              (type == Terrains.FUEL_TANK_MAG_N)) {
             return new Terrain(type, level, false, 0);
         } else {
             boolean exitsSpecified = cheTerrExitSpecified.isSelected();
@@ -1336,8 +1336,8 @@ public class BoardEditorPanel extends JPanel
             curHex.addTerrain(new Terrain(Terrains.FUEL_TANK_ELEV, 1, false, 0));
         }
 
-        if (!curHex.containsTerrain(Terrains.FUEL_TANK_MAGN)) {
-            curHex.addTerrain(new Terrain(Terrains.FUEL_TANK_MAGN, 100, false, 0));
+        if (!curHex.containsTerrain(Terrains.FUEL_TANK_MAG_N)) {
+            curHex.addTerrain(new Terrain(Terrains.FUEL_TANK_MAG_N, 100, false, 0));
         }
 
         refreshTerrainList();
@@ -2125,8 +2125,7 @@ public class BoardEditorPanel extends JPanel
                   BLDG_ELEV,
                   FUEL_TANK,
                   FUEL_TANK_CF,
-                  FUEL_TANK_ELEV,
-                  FUEL_TANK_MAGN);
+                  FUEL_TANK_ELEV, FUEL_TANK_MAG_N);
         } else if (ae.getActionCommand().equals(ClientGUI.BOARD_FLATTEN)) {
             boardFlatten();
         } else if (ae.getActionCommand().equals(ClientGUI.VIEW_RESET_WINDOW_POSITIONS)) {

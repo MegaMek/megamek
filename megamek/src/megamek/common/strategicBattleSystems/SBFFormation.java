@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -97,7 +97,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     private int ownerId = Player.PLAYER_NONE;
 
     /** Hidden deployment (not unseen) */
-    private boolean isHidden = false;
+    private final boolean isHidden = false;
     private boolean isDeployed = false;
     private int deployRound = 0;
     private BoardLocation position;
@@ -255,31 +255,17 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
      * not an Artillery SPA.
      */
     public static int getSbfArtilleryDamage(BattleForceSUA spa) {
-        switch (spa) {
-            case ARTTC:
-                return 1;
-            case ARTT:
-            case ARTBA:
-            case ARTSC:
-                return 2;
-            case ARTAIS:
-            case ARTAC:
-            case ARTS:
-            case ARTLTC:
-                return 3;
-            case ARTLT:
-                return 6;
-            case ARTCM5:
-                return 8;
-            case ARTCM7:
-                return 13;
-            case ARTCM9:
-                return 22;
-            case ARTCM12:
-                return 36;
-            default:
-                return 0;
-        }
+        return switch (spa) {
+            case ARTTC -> 1;
+            case ARTT, ARTBA, ARTSC -> 2;
+            case ARTAIS, ARTAC, ARTS, ARTLTC -> 3;
+            case ARTLT -> 6;
+            case ARTCM5 -> 8;
+            case ARTCM7 -> 13;
+            case ARTCM9 -> 22;
+            case ARTCM12 -> 36;
+            default -> 0;
+        };
     }
 
     /**

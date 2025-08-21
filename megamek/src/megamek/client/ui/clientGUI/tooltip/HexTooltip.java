@@ -48,7 +48,9 @@ import megamek.client.ui.clientGUI.boardview.sprite.FlareSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.Sprite;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.ReportMessages;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -85,7 +87,7 @@ public final class HexTooltip {
                       mhex.terrainLevel(Terrains.FUEL_TANK_ELEV),
                       Terrains.getEditorName(Terrains.FUEL_TANK),
                       mhex.terrainLevel(Terrains.FUEL_TANK_CF),
-                      mhex.terrainLevel(Terrains.FUEL_TANK_MAGN));
+                      mhex.terrainLevel(Terrains.FUEL_TANK_MAG_N));
             } else {
                 FuelTank bldg = (FuelTank) game.getBoard(boardId).getBuildingAt(mcoords);
                 sFuelTank = Messages.getString("BoardView1.Tooltip.FuelTank",

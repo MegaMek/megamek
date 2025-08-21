@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2012-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -76,7 +76,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     private static final long serialVersionUID = -8118673802295814548L;
 
     public static final int CONV_MODE_MEK = 0;
-    public static final int CONV_MODE_AIRMEK = 1;
+    public static final int CONV_MODE_AIR_MEK = 1;
     public static final int CONV_MODE_FIGHTER = 2;
 
     public static final int LAM_AVIONICS = 15;
@@ -103,10 +103,10 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
      */
     public static int getAeroLocation(int loc) {
         return switch (loc) {
-            case LOC_HEAD, LOC_CT, LOC_CAPITAL_NOSE -> Aero.LOC_NOSE;
-            case LOC_RT, LOC_RARM -> Aero.LOC_RWING;
-            case LOC_LT, LOC_LARM -> Aero.LOC_LWING;
-            case LOC_RLEG, LOC_LLEG, LOC_CAPITAL_AFT -> Aero.LOC_AFT;
+            case LOC_HEAD, LOC_CENTER_TORSO, LOC_CAPITAL_NOSE -> Aero.LOC_NOSE;
+            case LOC_RIGHT_TORSO, LOC_RIGHT_ARM -> Aero.LOC_RIGHT_WING;
+            case LOC_LEFT_TORSO, LOC_LEFT_ARM -> Aero.LOC_LEFT_WING;
+            case LOC_RIGHT_LEG, LOC_LEFT_LEG, LOC_CAPITAL_AFT -> Aero.LOC_AFT;
             case LOC_CAPITAL_WINGS -> Aero.LOC_WINGS;
             default -> LOC_NONE;
         };
@@ -115,8 +115,9 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     private static final String[] LOCATION_NAMES = { "Head", "Center Torso", "Right Torso", "Left Torso", "Right Arm",
                                                      "Left Arm", "Right Leg", "Left Leg", "Nose", "Aft", "Wings" };
 
-    private static final String[] LOCATION_ABBRS = { "HD", "CT", "RT", "LT", "RA", "LA", "RL", "LL", "NOS", "AFT",
-                                                     "WNG" };
+    private static final String[] LOCATION_ABBREVIATIONS = { "HD", "CT", "RT", "LT", "RA", "LA", "RL", "LL", "NOS",
+                                                             "AFT",
+                                                             "WNG" };
 
     private static final int[] NUM_OF_SLOTS = { 6, 12, 12, 12, 12, 12, 6, 6, 100, 100, 100 };
 
@@ -140,8 +141,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
      * Returns a vector of abbreviations for all locations
      */
     @Override
-    public String[] getLocationAbbrs() {
-        return LOCATION_ABBRS;
+    public String[] getLocationAbbreviations() {
+        return LOCATION_ABBREVIATIONS;
     }
 
     private int lamType;
@@ -173,10 +174,10 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     protected BombLoadout intBombChoices = new BombLoadout();
     protected BombLoadout extBombChoices = new BombLoadout();
 
-    private Targetable airmekBombTarget = null;
+    private Targetable airMekBombTarget = null;
 
     private int fuel;
-    private int currentfuel;
+    private int currentFuel;
     private int whoFirst;
 
     // Capital Fighter stuff
@@ -195,13 +196,13 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
         setTechLevel(TechConstants.T_IS_ADVANCED);
         setCritical(Mek.LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
-        setCritical(Mek.LOC_LT, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
-        setCritical(Mek.LOC_RT, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
-        setCritical(Mek.LOC_LT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
-        setCritical(Mek.LOC_RT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
-        for (int i = 0; i < getNumberOfCriticals(Mek.LOC_CT); i++) {
-            if (null == getCritical(Mek.LOC_CT, i)) {
-                setCritical(Mek.LOC_CT, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
+        setCritical(Mek.LOC_LEFT_TORSO, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
+        setCritical(Mek.LOC_RIGHT_TORSO, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
+        setCritical(Mek.LOC_LEFT_TORSO, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
+        setCritical(Mek.LOC_RIGHT_TORSO, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
+        for (int i = 0; i < getNumberOfCriticalSlots(Mek.LOC_CENTER_TORSO); i++) {
+            if (null == getCritical(Mek.LOC_CENTER_TORSO, i)) {
+                setCritical(Mek.LOC_CENTER_TORSO, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
                 break;
             }
         }
@@ -286,7 +287,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         int mp;
         if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_FIGHTER)) {
             mp = getFighterModeWalkMP(mpCalculationSetting);
-        } else if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_AIRMEK)) {
+        } else if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_AIR_MEK)) {
             mp = getAirMekCruiseMP(mpCalculationSetting);
         } else {
             mp = super.getWalkMP(mpCalculationSetting);
@@ -302,7 +303,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         int mp;
         if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_FIGHTER)) {
             mp = getFighterModeRunMP(mpCalculationSetting);
-        } else if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_AIRMEK)) {
+        } else if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_AIR_MEK)) {
             mp = getAirMekFlankMP(mpCalculationSetting);
         } else {
             // conversion reduction has already been done at this point
@@ -318,7 +319,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     public int getSprintMP(MPCalculationSetting mpCalculationSetting) {
         if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_FIGHTER)) {
             return getRunMP();
-        } else if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_AIRMEK)) {
+        } else if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_AIR_MEK)) {
             if (hasHipCrit()) {
                 return getAirMekRunMP(mpCalculationSetting);
             }
@@ -331,7 +332,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     public int getAirMekCruiseMP(MPCalculationSetting mpCalculationSetting) {
         if (game != null && game.isOnAtmosphericMap(this) &&
-              (isLocationBad(Mek.LOC_LT) || isLocationBad(Mek.LOC_RT))) {
+              (isLocationBad(Mek.LOC_LEFT_TORSO) || isLocationBad(Mek.LOC_RIGHT_TORSO))) {
             return 0;
         }
         return getJumpMP(mpCalculationSetting) * 3;
@@ -339,7 +340,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     public int getAirMekFlankMP(MPCalculationSetting mpCalculationSetting) {
         if (game != null && game.isOnAtmosphericMap(this) &&
-              (isLocationBad(Mek.LOC_LT) || isLocationBad(Mek.LOC_RT))) {
+              (isLocationBad(Mek.LOC_LEFT_TORSO) || isLocationBad(Mek.LOC_RIGHT_TORSO))) {
             return 0;
         }
         return (int) Math.ceil(getAirMekCruiseMP(mpCalculationSetting) * 1.5);
@@ -389,7 +390,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public int getCurrentThrust() {
         // Cannot fly in atmosphere with missing side torso
-        if (!isSpaceborne() && (isLocationBad(LOC_RT) || isLocationBad(LOC_LT))) {
+        if (!isSpaceborne() && (isLocationBad(LOC_RIGHT_TORSO) || isLocationBad(LOC_LEFT_TORSO))) {
             return 0;
         }
         int j = getJumpMP();
@@ -400,7 +401,9 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                 j = Math.max(j + weatherMod, 0);
             }
 
-            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND) &&
+            if (getCrew().getOptions()
+                  .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
+                  .equals(Crew.ENVIRONMENT_SPECIALIST_WIND) &&
                   conditions.getWeather().isClear() &&
                   conditions.getWind().isTornadoF1ToF3()) {
                 j += 1;
@@ -416,7 +419,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     public int getCurrentThrust(MPCalculationSetting mpCalculationSetting) {
         // Cannot fly in atmosphere with missing side torso
-        if (!isSpaceborne() && (isLocationBad(LOC_RT) || isLocationBad(LOC_LT))) {
+        if (!isSpaceborne() && (isLocationBad(LOC_RIGHT_TORSO) || isLocationBad(LOC_LEFT_TORSO))) {
             return 0;
         }
         int j = getJumpMP();
@@ -425,7 +428,9 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             int weatherMod = conditions.getMovementMods(this);
             j = Math.max(j + weatherMod, 0);
 
-            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND) &&
+            if (getCrew().getOptions()
+                  .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
+                  .equals(Crew.ENVIRONMENT_SPECIALIST_WIND) &&
                   conditions.getWeather().isClear() &&
                   conditions.getWind().isTornadoF1ToF3()) {
                 j += 1;
@@ -502,7 +507,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public boolean usesTurnMode() {
         // Turn mode rule is not optional for LAMs in AirMek mode.
-        return getConversionMode() == CONV_MODE_AIRMEK;
+        return getConversionMode() == CONV_MODE_AIR_MEK;
     }
 
     /**
@@ -518,7 +523,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     public int getPreviousConversionMode() {
         return switch (previousMovementMode) {
             case AERODYNE, WHEELED -> CONV_MODE_FIGHTER;
-            case WIGE -> CONV_MODE_AIRMEK;
+            case WIGE -> CONV_MODE_AIR_MEK;
             default -> CONV_MODE_MEK;
         };
     }
@@ -529,7 +534,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         if (mode == EntityMovementMode.AERODYNE || mode == EntityMovementMode.WHEELED) {
             setConversionMode(CONV_MODE_FIGHTER);
         } else if (mode == EntityMovementMode.WIGE) {
-            setConversionMode(CONV_MODE_AIRMEK);
+            setConversionMode(CONV_MODE_AIR_MEK);
         } else {
             setConversionMode(CONV_MODE_MEK);
         }
@@ -564,7 +569,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         }
         if (mode == CONV_MODE_MEK) {
             super.setMovementMode(EntityMovementMode.BIPED);
-        } else if (mode == CONV_MODE_AIRMEK) {
+        } else if (mode == CONV_MODE_AIR_MEK) {
             super.setMovementMode(EntityMovementMode.WIGE);
         } else if (mode == CONV_MODE_FIGHTER) {
             super.setMovementMode(EntityMovementMode.AERODYNE);
@@ -609,9 +614,9 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                 }
             }
 
-            // grounded aeros have the same prohibitions as wheeled tanks
+            // grounded aerospace have the same prohibitions as wheeled tanks
             return taxingAeroProhibitedTerrains(hex);
-        } else if (getConversionMode() == CONV_MODE_AIRMEK && testElevation > 0) {
+        } else if (getConversionMode() == CONV_MODE_AIR_MEK && testElevation > 0) {
             // Cannot enter woods or a building hex in AirMek mode unless using ground movement or flying over the
             // terrain.
             Hex hex = game.getHex(c, testBoardId);
@@ -625,8 +630,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     }
 
     @Override
-    public String getMovementString(EntityMovementType mtype) {
-        switch (mtype) {
+    public String getMovementString(EntityMovementType movementType) {
+        switch (movementType) {
             case MOVE_WALK:
                 if (getConversionMode() == CONV_MODE_FIGHTER) {
                     return "Cruised";
@@ -648,13 +653,13 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             case MOVE_OVER_THRUST:
                 return "Over Thrust";
             default:
-                return super.getMovementString(mtype);
+                return super.getMovementString(movementType);
         }
     }
 
     @Override
-    public String getMovementAbbr(EntityMovementType mtype) {
-        switch (mtype) {
+    public String getMovementAbbr(EntityMovementType movementType) {
+        switch (movementType) {
             case MOVE_WALK:
                 if (getConversionMode() == CONV_MODE_FIGHTER) {
                     return "C";
@@ -678,7 +683,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             case MOVE_OVER_THRUST:
                 return "O";
             default:
-                return super.getMovementAbbr(mtype);
+                return super.getMovementAbbr(movementType);
         }
     }
 
@@ -712,7 +717,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         }
 
         // In fighter mode a destroyed gyro gives +6 to the control roll.
-        int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CT);
+        int gyroHits = getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CENTER_TORSO);
         if (gyroHits > 0) {
             if (getGyroType() == Mek.GYRO_HEAVY_DUTY) {
                 if (gyroHits == 1) {
@@ -766,9 +771,9 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             }
 
             int vel = getCurrentVelocity();
-            int vmod = vel - (2 * getWalkMP());
-            if (!isSpaceborne() && (vmod > 0)) {
-                roll.addModifier(vmod, "Velocity greater than 2x safe thrust");
+            int velocityModifier = vel - (2 * getWalkMP());
+            if (!isSpaceborne() && (velocityModifier > 0)) {
+                roll.addModifier(velocityModifier, "Velocity greater than 2x safe thrust");
             }
 
             PlanetaryConditions conditions = game.getPlanetaryConditions();
@@ -801,7 +806,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         addEntityBonuses(roll);
 
         // Landing in AirMek mode only requires a roll if gyro or hip/leg actuators are damaged.
-        int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CT);
+        int gyroHits = getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CENTER_TORSO);
         if (getGyroType() == Mek.GYRO_HEAVY_DUTY) {
             gyroHits--;
         }
@@ -815,7 +820,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                     required = true;
                 } else {
                     // check for damaged hip actuators
-                    if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
+                    if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
                         roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
                         if (!game.getOptions()
                               .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
@@ -824,17 +829,17 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                         required = true;
                     }
                     // upper leg actuators?
-                    if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, loc) > 0) {
+                    if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, loc) > 0) {
                         roll.addModifier(1, getLocationName(loc) + " Upper Leg Actuator destroyed");
                         required = true;
                     }
                     // lower leg actuators?
-                    if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, loc) > 0) {
+                    if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, loc) > 0) {
                         roll.addModifier(1, getLocationName(loc) + " Lower Leg Actuator destroyed");
                         required = true;
                     }
                     // foot actuators?
-                    if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc) > 0) {
+                    if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc) > 0) {
                         roll.addModifier(1, getLocationName(loc) + " Foot Actuator destroyed");
                         required = true;
                     }
@@ -852,7 +857,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public int getMaxElevationDown(int currElevation) {
         // Cannot spend AirMek MP above altitude 3 (level 30) so we use that as max descent.
-        if ((currElevation > 0) && (getConversionMode() == CONV_MODE_AIRMEK)) {
+        if ((currElevation > 0) && (getConversionMode() == CONV_MODE_AIR_MEK)) {
             return 30;
         }
         return super.getMaxElevationDown(currElevation);
@@ -892,7 +897,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             setRecoveryTurn(getRecoveryTurn() - 1);
         }
 
-        airmekBombTarget = null;
+        airMekBombTarget = null;
 
         if (getConversionMode() == CONV_MODE_FIGHTER) {
             // if in atmosphere, then halve next turn's velocity
@@ -904,9 +909,9 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             setCurrentVelocity(getNextVelocity());
 
             // if they are out of control due to heat, then apply this and reset
-            if (isOutCtrlHeat()) {
+            if (isOutControlHeat()) {
                 setOutControl(true);
-                setOutCtrlHeat(false);
+                setOutControlHeat(false);
             }
 
             // get new random who first
@@ -930,7 +935,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public boolean canCharge() {
         if (getConversionMode() == CONV_MODE_FIGHTER ||
-              ((getConversionMode() == CONV_MODE_AIRMEK) && isAirborneVTOLorWIGE())) {
+              ((getConversionMode() == CONV_MODE_AIR_MEK) && isAirborneVTOLorWIGE())) {
             return false;
         } else {
             return super.canCharge();
@@ -941,7 +946,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     public boolean canRam() {
         if (getConversionMode() == CONV_MODE_FIGHTER) {
             return !isImmobile() && (getWalkMP() > 0);
-        } else if (getConversionMode() == CONV_MODE_AIRMEK) {
+        } else if (getConversionMode() == CONV_MODE_AIR_MEK) {
             return isAirborneVTOLorWIGE();
         } else {
             return false;
@@ -979,14 +984,14 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     /**
      * Determines whether it is possible to assume a particular mode based on damage and type of map.
      *
-     * @param fromMode The mode to convert from (one of CONV_MODE_MEK, CONV_MODE_AIRMEK, or CONV_MODE_FIGHTER)
-     * @param toMode   The mode to convert to (one of CONV_MODE_MEK, CONV_MODE_AIRMEK, or CONV_MODE_FIGHTER)
+     * @param fromMode The mode to convert from (one of CONV_MODE_MEK, CONV_MODE_AIR_MEK, or CONV_MODE_FIGHTER)
+     * @param toMode   The mode to convert to (one of CONV_MODE_MEK, CONV_MODE_AIR_MEK, or CONV_MODE_FIGHTER)
      *
      * @return true if it is possible for the LAM to convert to the given mode.
      */
     public boolean canConvertTo(int fromMode, int toMode) {
         // Cannot convert with any gyro damage
-        int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO, LOC_CT);
+        int gyroHits = getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO, LOC_CENTER_TORSO);
         if (getGyroType() == Mek.GYRO_HEAVY_DUTY) {
             gyroHits--;
         }
@@ -996,27 +1001,27 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
         // Cannot convert to or from mek mode with damage shoulder or arm actuators
         if ((toMode == CONV_MODE_MEK || fromMode == CONV_MODE_MEK) &&
-              (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_SHOULDER, LOC_RARM) +
-                    getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_ARM, LOC_RARM) +
-                    getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM, LOC_RARM) +
-                    getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_SHOULDER, LOC_LARM) +
-                    getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_ARM, LOC_LARM) +
-                    getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM, LOC_LARM) > 0)) {
+              (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_SHOULDER, LOC_RIGHT_ARM) +
+                    getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_ARM, LOC_RIGHT_ARM) +
+                    getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM, LOC_RIGHT_ARM) +
+                    getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_SHOULDER, LOC_LEFT_ARM) +
+                    getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_ARM, LOC_LEFT_ARM) +
+                    getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM, LOC_LEFT_ARM) > 0)) {
             return false;
         }
 
         // Cannot convert to or from fighter mode with damage hip or leg actuators
         if ((toMode == CONV_MODE_FIGHTER || fromMode == CONV_MODE_FIGHTER) &&
-              (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, LOC_RLEG) +
-                    getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, LOC_RLEG) +
-                    getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, LOC_RLEG) +
-                    getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, LOC_LLEG) +
-                    getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, LOC_LLEG) +
-                    getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, LOC_LLEG) > 0)) {
+              (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, LOC_RIGHT_LEG) +
+                    getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, LOC_RIGHT_LEG) +
+                    getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, LOC_RIGHT_LEG) +
+                    getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, LOC_LEFT_LEG) +
+                    getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, LOC_LEFT_LEG) +
+                    getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, LOC_LEFT_LEG) > 0)) {
             return false;
         }
 
-        if (toMode == CONV_MODE_AIRMEK) {
+        if (toMode == CONV_MODE_AIR_MEK) {
             return getLAMType() != LAM_BIMODAL;
         } else if (toMode == CONV_MODE_FIGHTER) {
             // Standard LAMs can convert from mek to fighter mode in a single round on a space map
@@ -1032,11 +1037,11 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         return true;
     }
 
-    public int getConversionModeFor(EntityMovementMode mmode) {
-        if (mmode == EntityMovementMode.AERODYNE || mmode == EntityMovementMode.WHEELED) {
+    public int getConversionModeFor(EntityMovementMode movementMode) {
+        if (movementMode == EntityMovementMode.AERODYNE || movementMode == EntityMovementMode.WHEELED) {
             return CONV_MODE_FIGHTER;
-        } else if (mmode == EntityMovementMode.WIGE) {
-            return CONV_MODE_AIRMEK;
+        } else if (movementMode == EntityMovementMode.WIGE) {
+            return CONV_MODE_AIR_MEK;
         } else {
             return CONV_MODE_MEK;
         }
@@ -1137,7 +1142,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
      */
     @Override
     public int getMaxIntBombSize() {
-        return Math.max(emptyBaysInLoc(LOC_CT), Math.max(emptyBaysInLoc(LOC_RT), emptyBaysInLoc(LOC_LT)));
+        return Math.max(emptyBaysInLoc(LOC_CENTER_TORSO), Math.max(emptyBaysInLoc(LOC_RIGHT_TORSO), emptyBaysInLoc(
+              LOC_LEFT_TORSO)));
     }
 
     @Override
@@ -1190,17 +1196,17 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     @Override
     public Targetable getVTOLBombTarget() {
-        return airmekBombTarget;
+        return airMekBombTarget;
     }
 
     @Override
     public void setVTOLBombTarget(Targetable t) {
-        airmekBombTarget = t;
+        airMekBombTarget = t;
     }
 
     @Override
     public boolean isMakingVTOLGroundAttack() {
-        return airmekBombTarget != null;
+        return airMekBombTarget != null;
     }
 
     @Override
@@ -1257,18 +1263,18 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     }
 
     @Override
-    public void setOutControl(boolean ocontrol) {
-        outControl = ocontrol;
+    public void setOutControl(boolean outControl) {
+        this.outControl = outControl;
     }
 
     @Override
-    public boolean isOutCtrlHeat() {
+    public boolean isOutControlHeat() {
         return outCtrlHeat;
     }
 
     @Override
-    public void setOutCtrlHeat(boolean octrlheat) {
-        outCtrlHeat = octrlheat;
+    public void setOutControlHeat(boolean outControlHeat) {
+        outCtrlHeat = outControlHeat;
     }
 
     @Override
@@ -1277,8 +1283,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     }
 
     @Override
-    public void setRandomMove(boolean randmove) {
-        randomMove = randmove;
+    public void setRandomMove(boolean randomMove) {
+        this.randomMove = randomMove;
     }
 
     @Override
@@ -1298,22 +1304,22 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     @Override
     public void setSI(int si) {
-        setInternal(si, LOC_CT);
+        setInternal(si, LOC_CENTER_TORSO);
     }
 
     @Override
     public int getSI() {
-        return getInternal(LOC_CT);
+        return getInternal(LOC_CENTER_TORSO);
     }
 
     @Override
     public int getOSI() {
-        return getOInternal(LOC_CT);
+        return getOInternal(LOC_CENTER_TORSO);
     }
 
     @Override
     public boolean hasLifeSupport() {
-        return getGoodCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT, LOC_HEAD) > 0;
+        return getGoodCriticalSlots(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT, LOC_HEAD) > 0;
     }
 
     /**
@@ -1321,7 +1327,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
      */
     @Override
     public int getNoseArmor() {
-        return getArmor(LOC_CT);
+        return getArmor(LOC_CENTER_TORSO);
     }
 
     /**
@@ -1330,11 +1336,13 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public int getLocationStatus(int loc) {
         return switch (loc) {
-            case LOC_CAPITAL_NOSE -> Math.max(super.getLocationStatus(LOC_HEAD), super.getLocationStatus(LOC_CT));
-            case LOC_CAPITAL_AFT -> Math.max(super.getLocationStatus(LOC_RLEG), super.getLocationStatus(LOC_LLEG));
+            case LOC_CAPITAL_NOSE -> Math.max(super.getLocationStatus(LOC_HEAD), super.getLocationStatus(
+                  LOC_CENTER_TORSO));
+            case LOC_CAPITAL_AFT -> Math.max(super.getLocationStatus(LOC_RIGHT_LEG), super.getLocationStatus(
+                  LOC_LEFT_LEG));
             case LOC_CAPITAL_WINGS ->
-                  Math.max(Math.max(super.getLocationStatus(LOC_RT), super.getLocationStatus(LOC_RARM)),
-                        Math.max(super.getLocationStatus(LOC_LT), super.getLocationStatus(LOC_LARM)));
+                  Math.max(Math.max(super.getLocationStatus(LOC_RIGHT_TORSO), super.getLocationStatus(LOC_RIGHT_ARM)),
+                        Math.max(super.getLocationStatus(LOC_LEFT_TORSO), super.getLocationStatus(LOC_LEFT_ARM)));
             default -> super.getLocationStatus(loc);
         };
     }
@@ -1343,14 +1351,14 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     public int getAvionicsHits() {
         int hits = 0;
         for (int loc = 0; loc < locations(); loc++) {
-            hits += getBadCriticals(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS, loc);
+            hits += getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS, loc);
         }
         return hits;
     }
 
     @Override
     public int getSensorHits() {
-        return getBadCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS, LOC_HEAD);
+        return getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS, LOC_HEAD);
     }
 
     @Override
@@ -1402,7 +1410,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     public int getLandingGearMod(boolean vTakeoff) {
         int hits = 0;
         for (int loc = 0; loc < locations(); loc++) {
-            hits += getBadCriticals(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR, loc);
+            hits += getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR, loc);
         }
         if (vTakeoff) {
             return hits > 0 ? 1 : 0;
@@ -1425,7 +1433,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     // Avionics mods for partial repairs
     @Override
-    public int getAvionicsMisreplaced() {
+    public int getAvionicsMisReplaced() {
         if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
             return 1;
         } else {
@@ -1464,33 +1472,33 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         switch (mounted.getLocation()) {
             case LOC_HEAD:
                 break;
-            case LOC_CT:
+            case LOC_CENTER_TORSO:
                 if (mounted.isRearMounted()) {
                     arc = Compute.ARC_AFT;
                 }
                 break;
-            case LOC_RT:
+            case LOC_RIGHT_TORSO:
                 if (mounted.isRearMounted()) {
                     arc = Compute.ARC_RIGHT_WING_AFT;
                 } else {
                     arc = Compute.ARC_RIGHT_WING;
                 }
                 break;
-            case LOC_LT:
+            case LOC_LEFT_TORSO:
                 if (mounted.isRearMounted()) {
                     arc = Compute.ARC_LEFT_WING_AFT;
                 } else {
                     arc = Compute.ARC_LEFT_WING;
                 }
                 break;
-            case LOC_RARM:
+            case LOC_RIGHT_ARM:
                 arc = Compute.ARC_RIGHT_WING;
                 break;
-            case LOC_LARM:
+            case LOC_LEFT_ARM:
                 arc = Compute.ARC_LEFT_WING;
                 break;
-            case LOC_RLEG:
-            case LOC_LLEG:
+            case LOC_RIGHT_LEG:
+            case LOC_LEFT_LEG:
                 arc = Compute.ARC_AFT;
                 break;
             default:
@@ -1524,30 +1532,30 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         if ((table == ToHitData.HIT_ABOVE) || (table == ToHitData.HIT_BELOW)) {
 
             // have to decide which arm/leg
-            int armloc = LOC_RARM;
-            int legloc = LOC_RLEG;
-            int wingroll = Compute.d6(1);
-            if (wingroll > 3) {
-                armloc = LOC_LARM;
-                legloc = LOC_LLEG;
+            int armLocation = LOC_RIGHT_ARM;
+            int logLocation = LOC_RIGHT_LEG;
+            int wingRoll = Compute.d6(1);
+            if (wingRoll > 3) {
+                armLocation = LOC_LEFT_ARM;
+                logLocation = LOC_LEFT_LEG;
             }
             switch (roll) {
                 case 2:
                 case 6:
-                    return new HitData(LOC_RT, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_TORSO, false, HitData.EFFECT_NONE);
                 case 3:
                 case 4:
                 case 10:
                 case 11:
-                    return new HitData(armloc, false, HitData.EFFECT_NONE);
+                    return new HitData(armLocation, false, HitData.EFFECT_NONE);
                 case 5:
                 case 9:
-                    return new HitData(legloc, false, HitData.EFFECT_NONE);
+                    return new HitData(logLocation, false, HitData.EFFECT_NONE);
                 case 7:
-                    return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_CENTER_TORSO, false, HitData.EFFECT_NONE);
                 case 8:
                 case 12:
-                    return new HitData(LOC_LT, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_TORSO, false, HitData.EFFECT_NONE);
             }
         }
 
@@ -1557,19 +1565,19 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                 case 2:
                 case 7:
                 case 12:
-                    return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_CENTER_TORSO, false, HitData.EFFECT_NONE);
                 case 3:
                 case 6:
-                    return new HitData(LOC_RT, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_TORSO, false, HitData.EFFECT_NONE);
                 case 4:
                 case 5:
-                    return new HitData(LOC_RARM, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_ARM, false, HitData.EFFECT_NONE);
                 case 8:
                 case 11:
-                    return new HitData(LOC_LT, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_TORSO, false, HitData.EFFECT_NONE);
                 case 9:
                 case 10:
-                    return new HitData(LOC_LARM, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_ARM, false, HitData.EFFECT_NONE);
             }
         } else if (side == ToHitData.SIDE_LEFT) {
             // normal left-side hits
@@ -1579,17 +1587,17 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                 case 3:
                 case 7:
                 case 11:
-                    return new HitData(LOC_LARM, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_ARM, false, HitData.EFFECT_NONE);
                 case 4:
                 case 5:
-                    return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_CENTER_TORSO, false, HitData.EFFECT_NONE);
                 case 6:
                 case 8:
-                    return new HitData(LOC_LT, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_TORSO, false, HitData.EFFECT_NONE);
                 case 9:
                 case 10:
                 case 12:
-                    return new HitData(LOC_LLEG, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_LEG, false, HitData.EFFECT_NONE);
             }
         } else if (side == ToHitData.SIDE_RIGHT) {
             // normal right-side hits
@@ -1599,17 +1607,17 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                 case 3:
                 case 7:
                 case 11:
-                    return new HitData(LOC_RARM, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_ARM, false, HitData.EFFECT_NONE);
                 case 4:
                 case 5:
-                    return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_CENTER_TORSO, false, HitData.EFFECT_NONE);
                 case 6:
                 case 8:
-                    return new HitData(LOC_RT, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_TORSO, false, HitData.EFFECT_NONE);
                 case 9:
                 case 10:
                 case 12:
-                    return new HitData(LOC_RLEG, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_LEG, false, HitData.EFFECT_NONE);
             }
         } else if (side == ToHitData.SIDE_REAR) {
             // rear torso locations are only hit on a roll of 5-6 on d6
@@ -1617,30 +1625,30 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             switch (roll) {
                 case 2:
                 case 12:
-                    return new HitData(LOC_CT, rear, HitData.EFFECT_NONE);
+                    return new HitData(LOC_CENTER_TORSO, rear, HitData.EFFECT_NONE);
                 case 3:
                 case 4:
-                    return new HitData(LOC_RT, rear, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_TORSO, rear, HitData.EFFECT_NONE);
                 case 5:
-                    return new HitData(LOC_RARM, rear, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_ARM, rear, HitData.EFFECT_NONE);
                 case 6:
-                    return new HitData(LOC_RLEG, rear, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_LEG, rear, HitData.EFFECT_NONE);
                 case 7:
                     if (Compute.d6() > 3) {
-                        return new HitData(LOC_LLEG, rear, HitData.EFFECT_NONE);
+                        return new HitData(LOC_LEFT_LEG, rear, HitData.EFFECT_NONE);
                     } else {
-                        return new HitData(LOC_RLEG, rear, HitData.EFFECT_NONE);
+                        return new HitData(LOC_RIGHT_LEG, rear, HitData.EFFECT_NONE);
                     }
                 case 8:
-                    return new HitData(LOC_LLEG, rear, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_LEG, rear, HitData.EFFECT_NONE);
                 case 9:
-                    return new HitData(LOC_LARM, rear, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_ARM, rear, HitData.EFFECT_NONE);
                 case 10:
                 case 11:
-                    return new HitData(LOC_LT, rear, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_TORSO, rear, HitData.EFFECT_NONE);
             }
         }
-        return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
+        return new HitData(LOC_CENTER_TORSO, false, HitData.EFFECT_NONE);
     }
 
     @Override
@@ -1657,9 +1665,9 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     public int getCurrentFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit")) ||
               (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
-            return (int) (currentfuel * 0.9);
+            return (int) (currentFuel * 0.9);
         } else {
-            return currentfuel;
+            return currentFuel;
         }
     }
 
@@ -1671,12 +1679,12 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public void setFuel(int gas) {
         fuel = gas;
-        currentfuel = gas;
+        currentFuel = gas;
     }
 
     @Override
     public void setCurrentFuel(int gas) {
-        currentfuel = gas;
+        currentFuel = gas;
     }
 
     @Override
@@ -1896,8 +1904,9 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
         for (Mounted<?> mounted : getTotalWeaponList()) {
             int loc = switch (mounted.getLocation()) {
-                case Mek.LOC_CT, Mek.LOC_HEAD -> LOC_CAPITAL_NOSE;
-                case Mek.LOC_LLEG, Mek.LOC_RLEG -> mounted.isRearMounted() ? LOC_CAPITAL_AFT : LOC_CAPITAL_WINGS;
+                case Mek.LOC_CENTER_TORSO, Mek.LOC_HEAD -> LOC_CAPITAL_NOSE;
+                case Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_LEG ->
+                      mounted.isRearMounted() ? LOC_CAPITAL_AFT : LOC_CAPITAL_WINGS;
                 default -> LOC_CAPITAL_WINGS;
             };
 
@@ -1921,26 +1930,26 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             switch (side) {
                 case 0: // Nose
                     destroyLocation(LOC_HEAD);
-                    destroyLocation(LOC_CT);
+                    destroyLocation(LOC_CENTER_TORSO);
                     break;
                 case 1: // Left wing
-                    destroyLocation(LOC_LT);
-                    destroyLocation(LOC_LARM);
+                    destroyLocation(LOC_LEFT_TORSO);
+                    destroyLocation(LOC_LEFT_ARM);
                     break;
                 case 2: // Right wing
-                    destroyLocation(LOC_RT);
-                    destroyLocation(LOC_RARM);
+                    destroyLocation(LOC_RIGHT_TORSO);
+                    destroyLocation(LOC_RIGHT_ARM);
                     break;
                 case 3: // Aft
-                    destroyLocation(LOC_LLEG);
-                    destroyLocation(LOC_RLEG);
+                    destroyLocation(LOC_LEFT_LEG);
+                    destroyLocation(LOC_RIGHT_LEG);
                     break;
             }
             // Also apply three engine hits
             int i = 0;
             int engineHits = getEngineHits();
-            while (engineHits < 3 && i < getNumberOfCriticals(LOC_CT)) {
-                final CriticalSlot slot = getCritical(LOC_CT, i);
+            while (engineHits < 3 && i < getNumberOfCriticalSlots(LOC_CENTER_TORSO)) {
+                final CriticalSlot slot = getCritical(LOC_CENTER_TORSO, i);
                 if (slot != null &&
                       slot.getType() == CriticalSlot.TYPE_SYSTEM &&
                       slot.getIndex() == SYSTEM_ENGINE &&
@@ -1973,7 +1982,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                     if (getInternal(loc) > 1) {
                         int internal = getInternal(loc) + getArmor(loc);
                         if (internal <= 0) {
-                            if ((loc == LOC_CT || loc == LOC_HEAD) && !isDestroyed() && !isDoomed()) {
+                            if ((loc == LOC_CENTER_TORSO || loc == LOC_HEAD) && !isDestroyed() && !isDoomed()) {
                                 // We don't want to destroy the fighter if it didn't pass the fatal threshold
                                 setInternal(1, loc);
                             } else {
@@ -1993,7 +2002,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     public String getTilesetModeString() {
         if (getConversionMode() == CONV_MODE_FIGHTER) {
             return "_FIGHTER";
-        } else if (getConversionMode() == CONV_MODE_AIRMEK) {
+        } else if (getConversionMode() == CONV_MODE_AIR_MEK) {
             return "_AIRMEK";
         } else {
             return "";
@@ -2015,12 +2024,12 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
      */
     @Override
     public int availableBombLocation(int cost) {
-        if (emptyBaysInLoc(LOC_RT) >= cost) {
-            return LOC_RT;
-        } else if (emptyBaysInLoc(LOC_LT) >= cost) {
-            return LOC_LT;
-        } else if (emptyBaysInLoc(LOC_CT) >= cost) {
-            return LOC_CT;
+        if (emptyBaysInLoc(LOC_RIGHT_TORSO) >= cost) {
+            return LOC_RIGHT_TORSO;
+        } else if (emptyBaysInLoc(LOC_LEFT_TORSO) >= cost) {
+            return LOC_LEFT_TORSO;
+        } else if (emptyBaysInLoc(LOC_CENTER_TORSO) >= cost) {
+            return LOC_CENTER_TORSO;
         } else {
             return LOC_NONE;
         }

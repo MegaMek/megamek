@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,10 +37,10 @@ package megamek.common.units;
 import java.io.Serializable;
 import java.util.Map;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.game.InGameObject;
-import megamek.common.annotations.Nullable;
 
 public interface Targetable extends InGameObject, Serializable {
     int TYPE_ENTITY = 0;
@@ -54,7 +54,7 @@ public interface Targetable extends InGameObject, Serializable {
     int TYPE_MINEFIELD_DELIVER = 6;
     int TYPE_HEX_ARTILLERY = 7;
     int TYPE_HEX_EXTINGUISH = 8;
-    int TYPE_INARC_POD = 11;
+    int TYPE_I_NARC_POD = 11;
     int TYPE_SEARCHLIGHT = 12;
     int TYPE_FLARE_DELIVER = 13;
     int TYPE_HEX_BOMB = 14;
@@ -156,19 +156,15 @@ public interface Targetable extends InGameObject, Serializable {
      * any player, such as buildings or terrain, are always considered enemies, since this will most often be used to
      * determine if something is valid to be shot at.
      *
-     * @param other
-     *
-     * @return
      */
     boolean isEnemyOf(Entity other);
 
     default boolean isHexBeingBombed() {
-        return getTargetType() == TYPE_HEX_AERO_BOMB ||
-              getTargetType() == TYPE_HEX_BOMB;
+        return getTargetType() == TYPE_HEX_AERO_BOMB || getTargetType() == TYPE_HEX_BOMB;
     }
 
     /**
-     * Used to identify an target that tracks heat buildup (Meks, ASFs, and small craft).
+     * Used to identify a target that tracks heat buildup (Meks, ASFs, and small craft).
      *
      * @return Whether the target tracks heat buildup.
      */
@@ -184,7 +180,7 @@ public interface Targetable extends InGameObject, Serializable {
     int hashCode();
 
     /**
-     * Utility function used to safely tell whether two Targetables are in the same hex. Does not throw exceptions in
+     * Utility function used to safely tell whether two Targetable's are in the same hex. Does not throw exceptions in
      * case of nulls.
      */
     static boolean areAtSamePosition(@Nullable Targetable first, @Nullable Targetable second) {

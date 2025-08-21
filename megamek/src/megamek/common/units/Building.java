@@ -1,7 +1,6 @@
 /*
-
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,17 +42,16 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.Vector;
 
-import megamek.common.board.Board;
-import megamek.common.board.Coords;
 import megamek.common.Hex;
 import megamek.common.Report;
-import megamek.common.rolls.Roll;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
+import megamek.common.rolls.Roll;
 import megamek.logging.MMLogger;
 
 /**
@@ -83,7 +81,7 @@ public class Building implements Serializable {
     /**
      * The Building Type of the building; equal to the terrain elevation of the BUILDING terrain of a hex.
      */
-    private BuildingType type = BuildingType.UNKNOWN;
+    private final BuildingType type;
 
     // The Building Classes
     public static final int STANDARD = 0;
@@ -96,12 +94,12 @@ public class Building implements Serializable {
     /**
      * The Building Class of the building; equal to the terrain elevation of the BUILDING CLASS terrain of a hex.
      */
-    private int bldgClass = Building.STANDARD;
+    private final int bldgClass;
 
     /**
      * The ID of this building.
      */
-    private int id = Building.UNKNOWN;
+    private final int id;
 
     /**
      * The coordinates of every hex of this building.
@@ -112,7 +110,7 @@ public class Building implements Serializable {
     /**
      * The Basement type of the building.
      */
-    private Map<Coords, BasementType> basement = new HashMap<>();
+    private final Map<Coords, BasementType> basement = new HashMap<>();
 
     private int collapsedHexes = 0;
 
@@ -121,65 +119,33 @@ public class Building implements Serializable {
     /**
      * The current construction factor of the building hexes. Any damage immediately updates this value.
      */
-    private Map<Coords, Integer> currentCF = new HashMap<>();
+    private final Map<Coords, Integer> currentCF = new HashMap<>();
 
     /**
      * The construction factor of the building hexes at the start of this attack phase. Damage that is received during
      * the phase is applied at the end of the phase.
      */
-    private Map<Coords, Integer> phaseCF = new HashMap<>();
+    private final Map<Coords, Integer> phaseCF = new HashMap<>();
 
     /**
      * The current armor of the building hexes.
      */
-    private Map<Coords, Integer> armor = new HashMap<>();
+    private final Map<Coords, Integer> armor = new HashMap<>();
 
     /**
      * The current state of the basement.
      */
-    private Map<Coords, Boolean> basementCollapsed = new HashMap<>();
+    private final Map<Coords, Boolean> basementCollapsed = new HashMap<>();
 
     /**
      * The name of the building.
      */
-    private String name = null;
+    private final String name;
 
     /**
      * Flag that indicates whether this building is burning
      */
-    private Map<Coords, Boolean> burning = new HashMap<>();
-
-    public static class DemolitionCharge implements Serializable {
-        private static final long serialVersionUID = -6655782801564155668L;
-        public int damage;
-        public int playerId;
-        public Coords pos;
-        /**
-         * A UUID to keep track of the identify of this demolition charge. Since we could have multiple charges in the
-         * same building hex, we can't track identity based upon owner and damage. Additionally, since we pass objects
-         * across the network, we need a mechanism to track identify other than memory address.
-         */
-        public UUID uuid = UUID.randomUUID();
-
-        public DemolitionCharge(int playerId, int damage, Coords p) {
-            this.damage = damage;
-            this.playerId = playerId;
-            this.pos = p;
-        }
-
-        @Override
-        public int hashCode() {
-            return uuid.hashCode();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o instanceof DemolitionCharge) {
-                return uuid.equals(((DemolitionCharge) o).uuid);
-            }
-            return false;
-        }
-    }
+    private final Map<Coords, Boolean> burning = new HashMap<>();
 
     private List<DemolitionCharge> demolitionCharges = new ArrayList<>();
 
@@ -272,7 +238,7 @@ public class Building implements Serializable {
     public Building(Coords coords, Board board, int structureType, BasementType basementType) {
 
         // The ID of the building will be deterministic based on the position of its first hex. 999 hexes in the Y
-        // direction ought to be enough for anyone. This has been changed to accomodate the board ID. Now only allows
+        // direction ought to be enough for anyone. This has been changed to accommodate the board ID. Now only allows
         // maximum board size of 1000x1000 which still seems enough. The ID cannot allow collisions (unlike the
         // hashcode).
         //
@@ -296,7 +262,7 @@ public class Building implements Serializable {
         type = BuildingType.getType(startHex.terrainLevel(structureType));
         bldgClass = startHex.terrainLevel(Terrains.BLDG_CLASS);
 
-        // Insure that we've got a good type (and initialize our CF).
+        // Ensure that we've got a good type (and initialize our CF).
         currentCF.put(coords, getDefaultCF(type));
         if (currentCF.get(coords) == Building.UNKNOWN) {
             throw new IllegalArgumentException("Unknown construction type: "
@@ -378,7 +344,7 @@ public class Building implements Serializable {
     }
 
     /**
-     * Determins if the coord exist in the currentCF has.
+     * Determines if the coord exist in the currentCF has.
      *
      * @param coords - the <code>Coords</code> being examined.
      *
@@ -426,7 +392,7 @@ public class Building implements Serializable {
     /**
      * Get the building basement, per TacOps rules.
      *
-     * @return the <code>int</code> code of the buildingbasement type.
+     * @return the <code>int</code> code of the building basement type.
      */
     public boolean getBasementCollapsed(Coords coords) {
         return basementCollapsed.get(coords);
@@ -444,7 +410,7 @@ public class Building implements Serializable {
         r.add(getName());
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
-        logger.error("basement " + basement + "is collapsing, hex:" + coords + " set terrain!");
+        logger.error("basement {}is collapsing, hex:{} set terrain!", basement, coords);
         board.getHex(coords).addTerrain(new Terrain(Terrains.BLDG_BASE_COLLAPSED, 1));
         basementCollapsed.put(coords, true);
 
@@ -454,7 +420,7 @@ public class Building implements Serializable {
      * Roll what kind of basement this building has
      *
      * @param coords       the <code>Coords</code> of the building to roll for
-     * @param vPhaseReport the {@link Report} <code>Vector</code> containing the phasereport
+     * @param vPhaseReport the {@link Report} <code>Vector</code> containing the phase report
      *
      * @return a <code>boolean</code> indicating weather the hex and building was changed or not
      */
@@ -695,41 +661,27 @@ public class Building implements Serializable {
      * @return the damage scale multiplier for units passing through this building
      */
     public double getDamageFromScale() {
-        switch (getBldgClass()) {
-            case Building.HANGAR:
-                return 0.5;
-            case Building.FORTRESS:
-            case Building.GUN_EMPLACEMENT:
-                return 2.0;
-            // case Building.CASTLE_BRIAN:
-            // return 10.0;
-            default:
-                return 1.0;
-        }
+        return switch (getBldgClass()) {
+            case Building.HANGAR -> 0.5;
+            case Building.FORTRESS, Building.GUN_EMPLACEMENT -> 2.0;
+            default -> 1.0;
+        };
     }
 
     /**
      * @return the damage scale multiplier for damage applied to this building (and occupants)
      */
     public double getDamageToScale() {
-        switch (getBldgClass()) {
-            case Building.FORTRESS:
-            case Building.GUN_EMPLACEMENT:
-                return 0.5;
-            // case Building.CASTLE_BRIAN:
-            // return 0.1;
-            default:
-                return 1.0;
-        }
+        return switch (getBldgClass()) {
+            case Building.FORTRESS, Building.GUN_EMPLACEMENT -> 0.5;
+            default -> 1.0;
+        };
     }
 
     /**
      * @return the amount of damage the building absorbs
      */
-    public int getAbsorbtion(Coords pos) {
-        // if (getBldgClass() == Building.CASTLE_BRIAN) {
-        // return (int) Math.ceil(getPhaseCF(pos));
-        // }
+    public int getAbsorption(Coords pos) {
         return (int) Math.ceil(getPhaseCF(pos) / 10.0);
     }
 
@@ -737,20 +689,14 @@ public class Building implements Serializable {
      * Returns the percentage of damage done to the building for attacks against infantry in the building from other
      * units within the building. TW pg175.
      *
-     * @return
      */
     public double getInfDmgFromInside() {
-        switch (getType()) {
-            case LIGHT:
-            case MEDIUM:
-                return 0.0;
-            case HEAVY:
-                return 0.5;
-            case HARDENED:
-                return 0.75;
-            default:
-                return 0;
-        }
+        return switch (getType()) {
+            case LIGHT, MEDIUM -> 0.0;
+            case HEAVY -> 0.5;
+            case HARDENED -> 0.75;
+            default -> 0;
+        };
     }
 
     /**
@@ -760,16 +706,12 @@ public class Building implements Serializable {
      * @return Damage fraction.
      */
     public float getDamageReductionFromOutside() {
-        switch (getType()) {
-            case LIGHT:
-                return 0.75f;
-            case MEDIUM:
-                return 0.5f;
-            case HEAVY:
-                return 0.25f;
-            default:
-                return 0f;
-        }
+        return switch (getType()) {
+            case LIGHT -> 0.75f;
+            case MEDIUM -> 0.5f;
+            case HEAVY -> 0.25f;
+            default -> 0f;
+        };
     }
 
     public BasementType getBasement(Coords coords) {

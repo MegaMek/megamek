@@ -856,9 +856,9 @@ public class Hex implements Serializable {
 
         // Fuel Tanks must have all of FUEL_TANK, _ELEV, _CF and _MAGN
         if (containsAnyTerrainOf(Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF,
-              Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAGN)
+              Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAG_N)
               && !containsAllTerrainsOf(Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF,
-              Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAGN)) {
+              Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAG_N)) {
             newErrors.add("Incomplete Fuel Tank! A hex with any fuel tank terrain must contain "
                   + "the fuel tank type, elevation, CF and the fuel tank magnitude.");
         }

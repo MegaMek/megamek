@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,7 @@ package megamek.common.units;
 
 import static java.util.stream.Collectors.toList;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,14 +44,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
 
-import megamek.common.game.Game;
 import megamek.common.equipment.Transporter;
+import megamek.common.game.Game;
 
 /**
  * Represents a volume of space set aside for carrying troops and their equipment under battle conditions. Typically, a
  * component of an APC.
  */
 public final class InfantryCompartment implements Transporter, InfantryTransporter {
+    @Serial
     private static final long serialVersionUID = 7837499891552862932L;
 
     /**
@@ -144,7 +146,7 @@ public final class InfantryCompartment implements Transporter, InfantryTransport
      * Get a <code>List</code> of the units currently loaded into this payload.
      *
      * @return A <code>List</code> of loaded <code>Entity</code> units. This list will never be
-     *       <code>null</code>, but it may be empty. The returned <code>List</code> is independent from
+     *       <code>null</code>, but it may be empty. The returned <code>List</code> is independent of
      *       the underlying data structure; modifying one does not affect the other.
      */
     @Override
@@ -178,7 +180,7 @@ public final class InfantryCompartment implements Transporter, InfantryTransport
         }
 
         // Remove the unit if we are carrying it.
-        boolean retval = false;
+        boolean retVal = false;
         double unloadWeight = 0;
 
         if (unit != null) {
@@ -187,12 +189,12 @@ public final class InfantryCompartment implements Transporter, InfantryTransport
 
         // If we removed it, restore our space.
         if (troops.remove(unit.getId()) != null) {
-            retval = true;
+            retVal = true;
             currentSpace += unloadWeight;
         }
 
         // Return our status
-        return retval;
+        return retVal;
     }
 
     /**

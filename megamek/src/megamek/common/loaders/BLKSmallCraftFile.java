@@ -178,8 +178,8 @@ public class BLKSmallCraftFile extends BLKFile implements IMekLoader {
         }
 
         a.initializeArmor(armor[BLKAeroSpaceFighterFile.NOSE], SmallCraft.LOC_NOSE);
-        a.initializeArmor(armor[BLKAeroSpaceFighterFile.RW], SmallCraft.LOC_RWING);
-        a.initializeArmor(armor[BLKAeroSpaceFighterFile.LW], SmallCraft.LOC_LWING);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.RW], SmallCraft.LOC_RIGHT_WING);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.LW], SmallCraft.LOC_LEFT_WING);
         a.initializeArmor(armor[BLKAeroSpaceFighterFile.AFT], SmallCraft.LOC_AFT);
         a.initializeArmor(IArmorState.ARMOR_NA, SmallCraft.LOC_HULL);
 

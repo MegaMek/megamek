@@ -541,11 +541,11 @@ public class MekFileParser {
                     LOGGER.error("Loading AES with incompatible systems for {}", ent.getShortName());
                 }
 
-                if ((m.getLocation() != Mek.LOC_LARM) &&
-                      (m.getLocation() != Mek.LOC_LLEG) &&
-                      (m.getLocation() != Mek.LOC_RARM) &&
-                      (m.getLocation() != Mek.LOC_RLEG) &&
-                      (m.getLocation() != Mek.LOC_CLEG)) {
+                if ((m.getLocation() != Mek.LOC_LEFT_ARM) &&
+                      (m.getLocation() != Mek.LOC_LEFT_LEG) &&
+                      (m.getLocation() != Mek.LOC_RIGHT_ARM) &&
+                      (m.getLocation() != Mek.LOC_RIGHT_LEG) &&
+                      (m.getLocation() != Mek.LOC_CENTER_LEG)) {
                     throw new EntityLoadingException("Unable to load AES due to incompatible location for " +
                           ent.getShortName());
                 }
@@ -856,7 +856,7 @@ public class MekFileParser {
                 // This may be called from MML after changing equipment location, so there may be old data that needs
                 // to be cleared
                 mga.clearBayWeapons();
-                for (int i = 0; i < entity.getNumberOfCriticals(mga.getLocation()); i++) {
+                for (int i = 0; i < entity.getNumberOfCriticalSlots(mga.getLocation()); i++) {
                     CriticalSlot slot = entity.getCritical(mga.getLocation(), i);
                     if ((slot != null) &&
                           (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) &&

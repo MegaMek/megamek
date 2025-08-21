@@ -131,33 +131,33 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
 
         if (attackingEntity instanceof Mek) {
             // damaged or missing actuators
-            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LARM)) {
+            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LEFT_ARM)) {
                 toHit.addModifier(2, "Left shoulder actuator destroyed");
             }
-            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_LARM)) {
+            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_LEFT_ARM)) {
                 toHit.addModifier(2, "Left upper arm actuator destroyed");
             }
-            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LARM)) {
+            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LEFT_ARM)) {
                 toHit.addModifier(2, "Left lower arm actuator destroyed");
             }
-            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM)) {
+            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM)) {
                 toHit.addModifier(1, "Left hand actuator destroyed");
             }
 
-            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RARM)) {
+            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RIGHT_ARM)) {
                 toHit.addModifier(2, "Right shoulder actuator destroyed");
             }
-            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_RARM)) {
+            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_RIGHT_ARM)) {
                 toHit.addModifier(2, "Right upper arm actuator destroyed");
             }
-            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RARM)) {
+            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RIGHT_ARM)) {
                 toHit.addModifier(2, "Right lower arm actuator destroyed");
             }
-            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM)) {
+            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM)) {
                 toHit.addModifier(1, "Right hand actuator destroyed");
             }
-            if (attackingEntity.hasFunctionalArmAES(Mek.LOC_RARM)
-                  && attackingEntity.hasFunctionalArmAES(Mek.LOC_LARM)) {
+            if (attackingEntity.hasFunctionalArmAES(Mek.LOC_RIGHT_ARM)
+                  && attackingEntity.hasFunctionalArmAES(Mek.LOC_LEFT_ARM)) {
                 toHit.addModifier(-1, "AES modifier");
             }
         }

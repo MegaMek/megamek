@@ -44,7 +44,7 @@ import megamek.common.interfaces.ITechnologyDelegator;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Infantry;
-import megamek.common.units.InfantryTransporter.PlatoonType;
+import megamek.common.units.PlatoonType;
 
 /**
  * Data for various transport bay types. This is used by MekHQ for cubicle parts, but can also be used in the future for

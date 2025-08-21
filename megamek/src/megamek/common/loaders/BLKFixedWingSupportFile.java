@@ -123,8 +123,8 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMekLoader {
         }
 
         a.initializeArmor(armor[BLKAeroSpaceFighterFile.NOSE], Aero.LOC_NOSE);
-        a.initializeArmor(armor[BLKAeroSpaceFighterFile.RW], Aero.LOC_RWING);
-        a.initializeArmor(armor[BLKAeroSpaceFighterFile.LW], Aero.LOC_LWING);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.RW], Aero.LOC_RIGHT_WING);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.LW], Aero.LOC_LEFT_WING);
         a.initializeArmor(armor[BLKAeroSpaceFighterFile.AFT], Aero.LOC_AFT);
 
         // Set the structural tech rating
@@ -151,8 +151,8 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMekLoader {
         a.autoSetThresh();
 
         loadEquipment(a, "Nose", Aero.LOC_NOSE);
-        loadEquipment(a, "Right Wing", Aero.LOC_RWING);
-        loadEquipment(a, "Left Wing", Aero.LOC_LWING);
+        loadEquipment(a, "Right Wing", Aero.LOC_RIGHT_WING);
+        loadEquipment(a, "Left Wing", Aero.LOC_LEFT_WING);
         loadEquipment(a, "Aft", Aero.LOC_AFT);
         loadEquipment(a, "Body", FixedWingSupport.LOC_BODY);
 

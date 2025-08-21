@@ -211,17 +211,17 @@ public class LargeSupportTankMapSet implements DisplayMapSet {
 
     private void setAreas() {
         areas[1] = new PMSimplePolygonArea(frontArmor, unitDisplayPanel, LargeSupportTank.LOC_FRONT);
-        areas[2] = new PMSimplePolygonArea(rightFrontArmor, unitDisplayPanel, LargeSupportTank.LOC_FRONTRIGHT);
-        areas[3] = new PMSimplePolygonArea(leftFrontArmor, unitDisplayPanel, LargeSupportTank.LOC_FRONTLEFT);
-        areas[4] = new PMSimplePolygonArea(rightRearArmor, unitDisplayPanel, LargeSupportTank.LOC_REARRIGHT);
-        areas[5] = new PMSimplePolygonArea(leftRearArmor, unitDisplayPanel, LargeSupportTank.LOC_REARLEFT);
+        areas[2] = new PMSimplePolygonArea(rightFrontArmor, unitDisplayPanel, LargeSupportTank.LOC_FRONT_RIGHT);
+        areas[3] = new PMSimplePolygonArea(leftFrontArmor, unitDisplayPanel, LargeSupportTank.LOC_FRONT_LEFT);
+        areas[4] = new PMSimplePolygonArea(rightRearArmor, unitDisplayPanel, LargeSupportTank.LOC_REAR_RIGHT);
+        areas[5] = new PMSimplePolygonArea(leftRearArmor, unitDisplayPanel, LargeSupportTank.LOC_REAR_LEFT);
         areas[6] = new PMSimplePolygonArea(rearArmor, unitDisplayPanel, LargeSupportTank.LOC_REAR);
         areas[7] = new PMSimplePolygonArea(turretArmor, unitDisplayPanel, LargeSupportTank.LOC_TURRET);
         areas[8] = new PMSimplePolygonArea(frontIS, unitDisplayPanel, LargeSupportTank.LOC_FRONT);
-        areas[9] = new PMSimplePolygonArea(rightFrontIS, unitDisplayPanel, LargeSupportTank.LOC_FRONTRIGHT);
-        areas[10] = new PMSimplePolygonArea(leftFrontIS, unitDisplayPanel, LargeSupportTank.LOC_FRONTLEFT);
-        areas[11] = new PMSimplePolygonArea(rightRearIS, unitDisplayPanel, LargeSupportTank.LOC_REARRIGHT);
-        areas[12] = new PMSimplePolygonArea(leftRearIS, unitDisplayPanel, LargeSupportTank.LOC_REARLEFT);
+        areas[9] = new PMSimplePolygonArea(rightFrontIS, unitDisplayPanel, LargeSupportTank.LOC_FRONT_RIGHT);
+        areas[10] = new PMSimplePolygonArea(leftFrontIS, unitDisplayPanel, LargeSupportTank.LOC_FRONT_LEFT);
+        areas[11] = new PMSimplePolygonArea(rightRearIS, unitDisplayPanel, LargeSupportTank.LOC_REAR_RIGHT);
+        areas[12] = new PMSimplePolygonArea(leftRearIS, unitDisplayPanel, LargeSupportTank.LOC_REAR_LEFT);
         areas[13] = new PMSimplePolygonArea(rearIS, unitDisplayPanel, LargeSupportTank.LOC_REAR);
         areas[14] = new PMSimplePolygonArea(turretIS, unitDisplayPanel, LargeSupportTank.LOC_TURRET);
     }

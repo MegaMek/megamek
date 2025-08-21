@@ -54,7 +54,7 @@ import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
 import megamek.common.units.*;
-import megamek.common.units.InfantryTransporter.PlatoonType;
+import megamek.common.units.System;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.attacks.InfantryAttack;
 import megamek.common.weapons.bayweapons.BayWeapon;
@@ -192,8 +192,8 @@ public class BLKFile {
 
     public int defaultAeroVGLFacing(int location, boolean rearFacing) {
         return switch (location) {
-            case Aero.LOC_LWING -> rearFacing ? 4 : 5;
-            case Aero.LOC_RWING -> rearFacing ? 2 : 1;
+            case Aero.LOC_LEFT_WING -> rearFacing ? 4 : 5;
+            case Aero.LOC_RIGHT_WING -> rearFacing ? 2 : 1;
             case Aero.LOC_AFT -> 4;
             default -> 0;
         };
@@ -451,7 +451,7 @@ public class BLKFile {
         if (dataFile.exists("systemManufacturers")) {
             for (String line : dataFile.getDataAsString("systemManufacturers")) {
                 String[] fields = line.split(":");
-                EntityFluff.System comp = EntityFluff.System.parse(fields[0]);
+                System comp = System.parse(fields[0]);
                 if ((null != comp) && (fields.length > 1)) {
                     e.getFluff().setSystemManufacturer(comp, fields[1]);
                 }
@@ -461,7 +461,7 @@ public class BLKFile {
         if (dataFile.exists("systemModels")) {
             for (String line : dataFile.getDataAsString("systemModels")) {
                 String[] fields = line.split(":");
-                EntityFluff.System comp = EntityFluff.System.parse(fields[0]);
+                System comp = System.parse(fields[0]);
                 if ((null != comp) && (fields.length > 1)) {
                     e.getFluff().setSystemModel(comp, fields[1]);
                 }
@@ -1336,7 +1336,7 @@ public class BLKFile {
                             break;
                         case "dropshuttlebay":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                            e.addTransporter(new DropshuttleBay(pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing()),
+                            e.addTransporter(new DropShuttleBay(pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing()),
                                   isPod);
                             break;
                         case "navalrepairpressurized":

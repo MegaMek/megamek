@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -51,7 +51,7 @@ public class UnitType {
     public static final int NAVAL = 6;
     public static final int GUN_EMPLACEMENT = 7;
     public static final int CONV_FIGHTER = 8;
-    public static final int AEROSPACEFIGHTER = 9;
+    public static final int AEROSPACE_FIGHTER = 9;
     public static final int SMALL_CRAFT = 10;
     public static final int DROPSHIP = 11;
     public static final int JUMPSHIP = 12;
@@ -61,12 +61,12 @@ public class UnitType {
     // IMPORTANT: AERO must be the last unit type for advanced search to work,
     // unless you are adding a new unit type which like Aero should be excluded from search.
     // In that case add an exception for it in the definition of unitTypeModel in AbstractUnitSelectorDialog.java
-    public static final int AERO = 16; // Non-differentiated Aerospace, like Escape Pods / Life Boats
+    public static final int AERO = 16; // Non-differentiated Aerospace, like Escape Pods / Lifeboats
 
-    private static String[] names = { "Mek", "Tank", "BattleArmor", "Infantry",
-                                      "ProtoMek", "VTOL", "Naval", "Gun Emplacement", "Conventional Fighter",
-                                      "AeroSpaceFighter", "Small Craft", "Dropship",
-                                      "Jumpship", "Warship", "Space Station", "Handheld Weapon", "Aero" };
+    private static final String[] names = { "Mek", "Tank", "BattleArmor", "Infantry", "ProtoMek", "VTOL", "Naval",
+                                            "Gun Emplacement", "Conventional Fighter", "AeroSpaceFighter",
+                                            "Small Craft", "Dropship", "Jumpship", "Warship", "Space Station",
+                                            "Handheld Weapon", "Aero" };
 
     public static final int SIZE = names.length;
 

@@ -3975,7 +3975,7 @@ public final class BoardView extends AbstractBoardView
         Targetable target = game.getTarget(attackAction.getTargetType(), attackAction.getTargetId());
         if ((attacker == null)
               || (target == null)
-              || (target.getTargetType() == Targetable.TYPE_INARC_POD)
+              || (target.getTargetType() == Targetable.TYPE_I_NARC_POD)
               || (target.getPosition() == null)
               || (attacker.getPosition() == null)
               || !game.onTheSameBoard(attacker, target)

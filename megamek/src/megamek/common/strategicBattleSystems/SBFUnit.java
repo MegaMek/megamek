@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -86,7 +86,7 @@ public class SBFUnit implements ASSpecialAbilityCollector, BattleForceSUAFormatt
     private final ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
     private List<AlphaStrikeElement> elements = new ArrayList<>();
 
-    // ingame values
+    // in game values
     private int currentArmor;
     private int damageCrits = 0;
     private int targetingCrits = 0;
@@ -281,10 +281,7 @@ public class SBFUnit implements ASSpecialAbilityCollector, BattleForceSUAFormatt
         if ((type == SBFElementType.BM) && (sua == SOA || sua == SRCH)) {
             return false;
         }
-        if ((type == SBFElementType.V) && (sua == SRCH)) {
-            return false;
-        }
-        return true;
+        return (type != SBFElementType.V) || (sua != SRCH);
     }
 
     @Override

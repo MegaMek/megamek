@@ -956,7 +956,7 @@ public class WeaponFireInfo {
             int hitLocation = i;
 
             while (targetMek.isLocationBad(hitLocation) &&
-                  (Mek.LOC_CT != hitLocation)) {
+                  (Mek.LOC_CENTER_TORSO != hitLocation)) {
 
                 // Head shots don't travel inward if the head is removed. Instead, a new roll
                 // gets made.
@@ -980,7 +980,7 @@ public class WeaponFireInfo {
             // If the location could be destroyed outright...
             if (getExpectedDamage() > ((targetArmor + targetInternals))) {
                 setExpectedCriticals(getExpectedCriticals() + (hitLocationProbability * getProbabilityToHit()));
-                if (Mek.LOC_CT == hitLocation) {
+                if (Mek.LOC_CENTER_TORSO == hitLocation) {
                     setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
                 } else if ((Mek.LOC_HEAD == hitLocation) &&
                       (Mek.COCKPIT_TORSO_MOUNTED != targetMek.getCockpitType())) {

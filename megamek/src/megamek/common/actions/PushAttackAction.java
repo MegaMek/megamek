@@ -94,7 +94,8 @@ public class PushAttackAction extends DisplacementAttackAction {
         }
 
         // can't push if carrying any cargo per TW
-        if ((attacker instanceof Mek mek) && !(mek.canFireWeapon(Mek.LOC_LARM) || mek.canFireWeapon(Mek.LOC_RARM))) {
+        if ((attacker instanceof Mek mek) && !(mek.canFireWeapon(Mek.LOC_LEFT_ARM)
+              || mek.canFireWeapon(Mek.LOC_RIGHT_ARM))) {
             return Messages.getString("WeaponAttackAction.CantFireWhileCarryingCargo");
         }
 
@@ -190,7 +191,7 @@ public class PushAttackAction extends DisplacementAttackAction {
         }
 
         // check if both arms are present
-        if (ae.isLocationBad(Mek.LOC_RARM) || ae.isLocationBad(Mek.LOC_LARM)) {
+        if (ae.isLocationBad(Mek.LOC_RIGHT_ARM) || ae.isLocationBad(Mek.LOC_LEFT_ARM)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
         }
 
@@ -200,7 +201,7 @@ public class PushAttackAction extends DisplacementAttackAction {
         }
 
         // check if attacker has fired arm-mounted weapons
-        if (ae.weaponFiredFrom(Mek.LOC_RARM) || ae.weaponFiredFrom(Mek.LOC_LARM)) {
+        if (ae.weaponFiredFrom(Mek.LOC_RIGHT_ARM) || ae.weaponFiredFrom(Mek.LOC_LEFT_ARM)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Weapons fired from arm this turn");
         }
 
@@ -303,10 +304,10 @@ public class PushAttackAction extends DisplacementAttackAction {
         toHit.append(Compute.getTargetTerrainModifier(game, te, 0, inSameBuilding));
 
         // damaged or missing actuators
-        if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RARM)) {
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RIGHT_ARM)) {
             toHit.addModifier(2, "Right Shoulder destroyed");
         }
-        if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LARM)) {
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LEFT_ARM)) {
             toHit.addModifier(2, "Left Shoulder destroyed");
         }
 
@@ -338,8 +339,10 @@ public class PushAttackAction extends DisplacementAttackAction {
         // sensor hits...
         // It gets a =4 penalty for being blind!
         if (((Mek) ae).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
-            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
-            int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_CT);
+            int sensorHits = ae.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
+            int sensorHits2 = ae.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM,
+                  Mek.SYSTEM_SENSORS,
+                  Mek.LOC_CENTER_TORSO);
             if ((sensorHits + sensorHits2) == 3) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Sensors Completely Destroyed for Torso-Mounted Cockpit");
             } else if (sensorHits == 2) {

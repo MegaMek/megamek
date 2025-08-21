@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2023-2025 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -48,12 +48,12 @@ public class AeroSpaceFighter extends Aero {
 
     @Override
     public int getUnitType() {
-        return UnitType.AEROSPACEFIGHTER;
+        return UnitType.AEROSPACE_FIGHTER;
     }
 
     @Override
     public void autoSetMaxBombPoints() {
-        // Aerospace fighters can carry both external and internal ordnances, if configured and quirked appropriately
+        // Aerospace fighters can carry both external and internal ordnance's, if configured and quirked appropriately
         maxExtBombPoints = (int) Math.round(getWeight() / 5);
         // Can't check quirk here, as they don't exist in unit files yet.
         maxIntBombPoints = getTransportBays().stream()
@@ -97,14 +97,14 @@ public class AeroSpaceFighter extends Aero {
             // Damage the weapon
             weapon.setHit(true);
             // Damage the critical slot
-            for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+            for (int i = 0; i < getNumberOfCriticalSlots(loc); i++) {
                 CriticalSlot slot1 = getCritical(loc, i);
                 if ((slot1 == null) || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                     continue;
                 }
                 Mounted<?> mounted = slot1.getMount();
                 if (mounted.equals(weapon)) {
-                    hitAllCriticals(loc, i);
+                    hitAllCriticalSlots(loc, i);
                     break;
                 }
             }
@@ -113,7 +113,7 @@ public class AeroSpaceFighter extends Aero {
 
     @Override
     public long getEntityType() {
-        return super.getEntityType() | Entity.ETYPE_AEROSPACEFIGHTER;
+        return super.getEntityType() | Entity.ETYPE_AEROSPACE_FIGHTER;
     }
 
     @Override

@@ -122,7 +122,7 @@ public class MekCostCalculator {
         // armored components
         int armoredCrits = 0;
         for (int j = 0; j < mek.locations(); j++) {
-            int numCrits = mek.getNumberOfCriticals(j);
+            int numCrits = mek.getNumberOfCriticalSlots(j);
             for (int k = 0; k < numCrits; k++) {
                 CriticalSlot ccs = mek.getCritical(j, k);
                 if ((ccs != null) && ccs.isArmored() && (ccs.getType() == CriticalSlot.TYPE_SYSTEM)) {

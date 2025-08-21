@@ -374,8 +374,10 @@ public class DfaAttackAction extends DisplacementAttackAction {
         // sensor hits...
         // It gets a =4 penalty for being blind!
         if ((ae instanceof Mek) && (((Mek) ae).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED)) {
-            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
-            int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_CT);
+            int sensorHits = ae.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
+            int sensorHits2 = ae.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM,
+                  Mek.SYSTEM_SENSORS,
+                  Mek.LOC_CENTER_TORSO);
             if ((sensorHits + sensorHits2) == 3) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Sensors Completely Destroyed for Torso-Mounted Cockpit");
             } else if (sensorHits == 2) {
@@ -428,19 +430,19 @@ public class DfaAttackAction extends DisplacementAttackAction {
 
             if (entity instanceof BipedMek) {
 
-                return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_RLEG) &&
-                      entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RLEG)) ||
-                      (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_LLEG) &&
-                            entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LLEG));
+                return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_RIGHT_LEG) &&
+                      entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RIGHT_LEG)) ||
+                      (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_LEFT_LEG) &&
+                            entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_LEG));
             }
-            return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_RLEG) &&
-                  entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RLEG)) ||
-                  (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_LLEG) &&
-                        entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LLEG)) ||
-                  ((entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_RARM)) &&
-                        (entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RARM) ||
-                              (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_LARM) &&
-                                    entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LARM))));
+            return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_RIGHT_LEG) &&
+                  entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RIGHT_LEG)) ||
+                  (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_LEFT_LEG) &&
+                        entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_LEG)) ||
+                  ((entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_RIGHT_ARM)) &&
+                        (entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RIGHT_ARM) ||
+                              (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_LEFT_ARM) &&
+                                    entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_ARM))));
         }
 
         return false;

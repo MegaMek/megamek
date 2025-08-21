@@ -35,7 +35,7 @@
 
 package megamek.server;
 
-import megamek.common.*;
+import megamek.common.CriticalSlot;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.Mounted;
@@ -113,7 +113,7 @@ public abstract class UnitStatusFormatter {
         for (int x = 0; x < e.locations(); x++) {
             sb.append(StringUtil.makeLength(e.getLocationName(x), 12)).append(": ");
             int nCount = 0;
-            for (int y = 0; y < e.getNumberOfCriticals(x); y++) {
+            for (int y = 0; y < e.getNumberOfCriticalSlots(x); y++) {
                 CriticalSlot cs = e.getCritical(x, y);
                 if (cs == null) {
                     continue;
@@ -216,30 +216,30 @@ public abstract class UnitStatusFormatter {
                   .append(renderArmor(m.getInternal(Mek.LOC_HEAD)))
                   .append(")\n");
             // torsos
-            sb.append("      /").append(renderArmor(m.getArmor(Mek.LOC_LT)))
+            sb.append("      /").append(renderArmor(m.getArmor(Mek.LOC_LEFT_TORSO)))
                   .append("|");
-            sb.append(renderArmor(m.getArmor(Mek.LOC_CT))).append("|");
-            sb.append(renderArmor(m.getArmor(Mek.LOC_RT))).append("\\           /");
-            sb.append(renderArmor(m.getArmor(Mek.LOC_LT, true))).append("|");
-            sb.append(renderArmor(m.getArmor(Mek.LOC_CT, true))).append("|");
-            sb.append(renderArmor(m.getArmor(Mek.LOC_RT, true))).append("\\            /");
-            sb.append(renderArmor(m.getInternal(Mek.LOC_LT))).append("|");
-            sb.append(renderArmor(m.getInternal(Mek.LOC_CT))).append("|");
-            sb.append(renderArmor(m.getInternal(Mek.LOC_RT))).append("\\\n");
+            sb.append(renderArmor(m.getArmor(Mek.LOC_CENTER_TORSO))).append("|");
+            sb.append(renderArmor(m.getArmor(Mek.LOC_RIGHT_TORSO))).append("\\           /");
+            sb.append(renderArmor(m.getArmor(Mek.LOC_LEFT_TORSO, true))).append("|");
+            sb.append(renderArmor(m.getArmor(Mek.LOC_CENTER_TORSO, true))).append("|");
+            sb.append(renderArmor(m.getArmor(Mek.LOC_RIGHT_TORSO, true))).append("\\            /");
+            sb.append(renderArmor(m.getInternal(Mek.LOC_LEFT_TORSO))).append("|");
+            sb.append(renderArmor(m.getInternal(Mek.LOC_CENTER_TORSO))).append("|");
+            sb.append(renderArmor(m.getInternal(Mek.LOC_RIGHT_TORSO))).append("\\\n");
             // arms
-            sb.append("     (").append(renderArmor(m.getArmor(Mek.LOC_LARM)));
-            sb.append("/ || \\").append(renderArmor(m.getArmor(Mek.LOC_RARM)));
+            sb.append("     (").append(renderArmor(m.getArmor(Mek.LOC_LEFT_ARM)));
+            sb.append("/ || \\").append(renderArmor(m.getArmor(Mek.LOC_RIGHT_ARM)));
             sb.append(")         (   |  |   )          (");
-            sb.append(renderArmor(m.getInternal(Mek.LOC_LARM))).append("/ || \\");
-            sb.append(renderArmor(m.getInternal(Mek.LOC_RARM))).append(")\n");
+            sb.append(renderArmor(m.getInternal(Mek.LOC_LEFT_ARM))).append("/ || \\");
+            sb.append(renderArmor(m.getInternal(Mek.LOC_RIGHT_ARM))).append(")\n");
             // legs
             sb.append("       /  /\\  \\               /  \\                /  /\\  \\\n");
-            sb.append("      (").append(renderArmor(m.getArmor(Mek.LOC_LLEG)));
-            sb.append("/  \\").append(renderArmor(m.getArmor(Mek.LOC_RLEG)));
+            sb.append("      (").append(renderArmor(m.getArmor(Mek.LOC_LEFT_LEG)));
+            sb.append("/  \\").append(renderArmor(m.getArmor(Mek.LOC_RIGHT_LEG)));
             sb.append(")             /    \\              (");
-            sb.append(renderArmor(m.getInternal(Mek.LOC_LLEG)));
+            sb.append(renderArmor(m.getInternal(Mek.LOC_LEFT_LEG)));
             sb.append("/  \\")
-                  .append(renderArmor(m.getInternal(Mek.LOC_RLEG)))
+                  .append(renderArmor(m.getInternal(Mek.LOC_RIGHT_LEG)))
                   .append(")\n");
         } else {
             // head
@@ -249,31 +249,31 @@ public abstract class UnitStatusFormatter {
             sb.append(renderArmor(m.getInternal(Mek.LOC_HEAD)))
                   .append("\\...\n");
             // torsos
-            sb.append("     /").append(renderArmor(m.getArmor(Mek.LOC_LT)))
+            sb.append("     /").append(renderArmor(m.getArmor(Mek.LOC_LEFT_TORSO)))
                   .append("| ");
-            sb.append(renderArmor(m.getArmor(Mek.LOC_CT))).append(" |");
-            sb.append(renderArmor(m.getArmor(Mek.LOC_RT))).append("\\         /");
-            sb.append(renderArmor(m.getArmor(Mek.LOC_LT, true))).append("| ");
-            sb.append(renderArmor(m.getArmor(Mek.LOC_CT, true))).append(" |");
-            sb.append(renderArmor(m.getArmor(Mek.LOC_RT, true))).append("\\          /");
-            sb.append(renderArmor(m.getInternal(Mek.LOC_LT))).append("| ");
-            sb.append(renderArmor(m.getInternal(Mek.LOC_CT))).append(" |");
-            sb.append(renderArmor(m.getInternal(Mek.LOC_RT))).append("\\\n");
+            sb.append(renderArmor(m.getArmor(Mek.LOC_CENTER_TORSO))).append(" |");
+            sb.append(renderArmor(m.getArmor(Mek.LOC_RIGHT_TORSO))).append("\\         /");
+            sb.append(renderArmor(m.getArmor(Mek.LOC_LEFT_TORSO, true))).append("| ");
+            sb.append(renderArmor(m.getArmor(Mek.LOC_CENTER_TORSO, true))).append(" |");
+            sb.append(renderArmor(m.getArmor(Mek.LOC_RIGHT_TORSO, true))).append("\\          /");
+            sb.append(renderArmor(m.getInternal(Mek.LOC_LEFT_TORSO))).append("| ");
+            sb.append(renderArmor(m.getInternal(Mek.LOC_CENTER_TORSO))).append(" |");
+            sb.append(renderArmor(m.getInternal(Mek.LOC_RIGHT_TORSO))).append("\\\n");
             // arms
-            sb.append("    (").append(renderArmor(m.getArmor(Mek.LOC_LARM)));
+            sb.append("    (").append(renderArmor(m.getArmor(Mek.LOC_LEFT_ARM)));
             sb.append("). -- .(")
-                  .append(renderArmor(m.getArmor(Mek.LOC_RARM)));
+                  .append(renderArmor(m.getArmor(Mek.LOC_RIGHT_ARM)));
             sb.append(")       (   |    |   )        (");
-            sb.append(renderArmor(m.getInternal(Mek.LOC_LARM))).append("). -- .(");
-            sb.append(renderArmor(m.getInternal(Mek.LOC_RARM))).append(")\n");
+            sb.append(renderArmor(m.getInternal(Mek.LOC_LEFT_ARM))).append("). -- .(");
+            sb.append(renderArmor(m.getInternal(Mek.LOC_RIGHT_ARM))).append(")\n");
             // legs
             sb.append("       /  /\\  \\             /      \\              /  /\\  \\\n");
-            sb.append("      /").append(renderArmor(m.getArmor(Mek.LOC_LLEG)));
-            sb.append(".\\/.").append(renderArmor(m.getArmor(Mek.LOC_RLEG)));
+            sb.append("      /").append(renderArmor(m.getArmor(Mek.LOC_LEFT_LEG)));
+            sb.append(".\\/.").append(renderArmor(m.getArmor(Mek.LOC_RIGHT_LEG)));
             sb.append("\\           /        \\            /");
-            sb.append(renderArmor(m.getInternal(Mek.LOC_LLEG)));
+            sb.append(renderArmor(m.getInternal(Mek.LOC_LEFT_LEG)));
             sb.append(".\\/.")
-                  .append(renderArmor(m.getInternal(Mek.LOC_RLEG)))
+                  .append(renderArmor(m.getInternal(Mek.LOC_RIGHT_LEG)))
                   .append("\\\n");
         }
         sb.append("\n");
@@ -302,14 +302,14 @@ public abstract class UnitStatusFormatter {
         // head & main gun
         sb.append("        ");
         if (m.hasMainGun()) {
-            sb.append(renderArmor(m.getArmor(ProtoMek.LOC_MAINGUN), 1));
+            sb.append(renderArmor(m.getArmor(ProtoMek.LOC_MAIN_GUN), 1));
         } else {
             sb.append(" ");
         }
         sb.append(" (").append(renderArmor(m.getArmor(ProtoMek.LOC_HEAD), 1))
               .append(")                  ");
         if (m.hasMainGun()) {
-            sb.append(renderArmor(m.getInternal(ProtoMek.LOC_MAINGUN), 1));
+            sb.append(renderArmor(m.getInternal(ProtoMek.LOC_MAIN_GUN), 1));
         } else {
             sb.append(" ");
         }
@@ -324,17 +324,17 @@ public abstract class UnitStatusFormatter {
         // arms & torso
         if (!m.isQuad()) {
             sb.append("      (").append(
-                  renderArmor(m.getArmor(ProtoMek.LOC_LARM), 1));
+                  renderArmor(m.getArmor(ProtoMek.LOC_LEFT_ARM), 1));
             sb.append(" /")
                   .append(renderArmor(m.getArmor(ProtoMek.LOC_TORSO)))
                   .append(" \\")
-                  .append(renderArmor(m.getArmor(ProtoMek.LOC_RARM)));
+                  .append(renderArmor(m.getArmor(ProtoMek.LOC_RIGHT_ARM)));
             sb.append(")            (");
-            sb.append(renderArmor(m.getInternal(ProtoMek.LOC_LARM), 1))
+            sb.append(renderArmor(m.getInternal(ProtoMek.LOC_LEFT_ARM), 1))
                   .append(" /")
                   .append(renderArmor(m.getInternal(ProtoMek.LOC_TORSO)))
                   .append(" \\");
-            sb.append(renderArmor(m.getInternal(ProtoMek.LOC_RARM)))
+            sb.append(renderArmor(m.getInternal(ProtoMek.LOC_RIGHT_ARM)))
                   .append(")\n");
         }
 

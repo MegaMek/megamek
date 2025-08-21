@@ -55,7 +55,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Transporter;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.units.Aero;
-import megamek.common.units.DropshuttleBay;
+import megamek.common.units.DropShuttleBay;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
@@ -589,10 +589,10 @@ public class MekSummaryCache {
         int hands = 0;
 
         if (e instanceof Mek) {
-            lowerArms += e.hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RARM) ? 1 : 0;
-            lowerArms += e.hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LARM) ? 1 : 0;
-            hands += e.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM) ? 1 : 0;
-            hands += e.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM) ? 1 : 0;
+            lowerArms += e.hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RIGHT_ARM) ? 1 : 0;
+            lowerArms += e.hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LEFT_ARM) ? 1 : 0;
+            hands += e.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM) ? 1 : 0;
+            hands += e.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM) ? 1 : 0;
         }
 
         ms.setLowerArms(lowerArms);
@@ -686,9 +686,9 @@ public class MekSummaryCache {
                 shvDoors += ((SuperHeavyVehicleBay) t).getCurrentDoors();
                 shvUnits += t.getUnused();
             }
-            if (t instanceof DropshuttleBay) {
+            if (t instanceof DropShuttleBay) {
                 dBays++;
-                dDoors += ((DropshuttleBay) t).getCurrentDoors();
+                dDoors += ((DropShuttleBay) t).getCurrentDoors();
                 dUnits += t.getUnused();
             }
             if (t instanceof BattleArmorHandles) {

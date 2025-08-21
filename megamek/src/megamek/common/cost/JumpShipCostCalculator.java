@@ -59,7 +59,7 @@ public class JumpShipCostCalculator {
         // Fire Control Computer
         costs[costIdx++] += 100000;
         // Gunnery Control Systems
-        costs[costIdx++] += 10000 * jumpShip.getArcswGuns();
+        costs[costIdx++] += 10000 * jumpShip.getArcsWithGuns();
         // Structural Integrity
         costs[costIdx++] += 100000 * jumpShip.getSI();
 

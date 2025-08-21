@@ -301,8 +301,8 @@ public class ComputeTargetToHitMods {
                 toHit.addModifier(1, Messages.getString("WeaponAttackAction.SquadTarget"));
             }
             InfantryMount mount = infantry.getMount();
-            if ((mount != null) && (mount.getSize().toHitMod != 0)) {
-                toHit.addModifier(mount.getSize().toHitMod, Messages.getString("WeaponAttackAction.MountSize"));
+            if ((mount != null) && (mount.size().toHitMod != 0)) {
+                toHit.addModifier(mount.size().toHitMod, Messages.getString("WeaponAttackAction.MountSize"));
             }
 
             // pl-masc makes foot infantry harder to hit - IntOps p.84

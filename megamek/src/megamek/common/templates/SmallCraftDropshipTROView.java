@@ -37,10 +37,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import megamek.common.units.Aero;
-import megamek.common.units.Entity;
 import megamek.common.Messages;
 import megamek.common.equipment.Mounted;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
 import megamek.common.units.SmallCraft;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestSmallCraft;
@@ -147,22 +147,18 @@ public class SmallCraftDropshipTROView extends AeroTROView {
     @Override
     protected String getArcAbbr(Mounted<?> m) {
         final String[][] arcs = aero.isSpheroid() ? SPHEROID_ARCS : AERODYNE_ARCS;
-        switch (m.getLocation()) {
-            case Aero.LOC_NOSE:
-                return arcs[0][0];
-            case Aero.LOC_RWING:
-                return arcs[m.isRearMounted() ? 2 : 1][0];
-            case Aero.LOC_LWING:
-                return arcs[m.isRearMounted() ? 2 : 1][1];
-            case Aero.LOC_AFT:
-                return arcs[3][0];
-            default:
-                return super.getArcAbbr(m);
-        }
+        return switch (m.getLocation()) {
+            case Aero.LOC_NOSE -> arcs[0][0];
+            case Aero.LOC_RIGHT_WING -> arcs[m.isRearMounted() ? 2 : 1][0];
+            case Aero.LOC_LEFT_WING -> arcs[m.isRearMounted() ? 2 : 1][1];
+            case Aero.LOC_AFT -> arcs[3][0];
+            default -> super.getArcAbbr(m);
+        };
     }
 
     private static final int[][] SC_ARMOR_LOCS = { { SmallCraft.LOC_NOSE },
-                                                   { SmallCraft.LOC_RWING, SmallCraft.LOC_LWING }, { Aero.LOC_AFT } };
+                                                   { SmallCraft.LOC_RIGHT_WING, SmallCraft.LOC_LEFT_WING },
+                                                   { Aero.LOC_AFT } };
 
     private void addArmor() {
         setModelData("armorValues", addArmorStructureEntries(aero, Entity::getOArmor, SC_ARMOR_LOCS));
@@ -171,9 +167,9 @@ public class SmallCraftDropshipTROView extends AeroTROView {
     @Override
     protected String formatLocationTableEntry(Entity entity, Mounted<?> mounted) {
         String str;
-        if (mounted.getLocation() == Aero.LOC_RWING) {
+        if (mounted.getLocation() == Aero.LOC_RIGHT_WING) {
             str = "TROView.RS";
-        } else if (mounted.getLocation() == Aero.LOC_LWING) {
+        } else if (mounted.getLocation() == Aero.LOC_LEFT_WING) {
             str = "TROView.LS";
         } else {
             return aero.getLocationName(mounted.getLocation());

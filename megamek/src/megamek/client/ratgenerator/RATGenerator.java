@@ -589,8 +589,8 @@ public class RATGenerator {
             }
 
             // Handle ChassisRecords saved as "AERO" units as ASFs for now
-            if (Arrays.asList(UnitType.AERO, UnitType.AEROSPACEFIGHTER).contains(curChassis.getUnitType())) {
-                curChassis.setUnitType(UnitType.AEROSPACEFIGHTER);
+            if (Arrays.asList(UnitType.AERO, UnitType.AEROSPACE_FIGHTER).contains(curChassis.getUnitType())) {
+                curChassis.setUnitType(UnitType.AEROSPACE_FIGHTER);
             }
 
             // Only return VTOLs when specifically requesting the unit type
@@ -727,7 +727,7 @@ public class RATGenerator {
               weightClasses.size() > 1) &&
               (unitType == UnitType.MEK ||
                     unitType == UnitType.TANK ||
-                    unitType == UnitType.AEROSPACEFIGHTER) &&
+                    unitType == UnitType.AEROSPACE_FIGHTER) &&
               (roles == null || roles.isEmpty())) {
 
             // Get standard weight class distribution for faction
@@ -845,7 +845,7 @@ public class RATGenerator {
         // unit types. Also skip when generating tables for specific roles.
         if (ratingLevel >= 0 &&
               (unitType == UnitType.MEK ||
-                    unitType == UnitType.AEROSPACEFIGHTER ||
+                    unitType == UnitType.AEROSPACE_FIGHTER ||
                     unitType == UnitType.TANK ||
                     unitType == UnitType.VTOL) &&
               ((roles == null) || roles.isEmpty())) {
@@ -944,7 +944,7 @@ public class RATGenerator {
             pctSL = interpolate(fRec.findPctTech(TechCategory.IS_ADVANCED, currentEra, rating),
                   fRec.findPctTech(TechCategory.IS_ADVANCED, nextEra, rating), currentEra, nextEra, year);
         }
-        if (unitType == UnitType.AEROSPACEFIGHTER) {
+        if (unitType == UnitType.AEROSPACE_FIGHTER) {
             pctOmni = interpolate(fRec.findPctTech(TechCategory.OMNI_AERO, currentEra, rating),
                   fRec.findPctTech(TechCategory.OMNI_AERO, nextEra, rating), currentEra, nextEra, year);
             pctClan = interpolate(fRec.findPctTech(TechCategory.CLAN_AERO, currentEra, rating),
@@ -994,7 +994,7 @@ public class RATGenerator {
 
         double totalWeightPostMod = 0.0;
         // Only balance Meks and aerospace for Omni/non-Omni ratios
-        if ((unitType == UnitType.MEK || unitType == UnitType.AEROSPACEFIGHTER) && pctOmni != null) {
+        if ((unitType == UnitType.MEK || unitType == UnitType.AEROSPACE_FIGHTER) && pctOmni != null) {
 
             // Get the difference between the ideal Omni level and the current one
             double omniPctDifference = pctOmni - (100.0 * totalOmniWeight / totalWeight);

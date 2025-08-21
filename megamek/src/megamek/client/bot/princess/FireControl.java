@@ -543,7 +543,7 @@ public class FireControl {
             if (target instanceof Infantry) {
                 return new ToHitData(TH_PHY_P_TAR_INF);
             }
-            final int armLocation = PhysicalAttackType.RIGHT_PUNCH == attackType ? Mek.LOC_RARM : Mek.LOC_LARM;
+            final int armLocation = PhysicalAttackType.RIGHT_PUNCH == attackType ? Mek.LOC_RIGHT_ARM : Mek.LOC_LEFT_ARM;
             if (shooter.isLocationBad(armLocation)) {
                 return new ToHitData(TH_PHY_P_NO_ARM);
             }
@@ -573,7 +573,7 @@ public class FireControl {
             if ((shooter).hasHipCrit()) {
                 return new ToHitData(TH_PHY_K_HIP);
             }
-            final int legLocation = PhysicalAttackType.RIGHT_KICK == attackType ? Mek.LOC_RLEG : Mek.LOC_LLEG;
+            final int legLocation = PhysicalAttackType.RIGHT_KICK == attackType ? Mek.LOC_RIGHT_LEG : Mek.LOC_LEFT_LEG;
 
             // Base to hit chance.
             toHitData.addModifier(shooter.getCrew().getPiloting() - 2, TH_PHY_BASE);
@@ -784,16 +784,16 @@ public class FireControl {
 
         if (shooterState.isProne()) {
             // Cannot fire if we cannot at least prop ourselves up.
-            if (shooter.isLocationBad(Mek.LOC_LARM) && shooter.isLocationBad(Mek.LOC_RARM)) {
+            if (shooter.isLocationBad(Mek.LOC_LEFT_ARM) && shooter.isLocationBad(Mek.LOC_RIGHT_ARM)) {
                 return new ToHitData(TH_WEAPON_PRONE_ARMLESS);
             }
             // Cannot fire weapons mounted in the propping arm.
-            if ((Mek.LOC_LARM == weapon.getLocation() || Mek.LOC_RARM == weapon.getLocation())
+            if ((Mek.LOC_LEFT_ARM == weapon.getLocation() || Mek.LOC_RIGHT_ARM == weapon.getLocation())
                   && shooter.isLocationBad(weapon.getLocation())) {
                 return new ToHitData(TH_WEAPON_ARM_PROP);
             }
             // Cannot fire leg-mounted weapons while prone.)
-            if ((Mek.LOC_LLEG == weapon.getLocation()) || (Mek.LOC_RLEG == weapon.getLocation())) {
+            if ((Mek.LOC_LEFT_LEG == weapon.getLocation()) || (Mek.LOC_RIGHT_LEG == weapon.getLocation())) {
                 return new ToHitData(TH_WEAPON_PRONE_LEG);
             }
         }

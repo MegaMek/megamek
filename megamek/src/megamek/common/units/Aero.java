@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -78,8 +78,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     // locations
     public static final int LOC_NOSE = 0;
-    public static final int LOC_LWING = 1;
-    public static final int LOC_RWING = 2;
+    public static final int LOC_LEFT_WING = 1;
+    public static final int LOC_RIGHT_WING = 2;
     public static final int LOC_AFT = 3;
     /** Location used for capital fighters and squadrons **/
     public static final int LOC_WINGS = 4;
@@ -141,7 +141,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     private static final String[] LOCATION_NAMES = { "Nose", "Left Wing", "Right Wing", "Aft", "Wings", "Fuselage" };
 
     @Override
-    public String[] getLocationAbbrs() {
+    public String[] getLocationAbbreviations() {
         return LOCATION_ABBREVIATIONS;
     }
 
@@ -470,7 +470,9 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
-            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND) &&
+            if (getCrew().getOptions()
+                  .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
+                  .equals(Crew.ENVIRONMENT_SPECIALIST_WIND) &&
                   conditions.getWind().isTornadoF1ToF3() &&
                   conditions.getWeather().isClear()) {
                 mp += 1;
@@ -547,7 +549,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
-    public boolean isOutCtrlHeat() {
+    public boolean isOutControlHeat() {
         return outCtrlHeat;
     }
 
@@ -576,13 +578,13 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
-    public void setOutControl(boolean outOfControl) {
-        outControl = outOfControl;
+    public void setOutControl(boolean outControl) {
+        this.outControl = outControl;
     }
 
     @Override
-    public void setOutCtrlHeat(boolean outOfControlHeat) {
-        outCtrlHeat = outOfControlHeat;
+    public void setOutControlHeat(boolean outControlHeat) {
+        outCtrlHeat = outControlHeat;
     }
 
     @Override
@@ -925,7 +927,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     // Avionics mods for partial repairs
     @Override
-    public int getAvionicsMisreplaced() {
+    public int getAvionicsMisReplaced() {
         if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
             return 1;
         } else {
@@ -1137,16 +1139,16 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         // update velocity
         setCurrentVelocity(getNextVelocity());
 
-        // if using variable damage thresholds then autoset them
+        // if using variable damage thresholds then auto set them
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_VARIABLE_DAMAGE_THRESH)) {
             autoSetThresh();
             autoSetFatalThresh();
         }
 
         // if they are out of control due to heat, then apply this and reset
-        if (isOutCtrlHeat()) {
+        if (isOutControlHeat()) {
             setOutControl(true);
-            setOutCtrlHeat(false);
+            setOutControlHeat(false);
         }
 
         // reset eccm bonus
@@ -1168,8 +1170,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
      * Returns the name of the type of movement used. This is tank-specific.
      */
     @Override
-    public String getMovementString(EntityMovementType entityMovementType) {
-        return switch (entityMovementType) {
+    public String getMovementString(EntityMovementType movementType) {
+        return switch (movementType) {
             case MOVE_SKID -> "Skidded";
             case MOVE_NONE -> "None";
             case MOVE_WALK -> "Cruised";
@@ -1184,8 +1186,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
      * Returns the name of the type of movement used. This is tank-specific.
      */
     @Override
-    public String getMovementAbbr(EntityMovementType entityMovementType) {
-        return switch (entityMovementType) {
+    public String getMovementAbbr(EntityMovementType movementType) {
+        return switch (movementType) {
             case MOVE_NONE -> "N";
             case MOVE_SAFE_THRUST -> "S";
             case MOVE_OVER_THRUST -> "O";
@@ -1212,14 +1214,14 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             case LOC_WINGS:
                 arc = Compute.ARC_NOSE;
                 break;
-            case LOC_RWING:
+            case LOC_RIGHT_WING:
                 if (mounted.isRearMounted()) {
                     arc = Compute.ARC_RIGHT_WING_AFT;
                 } else {
                     arc = Compute.ARC_RIGHT_WING;
                 }
                 break;
-            case LOC_LWING:
+            case LOC_LEFT_WING:
                 if (mounted.isRearMounted()) {
                     arc = Compute.ARC_LEFT_WING_AFT;
                 } else {
@@ -1269,10 +1271,10 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         if ((table == ToHitData.HIT_ABOVE) || (table == ToHitData.HIT_BELOW)) {
 
             // have to decide which wing
-            int wingLocation = LOC_RWING;
+            int wingLocation = LOC_RIGHT_WING;
             int wingRoll = Compute.d6(1);
             if (wingRoll > 3) {
-                wingLocation = LOC_LWING;
+                wingLocation = LOC_LEFT_WING;
             }
             switch (roll) {
                 case 2:
@@ -1316,10 +1318,10 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
                 case 4:
                     setPotCrit(CRIT_HEATSINK);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_WING, false, HitData.EFFECT_NONE);
                 case 5:
                     setPotCrit(CRIT_WEAPON);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_WING, false, HitData.EFFECT_NONE);
                 case 6:
                     setPotCrit(CRIT_AVIONICS);
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
@@ -1331,10 +1333,10 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
                 case 9:
                     setPotCrit(CRIT_WEAPON);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_WING, false, HitData.EFFECT_NONE);
                 case 10:
                     setPotCrit(CRIT_HEATSINK);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_WING, false, HitData.EFFECT_NONE);
                 case 11:
                     setPotCrit(CRIT_GEAR);
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
@@ -1347,7 +1349,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
                 case 3, 11:
                     setPotCrit(CRIT_GEAR);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_WING, false, HitData.EFFECT_NONE);
                 case 4:
                     setPotCrit(CRIT_SENSOR);
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
@@ -1356,13 +1358,13 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
                 case 6:
                     setPotCrit(CRIT_WEAPON);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_WING, false, HitData.EFFECT_NONE);
                 case 7:
                     setPotCrit(CRIT_AVIONICS);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_WING, false, HitData.EFFECT_NONE);
                 case 8:
                     setPotCrit(CRIT_BOMB);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_WING, false, HitData.EFFECT_NONE);
                 case 9:
                     setPotCrit(CRIT_CONTROL);
                     return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
@@ -1381,7 +1383,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
                 case 3, 11:
                     setPotCrit(CRIT_GEAR);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_WING, false, HitData.EFFECT_NONE);
                 case 4:
                     setPotCrit(CRIT_SENSOR);
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
@@ -1390,13 +1392,13 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
                 case 6:
                     setPotCrit(CRIT_WEAPON);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_WING, false, HitData.EFFECT_NONE);
                 case 7:
                     setPotCrit(CRIT_AVIONICS);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_WING, false, HitData.EFFECT_NONE);
                 case 8:
                     setPotCrit(CRIT_BOMB);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_WING, false, HitData.EFFECT_NONE);
                 case 9:
                     setPotCrit(CRIT_CONTROL);
                     return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
@@ -1418,10 +1420,10 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                     return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
                 case 4:
                     setPotCrit(CRIT_FUEL_TANK);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_WING, false, HitData.EFFECT_NONE);
                 case 5:
                     setPotCrit(CRIT_WEAPON);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_WING, false, HitData.EFFECT_NONE);
                 case 6, 8:
                     setPotCrit(CRIT_ENGINE);
                     return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
@@ -1430,10 +1432,10 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                     return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
                 case 9:
                     setPotCrit(CRIT_WEAPON);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_WING, false, HitData.EFFECT_NONE);
                 case 10:
                     setPotCrit(CRIT_FUEL_TANK);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_WING, false, HitData.EFFECT_NONE);
             }
         }
         return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
@@ -1483,7 +1485,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                 prd.addModifier(1, "Partial repair of Avionics");
             }
             if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
-                prd.addModifier(1, "Misreplaced Avionics");
+                prd.addModifier(1, "Mis-replaced Avionics");
             }
         }
 
@@ -2191,7 +2193,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
      * The number of critical slots that are destroyed in the component.
      */
     @Override
-    public int getBadCriticals(int type, int index, int loc) {
+    public int getBadCriticalSlots(int type, int index, int loc) {
         return 0;
     }
 
@@ -2257,8 +2259,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     public int getOppositeLocation(int loc) {
         return switch (loc) {
             case Aero.LOC_NOSE -> Aero.LOC_AFT;
-            case Aero.LOC_LWING -> Aero.LOC_RWING;
-            case Aero.LOC_RWING -> Aero.LOC_LWING;
+            case Aero.LOC_LEFT_WING -> Aero.LOC_RIGHT_WING;
+            case Aero.LOC_RIGHT_WING -> Aero.LOC_LEFT_WING;
             default -> Aero.LOC_NOSE;
         };
     }
@@ -2364,7 +2366,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         Map<String, Integer> groups = new HashMap<>();
         for (Mounted<?> mounted : getTotalWeaponList()) {
             int loc = mounted.getLocation();
-            if (isFighter() && ((loc == Aero.LOC_RWING) || (loc == Aero.LOC_LWING))) {
+            if (isFighter() && ((loc == Aero.LOC_RIGHT_WING) || (loc == Aero.LOC_LEFT_WING))) {
                 loc = Aero.LOC_WINGS;
             }
             if (mounted.isRearMounted()) {
@@ -2378,7 +2380,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public boolean hasArmoredEngine() {
-        for (int slot = 0; slot < getNumberOfCriticals(LOC_AFT); slot++) {
+        for (int slot = 0; slot < getNumberOfCriticalSlots(LOC_AFT); slot++) {
             CriticalSlot cs = getCritical(LOC_AFT, slot);
             if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == Mek.SYSTEM_ENGINE)) {
                 return cs.isArmored();

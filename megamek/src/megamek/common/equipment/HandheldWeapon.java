@@ -99,7 +99,7 @@ public class HandheldWeapon extends Entity {
     }
 
     @Override
-    public String[] getLocationAbbrs() {
+    public String[] getLocationAbbreviations() {
         return LOCATION_ABBREVIATIONS;
     }
 

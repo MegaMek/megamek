@@ -1038,7 +1038,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         List<Integer> locations = new ArrayList<>();
         if (getType().isSpreadable()) {
             for (int loc = 0; loc < getEntity().locations(); loc++) {
-                for (int slot = 0; slot < getEntity().getNumberOfCriticals(loc); slot++) {
+                for (int slot = 0; slot < getEntity().getNumberOfCriticalSlots(loc); slot++) {
                     final CriticalSlot crit = getEntity().getCritical(loc, slot);
                     if ((crit != null) && ((crit.getMount() == this) || (crit.getMount2() == this))) {
                         locations.add(loc);

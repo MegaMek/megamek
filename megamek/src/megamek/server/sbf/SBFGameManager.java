@@ -453,7 +453,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
         // var message = mailer.newReportMessage(game, reports, player);
         // mailer.send(message);
         // } catch (Exception ex) {
-        // logger.error("Error sending round report", ex);
+        // LOGGER.error("Error sending round report", ex);
         // }
         // }
         // }

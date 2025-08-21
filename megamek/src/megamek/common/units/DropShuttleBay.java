@@ -34,6 +34,8 @@
 
 package megamek.common.units;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.bays.UnitBay;
@@ -47,11 +49,12 @@ import megamek.common.enums.TechRating;
  *
  * @author Neoancient
  */
-public class DropshuttleBay extends UnitBay {
+public class DropShuttleBay extends UnitBay {
 
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -6910402023514976670L;
 
     // No more than one bay is allowed per armor facing
@@ -61,19 +64,19 @@ public class DropshuttleBay extends UnitBay {
      * The default constructor is only for serialization.
      */
 
-    protected DropshuttleBay() {
+    protected DropShuttleBay() {
         totalSpace = 0;
         currentSpace = 0;
     }
 
     /**
-     * Create a new dropshuttle bay
+     * Create a new DropShuttle bay
      *
      * @param doors     The number of bay doors
      * @param bayNumber The bay index, unique to the Entity
      * @param facing    The armor facing of the bay
      */
-    public DropshuttleBay(int doors, int bayNumber, int facing) {
+    public DropShuttleBay(int doors, int bayNumber, int facing) {
         totalSpace = 2;
         currentSpace = 2;
         this.doors = doors;
@@ -83,10 +86,10 @@ public class DropshuttleBay extends UnitBay {
         this.facing = facing;
     }
 
-    // Type is Dropshuttle Bay
+    // Type is DropShuttle Bay
     @Override
     public String getType() {
-        return "Dropshuttle Bay";
+        return "DropShuttle Bay";
     }
 
     @Override

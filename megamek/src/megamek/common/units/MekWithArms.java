@@ -65,23 +65,24 @@ public abstract class MekWithArms extends Mek {
     }
 
     private boolean hasAnyLowerArmOrHandActuator() {
-        return hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM) || hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LARM)
-              || hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM) || hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RARM);
+        return hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM) || hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LEFT_ARM)
+              || hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM) || hasSystem(Mek.ACTUATOR_LOWER_ARM,
+              Mek.LOC_RIGHT_ARM);
     }
 
     @Override
     public List<Integer> getDefaultPickupLocations() {
         List<Integer> result = new ArrayList<>();
 
-        if (hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM)
-              && (getCarriedObject(Mek.LOC_LARM) == null)
-              && !isLocationBad(Mek.LOC_LARM)) {
-            result.add(Mek.LOC_LARM);
+        if (hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM)
+              && (getCarriedObject(Mek.LOC_LEFT_ARM) == null)
+              && !isLocationBad(Mek.LOC_LEFT_ARM)) {
+            result.add(Mek.LOC_LEFT_ARM);
         }
-        if (hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM)
-              && (getCarriedObject(Mek.LOC_RARM) == null)
-              && !isLocationBad(Mek.LOC_RARM)) {
-            result.add(Mek.LOC_RARM);
+        if (hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM)
+              && (getCarriedObject(Mek.LOC_RIGHT_ARM) == null)
+              && !isLocationBad(Mek.LOC_RIGHT_ARM)) {
+            result.add(Mek.LOC_RIGHT_ARM);
         }
 
         return result;
@@ -96,10 +97,10 @@ public abstract class MekWithArms extends Mek {
     public double maxGroundObjectTonnage() {
         double percentage = 0.0;
 
-        if (hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM) && (getCarriedObject(Mek.LOC_LARM) == null)) {
+        if (hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM) && (getCarriedObject(Mek.LOC_LEFT_ARM) == null)) {
             percentage += 0.05;
         }
-        if (hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM) && (getCarriedObject(Mek.LOC_RARM) == null)) {
+        if (hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM) && (getCarriedObject(Mek.LOC_RIGHT_ARM) == null)) {
             percentage += 0.05;
         }
 
@@ -111,11 +112,11 @@ public abstract class MekWithArms extends Mek {
     public boolean hasShield() {
         for (MiscMounted m : getMisc()) {
             MiscType type = m.getType();
-            if (((m.getLocation() == Mek.LOC_LARM) || (m.getLocation() == Mek.LOC_RARM))
+            if (((m.getLocation() == Mek.LOC_LEFT_ARM) || (m.getLocation() == Mek.LOC_RIGHT_ARM))
                   && type.isShield()
                   && !m.isInoperable()
                   && (getInternal(m.getLocation()) > 0)) {
-                for (int slot = 0; slot < getNumberOfCriticals(m.getLocation()); slot++) {
+                for (int slot = 0; slot < getNumberOfCriticalSlots(m.getLocation()); slot++) {
                     CriticalSlot cs = getCritical(m.getLocation(), slot);
                     if ((cs != null)
                           && (cs.getType() == CriticalSlot.TYPE_EQUIPMENT)
@@ -134,7 +135,7 @@ public abstract class MekWithArms extends Mek {
     public boolean canBrace() {
         return getCrew().isActive() && !isShutDown() && !isProne()
               // needs to have at least one functional arm
-              && (!isLocationBad(Mek.LOC_RARM) || !isLocationBad(Mek.LOC_LARM));
+              && (!isLocationBad(Mek.LOC_RIGHT_ARM) || !isLocationBad(Mek.LOC_LEFT_ARM));
     }
 
     @Override
@@ -144,14 +145,14 @@ public abstract class MekWithArms extends Mek {
 
     @Override
     public List<Integer> getValidBraceLocations() {
-        List<Integer> validLocations = new ArrayList<>(List.of(Mek.LOC_RARM, Mek.LOC_LARM));
+        List<Integer> validLocations = new ArrayList<>(List.of(Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM));
         validLocations.removeIf(this::isLocationBad);
         return validLocations;
     }
 
     @Override
     public boolean hasFunctionalArmAES(int location) {
-        if ((location != Mek.LOC_RARM) && (location != Mek.LOC_LARM)) {
+        if ((location != Mek.LOC_RIGHT_ARM) && (location != Mek.LOC_LEFT_ARM)) {
             return false;
         }
 
@@ -186,7 +187,7 @@ public abstract class MekWithArms extends Mek {
 
     @Override
     public boolean hasVibroblades() {
-        return hasVibrobladesInLocation(Mek.LOC_RARM) || hasVibrobladesInLocation(Mek.LOC_LARM);
+        return hasVibrobladesInLocation(Mek.LOC_RIGHT_ARM) || hasVibrobladesInLocation(Mek.LOC_LEFT_ARM);
     }
 
     /**
@@ -197,11 +198,11 @@ public abstract class MekWithArms extends Mek {
      * @return boolean true if the Mek has a vibroblade in the location, false otherwise
      */
     public boolean hasVibrobladesInLocation(int location) {
-        if ((location != Mek.LOC_RARM) && (location != Mek.LOC_LARM)) {
+        if ((location != Mek.LOC_RIGHT_ARM) && (location != Mek.LOC_LEFT_ARM)) {
             return false;
         }
 
-        for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
+        for (int slot = 0; slot < getNumberOfCriticalSlots(location); slot++) {
             CriticalSlot cs = getCritical(location, slot);
             if ((cs == null) || (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)) {
                 continue;
@@ -226,11 +227,11 @@ public abstract class MekWithArms extends Mek {
 
     @Override
     public int getActiveVibrobladeHeat(int location, boolean ignoreMode) {
-        if ((location != Mek.LOC_RARM) && (location != Mek.LOC_LARM)) {
+        if ((location != Mek.LOC_RIGHT_ARM) && (location != Mek.LOC_LEFT_ARM)) {
             return 0;
         }
 
-        for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
+        for (int slot = 0; slot < getNumberOfCriticalSlots(location); slot++) {
             CriticalSlot cs = getCritical(location, slot);
             if ((cs == null) || (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)) {
                 continue;
@@ -264,11 +265,11 @@ public abstract class MekWithArms extends Mek {
         for (MiscMounted misc : getMisc()) {
             MiscType type = misc.getType();
             if (type.hasFlag(MiscType.F_CLUB) && (type.hasSubType(size))) {
-                // ok so we have a shield of certain size. no which arm is it.
-                if (misc.getLocation() == Mek.LOC_RARM) {
+                // ok so we have a shield of certain size. know which arm is it.
+                if (misc.getLocation() == Mek.LOC_RIGHT_ARM) {
                     raShield = 1;
                 }
-                if (misc.getLocation() == Mek.LOC_LARM) {
+                if (misc.getLocation() == Mek.LOC_LEFT_ARM) {
                     laShield = 1;
                 }
                 // break now.
@@ -282,7 +283,7 @@ public abstract class MekWithArms extends Mek {
 
     @Override
     public boolean hasActiveShield(int location) {
-        if ((location != Mek.LOC_RARM) && (location != Mek.LOC_LARM)) {
+        if ((location != Mek.LOC_RIGHT_ARM) && (location != Mek.LOC_LEFT_ARM)) {
             return false;
         }
 
@@ -290,7 +291,7 @@ public abstract class MekWithArms extends Mek {
             return false;
         }
 
-        for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
+        for (int slot = 0; slot < getNumberOfCriticalSlots(location); slot++) {
             CriticalSlot cs = getCritical(location, slot);
             if ((cs == null) || (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) || cs.isDamaged()) {
                 continue;
@@ -308,8 +309,8 @@ public abstract class MekWithArms extends Mek {
     @Override
     public boolean hasPassiveShield(int location, boolean rear) {
         return switch (location) {
-            case Mek.LOC_LARM, Mek.LOC_LT -> !rear && hasPassiveShield(Mek.LOC_LARM);
-            case Mek.LOC_RARM, Mek.LOC_RT -> !rear && hasPassiveShield(Mek.LOC_RARM);
+            case Mek.LOC_LEFT_ARM, Mek.LOC_LEFT_TORSO -> !rear && hasPassiveShield(Mek.LOC_LEFT_ARM);
+            case Mek.LOC_RIGHT_ARM, Mek.LOC_RIGHT_TORSO -> !rear && hasPassiveShield(Mek.LOC_RIGHT_ARM);
             default -> false;
         };
     }
@@ -320,11 +321,11 @@ public abstract class MekWithArms extends Mek {
             return false;
         }
 
-        if ((location != Mek.LOC_RARM) && (location != Mek.LOC_LARM)) {
+        if ((location != Mek.LOC_RIGHT_ARM) && (location != Mek.LOC_LEFT_ARM)) {
             return false;
         }
 
-        for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
+        for (int slot = 0; slot < getNumberOfCriticalSlots(location); slot++) {
             CriticalSlot cs = getCritical(location, slot);
 
             if (cs == null) {
@@ -351,11 +352,11 @@ public abstract class MekWithArms extends Mek {
     @Override
     public boolean hasNoDefenseShield(int location) {
 
-        if ((location != Mek.LOC_RARM) && (location != Mek.LOC_LARM)) {
+        if ((location != Mek.LOC_RIGHT_ARM) && (location != Mek.LOC_LEFT_ARM)) {
             return false;
         }
 
-        for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
+        for (int slot = 0; slot < getNumberOfCriticalSlots(location); slot++) {
             CriticalSlot cs = getCritical(location, slot);
 
             if (cs == null) {
@@ -387,8 +388,8 @@ public abstract class MekWithArms extends Mek {
 
     @Override
     public boolean canPickupGroundObject() {
-        return hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM) && (getCarriedObject(Mek.LOC_LARM) == null) ||
-              hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM) && (getCarriedObject(Mek.LOC_RARM) == null);
+        return hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM) && (getCarriedObject(Mek.LOC_LEFT_ARM) == null) ||
+              hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM) && (getCarriedObject(Mek.LOC_RIGHT_ARM) == null);
     }
 
     @Override
@@ -407,7 +408,7 @@ public abstract class MekWithArms extends Mek {
         }
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ATTEMPTING_STAND)) {
-            for (int loc : List.of(Mek.LOC_RARM, Mek.LOC_LARM)) {
+            for (int loc : List.of(Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM)) {
                 if (isLocationBad(loc)) {
                     roll.addModifier(2, getLocationName(loc) + " destroyed");
                 } else {
@@ -416,7 +417,7 @@ public abstract class MekWithArms extends Mek {
                     } else if (!hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, loc)) {
                         roll.addModifier(1, getLocationName(loc) + " lower Actuator missing/destroyed");
                     } else if (!hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, loc)) {
-                        roll.addModifier(1, getLocationName(loc) + " upper ctuator missing/destroyed");
+                        roll.addModifier(1, getLocationName(loc) + " upper Actuator missing/destroyed");
                     } else if (!hasWorkingSystem(Mek.ACTUATOR_SHOULDER, loc)) {
                         roll.addModifier(1, getLocationName(loc) + " shoulder Actuator missing/destroyed");
                     }

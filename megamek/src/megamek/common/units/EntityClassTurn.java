@@ -33,15 +33,18 @@
 
 package megamek.common.units;
 
-import megamek.common.game.Game;
-import megamek.common.game.GameTurn;
+import java.io.Serial;
+
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.GunEmplacement;
+import megamek.common.game.Game;
+import megamek.common.game.GameTurn;
 
 /**
  * A type of game turn that allows only certain types of units to move.
  */
 public class EntityClassTurn extends GameTurn {
+    @Serial
     private static final long serialVersionUID = 1305684619846966124L;
     private final int mask;
 
@@ -119,7 +122,7 @@ public class EntityClassTurn extends GameTurn {
     /**
      * Get the class code of this turn
      *
-     * @return the classcode of this turn
+     * @return the class code of this turn
      */
     public int getTurnCode() {
         return mask;

@@ -67,9 +67,9 @@ import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedXPanel;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
 import megamek.common.Configuration;
+import megamek.common.eras.Eras;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.UnitType;
-import megamek.common.eras.Eras;
 import megamek.logging.MMLogger;
 
 /**
@@ -1280,7 +1280,7 @@ public class RATGeneratorEditor extends JFrame {
         };
 
         private static final int[] WEIGHT_DIST_UNIT_TYPES = {
-              UnitType.MEK, UnitType.TANK, UnitType.AEROSPACEFIGHTER, UnitType.AERO
+              UnitType.MEK, UnitType.TANK, UnitType.AEROSPACE_FIGHTER, UnitType.AERO
         };
 
         private FactionRecord factionRec;

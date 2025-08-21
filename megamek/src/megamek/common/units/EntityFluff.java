@@ -34,6 +34,7 @@
 package megamek.common.units;
 
 import java.awt.Image;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.List;
@@ -50,22 +51,8 @@ import megamek.common.annotations.Nullable;
  * @author Neoancient
  */
 public class EntityFluff implements Serializable {
+    @Serial
     private static final long serialVersionUID = -8018098140016149185L;
-
-    public enum System {
-        CHASSIS, ENGINE, ARMOR, JUMPJET, COMMUNICATIONS, TARGETING;
-
-        public static @Nullable System parse(String string) {
-            if (null != string) {
-                for (final System c : values()) {
-                    if (c.toString().equals(string.toUpperCase())) {
-                        return c;
-                    }
-                }
-            }
-            return null;
-        }
-    }
 
     private String capabilities = "";
     private String overview = "";

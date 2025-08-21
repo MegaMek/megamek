@@ -115,7 +115,7 @@ public class SBFUnitConverter {
 
     private void calcUnitType() {
         int majorityCount = (int) Math.round(2.0 / 3 * elements.size());
-        List<SBFElementType> types = elements.stream().map(SBFElementType::getUnitType).collect(toList());
+        List<SBFElementType> types = elements.stream().map(SBFElementType::getUnitType).toList();
         Map<SBFElementType, Long> occurrenceCount = types.stream().collect(groupingBy(Function.identity(), counting()));
         long highestCount = occurrenceCount.values().stream().max(Long::compare).orElse(0L);
         SBFElementType highestType = types.stream()
@@ -276,7 +276,7 @@ public class SBFUnitConverter {
     }
 
     private void calcUnitSpecialAbilities() {
-        report.addLine("Special Abilites:", "");
+        report.addLine("Special Abilities:", "");
         addUnitSUAsIfAny(WAT, PRB, AECM, BHJ2, BHJ3, BH, BT, ECM, HPG, LPRB, LECM, TAG);
         addUnitSUAsIfHalf(AMS, ARM, ARS, BAR, BFC, CR, ENG, RBT, SRCH, SHLD);
         addUnitSUAsIfAll(AMP, AM, BHJ, XMEC, MCS, UCS, MEC, PAR, SAW, TRN);
@@ -423,8 +423,8 @@ public class SBFUnitConverter {
         }
     }
 
-    private void sumUnitSUAs(BattleForceSUA... suas) {
-        for (BattleForceSUA sua : suas) {
+    private void sumUnitSUAs(BattleForceSUA... SUAs) {
+        for (BattleForceSUA sua : SUAs) {
             List<String> summands = new ArrayList<>();
             double sum = 0;
             for (AlphaStrikeElement element : elements) {
@@ -458,8 +458,8 @@ public class SBFUnitConverter {
         }
     }
 
-    private void sumUnitArtillery(BattleForceSUA... suas) {
-        for (BattleForceSUA sua : suas) {
+    private void sumUnitArtillery(BattleForceSUA... SUAs) {
+        for (BattleForceSUA sua : SUAs) {
             int count = 0;
             List<String> summands = new ArrayList<>();
             for (AlphaStrikeElement element : elements) {
@@ -480,8 +480,8 @@ public class SBFUnitConverter {
         }
     }
 
-    private void sumUnitSUAsDivideBy3(BattleForceSUA... suas) {
-        for (BattleForceSUA sua : suas) {
+    private void sumUnitSUAsDivideBy3(BattleForceSUA... SUAs) {
+        for (BattleForceSUA sua : SUAs) {
             List<String> summands = new ArrayList<>();
             double suaValue = 0;
             for (AlphaStrikeElement element : elements) {

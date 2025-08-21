@@ -329,7 +329,7 @@ public class BattleArmor extends Infantry {
     private boolean clanExoWithoutHarjel = false;
 
     @Override
-    public String[] getLocationAbbrs() {
+    public String[] getLocationAbbreviations() {
         if (!isInitialized || isClan()) {
             return CLAN_LOCATION_ABBREVIATIONS;
         }
@@ -496,11 +496,13 @@ public class BattleArmor extends Infantry {
 
             if (conditions.getWeather().isGustingRain()
                   && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
-                  .equals(Crew.ENVSPC_RAIN)) {
+                  .equals(Crew.ENVIRONMENT_SPECIALIST_RAIN)) {
                 mp += 1;
             }
 
-            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
+            if (getCrew().getOptions()
+                  .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
+                  .equals(Crew.ENVIRONMENT_SPECIALIST_WIND)
                   && conditions.getWeather().isClear()
                   && conditions.getWind().isStrongGaleOrStorm()) {
                 mp += 1;
@@ -687,21 +689,21 @@ public class BattleArmor extends Infantry {
         if (transport instanceof Mek) {
             int loc = 99;
             switch (hit.getLocation()) {
-                case Mek.LOC_RT:
+                case Mek.LOC_RIGHT_TORSO:
                     if (hit.isRear()) {
                         loc = 3;
                     } else {
                         loc = 1;
                     }
                     break;
-                case Mek.LOC_LT:
+                case Mek.LOC_LEFT_TORSO:
                     if (hit.isRear()) {
                         loc = 4;
                     } else {
                         loc = 2;
                     }
                     break;
-                case Mek.LOC_CT:
+                case Mek.LOC_CENTER_TORSO:
                     if (hit.isRear()) {
                         loc = 5;
                     } else {
@@ -892,11 +894,11 @@ public class BattleArmor extends Infantry {
      * Trooper's equipment dies when they do.
      */
     @Override
-    public boolean hasHittableCriticals(int loc) {
+    public boolean hasHittableCriticalSlots(int loc) {
         if (LOC_SQUAD == loc) {
             return false;
         }
-        return super.hasHittableCriticals(loc);
+        return super.hasHittableCriticalSlots(loc);
     }
 
     /**
@@ -1385,7 +1387,7 @@ public class BattleArmor extends Infantry {
      * @see megamek.common.units.Entity#canTransferCriticals(int)
      */
     @Override
-    public boolean canTransferCriticals(int loc) {
+    public boolean canTransferCriticalSlots(int loc) {
         // BAs can never transfer crits
         return false;
     }

@@ -33,6 +33,8 @@
 
 package megamek.common.turns;
 
+import java.io.Serial;
+
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
 
@@ -41,8 +43,9 @@ import megamek.common.units.Entity;
  * infantry/BA.
  */
 public class TriggerBPodTurn extends SpecificEntityTurn {
+    @Serial
     private static final long serialVersionUID = -9082006433957145275L;
-    private String attackType;
+    private final String attackType;
 
     public TriggerBPodTurn(int playerId, int entityId, String attackType) {
         super(playerId, entityId);
@@ -58,10 +61,10 @@ public class TriggerBPodTurn extends SpecificEntityTurn {
      */
     @Override
     public boolean isValidEntity(Entity entity, Game game, boolean useValidNonInfantryCheck) {
-        final boolean oldDone = entity.done;
-        entity.done = false;
+        final boolean oldDone = entity.isDone();
+        entity.setDone(false);
         final boolean result = super.isValidEntity(entity, game, useValidNonInfantryCheck);
-        entity.done = oldDone;
+        entity.setDone(oldDone);
         return result;
     }
 }

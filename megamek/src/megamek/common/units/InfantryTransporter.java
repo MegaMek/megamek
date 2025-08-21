@@ -50,63 +50,6 @@ import megamek.common.equipment.Transporter;
 public interface InfantryTransporter extends Serializable {
 
     /**
-     * The amount of space taken up by an infantry unit in a transport bay differs from the space in an infantry
-     * compartment (used in APCs) due to quarters, equipment storage, and maintenance equipment. A single cubicle holds
-     * a platoon, except in the case of mechanized which requires a cubicle per squad.
-     */
-
-    public enum PlatoonType {
-        FOOT(5, 28, 25),
-        JUMP(6, 21, 20),
-        MOTORIZED(7, 28, 25),
-        MECHANIZED(8, 7, 5);
-
-        private int weight;
-        private int isPersonnel;
-        private int clanPersonnel;
-
-        PlatoonType(int weight, int isPersonnel, int clanPersonnel) {
-            this.weight = weight;
-            this.isPersonnel = isPersonnel;
-            this.clanPersonnel = clanPersonnel;
-        }
-
-        public int getWeight() {
-            return weight;
-        }
-
-        public int getISPersonnel() {
-            return isPersonnel;
-        }
-
-        public int getClanPersonnel() {
-            return clanPersonnel;
-        }
-
-        @Override
-        public String toString() {
-            return name().charAt(0) + name().substring(1).toLowerCase();
-        }
-
-        public static PlatoonType getPlatoonType(Entity en) {
-            switch (en.getMovementMode()) {
-                case TRACKED:
-                case WHEELED:
-                case HOVER:
-                case VTOL:
-                case SUBMARINE:
-                    return MECHANIZED;
-                case INF_MOTORIZED:
-                    return MOTORIZED;
-                case INF_JUMP:
-                    return JUMP;
-                default:
-                    return FOOT;
-            }
-        }
-    }
-
-    /**
      * These methods are required for Infantry unit loading/unloading. In practice, all are provided by Bay() or
      * overridden in transports that can carry infantry.
      */

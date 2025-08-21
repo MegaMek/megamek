@@ -203,7 +203,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         int clubLocation = club.getLocation();
         // tree clubs don't have a location--use right arm (is this okay?)
         if (clubLocation == Entity.LOC_NONE) {
-            clubLocation = Mek.LOC_RARM;
+            clubLocation = Mek.LOC_RIGHT_ARM;
         }
 
         if (entity.getLocationStatus(clubLocation) == ILocationExposureStatus.WET) {
@@ -314,7 +314,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
 
         // if somehow carrying cargo while holding a club
-        if (!ae.canFireWeapon(Mek.LOC_LARM) || !ae.canFireWeapon(Mek.LOC_LARM)) {
+        if (!ae.canFireWeapon(Mek.LOC_LEFT_ARM) || !ae.canFireWeapon(Mek.LOC_LEFT_ARM)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                   Messages.getString("WeaponAttackAction.CantFireWhileCarryingCargo"));
         }
@@ -341,13 +341,13 @@ public class ClubAttackAction extends PhysicalAttackAction {
 
         if ((ae.getGrappled() != Entity.NONE)
               && (ae.getGrappleSide() == Entity.GRAPPLE_LEFT)
-              && (club.getLocation() == Mek.LOC_LARM)) {
+              && (club.getLocation() == Mek.LOC_LEFT_ARM)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
         if ((ae.getGrappled() != Entity.NONE)
               && (ae.getGrappleSide() == Entity.GRAPPLE_RIGHT)
-              && (club.getLocation() == Mek.LOC_RARM)) {
+              && (club.getLocation() == Mek.LOC_RIGHT_ARM)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
@@ -362,12 +362,12 @@ public class ClubAttackAction extends PhysicalAttackAction {
               && club.getType().hasSubType(MiscType.S_CLUB))
               || zweihandering;
         // Cast is safe because non-'Meks never even get here.
-        final boolean hasClaws = ((Mek) ae).hasClaw(Mek.LOC_RARM)
-              || ((Mek) ae).hasClaw(Mek.LOC_LARM);
+        final boolean hasClaws = ((Mek) ae).hasClaw(Mek.LOC_RIGHT_ARM)
+              || ((Mek) ae).hasClaw(Mek.LOC_LEFT_ARM);
         final boolean shield = clubType.isShield();
         boolean needsHand = true;
-        final boolean armMounted = (club.getLocation() == Mek.LOC_LARM
-              || club.getLocation() == Mek.LOC_RARM);
+        final boolean armMounted = (club.getLocation() == Mek.LOC_LEFT_ARM
+              || club.getLocation() == Mek.LOC_RIGHT_ARM);
 
         if (hasClaws
               || (clubType.hasSubType(MiscType.S_BACKHOE))
@@ -390,25 +390,25 @@ public class ClubAttackAction extends PhysicalAttackAction {
 
         if (bothArms) {
             // check if both arms are present & operational
-            if (ae.isLocationBad(Mek.LOC_RARM)
-                  || ae.isLocationBad(Mek.LOC_LARM)) {
+            if (ae.isLocationBad(Mek.LOC_RIGHT_ARM)
+                  || ae.isLocationBad(Mek.LOC_LEFT_ARM)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
             }
             // check if attacker has fired arm-mounted weapons
-            if (ae.weaponFiredFrom(Mek.LOC_RARM)
-                  || ae.weaponFiredFrom(Mek.LOC_LARM)) {
+            if (ae.weaponFiredFrom(Mek.LOC_RIGHT_ARM)
+                  || ae.weaponFiredFrom(Mek.LOC_LEFT_ARM)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                       "Weapons fired from arm this turn");
             }
             // need shoulder and hand actuators
-            if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RARM)
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RIGHT_ARM)
                   || !ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER,
-                  Mek.LOC_LARM)) {
+                  Mek.LOC_LEFT_ARM)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                       "Shoulder actuator destroyed");
             }
-            if ((!ae.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM) || !ae
-                  .hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM))
+            if ((!ae.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM) || !ae
+                  .hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM))
                   && needsHand) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                       "Hand actuator destroyed");
@@ -451,7 +451,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
 
         // club must not be damaged
         if (!shield
-              && (ae.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT,
+              && (ae.getBadCriticalSlots(CriticalSlot.TYPE_EQUIPMENT,
               ae.getEquipmentNum(club), club.getLocation()) > 0)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Club is damaged");
         }
@@ -474,7 +474,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         if (bothArms) {
             clubArc = Compute.ARC_FORWARD;
         } else {
-            if (club.getLocation() == Mek.LOC_LARM) {
+            if (club.getLocation() == Mek.LOC_LEFT_ARM) {
                 clubArc = Compute.ARC_LEFT_ARM;
             } else if (armMounted) {
                 clubArc = Compute.ARC_RIGHT_ARM;
@@ -514,23 +514,23 @@ public class ClubAttackAction extends PhysicalAttackAction {
 
         // damaged or missing actuators
         if (bothArms) {
-            if (!ae.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_RARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_RIGHT_ARM)) {
                 toHit.addModifier(2, "Upper arm actuator destroyed");
             }
-            if (!ae.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_LARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_LEFT_ARM)) {
                 toHit.addModifier(2, "Upper arm actuator destroyed");
             }
-            if (!ae.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RIGHT_ARM)) {
                 toHit.addModifier(2, "Lower arm actuator missing or destroyed");
             }
-            if (!ae.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LEFT_ARM)) {
                 toHit.addModifier(2, "Lower arm actuator missing or destroyed");
             }
             if (hasClaws) {
                 toHit.addModifier(2, "Mek has claws");
             }
-            if (ae.hasFunctionalArmAES(Mek.LOC_RARM)
-                  && ae.hasFunctionalArmAES(Mek.LOC_LARM)) {
+            if (ae.hasFunctionalArmAES(Mek.LOC_RIGHT_ARM)
+                  && ae.hasFunctionalArmAES(Mek.LOC_LEFT_ARM)) {
                 toHit.addModifier(-1, "AES modifier");
             }
         } else {

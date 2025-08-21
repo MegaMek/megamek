@@ -1187,7 +1187,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                           .orElse(null);
                 }
                 case Targetable.TYPE_MINEFIELD_CLEAR -> new MinefieldTarget(MinefieldTarget.idToCoords(targetId));
-                case Targetable.TYPE_INARC_POD -> INarcPod.idToInstance(targetId);
+                case Targetable.TYPE_I_NARC_POD -> INarcPod.idToInstance(targetId);
                 default -> null;
             };
         } catch (Exception e) {

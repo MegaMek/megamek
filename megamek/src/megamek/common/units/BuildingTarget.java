@@ -1,7 +1,6 @@
 /*
-
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,15 +38,15 @@ import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
-import megamek.common.board.Board;
-import megamek.common.board.BoardLocation;
-import megamek.common.board.Coords;
-import megamek.common.game.Game;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.Messages;
 import megamek.common.Player;
 import megamek.common.ToHitData;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.game.Game;
 
 /**
  * This class represents a single, targetable hex of a building. The building itself may occupy multiple hexes.
@@ -94,7 +93,7 @@ public class BuildingTarget implements Targetable {
     /**
      * Initialize this object from the input.
      *
-     * @param coords - the <code>Coords</code> of the hext being targeted.
+     * @param coords - the <code>Coords</code> of the hex being targeted.
      * @param board  - the game's <code>Board</code> object.
      * @param nType  the target type
      *
@@ -139,7 +138,7 @@ public class BuildingTarget implements Targetable {
     /**
      * Target a single hex of a building.
      *
-     * @param coords - the <code>Coords</code> of the hext being targeted.
+     * @param coords - the <code>Coords</code> of the hex being targeted.
      * @param board  - the game's <code>Board</code> object.
      * @param nType  - an <code>int</code> value that indicates whether the player is attempting to set the building on
      *               fire, or not.
@@ -157,7 +156,7 @@ public class BuildingTarget implements Targetable {
     /**
      * Target a single hex of a building.
      *
-     * @param coords - the <code>Coords</code> of the hext being targeted.
+     * @param coords - the <code>Coords</code> of the hex being targeted.
      * @param board  - the game's <code>Board</code> object.
      * @param ignite - a <code>boolean</code> flag that indicates whether the player is attempting to set the building
      *               on fire, or not.

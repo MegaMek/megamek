@@ -2052,22 +2052,22 @@ public class Compute {
             // we have one or two dead legs...
 
             // Need an intact front leg
-            if (attacker.isLocationBad(Mek.LOC_RARM) && attacker.isLocationBad(Mek.LOC_LARM)) {
+            if (attacker.isLocationBad(Mek.LOC_RIGHT_ARM) && attacker.isLocationBad(Mek.LOC_LEFT_ARM)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone with both front legs destroyed.");
             }
 
             // front leg-mounted weapons have additional trouble
-            if ((weapon.getLocation() == Mek.LOC_RARM) || (weapon.getSecondLocation() == Mek.LOC_RARM)
-                  || (weapon.getLocation() == Mek.LOC_LARM || (weapon.getSecondLocation() == Mek.LOC_LARM))) {
-                int otherArm = (weapon.getLocation() == Mek.LOC_RARM
-                      || weapon.getSecondLocation() == Mek.LOC_RARM) ? Mek.LOC_LARM : Mek.LOC_RARM;
+            if ((weapon.getLocation() == Mek.LOC_RIGHT_ARM) || (weapon.getSecondLocation() == Mek.LOC_RIGHT_ARM)
+                  || (weapon.getLocation() == Mek.LOC_LEFT_ARM || (weapon.getSecondLocation() == Mek.LOC_LEFT_ARM))) {
+                int otherArm = (weapon.getLocation() == Mek.LOC_RIGHT_ARM
+                      || weapon.getSecondLocation() == Mek.LOC_RIGHT_ARM) ? Mek.LOC_LEFT_ARM : Mek.LOC_RIGHT_ARM;
                 // check previous attacks for weapons fire from the other arm
                 if (Compute.isFiringFromArmAlready(game, weaponId, attacker, otherArm)) {
                     return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone and firing from other front leg already.");
                 }
             }
             // can't fire rear leg weapons
-            if ((weapon.getLocation() == Mek.LOC_LLEG) || (weapon.getLocation() == Mek.LOC_RLEG)) {
+            if ((weapon.getLocation() == Mek.LOC_LEFT_LEG) || (weapon.getLocation() == Mek.LOC_RIGHT_LEG)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                       "Can't fire rear leg-mounted weapons while prone with destroyed legs.");
             }
@@ -2079,14 +2079,14 @@ public class Compute {
         } else {
             int l3ProneFiringArm = Entity.LOC_NONE;
 
-            if (attacker.isLocationBad(Mek.LOC_RARM) || attacker.isLocationBad(Mek.LOC_LARM)) {
+            if (attacker.isLocationBad(Mek.LOC_RIGHT_ARM) || attacker.isLocationBad(Mek.LOC_LEFT_ARM)) {
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PRONE_FIRE)) {
                     // Can fire with only one arm
-                    if (attacker.isLocationBad(Mek.LOC_RARM) && attacker.isLocationBad(Mek.LOC_LARM)) {
+                    if (attacker.isLocationBad(Mek.LOC_RIGHT_ARM) && attacker.isLocationBad(Mek.LOC_LEFT_ARM)) {
                         return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone with both arms destroyed.");
                     }
 
-                    l3ProneFiringArm = attacker.isLocationBad(Mek.LOC_RARM) ? Mek.LOC_LARM : Mek.LOC_RARM;
+                    l3ProneFiringArm = attacker.isLocationBad(Mek.LOC_RIGHT_ARM) ? Mek.LOC_LEFT_ARM : Mek.LOC_RIGHT_ARM;
                 } else {
                     // must have an arm intact
                     return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone with one or both arms destroyed.");
@@ -2094,22 +2094,22 @@ public class Compute {
             }
 
             // arm-mounted weapons have additional trouble
-            if ((weapon.getLocation() == Mek.LOC_RARM) || (weapon.getSecondLocation() == Mek.LOC_RARM)
-                  || (weapon.getLocation() == Mek.LOC_LARM) || (weapon.getSecondLocation() == Mek.LOC_LARM)) {
+            if ((weapon.getLocation() == Mek.LOC_RIGHT_ARM) || (weapon.getSecondLocation() == Mek.LOC_RIGHT_ARM)
+                  || (weapon.getLocation() == Mek.LOC_LEFT_ARM) || (weapon.getSecondLocation() == Mek.LOC_LEFT_ARM)) {
                 if (l3ProneFiringArm == weapon.getLocation() || (weapon.getSecondLocation() != Entity.NONE
                       && l3ProneFiringArm == weapon.getSecondLocation())) {
                     return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone and propping up with this arm.");
                 }
 
-                int otherArm = (weapon.getLocation() == Mek.LOC_RARM
-                      || weapon.getSecondLocation() == Mek.LOC_RARM) ? Mek.LOC_LARM : Mek.LOC_RARM;
+                int otherArm = (weapon.getLocation() == Mek.LOC_RIGHT_ARM
+                      || weapon.getSecondLocation() == Mek.LOC_RIGHT_ARM) ? Mek.LOC_LEFT_ARM : Mek.LOC_RIGHT_ARM;
                 // check previous attacks for weapons fire from the other arm
                 if (Compute.isFiringFromArmAlready(game, weaponId, attacker, otherArm)) {
                     return new ToHitData(TargetRoll.IMPOSSIBLE, "Prone and firing from other arm already.");
                 }
             }
             // can't fire leg weapons
-            if ((weapon.getLocation() == Mek.LOC_LLEG) || (weapon.getLocation() == Mek.LOC_RLEG)) {
+            if ((weapon.getLocation() == Mek.LOC_LEFT_LEG) || (weapon.getLocation() == Mek.LOC_RIGHT_LEG)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Can't fire leg-mounted weapons while prone.");
             }
             if (((Mek) attacker).getCockpitType() == Mek.COCKPIT_DUAL && attacker.getCrew().hasDedicatedGunner()) {
@@ -2168,17 +2168,17 @@ public class Compute {
 
             // Arm mounted (and main gun) weapons get DRMs from arm crits.
             switch (weapon.getLocation()) {
-                case ProtoMek.LOC_LARM:
-                case ProtoMek.LOC_RARM:
+                case ProtoMek.LOC_LEFT_ARM:
+                case ProtoMek.LOC_RIGHT_ARM:
                     hits = attackingProtoMek.getCritsHit(weapon.getLocation());
                     if (hits > 0) {
                         mods.addModifier(hits, hits + " arm critical(s)");
                     }
                     break;
-                case ProtoMek.LOC_MAINGUN:
+                case ProtoMek.LOC_MAIN_GUN:
                     // Main gun is affected by crits in *both* arms.
-                    hits = attackingProtoMek.getCritsHit(ProtoMek.LOC_LARM);
-                    hits += attackingProtoMek.getCritsHit(ProtoMek.LOC_RARM);
+                    hits = attackingProtoMek.getCritsHit(ProtoMek.LOC_LEFT_ARM);
+                    hits += attackingProtoMek.getCritsHit(ProtoMek.LOC_RIGHT_ARM);
                     if (4 == hits) {
                         mods.addModifier(TargetRoll.IMPOSSIBLE,
                               "Cannot fire main gun with no arms.");
@@ -2201,27 +2201,28 @@ public class Compute {
             int location = weapon.getLocation();
             if (weapon.isSplit()) {
                 switch (location) {
-                    case Mek.LOC_LT:
-                        location = Mek.LOC_LARM;
+                    case Mek.LOC_LEFT_TORSO:
+                        location = Mek.LOC_LEFT_ARM;
                         break;
-                    case Mek.LOC_RT:
-                        location = Mek.LOC_RARM;
+                    case Mek.LOC_RIGHT_TORSO:
+                        location = Mek.LOC_RIGHT_ARM;
                         break;
                     default:
                 }
             }
 
             // only arms can have damaged arm actuators
-            if ((location == Mek.LOC_LARM || location == Mek.LOC_RARM) && (attacker.braceLocation() != location)) {
-                if (attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_SHOULDER, location) > 0) {
+            if ((location == Mek.LOC_LEFT_ARM || location == Mek.LOC_RIGHT_ARM) && (attacker.braceLocation()
+                  != location)) {
+                if (attacker.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_SHOULDER, location) > 0) {
                     mods.addModifier(4, "shoulder actuator destroyed");
                 } else {
                     // no shoulder hits, add other arm hits
                     int actuatorHits = 0;
-                    if (attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_ARM, location) > 0) {
+                    if (attacker.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_ARM, location) > 0) {
                         actuatorHits++;
                     }
-                    if (attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM, location) > 0) {
+                    if (attacker.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM, location) > 0) {
                         actuatorHits++;
                     }
                     if (actuatorHits > 0) {
@@ -2232,9 +2233,11 @@ public class Compute {
         }
 
         // sensors critical hit to attacker
-        int sensorHits = attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
+        int sensorHits = attacker.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
         if ((attacker instanceof Mek attackerMek) && (attackerMek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED)) {
-            sensorHits += attackerMek.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_CT);
+            sensorHits += attackerMek.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM,
+                  Mek.SYSTEM_SENSORS,
+                  Mek.LOC_CENTER_TORSO);
             if (sensorHits > 1) {
                 mods.addModifier(4, "attacker sensors badly damaged");
             } else if (sensorHits > 0) {
@@ -2515,7 +2518,10 @@ public class Compute {
           final ToHitData toHit, final Game game) {
         Objects.requireNonNull(attacker);
 
-        if (attacker.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_LIGHT)
+        if (attacker.getCrew()
+              .getOptions()
+              .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
+              .equals(Crew.ENVIRONMENT_SPECIALIST_LIGHT)
               && !target.isIlluminated()
               && game.getPlanetaryConditions().getLight().isMoonlessOrSolarFlareOrPitchBack()) {
             toHit.addModifier(-1, "light specialist");

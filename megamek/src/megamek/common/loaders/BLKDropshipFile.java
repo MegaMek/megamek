@@ -194,8 +194,8 @@ public class BLKDropshipFile extends BLKFile implements IMekLoader {
         }
 
         a.initializeArmor(armor[BLKAeroSpaceFighterFile.NOSE], Dropship.LOC_NOSE);
-        a.initializeArmor(armor[BLKAeroSpaceFighterFile.RW], Dropship.LOC_RWING);
-        a.initializeArmor(armor[BLKAeroSpaceFighterFile.LW], Dropship.LOC_LWING);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.RW], Dropship.LOC_RIGHT_WING);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.LW], Dropship.LOC_LEFT_WING);
         a.initializeArmor(armor[BLKAeroSpaceFighterFile.AFT], Dropship.LOC_AFT);
         a.initializeArmor(IArmorState.ARMOR_NA, Dropship.LOC_HULL);
 

@@ -259,7 +259,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         // The amount is based upon the building's CF at the phase's start.
         int bldgAbsorbs = 0;
         if (targetInBuilding && (bldg != null)) {
-            bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
+            bldgAbsorbs = bldg.getAbsorption(target.getPosition());
         }
         if ((bldg != null) && (bldgAbsorbs > 0)) {
             // building absorbs some damage
@@ -317,7 +317,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         int hexDamage = targetingHex ? wtype.getRackSize() : ratedDamage * 2;
 
         bldg = game.getBoard().getBuildingAt(coords);
-        bldgAbsorbs = (bldg != null) ? bldg.getAbsorbtion(coords) : 0;
+        bldgAbsorbs = (bldg != null) ? bldg.getAbsorption(coords) : 0;
         bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
         handleClearDamage(vPhaseReport, bldg, hexDamage, false);
         ratedDamage -= bldgAbsorbs;

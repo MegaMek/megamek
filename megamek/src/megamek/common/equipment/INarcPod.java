@@ -134,7 +134,7 @@ public record INarcPod(int team, int type, int location) implements Serializable
 
     @Override
     public int getTargetType() {
-        return Targetable.TYPE_INARC_POD;
+        return Targetable.TYPE_I_NARC_POD;
     }
 
     @Override

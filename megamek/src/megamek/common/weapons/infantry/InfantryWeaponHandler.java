@@ -36,7 +36,8 @@ package megamek.common.weapons.infantry;
 
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
@@ -134,7 +135,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
             InfantryMount mount = ((Infantry) ae).getMount();
             if (mount != null) {
                 if (!target.isConventionalInfantry()) {
-                    damageDealt += mount.getVehicleDamage();
+                    damageDealt += mount.vehicleDamage();
                 } else if (mount.getBurstDamageDice() > 0) {
                     damageDealt += Compute.d6(mount.getBurstDamageDice());
                 }

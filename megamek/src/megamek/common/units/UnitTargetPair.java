@@ -35,31 +35,15 @@ package megamek.common.units;
 
 import java.util.Objects;
 
-import megamek.common.game.InGameObject;
 import megamek.common.annotations.Nullable;
+import megamek.common.game.InGameObject;
 
 /**
  * This class is a record of pair of a (InGameObject) unit and a (Targetable) target. Note that two such pairs are equal
  * when their contents count as equal which is when the IDs of unit and target are equal. This object itself is
  * immutable although the underlying objects are not.
  */
-public final class UnitTargetPair {
-
-    private final InGameObject unit;
-    private final Targetable target;
-
-    public UnitTargetPair(InGameObject unit, Targetable target) {
-        this.unit = unit;
-        this.target = target;
-    }
-
-    public InGameObject getUnit() {
-        return unit;
-    }
-
-    public Targetable getTarget() {
-        return target;
-    }
+public record UnitTargetPair(InGameObject unit, Targetable target) {
 
     @Override
     public boolean equals(@Nullable Object o) {
@@ -73,8 +57,4 @@ public final class UnitTargetPair {
         }
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(unit, target);
-    }
 }

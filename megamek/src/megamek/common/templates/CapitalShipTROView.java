@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,11 +39,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import megamek.common.Messages;
+import megamek.common.equipment.Mounted;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.Jumpship;
-import megamek.common.Messages;
-import megamek.common.equipment.Mounted;
 import megamek.common.units.Warship;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAdvancedAerospace;
@@ -152,26 +152,17 @@ public class CapitalShipTROView extends AeroTROView {
 
     @Override
     protected String getArcAbbr(Mounted<?> m) {
-        switch (m.getLocation()) {
-            case Aero.LOC_NOSE:
-                return ARCS[0][0];
-            case Jumpship.LOC_FRS:
-                return ARCS[1][0];
-            case Jumpship.LOC_FLS:
-                return ARCS[1][1];
-            case Jumpship.LOC_ARS:
-                return ARCS[3][0];
-            case Jumpship.LOC_ALS:
-                return ARCS[3][1];
-            case Aero.LOC_AFT:
-                return ARCS[4][0];
-            case Warship.LOC_RBS:
-                return ARCS[2][0];
-            case Warship.LOC_LBS:
-                return ARCS[2][1];
-            default:
-                return super.getArcAbbr(m);
-        }
+        return switch (m.getLocation()) {
+            case Aero.LOC_NOSE -> ARCS[0][0];
+            case Jumpship.LOC_FRS -> ARCS[1][0];
+            case Jumpship.LOC_FLS -> ARCS[1][1];
+            case Jumpship.LOC_ARS -> ARCS[3][0];
+            case Jumpship.LOC_ALS -> ARCS[3][1];
+            case Aero.LOC_AFT -> ARCS[4][0];
+            case Warship.LOC_RBS -> ARCS[2][0];
+            case Warship.LOC_LBS -> ARCS[2][1];
+            default -> super.getArcAbbr(m);
+        };
     }
 
     private void addArmor() {

@@ -288,7 +288,7 @@ public interface BTObject {
 
     /**
      * Returns true when this object has the distinction between aerodyne and spheroid, i.e. if it is a DropShip or
-     * SmallCraft and it is spheroid, false for any other type of object. Returns false for any type of unit group and
+     * SmallCraft, and it is spheroid, false for any other type of object. Returns false for any type of unit group and
      * for any unit that does not have the distinction.
      *
      * @return True when this is object is spheroid

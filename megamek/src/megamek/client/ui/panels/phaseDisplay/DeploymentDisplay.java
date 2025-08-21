@@ -250,7 +250,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-        if (entity.isWeapOrderChanged()) {
+        if (entity.isWeaponOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(entity);
         }
 
@@ -423,7 +423,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
               elevationOrAltitude, entity.getLoadedUnits(), assaultDropPreference);
         entity.setDeployed(true);
 
-        if (entity.isWeapOrderChanged()) {
+        if (entity.isWeaponOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(entity);
         }
         endMyTurn();

@@ -42,7 +42,9 @@ import megamek.common.Messages;
 /**
  * Stats for beast mounted infantry units. See TO:AU&amp;E, p. 106
  */
-public class InfantryMount implements Serializable {
+public record InfantryMount(String name, BeastSize size, double weight, int movementPoints,
+      EntityMovementMode movementMode, int burstDamage, int vehicleDamage, double damageDivisor, int maxWaterDepth,
+      int secondaryGroundMP, int uwEndurance, boolean custom) implements Serializable {
     public enum BeastSize {
         LARGE(1, 21, 0, 0, true, true, 0, 0, "BeastSize.large"),
         VERY_LARGE(2, 7, -1, 2, true, false, 1, 1, "BeastSize.very_large"),
@@ -55,7 +57,7 @@ public class InfantryMount implements Serializable {
         public final int troopsPerCreature;
         /** Maximum number of creatures allowed in a single platoon */
         public final int creaturesPerPlatoon;
-        /** Modifer to attack rolls against the beast-mounted infantry due to size */
+        /** Modifier to attack rolls against the beast-mounted infantry due to size */
         public final int toHitMod;
         /**
          * Maximum number of support weapons allowed per creature. Divide weapon crew needs by 2, rounding up
@@ -98,37 +100,6 @@ public class InfantryMount implements Serializable {
         }
     }
 
-    private final String name;
-    private final BeastSize size;
-    private final double weight;
-    private final int movementPoints;
-    private final EntityMovementMode movementMode;
-    private final int burstDamage;
-    private final int vehicleDamage;
-    private final double damageDivisor;
-    private final int maxWaterDepth;
-    private final int secondaryGroundMP;
-    private final int uwEndurance;
-    private final boolean custom;
-
-    private InfantryMount(String name, BeastSize size, double weight, int movementPoints,
-          EntityMovementMode movementMode, int burstDamage,
-          int vehicleDamage, double damageDivisor, int maxWaterDepth,
-          int secondaryGroundMP, int uwEndurance, boolean custom) {
-        this.name = name;
-        this.size = size;
-        this.weight = weight;
-        this.movementPoints = movementPoints;
-        this.movementMode = movementMode;
-        this.burstDamage = burstDamage;
-        this.vehicleDamage = vehicleDamage;
-        this.damageDivisor = damageDivisor;
-        this.maxWaterDepth = maxWaterDepth;
-        this.secondaryGroundMP = secondaryGroundMP;
-        this.uwEndurance = uwEndurance;
-        this.custom = custom;
-    }
-
     public InfantryMount(String name, BeastSize size, double weight, int movementPoints,
           EntityMovementMode movementMode, int burstDamage,
           int vehicleDamage, double damageDivisor, int maxWaterDepth,
@@ -140,21 +111,24 @@ public class InfantryMount implements Serializable {
     /**
      * @return The name of the beast.
      */
-    public String getName() {
+    @Override
+    public String name() {
         return name;
     }
 
     /**
      * @return The size class of the beast.
      */
-    public BeastSize getSize() {
+    @Override
+    public BeastSize size() {
         return size;
     }
 
     /**
      * @return The weight of each beast in tons. Add 2t per trooper to get total weight.
      */
-    public double getWeight() {
+    @Override
+    public double weight() {
         return weight;
     }
 
@@ -168,7 +142,8 @@ public class InfantryMount implements Serializable {
     /**
      * @return The primary movement mode.
      */
-    public EntityMovementMode getMovementMode() {
+    @Override
+    public EntityMovementMode movementMode() {
         return movementMode;
     }
 
@@ -180,30 +155,34 @@ public class InfantryMount implements Serializable {
     }
 
     /**
-     * @return The amount of additonal damage done to units other than conventional infantry in the same hex.
+     * @return The amount of additional damage done to units other than conventional infantry in the same hex.
      */
-    public int getVehicleDamage() {
+    @Override
+    public int vehicleDamage() {
         return vehicleDamage;
     }
 
     /**
      * @return The number used to divide any damage received in combat.
      */
-    public double getDamageDivisor() {
+    @Override
+    public double damageDivisor() {
         return damageDivisor;
     }
 
     /**
      * @return The maximum depth of water the unit may enter.
      */
-    public int getMaxWaterDepth() {
+    @Override
+    public int maxWaterDepth() {
         return maxWaterDepth;
     }
 
     /**
      * @return For units with a primary movement mode other than ground, this is the number of ground MP available.
      */
-    public int getSecondaryGroundMP() {
+    @Override
+    public int secondaryGroundMP() {
         return secondaryGroundMP;
     }
 

@@ -171,19 +171,19 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
 
         mek.initializeArmor(armor[BLKMekFile.HD], Mek.LOC_HEAD);
 
-        mek.initializeArmor(armor[BLKMekFile.LA], Mek.LOC_LARM);
-        mek.initializeArmor(armor[BLKMekFile.RA], Mek.LOC_RARM);
-        mek.initializeArmor(armor[BLKMekFile.LL], Mek.LOC_LLEG);
-        mek.initializeArmor(armor[BLKMekFile.RL], Mek.LOC_RLEG);
+        mek.initializeArmor(armor[BLKMekFile.LA], Mek.LOC_LEFT_ARM);
+        mek.initializeArmor(armor[BLKMekFile.RA], Mek.LOC_RIGHT_ARM);
+        mek.initializeArmor(armor[BLKMekFile.LL], Mek.LOC_LEFT_LEG);
+        mek.initializeArmor(armor[BLKMekFile.RL], Mek.LOC_RIGHT_LEG);
 
-        mek.initializeArmor(armor[BLKMekFile.CF], Mek.LOC_CT);
-        mek.initializeArmor(armor[BLKMekFile.LF], Mek.LOC_LT);
-        mek.initializeArmor(armor[BLKMekFile.RF], Mek.LOC_RT);
+        mek.initializeArmor(armor[BLKMekFile.CF], Mek.LOC_CENTER_TORSO);
+        mek.initializeArmor(armor[BLKMekFile.LF], Mek.LOC_LEFT_TORSO);
+        mek.initializeArmor(armor[BLKMekFile.RF], Mek.LOC_RIGHT_TORSO);
 
         // changed...
-        mek.initializeRearArmor(armor[BLKMekFile.CB], Mek.LOC_CT);
-        mek.initializeRearArmor(armor[BLKMekFile.LB], Mek.LOC_LT);
-        mek.initializeRearArmor(armor[BLKMekFile.RB], Mek.LOC_RT);
+        mek.initializeRearArmor(armor[BLKMekFile.CB], Mek.LOC_CENTER_TORSO);
+        mek.initializeRearArmor(armor[BLKMekFile.LB], Mek.LOC_LEFT_TORSO);
+        mek.initializeRearArmor(armor[BLKMekFile.RB], Mek.LOC_RIGHT_TORSO);
 
         mek.recalculateTechAdvancement();
 
@@ -201,33 +201,35 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
 
         // no lower right arm
         if (!dataFile.getDataAsString("ra criticalSlots")[2].trim().equalsIgnoreCase("Lower Arm Actuator")) {
-            mek.removeCriticals(Mek.LOC_RARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM));
+            mek.removeCriticalSlots(Mek.LOC_RIGHT_ARM,
+                  new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM));
         }
         // no right hand
         if (!dataFile.getDataAsString("ra criticalSlots")[3].trim().equalsIgnoreCase("Hand Actuator")) {
-            mek.removeCriticals(Mek.LOC_RARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND));
+            mek.removeCriticalSlots(Mek.LOC_RIGHT_ARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND));
         }
 
         // no lower left arm
         if (!dataFile.getDataAsString("la criticalSlots")[2].trim().equalsIgnoreCase("Lower Arm Actuator")) {
-            mek.removeCriticals(Mek.LOC_LARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM));
+            mek.removeCriticalSlots(Mek.LOC_LEFT_ARM,
+                  new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM));
         }
         // no left hand
         if (!dataFile.getDataAsString("la criticalSlots")[3].trim().equalsIgnoreCase("Hand Actuator")) {
-            mek.removeCriticals(Mek.LOC_LARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND));
+            mek.removeCriticalSlots(Mek.LOC_LEFT_ARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND));
         }
 
         // load equipment stuff...
         List<String>[] criticalSlots = new Vector[8];
 
         criticalSlots[Mek.LOC_HEAD] = dataFile.getDataAsVector("hd criticalSlots");
-        criticalSlots[Mek.LOC_LARM] = dataFile.getDataAsVector("la criticalSlots");
-        criticalSlots[Mek.LOC_RARM] = dataFile.getDataAsVector("ra criticalSlots");
-        criticalSlots[Mek.LOC_LLEG] = dataFile.getDataAsVector("ll criticalSlots");
-        criticalSlots[Mek.LOC_RLEG] = dataFile.getDataAsVector("rl criticalSlots");
-        criticalSlots[Mek.LOC_LT] = dataFile.getDataAsVector("lt criticalSlots");
-        criticalSlots[Mek.LOC_RT] = dataFile.getDataAsVector("rt criticalSlots");
-        criticalSlots[Mek.LOC_CT] = dataFile.getDataAsVector("ct criticalSlots");
+        criticalSlots[Mek.LOC_LEFT_ARM] = dataFile.getDataAsVector("la criticalSlots");
+        criticalSlots[Mek.LOC_RIGHT_ARM] = dataFile.getDataAsVector("ra criticalSlots");
+        criticalSlots[Mek.LOC_LEFT_LEG] = dataFile.getDataAsVector("ll criticalSlots");
+        criticalSlots[Mek.LOC_RIGHT_LEG] = dataFile.getDataAsVector("rl criticalSlots");
+        criticalSlots[Mek.LOC_LEFT_TORSO] = dataFile.getDataAsVector("lt criticalSlots");
+        criticalSlots[Mek.LOC_RIGHT_TORSO] = dataFile.getDataAsVector("rt criticalSlots");
+        criticalSlots[Mek.LOC_CENTER_TORSO] = dataFile.getDataAsVector("ct criticalSlots");
 
         // prefix is "Clan " or "IS "
         String prefix;

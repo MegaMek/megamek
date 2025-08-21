@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2009-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -297,7 +297,7 @@ public enum EntityMovementMode {
         }
 
         MMLogger.create(EntityMovementMode.class)
-              .error("Unable to parse " + text + " into an EntityMovementMode. Returning NONE.");
+              .error("Unable to parse {} into an EntityMovementMode. Returning NONE.", text);
 
         return NONE;
     }

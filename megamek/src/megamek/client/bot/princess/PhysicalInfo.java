@@ -241,7 +241,7 @@ public class PhysicalInfo {
         // now guess how many critical hits will be done
         for (int i = 0; i <= 7; i++) {
             int hitLoc = i;
-            while (targetMek.isLocationBad(hitLoc) && (hitLoc != Mek.LOC_CT)
+            while (targetMek.isLocationBad(hitLoc) && (hitLoc != Mek.LOC_CENTER_TORSO)
                   // Need to account for still-active 'Meks with destroyed
                   // heads so as not to spin into an endless loop.
                   && (hitLoc != Mek.LOC_HEAD)) {
@@ -268,7 +268,7 @@ public class PhysicalInfo {
             // If the location could be destroyed outright...
             if (getExpectedDamageOnHit() > ((targetArmor + targetInternals))) {
                 setExpectedCriticals(getExpectedCriticals() + hitLocationProbability * getProbabilityToHit());
-                if ((hitLoc == Mek.LOC_HEAD) || (hitLoc == Mek.LOC_CT)) {
+                if ((hitLoc == Mek.LOC_HEAD) || (hitLoc == Mek.LOC_CENTER_TORSO)) {
                     setKillProbability(getKillProbability() + hitLocationProbability * getProbabilityToHit());
                 }
 

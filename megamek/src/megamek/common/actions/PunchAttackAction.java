@@ -143,11 +143,11 @@ public class PunchAttackAction extends PhysicalAttackAction {
         final int targetElevation = target.getElevation()
               + targHex.getLevel(); // The absolute level of the target's base
         final int targetHeight = targetElevation + target.getHeight(); // The absolute level of the target's top
-        final int armLoc = (arm == PunchAttackAction.RIGHT) ? Mek.LOC_RARM
-              : Mek.LOC_LARM;
+        final int armLoc = (arm == PunchAttackAction.RIGHT) ? Mek.LOC_RIGHT_ARM
+              : Mek.LOC_LEFT_ARM;
         if (((ae.getGrappled() != Entity.NONE)
-              && (((ae.getGrappleSide() == Entity.GRAPPLE_LEFT) && (arm == Mek.LOC_LARM))))
-              || ((ae.getGrappleSide() == Entity.GRAPPLE_RIGHT) && (arm == Mek.LOC_RARM))) {
+              && (((ae.getGrappleSide() == Entity.GRAPPLE_LEFT) && (arm == Mek.LOC_LEFT_ARM))))
+              || ((ae.getGrappleSide() == Entity.GRAPPLE_RIGHT) && (arm == Mek.LOC_RIGHT_ARM))) {
             return "grappled with punching arm";
         }
         if ((ae instanceof Mek) && ((Mek) ae).hasExtendedRetractableBlade()) {
@@ -252,8 +252,8 @@ public class PunchAttackAction extends PhysicalAttackAction {
         if (ae.isProne()) {
             // The Mek must have both arms, the target must
             // be a tank, and both must be in the same hex.
-            if (!ae.isLocationBad(Mek.LOC_RARM)
-                  && !ae.isLocationBad(Mek.LOC_LARM)
+            if (!ae.isLocationBad(Mek.LOC_RIGHT_ARM)
+                  && !ae.isLocationBad(Mek.LOC_LEFT_ARM)
                   && (target instanceof Tank)
                   && (ae.getPosition().distance(target.getPosition()) == 0)) {
                 toHit.addModifier(2, "attacker is prone");
@@ -276,9 +276,9 @@ public class PunchAttackAction extends PhysicalAttackAction {
                   "Targeting adjacent building.");
         }
 
-        final int armLoc = (arm == PunchAttackAction.RIGHT) ? Mek.LOC_RARM
-              : Mek.LOC_LARM;
-        final int otherArm = armLoc == Mek.LOC_RARM ? Mek.LOC_LARM : Mek.LOC_RARM;
+        final int armLoc = (arm == PunchAttackAction.RIGHT) ? Mek.LOC_RIGHT_ARM
+              : Mek.LOC_LEFT_ARM;
+        final int otherArm = armLoc == Mek.LOC_RIGHT_ARM ? Mek.LOC_LEFT_ARM : Mek.LOC_RIGHT_ARM;
 
         // damaged or missing actuators
         if (!ae.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, armLoc)) {
@@ -379,8 +379,8 @@ public class PunchAttackAction extends PhysicalAttackAction {
      */
     public static int getDamageFor(Entity entity, int arm,
           boolean targetInfantry, boolean zweihandering) {
-        final int armLoc = (arm == PunchAttackAction.RIGHT) ? Mek.LOC_RARM
-              : Mek.LOC_LARM;
+        final int armLoc = (arm == PunchAttackAction.RIGHT) ? Mek.LOC_RIGHT_ARM
+              : Mek.LOC_LEFT_ARM;
         int damage = (int) Math.ceil(entity.getWeight() / 10.0);
 
         // Rules state tonnage/7 for claws

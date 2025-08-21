@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,7 +36,6 @@ package megamek.common.units;
 import java.util.Arrays;
 import java.util.List;
 
-import megamek.common.TechConstants;
 import megamek.common.equipment.BombLoadout;
 import megamek.common.equipment.BombMounted;
 import megamek.common.equipment.EquipmentType;
@@ -45,10 +44,9 @@ import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
-import megamek.common.options.OptionsConstants;
 
 /**
- * Common interface for all entities capable of carrying bombs and making bomb attacks, includig Aero, LandAirMek, and
+ * Common interface for all entities capable of carrying bombs and making bomb attacks, including Aero, LandAirMek, and
  * VTOL.
  *
  * @author Neoancient
@@ -63,14 +61,12 @@ public interface IBomber {
      * Set count of internal bombs used; this is used to reset, revert, or increase count of internal bombs a unit has
      * dropped during a turn.
      *
-     * @param b
      */
     void setUsedInternalBombs(int b);
 
     /**
      * Increase count of internal bombs used this turn.
      *
-     * @param b
      */
     void increaseUsedInternalBombs(int b);
 
@@ -138,7 +134,6 @@ public interface IBomber {
     /**
      * Backwards compatibility bomb choice setter that only affects external stores.
      *
-     * @param ebc
      */
     default void setBombChoices(BombLoadout ebc) {
         setExtBombChoices(ebc);
@@ -163,7 +158,7 @@ public interface IBomber {
     int availableBombLocation(int cost);
 
     /**
-     * Used by VTOLs and LAMs in airmek mode to declare the target hex for a bomb attack during the movement phase.
+     * Used by VTOLs and LAMs in AirMek mode to declare the target hex for a bomb attack during the movement phase.
      */
     default void setVTOLBombTarget(Targetable target) {
     }
@@ -229,7 +224,6 @@ public interface IBomber {
      */
     default void applyBombs() {
         Game game = ((Entity) this).getGame();
-        int gameTL = TechConstants.getSimpleLevel(game.getOptions().stringOption(OptionsConstants.ALLOWED_TECH_LEVEL));
 
         // Apply the largest bombs first because we need to fit larger bombs into a
         // single location in LAMs.
@@ -281,7 +275,7 @@ public interface IBomber {
     /**
      * Helper to apply equipment-type bombs, either externally or internally.
      *
-     * @param type     of bomb equipment.
+     * @param bombType of bomb equipment.
      * @param loc      location where mounted.
      * @param internal mounted internally or not.
      */
@@ -299,7 +293,7 @@ public interface IBomber {
     /**
      * Helper to apply weapon-type bombs, either externally or internally.
      *
-     * @param type     of bomb equipment.
+     * @param bombType of bomb equipment.
      * @param loc      location where mounted.
      * @param internal mounted internally or not.
      */

@@ -33,6 +33,8 @@
 
 package megamek.common.turns;
 
+import java.io.Serial;
+
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.units.Entity;
@@ -41,6 +43,7 @@ import megamek.common.units.Entity;
  * A type of game turn that allows only one specific entity to move.
  */
 public class SpecificEntityTurn extends GameTurn {
+    @Serial
     private static final long serialVersionUID = -4209080275946913689L;
 
     private final int entityId;

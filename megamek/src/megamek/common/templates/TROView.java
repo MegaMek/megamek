@@ -69,6 +69,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
 import megamek.common.units.*;
+import megamek.common.units.System;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.BayData;
 import megamek.common.verifier.EntityVerifier;
@@ -175,6 +176,14 @@ public class TROView {
         model.put("battleValue", NumberFormat.getInstance().format(entity.calculateBattleValue()));
         model.put("cost", NumberFormat.getInstance().format(entity.getCost(false)));
 
+        final StringJoiner quirksList = getQuirksList(entity);
+        if (quirksList.length() > 0) {
+            model.put("quirks", quirksList.toString());
+        }
+
+    }
+
+    private static StringJoiner getQuirksList(Entity entity) {
         final StringJoiner quirksList = new StringJoiner(", ");
         final Quirks quirks = entity.getQuirks();
         for (final Enumeration<IOptionGroup> optionGroups = quirks.getGroups(); optionGroups.hasMoreElements(); ) {
@@ -188,10 +197,7 @@ public class TROView {
                 }
             }
         }
-        if (quirksList.length() > 0) {
-            model.put("quirks", quirksList.toString());
-        }
-
+        return quirksList;
     }
 
     protected void addEntityFluff(Entity entity) {
@@ -232,7 +238,7 @@ public class TROView {
      * @return The fluff display name, which consists of the manufacturer and the model separated by a space. If either
      *       is missing it is left out.
      */
-    public static String formatSystemFluff(EntityFluff.System system, EntityFluff fluff, Supplier<String> altText) {
+    public static String formatSystemFluff(System system, EntityFluff fluff, Supplier<String> altText) {
         final StringJoiner sj = new StringJoiner(" ");
         if (!fluff.getSystemManufacturer(system).isBlank()) {
             sj.add(fluff.getSystemManufacturer(system));
@@ -250,7 +256,7 @@ public class TROView {
         model.put("massDesc", NumberFormat.getInstance().format(entity.getWeight())
               + Messages.getString(entity.getWeight() == 1.0 ? "TROView.ton" : "TROView.tons"));
         if (entity.hasEngine()) {
-            model.put("engineDesc", formatSystemFluff(EntityFluff.System.ENGINE, entity.getFluff(),
+            model.put("engineDesc", formatSystemFluff(System.ENGINE, entity.getFluff(),
                   () -> stripNotes(entity.getEngine().getEngineName())));
         } else {
             model.put("engineDesc", "None");
@@ -260,11 +266,11 @@ public class TROView {
             model.put("maxSpeed", entity.getRunMP() * 10.8);
         }
         if (entity.isMek() || (entity.isProtoMek() && entity.getOriginalJumpMP() > 0)) {
-            model.put("jumpDesc", formatSystemFluff(EntityFluff.System.JUMPJET, entity.getFluff(),
+            model.put("jumpDesc", formatSystemFluff(System.JUMP_JET, entity.getFluff(),
                   () -> Messages.getString("TROView.Unknown")));
         }
         model.put("armorDesc",
-              formatSystemFluff(EntityFluff.System.ARMOR, entity.getFluff(), () -> formatArmorType(entity, false)));
+              formatSystemFluff(System.ARMOR, entity.getFluff(), () -> formatArmorType(entity, false)));
         final Map<String, Integer> weaponCount = new HashMap<>();
         double podSpace = 0.0;
         for (final Mounted<?> m : entity.getEquipment()) {
@@ -282,9 +288,9 @@ public class TROView {
             armaments.add(String.format(Messages.getString("TROView.podspace.format"), podSpace));
         }
         model.put("armamentList", armaments);
-        model.put("communicationDesc", formatSystemFluff(EntityFluff.System.COMMUNICATIONS, entity.getFluff(),
+        model.put("communicationDesc", formatSystemFluff(System.COMMUNICATIONS, entity.getFluff(),
               () -> Messages.getString("TROView.Unknown")));
-        model.put("targetingDesc", formatSystemFluff(EntityFluff.System.TARGETING, entity.getFluff(),
+        model.put("targetingDesc", formatSystemFluff(System.TARGETING, entity.getFluff(),
               () -> Messages.getString("TROView.Unknown")));
     }
 
@@ -463,7 +469,7 @@ public class TROView {
                 final EquipmentType eq = entry.getKey().getType();
                 final int count = equipment.get(loc).get(entry.getKey());
                 String name = stripNotes(entry.getKey().name());
-                if (entry.getKey().isArmored()) {
+                if (entry.getKey().armored()) {
                     name += " (Armored)";
                 }
                 if (entry.getKey().internalBomb) {
@@ -479,7 +485,7 @@ public class TROView {
                 if (name.length() >= nameWidth) {
                     nameWidth = name.length() + 1;
                 }
-                fields.put("tonnage", eq.getTonnage(entity, entry.getKey().getSize()) * count);
+                fields.put("tonnage", eq.getTonnage(entity, entry.getKey().size()) * count);
                 if (eq instanceof WeaponType) {
                     fields.put("heat", eq.getHeat());
                     fields.put("srv", (int) ((WeaponType) eq).getShortAV());
@@ -517,7 +523,7 @@ public class TROView {
     private Map<Integer, Integer> getSpreadableLocations(final Entity entity, final EquipmentType eq) {
         final Map<Integer, Integer> retVal = new HashMap<>();
         for (int loc = 0; loc < entity.locations(); loc++) {
-            for (int slot = 0; slot < entity.getNumberOfCriticals(loc); slot++) {
+            for (int slot = 0; slot < entity.getNumberOfCriticalSlots(loc); slot++) {
                 final CriticalSlot crit = entity.getCritical(loc, slot);
                 if ((crit != null) && (crit.getMount() != null) && (crit.getMount().getType() == eq)) {
                     retVal.merge(loc, 1, Integer::sum);
@@ -537,7 +543,7 @@ public class TROView {
             int remaining = 0;
             final Map<String, Integer> fixedCount = new HashMap<>();
             final Map<String, Double> fixedWeight = new HashMap<>();
-            for (int slot = 0; slot < entity.getNumberOfCriticals(loc); slot++) {
+            for (int slot = 0; slot < entity.getNumberOfCriticalSlots(loc); slot++) {
                 final CriticalSlot crit = entity.getCritical(loc, slot);
                 if (null == crit) {
                     remaining++;
@@ -628,15 +634,15 @@ public class TROView {
                 bayRow.put("doors", bay.getDoors());
                 bays.add(bayRow);
             } else {
-                logger.warn("Could not determine bay type for " + bay);
+                logger.warn("Could not determine bay type for {}", bay);
             }
         }
         setModelData("bays", bays);
     }
 
     /**
-     * Used to determine whether system crits should be shown when detailing fixed equipment in an omni unit. By default
-     * this is false, but meks override it to show some systems.
+     * Used to determine whether system crits should be shown when detailing fixed equipment in an omni unit. By
+     * default, this is false, but meks override it to show some systems.
      *
      * @param entity The unit the TRO is for
      * @param index  The system index of the critical slot
@@ -733,8 +739,8 @@ public class TROView {
     }
 
     /**
-     * Removes parenthetical and bracketed notes from a String, with the exception of parenthetical notes that begin
-     * with a digit. These are assumed to be a marker of equipment size and left intact.
+     * Removes parenthetical and bracketed notes from a String, except parenthetical notes that begin with a digit.
+     * These are assumed to be a marker of equipment size and left intact.
      *
      * @param str The String to process
      *
@@ -799,21 +805,9 @@ public class TROView {
     /**
      * Tuple composed of EquipmentType and size, used for map keys
      */
-    static final class EquipmentKey {
-        private final EquipmentType etype;
-        private final double size;
-        private final boolean armored;
-        private final boolean internalBomb;
-
+    record EquipmentKey(EquipmentType etype, double size, boolean armored, boolean internalBomb) {
         EquipmentKey(EquipmentType etype, double size) {
             this(etype, size, false, false);
-        }
-
-        EquipmentKey(EquipmentType etype, double size, boolean armored, boolean internal) {
-            this.etype = etype;
-            this.size = size;
-            this.armored = armored;
-            this.internalBomb = internal;
         }
 
         String name() {
@@ -822,14 +816,6 @@ public class TROView {
 
         EquipmentType getType() {
             return etype;
-        }
-
-        double getSize() {
-            return size;
-        }
-
-        boolean isArmored() {
-            return armored;
         }
 
         @Override

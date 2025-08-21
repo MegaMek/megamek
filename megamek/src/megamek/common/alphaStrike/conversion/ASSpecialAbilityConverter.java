@@ -452,7 +452,7 @@ public class ASSpecialAbilityConverter {
 
     protected void processARM() {
         for (int location = 0; location < entity.locations(); location++) {
-            for (int slot = 0; slot < entity.getNumberOfCriticals(location); slot++) {
+            for (int slot = 0; slot < entity.getNumberOfCriticalSlots(location); slot++) {
                 CriticalSlot crit = entity.getCritical(location, slot);
                 if (null != crit) {
                     if (crit.isArmored()) {

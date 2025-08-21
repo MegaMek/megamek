@@ -354,13 +354,13 @@ public class UnitEditorDialog extends JDialog {
             }
             int nCrits = mounted.getNumCriticalSlots();
             int eqNum = entity.getEquipmentNum(mounted);
-            int hits = entity.getDamagedCriticals(CriticalSlot.TYPE_EQUIPMENT, eqNum, mounted.getLocation());
+            int hits = entity.getDamagedCriticalSlots(CriticalSlot.TYPE_EQUIPMENT, eqNum, mounted.getLocation());
             if (mounted.isSplit()) {
-                hits += entity.getDamagedCriticals(CriticalSlot.TYPE_EQUIPMENT, eqNum, mounted.getSecondLocation());
+                hits += entity.getDamagedCriticalSlots(CriticalSlot.TYPE_EQUIPMENT, eqNum, mounted.getSecondLocation());
             }
             if ((mounted.getType() instanceof MiscType) && (mounted.getType().hasFlag(MiscType.F_PARTIAL_WING))) {
-                hits = entity.getDamagedCriticals(CriticalSlot.TYPE_EQUIPMENT, eqNum, Mek.LOC_LT);
-                hits += entity.getDamagedCriticals(CriticalSlot.TYPE_EQUIPMENT, eqNum, Mek.LOC_RT);
+                hits = entity.getDamagedCriticalSlots(CriticalSlot.TYPE_EQUIPMENT, eqNum, Mek.LOC_LEFT_TORSO);
+                hits += entity.getDamagedCriticalSlots(CriticalSlot.TYPE_EQUIPMENT, eqNum, Mek.LOC_RIGHT_TORSO);
             }
 
             if (!(entity instanceof Mek)) {
@@ -432,26 +432,26 @@ public class UnitEditorDialog extends JDialog {
         int sensorCrits = 0;
         int lifeSupportCrits = 0;
         for (int i = 0; i < entity.locations(); i++) {
-            if (i == Mek.LOC_CT) {
-                centerEngineHits = entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, i);
-                centerEngineCrits = entity.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, i);
+            if (i == Mek.LOC_CENTER_TORSO) {
+                centerEngineHits = entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, i);
+                centerEngineCrits = entity.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, i);
             }
-            if (i == Mek.LOC_LT) {
-                leftEngineHits = entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, i);
-                leftEngineCrits = entity.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, i);
+            if (i == Mek.LOC_LEFT_TORSO) {
+                leftEngineHits = entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, i);
+                leftEngineCrits = entity.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, i);
             }
-            if (i == Mek.LOC_RT) {
-                rightEngineHits = entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, i);
-                rightEngineCrits = entity.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, i);
+            if (i == Mek.LOC_RIGHT_TORSO) {
+                rightEngineHits = entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, i);
+                rightEngineCrits = entity.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, i);
             }
-            gyroHits += entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, i);
-            gyroCrits += entity.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, i);
-            cockpitHits += entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_COCKPIT, i);
-            cockpitCrits += entity.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_COCKPIT, i);
-            sensorHits += entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, i);
-            sensorCrits += entity.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, i);
-            lifeSupportHits += entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, i);
-            lifeSupportCrits += entity.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, i);
+            gyroHits += entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, i);
+            gyroCrits += entity.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, i);
+            cockpitHits += entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_COCKPIT, i);
+            cockpitCrits += entity.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_COCKPIT, i);
+            sensorHits += entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, i);
+            sensorCrits += entity.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, i);
+            lifeSupportHits += entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, i);
+            lifeSupportCrits += entity.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, i);
         }
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
@@ -467,7 +467,7 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.weightx = 1.0;
         panSystem.add(centerEngineCrit, gridBagConstraints);
 
-        if (entity.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, Mek.LOC_RT) > 0) {
+        if (entity.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, Mek.LOC_RIGHT_TORSO) > 0) {
             gridBagConstraints.gridx = 0;
             gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
@@ -533,15 +533,15 @@ public class UnitEditorDialog extends JDialog {
             lamAvionicsCrit = new TreeMap<>();
             lamLandingGearCrit = new TreeMap<>();
             for (int loc = 0; loc < entity.locations(); loc++) {
-                int crits = entity.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_AVIONICS, loc);
+                int crits = entity.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_AVIONICS, loc);
                 if (crits > 0) {
-                    int hits = entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_AVIONICS, loc);
+                    int hits = entity.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_AVIONICS, loc);
                     CheckCritPanel critPanel = new CheckCritPanel(crits, hits);
                     lamAvionicsCrit.put(loc, critPanel);
                 }
-                crits = entity.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_LANDING_GEAR, loc);
+                crits = entity.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_LANDING_GEAR, loc);
                 if (crits > 0) {
-                    int hits = entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_LANDING_GEAR, loc);
+                    int hits = entity.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_LANDING_GEAR, loc);
                     CheckCritPanel critPanel = new CheckCritPanel(crits, hits);
                     lamLandingGearCrit.put(loc, critPanel);
                 }
@@ -574,10 +574,10 @@ public class UnitEditorDialog extends JDialog {
             actuatorCrits = new CheckCritPanel[4][4];
         }
 
-        for (int loc = Mek.LOC_RARM; loc <= (tripod ? Mek.LOC_CLEG : Mek.LOC_LLEG); loc++) {
+        for (int loc = Mek.LOC_RIGHT_ARM; loc <= (tripod ? Mek.LOC_CENTER_LEG : Mek.LOC_LEFT_LEG); loc++) {
             int start = Mek.ACTUATOR_SHOULDER;
             int end = Mek.ACTUATOR_HAND;
-            if ((loc >= Mek.LOC_RLEG) || (entity instanceof QuadMek)) {
+            if ((loc >= Mek.LOC_RIGHT_LEG) || (entity instanceof QuadMek)) {
                 start = Mek.ACTUATOR_HIP;
                 end = Mek.ACTUATOR_FOOT;
             }
@@ -590,7 +590,9 @@ public class UnitEditorDialog extends JDialog {
                 gridBagConstraints.gridy++;
                 gridBagConstraints.weightx = 0.0;
                 gridBagConstraints.weighty = 0.0;
-                if ((loc == (tripod ? Mek.LOC_CLEG : Mek.LOC_LLEG)) && (i == end) && !(entity instanceof QuadVee)) {
+                if ((loc == (tripod ? Mek.LOC_CENTER_LEG : Mek.LOC_LEFT_LEG))
+                      && (i == end)
+                      && !(entity instanceof QuadVee)) {
                     gridBagConstraints.weighty = 1.0;
                 }
                 panSystem.add(new JLabel("<html><b>" +
@@ -599,8 +601,8 @@ public class UnitEditorDialog extends JDialog {
                             ((Mek) entity).getSystemName(i)) +
                       "</b><br></html>"), gridBagConstraints);
                 CheckCritPanel actuatorCrit = new CheckCritPanel(1,
-                      entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, i, loc));
-                actuatorCrits[loc - Mek.LOC_RARM][i - start] = actuatorCrit;
+                      entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, i, loc));
+                actuatorCrits[loc - Mek.LOC_RIGHT_ARM][i - start] = actuatorCrit;
                 gridBagConstraints.gridx = 1;
                 panSystem.add(actuatorCrit, gridBagConstraints);
             }
@@ -610,7 +612,7 @@ public class UnitEditorDialog extends JDialog {
                 gridBagConstraints.gridy++;
                 gridBagConstraints.weightx = 0.0;
                 gridBagConstraints.weighty = 0.0;
-                if (loc == Mek.LOC_LLEG) {
+                if (loc == Mek.LOC_LEFT_LEG) {
                     gridBagConstraints.weighty = 1.0;
                 }
                 panSystem.add(new JLabel("<html><b>" +
@@ -619,8 +621,8 @@ public class UnitEditorDialog extends JDialog {
                             ((Mek) entity).getSystemName(QuadVee.SYSTEM_CONVERSION_GEAR)) +
                       "</b><br></html>"), gridBagConstraints);
                 CheckCritPanel actuatorCrit = new CheckCritPanel(1,
-                      entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, QuadVee.SYSTEM_CONVERSION_GEAR, loc));
-                actuatorCrits[loc - Mek.LOC_RARM][Mek.ACTUATOR_FOOT - Mek.ACTUATOR_HIP + 1] = actuatorCrit;
+                      entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, QuadVee.SYSTEM_CONVERSION_GEAR, loc));
+                actuatorCrits[loc - Mek.LOC_RIGHT_ARM][Mek.ACTUATOR_FOOT - Mek.ACTUATOR_HIP + 1] = actuatorCrit;
                 gridBagConstraints.gridx = 1;
                 panSystem.add(actuatorCrit, gridBagConstraints);
             }
@@ -729,7 +731,7 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.gridy = 0;
 
         for (int loc = 0; loc < proto.locations(); loc++) {
-            if ((loc == ProtoMek.LOC_MAINGUN) || (loc == ProtoMek.LOC_NMISS)) {
+            if ((loc == ProtoMek.LOC_MAIN_GUN) || (loc == ProtoMek.LOC_NEAR_MISS)) {
                 continue;
             }
             gridBagConstraints.gridx = 0;
@@ -744,17 +746,17 @@ public class UnitEditorDialog extends JDialog {
                         entity.getLocationName(loc)) +
                   "</b><br></html>"), gridBagConstraints);
             int hits = 0;
-            if ((loc == ProtoMek.LOC_LARM) || (loc == ProtoMek.LOC_RARM)) {
-                hits = entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ProtoMek.SYSTEM_ARMCRIT, loc);
+            if ((loc == ProtoMek.LOC_LEFT_ARM) || (loc == ProtoMek.LOC_RIGHT_ARM)) {
+                hits = entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, ProtoMek.SYSTEM_ARM_CRIT, loc);
             }
             if (loc == ProtoMek.LOC_LEG) {
-                hits = entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ProtoMek.SYSTEM_LEGCRIT, loc);
+                hits = entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, ProtoMek.SYSTEM_LEG_CRIT, loc);
             }
             if (loc == ProtoMek.LOC_HEAD) {
-                hits = entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ProtoMek.SYSTEM_HEADCRIT, loc);
+                hits = entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, ProtoMek.SYSTEM_HEAD_CRIT, loc);
             }
             if (loc == ProtoMek.LOC_TORSO) {
-                hits = entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ProtoMek.SYSTEM_TORSOCRIT, loc);
+                hits = entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, ProtoMek.SYSTEM_TORSO_CRIT, loc);
             }
             int nCrits = 2;
             if (loc == ProtoMek.LOC_LEG) {
@@ -1204,7 +1206,7 @@ public class UnitEditorDialog extends JDialog {
         int numHits = 0;
         Mounted<?> m = entity.getEquipment(eqNum);
         for (int loc = 0; loc < entity.locations(); loc++) {
-            for (int i = 0; i < entity.getNumberOfCriticals(loc); i++) {
+            for (int i = 0; i < entity.getNumberOfCriticalSlots(loc); i++) {
                 CriticalSlot cs = entity.getCritical(loc, i);
                 if ((cs == null) ||
                       (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) ||
@@ -1279,14 +1281,20 @@ public class UnitEditorDialog extends JDialog {
             if (null != centerEngineCrit) {
                 entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
                       Mek.SYSTEM_ENGINE,
-                      Mek.LOC_CT,
+                      Mek.LOC_CENTER_TORSO,
                       centerEngineCrit.getHits());
             }
             if (null != leftEngineCrit) {
-                entity.damageSystem(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, Mek.LOC_LT, leftEngineCrit.getHits());
+                entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
+                      Mek.SYSTEM_ENGINE,
+                      Mek.LOC_LEFT_TORSO,
+                      leftEngineCrit.getHits());
             }
             if (null != rightEngineCrit) {
-                entity.damageSystem(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, Mek.LOC_RT, rightEngineCrit.getHits());
+                entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
+                      Mek.SYSTEM_ENGINE,
+                      Mek.LOC_RIGHT_TORSO,
+                      rightEngineCrit.getHits());
             }
             if (null != gyroCrit) {
                 entity.damageSystem(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, gyroCrit.getHits());
@@ -1323,9 +1331,9 @@ public class UnitEditorDialog extends JDialog {
                     if (null == actuatorCrit) {
                         continue;
                     }
-                    int loc = i + Mek.LOC_RARM;
+                    int loc = i + Mek.LOC_RIGHT_ARM;
                     int actuator = j + Mek.ACTUATOR_SHOULDER;
-                    if ((loc >= Mek.LOC_RLEG) || (entity instanceof QuadMek)) {
+                    if ((loc >= Mek.LOC_RIGHT_LEG) || (entity instanceof QuadMek)) {
                         actuator = j + Mek.ACTUATOR_HIP;
                     }
                     entity.damageSystem(CriticalSlot.TYPE_SYSTEM, actuator, loc, actuatorCrit.getHits());
@@ -1337,7 +1345,7 @@ public class UnitEditorDialog extends JDialog {
                         if (null == actuatorCrit) {
                             continue;
                         }
-                        int loc = i + Mek.LOC_RARM;
+                        int loc = i + Mek.LOC_RIGHT_ARM;
                         int actuator = QuadVee.SYSTEM_CONVERSION_GEAR;
                         entity.damageSystem(CriticalSlot.TYPE_SYSTEM, actuator, loc, actuatorCrit.getHits());
                     }
@@ -1348,27 +1356,27 @@ public class UnitEditorDialog extends JDialog {
                 if (null == protoCrits[loc]) {
                     continue;
                 }
-                if ((loc == ProtoMek.LOC_LARM) || (loc == ProtoMek.LOC_RARM)) {
+                if ((loc == ProtoMek.LOC_LEFT_ARM) || (loc == ProtoMek.LOC_RIGHT_ARM)) {
                     entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
-                          ProtoMek.SYSTEM_ARMCRIT,
+                          ProtoMek.SYSTEM_ARM_CRIT,
                           loc,
                           protoCrits[loc].getHits());
                 }
                 if (loc == ProtoMek.LOC_LEG) {
                     entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
-                          ProtoMek.SYSTEM_LEGCRIT,
+                          ProtoMek.SYSTEM_LEG_CRIT,
                           loc,
                           protoCrits[loc].getHits());
                 }
                 if (loc == ProtoMek.LOC_HEAD) {
                     entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
-                          ProtoMek.SYSTEM_HEADCRIT,
+                          ProtoMek.SYSTEM_HEAD_CRIT,
                           loc,
                           protoCrits[loc].getHits());
                 }
                 if (loc == ProtoMek.LOC_TORSO) {
                     entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
-                          ProtoMek.SYSTEM_TORSOCRIT,
+                          ProtoMek.SYSTEM_TORSO_CRIT,
                           loc,
                           protoCrits[loc].getHits());
                 }

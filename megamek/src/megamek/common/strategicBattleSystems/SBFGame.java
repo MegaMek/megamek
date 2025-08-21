@@ -71,8 +71,7 @@ import megamek.server.sbf.SBFActionHandler;
 /**
  * This is an SBF game's game object that holds all game information. As of 2024, this is under construction.
  */
-public final class SBFGame extends AbstractGame implements PlanetaryConditionsUsing,
-                                                           SBFRuleOptionsUser {
+public final class SBFGame extends AbstractGame implements PlanetaryConditionsUsing, SBFRuleOptionsUser {
     private static final MMLogger logger = MMLogger.create(SBFGame.class);
 
     private final SBFRuleOptions options = new SBFRuleOptions();
@@ -339,7 +338,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     }
 
     /**
-     * @param units
+     *
      */
     @ClientOnly
     public void setUnitList(List<InGameObject> units) {
@@ -428,7 +427,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
         return player.isEnemyOf(getPlayer(formation.getOwnerId()));
     }
 
-    // check current turn, phase, formatzion
+    // check current turn, phase, formation
     private boolean isEligibleForAction(SBFFormation formation) {
         return (getTurn() instanceof SBFFormationTurn)
               && getTurn().isValidEntity(formation, this);
@@ -480,7 +479,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
           SelectDirection direction) {
         List<SBFFormation> eligibleFormations = getActiveFormations().stream()
               .filter(this::isEligibleForAction)
-              .collect(Collectors.toList());
+              .toList();
         if (eligibleFormations.isEmpty()) {
             return Optional.empty();
         } else {
@@ -540,7 +539,10 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
      */
     public void setTurnIndex(int turnIndex, int prevPlayerId) {
         setTurnIndex(turnIndex);
-        fireGameEvent(new GameTurnChangeEvent(this, getPlayer(getTurn().playerId()), prevPlayerId));
+        SBFTurn currentTurn = getTurn();
+        if (currentTurn != null) {
+            fireGameEvent(new GameTurnChangeEvent(this, getPlayer(currentTurn.playerId()), prevPlayerId));
+        }
     }
 
     public boolean onSameBoard(SBFFormation unit1, SBFFormation unit2) {

@@ -343,16 +343,16 @@ public class TWDamageManager implements IDamageManager {
         // Find out if Human TRO plays a part it crit bonus
         Entity attacker = game.getEntity(hit.getAttackerId());
         if ((attacker != null) && !areaSatArty) {
-            if ((entity instanceof Mek) && attacker.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_MEK)) {
+            if ((entity instanceof Mek) && attacker.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMAN_TRO_MEK)) {
                 critBonus += 1;
             } else if ((entity instanceof Aero) && attacker.hasAbility(OptionsConstants.MISC_HUMAN_TRO,
-                  Crew.HUMANTRO_AERO)) {
+                  Crew.HUMAN_TRO_AERO)) {
                 critBonus += 1;
             } else if ((entity instanceof Tank) && attacker.hasAbility(OptionsConstants.MISC_HUMAN_TRO,
-                  Crew.HUMANTRO_VEE)) {
+                  Crew.HUMAN_TRO_VEE)) {
                 critBonus += 1;
             } else if ((entity instanceof BattleArmor) &&
-                  attacker.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_BA)) {
+                  attacker.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMAN_TRO_BA)) {
                 critBonus += 1;
             }
         }
@@ -360,7 +360,7 @@ public class TWDamageManager implements IDamageManager {
         HitData nextHit = null;
 
         // Some "hits" on a ProtoMek are actually misses.
-        if ((entity instanceof ProtoMek proto) && (hit.getLocation() == ProtoMek.LOC_NMISS)) {
+        if ((entity instanceof ProtoMek proto) && (hit.getLocation() == ProtoMek.LOC_NEAR_MISS)) {
             report = new Report(6035);
             report.subject = entity.getId();
             report.indent(2);
@@ -783,24 +783,24 @@ public class TWDamageManager implements IDamageManager {
                 boolean spotlightHittable = true;
                 int loc = hit.getLocation();
                 if (entity instanceof Mek) {
-                    if ((loc != Mek.LOC_CT) && (loc != Mek.LOC_LT) && (loc != Mek.LOC_RT)) {
+                    if ((loc != Mek.LOC_CENTER_TORSO) && (loc != Mek.LOC_LEFT_TORSO) && (loc != Mek.LOC_RIGHT_TORSO)) {
                         spotlightHittable = false;
                     }
                 } else if (entity instanceof Tank) {
                     if (entity instanceof SuperHeavyTank) {
                         if ((loc != Tank.LOC_FRONT) &&
-                              (loc != SuperHeavyTank.LOC_FRONTRIGHT) &&
-                              (loc != SuperHeavyTank.LOC_FRONTLEFT) &&
-                              (loc != SuperHeavyTank.LOC_REARRIGHT) &&
-                              (loc != SuperHeavyTank.LOC_REARLEFT)) {
+                              (loc != SuperHeavyTank.LOC_FRONT_RIGHT) &&
+                              (loc != SuperHeavyTank.LOC_FRONT_LEFT) &&
+                              (loc != SuperHeavyTank.LOC_REAR_RIGHT) &&
+                              (loc != SuperHeavyTank.LOC_REAR_LEFT)) {
                             spotlightHittable = false;
                         }
                     } else if (entity instanceof LargeSupportTank) {
                         if ((loc != Tank.LOC_FRONT) &&
-                              (loc != LargeSupportTank.LOC_FRONTRIGHT) &&
-                              (loc != LargeSupportTank.LOC_FRONTLEFT) &&
-                              (loc != LargeSupportTank.LOC_REARRIGHT) &&
-                              (loc != LargeSupportTank.LOC_REARLEFT)) {
+                              (loc != LargeSupportTank.LOC_FRONT_RIGHT) &&
+                              (loc != LargeSupportTank.LOC_FRONT_LEFT) &&
+                              (loc != LargeSupportTank.LOC_REAR_RIGHT) &&
+                              (loc != LargeSupportTank.LOC_REAR_LEFT)) {
                             spotlightHittable = false;
                         }
                     } else {
@@ -843,7 +843,8 @@ public class TWDamageManager implements IDamageManager {
                     damage = manager.damageExternalPassenger(entity, hit, damage, reportVec, passenger);
                 }
 
-                boolean bTorso = (nLoc == Mek.LOC_CT) || (nLoc == Mek.LOC_RT) || (nLoc == Mek.LOC_LT);
+                boolean bTorso = (nLoc == Mek.LOC_CENTER_TORSO) || (nLoc == Mek.LOC_RIGHT_TORSO) || (nLoc
+                      == Mek.LOC_LEFT_TORSO);
 
                 // Does a swarming unit absorb damage?
                 int swarmer = entity.getSwarmAttackerId();
@@ -1539,13 +1540,15 @@ public class TWDamageManager implements IDamageManager {
                         // corresponding arm is not yet destroyed, add
                         // it as a club to that hex (p.35 BMRr)
                         if ((entity instanceof Mek) &&
-                              (((hit.getLocation() == Mek.LOC_RT) && (entity.getInternal(Mek.LOC_RARM) > 0)) ||
-                                    ((hit.getLocation() == Mek.LOC_LT) && (entity.getInternal(Mek.LOC_LARM) > 0)))) {
+                              (((hit.getLocation() == Mek.LOC_RIGHT_TORSO) && (entity.getInternal(Mek.LOC_RIGHT_ARM)
+                                    > 0)) ||
+                                    ((hit.getLocation() == Mek.LOC_LEFT_TORSO) && (entity.getInternal(Mek.LOC_LEFT_ARM)
+                                          > 0)))) {
                             int blownOffLocation;
-                            if (hit.getLocation() == Mek.LOC_RT) {
-                                blownOffLocation = Mek.LOC_RARM;
+                            if (hit.getLocation() == Mek.LOC_RIGHT_TORSO) {
+                                blownOffLocation = Mek.LOC_RIGHT_ARM;
                             } else {
-                                blownOffLocation = Mek.LOC_LARM;
+                                blownOffLocation = Mek.LOC_LEFT_ARM;
                             }
                             entity.destroyLocation(blownOffLocation, true);
                             report = new Report(6120);
@@ -1660,7 +1663,7 @@ public class TWDamageManager implements IDamageManager {
                         if (entity instanceof Mek) {
                             // Start with the number of engine crits in this
                             // location, if any...
-                            entity.engineHitsThisPhase += entity.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM,
+                            entity.engineHitsThisPhase += entity.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM,
                                   Mek.SYSTEM_ENGINE,
                                   hit.getLocation());
                             // ...then deduct the ones destroyed previously or
@@ -1668,7 +1671,7 @@ public class TWDamageManager implements IDamageManager {
                             // hit this round already. That leaves the ones
                             // actually
                             // destroyed with the location.
-                            entity.engineHitsThisPhase -= entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                            entity.engineHitsThisPhase -= entity.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM,
                                   Mek.SYSTEM_ENGINE,
                                   hit.getLocation());
                         }
@@ -1686,7 +1689,8 @@ public class TWDamageManager implements IDamageManager {
                                   !ammoExplosion,
                                   !((ammoExplosion || areaSatArty) &&
                                         ((entity instanceof Tank) ||
-                                              ((entity instanceof Mek) && (hit.getLocation() == Mek.LOC_CT))))));
+                                              ((entity instanceof Mek) && (hit.getLocation()
+                                                    == Mek.LOC_CENTER_TORSO))))));
                             // If the head is destroyed, kill the crew.
 
                             if ((entity instanceof Mek mek) &&
@@ -1707,7 +1711,7 @@ public class TWDamageManager implements IDamageManager {
                             }
 
                             if ((entity instanceof Mek mek) &&
-                                  (hit.getLocation() == Mek.LOC_CT) &&
+                                  (hit.getLocation() == Mek.LOC_CENTER_TORSO) &&
                                   !entity.getCrew().isDead() &&
                                   !entity.getCrew().isDoomed()) {
                                 if (mek.isAutoEject() &&
@@ -1724,7 +1728,7 @@ public class TWDamageManager implements IDamageManager {
                             }
 
                             if ((hit.getLocation() == Mek.LOC_HEAD) ||
-                                  ((hit.getLocation() == Mek.LOC_CT) &&
+                                  ((hit.getLocation() == Mek.LOC_CENTER_TORSO) &&
                                         ((ammoExplosion && !autoEject) || areaSatArty))) {
                                 entity.getCrew().setDoomed(true);
                             }
@@ -1867,8 +1871,8 @@ public class TWDamageManager implements IDamageManager {
                 entity.destroyLocation(hit.getLocation());
 
                 // Check for possible engine destruction here
-                if ((entity instanceof Mek) && ((hit.getLocation() == Mek.LOC_RT) || (hit.getLocation()
-                      == Mek.LOC_LT))) {
+                if ((entity instanceof Mek) && ((hit.getLocation() == Mek.LOC_RIGHT_TORSO) || (hit.getLocation()
+                      == Mek.LOC_LEFT_TORSO))) {
 
                     int numEngineHits = entity.getEngineHits();
                     boolean engineExploded = manager.checkEngineExplosion(entity, reportVec, numEngineHits);

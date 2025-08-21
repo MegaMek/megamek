@@ -59,7 +59,7 @@ public class SpaceStationCostCalculator {
         // Fire Control Computer
         costs[costIdx++] += 100000;
         // Gunnery Control Systems
-        costs[costIdx++] += 10000 * spaceStation.getArcswGuns();
+        costs[costIdx++] += 10000 * spaceStation.getArcsWithGuns();
         // Structural Integrity
         costs[costIdx++] += 100000 * spaceStation.getSI();
 

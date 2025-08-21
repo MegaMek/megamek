@@ -47,7 +47,7 @@ public interface Deployable {
     /**
      * Returns true when this unit/object is deployed, i.e. it has arrived in the game and may perform actions or be
      * targeted by actions. Usually that means it has a fixed position on a board. Offboard units also count as
-     * undeployed as long as they cannot perform actions and as deployed when they can.
+     * un-deployed as long as they cannot perform actions and as deployed when they can.
      */
     boolean isDeployed();
 

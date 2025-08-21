@@ -75,7 +75,7 @@ public class FormationType {
     public static final int FLAG_NAVAL = 1 << UnitType.NAVAL;
 
     public static final int FLAG_CONV_FIGHTER = 1 << UnitType.CONV_FIGHTER;
-    public static final int FLAG_AERO = 1 << UnitType.AEROSPACEFIGHTER;
+    public static final int FLAG_AERO = 1 << UnitType.AEROSPACE_FIGHTER;
     public static final int FLAG_SMALL_CRAFT = 1 << UnitType.SMALL_CRAFT;
     public static final int FLAG_DROPSHIP = 1 << UnitType.DROPSHIP;
 

@@ -1,6 +1,6 @@
 /*
- * MegaAero - Copyright (C) 2007 Jay Lawson
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007 Jay Lawson
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.units;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,12 +68,13 @@ import megamek.common.util.RoundWeight;
  */
 public class SmallCraft extends Aero {
 
+    @Serial
     private static final long serialVersionUID = 6708788176436555036L;
 
     public static final int LOC_HULL = 4;
 
-    private static String[] LOCATION_ABBRS = { "NOS", "LS", "RS", "AFT", "HULL" };
-    private static String[] LOCATION_NAMES = { "Nose", "Left Side", "Right Side", "Aft", "Hull" };
+    private static final String[] LOCATION_ABBREVIATIONS = { "NOS", "LS", "RS", "AFT", "HULL" };
+    private static final String[] LOCATION_NAMES = { "Nose", "Left Side", "Right Side", "Aft", "Hull" };
 
     // crew and passengers
     private int nOfficers = 0;
@@ -82,8 +84,8 @@ public class SmallCraft extends Aero {
 
     // Maps transported crew, passengers, marines to a host ship so we can match
     // them up again post-game
-    private Map<String, Integer> nOtherCrew = new HashMap<>();
-    private Map<String, Integer> passengers = new HashMap<>();
+    private final Map<String, Integer> nOtherCrew = new HashMap<>();
+    private final Map<String, Integer> passengers = new HashMap<>();
 
     // escape pods and lifeboats
     private int escapePods = 0;
@@ -229,7 +231,6 @@ public class SmallCraft extends Aero {
     /**
      * Convenience method to return all crew from other craft aboard from the above Map
      *
-     * @return
      */
     public int getTotalOtherCrew() {
         int toReturn = 0;
@@ -264,7 +265,6 @@ public class SmallCraft extends Aero {
     /**
      * Convenience method to return all passengers aboard from the above Map
      *
-     * @return
      */
     public int getTotalPassengers() {
         int toReturn = 0;
@@ -371,8 +371,8 @@ public class SmallCraft extends Aero {
     }
 
     @Override
-    public String[] getLocationAbbrs() {
-        return LOCATION_ABBRS;
+    public String[] getLocationAbbreviations() {
+        return LOCATION_ABBREVIATIONS;
     }
 
     @Override
@@ -395,7 +395,7 @@ public class SmallCraft extends Aero {
     public HitData rollHitLocation(int table, int side) {
 
         /*
-         * Unlike other units, ASFs determine potential crits based on the to-hit roll
+         * Unlike other units, ASFs determine potential crits based on the to-hit roll,
          * so I need to set this potential value as well as return the to hit data
          */
 
@@ -419,10 +419,10 @@ public class SmallCraft extends Aero {
         if ((table == ToHitData.HIT_ABOVE) || (table == ToHitData.HIT_BELOW)) {
 
             // have to decide which wing
-            int wingloc = LOC_RWING;
-            int wingroll = Compute.d6(1);
-            if (wingroll > 3) {
-                wingloc = LOC_LWING;
+            int wingLocation = LOC_RIGHT_WING;
+            int wingRoll = Compute.d6(1);
+            if (wingRoll > 3) {
+                wingLocation = LOC_LEFT_WING;
             }
             switch (roll) {
                 case 2:
@@ -434,27 +434,21 @@ public class SmallCraft extends Aero {
                 case 4:
                     setPotCrit(CRIT_SENSOR);
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-                case 5:
+                case 5, 9:
                     setPotCrit(CRIT_RIGHT_THRUSTER);
-                    if (wingroll > 3) {
+                    if (wingRoll > 3) {
                         setPotCrit(CRIT_LEFT_THRUSTER);
                     }
-                    return new HitData(wingloc, false, HitData.EFFECT_NONE);
+                    return new HitData(wingLocation, false, HitData.EFFECT_NONE);
                 case 6:
                     setPotCrit(CRIT_CARGO);
-                    return new HitData(wingloc, false, HitData.EFFECT_NONE);
+                    return new HitData(wingLocation, false, HitData.EFFECT_NONE);
                 case 7:
                     setPotCrit(CRIT_WEAPON);
-                    return new HitData(wingloc, false, HitData.EFFECT_NONE);
+                    return new HitData(wingLocation, false, HitData.EFFECT_NONE);
                 case 8:
                     setPotCrit(CRIT_DOOR);
-                    return new HitData(wingloc, false, HitData.EFFECT_NONE);
-                case 9:
-                    setPotCrit(CRIT_RIGHT_THRUSTER);
-                    if (wingroll > 3) {
-                        setPotCrit(CRIT_LEFT_THRUSTER);
-                    }
-                    return new HitData(wingloc, false, HitData.EFFECT_NONE);
+                    return new HitData(wingLocation, false, HitData.EFFECT_NONE);
                 case 10:
                     setPotCrit(CRIT_AVIONICS);
                     return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
@@ -478,10 +472,10 @@ public class SmallCraft extends Aero {
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
                 case 4:
                     setPotCrit(CRIT_WEAPON);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_WING, false, HitData.EFFECT_NONE);
                 case 5:
                     setPotCrit(CRIT_RIGHT_THRUSTER);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_WING, false, HitData.EFFECT_NONE);
                 case 6:
                     setPotCrit(CRIT_FCS);
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
@@ -493,16 +487,16 @@ public class SmallCraft extends Aero {
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
                 case 9:
                     setPotCrit(CRIT_LEFT_THRUSTER);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_WING, false, HitData.EFFECT_NONE);
                 case 10:
                     setPotCrit(CRIT_WEAPON);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_WING, false, HitData.EFFECT_NONE);
                 case 11:
                     setPotCrit(CRIT_SENSOR);
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
                 case 12:
                     setPotCrit(CRIT_KF_BOOM);
-                    // Primitve dropships without kf-boom take avionics hit instead (IO, p. 119).
+                    // Primitive dropships without kf-boom take avionics hit instead (IO, p. 119).
                     if ((this instanceof Dropship) && (((Dropship) this).getCollarType() == Dropship.COLLAR_NO_BOOM)) {
                         setPotCrit(CRIT_AVIONICS);
                     }
@@ -520,21 +514,18 @@ public class SmallCraft extends Aero {
                 case 4:
                     setPotCrit(CRIT_SENSOR);
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-                case 5:
+                case 5, 9:
                     setPotCrit(CRIT_LEFT_THRUSTER);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_WING, false, HitData.EFFECT_NONE);
                 case 6:
                     setPotCrit(CRIT_CARGO);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_WING, false, HitData.EFFECT_NONE);
                 case 7:
                     setPotCrit(CRIT_WEAPON);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_WING, false, HitData.EFFECT_NONE);
                 case 8:
                     setPotCrit(CRIT_DOOR);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-                case 9:
-                    setPotCrit(CRIT_LEFT_THRUSTER);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_WING, false, HitData.EFFECT_NONE);
                 case 10:
                     setPotCrit(CRIT_AVIONICS);
                     return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
@@ -557,21 +548,18 @@ public class SmallCraft extends Aero {
                 case 4:
                     setPotCrit(CRIT_SENSOR);
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-                case 5:
+                case 5, 9:
                     setPotCrit(CRIT_RIGHT_THRUSTER);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_WING, false, HitData.EFFECT_NONE);
                 case 6:
                     setPotCrit(CRIT_CARGO);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_WING, false, HitData.EFFECT_NONE);
                 case 7:
                     setPotCrit(CRIT_WEAPON);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_WING, false, HitData.EFFECT_NONE);
                 case 8:
                     setPotCrit(CRIT_DOOR);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-                case 9:
-                    setPotCrit(CRIT_RIGHT_THRUSTER);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_WING, false, HitData.EFFECT_NONE);
                 case 10:
                     setPotCrit(CRIT_AVIONICS);
                     return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
@@ -593,10 +581,10 @@ public class SmallCraft extends Aero {
                     return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
                 case 4:
                     setPotCrit(CRIT_WEAPON);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_WING, false, HitData.EFFECT_NONE);
                 case 5:
                     setPotCrit(CRIT_DOOR);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_RIGHT_WING, false, HitData.EFFECT_NONE);
                 case 6:
                     setPotCrit(CRIT_ENGINE);
                     return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
@@ -608,10 +596,10 @@ public class SmallCraft extends Aero {
                     return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
                 case 9:
                     setPotCrit(CRIT_DOOR);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_WING, false, HitData.EFFECT_NONE);
                 case 10:
                     setPotCrit(CRIT_WEAPON);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    return new HitData(LOC_LEFT_WING, false, HitData.EFFECT_NONE);
                 case 11:
                     setPotCrit(CRIT_GEAR);
                     return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
@@ -628,7 +616,7 @@ public class SmallCraft extends Aero {
     public int getWeaponArc(int weaponNumber) {
         final Mounted<?> mounted = getEquipment(weaponNumber);
 
-        int arc = Compute.ARC_NOSE;
+        int arc;
         if (!isSpheroid()) {
             switch (mounted.getLocation()) {
                 case LOC_NOSE:
@@ -638,7 +626,7 @@ public class SmallCraft extends Aero {
                     }
                     arc = Compute.ARC_NOSE;
                     break;
-                case LOC_RWING:
+                case LOC_RIGHT_WING:
                     if (mounted.isRearMounted()) {
                         if (mounted.isInWaypointLaunchMode()) {
                             arc = Compute.ARC_RIGHT_WING_AFT_WPL;
@@ -653,7 +641,7 @@ public class SmallCraft extends Aero {
                         arc = Compute.ARC_RIGHT_WING;
                     }
                     break;
-                case LOC_LWING:
+                case LOC_LEFT_WING:
                     if (mounted.isRearMounted()) {
                         if (mounted.isInWaypointLaunchMode()) {
                             arc = Compute.ARC_LEFT_WING_AFT_WPL;
@@ -688,7 +676,7 @@ public class SmallCraft extends Aero {
                         }
                         arc = Compute.ARC_NOSE;
                         break;
-                    case LOC_RWING:
+                    case LOC_RIGHT_WING:
                         if (mounted.isRearMounted()) {
                             if (mounted.isInWaypointLaunchMode()) {
                                 arc = Compute.ARC_RIGHT_SIDE_AFT_SPHERE_WPL;
@@ -703,7 +691,7 @@ public class SmallCraft extends Aero {
                             arc = Compute.ARC_RIGHT_SIDE_SPHERE;
                         }
                         break;
-                    case LOC_LWING:
+                    case LOC_LEFT_WING:
                         if (mounted.isRearMounted()) {
                             if (mounted.isInWaypointLaunchMode()) {
                                 arc = Compute.ARC_LEFT_SIDE_AFT_SPHERE_WPL;
@@ -729,22 +717,11 @@ public class SmallCraft extends Aero {
                         arc = Compute.ARC_360;
                 }
             } else {
-                switch (mounted.getLocation()) {
-                    case LOC_NOSE:
-                        arc = Compute.ARC_360;
-                        break;
-                    case LOC_RWING:
-                        arc = Compute.ARC_RIGHT_SPHERE_GROUND;
-                        break;
-                    case LOC_LWING:
-                        arc = Compute.ARC_LEFT_SPHERE_GROUND;
-                        break;
-                    case LOC_AFT:
-                        arc = Compute.ARC_360;
-                        break;
-                    default:
-                        arc = Compute.ARC_360;
-                }
+                arc = switch (mounted.getLocation()) {
+                    case LOC_RIGHT_WING -> Compute.ARC_RIGHT_SPHERE_GROUND;
+                    case LOC_LEFT_WING -> Compute.ARC_LEFT_SPHERE_GROUND;
+                    default -> Compute.ARC_360;
+                };
             }
 
         }
@@ -753,7 +730,7 @@ public class SmallCraft extends Aero {
 
     }
 
-    public int getArcswGuns() {
+    public int getArcsWithGuns() {
         // return the number
         int nArcs = 0;
         for (int i = 0; i < locations(); i++) {
@@ -770,9 +747,10 @@ public class SmallCraft extends Aero {
 
     public boolean hasWeaponInArc(int loc, boolean rearMount) {
         boolean hasWeapons = false;
-        for (Mounted<?> weap : getWeaponList()) {
-            if ((weap.getLocation() == loc) && (weap.isRearMounted() == rearMount)) {
+        for (Mounted<?> weapon : getWeaponList()) {
+            if ((weapon.getLocation() == loc) && (weapon.isRearMounted() == rearMount)) {
                 hasWeapons = true;
+                break;
             }
         }
         return hasWeapons;
@@ -823,17 +801,17 @@ public class SmallCraft extends Aero {
     @Override
     public boolean loadWeapon(WeaponMounted mounted, AmmoMounted mountedAmmo) {
         boolean success = false;
-        WeaponType wtype = mounted.getType();
-        AmmoType atype = mountedAmmo.getType();
+        WeaponType weaponType = mounted.getType();
+        AmmoType ammoType = mountedAmmo.getType();
 
         if (mounted.getLocation() != mountedAmmo.getLocation()) {
-            return success;
+            return false;
         }
 
         if (mountedAmmo.isAmmoUsable() &&
-              !wtype.hasFlag(WeaponType.F_ONE_SHOT) &&
-              (atype.getAmmoType() == wtype.getAmmoType()) &&
-              (atype.getRackSize() == wtype.getRackSize())) {
+              !weaponType.hasFlag(WeaponType.F_ONE_SHOT) &&
+              (ammoType.getAmmoType() == weaponType.getAmmoType()) &&
+              (ammoType.getRackSize() == weaponType.getRackSize())) {
             mounted.setLinked(mountedAmmo);
             success = true;
         }

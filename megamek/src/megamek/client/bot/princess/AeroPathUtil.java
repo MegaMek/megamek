@@ -347,10 +347,10 @@ public class AeroPathUtil {
                     case Dropship.LOC_NOSE:
                         // Turn 180, face away from enemy.
                         dir = (enemyDir + 3) % 6;
-                    case Dropship.LOC_LWING:
+                    case Dropship.LOC_LEFT_WING:
                         // Turn left two hex sides.
                         dir = (enemyDir + 4) % 6;
-                    case Dropship.LOC_RWING:
+                    case Dropship.LOC_RIGHT_WING:
                         // Turn right two hex sides.
                         dir = (enemyDir + 2) % 6;
                     case Dropship.LOC_AFT:

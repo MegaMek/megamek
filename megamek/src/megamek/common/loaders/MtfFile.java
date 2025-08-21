@@ -62,11 +62,11 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
-import megamek.common.units.EntityFluff;
 import megamek.common.units.LandAirMek;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadMek;
 import megamek.common.units.QuadVee;
+import megamek.common.units.System;
 import megamek.common.units.TripodMek;
 import megamek.common.units.UnitRole;
 import megamek.logging.MMLogger;
@@ -118,8 +118,8 @@ public class MtfFile implements IMekLoader {
     private String history = "";
     private String manufacturer = "";
     private String primaryFactory = "";
-    private final Map<EntityFluff.System, String> systemManufacturers = new EnumMap<>(EntityFluff.System.class);
-    private final Map<EntityFluff.System, String> systemModels = new EnumMap<>(EntityFluff.System.class);
+    private final Map<System, String> systemManufacturers = new EnumMap<>(System.class);
+    private final Map<System, String> systemModels = new EnumMap<>(System.class);
     private String notes = "";
 
     private String fluffImageEncoded = "";
@@ -133,9 +133,10 @@ public class MtfFile implements IMekLoader {
 
     private final List<String> quirkLines = new ArrayList<>();
 
-    public static final int[] locationOrder = { Mek.LOC_LARM, Mek.LOC_RARM, Mek.LOC_LT, Mek.LOC_RT, Mek.LOC_CT,
-                                                Mek.LOC_HEAD, Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_CLEG };
-    public static final int[] rearLocationOrder = { Mek.LOC_LT, Mek.LOC_RT, Mek.LOC_CT };
+    public static final int[] locationOrder = { Mek.LOC_LEFT_ARM, Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_TORSO,
+                                                Mek.LOC_RIGHT_TORSO, Mek.LOC_CENTER_TORSO,
+                                                Mek.LOC_HEAD, Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_LEG, Mek.LOC_CENTER_LEG };
+    public static final int[] rearLocationOrder = { Mek.LOC_LEFT_TORSO, Mek.LOC_RIGHT_TORSO, Mek.LOC_CENTER_TORSO };
 
     public static final String COMMENT = "#";
     public static final String MTF_VERSION = "version:";
@@ -400,7 +401,7 @@ public class MtfFile implements IMekLoader {
             mek.recalculateTechAdvancement();
 
             for (int x = 0; x < locationOrder.length; x++) {
-                if ((locationOrder[x] == Mek.LOC_CLEG) && !(mek instanceof TripodMek)) {
+                if ((locationOrder[x] == Mek.LOC_CENTER_LEG) && !(mek instanceof TripodMek)) {
                     continue;
                 }
                 mek.initializeArmor(Integer.parseInt(armorValues[x].substring(armorValues[x].lastIndexOf(':') + 1)),
@@ -747,7 +748,7 @@ public class MtfFile implements IMekLoader {
     private void parseCrits(Mek mek, int loc) throws EntityLoadingException {
         // check for removed arm actuators
         if (!(mek instanceof QuadMek)) {
-            if ((loc == Mek.LOC_LARM) || (loc == Mek.LOC_RARM)) {
+            if ((loc == Mek.LOC_LEFT_ARM) || (loc == Mek.LOC_RIGHT_ARM)) {
                 String toCheck = critData[loc][3].toUpperCase().trim();
                 if (toCheck.endsWith(ARMORED)) {
                     toCheck = toCheck.substring(0, toCheck.length() - ARMORED.length()).trim();
@@ -766,7 +767,7 @@ public class MtfFile implements IMekLoader {
         }
 
         // go through file, add weapons
-        for (int i = 0; i < mek.getNumberOfCriticals(loc); i++) {
+        for (int i = 0; i < mek.getNumberOfCriticalSlots(loc); i++) {
 
             // parse out and add the critical
             String critName = critData[loc][i];
@@ -919,7 +920,7 @@ public class MtfFile implements IMekLoader {
                             m = vSplitWeapon;
                             int nLoc = m.getLocation();
                             if ((((nLoc == loc) || (loc == Mek.getInnerLocation(nLoc)))
-                                  || ((nLoc == Mek.LOC_CT) && (loc == Mek.LOC_HEAD)))
+                                  || ((nLoc == Mek.LOC_CENTER_TORSO) && (loc == Mek.LOC_HEAD)))
                                   && (m.getType() == etype)) {
                                 bFound = true;
                                 break;
@@ -1067,7 +1068,7 @@ public class MtfFile implements IMekLoader {
             return;
         }
         int firstEmpty = -1;
-        for (int slot = 0; slot < mek.getNumberOfCriticals(loc); slot++) {
+        for (int slot = 0; slot < mek.getNumberOfCriticalSlots(loc); slot++) {
             if (critData[loc][slot] == null) {
                 critData[loc][slot] = MtfFile.EMPTY;
             }
@@ -1089,35 +1090,35 @@ public class MtfFile implements IMekLoader {
 
     private int getLocation(String location) {
         if (location.equalsIgnoreCase("Left Arm:") || location.equalsIgnoreCase("Front Left Leg:")) {
-            return Mek.LOC_LARM;
+            return Mek.LOC_LEFT_ARM;
         }
 
         if (location.equalsIgnoreCase("Right Arm:") || location.equalsIgnoreCase("Front Right Leg:")) {
-            return Mek.LOC_RARM;
+            return Mek.LOC_RIGHT_ARM;
         }
 
         if (location.equalsIgnoreCase("Left Leg:") || location.equalsIgnoreCase("Rear Left Leg:")) {
-            return Mek.LOC_LLEG;
+            return Mek.LOC_LEFT_LEG;
         }
 
         if (location.equalsIgnoreCase("Right Leg:") || location.equalsIgnoreCase("Rear Right Leg:")) {
-            return Mek.LOC_RLEG;
+            return Mek.LOC_RIGHT_LEG;
         }
 
         if (location.equalsIgnoreCase("Center Leg:")) {
-            return Mek.LOC_CLEG;
+            return Mek.LOC_CENTER_LEG;
         }
 
         if (location.equalsIgnoreCase("Left Torso:")) {
-            return Mek.LOC_LT;
+            return Mek.LOC_LEFT_TORSO;
         }
 
         if (location.equalsIgnoreCase("Right Torso:")) {
-            return Mek.LOC_RT;
+            return Mek.LOC_RIGHT_TORSO;
         }
 
         if (location.equalsIgnoreCase("Center Torso:")) {
-            return Mek.LOC_CT;
+            return Mek.LOC_CENTER_TORSO;
         }
 
         // else
@@ -1130,32 +1131,32 @@ public class MtfFile implements IMekLoader {
         boolean rear = false;
         String locationName = location.toLowerCase();
         if (locationName.startsWith("la armor:") || locationName.startsWith("fll armor:")) {
-            loc = Mek.LOC_LARM;
+            loc = Mek.LOC_LEFT_ARM;
         } else if (locationName.startsWith("ra armor:") || locationName.startsWith("frl armor:")) {
-            loc = Mek.LOC_RARM;
+            loc = Mek.LOC_RIGHT_ARM;
         } else if (locationName.startsWith("lt armor:")) {
-            loc = Mek.LOC_LT;
+            loc = Mek.LOC_LEFT_TORSO;
         } else if (locationName.startsWith("rt armor:")) {
-            loc = Mek.LOC_RT;
+            loc = Mek.LOC_RIGHT_TORSO;
         } else if (locationName.startsWith("ct armor:")) {
-            loc = Mek.LOC_CT;
+            loc = Mek.LOC_CENTER_TORSO;
         } else if (locationName.startsWith("hd armor:")) {
             loc = Mek.LOC_HEAD;
         } else if (locationName.startsWith("ll armor:") || locationName.startsWith("rll armor:")) {
-            loc = Mek.LOC_LLEG;
+            loc = Mek.LOC_LEFT_LEG;
         } else if (locationName.startsWith("rl armor:") || locationName.startsWith("rrl armor:")) {
-            loc = Mek.LOC_RLEG;
+            loc = Mek.LOC_RIGHT_LEG;
         } else if (locationName.startsWith("rtl armor:")) {
-            loc = Mek.LOC_LT;
+            loc = Mek.LOC_LEFT_TORSO;
             rear = true;
         } else if (locationName.startsWith("rtr armor:")) {
-            loc = Mek.LOC_RT;
+            loc = Mek.LOC_RIGHT_TORSO;
             rear = true;
         } else if (locationName.startsWith("rtc armor:")) {
-            loc = Mek.LOC_CT;
+            loc = Mek.LOC_CENTER_TORSO;
             rear = true;
         } else if (locationName.startsWith("cl armor:")) {
-            loc = Mek.LOC_CLEG;
+            loc = Mek.LOC_CENTER_LEG;
         }
 
         if (!rear) {
@@ -1334,7 +1335,7 @@ public class MtfFile implements IMekLoader {
         if (lineLower.startsWith(SYSTEM_MANUFACTURER)) {
             String[] fields = line.split(":");
             if (fields.length > 2) {
-                EntityFluff.System system = EntityFluff.System.parse(fields[1]);
+                System system = System.parse(fields[1]);
                 if (null != system) {
                     systemManufacturers.put(system, fields[2].trim());
                 }
@@ -1345,7 +1346,7 @@ public class MtfFile implements IMekLoader {
         if (lineLower.startsWith(SYSTEM_MODEL)) {
             String[] fields = line.split(":");
             if (fields.length > 2) {
-                EntityFluff.System system = EntityFluff.System.parse(fields[1]);
+                System system = System.parse(fields[1]);
                 if (null != system) {
                     systemModels.put(system, fields[2].trim());
                 }

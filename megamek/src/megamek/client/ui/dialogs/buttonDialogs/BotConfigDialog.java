@@ -41,7 +41,7 @@ import static megamek.common.units.Terrains.BRIDGE_ELEV;
 import static megamek.common.units.Terrains.BUILDING;
 import static megamek.common.units.Terrains.FUEL_TANK;
 import static megamek.common.units.Terrains.FUEL_TANK_CF;
-import static megamek.common.units.Terrains.FUEL_TANK_MAGN;
+import static megamek.common.units.Terrains.FUEL_TANK_MAG_N;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -85,16 +85,16 @@ import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.*;
-import megamek.common.board.Board;
-import megamek.common.units.Building;
-import megamek.common.board.Coords;
-import megamek.common.units.Entity;
 import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.common.internationalization.I18n;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 import megamek.server.ServerBoardHelper;
 
@@ -1060,7 +1060,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         } else if (hex.containsTerrain(FUEL_TANK)) {
             content += Messages.getString("BotConfigDialog.hexListFuel",
                   hex.terrainLevel(FUEL_TANK_CF),
-                  hex.terrainLevel(FUEL_TANK_MAGN));
+                  hex.terrainLevel(FUEL_TANK_MAG_N));
         } else {
             content += Messages.getString("BotConfigDialog.hexListBrdg",
                   bldg.getType().toString(),

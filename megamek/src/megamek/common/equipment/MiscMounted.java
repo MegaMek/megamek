@@ -103,13 +103,13 @@ public class MiscMounted extends Mounted<MiscType> {
         // Shields can only be used in arms so if you've got a shield in a
         // location
         // other than an arm your SOL --Torren.
-        if ((location != Mek.LOC_RARM) && (location != Mek.LOC_LARM)) {
+        if ((location != Mek.LOC_RIGHT_ARM) && (location != Mek.LOC_LEFT_ARM)) {
             return 0;
         }
 
         int base = baseDamageAbsorptionRate;
 
-        for (int slot = 0; slot < entity.getNumberOfCriticals(location); slot++) {
+        for (int slot = 0; slot < entity.getNumberOfCriticalSlots(location); slot++) {
             CriticalSlot cs = entity.getCritical(location, slot);
 
             if (cs == null) {
@@ -163,13 +163,13 @@ public class MiscMounted extends Mounted<MiscType> {
         // Shields can only be used in arms so if you've got a shield in a
         // location
         // other than an arm your SOL --Torren.
-        if ((location != Mek.LOC_RARM) && (location != Mek.LOC_LARM)) {
+        if ((location != Mek.LOC_RIGHT_ARM) && (location != Mek.LOC_LEFT_ARM)) {
             return 0;
         }
 
         int base = baseDamageCapacity;
 
-        for (int slot = 0; slot < entity.getNumberOfCriticals(location); slot++) {
+        for (int slot = 0; slot < entity.getNumberOfCriticalSlots(location); slot++) {
             CriticalSlot cs = entity.getCritical(location, slot);
 
             if (cs == null) {

@@ -58,14 +58,10 @@ import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.MekPanelTabStrip;
-import megamek.common.game.GameTurn;
 import megamek.common.HexTarget;
 import megamek.common.Player;
 import megamek.common.RangeType;
-import megamek.common.rolls.TargetRoll;
 import megamek.common.ToHitData;
-import megamek.common.turns.TriggerAPPodTurn;
-import megamek.common.turns.TriggerBPodTurn;
 import megamek.common.actions.*;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
@@ -80,7 +76,11 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.game.GameTurn;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.turns.TriggerAPPodTurn;
+import megamek.common.turns.TriggerBPodTurn;
 import megamek.common.units.Building;
 import megamek.common.units.BuildingTarget;
 import megamek.common.units.Dropship;
@@ -367,7 +367,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
         Client client = clientgui.getClient();
         Entity entity = game.getEntity(en);
-        if ((entity != null) && entity.isWeapOrderChanged()) {
+        if ((entity != null) && entity.isWeaponOrderChanged()) {
             client.sendEntityWeaponOrderUpdate(entity);
         }
 
@@ -598,7 +598,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         // clear queue
         removeAllAttacks();
 
-        if ((ce() != null) && ce().isWeapOrderChanged()) {
+        if ((ce() != null) && ce().isWeaponOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }
         endMyTurn();

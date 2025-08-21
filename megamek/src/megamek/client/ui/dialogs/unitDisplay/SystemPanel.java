@@ -370,7 +370,7 @@ class SystemPanel extends PicMap
         locModel.insertElementAt("-----", LOC_SPACER);
         for (int loc = 0; loc < en.locations(); loc++) {
             int idx = loc + LOC_OFFSET;
-            if (en.getNumberOfCriticals(loc) > 0) {
+            if (en.getNumberOfCriticalSlots(loc) > 0) {
                 locModel.insertElementAt(en.getLocationName(loc), idx);
             }
         }
@@ -406,7 +406,7 @@ class SystemPanel extends PicMap
 
         // Standard location handling
         loc -= LOC_OFFSET;
-        for (int i = 0; i < en.getNumberOfCriticals(loc); i++) {
+        for (int i = 0; i < en.getNumberOfCriticalSlots(loc); i++) {
             final CriticalSlot cs = en.getCritical(loc, i);
             StringBuilder sb = new StringBuilder(32);
             if (cs == null) {
@@ -776,12 +776,12 @@ class SystemPanel extends PicMap
                 m_chMode.setEnabled(false);
                 Mounted<?> m = getSelectedEquipment();
                 boolean carryingBAsOnBack = (en instanceof Mek)
-                      && ((en.getExteriorUnitAt(Mek.LOC_CT, true) != null)
-                      || (en.getExteriorUnitAt(Mek.LOC_LT, true) != null) || (en
-                      .getExteriorUnitAt(Mek.LOC_RT, true) != null));
+                      && ((en.getExteriorUnitAt(Mek.LOC_CENTER_TORSO, true) != null)
+                      || (en.getExteriorUnitAt(Mek.LOC_LEFT_TORSO, true) != null) || (en
+                      .getExteriorUnitAt(Mek.LOC_RIGHT_TORSO, true) != null));
 
                 boolean invalidEnvironment = (en instanceof Mek)
-                      && (en.getLocationStatus(Mek.LOC_CT) > ILocationExposureStatus.NORMAL);
+                      && (en.getLocationStatus(Mek.LOC_CENTER_TORSO) > ILocationExposureStatus.NORMAL);
 
                 if ((en instanceof Tank) && !(en instanceof GunEmplacement)
                       && (en.getLocationStatus(Tank.LOC_REAR) > ILocationExposureStatus.NORMAL)) {

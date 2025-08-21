@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,8 +47,6 @@ import megamek.common.interfaces.ITurnOrdered;
 public class TurnVectors implements Enumeration<ITurnOrdered> {
     private final int numEven;
     private final int numNormal;
-    //need to keep an enumeration of all non-even turns
-    private final int numTotal;
     private final int numSS;
     private final int numJS;
     private final int numWS;
@@ -199,7 +197,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
           int wsCount, int dsCount, int scCount, int tmCount, int aeroCount, int evenCount, int min) {
         this.numEven = evenCount;
         this.numNormal = normalCount;
-        this.numTotal = totalCount;
+        //need to keep an enumeration of all non-even turns
         this.numSS = ssCount;
         this.numJS = jsCount;
         this.numWS = wsCount;
@@ -208,7 +206,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
         this.numTM = tmCount;
         this.numAero = aeroCount;
         this.normal_turns = new Vector<>(normalCount);
-        this.total_turns = new Vector<>(this.numTotal);
+        this.total_turns = new Vector<>(totalCount);
         this.even_turns = new Vector<>(evenCount);
         this.space_station_turns = new Vector<>(ssCount);
         this.jumpship_turns = new Vector<>(jsCount);
@@ -273,7 +271,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
     /**
      * Add a <code>TurnOrdered</code> marker for a turn that must occur after all normal turns.
      *
-     * @param marker the <code>TurnOrdered</code> marker for a even turn.
+     * @param marker the <code>TurnOrdered</code> marker for an even turn.
      *
      * @throws IllegalStateException if as many markers have been added for even turns as indicated at construction.
      */
@@ -414,7 +412,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
     /**
      * Get the next "space station" <code>TurnOrdered</code> marker.
      *
-     * @return the "space staion" <code>TurnOrdered</code> marker.
+     * @return the "space station" <code>TurnOrdered</code> marker.
      */
     public ITurnOrdered nextSpaceStationElement() {
         return this.getTurnSSEnum().nextElement();

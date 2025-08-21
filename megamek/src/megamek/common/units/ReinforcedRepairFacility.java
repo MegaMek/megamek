@@ -34,6 +34,7 @@
 
 package megamek.common.units;
 
+import java.io.Serial;
 import java.text.DecimalFormat;
 
 import megamek.common.SimpleTechLevel;
@@ -52,6 +53,7 @@ import megamek.common.util.RoundWeight;
  */
 public class ReinforcedRepairFacility extends NavalRepairFacility {
 
+    @Serial
     private static final long serialVersionUID = -3474202393188929092L;
 
     /**
@@ -66,10 +68,8 @@ public class ReinforcedRepairFacility extends NavalRepairFacility {
     /**
      * Create a new repair facility
      *
-     * @param size      Maximum capacity in tons
-     * @param doors
-     * @param bayNumber
-     * @param facing    The armor facing of the facility
+     * @param size   Maximum capacity in tons
+     * @param facing The armor facing of the facility
      */
     public ReinforcedRepairFacility(double size, int doors, int bayNumber, int facing) {
         super(size, doors, bayNumber, facing, false);
@@ -101,9 +101,7 @@ public class ReinforcedRepairFacility extends NavalRepairFacility {
 
     @Override
     public String getUnusedString(boolean showRecovery) {
-        StringBuilder sb = new StringBuilder("Reinforced Naval Repair Facility: ");
-        sb.append(DecimalFormat.getInstance().format(totalSpace)).append(" tons");
-        return sb.toString();
+        return "Reinforced Naval Repair Facility: " + DecimalFormat.getInstance().format(totalSpace) + " tons";
     }
 
     public static TechAdvancement techAdvancement() {

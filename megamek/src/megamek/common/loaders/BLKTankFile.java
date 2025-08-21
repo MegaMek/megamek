@@ -62,9 +62,9 @@ public class BLKTankFile extends BLKFile implements IMekLoader {
     protected int defaultVGLFacing(int location, boolean rearFacing) {
         if (superheavy) {
             return switch (location) {
-                case SuperHeavyTank.LOC_FRONTRIGHT -> 1;
-                case SuperHeavyTank.LOC_REARRIGHT, SuperHeavyTank.LOC_REAR -> 2;
-                case SuperHeavyTank.LOC_REARLEFT, SuperHeavyTank.LOC_FRONTLEFT -> 4;
+                case SuperHeavyTank.LOC_FRONT_RIGHT -> 1;
+                case SuperHeavyTank.LOC_REAR_RIGHT, SuperHeavyTank.LOC_REAR -> 2;
+                case SuperHeavyTank.LOC_REAR_LEFT, SuperHeavyTank.LOC_FRONT_LEFT -> 4;
                 default -> 0;
             };
         } else {
@@ -203,10 +203,10 @@ public class BLKTankFile extends BLKFile implements IMekLoader {
 
         if (superheavy) {
             loadEquipment(t, "Front", Tank.LOC_FRONT);
-            loadEquipment(t, "Front Right", SuperHeavyTank.LOC_FRONTRIGHT);
-            loadEquipment(t, "Front Left", SuperHeavyTank.LOC_FRONTLEFT);
-            loadEquipment(t, "Rear Left", SuperHeavyTank.LOC_REARLEFT);
-            loadEquipment(t, "Rear Left", SuperHeavyTank.LOC_REARRIGHT);
+            loadEquipment(t, "Front Right", SuperHeavyTank.LOC_FRONT_RIGHT);
+            loadEquipment(t, "Front Left", SuperHeavyTank.LOC_FRONT_LEFT);
+            loadEquipment(t, "Rear Left", SuperHeavyTank.LOC_REAR_LEFT);
+            loadEquipment(t, "Rear Left", SuperHeavyTank.LOC_REAR_RIGHT);
             loadEquipment(t, "Rear", SuperHeavyTank.LOC_REAR);
             if (t.hasNoDualTurret()) {
                 if (!t.hasNoTurret()) {

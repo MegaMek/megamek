@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,6 +39,7 @@ import static megamek.common.game.Game.TEAM_HAS_COMBAT_SENSE;
 import static megamek.common.options.OptionsConstants.ATOW_COMBAT_PARALYSIS;
 import static megamek.common.options.OptionsConstants.ATOW_COMBAT_SENSE;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -58,6 +59,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.EntityClassTurn;
 
 public abstract class TurnOrdered implements ITurnOrdered {
+    @Serial
     private static final long serialVersionUID = 4131468442031773195L;
 
     private InitiativeRoll initiative = new InitiativeRoll();
@@ -67,8 +69,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
     private transient int turns_even = 0;
     private transient HashMap<Integer, Integer> turns_multi = new HashMap<>();
 
-    // these are special turns for all of the aero units (only used in the
-    // movement phase)
+    // these are special turns for all the aero units (only used in the movement phase)
     private transient int turns_aero = 0;
     private transient int turns_ss = 0;
     private transient int turns_js = 0;
@@ -110,34 +111,34 @@ public abstract class TurnOrdered implements ITurnOrdered {
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT)) {
             double lanceSize = game.getOptions()
                   .intOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT_NUMBER);
-            Integer numMekMultis = turns_multi.get(EntityClassTurn.CLASS_MEK);
-            if (numMekMultis != null) {
-                turns += (int) Math.ceil(numMekMultis / lanceSize);
+            Integer numMekMultiples = turns_multi.get(EntityClassTurn.CLASS_MEK);
+            if (numMekMultiples != null) {
+                turns += (int) Math.ceil(numMekMultiples / lanceSize);
             }
         }
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_LANCE_MOVEMENT)) {
             double lanceSize = game.getOptions()
                   .intOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_LANCE_MOVEMENT_NUMBER);
-            Integer numTankMultis = turns_multi.get(EntityClassTurn.CLASS_TANK);
-            if (numTankMultis != null) {
-                turns += (int) Math.ceil(numTankMultis / lanceSize);
+            Integer numTankMultiples = turns_multi.get(EntityClassTurn.CLASS_TANK);
+            if (numTankMultiples != null) {
+                turns += (int) Math.ceil(numTankMultiples / lanceSize);
             }
         }
 
         if (game.getOptions().booleanOption(OptionsConstants.INIT_PROTOMEKS_MOVE_MULTI)) {
             double lanceSize = game.getOptions().intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI);
-            Integer numProtoMultis = turns_multi.get(EntityClassTurn.CLASS_PROTOMEK);
-            if (numProtoMultis != null) {
-                turns += (int) Math.ceil(numProtoMultis / lanceSize);
+            Integer numProtoMultiples = turns_multi.get(EntityClassTurn.CLASS_PROTOMEK);
+            if (numProtoMultiples != null) {
+                turns += (int) Math.ceil(numProtoMultiples / lanceSize);
             }
         }
 
         if (game.getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_MULTI)) {
             double lanceSize = game.getOptions().intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI);
-            Integer numInfMultis = turns_multi.get(EntityClassTurn.CLASS_INFANTRY);
-            if (numInfMultis != null) {
-                turns += (int) Math.ceil(numInfMultis / lanceSize);
+            Integer numInfMultiples = turns_multi.get(EntityClassTurn.CLASS_INFANTRY);
+            if (numInfMultiples != null) {
+                turns += (int) Math.ceil(numInfMultiples / lanceSize);
             }
         }
         return turns;
@@ -334,23 +335,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
     public static void resetInitiativeCompensation(List<? extends ITurnOrdered> v, boolean bInitCompBonus) {
         // initiative compensation
         if (bInitCompBonus && !v.isEmpty()) {
-            final ITurnOrdered comparisonElement = v.get(0);
-            int difference = 0;
-            ITurnOrdered winningElement = comparisonElement;
-
-            // figure out who won initiative this round
-            for (ITurnOrdered item : v) {
-                // Observers don't have initiative, and they don't get initiative compensation
-                if (((item instanceof Player) && ((Player) item).isObserver()) ||
-                      ((item instanceof Team) && ((Team) item).isObserverTeam())) {
-                    continue;
-                }
-
-                if (item.getInitiative().compareTo(comparisonElement.getInitiative()) > difference) {
-                    difference = item.getInitiative().compareTo(comparisonElement.getInitiative());
-                    winningElement = item;
-                }
-            }
+            ITurnOrdered winningElement = getWinningElement(v);
 
             // set/reset the initiative compensation counters
             if (lastRoundInitWinner != null) {
@@ -373,6 +358,27 @@ public abstract class TurnOrdered implements ITurnOrdered {
             }
             lastRoundInitWinner = winningElement;
         }
+    }
+
+    private static ITurnOrdered getWinningElement(List<? extends ITurnOrdered> v) {
+        final ITurnOrdered comparisonElement = v.get(0);
+        int difference = 0;
+        ITurnOrdered winningElement = comparisonElement;
+
+        // figure out who won initiative this round
+        for (ITurnOrdered item : v) {
+            // Observers don't have initiative, and they don't get initiative compensation
+            if (((item instanceof Player) && ((Player) item).isObserver()) ||
+                  ((item instanceof Team) && ((Team) item).isObserverTeam())) {
+                continue;
+            }
+
+            if (item.getInitiative().compareTo(comparisonElement.getInitiative()) > difference) {
+                difference = item.getInitiative().compareTo(comparisonElement.getInitiative());
+                winningElement = item;
+            }
+        }
+        return winningElement;
     }
 
     /**
@@ -634,7 +640,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
                 }
 
             }
-            // Since the smallest unit count had to place 1, reduce min)
+            // Since the smallest unit count had to place 1, reduce min
             min--;
 
         } // Handle the next 'regular' turn.
@@ -670,7 +676,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
                         turns_left--;
                     }
                 }
-                // Since the smallest unit count had to place 1, reduce min)
+                // Since the smallest unit count had to place 1, reduce min
                 min--;
             } // Handle the next 'even' turn
         } // End have-'even'-turns
@@ -698,7 +704,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
                 }
 
             }
-            // Since the smallest unit count had to place 1, reduce min)
+            // Since the smallest unit count had to place 1, reduce min
             minSS--;
 
         } // Handle the next 'space station' turn.
@@ -726,7 +732,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
                 }
 
             }
-            // Since the smallest unit count had to place 1, reduce min)
+            // Since the smallest unit count had to place 1, reduce min
             minJS--;
 
         } // Handle the next 'jumpship' turn.
@@ -754,7 +760,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
                 }
 
             }
-            // Since the smallest unit count had to place 1, reduce min)
+            // Since the smallest unit count had to place 1, reduce min
             minWS--;
 
         } // Handle the next 'warship' turn.
@@ -782,7 +788,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
                 }
 
             }
-            // Since the smallest unit count had to place 1, reduce min)
+            // Since the smallest unit count had to place 1, reduce min
             minDS--;
 
         } // Handle the next 'dropship' turn.
@@ -810,7 +816,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
                 }
 
             }
-            // Since the smallest unit count had to place 1, reduce min)
+            // Since the smallest unit count had to place 1, reduce min
             minSC--;
 
         } // Handle the next 'small craft' turn.
@@ -838,7 +844,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
                 }
 
             }
-            // Since the smallest unit count had to place 1, reduce min)
+            // Since the smallest unit count had to place 1, reduce min
             minTM--;
 
         } // Handle the next 'telemissile' turn.
@@ -862,7 +868,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
                 }
 
             }
-            // Since the smallest unit count had to place 1, reduce min)
+            // Since the smallest unit count had to place 1, reduce min
             minAero--;
 
         } // Handle the next 'aero' turn.

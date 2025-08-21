@@ -199,7 +199,7 @@ public class BoardViewLessMinimapPanel extends JPanel implements OverlayPainter 
                         return;
                     }
 
-                    if (attackAction.getTargetType() == Targetable.TYPE_INARC_POD) {
+                    if (attackAction.getTargetType() == Targetable.TYPE_I_NARC_POD) {
                         // iNarc pods don't have a position
                         return;
                     }

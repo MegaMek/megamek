@@ -136,7 +136,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
             te = (Entity) target;
             targetId = target.getId();
         }
-        final int armLoc = (arm == BrushOffAttackAction.RIGHT) ? Mek.LOC_RARM : Mek.LOC_LARM;
+        final int armLoc = (arm == BrushOffAttackAction.RIGHT) ? Mek.LOC_RIGHT_ARM : Mek.LOC_LEFT_ARM;
         ToHitData toHit;
 
         // non-meks can't BrushOff
@@ -151,7 +151,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
             throw new IllegalArgumentException("Arm must be LEFT or RIGHT");
         }
         if (((targetId != ae.getSwarmAttackerId()) || !(te instanceof Infantry))
-              && (target.getTargetType() != Targetable.TYPE_INARC_POD)) {
+              && (target.getTargetType() != Targetable.TYPE_I_NARC_POD)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                   "Can only brush off swarming infantry or iNarc Pods");
         }
@@ -250,10 +250,10 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         // sensor hits...
         // It gets a =4 penalty for being blind!
         if (((Mek) ae).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
-            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+            int sensorHits = ae.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM,
                   Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
-            int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                  Mek.SYSTEM_SENSORS, Mek.LOC_CT);
+            int sensorHits2 = ae.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM,
+                  Mek.SYSTEM_SENSORS, Mek.LOC_CENTER_TORSO);
             if ((sensorHits + sensorHits2) == 3) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                       "Sensors Completely Destroyed for Torso-Mounted Cockpit");

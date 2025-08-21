@@ -257,11 +257,11 @@ class ComputeToHitIsImpossible {
                 }
                 // If caught by a chain whip, can't use weapons in the affected arm
                 if ((attacker instanceof Mek) && (attacker.getGrappleSide() == Entity.GRAPPLE_LEFT)
-                      && (loc == Mek.LOC_LARM)) {
+                      && (loc == Mek.LOC_LEFT_ARM)) {
                     return Messages.getString("WeaponAttackAction.CantShootWhileChained");
                 }
                 if ((attacker instanceof Mek) && (attacker.getGrappleSide() == Entity.GRAPPLE_RIGHT)
-                      && (loc == Mek.LOC_RARM)) {
+                      && (loc == Mek.LOC_RIGHT_ARM)) {
                     return Messages.getString("WeaponAttackAction.CantShootWhileChained");
                 }
             }
@@ -334,9 +334,11 @@ class ComputeToHitIsImpossible {
         // Are the sensors operational?
         // BattleMek sensors are destroyed after 2 hits, unless they have a
         // torso-mounted cockpit
-        int sensorHits = attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
+        int sensorHits = attacker.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
         if ((attacker instanceof Mek mek) && (mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED)) {
-            sensorHits += attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_CT);
+            sensorHits += attacker.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM,
+                  Mek.SYSTEM_SENSORS,
+                  Mek.LOC_CENTER_TORSO);
             if (sensorHits > 2) {
                 return Messages.getString("WeaponAttackAction.SensorsDestroyed");
             }
@@ -918,8 +920,8 @@ class ComputeToHitIsImpossible {
 
                     } else if (attacker instanceof LandAirMek) {
                         // LAMs can't use leg or rear-mounted weapons
-                        if ((weapon.getLocation() == Mek.LOC_LLEG) ||
-                              (weapon.getLocation() == Mek.LOC_RLEG) ||
+                        if ((weapon.getLocation() == Mek.LOC_LEFT_LEG) ||
+                              (weapon.getLocation() == Mek.LOC_RIGHT_LEG) ||
                               weapon.isRearMounted()) {
                             return Messages.getString("WeaponAttackAction.InvalidAeroDSAtgArc");
                         }
@@ -1387,14 +1389,14 @@ class ComputeToHitIsImpossible {
                 // locations
                 // can only be fired in response to leg/swarm attacks
                 if (attacker instanceof BipedMek) {
-                    if (!((weapon.getLocation() == Mek.LOC_LLEG) || (weapon.getLocation() == Mek.LOC_RLEG))) {
+                    if (!((weapon.getLocation() == Mek.LOC_LEFT_LEG) || (weapon.getLocation() == Mek.LOC_RIGHT_LEG))) {
                         return Messages.getString("WeaponAttackAction.OnlyLegBPod");
                     }
                 } else if (attacker instanceof QuadMek) {
-                    if (!((weapon.getLocation() == Mek.LOC_LLEG) ||
-                          (weapon.getLocation() == Mek.LOC_RLEG) ||
-                          (weapon.getLocation() == Mek.LOC_LARM) ||
-                          (weapon.getLocation() == Mek.LOC_RARM))) {
+                    if (!((weapon.getLocation() == Mek.LOC_LEFT_LEG) ||
+                          (weapon.getLocation() == Mek.LOC_RIGHT_LEG) ||
+                          (weapon.getLocation() == Mek.LOC_LEFT_ARM) ||
+                          (weapon.getLocation() == Mek.LOC_RIGHT_ARM))) {
                         return Messages.getString("WeaponAttackAction.OnlyLegBPod");
                     }
                 }
@@ -1769,17 +1771,17 @@ class ComputeToHitIsImpossible {
 
             // ProtoMeks cannot fire arm weapons and main gun in the same turn
             if ((attacker instanceof ProtoMek) &&
-                  ((weapon.getLocation() == ProtoMek.LOC_MAINGUN) ||
-                        (weapon.getLocation() == ProtoMek.LOC_RARM) ||
-                        (weapon.getLocation() == ProtoMek.LOC_LARM))) {
-                final boolean firingMainGun = weapon.getLocation() == ProtoMek.LOC_MAINGUN;
+                  ((weapon.getLocation() == ProtoMek.LOC_MAIN_GUN) ||
+                        (weapon.getLocation() == ProtoMek.LOC_RIGHT_ARM) ||
+                        (weapon.getLocation() == ProtoMek.LOC_LEFT_ARM))) {
+                final boolean firingMainGun = weapon.getLocation() == ProtoMek.LOC_MAIN_GUN;
                 for (EntityAction ea : game.getActionsVector()) {
                     if ((ea.getEntityId() == attackerId) && (ea instanceof WeaponAttackAction otherWAA)) {
                         final Mounted<?> otherWeapon = attacker.getEquipment(otherWAA.getWeaponId());
                         if ((firingMainGun &&
-                              ((otherWeapon.getLocation() == ProtoMek.LOC_RARM) ||
-                                    (otherWeapon.getLocation() == ProtoMek.LOC_LARM))) ||
-                              !firingMainGun && (otherWeapon.getLocation() == ProtoMek.LOC_MAINGUN)) {
+                              ((otherWeapon.getLocation() == ProtoMek.LOC_RIGHT_ARM) ||
+                                    (otherWeapon.getLocation() == ProtoMek.LOC_LEFT_ARM))) ||
+                              !firingMainGun && (otherWeapon.getLocation() == ProtoMek.LOC_MAIN_GUN)) {
                             return Messages.getString("WeaponAttackAction.CantFireArmsAndMainGun");
                         }
                     }

@@ -112,7 +112,6 @@ import megamek.common.turns.TurnOrdered;
 import megamek.common.turns.TurnVectors;
 import megamek.common.turns.UnloadStrandedTurn;
 import megamek.common.units.*;
-import megamek.common.units.Building.DemolitionCharge;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.C3Util;
 import megamek.common.util.EmailService;
@@ -860,7 +859,7 @@ public class TWGameManager extends AbstractGameManager {
                     WeaponSortOrder order = (WeaponSortOrder) data[1];
                     ent.setWeaponSortOrder(order);
                     // Used by the client but is set in setWeaponSortOrder
-                    ent.setWeapOrderChanged(false);
+                    ent.setWeaponOrderChanged(false);
                     if (order.isCustom()) {
                         // Unchecked cause of limitations in Java when casting to a collection
                         @SuppressWarnings(value = "unchecked")
@@ -5102,7 +5101,7 @@ public class TWGameManager extends AbstractGameManager {
         boolean partial = (Compute.d6() == 6);
         // if aero chance to avoid
         if ((target.isAero()) &&
-              (target.mpUsed < target.getRunMPwithoutMASC()) &&
+              (target.mpUsed < target.getRunMPWithoutMASC()) &&
               !((IAero) target).isOutControlTotal() &&
               !target.isImmobile()) {
             // give them a control roll to avoid the collision
@@ -5149,14 +5148,14 @@ public class TWGameManager extends AbstractGameManager {
                     // they may have exceeded SI, only add if they hadn't
                     // exceeded it before
                     if (target.mpUsed <= ta.getSI()) {
-                        PilotingRollData rollTarget = ta.checkThrustSITotal(target.getRunMPwithoutMASC(), target.moved);
+                        PilotingRollData rollTarget = ta.checkThrustSITotal(target.getRunMPWithoutMASC(), target.moved);
                         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                             game.addControlRoll(new PilotingRollData(target.getId(),
                                   0,
                                   "Thrust spent during turn exceeds SI"));
                         }
                     }
-                    target.mpUsed = target.getRunMPwithoutMASC();
+                    target.mpUsed = target.getRunMPWithoutMASC();
                 }
                 return false;
             }
@@ -6049,7 +6048,7 @@ public class TWGameManager extends AbstractGameManager {
                 if ((null != supercharger) && supercharger.curMode().equals("Armed")) {
                     if (entity.hasETypeFlag(Entity.ETYPE_MEK)) {
                         final int loc = supercharger.getLocation();
-                        for (int slot = 0; slot < entity.getNumberOfCriticals(loc); slot++) {
+                        for (int slot = 0; slot < entity.getNumberOfCriticalSlots(loc); slot++) {
                             final CriticalSlot crit = entity.getCritical(loc, slot);
                             if ((null != crit) &&
                                   (crit.getType() == CriticalSlot.TYPE_EQUIPMENT) &&
@@ -7093,7 +7092,8 @@ public class TWGameManager extends AbstractGameManager {
                                 int hitLoc = hit.getLocation();
                                 // Primary stores the left side, from the
                                 // perspective of the attacker
-                                if ((hitLoc == Mek.LOC_RLEG) || (hitLoc == Mek.LOC_RT) || (hitLoc == Mek.LOC_RARM)) {
+                                if ((hitLoc == Mek.LOC_RIGHT_LEG) || (hitLoc == Mek.LOC_RIGHT_TORSO) || (hitLoc
+                                      == Mek.LOC_RIGHT_ARM)) {
                                     // Left side is primary
                                     damageableCoverType = le.getDamagableCoverTypePrimary();
                                     coverDropship = le.getCoverDropshipPrimary();
@@ -7255,7 +7255,7 @@ public class TWGameManager extends AbstractGameManager {
                     while (te.heatFromExternal >= 3) {
                         te.heatFromExternal -= 3;
                         HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                        if (hit.getLocation() == ProtoMek.LOC_NMISS) {
+                        if (hit.getLocation() == ProtoMek.LOC_NEAR_MISS) {
                             ProtoMek proto = (ProtoMek) te;
                             r = new Report(6035);
                             r.subject = te.getId();
@@ -8262,19 +8262,19 @@ public class TWGameManager extends AbstractGameManager {
                         entity.setLocationStatus(loop, ILocationExposureStatus.NORMAL);
                     }
                 }
-                entity.setLocationStatus(Mek.LOC_RLEG, ILocationExposureStatus.WET);
-                entity.setLocationStatus(Mek.LOC_LLEG, ILocationExposureStatus.WET);
-                vPhaseReport.addAll(breachCheck(entity, Mek.LOC_RLEG, hex));
-                vPhaseReport.addAll(breachCheck(entity, Mek.LOC_LLEG, hex));
+                entity.setLocationStatus(Mek.LOC_RIGHT_LEG, ILocationExposureStatus.WET);
+                entity.setLocationStatus(Mek.LOC_LEFT_LEG, ILocationExposureStatus.WET);
+                vPhaseReport.addAll(breachCheck(entity, Mek.LOC_RIGHT_LEG, hex));
+                vPhaseReport.addAll(breachCheck(entity, Mek.LOC_LEFT_LEG, hex));
                 if (entity instanceof QuadMek) {
-                    entity.setLocationStatus(Mek.LOC_RARM, ILocationExposureStatus.WET);
-                    entity.setLocationStatus(Mek.LOC_LARM, ILocationExposureStatus.WET);
-                    vPhaseReport.addAll(breachCheck(entity, Mek.LOC_RARM, hex));
-                    vPhaseReport.addAll(breachCheck(entity, Mek.LOC_LARM, hex));
+                    entity.setLocationStatus(Mek.LOC_RIGHT_ARM, ILocationExposureStatus.WET);
+                    entity.setLocationStatus(Mek.LOC_LEFT_ARM, ILocationExposureStatus.WET);
+                    vPhaseReport.addAll(breachCheck(entity, Mek.LOC_RIGHT_ARM, hex));
+                    vPhaseReport.addAll(breachCheck(entity, Mek.LOC_LEFT_ARM, hex));
                 }
                 if (entity instanceof TripodMek) {
-                    entity.setLocationStatus(Mek.LOC_CLEG, ILocationExposureStatus.WET);
-                    vPhaseReport.addAll(breachCheck(entity, Mek.LOC_CLEG, hex));
+                    entity.setLocationStatus(Mek.LOC_CENTER_LEG, ILocationExposureStatus.WET);
+                    vPhaseReport.addAll(breachCheck(entity, Mek.LOC_CENTER_LEG, hex));
                 }
             } else {
                 int status = ILocationExposureStatus.WET;
@@ -11400,7 +11400,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         final String armName = (paa.getArm() == PunchAttackAction.LEFT) ? "Left Arm" : "Right Arm";
-        final int armLoc = (paa.getArm() == PunchAttackAction.LEFT) ? Mek.LOC_LARM : Mek.LOC_RARM;
+        final int armLoc = (paa.getArm() == PunchAttackAction.LEFT) ? Mek.LOC_LEFT_ARM : Mek.LOC_RIGHT_ARM;
 
         // get damage, ToHitData and roll from the PhysicalResult
         int damage = paa.getArm() == PunchAttackAction.LEFT ? pr.damage : pr.damageRight;
@@ -11503,7 +11503,7 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             if (paa.isZweihandering()) {
-                applyZweihanderSelfDamage(ae, true, Mek.LOC_RARM, Mek.LOC_LARM);
+                applyZweihanderSelfDamage(ae, true, Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM);
             }
 
             return;
@@ -11526,7 +11526,7 @@ public class TWGameManager extends AbstractGameManager {
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
             if (paa.isZweihandering()) {
-                applyZweihanderSelfDamage(ae, false, Mek.LOC_RARM, Mek.LOC_LARM);
+                applyZweihanderSelfDamage(ae, false, Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM);
             }
 
             // And we're done!
@@ -11548,7 +11548,7 @@ public class TWGameManager extends AbstractGameManager {
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
         if (targetInBuilding && (bldg != null)) {
-            int bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
+            int bldgAbsorbs = bldg.getAbsorption(target.getPosition());
             int toBldg = Math.min(bldgAbsorbs, damage);
             damage -= toBldg;
             addNewLines();
@@ -11596,7 +11596,7 @@ public class TWGameManager extends AbstractGameManager {
                       hit.getLocation(),
                       damage,
                       ae,
-                      (paa.getArm() == PunchAttackAction.LEFT) ? Mek.LOC_LARM : Mek.LOC_RARM);
+                      (paa.getArm() == PunchAttackAction.LEFT) ? Mek.LOC_LEFT_ARM : Mek.LOC_RIGHT_ARM);
                 DamageType damageType = DamageType.NONE;
 
                 addReport(damageEntity(te, hit, damage, false, damageType, false, false, throughFront));
@@ -11654,7 +11654,7 @@ public class TWGameManager extends AbstractGameManager {
         addNewLines();
 
         if (paa.isZweihandering()) {
-            applyZweihanderSelfDamage(ae, false, Mek.LOC_RARM, Mek.LOC_LARM);
+            applyZweihanderSelfDamage(ae, false, Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM);
         }
 
         addNewLines();
@@ -11840,7 +11840,7 @@ public class TWGameManager extends AbstractGameManager {
             // The building shields all units from a certain amount of damage.
             // The amount is based upon the building's CF at the phase's start.
             if (targetInBuilding && (bldg != null)) {
-                int bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
+                int bldgAbsorbs = bldg.getAbsorption(target.getPosition());
                 int toBldg = Math.min(bldgAbsorbs, damage);
                 damage -= toBldg;
                 addNewLines();
@@ -11884,10 +11884,10 @@ public class TWGameManager extends AbstractGameManager {
                 }
 
                 int leg = switch (kaa.getLeg()) {
-                    case KickAttackAction.LEFT -> (ae instanceof QuadMek) ? Mek.LOC_LARM : Mek.LOC_LLEG;
-                    case KickAttackAction.RIGHT -> (ae instanceof QuadMek) ? Mek.LOC_RARM : Mek.LOC_RLEG;
-                    case KickAttackAction.LEFT_MULE -> Mek.LOC_LLEG;
-                    default -> Mek.LOC_RLEG;
+                    case KickAttackAction.LEFT -> (ae instanceof QuadMek) ? Mek.LOC_LEFT_ARM : Mek.LOC_LEFT_LEG;
+                    case KickAttackAction.RIGHT -> (ae instanceof QuadMek) ? Mek.LOC_RIGHT_ARM : Mek.LOC_RIGHT_LEG;
+                    case KickAttackAction.LEFT_MULE -> Mek.LOC_LEFT_LEG;
+                    default -> Mek.LOC_RIGHT_LEG;
                 };
                 damage = checkForSpikes(te, hit.getLocation(), damage, ae, leg);
                 DamageType damageType = DamageType.NONE;
@@ -12094,7 +12094,7 @@ public class TWGameManager extends AbstractGameManager {
             // The building shields all units from a certain amount of damage.
             // The amount is based upon the building's CF at the phase's start.
             if (targetInBuilding && (bldg != null)) {
-                int bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
+                int bldgAbsorbs = bldg.getAbsorption(target.getPosition());
                 int toBldg = Math.min(bldgAbsorbs, damage);
                 damage -= toBldg;
                 addNewLines();
@@ -12290,7 +12290,7 @@ public class TWGameManager extends AbstractGameManager {
             // The building shields all units from a certain amount of damage.
             // The amount is based upon the building's CF at the phase's start.
             if (targetInBuilding && (bldg != null)) {
-                int bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
+                int bldgAbsorbs = bldg.getAbsorption(target.getPosition());
                 int toBldg = Math.min(bldgAbsorbs, damage);
                 damage -= toBldg;
                 addNewLines();
@@ -12524,7 +12524,7 @@ public class TWGameManager extends AbstractGameManager {
                     r.add(te.getDisplayName());
                     addReport(r);
                     break;
-                case Targetable.TYPE_INARC_POD:
+                case Targetable.TYPE_I_NARC_POD:
                     // Handle iNarc pod targets.
                     // TODO : check the return code and handle false appropriately.
                     ae.removeINarcPod((INarcPod) target);
@@ -12983,7 +12983,7 @@ public class TWGameManager extends AbstractGameManager {
 
             if (caa.isZweihandering()) {
                 if (caa.getClub().getType().hasSubType(MiscType.S_CLUB)) {
-                    applyZweihanderSelfDamage(ae, true, Mek.LOC_RARM, Mek.LOC_LARM);
+                    applyZweihanderSelfDamage(ae, true, Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM);
                 } else {
                     applyZweihanderSelfDamage(ae, true, caa.getClub().getLocation());
                 }
@@ -13048,7 +13048,7 @@ public class TWGameManager extends AbstractGameManager {
 
             if (caa.isZweihandering()) {
                 if (caa.getClub().getType().hasSubType(MiscType.S_CLUB)) {
-                    applyZweihanderSelfDamage(ae, true, Mek.LOC_RARM, Mek.LOC_LARM);
+                    applyZweihanderSelfDamage(ae, true, Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM);
                 } else {
                     applyZweihanderSelfDamage(ae, true, caa.getClub().getLocation());
                 }
@@ -13074,7 +13074,7 @@ public class TWGameManager extends AbstractGameManager {
 
             if (caa.isZweihandering()) {
                 if (caa.getClub().getType().hasSubType(MiscType.S_CLUB)) {
-                    applyZweihanderSelfDamage(ae, false, Mek.LOC_RARM, Mek.LOC_LARM);
+                    applyZweihanderSelfDamage(ae, false, Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM);
 
                     // the club breaks
                     r = new Report(4150);
@@ -13103,7 +13103,7 @@ public class TWGameManager extends AbstractGameManager {
             // The building shields all units from a certain amount of damage.
             // The amount is based upon the building's CF at the phase's start.
             if (targetInBuilding && (bldg != null)) {
-                int bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
+                int bldgAbsorbs = bldg.getAbsorption(target.getPosition());
                 int toBldg = Math.min(bldgAbsorbs, damage);
                 damage -= toBldg;
                 addNewLines();
@@ -13212,15 +13212,15 @@ public class TWGameManager extends AbstractGameManager {
                       !te.hasPassiveShield(loc);
 
                 boolean mightGrapple = ((te instanceof Mek) &&
-                      ((loc == Mek.LOC_LARM) || (loc == Mek.LOC_RARM)) &&
+                      ((loc == Mek.LOC_LEFT_ARM) || (loc == Mek.LOC_RIGHT_ARM)) &&
                       !te.isLocationBad(loc) &&
                       !te.isLocationDoomed(loc) &&
                       !te.hasActiveShield(loc) &&
                       !te.hasPassiveShield(loc) &&
                       !te.hasNoDefenseShield(loc)) ||
                       ((te instanceof ProtoMek) &&
-                            ((loc == ProtoMek.LOC_LARM) ||
-                                  (loc == ProtoMek.LOC_RARM) ||
+                            ((loc == ProtoMek.LOC_LEFT_ARM) ||
+                                  (loc == ProtoMek.LOC_RIGHT_ARM) ||
                                   (loc == ProtoMek.LOC_LEG))
                             // Only check location status after confirming we did
                             // hit a limb -- Protos have no actual near-miss
@@ -13265,7 +13265,7 @@ public class TWGameManager extends AbstractGameManager {
                 } else if (mightGrapple) {
                     GrappleAttackAction gaa = new GrappleAttackAction(ae.getId(), te.getId());
                     int grappleSide;
-                    if (caa.getClub().getLocation() == Mek.LOC_RARM) {
+                    if (caa.getClub().getLocation() == Mek.LOC_RIGHT_ARM) {
                         grappleSide = Entity.GRAPPLE_RIGHT;
                     } else {
                         grappleSide = Entity.GRAPPLE_LEFT;
@@ -13278,7 +13278,7 @@ public class TWGameManager extends AbstractGameManager {
                     resolveGrappleAttack(grappleResult,
                           lastEntityId,
                           grappleSide,
-                          (hit.getLocation() == Mek.LOC_RARM) ? Entity.GRAPPLE_RIGHT : Entity.GRAPPLE_LEFT);
+                          (hit.getLocation() == Mek.LOC_RIGHT_ARM) ? Entity.GRAPPLE_RIGHT : Entity.GRAPPLE_LEFT);
                 }
             }
         }
@@ -13287,7 +13287,7 @@ public class TWGameManager extends AbstractGameManager {
 
         if (caa.isZweihandering()) {
             if (caa.getClub().getType().hasSubType(MiscType.S_CLUB)) {
-                applyZweihanderSelfDamage(ae, false, Mek.LOC_RARM, Mek.LOC_LARM);
+                applyZweihanderSelfDamage(ae, false, Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM);
             } else {
                 applyZweihanderSelfDamage(ae, false, caa.getClub().getLocation());
             }
@@ -13487,8 +13487,8 @@ public class TWGameManager extends AbstractGameManager {
               ae.rollHitLocation(ToHitData.HIT_PUNCH, ComputeSideTable.sideTable(ae, te)).getLocation(),
               0,
               ae,
-              Mek.LOC_LARM,
-              Mek.LOC_RARM);
+              Mek.LOC_LEFT_ARM,
+              Mek.LOC_RIGHT_ARM);
 
         addNewLines();
     }
@@ -14232,7 +14232,7 @@ public class TWGameManager extends AbstractGameManager {
 
             // Apply damage to the attacker.
             int toAttacker = AirMekRamAttackAction.getDamageTakenBy(ae, target, ae.delta_distance);
-            HitData hit = new HitData(Mek.LOC_CT);
+            HitData hit = new HitData(Mek.LOC_CENTER_TORSO);
             hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
             addReport(damageEntity(ae, hit, toAttacker, false, DamageType.NONE, false, false, throughFront));
             addNewLines();
@@ -14642,7 +14642,7 @@ public class TWGameManager extends AbstractGameManager {
         // The amount is based upon the building's CF at the phase's start.
         int bldgAbsorbs = 0;
         if (targetInBuilding && (bldg != null)) {
-            bldgAbsorbs = bldg.getAbsorbtion(te.getPosition());
+            bldgAbsorbs = bldg.getAbsorption(te.getPosition());
         }
 
         Report r;
@@ -14670,14 +14670,14 @@ public class TWGameManager extends AbstractGameManager {
             // An airmek ramming attack does all damage to attacker's CT
             if (airMekRam) {
                 cluster = damageTaken;
-                hit = new HitData(Mek.LOC_CT);
+                hit = new HitData(Mek.LOC_CENTER_TORSO);
             } else {
                 cluster = Math.min(5, damageTaken);
                 hit = ae.rollHitLocation(toHit.getHitTable(), ae.sideTable(te.getPosition()));
             }
             damageTaken -= cluster;
             hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
-            cluster = checkForSpikes(ae, hit.getLocation(), cluster, te, Mek.LOC_CT);
+            cluster = checkForSpikes(ae, hit.getLocation(), cluster, te, Mek.LOC_CENTER_TORSO);
             addReport(damageEntity(ae, hit, cluster, false, DamageType.NONE, false, false, throughFront));
         }
 
@@ -14762,7 +14762,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (bDirect) {
                     hit.makeDirectBlow(directBlowCritMod);
                 }
-                cluster = checkForSpikes(te, hit.getLocation(), cluster, ae, Mek.LOC_CT);
+                cluster = checkForSpikes(te, hit.getLocation(), cluster, ae, Mek.LOC_CENTER_TORSO);
                 addReport(damageEntity(te, hit, cluster, false, DamageType.NONE, false, false, throughFront));
             }
         }
@@ -15240,7 +15240,12 @@ public class TWGameManager extends AbstractGameManager {
                         hit.makeDirectBlow(toHit.getMoS() / 3);
                     }
                     damage -= cluster;
-                    cluster = checkForSpikes(targetEntity, hit.getLocation(), cluster, ae, Mek.LOC_LLEG, Mek.LOC_RLEG);
+                    cluster = checkForSpikes(targetEntity,
+                          hit.getLocation(),
+                          cluster,
+                          ae,
+                          Mek.LOC_LEFT_LEG,
+                          Mek.LOC_RIGHT_LEG);
                     addReport(damageEntity(targetEntity,
                           hit,
                           cluster,
@@ -15308,14 +15313,14 @@ public class TWGameManager extends AbstractGameManager {
 
         if (ae.hasQuirk(OptionsConstants.QUIRK_NEG_WEAK_LEGS)) {
             addNewLines();
-            addReport(criticalEntity(ae, Mek.LOC_LLEG, false, 0, 0));
+            addReport(criticalEntity(ae, Mek.LOC_LEFT_LEG, false, 0, 0));
             addNewLines();
-            addReport(criticalEntity(ae, Mek.LOC_RLEG, false, 0, 0));
+            addReport(criticalEntity(ae, Mek.LOC_RIGHT_LEG, false, 0, 0));
             if (ae instanceof QuadMek) {
                 addNewLines();
-                addReport(criticalEntity(ae, Mek.LOC_LARM, false, 0, 0));
+                addReport(criticalEntity(ae, Mek.LOC_LEFT_ARM, false, 0, 0));
                 addNewLines();
-                addReport(criticalEntity(ae, Mek.LOC_RARM, false, 0, 0));
+                addReport(criticalEntity(ae, Mek.LOC_RIGHT_ARM, false, 0, 0));
             }
         }
 
@@ -15432,7 +15437,7 @@ public class TWGameManager extends AbstractGameManager {
                     }
                 }
                 // force unit out of control through heat
-                a.setOutCtrlHeat(true);
+                a.setOutControlHeat(true);
                 a.setRandomMove(true);
             }
         }
@@ -15646,7 +15651,7 @@ public class TWGameManager extends AbstractGameManager {
             } else if (entity instanceof ProtoMek) {
                 // this code is taken from inferno hits
                 HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                if (hit.getLocation() == ProtoMek.LOC_NMISS) {
+                if (hit.getLocation() == ProtoMek.LOC_NEAR_MISS) {
                     ProtoMek proto = (ProtoMek) entity;
                     r = new Report(6035);
                     r.subject = entity.getId();
@@ -16181,7 +16186,7 @@ public class TWGameManager extends AbstractGameManager {
             boolean cannotBreathe = underWater ||
                   game.getPlanetaryConditions().getAtmosphere().isLighterThan(Atmosphere.THIN);
             if (cannotBreathe &&
-                  (entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, Mek.LOC_HEAD) > 0)) {
+                  (entity.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, Mek.LOC_HEAD) > 0)) {
                 addReport(new Report(6020).with(entity));
                 addReport(damageCrew(entity, 1));
             }
@@ -16821,7 +16826,7 @@ public class TWGameManager extends AbstractGameManager {
                 r.choose(true);
                 vReport.add(r);
                 a.setOutControl(false);
-                a.setOutCtrlHeat(false);
+                a.setOutControlHeat(false);
                 a.setRandomMove(false);
             }
         }
@@ -17740,7 +17745,7 @@ public class TWGameManager extends AbstractGameManager {
             en.getCrew().setDoomed(true);
 
             // This is a hack so MM.NET marks the mek as not salvageable
-            en.destroyLocation(Mek.LOC_CT);
+            en.destroyLocation(Mek.LOC_CENTER_TORSO);
 
             // ICE explosions don't hurt anyone else, but fusion do
             if (engine.isFusion()) {
@@ -19052,7 +19057,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 break;
             case Mek.SYSTEM_GYRO:
-                int gyroHits = en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, loc);
+                int gyroHits = en.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, loc);
                 if (en.getGyroType() != Mek.GYRO_HEAVY_DUTY) {
                     gyroHits++;
                 }
@@ -19152,7 +19157,7 @@ public class TWGameManager extends AbstractGameManager {
             reports.addElement(r);
         }
         switch (cs.getIndex()) {
-            case ProtoMek.SYSTEM_HEADCRIT:
+            case ProtoMek.SYSTEM_HEAD_CRIT:
                 if (2 == numHit) {
                     r = new Report(6230);
                     r.subject = pm.getId();
@@ -19160,7 +19165,7 @@ public class TWGameManager extends AbstractGameManager {
                     pm.destroyLocation(loc);
                 }
                 break;
-            case ProtoMek.SYSTEM_ARMCRIT:
+            case ProtoMek.SYSTEM_ARM_CRIT:
                 if (2 == numHit) {
                     r = new Report(6235);
                     r.subject = pm.getId();
@@ -19168,7 +19173,7 @@ public class TWGameManager extends AbstractGameManager {
                     pm.destroyLocation(loc);
                 }
                 break;
-            case ProtoMek.SYSTEM_LEGCRIT:
+            case ProtoMek.SYSTEM_LEG_CRIT:
                 if (3 == numHit) {
                     r = new Report(6240);
                     r.subject = pm.getId();
@@ -19177,7 +19182,7 @@ public class TWGameManager extends AbstractGameManager {
                     pm.destroyLocation(loc);
                 }
                 break;
-            case ProtoMek.SYSTEM_TORSOCRIT:
+            case ProtoMek.SYSTEM_TORSO_CRIT:
                 if (3 == numHit) {
                     reports.addAll(destroyEntity(pm, "torso destruction"));
                 }
@@ -19616,7 +19621,7 @@ public class TWGameManager extends AbstractGameManager {
                     }
 
                     // Convert L/R wing location to wings, else wing weapons never get hit
-                    if (loc == Aero.LOC_LWING || loc == Aero.LOC_RWING) {
+                    if (loc == Aero.LOC_LEFT_WING || loc == Aero.LOC_RIGHT_WING) {
                         loc = Aero.LOC_WINGS;
                     }
 
@@ -19645,14 +19650,14 @@ public class TWGameManager extends AbstractGameManager {
                             // Taharqa: We should also damage the critical slot, or
                             // MM and MHQ won't remember that this weapon is damaged on the MUL
                             // file
-                            for (int i = 0; i < cf.getNumberOfCriticals(loc); i++) {
+                            for (int i = 0; i < cf.getNumberOfCriticalSlots(loc); i++) {
                                 CriticalSlot slot1 = cf.getCritical(loc, i);
                                 if ((slot1 == null) || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                                     continue;
                                 }
                                 Mounted<?> mounted = slot1.getMount();
                                 if (mounted.equals(misc)) {
-                                    cf.hitAllCriticals(loc, i);
+                                    cf.hitAllCriticalSlots(loc, i);
                                     break;
                                 }
                             }
@@ -19745,14 +19750,14 @@ public class TWGameManager extends AbstractGameManager {
                                 bayWeap.setHit(true);
                                 // Taharqa : We should also damage the critical slot, or MM and
                                 // MHQ won't remember that this weapon is damaged on the MUL file
-                                for (int i = 0; i < aero.getNumberOfCriticals(loc); i++) {
+                                for (int i = 0; i < aero.getNumberOfCriticalSlots(loc); i++) {
                                     CriticalSlot slot1 = aero.getCritical(loc, i);
                                     if ((slot1 == null) || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                                         continue;
                                     }
                                     Mounted<?> mounted = slot1.getMount();
                                     if (mounted.equals(bayWeap)) {
-                                        aero.hitAllCriticals(loc, i);
+                                        aero.hitAllCriticalSlots(loc, i);
                                         break;
                                     }
                                 }
@@ -19816,14 +19821,14 @@ public class TWGameManager extends AbstractGameManager {
                     equipmentHit.setHit(true);
                     // Taharqa : We should also damage the critical slot, or MM and MHQ won't
                     // remember that this weapon is damaged on the MUL file
-                    for (int i = 0; i < aero.getNumberOfCriticals(loc); i++) {
+                    for (int i = 0; i < aero.getNumberOfCriticalSlots(loc); i++) {
                         CriticalSlot slot1 = aero.getCritical(loc, i);
                         if ((slot1 == null) || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                             continue;
                         }
                         Mounted<?> mounted = slot1.getMount();
                         if (mounted.equals(equipmentHit)) {
-                            aero.hitAllCriticals(loc, i);
+                            aero.hitAllCriticalSlots(loc, i);
                             break;
                         }
                     }
@@ -19833,14 +19838,14 @@ public class TWGameManager extends AbstractGameManager {
                             bayWeap.setHit(true);
                             // Taharqa : We should also damage the critical slot, or MM and MHQ
                             // won't remember that this weapon is damaged on the MUL file
-                            for (int i = 0; i < aero.getNumberOfCriticals(loc); i++) {
+                            for (int i = 0; i < aero.getNumberOfCriticalSlots(loc); i++) {
                                 CriticalSlot slot1 = aero.getCritical(loc, i);
                                 if ((slot1 == null) || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                                     continue;
                                 }
                                 Mounted<?> mounted = slot1.getMount();
                                 if (mounted.equals(bayWeap)) {
-                                    aero.hitAllCriticals(loc, i);
+                                    aero.hitAllCriticalSlots(loc, i);
                                     break;
                                 }
                             }
@@ -20444,14 +20449,14 @@ public class TWGameManager extends AbstractGameManager {
                 // Taharqa: We should also damage the critical slot, or
                 // MM and MHQ won't remember that this weapon is damaged on the MUL
                 // file
-                for (int i = 0; i < tank.getNumberOfCriticals(loc); i++) {
+                for (int i = 0; i < tank.getNumberOfCriticalSlots(loc); i++) {
                     CriticalSlot slot1 = tank.getCritical(loc, i);
                     if ((slot1 == null) || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                         continue;
                     }
                     Mounted<?> mounted = slot1.getMount();
                     if (mounted.equals(weapon)) {
-                        tank.hitAllCriticals(loc, i);
+                        tank.hitAllCriticalSlots(loc, i);
                         break;
                     }
                 }
@@ -20657,7 +20662,7 @@ public class TWGameManager extends AbstractGameManager {
         PilotingRollData psr = en.checkGliderLanding();
         if ((psr.getValue() != TargetRoll.CHECK_FALSE) &&
               (0 > doSkillCheckWhileMoving(en, startElevation, pos, pos, psr, false, vDesc))) {
-            for (int i = 0; i < en.getNumberOfCriticals(ProtoMek.LOC_LEG); i++) {
+            for (int i = 0; i < en.getNumberOfCriticalSlots(ProtoMek.LOC_LEG); i++) {
                 en.getCritical(ProtoMek.LOC_LEG, i).setHit(true);
             }
             HitData hit = new HitData(ProtoMek.LOC_LEG);
@@ -21369,7 +21374,7 @@ public class TWGameManager extends AbstractGameManager {
                     }
                     sendChangedHex(coords, en.getBoardId());
                     return vDesc;
-                } else if ((loc == Mek.LOC_RARM) || (loc == Mek.LOC_LARM)) {
+                } else if ((loc == Mek.LOC_RIGHT_ARM) || (loc == Mek.LOC_LEFT_ARM)) {
                     CriticalSlot cs = en.getCritical(loc, 0);
                     if ((cs != null) && cs.isArmored()) {
                         r = new Report(6700);
@@ -21442,7 +21447,7 @@ public class TWGameManager extends AbstractGameManager {
         boolean possibleReactiveCrit = (en.getArmor(loc) > 0) &&
               (en.getArmorType(loc) == EquipmentType.T_ARMOR_REACTIVE);
         boolean locContainsReactiveArmor = false;
-        for (int i = 0; (i < en.getNumberOfCriticals(loc)) && possibleReactiveCrit; i++) {
+        for (int i = 0; (i < en.getNumberOfCriticalSlots(loc)) && possibleReactiveCrit; i++) {
             CriticalSlot crit = en.getCritical(loc, i);
             if ((crit != null) &&
                   (crit.getType() == CriticalSlot.TYPE_EQUIPMENT) &&
@@ -21455,7 +21460,7 @@ public class TWGameManager extends AbstractGameManager {
         possibleReactiveCrit &= locContainsReactiveArmor;
 
         // transfer criticalSlots, if needed
-        while ((en.canTransferCriticals(loc) && !possibleReactiveCrit) &&
+        while ((en.canTransferCriticalSlots(loc) && !possibleReactiveCrit) &&
               (en.getTransferLocation(loc) != Entity.LOC_DESTROYED) &&
               (en.getTransferLocation(loc) != Entity.LOC_NONE)) {
             loc = en.getTransferLocation(loc);
@@ -21470,7 +21475,7 @@ public class TWGameManager extends AbstractGameManager {
         while (hits > 0) {
 
             // Have we hit all available slots in this location?
-            if (en.getHittableCriticals(loc) <= 0) {
+            if (en.getHittableCriticalSlots(loc) <= 0) {
                 r = new Report(6340);
                 r.subject = en.getId();
                 r.indent(3);
@@ -21479,7 +21484,7 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             // Randomly pick a slot to be hit.
-            int slotIndex = Compute.randomInt(en.getNumberOfCriticals(loc));
+            int slotIndex = Compute.randomInt(en.getNumberOfCriticalSlots(loc));
             slot = en.getCritical(loc, slotIndex);
 
             // There are certain special cases, like reactive armor
@@ -21564,7 +21569,7 @@ public class TWGameManager extends AbstractGameManager {
                             // If only hittable crits are reactive,
                             // this crit is absorbed
                             boolean allHittableCritsReactive = true;
-                            for (int i = 0; i < en.getNumberOfCriticals(loc); i++) {
+                            for (int i = 0; i < en.getNumberOfCriticalSlots(loc); i++) {
                                 CriticalSlot crit = en.getCritical(loc, i);
                                 if (crit.isHittable()) {
                                     allHittableCritsReactive = false;
@@ -21696,9 +21701,9 @@ public class TWGameManager extends AbstractGameManager {
                   !(entity.getArmor(loc) > 0) ||
                   (dumping &&
                         (!(entity instanceof Mek) ||
-                              (loc == Mek.LOC_CT) ||
-                              (loc == Mek.LOC_RT) ||
-                              (loc == Mek.LOC_LT))) ||
+                              (loc == Mek.LOC_CENTER_TORSO) ||
+                              (loc == Mek.LOC_RIGHT_TORSO) ||
+                              (loc == Mek.LOC_LEFT_TORSO))) ||
                   !(!(entity instanceof Mek) || entity.getArmor(loc, true) > 0)) {
                 // Functional HarJel prevents breach as long as armor remains
                 // (and, presumably, as long as you don't open your chassis on
@@ -21761,7 +21766,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
             // all critical slots set as useless
-            for (int i = 0; i < entity.getNumberOfCriticals(loc); i++) {
+            for (int i = 0; i < entity.getNumberOfCriticalSlots(loc); i++) {
                 final CriticalSlot cs = entity.getCritical(loc, i);
                 if (cs != null) {
                     // for every undamaged actuator destroyed by breaching,
@@ -21790,7 +21795,7 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             // Check location for engine/cockpit breach and report accordingly
-            if (loc == Mek.LOC_CT) {
+            if (loc == Mek.LOC_CENTER_TORSO) {
                 vDesc.addAll(destroyEntity(entity, "hull breach"));
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT)) {
                     vDesc.addAll(abandonEntity(entity));
@@ -21820,9 +21825,9 @@ public class TWGameManager extends AbstractGameManager {
             if (mek.isSuperHeavy() && mek.hasEngine() && (mek.getEngine().getEngineType() == Engine.COMPACT_ENGINE)) {
                 hitsToDestroy = 2;
             }
-            if ((entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, Mek.LOC_LT) +
-                  entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, Mek.LOC_CT) +
-                  entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, Mek.LOC_RT)) >=
+            if ((entity.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, Mek.LOC_LEFT_TORSO) +
+                  entity.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, Mek.LOC_CENTER_TORSO) +
+                  entity.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, Mek.LOC_RIGHT_TORSO)) >=
                   hitsToDestroy) {
                 vDesc.addAll(destroyEntity(entity, "engine destruction"));
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT)) {
@@ -21830,11 +21835,11 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
 
-            if (loc == Mek.LOC_LT) {
-                vDesc.addAll(breachLocation(entity, Mek.LOC_LARM, hex, false));
+            if (loc == Mek.LOC_LEFT_TORSO) {
+                vDesc.addAll(breachLocation(entity, Mek.LOC_LEFT_ARM, hex, false));
             }
-            if (loc == Mek.LOC_RT) {
-                vDesc.addAll(breachLocation(entity, Mek.LOC_RARM, hex, false));
+            if (loc == Mek.LOC_RIGHT_TORSO) {
+                vDesc.addAll(breachLocation(entity, Mek.LOC_RIGHT_ARM, hex, false));
             }
         }
 
@@ -22540,7 +22545,7 @@ public class TWGameManager extends AbstractGameManager {
             hit.setEffect(HitData.EFFECT_NO_CRITICALS);
             Mounted<?> laser = mounted.getLinked();
             if (en instanceof Mek) {
-                for (int slot = 0; slot < en.getNumberOfCriticals(laser.getLocation()); slot++) {
+                for (int slot = 0; slot < en.getNumberOfCriticalSlots(laser.getLocation()); slot++) {
                     CriticalSlot cs = en.getCritical(laser.getLocation(), slot);
                     if ((cs.getType() == CriticalSlot.TYPE_EQUIPMENT) &&
                           cs.getMount().equals(laser) &&
@@ -22602,7 +22607,7 @@ public class TWGameManager extends AbstractGameManager {
         Vector<Report> vDesc = new Vector<>();
 
         for (int j = 0; j < entity.locations(); j++) {
-            for (int k = 0; k < entity.getNumberOfCriticals(j); k++) {
+            for (int k = 0; k < entity.getNumberOfCriticalSlots(j); k++) {
                 CriticalSlot cs = entity.getCritical(j, k);
                 if ((cs == null) || cs.isDestroyed() || cs.isHit() || (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)) {
                     continue;
@@ -25355,7 +25360,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // Find the most destructive Inferno ammo.
         for (int j = 0; j < entity.locations(); j++) {
-            for (int k = 0; k < entity.getNumberOfCriticals(j); k++) {
+            for (int k = 0; k < entity.getNumberOfCriticalSlots(j); k++) {
                 CriticalSlot cs = entity.getCritical(j, k);
                 // Ignore empty, destroyed, hit, and structure slots.
                 if ((cs == null) || cs.isDestroyed() || cs.isHit() || (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)) {
@@ -25637,8 +25642,8 @@ public class TWGameManager extends AbstractGameManager {
             // beast-mounted infantry
             if (entity instanceof Infantry) {
                 InfantryMount mount = ((Infantry) entity).getMount();
-                if ((mount != null) && (mount.getSize().buildingDamage() > 0)) {
-                    toBldg = mount.getSize().buildingDamage();
+                if ((mount != null) && (mount.size().buildingDamage() > 0)) {
+                    toBldg = mount.size().buildingDamage();
                 } else {
                     return;
                 }

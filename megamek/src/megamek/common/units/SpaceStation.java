@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Jay Lawson
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -54,8 +54,8 @@ public class SpaceStation extends Jumpship {
     @Serial
     private static final long serialVersionUID = -3160156173650960985L;
 
-    /** A station over this weight in may built as a modular station. */
-    public static final double MODULAR_MININUM_WEIGHT = 100000.0;
+    /** A station over this weight in may be built as a modular station. */
+    public static final double MODULAR_MINIMUM_WEIGHT = 100000.0;
 
     // This only affects cost, but may have an effect in a large-scale strategic setting.
     private boolean modularOrKFAdapter = false;
@@ -119,7 +119,7 @@ public class SpaceStation extends Jumpship {
     }
 
     /**
-     * @return True if this space station has a modular construction (or has a KF adapter for stations less than 100kt,
+     * @return True if this space station has a modular construction or has a KF adapter for stations less than 100kt,
      *       otherwise false.
      */
     public boolean isModularOrKFAdapter() {
@@ -127,11 +127,11 @@ public class SpaceStation extends Jumpship {
     }
 
     public boolean isModular() {
-        return modularOrKFAdapter && getWeight() > MODULAR_MININUM_WEIGHT;
+        return modularOrKFAdapter && getWeight() > MODULAR_MINIMUM_WEIGHT;
     }
 
     public boolean hasKFAdapter() {
-        return modularOrKFAdapter && getWeight() <= MODULAR_MININUM_WEIGHT;
+        return modularOrKFAdapter && getWeight() <= MODULAR_MINIMUM_WEIGHT;
     }
 
     @Override

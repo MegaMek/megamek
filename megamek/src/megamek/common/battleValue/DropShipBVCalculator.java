@@ -56,35 +56,35 @@ public class DropShipBVCalculator extends LargeAeroBVCalculator {
 
     @Override
     protected Predicate<Mounted<?>> leftWeaponFilter() {
-        return weapon -> (weapon.getLocation() == Dropship.LOC_LWING) && !weapon.isRearMounted();
+        return weapon -> (weapon.getLocation() == Dropship.LOC_LEFT_WING) && !weapon.isRearMounted();
     }
 
     @Override
     protected Predicate<Mounted<?>> leftAftWeaponFilter() {
-        return weapon -> (weapon.getLocation() == Dropship.LOC_LWING) && weapon.isRearMounted();
+        return weapon -> (weapon.getLocation() == Dropship.LOC_LEFT_WING) && weapon.isRearMounted();
     }
 
     @Override
     protected Predicate<Mounted<?>> rightWeaponFilter() {
-        return weapon -> (weapon.getLocation() == Dropship.LOC_RWING) && !weapon.isRearMounted();
+        return weapon -> (weapon.getLocation() == Dropship.LOC_RIGHT_WING) && !weapon.isRearMounted();
     }
 
     @Override
     protected Predicate<Mounted<?>> rightAftWeaponFilter() {
-        return weapon -> (weapon.getLocation() == Dropship.LOC_RWING) && weapon.isRearMounted();
+        return weapon -> (weapon.getLocation() == Dropship.LOC_RIGHT_WING) && weapon.isRearMounted();
     }
 
     @Override
     protected int bvLocation(Mounted<?> equipment) {
         if (equipment.getLocation() == Dropship.LOC_NOSE) {
             return BV_LOC_NOSE;
-        } else if ((equipment.getLocation() == Dropship.LOC_LWING) && !equipment.isRearMounted()) {
+        } else if ((equipment.getLocation() == Dropship.LOC_LEFT_WING) && !equipment.isRearMounted()) {
             return BV_LOC_LEFT;
-        } else if ((equipment.getLocation() == Dropship.LOC_LWING) && equipment.isRearMounted()) {
+        } else if ((equipment.getLocation() == Dropship.LOC_LEFT_WING) && equipment.isRearMounted()) {
             return BV_LOC_LEFT_AFT;
         } else if (equipment.getLocation() == Dropship.LOC_AFT) {
             return BV_LOC_AFT;
-        } else if ((equipment.getLocation() == Dropship.LOC_RWING) && equipment.isRearMounted()) {
+        } else if ((equipment.getLocation() == Dropship.LOC_RIGHT_WING) && equipment.isRearMounted()) {
             return BV_LOC_RIGHT_AFT;
         } else {
             return BV_LOC_RIGHT;
@@ -95,11 +95,11 @@ public class DropShipBVCalculator extends LargeAeroBVCalculator {
     protected String arcName(int bvLocation) {
         return switch (bvLocation) {
             case BV_LOC_NOSE -> entity.getLocationName(Dropship.LOC_NOSE);
-            case BV_LOC_LEFT -> entity.getLocationName(Dropship.LOC_LWING);
-            case BV_LOC_LEFT_AFT -> entity.getLocationName(Dropship.LOC_LWING) + " (R)";
+            case BV_LOC_LEFT -> entity.getLocationName(Dropship.LOC_LEFT_WING);
+            case BV_LOC_LEFT_AFT -> entity.getLocationName(Dropship.LOC_LEFT_WING) + " (R)";
             case BV_LOC_AFT -> entity.getLocationName(Dropship.LOC_AFT);
-            case BV_LOC_RIGHT_AFT -> entity.getLocationName(Dropship.LOC_RWING) + " (R)";
-            case BV_LOC_RIGHT -> entity.getLocationName(Dropship.LOC_RWING);
+            case BV_LOC_RIGHT_AFT -> entity.getLocationName(Dropship.LOC_RIGHT_WING) + " (R)";
+            case BV_LOC_RIGHT -> entity.getLocationName(Dropship.LOC_RIGHT_WING);
             default -> "Error: Unexpected location value.";
         };
     }

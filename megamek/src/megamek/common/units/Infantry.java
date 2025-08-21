@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2002 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,7 @@ package megamek.common.units;
 
 import static java.util.stream.Collectors.toList;
 
+import java.io.Serial;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -86,6 +87,7 @@ import megamek.logging.MMLogger;
 public class Infantry extends Entity {
     private static final MMLogger logger = MMLogger.create(Infantry.class);
 
+    @Serial
     private static final long serialVersionUID = -8706716079307721282L;
 
     // Infantry Specializations
@@ -156,7 +158,7 @@ public class Infantry extends Entity {
 
     // Infantry only have critical slots for field gun ammo
     private static final int[] NUM_OF_SLOTS = { 20, 20 };
-    private static final String[] LOCATION_ABBRS = { "TPRS", "FGUN" };
+    private static final String[] LOCATION_ABBREVIATIONS = { "TPRS", "FGUN" };
     private static final String[] LOCATION_NAMES = { "Troopers", "Field Guns" };
 
     public int turnsLayingExplosives = -1;
@@ -186,8 +188,8 @@ public class Infantry extends Entity {
     public static final int ANTI_MEK_SKILL_NO_GEAR = 8;
 
     @Override
-    public String[] getLocationAbbrs() {
-        return LOCATION_ABBRS;
+    public String[] getLocationAbbreviations() {
+        return LOCATION_ABBREVIATIONS;
     }
 
     @Override
@@ -519,19 +521,23 @@ public class Infantry extends Entity {
             if (conditions.getWeather().isGustingRain() &&
                   getCrew().getOptions()
                         .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
-                        .equals(Crew.ENVSPC_RAIN)) {
+                        .equals(Crew.ENVIRONMENT_SPECIALIST_RAIN)) {
                 if ((mp != 0) || getMovementMode().isMotorizedInfantry()) {
                     mp += 1;
                 }
             }
 
-            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
+            if (getCrew().getOptions()
+                  .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
+                  .equals(Crew.ENVIRONMENT_SPECIALIST_SNOW)) {
                 if (conditions.getWeather().isSnowFlurriesOrIceStorm() && (getOriginalWalkMP() != 0)) {
                     mp += 1;
                 }
             }
 
-            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND) &&
+            if (getCrew().getOptions()
+                  .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
+                  .equals(Crew.ENVIRONMENT_SPECIALIST_WIND) &&
                   conditions.getWeather().isClear()) {
                 if (conditions.getWind().isModerateGale()) {
                     mp += 1;
@@ -589,11 +595,13 @@ public class Infantry extends Entity {
             } else if (conditions.getWind().isModerateGale() &&
                   !getCrew().getOptions()
                         .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
-                        .equals(Crew.ENVSPC_WIND)) {
+                        .equals(Crew.ENVIRONMENT_SPECIALIST_WIND)) {
                 mp--;
             }
 
-            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
+            if (getCrew().getOptions()
+                  .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
+                  .equals(Crew.ENVIRONMENT_SPECIALIST_SNOW)) {
                 if (conditions.getWeather().isSnowFlurries() && conditions.getWeather().isIceStorm()) {
                     mp += 1;
                 }
@@ -619,7 +627,7 @@ public class Infantry extends Entity {
 
     @Override
     public int height() {
-        return mount == null ? 0 : mount.getSize().height;
+        return mount == null ? 0 : mount.size().height;
     }
 
     @Override
@@ -639,7 +647,7 @@ public class Infantry extends Entity {
         }
 
         Hex hex = game.getHex(c, testBoardId);
-        // Taharqa: waiting to hear back from Welshie but I am going to assume that
+        // Taharqa: waiting to hear back from Welshie, but I am going to assume that
         // units pulling artillery
         // should be treated as wheeled rather than motorized because otherwise
         // mechanized units face fewer
@@ -696,7 +704,7 @@ public class Infantry extends Entity {
 
         if ((hex.terrainLevel(Terrains.WATER) <= 0) &&
               getMovementMode().isSubmarine() &&
-              ((mount == null) || (mount.getSecondaryGroundMP() == 0))) {
+              ((mount == null) || (mount.secondaryGroundMP() == 0))) {
             return true;
         }
 
@@ -706,7 +714,7 @@ public class Infantry extends Entity {
                     return true;
                 }
             } else {
-                if (-currElevation > mount.getMaxWaterDepth()) {
+                if (-currElevation > mount.maxWaterDepth()) {
                     return true;
                 }
             }
@@ -719,7 +727,7 @@ public class Infantry extends Entity {
                       !getMovementMode().isSubmarine() &&
                       !getMovementMode().isVTOL();
             } else {
-                return hex.terrainLevel(Terrains.WATER) > mount.getMaxWaterDepth();
+                return hex.terrainLevel(Terrains.WATER) > mount.maxWaterDepth();
             }
         }
         return false;
@@ -729,72 +737,47 @@ public class Infantry extends Entity {
     public boolean isElevationValid(int assumedElevation, Hex hex) {
         if (mount != null) {
             // Mounted infantry can enter water hexes if the mount allows it
-            if (hex.containsTerrain(Terrains.WATER) && (hex.terrainLevel(Terrains.WATER) <= mount.getMaxWaterDepth())) {
+            if (hex.containsTerrain(Terrains.WATER) && (hex.terrainLevel(Terrains.WATER) <= mount.maxWaterDepth())) {
                 return true;
             }
             // Aquatic mounts may be able to move onto land
             if (!hex.containsTerrain(Terrains.WATER) && movementMode.isSubmarine()) {
-                return mount.getSecondaryGroundMP() > 0;
+                return mount.secondaryGroundMP() > 0;
             }
         }
         return super.isElevationValid(assumedElevation, hex);
     }
 
     @Override
-    public String getMovementString(EntityMovementType mtype) {
-        switch (mtype) {
-            case MOVE_NONE:
-                return "None";
-            case MOVE_WALK:
-            case MOVE_RUN:
-                switch (getMovementMode()) {
-                    case INF_LEG:
-                        return mount == null ? "Walked" : "Rode";
-                    case INF_MOTORIZED:
-                        return "Biked";
-                    case HOVER:
-                    case TRACKED:
-                    case WHEELED:
-                        return "Drove";
-                    case INF_JUMP:
-                    default:
-                        return "Unknown!";
-                }
-            case MOVE_VTOL_WALK:
-            case MOVE_VTOL_RUN:
-                return "Flew";
-            case MOVE_JUMP:
-                return "Jumped";
-            default:
-                return "Unknown!";
-        }
+    public String getMovementString(EntityMovementType movementType) {
+        return switch (movementType) {
+            case MOVE_NONE -> "None";
+            case MOVE_WALK, MOVE_RUN -> switch (getMovementMode()) {
+                case INF_LEG -> mount == null ? "Walked" : "Rode";
+                case INF_MOTORIZED -> "Biked";
+                case HOVER, TRACKED, WHEELED -> "Drove";
+                default -> "Unknown!";
+            };
+            case MOVE_VTOL_WALK, MOVE_VTOL_RUN -> "Flew";
+            case MOVE_JUMP -> "Jumped";
+            default -> "Unknown!";
+        };
     }
 
     @Override
-    public String getMovementAbbr(EntityMovementType mtype) {
-        switch (mtype) {
-            case MOVE_NONE:
-                return "N";
-            case MOVE_WALK:
-                return "W";
-            case MOVE_RUN:
-                switch (getMovementMode()) {
-                    case INF_LEG:
-                        return "R";
-                    case INF_MOTORIZED:
-                        return "B";
-                    case HOVER:
-                    case TRACKED:
-                    case WHEELED:
-                        return "D";
-                    default:
-                        return "?";
-                }
-            case MOVE_JUMP:
-                return "J";
-            default:
-                return "?";
-        }
+    public String getMovementAbbr(EntityMovementType movementType) {
+        return switch (movementType) {
+            case MOVE_NONE -> "N";
+            case MOVE_WALK -> "W";
+            case MOVE_RUN -> switch (getMovementMode()) {
+                case INF_LEG -> "R";
+                case INF_MOTORIZED -> "B";
+                case HOVER, TRACKED, WHEELED -> "D";
+                default -> "?";
+            };
+            case MOVE_JUMP -> "J";
+            default -> "?";
+        };
     }
 
     @Override
@@ -907,7 +890,7 @@ public class Infantry extends Entity {
         return NUM_OF_SLOTS;
     }
 
-    public boolean hasHittableCriticals(int loc) {
+    public boolean hasHittableCriticalSlots(int loc) {
         return false;
     }
 
@@ -1035,7 +1018,7 @@ public class Infantry extends Entity {
     }
 
     /**
-     * @return The number of troopers in the platoon before damage of the current phase is applied.
+     * @return The number of troopers in the platoon before damage to the current phase is applied.
      */
     public int getShootingStrength() {
         return troopersShooting;
@@ -1206,17 +1189,12 @@ public class Infantry extends Entity {
             } else if (getArmorKit().hasSubType(MiscType.S_COLD_WEATHER) &&
                   ((game == null) || game.getPlanetaryConditions().getTemperature() < -30)) {
                 return false;
-            } else if (getArmorKit().hasSubType(MiscType.S_HOT_WEATHER) &&
-                  ((game == null) || game.getPlanetaryConditions().getTemperature() > 50)) {
-                return false;
             } else {
-                return true;
+                return !getArmorKit().hasSubType(MiscType.S_HOT_WEATHER) ||
+                      ((game != null) && game.getPlanetaryConditions().getTemperature() <= 50);
             }
         }
-        if (hasSpaceSuit() || isMechanized()) {
-            return false;
-        }
-        return true;
+        return !hasSpaceSuit() && !isMechanized();
     }
 
     @Override
@@ -1229,7 +1207,7 @@ public class Infantry extends Entity {
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_PARATROOPERS)) {
             return true;
         }
-        ;
+
         EntityMovementMode moveMode = getMovementMode();
         return (List.of(EntityMovementMode.INF_JUMP, EntityMovementMode.HOVER, EntityMovementMode.VTOL)
               .contains(moveMode) || hasSpecialization(PARATROOPS));
@@ -1289,7 +1267,7 @@ public class Infantry extends Entity {
     }
 
     /**
-     * This function is called when loading a unit into a transport. This is overridden to ensure infantry are no longer
+     * This function is called when loading a unit into transport. This is overridden to ensure infantry are no longer
      * considered dug in when they are being transported.
      *
      * @param transportID The entity ID of the transporter
@@ -1363,7 +1341,7 @@ public class Infantry extends Entity {
               .filter(m -> m instanceof MiscMounted)
               .map(m -> (MiscMounted) m)
               .filter(m -> m.getType().hasFlag(MiscType.F_ARMOR_KIT))
-              .collect(toList());
+              .toList();
 
         getEquipment().removeAll(toRemove);
         getMisc().removeAll(toRemove);
@@ -1372,7 +1350,7 @@ public class Infantry extends Entity {
             if ((slot != null) &&
                   (slot.getMount() instanceof MiscMounted) &&
                   toRemove.contains((MiscMounted) slot.getMount())) {
-                removeCriticals(Infantry.LOC_INFANTRY, slot);
+                removeCriticalSlots(Infantry.LOC_INFANTRY, slot);
             }
         }
     }
@@ -1396,7 +1374,7 @@ public class Infantry extends Entity {
             divisor += 1.0;
         }
         if (mount != null) {
-            divisor *= mount.getDamageDivisor();
+            divisor *= mount.damageDivisor();
         }
         return divisor;
     }
@@ -1462,7 +1440,7 @@ public class Infantry extends Entity {
     }
 
     public void setSpecializations(int spec) {
-        // Equipment for Trench/Fieldworks Engineers
+        // Equipment for Trench/Fieldwork's Engineers
         if ((spec & TRENCH_ENGINEERS) > 0 && (infSpecs & TRENCH_ENGINEERS) == 0) {
             // Add vibro shovels
             try {
@@ -1480,8 +1458,14 @@ public class Infantry extends Entity {
                 }
             }
             getEquipment().removeAll(eqToRemove);
-            getMisc().removeAll(eqToRemove);
+
+            for (Mounted<?> mounted : eqToRemove) {
+                if (mounted instanceof MiscMounted) {
+                    getMisc().remove(mounted);
+                }
+            }
         }
+
         // Equipment for Demolition Engineers
         if ((spec & DEMO_ENGINEERS) > 0 && (infSpecs & DEMO_ENGINEERS) == 0) {
             // Add demolition charge
@@ -1500,7 +1484,12 @@ public class Infantry extends Entity {
                 }
             }
             getEquipment().removeAll(eqToRemove);
-            getMisc().removeAll(eqToRemove);
+
+            for (Mounted<?> mounted : eqToRemove) {
+                if (mounted instanceof MiscMounted) {
+                    getMisc().remove(mounted);
+                }
+            }
         }
         infSpecs = spec;
     }
@@ -1512,7 +1501,7 @@ public class Infantry extends Entity {
             if ((spec & currSpec) < 1) {
                 continue;
             }
-            if (name.length() > 0) {
+            if (!name.isEmpty()) {
                 name.append(" ");
             }
             name.append(Messages.getString("Infantry.specialization" + i));
@@ -1527,7 +1516,7 @@ public class Infantry extends Entity {
             if ((spec & currSpec) < 1) {
                 continue;
             }
-            if (name.length() > 0) {
+            if (!name.isEmpty()) {
                 name.append(" ");
             }
             name.append(Messages.getString("Infantry.specializationTip" + i));
@@ -1563,7 +1552,7 @@ public class Infantry extends Entity {
     public TargetRoll getStealthModifier(int range, Entity ae) {
         TargetRoll result = null;
 
-        // Note: infantry are immune to stealth, but not camoflage or mimetic armor
+        // Note: infantry are immune to stealth, but not camouflage or mimetic armor
         if ((sneak_ir || dest) && !(ae instanceof Infantry)) {
             switch (range) {
                 case RangeType.RANGE_MINIMUM:
@@ -1625,11 +1614,11 @@ public class Infantry extends Entity {
     public void setMount(InfantryMount mount) {
         this.mount = mount;
         if (mount != null) {
-            setMovementMode(mount.getMovementMode());
-            if (mount.getMovementMode().isLegInfantry()) {
+            setMovementMode(mount.movementMode());
+            if (mount.movementMode().isLegInfantry()) {
                 setOriginalWalkMP(mount.getMP());
             } else {
-                setOriginalWalkMP(mount.getSecondaryGroundMP());
+                setOriginalWalkMP(mount.secondaryGroundMP());
                 setOriginalJumpMP(mount.getMP());
             }
         }
@@ -1892,10 +1881,9 @@ public class Infantry extends Entity {
     public boolean isCrippled() {
         double activeTroopPercent = (double) getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY);
         if (activeTroopPercent < 0.25) {
-            logger.debug(getDisplayName() +
-                  " CRIPPLED: Only " +
-                  NumberFormat.getPercentInstance().format(activeTroopPercent) +
-                  " troops remaining.");
+            logger.debug("{} CRIPPLED: Only {} troops remaining.",
+                  getDisplayName(),
+                  NumberFormat.getPercentInstance().format(activeTroopPercent));
             return true;
         } else {
             return false;
@@ -1973,7 +1961,7 @@ public class Infantry extends Entity {
      * @param pos       The hex coords
      * @param elevation The elevation (flying or in building)
      *
-     * @return True when this infantry has valid conver
+     * @return True when this infantry has valid cover
      */
     public static boolean hasValidCover(Game game, Coords pos, int elevation) {
         // Can't do anything if we don't have a position
@@ -1983,7 +1971,7 @@ public class Infantry extends Entity {
             return false;
         }
         boolean hasMovedEntity = false;
-        // First, look for ground untis in the same hex that have already moved
+        // First, look for ground units in the same hex that have already moved
         for (Entity e : game.getEntitiesVector(pos)) {
             if (e.isDone() && !(e instanceof Infantry) && (e.getElevation() == elevation)) {
                 hasMovedEntity = true;

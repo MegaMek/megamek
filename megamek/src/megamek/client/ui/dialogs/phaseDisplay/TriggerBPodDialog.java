@@ -59,15 +59,15 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.common.actions.TriggerBPodAction;
 import megamek.common.board.Coords;
-import megamek.common.units.Entity;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
-import megamek.common.equipment.Mounted;
 import megamek.common.units.QuadMek;
-import megamek.common.equipment.WeaponType;
-import megamek.common.actions.TriggerBPodAction;
 
 /**
  * A dialog displayed to the player when they have an opportunity to trigger an Anti-BA Pod on one of their units.
@@ -156,12 +156,12 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
                 if (mount.canFire()) {
                     // Only Leg's and CT BPods can be used against Leg attacks
                     if (attackType.equals(Infantry.LEG_ATTACK)
-                          && (mount.getLocation() != Mek.LOC_CT)
-                          && (mount.getLocation() != Mek.LOC_LLEG)
-                          && (mount.getLocation() != Mek.LOC_RLEG)) {
+                          && (mount.getLocation() != Mek.LOC_CENTER_TORSO)
+                          && (mount.getLocation() != Mek.LOC_LEFT_LEG)
+                          && (mount.getLocation() != Mek.LOC_RIGHT_LEG)) {
                         if (entity instanceof QuadMek) {
-                            if ((mount.getLocation() != Mek.LOC_LARM)
-                                  || (mount.getLocation() != Mek.LOC_RARM)) {
+                            if ((mount.getLocation() != Mek.LOC_LEFT_ARM)
+                                  || (mount.getLocation() != Mek.LOC_RIGHT_ARM)) {
                                 pod.setEnabled(false);
                             }
                         } else {
@@ -172,9 +172,9 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
                     // Swarm attacks
                     else if (attackType.equals(Infantry.SWARM_MEK)
                           && (mount.isRearMounted()
-                          || (mount.getLocation() == Mek.LOC_CT)
-                          || (mount.getLocation() == Mek.LOC_LLEG) || (mount
-                          .getLocation() == Mek.LOC_RLEG))) {
+                          || (mount.getLocation() == Mek.LOC_CENTER_TORSO)
+                          || (mount.getLocation() == Mek.LOC_LEFT_LEG) || (mount
+                          .getLocation() == Mek.LOC_RIGHT_LEG))) {
                         pod.setEnabled(false);
                     } else {
                         // Yup. Add a traker for this pod.

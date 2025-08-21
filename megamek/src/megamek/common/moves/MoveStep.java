@@ -35,6 +35,7 @@ package megamek.common.moves;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.lang.System;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -2163,9 +2164,9 @@ public class MoveStep implements Serializable {
         // Meks with no arms and a missing leg cannot attempt to stand
         if (((stepType == MoveStepType.GET_UP) || (stepType == MoveStepType.CAREFUL_STAND)) &&
               (entity instanceof Mek) &&
-              entity.isLocationBad(Mek.LOC_LARM) &&
-              entity.isLocationBad(Mek.LOC_RARM) &&
-              (entity.isLocationBad(Mek.LOC_RLEG) || entity.isLocationBad(Mek.LOC_LLEG))) {
+              entity.isLocationBad(Mek.LOC_LEFT_ARM) &&
+              entity.isLocationBad(Mek.LOC_RIGHT_ARM) &&
+              (entity.isLocationBad(Mek.LOC_RIGHT_LEG) || entity.isLocationBad(Mek.LOC_LEFT_LEG))) {
             movementType = EntityMovementType.MOVE_ILLEGAL;
             return;
         }
@@ -2565,11 +2566,11 @@ public class MoveStep implements Serializable {
         final boolean isFogSpecialist = en.getCrew()
               .getOptions()
               .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
-              .equals(Crew.ENVSPC_FOG);
+              .equals(Crew.ENVIRONMENT_SPECIALIST_FOG);
         final boolean isLightSpecialist = en.getCrew()
               .getOptions()
               .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
-              .equals(Crew.ENVSPC_LIGHT);
+              .equals(Crew.ENVIRONMENT_SPECIALIST_LIGHT);
         int nSrcEl = srcHex.getLevel() + prevEl;
         int nDestEl = destHex.getLevel() + elevation;
         PlanetaryConditions conditions = game.getPlanetaryConditions();
@@ -2812,7 +2813,7 @@ public class MoveStep implements Serializable {
                 // mechanized infantry pays 1 extra
                 mp += 1;
             } else if (isInfantry && (((Infantry) entity).getMount() != null)) {
-                mp += ((Infantry) entity).getMount().getSize().buildingMP;
+                mp += ((Infantry) entity).getMount().size().buildingMP;
             }
         }
 
@@ -3810,7 +3811,7 @@ public class MoveStep implements Serializable {
         }
         if (entity instanceof LandAirMek) {
             return entity.getConversionMode() == LandAirMek.CONV_MODE_MEK ||
-                  (entity.getConversionMode() == LandAirMek.CONV_MODE_AIRMEK && getClearance() <= 0);
+                  (entity.getConversionMode() == LandAirMek.CONV_MODE_AIR_MEK && getClearance() <= 0);
         }
         return entity instanceof Mek;
     }

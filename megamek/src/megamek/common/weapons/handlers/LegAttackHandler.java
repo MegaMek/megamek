@@ -82,10 +82,10 @@ public class LegAttackHandler extends WeaponHandler {
         // If a leg attacks hit a leg that isn't
         // there, then hit the other leg.
         if (entityTarget.getInternal(hit) <= 0) {
-            if (hit.getLocation() == Mek.LOC_RLEG) {
-                hit = new HitData(Mek.LOC_LLEG);
+            if (hit.getLocation() == Mek.LOC_RIGHT_LEG) {
+                hit = new HitData(Mek.LOC_LEFT_LEG);
             } else {
-                hit = new HitData(Mek.LOC_RLEG);
+                hit = new HitData(Mek.LOC_RIGHT_LEG);
             }
         }
         hit.setGeneralDamageType(generalDamageType);
@@ -113,7 +113,7 @@ public class LegAttackHandler extends WeaponHandler {
         if (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED) {
             critMod -= 2;
         }
-        if (ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_MEK)) {
+        if (ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMAN_TRO_MEK)) {
             critMod += 1;
         }
         vPhaseReport.addAll(gameManager.criticalEntity(entityTarget, hit.getLocation(), hit.isRear(), critMod, damage));

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2003 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.units;
 
+import java.io.Serial;
+
 import megamek.common.Hex;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
@@ -50,6 +52,7 @@ import megamek.common.equipment.MiscType;
  * @author beerockxs
  */
 public class SupportTank extends Tank {
+    @Serial
     private static final long serialVersionUID = -9028127010133768714L;
 
     private final int[] barRating;
@@ -224,50 +227,42 @@ public class SupportTank extends Tank {
             }
         }
 
-        switch (movementMode) {
-            case TRACKED:
-                return (hex.terrainLevel(Terrains.WOODS) > 1)
-                      || ((hex.terrainLevel(Terrains.WATER) > 0)
-                      && !hex.containsTerrain(Terrains.ICE)
-                      && !hasEnvironmentalSealing())
-                      || hex.containsTerrain(Terrains.JUNGLE)
-                      || (hex.terrainLevel(Terrains.MAGMA) > 1)
-                      || (hex.terrainLevel(Terrains.ROUGH) > 1)
-                      || (hex.terrainLevel(Terrains.RUBBLE) > 5);
-            case WHEELED:
-                return (hex.terrainLevel(Terrains.WOODS) > 1)
-                      || ((hex.terrainLevel(Terrains.WOODS) == 1) && !isMonoCycleOrBicycle())
-                      || hex.containsTerrain(Terrains.ROUGH)
-                      || ((hex.terrainLevel(Terrains.WATER) > 0)
-                      && !hex.containsTerrain(Terrains.ICE)
-                      && !hasEnvironmentalSealing())
-                      || hex.containsTerrain(Terrains.RUBBLE)
-                      || hex.containsTerrain(Terrains.MAGMA)
-                      || hex.containsTerrain(Terrains.JUNGLE)
-                      || (hex.terrainLevel(Terrains.SNOW) > 1)
-                      || (hex.terrainLevel(Terrains.GEYSER) == 2);
-            case HOVER:
-                return (hex.terrainLevel(Terrains.WOODS) > 1)
-                      || ((hex.terrainLevel(Terrains.WOODS) == 1) && !isMonoCycleOrBicycle())
-                      || hex.containsTerrain(Terrains.JUNGLE)
-                      || (hex.terrainLevel(Terrains.MAGMA) > 1)
-                      || (hex.terrainLevel(Terrains.ROUGH) > 1)
-                      || (hex.terrainLevel(Terrains.RUBBLE) > 5);
-            case NAVAL:
-            case HYDROFOIL:
-                return (hex.terrainLevel(Terrains.WATER) <= 0)
-                      || hex.containsTerrain(Terrains.ICE);
-            case SUBMARINE:
-                return (hex.terrainLevel(Terrains.WATER) <= 0);
-            case WIGE:
-                return (hex.containsTerrain(Terrains.WOODS) || (hex
-                      .containsTerrain(Terrains.BUILDING)))
-                      && !(currElevation > hex
-                      .maxTerrainFeatureElevation(game.getBoard(testBoardId)
-                            .isLowAltitude()));
-            default:
-                return false;
-        }
+        return switch (movementMode) {
+            case TRACKED -> (hex.terrainLevel(Terrains.WOODS) > 1)
+                  || ((hex.terrainLevel(Terrains.WATER) > 0)
+                  && !hex.containsTerrain(Terrains.ICE)
+                  && !hasEnvironmentalSealing())
+                  || hex.containsTerrain(Terrains.JUNGLE)
+                  || (hex.terrainLevel(Terrains.MAGMA) > 1)
+                  || (hex.terrainLevel(Terrains.ROUGH) > 1)
+                  || (hex.terrainLevel(Terrains.RUBBLE) > 5);
+            case WHEELED -> (hex.terrainLevel(Terrains.WOODS) > 1)
+                  || ((hex.terrainLevel(Terrains.WOODS) == 1) && !isMonoCycleOrBicycle())
+                  || hex.containsTerrain(Terrains.ROUGH)
+                  || ((hex.terrainLevel(Terrains.WATER) > 0)
+                  && !hex.containsTerrain(Terrains.ICE)
+                  && !hasEnvironmentalSealing())
+                  || hex.containsTerrain(Terrains.RUBBLE)
+                  || hex.containsTerrain(Terrains.MAGMA)
+                  || hex.containsTerrain(Terrains.JUNGLE)
+                  || (hex.terrainLevel(Terrains.SNOW) > 1)
+                  || (hex.terrainLevel(Terrains.GEYSER) == 2);
+            case HOVER -> (hex.terrainLevel(Terrains.WOODS) > 1)
+                  || ((hex.terrainLevel(Terrains.WOODS) == 1) && !isMonoCycleOrBicycle())
+                  || hex.containsTerrain(Terrains.JUNGLE)
+                  || (hex.terrainLevel(Terrains.MAGMA) > 1)
+                  || (hex.terrainLevel(Terrains.ROUGH) > 1)
+                  || (hex.terrainLevel(Terrains.RUBBLE) > 5);
+            case NAVAL, HYDROFOIL -> (hex.terrainLevel(Terrains.WATER) <= 0)
+                  || hex.containsTerrain(Terrains.ICE);
+            case SUBMARINE -> (hex.terrainLevel(Terrains.WATER) <= 0);
+            case WIGE -> (hex.containsTerrain(Terrains.WOODS) || (hex
+                  .containsTerrain(Terrains.BUILDING)))
+                  && !(currElevation > hex
+                  .maxTerrainFeatureElevation(game.getBoard(testBoardId)
+                        .isLowAltitude()));
+            default -> false;
+        };
     }
 
     public boolean isMonoCycleOrBicycle() {

@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,7 @@
 package megamek.common;
 
 
+import java.io.Serial;
 import java.util.List;
 
 import megamek.common.board.Coords;
@@ -49,6 +50,7 @@ import megamek.common.units.Entity;
  */
 public class ToHitData extends TargetRoll {
 
+    @Serial
     private static final long serialVersionUID = 737321999301910678L;
     public static final int HIT_NORMAL = 0;
     public static final int HIT_PUNCH = 1;
@@ -66,10 +68,10 @@ public class ToHitData extends TargetRoll {
     public static final int SIDE_REAR = 1;
     public static final int SIDE_LEFT = 2;
     public static final int SIDE_RIGHT = 3;
-    public static final int SIDE_FRONTLEFT = 4;
-    public static final int SIDE_FRONTRIGHT = 5;
-    public static final int SIDE_REARLEFT = 6;
-    public static final int SIDE_REARRIGHT = 7;
+    public static final int SIDE_FRONT_LEFT = 4;
+    public static final int SIDE_FRONT_RIGHT = 5;
+    public static final int SIDE_REAR_LEFT = 6;
+    public static final int SIDE_REAR_RIGHT = 7;
     public static final int SIDE_RANDOM = 8;
 
     private int hitTable = HIT_NORMAL;
@@ -143,7 +145,7 @@ public class ToHitData extends TargetRoll {
      * @param targetRollModifier The {@link TargetRollModifier} that applies immediately.
      */
     public ToHitData(TargetRollModifier targetRollModifier) {
-        this(targetRollModifier.getValue(), targetRollModifier.getDesc());
+        this(targetRollModifier.value(), targetRollModifier.getDesc());
     }
 
     /**
@@ -190,48 +192,48 @@ public class ToHitData extends TargetRoll {
     }
 
     /**
-     * Describes the table and side we'return hitting on
+     * Describes the table and side we're turn hitting on
      */
     public String getTableDesc() {
         if ((sideTable != SIDE_FRONT) || (hitTable != HIT_NORMAL)) {
-            String tdesc = new String();
+            String tableDesc = "";
             switch (sideTable) {
                 case SIDE_RANDOM:
-                    tdesc += "Random Side ";
+                    tableDesc += "Random Side ";
                     break;
                 case SIDE_RIGHT:
-                    tdesc += "Right Side ";
+                    tableDesc += "Right Side ";
                     break;
                 case SIDE_LEFT:
-                    tdesc += "Left Side ";
+                    tableDesc += "Left Side ";
                     break;
                 case SIDE_REAR:
-                    tdesc += "Rear ";
+                    tableDesc += "Rear ";
                     break;
             }
             switch (hitTable) {
                 case HIT_PUNCH:
-                    tdesc += "Punch ";
+                    tableDesc += "Punch ";
                     break;
                 case HIT_KICK:
-                    tdesc += "Kick ";
+                    tableDesc += "Kick ";
                     break;
                 case HIT_SWARM:
                 case HIT_SWARM_CONVENTIONAL:
-                    tdesc += "Swarm ";
+                    tableDesc += "Swarm ";
                     break;
                 case HIT_ABOVE:
-                    tdesc += "Above ";
+                    tableDesc += "Above ";
                     break;
                 case HIT_BELOW:
-                    tdesc += "Below ";
+                    tableDesc += "Below ";
                     break;
                 case HIT_PARTIAL_COVER:
-                    tdesc += "Partial cover " +
+                    tableDesc += "Partial cover " +
                           "(" + LosEffects.getCoverName(cover, true) + ") ";
                     break;
             }
-            return " (using " + tdesc + "table)";
+            return " (using " + tableDesc + "table)";
         }
         return "";
     }

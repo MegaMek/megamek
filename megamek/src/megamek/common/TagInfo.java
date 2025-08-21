@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,11 +34,13 @@
 
 package megamek.common;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import megamek.common.units.Targetable;
 
 public class TagInfo implements Serializable {
+    @Serial
     private static final long serialVersionUID = -8428068101269842100L;
     public int attackerId; // who fired the TAG
     public int targetType; // keeps track of the target's type

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2004 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2004-2022 - 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,6 +33,7 @@
  */
 package megamek.common;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,13 +52,14 @@ import megamek.common.rolls.TargetRoll;
  * mods they get to hit certain hexes.
  */
 public class ArtilleryTracker implements Serializable {
+    @Serial
     private static final long serialVersionUID = -6913144265531983734L;
 
     /**
      * Maps WeaponID's of artillery weapons to a Vector of ArtilleryModifiers, for all the different coords it's got
      * mods to.
      */
-    private Map<Mounted<?>, Vector<ArtilleryModifier>> weapons;
+    private final Map<Mounted<?>, Vector<ArtilleryModifier>> weapons;
 
     private boolean spotterIsForwardObs;
 
@@ -94,8 +96,8 @@ public class ArtilleryTracker implements Serializable {
     }
 
     /**
-     * Remove all autohit mods from hexes that were hit previously; used when artillery unit moves. This _should_ be
-     * thread-safe. Only autohit mods are lost when an artillery unit spends MPs (TO:AR pg. 150)
+     * Remove all auto hit mods from hexes that were hit previously; used when artillery unit moves. This _should_ be
+     * thread-safe. Only auto hit mods are lost when an artillery unit spends MPs (TO:AR pg. 150)
      */
     public void clearHitHexMods() {
         for (Vector<ArtilleryModifier> modVector : weapons.values()) {
@@ -126,25 +128,22 @@ public class ArtilleryTracker implements Serializable {
      * Sets the modifier for artillery weapons on this unit. All weapons use the same modifier due to artillery fire
      * adjustment being handled on a per-unit basis.
      *
-     * @param modifier
-     * @param coords
      */
     public void setModifier(int modifier, Coords coords) {
         for (Mounted<?> weapon : weapons.keySet()) {
             Vector<ArtilleryModifier> weaponMods = getWeaponModifiers(weapon);
-            ArtilleryModifier am = getModifierByCoords(weaponMods, coords);
-            if (am != null) {
-                am.setModifier(modifier);
+            ArtilleryModifier artilleryModifier = getModifierByCoords(weaponMods, coords);
+            if (artilleryModifier != null) {
+                artilleryModifier.setModifier(modifier);
             } else {
-                am = new ArtilleryModifier(coords, modifier);
-                weaponMods.addElement(am);
+                artilleryModifier = new ArtilleryModifier(coords, modifier);
+                weaponMods.addElement(artilleryModifier);
             }
         }
     }
 
     /**
      * @param weapon weapon to get modifier for
-     * @param coords
      *
      * @return the modifier for the given weapon
      */
@@ -173,41 +172,6 @@ public class ArtilleryTracker implements Serializable {
      */
     protected ArtilleryModifier getModifierByCoords(Vector<ArtilleryModifier> modifiers, Coords coords) {
         return modifiers.stream().filter(mod -> mod.getCoords().equals(coords)).findFirst().orElse(null);
-    }
-
-    /**
-     * Small collector... just holds a Coords and a modifier (either ToHitData.AUTOMATIC_SUCCESS or just a modifier)
-     */
-    public static class ArtilleryModifier implements Serializable {
-        private static final long serialVersionUID = 4913880091708068708L;
-        private Coords coords;
-        private int modifier;
-
-        public ArtilleryModifier(Coords coords, int modifier) {
-            this.coords = coords;
-            this.setModifier(modifier);
-        }
-
-        /**
-         * @return the coords.
-         */
-        public Coords getCoords() {
-            return coords;
-        }
-
-        /**
-         * @param modifier The modifier to set.
-         */
-        public void setModifier(int modifier) {
-            this.modifier = modifier;
-        }
-
-        /**
-         * @return the modifier.
-         */
-        public int getModifier() {
-            return modifier;
-        }
     }
 
     public boolean getSpotterHasForwardObs() {

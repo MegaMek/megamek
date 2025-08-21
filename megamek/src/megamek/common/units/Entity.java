@@ -3127,20 +3127,20 @@ public abstract class Entity extends TurnOrdered
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         int mp = getOriginalWalkMP();
 
-        if (!mpCalculationSetting.ignoreHeat) {
+        if (!mpCalculationSetting.ignoreHeat()) {
             mp = Math.max(0, mp - getHeatMPReduction());
         }
 
-        if (!mpCalculationSetting.ignoreCargo) {
+        if (!mpCalculationSetting.ignoreCargo()) {
             mp = Math.max(mp - getCargoMpReduction(this), 0);
         }
 
-        if (!mpCalculationSetting.ignoreWeather && (game != null)) {
+        if (!mpCalculationSetting.ignoreWeather() && (game != null)) {
             int weatherModifier = game.getPlanetaryConditions().getMovementMods(this);
             mp = Math.max(mp + weatherModifier, 0);
         }
 
-        if (!mpCalculationSetting.ignoreGravity) {
+        if (!mpCalculationSetting.ignoreGravity()) {
             mp = applyGravityEffectsOnMP(mp);
         }
 
@@ -3330,7 +3330,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
-        if (mpCalculationSetting.ignoreGravity) {
+        if (mpCalculationSetting.ignoreGravity()) {
             return getOriginalJumpMP();
         } else {
             return applyGravityEffectsOnMP(getOriginalJumpMP());
@@ -10833,12 +10833,12 @@ public abstract class Entity extends TurnOrdered
     public boolean removePartialCoverHits(int location, int cover, int side) {
         if (cover > LosEffects.COVER_NONE) {
             switch (cover) {
-                case LosEffects.COVER_LOWLEFT:
+                case LosEffects.COVER_LOW_LEFT:
                     if (location == Mek.LOC_LEFT_LEG) {
                         return true;
                     }
                     break;
-                case LosEffects.COVER_LOWRIGHT:
+                case LosEffects.COVER_LOW_RIGHT:
                     if (location == Mek.LOC_RIGHT_LEG) {
                         return true;
                     }
@@ -11344,10 +11344,10 @@ public abstract class Entity extends TurnOrdered
         return switch (side) {
             case ToHitData.SIDE_LEFT,
                  ToHitData.SIDE_RIGHT,
-                 ToHitData.SIDE_FRONTLEFT,
-                 ToHitData.SIDE_FRONTRIGHT,
-                 ToHitData.SIDE_REARLEFT,
-                 ToHitData.SIDE_REARRIGHT -> 2;
+                 ToHitData.SIDE_FRONT_LEFT,
+                 ToHitData.SIDE_FRONT_RIGHT,
+                 ToHitData.SIDE_REAR_LEFT,
+                 ToHitData.SIDE_REAR_RIGHT -> 2;
             case ToHitData.SIDE_REAR -> 1;
             default -> 0;
         };
@@ -14020,7 +14020,7 @@ public abstract class Entity extends TurnOrdered
         // Load all the unit's quirks.
         for (QuirkEntry quirkEntry : quirks) {
             // If the quirk doesn't have a location, then it is a unit quirk, not a weapon quirk.
-            if (StringUtility.isNullOrBlank(quirkEntry.getLocation())) {
+            if (StringUtility.isNullOrBlank(quirkEntry.location())) {
                 // Activate the unit quirk.
                 if (getQuirks().getOption(quirkEntry.getQuirk()) == null) {
                     LOGGER.warn("{} failed to load quirk for {} {} - Invalid quirk!", quirkEntry, getChassis(),
@@ -14047,7 +14047,7 @@ public abstract class Entity extends TurnOrdered
      */
     protected Mounted<?> getEquipmentForWeaponQuirk(QuirkEntry quirkEntry) {
         // Get the weapon in the indicated location and slot.
-        CriticalSlot cs = getCritical(getLocationFromAbbr(quirkEntry.getLocation()), quirkEntry.getSlot());
+        CriticalSlot cs = getCritical(getLocationFromAbbr(quirkEntry.location()), quirkEntry.slot());
         if (cs != null) {
             return cs.getMount();
         } else {
@@ -14055,8 +14055,8 @@ public abstract class Entity extends TurnOrdered
                   quirkEntry,
                   getChassis(),
                   getModel(),
-                  quirkEntry.getLocation(),
-                  quirkEntry.getSlot());
+                  quirkEntry.location(),
+                  quirkEntry.slot());
             return null;
         }
     }
@@ -14068,8 +14068,8 @@ public abstract class Entity extends TurnOrdered
                   quirkEntry,
                   getChassis(),
                   getModel(),
-                  quirkEntry.getLocation(),
-                  quirkEntry.getSlot());
+                  quirkEntry.location(),
+                  quirkEntry.slot());
             return;
         }
 
@@ -14084,7 +14084,7 @@ public abstract class Entity extends TurnOrdered
         Enumeration<String> typeNames = m.getType().getNames();
         while (typeNames.hasMoreElements()) {
             String typeName = typeNames.nextElement();
-            if (typeName.equals(quirkEntry.getWeaponName())) {
+            if (typeName.equals(quirkEntry.weaponName())) {
                 matchFound = true;
                 break;
             }
@@ -14096,7 +14096,7 @@ public abstract class Entity extends TurnOrdered
                   getChassis(),
                   getModel(),
                   m.getType().getName(),
-                  quirkEntry.getWeaponName());
+                  quirkEntry.weaponName());
             return;
         }
 

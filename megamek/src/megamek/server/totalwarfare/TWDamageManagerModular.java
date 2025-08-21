@@ -542,7 +542,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         // head do external and internal damage, but it's one hit and shouldn't cause 2 hits to the pilot.
         mods.isHeadHit = ((mek.getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED) &&
               (hit.getLocation() == Mek.LOC_HEAD) &&
-              ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS));
+              ((hit.getEffect() & HitData.EFFECT_NO_CRITICAL_SLOTS) != HitData.EFFECT_NO_CRITICAL_SLOTS));
         int entityId = mek.getId();
         Entity attacker = game.getEntity(hit.getAttackerId());
         Report report;
@@ -641,7 +641,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                   !hit.isFallDamage() &&
                   !damageIS &&
                   mek.hasShield() &&
-                  ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
+                  ((hit.getEffect() & HitData.EFFECT_NO_CRITICAL_SLOTS) != HitData.EFFECT_NO_CRITICAL_SLOTS)) {
                 int damageNew = mek.shieldAbsorptionDamage(damage, hit.getLocation(), hit.isRear());
                 // if a shield absorbed the damage, then let's tell the world about it.
                 if (damageNew != damage) {
@@ -2219,7 +2219,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         // modular armor might absorb some damage if the location mounts any.
         if (!ammoExplosion &&
               !damageIS &&
-              ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
+              ((hit.getEffect() & HitData.EFFECT_NO_CRITICAL_SLOTS) != HitData.EFFECT_NO_CRITICAL_SLOTS)) {
             int damageNew = entity.getDamageReductionFromModularArmor(hit, damage, reportVec);
             int damageDiff = damage - damageNew;
             entity.damageThisPhase += damageDiff;
@@ -2326,7 +2326,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             reportVec.add(report);
 
             if (diceRoll.getIntValue() >= 8) {
-                hit.setEffect(HitData.EFFECT_NO_CRITICALS);
+                hit.setEffect(HitData.EFFECT_NO_CRITICAL_SLOTS);
             }
         }
 
@@ -2351,7 +2351,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         // unless the section destroyed in a previous phase?
         // Cause a crit.
         if ((entity.getInternal(hit) != IArmorState.ARMOR_DESTROYED) &&
-              ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
+              ((hit.getEffect() & HitData.EFFECT_NO_CRITICAL_SLOTS) != HitData.EFFECT_NO_CRITICAL_SLOTS)) {
             for (int i = 0; i < crits; i++) {
                 reportVec.addAll(manager.criticalEntity(entity,
                       hit.getLocation(),

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -96,20 +96,13 @@ public enum SimpleTechLevel {
      * @return The corresponding TechConstants.T_* value.
      */
     public int getCompoundTechLevel(boolean clan) {
-        switch (this) {
-            case INTRO:
-                return TechConstants.T_INTRO_BOXSET;
-            case STANDARD:
-                return clan ? TechConstants.T_CLAN_TW : TechConstants.T_IS_TW_NON_BOX;
-            case ADVANCED:
-                return clan ? TechConstants.T_CLAN_ADVANCED : TechConstants.T_IS_ADVANCED;
-            case EXPERIMENTAL:
-                return clan ? TechConstants.T_CLAN_EXPERIMENTAL : TechConstants.T_IS_EXPERIMENTAL;
-            case UNOFFICIAL:
-                return clan ? TechConstants.T_CLAN_UNOFFICIAL : TechConstants.T_IS_UNOFFICIAL;
-            default:
-                return TechConstants.T_INTRO_BOXSET;
-        }
+        return switch (this) {
+            case STANDARD -> clan ? TechConstants.T_CLAN_TW : TechConstants.T_IS_TW_NON_BOX;
+            case ADVANCED -> clan ? TechConstants.T_CLAN_ADVANCED : TechConstants.T_IS_ADVANCED;
+            case EXPERIMENTAL -> clan ? TechConstants.T_CLAN_EXPERIMENTAL : TechConstants.T_IS_EXPERIMENTAL;
+            case UNOFFICIAL -> clan ? TechConstants.T_CLAN_UNOFFICIAL : TechConstants.T_IS_UNOFFICIAL;
+            default -> TechConstants.T_INTRO_BOX_SET;
+        };
     }
 
     /**
@@ -117,29 +110,15 @@ public enum SimpleTechLevel {
      *
      * @param level A TechConstants tech level constant
      *
-     * @return
      */
     public static SimpleTechLevel convertCompoundToSimple(int level) {
-        switch (level) {
-            case TechConstants.T_INTRO_BOXSET:
-                return SimpleTechLevel.INTRO;
-            case TechConstants.T_IS_TW_NON_BOX:
-            case TechConstants.T_CLAN_TW:
-            case TechConstants.T_IS_TW_ALL:
-            case TechConstants.T_TW_ALL:
-                return SimpleTechLevel.STANDARD;
-            case TechConstants.T_IS_ADVANCED:
-            case TechConstants.T_CLAN_ADVANCED:
-                return SimpleTechLevel.ADVANCED;
-            case TechConstants.T_IS_EXPERIMENTAL:
-            case TechConstants.T_CLAN_EXPERIMENTAL:
-                return SimpleTechLevel.EXPERIMENTAL;
-            case TechConstants.T_IS_UNOFFICIAL:
-            case TechConstants.T_CLAN_UNOFFICIAL:
-                return SimpleTechLevel.UNOFFICIAL;
-            default:
-                return SimpleTechLevel.STANDARD;
-        }
+        return switch (level) {
+            case TechConstants.T_INTRO_BOX_SET -> SimpleTechLevel.INTRO;
+            case TechConstants.T_IS_ADVANCED, TechConstants.T_CLAN_ADVANCED -> SimpleTechLevel.ADVANCED;
+            case TechConstants.T_IS_EXPERIMENTAL, TechConstants.T_CLAN_EXPERIMENTAL -> SimpleTechLevel.EXPERIMENTAL;
+            case TechConstants.T_IS_UNOFFICIAL, TechConstants.T_CLAN_UNOFFICIAL -> SimpleTechLevel.UNOFFICIAL;
+            default -> SimpleTechLevel.STANDARD;
+        };
     }
 
     public static SimpleTechLevel getGameTechLevel(Game game) {

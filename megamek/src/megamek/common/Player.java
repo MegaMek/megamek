@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -65,6 +66,7 @@ import megamek.common.units.MekWarrior;
 public final class Player extends TurnOrdered {
 
     //region Variable Declarations
+    @Serial
     private static final long serialVersionUID = 6828849559007455761L;
 
     public static final int PLAYER_NONE = -1;
@@ -175,7 +177,7 @@ public final class Player extends TurnOrdered {
               (numMfVibra > 0) ||
               (numMfActive > 0) ||
               (numMfInferno > 0) ||
-              getGroundObjectsToPlace().size() > 0;
+              !getGroundObjectsToPlace().isEmpty();
     }
 
     public void setNbrMFConventional(int nbrMF) {
@@ -299,7 +301,7 @@ public final class Player extends TurnOrdered {
     }
 
     /**
-     * If you are checking to see this player is a Game Master, use {@link #isGameMaster()} ()} instead
+     * If you are checking to see this player is a Game Master, use {@link #isGameMaster()} instead
      *
      * @return the value of gameMaster flag, without checking if it is permitted.
      */
@@ -381,7 +383,7 @@ public final class Player extends TurnOrdered {
     }
 
     /**
-     * If you are checking to see this player can ignore double-blind, use {@link #canIgnoreDoubleBlind()} ()} instead
+     * If you are checking to see this player can ignore double-blind, use {@link #canIgnoreDoubleBlind()} instead
      *
      * @return the value of singleBlind flag, without checking if it is permitted.
      */
@@ -399,7 +401,7 @@ public final class Player extends TurnOrdered {
     /**
      * If you are checking to see if double-blind applies to this player, use {@link #canIgnoreDoubleBlind()}
      *
-     * @return true if player is allowed use singleblind (bots only)
+     * @return true if player is allowed use single blind (bots only)
      */
     public boolean isSingleBlindPermitted() {
         return bot;
@@ -638,8 +640,7 @@ public final class Player extends TurnOrdered {
 
         int bonus = 0;
         for (InGameObject object : game.getInGameObjects()) {
-            if (object instanceof Entity && ((Entity) object).getOwner().equals(this)) {
-                Entity entity = (Entity) object;
+            if (object instanceof Entity entity && entity.getOwner().equals(this)) {
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_MOBILE_HQS)) {
                     bonus = Math.max(entity.getHQIniBonus(), bonus);
                 }
@@ -666,14 +667,14 @@ public final class Player extends TurnOrdered {
               .filter(entity -> (null != entity.getOwner()) &&
                     entity.getOwner().equals(this))
               .collect(Collectors.toCollection(ArrayList::new));
-        int commandb = 0;
+        int commandBonus = 0;
         for (Entity entity : entities) {
             int bonus = getIndividualCommandBonus(entity, useCommandInit);
-            if (bonus > commandb) {
-                commandb = bonus;
+            if (bonus > commandBonus) {
+                commandBonus = bonus;
             }
         }
-        return commandb;
+        return commandBonus;
     }
 
     /**
@@ -683,7 +684,6 @@ public final class Player extends TurnOrdered {
      * @param entity         being considered
      * @param useCommandInit boolean based on game options
      *
-     * @return
      */
     public int getIndividualCommandBonus(Entity entity, boolean useCommandInit) {
         int bonus = 0;

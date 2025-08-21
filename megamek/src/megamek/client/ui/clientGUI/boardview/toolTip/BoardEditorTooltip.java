@@ -72,7 +72,7 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
     private static final List<Integer> AUXILIARY_TERRAINS = List.of(Terrains.BLDG_CF, Terrains.BLDG_ELEV,
           Terrains.BLDG_BASEMENT_TYPE, Terrains.BLDG_ARMOR, Terrains.BLDG_CLASS, Terrains.BLDG_BASE_COLLAPSED,
           Terrains.BRIDGE_CF, Terrains.BRIDGE_ELEV, Terrains.FUEL_TANK_CF, Terrains.FUEL_TANK_ELEV,
-          Terrains.FUEL_TANK_MAG_N, Terrains.BLDG_FLUFF, Terrains.ROAD_FLUFF, Terrains.WATER_FLUFF,
+          Terrains.FUEL_TANK_MAGN, Terrains.BLDG_FLUFF, Terrains.ROAD_FLUFF, Terrains.WATER_FLUFF,
           Terrains.FOLIAGE_ELEV);
 
     private final BoardView bv;

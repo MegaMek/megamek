@@ -974,8 +974,8 @@ public abstract class Mek extends Entity {
     public int getRunMP(MPCalculationSetting mpCalculationSetting) {
         int mp;
         MPBoosters mpBoosters = getArmedMPBoosters();
-        if (!mpCalculationSetting.ignoreMASC && !mpBoosters.isNone()) {
-            if (mpCalculationSetting.singleMASC) {
+        if (!mpCalculationSetting.ignoreMASC() && !mpBoosters.isNone()) {
+            if (mpCalculationSetting.singleMASC()) {
                 mp = MPBoosters.MASC_ONLY.calculateRunMP(getWalkMP(mpCalculationSetting));
             } else {
                 mp = mpBoosters.calculateRunMP(getWalkMP(mpCalculationSetting));
@@ -1025,8 +1025,8 @@ public abstract class Mek extends Entity {
 
         int mp;
         MPBoosters mpBoosters = getArmedMPBoosters();
-        if (!mpCalculationSetting.ignoreMASC && !mpBoosters.isNone()) {
-            if (mpCalculationSetting.singleMASC) {
+        if (!mpCalculationSetting.ignoreMASC() && !mpBoosters.isNone()) {
+            if (mpCalculationSetting.singleMASC()) {
                 mp = MPBoosters.MASC_ONLY.calculateSprintMP(getWalkMP(mpCalculationSetting));
             } else {
                 mp = mpBoosters.calculateSprintMP(getWalkMP(mpCalculationSetting));
@@ -1068,7 +1068,7 @@ public abstract class Mek extends Entity {
               .filter(Mounted::isOperable)
               .count();
 
-        if (!mpCalculationSetting.ignoreSubmergedJumpJets && hasOccupiedHex() && getElevation() < 0) {
+        if (!mpCalculationSetting.ignoreSubmergedJumpJets() && hasOccupiedHex() && getElevation() < 0) {
             int waterLevel = game.getHexOf(this).terrainLevel(Terrains.WATER);
             if (waterLevel > 1) {
                 return 0;
@@ -1090,11 +1090,11 @@ public abstract class Mek extends Entity {
         // Medium shield reduces jump mp by 1/shield
         mp -= getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
 
-        if (!mpCalculationSetting.ignoreModularArmor && hasModularArmor()) {
+        if (!mpCalculationSetting.ignoreModularArmor() && hasModularArmor()) {
             mp--;
         }
 
-        if (!mpCalculationSetting.ignoreGravity) {
+        if (!mpCalculationSetting.ignoreGravity()) {
             return Math.max(applyGravityEffectsOnMP(mp), 0);
         }
 
@@ -1140,11 +1140,11 @@ public abstract class Mek extends Entity {
         // Medium shield reduces jump mp by 1/shield
         mp -= getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
 
-        if (!mpCalculationSetting.ignoreModularArmor && hasModularArmor()) {
+        if (!mpCalculationSetting.ignoreModularArmor() && hasModularArmor()) {
             mp--;
         }
 
-        if (!mpCalculationSetting.ignoreGravity) {
+        if (!mpCalculationSetting.ignoreGravity()) {
             return Math.max(applyGravityEffectsOnMP(mp), 0);
         }
 
@@ -1172,7 +1172,7 @@ public abstract class Mek extends Entity {
     public int getPartialWingJumpAtmosphereBonus(MPCalculationSetting mpCalculationSetting) {
         int bonus;
 
-        if (!mpCalculationSetting.ignoreWeather && (game != null)) {
+        if (!mpCalculationSetting.ignoreWeather() && (game != null)) {
             if ((getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM)) {
                 bonus = switch (game.getPlanetaryConditions().getAtmosphere()) {
                     case VACUUM, TRACE -> 0;
@@ -3893,11 +3893,11 @@ public abstract class Mek extends Entity {
         }
 
         if (side == ToHitData.SIDE_FRONT) {
-            if (((cover & LosEffects.COVER_LOWRIGHT) != 0)
+            if (((cover & LosEffects.COVER_LOW_RIGHT) != 0)
                   && (location == Mek.LOC_LEFT_LEG)) {
                 return true;
             }
-            if (((cover & LosEffects.COVER_LOWLEFT) != 0)
+            if (((cover & LosEffects.COVER_LOW_LEFT) != 0)
                   && (location == Mek.LOC_RIGHT_LEG)) {
                 return true;
             }
@@ -3910,11 +3910,11 @@ public abstract class Mek extends Entity {
                   && ((location == Mek.LOC_RIGHT_ARM) || (location == Mek.LOC_RIGHT_TORSO) || (location
                   == Mek.LOC_RIGHT_LEG));
         } else {
-            if (((cover & LosEffects.COVER_LOWLEFT) != 0)
+            if (((cover & LosEffects.COVER_LOW_LEFT) != 0)
                   && (location == Mek.LOC_LEFT_LEG)) {
                 return true;
             }
-            if (((cover & LosEffects.COVER_LOWRIGHT) != 0)
+            if (((cover & LosEffects.COVER_LOW_RIGHT) != 0)
                   && (location == Mek.LOC_RIGHT_LEG)) {
                 return true;
             }

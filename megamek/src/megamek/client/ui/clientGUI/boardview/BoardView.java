@@ -86,7 +86,7 @@ import megamek.client.ui.widget.MegaMekBorder;
 import megamek.client.ui.widget.SkinSpecification;
 import megamek.client.ui.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.widget.SkinXMLHandler;
-import megamek.common.ArtilleryTracker;
+import megamek.common.ArtilleryModifier;
 import megamek.common.Configuration;
 import megamek.common.ECMInfo;
 import megamek.common.Hex;
@@ -849,7 +849,7 @@ public final class BoardView extends AbstractBoardView
         SpecialHexDisplay.Type.ARTILLERY_INCOMING.init();
         SpecialHexDisplay.Type.ARTILLERY_TARGET.init();
         SpecialHexDisplay.Type.ARTILLERY_ADJUSTED.init();
-        SpecialHexDisplay.Type.ARTILLERY_AUTOHIT.init();
+        SpecialHexDisplay.Type.ARTILLERY_AUTO_HIT.init();
         SpecialHexDisplay.Type.BOMB_MISS.init();
         SpecialHexDisplay.Type.BOMB_HIT.init();
         SpecialHexDisplay.Type.BOMB_DRIFT.init();
@@ -1823,7 +1823,7 @@ public final class BoardView extends AbstractBoardView
         // Draw modifiers for selected entity and selectedArtilleryWeapon
         if (selectedArtilleryWeapon != null) {
             // Loop through all the attack modifiers for this selectedArtilleryWeapon
-            for (ArtilleryTracker.ArtilleryModifier attackMod : Objects.requireNonNull(
+            for (ArtilleryModifier attackMod : Objects.requireNonNull(
                   getSelectedEntity()).aTracker.getWeaponModifiers(
                   selectedArtilleryWeapon)) {
                 Coords coords = attackMod.getCoords();

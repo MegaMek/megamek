@@ -471,14 +471,14 @@ public class BattleArmor extends Infantry {
         int mp = getOriginalWalkMP();
 
         if (hasMyomerBooster()) {
-            if (!mpCalculationSetting.ignoreMyomerBooster) {
+            if (!mpCalculationSetting.ignoreMyomerBooster()) {
                 mp += (getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY) ? 1 : 2;
             }
         } else if (hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER)) {
             mp++;
         }
 
-        if (hasDWP() && !mpCalculationSetting.ignoreDWP) {
+        if (hasDWP() && !mpCalculationSetting.ignoreDWP()) {
             if (getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
                 mp -= 3;
             } else if (getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY) {
@@ -489,7 +489,7 @@ public class BattleArmor extends Infantry {
             }
         }
 
-        if ((!mpCalculationSetting.ignoreWeather) && (null != game)) {
+        if ((!mpCalculationSetting.ignoreWeather()) && (null != game)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
@@ -509,7 +509,7 @@ public class BattleArmor extends Infantry {
             }
         }
 
-        if (!mpCalculationSetting.ignoreGravity) {
+        if (!mpCalculationSetting.ignoreGravity()) {
             mp = applyGravityEffectsOnMP(mp);
         }
 
@@ -518,7 +518,7 @@ public class BattleArmor extends Infantry {
 
     @Override
     public int getRunMP(MPCalculationSetting mpCalculationSetting) {
-        boolean fastMove = !mpCalculationSetting.ignoreOptionalRules && (game != null) &&
+        boolean fastMove = !mpCalculationSetting.ignoreOptionalRules() && (game != null) &&
               game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FAST_INFANTRY_MOVE);
         return getWalkMP(mpCalculationSetting) + (fastMove ? 1 : 0);
     }
@@ -539,17 +539,17 @@ public class BattleArmor extends Infantry {
 
     @Override
     public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
-        if (isBurdened() && !mpCalculationSetting.ignoreBurden) {
+        if (isBurdened() && !mpCalculationSetting.ignoreBurden()) {
             return 0;
         }
 
-        if (hasDWP() && !mpCalculationSetting.ignoreDWP) {
+        if (hasDWP() && !mpCalculationSetting.ignoreDWP()) {
             return 0;
         }
 
         if (null != game) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
-            if (!mpCalculationSetting.ignoreWeather
+            if (!mpCalculationSetting.ignoreWeather()
                   && conditions.getWind().isStrongerThan(Wind.STRONG_GALE)) {
                 return 0;
             }
@@ -568,7 +568,7 @@ public class BattleArmor extends Infantry {
         // MM is concerned with in-game conditions that impact Partial Wing mp
         if ((game != null)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
-            boolean ignoreGameLessThanThin = mpCalculationSetting.ignoreWeather
+            boolean ignoreGameLessThanThin = mpCalculationSetting.ignoreWeather()
                   || !conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
             if ((mp > 0)
                   && hasWorkingMisc(MiscType.F_PARTIAL_WING)
@@ -587,7 +587,7 @@ public class BattleArmor extends Infantry {
             mp++;
         }
 
-        if (!mpCalculationSetting.ignoreGravity) {
+        if (!mpCalculationSetting.ignoreGravity()) {
             mp = applyGravityEffectsOnMP(mp);
         }
 

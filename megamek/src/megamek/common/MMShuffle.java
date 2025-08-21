@@ -1,7 +1,7 @@
 /*
 
  * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -48,8 +48,8 @@ public class MMShuffle extends Roll {
     /**
      * Record the two "dice" of this "roll".
      */
-    private int one;
-    private int two;
+    private final int one;
+    private final int two;
 
     /**
      * Record the order in which this "roll" was dealt from its shuffle.
@@ -114,21 +114,12 @@ public class MMShuffle extends Roll {
      */
     @Override
     public String toString() {
-        // Build a buffer as we go.
-        StringBuffer buffer = new StringBuffer();
-
-        // Start off the report (this is all the report a single die needs).
-        buffer.append(this.one + this.two);
-
-        // Add the two "dice".
-        buffer.append(" (");
-        buffer.append(this.one);
-        buffer.append("+");
-        buffer.append(this.two);
-        buffer.append(")");
-
-        // Return the string.
-        return buffer.toString();
+        return (this.one + this.two)
+              + " ("
+              + this.one
+              + "+"
+              + this.two
+              + ")";
     }
 
     /**
@@ -138,29 +129,17 @@ public class MMShuffle extends Roll {
      */
     @Override
     public String getReport() {
-
-        // Build a buffer as we go.
-        StringBuffer buffer = new StringBuffer();
-
-        // Include the id.
-        buffer.append("Roll #").append(this.id).append(" - range: [").append(1)
-              .append(",").append(6).append("], result: ").append(
-                    this.one + this.two);
-
-        // Report the two "dice".
-        buffer.append(", rolls: ");
-        buffer.append(this.one);
-        buffer.append(", ");
-        buffer.append(this.two);
-
-        // Now report the order of the shuffle.
-        buffer.append(", deal #");
-        buffer.append(this.deal);
-        buffer.append(" of shuffle #");
-        buffer.append(this.shuffle);
-
-        // Return the string.
-        return buffer.toString();
+        return "Roll #" + this.id + " - range: [" + 1
+              + "," + 6 + "], result: "
+              + (this.one + this.two)
+              + ", rolls: "
+              + this.one
+              + ", "
+              + this.two
+              + ", deal #"
+              + this.deal
+              + " of shuffle #"
+              + this.shuffle;
     }
 
     /**

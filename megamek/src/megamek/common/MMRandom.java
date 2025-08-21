@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -60,19 +60,15 @@ public abstract class MMRandom {
      * Gives you the type asked for, defaulting to SunRandom if there are any errors.
      */
     public static MMRandom generate(int type) {
-        logger.info("Generating RNG type #" + type);
+        logger.info("Generating RNG type #{}", type);
         try {
-            switch (type) {
-                case R_CRYPTO:
-                    return new CryptoRandom();
-                case R_POOL36:
-                    return new Pool36Random();
-                case R_SUN:
-                default:
-                    return new SunRandom();
-            }
+            return switch (type) {
+                case R_CRYPTO -> new CryptoRandom();
+                case R_POOL36 -> new Pool36Random();
+                default -> new SunRandom();
+            };
         } catch (Exception ex) {
-            logger.error("Failed to create desired RNG " + type + ", using SunRandom instead.", ex);
+            logger.error(ex, "Failed to create desired RNG {}, using SunRandom instead.", type);
             return new SunRandom();
         }
     }
@@ -165,12 +161,7 @@ public abstract class MMRandom {
         /**
          * Construct, making a new thread to init the RNG
          */
-        public CryptoRandom() throws NoSuchMethodException {
-            // hack: just check to see if there's java.util.Random@nextInt(int)
-            new java.util.Random().getClass().getMethod("nextInt",
-                  new Class[] { Integer.TYPE });
-
-            // all clear, get on with the normal init
+        public CryptoRandom() {
             random = new java.security.SecureRandom();
 
             Thread initRNG = new Thread(() -> random.nextInt(), "Random Number Init (CryptoRandom)");

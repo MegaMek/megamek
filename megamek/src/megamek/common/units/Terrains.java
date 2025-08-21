@@ -116,7 +116,7 @@ public class Terrains implements Serializable {
     public static final int FUEL_TANK = 31;
     public static final int FUEL_TANK_CF = 32;
     public static final int FUEL_TANK_ELEV = 33;
-    public static final int FUEL_TANK_MAG_N = 34;
+    public static final int FUEL_TANK_MAGN = 34;
 
     // special types
     public static final int IMPASSABLE = 35;

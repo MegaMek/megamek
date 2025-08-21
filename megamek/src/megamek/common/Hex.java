@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,12 +64,13 @@ import megamek.common.units.Terrains;
  */
 public class Hex implements Serializable {
     //region Variable Declarations
+    @Serial
     private static final long serialVersionUID = 82483704768044698L;
     private Coords coords;
     private int level;
-    private Map<Integer, Terrain> terrains = new HashMap<>(1);
+    private final Map<Integer, Terrain> terrains = new HashMap<>(1);
     private String theme;
-    private String originalTheme;
+    private final String originalTheme;
     private int fireTurn;
     //endregion Variable Declarations
 
@@ -161,7 +163,7 @@ public class Hex implements Serializable {
         int[] result = new int[terrains.size()];
         int i = 0;
         for (Integer key : terrains.keySet()) {
-            result[i++] = key.intValue();
+            result[i++] = key;
         }
         return result;
     }
@@ -342,7 +344,7 @@ public class Hex implements Serializable {
     /**
      * Returns the altitude ceiling, i.e. highest terrain feature influencing aero movement, of this hex. If
      * inAtmosphere is false, the hex is assumed to be a ground map hex and the return value is 0, as airborne aero
-     * movement ignores all terrain features of a ground map (TW p.92). Otherwise the hex is assumed to be on a low
+     * movement ignores all terrain features of a ground map (TW p.92). Otherwise, the hex is assumed to be on a low
      * altitude map and the hex level and a few terrains set an altitude of this hex. Note that the returned value is
      * never below 0 to avoid having to deal with negative altitudes.
      *
@@ -515,9 +517,8 @@ public class Hex implements Serializable {
     }
 
     /**
-     * If there's a road on this tile and it's paved, return true
+     * If there's a road on this tile, and it's paved, return true
      *
-     * @return
      */
     public boolean hasPavedRoad() {
         if (containsTerrain(Terrains.ROAD)) {
@@ -631,11 +632,11 @@ public class Hex implements Serializable {
      * @return new hex which is equal to this
      */
     public Hex duplicate() {
-        Terrain[] tcopy = new Terrain[Terrains.SIZE];
+        Terrain[] terrainCopy = new Terrain[Terrains.SIZE];
         for (Integer i : terrains.keySet()) {
-            tcopy[i] = new Terrain(terrains.get(i));
+            terrainCopy[i] = new Terrain(terrains.get(i));
         }
-        return new Hex(level, tcopy, theme, coords);
+        return new Hex(level, terrainCopy, theme, coords);
     }
 
     /**
@@ -682,7 +683,6 @@ public class Hex implements Serializable {
     /**
      * Returns true if the hex is valid for takeoff - either clear, has pavement, or a road
      *
-     * @return
      */
     public boolean isClearForTakeoff() {
         if (hasPavementOrRoad()) {
@@ -698,7 +698,6 @@ public class Hex implements Serializable {
     /**
      * Returns the "Base Terrain" for the hex, or 0 if it is clear
      *
-     * @return
      */
     public int getBaseTerrainType() {
         for (int terrain : terrains.keySet()) {
@@ -847,7 +846,7 @@ public class Hex implements Serializable {
                   + "a building type, building elevation and building CF.");
         }
 
-        // Bridges must have all of BRIDGE, BRIDGE_ELEV and BRIDGE_CF
+        // Bridges must have all BRIDGE, BRIDGE_ELEV and BRIDGE_CF
         if (containsAnyTerrainOf(Terrains.BRIDGE, Terrains.BRIDGE_ELEV, Terrains.BRIDGE_CF)
               && !containsAllTerrainsOf(Terrains.BRIDGE, Terrains.BRIDGE_ELEV, Terrains.BRIDGE_CF)) {
             newErrors.add("Incomplete Bridge! A hex with any bridge terrain must contain "
@@ -856,9 +855,9 @@ public class Hex implements Serializable {
 
         // Fuel Tanks must have all of FUEL_TANK, _ELEV, _CF and _MAGN
         if (containsAnyTerrainOf(Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF,
-              Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAG_N)
+              Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAGN)
               && !containsAllTerrainsOf(Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF,
-              Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAG_N)) {
+              Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAGN)) {
             newErrors.add("Incomplete Fuel Tank! A hex with any fuel tank terrain must contain "
                   + "the fuel tank type, elevation, CF and the fuel tank magnitude.");
         }

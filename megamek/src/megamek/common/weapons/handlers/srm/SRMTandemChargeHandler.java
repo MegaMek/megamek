@@ -37,7 +37,10 @@ package megamek.common.weapons.handlers.srm;
 import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.HitData;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
@@ -152,11 +155,11 @@ public class SRMTandemChargeHandler extends SRMHandler {
 
                 if (bGlancing || bLowProfileGlancing) {
                     // this will be either -4 or -8
-                    hit.setSpecCritmod(-2 * (int) getTotalGlancingBlowFactor());
+                    hit.setSpecCriticalModifier(-2 * (int) getTotalGlancingBlowFactor());
                 } else if (bDirect) {
-                    hit.setSpecCritmod((toHit.getMoS() / 3) - 2);
+                    hit.setSpecCriticalModifier((toHit.getMoS() / 3) - 2);
                 } else {
-                    hit.setSpecCritmod(-2);
+                    hit.setSpecCriticalModifier(-2);
                 }
             }
             vPhaseReport

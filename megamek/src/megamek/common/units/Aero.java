@@ -462,11 +462,11 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         }
         mp = Math.max(0, mp - (engineHits * engineLoss));
 
-        if (!mpCalculationSetting.ignoreCargo) {
+        if (!mpCalculationSetting.ignoreCargo()) {
             mp = Math.max(0, mp - getCargoMpReduction(this));
         }
 
-        if ((null != game) && !mpCalculationSetting.ignoreWeather) {
+        if ((null != game) && !mpCalculationSetting.ignoreWeather()) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
@@ -479,11 +479,11 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             }
         }
 
-        if (!mpCalculationSetting.ignoreCargo) {
+        if (!mpCalculationSetting.ignoreCargo()) {
             mp = reduceMPByBombLoad(mp);
         }
 
-        if (!mpCalculationSetting.ignoreModularArmor && hasModularArmor()) {
+        if (!mpCalculationSetting.ignoreModularArmor() && hasModularArmor()) {
             mp--;
         }
 
@@ -491,7 +491,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             mp--;
         }
 
-        if (!mpCalculationSetting.ignoreGrounded && !isAirborne()) {
+        if (!mpCalculationSetting.ignoreGrounded() && !isAirborne()) {
             mp = isSpheroid() ? 0 : mp / 2;
         }
 

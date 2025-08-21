@@ -225,27 +225,27 @@ public class RandomArmyCreator {
                         continue;
                     }
                 } else if (p.tech == TechConstants.T_IS_ADVANCED) {
-                    if ((m.getType() != TechConstants.T_INTRO_BOXSET)
+                    if ((m.getType() != TechConstants.T_INTRO_BOX_SET)
                           && (m.getType() != TechConstants.T_IS_TW_NON_BOX)) {
                         continue;
                     }
                 } else if (p.tech == TechConstants.T_IS_TW_NON_BOX) {
-                    if (m.getType() != TechConstants.T_INTRO_BOXSET) {
+                    if (m.getType() != TechConstants.T_INTRO_BOX_SET) {
                         continue;
                     }
                 } else if (p.tech == TechConstants.T_TW_ALL) {
-                    if ((m.getType() != TechConstants.T_INTRO_BOXSET)
+                    if ((m.getType() != TechConstants.T_INTRO_BOX_SET)
                           && (m.getType() != TechConstants.T_IS_TW_NON_BOX)
                           && (m.getType() != TechConstants.T_CLAN_TW)) {
                         continue;
                     }
                 } else if (p.tech == TechConstants.T_IS_TW_ALL) {
-                    if ((m.getType() != TechConstants.T_INTRO_BOXSET)
+                    if ((m.getType() != TechConstants.T_INTRO_BOX_SET)
                           && (m.getType() != TechConstants.T_IS_TW_NON_BOX)) {
                         continue;
                     }
                 } else if (p.tech == TechConstants.T_ALL_IS) {
-                    if ((m.getType() != TechConstants.T_INTRO_BOXSET)
+                    if ((m.getType() != TechConstants.T_INTRO_BOX_SET)
                           && (m.getType() != TechConstants.T_IS_TW_NON_BOX)
                           && (m.getType() != TechConstants.T_IS_ADVANCED)
                           && (m.getType() != TechConstants.T_IS_EXPERIMENTAL)

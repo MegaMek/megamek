@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2004 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2004-2022 - 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -31,53 +31,45 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-
 package megamek.common;
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.io.Serial;
+import java.io.Serializable;
 
-import megamek.MegaMek;
+import megamek.common.board.Coords;
 
-public class Messages {
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("megamek.common.messages",
-          MegaMek.getMMOptions().getLocale());
+/**
+ * Small collector... just holds a Coords and a modifier (either ToHitData.AUTOMATIC_SUCCESS or just a modifier)
+ */
+public class ArtilleryModifier implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 4913880091708068708L;
+    private final Coords coords;
+    private int modifier;
 
-    private Messages() {
-
+    public ArtilleryModifier(Coords coords, int modifier) {
+        this.coords = coords;
+        this.setModifier(modifier);
     }
 
     /**
-     * Returns the translated value given the key for that value in the common Resource Bundle directory.
-     *
+     * @return the coords.
      */
-    public static String getString(String key) {
-        try {
-            return RESOURCE_BUNDLE.getString(key);
-        } catch (MissingResourceException e) {
-            return '!' + key + '!';
-        }
+    public Coords getCoords() {
+        return coords;
     }
 
     /**
-     * Returns true if the resource bundle has a translated value for the given key.
-     *
+     * @param modifier The modifier to set.
      */
-    public static boolean hasString(String key) {
-        return RESOURCE_BUNDLE.containsKey(key);
+    public void setModifier(int modifier) {
+        this.modifier = modifier;
     }
 
     /**
-     * Returns the formatted message for the given key in the resource bundle.
-     *
-     * @param key  the resource name
-     * @param args the message arguments
-     *
-     * @return the string
+     * @return the modifier.
      */
-    public static String getString(String key, Object... args) {
-        return MessageFormat.format(getString(key), args);
+    public int getModifier() {
+        return modifier;
     }
-
 }

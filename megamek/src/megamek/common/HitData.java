@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,7 +44,7 @@ public class HitData {
     public static final int EFFECT_NONE = 0;
     public static final int EFFECT_CRITICAL = 0x0001;
     public static final int EFFECT_VEHICLE_MOVE_DAMAGED = 0x0002;
-    public static final int EFFECT_NO_CRITICALS = 0x0020;
+    public static final int EFFECT_NO_CRITICAL_SLOTS = 0x0020;
 
     public static final int DAMAGE_NONE = -1;
     public static final int DAMAGE_PHYSICAL = -2;
@@ -57,19 +57,19 @@ public class HitData {
     public static final int DAMAGE_AX = -9;
 
     private int location;
-    private boolean rear;
+    private final boolean rear;
     private int effect;
-    private boolean hitAimedLocation = false;
-    private int specCritMod = 0;
-    private boolean specCrit = false;
+    private final boolean hitAimedLocation;
+    private int specCritMod;
+    private boolean specCrit;
     private int motiveMod = 0;
-    private int glancing = 0;
-    private boolean fromFront = true; // True if attack came in through hex in
+    private int glancing;
+    private boolean fromFront; // True if attack came in through hex in
     // front of target
     // in case of usage of Edge it is document what the previous location was
     private HitData undoneLocation = null;
     private boolean fallDamage = false; // did the damage come from a fall?
-    private int generalDamageType = HitData.DAMAGE_NONE;
+    private int generalDamageType;
     private boolean capital = false;
     private int capMisCritMod = 0;
     private boolean boxcars = false;
@@ -142,7 +142,7 @@ public class HitData {
         return fromFront;
     }
 
-    public void makeArmorPiercing(AmmoType inType, int modifer) {
+    public void makeArmorPiercing(AmmoType inType, int modifier) {
         specCrit = true;
         if (inType.getRackSize() == 2) {
             specCritMod = -4;
@@ -162,7 +162,7 @@ public class HitData {
             specCritMod = -1;
         }
 
-        specCritMod += modifer;
+        specCritMod += modifier;
     }
 
     public void makeGlancingBlow() {
@@ -209,7 +209,7 @@ public class HitData {
         this.effect = effect;
     }
 
-    public void setSpecCritmod(int val) {
+    public void setSpecCriticalModifier(int val) {
         specCrit = true;
         specCritMod = val;
     }

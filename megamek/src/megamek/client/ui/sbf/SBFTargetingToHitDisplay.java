@@ -37,8 +37,8 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import megamek.client.ui.util.UIUtil;
-import megamek.common.compute.Compute;
 import megamek.common.TargetRollModifier;
+import megamek.common.compute.Compute;
 import megamek.common.strategicBattleSystems.SBFToHitData;
 
 public class SBFTargetingToHitDisplay {
@@ -60,9 +60,9 @@ public class SBFTargetingToHitDisplay {
 
         for (int index = 0; index < data.getModifiers().size(); index++) {
             TargetRollModifier modifier = data.getModifiers().get(index);
-            String valueText = (index > 0 ? (modifier.getValue() >= 0 ? "+ " : "- ") : "")
-                  + Math.abs(modifier.getValue());
-            cssClass = modifier.getValue() > 0 ? "penalty" : "bonus";
+            String valueText = (index > 0 ? (modifier.value() >= 0 ? "+ " : "- ") : "")
+                  + Math.abs(modifier.value());
+            cssClass = modifier.value() > 0 ? "penalty" : "bonus";
             result.append(UIUtil.spanCSS(cssClass, valueText));
             result.append(UIUtil.spanCSS("valuedeemph", " (" + modifier.getDesc() + ") "));
         }

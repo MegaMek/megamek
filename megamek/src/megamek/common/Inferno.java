@@ -33,31 +33,18 @@
  */
 package megamek.common;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
  * This class defines the effects of a single hit by an Inferno round.
  */
-public class Inferno implements Serializable {
+public record Inferno(int heatPerRound, int burnRoundsPerHit) implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1799687411697517801L;
-    private int heatPerRound;
-    private int burnRoundsPerHit;
 
     public Inferno() {
-        heatPerRound = 6;
-        burnRoundsPerHit = 3;
+        this(6, 3);
     }
 
-    public Inferno(int heat, int rounds) {
-        this.heatPerRound = heat;
-        this.burnRoundsPerHit = rounds;
-    }
-
-    public int getHeatPerRound() {
-        return heatPerRound;
-    }
-
-    public int getBurnRoundsPerHit() {
-        return burnRoundsPerHit;
-    }
 }

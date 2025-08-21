@@ -171,7 +171,7 @@ public class QuadVee extends QuadMek {
         // Current MP is calculated differently depending on whether the QuadVee is in MEK
         // or vehicle mode. During conversion, we use the mode we started in:
         // bg.battletech.com/forums/index.php?topic=55261.msg1271935#msg1271935
-        if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_VEHICLE)) {
+        if (!mpCalculationSetting.ignoreConversion() && (getConversionMode() == CONV_MODE_VEHICLE)) {
             return getCruiseMP(mpCalculationSetting);
         } else {
             return super.getWalkMP(mpCalculationSetting);
@@ -203,11 +203,11 @@ public class QuadVee extends QuadMek {
             mp -= mp * badTracks / 4;
         }
 
-        if (!mpCalculationSetting.ignoreModularArmor && hasModularArmor()) {
+        if (!mpCalculationSetting.ignoreModularArmor() && hasModularArmor()) {
             mp--;
         }
 
-        if (!mpCalculationSetting.ignoreHeat) {
+        if (!mpCalculationSetting.ignoreHeat()) {
             if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT)) {
                 if (heat < 30) {
                     mp -= (heat / 5);
@@ -227,7 +227,7 @@ public class QuadVee extends QuadMek {
             }
         }
 
-        if (!mpCalculationSetting.ignoreWeather && (null != game)) {
+        if (!mpCalculationSetting.ignoreWeather() && (null != game)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
@@ -241,7 +241,7 @@ public class QuadVee extends QuadMek {
             }
         }
 
-        if (!mpCalculationSetting.ignoreGravity) {
+        if (!mpCalculationSetting.ignoreGravity()) {
             mp = applyGravityEffectsOnMP(mp);
         }
 
@@ -250,7 +250,7 @@ public class QuadVee extends QuadMek {
 
     @Override
     public int getSprintMP(MPCalculationSetting mpCalculationSetting) {
-        if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_VEHICLE)
+        if (!mpCalculationSetting.ignoreConversion() && (getConversionMode() == CONV_MODE_VEHICLE)
               && ((game == null) ||
               !game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_ADVANCED_MANEUVERS))) {
             return getRunMP(mpCalculationSetting);
@@ -264,7 +264,7 @@ public class QuadVee extends QuadMek {
      */
     @Override
     public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
-        if (!mpCalculationSetting.ignoreConversion
+        if (!mpCalculationSetting.ignoreConversion()
               && ((getConversionMode() == CONV_MODE_VEHICLE) || convertingNow)) {
             return 0;
         } else {

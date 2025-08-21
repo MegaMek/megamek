@@ -285,14 +285,14 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         int mp;
-        if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_FIGHTER)) {
+        if (!mpCalculationSetting.ignoreConversion() && (getConversionMode() == CONV_MODE_FIGHTER)) {
             mp = getFighterModeWalkMP(mpCalculationSetting);
-        } else if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_AIR_MEK)) {
+        } else if (!mpCalculationSetting.ignoreConversion() && (getConversionMode() == CONV_MODE_AIR_MEK)) {
             mp = getAirMekCruiseMP(mpCalculationSetting);
         } else {
             mp = super.getWalkMP(mpCalculationSetting);
         }
-        if (!mpCalculationSetting.ignoreConversion && convertingNow) {
+        if (!mpCalculationSetting.ignoreConversion() && convertingNow) {
             mp /= 2;
         }
         return mp;
@@ -301,9 +301,9 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public int getRunMP(MPCalculationSetting mpCalculationSetting) {
         int mp;
-        if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_FIGHTER)) {
+        if (!mpCalculationSetting.ignoreConversion() && (getConversionMode() == CONV_MODE_FIGHTER)) {
             mp = getFighterModeRunMP(mpCalculationSetting);
-        } else if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_AIR_MEK)) {
+        } else if (!mpCalculationSetting.ignoreConversion() && (getConversionMode() == CONV_MODE_AIR_MEK)) {
             mp = getAirMekFlankMP(mpCalculationSetting);
         } else {
             // conversion reduction has already been done at this point
@@ -317,13 +317,13 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     @Override
     public int getSprintMP(MPCalculationSetting mpCalculationSetting) {
-        if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_FIGHTER)) {
+        if (!mpCalculationSetting.ignoreConversion() && (getConversionMode() == CONV_MODE_FIGHTER)) {
             return getRunMP();
-        } else if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_AIR_MEK)) {
+        } else if (!mpCalculationSetting.ignoreConversion() && (getConversionMode() == CONV_MODE_AIR_MEK)) {
             if (hasHipCrit()) {
                 return getAirMekRunMP(mpCalculationSetting);
             }
-            if (!mpCalculationSetting.ignoreMASC) {
+            if (!mpCalculationSetting.ignoreMASC()) {
                 return getArmedMPBoosters().calculateSprintMP(getAirMekWalkMP(mpCalculationSetting));
             }
         }
@@ -352,7 +352,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     public int getAirMekWalkMP(MPCalculationSetting mpCalculationSetting) {
         int mp = (int) Math.ceil(super.getWalkMP(mpCalculationSetting) * 0.33);
-        if (!mpCalculationSetting.ignoreConversion && convertingNow) {
+        if (!mpCalculationSetting.ignoreConversion() && convertingNow) {
             mp /= 2;
         }
         return mp;
@@ -364,7 +364,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     public int getAirMekRunMP(MPCalculationSetting mpCalculationSetting) {
         int mp = (int) Math.ceil(getAirMekWalkMP(mpCalculationSetting) * 1.5);
-        if (!mpCalculationSetting.ignoreConversion && convertingNow) {
+        if (!mpCalculationSetting.ignoreConversion() && convertingNow) {
             mp /= 2;
         }
         return mp;
@@ -372,7 +372,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     public int getFighterModeWalkMP(MPCalculationSetting mpCalculationSetting) {
         int thrust = getCurrentThrust(mpCalculationSetting);
-        if (!mpCalculationSetting.ignoreGrounded && !isAirborne()) {
+        if (!mpCalculationSetting.ignoreGrounded() && !isAirborne()) {
             thrust /= 2;
         }
         return thrust;
@@ -380,7 +380,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     public int getFighterModeRunMP(MPCalculationSetting mpCalculationSetting) {
         int walk = getFighterModeWalkMP(mpCalculationSetting);
-        if (mpCalculationSetting.ignoreGrounded || isAirborne()) {
+        if (mpCalculationSetting.ignoreGrounded() || isAirborne()) {
             return (int) Math.ceil(walk * 1.5);
         } else {
             return walk; // Grounded asfs cannot use flanking movement
@@ -423,7 +423,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             return 0;
         }
         int j = getJumpMP();
-        if (!mpCalculationSetting.ignoreWeather && (null != game)) {
+        if (!mpCalculationSetting.ignoreWeather() && (null != game)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             j = Math.max(j + weatherMod, 0);

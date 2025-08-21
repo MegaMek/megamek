@@ -133,19 +133,19 @@ public class SuperHeavyTank extends Tank {
             // on a hull down vee, all front hits go to turret if one exists.
             nArmorLoc = LOC_TURRET;
         }
-        if (side == ToHitData.SIDE_FRONTLEFT) {
+        if (side == ToHitData.SIDE_FRONT_LEFT) {
             nArmorLoc = LOC_FRONT_LEFT;
             bSide = true;
             motiveMod = 2;
-        } else if (side == ToHitData.SIDE_FRONTRIGHT) {
+        } else if (side == ToHitData.SIDE_FRONT_RIGHT) {
             nArmorLoc = LOC_FRONT_RIGHT;
             bSide = true;
             motiveMod = 2;
-        } else if (side == ToHitData.SIDE_REARRIGHT) {
+        } else if (side == ToHitData.SIDE_REAR_RIGHT) {
             nArmorLoc = LOC_REAR_RIGHT;
             bRearSide = true;
             motiveMod = 1;
-        } else if (side == ToHitData.SIDE_REARLEFT) {
+        } else if (side == ToHitData.SIDE_REAR_LEFT) {
             nArmorLoc = LOC_REAR_LEFT;
             bRearSide = true;
             motiveMod = 1;
@@ -339,27 +339,27 @@ public class SuperHeavyTank extends Tank {
         }
 
         if ((fa == 330) && (leftBetter == 0)) {
-            return ToHitData.SIDE_FRONTLEFT;
+            return ToHitData.SIDE_FRONT_LEFT;
         } else if ((fa == 270) && (leftBetter == 0)) {
-            return ToHitData.SIDE_REARLEFT;
+            return ToHitData.SIDE_REAR_LEFT;
         } else if ((fa == 210) && (leftBetter == 0)) {
             return ToHitData.SIDE_REAR;
         } else if ((fa == 150) && (leftBetter == 0)) {
-            return ToHitData.SIDE_REARRIGHT;
+            return ToHitData.SIDE_REAR_RIGHT;
         } else if ((fa == 90) && (leftBetter == 1)) {
-            return ToHitData.SIDE_REARRIGHT;
+            return ToHitData.SIDE_REAR_RIGHT;
         } else if ((fa == 30) && (leftBetter == 1)) {
-            return ToHitData.SIDE_FRONTRIGHT;
+            return ToHitData.SIDE_FRONT_RIGHT;
         } else if ((fa > 30) && (fa <= 90)) {
-            return ToHitData.SIDE_FRONTRIGHT;
+            return ToHitData.SIDE_FRONT_RIGHT;
         } else if ((fa > 90) && (fa < 150)) {
-            return ToHitData.SIDE_REARRIGHT;
+            return ToHitData.SIDE_REAR_RIGHT;
         } else if ((fa >= 150) && (fa < 210)) {
             return ToHitData.SIDE_REAR;
         } else if ((fa >= 210) && (fa < 270)) {
-            return ToHitData.SIDE_REARLEFT;
+            return ToHitData.SIDE_REAR_LEFT;
         } else if ((fa >= 270) && (fa < 330)) {
-            return ToHitData.SIDE_FRONTLEFT;
+            return ToHitData.SIDE_FRONT_LEFT;
         } else {
             return ToHitData.SIDE_FRONT;
         }

@@ -261,13 +261,13 @@ public class ProtoMek extends Entity {
         }
         int mp = getOriginalWalkMP();
 
-        if (!mpCalculationSetting.ignoreWeather && (game != null)) {
+        if (!mpCalculationSetting.ignoreWeather() && (game != null)) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
         }
 
         // Gravity, ProtoMeks can't get faster
-        if (!mpCalculationSetting.ignoreGravity) {
+        if (!mpCalculationSetting.ignoreGravity()) {
             mp = Math.min(mp, applyGravityEffectsOnMP(mp));
         }
 
@@ -443,7 +443,7 @@ public class ProtoMek extends Entity {
 
     @Override
     public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
-        if (mpCalculationSetting.ignoreSubmergedJumpJets && isUnderwater()) {
+        if (mpCalculationSetting.ignoreSubmergedJumpJets() && isUnderwater()) {
             return 0;
         }
         int jump = jumpMP;
@@ -460,7 +460,7 @@ public class ProtoMek extends Entity {
                 jump = jump / 2;
                 break;
         }
-        if (!mpCalculationSetting.ignoreWeather && hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
+        if (!mpCalculationSetting.ignoreWeather() && hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
             Atmosphere atmosphere = Atmosphere.STANDARD;
             if (game != null) {
                 atmosphere = game.getPlanetaryConditions().getAtmosphere();
@@ -481,7 +481,7 @@ public class ProtoMek extends Entity {
             }
         }
 
-        return mpCalculationSetting.ignoreGravity ? jump : Math.min(applyGravityEffectsOnMP(jump), jump);
+        return mpCalculationSetting.ignoreGravity() ? jump : Math.min(applyGravityEffectsOnMP(jump), jump);
     }
 
     @Override
@@ -599,7 +599,7 @@ public class ProtoMek extends Entity {
 
     @Override
     public int getRunMP(MPCalculationSetting mpCalculationSetting) {
-        if (!mpCalculationSetting.ignoreMyomerBooster && hasMyomerBooster()) {
+        if (!mpCalculationSetting.ignoreMyomerBooster() && hasMyomerBooster()) {
             return (getWalkMP(mpCalculationSetting) * 2);
         } else {
             return super.getRunMP(mpCalculationSetting);
@@ -1391,8 +1391,8 @@ public class ProtoMek extends Entity {
 
     @Override
     protected Mounted<?> getEquipmentForWeaponQuirk(QuirkEntry quirkEntry) {
-        int location = getLocationFromAbbr(quirkEntry.getLocation());
-        int slot = quirkEntry.getSlot();
+        int location = getLocationFromAbbr(quirkEntry.location());
+        int slot = quirkEntry.slot();
         for (Mounted<?> equipment : getEquipment()) {
             if (equipment.getLocation() == location) {
                 if (slot == 0) {

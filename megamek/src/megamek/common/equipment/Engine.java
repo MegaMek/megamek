@@ -1079,7 +1079,7 @@ public class Engine implements Serializable, ITechnology {
                 } else if (year <= 2285) {
                     return TechConstants.T_IS_UNOFFICIAL;
                 } else {
-                    return TechConstants.T_INTRO_BOXSET;
+                    return TechConstants.T_INTRO_BOX_SET;
                 }
             case XL_ENGINE:
                 if ((isClan) && (isLarge)) {

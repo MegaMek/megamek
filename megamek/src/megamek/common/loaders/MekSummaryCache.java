@@ -307,7 +307,7 @@ public class MekSummaryCache {
             }
 
             // load units from story arcs
-            File storyArcsDir = Configuration.storyarcsDir();
+            File storyArcsDir = Configuration.storyArcsDir();
             if (storyArcsDir.exists() && storyArcsDir.isDirectory()) {
                 File[] storyArcsFiles = storyArcsDir.listFiles();
                 if (storyArcsFiles != null) {
@@ -473,8 +473,8 @@ public class MekSummaryCache {
         } else if (e.isClan()) {
             ms.setAltTypes(new int[] { TechConstants.T_CLAN_TW, TechConstants.T_CLAN_ADVANCED,
                                        TechConstants.T_CLAN_EXPERIMENTAL });
-        } else if (e.getTechLevel() == TechConstants.T_INTRO_BOXSET) {
-            ms.setAltTypes(new int[] { TechConstants.T_INTRO_BOXSET, TechConstants.T_IS_ADVANCED,
+        } else if (e.getTechLevel() == TechConstants.T_INTRO_BOX_SET) {
+            ms.setAltTypes(new int[] { TechConstants.T_INTRO_BOX_SET, TechConstants.T_IS_ADVANCED,
                                        TechConstants.T_IS_EXPERIMENTAL });
         } else {
             ms.setAltTypes(new int[] { TechConstants.T_IS_TW_NON_BOX, TechConstants.T_IS_ADVANCED,

@@ -1851,9 +1851,9 @@ public class Princess extends BotClient {
         WeaponFireInfo primaryFire = calledShots.get(0);
 
         // If the target is being shot in a side arc, set the call direction to hit the rear arc
-        if (attackSide == ToHitData.SIDE_LEFT || attackSide == ToHitData.SIDE_REARLEFT) {
+        if (attackSide == ToHitData.SIDE_LEFT || attackSide == ToHitData.SIDE_REAR_LEFT) {
             calledShotDirection = CalledShot.CALLED_RIGHT;
-        } else if (attackSide == ToHitData.SIDE_RIGHT || attackSide == ToHitData.SIDE_REARRIGHT) {
+        } else if (attackSide == ToHitData.SIDE_RIGHT || attackSide == ToHitData.SIDE_REAR_RIGHT) {
             calledShotDirection = CalledShot.CALLED_LEFT;
         }
 

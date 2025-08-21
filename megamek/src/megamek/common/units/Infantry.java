@@ -513,7 +513,7 @@ public class Infantry extends Entity {
             }
         }
 
-        if (!mpCalculationSetting.ignoreWeather && (null != game)) {
+        if (!mpCalculationSetting.ignoreWeather() && (null != game)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
@@ -549,7 +549,7 @@ public class Infantry extends Entity {
             }
         }
 
-        if (!mpCalculationSetting.ignoreGravity) {
+        if (!mpCalculationSetting.ignoreGravity()) {
             mp = applyGravityEffectsOnMP(mp);
         }
 
@@ -559,7 +559,7 @@ public class Infantry extends Entity {
     @Override
     public int getRunMP(MPCalculationSetting mpCalculationSetting) {
         int walkMP = getWalkMP(mpCalculationSetting);
-        if (!mpCalculationSetting.ignoreOptionalRules &&
+        if (!mpCalculationSetting.ignoreOptionalRules() &&
               (game != null) &&
               game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FAST_INFANTRY_MOVE)) {
             return (walkMP > 0) ? walkMP + 1 : walkMP + 2;
@@ -584,11 +584,11 @@ public class Infantry extends Entity {
             }
         }
 
-        if (!mpCalculationSetting.ignoreGravity) {
+        if (!mpCalculationSetting.ignoreGravity()) {
             mp = applyGravityEffectsOnMP(mp);
         }
 
-        if (!mpCalculationSetting.ignoreWeather && (null != game)) {
+        if (!mpCalculationSetting.ignoreWeather() && (null != game)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             if (conditions.getWind().isStrongerThan(Wind.MOD_GALE)) {
                 return 0;

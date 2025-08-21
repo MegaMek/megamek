@@ -574,7 +574,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
             return level;
         }
         if (year >= stdTechYear) {
-            if (type == TechConstants.T_INTRO_BOXSET) {
+            if (type == TechConstants.T_INTRO_BOX_SET) {
                 return level;
             } else {
                 return String.valueOf(TechConstants.T_SIMPLE_STANDARD + 1);

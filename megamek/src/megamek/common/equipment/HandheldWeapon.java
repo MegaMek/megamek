@@ -63,7 +63,7 @@ public class HandheldWeapon extends Entity {
     public HandheldWeapon() {
         super();
         setArmorType(MiscType.T_ARMOR_STANDARD);
-        setArmorTechLevel(TechConstants.T_INTRO_BOXSET);
+        setArmorTechLevel(TechConstants.T_INTRO_BOX_SET);
     }
 
     @Override

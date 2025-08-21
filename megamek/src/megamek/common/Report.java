@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,6 +38,7 @@ import static megamek.client.ui.util.UIUtil.uiGray;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.io.Serial;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -105,6 +106,7 @@ public class Report implements ReportEntry {
      * helping the dial-up people :)
      */
 
+    @Serial
     private static final long serialVersionUID = -5586008091586682078L;
 
     private static final int MESSAGE_NONE = -1;
@@ -149,7 +151,7 @@ public class Report implements ReportEntry {
     public static final int DEFAULT_INDENTATION = 8; // was 4 previously
 
     /**
-     * Number of indentation levels allowed. Currently the same as the DEFAULT_INDENTATION value, to limit indentations
+     * Number of indentation levels allowed. Currently, the same as the DEFAULT_INDENTATION value, to limit indentations
      * to one level for a cleaner look of the report.
      */
     public static final int MAX_INDENTATION = 8;
@@ -527,14 +529,14 @@ public class Report implements ReportEntry {
         this.showImage = showImage;
     }
 
-    public void obsureImg() {
+    public void obscureImg() {
         imageCode = "<span id='" + HIDDEN_ENTITY_NUM + "'></span>";
     }
 
     /**
      * Internal method. Not for typical use.
      * <p>
-     * Tests wheter the data value at the given index has been marked as obscured.
+     * Tests whether the data value at the given index has been marked as obscured.
      *
      * @param index position of data value (indexes are chronological and start at zero)
      *
@@ -606,11 +608,10 @@ public class Report implements ReportEntry {
             }
             return value;
         } catch (ArrayIndexOutOfBoundsException e) {
-            logger.error("Error: Report#getText --> Array Index out of Bounds Exception (index: "
-                  + index
-                  + ") for a report with ID "
-                  + messageId
-                  + ". Maybe Report#add wasn't called enough times for the amount of tags in the message?");
+            logger.error(
+                  "Error: Report#getText --> Array Index out of Bounds Exception (index: {}) for a report with ID {}. Maybe Report#add wasn't called enough times for the amount of tags in the message?",
+                  index,
+                  messageId);
             return "[Reporting Error: see megamek.log for details]";
         }
     }
@@ -629,7 +630,7 @@ public class Report implements ReportEntry {
 
         if (raw == null) {
             // Should we handle this better? Check alternate language files?
-            logger.error("No message found for ID " + messageId);
+            logger.error("No message found for ID {}", messageId);
             text.append("[Reporting Error for message ID ").append(messageId).append("]");
         } else {
             int i = 0;
@@ -714,7 +715,7 @@ public class Report implements ReportEntry {
                   + clr.getBlue()
                   + ","
                   + "0.15)'>"
-                  + text.toString()
+                  + text
                   + "</div>";
             //shade lines of each attacker in its player color
         } else {
@@ -730,15 +731,12 @@ public class Report implements ReportEntry {
     }
 
     private void handleIndentation(StringBuffer sb) {
-        if ((indentation == 0) || (sb.length() == 0)) {
+        if ((indentation == 0) || (sb.isEmpty())) {
             return;
         }
         int i = 0;
         while (sb.substring(i, i + 4).equals("<br>")) {
             i += 4;
-            if (i == sb.length()) {
-                continue;
-            }
         }
         sb.insert(i, getSpaces());
     }
@@ -796,7 +794,6 @@ public class Report implements ReportEntry {
         styleSheet.addRule("span.small { font-size: small; }");
         styleSheet.addRule("span.x-small { font-size: x-small; }");
         styleSheet.addRule("span.xx-small { font-size: xx-small; }");
-        //styleSheet.addRule("div.bgshade { background-color: rgba(0,0,0,0.2); }");
     }
 
     public String span(String name, String text) {
@@ -808,7 +805,7 @@ public class Report implements ReportEntry {
     }
 
     private static String hexColor(Color color) {
-        return String.format("#%06x", Integer.valueOf(color.getRGB() & 0x00FFFFFF));
+        return String.format("#%06x", color.getRGB() & 0x00FFFFFF);
     }
 
     public String fgColor(Color color, String str) {
@@ -880,13 +877,6 @@ public class Report implements ReportEntry {
     // debugReport method
     private static StringBuffer mark(StringBuffer sb) {
         sb.insert(0, "<hidden>");
-        /*int i = sb.length() - 1;
-        while (sb.charAt(i) == '<br>') {
-            i--;
-            if (i == 0) {
-                continue;
-            }
-        }*/
         sb.insert(sb.indexOf("<br>") + 4, "</hidden>");
         return sb;
     }

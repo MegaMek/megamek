@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,26 +43,17 @@ import megamek.common.rolls.TargetRoll;
  * like +1 or -2 or one of the finalizers like {@link TargetRoll#AUTOMATIC_FAIL}, a description (attacker jumped) and
  * indicates if it is cumulative. Note: This class is immutable.
  */
-public class TargetRollModifier implements Serializable {
-
-    private final int value;
-    private final String description;
-    private final boolean cumulative;
+public record TargetRollModifier(int value, String description, boolean cumulative) implements Serializable {
 
     public TargetRollModifier(int value, String description) {
         this(value, description, true);
     }
 
-    public TargetRollModifier(int value, String description, boolean cumulative) {
-        this.value = value;
-        this.description = description;
-        this.cumulative = cumulative;
-    }
-
     /**
      * @return The modifier value like +1 or -2 or {@link TargetRoll#AUTOMATIC_FAIL}
      */
-    public int getValue() {
+    @Override
+    public int value() {
         return value;
     }
 
@@ -76,7 +67,8 @@ public class TargetRollModifier implements Serializable {
     /**
      * @return True when this modifier is cumulative
      */
-    public boolean isCumulative() {
+    @Override
+    public boolean cumulative() {
         return cumulative;
     }
 
@@ -92,8 +84,4 @@ public class TargetRollModifier implements Serializable {
               that.description);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(value, description, cumulative);
-    }
 }

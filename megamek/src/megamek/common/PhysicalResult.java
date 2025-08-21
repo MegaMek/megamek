@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,6 +35,7 @@
 
 package megamek.common;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import megamek.common.actions.AbstractAttackAction;
@@ -47,6 +48,7 @@ public class PhysicalResult implements Serializable {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 4011084578252131074L;
     public AbstractAttackAction aaa = null;
     public ToHitData toHit = null;

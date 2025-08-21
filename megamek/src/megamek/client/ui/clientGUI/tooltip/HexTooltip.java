@@ -87,7 +87,7 @@ public final class HexTooltip {
                       mhex.terrainLevel(Terrains.FUEL_TANK_ELEV),
                       Terrains.getEditorName(Terrains.FUEL_TANK),
                       mhex.terrainLevel(Terrains.FUEL_TANK_CF),
-                      mhex.terrainLevel(Terrains.FUEL_TANK_MAG_N));
+                      mhex.terrainLevel(Terrains.FUEL_TANK_MAGN));
             } else {
                 FuelTank bldg = (FuelTank) game.getBoard(boardId).getBuildingAt(mcoords);
                 sFuelTank = Messages.getString("BoardView1.Tooltip.FuelTank",

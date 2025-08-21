@@ -383,7 +383,7 @@ public class Board implements Serializable {
                     if (!bldgByCoords.containsKey(coords)) {
                         // Nope. Try to create an object for the new building.
                         try {
-                            int magnitude = curHex.getTerrain(Terrains.FUEL_TANK_MAG_N).getLevel();
+                            int magnitude = curHex.getTerrain(Terrains.FUEL_TANK_MAGN).getLevel();
                             FuelTank bldg = new FuelTank(coords, this, Terrains.FUEL_TANK, magnitude);
                             buildings.addElement(bldg);
 
@@ -1438,7 +1438,7 @@ public class Board implements Serializable {
         curHex.removeTerrain(Terrains.FUEL_TANK);
         curHex.removeTerrain(Terrains.FUEL_TANK_CF);
         curHex.removeTerrain(Terrains.FUEL_TANK_ELEV);
-        curHex.removeTerrain(Terrains.FUEL_TANK_MAG_N);
+        curHex.removeTerrain(Terrains.FUEL_TANK_MAGN);
         curHex.removeTerrain(Terrains.BRIDGE);
         curHex.removeTerrain(Terrains.BRIDGE_CF);
         curHex.removeTerrain(Terrains.BRIDGE_ELEV);

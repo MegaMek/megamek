@@ -332,7 +332,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         if (shdList != null) {
             String sSpecialHex = "";
             for (SpecialHexDisplay shd : shdList) {
-                boolean isTypeAutoHit = shd.getType() == SpecialHexDisplay.Type.ARTILLERY_AUTOHIT;
+                boolean isTypeAutoHit = shd.getType() == SpecialHexDisplay.Type.ARTILLERY_AUTO_HIT;
                 // Don't draw if this SHD is obscured from this player The SHD list may also contain stale SHDs, so
                 // don't show tooltips for SHDs that aren't drawn. The exception is auto hits.  There will be an icon
                 // for auto hits, so we need to draw a tooltip

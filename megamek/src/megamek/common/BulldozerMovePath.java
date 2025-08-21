@@ -34,6 +34,7 @@
 
 package megamek.common;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -59,6 +60,7 @@ import megamek.common.units.Terrains;
  * @author NickAragua
  */
 public class BulldozerMovePath extends MovePath {
+    @Serial
     private static final long serialVersionUID = 1346716014573707012L;
 
     public static final int CANNOT_LEVEL = -1;
@@ -185,7 +187,7 @@ public class BulldozerMovePath extends MovePath {
     }
 
     /**
-     * Clones this path, will contain a new clone of the steps so that the clone is independent from the original.
+     * Clones this path, will contain a new clone of the steps so that the clone is independent of the original.
      *
      * @return the cloned MovePath
      */
@@ -197,7 +199,7 @@ public class BulldozerMovePath extends MovePath {
         copy.additionalCosts = new HashMap<>(additionalCosts);
         copy.coordsToLevel = new ArrayList<>(coordsToLevel);
         copy.maxPointBlankDamage = maxPointBlankDamage;
-        copy.destination = (destination == null) ? destination : new Coords(destination.getX(), destination.getY());
+        copy.destination = (destination == null) ? null : new Coords(destination.getX(), destination.getY());
         return copy;
     }
 
@@ -259,7 +261,7 @@ public class BulldozerMovePath extends MovePath {
             }
         }
 
-        // hovertanks can move through rough and rubble, so any terrain that can be
+        // hover tanks can move through rough and rubble, so any terrain that can be
         // reduced to that
         // can eventually be moved through
         if (isHovercraft) {
@@ -287,7 +289,7 @@ public class BulldozerMovePath extends MovePath {
     }
 
     /**
-     * Helper function that lazy-calculates an entity's max damage at point blank range.
+     * Helper function that lazy-calculates an entity's max damage at point-blank range.
      */
     private static double getMaxPointBlankDamage(Entity entity) {
         return FireControl.getMaxDamageAtRange(entity, 1, false, false);

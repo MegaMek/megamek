@@ -132,16 +132,16 @@ public class TargetRoll implements Serializable {
         StringBuilder allDesc = new StringBuilder();
 
         for (TargetRollModifier modifier : modifiers) {
-            if (isFinalizer(modifier.getValue())) {
+            if (isFinalizer(modifier.value())) {
                 return modifier.getDesc();
             }
 
             if (first) {
                 first = false;
-                allDesc.append(modifier.getValue());
+                allDesc.append(modifier.value());
             } else {
-                allDesc.append((modifier.getValue() < 0 ? " - " : " + "))
-                      .append(Math.abs(modifier.getValue()));
+                allDesc.append((modifier.value() < 0 ? " - " : " + "))
+                      .append(Math.abs(modifier.value()));
             }
             allDesc.append(" (").append(modifier.getDesc()).append(")");
         }
@@ -174,7 +174,7 @@ public class TargetRoll implements Serializable {
      */
     public String getCumulativePlainDesc() {
         for (TargetRollModifier mod : modifiers) {
-            if (mod.isCumulative()) {
+            if (mod.cumulative()) {
                 return mod.getDesc();
             }
         }
@@ -285,7 +285,7 @@ public class TargetRoll implements Serializable {
     public void append(TargetRoll other, boolean appendNonCumulative) {
         if (other != null) {
             for (TargetRollModifier modifier : other.modifiers) {
-                if (appendNonCumulative || modifier.isCumulative()) {
+                if (appendNonCumulative || modifier.cumulative()) {
                     addModifier(modifier);
                 }
             }
@@ -314,11 +314,11 @@ public class TargetRoll implements Serializable {
     }
 
     private boolean isAutomaticOrImpossible(TargetRollModifier modifier) {
-        return AUTOS_AND_IMPOSSIBLE.contains(modifier.getValue());
+        return AUTOS_AND_IMPOSSIBLE.contains(modifier.value());
     }
 
     private boolean isAutomatic(TargetRollModifier modifier) {
-        return AUTOS.contains(modifier.getValue());
+        return AUTOS.contains(modifier.value());
     }
 
     /**
@@ -327,11 +327,11 @@ public class TargetRoll implements Serializable {
     private void recalculate() {
         total = 0;
         for (TargetRollModifier modifier : modifiers) {
-            if (isFinalizer(modifier.getValue())) {
-                total = modifier.getValue();
+            if (isFinalizer(modifier.value())) {
+                total = modifier.value();
                 return;
             } else {
-                total += modifier.getValue();
+                total += modifier.value();
             }
         }
     }
@@ -341,7 +341,7 @@ public class TargetRoll implements Serializable {
     }
 
     private void addModifierImpl(TargetRollModifier modifier) {
-        if (modifier.getValue() == CHECK_FALSE) {
+        if (modifier.value() == CHECK_FALSE) {
             // When the check is no longer necessary, remove other finalizers that would come first
             removeAutos(true);
         }

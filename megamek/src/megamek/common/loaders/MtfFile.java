@@ -369,7 +369,7 @@ public class MtfFile implements IMekLoader {
                 } else {
                     switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
                         case 1:
-                            mek.setArmorTechLevel(TechConstants.T_INTRO_BOXSET);
+                            mek.setArmorTechLevel(TechConstants.T_INTRO_BOX_SET);
                             break;
                         case 2:
                             mek.setArmorTechLevel(TechConstants.T_IS_TW_NON_BOX);
@@ -432,7 +432,7 @@ public class MtfFile implements IMekLoader {
                     } else if (armorValue.contains("inner sphere")) {
                         switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
                             case 1:
-                                mek.setArmorTechLevel(TechConstants.T_INTRO_BOXSET, locationOrder[x]);
+                                mek.setArmorTechLevel(TechConstants.T_INTRO_BOX_SET, locationOrder[x]);
                                 break;
                             case 2:
                                 mek.setArmorTechLevel(TechConstants.T_IS_TW_NON_BOX, locationOrder[x]);
@@ -667,7 +667,7 @@ public class MtfFile implements IMekLoader {
         if (techBase.equalsIgnoreCase("Inner Sphere")) {
             switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
                 case 1:
-                    mek.setTechLevel(TechConstants.T_INTRO_BOXSET);
+                    mek.setTechLevel(TechConstants.T_INTRO_BOX_SET);
                     break;
                 case 2:
                     mek.setTechLevel(TechConstants.T_IS_TW_NON_BOX);

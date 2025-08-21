@@ -9410,11 +9410,11 @@ public class TWGameManager extends AbstractGameManager {
         for (BoardLocation location : artyAutoHitHexes) {
             game.getBoard(location).addSpecialHexDisplay(location.coords(),
                   new SpecialHexDisplay(
-                        SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
+                        SpecialHexDisplay.Type.ARTILLERY_AUTO_HIT,
                         SpecialHexDisplay.NO_ROUND, game.getPlayer(playerId),
                         "Artillery auto hit hex, for "
                               + game.getPlayer(playerId).getName(),
-                        SpecialHexDisplay.SHD_VISIBLETO_TEAM));
+                        SpecialHexDisplay.SHD_VISIBLE_TO_TEAM));
         }
         endCurrentTurn(null);
     }
@@ -18218,7 +18218,7 @@ public class TWGameManager extends AbstractGameManager {
                                   // The player should not matter, I just dont want to
                                   // cause a nullpointererror
                                   message,
-                                  SpecialHexDisplay.SHD_VISIBLETO_ALL,
+                                  SpecialHexDisplay.SHD_VISIBLE_TO_ALL,
                                   imageSignature));
             } else {
                 getGame().getBoard()
@@ -18229,7 +18229,7 @@ public class TWGameManager extends AbstractGameManager {
                                   // The player should not matter, I just dont want to
                                   // cause a nullpointererror
                                   message,
-                                  SpecialHexDisplay.SHD_VISIBLETO_ALL));
+                                  SpecialHexDisplay.SHD_VISIBLE_TO_ALL));
             }
             sendChangedHex(coord);
         }
@@ -18256,7 +18256,7 @@ public class TWGameManager extends AbstractGameManager {
                               // The player should not matter, I just dont want to
                               // cause a nullpointererror
                               Messages.getString("OrbitalBombardment.hitOnRound", getGame().getRoundCount()),
-                              SpecialHexDisplay.SHD_VISIBLETO_ALL));
+                              SpecialHexDisplay.SHD_VISIBLE_TO_ALL));
             sendChangedHex(coord);
         }
     }
@@ -18345,7 +18345,7 @@ public class TWGameManager extends AbstractGameManager {
                               // The player should not matter, I just dont want to
                               // cause a nullpointererror
                               Messages.getString("Nuke.exploded"),
-                              SpecialHexDisplay.SHD_VISIBLETO_ALL,
+                              SpecialHexDisplay.SHD_VISIBLE_TO_ALL,
                               imageSignature));
             sendChangedHex(coord);
         }
@@ -18367,7 +18367,7 @@ public class TWGameManager extends AbstractGameManager {
                               // The player should not matter, I just dont want to
                               // cause a nullpointererror
                               Messages.getString("Nuke.hitOnRound", getGame().getRoundCount()),
-                              SpecialHexDisplay.SHD_VISIBLETO_ALL));
+                              SpecialHexDisplay.SHD_VISIBLE_TO_ALL));
             sendChangedHex(coord);
         }
     }
@@ -22542,7 +22542,7 @@ public class TWGameManager extends AbstractGameManager {
         // automatically crit the first uncritted crit of the laser it's
         // attached to
         if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-            hit.setEffect(HitData.EFFECT_NO_CRITICALS);
+            hit.setEffect(HitData.EFFECT_NO_CRITICAL_SLOTS);
             Mounted<?> laser = mounted.getLinked();
             if (en instanceof Mek) {
                 for (int slot = 0; slot < en.getNumberOfCriticalSlots(laser.getLocation()); slot++) {
@@ -24008,7 +24008,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         if (shouldObscure) {
-            copy.obsureImg();
+            copy.obscureImg();
         }
 
         return copy;

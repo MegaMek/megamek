@@ -41,7 +41,7 @@ import static megamek.common.units.Terrains.BRIDGE_ELEV;
 import static megamek.common.units.Terrains.BUILDING;
 import static megamek.common.units.Terrains.FUEL_TANK;
 import static megamek.common.units.Terrains.FUEL_TANK_CF;
-import static megamek.common.units.Terrains.FUEL_TANK_MAG_N;
+import static megamek.common.units.Terrains.FUEL_TANK_MAGN;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -1060,7 +1060,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         } else if (hex.containsTerrain(FUEL_TANK)) {
             content += Messages.getString("BotConfigDialog.hexListFuel",
                   hex.terrainLevel(FUEL_TANK_CF),
-                  hex.terrainLevel(FUEL_TANK_MAG_N));
+                  hex.terrainLevel(FUEL_TANK_MAGN));
         } else {
             content += Messages.getString("BotConfigDialog.hexListBrdg",
                   bldg.getType().toString(),

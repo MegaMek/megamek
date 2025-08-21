@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,7 +41,7 @@ import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 
 /**
- * Maneuver types for Aeros
+ * Maneuver types for Aerospace
  */
 public class ManeuverType {
 
@@ -56,9 +56,8 @@ public class ManeuverType {
     public static final int MAN_SIDE_SLIP_RIGHT = 8;
     public static final int MAN_VIFF = 9;
 
-    private static String[] names = { "None", "Loop", "Immelman", "Split S",
-                                      "Hammerhead", "Half Roll", "Barrel Roll", "Side Slip (Left)",
-                                      "Side Slip (Right)", "VIFF" };
+    private static final String[] names = { "None", "Loop", "Immelman", "Split S", "Hammerhead", "Half Roll",
+                                            "Barrel Roll", "Side Slip (Left)", "Side Slip (Right)", "VIFF" };
 
     public static final int MAN_SIZE = names.length;
 
@@ -83,7 +82,7 @@ public class ManeuverType {
             }
         }
 
-        // Side slip is the only maneuver that doesn't have to be at the start
+        // Side-slip is the only maneuver that doesn't have to be at the start
         if ((distance > 0) && (type != MAN_SIDE_SLIP_LEFT)
               && (type != MAN_SIDE_SLIP_RIGHT)) {
             return false;
@@ -137,53 +136,33 @@ public class ManeuverType {
      * Thrust cost of maneuver
      */
     public static int getCost(int type, int velocity) {
-        switch (type) {
-            case MAN_LOOP:
-            case MAN_IMMELMAN:
-                return 4;
-            case MAN_SPLIT_S:
-                return 2;
-            case MAN_HAMMERHEAD:
-                return velocity;
-            case MAN_HALF_ROLL:
-            case MAN_BARREL_ROLL:
-            case MAN_SIDE_SLIP_LEFT:
-            case MAN_SIDE_SLIP_RIGHT:
-                return 1;
-            case MAN_VIFF:
-                return velocity + 2;
-            default:
-                return 0;
-        }
+        return switch (type) {
+            case MAN_LOOP, MAN_IMMELMAN -> 4;
+            case MAN_SPLIT_S -> 2;
+            case MAN_HAMMERHEAD -> velocity;
+            case MAN_HALF_ROLL, MAN_BARREL_ROLL, MAN_SIDE_SLIP_LEFT, MAN_SIDE_SLIP_RIGHT -> 1;
+            case MAN_VIFF -> velocity + 2;
+            default -> 0;
+        };
     }
 
     /**
      * Returns the Control Roll modifier for a particular maneuver.
      *
-     * @param type      The type of maneuver performed
-     * @param isVSTOLCF Flag that determines whether the maneuvering unit is a conventional fighter with VSTOl, which
-     *                  has effects for side-slips
+     * @param type       The type of maneuver performed
+     * @param isVSTOL_CF Flag that determines whether the maneuvering unit is a conventional fighter with VSTOl, which
+     *                   has effects for side-slips
      *
      * @return The control roll modifier
      */
-    public static int getMod(int type, boolean isVSTOLCF) {
-        switch (type) {
-            case MAN_LOOP:
-            case MAN_IMMELMAN:
-                return 1;
-            case MAN_SPLIT_S:
-            case MAN_VIFF:
-                return 2;
-            case MAN_HAMMERHEAD:
-                return 3;
-            case MAN_HALF_ROLL:
-                return -1;
-            case MAN_SIDE_SLIP_LEFT:
-            case MAN_SIDE_SLIP_RIGHT:
-                return isVSTOLCF ? -1 : 0;
-            case MAN_BARREL_ROLL:
-            default:
-                return 0;
-        }
+    public static int getMod(int type, boolean isVSTOL_CF) {
+        return switch (type) {
+            case MAN_LOOP, MAN_IMMELMAN -> 1;
+            case MAN_SPLIT_S, MAN_VIFF -> 2;
+            case MAN_HAMMERHEAD -> 3;
+            case MAN_HALF_ROLL -> -1;
+            case MAN_SIDE_SLIP_LEFT, MAN_SIDE_SLIP_RIGHT -> isVSTOL_CF ? -1 : 0;
+            default -> 0;
+        };
     }
 }

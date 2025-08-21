@@ -1004,7 +1004,7 @@ public class SharedUtility {
     public static double predictLeapFallDamage(Entity movingEntity, TargetRoll data) {
         // Rough guess based on normal pilots
         double odds = Compute.oddsAbove(data.getValue(), false) / 100d;
-        int fallHeight = data.getModifiers().get(data.getModifiers().size() - 1).getValue();
+        int fallHeight = data.getModifiers().get(data.getModifiers().size() - 1).value();
         double fallDamage = Math.round(movingEntity.getWeight() / 10.0)
               * (fallHeight + 1);
         LOGGER.trace("Predicting Leap fall damage for {} at {}% odds, {} fall height",
@@ -1023,7 +1023,7 @@ public class SharedUtility {
     public static double predictLeapDamage(Entity movingEntity, TargetRoll data) {
         int legMultiplier = (movingEntity.isQuadMek()) ? 4 : 2;
         double odds = Compute.oddsAbove(data.getValue(), false) / 100d;
-        int fallHeight = data.getModifiers().get(data.getModifiers().size() - 1).getValue() / 2;
+        int fallHeight = data.getModifiers().get(data.getModifiers().size() - 1).value() / 2;
         double legDamage = fallHeight * (legMultiplier);
         LOGGER.trace("Predicting Leap damage for {} at {}% odds, {} fall height",
               movingEntity.getDisplayName(),

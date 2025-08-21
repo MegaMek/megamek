@@ -765,7 +765,7 @@ public class BoardEditorPanel extends JPanel
             if (!curHex.containsTerrain(Terrains.FUEL_TANK) &&
                   !curHex.containsTerrain(Terrains.FUEL_TANK_CF) &&
                   !curHex.containsTerrain(Terrains.FUEL_TANK_ELEV) &&
-                  !curHex.containsTerrain(Terrains.FUEL_TANK_MAG_N)) {
+                  !curHex.containsTerrain(Terrains.FUEL_TANK_MAGN)) {
                 curHex.removeAllTerrains();
             }
             setBasicFuelTank();
@@ -778,7 +778,7 @@ public class BoardEditorPanel extends JPanel
                 int oldLevel = curHex.getTerrain(terrainType).getLevel();
                 newLevel = Math.max(10, oldLevel + wheelDir * 10);
             } else if (e.isControlDown()) {
-                terrainType = Terrains.FUEL_TANK_MAG_N;
+                terrainType = Terrains.FUEL_TANK_MAGN;
                 int oldLevel = curHex.getTerrain(terrainType).getLevel();
                 newLevel = Math.max(10, oldLevel + wheelDir * 10);
             } else {
@@ -1272,7 +1272,7 @@ public class BoardEditorPanel extends JPanel
               (type == Terrains.BRIDGE_ELEV) ||
               (type == Terrains.FUEL_TANK_CF) ||
               (type == Terrains.FUEL_TANK_ELEV) ||
-              (type == Terrains.FUEL_TANK_MAG_N)) {
+              (type == Terrains.FUEL_TANK_MAGN)) {
             return new Terrain(type, level, false, 0);
         } else {
             boolean exitsSpecified = cheTerrExitSpecified.isSelected();
@@ -1336,8 +1336,8 @@ public class BoardEditorPanel extends JPanel
             curHex.addTerrain(new Terrain(Terrains.FUEL_TANK_ELEV, 1, false, 0));
         }
 
-        if (!curHex.containsTerrain(Terrains.FUEL_TANK_MAG_N)) {
-            curHex.addTerrain(new Terrain(Terrains.FUEL_TANK_MAG_N, 100, false, 0));
+        if (!curHex.containsTerrain(Terrains.FUEL_TANK_MAGN)) {
+            curHex.addTerrain(new Terrain(Terrains.FUEL_TANK_MAGN, 100, false, 0));
         }
 
         refreshTerrainList();
@@ -2125,7 +2125,7 @@ public class BoardEditorPanel extends JPanel
                   BLDG_ELEV,
                   FUEL_TANK,
                   FUEL_TANK_CF,
-                  FUEL_TANK_ELEV, FUEL_TANK_MAG_N);
+                  FUEL_TANK_ELEV, FUEL_TANK_MAGN);
         } else if (ae.getActionCommand().equals(ClientGUI.BOARD_FLATTEN)) {
             boardFlatten();
         } else if (ae.getActionCommand().equals(ClientGUI.VIEW_RESET_WINDOW_POSITIONS)) {

@@ -218,7 +218,7 @@ public class TWDamageManager implements IDamageManager {
         boolean isHeadHit = (entity instanceof Mek) &&
               (((Mek) entity).getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED) &&
               (hit.getLocation() == Mek.LOC_HEAD) &&
-              ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS);
+              ((hit.getEffect() & HitData.EFFECT_NO_CRITICAL_SLOTS) != HitData.EFFECT_NO_CRITICAL_SLOTS);
 
         // booleans to indicate criticalSlots for AT2
         boolean critSI = false;
@@ -729,7 +729,7 @@ public class TWDamageManager implements IDamageManager {
                   !hit.isFallDamage() &&
                   !damageIS &&
                   entity.hasShield() &&
-                  ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
+                  ((hit.getEffect() & HitData.EFFECT_NO_CRITICAL_SLOTS) != HitData.EFFECT_NO_CRITICAL_SLOTS)) {
                 Mek me = (Mek) entity;
                 int damageNew = me.shieldAbsorptionDamage(damage, hit.getLocation(), hit.isRear());
                 // if a shield absorbed the damage then lets tell the world
@@ -771,7 +771,7 @@ public class TWDamageManager implements IDamageManager {
             // So might modular armor, if the location mounts any.
             if (!ammoExplosion &&
                   !damageIS &&
-                  ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
+                  ((hit.getEffect() & HitData.EFFECT_NO_CRITICAL_SLOTS) != HitData.EFFECT_NO_CRITICAL_SLOTS)) {
                 int damageNew = entity.getDamageReductionFromModularArmor(hit, damage, reportVec);
                 int damageDiff = damage - damageNew;
                 entity.damageThisPhase += damageDiff;
@@ -1412,7 +1412,7 @@ public class TWDamageManager implements IDamageManager {
                     reportVec.add(report);
 
                     if (diceRoll.getIntValue() >= 8) {
-                        hit.setEffect(HitData.EFFECT_NO_CRITICALS);
+                        hit.setEffect(HitData.EFFECT_NO_CRITICAL_SLOTS);
                     }
                 }
                 // check for tank CASE here: damage to rear armor, excess
@@ -1810,7 +1810,7 @@ public class TWDamageManager implements IDamageManager {
             // unless the section destroyed in a previous phase?
             // Cause a crit.
             if ((entity.getInternal(hit) != IArmorState.ARMOR_DESTROYED) &&
-                  ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
+                  ((hit.getEffect() & HitData.EFFECT_NO_CRITICAL_SLOTS) != HitData.EFFECT_NO_CRITICAL_SLOTS)) {
                 for (int i = 0; i < crits; i++) {
                     reportVec.addAll(manager.criticalEntity(entity,
                           hit.getLocation(),

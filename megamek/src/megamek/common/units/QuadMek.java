@@ -175,15 +175,15 @@ public class QuadMek extends Mek {
             }
         }
 
-        if (!mpCalculationSetting.ignoreModularArmor && hasModularArmor()) {
+        if (!mpCalculationSetting.ignoreModularArmor() && hasModularArmor()) {
             mp--;
         }
 
-        if (!mpCalculationSetting.ignoreChainDrape && hasChainDrape()) {
+        if (!mpCalculationSetting.ignoreChainDrape() && hasChainDrape()) {
             mp--;
         }
 
-        if (!mpCalculationSetting.ignoreHeat) {
+        if (!mpCalculationSetting.ignoreHeat()) {
             // factor in heat
             if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT)) {
                 if (heat < 30) {
@@ -205,12 +205,12 @@ public class QuadMek extends Mek {
         }
 
         // TSM negates some heat, but provides no benefit when using tracks.
-        if (((heat >= 9) || mpCalculationSetting.forceTSM) &&
+        if (((heat >= 9) || mpCalculationSetting.forceTSM()) &&
               hasTSM(false) &&
               (legsDestroyed < 2) &&
               !movementMode.isTracked() &&
               !movementMode.isWheeled()) {
-            if (mpCalculationSetting.forceTSM && mpCalculationSetting.ignoreHeat) {
+            if (mpCalculationSetting.forceTSM() && mpCalculationSetting.ignoreHeat()) {
                 // When forcing TSM but ignoring heat we must assume heat to be 9 to activate
                 // TSM, this adds -1 MP!
                 mp += 1;
@@ -219,7 +219,7 @@ public class QuadMek extends Mek {
             }
         }
 
-        if (!mpCalculationSetting.ignoreWeather && (null != game)) {
+        if (!mpCalculationSetting.ignoreWeather() && (null != game)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
@@ -233,7 +233,7 @@ public class QuadMek extends Mek {
             }
         }
 
-        if (!mpCalculationSetting.ignoreGravity) {
+        if (!mpCalculationSetting.ignoreGravity()) {
             mp = applyGravityEffectsOnMP(mp);
         }
 
@@ -792,11 +792,11 @@ public class QuadMek extends Mek {
         // left and right cover are from attacker's POV.
         // if hitting front arc, need to swap them
         if (side == ToHitData.SIDE_FRONT) {
-            if (((cover & LosEffects.COVER_LOWRIGHT) != 0) &&
+            if (((cover & LosEffects.COVER_LOW_RIGHT) != 0) &&
                   ((location == Mek.LOC_LEFT_ARM) || (location == Mek.LOC_LEFT_LEG))) {
                 return true;
             }
-            if (((cover & LosEffects.COVER_LOWLEFT) != 0) &&
+            if (((cover & LosEffects.COVER_LOW_LEFT) != 0) &&
                   ((location == Mek.LOC_RIGHT_ARM) || (location == Mek.LOC_RIGHT_LEG))) {
                 return true;
             }
@@ -809,11 +809,11 @@ public class QuadMek extends Mek {
                   ((location == Mek.LOC_RIGHT_ARM) || (location == Mek.LOC_RIGHT_TORSO) || (location
                         == Mek.LOC_RIGHT_LEG));
         } else {
-            if (((cover & LosEffects.COVER_LOWLEFT) != 0) &&
+            if (((cover & LosEffects.COVER_LOW_LEFT) != 0) &&
                   ((location == Mek.LOC_LEFT_ARM) || (location == Mek.LOC_LEFT_LEG))) {
                 return true;
             }
-            if (((cover & LosEffects.COVER_LOWRIGHT) != 0) &&
+            if (((cover & LosEffects.COVER_LOW_RIGHT) != 0) &&
                   ((location == Mek.LOC_RIGHT_ARM) || (location == Mek.LOC_RIGHT_LEG))) {
                 return true;
             }

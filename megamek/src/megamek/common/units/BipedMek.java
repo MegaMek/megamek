@@ -140,15 +140,15 @@ public class BipedMek extends MekWithArms {
             mp -= getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
         }
 
-        if (!mpCalculationSetting.ignoreModularArmor && hasModularArmor()) {
+        if (!mpCalculationSetting.ignoreModularArmor() && hasModularArmor()) {
             mp--;
         }
 
-        if (!mpCalculationSetting.ignoreChainDrape && hasChainDrape()) {
+        if (!mpCalculationSetting.ignoreChainDrape() && hasChainDrape()) {
             mp--;
         }
 
-        if (!mpCalculationSetting.ignoreHeat) {
+        if (!mpCalculationSetting.ignoreHeat()) {
             // factor in heat
             if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT)) {
                 if (heat < 30) {
@@ -170,11 +170,11 @@ public class BipedMek extends MekWithArms {
         }
 
         // TSM negates some heat, but provides no benefit when using tracks.
-        if (((heat >= 9) || mpCalculationSetting.forceTSM) &&
+        if (((heat >= 9) || mpCalculationSetting.forceTSM()) &&
               hasTSM(false) &&
               (legsDestroyed == 0) &&
               !movementMode.isTracked()) {
-            if (mpCalculationSetting.forceTSM && mpCalculationSetting.ignoreHeat) {
+            if (mpCalculationSetting.forceTSM() && mpCalculationSetting.ignoreHeat()) {
                 // When forcing TSM but ignoring heat we must assume heat to be 9 to activate TSM, this adds -1 MP!
                 mp += 1;
             } else {
@@ -182,11 +182,11 @@ public class BipedMek extends MekWithArms {
             }
         }
 
-        if (!mpCalculationSetting.ignoreCargo) {
+        if (!mpCalculationSetting.ignoreCargo()) {
             mp = Math.max(mp - getCargoMpReduction(this), 0);
         }
 
-        if (!mpCalculationSetting.ignoreWeather && (null != game)) {
+        if (!mpCalculationSetting.ignoreWeather() && (null != game)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
@@ -200,7 +200,7 @@ public class BipedMek extends MekWithArms {
             }
         }
 
-        if (!mpCalculationSetting.ignoreGravity) {
+        if (!mpCalculationSetting.ignoreGravity()) {
             mp = applyGravityEffectsOnMP(mp);
         }
 

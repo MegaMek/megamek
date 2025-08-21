@@ -46,13 +46,10 @@ import megamek.common.planetaryConditions.Wind;
  * This class contains data and logic for temperature restrictions.
  * TODO: Move the "data" out to user-configurable files?
  */
-public class WeatherRestriction {
-    private static HashMap<Integer, WeatherRestriction> fogRestrictions;
-    private static HashMap<Integer, WeatherRestriction> weatherRestrictions;
-    private static HashMap<Integer, WeatherRestriction> windRestrictions;
-
-    private Integer minAtmoLevel;
-    private Integer maxTemp;
+public record WeatherRestriction(Integer minAtmosphereLevel, Integer maxTemp) {
+    private static final HashMap<Integer, WeatherRestriction> fogRestrictions;
+    private static final HashMap<Integer, WeatherRestriction> weatherRestrictions;
+    private static final HashMap<Integer, WeatherRestriction> windRestrictions;
 
     static {
         // init fog restrictions
@@ -131,11 +128,6 @@ public class WeatherRestriction {
         windRestrictions.put(Wind.TORNADO_F4.ordinal(), weatherRestrictionF4);
     }
 
-    public WeatherRestriction(Integer minAtmoLevel, Integer maxTemp) {
-        this.minAtmoLevel = minAtmoLevel;
-        this.maxTemp = maxTemp;
-    }
-
     /**
      * Given a set of planetary conditions, determine if they are valid for their current atmosphere/temperature
      * Currently validates fog, weather (precipitation) and wind strength
@@ -155,37 +147,37 @@ public class WeatherRestriction {
     /**
      * Given a fog level and set of relevant planetary conditions, determine if the fog level is allowed
      */
-    public static boolean IsFogRestricted(int fogLevel, int atmoLevel, int temperature) {
-        return IsRestricted(fogLevel, atmoLevel, temperature, fogRestrictions);
+    public static boolean IsFogRestricted(int fogLevel, int atmosphereLevel, int temperature) {
+        return IsRestricted(fogLevel, atmosphereLevel, temperature, fogRestrictions);
     }
 
     /**
      * Given a weather (precipitation) type and set of relevant planetary conditions, determine if it's allowed
      */
-    public static boolean IsWeatherRestricted(int weatherType, int atmoLevel, int temperature) {
-        return IsRestricted(weatherType, atmoLevel, temperature, weatherRestrictions);
+    public static boolean IsWeatherRestricted(int weatherType, int atmosphereLevel, int temperature) {
+        return IsRestricted(weatherType, atmosphereLevel, temperature, weatherRestrictions);
     }
 
     /**
      * Given a wind level and set of relevant planetary conditions, determine if the wind level is allowed
      */
-    public static boolean IsWindRestricted(int windLevel, int atmoLevel, int temperature) {
-        return IsRestricted(windLevel, atmoLevel, temperature, windRestrictions);
+    public static boolean IsWindRestricted(int windLevel, int atmosphereLevel, int temperature) {
+        return IsRestricted(windLevel, atmosphereLevel, temperature, windRestrictions);
     }
 
     /**
      * Given a condition type, current atmospheric level and temperature, determine if the condition type is allowed
      * from the given restriction mapping.
      */
-    private static boolean IsRestricted(int conditionType, int atmoLevel, int currentTemp,
+    private static boolean IsRestricted(int conditionType, int atmosphereLevel, int currentTemp,
           HashMap<Integer, WeatherRestriction> restrictionMap) {
         if (restrictionMap.containsKey(conditionType)) {
             WeatherRestriction restriction = restrictionMap.get(conditionType);
 
             // condition is restricted:
-            // if there's a specified minimum atmo level and we're below it OR
-            // if there's a specified max temp and we're at or above it
-            return ((restriction.minAtmoLevel != null) && (atmoLevel < restriction.minAtmoLevel)) ||
+            // if there's a specified minimum atmo level, and we're below it OR
+            // if there's a specified max temp, and we're at or above it
+            return ((restriction.minAtmosphereLevel != null) && (atmosphereLevel < restriction.minAtmosphereLevel)) ||
                   ((restriction.maxTemp != null) && (currentTemp >= restriction.maxTemp));
         }
 

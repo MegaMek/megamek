@@ -517,13 +517,13 @@ public class BLKFile {
         switch (dataFile.getDataAsString("type")[0]) {
             case "IS":
                 if (e.getYear() == 3025) {
-                    e.setTechLevel(TechConstants.T_INTRO_BOXSET);
+                    e.setTechLevel(TechConstants.T_INTRO_BOX_SET);
                 } else {
                     e.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
                 }
                 break;
             case "IS Level 1":
-                e.setTechLevel(TechConstants.T_INTRO_BOXSET);
+                e.setTechLevel(TechConstants.T_INTRO_BOX_SET);
                 break;
             case "IS Level 2":
                 e.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
@@ -1130,7 +1130,7 @@ public class BLKFile {
             }
         } else {
             type = switch (t.getTechLevel()) {
-                case TechConstants.T_INTRO_BOXSET -> "IS Level 1";
+                case TechConstants.T_INTRO_BOX_SET -> "IS Level 1";
                 case TechConstants.T_IS_TW_NON_BOX -> "IS Level 2";
                 case TechConstants.T_IS_ADVANCED -> "IS Level 3";
                 case TechConstants.T_IS_EXPERIMENTAL -> "IS Level 4";

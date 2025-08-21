@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -153,7 +153,7 @@ public class HexTarget implements Targetable {
             case Targetable.TYPE_HEX_TAG -> Messages.getString("HexTarget.Tag");
             default -> "";
         };
-        // When the board Id is 0, assume (for now) that there is only one board and no board info is necessary
+        // When the board ID is 0, assume (for now) that there is only one board and no board info is necessary
         return "Hex: " + ((boardId == 0) ? coords : getBoardLocation()) + typeString;
     }
 

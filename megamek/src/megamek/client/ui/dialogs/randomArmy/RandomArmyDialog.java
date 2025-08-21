@@ -1071,7 +1071,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
               .getOptions()
               .stringOption(OptionsConstants.ALLOWED_TECH_LEVEL));
         final int maxTech = switch (gameTL) {
-            case TechConstants.T_SIMPLE_INTRO -> TechConstants.T_INTRO_BOXSET;
+            case TechConstants.T_SIMPLE_INTRO -> TechConstants.T_INTRO_BOX_SET;
             case TechConstants.T_SIMPLE_ADVANCED -> TechConstants.T_CLAN_ADVANCED;
             case TechConstants.T_SIMPLE_EXPERIMENTAL -> TechConstants.T_CLAN_EXPERIMENTAL;
             case TechConstants.T_SIMPLE_UNOFFICIAL -> TechConstants.T_ALL;

@@ -360,7 +360,7 @@ public class GunEmplacement extends Tank {
 
     @Override
     public int getArmorTechLevel(int loc) {
-        return TechConstants.T_INTRO_BOXSET;
+        return TechConstants.T_INTRO_BOX_SET;
     }
 
     @Override

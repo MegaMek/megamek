@@ -1191,7 +1191,7 @@ public abstract class TestEntity implements TestEntityOption {
                 illegal |= getEntity().isClan() && nextE.getTechBase() == TechBase.IS;
                 illegal |= !getEntity().isClan() && nextE.getTechBase() == TechBase.CLAN;
             }
-            int eqTechLevel = TechConstants.convertFromSimplelevel(eqRulesLevel, nextE.isClan());
+            int eqTechLevel = TechConstants.convertFromSimpleLevel(eqRulesLevel, nextE.isClan());
             if (nextE instanceof AmmoType) {
                 if (eqRulesLevel > ammoRulesLevel) {
                     if (!retVal) {
@@ -1255,7 +1255,7 @@ public abstract class TestEntity implements TestEntityOption {
                 buff.append(cockpitName);
                 buff.append(" (");
                 buff.append(TechConstants
-                      .getLevelDisplayableName(TechConstants.convertFromSimplelevel(eqRulesLevel, cockpit.isClan())));
+                      .getLevelDisplayableName(TechConstants.convertFromSimpleLevel(eqRulesLevel, cockpit.isClan())));
                 buff.append(")\n");
                 retVal = true;
             }
@@ -1281,7 +1281,7 @@ public abstract class TestEntity implements TestEntityOption {
                     buff.append(((Mek) getEntity()).getGyroTypeString());
                     buff.append(" (");
                     buff.append(TechConstants
-                          .getLevelDisplayableName(TechConstants.convertFromSimplelevel(eqRulesLevel,
+                          .getLevelDisplayableName(TechConstants.convertFromSimpleLevel(eqRulesLevel,
                                 gyro.isClan())));
                     buff.append(")\n");
                     retVal = true;
@@ -1308,7 +1308,7 @@ public abstract class TestEntity implements TestEntityOption {
                 buff.append(getEntity().getEngine().getShortEngineName());
                 buff.append(" (");
                 buff.append(TechConstants
-                      .getLevelDisplayableName(TechConstants.convertFromSimplelevel(eqRulesLevel,
+                      .getLevelDisplayableName(TechConstants.convertFromSimpleLevel(eqRulesLevel,
                             engine.isClan())));
                 buff.append(")\n");
                 buff.append("\n");
@@ -1331,7 +1331,7 @@ public abstract class TestEntity implements TestEntityOption {
                 buff.append(eTLYear);
                 buff.append("): Patchwork (");
                 buff.append(TechConstants
-                      .getLevelDisplayableName(TechConstants.convertFromSimplelevel(eqRulesLevel,
+                      .getLevelDisplayableName(TechConstants.convertFromSimpleLevel(eqRulesLevel,
                             getEntity().isClan())));
                 buff.append(")\n");
                 buff.append("\n");
@@ -1366,7 +1366,7 @@ public abstract class TestEntity implements TestEntityOption {
                 buff.append("): ");
                 buff.append(atName);
                 buff.append(" (");
-                buff.append(TechConstants.getLevelDisplayableName(TechConstants.convertFromSimplelevel(
+                buff.append(TechConstants.getLevelDisplayableName(TechConstants.convertFromSimpleLevel(
                       eqRulesLevel, at.isClan())));
                 buff.append(")\n");
                 buff.append("\n");

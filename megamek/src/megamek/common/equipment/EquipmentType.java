@@ -307,7 +307,7 @@ public class EquipmentType implements ITechnology {
             techLevel.put(techAdvancement.getCommonDate(true), TechConstants.T_CLAN_TW);
         } else if (techAdvancement.getCommonDate(false) > 0) {
             techLevel.put(techAdvancement.getCommonDate(false),
-                  isIntroLevel() ? TechConstants.T_INTRO_BOXSET : TechConstants.T_IS_TW_NON_BOX);
+                  isIntroLevel() ? TechConstants.T_INTRO_BOX_SET : TechConstants.T_IS_TW_NON_BOX);
         }
 
         return techLevel;

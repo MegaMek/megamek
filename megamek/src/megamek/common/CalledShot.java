@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2009-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,6 +33,7 @@
 
 package megamek.common;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import megamek.common.annotations.Nullable;
@@ -46,6 +47,7 @@ import megamek.common.units.Targetable;
  * Some static methods for called shots
  */
 public class CalledShot implements Serializable {
+    @Serial
     private static final long serialVersionUID = 8746351140726246311L;
 
     // locations for called shots
@@ -87,10 +89,9 @@ public class CalledShot implements Serializable {
             return null;
         }
 
-        if (!(target instanceof Entity)) {
+        if (!(target instanceof Entity te)) {
             return "called shots on entities only";
         }
-        Entity te = (Entity) target;
         if (te instanceof Infantry || te instanceof ProtoMek) {
             return "no called shots on infantry/ProtoMeks";
         }

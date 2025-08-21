@@ -358,11 +358,11 @@ public class Tank extends Entity {
         }
         mp = Math.max(0, mp - motiveDamage);
 
-        if (!mpCalculationSetting.ignoreCargo) {
+        if (!mpCalculationSetting.ignoreCargo()) {
             mp = Math.max(0, mp - getCargoMpReduction(this));
         }
 
-        if (!mpCalculationSetting.ignoreWeather && (null != game)) {
+        if (!mpCalculationSetting.ignoreWeather() && (null != game)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
@@ -388,7 +388,7 @@ public class Tank extends Entity {
             }
         }
 
-        if (!mpCalculationSetting.ignoreModularArmor && hasModularArmor()) {
+        if (!mpCalculationSetting.ignoreModularArmor() && hasModularArmor()) {
             mp--;
         }
 
@@ -396,12 +396,12 @@ public class Tank extends Entity {
             mp--;
         }
 
-        if (!mpCalculationSetting.ignoreGravity) {
+        if (!mpCalculationSetting.ignoreGravity()) {
             mp = applyGravityEffectsOnMP(mp);
         }
 
         // If the unit is towing trailers, adjust its walkMP, TW p205
-        if (!mpCalculationSetting.ignoreCargo && (null != game) && !getAllTowedUnits().isEmpty()) {
+        if (!mpCalculationSetting.ignoreCargo() && (null != game) && !getAllTowedUnits().isEmpty()) {
             double trainWeight = getWeight();
             int lowestSuspensionFactor = getSuspensionFactor();
             // Add up the trailers
@@ -1424,7 +1424,7 @@ public class Tank extends Entity {
 
     @Override
     public int getRunMP(MPCalculationSetting mpCalculationSetting) {
-        if (!mpCalculationSetting.ignoreMASC && hasArmedMASC()) {
+        if (!mpCalculationSetting.ignoreMASC() && hasArmedMASC()) {
             return (getWalkMP(mpCalculationSetting) * 2);
         } else {
             return super.getRunMP(mpCalculationSetting);
@@ -1440,7 +1440,7 @@ public class Tank extends Entity {
     public int getSprintMP(MPCalculationSetting mpCalculationSetting) {
         if ((game != null) && game.getOptions()
               .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_ADVANCED_MANEUVERS)) {
-            if (!mpCalculationSetting.ignoreMASC && hasArmedMASC()) {
+            if (!mpCalculationSetting.ignoreMASC() && hasArmedMASC()) {
                 return (int) Math.ceil(getWalkMP(mpCalculationSetting) * 2.5);
             } else {
                 return getWalkMP(mpCalculationSetting) * 2;

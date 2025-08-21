@@ -568,7 +568,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         }
 
         int maxTech = switch (gameTechLevel) {
-            case TechConstants.T_SIMPLE_INTRO -> TechConstants.T_INTRO_BOXSET;
+            case TechConstants.T_SIMPLE_INTRO -> TechConstants.T_INTRO_BOX_SET;
             case TechConstants.T_SIMPLE_STANDARD -> TechConstants.T_TW_ALL;
             case TechConstants.T_SIMPLE_ADVANCED -> TechConstants.T_CLAN_ADVANCED;
             case TechConstants.T_SIMPLE_EXPERIMENTAL -> TechConstants.T_CLAN_EXPERIMENTAL;

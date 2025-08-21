@@ -40,5 +40,5 @@ default weight. The first line of this file must be the standard header of "Ethn
 
 ### data/universe/
 
-ranks.xml: This file contains custom rank systems. This is merge implemented, so that each rank systemFluff will be
+ranks.xml: This file contains custom rank systems. This is merge implemented, so that each rank system will be
 handled akin to the default MekHQ rank systems, with the default rank systems taking primary key priority on load.

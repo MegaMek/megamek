@@ -330,7 +330,7 @@ directory (data/forcegenerator/faction_rules).
 
 2. The <ruleset> element contains the following child elements:
 	<defaults> [once]: Various default values for the faction as a whole
-	<customRanks> [optional]: Allows a faction to provide a unique rank systemFluff or customize certain rank names.
+	<customRanks> [optional]: Allows a faction to provide a unique rank system or customize certain rank names.
 	<toc> [optional]: Informs the UI which unit types are available, and which formations are appropriate
 	                  to certain unit types.
 	<force> [any number]: Provides the rules for generating each node of the force tree.
@@ -344,7 +344,7 @@ directory (data/forcegenerator/faction_rules).
 	<rating>: the default equipment rating to use for the generated unit if one has not been assigned.
 
 4. The <customRanks> element has the following child elements:
-	<base>: the rank systemFluff that will provide any rank names that are not overridden.
+	<base>: the rank system that will provide any rank names that are not overridden.
 	<rank> [any number]: A rank level followed by one or more rank names. All fields are separated by a colon.
 						 The rank level is a numeric value that should match the rank level in MekHQ.
 						 Constants are provided for common values. If one rank name is provided, it is used
@@ -364,7 +364,7 @@ directory (data/forcegenerator/faction_rules).
    <echelon>: A comma-separated list of all echelon levels available. The echelon level is a numeric
                value (constants are available for common values). The numeric value may be followed by ^
                to indicate augmented, + for reinforced, or - for understrength.
-   <rating>: A comma separated list of which levels of the rating systemFluff (designated in the <default>
+   <rating>: A comma separated list of which levels of the rating system (designated in the <default>
              section) to use. This is most often to restrict the rating systems by unit type, such as
              most Clan factions which restrict vehicle forces to second line formations.
    <flags>: A comma-separated list of flags that can be set by the user. Each entry has the format

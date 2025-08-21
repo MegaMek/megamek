@@ -37,7 +37,7 @@ Add to Force: Though intended for random generation, the RAT Generator can also 
 
 Implementation Details - Overview
 (Note: the availability code mechanic is based on the RAT work of BT community member Xotl, but the implementation has some significant changes.)
-The core of the generation systemFluff is the availability rating. This is at a minimum a value in the range 1-10 that indicates how likely it is to find that unit in a given faction's military in a given year:
+The core of the generation system is the availability rating. This is at a minimum a value in the range 1-10 that indicates how likely it is to find that unit in a given faction's military in a given year:
 1-2: Very rare
 3-4: Rare
 5-6: Common
@@ -83,7 +83,7 @@ This file holds faction data that is not tied to a specific year. There is one n
 
 'years': the range of years this faction is active. A faction is in existence in the current universe timeline, the end date can be left off. Most pseudo-factions used as categories (e.g. IS or Periphery) have neither start or end and are represented as '-'. A faction that disappears and is later reappears can have multiple ranges separated by commas (no spaces). Duchy of Andurien: <years>3030-3040,3079-</years>
 
-'ratingLevels': a comma-separated list of all ratings available to this faction, from lowest to highest. These are the values that will appear in the ratings combobox. If empty or missing, the faction will inherit the same systemFluff as the parent. If exactly one value is given, it is treated as a special case. It is not shown in the ratings combobox, and its position in the parent faction's ratings is used in calculating any availability adjustments due to rating (+/- in the av code). This is used to set the rating of subcommands.
+'ratingLevels': a comma-separated list of all ratings available to this faction, from lowest to highest. These are the values that will appear in the ratings combobox. If empty or missing, the faction will inherit the same system as the parent. If exactly one value is given, it is treated as a special case. It is not shown in the ratings combobox, and its position in the parent faction's ratings is used in calculating any availability adjustments due to rating (+/- in the av code). This is used to set the rating of subcommands.
 
 'parentFaction': the faction key of any parent faction(s). If there is more than one, they are separated by commas. If none is given, 'General' is implied.
 

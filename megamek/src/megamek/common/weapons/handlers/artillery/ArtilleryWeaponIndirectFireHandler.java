@@ -620,7 +620,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        double toReturn = wtype.rackSize;
+        double toReturn = wtype.getRackSize();
         if (wtype instanceof CapitalMissileWeapon) {
             toReturn = wtype.getRoundShortAV();
         }

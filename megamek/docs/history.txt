@@ -743,7 +743,7 @@ DEV NOTE - Starting with this release the History file is built on release rathe
 + Fix #5193: Weapon bays work again at short range in atmosphere
 + PR #5188, #5246: Units on the ground (except multi-hex units) now throw shadows
 + PR #5156: MML and MM can now process unit fluff images embedded in unit files (see MML Fix #269)
-+ PR #5209: Java LookAndFeels choices have been restricted to FlatLaf and the system default; the default is now FlatLaf Darcula
++ PR #5209: Java LookAndFeels choices have been restricted to FlatLaf and the systemFluff default; the default is now FlatLaf Darcula
 + PR #5208: Off-board arty may no longer attempt Flak attacks at on-board aerospace units
 + PR #5199: Fixes superheavy and tripod crew total calculation
 + Fix #4819: Seabuster Strike Fighter (Early) is missing the floatation hull chassis mod.
@@ -756,7 +756,7 @@ DEV NOTE - Starting with this release the History file is built on release rathe
 + Fix #5214: Exception when loading saved game
 + Fix #5224: Infantry Firing issue
 + PR #5241: Add test to ensure every unit can load
-+ PR #5244: Fixing MML #1452 Allows you to pod mount null signature system.
++ PR #5244: Fixing MML #1452 Allows you to pod mount null signature systemFluff.
 + Fix #5228: The TAG phase will no longer inadvertently reveal hidden units
 + Fix #5206: Prevent an error with the map preview in the lobby
 + PR #5240: Fix MML 1365: Sponson Turrets not being included in TechLevel calcs
@@ -975,7 +975,7 @@ DEV NOTE - Starting with this release the History file is built on release rathe
 + Fix #4727: Fixes an error with pilot images in reports
 + PR #4776: Fixed Wing Support with STOL no longer show as invalid in the lobby when set to altitude 0
 + Issue #1552: Added Arrow IV air defense missiles; Princess can use them if available
-+ Issue #4782: Argotera now has full-head ejection system
++ Issue #4782: Argotera now has full-head ejection systemFluff
 + Fix #4780: Players can once again fire during the point blank phase
 + Fix #4779: Mechs can once again sprint
 + Fix #4768: Improved gauss rifles nerfed - take a +1 penalty to the TN when fired from small aeros
@@ -1921,7 +1921,7 @@ DEV NOTE - Starting with this release the History file is built on release rathe
 + PR #2350: Allow java.util.TreeMap to be deserialized
 + PR #2334: Modernizing Multiple Visual Configs
 + PR #2351: Prevent aerospace units from sometimes showing as crippled after rolling for but not confirming a crit
-+ PR #2357: Restored(?) full head ejection system to a lot of Wolfhound/Hatchetman variants;
++ PR #2357: Restored(?) full head ejection systemFluff to a lot of Wolfhound/Hatchetman variants;
     ejection now hits the cockpit or blows off the head for full head ejection - mostly relevant for MekHQ
 + Issue #2246: "Change Tileset Theme" menu entry disabled outside the Board Editor
 + Issues #2349, #2347. #2339 Various Data fixes
@@ -2370,7 +2370,7 @@ v0.45.3 (2019-02-12 0500 UTC)
 + Data: New Sprites
 
 v0.45.2 (2018-11-18 0200 UTC)
-+ Switched build system from ant to gradle.
++ Switched build systemFluff from ant to gradle.
 + Issue #1122: Piloting/gunnery skills generated from the wrong tables [Force Generator]
 + PR #1132: Zweihander
 + Issue #1149: Force Generator switching from Mechs to ProtoMeks for Clans that deploy them
@@ -2384,7 +2384,7 @@ v0.45.2 (2018-11-18 0200 UTC)
 + PR #1170: Bullet-proofing various edge cases for space maps; weather related info no longer displayed in space
 + Issue #1177: Rocket Launcher bug after configuring unit
 + PR #1185: ProtoMek validation, updates to ProtoMek unit files from errata and addition of Wars of Reaving units.
-+ PR #1186: ProtoMek equipment (implementation of melee weapon, quad melee system, fusillade, and magnetic clamps)
++ PR #1186: ProtoMek equipment (implementation of melee weapon, quad melee systemFluff, fusillade, and magnetic clamps)
 + PR #1184: Bot handling for aerospace units on low-atmospheric maps and on space maps using non-advanced flight rules
 + PR #1193: TRO style summary
 + Data: New Sprites
@@ -2605,7 +2605,7 @@ v0.43.5 (2017-12-17 11:00 UTC)
 + Feature: Adds ASEW missile functionality
 + Feature: "OUR WORDS ARE BACKED BY NUCLEAR WEAPONS" -Mahatma Ghandi (adds Alamo, Santa Anna and Peacemaker warheads)
 + Issue #530: MegaMek Help->Contents now points at Readme.txt
-+ Issue #711: Aeros and spacecraft with destroyed fire control system or combat information center now count as crippled
++ Issue #711: Aeros and spacecraft with destroyed fire control systemFluff or combat information center now count as crippled
 + Issue #716: Targeting a non-Entity with Arrow IV Homing Missile no longer causes NPE
 + Issue #666: Linked equipment now works with bay weapons
 + PR #740: Optional cargo/transport bay damage on cargo critical hit for large craft
@@ -2745,7 +2745,7 @@ v0.43.3 (2017-07-18 18:30 UTC)
 
 v0.43.2 2017-05-1 22:00 UTC)
 + PR #518: Implemented quirks: Stabilized weapon, barrel fist
-+ PR #518: Updated quirks for errata: Improved sensors, cooling system flaw, fragile fuel tank
++ PR #518: Updated quirks for errata: Improved sensors, cooling systemFluff flaw, fragile fuel tank
 + Issue #526: Further image atlas packaging bugs
 + Issue #487: Carriage returns in startup.sh causing issues
 + Removed BLDG_CF & BRIDGE_CF from board validator (these aren't strictly required, as they have default values if not defined)
@@ -3682,7 +3682,7 @@ v0.41.4 (2015-05-31 16:45 UTC)
 + Patch [#495]: Princess shoots at buildings with infantry in them
 + Bug [#4234]: Minesweeper vehicle equipment implemented
 + Added minefield reports that can only be seen by minefield owner in DB
-+ Bug: Minefield motive system damage check still applies side penalty with
++ Bug: Minefield motive systemFluff damage check still applies side penalty with
     TacOps vehicle effectiveness in effect
 + Bug: Minefields always triggered upon entering regardless of roll outside
     double blind
@@ -3725,7 +3725,7 @@ v0.41.3 (2015-04-18, 12:52 UTC+2)
 + Bug: M-Pod should be defensive BV for tanks
 + Bug: AR10 ammo BV should be in total compared to launcher BV, not for each
     type of missile seperately
-+ Bug: PPC w/ capacitor has wrong BV when combined with drone operating system
++ Bug: PPC w/ capacitor has wrong BV when combined with drone operating systemFluff
 + Bug [#4467]: Incorrect popup text when mousing over hex targeted by artillery
 + Bug [#4468]: Path planner doesn't know about elevation change steps
 + Bug [#4471]: TargetingDisplay centers display on off-board units
@@ -3993,7 +3993,7 @@ v0.39.4 / v0.40.0RC2 (2014-12-14 19:00 UTC)
 + Data: New Unit Images
 + Feature: Changed the client/server mismatch check to use a checksum of the MegaMek.jar file instead of timestamp
 + Bug: Checksum NumberFormat error
-+ Added logging for the new checksum system
++ Added logging for the new checksum systemFluff
 + Data:New Images/Unit Fixes
 + Bug: Deployment tag not working
 + Bug: Round error for JS/WS Sail Integrity.
@@ -4147,7 +4147,7 @@ v0.39.2 (2014-09-27 23:51 UTC)
     better she'll want her to-hit odds to be before firing.  Ammo conservation depends on a combination of total
     shots remaining and aggressiveness (higher aggression means less conservation).
 + Data: Unit Fixes and New Images.
-+ Data: Fixed Scenario files to be inline with new naming system.
++ Data: Fixed Scenario files to be inline with new naming systemFluff.
 + Bug: VGLs mounted in the front right and front left on vehicles would receive
     a 'not in arc' message without TO vehicle arc rules on
 + Bug: Show Game Options menu item would display dialog twice in firing and
@@ -4203,7 +4203,7 @@ v0.39.2 (2014-09-27 23:51 UTC)
 
 v0.39.1 (2014-08-26 14:56 UTC)
 + Patch [#458]: Highlighting FOV options
-+ Patch [#462]: Forcing redirected system.out and sys.err to respect flush
++ Patch [#462]: Forcing redirected systemFluff.out and sys.err to respect flush
 + Data: New Images and some date fixes
 + Added entity attribute neverDeployed to the MUL files
 + Bug [#4189] Princess throws NPE (in exp branch)
@@ -4471,7 +4471,7 @@ v0.37.12-exp (2014-06-03 19:06 UTC)
     "@" symbol as a reference to anther RAT to roll on.  Updated the EXAMPLE RAT
     FILE.txt file to reflect this information and also copied it into the docs
     folder to make it easier to find.
-+ Added a basic morale system for Princess to have her potentially retreat units
++ Added a basic morale systemFluff for Princess to have her potentially retreat units
     off the board before Forced Withdrawal would take effect.
 + Updated the Xotl RAT files to incorporate the most recent version (including
     the 3050 IS mechs) and to make use of the changes for Feature Request
@@ -4522,7 +4522,7 @@ v0.37.12 (2014-06-03 19:06 UTC)
 + Errata: Vehicle-mounted chemical lasers not disabled by engine hits
     (tentatively also extended to heavy/vehicle flamers on a "makes sense" basis
     pending further clarification).
-+ New motive system damage message to better distinguish from "proper"
++ New motive systemFluff damage message to better distinguish from "proper"
     criticals.
 + Data: Kite Reconnaissance Vehicle (Standard) movement fix.
 + Data: Unit Fixes and Total Chaos RATs
@@ -4788,9 +4788,9 @@ v0.37.9, 0.38.0 Release Candidate 1 (2014-03-29 14:25 UTC)
 + Fixed a ClassCastException in PhysicalInfo.initDamage()
 + Added code for Princess to give command units a higher targeting priority.
     Princess defines 2 levels of command unit: Commander and Sub-Commander.  A
-    Commander is any unit with the isCommander flag set, has a C3 Master system
+    Commander is any unit with the isCommander flag set, has a C3 Master systemFluff
     or provides the highest initiative bonus for its player.  A Sub-Commander
-    is any unit that has an init bonus (but not the highest), a C3 slave system,
+    is any unit that has an init bonus (but not the highest), a C3 slave systemFluff,
     ECM, Active Probe, TAG, EI Cockpit or is currently using a spotlight.
 + Bug [#2244]: ECM in Double Blind games -> wrong hit roll reporting
 + Bug [#3996]: Cleaned up a few more areas where not all of an Entities loaded
@@ -5626,7 +5626,7 @@ v0.37.0 (2013-12-21, 13:13 UTC1+)
     to move errors
 + Bug: inf ignore initiative rule was bugged when there is only one team: in
     that case initiative order would be like: unit, <all infantry>, <rest>.
-+ added construction data for light fluid suction system
++ added construction data for light fluid suction systemFluff
 + Bug [#3951]: Field Gun infantry can fire into the same hex, but shouldn't be
     able to.
 + Bug [#3949]: Cluster Hitter Pilot Ability Description Missing 0.37-dev
@@ -6629,7 +6629,7 @@ v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: TacOps Ammo Explosion should not happen when using CASE or CASE II.
 + Bug 3535718: Problem with new SVN
 + Bug: Vehicles executing or hit by a successful charge attack not rolling for
-    motive system damage as per TW p. 148.
+    motive systemFluff damage as per TW p. 148.
 + Bug 3535786: 'Meks deployed on water hexes deploy to surface, not sea bottom.
 + New hexset images: cropped_barn.png, orchard.png, pigs1.png, pigs2.png,
     vineyard.png, soybeans.png...
@@ -6978,7 +6978,7 @@ v0.35.27 (2012-01-10, 20:41 UTC+1)
     Precognition.java
 + implement RandomUnitGenerator and RandomNameGenerator with static references
     to avoid memory problems
-+ fixed Drone (remote) operating system crits
++ fixed Drone (remote) operating systemFluff crits
 + public getFlag method in Engine
 + Patch 3467874: Smoke SRM/LRM
 + Charge and Building displacement bugfixes
@@ -7089,7 +7089,7 @@ v0.35.25 (2011-10-09, 15:00 UTC+2)
 + set squad size and number to 1 by default so we never divide by zero
 + Added BA heat sensor
 + Added BA Extended Life Support construction data
-+ Added BV errata for drone remote operating system
++ Added BV errata for drone remote operating systemFluff
 + Only multiply individual weapon BV by 0.9 for industrials without advanced
     firing control
 + Bug 3387115: prototype RL launcher to hit
@@ -7180,7 +7180,7 @@ v0.35.24 (2011-06-24)
 + vee engine hits should affect walkmp in Tank#getWalkMP, not by setting the
     original walkmp
 + some further adjustments to aero engine hits
-+ vee motive system damage should not reset the original walkmp
++ vee motive systemFluff damage should not reset the original walkmp
 + added motive damage to MUL input/output
 + added vehicle sensor and engine damage to MUL input/output
 + added vehicle stabilizier hits to MUL input/output
@@ -7189,7 +7189,7 @@ v0.35.24 (2011-06-24)
 + VTOL rotor hits should affect walkmp in VTOL#getWalkMP, not by setting the
     original walkmp
 + improvements to damage reporting in MechView
-+ getLocationDamage report for location-specific system damage (for MechView)
++ getLocationDamage report for location-specific systemFluff damage (for MechView)
 + Added Mining Drill
 + aero critical damage displayed in MechView
 + better tracking of heat sinks on Aeros
@@ -7280,12 +7280,12 @@ v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug: LAC 10 and 20 should be unofficial
 + Bug: Fixed Wing Support transport bays not working right
 + Bug: Tank engine weight for fusion engines not always correct
-+ Bug: Armored motive system BV cost missing
++ Bug: Armored motive systemFluff BV cost missing
 + Bug: Armor multipliers for Tank BV missing
 + Bug: Vehicle flamer ammo not counting for BV
 + Bug: Chemical laser ammo not counting for BV
 + Added construction data for chaff pods
-+ Added drone carrier control system construction data
++ Added drone carrier control systemFluff construction data
 + consolidated Server#unloadUnit and Server#unloadUnitFromBay functionality
 + Bug 3153520: Aerodyne dropships won't take off
 + Bug: BA BV not accounting for myomer booster in speed factor calculation
@@ -7731,7 +7731,7 @@ v0.35.16 (2010-06-19. 16:28 UTC+2)
 + Updated TestMech to check for new illegal equipment combos.
 + Bug: XXL Engine weight sometimes wrong
 + Bug: Mace has wrong weight in verifier
-+ Added full-head ejection system (no game rules yet)
++ Added full-head ejection systemFluff (no game rules yet)
 + Added laser insulators
 + Bug: armor weight sometimes not correct, stupid floating point inaccuracy
 
@@ -8702,7 +8702,7 @@ v0.33.40 (2009-02-08, 2:27 UTC+1)
 + Added Mek Taser, Not fully Tested.
 + Bug: NPE when calculating BV for HarJel when mounted has Location None
 + RFE: Added the ability to save and load base chassis heat sinks for omnis
-+ Bug: Industrial Mechs without advanced targeting system should get 0.9 mod
++ Bug: Industrial Mechs without advanced targeting systemFluff should get 0.9 mod
     to offensive BV
 + Typo: Chassie changed to Chassis
 + Added getFirstEmptyCrit method
@@ -9070,7 +9070,7 @@ v0.33.34 (2008-10-28, 02:30 UTC)
 + Bug: Infantry should have identical walk and run MP
 + Bug: 0 MP infantry units should be able to shoot or move
 + Bug 2171505: C3i not granting bonus
-+ Enhancements to swing GUI to make it look more system-specific (especially for
++ Enhancements to swing GUI to make it look more systemFluff-specific (especially for
     Macs)
 
 v0.33.33 (2008-10-07, 20:33 GMT+1)
@@ -9896,7 +9896,7 @@ v0.33.13 (2007-12-13, 21:34 GMT+1)
 + Reverted all network changes for now, until we have stabilised them
 + Infantry shouldn't sideslip
 + Bug 1839351: No vertical scroll on initial help screen
-+ Show when ammo is dumping in system view.
++ Show when ammo is dumping in systemFluff view.
 + Bug 1841267: Consciousness rolls should be made immediately, not at end of
     phase.
 + added Mounted.getBaseDamageAbsorptionRate() for MW Use
@@ -10378,7 +10378,7 @@ v0.33.0 (2006-10-13 22:39 GMT+9)
 + Anti mech attacks partially updated for TW rules (swarm pulls in too many rules)
 + Tank and quad hit location tables partially updated for TW rules
 + Infantry anti-mech skill is customisable
-+ Update the motive system damage table, and make vehicles use it
++ Update the motive systemFluff damage table, and make vehicles use it
 + Bug: NPE firing infantry rifle
 + Implemented infantry weapon changes from TW
 + New <troopers> tag in infantry BLK files
@@ -10751,7 +10751,7 @@ v0.31.8 (2006-05-28, 16:58 GMT)
 + Engineer platoons' fire extinguisher ability
 + Coolant System (fire extinguish / cool mode for veh. flamers)
 + JWindow swingized, JWindow/JFrame .add() and .setLayout() need to be converted
-    to .getContentPane().blah, migrated coolant system fix to swing.
+    to .getContentPane().blah, migrated coolant systemFluff fix to swing.
 + Heavy infantry
 + FileChooser migrated, Choice, ScrollPane and others in the process
 + MaxTech new physical attacks: Jump Jet attack and Trip
@@ -10845,10 +10845,10 @@ v0.31.6 (2006-03-12, 16:48 GMT)
 + Patch 1438465: ECCM Patch
 + Bug 1438580: Tanks on bridges drown at end of physical phase
 + Bug 1436167:  Unloading Battle Armour on top of buildings with VTOLs
-+ Bug 1288101: VTOLs crash multiple times when movement system destroyed
++ Bug 1288101: VTOLs crash multiple times when movement systemFluff destroyed
 + artillery flak use artillery damage functions
 + Patch 1440745: S7 Claws
-+ BattleMech HarJel system, from MapPack Solaris VII
++ BattleMech HarJel systemFluff, from MapPack Solaris VII
 + Patch 1442366: Edge Bug fixed.
 + Bug: claws ClassCastException for non mechs
 + Bug: bot infinite loop deciding if push damage can break armour (100% cpu
@@ -10944,7 +10944,7 @@ v0.31.4 (2006-01-27, 22:10 GMT)
 + Fixed several torso-mounted cockpit and hardened armor bugs.
 + Bug 1388465: blk lvl 1 mechs load without engines.
 + Bug 1374005: mech with small cockpit has error if sensors crit is moved.
-+ Continue system criticals refactoring (gyro, cockpit).
++ Continue systemFluff criticals refactoring (gyro, cockpit).
 + Clarified "default autoeject off" client setting.
 + Patch 1376849: Bot equipment usage: RAC unjam, part 2.
 + Patch 1380002: Smaller NPE error message for MechFileParser.java.

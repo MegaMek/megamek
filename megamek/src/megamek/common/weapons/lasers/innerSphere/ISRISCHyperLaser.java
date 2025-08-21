@@ -100,7 +100,7 @@ public class ISRISCHyperLaser extends LaserWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new HyperLaserHandler(toHit, waa, game, manager);
     }

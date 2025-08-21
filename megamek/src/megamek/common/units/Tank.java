@@ -675,7 +675,7 @@ public class Tank extends Entity {
     /**
      * Per https://bg.battletech.com/forums/index.php/topic,78336.msg1869386.html#msg1869386 CVs with working engines
      * and Jump Jets should still have the option to jump during the movement phase, even if reduced to 0 MP by motive
-     * hits, or rolling 12 on the Motive System Damage table.
+     * hits, or rolling 12 on the Motive SystemFluff Damage table.
      */
     @Override
     public boolean isImmobileForJump() {

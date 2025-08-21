@@ -34,13 +34,13 @@
 
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.FlamerHandler;
-import megamek.common.weapons.Weapon;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -59,7 +59,7 @@ public abstract class BAFlamerWeapon extends Weapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new FlamerHandler(toHit, waa, game, manager);
     }

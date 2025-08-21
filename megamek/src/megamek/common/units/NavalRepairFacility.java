@@ -119,7 +119,7 @@ public class NavalRepairFacility extends UnitBay {
     }
 
     /**
-     * Advanced Robotic Transport System (ARTS). See IO, p. 147
+     * Advanced Robotic Transport SystemFluff (ARTS). See IO, p. 147
      *
      * @return Whether the bay has the ARTS automated system
      */

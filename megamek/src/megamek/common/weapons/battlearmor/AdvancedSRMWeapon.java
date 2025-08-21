@@ -59,7 +59,7 @@ public abstract class AdvancedSRMWeapon extends SRMWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new AdvancedSRMHandler(toHit, waa, game, manager);
     }

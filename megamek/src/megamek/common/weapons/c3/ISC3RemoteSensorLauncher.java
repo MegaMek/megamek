@@ -96,7 +96,7 @@ public class ISC3RemoteSensorLauncher extends MissileWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         return super.getCorrectHandler(toHit, waa, game, manager);
         // FIXME: Implement handler

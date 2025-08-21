@@ -428,7 +428,8 @@ public class MekFileParser {
                 if (m.getLinked() == null) {
                     // This mek has stealth armor but no ECM. Probably an improperly created custom.
                     LOGGER.error(
-                          "Unable to find an ECM Suite for {}. `Mek's with Stealth Armor or Void-Signature-System " +
+                          "Unable to find an ECM Suite for {}. `Mek's with Stealth Armor or Void-Signature-SystemFluff "
+                                +
                                 "must also be equipped with an ECM Suite.",
                           ent.getShortName());
                 }

@@ -56,7 +56,7 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
 
     public ISCenturionWeaponSystem() {
         super();
-        name = "Centurion Weapon System";
+        name = "Centurion Weapon SystemFluff";
         setInternalName(name);
         heat = 4;
         damage = 0;
@@ -94,7 +94,7 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new CenturionWeaponSystemHandler(toHit, waa, game, manager);
     }

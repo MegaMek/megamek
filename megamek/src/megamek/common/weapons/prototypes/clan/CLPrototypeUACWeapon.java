@@ -34,13 +34,13 @@
 
 package megamek.common.weapons.prototypes.clan;
 
-import megamek.common.game.Game;
-import megamek.common.equipment.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.weapons.autocannons.UACWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.prototype.PrototypeCLUltraWeaponHandler;
-import megamek.common.weapons.autocannons.UACWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -58,7 +58,7 @@ public abstract class CLPrototypeUACWeapon extends UACWeapon {
      * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         Mounted<?> weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
         if (weapon.curMode().equals("Ultra")) {

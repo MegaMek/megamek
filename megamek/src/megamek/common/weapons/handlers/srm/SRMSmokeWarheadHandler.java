@@ -37,14 +37,14 @@ package megamek.common.weapons.handlers.srm;
 import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.compute.Compute;
-import megamek.common.board.Coords;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
 import megamek.server.SmokeCloud;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -64,7 +64,7 @@ public class SRMSmokeWarheadHandler extends SRMHandler {
         Coords coords = target.getPosition();
         Coords center = coords;
 
-        AmmoType atype = (AmmoType) ammo.getType();
+        AmmoType atype = ammo.getType();
 
         if (!bMissed) {
             Report r = new Report(3190);

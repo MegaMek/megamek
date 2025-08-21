@@ -45,7 +45,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.LandAirMek;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadVee;
-import megamek.common.units.System;
+import megamek.common.units.SystemFluff;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestMek;
 
@@ -168,8 +168,8 @@ public class MekTROView extends TROView {
     protected void addFluff() {
         addMekVeeAeroFluff(mek);
         setModelData("chassisDesc",
-              formatSystemFluff(System.CHASSIS, mek.getFluff(), this::formatChassisDesc));
-        setModelData("jjDesc", formatSystemFluff(System.JUMP_JET, mek.getFluff(), this::formatJJDesc));
+              formatSystemFluff(SystemFluff.CHASSIS, mek.getFluff(), this::formatChassisDesc));
+        setModelData("jjDesc", formatSystemFluff(SystemFluff.JUMP_JET, mek.getFluff(), this::formatJJDesc));
         setModelData("jumpCapacity", mek.getJumpMP() * 30);
         setModelData("jumpBoosterCapacity", mek.getMechanicalJumpBoosterMP() * 30);
     }

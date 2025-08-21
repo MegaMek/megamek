@@ -330,11 +330,11 @@ public class EquipmentTypeLookup {
     public static final String REFUELING_DROGUE = "RefuelingDrogue";
     // CHECKSTYLE IGNORE ForbiddenWords FOR 2 LINES
     @EquipmentName
-    public static final String FLUID_SUCTION_LIGHT_MEK = "Fluid Suction System (Light - Mech)";
+    public static final String FLUID_SUCTION_LIGHT_MEK = "Fluid Suction SystemFluff (Light - Mech)";
     @EquipmentName
-    public static final String FLUID_SUCTION_LIGHT_VEE = "Fluid Suction System (Light - Vehicle)";
+    public static final String FLUID_SUCTION_LIGHT_VEE = "Fluid Suction SystemFluff (Light - Vehicle)";
     @EquipmentName
-    public static final String FLUID_SUCTION = "Fluid Suction System (Standard)";
+    public static final String FLUID_SUCTION = "Fluid Suction SystemFluff (Standard)";
     @EquipmentName
     public static final String ROCK_CUTTER = "Rock Cutter";
     @EquipmentName

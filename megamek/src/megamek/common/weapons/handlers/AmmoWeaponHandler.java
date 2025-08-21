@@ -61,7 +61,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
 
     private static final MMLogger logger = MMLogger.create(AmmoWeaponHandler.class);
 
-    AmmoMounted ammo;
+    protected AmmoMounted ammo;
 
     public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);

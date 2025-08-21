@@ -89,7 +89,7 @@ public class CapitalMissileBayWeapon extends AmmoBayWeapon {
      * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         Mounted<?> weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
         Entity attacker = game.getEntity(waa.getEntityId());

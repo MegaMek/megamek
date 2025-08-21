@@ -758,8 +758,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                           gameManager);
                     bayWHandler.setAnnouncedEntityFiring(false);
                     // This should always be true. Maybe there's a better way to write this?
-                    if (bayWHandler instanceof WeaponHandler) {
-                        WeaponHandler wHandler = (WeaponHandler) bayWHandler;
+                    if (bayWHandler instanceof WeaponHandler wHandler) {
                         wHandler.setParentBayHandler(this);
                     } else {
                         logger.error("bayWHandler " + bayWHandler.getClass()

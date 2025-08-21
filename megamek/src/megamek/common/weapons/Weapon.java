@@ -124,7 +124,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
               : (toHit.getValue() == TargetRoll.IMPOSSIBLE) ? null : ah;
     }
 
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager gameManager) {
         return new WeaponHandler(toHit, waa, game, gameManager);
     }

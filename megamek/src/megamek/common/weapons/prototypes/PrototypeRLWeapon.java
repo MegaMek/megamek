@@ -73,7 +73,7 @@ public abstract class PrototypeRLWeapon extends MissileWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new PrototypeRLHandler(toHit, waa, game, manager);
     }

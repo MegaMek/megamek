@@ -87,7 +87,7 @@ public abstract class LRMWeapon extends MissileWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return getLRMHandler(toHit, waa, game, manager);
     }

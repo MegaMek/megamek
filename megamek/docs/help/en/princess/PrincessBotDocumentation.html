@@ -145,14 +145,21 @@
 
 <h2 id="who-is-princess">Who is Princess Bot?</h2>
 <p>
-    The Princess Bot was written in an attempt to create an AI that would process quicker than our previous bot, TestBot, even if it were slightly dimmer:
+    The Princess Bot was written in an attempt to create an AI that would process quicker than our previous bot,
+    TestBot, even if it were slightly dimmer:
 </p>
 <ul>
     <li>Princess is still being maintained.</li>
-    <li>Princess is actually fast at determining which unit to move next, however, she is slow at moving fast units (VTOLs and Hovercraft especially).</li>
-    <li>She is able to operate AeroSpace units on the ground map, but it takes a long time for her to crunch the numbers and she still can't handle space maps very well.</li>
+    <li>Princess is actually fast at determining which unit to move next, however, she is slow at moving fast units
+        (VTOLs and Hovercraft especially).
+    </li>
+    <li>She is able to operate AeroSpace units on the ground map, but it takes a long time for her to crunch the numbers
+        and she still can't handle space maps very well.
+    </li>
     <li>She's not very competent with Infantry.</li>
-    <li>One of the biggest advantages of Princess is that her behavior can be modified in a number of ways, which you'll see throughout this document.</li>
+    <li>One of the biggest advantages of Princess is that her behavior can be modified in a number of ways, which you'll
+        see throughout this document.
+    </li>
 </ul>
 
 <h2 id="configuration">Princess Bot Configuration</h2>
@@ -170,25 +177,33 @@
             <p>There are 4 behaviors pre-configured with Princess:</p>
             <ul>
                 <li><strong>DEFAULT</strong> - Basic "balanced" settings.</li>
-                <li><strong>BERSERK</strong> - Highly aggressive. Princess will ignore danger to herself and will not run away under any circumstances.</li>
+                <li><strong>BERSERK</strong> - Highly aggressive. Princess will ignore danger to herself and will not
+                    run away under any circumstances.
+                </li>
                 <li><strong>COWARDLY</strong> - Really doesn't want to get shot.</li>
-                <li><strong>ESCAPE</strong> - Not quite as fearful as <strong>cowardly</strong> but she will try to escape from her home board edge ASAP.</li>
+                <li><strong>ESCAPE</strong> - Not quite as fearful as <strong>cowardly</strong> but she will try to
+                    escape from her home board edge ASAP.
+                </li>
             </ul>
-            <p>You can also enter a name to save your own configurations for later games or for use with the <a href="#replacing-player">replacePlayer</a> command.</p>
+            <p>You can also enter a name to save your own configurations for later games or for use with the <a
+                    href="#replacing-player">replacePlayer</a> command.</p>
             <h3>Forced Withdrawal</h3>
             <p>Used to make the Princess follow the Forced Withdrawal rules outlined in Total Warfare.</p>
 
             <h3>Immediate Withdrawal</h3>
-            <p>Used to make Princess send her units to her home edge from the start of the game, regardless of damage level. This can be handy for <em>Chase</em> and <em>Breakthrough</em> scenarios.</p>
+            <p>Used to make Princess send her units to her home edge from the start of the game, regardless of damage
+                level. This can be handy for <em>Chase</em> and <em>Breakthrough</em> scenarios.</p>
 
             <h3>Auto Flee Board</h3>
-            <p>(Only available when <em>Immediate Withdrawal</em> is in effect.) If this is checked, Princess will issue the Flee command as soon as her units reach her home edge, regardless of damage level.</p>
+            <p>(Only available when <em>Immediate Withdrawal</em> is in effect.) If this is checked, Princess will issue
+                the Flee command as soon as her units reach her home edge, regardless of damage level.</p>
 
             <h3>Home Edge</h3>
             <p>Defines which edge Princess will attempt to flee across when Forced Withdrawal is in effect.</p>
 
             <h3>Aggression</h3>
-            <p>This determines how much Princess wants to close with her enemies. Lower settings will cause her to try to keep her distance more, while higher settings will have her get right up in her enemies' faces.</p>
+            <p>This determines how much Princess wants to close with her enemies. Lower settings will cause her to try
+                to keep her distance more, while higher settings will have her get right up in her enemies' faces.</p>
 
             <h3>Bravery</h3>
             <p>This determines how much return fire Princess is willing to risk in order to do damage to the enemy.</p>
@@ -197,13 +212,19 @@
             <p>The higher this value, the more Princess will try to keep her units together.</p>
 
             <h3>Piloting Caution</h3>
-            <p>This determines how willing Princess is to fail a piloting roll and fall on her face when attempting various maneuvers. Higher settings means that Princess will risk fewer piloting rolls. Note, this also affects how willing she is to use MASC or try to move through or on buildings.</p>
+            <p>This determines how willing Princess is to fail a piloting roll and fall on her face when attempting
+                various maneuvers. Higher settings means that Princess will risk fewer piloting rolls. Note, this also
+                affects how willing she is to use MASC or try to move through or on buildings.</p>
 
             <h3>Self Preservation</h3>
-            <p>This determines how quickly Princess will flee once Forced Withdrawal takes effect. At lower levels, she will attempt more of a fighting withdrawal, while at higher levels she should run straight for her home edge.</p>
+            <p>This determines how quickly Princess will flee once Forced Withdrawal takes effect. At lower levels, she
+                will attempt more of a fighting withdrawal, while at higher levels she should run straight for her home
+                edge.</p>
 
             <h3>Strategic Targets</h3>
-            <p>This allows you to provide Princess with a list of hex coordinates or unit ids to move to and attack. If a building exists in a target hex, then she will attempt to destroy that building. If a unit with the given id is on the enemy team, she will give that target a higher priority.</p>
+            <p>This allows you to provide Princess with a list of hex coordinates or unit ids to move to and attack. If
+                a building exists in a target hex, then she will attempt to destroy that building. If a unit with the
+                given id is on the enemy team, she will give that target a higher priority.</p>
 
         </td>
     </tr>
@@ -223,7 +244,8 @@
             <td><strong>Flee</strong></td>
             <td><code>princessName: flee : edge#</code></td>
             <td>
-                Causes princess-controlled units to start fleeing the board, regardless of damage level or Forced Withdrawal setting.
+                Causes princess-controlled units to start fleeing the board, regardless of damage level or Forced
+                Withdrawal setting.
                 Edge # is a number from 0 to 4:
                 <ul>
                     <li>0 = north</li>
@@ -242,17 +264,22 @@
         <tr>
             <td><strong>Caution</strong></td>
             <td><code>princessName: caution : &lt;+/-&gt;</code></td>
-            <td>Modifies princess's Piloting Caution setting. Each '+' increases it by 1 and each '-' decreases it by one.</td>
+            <td>Modifies princess's Piloting Caution setting. Each '+' increases it by 1 and each '-' decreases it by
+                one.
+            </td>
         </tr>
         <tr>
             <td><strong>Avoid</strong></td>
             <td><code>princessName: avoid : &lt;+/-&gt;</code></td>
-            <td>Modifies princess's Self Preservation setting. Each '+' increases it by 1 and each '-' decreases it by one.</td>
+            <td>Modifies princess's Self Preservation setting. Each '+' increases it by 1 and each '-' decreases it by
+                one.
+            </td>
         </tr>
         <tr>
             <td><strong>Aggression</strong></td>
             <td><code>princessName: aggression : &lt;+/-&gt;</code></td>
-            <td>Modifies princess's Aggression setting. Each '+' increases it by 1 and each '-' decreases it by one.</td>
+            <td>Modifies princess's Aggression setting. Each '+' increases it by 1 and each '-' decreases it by one.
+            </td>
         </tr>
         <tr>
             <td><strong>Herding</strong></td>
@@ -282,18 +309,22 @@
         <tr>
             <td><strong>List Commands</strong></td>
             <td><code>princessName: listCommands</code></td>
-            <td>Displays a list of available chat commands for Princess. New commands are constantly added to control the bot.</td>
+            <td>Displays a list of available chat commands for Princess. New commands are constantly added to control
+                the bot.
+            </td>
         </tr>
     </table>
 </div>
 
 <h2 id="replacing-player">Replacing an Absent Player with the Princess Bot</h2>
 <p>
-    If a player has become disconnected (the word "<em>(Ghost)</em>" appears next to their name, you can replace that player with a bot. There are two methods for replacing a player:
+    If a player has become disconnected (the word "<em>(Ghost)</em>" appears next to their name, you can replace that
+    player with a bot. There are two methods for replacing a player:
 </p>
 
 <h3>Method 1: Using the UI</h3>
-<p>Use the <strong>Edit Bots</strong> command under the <u>Game</u> menu. This will bring up a version of the Bot Config Dialog along with a list of players that can be replaced.</p>
+<p>Use the <strong>Edit Bots</strong> command under the <u>Game</u> menu. This will bring up a version of the Bot Config
+    Dialog along with a list of players that can be replaced.</p>
 
 <h3>Method 2: Using the Chat Command</h3>
 <div class="command">
@@ -302,18 +333,25 @@
 
 <p>Princess will replace the named player.</p>
 <ul>
-    <li><code>&lt;-c&gt;</code> Specifies a saved configuration to be used by Princess (case-sensitive). If left out DEFAULT will be used.</li>
-    <li><code>&lt;-p&gt;</code> Specifies the player to be replaced. The "-p:" is only required with the "-c:" or "-v:" parameters are also used.</li>
+    <li><code>&lt;-c&gt;</code> Specifies a saved configuration to be used by Princess (case-sensitive). If left out
+        DEFAULT will be used.
+    </li>
+    <li><code>&lt;-p&gt;</code> Specifies the player to be replaced. The "-p:" is only required with the "-c:" or "-v:"
+        parameters are also used.
+    </li>
 </ul>
 
 <h2 id="compatible-rules">Princess-Compatible Optional Rules</h2>
 <p>
-    The following are the optional rules that should be safe to use when playing against Princess. Anything not on this list will either cause Princess to behave in nonsensical ways (always Sprinting or Leaping) or can cause crashes/lockups (mek/vehicle lance movement).
+    The following are the optional rules that should be safe to use when playing against Princess. Anything not on this
+    list will either cause Princess to behave in nonsensical ways (always Sprinting or Leaping) or can cause
+    crashes/lockups (mek/vehicle lance movement).
     So, it is not recommended you use any rules not on this list when using Princess.
 </p>
 
 <p>
-    If there is an optional rule you would like Princess to support, file a Feature Request at our GitHub issue tracker: <a href="https://github.com/MegaMek/megamek/issues" target="_blank">https://github.com/MegaMek/megamek/issues</a>
+    If there is an optional rule you would like Princess to support, file a Feature Request at our GitHub issue tracker:
+    <a href="https://github.com/MegaMek/megamek/issues" target="_blank">https://github.com/MegaMek/megamek/issues</a>
 </p>
 
 <div class="container" style="display: block;">
@@ -336,13 +374,18 @@
 
     <h3>Victory Conditions</h3>
     <p>
-        Any will work, but Princess isn't really aware of them. This means that she'll use the same strategy no matter the VC.
+        Any will work, but Princess isn't really aware of them. This means that she'll use the same strategy no matter
+        the VC.
     </p>
 
     <h3>Allowed Units and Equipment</h3>
     <ul>
-        <li>She'll try to use most anything. However, don't expect her to do well with ammo created after the FedCom Civil War or units like LAMS or Superheavy Meks.</li>
-        <li>Princess doesnt have a well developed Newtonian movement system, so it's not going to be a great experience.</li>
+        <li>She'll try to use most anything. However, don't expect her to do well with ammo created after the FedCom
+            Civil War or units like LAMS or Superheavy Meks.
+        </li>
+        <li>Princess doesnt have a well developed Newtonian movement systemFluff, so it's not going to be a great
+            experience.
+        </li>
     </ul>
 
     <h3>Advanced Rules</h3>
@@ -417,7 +460,10 @@
     <ul>
         <li>Front load initiative</li>
         <li>Initiative streak compensation</li>
-        <li>Simultaneous Phases (any) - Technically they can be used but they cause massive CPU and Memory consumption. So, don't use these unless you're running a high-end system. Also, Simultaneous Movement won't work at all.</li>
+        <li>Simultaneous Phases (any) - Technically they can be used but they cause massive CPU and Memory consumption.
+            So, don't use these unless you're running a high-end systemFluff. Also, Simultaneous Movement won't work at
+            all.
+        </li>
     </ul>
 
     <h3>RPG Related</h3>

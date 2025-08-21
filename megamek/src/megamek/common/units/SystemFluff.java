@@ -35,14 +35,14 @@ package megamek.common.units;
 
 import megamek.common.annotations.Nullable;
 
-public enum System {
+public enum SystemFluff {
     CHASSIS, ENGINE, ARMOR, JUMP_JET, COMMUNICATIONS, TARGETING;
 
-    public static @Nullable System parse(String string) {
+    public static @Nullable SystemFluff parse(String string) {
         if (null != string) {
-            for (final System c : values()) {
-                if (c.toString().equals(string.toUpperCase())) {
-                    return c;
+            for (final SystemFluff systemFluff : values()) {
+                if (systemFluff.toString().equals(string.toUpperCase())) {
+                    return systemFluff;
                 }
             }
         }

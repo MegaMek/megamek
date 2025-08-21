@@ -68,7 +68,7 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
 
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())

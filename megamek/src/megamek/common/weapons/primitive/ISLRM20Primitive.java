@@ -94,7 +94,7 @@ public class ISLRM20Primitive extends LRMWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new LRMHandler(toHit, waa, game, manager, -2);
     }

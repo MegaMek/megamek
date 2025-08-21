@@ -19967,7 +19967,7 @@ public class TWGameManager extends AbstractGameManager {
                             break;
                         case 3:
                         case 11:
-                            // Charging System Hit
+                            // Charging SystemFluff Hit
                             r = new Report(9187);
                             r.subject = aero.getId();
                             reports.add(r);

@@ -98,7 +98,7 @@ public class ISPlasmaRifle extends AmmoWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new PlasmaRifleHandler(toHit, waa, game, manager);
     }

@@ -34,6 +34,7 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.RangeType;
@@ -62,8 +63,9 @@ import megamek.server.totalwarfare.TWGameManager;
 public class BayWeaponHandler extends WeaponHandler {
     private static final MMLogger logger = MMLogger.create(BayWeaponHandler.class);
 
+    @Serial
     private static final long serialVersionUID = -1618484541772117621L;
-    AmmoMounted ammo;
+    protected AmmoMounted ammo;
 
     protected BayWeaponHandler() {
         // deserialization only

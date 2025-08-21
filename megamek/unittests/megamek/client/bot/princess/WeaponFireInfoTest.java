@@ -44,7 +44,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import megamek.client.bot.princess.FireControl.FireControlType;
-import megamek.common.*;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
@@ -197,7 +197,7 @@ class WeaponFireInfoTest {
         when(mockWeaponType.getShortRange()).thenReturn(1);
         when(mockWeaponType.getMediumRange()).thenReturn(2);
         when(mockWeaponType.getLongRange()).thenReturn(8);
-        when(mockWeapon.getDesc()).thenReturn("IS Arrow IV Missile System");
+        when(mockWeapon.getDesc()).thenReturn("IS Arrow IV Missile SystemFluff");
     }
 
     private WeaponFireInfo setupWFI() {

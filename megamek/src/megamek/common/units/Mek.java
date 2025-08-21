@@ -179,7 +179,7 @@ public abstract class Mek extends Entity {
                                                           "Superheavy Command", "Small Command", "Tripod Industrial",
                                                           "Superheavy Tripod Industrial" };
 
-    public static final String FULL_HEAD_EJECT_STRING = "Full Head Ejection System";
+    public static final String FULL_HEAD_EJECT_STRING = "Full Head Ejection SystemFluff";
 
     public static final String RISC_HEAT_SINK_OVERRIDE_KIT = "RISC Heat Sink Override Kit";
 
@@ -297,7 +297,7 @@ public abstract class Mek extends Entity {
 
     protected int nCoolantSystemMOS = 0;
 
-    // Cooling System Flaws quirk
+    // Cooling SystemFluff Flaws quirk
     private boolean coolingFlawActive = false;
 
     // QuadVees, LAMs, and tracked 'Meks can change movement mode.
@@ -4504,18 +4504,18 @@ public abstract class Mek extends Entity {
             sb.append(newLine);
         }
 
-        for (System system : System.values()) {
-            if (!getFluff().getSystemManufacturer(system).isBlank()) {
+        for (SystemFluff systemFluff : SystemFluff.values()) {
+            if (!getFluff().getSystemManufacturer(systemFluff).isBlank()) {
                 sb.append(MtfFile.SYSTEM_MANUFACTURER);
-                sb.append(system.toString()).append(":");
-                sb.append(getFluff().getSystemManufacturer(system));
+                sb.append(systemFluff.toString()).append(":");
+                sb.append(getFluff().getSystemManufacturer(systemFluff));
                 sb.append(newLine);
             }
 
-            if (!getFluff().getSystemModel(system).isBlank()) {
+            if (!getFluff().getSystemModel(systemFluff).isBlank()) {
                 sb.append(MtfFile.SYSTEM_MODEL);
-                sb.append(system.toString()).append(":");
-                sb.append(getFluff().getSystemModel(system));
+                sb.append(systemFluff.toString()).append(":");
+                sb.append(getFluff().getSystemModel(systemFluff));
                 sb.append(newLine);
             }
         }
@@ -5569,7 +5569,7 @@ public abstract class Mek extends Entity {
                     if ((cs.getIndex() == Mek.SYSTEM_GYRO)) {
                         bv += getWeight() * getGyroMultiplier() * 0.05;
                     } else {
-                        // System Crit that is armored but does not normally
+                        // SystemFluff Crit that is armored but does not normally
                         // have a BV
                         bv += 5;
                     }

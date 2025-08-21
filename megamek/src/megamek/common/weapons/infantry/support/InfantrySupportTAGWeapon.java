@@ -79,7 +79,7 @@ public class InfantrySupportTAGWeapon extends InfantryWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new TAGHandler(toHit, waa, game, manager);
     }

@@ -51,9 +51,9 @@ public class ISAMS extends AmmoWeapon {
 
     public ISAMS() {
         super();
-        name = "Anti-Missile System";
+        name = "Anti-Missile SystemFluff";
         setInternalName("ISAntiMissileSystem");
-        addLookupName("IS Anti-Missile System");
+        addLookupName("IS Anti-Missile SystemFluff");
         addLookupName("IS AMS");
         addLookupName("ISAMS");
         heat = 1;

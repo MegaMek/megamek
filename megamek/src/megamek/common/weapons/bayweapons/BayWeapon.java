@@ -83,7 +83,7 @@ public abstract class BayWeapon extends Weapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         if ((isCapital() || isSubCapital()) && waa.isOrbitToSurface(game)) {
             return new ArtilleryBayWeaponIndirectFireHandler(toHit, waa, game, manager);

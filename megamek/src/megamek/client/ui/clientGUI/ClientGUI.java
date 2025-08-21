@@ -437,7 +437,7 @@ public class ClientGUI extends AbstractClientGUI
 
     /**
      * Construct a client which will display itself in a new frame. It will not try to connect to a server yet. When the
-     * frame closes, this client will clean up after itself as much as possible, but will not call System.exit().
+     * frame closes, this client will clean up after itself as much as possible, but will not call SystemFluff.exit().
      */
     public ClientGUI(Client client, MegaMekController c) {
         super(client);

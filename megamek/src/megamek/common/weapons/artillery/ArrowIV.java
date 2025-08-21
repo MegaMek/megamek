@@ -34,11 +34,11 @@
 
 package megamek.common.weapons.artillery;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
-import megamek.common.equipment.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.ADAMissileWeaponHandler;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.totalwarfare.TWGameManager;
@@ -64,8 +64,8 @@ public abstract class ArrowIV extends ArtilleryWeapon {
         name = "Arrow IV";
         setInternalName("ArrowIV");
         addLookupName("ArrowIVSystem");
-        addLookupName("Arrow IV System");
-        addLookupName("Arrow IV Missile System");
+        addLookupName("Arrow IV SystemFluff");
+        addLookupName("Arrow IV Missile SystemFluff");
         heat = 10;
         rackSize = 20;
         ammoType = AmmoType.AmmoTypeEnum.ARROW_IV;
@@ -99,7 +99,7 @@ public abstract class ArrowIV extends ArtilleryWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         if (waa.getAmmoMunitionType().contains(AmmoType.Munitions.M_ADA)) {
             return new ADAMissileWeaponHandler(toHit, waa, game, manager);

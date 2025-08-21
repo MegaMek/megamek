@@ -109,7 +109,7 @@ public class ISHGaussRifle extends GaussWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new HGRHandler(toHit, waa, game, manager);
     }

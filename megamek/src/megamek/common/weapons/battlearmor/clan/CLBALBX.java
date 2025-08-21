@@ -94,7 +94,7 @@ public class CLBALBX extends Weapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new BALBXHandler(toHit, waa, game, manager);
     }

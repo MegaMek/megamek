@@ -69,7 +69,7 @@ public abstract class PPCWeapon extends EnergyWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new PPCHandler(toHit, waa, game, manager);
     }

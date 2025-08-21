@@ -215,7 +215,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         }
         nDamPerHit = wtype.getRackSize();
 
-        AmmoType ammoType = (AmmoType) ammo.getType();
+        AmmoType ammoType = ammo.getType();
 
         // copperhead gets 10 damage less than standard
         if (!(ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV

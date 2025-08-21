@@ -81,7 +81,7 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new StreakLRMHandler(toHit, waa, game, manager);
     }

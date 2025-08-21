@@ -34,16 +34,16 @@
 
 package megamek.common.weapons.artillery;
 
-import megamek.common.game.Game;
-import megamek.common.equipment.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.weapons.AmmoWeapon;
+import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryWeaponDirectFireHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryWeaponDirectHomingHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryWeaponIndirectFireHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryWeaponIndirectHomingHandler;
-import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -79,7 +79,7 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         Mounted<?> ammo = game.getEntity(waa.getEntityId())
               .getEquipment(waa.getWeaponId()).getLinked();

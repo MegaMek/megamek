@@ -50,13 +50,13 @@ public class ISC3MBS extends TAGWeapon {
 
     public ISC3MBS() {
         super();
-        name = "C3 Boosted System (Master)";
+        name = "C3 Boosted SystemFluff (Master)";
         shortName = "C3BS (Master)";
         setInternalName("ISC3MasterBoostedSystemUnit");
         addLookupName("IS C3 Computer Boosted");
         addLookupName("ISC3MasterComputerBoosted");
-        addLookupName("C3 Master Boosted System with TAG");
-        addLookupName("C3 Boosted System (C3BS) [Master]");
+        addLookupName("C3 Master Boosted SystemFluff with TAG");
+        addLookupName("C3 Boosted SystemFluff (C3BS) [Master]");
         tonnage = 6;
         criticalSlots = 6;
         svSlots = 6;

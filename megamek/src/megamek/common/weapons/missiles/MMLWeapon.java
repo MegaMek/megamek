@@ -62,7 +62,7 @@ public abstract class MMLWeapon extends MissileWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
               .getEquipment(waa.getWeaponId())

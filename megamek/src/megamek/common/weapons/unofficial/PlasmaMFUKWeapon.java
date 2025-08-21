@@ -34,10 +34,10 @@
 
 package megamek.common.weapons.unofficial;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.plasma.PlasmaMFUKWeaponHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
@@ -58,7 +58,7 @@ public abstract class PlasmaMFUKWeapon extends EnergyWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new PlasmaMFUKWeaponHandler(toHit, waa, game, manager);
     }

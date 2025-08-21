@@ -61,8 +61,8 @@ public class EntityFluff implements Serializable {
 
     private String manufacturer = "";
     private String primaryFactory = "";
-    private final Map<System, String> systemManufacturers = new EnumMap<>(System.class);
-    private final Map<System, String> systemModels = new EnumMap<>(System.class);
+    private final Map<SystemFluff, String> systemManufacturers = new EnumMap<>(SystemFluff.class);
+    private final Map<SystemFluff, String> systemModels = new EnumMap<>(SystemFluff.class);
     private String notes = "";
 
     private Base64Image fluffImage = new Base64Image();
@@ -122,52 +122,52 @@ public class EntityFluff implements Serializable {
     }
 
     /**
-     * Retrieves the manufacturer of particular system component
+     * Retrieves the manufacturer of particular systemFluff component
      *
-     * @param system The system component
+     * @param systemFluff The systemFluff component
      *
      * @return The name of the manufacturer, or an empty string if it has not been set.
      */
-    public String getSystemManufacturer(System system) {
-        return systemManufacturers.getOrDefault(system, "");
+    public String getSystemManufacturer(SystemFluff systemFluff) {
+        return systemManufacturers.getOrDefault(systemFluff, "");
     }
 
     /**
-     * Sets the name of the manufacturer of a particular system component.
+     * Sets the name of the manufacturer of a particular systemFluff component.
      *
-     * @param system       The system component
+     * @param systemFluff       The systemFluff component
      * @param manufacturer The name of the manufacturer, or {@code null} or an empty string to remove the entry.
      */
-    public void setSystemManufacturer(System system, @Nullable String manufacturer) {
+    public void setSystemManufacturer(SystemFluff systemFluff, @Nullable String manufacturer) {
         if ((null != manufacturer) && !manufacturer.isBlank()) {
-            systemManufacturers.put(system, manufacturer);
+            systemManufacturers.put(systemFluff, manufacturer);
         } else {
-            systemManufacturers.remove(system);
+            systemManufacturers.remove(systemFluff);
         }
     }
 
     /**
-     * Retrieves the manufacturer of particular system component
+     * Retrieves the manufacturer of particular systemFluff component
      *
-     * @param system The system component
+     * @param systemFluff The systemFluff component
      *
      * @return The name of the manufacturer, or an empty string if it has not been set.
      */
-    public String getSystemModel(System system) {
-        return systemModels.getOrDefault(system, "");
+    public String getSystemModel(SystemFluff systemFluff) {
+        return systemModels.getOrDefault(systemFluff, "");
     }
 
     /**
-     * Sets the model name of a particular system component.
+     * Sets the model name of a particular systemFluff component.
      *
-     * @param system The system component
+     * @param systemFluff The systemFluff component
      * @param model  The model name, or {@code null} or an empty string to remove the entry.
      */
-    public void setSystemModel(System system, @Nullable String model) {
+    public void setSystemModel(SystemFluff systemFluff, @Nullable String model) {
         if ((null != model) && !model.isBlank()) {
-            systemModels.put(system, model);
+            systemModels.put(systemFluff, model);
         } else {
-            systemModels.remove(system);
+            systemModels.remove(systemFluff);
         }
     }
 

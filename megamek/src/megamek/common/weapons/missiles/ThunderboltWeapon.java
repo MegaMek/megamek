@@ -79,7 +79,7 @@ public abstract class ThunderboltWeapon extends MissileWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new ThunderBoltWeaponHandler(toHit, waa, game, manager);
     }

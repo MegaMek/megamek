@@ -34,10 +34,10 @@
 
 package megamek.common.weapons.prototypes.clan;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.prototype.PrototypeStreakHandler;
 import megamek.common.weapons.srms.SRMWeapon;
@@ -70,7 +70,7 @@ public abstract class CLPrototypeStreakSRMWeapon extends SRMWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new PrototypeStreakHandler(toHit, waa, game, manager);
     }

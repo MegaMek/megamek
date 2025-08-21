@@ -5031,14 +5031,14 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return True when this unit has a RISC Super-Cooled Myomer System (even if the SCM is destroyed).
+     * @return True when this unit has a RISC Super-Cooled Myomer SystemFluff (even if the SCM is destroyed).
      */
     public boolean hasSCM() {
         return miscList.stream().anyMatch(m -> m.is(EquipmentTypeLookup.SCM));
     }
 
     /**
-     * @return True when this unit has an operable RISC Super-Cooled Myomer System.
+     * @return True when this unit has an operable RISC Super-Cooled Myomer SystemFluff.
      */
     public boolean hasWorkingSCM() {
         return miscList.stream().filter(m -> m.is(EquipmentTypeLookup.SCM)).anyMatch(Mounted::isOperable);
@@ -5078,7 +5078,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Pretty-prints the heat capacity of a unit, including optional heat sinking systems. Typically, this is equivalent
      * to {@link #getHeatCapacity()}, but in the presence of Radical Heat Sinks, Coolant Pods, or the RISC Emergency
-     * Coolant System, produces strings like "24 [36]" or "12 [+MoS]".
+     * Coolant SystemFluff, produces strings like "24 [36]" or "12 [+MoS]".
      *
      * @return The formatted heat capacity
      */
@@ -5884,7 +5884,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns whether this entity has a Drone Operating System
+     * Returns whether this entity has a Drone Operating SystemFluff
      */
     public boolean hasDroneOs() {
         return getMisc().stream()

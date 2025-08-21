@@ -301,7 +301,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
             toHit.addModifier(-1, "AES modifier");
         }
 
-        // Claws replace Actuators, but they are Equipment vs System as they
+        // Claws replace Actuators, but they are Equipment vs SystemFluff as they
         // take up multiple crits.
         // Rules state +1 bth with claws and if claws are critted then you get
         // the normal +1 bth for missing hand actuator.

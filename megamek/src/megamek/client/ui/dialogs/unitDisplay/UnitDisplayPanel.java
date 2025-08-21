@@ -68,8 +68,8 @@ import megamek.client.ui.widget.UnitDisplaySkinSpecification;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PicMap;
 import megamek.common.Configuration;
-import megamek.common.units.Entity;
 import megamek.common.annotations.Nullable;
+import megamek.common.units.Entity;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 
@@ -121,7 +121,7 @@ public class UnitDisplayPanel extends JPanel {
     public static final String NON_TABBED_PILOT = "Pilot";
     public static final String NON_TABBED_ARMOR = "Armor";
     public static final String NON_TABBED_WEAPON = "Weapon";
-    public static final String NON_TABBED_SYSTEM = "System";
+    public static final String NON_TABBED_SYSTEM = "SystemFluff";
     public static final String NON_TABBED_EXTRA = "Extra";
 
     public static final String NON_TABBED_A1 = "NonTabbedA1";

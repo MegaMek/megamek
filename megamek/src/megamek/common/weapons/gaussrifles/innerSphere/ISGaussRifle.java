@@ -94,7 +94,7 @@ public class ISGaussRifle extends GaussWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new GRHandler(toHit, waa, game, manager);
     }

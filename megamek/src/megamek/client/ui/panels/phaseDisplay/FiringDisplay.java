@@ -1646,7 +1646,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             int effectiveDistance = Compute.effectiveDistance(game, attacker, target);
             clientgui.getUnitDisplay().wPan.wRangeR.setText("" + effectiveDistance);
             Mounted<?> m = attacker.getEquipment(weaponId);
-            // If we have a Centurion Weapon System selected, we may need to
+            // If we have a Centurion Weapon SystemFluff selected, we may need to
             // update ranges.
             if (m.getType().hasFlag(WeaponType.F_CWS)) {
                 clientgui.getUnitDisplay().wPan.selectWeapon(weaponId);

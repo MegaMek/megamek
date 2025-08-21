@@ -83,7 +83,7 @@ public class JumpShipCostCalculator {
         driveCost[driveIdx++] += 50000.0 * jumpShip.getKFIntegrity();
         // Sail
         driveCost[driveIdx++] += 50000.0 * (30 + (jumpShip.getWeight() / 7500.0));
-        // Charging System
+        // Charging SystemFluff
         driveCost[driveIdx++] += 500000.0 + (200000.0 * jumpShip.getDocks(true));
 
         for (int i = 0; i < driveIdx; i++) {
@@ -162,7 +162,7 @@ public class JumpShipCostCalculator {
 
         String[] systemNames = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunnery Control Systems",
                                  "Structural Integrity", "Engine", "Engine Control Unit",
-                                 "KF Drive", "KF Drive Support System", "Attitude Thrusters", "Docking Collars",
+                                 "KF Drive", "KF Drive Support SystemFluff", "Attitude Thrusters", "Docking Collars",
                                  "Fuel Tanks", "Armor", "Heat Sinks", "Life Boats/Escape Pods", "Grav Decks",
                                  "Bays", "Quarters", "HPG", "Weapons/Equipment", "Weight Multiplier" };
         CostCalculator.fillInReport(costReport, jumpShip, ignoreAmmo, systemNames, 20, cost, costs);

@@ -78,7 +78,7 @@ public abstract class ACWeapon extends AmmoWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager gameManager) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
               .getEquipment(waa.getWeaponId())

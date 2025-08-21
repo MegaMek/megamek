@@ -49,7 +49,7 @@ public class ISBAAPDS extends Weapon {
 
     public ISBAAPDS() {
         super();
-        name = "RISC Advanced Point Defense System";
+        name = "RISC Advanced Point Defense SystemFluff";
         setInternalName("ISBAAPDS");
         tonnage = 0.35;
         criticalSlots = 2;

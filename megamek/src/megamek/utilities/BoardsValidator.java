@@ -42,8 +42,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.board.Board;
 import megamek.common.Configuration;
+import megamek.common.board.Board;
 import megamek.logging.MMLogger;
 
 /**
@@ -99,7 +99,7 @@ public class BoardsValidator {
 
     /**
      * Check whether the supplied file is a valid board file or not. Ignores files that don't end in .board. Any errors
-     * are logged to System.out.
+     * are logged to SystemFluff.out.
      *
      * @param boardFile the board file to check
      */

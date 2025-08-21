@@ -223,11 +223,11 @@ Drawing Board.
                 construction. Valid values are: Standard and Endo Steel.
                 Not all structure values are valid for all template type,
                 entity techBase and entity year values.
-        myomer - optional - the myomer system used in the entity's
+        myomer - optional - the myomer systemFluff used in the entity's
                 construction. Valid values are: Standard, MASC, and TSM.
                 Not all myomer values are valid for all template type,
                 entity techBase and entity year values.
-        armor - optional - the armor system used in the construction of
+        armor - optional - the armor systemFluff used in the construction of
                 the entity. Valid values are: Standard, Ferro-Fibrous,
                 and Stealth. Not all armor values are valid for all
                 template type, entity techBase and entity year values.
@@ -321,9 +321,9 @@ Drawing Board.
                 values are any integer from 1 to 12 or N/A.
         type - required - the internal name the piece of equipment within
                 the MegaMek application. The value of System identifies
-                the equipment in the slot as the standard system normally
+                the equipment in the slot as the standard systemFluff normally
                 found at this slot's index. The value of Empty identifies
-                that there is no equipment in the slot; any standard system
+                that there is no equipment in the slot; any standard systemFluff
                 normally found at this slot's index will be removed.
         isRear - default: false - specifies that the weapon in this slot
                 fires to the rear. Any boolean value is valid.

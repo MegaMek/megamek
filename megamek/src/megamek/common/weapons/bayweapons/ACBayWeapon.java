@@ -74,7 +74,7 @@ public class ACBayWeapon extends AmmoBayWeapon {
      * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new ACBayHandler(toHit, waa, game, manager);
     }

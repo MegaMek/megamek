@@ -73,7 +73,7 @@ public abstract class PrimRLWeapon extends RLWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new RLHandler(toHit, waa, game, manager);
     }

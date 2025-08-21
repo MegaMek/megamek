@@ -74,7 +74,7 @@ public abstract class RACWeapon extends UACWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         Mounted<?> weapon = game.getEntity(waa.getEntityId()).getEquipment(
               waa.getWeaponId());

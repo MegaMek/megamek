@@ -52,7 +52,7 @@ public class CLAMS extends AmmoWeapon {
 
     public CLAMS() {
         super();
-        name = "Anti-Missile System";
+        name = "Anti-Missile SystemFluff";
         setInternalName("CLAntiMissileSystem");
         addLookupName("Clan Anti-Missile Sys");
         addLookupName("Clan AMS");

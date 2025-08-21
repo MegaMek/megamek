@@ -34,19 +34,19 @@
 
 package megamek.common.weapons.bayweapons;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.units.Entity;
-import megamek.common.equipment.EquipmentTypeLookup;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
+import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponDirectFireHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponDirectHomingHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponIndirectFireHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponIndirectHomingHandler;
-import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -83,7 +83,7 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         Entity ae = game.getEntity(waa.getEntityId());
         boolean useHoming = false;

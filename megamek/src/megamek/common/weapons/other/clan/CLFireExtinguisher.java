@@ -84,7 +84,7 @@ public class CLFireExtinguisher extends Weapon {
      * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new FireExtinguisherHandler(toHit, waa, game, manager);
     }

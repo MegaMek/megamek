@@ -414,7 +414,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     /**
      * Return the attack value of point defense weapons used against a missile bay attack
      */
-    protected int getCounterAV() {
+    public int getCounterAV() {
         return CounterAV;
     }
 
@@ -431,7 +431,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      *
      * @param bh - The <code>AttackHandler</code> for the BayWeapon this individual weapon belongs to
      */
-    protected void setParentBayHandler(WeaponHandler bh) {
+    public void setParentBayHandler(WeaponHandler bh) {
         parentBayHandler = bh;
     }
 

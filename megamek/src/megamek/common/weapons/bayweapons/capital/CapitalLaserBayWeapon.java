@@ -67,7 +67,7 @@ public class CapitalLaserBayWeapon extends BayWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         if (waa.isOrbitToSurface(game)) {
             return new CapitalLaserBayOrbitalBombardmentHandler(toHit, waa, game, manager);

@@ -100,7 +100,7 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
      * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new VGLWeaponHandler(toHit, waa, game, manager);
     }

@@ -34,9 +34,9 @@
 
 package megamek.common.weapons.lasers;
 
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.PulseLaserWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
@@ -63,7 +63,7 @@ public abstract class PulseLaserWeapon extends LaserWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new PulseLaserWeaponHandler(toHit, waa, game, manager);
     }

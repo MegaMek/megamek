@@ -51,8 +51,8 @@ public class ISArrowIV extends ArrowIV {
 
         setInternalName("ISArrowIV");
         addLookupName("ISArrowIVSystem");
-        addLookupName("IS Arrow IV System");
-        addLookupName("IS Arrow IV Missile System");
+        addLookupName("IS Arrow IV SystemFluff");
+        addLookupName("IS Arrow IV Missile SystemFluff");
         shortRange = 1;
         mediumRange = 2;
         longRange = 8;

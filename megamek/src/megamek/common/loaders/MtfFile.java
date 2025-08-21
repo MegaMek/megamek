@@ -66,7 +66,7 @@ import megamek.common.units.LandAirMek;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadMek;
 import megamek.common.units.QuadVee;
-import megamek.common.units.System;
+import megamek.common.units.SystemFluff;
 import megamek.common.units.TripodMek;
 import megamek.common.units.UnitRole;
 import megamek.logging.MMLogger;
@@ -118,8 +118,8 @@ public class MtfFile implements IMekLoader {
     private String history = "";
     private String manufacturer = "";
     private String primaryFactory = "";
-    private final Map<System, String> systemManufacturers = new EnumMap<>(System.class);
-    private final Map<System, String> systemModels = new EnumMap<>(System.class);
+    private final Map<SystemFluff, String> systemManufacturers = new EnumMap<>(SystemFluff.class);
+    private final Map<SystemFluff, String> systemModels = new EnumMap<>(SystemFluff.class);
     private String notes = "";
 
     private String fluffImageEncoded = "";
@@ -1335,9 +1335,9 @@ public class MtfFile implements IMekLoader {
         if (lineLower.startsWith(SYSTEM_MANUFACTURER)) {
             String[] fields = line.split(":");
             if (fields.length > 2) {
-                System system = System.parse(fields[1]);
-                if (null != system) {
-                    systemManufacturers.put(system, fields[2].trim());
+                SystemFluff systemFluff = SystemFluff.parse(fields[1]);
+                if (null != systemFluff) {
+                    systemManufacturers.put(systemFluff, fields[2].trim());
                 }
             }
             return true;
@@ -1346,9 +1346,9 @@ public class MtfFile implements IMekLoader {
         if (lineLower.startsWith(SYSTEM_MODEL)) {
             String[] fields = line.split(":");
             if (fields.length > 2) {
-                System system = System.parse(fields[1]);
-                if (null != system) {
-                    systemModels.put(system, fields[2].trim());
+                SystemFluff systemFluff = SystemFluff.parse(fields[1]);
+                if (null != systemFluff) {
+                    systemModels.put(systemFluff, fields[2].trim());
                 }
             }
             return true;

@@ -91,7 +91,7 @@ public class CLLightMGA extends AmmoWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new MGAWeaponHandler(toHit, waa, game, manager);
     }

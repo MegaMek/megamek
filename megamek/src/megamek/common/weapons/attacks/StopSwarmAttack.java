@@ -74,7 +74,7 @@ public class StopSwarmAttack extends InfantryAttack {
      * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new StopSwarmAttackHandler(toHit, waa, game, manager);
     }

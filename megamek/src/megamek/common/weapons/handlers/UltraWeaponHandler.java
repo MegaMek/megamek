@@ -60,7 +60,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
     @Serial
     private static final long serialVersionUID = 7551194199079004134L;
 
-    int howManyShots;
+    protected int howManyShots;
     private final boolean twoRollsUltra; // Tracks whether this is an
     // ultra AC using the unofficial "two rolls" rule. Can be final because
     // this isn't really going to change over the course of a game.

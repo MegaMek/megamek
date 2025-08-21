@@ -34,10 +34,12 @@
 
 package megamek.common.weapons.handlers.ac;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.LBXHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -45,6 +47,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Jason Tighe
  */
 public class ACFlakHandler extends LBXHandler {
+    @Serial
     private static final long serialVersionUID = -7814754695629391969L;
 
     /**
@@ -70,7 +73,7 @@ public class ACFlakHandler extends LBXHandler {
 
     @Override
     protected boolean usesClusterTable() {
-        return ((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_FLAK);
+        return ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_FLAK);
     }
 
 }

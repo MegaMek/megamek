@@ -102,7 +102,7 @@ public class ISPulseLaserLargePrototype extends PulseLaserWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new PrototypeLaserHandler(toHit, waa, game, manager);
     }

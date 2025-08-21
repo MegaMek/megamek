@@ -93,7 +93,7 @@ public class ISGaussRiflePrototype extends GaussWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new PrototypeGaussHandler(toHit, waa, game, manager);
     }

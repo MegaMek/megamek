@@ -50,7 +50,7 @@ public class ISAPDS extends AmmoWeapon {
 
     public ISAPDS() {
         super();
-        name = "RISC Advanced Point Defense System";
+        name = "RISC Advanced Point Defense SystemFluff";
         shortName = "RISC APDS";
         setInternalName("ISAPDS");
         heat = 2;

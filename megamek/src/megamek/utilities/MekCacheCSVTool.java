@@ -58,7 +58,7 @@ import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
-import megamek.common.units.System;
+import megamek.common.units.SystemFluff;
 import megamek.logging.MMLogger;
 
 /**
@@ -250,17 +250,17 @@ public final class MekCacheCSVTool {
                     }
                     csvLine.append(DELIM);
 
-                    csvLine.append(TROView.formatSystemFluff(System.TARGETING, entity.getFluff(),
+                    csvLine.append(TROView.formatSystemFluff(SystemFluff.TARGETING, entity.getFluff(),
                           () -> "--")).append(DELIM);
-                    csvLine.append(TROView.formatSystemFluff(System.COMMUNICATIONS, entity.getFluff(),
+                    csvLine.append(TROView.formatSystemFluff(SystemFluff.COMMUNICATIONS, entity.getFluff(),
                           () -> "--")).append(DELIM);
-                    csvLine.append(TROView.formatSystemFluff(System.ARMOR, entity.getFluff(),
+                    csvLine.append(TROView.formatSystemFluff(SystemFluff.ARMOR, entity.getFluff(),
                           () -> "--")).append(DELIM);
-                    csvLine.append(TROView.formatSystemFluff(System.JUMP_JET, entity.getFluff(),
+                    csvLine.append(TROView.formatSystemFluff(SystemFluff.JUMP_JET, entity.getFluff(),
                           () -> "--")).append(DELIM);
-                    csvLine.append(TROView.formatSystemFluff(System.ENGINE, entity.getFluff(),
+                    csvLine.append(TROView.formatSystemFluff(SystemFluff.ENGINE, entity.getFluff(),
                           () -> "--")).append(DELIM);
-                    csvLine.append(TROView.formatSystemFluff(System.CHASSIS, entity.getFluff(),
+                    csvLine.append(TROView.formatSystemFluff(SystemFluff.CHASSIS, entity.getFluff(),
                           () -> "--")).append(DELIM);
 
                     csvLine.append(entity.getFluff().getCapabilities().isBlank() ? "no" : "yes").append(DELIM);

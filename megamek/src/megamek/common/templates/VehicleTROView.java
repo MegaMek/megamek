@@ -44,7 +44,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.Transporter;
 import megamek.common.units.Entity;
 import megamek.common.units.SuperHeavyTank;
-import megamek.common.units.System;
+import megamek.common.units.SystemFluff;
 import megamek.common.units.Tank;
 import megamek.common.units.VTOL;
 import megamek.common.verifier.EntityVerifier;
@@ -146,7 +146,7 @@ public class VehicleTROView extends TROView {
     private void addFluff() {
         addMekVeeAeroFluff(tank);
         if (tank.getJumpMP() > 0) {
-            setModelData("jjDesc", formatSystemFluff(System.JUMP_JET, tank.getFluff(),
+            setModelData("jjDesc", formatSystemFluff(SystemFluff.JUMP_JET, tank.getFluff(),
                   () -> Messages.getString("TROView.jjVehicle")));
             setModelData("jumpCapacity", tank.getJumpMP() * 30);
         }

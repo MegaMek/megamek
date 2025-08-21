@@ -34,12 +34,12 @@
 
 package megamek.common.weapons;
 
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.totalwarfare.TWGameManager;
@@ -91,7 +91,7 @@ public abstract class AmmoWeapon extends Weapon {
      * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new AmmoWeaponHandler(toHit, waa, game, manager);
     }

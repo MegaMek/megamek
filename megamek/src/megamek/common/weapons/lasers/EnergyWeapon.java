@@ -58,7 +58,7 @@ public abstract class EnergyWeapon extends Weapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new EnergyWeaponHandler(toHit, waa, game, manager);
     }

@@ -83,7 +83,7 @@ public class ATMBayWeapon extends AmmoBayWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new MissileBayWeaponHandler(toHit, waa, game, manager);
     }

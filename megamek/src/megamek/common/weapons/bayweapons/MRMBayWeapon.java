@@ -34,10 +34,10 @@
 
 package megamek.common.weapons.bayweapons;
 
-import megamek.common.equipment.EquipmentTypeLookup;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.MissileBayWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
@@ -69,7 +69,7 @@ public class MRMBayWeapon extends AmmoBayWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new MissileBayWeaponHandler(toHit, waa, game, manager);
     }

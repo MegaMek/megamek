@@ -99,7 +99,7 @@ public class CLASEWMissileWeapon extends ThunderboltWeapon {
 
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new ASEWMissileWeaponHandler(toHit, waa, game, manager);
     }

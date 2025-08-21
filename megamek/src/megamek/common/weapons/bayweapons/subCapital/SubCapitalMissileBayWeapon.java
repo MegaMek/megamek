@@ -78,7 +78,7 @@ public class SubCapitalMissileBayWeapon extends AmmoBayWeapon {
      * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new CapitalMissileBayHandler(toHit, waa, game, manager);
     }

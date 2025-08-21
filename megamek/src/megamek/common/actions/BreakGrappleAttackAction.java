@@ -171,8 +171,6 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
     }
 
     private static int getWeightMod(Entity target, Entity attackingEntity) {
-        // Weight class difference
-        GrappleAttackAction.getWeaponMod(attackingEntity, target);
-        return weightMod;
+        return GrappleAttackAction.getWeaponMod(attackingEntity, target);
     }
 }

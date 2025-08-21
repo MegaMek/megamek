@@ -280,7 +280,7 @@ public class MULParser {
     public static final String VALUE_REAR = "Rear";
     public static final String VALUE_INTERNAL = "Internal";
     public static final String VALUE_EMPTY = "Empty";
-    public static final String VALUE_SYSTEM = "System";
+    public static final String VALUE_SYSTEM = "SystemFluff";
     public static final String VALUE_NONE = "None";
     public static final String VALUE_HIT = "hit";
     public static final String VALUE_CONSOLE = "console";

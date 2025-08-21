@@ -87,7 +87,7 @@ public abstract class CLIATMWeapon extends MissileWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
 
         // MML does different handlers here. I think I'll go with implementing different

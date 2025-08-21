@@ -56,7 +56,7 @@ public class CLLaserAMS extends LaserWeapon {
         setInternalName("CLLaserAntiMissileSystem");
         addLookupName("Clan Laser Anti-Missile Sys");
         addLookupName("Clan Laser AMS");
-        sortingName = "Anti-Missile System Laser";
+        sortingName = "Anti-Missile SystemFluff Laser";
         heat = 5;
         rackSize = 2;
         damage = 3; // for manual operation

@@ -47,7 +47,7 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.units.Entity;
 import megamek.common.units.ProtoMek;
-import megamek.common.units.System;
+import megamek.common.units.SystemFluff;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestProtoMek;
 
@@ -118,10 +118,10 @@ public class ProtoMekTROView extends TROView {
     private void addFluff() {
         addMekVeeAeroFluff(proto);
         if (proto.getOriginalJumpMP() > 0) {
-            setModelData("chassisDesc", formatSystemFluff(System.CHASSIS, proto.getFluff(), () -> ""));
+            setModelData("chassisDesc", formatSystemFluff(SystemFluff.CHASSIS, proto.getFluff(), () -> ""));
         }
         if (!proto.isGlider()) {
-            setModelData("jjDesc", formatSystemFluff(System.JUMP_JET, proto.getFluff(), () -> ""));
+            setModelData("jjDesc", formatSystemFluff(SystemFluff.JUMP_JET, proto.getFluff(), () -> ""));
             setModelData("jumpCapacity", proto.getJumpMP() * 30);
         }
         if (proto.isGlider()) {

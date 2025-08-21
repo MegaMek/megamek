@@ -96,7 +96,7 @@ public class ISSRM2Primitive extends SRMWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new SRMHandler(toHit, waa, game, manager, -2);
     }

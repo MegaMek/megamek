@@ -34,14 +34,14 @@
 
 package megamek.common.weapons.prototypes.clan;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.handlers.ac.ACWeaponHandler;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
+import megamek.common.weapons.autocannons.LBXACWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.CLLBXPrototypeHandler;
-import megamek.common.weapons.autocannons.LBXACWeapon;
+import megamek.common.weapons.handlers.ac.ACWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -61,7 +61,7 @@ public abstract class CLLBXACPrototypeWeapon extends LBXACWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
               .getEquipment(waa.getWeaponId()).getLinked().getType();

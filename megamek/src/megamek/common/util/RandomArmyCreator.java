@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2006-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,10 +41,10 @@ import java.util.List;
 
 import megamek.client.ui.dialogs.advancedsearch.ASAdvancedSearchPanel;
 import megamek.client.ui.dialogs.advancedsearch.MekSearchFilter;
+import megamek.common.TechConstants;
 import megamek.common.compute.Compute;
 import megamek.common.loaders.MekSummary;
 import megamek.common.loaders.MekSummaryCache;
-import megamek.common.TechConstants;
 import megamek.common.units.UnitType;
 
 public class RandomArmyCreator {
@@ -122,7 +122,7 @@ public class RandomArmyCreator {
     private static List<MekSummary> generateArmy(
           List<MekSummary> unitList, int count, int targetBV, int allowedVariance) {
         List<MekSummary> units = new ArrayList<>();
-        if ((count < 1) || (unitList.size() < 1)) {
+        if ((count < 1) || (unitList.isEmpty())) {
             return units;
         }
         // first pick any random meks

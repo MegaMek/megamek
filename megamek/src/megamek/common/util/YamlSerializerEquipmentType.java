@@ -311,7 +311,7 @@ public class YamlSerializerEquipmentType {
                 return new EquipmentType();
             }
         } catch (Exception e) {
-            logger.warn("Failed to create default instance for comparison: " + e.getMessage());
+            logger.warn("Failed to create default instance for comparison: {}", e.getMessage());
             return new EquipmentType();
         }
     }

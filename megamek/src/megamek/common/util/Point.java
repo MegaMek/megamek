@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,24 +34,28 @@
 
 package megamek.common.util;
 
-import megamek.common.ToHitData;
+public class Point {
+    public int x;
+    public int y;
 
-/**
- * Used to track data for displaying "FiringSolution" data in the BoardView. This contains information about to-hit
- * numbers and any other useful information for determining what units to are the best to shoot at.
- *
- * @author arlith
- */
-public record FiringSolution(ToHitData toHit, boolean targetSpotted) {
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public Point(Point other) {
+        x = other.x;
+        y = other.y;
+    }
 
     /**
+     * Set the location
      *
+     * @param x x coordinate
+     * @param y y coordinate
      */
-    public FiringSolution {
+    public void setLocation(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
-
-    public ToHitData getToHitData() {
-        return toHit;
-    }
-
 }

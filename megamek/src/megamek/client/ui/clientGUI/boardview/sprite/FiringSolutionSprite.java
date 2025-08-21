@@ -139,7 +139,7 @@ public class FiringSolutionSprite extends HexSprite {
             graph.draw(rangeHexPolygon);
         }
 
-        if (firingSolution.isTargetSpotted()) {
+        if (firingSolution.targetSpotted()) {
             graph.setColor(INDIRECT_DASH_COLOR_1);
             graph.setStroke(INDIRECT_STROKE_1);
             graph.draw(BoardView.getHexPoly());

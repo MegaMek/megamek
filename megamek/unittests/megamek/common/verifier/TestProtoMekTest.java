@@ -52,7 +52,6 @@ import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.ProtoMek;
 import megamek.common.util.RoundWeight;
-import megamek.common.verifier.TestEntity.Ceil;
 import org.junit.jupiter.api.Test;
 
 public class TestProtoMekTest {
@@ -129,7 +128,7 @@ public class TestProtoMekTest {
         }
 
         @Override
-        public boolean showUnderweightedEntity() {
+        public boolean showUnderweightEntity() {
             return false;
         }
 
@@ -174,7 +173,7 @@ public class TestProtoMekTest {
         }
 
         @Override
-        public int getTargCompCrits() {
+        public int getTargetingComputerCrits() {
             return 0;
         }
 

@@ -81,7 +81,7 @@ public enum BayData {
           (size, num) -> new ASFBay(size, 1, num)),
     SMALL_CRAFT("Small Craft", 200.0, 5, SmallCraftBay.techAdvancement(),
           (size, num) -> new SmallCraftBay(size, 1, num)),
-    DROPSHUTTLE("Dropshuttle", 11000.0, 0, DropShuttleBay.techAdvancement(),
+    DROP_SHUTTLE("DropShuttle", 11000.0, 0, DropShuttleBay.techAdvancement(),
           (size, num) -> new DropShuttleBay(1, num, 0)),
     REPAIR_UNPRESSURIZED("Standard Repair Facility (Unpressurized)", 0.025, 0, NavalRepairFacility.techAdvancement(),
           (size, num) -> new NavalRepairFacility(size, 1, num, 0, false)),
@@ -114,7 +114,7 @@ public enum BayData {
     private final TechAdvancement techAdvancement;
     private final BiFunction<Double, Integer, Bay> init;
 
-    static final List<Enum> noMinDoorBayTypes = new ArrayList<>();
+    static final List<BayData> noMinDoorBayTypes = new ArrayList<>();
 
     static {
         noMinDoorBayTypes.addAll(List.of(
@@ -195,7 +195,7 @@ public enum BayData {
      *
      * @param bay A <code>Bay</code> that is (or can be) mounted on a unit.
      *
-     * @return The enum value for the bay. Returns null if the bay is not a transport by (e.g. crew quarters)
+     * @return The enum value for the bay. Returns null if the bay is not transport by (e.g. crew quarters)
      */
     public static @Nullable BayData getBayType(Bay bay) {
         if (bay instanceof MekBay) {
@@ -209,18 +209,12 @@ public enum BayData {
         } else if (bay instanceof SuperHeavyVehicleBay) {
             return VEHICLE_SH;
         } else if (bay instanceof InfantryBay) {
-            switch (((InfantryBay) bay).getPlatoonType()) {
-                case JUMP:
-                    return INFANTRY_JUMP;
-                case MECHANIZED:
-                    return INFANTRY_MECHANIZED;
-                case MOTORIZED:
-                    return INFANTRY_MOTORIZED;
-                case FOOT:
-                default:
-                    return INFANTRY_FOOT;
-
-            }
+            return switch (((InfantryBay) bay).getPlatoonType()) {
+                case JUMP -> INFANTRY_JUMP;
+                case MECHANIZED -> INFANTRY_MECHANIZED;
+                case MOTORIZED -> INFANTRY_MOTORIZED;
+                default -> INFANTRY_FOOT;
+            };
         } else if (bay instanceof BattleArmorBay) {
             if (bay.getWeight() / bay.getCapacity() == 12) {
                 return CS_BATTLE_ARMOR;
@@ -231,7 +225,7 @@ public enum BayData {
         } else if (bay instanceof ASFBay) {
             return ((ASFBay) bay).hasARTS() ? ARTS_FIGHTER : FIGHTER;
         } else if (bay instanceof DropShuttleBay) {
-            return DROPSHUTTLE;
+            return DROP_SHUTTLE;
         } else if (bay instanceof ReinforcedRepairFacility) {
             return REPAIR_REINFORCED;
         } else if (bay instanceof NavalRepairFacility) {
@@ -283,10 +277,10 @@ public enum BayData {
      */
     public boolean isLegalFor(Entity en) {
         //TODO: Container cargo bays aren't implemented, but when added they can be carried by
-        // industrial but not battlemeks.
+        // industrial but not BattleMeks.
         if (en.hasETypeFlag(Entity.ETYPE_MEK)) {
             return isCargoBay() && (this != LIVESTOCK_CARGO);
-        } else if ((this == DROPSHUTTLE)
+        } else if ((this == DROP_SHUTTLE)
               || (this == REPAIR_UNPRESSURIZED)
               || (this == REPAIR_PRESSURIZED)
               || (this == REPAIR_REINFORCED)) {
@@ -301,7 +295,7 @@ public enum BayData {
      * @return Whether the bay type requires a designated armor facing.
      */
     public boolean requiresFacing() {
-        return (this == DROPSHUTTLE)
+        return (this == DROP_SHUTTLE)
               || (this == REPAIR_UNPRESSURIZED)
               || (this == REPAIR_PRESSURIZED)
               || (this == REPAIR_REINFORCED)
@@ -313,6 +307,6 @@ public enum BayData {
      * @return Whether the bay capacity can be changed.
      */
     public boolean hasVariableSize() {
-        return this != DROPSHUTTLE;
+        return this != DROP_SHUTTLE;
     }
 }

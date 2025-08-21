@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -49,9 +49,9 @@ import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.game.Game;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -61,16 +61,22 @@ public class AddBotUtil {
 
     private final List<String> results = new ArrayList<>();
     public static final String COMMAND = "replacePlayer";
-    public static final String USAGE = "Replaces a player who is a ghost with a bot." +
-          "\nUsage /replacePlayer <-b:Princess> <-c:Config> <-v:Verbosity> " +
-          "<-p:>name." +
-          "\n  <-b> Specifies use if Princess. " +
-          "\n  <-c> Specifies a saved configuration to be used by Princess.  If left out" +
-          " DEFAULT will be used." +
-          "\n  <-v> Specifies the verbosity level for Princess " +
-          "(DEBUG/INFO/WARNING/ERROR)." +
-          "\n  <-p> Specifies the player name.  The '-p' is only required when the '-c' " +
-          "or '-v' parameters are also used.";
+    public static final String USAGE = """
+          Replaces a player who is a ghost with a bot.\
+          
+          Usage /replacePlayer <-b:Princess> <-c:Config> <-v:Verbosity> \
+          <-p:>name.\
+          
+            <-b> Specifies use if Princess. \
+          
+            <-c> Specifies a saved configuration to be used by Princess.  If left out\
+           DEFAULT will be used.\
+          
+            <-v> Specifies the verbosity level for Princess \
+          (DEBUG/INFO/WARNING/ERROR).\
+          
+            <-p> Specifies the player name.  The '-p' is only required when the '-c' \
+          or '-v' parameters are also used.""";
 
     private String concatResults() {
         final StringBuilder output = new StringBuilder();
@@ -137,7 +143,7 @@ public class AddBotUtil {
 
         Player target = null;
         for (Player player : game.getPlayersList()) {
-            if (player.getName().equals(playerName.toString())) {
+            if (player.getName().contentEquals(playerName)) {
                 target = player;
             }
 
@@ -215,10 +221,10 @@ public class AddBotUtil {
               .filter(p -> p.getName().equals(playerName))
               .findFirst();
         if (possible.isEmpty()) {
-            message.append("No player with the name '" + playerName + "'.");
+            message.append("No player with the name '").append(playerName).append("'.");
             return null;
         } else if (!possible.get().isGhost()) {
-            message.append("Player '" + playerName + "' is not a ghost.");
+            message.append("Player '").append(playerName).append("' is not a ghost.");
             return null;
         }
 
@@ -233,17 +239,15 @@ public class AddBotUtil {
             message.append("Princess failed to connect.");
         }
         princess.setLocalPlayerNumber(target.getId());
-        message.append("Princess has replaced " + playerName + ".");
+        message.append("Princess has replaced ").append(playerName).append(".");
         return princess;
     }
 
     /**
      * Replace a ghost player or an existing Princess bot with a new bot
-     *
-     * @return the new Princess bot or null if not able to replace
      */
-    public @Nullable Princess changeBotSettings(final BehaviorSettings behavior, final String playerName,
-          final Client client, StringBuilder message) {
+    public void changeBotSettings(final BehaviorSettings behavior, final String playerName, final Client client,
+          StringBuilder message) {
         Objects.requireNonNull(client);
         Objects.requireNonNull(behavior);
 
@@ -258,11 +262,11 @@ public class AddBotUtil {
               .filter(p -> p.getName().equals(playerName))
               .findFirst();
         if (possible.isEmpty()) {
-            message.append("No player with the name '" + playerName + "'.");
-            return null;
+            message.append("No player with the name '").append(playerName).append("'.");
+            return;
         } else if (!possible.get().isGhost() && !possible.get().isBot()) {
-            message.append("Player '" + playerName + "' is neither a ghost nor an existing bot.");
-            return null;
+            message.append("Player '").append(playerName).append("' is neither a ghost nor an existing bot.");
+            return;
         }
 
         final Player target = possible.get();
@@ -276,25 +280,22 @@ public class AddBotUtil {
                 message.append("Princess failed to connect.");
             }
             princess.setLocalPlayerNumber(target.getId());
-            message.append("Princess has replaced " + playerName + ".");
-            return princess;
+            message.append("Princess has replaced ").append(playerName).append(".");
         } else {
             AbstractClient bot = client.getBots().get(target.getName());
             if (bot == null) {
-                message.append("Player '" + playerName + "' is not a local bot.");
-                return null;
+                message.append("Player '").append(playerName).append("' is not a local bot.");
+                return;
             } else if (!(bot instanceof Princess)) {
-                message.append("Player '" + playerName + "' is not a Princess bot.");
-                return null;
+                message.append("Player '").append(playerName).append("' is not a Princess bot.");
+                return;
             }
             Princess princess = (Princess) bot;
             princess.setBehaviorSettings(behavior);
-            return princess;
         }
     }
 
-    public boolean kickBot(final String playerName, final Client client, StringBuilder message) {
-
+    public void kickBot(final String playerName, final Client client, StringBuilder message) {
         Objects.requireNonNull(client);
         final Game game = client.getGame();
         Objects.requireNonNull(game);
@@ -305,19 +306,18 @@ public class AddBotUtil {
               .findFirst();
 
         if (possible.isEmpty()) {
-            message.append("No player with the name '" + playerName + "'.");
-            return false;
+            message.append("No player with the name '").append(playerName).append("'.");
+            return;
         } else if (possible.get().isGhost()) {
-            message.append("Player '" + playerName + "' is a ghost.");
-            return false;
+            message.append("Player '").append(playerName).append("' is a ghost.");
+            return;
         } else if (!possible.get().isBot()) {
-            message.append("Player '" + playerName + "' is not a bot.");
-            return false;
+            message.append("Player '").append(playerName).append("' is not a bot.");
+            return;
         }
 
         final Player target = possible.get();
         client.sendChat("/kick " + target.getId());
-        return true;
     }
 
     BotClient makeNewPrincessClient(final Player target, final String host, final int port) {

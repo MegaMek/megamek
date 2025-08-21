@@ -66,8 +66,8 @@ public class TestSmallCraft extends TestAero {
 
     // Indices used to specify firing arcs with aliases for AeroDyne and spheroid
     public static final int ARC_NOSE = SmallCraft.LOC_NOSE;
-    public static final int ARC_LWING = SmallCraft.LOC_LEFT_WING;
-    public static final int ARC_RWING = SmallCraft.LOC_RIGHT_WING;
+    public static final int ARC_LEFT_WING = SmallCraft.LOC_LEFT_WING;
+    public static final int ARC_RIGHT_WING = SmallCraft.LOC_RIGHT_WING;
     public static final int ARC_AFT = SmallCraft.LOC_AFT;
     public static final int REAR_ARC_OFFSET = SmallCraft.LOC_HULL;
     public static final int ARC_FWD_LEFT = SmallCraft.LOC_LEFT_WING;
@@ -102,9 +102,9 @@ public class TestSmallCraft extends TestAero {
      */
     public static double maxArmorWeight(SmallCraft smallCraft) {
         if (smallCraft.isSpheroid()) {
-            return floor(smallCraft.getOSI() * 3.6, Ceil.HALFTON);
+            return floor(smallCraft.getOSI() * 3.6, Ceil.HALF_TON);
         } else {
-            return floor(smallCraft.getOSI() * 4.5, Ceil.HALFTON);
+            return floor(smallCraft.getOSI() * 4.5, Ceil.HALF_TON);
         }
     }
 
@@ -145,7 +145,7 @@ public class TestSmallCraft extends TestAero {
         for (int arc = 0; arc < arcs; arc++) {
             int excess = (weaponsPerArc[arc] - 1) / slotsPerArc(sc);
             if (excess > 0) {
-                retVal[arc] = ceil(excess * weaponTonnage[arc] / 10.0, Ceil.HALFTON);
+                retVal[arc] = ceil(excess * weaponTonnage[arc] / 10.0, Ceil.HALF_TON);
             }
             if (hasNC3) {
                 retVal[arc] *= 2;
@@ -175,7 +175,7 @@ public class TestSmallCraft extends TestAero {
         } else {
             multiplier = smallCraftEngineMultiplier(year);
         }
-        return ceil(tonnage * desiredSafeThrust * multiplier, Ceil.HALFTON);
+        return ceil(tonnage * desiredSafeThrust * multiplier, Ceil.HALF_TON);
     }
 
     public static int weightFreeHeatSinks(SmallCraft sc) {
@@ -316,7 +316,7 @@ public class TestSmallCraft extends TestAero {
         if (smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
             return ceil(smallCraft.getWeight() * dropshipControlMultiplier(year), Ceil.TON);
         } else {
-            return ceil(smallCraft.getWeight() * smallCraftControlMultiplier(year), Ceil.HALFTON);
+            return ceil(smallCraft.getWeight() * smallCraftControlMultiplier(year), Ceil.HALF_TON);
         }
     }
 
@@ -339,7 +339,7 @@ public class TestSmallCraft extends TestAero {
     @Override
     public double getWeightFuel() {
         // Add 2% for pumps and round up to the half ton
-        return ceil(smallCraft.getFuelTonnage() * 1.02, Ceil.HALFTON);
+        return ceil(smallCraft.getFuelTonnage() * 1.02, Ceil.HALF_TON);
     }
 
     @Override
@@ -531,7 +531,7 @@ public class TestSmallCraft extends TestAero {
         correct &= !hasIllegalEquipmentCombinations(buff);
         correct &= correctHeatSinks(buff);
         correct &= correctCrew(buff);
-        correct &= correctCriticals(buff);
+        correct &= correctCriticalSlots(buff);
         if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) ||
               getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
@@ -750,7 +750,7 @@ public class TestSmallCraft extends TestAero {
         buff.append(printArmorPlacement());
         correctArmor(buff);
         buff.append(printLocations());
-        correctCriticals(buff);
+        correctCriticalSlots(buff);
         printFailedEquipment(buff);
         return buff;
     }

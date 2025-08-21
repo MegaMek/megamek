@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2012-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -57,7 +57,7 @@ import megamek.common.weapons.artillery.ArtilleryWeapon;
  * @author Jay Lawson (Taharqa)
  */
 public class TestInfantry extends TestEntity {
-    private Infantry infantry;
+    private final Infantry infantry;
 
     public TestInfantry(Infantry infantry, TestEntityOption option, String fileString) {
         super(option, null, null);
@@ -172,7 +172,7 @@ public class TestInfantry extends TestEntity {
 
         int max = maxSecondaryWeapons(inf);
         if (inf.getSecondaryWeaponsPerSquad() > max) {
-            buff.append("Number of secondary weapons exceeds maximum of " + max).append("\n\n");
+            buff.append("Number of secondary weapons exceeds maximum of ").append(max).append("\n\n");
             correct = false;
         }
 
@@ -328,21 +328,14 @@ public class TestInfantry extends TestEntity {
      */
     public static int maxSquadSize(EntityMovementMode movementMode, boolean alt, @Nullable InfantryMount mount) {
         if (mount == null) {
-            switch (movementMode) {
-                case HOVER:
-                case SUBMARINE:
-                    return 5;
-                case WHEELED:
-                    return 6;
-                case TRACKED:
-                    return 7;
-                case INF_UMU:
-                    return alt ? 6 : 10;
-                case VTOL:
-                    return alt ? 2 : 4;
-                default:
-                    return 10;
-            }
+            return switch (movementMode) {
+                case HOVER, SUBMARINE -> 5;
+                case WHEELED -> 6;
+                case TRACKED -> 7;
+                case INF_UMU -> alt ? 6 : 10;
+                case VTOL -> alt ? 2 : 4;
+                default -> 10;
+            };
         } else if (mount.size().troopsPerCreature == 1) {
             return 10; // use foot infantry limit
         } else {
@@ -416,7 +409,7 @@ public class TestInfantry extends TestEntity {
                     max = 28;
                     break;
                 case VTOL:
-                    max = maxSquadSize(movementMode, alt, mount) * 4;
+                    max = maxSquadSize(movementMode, alt, null) * 4;
                     break;
                 default:
                     max = 30;
@@ -480,7 +473,7 @@ public class TestInfantry extends TestEntity {
      */
     public static double getWeight(Infantry infantry) {
         double weight = getWeightExact(infantry, new DummyCalculationReport());
-        return ceil(weight, Ceil.HALFTON);
+        return ceil(weight, Ceil.HALF_TON);
     }
 
     /**
@@ -527,61 +520,61 @@ public class TestInfantry extends TestEntity {
             report.addLine("", calculation, formatForReport(weight) + " t");
 
         } else { // not beast-mounted
-            double mult;
+            double multiplier;
             switch (infantry.getMovementMode()) {
                 case INF_MOTORIZED:
-                    mult = 0.195;
+                    multiplier = 0.195;
                     break;
                 case HOVER:
                 case TRACKED:
                 case WHEELED:
-                    mult = 1.0;
+                    multiplier = 1.0;
                     break;
                 case VTOL:
-                    mult = infantry.hasMicrolite() ? 1.4 : 1.9;
+                    multiplier = infantry.hasMicrolite() ? 1.4 : 1.9;
                     break;
                 case INF_JUMP:
-                    mult = 0.165;
+                    multiplier = 0.165;
                     break;
                 case INF_UMU:
                     if (infantry.getActiveUMUCount() > 1) {
-                        mult = 0.295; // motorized + 0.1 for motorized scuba
+                        multiplier = 0.295; // motorized + 0.1 for motorized scuba
                     } else {
-                        mult = 0.135; // foot + 0.05 for scuba
+                        multiplier = 0.135; // foot + 0.05 for scuba
                     }
                     break;
                 case SUBMARINE:
-                    mult = 0.9;
+                    multiplier = 0.9;
                     break;
                 case INF_LEG:
                 default:
-                    mult = 0.085;
+                    multiplier = 0.085;
             }
-            report.addLine("Base Weight: ", infantry.getMovementModeAsString(), formatForReport(mult) + " t");
+            report.addLine("Base Weight: ", infantry.getMovementModeAsString(), formatForReport(multiplier) + " t");
 
             if (infantry.hasSpecialization(Infantry.COMBAT_ENGINEERS)) {
-                mult += 0.1;
+                multiplier += 0.1;
                 report.addLine("", "Combat Engineers", "+ 0.1 t");
 
             }
 
             if (infantry.hasSpecialization(Infantry.PARATROOPS)) {
-                mult += 0.05;
+                multiplier += 0.05;
                 report.addLine("", "Paratroopers", "+ 0.05 t");
             }
 
             if (infantry.hasSpecialization(Infantry.PARAMEDICS)) {
-                mult += 0.05;
+                multiplier += 0.05;
                 report.addLine("", "Paramedics", "+ 0.05 t");
             }
 
             if (infantry.hasAntiMekGear()) {
-                mult += .015;
+                multiplier += .015;
                 report.addLine("", "Anti-Mek Gear", "+ 0.015 t");
             }
 
-            weight = activeTroopers * mult;
-            report.addLine("Trooper Weight:", activeTroopers + " x " + formatForReport(mult) + " t",
+            weight = activeTroopers * multiplier;
+            report.addLine("Trooper Weight:", activeTroopers + " x " + formatForReport(multiplier) + " t",
                   formatForReport(weight) + " t");
 
             weight += infantry.activeFieldWeapons().stream().mapToDouble(Mounted::getTonnage).sum();
@@ -597,7 +590,7 @@ public class TestInfantry extends TestEntity {
 
         report.addEmptyLine();
         // Intentional: Add the final rounding to the report, but return the exact weight
-        double roundedWeight = ceil(weight, Ceil.HALFTON);
+        double roundedWeight = ceil(weight, Ceil.HALF_TON);
         report.addLine("Final Weight:", "round up to nearest half ton",
               formatForReport(roundedWeight) + " t");
         return weight;

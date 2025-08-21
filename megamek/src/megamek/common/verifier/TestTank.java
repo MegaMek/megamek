@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -124,23 +124,14 @@ public class TestTank extends TestEntity {
      * @return The maximum construction tonnage
      */
     public static double maxTonnage(EntityMovementMode mode, boolean superheavy) {
-        switch (mode) {
-            case WHEELED:
-            case WIGE:
-                return superheavy ? 160.0 : 80.0;
-            case HOVER:
-                return superheavy ? 100.0 : 50.0;
-            case VTOL:
-                return superheavy ? 60.0 : 30.0;
-            case NAVAL:
-            case SUBMARINE:
-                return superheavy ? 555.0 : 300.0;
-            case HYDROFOIL:
-                return 100.0; // not eligible for superheavy
-            case TRACKED:
-            default:
-                return superheavy ? 200.0 : 100.0;
-        }
+        return switch (mode) {
+            case WHEELED, WIGE -> superheavy ? 160.0 : 80.0;
+            case HOVER -> superheavy ? 100.0 : 50.0;
+            case VTOL -> superheavy ? 60.0 : 30.0;
+            case NAVAL, SUBMARINE -> superheavy ? 555.0 : 300.0;
+            case HYDROFOIL -> 100.0; // not eligible for superheavy
+            default -> superheavy ? 200.0 : 100.0;
+        };
     }
 
     @Override
@@ -185,7 +176,7 @@ public class TestTank extends TestEntity {
         if (tank.isOmni() && tank.getBaseChassisTurretWeight() >= 0) {
             weight = tank.getBaseChassisTurretWeight();
         } else {
-            // For non-omnis, count up the weight of eq in the turret
+            // For non-OmniMeks, count up the weight of eq in the turret
             for (Mounted<?> m : tank.getEquipment()) {
                 if ((m.getLocation() == tank.getLocTurret())
                       && !(m.getType() instanceof AmmoType)
@@ -202,7 +193,7 @@ public class TestTank extends TestEntity {
             if (getEntity().getWeight() < 5) {
                 return TestEntity.ceil(weight, Ceil.KILO);
             } else {
-                return TestEntity.ceil(weight, Ceil.HALFTON);
+                return TestEntity.ceil(weight, Ceil.HALF_TON);
             }
         } else {
             return TestEntity.ceilMaxHalf(weight, getWeightCeilingTurret());
@@ -216,7 +207,7 @@ public class TestTank extends TestEntity {
         if (tank.isOmni() && tank.getBaseChassisTurret2Weight() >= 0) {
             weight = tank.getBaseChassisTurret2Weight();
         } else {
-            // For non-omnis, count up the weight of eq in the turret
+            // For non-OmniMeks, count up the weight of eq in the turret
             for (Mounted<?> m : tank.getEquipment()) {
                 if ((m.getLocation() == tank.getLocTurret2())
                       && !(m.getType() instanceof AmmoType)) {
@@ -230,17 +221,11 @@ public class TestTank extends TestEntity {
     }
 
     public double getTankWeightLifting() {
-        switch (tank.getMovementMode()) {
-            case HOVER:
-            case VTOL:
-            case HYDROFOIL:
-            case SUBMARINE:
-            case WIGE:
-                return TestEntity.ceilMaxHalf(tank.getWeight() / 10.0f,
-                      getWeightCeilingLifting());
-            default:
-                return 0f;
-        }
+        return switch (tank.getMovementMode()) {
+            case HOVER, VTOL, HYDROFOIL, SUBMARINE, WIGE -> TestEntity.ceilMaxHalf(tank.getWeight() / 10.0f,
+                  getWeightCeilingLifting());
+            default -> 0f;
+        };
     }
 
     @Override
@@ -396,7 +381,7 @@ public class TestTank extends TestEntity {
                 }
             } else if (m.getType().hasFlag(MiscType.F_MASC) && m.getType().hasSubType(MiscType.S_SUPERCHARGER)
                   && (tank instanceof VTOL)) {
-                buff.append("VTOLS cannot mount superchargers.");
+                buff.append("VTOL'S cannot mount superchargers.");
                 correct = false;
             }
         }
@@ -426,7 +411,7 @@ public class TestTank extends TestEntity {
         if (hasIllegalEquipmentCombinations(buff)) {
             correct = false;
         }
-        if (!correctCriticals(buff)) {
+        if (!correctCriticalSlots(buff)) {
             correct = false;
         }
         if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)
@@ -439,13 +424,13 @@ public class TestTank extends TestEntity {
     /**
      * Checks whether the equipment is compatible with the vehicle's motive type
      *
-     * @param eq            The equipment to check
-     * @param mode          The vehicle's motive type
-     * @param supporVehicle Whether the vehicle is a support vehicle.
+     * @param eq             The equipment to check
+     * @param mode           The vehicle's motive type
+     * @param supportVehicle Whether the vehicle is a support vehicle.
      *
      * @return Whether the equipment and motive type are compatible
      */
-    public static boolean legalForMotiveType(EquipmentType eq, EntityMovementMode mode, boolean supporVehicle) {
+    public static boolean legalForMotiveType(EquipmentType eq, EntityMovementMode mode, boolean supportVehicle) {
         final boolean isAero = mode.isAerodyne()
               || mode.isAirship()
               || mode.isStationKeeping();
@@ -484,7 +469,7 @@ public class TestTank extends TestEntity {
                 if (eq.hasSubType(MiscType.S_MARITIME_ESCAPE_POD | MiscType.S_MARITIME_LIFEBOAT)) {
                     // Allowed for all naval units and support vehicles with an amphibious chassis
                     // mod
-                    return supporVehicle ? !mode.isHover() : mode.isMarine();
+                    return supportVehicle ? !mode.isHover() : mode.isMarine();
                 } else {
                     return isAero;
                 }
@@ -571,7 +556,7 @@ public class TestTank extends TestEntity {
         }
     }
 
-    public boolean correctCriticals(StringBuffer buff) {
+    public boolean correctCriticalSlots(StringBuffer buff) {
         List<Mounted<?>> unallocated = new ArrayList<>();
         boolean correct = true;
 
@@ -678,12 +663,10 @@ public class TestTank extends TestEntity {
         if (!tank.hasPatchworkArmor()) {
             ArmorType armor = ArmorType.of(tank.getArmorType(tank.firstArmorIndex()),
                   TechConstants.isClan(tank.getArmorTechLevel(tank.firstArmorIndex())));
-            if (armor != null) {
-                int armorSlots = armor.getTankSlots(tank);
-                if (armorSlots != 0) {
-                    buff.append(StringUtil.makeLength(armor.getName(), 30));
-                    buff.append(armorSlots).append("\n");
-                }
+            int armorSlots = armor.getTankSlots(tank);
+            if (armorSlots != 0) {
+                buff.append(StringUtil.makeLength(armor.getName(), 30));
+                buff.append(armorSlots).append("\n");
             }
         }
 
@@ -691,7 +674,7 @@ public class TestTank extends TestEntity {
         // submunition type
         Map<String, Boolean> foundAmmo = new HashMap<>();
         for (Mounted<?> ammo : tank.getAmmo()) {
-            // don't count oneshot ammo
+            // don't count one shot ammo
             if ((ammo.getLocation() == Entity.LOC_NONE)
                   && (ammo.getBaseShotsLeft() == 1)) {
                 continue;
@@ -834,8 +817,8 @@ public class TestTank extends TestEntity {
                     turretWeight = TestEntity.ceil(turretWeight, Ceil.KILO);
                     turret2Weight = TestEntity.ceil(turret2Weight, Ceil.KILO);
                 } else {
-                    turretWeight = TestEntity.ceil(turretWeight, Ceil.HALFTON);
-                    turret2Weight = TestEntity.ceil(turret2Weight, Ceil.HALFTON);
+                    turretWeight = TestEntity.ceil(turretWeight, Ceil.HALF_TON);
+                    turret2Weight = TestEntity.ceil(turret2Weight, Ceil.HALF_TON);
                 }
             } else {
                 turretWeight = TestEntity.ceil(turretWeight,

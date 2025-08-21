@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -81,9 +81,9 @@ public class TestMek extends TestEntity {
         JJ_PROTOTYPE_IMPROVED(EquipmentTypeLookup.PROTOTYPE_IMPROVED_JJ, false, Mek.JUMP_PROTOTYPE_IMPROVED),
         JJ_UMU(EquipmentTypeLookup.MEK_UMU, false, Mek.JUMP_NONE);
 
-        private String internalName;
-        private boolean industrial;
-        private int jumpType;
+        private final String internalName;
+        private final boolean industrial;
+        private final int jumpType;
 
         MekJumpJets(String internalName, boolean industrial, int jumpType) {
             this.internalName = internalName;
@@ -119,7 +119,7 @@ public class TestMek extends TestEntity {
      * Filters all mek armor according to given tech constraints
      *
      * @param etype       Entity type bitmap
-     * @param industrial  Whether to include industrialmek armors
+     * @param industrial  Whether to include IndustrialMek armors
      * @param techManager The tech manager that determines legality
      *
      * @return A list of legal armors for the mek
@@ -145,7 +145,7 @@ public class TestMek extends TestEntity {
         return legalArmors;
     }
 
-    private Mek mek;
+    private final Mek mek;
 
     public TestMek(Mek mek, TestEntityOption option, String fileString) {
         super(option, mek.getEngine(), getStructure(mek));
@@ -245,34 +245,25 @@ public class TestMek extends TestEntity {
     }
 
     public double getWeightCockpit() {
-        switch (mek.getCockpitType()) {
-            case Mek.COCKPIT_SMALL:
-                return 2.0;
-            case Mek.COCKPIT_TORSO_MOUNTED:
-            case Mek.COCKPIT_DUAL:
-            case Mek.COCKPIT_SUPERHEAVY:
-            case Mek.COCKPIT_SUPERHEAVY_INDUSTRIAL:
-            case Mek.COCKPIT_TRIPOD:
-            case Mek.COCKPIT_TRIPOD_INDUSTRIAL:
-            case Mek.COCKPIT_INTERFACE:
-            case Mek.COCKPIT_QUADVEE:
-                return 4.0;
-            case Mek.COCKPIT_PRIMITIVE:
-            case Mek.COCKPIT_PRIMITIVE_INDUSTRIAL:
-            case Mek.COCKPIT_SUPERHEAVY_TRIPOD:
-            case Mek.COCKPIT_SUPERHEAVY_TRIPOD_INDUSTRIAL:
-            case Mek.COCKPIT_SMALL_COMMAND_CONSOLE:
-                return 5.0;
-            case Mek.COCKPIT_COMMAND_CONSOLE:
-                return 6.0;
-            case Mek.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE:
-                return 7.0;
-            case Mek.COCKPIT_STANDARD:
-            case Mek.COCKPIT_INDUSTRIAL:
-            case Mek.COCKPIT_VRRP:
-            default:
-                return 3.0;
-        }
+        return switch (mek.getCockpitType()) {
+            case Mek.COCKPIT_SMALL -> 2.0;
+            case Mek.COCKPIT_TORSO_MOUNTED,
+                 Mek.COCKPIT_DUAL,
+                 Mek.COCKPIT_SUPERHEAVY,
+                 Mek.COCKPIT_SUPERHEAVY_INDUSTRIAL,
+                 Mek.COCKPIT_TRIPOD,
+                 Mek.COCKPIT_TRIPOD_INDUSTRIAL,
+                 Mek.COCKPIT_INTERFACE,
+                 Mek.COCKPIT_QUADVEE -> 4.0;
+            case Mek.COCKPIT_PRIMITIVE,
+                 Mek.COCKPIT_PRIMITIVE_INDUSTRIAL,
+                 Mek.COCKPIT_SUPERHEAVY_TRIPOD,
+                 Mek.COCKPIT_SUPERHEAVY_TRIPOD_INDUSTRIAL,
+                 Mek.COCKPIT_SMALL_COMMAND_CONSOLE -> 5.0;
+            case Mek.COCKPIT_COMMAND_CONSOLE -> 6.0;
+            case Mek.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE -> 7.0;
+            default -> 3.0;
+        };
     }
 
     public double getWeightGyro() {
@@ -331,15 +322,13 @@ public class TestMek extends TestEntity {
 
     @Override
     public String printWeightControls() {
-        StringBuffer retVal = new StringBuffer(StringUtil.makeLength(
-              mek.getCockpitTypeString() + ":", getPrintSize() - 5));
-        retVal.append(makeWeightString(getWeightCockpit()));
-        retVal.append("\n");
-        retVal.append(StringUtil.makeLength(mek.getGyroTypeString() + ":",
-              getPrintSize() - 5));
-        retVal.append(makeWeightString(getWeightGyro()));
-        retVal.append("\n");
-        return retVal.toString();
+        return StringUtil.makeLength(
+              mek.getCockpitTypeString() + ":", getPrintSize() - 5) + makeWeightString(getWeightCockpit())
+              + "\n"
+              + StringUtil.makeLength(mek.getGyroTypeString() + ":",
+              getPrintSize() - 5)
+              + makeWeightString(getWeightGyro())
+              + "\n";
     }
 
     public Mek getMek() {
@@ -363,14 +352,10 @@ public class TestMek extends TestEntity {
         int count = 0;
         for (int slots = 0; slots < entity.getNumberOfCriticalSlots(location); slots++) {
             CriticalSlot slot = entity.getCritical(location, slots);
-            if ((slot == null) || (slot.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                continue;
-            } else if (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) {
+            if (slot != null && slot.getType() == CriticalSlot.TYPE_EQUIPMENT) {
                 if (slot.getMount().equals(mount)) {
                     count++;
                 }
-            } else {
-                // Ignore this?
             }
         }
         return count;
@@ -481,15 +466,15 @@ public class TestMek extends TestEntity {
         return true;
     }
 
-    public boolean criticalSlotsAllocated(Entity entity, Mounted<?> mounted,
-          Vector<Serializable> allocation, StringBuffer buff) {
+    public boolean criticalSlotsAllocated(Entity entity, Mounted<?> mounted, Vector<Serializable> allocation,
+          StringBuffer buff) {
         int location = mounted.getLocation();
         EquipmentType et = mounted.getType();
-        int criticals;
+        int criticalSlots;
         if (et instanceof MiscType) {
-            criticals = calcMiscCrits((MiscType) et, mounted.getSize());
+            criticalSlots = calcMiscCrits((MiscType) et, mounted.getSize());
         } else {
-            criticals = mounted.getNumCriticalSlots();
+            criticalSlots = mounted.getNumCriticalSlots();
         }
         int count = 0;
 
@@ -525,19 +510,18 @@ public class TestMek extends TestEntity {
             }
         }
 
-        if (count == criticals) {
+        if (count == criticalSlots) {
             return true;
         }
 
         allocation.addElement(mounted);
-        allocation.addElement(criticals);
+        allocation.addElement(criticalSlots);
         allocation.addElement(count);
         return false;
     }
 
-    public boolean checkCriticalSlotsForEquipment(Mek mek,
-          Vector<Mounted<?>> unallocated, Vector<Serializable> allocation,
-          Vector<Integer> heatSinks, StringBuffer buff) {
+    public boolean checkCriticalSlotsForEquipment(Mek mek, Vector<Mounted<?>> unallocated,
+          Vector<Serializable> allocation, Vector<Integer> heatSinks, StringBuffer buff) {
         boolean legal = true;
         int countInternalHeatSinks = 0;
         for (Mounted<?> m : mek.getEquipment()) {
@@ -550,11 +534,10 @@ public class TestMek extends TestEntity {
                 if (m.getNumCriticalSlots() == 0) {
                     continue;
                 }
-                if (!(m.getType() instanceof MiscType)) {
+                if (!(m.getType() instanceof MiscType mt)) {
                     unallocated.addElement(m);
                     continue;
                 }
-                MiscType mt = (MiscType) m.getType();
                 if (mt.hasFlag(MiscType.F_HEAT_SINK)
                       || mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
                       || mt.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
@@ -600,7 +583,7 @@ public class TestMek extends TestEntity {
         return legal;
     }
 
-    public boolean correctCriticals(StringBuffer buff) {
+    public boolean correctCriticalSlots(StringBuffer buff) {
         Vector<Mounted<?>> unallocated = new Vector<>();
         Vector<Serializable> allocation = new Vector<>();
         Vector<Integer> heatSinks = new Vector<>();
@@ -632,13 +615,13 @@ public class TestMek extends TestEntity {
                   .hasCompactHeatSinks())).append(" unallocated heat sinks\n");
             correct = false;
         }
-        if (!checkSystemCriticals(buff)) {
+        if (!checkSystemCriticalSlots(buff)) {
             correct = false;
         }
         return correct;
     }
 
-    private boolean checkSystemCriticals(StringBuffer buff) {
+    private boolean checkSystemCriticalSlots(StringBuffer buff) {
         // Engine criticalSlots
         boolean engineCorrect = true;
         int requiredSideCrits = engine.getSideTorsoCriticalSlots().length;
@@ -708,7 +691,7 @@ public class TestMek extends TestEntity {
     }
 
     public boolean correctMovement(StringBuffer buff) {
-        // Mechanical Jump Boosts can be greater then Running as long as
+        // Mechanical Jump Boosts can be greater than Running as long as
         // the unit can handle the weight.
         if ((mek.getJumpMP(MPCalculationSetting.NO_GRAVITY) > mek.getOriginalRunMP())
               && !mek.hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
@@ -745,19 +728,16 @@ public class TestMek extends TestEntity {
         }
         if (getCountHeatSinks() < engine.getWeightFreeEngineHeatSinks()) {
             buff.append("Heat Sinks:\n");
-            buff.append(" Engine    "
-                  + engine.integralHeatSinkCapacity(mek
-                  .hasCompactHeatSinks())
-                  + "\n");
-            buff.append(" Total     " + getCountHeatSinks() + "\n");
-            buff.append(" Required  " + engine.getWeightFreeEngineHeatSinks()
-                  + "\n");
+            buff.append(" Engine    ").append(engine.integralHeatSinkCapacity(mek
+                  .hasCompactHeatSinks())).append("\n");
+            buff.append(" Total     ").append(getCountHeatSinks()).append("\n");
+            buff.append(" Required  ").append(engine.getWeightFreeEngineHeatSinks()).append("\n");
             correct = false;
         }
         if (showCorrectArmor() && !correctArmor(buff)) {
             correct = false;
         }
-        if (showCorrectCritical() && !correctCriticals(buff)) {
+        if (showCorrectCritical() && !correctCriticalSlots(buff)) {
             correct = false;
         }
         if (showFailedEquip() && hasFailedEquipment(buff)) {
@@ -800,7 +780,7 @@ public class TestMek extends TestEntity {
         buff.append(printArmorPlacement());
         correctArmor(buff);
         buff.append(printLocations());
-        correctCriticals(buff);
+        correctCriticalSlots(buff);
 
         // printArmor(buff);
         printFailedEquipment(buff);
@@ -978,7 +958,7 @@ public class TestMek extends TestEntity {
                         int miscId = mek.getEquipmentNum(m);
                         if (mek.getMisc().stream().filter(otherMisc -> mek.getEquipmentNum(otherMisc) != miscId)
                               .filter(otherMisc -> otherMisc.getLocation() == m.getLocation())
-                              .anyMatch(otherMisc -> replacesHandActuator((MiscType) otherMisc.getType()))) {
+                              .anyMatch(otherMisc -> replacesHandActuator(otherMisc.getType()))) {
                             illegal = true;
                             buff.append(errorMsg);
                         }
@@ -1185,7 +1165,7 @@ public class TestMek extends TestEntity {
 
         if (mek.isPrimitive()) {
             if (mek.isOmni()) {
-                buff.append("primitive meks can't be omnis\n");
+                buff.append("primitive meks can't be OmniMeks\n");
                 illegal = true;
             }
             if (!((mek.getStructureType() == EquipmentType.T_STRUCTURE_STANDARD) || (mek
@@ -1207,13 +1187,13 @@ public class TestMek extends TestEntity {
             }
             if (mek.isIndustrial()) {
                 if (mek.getArmorType(0) != EquipmentType.T_ARMOR_COMMERCIAL) {
-                    buff.append("primitive industrialmeks must mount commercial armor\n");
+                    buff.append("primitive IndustrialMeks must mount commercial armor\n");
                     illegal = true;
                 }
             } else {
                 if ((mek.getArmorType(0) != EquipmentType.T_ARMOR_PRIMITIVE)
                       && (mek.getArmorType(0) != EquipmentType.T_ARMOR_INDUSTRIAL)) {
-                    buff.append("primitive battlemeks must mount primitive battlemek armor\n");
+                    buff.append("primitive BattleMeks must mount primitive battlemek armor\n");
                     illegal = true;
                 }
             }
@@ -1221,7 +1201,7 @@ public class TestMek extends TestEntity {
 
         if (mek instanceof LandAirMek) {
             if (mek.isOmni()) {
-                buff.append("LAMs may not be constructed as omnis\n");
+                buff.append("LAMs may not be constructed as OmniMeks\n");
                 illegal = true;
             }
             if (mek.getWeight() > 55) {
@@ -1341,13 +1321,16 @@ public class TestMek extends TestEntity {
                   : mek.getEngine().integralHeatSinkCapacity(compact));
             if (allocated < required) {
                 illegal = true;
-                buff.append("Only " + allocated + " of the required " + required
-                      + " heat sinks are allocated to critical slots.");
+                buff.append("Only ")
+                      .append(allocated)
+                      .append(" of the required ")
+                      .append(required)
+                      .append(" heat sinks are allocated to critical slots.");
             }
         }
 
         if (hasMASC && advancedMyomer != null) {
-            buff.append("MASC is incompatible with " + advancedMyomer.getName() + "\n");
+            buff.append("MASC is incompatible with ").append(advancedMyomer.getName()).append("\n");
             illegal = true;
         }
 
@@ -1555,7 +1538,7 @@ public class TestMek extends TestEntity {
     /**
      * @param equipment A type of equipment that can be mounted in a mek arm
      *
-     * @return Whether the equipment requires the hand acutator
+     * @return Whether the equipment requires the hand actuator
      */
     public static boolean requiresHandActuator(EquipmentType equipment) {
         return (equipment instanceof MiscType)
@@ -1572,7 +1555,7 @@ public class TestMek extends TestEntity {
     /**
      * @param misc A type of equipment that can be mounted in a mek arm
      *
-     * @return Whether the equipment requires the lower arm acutator
+     * @return Whether the equipment requires the lower arm actuator
      */
     public static boolean requiresLowerArm(MiscType misc) {
         return replacesHandActuator(misc) ||

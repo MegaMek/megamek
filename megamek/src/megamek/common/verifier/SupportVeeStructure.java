@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -61,73 +61,74 @@ public class SupportVeeStructure extends Structure {
 
     public static double getWeightStructure(Entity sv) {
         double baseChassisVal = sv.getBaseChassisValue();
-        double trMult = SV_TECH_RATING_STRUCTURE_MULTIPLIER.getOrDefault(sv.getStructuralTechRating(), 1.0);
-        double chassisModMult = 1;
+        double techRatingMultiplier = SV_TECH_RATING_STRUCTURE_MULTIPLIER.getOrDefault(sv.getStructuralTechRating(),
+              1.0);
+        double chassisModMultiplier = 1;
         if (sv.hasMisc(MiscType.F_AMPHIBIOUS)) {
-            chassisModMult *= 1.75;
+            chassisModMultiplier *= 1.75;
         }
         if (sv.hasMisc(MiscType.F_ARMORED_CHASSIS)) {
-            chassisModMult *= 1.5;
+            chassisModMultiplier *= 1.5;
         }
         if (sv.hasMisc(MiscType.F_BICYCLE)) {
-            chassisModMult *= 0.75;
+            chassisModMultiplier *= 0.75;
         }
         if (sv.hasMisc(MiscType.F_CONVERTIBLE)) {
-            chassisModMult *= 1.1;
+            chassisModMultiplier *= 1.1;
         }
         if (sv.hasMisc(MiscType.F_DUNE_BUGGY)) {
-            chassisModMult *= 1.5;
+            chassisModMultiplier *= 1.5;
         }
         if (sv.hasMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
-            chassisModMult *= 2;
+            chassisModMultiplier *= 2;
         }
         if (sv.hasMisc(MiscType.F_EXTERNAL_POWER_PICKUP)) {
-            chassisModMult *= 1.1;
+            chassisModMultiplier *= 1.1;
         }
         if (sv.hasMisc(MiscType.F_HYDROFOIL)) {
-            chassisModMult *= 1.7;
+            chassisModMultiplier *= 1.7;
         }
         if (sv.hasMisc(MiscType.F_MONOCYCLE)) {
-            chassisModMult *= 0.5;
+            chassisModMultiplier *= 0.5;
         }
         if (sv.hasMisc(MiscType.F_OFF_ROAD)) {
-            chassisModMult *= 1.5;
+            chassisModMultiplier *= 1.5;
         }
         if (sv.hasMisc(MiscType.F_PROP)) {
-            chassisModMult *= 1.2;
+            chassisModMultiplier *= 1.2;
         }
         if (sv.hasMisc(MiscType.F_SNOWMOBILE)) {
-            chassisModMult *= 1.75;
+            chassisModMultiplier *= 1.75;
         }
         if (sv.hasMisc(MiscType.F_STOL_CHASSIS)) {
-            chassisModMult *= 1.5;
+            chassisModMultiplier *= 1.5;
         }
         if (sv.hasMisc(MiscType.F_SUBMERSIBLE)) {
-            chassisModMult *= 1.8;
+            chassisModMultiplier *= 1.8;
         }
         if (sv.hasMisc(MiscType.F_TRACTOR_MODIFICATION)) {
-            chassisModMult *= 1.2;
+            chassisModMultiplier *= 1.2;
         }
         if (sv.hasMisc(MiscType.F_TRAILER_MODIFICATION)) {
-            chassisModMult *= 0.8;
+            chassisModMultiplier *= 0.8;
         }
         if (sv.hasMisc(MiscType.F_ULTRA_LIGHT)) {
-            chassisModMult *= 0.5;
+            chassisModMultiplier *= 0.5;
         }
         if (sv.hasMisc(MiscType.F_VSTOL_CHASSIS)) {
-            chassisModMult *= 2;
+            chassisModMultiplier *= 2;
         }
 
-        double weight = baseChassisVal * trMult * chassisModMult * sv.getWeight();
-        TestEntity.Ceil roundWeight = TestEntity.Ceil.HALFTON;
+        double weight = baseChassisVal * techRatingMultiplier * chassisModMultiplier * sv.getWeight();
+        Ceil roundWeight = Ceil.HALF_TON;
         if (sv.getWeight() < 5) {
-            roundWeight = TestEntity.Ceil.KILO;
+            roundWeight = Ceil.KILO;
         }
         return TestEntity.floor(weight, roundWeight);
     }
 
     @Override
-    public double getWeightStructure(double weight, TestEntity.Ceil roundWeight) {
+    public double getWeightStructure(double weight, Ceil roundWeight) {
         return getWeightStructure(sv);
     }
 

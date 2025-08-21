@@ -56,12 +56,12 @@ public abstract class AbstractDirectory {
     /**
      * A map of the category names to the direct sub-categories
      */
-    private Map<String, AbstractDirectory> categories = new TreeMap<>(new NaturalOrderComparator());
+    private final Map<String, AbstractDirectory> categories = new TreeMap<>(new NaturalOrderComparator());
 
     /**
      * A map of item names to the <code>ItemFile</code>s in the root category
      */
-    private Map<String, ItemFile> items = new TreeMap<>(new NaturalOrderComparator());
+    private final Map<String, ItemFile> items = new TreeMap<>(new NaturalOrderComparator());
     //endregion Variable Declarations
 
     //region Constructors

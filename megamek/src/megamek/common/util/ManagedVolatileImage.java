@@ -46,7 +46,7 @@ import java.awt.image.VolatileImage;
  */
 public class ManagedVolatileImage {
     private VolatileImage volatileImage;
-    private Image sourceImage;
+    private final Image sourceImage;
     private final int width;
     private final int height;
     private final int transparency;

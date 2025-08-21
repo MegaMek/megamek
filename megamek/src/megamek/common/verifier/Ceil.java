@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -31,26 +32,14 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.util;
+package megamek.common.verifier;
 
-import megamek.common.ToHitData;
+public enum Ceil {
+    TON(1.0), HALF_TON(2.0), QUARTER_TON(4.0), TENTH_TON(10.0), KILO(1000.0);
 
-/**
- * Used to track data for displaying "FiringSolution" data in the BoardView. This contains information about to-hit
- * numbers and any other useful information for determining what units to are the best to shoot at.
- *
- * @author arlith
- */
-public record FiringSolution(ToHitData toHit, boolean targetSpotted) {
+    public final double multiplier;
 
-    /**
-     *
-     */
-    public FiringSolution {
+    Ceil(double multiplier) {
+        this.multiplier = multiplier;
     }
-
-    public ToHitData getToHitData() {
-        return toHit;
-    }
-
 }

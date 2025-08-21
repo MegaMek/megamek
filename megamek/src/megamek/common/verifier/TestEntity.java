@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -73,19 +73,9 @@ import megamek.common.weapons.lasers.clan.CLChemicalLaserWeapon;
  * @author Reinhard Vicinus
  */
 public abstract class TestEntity implements TestEntityOption {
-    public static enum Ceil {
-        TON(1.0), HALFTON(2.0), QUARTERTON(4.0), TENTHTON(10.0), KILO(1000.0);
-
-        public final double mult;
-
-        private Ceil(double mult) {
-            this.mult = mult;
-        }
-    }
-
-    protected Engine engine = null;
-    protected Structure structure = null;
-    private TestEntityOption options = null;
+    protected Engine engine;
+    protected Structure structure;
+    private final TestEntityOption options;
 
     public abstract Entity getEntity();
 
@@ -251,8 +241,8 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     @Override
-    public boolean showUnderweightedEntity() {
-        return options.showUnderweightedEntity();
+    public boolean showUnderweightEntity() {
+        return options.showUnderweightEntity();
     }
 
     @Override
@@ -291,8 +281,8 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     @Override
-    public int getTargCompCrits() {
-        return options.getTargCompCrits();
+    public int getTargetingComputerCrits() {
+        return options.getTargetingComputerCrits();
     }
 
     @Override
@@ -309,22 +299,22 @@ public abstract class TestEntity implements TestEntityOption {
      * @return Rounded value
      */
     public static double ceil(double f, Ceil type) {
-        return Math.ceil(f * type.mult) / type.mult;
+        return Math.ceil(f * type.multiplier) / type.multiplier;
     }
 
     public static double ceilMaxHalf(double f, Ceil type) {
         if (type == Ceil.TON) {
-            return TestEntity.ceil(f, Ceil.HALFTON);
+            return TestEntity.ceil(f, Ceil.HALF_TON);
         }
         return TestEntity.ceil(f, type);
     }
 
     public static double floor(double f, Ceil type) {
-        return Math.floor(f * type.mult) / type.mult;
+        return Math.floor(f * type.multiplier) / type.multiplier;
     }
 
     public static double round(double f, Ceil type) {
-        return Math.round(f * type.mult) / type.mult;
+        return Math.round(f * type.multiplier) / type.multiplier;
     }
 
     static String makeWeightString(double weight) {
@@ -344,7 +334,7 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     /**
-     * Allows a value to be truncuated to an arbitrary number of decimal places.
+     * Allows a value to be truncated to an arbitrary number of decimal places.
      *
      * @param value     The input value
      * @param precision The number of decimals to truncate at
@@ -352,8 +342,7 @@ public abstract class TestEntity implements TestEntityOption {
      * @return The input value truncated to the number of decimal places supplied
      */
     public static double setPrecision(double value, int precision) {
-        return Math.round(value * Math.pow(10, precision))
-              / Math.pow(10, precision);
+        return Math.round(value * Math.pow(10, precision)) / Math.pow(10, precision);
     }
 
     /**
@@ -362,7 +351,7 @@ public abstract class TestEntity implements TestEntityOption {
      * @param etype        The entity type bit mask
      * @param industrial   For meks; industrial meks can only use certain armor types unless allowing experimental
      *                     rules
-     * @param primitive    Whether the unit is primitive/retrotech
+     * @param primitive    Whether the unit is primitive/RetroTech
      * @param movementMode For vehicles; hardened armor is illegal for some movement modes
      * @param techManager  The constraints used to filter the armor types
      *
@@ -390,19 +379,18 @@ public abstract class TestEntity implements TestEntityOption {
         }
     }
 
-    public static List<EquipmentType> validJumpJets(long entitytype, boolean industrial) {
-        if ((entitytype & Entity.ETYPE_MEK) != 0) {
+    public static List<EquipmentType> validJumpJets(long entityType, boolean industrial) {
+        if ((entityType & Entity.ETYPE_MEK) != 0) {
             return TestMek.MekJumpJets.allJJs(industrial);
-        } else if ((entitytype & Entity.ETYPE_TANK) != 0) {
+        } else if ((entityType & Entity.ETYPE_TANK) != 0) {
             return Collections.singletonList(EquipmentType.get(EquipmentTypeLookup.VEHICLE_JUMP_JET));
-        } else if ((entitytype & Entity.ETYPE_BATTLEARMOR) != 0) {
+        } else if ((entityType & Entity.ETYPE_BATTLEARMOR) != 0) {
             return TestBattleArmor.BAMotiveSystems.allSystems();
-        } else if ((entitytype & Entity.ETYPE_PROTOMEK) != 0) {
+        } else if ((entityType & Entity.ETYPE_PROTOMEK) != 0) {
             // Until we have a TestProtomek
-            return Arrays.asList(new EquipmentType[] {
-                  EquipmentType.get(EquipmentTypeLookup.PROTOMEK_JUMP_JET),
+            return Arrays.asList(EquipmentType.get(EquipmentTypeLookup.PROTOMEK_JUMP_JET),
                   EquipmentType.get(EquipmentTypeLookup.EXTENDED_JUMP_JET_SYSTEM),
-                  EquipmentType.get(EquipmentTypeLookup.PROTOMEK_UMU) });
+                  EquipmentType.get(EquipmentTypeLookup.PROTOMEK_UMU));
         } else {
             return Collections.emptyList();
         }
@@ -552,7 +540,7 @@ public abstract class TestEntity implements TestEntityOption {
         return points / pointsPerTon;
     }
 
-    public static double getWeightArmor(ArmorType armor, int totalOArmor, TestEntity.Ceil roundWeight) {
+    public static double getWeightArmor(ArmorType armor, int totalOArmor, Ceil roundWeight) {
         return TestEntity.ceilMaxHalf(getRawWeightArmor(armor, totalOArmor), roundWeight);
     }
 
@@ -828,12 +816,12 @@ public abstract class TestEntity implements TestEntityOption {
                 weight = TestEntity.ceil(fTons / 5.0f,
                       getWeightCeilingTargComp());
             }
-            switch (getTargCompCrits()) {
-                case CEIL_TARGCOMP_CRITS:
+            switch (getTargetingComputerCrits()) {
+                case CEIL_TARGETING_COMPUTER_CRITS:
                     return (int) Math.ceil(weight);
-                case ROUND_TARGCOMP_CRITS:
+                case ROUND_TARGETING_COMPUTER_CRITS:
                     return (int) Math.round(weight);
-                case FLOOR_TARGCOMP_CRITS:
+                case FLOOR_TARGETING_COMPUTER_CRITS:
                     return (int) Math.floor(weight);
             }
         } else if (EquipmentType.getArmorTypeName(
@@ -955,13 +943,13 @@ public abstract class TestEntity implements TestEntityOption {
         double weight = calculateWeightExact();
         // If the unit used kg standard, we just need to get rid of floating-point math
         // anomalies.
-        // Otherwise accumulated kg-scale equipment needs to be rounded up to the
+        // Otherwise, accumulated kg-scale equipment needs to be rounded up to the
         // nearest half-ton.
         weight = round(weight, Ceil.KILO);
         if (usesKgStandard()) {
             return weight;
         } else {
-            return ceil(weight, Ceil.HALFTON);
+            return ceil(weight, Ceil.HALF_TON);
         }
     }
 
@@ -1005,7 +993,7 @@ public abstract class TestEntity implements TestEntityOption {
 
     public boolean correctWeight(StringBuffer buff) {
         return correctWeight(buff, showOverweightedEntity(),
-              showUnderweightedEntity());
+              showUnderweightEntity());
     }
 
     public boolean correctWeight(StringBuffer buff, boolean showO, boolean showU) {
@@ -1179,7 +1167,7 @@ public abstract class TestEntity implements TestEntityOption {
         /*
          * A large number of units have official tech levels lower than their components
          * at the
-         * intro date. We test instead whether the stated tech level is ever possible
+         * intro date. We test instead whether the stated tech level is even possible
          * based on the
          * equipment. We also test for mixed IS/Clan tech in units that are not
          * designated as mixed.
@@ -1843,7 +1831,7 @@ public abstract class TestEntity implements TestEntityOption {
         /*
          * Besides tracking the number required we also want to check that they are all
          * linked.
-         * This will find situations where the number matches but they're not in the
+         * This will find situations where the number matches, but they're not in the
          * same
          * locations as the launcher.
          */
@@ -1947,7 +1935,7 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public String printArmorPlacement() {
-        StringBuffer buff = new StringBuffer();
+        StringBuilder buff = new StringBuilder();
         buff.append("Armor Placement:\n");
         for (int loc = 0; loc < getEntity().locations(); loc++) {
             buff.append(printArmorLocation(loc)).append("\n");

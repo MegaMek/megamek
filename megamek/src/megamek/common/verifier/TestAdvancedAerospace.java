@@ -111,13 +111,13 @@ public class TestAdvancedAerospace extends TestAero {
         // max armor tonnage is based on SI weight
         if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
             // SI weight (SI/1000) / 50
-            return floor(vessel.getOSI() * vessel.getWeight() / 50000.0, Ceil.HALFTON);
+            return floor(vessel.getOSI() * vessel.getWeight() / 50000.0, Ceil.HALF_TON);
         } else if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
             // SI weight (SI/100) / 3 + 60
-            return floor(vessel.getOSI() * vessel.getWeight() / 300.0 + 60, Ceil.HALFTON);
+            return floor(vessel.getOSI() * vessel.getWeight() / 300.0 + 60, Ceil.HALF_TON);
         } else {
             // SI weight (SI/150) / 12
-            return floor(vessel.getOSI() * vessel.getWeight() / 1800.0, Ceil.HALFTON);
+            return floor(vessel.getOSI() * vessel.getWeight() / 1800.0, Ceil.HALF_TON);
         }
     }
 
@@ -165,7 +165,7 @@ public class TestAdvancedAerospace extends TestAero {
         for (int arc = 0; arc < arcs; arc++) {
             int excess = (weaponsPerArc[arc] - 1) / slotsPerArc;
             if (excess > 0) {
-                retVal[arc] = ceil(excess * weaponTonnage[arc] / 10.0, Ceil.HALFTON);
+                retVal[arc] = ceil(excess * weaponTonnage[arc] / 10.0, Ceil.HALF_TON);
             }
             if (hasNC3) {
                 retVal[arc] *= 2;
@@ -201,13 +201,13 @@ public class TestAdvancedAerospace extends TestAero {
      */
     public static double calculateEngineTonnage(Jumpship vessel) {
         if (vessel.hasStationKeepingDrive()) {
-            return round(vessel.getWeight() * 0.012, Ceil.HALFTON);
+            return round(vessel.getWeight() * 0.012, Ceil.HALF_TON);
         } else if (vessel.isPrimitive()) {
             return round(vessel.getWeight() *
                   vessel.getOriginalWalkMP() *
-                  primitiveEngineMultiplier(vessel.getOriginalBuildYear()), Ceil.HALFTON);
+                  primitiveEngineMultiplier(vessel.getOriginalBuildYear()), Ceil.HALF_TON);
         } else {
-            return round(vessel.getWeight() * vessel.getOriginalWalkMP() * 0.06, Ceil.HALFTON);
+            return round(vessel.getWeight() * vessel.getOriginalWalkMP() * 0.06, Ceil.HALF_TON);
         }
     }
 
@@ -450,7 +450,7 @@ public class TestAdvancedAerospace extends TestAero {
 
             AmmoType mt = (AmmoType) m.getType();
             int slots = (int) Math.ceil((double) m.getBaseShotsLeft() / mt.getShots());
-            weight += ceil(m.getTonnage() * slots, Ceil.HALFTON);
+            weight += ceil(m.getTonnage() * slots, Ceil.HALF_TON);
         }
         return weight;
     }
@@ -544,7 +544,7 @@ public class TestAdvancedAerospace extends TestAero {
                       .append("\n");
             }
             for (AmmoMounted a : m.getBayAmmo()) {
-                double weight = ceil(a.getTonnage() * a.getBaseShotsLeft() / a.getType().getShots(), Ceil.HALFTON);
+                double weight = ceil(a.getTonnage() * a.getBaseShotsLeft() / a.getType().getShots(), Ceil.HALF_TON);
                 buffer.append("   ")
                       .append(StringUtil.makeLength(a.getName(), getPrintSize() - 25))
                       .append(weight)
@@ -665,7 +665,7 @@ public class TestAdvancedAerospace extends TestAero {
         correct &= correctCrew(buff);
         correct &= correctGravDecks(buff);
         correct &= correctBays(buff);
-        correct &= correctCriticals(buff);
+        correct &= correctCriticalSlots(buff);
         if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) ||
               getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
@@ -1003,7 +1003,7 @@ public class TestAdvancedAerospace extends TestAero {
         buff.append(printArmorPlacement());
         correctArmor(buff);
         buff.append(printLocations());
-        correctCriticals(buff);
+        correctCriticalSlots(buff);
 
         // printArmor(buff);
         printFailedEquipment(buff);

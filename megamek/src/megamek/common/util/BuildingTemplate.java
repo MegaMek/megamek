@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,9 +37,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import megamek.common.units.Building;
 import megamek.common.board.Coords;
 import megamek.common.enums.BuildingType;
+import megamek.common.units.Building;
 
 /**
  * Building template, for placing on the map during map generation.

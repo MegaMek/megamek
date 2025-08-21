@@ -86,7 +86,7 @@ public class HazardousLiquidPoolUtil {
      * liquid.
      *
      * @param entity        Entity in the liquid
-     * @param eruption      If this is from an eruoption
+     * @param eruption      If this is from an eruption
      * @param depth         Int depth of the liquid
      * @param twGameManager Current game manager (to damage entity)
      *
@@ -156,9 +156,6 @@ public class HazardousLiquidPoolUtil {
     /**
      * Support vehicles and industrial meks without environmental sealing take double damage
      *
-     * @param entity
-     *
-     * @return
      */
     public static int getHazardousLiquidPoolDamageMultiplierForUnsealed(Entity entity) {
         // IndustrialMeks and Support Vehicles take Double Damage
@@ -173,9 +170,6 @@ public class HazardousLiquidPoolUtil {
     /**
      * Infantry units take more or less damage depending on if they have XCT training and the appropriate gear
      *
-     * @param entity
-     *
-     * @return
      */
     public static double getHazardousLiquidPoolDamageDivisorForInfantry(Entity entity) {
         // If infantry have XCT training and appropriate gear they take 1/3 damage

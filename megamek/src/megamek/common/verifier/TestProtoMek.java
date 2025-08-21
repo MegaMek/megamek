@@ -245,9 +245,11 @@ public class TestProtoMek extends TestEntity {
     @Override
     public boolean correctEntity(StringBuffer buff, int ammoTechLvl) {
         boolean correct = true;
+
         if (skip()) {
-            return correct;
+            return true;
         }
+
         if (!allowOverweightConstruction() && !correctWeight(buff)) {
             buff.insert(0, printTechLevel() + printShortMovement());
             buff.append(printWeightCalculation());
@@ -331,11 +333,11 @@ public class TestProtoMek extends TestEntity {
                     illegal = true;
                 }
                 if (mount.getType().hasSubType(MiscType.S_PROTO_QMS) && !proto.isQuad()) {
-                    buff.append(mount.getType().getName() + "can only be used by quad ProtoMeks.\n");
+                    buff.append(mount.getType().getName()).append("can only be used by quad ProtoMeks.\n");
                     illegal = true;
                 }
                 if (mount.getType().hasSubType(MiscType.S_PROTOMEK_WEAPON) && proto.isQuad()) {
-                    buff.append(mount.getType().getName() + "cannot be used by quad ProtoMeks.\n");
+                    buff.append(mount.getType().getName()).append("cannot be used by quad ProtoMeks.\n");
                     illegal = true;
                 }
             }

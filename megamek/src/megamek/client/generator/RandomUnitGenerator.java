@@ -181,7 +181,7 @@ public class RandomUnitGenerator implements Serializable {
                     return;
                 }
 
-                if (line.startsWith("#")) {
+                if (line.startsWith("#") || line.isBlank()) {
                     continue;
                 }
 

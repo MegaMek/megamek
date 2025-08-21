@@ -51,16 +51,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.alphaStrike.ASArcs;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.units.Aero;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.Jumpship;
-import megamek.common.equipment.Mounted;
 import megamek.common.units.SmallCraft;
-import megamek.common.alphaStrike.ASArcs;
-import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.equipment.WeaponMounted;
-import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.bayWeapons.BayWeapon;
 
 public class ASLargeAeroSpecialAbilityConverter extends ASSpecialAbilityConverter {
 

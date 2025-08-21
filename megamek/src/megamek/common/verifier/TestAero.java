@@ -59,7 +59,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.Jumpship;
 import megamek.common.units.SmallCraft;
 import megamek.common.util.StringUtil;
-import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.bayWeapons.BayWeapon;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.lasers.clan.CLChemicalLaserWeapon;

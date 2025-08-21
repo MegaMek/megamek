@@ -55,7 +55,7 @@ import megamek.common.units.Crew;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Targetable;
-import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.bayWeapons.BayWeapon;
 
 class ComputeAbilityMods {
 

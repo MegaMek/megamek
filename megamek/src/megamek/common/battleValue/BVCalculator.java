@@ -55,7 +55,7 @@ import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.*;
-import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.bayWeapons.BayWeapon;
 
 /**
  * Base class for battle value calculators for all units. The subclasses implement overrides as necessary for the bv

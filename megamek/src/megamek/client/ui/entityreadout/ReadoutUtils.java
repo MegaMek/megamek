@@ -46,7 +46,7 @@ import megamek.common.equipment.*;
 import megamek.common.units.Entity;
 import megamek.common.units.InfantryCompartment;
 import megamek.common.units.Mek;
-import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.bayWeapons.BayWeapon;
 
 /**
  * This class contains some readout modules that are used by Entity types that are not in the same hierarchy (e.g.

@@ -89,7 +89,7 @@ import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
-import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
+import megamek.common.weapons.bayWeapons.TeleOperatedMissileBayWeapon;
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 import megamek.logging.MMLogger;
 

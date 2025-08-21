@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2002-2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2002-2007 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -51,20 +51,20 @@ import megamek.common.weapons.attacks.SpaceBombAttack;
 import megamek.common.weapons.attacks.StopSwarmAttack;
 import megamek.common.weapons.attacks.SwarmAttack;
 import megamek.common.weapons.attacks.SwarmWeaponAttack;
-import megamek.common.weapons.autocannons.clan.*;
-import megamek.common.weapons.autocannons.innerSphere.*;
-import megamek.common.weapons.battlearmor.clan.*;
-import megamek.common.weapons.battlearmor.innerSphere.*;
-import megamek.common.weapons.bayweapons.*;
-import megamek.common.weapons.bayweapons.capital.CapitalACBayWeapon;
-import megamek.common.weapons.bayweapons.capital.CapitalGaussBayWeapon;
-import megamek.common.weapons.bayweapons.capital.CapitalLaserBayWeapon;
-import megamek.common.weapons.bayweapons.capital.CapitalMDBayWeapon;
-import megamek.common.weapons.bayweapons.capital.CapitalMissileBayWeapon;
-import megamek.common.weapons.bayweapons.capital.CapitalPPCBayWeapon;
-import megamek.common.weapons.bayweapons.subCapital.SubCapCannonBayWeapon;
-import megamek.common.weapons.bayweapons.subCapital.SubCapLaserBayWeapon;
-import megamek.common.weapons.bayweapons.subCapital.SubCapitalMissileBayWeapon;
+import megamek.common.weapons.autoCannons.clan.*;
+import megamek.common.weapons.autoCannons.innerSphere.*;
+import megamek.common.weapons.battleArmor.clan.*;
+import megamek.common.weapons.battleArmor.innerSphere.*;
+import megamek.common.weapons.bayWeapons.*;
+import megamek.common.weapons.bayWeapons.capital.CapitalACBayWeapon;
+import megamek.common.weapons.bayWeapons.capital.CapitalGaussBayWeapon;
+import megamek.common.weapons.bayWeapons.capital.CapitalLaserBayWeapon;
+import megamek.common.weapons.bayWeapons.capital.CapitalMDBayWeapon;
+import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
+import megamek.common.weapons.bayWeapons.capital.CapitalPPCBayWeapon;
+import megamek.common.weapons.bayWeapons.subCapital.SubCapCannonBayWeapon;
+import megamek.common.weapons.bayWeapons.subCapital.SubCapLaserBayWeapon;
+import megamek.common.weapons.bayWeapons.subCapital.SubCapitalMissileBayWeapon;
 import megamek.common.weapons.bombs.BombArrowIV;
 import megamek.common.weapons.bombs.BombISRL10;
 import megamek.common.weapons.bombs.BombISRLP10;
@@ -91,18 +91,18 @@ import megamek.common.weapons.flamers.innerSphere.ISERFlamer;
 import megamek.common.weapons.flamers.innerSphere.ISFlamer;
 import megamek.common.weapons.flamers.innerSphere.ISHeavyFlamer;
 import megamek.common.weapons.flamers.innerSphere.ISVehicleFlamer;
-import megamek.common.weapons.gaussrifles.clan.CLAPGaussRifle;
-import megamek.common.weapons.gaussrifles.clan.CLGaussRifle;
-import megamek.common.weapons.gaussrifles.clan.CLHAG20;
-import megamek.common.weapons.gaussrifles.clan.CLHAG30;
-import megamek.common.weapons.gaussrifles.clan.CLHAG40;
-import megamek.common.weapons.gaussrifles.clan.CLImprovedGaussRifle;
-import megamek.common.weapons.gaussrifles.innerSphere.ISGaussRifle;
-import megamek.common.weapons.gaussrifles.innerSphere.ISHGaussRifle;
-import megamek.common.weapons.gaussrifles.innerSphere.ISImpHGaussRifle;
-import megamek.common.weapons.gaussrifles.innerSphere.ISLGaussRifle;
-import megamek.common.weapons.gaussrifles.innerSphere.ISMagshotGaussRifle;
-import megamek.common.weapons.gaussrifles.innerSphere.ISSilverBulletGauss;
+import megamek.common.weapons.gaussRifles.clan.CLAPGaussRifle;
+import megamek.common.weapons.gaussRifles.clan.CLGaussRifle;
+import megamek.common.weapons.gaussRifles.clan.CLHAG20;
+import megamek.common.weapons.gaussRifles.clan.CLHAG30;
+import megamek.common.weapons.gaussRifles.clan.CLHAG40;
+import megamek.common.weapons.gaussRifles.clan.CLImprovedGaussRifle;
+import megamek.common.weapons.gaussRifles.innerSphere.ISGaussRifle;
+import megamek.common.weapons.gaussRifles.innerSphere.ISHGaussRifle;
+import megamek.common.weapons.gaussRifles.innerSphere.ISImpHGaussRifle;
+import megamek.common.weapons.gaussRifles.innerSphere.ISLGaussRifle;
+import megamek.common.weapons.gaussRifles.innerSphere.ISMagshotGaussRifle;
+import megamek.common.weapons.gaussRifles.innerSphere.ISSilverBulletGauss;
 import megamek.common.weapons.infantry.InfantrySniperStalkerWeapon;
 import megamek.common.weapons.infantry.InfantryTWFlamerWeapon;
 import megamek.common.weapons.infantry.archaic.*;
@@ -1307,18 +1307,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLHeavyMGA());
 
         // LRMs
-        /*
-         * These were BA versions and there are currently BA
-         * versions of these weapons. So they've been commented out.
-         * EquipmentType.addType(new ISLRM1());
-         * EquipmentType.addType(new ISLRM1OS());
-         * EquipmentType.addType(new ISLRM2());
-         * EquipmentType.addType(new ISLRM2OS());
-         * EquipmentType.addType(new ISLRM3());
-         * EquipmentType.addType(new ISLRM3OS());
-         * EquipmentType.addType(new ISLRM4());
-         * EquipmentType.addType(new ISLRM4OS());
-         */
         EquipmentType.addType(new ISLRM5());
         EquipmentType.addType(new ISLRM10());
         EquipmentType.addType(new ISLRM15());
@@ -1445,17 +1433,11 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLLRT20OS());
 
         // SRMs
-        // EquipmentType.addType(new ISSRM1());
         EquipmentType.addType(new ISSRM2());
-        // EquipmentType.addType(new ISSRM3());
         EquipmentType.addType(new ISSRM4());
-        // EquipmentType.addType(new ISSRM5());
         EquipmentType.addType(new ISSRM6());
-        // EquipmentType.addType(new ISSRM1OS());
         EquipmentType.addType(new ISSRM2OS());
-        // EquipmentType.addType(new ISSRM3OS());
         EquipmentType.addType(new ISSRM4OS());
-        // EquipmentType.addType(new ISSRM5OS());
         EquipmentType.addType(new ISSRM6OS());
         EquipmentType.addType(new CLSRM1());
         EquipmentType.addType(new CLSRM1OS());
@@ -1511,14 +1493,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLSRT6OS());
 
         // RLs
-        /*
-         * This is a duplicate of the ISBARL, and not available for meks.
-         * EquipmentType.addType(new ISRL1());
-         * EquipmentType.addType(new ISRL2());
-         * EquipmentType.addType(new ISRL3());
-         * EquipmentType.addType(new ISRL4());
-         * EquipmentType.addType(new ISRL5());
-         */
         EquipmentType.addType(new RocketLauncher10());
         EquipmentType.addType(new RocketLauncher15());
         EquipmentType.addType(new RocketLauncher20());
@@ -1583,7 +1557,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISC3MBS());
         EquipmentType.addType(new CLLightTAG());
         EquipmentType.addType(new CLTAG());
-        // EquipmentType.addType(new ISBALightTAG());
         EquipmentType.addType(new CLBALightTAG());
         EquipmentType.addType(new ISPrototypeTAG());
 
@@ -1623,11 +1596,8 @@ public class WeaponType extends EquipmentType {
         // MapPack Solaris VII
         EquipmentType.addType(new ISMagshotGaussRifle());
         EquipmentType.addType(new ISMPod());
-
-        // EquipmentType.addType(new CLMPod());
         EquipmentType.addType(new ISBPod());
 
-        // EquipmentType.addType(new CLBPod());
         // Thunderbolts
         EquipmentType.addType(new ISThunderbolt5());
         EquipmentType.addType(new ISThunderbolt10());
@@ -1644,10 +1614,7 @@ public class WeaponType extends EquipmentType {
         // Taser
         EquipmentType.addType(new ISMekTaser());
 
-        EquipmentType.addType(new ISNailandRivetGun());
-        // EquipmentType.addType(new ISRivetGun());
-        // EquipmentType.addType(new CLNailGun());
-        // EquipmentType.addType(new CLRivetGun());
+        EquipmentType.addType(new ISNailAndRivetGun());
 
         // rifles
         EquipmentType.addType(new ISRifleLight());

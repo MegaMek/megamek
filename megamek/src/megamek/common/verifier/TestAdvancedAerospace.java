@@ -62,7 +62,7 @@ import megamek.common.units.NavalRepairFacility;
 import megamek.common.units.Warship;
 import megamek.common.util.RoundWeight;
 import megamek.common.util.StringUtil;
-import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.bayWeapons.BayWeapon;
 import megamek.common.weapons.capitalWeapons.ScreenLauncherWeapon;
 
 /**

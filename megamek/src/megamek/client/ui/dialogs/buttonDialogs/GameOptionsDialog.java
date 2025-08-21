@@ -69,7 +69,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
-import megamek.common.weapons.bayweapons.capital.CapitalMissileBayWeapon;
+import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
 import megamek.utilities.xml.MMXMLUtility;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;

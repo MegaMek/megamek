@@ -63,7 +63,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.Weapon;
-import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
+import megamek.common.weapons.bayWeapons.TeleOperatedMissileBayWeapon;
 import megamek.common.weapons.handlers.AmmoBayWeaponHandler;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.WeaponHandler;

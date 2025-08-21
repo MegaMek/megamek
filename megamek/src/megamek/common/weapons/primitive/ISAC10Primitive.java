@@ -44,7 +44,7 @@ import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
-import megamek.common.weapons.autocannons.ACWeapon;
+import megamek.common.weapons.autoCannons.ACWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.PrimitiveACWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;

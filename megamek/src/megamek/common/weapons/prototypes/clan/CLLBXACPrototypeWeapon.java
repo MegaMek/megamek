@@ -38,7 +38,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
-import megamek.common.weapons.autocannons.LBXACWeapon;
+import megamek.common.weapons.autoCannons.LBXACWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.CLLBXPrototypeHandler;
 import megamek.common.weapons.handlers.ac.ACWeaponHandler;

@@ -62,7 +62,7 @@ import megamek.common.interfaces.ITechnology;
 import megamek.common.units.Entity;
 import megamek.common.util.RoundWeight;
 import megamek.common.util.YamlEncDec;
-import megamek.common.weapons.autocannons.HVACWeapon;
+import megamek.common.weapons.autoCannons.HVACWeapon;
 import megamek.common.weapons.defensivePods.BPodWeapon;
 import megamek.common.weapons.defensivePods.MPodWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.artillery;
 
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoType;
@@ -49,6 +51,7 @@ import megamek.server.totalwarfare.TWGameManager;
  */
 
 public abstract class ArrowIV extends ArtilleryWeapon {
+    @Serial
     private static final long serialVersionUID = -4495524659692575107L;
 
     // Air-Defense Arrow IV (ADA) missile ranges differ from normal Arrow IV ammo
@@ -86,8 +89,8 @@ public abstract class ArrowIV extends ArtilleryWeapon {
         int eRange = getExtremeRange();
         boolean hasLoadedAmmo = (weapon.getLinked() != null);
         if (hasLoadedAmmo) {
-            AmmoType atype = (AmmoType) weapon.getLinked().getType();
-            if (atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
+            AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
+            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
                 minRange = ADA_MIN_RANGE;
                 sRange = ADA_SHORT_RANGE;
                 mRange = ADA_MED_RANGE;

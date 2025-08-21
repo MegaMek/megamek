@@ -49,7 +49,7 @@ import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
-import megamek.common.weapons.bayweapons.capital.CapitalMissileBayWeapon;
+import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 
 /**

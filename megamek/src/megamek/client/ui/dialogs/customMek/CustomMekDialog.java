@@ -86,8 +86,8 @@ import megamek.common.options.Quirks;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.units.*;
 import megamek.common.verifier.TestEntity;
-import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
-import megamek.common.weapons.bayweapons.capital.CapitalMissileBayWeapon;
+import megamek.common.weapons.bayWeapons.ArtilleryBayWeapon;
+import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
 import megamek.server.ServerBoardHelper;
 
 /**

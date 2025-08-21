@@ -46,7 +46,7 @@ import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
-import megamek.common.weapons.gaussrifles.GaussWeapon;
+import megamek.common.weapons.gaussRifles.GaussWeapon;
 import megamek.common.weapons.handlers.WeaponHandler;
 
 public class WeaponMounted extends Mounted<WeaponType> {

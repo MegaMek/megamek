@@ -70,12 +70,12 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.attacks.DiveBombAttack;
-import megamek.common.weapons.bayweapons.LaserBayWeapon;
-import megamek.common.weapons.bayweapons.PPCBayWeapon;
-import megamek.common.weapons.bayweapons.PulseLaserBayWeapon;
-import megamek.common.weapons.bayweapons.ScreenLauncherBayWeapon;
+import megamek.common.weapons.bayWeapons.LaserBayWeapon;
+import megamek.common.weapons.bayWeapons.PPCBayWeapon;
+import megamek.common.weapons.bayWeapons.PulseLaserBayWeapon;
+import megamek.common.weapons.bayWeapons.ScreenLauncherBayWeapon;
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
-import megamek.common.weapons.gaussrifles.GaussWeapon;
+import megamek.common.weapons.gaussRifles.GaussWeapon;
 
 class ComputeToHitIsImpossible {
 

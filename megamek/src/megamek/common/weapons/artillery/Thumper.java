@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.artillery;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -47,6 +49,7 @@ import megamek.common.equipment.EquipmentTypeLookup;
  * @since Oct 20, 2004
  */
 public class Thumper extends ArtilleryWeapon {
+    @Serial
     private static final long serialVersionUID = -3256813053043672610L;
 
     public Thumper() {

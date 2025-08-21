@@ -49,7 +49,7 @@ import javax.swing.JTextField;
 import megamek.client.ui.Messages;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.bayweapons.capital.CapitalMissileBayWeapon;
+import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
 
 /**
  * Ask for the velocity setting for a teleoperated missile.

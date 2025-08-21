@@ -37,7 +37,7 @@ package megamek.common.weapons.capitalWeapons;
 import java.io.Serial;
 
 import megamek.common.equipment.Mounted;
-import megamek.common.weapons.gaussrifles.GaussWeapon;
+import megamek.common.weapons.gaussRifles.GaussWeapon;
 
 /**
  * Naval Gauss Weapon superclass

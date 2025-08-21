@@ -63,7 +63,7 @@ import megamek.common.interfaces.ITechManager;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.units.*;
 import megamek.common.util.StringUtil;
-import megamek.common.weapons.battlearmor.BAFlamerWeapon;
+import megamek.common.weapons.battleArmor.BAFlamerWeapon;
 import megamek.common.weapons.lasers.clan.CLChemicalLaserWeapon;
 
 /**

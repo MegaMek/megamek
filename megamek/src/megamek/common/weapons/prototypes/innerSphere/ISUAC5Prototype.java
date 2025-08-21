@@ -43,7 +43,7 @@ import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
-import megamek.common.weapons.autocannons.UACWeapon;
+import megamek.common.weapons.autoCannons.UACWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.prototype.PrototypeISUltraWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;

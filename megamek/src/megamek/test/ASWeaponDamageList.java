@@ -40,7 +40,7 @@ import java.util.List;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponType;
-import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.bayWeapons.BayWeapon;
 
 public class ASWeaponDamageList {
 

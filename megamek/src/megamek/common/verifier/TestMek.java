@@ -62,10 +62,10 @@ import megamek.common.units.QuadMek;
 import megamek.common.units.QuadVee;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
-import megamek.common.weapons.autocannons.ACWeapon;
-import megamek.common.weapons.autocannons.LBXACWeapon;
-import megamek.common.weapons.autocannons.UACWeapon;
-import megamek.common.weapons.gaussrifles.GaussWeapon;
+import megamek.common.weapons.autoCannons.ACWeapon;
+import megamek.common.weapons.autoCannons.LBXACWeapon;
+import megamek.common.weapons.autoCannons.UACWeapon;
+import megamek.common.weapons.gaussRifles.GaussWeapon;
 import megamek.common.weapons.lasers.EnergyWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 

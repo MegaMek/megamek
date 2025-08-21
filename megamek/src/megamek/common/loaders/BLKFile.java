@@ -56,7 +56,7 @@ import megamek.common.options.PilotOptions;
 import megamek.common.units.*;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.attacks.InfantryAttack;
-import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.bayWeapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 

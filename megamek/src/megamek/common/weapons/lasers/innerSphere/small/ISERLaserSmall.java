@@ -1,0 +1,91 @@
+/*
+  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
+package megamek.common.weapons.lasers.innerSphere.small;
+
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.weapons.lasers.LaserWeapon;
+
+/**
+ * @author Andrew Hunter
+ * @since Sep 12, 2004
+ */
+public class ISERLaserSmall extends LaserWeapon {
+    private static final long serialVersionUID = -4997798107691083605L;
+
+    public ISERLaserSmall() {
+        super();
+        name = "ER Small Laser";
+        setInternalName("ISERSmallLaser");
+        addLookupName("IS ER Small Laser");
+        sortingName = "Laser ER B";
+        heat = 2;
+        damage = 3;
+        shortRange = 2;
+        mediumRange = 4;
+        longRange = 5;
+        extremeRange = 7;
+        waterShortRange = 1;
+        waterMediumRange = 2;
+        waterLongRange = 3;
+        waterExtremeRange = 4;
+        tonnage = 0.5;
+        criticalSlots = 1;
+        flags = flags.or(F_NO_FIRES);
+        bv = 17;
+        cost = 11250;
+        shortAV = 3;
+        maxRange = RANGE_SHORT;
+        rulesRefs = "226, TM";
+        // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
+        // December 2021 - Errata request to change common date
+        techAdvancement.setTechBase(TechBase.IS)
+              .setIntroLevel(false)
+              .setUnofficial(false)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C)
+              .setISAdvancement(3052, 3058, 3062, DATE_NONE, DATE_NONE)
+              .setISApproximate(false, false, true, false, false)
+              .setPrototypeFactions(Faction.FW, Faction.WB)
+              .setProductionFactions(Faction.FW);
+    }
+
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
+    }
+}

@@ -39,7 +39,7 @@ import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
-import megamek.common.weapons.missiles.ThunderboltWeapon;
+import megamek.common.weapons.missiles.thuunderbolt.ThunderboltWeapon;
 
 /**
  * @author Jay Lawson

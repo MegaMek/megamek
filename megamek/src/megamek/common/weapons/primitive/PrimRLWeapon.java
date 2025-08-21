@@ -40,7 +40,7 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.RLHandler;
-import megamek.common.weapons.missiles.RLWeapon;
+import megamek.common.weapons.missiles.rocketLauncher.RLWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**

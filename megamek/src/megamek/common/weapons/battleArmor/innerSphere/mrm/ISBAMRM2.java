@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.battleArmor.innerSphere.mrm;
 
+import java.io.Serial;
+
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -48,6 +50,7 @@ public class ISBAMRM2 extends MRMWeapon {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -8616767319138511565L;
 
     /**

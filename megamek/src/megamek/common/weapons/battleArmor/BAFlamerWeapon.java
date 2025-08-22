@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.battleArmor;
 
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoType;
@@ -48,19 +50,25 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sept 23, 2004
  */
 public abstract class BAFlamerWeapon extends Weapon {
+    @Serial
     private static final long serialVersionUID = -8198014543155920036L;
 
     public BAFlamerWeapon() {
         super();
-        flags = flags.or(F_FLAMER).or(F_ENERGY).or(F_BA_WEAPON)
-              .or(F_BURST_FIRE).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_FLAMER)
+              .or(F_ENERGY)
+              .or(F_BA_WEAPON)
+              .or(F_BURST_FIRE)
+              .andNot(F_MEK_WEAPON)
+              .andNot(F_TANK_WEAPON)
+              .andNot(F_AERO_WEAPON)
+              .andNot(F_PROTO_WEAPON);
         ammoType = AmmoType.AmmoTypeEnum.NA;
         atClass = CLASS_POINT_DEFENSE;
     }
 
     @Override
-    public AttackHandler getCorrectHandler(ToHitData toHit,
-          WeaponAttackAction waa, Game game, TWGameManager manager) {
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new FlamerHandler(toHit, waa, game, manager);
     }
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.battleArmor.innerSphere;
 
+import java.io.Serial;
+
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -41,13 +43,11 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.weapons.ppc.PPCWeapon;
 
 /**
- * Commented out in WeaponType. Clan version is same stats as IS one. And Clan versions captures Tech progression for
- * both.
- *
  * @author Sebastian Brocks
  * @since Sep 24, 2004
  */
 public class ISBASupportPPC extends PPCWeapon {
+    @Serial
     private static final long serialVersionUID = -993141316216102914L;
 
     public ISBASupportPPC() {

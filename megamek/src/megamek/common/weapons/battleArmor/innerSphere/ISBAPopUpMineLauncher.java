@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.battleArmor.innerSphere;
 
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
@@ -53,6 +55,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sep 24, 2004
  */
 public class ISBAPopUpMineLauncher extends Weapon {
+    @Serial
     private static final long serialVersionUID = -3445048091894801251L;
 
     public ISBAPopUpMineLauncher() {

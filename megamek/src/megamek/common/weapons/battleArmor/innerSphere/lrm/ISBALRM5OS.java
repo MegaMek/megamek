@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.battleArmor.innerSphere.lrm;
 
+import java.io.Serial;
+
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -49,6 +51,7 @@ public class ISBALRM5OS extends LRMWeapon {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 3915337270241715850L;
 
     /**
@@ -68,7 +71,6 @@ public class ISBALRM5OS extends LRMWeapon {
         criticalSlots = 5;
         bv = 9;
         cost = 18000;
-        criticalSlots = 5;
         flags = flags.or(F_NO_FIRES)
               .or(F_BA_WEAPON)
               .or(F_ONE_SHOT)

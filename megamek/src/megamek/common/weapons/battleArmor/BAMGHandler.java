@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.weapons.battleArmor;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.Report;
@@ -52,16 +53,15 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Oct 20, 2004
  */
 public class BAMGHandler extends WeaponHandler {
+    @Serial
     private static final long serialVersionUID = 4109377609879352900L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
-    public BAMGHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
-        super(t, w, g, m);
+    public BAMGHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
+          TWGameManager twGameManager) {
+        super(toHitData, weaponAttackAction, game, twGameManager);
         damageType = DamageType.ANTI_INFANTRY;
     }
 
@@ -73,7 +73,7 @@ public class BAMGHandler extends WeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         if (weapon.isRapidFire() && !(target instanceof Infantry)) {
-            // Check for rapid fire Option. Only MGs can be rapidfire.
+            // Check for rapid fire Option. Only MGs can be rapid fire.
             switch (wtype.getDamage()) {
                 case 1:
                     nDamPerHit = Math.max(1, Compute.d6() - 1);

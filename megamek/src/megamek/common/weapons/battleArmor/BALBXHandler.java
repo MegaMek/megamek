@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.weapons.battleArmor;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.Report;
@@ -47,6 +48,7 @@ import megamek.common.weapons.handlers.WeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class BALBXHandler extends WeaponHandler {
+    @Serial
     private static final long serialVersionUID = -6378056043285522609L;
 
     private static final String sSalvoType = " pellet(s) ";

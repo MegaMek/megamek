@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.battleArmor;
 
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoType;
@@ -47,13 +49,20 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Oct 20, 2004
  */
 public abstract class BAMGWeapon extends Weapon {
+    @Serial
     private static final long serialVersionUID = -6222214456392675786L;
 
     public BAMGWeapon() {
         super();
         ammoType = AmmoType.AmmoTypeEnum.NA;
-        flags = flags.or(F_MG).or(F_BALLISTIC).or(F_BA_WEAPON).or(F_BURST_FIRE)
-              .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_MG)
+              .or(F_BALLISTIC)
+              .or(F_BA_WEAPON)
+              .or(F_BURST_FIRE)
+              .andNot(F_MEK_WEAPON)
+              .andNot(F_TANK_WEAPON)
+              .andNot(F_AERO_WEAPON)
+              .andNot(F_PROTO_WEAPON);
     }
 
     /*

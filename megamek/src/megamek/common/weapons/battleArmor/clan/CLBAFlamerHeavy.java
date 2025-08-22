@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.battleArmor.clan;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
@@ -47,6 +49,7 @@ import megamek.common.weapons.battleArmor.BAFlamerWeapon;
  * @since Sep 24, 2004
  */
 public class CLBAFlamerHeavy extends BAFlamerWeapon {
+    @Serial
     private static final long serialVersionUID = 8041763978361592459L;
 
     public CLBAFlamerHeavy() {

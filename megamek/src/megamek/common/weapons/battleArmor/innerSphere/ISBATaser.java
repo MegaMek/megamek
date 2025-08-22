@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.battleArmor.innerSphere;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -52,6 +54,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Sebastian Brocks
  */
 public class ISBATaser extends AmmoWeapon {
+    @Serial
     private static final long serialVersionUID = 4393086562754363816L;
 
     public ISBATaser() {
@@ -72,8 +75,14 @@ public class ISBATaser extends AmmoWeapon {
         cost = 10000;
         tonnage = 0.3;
         criticalSlots = 3;
-        flags = flags.or(F_BA_WEAPON).or(F_ONE_SHOT).or(F_TASER).or(F_BALLISTIC)
-              .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_BA_WEAPON)
+              .or(F_ONE_SHOT)
+              .or(F_TASER)
+              .or(F_BALLISTIC)
+              .andNot(F_MEK_WEAPON)
+              .andNot(F_TANK_WEAPON)
+              .andNot(F_AERO_WEAPON)
+              .andNot(F_PROTO_WEAPON);
         rulesRefs = "346, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)

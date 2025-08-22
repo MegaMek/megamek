@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.battleArmor.innerSphere.laser;
 
+import java.io.Serial;
+
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -47,6 +49,7 @@ import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
  * @since Sep 12, 2004
  */
 public class ISBALaserVSPSmall extends VariableSpeedPulseLaserWeapon {
+    @Serial
     private static final long serialVersionUID = 2676144961105838316L;
 
     public ISBALaserVSPSmall() {

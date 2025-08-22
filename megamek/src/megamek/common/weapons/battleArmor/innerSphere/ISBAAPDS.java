@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.battleArmor.innerSphere;
 
+import java.io.Serial;
+
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -45,6 +47,7 @@ import megamek.common.weapons.Weapon;
  * @since Sep 25, 2004
  */
 public class ISBAAPDS extends Weapon {
+    @Serial
     private static final long serialVersionUID = 5678281956614161074L;
 
     public ISBAAPDS() {
@@ -55,8 +58,14 @@ public class ISBAAPDS extends Weapon {
         criticalSlots = 2;
         bv = 7;
         longRange = 3;
-        flags = flags.or(F_BA_WEAPON).or(F_AUTO_TARGET).or(F_AMS).or(F_BALLISTIC).andNot(F_MEK_WEAPON)
-              .andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_BA_WEAPON)
+              .or(F_AUTO_TARGET)
+              .or(F_AMS)
+              .or(F_BALLISTIC)
+              .andNot(F_MEK_WEAPON)
+              .andNot(F_TANK_WEAPON)
+              .andNot(F_AERO_WEAPON)
+              .andNot(F_PROTO_WEAPON);
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 50000;

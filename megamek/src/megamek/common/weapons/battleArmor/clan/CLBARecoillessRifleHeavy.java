@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2004-2005 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.battleArmor.clan;
 
+import java.io.Serial;
+
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -47,6 +49,7 @@ import megamek.common.weapons.Weapon;
  * @since Sep 24, 2004
  */
 public class CLBARecoillessRifleHeavy extends Weapon {
+    @Serial
     private static final long serialVersionUID = -4900393422594499114L;
 
     public CLBARecoillessRifleHeavy() {

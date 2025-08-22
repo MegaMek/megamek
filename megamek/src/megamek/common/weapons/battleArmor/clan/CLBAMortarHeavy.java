@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.battleArmor.clan;
 
+import java.io.Serial;
+
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -55,6 +57,7 @@ import megamek.common.weapons.Weapon;
  * @since Sep 24, 2004
  */
 public class CLBAMortarHeavy extends Weapon {
+    @Serial
     private static final long serialVersionUID = -141763207003813118L;
 
     public CLBAMortarHeavy() {

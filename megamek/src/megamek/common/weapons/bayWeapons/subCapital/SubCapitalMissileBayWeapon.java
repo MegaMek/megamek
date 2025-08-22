@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.bayWeapons.subCapital;
 
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.EquipmentTypeLookup;
@@ -48,6 +50,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sep 25, 2004
  */
 public class SubCapitalMissileBayWeapon extends AmmoBayWeapon {
+    @Serial
     private static final long serialVersionUID = 8656042527483383101L;
 
     public SubCapitalMissileBayWeapon() {

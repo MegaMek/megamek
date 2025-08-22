@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.flamers.clan;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
@@ -48,6 +50,7 @@ import megamek.common.weapons.flamers.FlamerWeapon;
  * @since Sep 24, 2004
  */
 public class CLERFlamer extends FlamerWeapon {
+    @Serial
     private static final long serialVersionUID = 1414639280093120062L;
 
     public CLERFlamer() {
@@ -85,8 +88,8 @@ public class CLERFlamer extends FlamerWeapon {
     }
 
     @Override
-    public int getAlphaStrikeHeatDamage(int rangeband) {
-        if (rangeband <= AlphaStrikeElement.RANGE_BAND_MEDIUM) {
+    public int getAlphaStrikeHeatDamage(int rangeBand) {
+        if (rangeBand <= AlphaStrikeElement.RANGE_BAND_MEDIUM) {
             return 2;
         } else {
             return 0;

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.bombs.innerSphere;
 
+import java.io.Serial;
+
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -50,6 +52,7 @@ public class ISAAAMissileWeapon extends ThunderboltWeapon {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -2043203178614130517L;
 
     public ISAAAMissileWeapon() {

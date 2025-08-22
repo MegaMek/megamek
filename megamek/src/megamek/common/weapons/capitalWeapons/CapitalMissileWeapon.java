@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.capitalWeapons;
 
+import java.io.Serial;
+
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -53,6 +55,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sept 2, 2004
  */
 public abstract class CapitalMissileWeapon extends AmmoWeapon {
+    @Serial
     private static final long serialVersionUID = 9186993166684654767L;
 
     public CapitalMissileWeapon() {

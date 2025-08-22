@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.bayWeapons.capital;
 
+import java.io.Serial;
+
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.weapons.bayWeapons.BayWeapon;
 
@@ -42,6 +44,7 @@ import megamek.common.weapons.bayWeapons.BayWeapon;
  * @since Sep 25, 2004
  */
 public class CapitalPPCBayWeapon extends BayWeapon {
+    @Serial
     private static final long serialVersionUID = 8756042527483383101L;
 
     public CapitalPPCBayWeapon() {

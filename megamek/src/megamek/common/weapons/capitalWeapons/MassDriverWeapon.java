@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,6 +38,8 @@
  */
 package megamek.common.weapons.capitalWeapons;
 
+import java.io.Serial;
+
 import megamek.common.weapons.gaussRifles.GaussWeapon;
 
 /**
@@ -48,6 +50,7 @@ public abstract class MassDriverWeapon extends GaussWeapon {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -2800123131421584210L;
 
     public MassDriverWeapon() {

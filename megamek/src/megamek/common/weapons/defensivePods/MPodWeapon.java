@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.defensivePods;
 
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoType;
@@ -49,6 +51,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sep 24, 2004
  */
 public abstract class MPodWeapon extends AmmoWeapon {
+    @Serial
     private static final long serialVersionUID = 3343394645568467135L;
 
     public MPodWeapon() {
@@ -64,8 +67,7 @@ public abstract class MPodWeapon extends AmmoWeapon {
         extremeRange = 4;
         tonnage = 1.0;
         criticalSlots = 1;
-        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_BALLISTIC)
-              .or(F_ONE_SHOT).or(F_M_POD);
+        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_BALLISTIC).or(F_ONE_SHOT).or(F_M_POD);
         explosive = true;
         bv = 5;
         cost = 6000;

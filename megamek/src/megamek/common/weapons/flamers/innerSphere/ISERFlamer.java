@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.flamers.innerSphere;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
@@ -48,6 +50,7 @@ import megamek.common.weapons.flamers.FlamerWeapon;
  * @since Sep 24, 2004
  */
 public class ISERFlamer extends FlamerWeapon {
+    @Serial
     private static final long serialVersionUID = 1414639280093120062L;
 
     public ISERFlamer() {
@@ -85,7 +88,7 @@ public class ISERFlamer extends FlamerWeapon {
     }
 
     @Override
-    public int getAlphaStrikeHeatDamage(int rangeband) {
-        return (rangeband <= AlphaStrikeElement.RANGE_BAND_MEDIUM) ? 2 : 0;
+    public int getAlphaStrikeHeatDamage(int rangeBand) {
+        return (rangeBand <= AlphaStrikeElement.RANGE_BAND_MEDIUM) ? 2 : 0;
     }
 }

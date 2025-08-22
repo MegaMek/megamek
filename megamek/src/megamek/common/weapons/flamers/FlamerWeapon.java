@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2004 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.flamers;
 
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
@@ -49,6 +51,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sept 23, 2004
  */
 public abstract class FlamerWeapon extends EnergyWeapon {
+    @Serial
     private static final long serialVersionUID = -8198014543155920036L;
 
     public FlamerWeapon() {
@@ -70,8 +73,8 @@ public abstract class FlamerWeapon extends EnergyWeapon {
     }
 
     @Override
-    public int getAlphaStrikeHeatDamage(int rangeband) {
-        return (rangeband == AlphaStrikeElement.RANGE_BAND_SHORT) ? 2 : 0;
+    public int getAlphaStrikeHeatDamage(int rangeBand) {
+        return (rangeBand == AlphaStrikeElement.RANGE_BAND_SHORT) ? 2 : 0;
     }
 
     @Override

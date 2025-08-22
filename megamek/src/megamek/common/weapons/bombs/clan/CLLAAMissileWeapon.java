@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.bombs.clan;
 
+import java.io.Serial;
+
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -50,6 +52,7 @@ public class CLLAAMissileWeapon extends ThunderboltWeapon {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 6262048986109960442L;
 
     public CLLAAMissileWeapon() {

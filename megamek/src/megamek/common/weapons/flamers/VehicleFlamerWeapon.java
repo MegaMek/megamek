@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,10 +38,13 @@
  */
 package megamek.common.weapons.flamers;
 
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
+import megamek.common.units.Entity;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.VehicleFlamerCoolHandler;
@@ -55,6 +58,7 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -8729838198434670197L;
 
     /**
@@ -69,16 +73,21 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
     }
 
     @Override
-    public AttackHandler getCorrectHandler(ToHitData toHit,
-          WeaponAttackAction waa, Game game, TWGameManager manager) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-              .getEquipment(waa.getWeaponId()).getLinked().getType();
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
+        Entity entity = game.getEntity(waa.getEntityId());
 
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_COOLANT)) {
-            return new VehicleFlamerCoolHandler(toHit, waa, game, manager);
-        } else {
-            return new VehicleFlamerHandler(toHit, waa, game, manager);
+        if (entity != null) {
+            Object ammo = entity.getEquipment(waa.getWeaponId()).getLinked().getType();
+
+            if (ammo instanceof AmmoType ammoType) {
+                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_COOLANT)) {
+                    return new VehicleFlamerCoolHandler(toHit, waa, game, manager);
+                }
+
+            }
         }
+
+        return new VehicleFlamerHandler(toHit, waa, game, manager);
     }
 
 }

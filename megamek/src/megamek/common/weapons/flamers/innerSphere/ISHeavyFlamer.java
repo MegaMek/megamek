@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.flamers.innerSphere;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
@@ -49,6 +51,7 @@ import megamek.common.weapons.flamers.VehicleFlamerWeapon;
  * @since Sep 24, 2004
  */
 public class ISHeavyFlamer extends VehicleFlamerWeapon {
+    @Serial
     private static final long serialVersionUID = -3957472644909347725L;
 
     public ISHeavyFlamer() {

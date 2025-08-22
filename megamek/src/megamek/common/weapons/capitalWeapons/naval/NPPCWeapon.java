@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,6 +38,8 @@
  */
 package megamek.common.weapons.capitalWeapons.naval;
 
+import java.io.Serial;
+
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.Mounted;
 import megamek.common.weapons.lasers.EnergyWeapon;
@@ -49,6 +51,7 @@ public abstract class NPPCWeapon extends EnergyWeapon {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 414010600231978506L;
 
     public NPPCWeapon() {

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,11 +34,14 @@
 
 package megamek.common.weapons.defensivePods;
 
+import java.io.Serial;
+
 /**
  * @author Jason Tighe
  * @since Oct 20, 2004
  */
 public class ISBPod extends BPodWeapon {
+    @Serial
     private static final long serialVersionUID = -7533678162058325256L;
 
     public ISBPod() {

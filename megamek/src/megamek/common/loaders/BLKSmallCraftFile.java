@@ -266,7 +266,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMekLoader {
                 if (etype != null) {
                     try {
                         int useLoc = TestEntity.eqRequiresLocation(t, etype) ? nLoc : SmallCraft.LOC_HULL;
-                        if (useLoc == SmallCraft.LOC_HULL) {
+                        if (useLoc == SmallCraft.LOC_HULL && rearMount) {
                             // "Rear hull" isn't a valid mount point on small craft,
                             // but bugs in unit construction may cause a unit to be saved with
                             // such an impossible configuration.

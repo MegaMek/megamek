@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,17 +34,18 @@
 
 package megamek.common.weapons.handlers.lrm;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import megamek.common.game.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.Minefield;
+import megamek.common.game.Game;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
@@ -52,13 +53,11 @@ import megamek.common.weapons.handlers.StreakHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class StreakLRMHandler extends StreakHandler {
+    @Serial
     private static final long serialVersionUID = -3848472655779311898L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
     public StreakLRMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
@@ -73,10 +72,10 @@ public class StreakLRMHandler extends StreakHandler {
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
             return Compute.directBlowInfantryDamage(
-                  wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
-                  wtype.getInfantryDamageClass(),
+                  weaponType.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
+                  weaponType.getInfantryDamageClass(),
                   ((Infantry) target).isMechanized(),
-                  toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                  toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
         }
         return 1;
     }
@@ -87,7 +86,7 @@ public class StreakLRMHandler extends StreakHandler {
      * @see megamek.common.weapons.handlers.WeaponHandler#calcnCluster()
      */
     @Override
-    protected int calcnCluster() {
+    protected int calculateNumCluster() {
         return 5;
     }
 
@@ -111,7 +110,7 @@ public class StreakLRMHandler extends StreakHandler {
             ArrayList<Minefield> mfRemoved = new ArrayList<>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
-                if (gameManager.clearMinefield(mf, ae,
+                if (gameManager.clearMinefield(mf, attackingEntity,
                       Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
                     mfRemoved.add(mf);
                 }

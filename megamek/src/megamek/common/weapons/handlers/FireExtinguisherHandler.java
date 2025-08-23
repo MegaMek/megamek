@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,16 +34,17 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.Report;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -51,6 +52,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sep 23, 2004
  */
 public class FireExtinguisherHandler extends WeaponHandler {
+    @Serial
     private static final long serialVersionUID = -7047033962986081773L;
 
     public FireExtinguisherHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {

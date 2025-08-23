@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005, 2006, 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,13 +34,14 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
 import megamek.common.weapons.Weapon;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -49,13 +50,11 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Oct 19, 2004
  */
 public class RACHandler extends UltraWeaponHandler {
+    @Serial
     private static final long serialVersionUID = -4859480151505343638L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
     public RACHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
@@ -70,7 +69,7 @@ public class RACHandler extends UltraWeaponHandler {
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (doAmmoFeedProblemCheck(vPhaseReport)) {
             return true;
-        } else if (ae.isConventionalInfantry()) {
+        } else if (attackingEntity.isConventionalInfantry()) {
             return false;
         }
         boolean jams = false;
@@ -140,14 +139,13 @@ public class RACHandler extends UltraWeaponHandler {
         }
 
         // Reduce number of allowed shots to number of remaining rounds of ammo if applicable
-        int total = ae.getTotalAmmoOfType(ammo.getType());
+        int total = attackingEntity.getTotalAmmoOfType(ammo.getType());
         if (total < 0) {
             throw new RuntimeException("Invalid total ammo value < 0!");
-        } else if (total < 6) {
-            actualShots = total;
         } else {
-            actualShots = 6;
+            actualShots = Math.min(total, 6);
         }
+
         if (actualShots < howManyShots) {
             howManyShots = actualShots;
         }
@@ -167,7 +165,7 @@ public class RACHandler extends UltraWeaponHandler {
     }
 
     @Override
-    protected int calcnClusterAero(Entity entityTarget) {
+    protected int calculateNumClusterAero(Entity entityTarget) {
         return 5;
     }
 

@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -75,12 +75,12 @@ public class SRMTandemChargeHandler extends SRMHandler {
         missed = false;
 
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-              toHit.getSideTable(), waa.getAimedLocation(),
-              waa.getAimingMode(), toHit.getCover());
+              toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+              weaponAttackAction.getAimingMode(), toHit.getCover());
         hit.setGeneralDamageType(generalDamageType);
         hit.setAttackerId(getAttackerId());
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-              .getCover(), ComputeSideTable.sideTable(ae, entityTarget, weapon
+              .getCover(), ComputeSideTable.sideTable(attackingEntity, entityTarget, weapon
               .getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
@@ -89,7 +89,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
         }
 
         if (!bSalvo) {
-            // Each hit in the salvo get's its own hit location.
+            // Each hit in the salvo gets its own hit location.
             Report r = new Report(3405);
             r.subject = subjectId;
             r.add(toHit.getTableDesc());
@@ -106,7 +106,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
         }
 
         // if the target was in partial cover, then we already handled
-        // damage absorption by the partial cover, if it would have happened
+        // damage absorption by the partial cover, if it had happened
         Hex targetHex = game.getBoard().getHex(target.getPosition());
         boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
 
@@ -164,7 +164,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
             }
             vPhaseReport
                   .addAll(gameManager.damageEntity(entityTarget, hit, nDamage,
-                        false, ae.getSwarmTargetId() == entityTarget
+                        false, attackingEntity.getSwarmTargetId() == entityTarget
                               .getId() ? DamageType.IGNORE_PASSENGER
                               : DamageType.NONE, false, false,
                         throughFront, underWater));
@@ -175,10 +175,10 @@ public class SRMTandemChargeHandler extends SRMHandler {
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
             double toReturn = Compute.directBlowInfantryDamage(
-                  wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
-                  wtype.getInfantryDamageClass(),
+                  weaponType.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
+                  weaponType.getInfantryDamageClass(),
                   ((Infantry) target).isMechanized(),
-                  toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                  toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
 
             toReturn = applyGlancingBlowModifier(toReturn, true);
 

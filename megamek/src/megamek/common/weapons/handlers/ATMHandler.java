@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -75,11 +75,11 @@ public class ATMHandler extends MissileWeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         double toReturn;
-        AmmoType atype = (AmmoType) ammo.getType();
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
+        AmmoType ammoType = ammo.getType();
+        if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
             sSalvoType = " high-explosive missile(s) ";
             toReturn = 3;
-        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
+        } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
             sSalvoType = " extended-range missile(s) ";
             toReturn = 1;
         } else {
@@ -87,10 +87,10 @@ public class ATMHandler extends MissileWeaponHandler {
         }
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(
-                  wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
-                  wtype.getInfantryDamageClass(),
+                  weaponType.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
+                  weaponType.getInfantryDamageClass(),
                   ((Infantry) target).isMechanized(),
-                  toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                  toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
             toReturn = applyGlancingBlowModifier(toReturn, true);
         }
 
@@ -105,9 +105,9 @@ public class ATMHandler extends MissileWeaponHandler {
             return 1;
         }
         int hits;
-        AmmoType atype = (AmmoType) ammo.getType();
-        // TacOPs p.84 Cluster Hit Penalites will only effect ATM HE
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
+        AmmoType ammoType = ammo.getType();
+        // TacOPs p.84 Cluster Hit Penalties will only affect ATM HE
+        if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
             hits = super.calcHits(vPhaseReport);
         } else {
             hits = calcStandardAndExtendedAmmoHits(vPhaseReport);
@@ -127,24 +127,24 @@ public class ATMHandler extends MissileWeaponHandler {
     protected int calcAttackValue() {
         int av = 0;
         int counterAV;
-        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
-        AmmoType atype = (AmmoType) ammo.getType();
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
+        int range = RangeType.rangeBracket(nRange, weaponType.getATRanges(), true, false);
+        AmmoType ammoType = ammo.getType();
+        if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
             if (range == WeaponType.RANGE_SHORT) {
-                av = wtype.getRoundShortAV();
+                av = weaponType.getRoundShortAV();
                 av = av + (int) Math.ceil(av / 2.0);
             }
-        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
-            av = (int) Math.ceil(wtype.getRoundMedAV() / 2.0);
+        } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
+            av = (int) Math.ceil(weaponType.getRoundMedAV() / 2.0);
         } else {
             if (range == WeaponType.RANGE_SHORT) {
-                av = wtype.getRoundShortAV();
+                av = weaponType.getRoundShortAV();
             } else if (range == WeaponType.RANGE_MED) {
-                av = wtype.getRoundMedAV();
+                av = weaponType.getRoundMedAV();
             } else if (range == WeaponType.RANGE_LONG) {
-                av = wtype.getRoundLongAV();
+                av = weaponType.getRoundLongAV();
             } else if (range == WeaponType.RANGE_EXT) {
-                av = wtype.getRoundExtAV();
+                av = weaponType.getRoundExtAV();
             }
         }
 
@@ -164,20 +164,20 @@ public class ATMHandler extends MissileWeaponHandler {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
         if (target.isConventionalInfantry()) {
-            if (ae instanceof BattleArmor) {
+            if (attackingEntity instanceof BattleArmor) {
                 bSalvo = true;
                 Report r = new Report(3325);
                 r.subject = subjectId;
-                r.add(wtype.getRackSize()
-                      * ((BattleArmor) ae).getShootingStrength());
+                r.add(weaponType.getRackSize()
+                      * ((BattleArmor) attackingEntity).getShootingStrength());
                 r.add(sSalvoType);
                 r.add(toHit.getTableDesc());
                 vPhaseReport.add(r);
-                return ((BattleArmor) ae).getShootingStrength();
+                return ((BattleArmor) attackingEntity).getShootingStrength();
             }
             Report r = new Report(3325);
             r.subject = subjectId;
-            r.add(wtype.getRackSize());
+            r.add(weaponType.getRackSize());
             r.add(sSalvoType);
             r.add(toHit.getTableDesc());
             vPhaseReport.add(r);
@@ -188,17 +188,19 @@ public class ATMHandler extends MissileWeaponHandler {
         int missilesHit;
 
         boolean bMekTankStealthActive = false;
-        if ((ae instanceof Mek) || (ae instanceof Tank)) {
-            bMekTankStealthActive = ae.isStealthActive();
+        if ((attackingEntity instanceof Mek) || (attackingEntity instanceof Tank)) {
+            bMekTankStealthActive = attackingEntity.isStealthActive();
         }
         Mounted<?> mLinker = weapon.getLinkedBy();
-        AmmoType atype = (AmmoType) ammo.getType();
+        AmmoType ammoType = ammo.getType();
 
         int nMissilesModifier = getClusterModifiers(
-              atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE));
+              ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE));
 
         // is any hex in the flight path of the missile ECM affected?
-        boolean bECMAffected = ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition());
+        boolean bECMAffected = ComputeECM.isAffectedByECM(attackingEntity,
+              attackingEntity.getPosition(),
+              target.getPosition());
         // if the attacker is affected by ECM or the target is protected by ECM
         // then act as if affected.
 
@@ -206,7 +208,7 @@ public class ATMHandler extends MissileWeaponHandler {
               && !mLinker.isDestroyed() && !mLinker.isMissing()
               && !mLinker.isBreached() && mLinker.getType().hasFlag(
               MiscType.F_ARTEMIS))
-              && (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))) {
+              && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))) {
             if (bECMAffected) {
                 // ECM prevents bonus
                 Report r = new Report(3330);
@@ -222,7 +224,7 @@ public class ATMHandler extends MissileWeaponHandler {
             } else {
                 nMissilesModifier += 2;
             }
-        } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) {
+        } else if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) {
             if (bECMAffected) {
                 // ECM prevents bonus
                 Report r = new Report(3330);
@@ -239,19 +241,18 @@ public class ATMHandler extends MissileWeaponHandler {
                 nMissilesModifier += 2;
             }
         } else if ((entityTarget != null)
-              && (entityTarget.isNarcedBy(ae.getOwner().getTeam()) || entityTarget
-              .isINarcedBy(ae.getOwner().getTeam()))) {
-            // only apply Narc bonus if we're not suffering ECM effect
+              && (entityTarget.isNarcedBy(attackingEntity.getOwner().getTeam()) || entityTarget
+              .isINarcedBy(attackingEntity.getOwner().getTeam()))) {
+            // only apply Narc bonus if we're not suffering ECM effect,
             // and we are using narc ammo, and we're not firing indirectly.
             // narc capable missiles are only affected if the narc pod, which
             // sits on the target, is ECM affected
-            boolean bTargetECMAffected = false;
-            bTargetECMAffected = ComputeECM.isAffectedByECM(ae,
+            boolean bTargetECMAffected = ComputeECM.isAffectedByECM(attackingEntity,
                   target.getPosition(), target.getPosition());
-            if (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) || (atype
+            if (((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) || (ammoType
                   .getAmmoType() == AmmoType.AmmoTypeEnum.SRM))
-                  || ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML)
-                  && (atype.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE)) && ((weapon
+                  || ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML)
+                  && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE)) && ((weapon
                   .curMode() == null) || !weapon.curMode().equals(
                   "Indirect")))) {
                 if (bTargetECMAffected) {
@@ -271,23 +272,23 @@ public class ATMHandler extends MissileWeaponHandler {
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)
               && entityTarget != null && entityTarget.isLargeCraft()) {
-            nMissilesModifier -= getAeroSanityAMSHitsMod();
+            nMissilesModifier -= (int) Math.floor(getAeroSanityAMSHitsMod());
         }
 
         if (allShotsHit()) {
             // We want buildings and large craft to be able to affect this number with AMS
             // treat as a Streak launcher (cluster roll 11) to make this happen
-            missilesHit = Compute.missilesHit(wtype.getRackSize(),
+            missilesHit = Compute.missilesHit(weaponType.getRackSize(),
                   nMissilesModifier, weapon.isHotLoaded(), true,
                   isAdvancedAMS());
         } else {
-            if (ae instanceof BattleArmor) {
-                missilesHit = Compute.missilesHit(wtype.getRackSize()
-                            * ((BattleArmor) ae).getShootingStrength(),
+            if (attackingEntity instanceof BattleArmor) {
+                missilesHit = Compute.missilesHit(weaponType.getRackSize()
+                            * ((BattleArmor) attackingEntity).getShootingStrength(),
                       nMissilesModifier, weapon.isHotLoaded(), false,
                       isAdvancedAMS());
             } else {
-                missilesHit = Compute.missilesHit(wtype.getRackSize(),
+                missilesHit = Compute.missilesHit(weaponType.getRackSize(),
                       nMissilesModifier, weapon.isHotLoaded(), false,
                       isAdvancedAMS());
             }
@@ -334,7 +335,7 @@ public class ATMHandler extends MissileWeaponHandler {
             ArrayList<Minefield> mfRemoved = new ArrayList<>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
-                if (gameManager.clearMinefield(mf, ae,
+                if (gameManager.clearMinefield(mf, attackingEntity,
                       Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
                     mfRemoved.add(mf);
                 }

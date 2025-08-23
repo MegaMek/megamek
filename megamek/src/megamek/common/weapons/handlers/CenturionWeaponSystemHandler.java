@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.Report;
@@ -48,19 +49,17 @@ import megamek.common.units.Entity;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
- * Weaponhandler for the Centurion Weapon SystemFluff weapon, which is found in Jihad Conspiracies Interstellar Players 2, pg
- * 127.
+ * WeaponHandler for the Centurion Weapon SystemFluff weapon, which is found in Jihad Conspiracies Interstellar Players
+ * 2, pg 127.
  *
  * @author arlith Created on Sept 5, 2005
  */
 public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
+    @Serial
     private static final long serialVersionUID = -5226841653686213141L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
     public CenturionWeaponSystemHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);

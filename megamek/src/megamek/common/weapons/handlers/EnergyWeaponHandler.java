@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
+
 import megamek.common.HitData;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
@@ -47,12 +49,11 @@ import megamek.common.units.Infantry;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class EnergyWeaponHandler extends WeaponHandler {
+    @Serial
     private static final long serialVersionUID = 2452514543790235562L;
 
     /**
-     * @param toHit
-     * @param waa
-     * @param g
+     *
      */
     public EnergyWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
@@ -66,36 +67,34 @@ public class EnergyWeaponHandler extends WeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        double toReturn = wtype.getDamage(nRange);
+        double toReturn = weaponType.getDamage(nRange);
 
         if ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ENERGY_WEAPONS)
-              && weapon.hasModes()) || wtype.hasFlag(WeaponType.F_BOMBAST_LASER)) {
-            toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
+              && weapon.hasModes()) || weaponType.hasFlag(WeaponType.F_BOMBAST_LASER)) {
+            toReturn = Compute.dialDownDamage(weapon, weaponType, nRange);
         }
         // during a swarm, all damage gets applied as one block to one location
-        if ((ae instanceof BattleArmor)
+        if ((attackingEntity instanceof BattleArmor)
               && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
               && !(weapon.isSquadSupportWeapon())
-              && (ae.getSwarmTargetId() == target.getId())) {
-            toReturn *= ((BattleArmor) ae).getShootingStrength();
+              && (attackingEntity.getSwarmTargetId() == target.getId())) {
+            toReturn *= ((BattleArmor) attackingEntity).getShootingStrength();
         }
         // Check for Altered Damage from Energy Weapons (TacOp, pg.83)
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ALTERNATIVE_DAMAGE)) {
             if (nRange <= 1) {
                 toReturn++;
-            } else if (nRange <= wtype.getMediumRange()) {
-                // Do Nothing for Short and Medium Range
-            } else if (nRange <= wtype.getLongRange()) {
+            } else if (nRange > weaponType.getMediumRange() && nRange <= weaponType.getLongRange()) {
                 toReturn--;
             }
         }
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
-              && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+              && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn -= 1;
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
-              && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+              && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
 
@@ -103,11 +102,11 @@ public class EnergyWeaponHandler extends WeaponHandler {
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(
                   toReturn, bDirect ? toHit.getMoS() / 3 : 0,
-                  wtype.getInfantryDamageClass(),
+                  weaponType.getInfantryDamageClass(),
                   ((Infantry) target).isMechanized(),
-                  toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                  toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
-            toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
+            toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0), toReturn * 2);
         }
 
         toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());

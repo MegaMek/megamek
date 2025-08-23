@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,10 +36,10 @@ package megamek.common.weapons.handlers.lrm;
 
 import java.io.Serial;
 
-import megamek.common.compute.ComputeECM;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.compute.ComputeECM;
+import megamek.common.game.Game;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -57,7 +57,7 @@ public class LRMFollowTheLeaderHandler extends LRMHandler {
 
     @Override
     public int getSalvoBonus() {
-        if (ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
+        if (ComputeECM.isAffectedByECM(attackingEntity, attackingEntity.getPosition(), target.getPosition())) {
             return 0;
         } else {
             return nSalvoBonus;
@@ -65,9 +65,9 @@ public class LRMFollowTheLeaderHandler extends LRMHandler {
     }
 
     @Override
-    protected int calcnCluster() {
-        if (ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
-            return super.calcnCluster();
+    protected int calculateNumCluster() {
+        if (ComputeECM.isAffectedByECM(attackingEntity, attackingEntity.getPosition(), target.getPosition())) {
+            return super.calculateNumCluster();
         } else {
             return Integer.MAX_VALUE;
         }

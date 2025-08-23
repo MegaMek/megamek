@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,22 +34,24 @@
 
 package megamek.common.weapons.handlers.plasma;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.units.Building;
-import megamek.common.units.Entity;
-import megamek.common.equipment.EquipmentType;
-import megamek.common.game.Game;
-import megamek.common.units.Mek;
 import megamek.common.Report;
-import megamek.common.rolls.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.game.Game;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 import megamek.common.weapons.handlers.EnergyWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
+    @Serial
     private static final long serialVersionUID = -6816799343788643259L;
 
     public PlasmaMFUKWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
@@ -104,7 +106,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
-        TargetRoll tn = new TargetRoll(wtype.getFireTN(), wtype.getName());
+        TargetRoll tn = new TargetRoll(weaponType.getFireTN(), weaponType.getName());
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
             gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, true, false,
@@ -134,7 +136,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
         // TODO : you do a normal ignition as though for intentional fires
         if ((bldg != null)
               && gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, true, false,
-              new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
+              new TargetRoll(weaponType.getFireTN(), weaponType.getName()), 5, vPhaseReport)) {
             return;
         }
         Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(),

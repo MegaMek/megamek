@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,13 +34,14 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.compute.Compute;
-import megamek.common.game.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -48,13 +49,11 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Sebastian Brocks Created on Oct 15, 2004
  */
 public class MPodHandler extends LBXHandler {
+    @Serial
     private static final long serialVersionUID = -1591751929178217495L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
     public MPodHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);

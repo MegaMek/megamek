@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,18 +34,19 @@
 
 package megamek.common.weapons.handlers.ac;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.units.Building;
-import megamek.common.compute.ComputeSideTable;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.compute.ComputeSideTable;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
 import megamek.common.weapons.DamageType;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -54,23 +55,25 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sep 25, 2004
  */
 public class ACAPHandler extends ACWeaponHandler {
+    @Serial
     private static final long serialVersionUID = -4251291510045646817L;
 
-    public ACAPHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
-        super(t, w, g, m);
+    public ACAPHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
+          TWGameManager twGameManager) {
+        super(toHitData, weaponAttackAction, game, twGameManager);
         generalDamageType = HitData.DAMAGE_ARMOR_PIERCING;
     }
 
     @Override
-    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
-          Building bldg, int hits, int nCluster, int bldgAbsorbs) {
-        AmmoType atype = (AmmoType) weapon.getLinked().getType();
+    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, Building bldg, int hits,
+          int nCluster, int bldgAbsorbs) {
+        AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(),
-              waa.getAimedLocation(), waa.getAimingMode(), toHit.getCover());
+              weaponAttackAction.getAimedLocation(), weaponAttackAction.getAimingMode(), toHit.getCover());
         hit.setGeneralDamageType(generalDamageType);
         hit.setAttackerId(getAttackerId());
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
-              ComputeSideTable.sideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
+              ComputeSideTable.sideTable(attackingEntity, entityTarget, weapon.getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits, nCluster, bldgAbsorbs);
             return;
@@ -139,9 +142,9 @@ public class ACAPHandler extends ACWeaponHandler {
             if (bDirect) {
                 critModifier += toHit.getMoS() / 3;
             }
-            hit.makeArmorPiercing(atype, critModifier);
+            hit.makeArmorPiercing(ammoType, critModifier);
             vPhaseReport.addAll(gameManager.damageEntity(entityTarget, hit, nDamage, false,
-                  ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType,
+                  attackingEntity.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType,
                   false, false, throughFront, underWater));
         }
     }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,18 +34,19 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import megamek.common.board.Coords;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.equipment.Minefield;
 import megamek.common.Report;
-import megamek.common.units.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Coords;
+import megamek.common.equipment.Minefield;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -56,13 +57,11 @@ public class MRMHandler extends MissileWeaponHandler {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 38852986607304997L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
     public MRMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
@@ -78,8 +77,7 @@ public class MRMHandler extends MissileWeaponHandler {
     @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport,
           Entity entityTarget) {
-        if (!bMissed
-              && target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR) {
+        if (!bMissed && target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR) {
             Report r = new Report(3255);
             r.indent(1);
             r.subject = subjectId;
@@ -91,7 +89,7 @@ public class MRMHandler extends MissileWeaponHandler {
             ArrayList<Minefield> mfRemoved = new ArrayList<>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
-                if (gameManager.clearMinefield(mf, ae,
+                if (gameManager.clearMinefield(mf, attackingEntity,
                       Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
                     mfRemoved.add(mf);
                 }

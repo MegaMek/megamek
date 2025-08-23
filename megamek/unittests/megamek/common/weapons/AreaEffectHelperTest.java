@@ -33,7 +33,6 @@
 
 package megamek.common.weapons;
 
-import static megamek.common.weapons.handlers.AreaEffectHelper.DamageFalloff;
 import static megamek.common.weapons.handlers.AreaEffectHelper.calculateDamageFallOff;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -63,6 +62,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.common.weapons.handlers.AreaEffectHelper;
+import megamek.common.weapons.handlers.DamageFalloff;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;

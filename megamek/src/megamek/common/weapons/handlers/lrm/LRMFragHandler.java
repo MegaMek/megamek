@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,15 +37,15 @@ package megamek.common.weapons.handlers.lrm;
 import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.battleArmor.BattleArmor;
-import megamek.common.units.Building;
-import megamek.common.board.Coords;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.Report;
-import megamek.common.rolls.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Coords;
+import megamek.common.game.Game;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
 import megamek.common.weapons.DamageType;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -71,15 +71,15 @@ public class LRMFragHandler extends LRMHandler {
     protected int calcDamagePerHit() {
         double toReturn = 1;
         // during a swarm, all damage gets applied as one block to one location
-        if ((ae instanceof BattleArmor)
+        if ((attackingEntity instanceof BattleArmor)
               && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
               && !(weapon.isSquadSupportWeapon())
-              && (ae.getSwarmTargetId() == target.getId())) {
-            toReturn *= ((BattleArmor) ae).getShootingStrength();
+              && (attackingEntity.getSwarmTargetId() == target.getId())) {
+            toReturn *= ((BattleArmor) attackingEntity).getShootingStrength();
         }
         // against infantry, we have 1 hit
         if (target.isConventionalInfantry()) {
-            toReturn = wtype.getRackSize();
+            toReturn = weaponType.getRackSize();
             if (bDirect) {
                 toReturn += toHit.getMoS() / 3.0;
             }
@@ -119,7 +119,7 @@ public class LRMFragHandler extends LRMHandler {
         if ((bldg != null)
               && gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, false,
               false,
-              new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
+              new TargetRoll(weaponType.getFireTN(), weaponType.getName()), 5,
               vPhaseReport)) {
             return;
         }

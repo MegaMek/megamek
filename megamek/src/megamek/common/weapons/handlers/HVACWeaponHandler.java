@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -70,10 +70,10 @@ public class HVACWeaponHandler extends ACWeaponHandler {
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_START_FIRE)
               && !conditions.getAtmosphere().isVacuum()) {
-            int rear = (ae.getFacing() + 3 + (weapon.isMekTurretMounted() ? weapon.getFacing() : 0)) % 6;
-            Coords src = ae.getPosition();
+            int rear = (attackingEntity.getFacing() + 3 + (weapon.isMekTurretMounted() ? weapon.getFacing() : 0)) % 6;
+            Coords src = attackingEntity.getPosition();
             Coords rearCoords = src.translated(rear);
-            Board board = game.getBoard(ae);
+            Board board = game.getBoard(attackingEntity);
             Hex currentHex = board.getHex(src);
 
             if (!board.contains(rearCoords)) {
@@ -99,27 +99,27 @@ public class HVACWeaponHandler extends ACWeaponHandler {
             return true;
         }
 
-        if ((roll.getIntValue() == 2) && !ae.isConventionalInfantry()) {
-            Report r = new Report(3162);
-            r.subject = subjectId;
+        if ((roll.getIntValue() == 2) && !attackingEntity.isConventionalInfantry()) {
+            Report report = new Report(3162);
+            report.subject = subjectId;
             weapon.setJammed(true);
             weapon.setHit(true);
-            int wloc = weapon.getLocation();
-            for (int i = 0; i < ae.getNumberOfCriticalSlots(wloc); i++) {
-                CriticalSlot slot1 = ae.getCritical(wloc, i);
+            int weaponLocation = weapon.getLocation();
+            for (int i = 0; i < attackingEntity.getNumberOfCriticalSlots(weaponLocation); i++) {
+                CriticalSlot slot1 = attackingEntity.getCritical(weaponLocation, i);
                 if ((slot1 == null) ||
                       (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                     continue;
                 }
                 Mounted<?> mounted = slot1.getMount();
                 if (mounted.equals(weapon)) {
-                    ae.hitAllCriticalSlots(wloc, i);
+                    attackingEntity.hitAllCriticalSlots(weaponLocation, i);
                     break;
                 }
             }
-            vPhaseReport.addAll(gameManager.explodeEquipment(ae, wloc, weapon));
-            r.choose(false);
-            vPhaseReport.addElement(r);
+            vPhaseReport.addAll(gameManager.explodeEquipment(attackingEntity, weaponLocation, weapon));
+            report.choose(false);
+            vPhaseReport.addElement(report);
             return true;
         } else {
             return super.doChecks(vPhaseReport);

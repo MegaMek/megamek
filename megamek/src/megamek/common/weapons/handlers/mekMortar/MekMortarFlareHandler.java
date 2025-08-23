@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,18 +34,19 @@
 
 package megamek.common.weapons.handlers.mekMortar;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.compute.Compute;
-import megamek.common.board.Coords;
-import megamek.common.game.Game;
-import megamek.common.equipment.Mounted;
 import megamek.common.Report;
-import megamek.common.rolls.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
@@ -56,6 +57,7 @@ import megamek.server.totalwarfare.TWGameManager;
 public class MekMortarFlareHandler extends AmmoWeaponHandler {
     private static final MMLogger logger = MMLogger.create(MekMortarFlareHandler.class);
 
+    @Serial
     private static final long serialVersionUID = -2073773899108954657L;
 
     public MekMortarFlareHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
@@ -75,7 +77,7 @@ public class MekMortarFlareHandler extends AmmoWeaponHandler {
 
         Coords targetPos = target.getPosition();
 
-        Mounted<?> ammoUsed = ae.getEquipment(waa.getAmmoId());
+        Mounted<?> ammoUsed = attackingEntity.getEquipment(weaponAttackAction.getAmmoId());
         final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
         if ((ammoType == null) || !ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLARE)) {
             logger.error("Trying to use a Mek Mortar Flare with non-flare ammo");
@@ -87,8 +89,8 @@ public class MekMortarFlareHandler extends AmmoWeaponHandler {
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        if (wtype != null) {
-            r.add(wtype.getName() + ' ' + ammoType.getSubMunitionName());
+        if (weaponType != null) {
+            r.add(weaponType.getName() + ' ' + ammoType.getSubMunitionName());
         } else {
             r.add("Error: From Nowhere");
         }
@@ -133,7 +135,7 @@ public class MekMortarFlareHandler extends AmmoWeaponHandler {
         bMissed = roll.getIntValue() < toHit.getValue();
         // Set Margin of Success/Failure.
         toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
-        int duration = wtype.getRackSize() * 2;
+        int duration = weaponType.getRackSize() * 2;
 
         if (!bMissed) {
             r = new Report(3190);

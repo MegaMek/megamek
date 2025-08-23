@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.gaussRifles;
 
+import java.io.Serial;
+
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AmmoWeapon;
@@ -42,12 +44,18 @@ import megamek.common.weapons.AmmoWeapon;
  * @author Andrew Hunter Created on Oct 19, 2004
  */
 public abstract class GaussWeapon extends AmmoWeapon {
+    @Serial
     private static final long serialVersionUID = 8640523093316267351L;
 
     public GaussWeapon() {
         super();
-        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON)
-              .or(F_BALLISTIC).or(F_DIRECT_FIRE).or(F_NO_FIRES);
+        flags = flags.or(F_MEK_WEAPON)
+              .or(F_TANK_WEAPON)
+              .or(F_AERO_WEAPON)
+              .or(F_PROTO_WEAPON)
+              .or(F_BALLISTIC)
+              .or(F_DIRECT_FIRE)
+              .or(F_NO_FIRES);
         explosive = true;
         atClass = CLASS_AC;
     }

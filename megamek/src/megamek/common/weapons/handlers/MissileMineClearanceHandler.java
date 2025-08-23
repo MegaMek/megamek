@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,11 +34,15 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
@@ -60,6 +64,7 @@ import megamek.server.totalwarfare.TWGameManager;
 public class MissileMineClearanceHandler extends AmmoWeaponHandler {
     private static final MMLogger logger = MMLogger.create(MissileMineClearanceHandler.class);
 
+    @Serial
     private static final long serialVersionUID = 2753652169368638804L;
 
     public MissileMineClearanceHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
@@ -74,7 +79,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
 
         final Coords targetPos = target.getPosition();
 
-        Mounted<?> ammoUsed = ae.getEquipment(waa.getAmmoId());
+        Mounted<?> ammoUsed = attackingEntity.getEquipment(weaponAttackAction.getAmmoId());
         final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
         if ((ammoType == null) || (!ammoType.getMunitionType().contains(AmmoType.Munitions.M_MINE_CLEARANCE))) {
             logger.error("Not using mine clearance ammo!");
@@ -86,8 +91,8 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        if (wtype != null) {
-            r.add(wtype.getName() + ' ' + ammoType.getSubMunitionName());
+        if (weaponType != null) {
+            r.add(weaponType.getName() + ' ' + ammoType.getSubMunitionName());
         } else {
             r.add("Error: From Nowhere");
         }
@@ -150,8 +155,8 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
 
         // Handle mine clearance
         List<Minefield> mfRemoved = new ArrayList<>();
-        int missileDamage = (wtype instanceof LRMWeapon) ? 1 : 2;
-        int mineDamage = wtype.getRackSize() * missileDamage;
+        int missileDamage = (weaponType instanceof LRMWeapon) ? 1 : 2;
+        int mineDamage = weaponType.getRackSize() * missileDamage;
         boolean updateMinefields = false;
         for (Minefield mf : game.getMinefields(targetPos)) {
             int density = mf.getDensity() - mineDamage;
@@ -181,12 +186,12 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         }
 
         // Report amount of damage
-        int damage = (wtype.getRackSize() * missileDamage) / 10;
+        int damage = (weaponType.getRackSize() * missileDamage) / 10;
         r = new Report(9940);
         r.subject = subjectId;
         r.indent(2);
         r.newlines++;
-        r.add(wtype.getName() + " " + ammoType.getSubMunitionName());
+        r.add(weaponType.getName() + " " + ammoType.getSubMunitionName());
         r.add(damage);
         vPhaseReport.addElement(r);
 
@@ -229,21 +234,21 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
             // buildings
             if (Compute.isInBuilding(game, target, targetPos)) {
                 Player tOwner = target.getOwner();
-                String colorcode = tOwner.getColour().getHexString(0x00F0F0F0);
+                String colorCode = tOwner.getColour().getHexString(0x00F0F0F0);
                 newReports = gameManager.damageBuilding(bldg, damage, " shields "
                             + target.getShortName() + " (<B><font color='"
-                            + colorcode + "'>" + tOwner.getName() + "</font></B>)"
+                            + colorCode + "'>" + tOwner.getName() + "</font></B>)"
                             + " from the mine clearance munitions, receiving ",
                       targetPos);
                 adjustReports(newReports);
                 vPhaseReport.addAll(newReports);
             } else {
                 hit = target.rollHitLocation(toHit.getHitTable(),
-                      toHit.getSideTable(), waa.getAimedLocation(),
-                      waa.getAimingMode(), toHit.getCover());
+                      toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+                      weaponAttackAction.getAimingMode(), toHit.getCover());
                 if (target.getBARRating(hit.getLocation()) <= 6) {
                     hit.setGeneralDamageType(generalDamageType);
-                    hit.setCapital(wtype.isCapital());
+                    hit.setCapital(weaponType.isCapital());
                     hit.setBoxCars(roll.getIntValue() == 12);
                     hit.setCapMisCritMod(getCapMisMod());
                     hit.setFirstHit(firstHit);
@@ -271,11 +276,10 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
      * Indents all reports in the collection, and adds a new line to the last one. This is used to make nested reports
      * line-up and look nicer.
      *
-     * @param reports
      */
     private void adjustReports(Vector<Report> reports) {
-        for (Report nr : reports) {
-            nr.indent();
+        for (Report report : reports) {
+            report.indent();
         }
 
         if (!reports.isEmpty()) {

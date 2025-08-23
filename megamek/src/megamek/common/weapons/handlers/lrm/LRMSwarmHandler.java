@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -83,64 +83,64 @@ public class LRMSwarmHandler extends LRMHandler {
               entityTarget);
         final boolean bldgDamagedOnMiss = targetInBuilding
               && !(target instanceof Infantry)
-              && ae.getPosition().distance(target.getPosition()) <= 1;
+              && attackingEntity.getPosition().distance(target.getPosition()) <= 1;
 
         if (entityTarget != null) {
-            ae.setLastTarget(entityTarget.getId());
-            ae.setLastTargetDisplayName(entityTarget.getDisplayName());
+            attackingEntity.setLastTarget(entityTarget.getId());
+            attackingEntity.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
 
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
 
         // Report weapon attack and its to-hit value.
-        Report r = new Report(3115);
-        r.indent();
-        r.newlines = 0;
-        r.subject = subjectId;
-        r.add(wtype.getName() + " (" + atype.getShortName() + ")");
+        Report report = new Report(3115);
+        report.indent();
+        report.newlines = 0;
+        report.subject = subjectId;
+        report.add(weaponType.getName() + " (" + ammoType.getShortName() + ")");
         if (entityTarget != null) {
-            r.addDesc(entityTarget);
+            report.addDesc(entityTarget);
             // record which launcher targeted the target
-            entityTarget.addTargetedBySwarm(ae.getId(), waa.getWeaponId());
+            entityTarget.addTargetedBySwarm(attackingEntity.getId(), weaponAttackAction.getWeaponId());
         } else {
-            r.messageId = 3120;
-            r.add(target.getDisplayName(), true);
+            report.messageId = 3120;
+            report.add(target.getDisplayName(), true);
         }
-        vPhaseReport.addElement(r);
+        vPhaseReport.addElement(report);
         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-            r = new Report(3135);
-            r.subject = subjectId;
-            r.add(toHit.getDesc());
-            vPhaseReport.addElement(r);
+            report = new Report(3135);
+            report.subject = subjectId;
+            report.add(toHit.getDesc());
+            vPhaseReport.addElement(report);
             return false;
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
-            r = new Report(3140);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(toHit.getDesc());
-            vPhaseReport.addElement(r);
+            report = new Report(3140);
+            report.newlines = 0;
+            report.subject = subjectId;
+            report.add(toHit.getDesc());
+            vPhaseReport.addElement(report);
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
-            r = new Report(3145);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(toHit.getDesc());
-            vPhaseReport.addElement(r);
+            report = new Report(3145);
+            report.newlines = 0;
+            report.subject = subjectId;
+            report.add(toHit.getDesc());
+            vPhaseReport.addElement(report);
         } else {
             // roll to hit
-            r = new Report(3150);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(toHit);
-            vPhaseReport.addElement(r);
+            report = new Report(3150);
+            report.newlines = 0;
+            report.subject = subjectId;
+            report.add(toHit);
+            vPhaseReport.addElement(report);
         }
 
         // dice have been rolled, thanks
-        r = new Report(3155);
-        r.newlines = 0;
-        r.subject = subjectId;
-        r.add(roll);
-        vPhaseReport.addElement(r);
+        report = new Report(3155);
+        report.newlines = 0;
+        report.subject = subjectId;
+        report.add(roll);
+        vPhaseReport.addElement(report);
 
         // do we hit?
         bMissed = roll.getIntValue() < toHit.getValue();
@@ -154,10 +154,10 @@ public class LRMSwarmHandler extends LRMHandler {
         bDirect = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
               && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
-            r = new Report(3189);
-            r.subject = ae.getId();
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
+            report = new Report(3189);
+            report.subject = attackingEntity.getId();
+            report.newlines = 0;
+            vPhaseReport.addElement(report);
         }
 
         // Do this stuff first, because some weapon's miss report reference the
@@ -191,9 +191,9 @@ public class LRMSwarmHandler extends LRMHandler {
             }
         }
 
-        // yeech. handle damage. . different weapons do this in very different
+        // handle damage. . different weapons do this in very different
         // ways
-        int hits = calcHits(vPhaseReport), nCluster = calcnCluster();
+        int hits = calcHits(vPhaseReport), nCluster = calculateNumCluster();
 
         if (bMissed) {
             return false;
@@ -213,8 +213,8 @@ public class LRMSwarmHandler extends LRMHandler {
               && (toHit.getThruBldg() != null)
               && (entityTarget instanceof Infantry)) {
             // If elevation is the same, building doesn't absorb
-            if (ae.getElevation() != entityTarget.getElevation()) {
-                int dmgClass = wtype.getInfantryDamageClass();
+            if (attackingEntity.getElevation() != entityTarget.getElevation()) {
+                int dmgClass = weaponType.getInfantryDamageClass();
                 int nDamage;
                 if (dmgClass < WeaponType.WEAPON_BURST_1D6) {
                     nDamage = nDamPerHit * Math.min(nCluster, hits);
@@ -223,7 +223,7 @@ public class LRMSwarmHandler extends LRMHandler {
                     // absorbed damage shouldn't reduce incoming damage,
                     // since the incoming damage was reduced in
                     // Compute.directBlowInfantryDamage
-                    nDamage = -wtype.getDamage(nRange)
+                    nDamage = -weaponType.getDamage(nRange)
                           * Math.min(nCluster, hits);
                 }
                 bldgAbsorbs = (int) Math.round(nDamage
@@ -236,13 +236,13 @@ public class LRMSwarmHandler extends LRMHandler {
 
         // Make sure the player knows when his attack causes no damage.
         if (hits == 0) {
-            r = new Report(3365);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
+            report = new Report(3365);
+            report.subject = subjectId;
+            vPhaseReport.addElement(report);
         }
 
         // Handle full-salvo hit on initial attack so we don't accidentally spawn another full shot
-        if (hits == wtype.getRackSize()) {
+        if (hits == weaponType.getRackSize()) {
             swarmMissilesNowLeft = 0;
         }
         // for each cluster of hits, do a chunk of damage
@@ -271,7 +271,7 @@ public class LRMSwarmHandler extends LRMHandler {
             if (entityTarget != null) {
                 handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                       nCluster, bldgAbsorbs);
-                gameManager.creditKill(entityTarget, ae);
+                gameManager.creditKill(entityTarget, attackingEntity);
                 hits -= nCluster;
                 firstHit = false;
             }
@@ -280,29 +280,19 @@ public class LRMSwarmHandler extends LRMHandler {
         Report.addNewline(vPhaseReport);
         if (swarmMissilesNowLeft > 0) {
             Entity swarmTarget = Compute.getSwarmMissileTarget(game,
-                  ae.getId(), target.getPosition(), waa.getWeaponId());
-            boolean stoppedByECM = ComputeECM.isAffectedByECM(ae,
+                  attackingEntity.getId(), target.getPosition(), weaponAttackAction.getWeaponId());
+            boolean stoppedByECM = ComputeECM.isAffectedByECM(attackingEntity,
                   target.getPosition(), target.getPosition())
                   && !(this instanceof LRMSwarmIHandler);
             if (swarmTarget != null && !stoppedByECM) {
-                r = new Report(3420, Report.HIDDEN);
-                r.subject = subjectId;
-                r.indent(2);
-                r.add(swarmMissilesNowLeft);
-                vPhaseReport.addElement(r);
+                report = new Report(3420, Report.HIDDEN);
+                report.subject = subjectId;
+                report.indent(2);
+                report.add(swarmMissilesNowLeft);
+                vPhaseReport.addElement(report);
                 weapon.setUsedThisRound(false);
-                WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
-                      swarmTarget.getId(), waa.getWeaponId());
-                newWaa.setSwarmingMissiles(true);
-                newWaa.setSwarmMissiles(swarmMissilesNowLeft);
-                newWaa.setOldTargetId(target.getId());
-                newWaa.setOldTargetType(target.getTargetType());
-                newWaa.setOriginalTargetId(waa.getOriginalTargetId());
-                newWaa.setOriginalTargetType(waa.getOriginalTargetType());
-                newWaa.setAmmoId(waa.getAmmoId());
-                newWaa.setAmmoMunitionType(waa.getAmmoMunitionType());
-                newWaa.setAmmoCarrier(waa.getAmmoCarrier());
-                Mounted<?> m = ae.getEquipment(waa.getWeaponId());
+                WeaponAttackAction newWaa = getWeaponAttackAction(swarmTarget, swarmMissilesNowLeft);
+                Mounted<?> m = attackingEntity.getEquipment(weaponAttackAction.getWeaponId());
                 Weapon w = (Weapon) m.getType();
                 // increase ammo by one, we'll use one that we shouldn't use
                 // in the next line
@@ -315,18 +305,14 @@ public class LRMSwarmHandler extends LRMHandler {
                 wh.handle(phase, vPhaseReport);
             } else {
                 if (swarmTarget == null) {
-                    r = new Report(3425);
-                    r.add(swarmMissilesNowLeft);
-                    r.subject = subjectId;
-                    r.indent(2);
-                    vPhaseReport.addElement(r);
+                    report = new Report(3425);
                 } else {
-                    r = new Report(3426);
-                    r.add(swarmMissilesNowLeft);
-                    r.subject = subjectId;
-                    r.indent(2);
-                    vPhaseReport.addElement(r);
+                    report = new Report(3426);
                 }
+                report.add(swarmMissilesNowLeft);
+                report.subject = subjectId;
+                report.indent(2);
+                vPhaseReport.addElement(report);
             }
 
             // Reset the Swarm Missiles variable to 0 because if we don't it
@@ -337,19 +323,35 @@ public class LRMSwarmHandler extends LRMHandler {
         return false;
     }
 
+    private WeaponAttackAction getWeaponAttackAction(Entity swarmTarget, int swarmMissilesNowLeft) {
+        WeaponAttackAction weaponAttackAction = new WeaponAttackAction(attackingEntity.getId(),
+              swarmTarget.getId(),
+              this.weaponAttackAction.getWeaponId());
+        weaponAttackAction.setSwarmingMissiles(true);
+        weaponAttackAction.setSwarmMissiles(swarmMissilesNowLeft);
+        weaponAttackAction.setOldTargetId(target.getId());
+        weaponAttackAction.setOldTargetType(target.getTargetType());
+        weaponAttackAction.setOriginalTargetId(this.weaponAttackAction.getOriginalTargetId());
+        weaponAttackAction.setOriginalTargetType(this.weaponAttackAction.getOriginalTargetType());
+        weaponAttackAction.setAmmoId(this.weaponAttackAction.getAmmoId());
+        weaponAttackAction.setAmmoMunitionType(this.weaponAttackAction.getAmmoMunitionType());
+        weaponAttackAction.setAmmoCarrier(this.weaponAttackAction.getAmmoCarrier());
+        return weaponAttackAction;
+    }
+
     @Override
     protected int calcDamagePerHit() {
         // This needs to override the superclass method because in case of swarm
         // the damage to adjacent infantry should be based on the missiles left over,
         // not the total rack size.
         if (target.isConventionalInfantry()) {
-            int missiles = waa.isSwarmingMissiles() ? waa.getSwarmMissiles()
-                  : wtype.getRackSize();
+            int missiles = weaponAttackAction.isSwarmingMissiles() ? weaponAttackAction.getSwarmMissiles()
+                  : weaponType.getRackSize();
             double toReturn = Compute.directBlowInfantryDamage(
                   missiles, bDirect ? toHit.getMoS() / 3 : 0,
-                  wtype.getInfantryDamageClass(),
+                  weaponType.getInfantryDamageClass(),
                   ((Infantry) target).isMechanized(),
-                  toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                  toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
 
             toReturn = applyGlancingBlowModifier(toReturn, true);
             return (int) toReturn;
@@ -362,18 +364,18 @@ public class LRMSwarmHandler extends LRMHandler {
           Vector<Report> vPhaseReport, GamePhase phase) {
         super.handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
               vPhaseReport);
-        int swarmMissilesNowLeft = waa.getSwarmMissiles();
+        int swarmMissilesNowLeft = weaponAttackAction.getSwarmMissiles();
         if (swarmMissilesNowLeft == 0) {
-            swarmMissilesNowLeft = wtype.getRackSize();
+            swarmMissilesNowLeft = weaponType.getRackSize();
         }
         if (entityTarget != null) {
-            ae.setLastTarget(entityTarget.getId());
-            ae.setLastTargetDisplayName(entityTarget.getDisplayName());
+            attackingEntity.setLastTarget(entityTarget.getId());
+            attackingEntity.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
 
-        Entity swarmTarget = Compute.getSwarmMissileTarget(game, ae.getId(),
-              target.getPosition(), waa.getWeaponId());
-        boolean stoppedByECM = ComputeECM.isAffectedByECM(ae,
+        Entity swarmTarget = Compute.getSwarmMissileTarget(game, attackingEntity.getId(),
+              target.getPosition(), weaponAttackAction.getWeaponId());
+        boolean stoppedByECM = ComputeECM.isAffectedByECM(attackingEntity,
               target.getPosition(), target.getPosition())
               && !(this instanceof LRMSwarmIHandler);
         if (swarmTarget != null && !stoppedByECM) {
@@ -383,18 +385,8 @@ public class LRMSwarmHandler extends LRMHandler {
             r.add(swarmMissilesNowLeft);
             vPhaseReport.addElement(r);
             weapon.setUsedThisRound(false);
-            WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
-                  swarmTarget.getId(), waa.getWeaponId());
-            newWaa.setSwarmingMissiles(true);
-            newWaa.setSwarmMissiles(swarmMissilesNowLeft);
-            newWaa.setOldTargetId(target.getId());
-            newWaa.setOldTargetType(target.getTargetType());
-            newWaa.setOriginalTargetId(waa.getOriginalTargetId());
-            newWaa.setOriginalTargetType(waa.getOriginalTargetType());
-            newWaa.setAmmoId(waa.getAmmoId());
-            newWaa.setAmmoMunitionType(waa.getAmmoMunitionType());
-            newWaa.setAmmoCarrier(waa.getAmmoCarrier());
-            Mounted<?> m = ae.getEquipment(waa.getWeaponId());
+            WeaponAttackAction newWaa = getWeaponAttackAction(swarmTarget, swarmMissilesNowLeft);
+            Mounted<?> m = attackingEntity.getEquipment(weaponAttackAction.getWeaponId());
             Weapon w = (Weapon) m.getType();
             // increase ammo by one, we'll use one that we shouldn't use
             // in the next line
@@ -406,19 +398,16 @@ public class LRMSwarmHandler extends LRMHandler {
             wh.handledHeat = true;
             wh.handle(phase, vPhaseReport);
         } else {
+            Report report;
             if (swarmTarget == null) {
-                Report r = new Report(3425);
-                r.add(swarmMissilesNowLeft);
-                r.subject = subjectId;
-                r.indent(2);
-                vPhaseReport.addElement(r);
+                report = new Report(3425);
             } else {
-                Report r = new Report(3426);
-                r.add(swarmMissilesNowLeft);
-                r.subject = subjectId;
-                r.indent(2);
-                vPhaseReport.addElement(r);
+                report = new Report(3426);
             }
+            report.add(swarmMissilesNowLeft);
+            report.subject = subjectId;
+            report.indent(2);
+            vPhaseReport.addElement(report);
         }
         return false;
     }
@@ -428,9 +417,9 @@ public class LRMSwarmHandler extends LRMHandler {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
         if (target.isConventionalInfantry()) {
-            if (ae instanceof BattleArmor) {
+            if (attackingEntity instanceof BattleArmor) {
                 bSalvo = true;
-                return ((BattleArmor) ae).getShootingStrength();
+                return ((BattleArmor) attackingEntity).getShootingStrength();
             }
             return 1;
         }
@@ -449,7 +438,7 @@ public class LRMSwarmHandler extends LRMHandler {
         }
         nMissilesModifier += amsMod;
 
-        int swarmMissilesLeft = waa.getSwarmMissiles();
+        int swarmMissilesLeft = weaponAttackAction.getSwarmMissiles();
         // swarm or swarm-I shots may just hit with the remaining missiles
         if (swarmMissilesLeft > 0) {
             if (allShotsHit()) {
@@ -460,11 +449,11 @@ public class LRMSwarmHandler extends LRMHandler {
                       isAdvancedAMS());
             }
         } else {
-            missilesHit = allShotsHit() ? wtype.getRackSize()
+            missilesHit = allShotsHit() ? weaponType.getRackSize()
                   : Compute
-                  .missilesHit(wtype.getRackSize(), nMissilesModifier,
+                  .missilesHit(weaponType.getRackSize(), nMissilesModifier,
                         weapon.isHotLoaded(), false, isAdvancedAMS());
-            swarmMissilesLeft = wtype.getRackSize();
+            swarmMissilesLeft = weaponType.getRackSize();
         }
         swarmMissilesNowLeft = swarmMissilesLeft - missilesHit;
         Report r = new Report(3325, Report.HIDDEN);

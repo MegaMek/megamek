@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,12 +37,12 @@ package megamek.common.weapons.handlers.ac;
 import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.compute.Compute;
-import megamek.common.game.Game;
 import megamek.common.Report;
-import megamek.common.rolls.Roll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
+import megamek.common.rolls.Roll;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -62,7 +62,7 @@ public class ACCaselessHandler extends ACWeaponHandler {
             return true;
         }
 
-        if ((roll.getIntValue() <= 2) && !ae.isConventionalInfantry()) {
+        if ((roll.getIntValue() <= 2) && !attackingEntity.isConventionalInfantry()) {
             Roll diceRoll = Compute.rollD6(2);
 
             Report r = new Report(3164);

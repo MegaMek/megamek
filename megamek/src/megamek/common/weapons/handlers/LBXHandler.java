@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.RangeType;
@@ -53,13 +54,11 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Andrew Hunter Created on Oct 15, 2004
  */
 public class LBXHandler extends AmmoWeaponHandler {
+    @Serial
     private static final long serialVersionUID = 6803847280685526644L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
     public LBXHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
@@ -75,10 +74,10 @@ public class LBXHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
             double toReturn = Compute.directBlowInfantryDamage(
-                  wtype.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
+                  weaponType.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
                   WeaponType.WEAPON_CLUSTER_BALLISTIC,
                   ((Infantry) target).isMechanized(),
-                  toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                  toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
             toReturn = applyGlancingBlowModifier(toReturn, true);
             return (int) toReturn;
         }
@@ -103,48 +102,48 @@ public class LBXHandler extends AmmoWeaponHandler {
         int nHitsModifier = getClusterModifiers(true);
 
         if (allShotsHit()) {
-            shotsHit = wtype.getRackSize();
+            shotsHit = weaponType.getRackSize();
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
-                  && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+                  && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG])) {
                 shotsHit = (int) Math.ceil(shotsHit * .75);
             }
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
-                  && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+                  && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
                 shotsHit = (int) Math.ceil(shotsHit * .5);
             }
         } else {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
-            shotsHit = Compute.missilesHit(wtype.getRackSize(), nHitsModifier, conditions.getEMI().isEMI());
+            shotsHit = Compute.missilesHit(weaponType.getRackSize(), nHitsModifier, conditions.getEMI().isEMI());
         }
 
-        Report r = new Report(3325);
-        r.subject = subjectId;
-        r.add(shotsHit);
-        r.add(sSalvoType);
-        r.add(toHit.getTableDesc());
-        r.newlines = 0;
-        vPhaseReport.addElement(r);
+        Report report = new Report(3325);
+        report.subject = subjectId;
+        report.add(shotsHit);
+        report.add(sSalvoType);
+        report.add(toHit.getTableDesc());
+        report.newlines = 0;
+        vPhaseReport.addElement(report);
         if (nHitsModifier != 0) {
             if (nHitsModifier > 0) {
-                r = new Report(3340);
+                report = new Report(3340);
             } else {
-                r = new Report(3341);
+                report = new Report(3341);
             }
-            r.subject = subjectId;
-            r.add(nHitsModifier);
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
+            report.subject = subjectId;
+            report.add(nHitsModifier);
+            report.newlines = 0;
+            vPhaseReport.addElement(report);
         }
-        r = new Report(3345);
-        r.subject = subjectId;
-        vPhaseReport.addElement(r);
+        report = new Report(3345);
+        report.subject = subjectId;
+        vPhaseReport.addElement(report);
         bSalvo = true;
         return shotsHit;
     }
 
     @Override
     protected boolean usesClusterTable() {
-        return ((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_CLUSTER);
+        return ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_CLUSTER);
     }
 
 }

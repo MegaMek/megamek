@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,15 +34,16 @@
 
 package megamek.common.weapons.handlers.ac;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
-import megamek.common.equipment.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AmmoBayWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -51,16 +52,15 @@ import megamek.server.totalwarfare.TWGameManager;
  */
 public class ACBayHandler extends AmmoBayWeaponHandler {
 
+    @Serial
     private static final long serialVersionUID = -1618484541772117621L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
-    public ACBayHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
-        super(t, w, g, m);
+    public ACBayHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
+          TWGameManager twGameManager) {
+        super(toHitData, weaponAttackAction, game, twGameManager);
     }
 
     /*

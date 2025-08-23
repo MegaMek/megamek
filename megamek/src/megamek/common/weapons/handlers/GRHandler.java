@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
+
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -47,13 +49,11 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Jason Tighe Created on Oct 19, 2004
  */
 public class GRHandler extends AmmoWeaponHandler {
+    @Serial
     private static final long serialVersionUID = -6599352761593455842L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
     public GRHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
@@ -66,23 +66,23 @@ public class GRHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        double toReturn = wtype.getDamage(nRange);
+        double toReturn = weaponType.getDamage(nRange);
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
-              && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
+              && nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG]) {
             toReturn -= 1;
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
-              && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+              && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
 
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(
                   toReturn, bDirect ? toHit.getMoS() / 3 : 0,
-                  wtype.getInfantryDamageClass(),
+                  weaponType.getInfantryDamageClass(),
                   ((Infantry) target).isMechanized(),
-                  toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                  toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0), toReturn * 2);
         }

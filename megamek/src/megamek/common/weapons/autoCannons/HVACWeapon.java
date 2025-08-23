@@ -44,7 +44,7 @@ import megamek.common.game.Game;
 import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.HVACWeaponHandler;
-import megamek.common.weapons.handlers.RapidfireHVACWeaponHandler;
+import megamek.common.weapons.handlers.RapidFireHVACWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -67,7 +67,7 @@ public abstract class HVACWeapon extends ACWeapon {
             Mounted<?> weapon = entity.getEquipment(waa.getWeaponId());
 
             if (weapon.curMode().equals("Rapid")) {
-                return new RapidfireHVACWeaponHandler(toHit, waa, game, manager);
+                return new RapidFireHVACWeaponHandler(toHit, waa, game, manager);
             }
         }
 

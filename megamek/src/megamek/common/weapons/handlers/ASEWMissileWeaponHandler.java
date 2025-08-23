@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,15 +37,15 @@ package megamek.common.weapons.handlers;
 import java.io.Serial;
 import java.util.Vector;
 
+import megamek.common.Report;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.game.Game;
 import megamek.common.units.Building;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.units.Jumpship;
-import megamek.common.Report;
-import megamek.common.ToHitData;
 import megamek.common.units.Warship;
-import megamek.common.actions.WeaponAttackAction;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -75,10 +75,10 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
         missed = false;
 
         hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-              toHit.getSideTable(), waa.getAimedLocation(),
-              waa.getAimingMode(), toHit.getCover());
+              toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+              weaponAttackAction.getAimingMode(), toHit.getCover());
         hit.setGeneralDamageType(generalDamageType);
-        hit.setCapital(wtype.isCapital());
+        hit.setCapital(weaponType.isCapital());
         hit.setBoxCars(roll.getIntValue() == 12);
         hit.setCapMisCritMod(getCapMisMod());
         hit.setFirstHit(firstHit);
@@ -92,13 +92,13 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
         r.add(toHit.getTableDesc());
         r.add(entityTarget.getLocationAbbr(hit));
         vPhaseReport.addElement(r);
-        if (nweaponsHit > 1) {
+        if (numWeaponsHit > 1) {
             //If the target is hit by multiple ASEW missiles, report it here, even if the effects don't stack
             r.newlines = 1;
             r = new Report(3471);
             r.subject = subjectId;
             r.addDesc(entityTarget);
-            r.add(nweaponsHit);
+            r.add(numWeaponsHit);
             vPhaseReport.add(r);
         } else {
             //Otherwise, report a single ASEW missile hit

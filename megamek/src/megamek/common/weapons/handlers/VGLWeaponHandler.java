@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,7 +38,10 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.HexTarget;
+import megamek.common.HitData;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
@@ -82,22 +85,22 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
 
 
         // Determine what coords get hit
-        AmmoType atype = (AmmoType) ammo.getType();
+        AmmoType ammoType = ammo.getType();
         int facing = weapon.getFacing();
         ArrayList<Coords> affectedCoords = new ArrayList<>(3);
-        int af = ae.getFacing();
-        if (ae.isSecondaryArcWeapon(ae.getEquipmentNum(weapon))) {
-            af = ae.getSecondaryFacing();
+        int af = attackingEntity.getFacing();
+        if (attackingEntity.isSecondaryArcWeapon(attackingEntity.getEquipmentNum(weapon))) {
+            af = attackingEntity.getSecondaryFacing();
         }
-        affectedCoords.add(ae.getPosition().translated(af + facing));
-        affectedCoords.add(ae.getPosition().translated((af + facing + 1) % 6));
-        affectedCoords.add(ae.getPosition().translated((af + facing + 5) % 6));
+        affectedCoords.add(attackingEntity.getPosition().translated(af + facing));
+        affectedCoords.add(attackingEntity.getPosition().translated((af + facing + 1) % 6));
+        affectedCoords.add(attackingEntity.getPosition().translated((af + facing + 5) % 6));
 
         Report r = new Report(3117);
         r.indent();
         r.subject = subjectId;
-        r.add(wtype.getName());
-        r.add(atype.getSubMunitionName());
+        r.add(weaponType.getName());
+        r.add(ammoType.getSubMunitionName());
         r.add(affectedCoords.get(0).getBoardNum());
         r.add(affectedCoords.get(1).getBoardNum());
         r.add(affectedCoords.get(2).getBoardNum());
@@ -106,16 +109,16 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
 
         for (Coords c : affectedCoords) {
             Building bldg = game.getBoard().getBuildingAt(c);
-            if (atype.getMunitionType().contains(AmmoType.Munitions.M_SMOKE)) {
+            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_SMOKE)) {
                 gameManager.deliverSmokeGrenade(c, vPhaseReport);
-            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_CHAFF)) {
+            } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_CHAFF)) {
                 gameManager.deliverChaffGrenade(c, vPhaseReport);
-            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY)) {
+            } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY)) {
                 Vector<Report> dmgReports;
                 // Delivery an inferno to the hex
                 Targetable grenadeTarget = new HexTarget(c, Targetable.TYPE_HEX_IGNITE);
                 dmgReports = gameManager
-                      .deliverInfernoMissiles(ae, grenadeTarget, 1);
+                      .deliverInfernoMissiles(attackingEntity, grenadeTarget, 1);
                 r = new Report(3372);
                 r.add("Hex " + c.getBoardNum());
                 r.indent();
@@ -129,7 +132,7 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
                 if (bldg != null) {
                     grenadeTarget = new BuildingTarget(c, game.getBoard(),
                           Targetable.TYPE_BLDG_IGNITE);
-                    dmgReports = gameManager.deliverInfernoMissiles(ae,
+                    dmgReports = gameManager.deliverInfernoMissiles(attackingEntity,
                           grenadeTarget, 1);
                     r = new Report(3372);
                     r.add(bldg.getName());
@@ -150,7 +153,7 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
                         continue;
                     }
                     dmgReports = gameManager
-                          .deliverInfernoMissiles(ae, entTarget, 1);
+                          .deliverInfernoMissiles(attackingEntity, entTarget, 1);
                     r = new Report(3371);
                     r.addDesc(entTarget);
                     r.indent();
@@ -168,8 +171,8 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
                           && Compute.isInBuilding(game, entTarget, c);
 
                     hit = entTarget.rollHitLocation(toHit.getHitTable(),
-                          toHit.getSideTable(), waa.getAimedLocation(),
-                          waa.getAimingMode(), toHit.getCover());
+                          toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+                          weaponAttackAction.getAimingMode(), toHit.getCover());
                     hit.setAttackerId(getAttackerId());
 
                     Vector<Report> dmgReports = new Vector<>();

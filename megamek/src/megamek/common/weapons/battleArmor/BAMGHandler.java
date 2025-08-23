@@ -74,7 +74,7 @@ public class BAMGHandler extends WeaponHandler {
     protected int calcDamagePerHit() {
         if (weapon.isRapidFire() && !(target instanceof Infantry)) {
             // Check for rapid fire Option. Only MGs can be rapid fire.
-            switch (wtype.getDamage()) {
+            switch (weaponType.getDamage()) {
                 case 1:
                     nDamPerHit = Math.max(1, Compute.d6() - 1);
                     break;
@@ -106,7 +106,7 @@ public class BAMGHandler extends WeaponHandler {
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             if (weapon.isRapidFire()) {
-                ae.heatBuildup += nDamPerHit;
+                attackingEntity.heatBuildup += nDamPerHit;
             } else {
                 super.addHeat();
             }

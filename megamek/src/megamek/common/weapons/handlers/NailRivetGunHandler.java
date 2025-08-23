@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2009-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,10 +34,12 @@
 
 package megamek.common.weapons.handlers;
 
-import megamek.common.compute.Compute;
-import megamek.common.game.Game;
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
 import megamek.common.weapons.DamageType;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -46,13 +48,11 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Oct 20, 2004
  */
 public class NailRivetGunHandler extends AmmoWeaponHandler {
+    @Serial
     private static final long serialVersionUID = 5635871269404561702L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
     public NailRivetGunHandler(ToHitData t, WeaponAttackAction w, Game g,
           TWGameManager m) {

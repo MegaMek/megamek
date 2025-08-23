@@ -177,7 +177,7 @@ public class AreaEffectHelper {
         Game game = attacker.getGame();
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         boolean thinAir = conditions.getAtmosphere().isThin();
-        // sanity check: if this attack is happening in vacuum through very thin atmo,
+        // sanity check: if this attack is happening in vacuum through very thin atmosphere,
         // add that to the phase report and terminate early
 
         if (game.getBoard().isSpace()
@@ -204,7 +204,7 @@ public class AreaEffectHelper {
 
         // determine distance to entity
         // look up damage on radius chart
-        // (divided by half, round up for thin atmo)
+        // (divided by half, round up for thin atmosphere)
         // not here, but in artilleryDamageEntity, make sure to 2x damage for infantry
         // outside of building
         // not here, but in artilleryDamageEntity, make sure to 1.5x damage for light
@@ -251,7 +251,7 @@ public class AreaEffectHelper {
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         boolean thinAir = conditions.getAtmosphere().isThin();
 
-        // sanity check: if this attack is happening in vacuum through very thin atmo,
+        // sanity check: if this attack is happening in vacuum through very thin atmosphere,
         // add that to the phase report and terminate early
         if (game.getBoard(boardId).isSpace()
               || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN)) {
@@ -273,7 +273,7 @@ public class AreaEffectHelper {
 
         // assemble collection of <level, Coords> 3D locations at ranges 0 to radius
         // for each hex, invoke artilleryDamageHex, with the damage set according to
-        // the blast shape (damage is divided by half, round up for thin atmo)
+        // the blast shape (damage is divided by half, round up for thin atmosphere)
         // if any attacked unit is infantry or BA, roll 2d6 + current distance. Inf dies
         // on 9-, BA dies on 7-
         // Use DamageFalloff to signal building damage factor
@@ -330,9 +330,8 @@ public class AreaEffectHelper {
      * necessary. Single-entity version.
      */
     public static void checkInfantryDestruction(Entity entity, int distFromCenter, Entity attacker,
-          Vector<Integer> alreadyHit,
-          Vector<Report> vPhaseReport, Game game, TWGameManager gameManager) {
-        int rollTarget = -1;
+          Vector<Integer> alreadyHit, Vector<Report> vPhaseReport, Game game, TWGameManager gameManager) {
+        int rollTarget;
         if (entity instanceof BattleArmor) {
             rollTarget = 7;
         } else if (entity instanceof Infantry) {
@@ -346,21 +345,20 @@ public class AreaEffectHelper {
         String rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + " + distFromCenter + "]";
         boolean destroyed = rollValue <= rollTarget;
 
-        Report r = new Report(9987);
-        r.indent(1);
-        r.subject = attacker.getId();
-        r.newlines = 1;
-        r.add(rollTarget);
-        r.addDataWithTooltip(rollCalc, diceRoll.getReport());
-        r.add(distFromCenter);
-        r.choose(destroyed);
-        vPhaseReport.addElement(r);
+        Report report = new Report(9987);
+        report.indent(1);
+        report.subject = attacker.getId();
+        report.newlines = 1;
+        report.add(rollTarget);
+        report.addDataWithTooltip(rollCalc, diceRoll.getReport());
+        report.add(distFromCenter);
+        report.choose(destroyed);
+        vPhaseReport.addElement(report);
 
         if (destroyed) {
             vPhaseReport.addAll(gameManager.destroyEntity(entity, "fuel-air ordnance detonation", false, false));
             alreadyHit.add(entity.getId());
         }
-        return;
     }
 
     /**
@@ -399,15 +397,15 @@ public class AreaEffectHelper {
      * @param isFuelAirBomb  Whether we are making a fuel-air attack
      * @param killer         The entity that initiated the attack
      * @param hex            The hex, if any, where the shell landed
-     * @param subjectId      The ID of the entity carrying out the attack, for reporting in double blind games
+     * @param subjectId      The ID of the entity carrying out the attack, for reporting in double-blind games
      * @param vPhaseReport   Vector of reports to which we append reports
      * @param gameManager    GameManager object for invocation of various methods
      */
     public static void artilleryDamageEntity(Entity entity, int damage, Building bldg, int bldgAbsorbs,
-          boolean variableDamage, boolean asfFlak, boolean flak, int altitude,
-          Coords attackSource, AmmoType ammo, Coords coords, boolean isFuelAirBomb,
-          Entity killer, Hex hex, int subjectId, Vector<Report> vPhaseReport, TWGameManager gameManager) {
-        Report r;
+          boolean variableDamage, boolean asfFlak, boolean flak, int altitude, Coords attackSource, AmmoType ammo,
+          Coords coords, boolean isFuelAirBomb, Entity killer, Hex hex, int subjectId, Vector<Report> vPhaseReport,
+          TWGameManager gameManager) {
+        Report report;
 
         int hits = damage;
         if (variableDamage) {
@@ -432,20 +430,20 @@ public class AreaEffectHelper {
                 return; // took its damage already from building damage
             } else if (cluster <= 0) {
                 // entity takes no damage
-                r = new Report(6426);
-                r.subject = subjectId;
-                r.addDesc(entity);
-                vPhaseReport.add(r);
+                report = new Report(6426);
+                report.subject = subjectId;
+                report.addDesc(entity);
+                vPhaseReport.add(report);
                 return;
             } else {
-                r = new Report(6425);
-                r.subject = subjectId;
-                r.add(bldgAbsorbs);
-                vPhaseReport.add(r);
+                report = new Report(6425);
+                report.subject = subjectId;
+                report.add(bldgAbsorbs);
+                vPhaseReport.add(report);
             }
         }
 
-        // flak against ASF should only hit Aeros, because their elevation
+        // flak against ASF should only hit Aerospace, because their elevation
         // is actually altitude, so shouldn't hit VTOLs
         if (asfFlak && !(entity.isAirborne())) {
             return;
@@ -519,12 +517,12 @@ public class AreaEffectHelper {
                 if ((entity instanceof Tank)
                       && ((entity.getMovementMode() == EntityMovementMode.WHEELED)
                       || (entity.getMovementMode() == EntityMovementMode.HOVER))) {
-                    r = new Report(6480);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    r.add(toHit.getTableDesc());
-                    r.add(0);
-                    vPhaseReport.add(r);
+                    report = new Report(6480);
+                    report.subject = entity.getId();
+                    report.addDesc(entity);
+                    report.add(toHit.getTableDesc());
+                    report.add(0);
+                    vPhaseReport.add(report);
                     vPhaseReport.addAll(gameManager.vehicleMotiveDamage((Tank) entity, 0));
                     return;
                 }
@@ -541,64 +539,48 @@ public class AreaEffectHelper {
                     if ((entity.getBARRating(1) < 5) && !entity.hasPatchworkArmor()) {
                         switch (ammo.getAmmoType()) {
                             case LONG_TOM:
-                                // hack: check if damage is still at 4, so
-                                // we're in
-                                // the
-                                // center hex. otherwise, do no damage
-                                if (damage == 4) {
-                                    damage = (5 - entity.getBARRating(1)) * 5;
-                                } else {
+                                // hack: check if damage is still at 4, so we're in the center hex. otherwise, do no
+                                // damage
+                                if (damage != 4) {
                                     return;
                                 }
+
                                 break;
                             case SNIPER:
-                                // hack: check if damage is still at 2, so
-                                // we're in
-                                // the
-                                // center hex. otherwise, do no damage
-                                if (damage == 2) {
-                                    damage = (5 - entity.getBARRating(1)) * 3;
-                                } else {
+                                // hack: check if damage is still at 2, so we're in the center hex. otherwise, do no
+                                // damage
+                                if (damage != 2) {
                                     return;
                                 }
                                 break;
                             case THUMPER:
-                                // no need to check for damage, because
-                                // falloff =
-                                // damage for the thumper
-                                damage = 5 - entity.getBARRating(1);
+                                // no need to check for damage, because falloff = damage for the thumper
                                 break;
                         }
                     } else {
                         // ugh, patchwork armor
-                        // rules as written don't deal with this reset the damage to standard arty
-                        // damage
-                        // when we have each cluster's hit location, we'll multiply by the
-                        // BAR-difference to BAR 5, per a rules question email
+                        // rules as written don't deal with this reset the damage to standard arty damage when we
+                        // have each cluster's hit location, we'll multiply by the BAR-difference to BAR 5, per a
+                        // rules question email
                         specialCaseFlechette = true;
                         switch (ammo.getAmmoType()) {
                             case LONG_TOM:
                                 // hack: check if damage is still at 4, so
                                 // we're in the center hex. otherwise, do no damage
-                                if (damage == 4) {
-                                    damage = 25;
-                                } else {
+                                if (damage != 4) {
                                     return;
                                 }
                                 break;
                             case SNIPER:
-                                // hack: check if damage is still at 2, so we're in
-                                // the center hex. otherwise, do no damage
-                                if (damage == 2) {
-                                    damage = 15;
-                                } else {
+                                // hack: check if damage is still at 2, so we're in the center hex. otherwise, do no
+                                // damage
+                                if (damage != 2) {
                                     return;
                                 }
                                 break;
                             case THUMPER:
                                 // no need to check for damage, because
                                 // falloff = damage for the thumper
-                                damage = 10;
                                 break;
                         }
                     }
@@ -607,12 +589,13 @@ public class AreaEffectHelper {
         }
 
         // Do the damage
-        r = new Report(6480);
-        r.subject = entity.getId();
-        r.addDesc(entity);
-        r.add(toHit.getTableDesc());
-        r.add(hits);
-        vPhaseReport.add(r);
+        report = new Report(6480);
+        report.subject = entity.getId();
+        report.addDesc(entity);
+        report.add(toHit.getTableDesc());
+        report.add(hits);
+        vPhaseReport.add(report);
+
         if (entity instanceof BattleArmor) {
             // BA take full damage to each trooper, ouch!
             for (int loc = 0; loc < entity.locations(); loc++) {
@@ -626,25 +609,29 @@ public class AreaEffectHelper {
             while (hits > 0) {
                 int damageToDeal = Math.min(cluster, hits);
                 HitData hit = entity.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-                // per a rules question, for patchwork armor being attacked by flechette ammo,
-                // we multiply the damage done
-                // by 5 - the BAR rating of the hit location
+                // per a rules question, for patchwork armor being attacked by fléchette ammo, we multiply the damage
+                // done by 5 - the BAR rating of the hit location
                 if (specialCaseFlechette && !(entity instanceof Infantry)) {
                     damageToDeal *= (5 - entity.getBARRating(hit.getLocation()));
-                    // fuel-air bombs do 1.5x damage to locations hit that have a BAR rating of less
-                    // than 10.
+                    // fuel-air bombs do 1.5x damage to locations hit that have a BAR rating of less than 10.
                 } else if (isFuelAirBomb && !(entity instanceof Infantry)
                       && (entity.getBARRating(hit.getLocation()) < 10)) {
                     damageToDeal = (int) Math.ceil(damageToDeal * 1.5);
 
-                    r = new Report(9991);
-                    r.indent(1);
-                    r.subject = killer.getId();
-                    r.newlines = 1;
-                    vPhaseReport.addElement(r);
+                    report = new Report(9991);
+                    report.indent(1);
+                    report.subject = killer.getId();
+                    report.newlines = 1;
+                    vPhaseReport.addElement(report);
                 }
-                vPhaseReport.addAll(gameManager.damageEntity(entity, hit, damageToDeal,
-                      false, DamageType.NONE, false, true, false));
+                vPhaseReport.addAll(gameManager.damageEntity(entity,
+                      hit,
+                      damageToDeal,
+                      false,
+                      DamageType.NONE,
+                      false,
+                      true,
+                      false));
                 hits -= Math.min(cluster, hits);
             }
         }
@@ -660,14 +647,14 @@ public class AreaEffectHelper {
      *
      * @param ammo        AmmoType being used for the attack
      * @param attackingBA How many BA suits are in the squad if this is a BA Tube arty attack, -1 otherwise
-     * @param mineClear   Whether or not we're clearing a minefield
+     * @param mineClear   Whether we're clearing a minefield
      *
      * @return A DamageFalloff object containing the damage and falloff values and if it is cluster or not
      */
     public static DamageFalloff calculateDamageFallOff(AmmoType ammo, int attackingBA, boolean mineClear) {
         if (ammo == null) {
-            logger.error("Attempting to calculate damage fall-off with null ammo.\n\n"
-                  + Arrays.toString(Thread.currentThread().getStackTrace()));
+            logger.error("Attempting to calculate damage fall-off with null ammo.\n\n{}",
+                  Arrays.toString(Thread.currentThread().getStackTrace()));
 
             DamageFalloff empty = new DamageFalloff();
             empty.damage = 0;
@@ -698,9 +685,8 @@ public class AreaEffectHelper {
             if (ammo.getMunitionType().contains(Munitions.M_FAE)) {
                 damage = switch (ammo.getAmmoType()) {
                     case LONG_TOM, LONG_TOM_CANNON, LONG_TOM_PRIM -> 30;
-                    case SNIPER, SNIPER_CANNON -> 20;
+                    case SNIPER, SNIPER_CANNON, ARROW_IV, ARROWIV_PROTO -> 20;
                     case THUMPER, THUMPER_CANNON -> 10;
-                    case ARROW_IV, ARROWIV_PROTO -> 20;
                     default -> 0; // Should not happen...
                 };
                 radius = getFuelAirBlastRadiusIndex(ammo.getInternalName());
@@ -811,7 +797,7 @@ public class AreaEffectHelper {
         } else if (ammo.getMunitionType().contains(Munitions.M_FLECHETTE)) {
             // TODO: update to current TacOps rules (damage differs between armor types)
             falloff = switch (ammo.getAmmoType()) {
-                // for flechette, damage and falloff is number of d6, not absolute
+                // for fléchette, damage and falloff is number of d6, not absolute
                 // damage
                 case LONG_TOM -> {
                     damage = 4;
@@ -958,44 +944,6 @@ public class AreaEffectHelper {
     }
 
     /**
-     * Dumb data structure intended to hold results from the calculateDamageFalloff method.
-     */
-    public static class DamageFalloff {
-        public int damage;
-        public int falloff;
-        public int radius = 0;
-        public boolean clusterMunitionsFlag;
-    }
-
-    /**
-     * Dumb data structure intended to hold characteristics associated with various types of NUCLEAR WEAPONS (thanks
-     * Ghandi).
-     */
-    public static class NukeStats {
-        /**
-         * This is the base damage of the weapon. Note that a unit will never actually take this much damage unless the
-         * craterDepth is specified as 0.
-         */
-        public int baseDamage;
-
-        /**
-         * How much to subtract, per hex distance from impact point, from the base damage
-         */
-        public int degradation;
-
-        /**
-         * The maximum distance, in hexes, from the impact point, at which "secondary" effects are applied to units
-         */
-        public int secondaryRadius;
-
-        /**
-         * The depth, in hex levels, of the crater generated by this nuke at the impact hex Note that the crater radius
-         * is this number multiplied by 2
-         */
-        public int craterDepth;
-    }
-
-    /**
      * Computes the semi-3D blast shapes of AE and Artillery explosions using rules from: - Total Warfare pp. 173, XXX,
      * and - Tactical Operations: Advanced Rules pp. 150, YYY
      * <p>
@@ -1005,7 +953,7 @@ public class AreaEffectHelper {
      * level that was hit/targeted in the central hex.  E.g. a WiGE vehicle at elevation 1 in a water hex would take 1/2
      * damage from any AE attack that targeted and hit that hex.  Any underwater vehicle at depth 1 below the surface,
      * likewise. - For R1 and larger: full damage to 1 level above and below the targeted level in that hex. 1/2 damage
-     * to the levels 2 above and 2 below the level hit. Also 1/2 damage in an R1 ring at 1 level above and 1 level
+     * to the levels 2 above and 2 below the level hit. Also, 1/2 damage in an R1 ring at 1 level above and 1 level
      * below.
      * <p>
      * Further, cumulatively, Artillery attacks deal extra damage above the hexes they hit no matter what type of hex
@@ -1122,7 +1070,7 @@ public class AreaEffectHelper {
               center, falloff, height, true
         ));
 
-        // 2.1 For FAE munitions, add an additional ring of 5 damage
+        // 2.1 For FAE munitions, add a ring of 5 damage
         if (isFaeAmmo || isFaeBomb) {
             List<Coords> ringCoords = center.allAtDistance(radius);
             for (Coords c : ringCoords) {
@@ -1150,7 +1098,7 @@ public class AreaEffectHelper {
             // R1+ AE attacks also generate 1/2-damage rings around the +1 and -1 levels of the center hex.
             if (radius > 0) {
                 // Upper blast ring looks like >> | 1/2 damage || center || 1/2 damage | << so we need a different
-                // falloff value.  We automatically subtract the falloff value for each radius outside of 1 so
+                // falloff value.  We automatically subtract the falloff value for each radius outside 1 so
                 // double the computed damage and set the falloff to equal it.
                 blastShape.putAll(AreaEffectHelper.shapeBlastRing(
                       center, falloff, height + 1, true

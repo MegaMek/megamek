@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2004 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -68,8 +68,8 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
     public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         twoRollsUltra = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_UAC_TWO_ROLLS)
-              && ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA)
-              || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB));
+              && ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA)
+              || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB));
     }
 
     @Override
@@ -77,12 +77,10 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         setDone();
         checkAmmo();
         howManyShots = (weapon.curMode().equals(Weapon.MODE_AC_SINGLE) ? 1 : 2);
-        int total = ae.getTotalAmmoOfType(ammo.getType());
-        if (total > 1) {
-            // No need to change howManyShots
-        } else if (total == 1) {
+        int total = attackingEntity.getTotalAmmoOfType(ammo.getType());
+        if (total == 1) {
             howManyShots = 1;
-        } else {
+        } else if (total < 1) {
             howManyShots = 0;
         }
 
@@ -95,7 +93,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         // We _may_ be able to reload from another ammo source, but in case
         // a previous attack burned through all the ammo, this attack may be SOL.
         if (ammo.getUsableShotsLeft() == 0) {
-            ae.loadWeapon(weapon);
+            attackingEntity.loadWeapon(weapon);
             ammo = (AmmoMounted) weapon.getLinked();
         }
     }
@@ -159,13 +157,13 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             return true;
         }
 
-        if ((roll.getIntValue() == 2) && (howManyShots == 2) && !ae.isConventionalInfantry()) {
+        if ((roll.getIntValue() == 2) && (howManyShots == 2) && !attackingEntity.isConventionalInfantry()) {
             Report r = new Report();
             r.subject = subjectId;
             weapon.setJammed(true);
             isJammed = true;
-            if ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA)
-                  || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) {
+            if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA)
+                  || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) {
                 r.messageId = 3160;
             } else {
                 r.messageId = 3170;
@@ -177,30 +175,30 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     @Override
     protected int calcDamagePerHit() {
-        double toReturn = wtype.getDamage();
+        double toReturn = weaponType.getDamage();
         // infantry get hit by all shots
         if (target.isConventionalInfantry()) {
             if (howManyShots > 1) { // Is this a cluster attack?
                 // Compute maximum damage potential for cluster weapons
-                toReturn = howManyShots * wtype.getDamage();
+                toReturn = howManyShots * weaponType.getDamage();
                 toReturn = Compute.directBlowInfantryDamage(toReturn,
                       bDirect ? toHit.getMoS() / 3 : 0,
                       WeaponType.WEAPON_CLUSTER_BALLISTIC, // treat as cluster
                       ((Infantry) target).isMechanized(),
-                      toHit.getThruBldg() != null, ae.getId(),
+                      toHit.getThruBldg() != null, attackingEntity.getId(),
                       calcDmgPerHitReport);
             } else { // No - only one shot fired
-                toReturn = Compute.directBlowInfantryDamage(wtype.getDamage(),
+                toReturn = Compute.directBlowInfantryDamage(weaponType.getDamage(),
                       bDirect ? toHit.getMoS() / 3 : 0,
-                      wtype.getInfantryDamageClass(),
+                      weaponType.getInfantryDamageClass(),
                       ((Infantry) target).isMechanized(),
-                      toHit.getThruBldg() != null, ae.getId(),
+                      toHit.getThruBldg() != null, attackingEntity.getId(),
                       calcDmgPerHitReport);
             }
             // Cluster bonuses or penalties can't apply to "two rolls" UACs, so
             // if we have one, modify the damage per hit directly.
         } else if (bDirect && (howManyShots == 1 || twoRollsUltra)) {
-            toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
+            toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0), toReturn * 2);
         }
 
         if (howManyShots == 1 || twoRollsUltra) {
@@ -208,11 +206,11 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         }
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
-              && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+              && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
-              && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+              && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
         }
         return (int) toReturn;
@@ -224,8 +222,8 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected int calcnClusterAero(Entity entityTarget) {
-        if (usesClusterTable() && !ae.isCapitalFighter() && (entityTarget != null)
+    protected int calculateNumClusterAero(Entity entityTarget) {
+        if (usesClusterTable() && !attackingEntity.isCapitalFighter() && (entityTarget != null)
               && !entityTarget.isCapitalScale()) {
             return (int) Math.ceil(attackValue / 2.0);
         } else {

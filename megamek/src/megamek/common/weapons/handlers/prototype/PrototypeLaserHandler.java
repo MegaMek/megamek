@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,11 +34,13 @@
 
 package megamek.common.weapons.handlers.prototype;
 
+import java.io.Serial;
+
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.handlers.EnergyWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -50,13 +52,11 @@ public class PrototypeLaserHandler extends EnergyWeaponHandler {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 6832340682515730916L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
     public PrototypeLaserHandler(ToHitData t, WeaponAttackAction w, Game g,
           TWGameManager m) {
@@ -76,7 +76,7 @@ public class PrototypeLaserHandler extends EnergyWeaponHandler {
         }
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             super.addHeat();
-            ae.heatBuildup += Compute.d6();
+            attackingEntity.heatBuildup += Compute.d6();
         }
 
     }

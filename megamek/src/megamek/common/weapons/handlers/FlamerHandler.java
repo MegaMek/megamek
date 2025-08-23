@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,9 +34,12 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.HitData;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.ComputeSideTable;
@@ -54,6 +57,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Sebastian Brocks Created on Sep 23, 2004
  */
 public class FlamerHandler extends WeaponHandler {
+    @Serial
     private static final long serialVersionUID = -7348456582587703751L;
 
     public FlamerHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
@@ -62,10 +66,16 @@ public class FlamerHandler extends WeaponHandler {
     }
 
     @Override
-    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
-          Building bldg, int hits, int nCluster, int bldgAbsorbs) {
+    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, Building bldg, int hits,
+          int nCluster, int bldgAbsorbs) {
         boolean bmmFlamerDamage = game.getOptions().booleanOption(OptionsConstants.BASE_FLAMER_HEAT);
-        EquipmentMode currentWeaponMode = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).curMode();
+        Entity entity = game.getEntity(weaponAttackAction.getEntityId());
+
+        if (entity == null) {
+            return;
+        }
+
+        EquipmentMode currentWeaponMode = entity.getEquipment(weaponAttackAction.getWeaponId()).curMode();
 
         boolean flamerDoesHeatOnlyDamage = currentWeaponMode != null
               && currentWeaponMode.equals(Weapon.MODE_FLAMER_HEAT);
@@ -76,28 +86,28 @@ public class FlamerHandler extends WeaponHandler {
 
             if (bmmFlamerDamage && entityTarget.tracksHeat() &&
                   !entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
-                        ComputeSideTable.sideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
-                FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, wtype, subjectId, hit);
+                        ComputeSideTable.sideTable(attackingEntity, entityTarget, weapon.getCalledShot().getCall()))) {
+                FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, weaponType, subjectId, hit);
             }
         } else if (flamerDoesHeatOnlyDamage) {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                  toHit.getSideTable(), waa.getAimedLocation(),
-                  waa.getAimingMode(), toHit.getCover());
+                  toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+                  weaponAttackAction.getAimingMode(), toHit.getCover());
             hit.setAttackerId(getAttackerId());
 
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
-                  ComputeSideTable.sideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
+                  ComputeSideTable.sideTable(attackingEntity, entityTarget, weapon.getCalledShot().getCall()))) {
                 // Weapon strikes Partial Cover.
                 handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits, nCluster, bldgAbsorbs);
                 return;
             }
-            Report r = new Report(3405);
-            r.subject = subjectId;
-            r.add(toHit.getTableDesc());
-            r.add(entityTarget.getLocationAbbr(hit));
-            vPhaseReport.addElement(r);
+            Report report = new Report(3405);
+            report.subject = subjectId;
+            report.add(toHit.getTableDesc());
+            report.add(entityTarget.getLocationAbbr(hit));
+            vPhaseReport.addElement(report);
 
-            FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, wtype, subjectId, hit);
+            FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, weaponType, subjectId, hit);
         }
     }
 
@@ -124,7 +134,7 @@ public class FlamerHandler extends WeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
-        TargetRoll tn = new TargetRoll(wtype.getFireTN(), wtype.getName());
+        TargetRoll tn = new TargetRoll(weaponType.getFireTN(), weaponType.getName());
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
             gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, true, false,
@@ -156,7 +166,7 @@ public class FlamerHandler extends WeaponHandler {
         if ((bldg != null)
               && gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, true,
               false,
-              new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
+              new TargetRoll(weaponType.getFireTN(), weaponType.getName()), 5,
               vPhaseReport)) {
             return;
         }

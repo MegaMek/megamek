@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -130,7 +130,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         for (int i = 0; i < shots; i++) {
             if ((null == bayWAmmo) || bayWAmmo.getUsableShotsLeft() < 1) {
                 // try loading something else
-                ae.loadWeaponWithSameAmmo(bayW);
+                attackingEntity.loadWeaponWithSameAmmo(bayW);
                 bayWAmmo = bayW.getLinkedAmmo();
             }
             if (null != bayWAmmo) {
@@ -144,7 +144,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         if (!cares(phase)) {
             return true;
         }
-        ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
+        ArtilleryAttackAction aaa = (ArtilleryAttackAction) weaponAttackAction;
         if (phase.isTargeting()) {
             if (!handledAmmoAndReport) {
                 addHeat();
@@ -153,7 +153,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 r.indent();
                 r.newlines = 0;
                 r.subject = subjectId;
-                r.add(wtype.getName());
+                r.add(weaponType.getName());
                 r.add(aaa.getTurnsTilHit());
                 vPhaseReport.addElement(r);
                 Report.addNewline(vPhaseReport);
@@ -173,7 +173,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
         Entity entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa.getTarget(game) : null;
         if (game.getPhase().isFiring() && entityTarget == null) {
-            convertHexTargetToEntityTarget(vPhaseReport);
+            convertHexTargetToEntityTarget();
             entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa.getTarget(game) : null;
         }
 
@@ -282,7 +282,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
 
             if (bDirect) {
                 r = new Report(3189);
-                r.subject = ae.getId();
+                r.subject = attackingEntity.getId();
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
             }
@@ -324,9 +324,8 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
         // Aero Sanity Handling
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY) && !bMissed) {
-            // New toHit data to hold our bay auto hit. We want to be able to get
-            // glacing/direct blow
-            // data from the 'real' toHit data of this bay handler
+            // New toHit data to hold our bay auto hit. We want to be able to get glancing/direct blow data from the
+            // 'real' toHit data of this bay handler
             ToHitData autoHit = new ToHitData();
             autoHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "if the bay hits, all bay weapons hit");
             int replaceReport;
@@ -335,9 +334,9 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                     WeaponType bayWType = m.getType();
                     if (bayWType instanceof Weapon) {
                         replaceReport = vPhaseReport.size();
-                        WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(),
-                              waa.getTargetType(),
-                              waa.getTargetId(),
+                        WeaponAttackAction bayWaa = new WeaponAttackAction(weaponAttackAction.getEntityId(),
+                              weaponAttackAction.getTargetType(),
+                              weaponAttackAction.getTargetId(),
                               bayWAmmo.getEquipmentNum());
                         AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit,
                               bayWaa,
@@ -381,7 +380,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
 
         // Handle damage.
-        int nCluster = calcnCluster();
+        int nCluster = calculateNumCluster();
         int id = vPhaseReport.size();
         int hits = calcHits(vPhaseReport);
         // Set the hit location table based on where the missile goes active
@@ -390,7 +389,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 toHit.setSideTable(entityTarget.sideTable(aaa.getOldTargetCoords()));
             }
         }
-        if (target.isAirborne() || game.getBoard().isSpace() || ae.usesWeaponBays()) {
+        if (target.isAirborne() || game.getBoard().isSpace() || attackingEntity.usesWeaponBays()) {
             // if we added a line to the phase report for calc hits, remove
             // it now
             while (vPhaseReport.size() > id) {
@@ -427,7 +426,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
         if (!bMissed && (entityTarget != null)) {
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
-            gameManager.creditKill(entityTarget, ae);
+            gameManager.creditKill(entityTarget, attackingEntity);
         } else if (!bMissed) { // Hex is targeted, need to report a hit
             r = new Report(3390);
             r.subject = subjectId;
@@ -438,19 +437,11 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
     }
 
     /**
-     * @deprecated The parameter isn't used so replacing with version without the parameter.
-     */
-    @Deprecated(since = "0.50.05")
-    public void convertHexTargetToEntityTarget(Vector<Report> vPhaseReport) {
-        convertHexTargetToEntityTarget();
-    }
-
-    /**
      * Find the available targets within sensor range. Bearings-only missiles scan within the nose arc and target the
      * closest large craft within the preset range band. If none are found, it targets the closest small craft.
      */
     public void convertHexTargetToEntityTarget() {
-        ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
+        ArtilleryAttackAction aaa = (ArtilleryAttackAction) weaponAttackAction;
 
         final Coords tc = target.getPosition();
         targetCoords = tc;
@@ -459,12 +450,12 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         aaa.setOldTargetCoords(tc);
         aaa.setOriginalTargetId(target.getId());
         aaa.setOriginalTargetType(target.getTargetType());
-        int missileFacing = ae.getPosition().direction(tc);
+        int missileFacing = attackingEntity.getPosition().direction(tc);
         Targetable newTarget = null;
         Vector<Aero> targets = new Vector<>();
 
         // get all entities on the opposing side
-        for (Iterator<Entity> enemies = game.getAllEnemyEntities(ae); enemies.hasNext(); ) {
+        for (Iterator<Entity> enemies = game.getAllEnemyEntities(attackingEntity); enemies.hasNext(); ) {
             Entity e = enemies.next();
             // Narrow the list to small craft and larger
             if (((e.getEntityType() & (Entity.ETYPE_SMALL_CRAFT)) != 0)) {
@@ -537,7 +528,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         targets.removeAllElements();
         targets.addAll(detected);
 
-        // If we're using tele-operated missiles, the player gets to select the target
+        // If we're using teleoperated missiles, the player gets to select the target
         if (weapon.getType() instanceof TeleOperatedMissileBayWeapon) {
             List<Integer> targetIds = new ArrayList<>();
             List<Integer> toHitValues = new ArrayList<>();
@@ -546,7 +537,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 targetIds.add(target.getId());
                 toHitValues.add(toHit.getValue());
             }
-            int choice = gameManager.processTeleguidedMissileCFR(ae.getOwnerId(), targetIds, toHitValues);
+            int choice = gameManager.processTeleguidedMissileCFR(attackingEntity.getOwnerId(), targetIds, toHitValues);
             newTarget = targets.get(choice);
             target = newTarget;
             aaa.setTargetId(target.getId());
@@ -696,7 +687,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         // Space ECM
         if (game.getBoard().isSpace() && game.getOptions()
               .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ECM)) {
-            int ecm = ComputeECM.getLargeCraftECM(ae, targetCoords, target.getPosition());
+            int ecm = ComputeECM.getLargeCraftECM(attackingEntity, targetCoords, target.getPosition());
             ecm = Math.min(4, ecm);
             if (ecm > 0) {
                 toHit.addModifier(ecm, "ECM");
@@ -750,7 +741,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
 
             if (null == bayWeaponAmmoMounted || bayWeaponAmmoMounted.getUsableShotsLeft() < 1) {
                 // try loading something else
-                ae.loadWeaponWithSameAmmo(bayWeaponMounted);
+                attackingEntity.loadWeaponWithSameAmmo(bayWeaponMounted);
                 bayWeaponAmmoMounted = bayWeaponMounted.getLinkedAmmo();
             }
 
@@ -758,7 +749,8 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                   !bayWeaponMounted.isDestroyed() &&
                   !bayWeaponMounted.isJammed() &&
                   bayWeaponAmmoMounted != null &&
-                  ae.getTotalAmmoOfType(bayWeaponAmmoMounted.getType()) >= bayWeaponMounted.getCurrentShots()) {
+                  attackingEntity.getTotalAmmoOfType(bayWeaponAmmoMounted.getType())
+                        >= bayWeaponMounted.getCurrentShots()) {
                 WeaponType bayWeaponMountedType = bayWeaponMounted.getType();
                 // need to cycle through weapons and add attackValue
                 double currentAttackValue = 0;
@@ -782,7 +774,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                     nukeS2S = true;
                 }
 
-                currentAttackValue = updateAVforAmmo(currentAttackValue,
+                currentAttackValue = updateAVForAmmo(currentAttackValue,
                       ammoType,
                       bayWeaponMountedType,
                       range,
@@ -812,7 +804,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         AmmoType ammoType = ammo.getType();
-        double toReturn = wtype.getDamage(nRange);
+        double toReturn = weaponType.getDamage(nRange);
 
         // AR10 munitions
         if (ammoType != null) {
@@ -892,7 +884,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         int mod = 0;
 
         for (WeaponMounted bayWeaponMounted : weapon.getBayWeapons()) {
-            int currentMod = 0;
+            int currentMod;
             // check the currently loaded ammo
             AmmoMounted bayWAmmo = bayWeaponMounted.getLinkedAmmo();
             currentMod = getCritMod(bayWAmmo.getType());
@@ -934,7 +926,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
     }
 
     @Override
-    protected double updateAVforAmmo(double currentAttackValue, AmmoType ammoType, WeaponType bayWeaponType, int range,
+    protected double updateAVForAmmo(double currentAttackValue, AmmoType ammoType, WeaponType bayWeaponType, int range,
           int wId) {
         // AR10 munitions
         if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AR10) {

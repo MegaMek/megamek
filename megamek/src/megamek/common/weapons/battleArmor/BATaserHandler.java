@@ -142,7 +142,7 @@ public class BATaserHandler extends AmmoWeaponHandler {
 
         Roll diceRoll2 = Compute.rollD6(2);
         report = new Report(3715);
-        report.addDesc(ae);
+        report.addDesc(attackingEntity);
         report.add(diceRoll2);
         report.newlines = 0;
         report.indent(2);
@@ -151,13 +151,13 @@ public class BATaserHandler extends AmmoWeaponHandler {
             report = new Report(3720);
             vPhaseReport.add(report);
             // +1 to-hit for 3 turns
-            ae.setTaserFeedback(3);
+            attackingEntity.setTaserFeedback(3);
         } else {
             report = new Report(3725);
             vPhaseReport.add(report);
             // kill the firing trooper
             // TODO: should just be shut down for remainder of scenario
-            vPhaseReport.addAll(gameManager.criticalEntity(ae, weapon.getLocation(),
+            vPhaseReport.addAll(gameManager.criticalEntity(attackingEntity, weapon.getLocation(),
                   false, 0, false, false, 0));
         }
         return done;

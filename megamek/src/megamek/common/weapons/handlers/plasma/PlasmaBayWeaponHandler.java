@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2012-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,9 +34,12 @@
 
 package megamek.common.weapons.handlers.plasma;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.HitData;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
@@ -56,12 +59,11 @@ import megamek.common.weapons.ppc.innerSphere.ISPlasmaRifle;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
+    @Serial
     private static final long serialVersionUID = -4718048077136686433L;
 
     /**
-     * @param toHit
-     * @param waa
-     * @param g
+     *
      */
     public PlasmaBayWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
@@ -86,7 +88,7 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
             int extraHeat = 0;
             for (WeaponMounted m : weapon.getBayWeapons()) {
                 if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
-                    WeaponType bayWType = ((WeaponType) m.getType());
+                    WeaponType bayWType = m.getType();
                     if (bayWType instanceof ISPlasmaRifle) {
                         extraHeat += Compute.d6();
                     } else if (bayWType instanceof CLPlasmaCannon) {
@@ -137,7 +139,7 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
-        TargetRoll tn = new TargetRoll(wtype.getFireTN(), wtype.getName());
+        TargetRoll tn = new TargetRoll(weaponType.getFireTN(), weaponType.getName());
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
             gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, true, false,
@@ -173,7 +175,7 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
         if ((bldg != null)
               && gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, true,
               false,
-              new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
+              new TargetRoll(weaponType.getFireTN(), weaponType.getName()), 5,
               vPhaseReport)) {
             return;
         }

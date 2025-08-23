@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,9 +34,14 @@
 
 package megamek.common.weapons.handlers.mekMortar;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.HitData;
+import megamek.common.Player;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
@@ -56,8 +61,9 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author arlith
  */
 public class MekMortarAirburstHandler extends AmmoWeaponHandler {
-    private static final MMLogger logger = MMLogger.create(MekMortarAirburstHandler.class);
+    private static final MMLogger LOGGER = MMLogger.create(MekMortarAirburstHandler.class);
 
+    @Serial
     private static final long serialVersionUID = -2073773899108954657L;
 
     public MekMortarAirburstHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
@@ -72,10 +78,10 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
 
         final Coords targetPos = target.getPosition();
 
-        Mounted<?> ammoUsed = ae.getEquipment(waa.getAmmoId());
+        Mounted<?> ammoUsed = attackingEntity.getEquipment(weaponAttackAction.getAmmoId());
         final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
         if ((ammoType == null) || (!ammoType.getMunitionType().contains(AmmoType.Munitions.M_AIRBURST))) {
-            logger.error("Not using airburst ammo!");
+            LOGGER.error("Not using airburst ammo!");
             return true;
         }
 
@@ -84,8 +90,8 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        if (wtype != null) {
-            r.add(wtype.getName() + ' ' + ammoType.getSubMunitionName());
+        if (weaponType != null) {
+            r.add(weaponType.getName() + ' ' + ammoType.getSubMunitionName());
         } else {
             r.add("Error: From Nowhere");
         }
@@ -151,12 +157,12 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
         r.subject = subjectId;
         r.indent(2);
         r.newlines++;
-        r.add(wtype.getName() + " " + ammoType.getSubMunitionName());
-        r.add(wtype.getRackSize());
+        r.add(weaponType.getName() + " " + ammoType.getSubMunitionName());
+        r.add(weaponType.getRackSize());
         vPhaseReport.addElement(r);
 
         Vector<Report> newReports;
-        int numRounds = wtype.getRackSize();
+        int numRounds = weaponType.getRackSize();
         // Damage building directly
         Building bldg = game.getBuildingAt(targetPos, target.getBoardId()).orElse(null);
         if (bldg != null) {
@@ -191,10 +197,10 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
             // Units in a building apply damage to building
             if (Compute.isInBuilding(game, target, targetPos)) {
                 Player tOwner = target.getOwner();
-                String colorcode = tOwner.getColour().getHexString(0x00F0F0F0);
+                String colorCode = tOwner.getColour().getHexString(0x00F0F0F0);
                 newReports = gameManager.damageBuilding(bldg, numRounds, " shields "
                       + target.getShortName() + " (<B><font color='"
-                      + colorcode + "'>" + tOwner.getName()
+                      + colorCode + "'>" + tOwner.getName()
                       + "</font></B>)"
                       + " from the airburst mortar, receiving ", targetPos);
                 adjustReports(newReports);
@@ -209,10 +215,10 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
                         damage += (int) Math.ceil(Compute.d6() / 2.0);
                     }
                     hit = target.rollHitLocation(toHit.getHitTable(),
-                          toHit.getSideTable(), waa.getAimedLocation(),
-                          waa.getAimingMode(), toHit.getCover());
+                          toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+                          weaponAttackAction.getAimingMode(), toHit.getCover());
                     hit.setGeneralDamageType(generalDamageType);
-                    hit.setCapital(wtype.isCapital());
+                    hit.setCapital(weaponType.isCapital());
                     hit.setBoxCars(roll.getIntValue() == 12);
                     hit.setCapMisCritMod(getCapMisMod());
                     hit.setFirstHit(firstHit);
@@ -222,7 +228,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
                     adjustReports(newReports);
                     vPhaseReport.addAll(newReports);
                     continue;
-                    // Battlarmor take damage to each trooper
+                    // BattlArmor take damage to each trooper
                 } else if (target instanceof BattleArmor) {
                     newReports = new Vector<>();
                     for (int loc = 0; loc < target.locations(); loc++) {
@@ -238,10 +244,10 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
                 // Each round deals 1 damage
                 for (int i = 0; i < numRounds; i++) {
                     hit = target.rollHitLocation(toHit.getHitTable(),
-                          toHit.getSideTable(), waa.getAimedLocation(),
-                          waa.getAimingMode(), toHit.getCover());
+                          toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+                          weaponAttackAction.getAimingMode(), toHit.getCover());
                     hit.setGeneralDamageType(generalDamageType);
-                    hit.setCapital(wtype.isCapital());
+                    hit.setCapital(weaponType.isCapital());
                     hit.setBoxCars(roll.getIntValue() == 12);
                     hit.setCapMisCritMod(getCapMisMod());
                     hit.setFirstHit(firstHit);
@@ -260,11 +266,10 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
      * Indents all reports in the collection, and adds a new line to the last one. This is used to make nested reports
      * line-up and look nicer.
      *
-     * @param reports
      */
     private void adjustReports(Vector<Report> reports) {
-        for (Report nr : reports) {
-            nr.indent();
+        for (Report report : reports) {
+            report.indent();
         }
 
         if (!reports.isEmpty()) {

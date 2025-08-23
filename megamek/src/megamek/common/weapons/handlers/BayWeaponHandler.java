@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -61,7 +61,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Jay Lawson
  */
 public class BayWeaponHandler extends WeaponHandler {
-    private static final MMLogger logger = MMLogger.create(BayWeaponHandler.class);
+    private static final MMLogger LOGGER = MMLogger.create(BayWeaponHandler.class);
 
     @Serial
     private static final long serialVersionUID = -1618484541772117621L;
@@ -83,11 +83,11 @@ public class BayWeaponHandler extends WeaponHandler {
     @Override
     protected int calcAttackValue() {
         double av = 0;
-        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
+        int range = RangeType.rangeBracket(nRange, weaponType.getATRanges(), true, false);
 
         for (WeaponMounted m : weapon.getBayWeapons()) {
             if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
-                WeaponType bayWType = ((WeaponType) m.getType());
+                WeaponType bayWType = m.getType();
                 // need to cycle through weapons and add av
                 if (range == WeaponType.RANGE_SHORT) {
                     av = av + bayWType.getShortAV();
@@ -101,7 +101,7 @@ public class BayWeaponHandler extends WeaponHandler {
             }
         }
         if (bDirect) {
-            av = Math.min(av + (toHit.getMoS() / 3), av * 2);
+            av = Math.min(av + (toHit.getMoS() / 3.0), av * 2);
         }
         av = applyGlancingBlowModifier(av, false);
         av = (int) Math.floor(getBracketingMultiplier() * av);
@@ -117,14 +117,14 @@ public class BayWeaponHandler extends WeaponHandler {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_HEAT_BY_BAY)) {
                 for (WeaponMounted m : weapon.getBayWeapons()) {
-                    ae.heatBuildup += m.getCurrentHeat();
+                    attackingEntity.heatBuildup += m.getCurrentHeat();
                 }
             } else {
                 int loc = weapon.getLocation();
                 boolean rearMount = weapon.isRearMounted();
-                if (!ae.hasArcFired(loc, rearMount)) {
-                    ae.heatBuildup += ae.getHeatInArc(loc, rearMount);
-                    ae.setArcFired(loc, rearMount);
+                if (!attackingEntity.hasArcFired(loc, rearMount)) {
+                    attackingEntity.heatBuildup += attackingEntity.getHeatInArc(loc, rearMount);
+                    attackingEntity.setArcFired(loc, rearMount);
                 }
             }
         }
@@ -147,13 +147,14 @@ public class BayWeaponHandler extends WeaponHandler {
               : null;
 
         if ((((null == entityTarget) || entityTarget.isAirborne())
+              && (target != null)
               && (target.getTargetType() != Targetable.TYPE_HEX_CLEAR
               && target.getTargetType() != Targetable.TYPE_HEX_IGNITE
               && target.getTargetType() != Targetable.TYPE_BUILDING))
               || game.getBoard().isSpace()
               // Capital missile launchers should return the root handler...
-              || (wtype.getAtClass() == (WeaponType.CLASS_CAPITAL_MISSILE))
-              || (wtype.getAtClass() == (WeaponType.CLASS_AR10))) {
+              || (weaponType.getAtClass() == (WeaponType.CLASS_CAPITAL_MISSILE))
+              || (weaponType.getAtClass() == (WeaponType.CLASS_AR10))) {
             return super.handle(phase, vPhaseReport);
         }
 
@@ -165,23 +166,23 @@ public class BayWeaponHandler extends WeaponHandler {
               entityTarget);
         final boolean bldgDamagedOnMiss = targetInBuilding
               && !(target instanceof Infantry)
-              && ae.getPosition().distance(target.getPosition()) <= 1;
+              && attackingEntity.getPosition().distance(target.getPosition()) <= 1;
 
         if (entityTarget != null) {
-            ae.setLastTarget(entityTarget.getId());
-            ae.setLastTargetDisplayName(entityTarget.getDisplayName());
+            attackingEntity.setLastTarget(entityTarget.getId());
+            attackingEntity.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
 
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
-        String number = nweapons > 1 ? " (" + nweapons + ")" : "";
+        String number = numWeapons > 1 ? " (" + numWeapons + ")" : "";
 
         // Report weapon attack and its to-hit value.
         Report r = new Report(3115);
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        r.add(wtype.getName() + number);
+        r.add(weaponType.getName() + number);
         if (entityTarget != null) {
             r.addDesc(entityTarget);
         } else {
@@ -237,7 +238,7 @@ public class BayWeaponHandler extends WeaponHandler {
               && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
-            r.subject = ae.getId();
+            r.subject = attackingEntity.getId();
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
@@ -294,28 +295,17 @@ public class BayWeaponHandler extends WeaponHandler {
 
         Report.addNewline(vPhaseReport);
         // loop through weapons in bay and do damage
-        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
+        int range = RangeType.rangeBracket(nRange, weaponType.getATRanges(), true, false);
         int hits = 1;
         int nCluster = 1;
         for (WeaponMounted m : weapon.getBayWeapons()) {
-            double av = 0;
-            if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
-                WeaponType bayWType = ((WeaponType) m.getType());
-                // need to cycle through weapons and add av
-                if (range == WeaponType.RANGE_SHORT) {
-                    av = bayWType.getShortAV();
-                } else if (range == WeaponType.RANGE_MED) {
-                    av = bayWType.getMedAV();
-                } else if (range == WeaponType.RANGE_LONG) {
-                    av = bayWType.getLongAV();
-                } else if (range == WeaponType.RANGE_EXT) {
-                    av = bayWType.getExtAV();
-                }
-            }
+            double av = getAv(m, range);
             nDamPerHit = (int) Math.ceil(av);
+
             if (nDamPerHit <= 0) {
                 continue;
             }
+
             bSalvo = true;
 
             // Buildings shield all units from a certain amount of damage.
@@ -331,8 +321,8 @@ public class BayWeaponHandler extends WeaponHandler {
                   && (toHit.getThruBldg() != null)
                   && (entityTarget instanceof Infantry)) {
                 // If elevation is the same, building doesn't absorb
-                if (ae.getElevation() != entityTarget.getElevation()) {
-                    int dmgClass = wtype.getInfantryDamageClass();
+                if (attackingEntity.getElevation() != entityTarget.getElevation()) {
+                    int dmgClass = weaponType.getInfantryDamageClass();
                     int nDamage;
                     if (dmgClass < WeaponType.WEAPON_BURST_1D6) {
                         nDamage = nDamPerHit * Math.min(nCluster, hits);
@@ -341,7 +331,7 @@ public class BayWeaponHandler extends WeaponHandler {
                         // absorbed damage shouldn't reduce incoming damage,
                         // since the incoming damage was reduced in
                         // Compute.directBlowInfantryDamage
-                        nDamage = -wtype.getDamage(nRange) * Math.min(nCluster, hits);
+                        nDamage = -weaponType.getDamage(nRange) * Math.min(nCluster, hits);
                     }
                     bldgAbsorbs = (int) Math.round(nDamage * bldg.getInfDmgFromInside());
                 } else {
@@ -351,10 +341,28 @@ public class BayWeaponHandler extends WeaponHandler {
             }
 
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
-            gameManager.creditKill(entityTarget, ae);
+            gameManager.creditKill(entityTarget, attackingEntity);
         } // Handle the next weapon in the bay
         Report.addNewline(vPhaseReport);
         return false;
+    }
+
+    private static double getAv(WeaponMounted m, int range) {
+        double av = 0;
+        if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
+            WeaponType bayWType = m.getType();
+            // need to cycle through weapons and add av
+            if (range == WeaponType.RANGE_SHORT) {
+                av = bayWType.getShortAV();
+            } else if (range == WeaponType.RANGE_MED) {
+                av = bayWType.getMedAV();
+            } else if (range == WeaponType.RANGE_LONG) {
+                av = bayWType.getLongAV();
+            } else if (range == WeaponType.RANGE_EXT) {
+                av = bayWType.getExtAV();
+            }
+        }
+        return av;
     }
 
     /**
@@ -378,27 +386,27 @@ public class BayWeaponHandler extends WeaponHandler {
               entityTarget);
         final boolean bldgDamagedOnMiss = targetInBuilding
               && !(target instanceof Infantry)
-              && ae.getPosition().distance(target.getPosition()) <= 1;
+              && attackingEntity.getPosition().distance(target.getPosition()) <= 1;
 
         if (entityTarget != null) {
-            ae.setLastTarget(entityTarget.getId());
-            ae.setLastTargetDisplayName(entityTarget.getDisplayName());
+            attackingEntity.setLastTarget(entityTarget.getId());
+            attackingEntity.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
         // Report weapon attack and its to-hit value.
-        Report r = new Report(3115);
-        r.indent();
-        r.newlines = 0;
-        r.subject = subjectId;
-        r.add(wtype.getName());
+        Report report = new Report(3115);
+        report.indent();
+        report.newlines = 0;
+        report.subject = subjectId;
+        report.add(weaponType.getName());
         if (entityTarget != null) {
-            r.addDesc(entityTarget);
+            report.addDesc(entityTarget);
         } else {
-            r.messageId = 3120;
-            r.add(target.getDisplayName(), true);
+            report.messageId = 3120;
+            report.add(target.getDisplayName(), true);
         }
-        vPhaseReport.addElement(r);
+        vPhaseReport.addElement(report);
 
         // Handle point defense fire. For cluster hit missile launchers, we'll report
         // later.
@@ -424,53 +432,53 @@ public class BayWeaponHandler extends WeaponHandler {
         // Report any AMS bay action against Capital missiles that doesn't destroy them
         // all.
         if (amsBayEngagedCap && CapMissileArmor > 0) {
-            r = new Report(3358);
-            r.add(CapMissileAMSMod);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
+            report = new Report(3358);
+            report.add(CapMissileAMSMod);
+            report.subject = subjectId;
+            vPhaseReport.addElement(report);
 
             // Report any PD bay action against Capital missiles that doesn't destroy them
             // all.
         } else if (pdBayEngagedCap && CapMissileArmor > 0) {
-            r = new Report(3357);
-            r.add(CapMissileAMSMod);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
+            report = new Report(3357);
+            report.add(CapMissileAMSMod);
+            report.subject = subjectId;
+            vPhaseReport.addElement(report);
         }
 
         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-            r = new Report(3135);
-            r.subject = subjectId;
-            r.add(toHit.getDesc());
-            vPhaseReport.addElement(r);
+            report = new Report(3135);
+            report.subject = subjectId;
+            report.add(toHit.getDesc());
+            vPhaseReport.addElement(report);
             return false;
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
-            r = new Report(3140);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(toHit.getDesc());
-            vPhaseReport.addElement(r);
+            report = new Report(3140);
+            report.newlines = 0;
+            report.subject = subjectId;
+            report.add(toHit.getDesc());
+            vPhaseReport.addElement(report);
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
-            r = new Report(3145);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(toHit.getDesc());
-            vPhaseReport.addElement(r);
+            report = new Report(3145);
+            report.newlines = 0;
+            report.subject = subjectId;
+            report.add(toHit.getDesc());
+            vPhaseReport.addElement(report);
         } else {
             // roll to hit
-            r = new Report(3150);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(toHit);
-            vPhaseReport.addElement(r);
+            report = new Report(3150);
+            report.newlines = 0;
+            report.subject = subjectId;
+            report.add(toHit);
+            vPhaseReport.addElement(report);
         }
 
         // dice have been rolled, thanks
-        r = new Report(3155);
-        r.newlines = 0;
-        r.subject = subjectId;
-        r.add(roll);
-        vPhaseReport.addElement(r);
+        report = new Report(3155);
+        report.newlines = 0;
+        report.subject = subjectId;
+        report.add(roll);
+        vPhaseReport.addElement(report);
 
         // do we hit?
         bMissed = roll.getIntValue() < toHit.getValue();
@@ -484,10 +492,10 @@ public class BayWeaponHandler extends WeaponHandler {
         bDirect = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
               && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
-            r = new Report(3189);
-            r.subject = ae.getId();
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
+            report = new Report(3189);
+            report.subject = attackingEntity.getId();
+            report.newlines = 0;
+            vPhaseReport.addElement(report);
         }
 
         // Don't add heat here, because that will be handled by individual weapons (even
@@ -511,18 +519,18 @@ public class BayWeaponHandler extends WeaponHandler {
         // Large missiles
         // use this if AMS counterfire destroys all the missiles
         if (amsBayEngagedCap && (CapMissileArmor <= 0)) {
-            r = new Report(3356);
-            r.indent();
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
+            report = new Report(3356);
+            report.indent();
+            report.subject = subjectId;
+            vPhaseReport.addElement(report);
             return false;
         }
         // use this if PD counterfire destroys all the Capital missiles
         if (pdBayEngagedCap && (CapMissileArmor <= 0)) {
-            r = new Report(3355);
-            r.indent();
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
+            report = new Report(3355);
+            report.indent();
+            report.subject = subjectId;
+            vPhaseReport.addElement(report);
             return false;
         }
 
@@ -545,33 +553,33 @@ public class BayWeaponHandler extends WeaponHandler {
               || pdBayEngaged
               || pdBayEngagedCap
               || pdBayEngagedMissile))) {
-            r = new Report(3359);
-            r.subject = subjectId;
-            r.indent();
-            vPhaseReport.addElement(r);
+            report = new Report(3359);
+            report.subject = subjectId;
+            report.indent();
+            vPhaseReport.addElement(report);
         } else if (pdOverheated) {
             // Report a partial failure
-            r = new Report(3361);
-            r.subject = subjectId;
-            r.indent();
-            vPhaseReport.addElement(r);
+            report = new Report(3361);
+            report.subject = subjectId;
+            report.indent();
+            vPhaseReport.addElement(report);
             // Halve the effectiveness of cluster hits modification
             counterAVMod /= 2.0;
         }
         // Now report the effects, if any
         // Missiles using the cluster hits table
         if (amsBayEngaged || pdBayEngaged) {
-            r = new Report(3366);
-            r.indent();
-            r.subject = subjectId;
-            r.add((int) counterAVMod);
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
+            report = new Report(3366);
+            report.indent();
+            report.subject = subjectId;
+            report.add((int) counterAVMod);
+            report.newlines = 0;
+            vPhaseReport.addElement(report);
         }
 
         Report.addNewline(vPhaseReport);
         // New toHit data to hold our bay auto hit. We want to be able to get
-        // glacing/direct blow
+        // glancing/direct blow
         // data from the 'real' toHit data of this bay handler
         ToHitData autoHit = new ToHitData();
         autoHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "if the bay hits, all bay weapons hit");
@@ -581,18 +589,19 @@ public class BayWeaponHandler extends WeaponHandler {
                 WeaponType bayWType = m.getType();
                 if (bayWType instanceof Weapon) {
                     replaceReport = vPhaseReport.size();
-                    WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(),
-                          waa.getTargetId(), m.getEquipmentNum());
+                    WeaponAttackAction bayWaa = new WeaponAttackAction(weaponAttackAction.getEntityId(),
+                          weaponAttackAction.getTargetType(),
+                          weaponAttackAction.getTargetId(),
+                          m.getEquipmentNum());
                     AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game,
                           gameManager);
                     bayWHandler.setAnnouncedEntityFiring(false);
                     // This should always be true
-                    if (bayWHandler instanceof WeaponHandler) {
-                        WeaponHandler wHandler = (WeaponHandler) bayWHandler;
+                    if (bayWHandler instanceof WeaponHandler wHandler) {
                         wHandler.setParentBayHandler(this);
                     } else {
-                        logger.error("bayWHandler " + bayWHandler.getClass()
-                              + " is not a weapon handler! Cannot set parent bay handler.");
+                        LOGGER.error("bayWHandler {} is not a weapon handler! Cannot set parent bay handler.",
+                              bayWHandler.getClass());
                         continue;
                     }
                     bayWHandler.handle(phase, vPhaseReport);
@@ -607,18 +616,18 @@ public class BayWeaponHandler extends WeaponHandler {
                                 currentReport = vPhaseReport.get(replaceReport);
                             }
                         }
-                        r = new Report(3115);
-                        r.indent(2);
-                        r.newlines = 1;
-                        r.subject = subjectId;
-                        r.add(bayWType.getName());
+                        report = new Report(3115);
+                        report.indent(2);
+                        report.newlines = 1;
+                        report.subject = subjectId;
+                        report.add(bayWType.getName());
                         if (entityTarget != null) {
-                            r.addDesc(entityTarget);
+                            report.addDesc(entityTarget);
                         } else {
-                            r.messageId = 3120;
-                            r.add(target.getDisplayName(), true);
+                            report.messageId = 3120;
+                            report.add(target.getDisplayName(), true);
                         }
-                        vPhaseReport.add(replaceReport, r);
+                        vPhaseReport.add(replaceReport, report);
                     }
                 }
             }

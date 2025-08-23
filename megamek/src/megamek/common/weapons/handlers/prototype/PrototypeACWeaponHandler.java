@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,10 +37,10 @@ package megamek.common.weapons.handlers.prototype;
 import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.game.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.ac.ACWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -61,7 +61,7 @@ public class PrototypeACWeaponHandler extends ACWeaponHandler {
             return true;
         }
 
-        if ((roll.getIntValue() == 2) && !ae.isConventionalInfantry()) {
+        if ((roll.getIntValue() == 2) && !attackingEntity.isConventionalInfantry()) {
             Report r = new Report(3165);
             r.subject = subjectId;
             weapon.setJammed(true);

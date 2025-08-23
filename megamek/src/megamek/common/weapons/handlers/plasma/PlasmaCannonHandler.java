@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.weapons.handlers.plasma;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.HitData;
@@ -60,12 +61,11 @@ import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class PlasmaCannonHandler extends AmmoWeaponHandler {
+    @Serial
     private static final long serialVersionUID = 2304364403526293671L;
 
     /**
-     * @param toHit
-     * @param waa
-     * @param g
+     *
      */
     public PlasmaCannonHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
@@ -77,12 +77,6 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
      * state variable so damage is applied properly.
      *
      * @param entityTarget The target Entity
-     * @param vPhaseReport
-     * @param hit
-     * @param bldg
-     * @param hits
-     * @param nCluster
-     * @param bldgAbsorbs
      */
     @Override
     protected void handlePartialCoverHit(Entity entityTarget, Vector<Report> vPhaseReport,
@@ -108,10 +102,10 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         r.indent(2);
         vPhaseReport.addElement(r);
 
-        int damageableCoverType = LosEffects.DAMAGABLE_COVER_NONE;
-        Building coverBuilding = null;
-        Entity coverDropShip = null;
-        Coords coverLoc = null;
+        int damageableCoverType;
+        Building coverBuilding;
+        Entity coverDropShip;
+        Coords coverLoc;
 
         // Determine if there is primary and secondary cover,
         // and then determine which one gets hit
@@ -149,11 +143,11 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             // We need to adjust some state and then restore it later
             // This allows us to make a call to handleEntityDamage
             ToHitData savedToHit = toHit;
-            AimingMode savedAimingMode = waa.getAimingMode();
-            waa.setAimingMode(AimingMode.NONE);
+            AimingMode savedAimingMode = weaponAttackAction.getAimingMode();
+            weaponAttackAction.setAimingMode(AimingMode.NONE);
 
-            int savedAimedLocation = waa.getAimedLocation();
-            waa.setAimedLocation(Entity.LOC_NONE);
+            int savedAimedLocation = weaponAttackAction.getAimedLocation();
+            weaponAttackAction.setAimedLocation(Entity.LOC_NONE);
             boolean savedSalvo = bSalvo;
             bSalvo = true;
             Targetable origTarget = target;
@@ -161,7 +155,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             hits = calcHits(vPhaseReport);
             // Create new toHitData
             toHit = new ToHitData(0, "", ToHitData.HIT_NORMAL,
-                  ComputeSideTable.sideTable(ae, coverDropShip));
+                  ComputeSideTable.sideTable(attackingEntity, coverDropShip));
             // Report cover was damaged
             int sizeBefore = vPhaseReport.size();
             r = new Report(3465);
@@ -182,8 +176,8 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             }
             // Restore state
             toHit = savedToHit;
-            waa.setAimingMode(savedAimingMode);
-            waa.setAimedLocation(savedAimedLocation);
+            weaponAttackAction.setAimingMode(savedAimingMode);
+            weaponAttackAction.setAimedLocation(savedAimedLocation);
             bSalvo = savedSalvo;
             target = origTarget;
             // Damage a building that blocked a shot
@@ -204,7 +198,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             vPhaseReport.addAll(buildingReport);
             // Damage any infantry in the building.
             Vector<Report> infantryReport = gameManager.damageInfantryIn(coverBuilding, nDamage,
-                  coverLoc, wtype.getInfantryDamageClass());
+                  coverLoc, weaponType.getInfantryDamageClass());
             for (Report report : infantryReport) {
                 report.indent(2);
             }
@@ -219,12 +213,12 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
 
         if (entityTarget.tracksHeat()) {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                  toHit.getSideTable(), waa.getAimedLocation(),
-                  waa.getAimingMode(), toHit.getCover());
+                  toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+                  weaponAttackAction.getAimingMode(), toHit.getCover());
             hit.setGeneralDamageType(generalDamageType);
             hit.setAttackerId(getAttackerId());
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
-                  ComputeSideTable.sideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
+                  ComputeSideTable.sideTable(attackingEntity, entityTarget, weapon.getCalledShot().getCall()))) {
                 // Weapon strikes Partial Cover.
                 handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits, nCluster, bldgAbsorbs);
                 return;
@@ -292,7 +286,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected int calcnCluster() {
+    protected int calculateNumCluster() {
         if (target.tracksHeat()) {
             bSalvo = false;
             return 1;
@@ -323,7 +317,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
-        TargetRoll tn = new TargetRoll(wtype.getFireTN(), wtype.getName());
+        TargetRoll tn = new TargetRoll(weaponType.getFireTN(), weaponType.getName());
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
             gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, true, false,
@@ -358,7 +352,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         if ((bldg != null)
               && gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, true,
               false,
-              new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
+              new TargetRoll(weaponType.getFireTN(), weaponType.getName()), 5,
               vPhaseReport)) {
             return;
         }

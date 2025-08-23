@@ -511,7 +511,7 @@ class ComputeToHitIsImpossible {
             if (attacker.hasC3() || attacker.hasC3i() || attacker.hasActiveNovaCEWS()) {
                 // c3 units can fire if any other unit in their network is in visual or sensor range
                 for (Entity en : game.getEntitiesVector()) {
-                    // We got here because ae can't see the target, so we need a C3 buddy that _can_
+                    // We got here because attackingEntity can't see the target, so we need a C3 buddy that _can_
                     // or there's no shot.
                     if (!en.isEnemyOf(attacker) &&
                           en.onSameC3NetworkAs(attacker) &&

@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.weapons.handlers.capitalMissile;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.RangeType;
@@ -65,19 +66,16 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Jay Lawson
  */
 public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
-    private static final MMLogger logger = MMLogger.create(CapitalMissileBayHandler.class);
+    private static final MMLogger LOGGER = MMLogger.create(CapitalMissileBayHandler.class);
 
+    @Serial
     private static final long serialVersionUID = -1618484541772117621L;
-    boolean advancedPD = false;
+    boolean advancedPD;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
-    public CapitalMissileBayHandler(ToHitData t, WeaponAttackAction w, Game g,
-          TWGameManager m) {
+    public CapitalMissileBayHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);
     }
@@ -100,35 +98,34 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
               : null;
 
         if (entityTarget != null) {
-            ae.setLastTarget(entityTarget.getId());
-            ae.setLastTargetDisplayName(entityTarget.getDisplayName());
+            attackingEntity.setLastTarget(entityTarget.getId());
+            attackingEntity.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
-        String number = nweapons > 1 ? " (" + nweapons + ")" : "";
+        String number = numWeapons > 1 ? " (" + numWeapons + ")" : "";
         for (int i = numAttacks; i > 0; i--) {
             // Report weapon attack and its to-hit value.
-            Report r = new Report(3115);
-            r.indent();
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(wtype.getName() + number);
+            Report report = new Report(3115);
+            report.indent();
+            report.newlines = 0;
+            report.subject = subjectId;
+            report.add(weaponType.getName() + number);
             if (entityTarget != null) {
-                if ((wtype.getAmmoType() != AmmoType.AmmoTypeEnum.NA)
+                if ((weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.NA)
                       && (weapon.getLinked() != null)
-                      && (weapon.getLinked().getType() instanceof AmmoType)) {
-                    AmmoType atype = (AmmoType) weapon.getLinked().getType();
-                    if (!atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
-                        r.messageId = 3116;
-                        r.add(atype.getSubMunitionName());
+                      && (weapon.getLinked().getType() instanceof AmmoType ammoType)) {
+                    if (!ammoType.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
+                        report.messageId = 3116;
+                        report.add(ammoType.getSubMunitionName());
                     }
                 }
-                r.addDesc(entityTarget);
+                report.addDesc(entityTarget);
             } else {
-                r.messageId = 3120;
-                r.add(target.getDisplayName(), true);
+                report.messageId = 3120;
+                report.add(target.getDisplayName(), true);
             }
-            vPhaseReport.addElement(r);
+            vPhaseReport.addElement(report);
 
             // Point Defense fire vs Capital Missiles
 
@@ -157,53 +154,53 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             // Report any AMS bay action against Capital missiles that doesn't destroy them
             // all.
             if (amsBayEngagedCap && CapMissileArmor > 0) {
-                r = new Report(3358);
-                r.add(CapMissileAMSMod);
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
+                report = new Report(3358);
+                report.add(CapMissileAMSMod);
+                report.subject = subjectId;
+                vPhaseReport.addElement(report);
 
                 // Report any PD bay action against Capital missiles that doesn't destroy them
                 // all.
             } else if (pdBayEngagedCap && CapMissileArmor > 0) {
-                r = new Report(3357);
-                r.add(CapMissileAMSMod);
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
+                report = new Report(3357);
+                report.add(CapMissileAMSMod);
+                report.subject = subjectId;
+                vPhaseReport.addElement(report);
             }
 
             if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-                r = new Report(3135);
-                r.subject = subjectId;
-                r.add(" " + target.getPosition(), true);
-                vPhaseReport.addElement(r);
+                report = new Report(3135);
+                report.subject = subjectId;
+                report.add(" " + target.getPosition(), true);
+                vPhaseReport.addElement(report);
                 return false;
             } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
-                r = new Report(3140);
-                r.newlines = 0;
-                r.subject = subjectId;
-                r.add(toHit.getDesc());
-                vPhaseReport.addElement(r);
+                report = new Report(3140);
+                report.newlines = 0;
+                report.subject = subjectId;
+                report.add(toHit.getDesc());
+                vPhaseReport.addElement(report);
             } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
-                r = new Report(3145);
-                r.newlines = 0;
-                r.subject = subjectId;
-                r.add(toHit.getDesc());
-                vPhaseReport.addElement(r);
+                report = new Report(3145);
+                report.newlines = 0;
+                report.subject = subjectId;
+                report.add(toHit.getDesc());
+                vPhaseReport.addElement(report);
             } else {
                 // roll to hit
-                r = new Report(3150);
-                r.newlines = 0;
-                r.subject = subjectId;
-                r.add(toHit);
-                vPhaseReport.addElement(r);
+                report = new Report(3150);
+                report.newlines = 0;
+                report.subject = subjectId;
+                report.add(toHit);
+                vPhaseReport.addElement(report);
             }
 
             // dice have been rolled, thanks
-            r = new Report(3155);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(roll);
-            vPhaseReport.addElement(r);
+            report = new Report(3155);
+            report.newlines = 0;
+            report.subject = subjectId;
+            report.add(roll);
+            vPhaseReport.addElement(report);
 
             // do we hit?
             bMissed = roll.getIntValue() < toHit.getValue();
@@ -213,28 +210,28 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 addGlancingBlowReports(vPhaseReport);
 
                 if (bDirect) {
-                    r = new Report(3189);
-                    r.subject = ae.getId();
-                    r.newlines = 0;
-                    vPhaseReport.addElement(r);
+                    report = new Report(3189);
+                    report.subject = attackingEntity.getId();
+                    report.newlines = 0;
+                    vPhaseReport.addElement(report);
                 }
             }
 
             CounterAV = getCounterAV();
             // use this if AMS counterfire destroys all the Capital missiles
             if (amsBayEngagedCap && (CapMissileArmor <= 0)) {
-                r = new Report(3356);
-                r.indent();
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
+                report = new Report(3356);
+                report.indent();
+                report.subject = subjectId;
+                vPhaseReport.addElement(report);
                 bMissed = true;
             }
             // use this if PD counterfire destroys all the Capital missiles
             if (pdBayEngagedCap && (CapMissileArmor <= 0)) {
-                r = new Report(3355);
-                r.indent();
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
+                report = new Report(3355);
+                report.indent();
+                report.subject = subjectId;
+                vPhaseReport.addElement(report);
                 bMissed = true;
             }
 
@@ -250,11 +247,11 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 reportMiss(vPhaseReport);
             }
             // Handle damage.
-            int nCluster = calcnCluster();
+            int nCluster = calculateNumCluster();
             int id = vPhaseReport.size();
             int hits = calcHits(vPhaseReport);
 
-            if (target.isAirborne() || game.getBoard().isSpace() || ae.usesWeaponBays()) {
+            if (target.isAirborne() || game.getBoard().isSpace() || attackingEntity.usesWeaponBays()) {
                 // if we added a line to the phase report for calc hits, remove
                 // it now
                 while (vPhaseReport.size() > id) {
@@ -283,19 +280,19 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
 
             // Make sure the player knows when his attack causes no damage.
             if (nDamPerHit == 0) {
-                r = new Report(3365);
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
+                report = new Report(3365);
+                report.subject = subjectId;
+                vPhaseReport.addElement(report);
                 return false;
             }
             if (!bMissed && (entityTarget != null)) {
                 handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                       nCluster, bldgAbsorbs);
-                gameManager.creditKill(entityTarget, ae);
+                gameManager.creditKill(entityTarget, attackingEntity);
             } else if (!bMissed) { // Hex is targeted, need to report a hit
-                r = new Report(3390);
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
+                report = new Report(3390);
+                report.subject = subjectId;
+                vPhaseReport.addElement(report);
             }
         }
         Report.addNewline(vPhaseReport);
@@ -308,40 +305,40 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         double av = 0;
         double counterAV = calcCounterAV();
         int armor = 0;
-        int weaponarmor = 0;
-        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
+        int weaponArmor;
+        int range = RangeType.rangeBracket(nRange, weaponType.getATRanges(), true, false);
 
         for (WeaponMounted bayW : weapon.getBayWeapons()) {
             // check the currently loaded ammo
             AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
             if (null == bayWAmmo || bayWAmmo.getUsableShotsLeft() < 1) {
                 // try loading something else
-                ae.loadWeaponWithSameAmmo(bayW);
+                attackingEntity.loadWeaponWithSameAmmo(bayW);
                 bayWAmmo = bayW.getLinkedAmmo();
             }
             if (!bayW.isBreached()
                   && !bayW.isDestroyed()
                   && !bayW.isJammed()
                   && bayWAmmo != null
-                  && ae.getTotalAmmoOfType(bayWAmmo.getType()) >= bayW.getCurrentShots()) {
-                WeaponType bayWType = ((WeaponType) bayW.getType());
+                  && attackingEntity.getTotalAmmoOfType(bayWAmmo.getType()) >= bayW.getCurrentShots()) {
+                WeaponType bayWType = bayW.getType();
                 // need to cycle through weapons and add av
                 double current_av = 0;
 
-                AmmoType atype = (AmmoType) bayWAmmo.getType();
+                AmmoType ammoType = bayWAmmo.getType();
                 if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
-                      && (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
-                      || atype.hasFlag(AmmoType.F_PEACEMAKER))) {
-                    weaponarmor = 40;
+                      && (ammoType.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
+                      || ammoType.hasFlag(AmmoType.F_PEACEMAKER))) {
+                    weaponArmor = 40;
                 } else if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
-                      && (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
-                      || atype.hasFlag(AmmoType.F_SANTA_ANNA))) {
-                    weaponarmor = 30;
+                      && (ammoType.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
+                      || ammoType.hasFlag(AmmoType.F_SANTA_ANNA))) {
+                    weaponArmor = 30;
                 } else if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
-                      && atype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
-                    weaponarmor = 20;
+                      && ammoType.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
+                    weaponArmor = 20;
                 } else {
-                    weaponarmor = bayWType.getMissileArmor();
+                    weaponArmor = bayWType.getMissileArmor();
                 }
                 if (range == WeaponType.RANGE_SHORT) {
                     current_av = bayWType.getShortAV();
@@ -353,14 +350,14 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                     current_av = bayWType.getExtAV();
                 }
 
-                if (atype.hasFlag(AmmoType.F_NUCLEAR)) {
+                if (ammoType.hasFlag(AmmoType.F_NUCLEAR)) {
                     nukeS2S = true;
                 }
 
-                current_av = updateAVforAmmo(current_av, atype, bayWType,
+                current_av = updateAVForAmmo(current_av, ammoType, bayWType,
                       range, bayW.getEquipmentNum());
                 av = av + current_av;
-                armor = armor + weaponarmor;
+                armor = armor + weaponArmor;
                 // now use the ammo that we had loaded
                 if (current_av > 0) {
                     int shots = bayW.getCurrentShots();
@@ -368,7 +365,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                         if (null == bayWAmmo
                               || bayWAmmo.getUsableShotsLeft() < 1) {
                             // try loading something else
-                            ae.loadWeaponWithSameAmmo(bayW);
+                            attackingEntity.loadWeaponWithSameAmmo(bayW);
                             bayWAmmo = bayW.getLinkedAmmo();
                         }
                         if (null != bayWAmmo) {
@@ -383,7 +380,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         CapMissileAMSMod = calcCapMissileAMSMod();
 
         if (bDirect) {
-            av = Math.min(av + (toHit.getMoS() / 3), av * 2);
+            av = Math.min(av + (toHit.getMoS() / 3.0), av * 2);
         }
         av = applyGlancingBlowModifier(av, false);
         av = (int) Math.floor(getBracketingMultiplier() * av);
@@ -397,11 +394,6 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         return CapMissileAMSMod;
     }
 
-    @Override
-    protected int getCapMissileAMSMod() {
-        return CapMissileAMSMod;
-    }
-
     /**
      * Calculate the starting armor value of a flight of Capital Missiles Used for Aero Sanity. This is done in
      * calcAttackValue() otherwise
@@ -410,21 +402,21 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     protected int initializeCapMissileArmor() {
         int armor = 0;
         for (WeaponMounted bayW : weapon.getBayWeapons()) {
-            int curr_armor = 0;
+            int curr_armor;
             // check the currently loaded ammo
             AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
-            AmmoType atype = bayWAmmo.getType();
+            AmmoType ammoType = bayWAmmo.getType();
             WeaponType bayWType = bayW.getType();
             if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
-                  && (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
-                  || atype.hasFlag(AmmoType.F_PEACEMAKER))) {
+                  && (ammoType.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
+                  || ammoType.hasFlag(AmmoType.F_PEACEMAKER))) {
                 curr_armor = 40;
             } else if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
-                  && (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
-                  || atype.hasFlag(AmmoType.F_SANTA_ANNA))) {
+                  && (ammoType.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
+                  || ammoType.hasFlag(AmmoType.F_SANTA_ANNA))) {
                 curr_armor = 30;
             } else if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
-                  && atype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
+                  && ammoType.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
                 curr_armor = 20;
             } else {
                 curr_armor = bayWType.getMissileArmor();
@@ -438,7 +430,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     protected int getCapMisMod() {
         int mod = 0;
         for (WeaponMounted bayW : weapon.getBayWeapons()) {
-            int curr_mod = 0;
+            int curr_mod;
             // check the currently loaded ammo
             AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
             curr_mod = getCritMod(bayWAmmo.getType());
@@ -452,28 +444,28 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     /*
      * get the cap mis mod given a single ammo type
      */
-    protected int getCritMod(AmmoType atype) {
-        if (atype == null || atype.getAmmoType() == AmmoType.AmmoTypeEnum.PIRANHA) {
+    protected int getCritMod(AmmoType ammoType) {
+        if (ammoType == null || ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.PIRANHA) {
             return 0;
         }
-        if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.WHITE_SHARK
-              || atype.getAmmoType() == AmmoType.AmmoTypeEnum.WHITE_SHARK_T
-              || atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
+        if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.WHITE_SHARK
+              || ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.WHITE_SHARK_T
+              || ammoType.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
               // Santa Anna, per IO rules
-              || atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+              || ammoType.hasFlag(AmmoType.F_SANTA_ANNA)) {
             return 9;
-        } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.KRAKEN_T
-              || atype.getAmmoType() == AmmoType.AmmoTypeEnum.KRAKENM
+        } else if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.KRAKEN_T
+              || ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.KRAKENM
               // Peacemaker, per IO rules
-              || atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+              || ammoType.hasFlag(AmmoType.F_PEACEMAKER)) {
             return 8;
-        } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.KILLER_WHALE
-              || atype.getAmmoType() == AmmoType.AmmoTypeEnum.KILLER_WHALE_T
-              || atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
-              || atype.getAmmoType() == AmmoType.AmmoTypeEnum.MANTA_RAY
-              || atype.getAmmoType() == AmmoType.AmmoTypeEnum.ALAMO) {
+        } else if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.KILLER_WHALE
+              || ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.KILLER_WHALE_T
+              || ammoType.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
+              || ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MANTA_RAY
+              || ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.ALAMO) {
             return 10;
-        } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.STINGRAY) {
+        } else if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.STINGRAY) {
             return 12;
         } else {
             return 11;
@@ -481,26 +473,25 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     }
 
     @Override
-    protected double updateAVforAmmo(double current_av, AmmoType atype,
-          WeaponType bayWType, int range, int wId) {
+    protected double updateAVForAmmo(double current_av, AmmoType ammoType, WeaponType bayWType, int range, int wId) {
         // AR10 munitions
-        if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AR10) {
-            if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+        if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AR10) {
+            if (ammoType.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
                 current_av = 4;
-            } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+            } else if (ammoType.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
                 current_av = 3;
-            } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+            } else if (ammoType.hasFlag(AmmoType.F_PEACEMAKER)) {
                 current_av = 1000;
-            } else if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+            } else if (ammoType.hasFlag(AmmoType.F_SANTA_ANNA)) {
                 current_av = 100;
             } else {
                 current_av = 2;
             }
         }
         // Nuclear Warheads for non-AR10 missiles
-        if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+        if (ammoType.hasFlag(AmmoType.F_SANTA_ANNA)) {
             current_av = 100;
-        } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+        } else if (ammoType.hasFlag(AmmoType.F_PEACEMAKER)) {
             current_av = 1000;
         }
         return current_av;
@@ -518,9 +509,9 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         }
 
         for (int wId : insertedAttacks) {
-            Mounted<?> bayW = ae.getEquipment(wId);
-            WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
-                  waa.getTargetId(), wId);
+            Mounted<?> bayW = attackingEntity.getEquipment(wId);
+            WeaponAttackAction newWaa = new WeaponAttackAction(attackingEntity.getId(),
+                  weaponAttackAction.getTargetId(), wId);
             Weapon w = (Weapon) bayW.getType();
             // increase ammo by one, we'll use one that we shouldn't use
             // in the next line
@@ -572,36 +563,35 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
               entityTarget);
         final boolean bldgDamagedOnMiss = targetInBuilding
               && !(target instanceof Infantry)
-              && ae.getPosition().distance(target.getPosition()) <= 1;
+              && attackingEntity.getPosition().distance(target.getPosition()) <= 1;
 
         if (entityTarget != null) {
-            ae.setLastTarget(entityTarget.getId());
-            ae.setLastTargetDisplayName(entityTarget.getDisplayName());
+            attackingEntity.setLastTarget(entityTarget.getId());
+            attackingEntity.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
         // Report weapon attack and its to-hit value.
-        Report r = new Report(3115);
-        r.indent();
-        r.newlines = 0;
-        r.subject = subjectId;
-        r.add(wtype.getName());
+        Report report = new Report(3115);
+        report.indent();
+        report.newlines = 0;
+        report.subject = subjectId;
+        report.add(weaponType.getName());
         if (entityTarget != null) {
-            if ((wtype.getAmmoType() != AmmoType.AmmoTypeEnum.NA)
+            if ((weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.NA)
                   && (weapon.getLinked() != null)
-                  && (weapon.getLinked().getType() instanceof AmmoType)) {
-                AmmoType atype = (AmmoType) weapon.getLinked().getType();
-                if (!atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
-                    r.messageId = 3116;
-                    r.add(atype.getSubMunitionName());
+                  && (weapon.getLinked().getType() instanceof AmmoType ammoType)) {
+                if (!ammoType.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
+                    report.messageId = 3116;
+                    report.add(ammoType.getSubMunitionName());
                 }
             }
-            r.addDesc(entityTarget);
+            report.addDesc(entityTarget);
         } else {
-            r.messageId = 3120;
-            r.add(target.getDisplayName(), true);
+            report.messageId = 3120;
+            report.add(target.getDisplayName(), true);
         }
-        vPhaseReport.addElement(r);
+        vPhaseReport.addElement(report);
 
         // are we a glancing hit? Check for this here, report it later
         setGlancingBlowFlags(entityTarget);
@@ -634,53 +624,53 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         // Report any AMS bay action against Capital missiles that doesn't destroy them
         // all.
         if (amsBayEngagedCap && CapMissileArmor > 0) {
-            r = new Report(3358);
-            r.add(CapMissileAMSMod);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
+            report = new Report(3358);
+            report.add(CapMissileAMSMod);
+            report.subject = subjectId;
+            vPhaseReport.addElement(report);
 
             // Report any PD bay action against Capital missiles that doesn't destroy them
             // all.
         } else if (pdBayEngagedCap && CapMissileArmor > 0) {
-            r = new Report(3357);
-            r.add(CapMissileAMSMod);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
+            report = new Report(3357);
+            report.add(CapMissileAMSMod);
+            report.subject = subjectId;
+            vPhaseReport.addElement(report);
         }
 
         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-            r = new Report(3135);
-            r.subject = subjectId;
-            r.add(toHit.getDesc());
-            vPhaseReport.addElement(r);
+            report = new Report(3135);
+            report.subject = subjectId;
+            report.add(toHit.getDesc());
+            vPhaseReport.addElement(report);
             return false;
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
-            r = new Report(3140);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(toHit.getDesc());
-            vPhaseReport.addElement(r);
+            report = new Report(3140);
+            report.newlines = 0;
+            report.subject = subjectId;
+            report.add(toHit.getDesc());
+            vPhaseReport.addElement(report);
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
-            r = new Report(3145);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(toHit.getDesc());
-            vPhaseReport.addElement(r);
+            report = new Report(3145);
+            report.newlines = 0;
+            report.subject = subjectId;
+            report.add(toHit.getDesc());
+            vPhaseReport.addElement(report);
         } else {
             // roll to hit
-            r = new Report(3150);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(toHit);
-            vPhaseReport.addElement(r);
+            report = new Report(3150);
+            report.newlines = 0;
+            report.subject = subjectId;
+            report.add(toHit);
+            vPhaseReport.addElement(report);
         }
 
         // dice have been rolled, thanks
-        r = new Report(3155);
-        r.newlines = 0;
-        r.subject = subjectId;
-        r.add(roll);
-        vPhaseReport.addElement(r);
+        report = new Report(3155);
+        report.newlines = 0;
+        report.subject = subjectId;
+        report.add(roll);
+        vPhaseReport.addElement(report);
 
         // do we hit?
         bMissed = roll.getIntValue() < toHit.getValue();
@@ -690,27 +680,27 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             addGlancingBlowReports(vPhaseReport);
 
             if (bDirect) {
-                r = new Report(3189);
-                r.subject = ae.getId();
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
+                report = new Report(3189);
+                report.subject = attackingEntity.getId();
+                report.newlines = 0;
+                vPhaseReport.addElement(report);
             }
         }
 
         // use this if AMS counterfire destroys all the Capital missiles
         if (amsBayEngagedCap && (CapMissileArmor <= 0)) {
-            r = new Report(3356);
-            r.indent();
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
+            report = new Report(3356);
+            report.indent();
+            report.subject = subjectId;
+            vPhaseReport.addElement(report);
             return false;
         }
         // use this if PD counterfire destroys all the Capital missiles
         if (pdBayEngagedCap && (CapMissileArmor <= 0)) {
-            r = new Report(3355);
-            r.indent();
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
+            report = new Report(3355);
+            report.indent();
+            report.subject = subjectId;
+            vPhaseReport.addElement(report);
             return false;
         }
 
@@ -749,11 +739,13 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         int replaceReport;
         for (WeaponMounted m : weapon.getBayWeapons()) {
             if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
-                WeaponType bayWType = ((WeaponType) m.getType());
+                WeaponType bayWType = m.getType();
                 if (bayWType instanceof Weapon) {
                     replaceReport = vPhaseReport.size();
-                    WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(),
-                          waa.getTargetId(), m.getEquipmentNum());
+                    WeaponAttackAction bayWaa = new WeaponAttackAction(weaponAttackAction.getEntityId(),
+                          weaponAttackAction.getTargetType(),
+                          weaponAttackAction.getTargetId(),
+                          m.getEquipmentNum());
                     AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game,
                           gameManager);
                     bayWHandler.setAnnouncedEntityFiring(false);
@@ -761,8 +753,8 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                     if (bayWHandler instanceof WeaponHandler wHandler) {
                         wHandler.setParentBayHandler(this);
                     } else {
-                        logger.error("bayWHandler " + bayWHandler.getClass()
-                              + " is not a weapon handler! Cannot set parent bay handler.");
+                        LOGGER.error("bayWHandler {} is not a weapon handler! Cannot set parent bay handler.",
+                              bayWHandler.getClass());
                         continue;
                     }
                     bayWHandler.handle(phase, vPhaseReport);
@@ -777,18 +769,18 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                                 currentReport = vPhaseReport.get(replaceReport);
                             }
                         }
-                        r = new Report(3115);
-                        r.indent(2);
-                        r.newlines = 1;
-                        r.subject = subjectId;
-                        r.add(bayWType.getName());
+                        report = new Report(3115);
+                        report.indent(2);
+                        report.newlines = 1;
+                        report.subject = subjectId;
+                        report.add(bayWType.getName());
                         if (entityTarget != null) {
-                            r.addDesc(entityTarget);
+                            report.addDesc(entityTarget);
                         } else {
-                            r.messageId = 3120;
-                            r.add(target.getDisplayName(), true);
+                            report.messageId = 3120;
+                            report.add(target.getDisplayName(), true);
                         }
-                        vPhaseReport.add(replaceReport, r);
+                        vPhaseReport.add(replaceReport, report);
                     }
                 }
             }

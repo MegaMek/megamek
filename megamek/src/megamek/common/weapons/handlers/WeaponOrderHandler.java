@@ -1,7 +1,7 @@
 /*
 
  * Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -98,13 +98,12 @@ public class WeaponOrderHandler {
     private static final String ORDER_LIST = "orderList";
 
     private static Map<String, WeaponOrder> weaponOrderMap;
-    private static AtomicBoolean initialized = new AtomicBoolean(false);
-    private static AtomicBoolean updated = new AtomicBoolean(false);
+    private static final AtomicBoolean initialized = new AtomicBoolean(false);
+    private static final AtomicBoolean updated = new AtomicBoolean(false);
 
     /**
      * Save customWeaponOrderMap to a file.
      *
-     * @throws IOException
      */
     public synchronized static void saveWeaponOrderFile() throws IOException {
         // If the map hasn't been updated, we don't need to save it.
@@ -115,7 +114,7 @@ public class WeaponOrderHandler {
         String path = CUSTOM_WEAPON_ORDER_FILENAME;
         File file = new MegaMekFile(Configuration.configDir(), path).getFile();
         if (file.exists() && !file.canWrite()) {
-            logger.error("Could not save custom weapon orders from " + path);
+            logger.error("Could not save custom weapon orders from {}", path);
             return;
         }
 
@@ -130,17 +129,17 @@ public class WeaponOrderHandler {
         for (String unitId : weaponOrderMap.keySet()) {
             StringBuilder weaponList = new StringBuilder();
             StringBuilder orderList = new StringBuilder();
-            WeaponOrder weapOrder = weaponOrderMap.get(unitId);
-            if (weapOrder == null) {
+            WeaponOrder weaponOrder = weaponOrderMap.get(unitId);
+            if (weaponOrder == null) {
                 continue;
             }
 
-            if (weapOrder.orderType.isCustom()) {
+            if (weaponOrder.orderType.isCustom()) {
                 // Build weapon and order lists
-                for (Integer weapId : weapOrder.customWeaponOrderMap.keySet()) {
-                    Integer order = weapOrder.customWeaponOrderMap.get(weapId);
-                    weaponList.append(weapId + ",");
-                    orderList.append(order + ",");
+                for (Integer weaponID : weaponOrder.customWeaponOrderMap.keySet()) {
+                    Integer order = weaponOrder.customWeaponOrderMap.get(weaponID);
+                    weaponList.append(weaponID).append(",");
+                    orderList.append(order).append(",");
                 }
                 weaponList.deleteCharAt(weaponList.length() - 1);
                 orderList.deleteCharAt(orderList.length() - 1);
@@ -155,7 +154,7 @@ public class WeaponOrderHandler {
             output.write("</" + ID + ">");
             output.write("\n\t\t");
             output.write("<" + ORDER_TYPE + ">");
-            output.write(weapOrder.orderType.name());
+            output.write(weaponOrder.orderType.name());
             output.write("</" + ORDER_TYPE + ">");
             output.write("\n\t\t");
             output.write("<" + WEAPON_LIST + ">");
@@ -177,9 +176,6 @@ public class WeaponOrderHandler {
     /**
      * Load customWeaponOrderMap from a file.
      *
-     * @return
-     *
-     * @throws IOException
      */
     private synchronized static Map<String, WeaponOrder> loadWeaponOrderFile() throws IOException {
         Map<String, WeaponOrder> weapOrderMap = new HashMap<>();
@@ -187,7 +183,7 @@ public class WeaponOrderHandler {
         String path = CUSTOM_WEAPON_ORDER_FILENAME;
         File file = new MegaMekFile(Configuration.configDir(), path).getFile();
         if (!file.exists() || !file.isFile()) {
-            logger.warn("Could not load custom weapon orders from " + path);
+            logger.warn("Could not load custom weapon orders from {}", path);
             return weapOrderMap;
         }
 
@@ -243,18 +239,18 @@ public class WeaponOrderHandler {
                     continue;
                 }
 
-                WeaponOrder weapOrder = new WeaponOrder();
-                weapOrder.orderType = WeaponSortOrder.valueOf(orderTypeElement.getTextContent());
-                if (weapOrder.orderType.isCustom()) {
+                WeaponOrder weaponOrder = new WeaponOrder();
+                weaponOrder.orderType = WeaponSortOrder.valueOf(orderTypeElement.getTextContent());
+                if (weaponOrder.orderType.isCustom()) {
                     String[] weaponList = weaponListElement.getTextContent().split(",");
                     String[] orderList = orderListElement.getTextContent().split(",");
                     for (int i = 0; i < weaponList.length; i++) {
-                        weapOrder.customWeaponOrderMap.put(
+                        weaponOrder.customWeaponOrderMap.put(
                               Integer.parseInt(weaponList[i]),
                               Integer.parseInt(orderList[i]));
                     }
                 }
-                weapOrderMap.put(unitId, weapOrder);
+                weapOrderMap.put(unitId, weaponOrder);
             }
             return weapOrderMap;
         } catch (Exception ex) {
@@ -284,7 +280,7 @@ public class WeaponOrderHandler {
                 return null;
             }
         }
-        WeaponOrder newWeapOrder = new WeaponOrder();
+        WeaponOrder newWeaponOrder = new WeaponOrder();
 
         // Build the unit ID from the chassis and model.
         String unitId = chassis;
@@ -293,11 +289,11 @@ public class WeaponOrderHandler {
         try {
             if (weaponOrderMap.containsKey(unitId)) {
                 final WeaponOrder storedOrder = weaponOrderMap.get(unitId);
-                newWeapOrder.orderType = storedOrder.orderType;
+                newWeaponOrder.orderType = storedOrder.orderType;
                 if (storedOrder.customWeaponOrderMap != null) {
-                    newWeapOrder.customWeaponOrderMap.putAll(storedOrder.customWeaponOrderMap);
+                    newWeaponOrder.customWeaponOrderMap.putAll(storedOrder.customWeaponOrderMap);
                 }
-                return newWeapOrder;
+                return newWeaponOrder;
             } else {
                 return null;
             }
@@ -310,14 +306,9 @@ public class WeaponOrderHandler {
     /**
      * Sets the custom weapon order for the given chassis and model.
      *
-     * @param chassis
-     * @param model
-     * @param type
-     * @param customWeapOrder
      */
-    public synchronized static void setWeaponOrder(String chassis, String model,
-          WeaponSortOrder type,
-          Map<Integer, Integer> customWeapOrder) {
+    public synchronized static void setWeaponOrder(String chassis, String model, WeaponSortOrder type,
+          Map<Integer, Integer> customWeaponOrder) {
         if (!initialized.get() || (null == weaponOrderMap)) {
             try {
                 weaponOrderMap = loadWeaponOrderFile();
@@ -327,16 +318,15 @@ public class WeaponOrderHandler {
             }
         }
 
-        if (chassis == null || chassis.length() < 1 || model == null
-              || model.length() < 1) {
+        if (chassis == null || chassis.isEmpty() || model == null || model.isEmpty()) {
             return;
         }
         String unitId = chassis;
         unitId += " " + model;
-        WeaponOrder weapOrder = new WeaponOrder();
-        weapOrder.orderType = type;
-        weapOrder.customWeaponOrderMap = customWeapOrder;
-        weaponOrderMap.put(unitId, weapOrder);
+        WeaponOrder weaponOrder = new WeaponOrder();
+        weaponOrder.orderType = type;
+        weaponOrder.customWeaponOrderMap = customWeaponOrder;
+        weaponOrderMap.put(unitId, weaponOrder);
         updated.set(true);
     }
 }

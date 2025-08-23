@@ -70,6 +70,7 @@ import megamek.common.weapons.battleArmor.innerSphere.ISBAPopUpMineLauncher;
 import megamek.common.weapons.bayWeapons.BayWeapon;
 import megamek.common.weapons.gaussRifles.HAGWeapon;
 import megamek.common.weapons.handlers.AreaEffectHelper;
+import megamek.common.weapons.handlers.DamageFalloff;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.mgs.MGWeapon;
 import megamek.logging.MMLogger;
@@ -7260,7 +7261,7 @@ public class Compute {
         }
 
         // Get radius, base damage
-        AreaEffectHelper.DamageFalloff falloff = AreaEffectHelper.calculateDamageFallOff(
+        DamageFalloff falloff = AreaEffectHelper.calculateDamageFallOff(
               ammoType,
               attacker.isBattleArmor() ? ((BattleArmor) attacker).getTroopers() : 0,
               false

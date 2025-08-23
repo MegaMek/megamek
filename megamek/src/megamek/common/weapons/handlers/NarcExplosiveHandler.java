@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,34 +34,32 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.equipment.AmmoType;
+import megamek.common.Report;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
-import megamek.common.game.Game;
-import megamek.common.units.Infantry;
-import megamek.common.Report;
-import megamek.common.rolls.Roll;
-import megamek.common.ToHitData;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponType;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.game.Game;
+import megamek.common.rolls.Roll;
+import megamek.common.units.Infantry;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
  */
 public class NarcExplosiveHandler extends MissileWeaponHandler {
+    @Serial
     private static final long serialVersionUID = -1655014339855184419L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
-    public NarcExplosiveHandler(ToHitData t, WeaponAttackAction w, Game g,
-          TWGameManager m) {
+    public NarcExplosiveHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         sSalvoType = " explosive pod ";
     }
@@ -77,20 +75,20 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
         if (target.isConventionalInfantry()) {
-            if (ae instanceof BattleArmor) {
+            if (attackingEntity instanceof BattleArmor) {
                 bSalvo = true;
-                return ((BattleArmor) ae).getShootingStrength();
+                return ((BattleArmor) attackingEntity).getShootingStrength();
             }
             return 1;
         }
         bSalvo = true;
-        if (ae instanceof BattleArmor) {
+        if (attackingEntity instanceof BattleArmor) {
             if (amsEngaged) {
                 return Compute.missilesHit(
-                      ((BattleArmor) ae).getShootingStrength(), -2);
+                      ((BattleArmor) attackingEntity).getShootingStrength(), -2);
             }
             return Compute
-                  .missilesHit(((BattleArmor) ae).getShootingStrength());
+                  .missilesHit(((BattleArmor) attackingEntity).getShootingStrength());
         }
 
         if (amsEngaged) {
@@ -126,7 +124,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
      * @see megamek.common.weapons.handlers.WeaponHandler#calcnCluster()
      */
     @Override
-    protected int calcnCluster() {
+    protected int calculateNumCluster() {
         return 1;
     }
 
@@ -137,9 +135,9 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        AmmoType atype = (AmmoType) ammo.getType();
+        AmmoType ammoType = ammo.getType();
         double toReturn;
-        if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.INARC) {
+        if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.INARC) {
             toReturn = 6;
         } else {
             toReturn = 4;
@@ -149,7 +147,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
                   bDirect ? toHit.getMoS() / 3 : 0,
                   WeaponType.WEAPON_DIRECT_FIRE,
                   ((Infantry) target).isMechanized(),
-                  toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                  toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
             toReturn = Math.ceil(toReturn);
         }
 

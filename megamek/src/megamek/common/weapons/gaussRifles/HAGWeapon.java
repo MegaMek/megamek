@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,6 +38,8 @@
  */
 package megamek.common.weapons.gaussRifles;
 
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
@@ -54,6 +56,7 @@ public abstract class HAGWeapon extends GaussWeapon {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -2890339452762009216L;
 
     public HAGWeapon() {

@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,29 +33,12 @@
 
 package megamek.common.weapons.handlers;
 
-import java.io.Serial;
-
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.game.Game;
-import megamek.server.totalwarfare.TWGameManager;
-
 /**
- * @author Jay Lawson
+ * Dumb data structure intended to hold results from the calculateDamageFalloff method.
  */
-public class PiranhaHandler extends AmmoWeaponHandler {
-
-    /**
-     *
-     */
-    @Serial
-    private static final long serialVersionUID = -2536312899803154911L;
-
-    /**
-     *
-     */
-    public PiranhaHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
-        super(t, w, g, m);
-    }
-
+public class DamageFalloff {
+    public int damage;
+    public int falloff;
+    public int radius = 0;
+    public boolean clusterMunitionsFlag;
 }

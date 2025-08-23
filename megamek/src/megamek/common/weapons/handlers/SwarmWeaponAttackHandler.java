@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,14 +34,15 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.battleArmor.BattleArmor;
-import megamek.common.game.Game;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.game.Game;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -49,15 +50,13 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Feb 21, 2013
  */
 public class SwarmWeaponAttackHandler extends WeaponHandler {
+    @Serial
     private static final long serialVersionUID = -2439937071168853215L;
 
     /**
-     * @param toHit
-     * @param waa
-     * @param g
+     *
      */
-    public SwarmWeaponAttackHandler(ToHitData toHit, WeaponAttackAction waa,
-          Game g, TWGameManager m) {
+    public SwarmWeaponAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_NONE;
     }
@@ -65,8 +64,7 @@ public class SwarmWeaponAttackHandler extends WeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         int damage = 0;
-        if (ae instanceof BattleArmor) {
-            BattleArmor ba = (BattleArmor) ae;
+        if (attackingEntity instanceof BattleArmor ba) {
             damage = ba.calculateSwarmDamage();
         }
         // should this be affected by direct blows?

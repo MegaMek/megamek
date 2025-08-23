@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,15 +34,17 @@
 
 package megamek.common.weapons.handlers;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.AmmoType.Munitions;
-import megamek.common.game.Game;
+import java.io.Serial;
+
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
-import megamek.common.equipment.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.AmmoType.Munitions;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -50,6 +52,7 @@ import megamek.server.totalwarfare.TWGameManager;
  */
 public class AmmoBayWeaponHandler extends BayWeaponHandler {
 
+    @Serial
     private static final long serialVersionUID = -1618484541772117621L;
 
     protected AmmoBayWeaponHandler() {
@@ -57,10 +60,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
     }
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
     public AmmoBayWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
           TWGameManager m) {
@@ -78,25 +78,25 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
     protected int calcAttackValue() {
 
         double av = 0;
-        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
+        int range = RangeType.rangeBracket(nRange, weaponType.getATRanges(), true, false);
 
         for (WeaponMounted bayW : weapon.getBayWeapons()) {
             // check the currently loaded ammo
             AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
             if (null == bayWAmmo || bayWAmmo.getUsableShotsLeft() < 1) {
                 // try loading something else
-                ae.loadWeaponWithSameAmmo(bayW);
+                attackingEntity.loadWeaponWithSameAmmo(bayW);
                 bayWAmmo = bayW.getLinkedAmmo();
             }
             if (!bayW.isBreached()
                   && !bayW.isDestroyed()
                   && !bayW.isJammed()
                   && bayWAmmo != null
-                  && ae.getTotalAmmoOfType(bayWAmmo.getType()) >= bayW.getCurrentShots()) {
+                  && attackingEntity.getTotalAmmoOfType(bayWAmmo.getType()) >= bayW.getCurrentShots()) {
                 WeaponType bayWType = bayW.getType();
                 // need to cycle through weapons and add av
                 double current_av = 0;
-                AmmoType atype = bayWAmmo.getType();
+                AmmoType ammoType = bayWAmmo.getType();
 
                 if (range == WeaponType.RANGE_SHORT) {
                     current_av = bayWType.getShortAV();
@@ -107,7 +107,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                 } else if (range == WeaponType.RANGE_EXT) {
                     current_av = bayWType.getExtAV();
                 }
-                current_av = updateAVforAmmo(current_av, atype, bayWType,
+                current_av = updateAVForAmmo(current_av, ammoType, bayWType,
                       range, bayW.getEquipmentNum());
                 av = av + current_av;
                 // now use the ammo that we had loaded
@@ -117,7 +117,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                         if (null == bayWAmmo
                               || bayWAmmo.getUsableShotsLeft() < 1) {
                             // try loading something else
-                            ae.loadWeaponWithSameAmmo(bayW);
+                            attackingEntity.loadWeaponWithSameAmmo(bayW);
                             bayWAmmo = bayW.getLinkedAmmo();
                         }
                         if (null != bayWAmmo) {
@@ -128,7 +128,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
             }
         }
         if (bDirect) {
-            av = Math.min(av + (toHit.getMoS() / 3), av * 2);
+            av = Math.min(av + (toHit.getMoS() / 3.0), av * 2);
         }
         av = applyGlancingBlowModifier(av, false);
         av = (int) Math.floor(getBracketingMultiplier() * av);
@@ -138,12 +138,12 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
     /*
      * check for special munitions and their effect on av
      */
-    protected double updateAVforAmmo(double current_av, AmmoType atype,
-          WeaponType bayWType, int range, int wId) {
+    protected double updateAVForAmmo(double current_av, AmmoType ammoType, WeaponType bayWType, int range, int wId) {
 
-        if (atype.getMunitionType().contains(Munitions.M_CLUSTER)) {
+        if (ammoType.getMunitionType().contains(Munitions.M_CLUSTER)) {
             current_av = Math.floor(0.6 * current_av);
         }
+
         return current_av;
     }
 }

@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.Hex;
@@ -56,18 +57,15 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Jason Tighe
  */
 public class RifleWeaponHandler extends AmmoWeaponHandler {
+    @Serial
     private static final long serialVersionUID = 7468287406174862534L;
 
     private HitData hit;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
-    public RifleWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-          TWGameManager m) {
+    public RifleWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 
@@ -79,14 +77,14 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
     @Override
     protected int calcDamagePerHit() {
 
-        double toReturn = wtype.getDamage();
+        double toReturn = weaponType.getDamage();
         // we default to direct fire weapons for anti-infantry damage
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                   bDirect ? toHit.getMoS() : 0,
-                  wtype.getInfantryDamageClass(),
+                  weaponType.getInfantryDamageClass(),
                   ((Infantry) target).isMechanized(),
-                  toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                  toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0), toReturn * 2);
         }
@@ -94,7 +92,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         if (target instanceof Entity) {
             te = (Entity) target;
             hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(),
-                  waa.getAimedLocation(), waa.getAimingMode(),
+                  weaponAttackAction.getAimedLocation(), weaponAttackAction.getAimingMode(),
                   toHit.getCover());
             hit.setAttackerId(getAttackerId());
             if (!(te instanceof Infantry)
@@ -106,11 +104,11 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
-              && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+              && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
-              && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+              && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
         }
 
@@ -127,7 +125,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         hit.setBoxCars(roll.getIntValue() == 12);
 
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-              .getCover(), ComputeSideTable.sideTable(ae, entityTarget, weapon
+              .getCover(), ComputeSideTable.sideTable(attackingEntity, entityTarget, weapon
               .getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
@@ -141,7 +139,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         r.add(entityTarget.getLocationAbbr(hit));
         vPhaseReport.addElement(r);
 
-        // for non-salvo shots, report that the aimed shot was successfull
+        // for non-salvo shots, report that the aimed shot was successfully
         // before applying damage
         if (hit.hitAimedLocation() && !bSalvo) {
             r = new Report(3410);
@@ -163,7 +161,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         }
 
         // if the target was in partial cover, then we already handled
-        // damage absorption by the partial cover, if it would have happened
+        // damage absorption by the partial cover, if it had happened
         Hex targetHex = game.getBoard().getHex(target.getPosition());
         boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
 
@@ -198,7 +196,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
             }
             vPhaseReport
                   .addAll(gameManager.damageEntity(entityTarget, hit, nDamage,
-                        false, ae.getSwarmTargetId() == entityTarget
+                        false, attackingEntity.getSwarmTargetId() == entityTarget
                               .getId() ? DamageType.IGNORE_PASSENGER
                               : damageType, false, false, throughFront,
                         underWater, nukeS2S));

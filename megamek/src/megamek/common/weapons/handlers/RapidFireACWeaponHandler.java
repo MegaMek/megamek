@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,11 +47,11 @@ import megamek.server.totalwarfare.TWGameManager;
 /**
  * @author Andrew Hunter
  */
-public class RapidfireACWeaponHandler extends UltraWeaponHandler {
+public class RapidFireACWeaponHandler extends UltraWeaponHandler {
     @Serial
     private static final long serialVersionUID = -1770392652874842106L;
 
-    public RapidfireACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public RapidFireACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 
@@ -66,7 +66,7 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
         if (kindRapidFire) {
             jamLevel = 2;
         }
-        if ((roll.getIntValue() <= jamLevel) && (howManyShots == 2) && !ae.isConventionalInfantry()) {
+        if ((roll.getIntValue() <= jamLevel) && (howManyShots == 2) && !attackingEntity.isConventionalInfantry()) {
             if (roll.getIntValue() > 2 || kindRapidFire) {
                 Report r = new Report(3161);
                 r.subject = subjectId;

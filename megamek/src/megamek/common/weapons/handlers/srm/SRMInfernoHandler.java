@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -83,7 +83,7 @@ public class SRMInfernoHandler extends SRMHandler {
               entityTarget);
         final boolean bldgDamagedOnMiss = targetInBuilding
               && !(target instanceof Infantry)
-              && ae.getPosition().distance(target.getPosition()) <= 1;
+              && attackingEntity.getPosition().distance(target.getPosition()) <= 1;
 
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
@@ -93,7 +93,7 @@ public class SRMInfernoHandler extends SRMHandler {
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        r.add(wtype.getName() + " (" + atype.getShortName() + ")");
+        r.add(weaponType.getName() + " (" + ammoType.getShortName() + ")");
         if (entityTarget != null) {
             r.addDesc(entityTarget);
         } else {
@@ -148,7 +148,7 @@ public class SRMInfernoHandler extends SRMHandler {
               && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
-            r.subject = ae.getId();
+            r.subject = attackingEntity.getId();
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
@@ -174,7 +174,7 @@ public class SRMInfernoHandler extends SRMHandler {
             }
         }
 
-        // yeech. handle damage. . different weapons do this in very different ways
+        // handle damage. . different weapons do this in very different ways
         int hits = calcHits(vPhaseReport);
         Report.addNewline(vPhaseReport);
 
@@ -183,7 +183,10 @@ public class SRMInfernoHandler extends SRMHandler {
         } // End missed-target
 
         // light inferno missiles all at once, if not missed
-        vPhaseReport.addAll(gameManager.deliverInfernoMissiles(ae, target, hits, weapon.getCalledShot().getCall()));
+        vPhaseReport.addAll(gameManager.deliverInfernoMissiles(attackingEntity,
+              target,
+              hits,
+              weapon.getCalledShot().getCall()));
         return false;
     }
 
@@ -192,23 +195,23 @@ public class SRMInfernoHandler extends SRMHandler {
         // conventional infantry gets hit with all missiles
         // BAs do one lump of damage per BA suit
         if (target.isConventionalInfantry()) {
-            if (ae instanceof BattleArmor) {
+            if (attackingEntity instanceof BattleArmor) {
                 bSalvo = true;
                 Report r = new Report(3325);
                 r.subject = subjectId;
-                r.add(wtype.getRackSize() * ((BattleArmor) ae).getShootingStrength());
+                r.add(weaponType.getRackSize() * ((BattleArmor) attackingEntity).getShootingStrength());
                 r.add(sSalvoType);
                 r.add(toHit.getTableDesc());
                 vPhaseReport.add(r);
-                return ((BattleArmor) ae).getShootingStrength() * wtype.getRackSize();
+                return ((BattleArmor) attackingEntity).getShootingStrength() * weaponType.getRackSize();
             }
             Report r = new Report(3325);
             r.subject = subjectId;
-            r.add(wtype.getRackSize());
+            r.add(weaponType.getRackSize());
             r.add(sSalvoType);
             r.add(toHit.getTableDesc());
             vPhaseReport.add(r);
-            return wtype.getRackSize();
+            return weaponType.getRackSize();
         }
         int missilesHit;
         int nMissilesModifier = getClusterModifiers(true);
@@ -220,24 +223,24 @@ public class SRMInfernoHandler extends SRMHandler {
             Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                   : null;
             if (entityTarget != null && entityTarget.isLargeCraft()) {
-                nMissilesModifier -= getAeroSanityAMSHitsMod();
+                nMissilesModifier -= (int) Math.floor(getAeroSanityAMSHitsMod());
             }
         }
 
         if (allShotsHit()) {
             // We want buildings and large craft to be able to affect this number with AMS
             // treat as a Streak launcher (cluster roll 11) to make this happen
-            missilesHit = Compute.missilesHit(wtype.getRackSize(),
+            missilesHit = Compute.missilesHit(weaponType.getRackSize(),
                   nMissilesModifier, weapon.isHotLoaded(), true,
                   isAdvancedAMS());
         } else {
-            if (ae instanceof BattleArmor) {
-                missilesHit = Compute.missilesHit(wtype.getRackSize()
-                            * ((BattleArmor) ae).getShootingStrength(),
+            if (attackingEntity instanceof BattleArmor) {
+                missilesHit = Compute.missilesHit(weaponType.getRackSize()
+                            * ((BattleArmor) attackingEntity).getShootingStrength(),
                       nMissilesModifier, weapon.isHotLoaded(), false,
                       isAdvancedAMS());
             } else {
-                missilesHit = Compute.missilesHit(wtype.getRackSize(),
+                missilesHit = Compute.missilesHit(weaponType.getRackSize(),
                       nMissilesModifier, weapon.isHotLoaded(), false,
                       isAdvancedAMS());
             }

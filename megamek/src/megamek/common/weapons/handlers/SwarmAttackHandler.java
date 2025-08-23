@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,15 +34,16 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.units.Building;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.game.Game;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -50,15 +51,13 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sep 23, 2004
  */
 public class SwarmAttackHandler extends WeaponHandler {
+    @Serial
     private static final long serialVersionUID = -2439937071168853215L;
 
     /**
-     * @param toHit
-     * @param waa
-     * @param g
+     *
      */
-    public SwarmAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g,
-          TWGameManager m) {
+    public SwarmAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_NONE;
     }
@@ -67,26 +66,26 @@ public class SwarmAttackHandler extends WeaponHandler {
     protected void handleEntityDamage(Entity entityTarget,
           Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
           int bldgAbsorbs) {
-        Report r;
+        Report report;
         // Is the target already swarmed?
         if (Entity.NONE != entityTarget.getSwarmAttackerId()) {
-            r = new Report(3265);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
+            report = new Report(3265);
+            report.subject = subjectId;
+            vPhaseReport.addElement(report);
         }
         // Did the target get destroyed by weapons fire?
         else if (entityTarget.isDoomed() || entityTarget.isDestroyed()
               || entityTarget.getCrew().isDead()) {
-            r = new Report(3270);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
+            report = new Report(3270);
+            report.subject = subjectId;
+            vPhaseReport.addElement(report);
         } else {
             // success
-            r = new Report(3275);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-            ae.setSwarmTargetId(waa.getTargetId());
-            entityTarget.setSwarmAttackerId(waa.getEntityId());
+            report = new Report(3275);
+            report.subject = subjectId;
+            vPhaseReport.addElement(report);
+            attackingEntity.setSwarmTargetId(weaponAttackAction.getTargetId());
+            entityTarget.setSwarmAttackerId(weaponAttackAction.getEntityId());
         }
     }
 

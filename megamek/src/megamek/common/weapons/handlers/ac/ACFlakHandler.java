@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -51,13 +51,11 @@ public class ACFlakHandler extends LBXHandler {
     private static final long serialVersionUID = -7814754695629391969L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
-    public ACFlakHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
-        super(t, w, g, m);
+    public ACFlakHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
+          TWGameManager twGameManager) {
+        super(toHitData, weaponAttackAction, game, twGameManager);
         sSalvoType = " fragment(s) ";
     }
 
@@ -67,7 +65,7 @@ public class ACFlakHandler extends LBXHandler {
      * @see megamek.common.weapons.handlers.WeaponHandler#calcnCluster()
      */
     @Override
-    protected int calcnCluster() {
+    protected int calculateNumCluster() {
         return 5;
     }
 

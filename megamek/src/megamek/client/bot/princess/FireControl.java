@@ -2903,7 +2903,7 @@ public class FireControl {
 
             /* If everything looks okay, update the action with the new values
              *  Don't replace the old action with the clone - the clone doesn't
-             *  consider that the waa might have been a subclass of WeaponAttackAction
+             *  consider that the weaponAttackAction might have been a subclass of WeaponAttackAction
              *  - like ArtilleryAttackAction. So instead update the changed values: */
             info.getAction().setAmmoId(cloneWAA.getAmmoId());
             info.getAction().setAmmoMunitionType(cloneWAA.getAmmoMunitionType());

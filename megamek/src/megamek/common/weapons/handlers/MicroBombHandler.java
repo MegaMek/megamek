@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,19 +36,17 @@ package megamek.common.weapons.handlers;
 
 import static megamek.common.weapons.handlers.AreaEffectHelper.calculateDamageFallOff;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.compute.Compute;
-import megamek.common.board.Coords;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.units.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.handlers.AreaEffectHelper.DamageFalloff;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -56,12 +54,11 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sep 23, 2004
  */
 public class MicroBombHandler extends AmmoWeaponHandler {
+    @Serial
     private static final long serialVersionUID = -2995118961278208244L;
 
     /**
-     * @param toHit
-     * @param waa
-     * @param g
+     *
      */
     public MicroBombHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
@@ -83,34 +80,25 @@ public class MicroBombHandler extends AmmoWeaponHandler {
             r.add(coords.getBoardNum());
             vPhaseReport.add(r);
         } else {
-            int moF = -toHit.getMoS();
-            if (ae.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
-                if ((-toHit.getMoS() - 2) < 1) {
-                    moF = 0;
-                } else {
-                    moF = -toHit.getMoS() - 2;
-                }
-            }
-
             // magic number - BA-launched micro bombs only scatter 1 hex per TW-2018 p 228
             coords = Compute.scatter(coords, 1);
             if (game.getBoard().contains(coords)) {
-                Report r = new Report(3195);
-                r.subject = subjectId;
-                r.add(coords.getBoardNum());
-                vPhaseReport.add(r);
+                Report report = new Report(3195);
+                report.subject = subjectId;
+                report.add(coords.getBoardNum());
+                vPhaseReport.add(report);
             } else {
-                Report r = new Report(3200);
-                r.subject = subjectId;
-                vPhaseReport.add(r);
+                Report report = new Report(3200);
+                report.subject = subjectId;
+                vPhaseReport.add(report);
                 return !bMissed;
             }
         }
         // Not mine clearing if we are shooting an entity
-        Infantry ba = (Infantry) ae;
-        DamageFalloff falloff = calculateDamageFallOff((AmmoType) ammo.getType(), ba.getShootingStrength(), false);
-        gameManager.artilleryDamageArea(coords,
-              (AmmoType) ammo.getType(), subjectId, ae, falloff, false, 0, vPhaseReport, false);
+        Infantry ba = (Infantry) attackingEntity;
+        DamageFalloff falloff = calculateDamageFallOff(ammo.getType(), ba.getShootingStrength(), false);
+        gameManager.artilleryDamageArea(coords, ammo.getType(), subjectId,
+              attackingEntity, falloff, false, 0, vPhaseReport, false);
         return true;
     }
 }

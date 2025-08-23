@@ -94,7 +94,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.weapons.bayWeapons.BayWeapon;
 import megamek.common.weapons.gaussRifles.HAGWeapon;
 import megamek.common.weapons.handlers.AreaEffectHelper;
-import megamek.common.weapons.handlers.AreaEffectHelper.DamageFalloff;
+import megamek.common.weapons.handlers.DamageFalloff;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 

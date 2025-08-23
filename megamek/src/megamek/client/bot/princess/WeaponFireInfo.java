@@ -75,7 +75,7 @@ import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 import megamek.common.weapons.handlers.AreaEffectHelper;
-import megamek.common.weapons.handlers.AreaEffectHelper.DamageFalloff;
+import megamek.common.weapons.handlers.DamageFalloff;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.infantry.InfantryWeaponHandler;
 import megamek.logging.MMLogger;

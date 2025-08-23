@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,28 +34,27 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
+import megamek.common.Report;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.units.Infantry;
-import megamek.common.Report;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jason Tighe Created on Oct 15, 2004
  */
 public class BPodHandler extends AmmoWeaponHandler {
+    @Serial
     private static final long serialVersionUID = -6710600713016145831L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
     public BPodHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
@@ -67,7 +66,7 @@ public class BPodHandler extends AmmoWeaponHandler {
      * @return a <code>int</code> value saying how much hits are in each cluster of damage.
      */
     @Override
-    protected int calcnCluster() {
+    protected int calculateNumCluster() {
         return 5;
     }
 

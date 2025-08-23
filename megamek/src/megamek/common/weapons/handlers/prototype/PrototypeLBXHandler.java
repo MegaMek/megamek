@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,13 +34,14 @@
 
 package megamek.common.weapons.handlers.prototype;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.compute.Compute;
-import megamek.common.game.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.LBXHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -48,13 +49,11 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Sebastian Brocks Created on Oct 15, 2004
  */
 public class PrototypeLBXHandler extends LBXHandler {
+    @Serial
     private static final long serialVersionUID = -5200908977142584431L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
     public PrototypeLBXHandler(ToHitData t, WeaponAttackAction w, Game g,
           TWGameManager m) {
@@ -77,8 +76,8 @@ public class PrototypeLBXHandler extends LBXHandler {
         int shotMod = getClusterModifiers(true);
 
         shotMod -= 1;
-        int shotsHit = allShotsHit() ? wtype.getRackSize() : Compute
-              .missilesHit(wtype.getRackSize(), shotMod);
+        int shotsHit = allShotsHit() ? weaponType.getRackSize() : Compute
+              .missilesHit(weaponType.getRackSize(), shotMod);
 
         Report r = new Report(3325);
         r.subject = subjectId;
@@ -105,7 +104,7 @@ public class PrototypeLBXHandler extends LBXHandler {
             return true;
         }
 
-        if ((roll.getIntValue() == 2) && !ae.isConventionalInfantry()) {
+        if ((roll.getIntValue() == 2) && !attackingEntity.isConventionalInfantry()) {
             Report r = new Report(3165);
             r.subject = subjectId;
             weapon.setJammed(true);

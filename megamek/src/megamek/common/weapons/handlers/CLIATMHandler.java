@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -70,28 +71,31 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Sebastian Brocks, modified by Greg
  */
 public class CLIATMHandler extends ATMHandler {
+    @Serial
     private static final long serialVersionUID = 5476183194060709574L;
     boolean isAngelECMAffected;
 
     public CLIATMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
-        isAngelECMAffected = ComputeECM.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition());
+        isAngelECMAffected = ComputeECM.isAffectedByAngelECM(attackingEntity,
+              attackingEntity.getPosition(),
+              target.getPosition());
     }
 
     @Override
     protected int calcDamagePerHit() {
         double toReturn;
-        AmmoType atype = (AmmoType) ammo.getType();
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
+        AmmoType ammoType = ammo.getType();
+        if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
             sSalvoType = " high-explosive missile(s) ";
             toReturn = 3;
-        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
+        } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
             sSalvoType = " extended-range missile(s) ";
             toReturn = 1;
-        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)) {
+        } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)) {
             sSalvoType = " IMP missile(s) ";
             toReturn = 1;
-        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW)) {
+        } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW)) {
             sSalvoType = " IIW missile(s) ";
             toReturn = 2;
         } else {
@@ -100,10 +104,10 @@ public class CLIATMHandler extends ATMHandler {
 
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(
-                  wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
-                  wtype.getInfantryDamageClass(),
+                  weaponType.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
+                  weaponType.getInfantryDamageClass(),
                   ((Infantry) target).isMechanized(),
-                  toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                  toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
 
             // some question here about "partial streak missiles"
             if (streakInactive()) {
@@ -119,21 +123,21 @@ public class CLIATMHandler extends ATMHandler {
         // conventional infantry gets hit in one lump - gets calculated in the sub
         // functions
         // don't need to check for BAs, because BA can't mount ATMs
-        AmmoType atype = (AmmoType) ammo.getType();
-        // TacOPs p.84 Cluster Hit Penalites will only effect ATM HE
-        // I'm doing my own hit calcs here. Special ammo gets its own method.
+        AmmoType ammoType = ammo.getType();
+        // TacOPs p.84 Cluster Hit Penalties will only affect ATM HE
+        // I'm doing my own hit calculations here. Special ammo gets its own method.
 
-        // compute ammount of missiles hit - this is the same for all ATM ammo types.
+        // compute amount of missiles hit - this is the same for all ATM ammo types.
         int hits = calcMissileHits(vPhaseReport);
 
         // If we use IIW or IMP we are done.
-        if ((atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW))
-              || (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP))) {
+        if ((ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW))
+              || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP))) {
             return hits;
         }
 
         // Normalize into clusters (for standard and HE)
-        if (!atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
+        if (!ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
             // change to 5 damage clusters here, after AMS has been done
             hits = nDamPerHit * hits;
             nDamPerHit = 1;
@@ -149,34 +153,34 @@ public class CLIATMHandler extends ATMHandler {
      */
     @Override
     protected int calcAttackValue() {
-        // TODO: Should handle specical munitions AV
+        // TODO: Should handle special munitions AV
         return super.calcAttackValue();
     }
 
     protected int calcMissileHits(Vector<Report> vPhaseReport) {
-        AmmoType atype = (AmmoType) ammo.getType();
+        AmmoType ammoType = ammo.getType();
 
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
         if (target.isConventionalInfantry()) {
-            if (ae instanceof BattleArmor) {
+            if (attackingEntity instanceof BattleArmor) {
                 bSalvo = true;
-                Report r = new Report(3325);
-                r.newlines = 0;
-                r.subject = subjectId;
-                r.add(wtype.getRackSize() * ((BattleArmor) ae).getShootingStrength());
-                r.add(sSalvoType);
-                r.add(toHit.getTableDesc());
-                vPhaseReport.add(r);
-                return ((BattleArmor) ae).getShootingStrength();
+                Report report = new Report(3325);
+                report.newlines = 0;
+                report.subject = subjectId;
+                report.add(weaponType.getRackSize() * ((BattleArmor) attackingEntity).getShootingStrength());
+                report.add(sSalvoType);
+                report.add(toHit.getTableDesc());
+                vPhaseReport.add(report);
+                return ((BattleArmor) attackingEntity).getShootingStrength();
             }
-            Report r = new Report(3325);
-            r.subject = subjectId;
-            r.newlines = 0;
-            r.add(wtype.getRackSize());
-            r.add(sSalvoType);
-            r.add(toHit.getTableDesc());
-            vPhaseReport.add(r);
+            Report report = new Report(3325);
+            report.subject = subjectId;
+            report.newlines = 0;
+            report.add(weaponType.getRackSize());
+            report.add(sSalvoType);
+            report.add(toHit.getTableDesc());
+            vPhaseReport.add(report);
             return 1;
         }
 
@@ -189,25 +193,23 @@ public class CLIATMHandler extends ATMHandler {
          * if (bMissed && allShotsHit()) { return 0; }
          */
         // //////
-        // TacOPs p.84 Cluster Hit Penalites will only effect ATM HE.
+        // TacOPs p.84 Cluster Hit Penalties will only affect ATM HE.
         // Since the IMP ammo has the same ranges as the ATM HE I assume it also
         // gets affected by this rule.
-        // However, IMP is done in its own function - i think. Also if we have
+        // However, IMP is done in its own function - I think. Also, if we have
         // the streak system enabled, this is not used
-        int[] ranges = wtype.getRanges(weapon);
-        boolean tacopscluster = game.getOptions().booleanOption(
-              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CLUSTER_HIT_PEN);
+        int[] ranges = weaponType.getRanges(weapon);
+        boolean tacOpsCluster = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CLUSTER_HIT_PEN);
 
         // Only apply if not all shots hit. IATM IMP have HE ranges and thus
         // suffer from spread too
-        if (((atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))
-              || (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)))
-              && tacopscluster && !allShotsHit()) {
+        if (((ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))
+              || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)))
+              && tacOpsCluster && !allShotsHit()) {
             if (nRange <= 1) {
                 nMissilesModifier += 1;
-            } else if (nRange <= ranges[RangeType.RANGE_MEDIUM]) {
-                nMissilesModifier += 0;
-            } else {
+            } else if (nRange > ranges[RangeType.RANGE_MEDIUM]) {
                 nMissilesModifier -= 1;
             }
         }
@@ -215,7 +217,7 @@ public class CLIATMHandler extends ATMHandler {
         // //////
         // This applies even with streaks.
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
-              && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+              && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG])) {
             nMissilesModifier -= 2;
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
@@ -224,7 +226,7 @@ public class CLIATMHandler extends ATMHandler {
         }
 
         // Don't need to check for ECM here since we can't have artemis boni.
-        // And Streak bonus is allready handled.
+        // And Streak bonus is already handled.
 
         // In theory there is no direct statement that says iATM doesn't have
         // the Artemis bonus too, but since it also has Streak and Artemis
@@ -234,7 +236,7 @@ public class CLIATMHandler extends ATMHandler {
         // Fusillade doesn't have streak effect, but has the built-in Artemis IV of the
         // ATM.
         if (weapon.getType().hasFlag(WeaponType.F_PROTO_WEAPON)) {
-            if (ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
+            if (ComputeECM.isAffectedByECM(attackingEntity, attackingEntity.getPosition(), target.getPosition())) {
                 Report r = new Report(3330);
                 r.subject = subjectId;
                 r.newlines = 0;
@@ -274,24 +276,24 @@ public class CLIATMHandler extends ATMHandler {
             Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                   : null;
             if (entityTarget != null && entityTarget.isLargeCraft()) {
-                nMissilesModifier -= getAeroSanityAMSHitsMod();
+                nMissilesModifier -= (int) Math.floor(getAeroSanityAMSHitsMod());
             }
         }
 
         if (allShotsHit()) {
             // We want buildings and large craft to be able to affect this number with AMS
             // treat as a Streak launcher (cluster roll 11) to make this happen
-            missilesHit = Compute.missilesHit(wtype.getRackSize(),
+            missilesHit = Compute.missilesHit(weaponType.getRackSize(),
                   nMissilesModifier, weapon.isHotLoaded(), true,
                   isAdvancedAMS());
         } else {
-            if (ae instanceof BattleArmor) {
-                missilesHit = Compute.missilesHit(wtype.getRackSize()
-                            * ((BattleArmor) ae).getShootingStrength(),
+            if (attackingEntity instanceof BattleArmor) {
+                missilesHit = Compute.missilesHit(weaponType.getRackSize()
+                            * ((BattleArmor) attackingEntity).getShootingStrength(),
                       nMissilesModifier, weapon.isHotLoaded(), false,
                       isAdvancedAMS());
             } else {
-                missilesHit = Compute.missilesHit(wtype.getRackSize(),
+                missilesHit = Compute.missilesHit(weaponType.getRackSize(),
                       nMissilesModifier, weapon.isHotLoaded(), false,
                       isAdvancedAMS());
             }
@@ -324,23 +326,23 @@ public class CLIATMHandler extends ATMHandler {
         return missilesHit;
     }
 
-    // I don't think i need to change anything here for iATMs. Seems just to
+    // I don't think I need to change anything here for iATMs. Seems just to
     // handle Minefield clearance
     @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget) {
         if (!bMissed
               && (target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR)) {
-            Report r = new Report(3255);
-            r.indent(1);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
+            Report report = new Report(3255);
+            report.indent(1);
+            report.subject = subjectId;
+            vPhaseReport.addElement(report);
             Coords coords = target.getPosition();
 
             Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
             ArrayList<Minefield> mfRemoved = new ArrayList<>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
-                if (gameManager.clearMinefield(mf, ae, Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
+                if (gameManager.clearMinefield(mf, attackingEntity, Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
                     mfRemoved.add(mf);
                 }
             }
@@ -388,12 +390,13 @@ public class CLIATMHandler extends ATMHandler {
             return;
         }
         checkAmmo();
-        if (ammo == null) {// Can't happen. w/o legal ammo, the weapon
-            // *shouldn't* fire.
+        if (ammo == null) {// Can't happen. w/o legal ammo, the weapon *shouldn't* fire.
             System.out.println("Handler can't find any ammo!  Oh no!");
+            return;
         }
+
         if (ammo.getUsableShotsLeft() <= 0) {
-            ae.loadWeaponWithSameAmmo(weapon);
+            attackingEntity.loadWeaponWithSameAmmo(weapon);
             if (weapon.getLinked() instanceof AmmoMounted ammoMounted) {
                 ammo = ammoMounted;
             } else {
@@ -404,7 +407,7 @@ public class CLIATMHandler extends ATMHandler {
         }
         if (roll.getIntValue() >= toHit.getValue()) {
             ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
-            if (wtype.hasFlag(WeaponType.F_ONE_SHOT)) {
+            if (weaponType.hasFlag(WeaponType.F_ONE_SHOT)) {
                 weapon.setFired(true);
             }
             setDone();
@@ -462,8 +465,8 @@ public class CLIATMHandler extends ATMHandler {
 
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
-        AmmoType atype = (AmmoType) ammo.getType();
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW)) {
+        AmmoType ammoType = ammo.getType();
+        if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW)) {
             if (!cares(phase)) {
                 return true;
             }
@@ -474,7 +477,7 @@ public class CLIATMHandler extends ATMHandler {
                   entityTarget);
             final boolean bldgDamagedOnMiss = targetInBuilding
                   && !(target instanceof Infantry)
-                  && ae.getPosition().distance(target.getPosition()) <= 1;
+                  && attackingEntity.getPosition().distance(target.getPosition()) <= 1;
 
             // Which building takes the damage?
             Building bldg = game.getBoard().getBuildingAt(target.getPosition());
@@ -484,7 +487,7 @@ public class CLIATMHandler extends ATMHandler {
             r.indent();
             r.newlines = 0;
             r.subject = subjectId;
-            r.add(wtype.getName() + " (" + atype.getShortName() + ")");
+            r.add(weaponType.getName() + " (" + ammoType.getShortName() + ")");
             if (entityTarget != null) {
                 r.addDesc(entityTarget);
             } else {
@@ -539,7 +542,7 @@ public class CLIATMHandler extends ATMHandler {
                   && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
             if (bDirect) {
                 r = new Report(3189);
-                r.subject = ae.getId();
+                r.subject = attackingEntity.getId();
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
             }
@@ -569,7 +572,7 @@ public class CLIATMHandler extends ATMHandler {
                 }
             }
 
-            // yeech. handle damage. . different weapons do this in very
+            //  handle damage. . different weapons do this in very
             // different
             // ways
             int hits = calcHits(vPhaseReport);
@@ -577,11 +580,11 @@ public class CLIATMHandler extends ATMHandler {
 
             if (!bMissed) {
                 // light inferno missiles all at once, if not missed
-                vPhaseReport.addAll(gameManager.deliverInfernoMissiles(ae, target,
+                vPhaseReport.addAll(gameManager.deliverInfernoMissiles(attackingEntity, target,
                       hits, weapon.getCalledShot().getCall()));
             }
             return false;
-        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)) {
+        } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)) {
             if (!cares(phase)) {
                 return true;
             }
@@ -591,48 +594,48 @@ public class CLIATMHandler extends ATMHandler {
                   entityTarget);
             final boolean bldgDamagedOnMiss = targetInBuilding
                   && !(target instanceof Infantry)
-                  && ae.getPosition().distance(target.getPosition()) <= 1;
+                  && attackingEntity.getPosition().distance(target.getPosition()) <= 1;
             boolean bNemesisConfusable = isNemesisConfusable();
 
             if (entityTarget != null) {
-                ae.setLastTarget(entityTarget.getId());
-                ae.setLastTargetDisplayName(entityTarget.getDisplayName());
+                attackingEntity.setLastTarget(entityTarget.getId());
+                attackingEntity.setLastTargetDisplayName(entityTarget.getDisplayName());
             }
 
             // Which building takes the damage?
             Building bldg = game.getBoard().getBuildingAt(target.getPosition());
-            String number = nweapons > 1 ? " (" + nweapons + ")" : "";
+            String number = numWeapons > 1 ? " (" + numWeapons + ")" : "";
             // Report weapon attack and its to-hit value.
-            Report r = new Report(3115);
-            r.indent();
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(wtype.getName() + number);
+            Report report = new Report(3115);
+            report.indent();
+            report.newlines = 0;
+            report.subject = subjectId;
+            report.add(weaponType.getName() + number);
             if (entityTarget != null) {
-                r.addDesc(entityTarget);
+                report.addDesc(entityTarget);
             } else {
-                r.messageId = 3120;
-                r.add(target.getDisplayName(), true);
+                report.messageId = 3120;
+                report.add(target.getDisplayName(), true);
             }
-            vPhaseReport.addElement(r);
+            vPhaseReport.addElement(report);
             // check for nemesis
             boolean shotAtNemesisTarget = false;
-            if (bNemesisConfusable && !waa.isNemesisConfused()) {
+            if (bNemesisConfusable && !weaponAttackAction.isNemesisConfused()) {
                 // loop through nemesis targets
-                for (Enumeration<Entity> e = game.getNemesisTargets(ae,
+                for (Enumeration<Entity> e = game.getNemesisTargets(attackingEntity,
                       target.getPosition()); e.hasMoreElements(); ) {
                     Entity entity = e.nextElement();
                     // friendly unit with attached iNarc Nemesis pod standing in
                     // the
                     // way
-                    r = new Report(3125);
-                    r.subject = subjectId;
-                    vPhaseReport.addElement(r);
+                    report = new Report(3125);
+                    report.subject = subjectId;
+                    vPhaseReport.addElement(report);
                     weapon.setUsedThisRound(false);
                     WeaponAttackAction newWaa = new WeaponAttackAction(
-                          ae.getId(), entity.getId(), waa.getWeaponId());
+                          attackingEntity.getId(), entity.getId(), weaponAttackAction.getWeaponId());
                     newWaa.setNemesisConfused(true);
-                    Mounted<?> m = ae.getEquipment(waa.getWeaponId());
+                    Mounted<?> m = attackingEntity.getEquipment(weaponAttackAction.getWeaponId());
                     Weapon w = (Weapon) m.getType();
                     AttackHandler ah = w.fire(newWaa, game, gameManager);
                     // increase ammo by one, because we just incorrectly used
@@ -655,46 +658,46 @@ public class CLIATMHandler extends ATMHandler {
                 }
                 if (shotAtNemesisTarget) {
                     // back to original target
-                    r = new Report(3130);
-                    r.subject = subjectId;
-                    r.newlines = 0;
-                    r.indent();
-                    vPhaseReport.addElement(r);
+                    report = new Report(3130);
+                    report.subject = subjectId;
+                    report.newlines = 0;
+                    report.indent();
+                    vPhaseReport.addElement(report);
                 }
             }
             if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-                r = new Report(3135);
-                r.subject = subjectId;
-                r.add(toHit.getDesc());
-                vPhaseReport.addElement(r);
+                report = new Report(3135);
+                report.subject = subjectId;
+                report.add(toHit.getDesc());
+                vPhaseReport.addElement(report);
                 return false;
             } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
-                r = new Report(3140);
-                r.newlines = 0;
-                r.subject = subjectId;
-                r.add(toHit.getDesc());
-                vPhaseReport.addElement(r);
+                report = new Report(3140);
+                report.newlines = 0;
+                report.subject = subjectId;
+                report.add(toHit.getDesc());
+                vPhaseReport.addElement(report);
             } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
-                r = new Report(3145);
-                r.newlines = 0;
-                r.subject = subjectId;
-                r.add(toHit.getDesc());
-                vPhaseReport.addElement(r);
+                report = new Report(3145);
+                report.newlines = 0;
+                report.subject = subjectId;
+                report.add(toHit.getDesc());
+                vPhaseReport.addElement(report);
             } else {
                 // roll to hit
-                r = new Report(3150);
-                r.newlines = 0;
-                r.subject = subjectId;
-                r.add(toHit);
-                vPhaseReport.addElement(r);
+                report = new Report(3150);
+                report.newlines = 0;
+                report.subject = subjectId;
+                report.add(toHit);
+                vPhaseReport.addElement(report);
             }
 
             // dice have been rolled, thanks
-            r = new Report(3155);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(roll);
-            vPhaseReport.addElement(r);
+            report = new Report(3155);
+            report.newlines = 0;
+            report.subject = subjectId;
+            report.add(roll);
+            vPhaseReport.addElement(report);
 
             // do we hit?
             bMissed = roll.getIntValue() < toHit.getValue();
@@ -708,10 +711,10 @@ public class CLIATMHandler extends ATMHandler {
             bDirect = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
                   && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
             if (bDirect) {
-                r = new Report(3189);
-                r.subject = ae.getId();
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
+                report = new Report(3189);
+                report.subject = attackingEntity.getId();
+                report.newlines = 0;
+                vPhaseReport.addElement(report);
             }
 
             // Do this stuff first, because some weapon's miss report reference
@@ -745,49 +748,47 @@ public class CLIATMHandler extends ATMHandler {
                 }
             }
 
-            // yeech. handle damage. . different weapons do this in very
+            //  handle damage. . different weapons do this in very
             // different
             // ways
             int hits = 1;
             if (!(target.isAirborne())) {
                 hits = calcHits(vPhaseReport);
             }
-            int nCluster = calcnCluster();
+            int nCluster = calculateNumCluster();
 
-            // Now I need to adjust this for attacks on aeros because they use
+            // Now I need to adjust this for attacks on aerospace because they use
             // attack values and different rules
             if (target.isAirborne() || game.getBoard().isSpace()) {
                 // this will work differently for cluster and non-cluster
                 // weapons, and differently for capital fighter/fighter
                 // squadrons
-                nCluster = calcnClusterAero(entityTarget);
+                nCluster = calculateNumClusterAero(entityTarget);
                 if (nCluster > 1) {
                     bSalvo = true;
                     nDamPerHit = 1;
                     hits = attackValue;
                 } else {
-                    if (ae.isCapitalFighter()) {
+                    if (attackingEntity.isCapitalFighter()) {
                         bSalvo = true;
-                        if (nweapons > 1) {
-                            nweaponsHit = Compute.missilesHit(nweapons,
-                                  ((Aero) ae).getClusterMods());
-                            r = new Report(3325);
-                            r.subject = subjectId;
-                            r.add(nweaponsHit);
-                            r.add(" weapon(s) ");
-                            r.add(" ");
-                            r.newlines = 0;
-                            vPhaseReport.add(r);
+                        if (numWeapons > 1) {
+                            numWeaponsHit = Compute.missilesHit(numWeapons,
+                                  ((Aero) attackingEntity).getClusterMods());
+                            report = new Report(3325);
+                            report.subject = subjectId;
+                            report.add(numWeaponsHit);
+                            report.add(" weapon(s) ");
+                            report.add(" ");
+                            report.newlines = 0;
+                            vPhaseReport.add(report);
                         }
-                        nDamPerHit = attackValue * nweaponsHit;
-                        hits = 1;
-                        nCluster = 1;
+                        nDamPerHit = attackValue * numWeaponsHit;
                     } else {
                         bSalvo = false;
                         nDamPerHit = attackValue;
-                        hits = 1;
-                        nCluster = 1;
                     }
+                    hits = 1;
+                    nCluster = 1;
                 }
             }
 
@@ -809,8 +810,8 @@ public class CLIATMHandler extends ATMHandler {
                   && (toHit.getThruBldg() != null)
                   && (entityTarget instanceof Infantry)) {
                 // If elevation is the same, building doesn't absorb
-                if (ae.getElevation() != entityTarget.getElevation()) {
-                    int dmgClass = wtype.getInfantryDamageClass();
+                if (attackingEntity.getElevation() != entityTarget.getElevation()) {
+                    int dmgClass = weaponType.getInfantryDamageClass();
                     int nDamage;
                     if (dmgClass < WeaponType.WEAPON_BURST_1D6) {
                         nDamage = nDamPerHit * Math.min(nCluster, hits);
@@ -819,7 +820,7 @@ public class CLIATMHandler extends ATMHandler {
                         // absorbed damage shouldn't reduce incoming damage,
                         // since the incoming damage was reduced in
                         // Compute.directBlowInfantryDamage
-                        nDamage = -wtype.getDamage(nRange)
+                        nDamage = -weaponType.getDamage(nRange)
                               * Math.min(nCluster, hits);
                     }
                     bldgAbsorbs = (int) Math.round(nDamage
@@ -832,9 +833,9 @@ public class CLIATMHandler extends ATMHandler {
 
             // Make sure the player knows when his attack causes no damage.
             if (hits == 0) {
-                r = new Report(3365);
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
+                report = new Report(3365);
+                report.subject = subjectId;
+                vPhaseReport.addElement(report);
             }
 
             // for each cluster of hits, do a chunk of damage
@@ -864,7 +865,7 @@ public class CLIATMHandler extends ATMHandler {
                 if (entityTarget != null) {
                     handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                           nCluster, bldgAbsorbs);
-                    gameManager.creditKill(entityTarget, ae);
+                    gameManager.creditKill(entityTarget, attackingEntity);
                     hits -= nCluster;
                     firstHit = false;
                     // do IMP stuff here!

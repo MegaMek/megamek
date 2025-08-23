@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.CriticalSlot;
@@ -49,15 +50,13 @@ import megamek.common.units.Infantry;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class HyperLaserHandler extends EnergyWeaponHandler {
+    @Serial
     private static final long serialVersionUID = 1;
 
     /**
-     * @param toHit
-     * @param waa
-     * @param g
+     *
      */
-    public HyperLaserHandler(ToHitData toHit,
-          WeaponAttackAction waa, Game g, TWGameManager m) {
+    public HyperLaserHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
     }
 
@@ -69,22 +68,22 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
             r.subject = subjectId;
             r.newlines = 1;
             weapon.setHit(true);
-            int wloc = weapon.getLocation();
-            for (int i = 0; i < ae.getNumberOfCriticalSlots(wloc); i++) {
-                CriticalSlot slot1 = ae.getCritical(wloc, i);
+            int weaponLocation = weapon.getLocation();
+            for (int i = 0; i < attackingEntity.getNumberOfCriticalSlots(weaponLocation); i++) {
+                CriticalSlot slot1 = attackingEntity.getCritical(weaponLocation, i);
                 if ((slot1 == null) ||
                       (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                     continue;
                 }
                 Mounted<?> mounted = slot1.getMount();
                 if (mounted.equals(weapon)) {
-                    ae.hitAllCriticalSlots(wloc, i);
+                    attackingEntity.hitAllCriticalSlots(weaponLocation, i);
                     break;
                 }
             }
             r.choose(false);
             vPhaseReport.addElement(r);
-            vPhaseReport.addAll(gameManager.explodeEquipment(ae, wloc, weapon));
+            vPhaseReport.addAll(gameManager.explodeEquipment(attackingEntity, weaponLocation, weapon));
             return true;
         }
         return false;
@@ -97,21 +96,19 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        int[] nRanges = wtype.getRanges(weapon);
-        double toReturn = wtype.getDamage(nRange);
+        int[] nRanges = weaponType.getRanges(weapon);
+        double toReturn = weaponType.getDamage(nRange);
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ENERGY_WEAPONS)
               && weapon.hasModes()) {
-            toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
+            toReturn = Compute.dialDownDamage(weapon, weaponType, nRange);
         }
 
         // Check for Altered Damage from Energy Weapons (TacOp, pg.83)
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ALTERNATIVE_DAMAGE)) {
             if (nRange <= 1) {
                 toReturn++;
-            } else if (nRange <= wtype.getMediumRange()) {
-                // Do Nothing for Short and Medium Range
-            } else if (nRange <= wtype.getLongRange()) {
+            } else if (nRange > weaponType.getMediumRange() && nRange <= weaponType.getLongRange()) {
                 toReturn--;
             }
         }
@@ -119,9 +116,9 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                   bDirect ? toHit.getMoS() / 3 : 0,
-                  wtype.getInfantryDamageClass(),
+                  weaponType.getInfantryDamageClass(),
                   ((Infantry) target).isMechanized(),
-                  toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                  toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
             if (nRange <= nRanges[RangeType.RANGE_SHORT]) {
                 toReturn += 3;
             } else if (nRange <= nRanges[RangeType.RANGE_MEDIUM]) {
@@ -130,7 +127,7 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
                 toReturn++;
             }
         } else if (bDirect) {
-            toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
+            toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0), toReturn * 2);
         }
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)

@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,20 +34,20 @@
 
 package megamek.common.weapons.handlers.prototype;
 
-import megamek.common.game.Game;
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.RLHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class PrototypeRLHandler extends RLHandler {
+    @Serial
     private static final long serialVersionUID = 7072803119488613781L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
     public PrototypeRLHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);

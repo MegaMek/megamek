@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,14 +34,15 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.compute.Compute;
-import megamek.common.game.Game;
-import megamek.common.units.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
+import megamek.common.units.Infantry;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -49,12 +50,11 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sep 24, 2004
  */
 public class HAGWeaponHandler extends AmmoWeaponHandler {
+    @Serial
     private static final long serialVersionUID = -8193801876308832102L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
+     *
      */
     public HAGWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
@@ -67,7 +67,7 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.handlers.WeaponHandler#calcnCluster()
      */
     @Override
-    protected int calcnCluster() {
+    protected int calculateNumCluster() {
         return 5;
     }
 
@@ -79,12 +79,12 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
-            double toReturn = wtype.getRackSize();
+            double toReturn = weaponType.getRackSize();
             toReturn = Compute.directBlowInfantryDamage(
                   toReturn, bDirect ? toHit.getMoS() / 3 : 0,
-                  wtype.getInfantryDamageClass(),
+                  weaponType.getInfantryDamageClass(),
                   ((Infantry) target).isMechanized(),
-                  toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                  toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
             toReturn = applyGlancingBlowModifier(toReturn, true);
             return (int) toReturn;
         }
@@ -105,16 +105,16 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
         }
         int nHits;
         int nHitsModifier = getClusterModifiers(true);
-        if (nRange <= wtype.getShortRange()) {
+        if (nRange <= weaponType.getShortRange()) {
             nHitsModifier += 2;
-        } else if (nRange > wtype.getMediumRange()) {
+        } else if (nRange > weaponType.getMediumRange()) {
             nHitsModifier -= 2;
         }
 
         if (allShotsHit()) {
-            nHits = wtype.getRackSize();
+            nHits = weaponType.getRackSize();
         } else {
-            nHits = Compute.missilesHit(wtype.getRackSize(), nHitsModifier);
+            nHits = Compute.missilesHit(weaponType.getRackSize(), nHitsModifier);
         }
         Report r = new Report(3325);
         r.subject = subjectId;

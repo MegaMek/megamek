@@ -367,7 +367,7 @@ public class LosEffects {
     }
 
     /**
-     * LOS check from ae to te.
+     * LOS check from attackingEntity to te.
      */
     public boolean canSee() {
         // !blocked && (lightWoods + lightSmoke) + ((heavyWoods + heavySmoke) * 2) < 3;

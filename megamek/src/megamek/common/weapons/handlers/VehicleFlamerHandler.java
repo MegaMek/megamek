@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,9 +34,12 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.HitData;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
@@ -58,15 +61,13 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sep 23, 2004
  */
 public class VehicleFlamerHandler extends AmmoWeaponHandler {
+    @Serial
     private static final long serialVersionUID = 1130274470571109915L;
 
     /**
-     * @param toHit
-     * @param waa
-     * @param g
+     *
      */
-    public VehicleFlamerHandler(ToHitData toHit, WeaponAttackAction waa,
-          Game g, TWGameManager m) {
+    public VehicleFlamerHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
@@ -83,7 +84,13 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
           Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
           int bldgAbsorbs) {
         boolean bmmFlamerDamage = game.getOptions().booleanOption(OptionsConstants.BASE_FLAMER_HEAT);
-        EquipmentMode currentWeaponMode = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).curMode();
+        Entity entity = game.getEntity(weaponAttackAction.getEntityId());
+
+        if (entity == null) {
+            return;
+        }
+
+        EquipmentMode currentWeaponMode = entity.getEquipment(weaponAttackAction.getWeaponId()).curMode();
 
         boolean flamerDoesHeatOnlyDamage = currentWeaponMode != null
               && currentWeaponMode.equals(Weapon.MODE_FLAMER_HEAT);
@@ -93,16 +100,16 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
 
             if (bmmFlamerDamage && entityTarget.tracksHeat()) {
-                FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, wtype, subjectId, hit);
+                FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, weaponType, subjectId, hit);
             }
         } else if (flamerDoesHeatOnlyDamage) {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                  toHit.getSideTable(), waa.getAimedLocation(),
-                  waa.getAimingMode(), toHit.getCover());
+                  toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+                  weaponAttackAction.getAimingMode(), toHit.getCover());
             hit.setAttackerId(getAttackerId());
 
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                  .getCover(), ComputeSideTable.sideTable(ae, entityTarget,
+                  .getCover(), ComputeSideTable.sideTable(attackingEntity, entityTarget,
                   weapon.getCalledShot().getCall()))) {
                 // Weapon strikes Partial Cover.
                 handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg,
@@ -115,7 +122,7 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
             r.add(entityTarget.getLocationAbbr(hit));
             vPhaseReport.addElement(r);
 
-            FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, wtype, subjectId, hit);
+            FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, weaponType, subjectId, hit);
         }
     }
 
@@ -129,16 +136,16 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         double toReturn;
         if (target.isConventionalInfantry()) {
-            if (ae instanceof BattleArmor) {
+            if (attackingEntity instanceof BattleArmor) {
                 toReturn = Compute.d6(3);
-            } else if ((wtype instanceof ISHeavyFlamer)
-                  || (wtype instanceof CLHeavyFlamer)) {
+            } else if ((weaponType instanceof ISHeavyFlamer)
+                  || (weaponType instanceof CLHeavyFlamer)) {
                 toReturn = Compute.d6(6);
             } else {
                 toReturn = Compute.d6(4);
             }
             if (bDirect) {
-                toReturn += toHit.getMoS() / 3;
+                toReturn += toHit.getMoS() / 3.0;
             }
             // pain shunted infantry get half damage
             if (((Entity) target).hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
@@ -161,7 +168,7 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
-        TargetRoll tn = new TargetRoll(wtype.getFireTN(), wtype.getName());
+        TargetRoll tn = new TargetRoll(weaponType.getFireTN(), weaponType.getName());
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
             gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, true, false,
@@ -193,7 +200,7 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
         if ((bldg != null)
               && gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, true,
               false,
-              new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
+              new TargetRoll(weaponType.getFireTN(), weaponType.getName()), 5,
               vPhaseReport)) {
             return;
         }

@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.HitData;
@@ -54,14 +55,13 @@ import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
-    private static final MMLogger logger = MMLogger.create(PopUpMineLauncherHandler.class);
+    private static final MMLogger LOGGER = MMLogger.create(PopUpMineLauncherHandler.class);
 
+    @Serial
     private static final long serialVersionUID = -6179453250580148965L;
 
     /**
-     * @param toHit
-     * @param waa
-     * @param g
+     *
      */
     public PopUpMineLauncherHandler(ToHitData toHit, WeaponAttackAction waa,
           Game g, TWGameManager m) {
@@ -79,9 +79,9 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
         if (target.isConventionalInfantry()) {
-            if (ae instanceof BattleArmor) {
+            if (attackingEntity instanceof BattleArmor) {
                 bSalvo = true;
-                return ((BattleArmor) ae).getShootingStrength();
+                return ((BattleArmor) attackingEntity).getShootingStrength();
             }
             return 1;
         }
@@ -115,8 +115,8 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
           Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
           int bldgAbsorbs) {
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-              toHit.getSideTable(), waa.getAimedLocation(),
-              waa.getAimingMode(), toHit.getCover());
+              toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+              weaponAttackAction.getAimingMode(), toHit.getCover());
         hit.setAttackerId(getAttackerId());
         if (target instanceof Mek) {
             hit = new HitData(Mek.LOC_CENTER_TORSO);
@@ -144,7 +144,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
                         hit,
                         damage,
                         false,
-                        ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER
+                        attackingEntity.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER
                               : damageType,
                         false, false, throughFront,
                         underWater);
@@ -153,7 +153,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
             try {
                 (specialDamageReport.elementAt(specialDamageReport.size() - 2)).newlines++;
             } catch (Exception ignored) {
-                logger.error("No previous report when trying to add newline");
+                LOGGER.error("No previous report when trying to add newline");
             }
         }
         // Report the result
@@ -174,7 +174,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
 
         // do we need to revert to single shot?
         if (nShots > 1) {
-            int nAvail = ae.getTotalAmmoOfType(ammo.getType());
+            int nAvail = attackingEntity.getTotalAmmoOfType(ammo.getType());
             while (nAvail < nShots) {
                 nShots--;
             }
@@ -183,7 +183,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
         // use up ammo
         for (int i = 0; i < nShots; i++) {
             if (ammo.getUsableShotsLeft() <= 0) {
-                ae.loadWeaponWithSameAmmo(weapon);
+                attackingEntity.loadWeaponWithSameAmmo(weapon);
                 ammo = (AmmoMounted) weapon.getLinked();
             }
             ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);

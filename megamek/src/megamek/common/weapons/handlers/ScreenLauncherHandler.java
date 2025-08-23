@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,18 +34,19 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.board.Coords;
-import megamek.common.units.Entity;
-import megamek.common.units.FighterSquadron;
-import megamek.common.game.Game;
 import megamek.common.HitData;
 import megamek.common.Report;
-import megamek.common.rolls.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
+import megamek.common.game.Game;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.FighterSquadron;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -56,23 +57,20 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -2536312899803153911L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
-    public ScreenLauncherHandler(ToHitData t, WeaponAttackAction w, Game g,
-          TWGameManager m) {
+    public ScreenLauncherHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 
     /**
      * handle this weapons firing
      *
-     * @return a <code>boolean</code> value indicating wether this should be kept or not
+     * @return a <code>boolean</code> value indicating whether this should be kept or not
      */
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
@@ -85,7 +83,7 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        r.add(wtype.getName());
+        r.add(weaponType.getName());
         r.messageId = 3120;
         r.add(target.getDisplayName(), true);
         vPhaseReport.addElement(r);
@@ -126,7 +124,7 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
                           HitData hit = ent.rollHitLocation(squadronToHit.getHitTable(), ToHitData.SIDE_FRONT);
                           hit.setCapital(false);
                           vPhaseReport.addAll(gameManager.damageEntity(ent, hit, attackValue));
-                          gameManager.creditKill(ent, ae);
+                          gameManager.creditKill(ent, attackingEntity);
                       });
             } else {
                 ToHitData hexToHit = new ToHitData();
@@ -134,7 +132,7 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
                 HitData hit = entity.rollHitLocation(hexToHit.getHitTable(), ToHitData.SIDE_FRONT);
                 hit.setCapital(false);
                 vPhaseReport.addAll(gameManager.damageEntity(entity, hit, attackValue));
-                gameManager.creditKill(entity, ae);
+                gameManager.creditKill(entity, attackingEntity);
             }
         }
         return false;

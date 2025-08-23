@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.RangeType;
@@ -55,13 +56,11 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Sebastian Brocks
  */
 public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
+    @Serial
     private static final long serialVersionUID = 6329291710822071023L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
     public ThunderBoltWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
           TWGameManager m) {
@@ -75,13 +74,13 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        AmmoType atype = (AmmoType) ammo.getType();
-        double toReturn = atype.getDamagePerShot();
+        AmmoType ammoType = ammo.getType();
+        double toReturn = ammoType.getDamagePerShot();
         int minRange;
-        if (ae.isAirborne()) {
-            minRange = wtype.getATRanges()[RangeType.RANGE_MINIMUM];
+        if (attackingEntity.isAirborne()) {
+            minRange = weaponType.getATRanges()[RangeType.RANGE_MINIMUM];
         } else {
-            minRange = wtype.getMinimumRange();
+            minRange = weaponType.getMinimumRange();
         }
         if ((nRange <= minRange) && !weapon.isHotLoaded()) {
             toReturn /= 2;
@@ -90,11 +89,11 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                   bDirect ? toHit.getMoS() / 3 : 0,
-                  wtype.getInfantryDamageClass(),
+                  weaponType.getInfantryDamageClass(),
                   ((Infantry) target).isMechanized(),
-                  toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                  toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
-            toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
+            toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0), toReturn * 2);
         }
         return (int) Math.ceil(toReturn);
     }
@@ -108,21 +107,21 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
     protected int calcAttackValue() {
         int av = 0;
         double counterAV = calcCounterAV();
-        int armor = wtype.getMissileArmor();
-        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
+        int armor = weaponType.getMissileArmor();
+        int range = RangeType.rangeBracket(nRange, weaponType.getATRanges(), true, false);
         if (range == WeaponType.RANGE_SHORT) {
-            av = wtype.getRoundShortAV();
+            av = weaponType.getRoundShortAV();
         } else if (range == WeaponType.RANGE_MED) {
-            av = wtype.getRoundMedAV();
+            av = weaponType.getRoundMedAV();
         } else if (range == WeaponType.RANGE_LONG) {
-            av = wtype.getRoundLongAV();
+            av = weaponType.getRoundLongAV();
         } else if (range == WeaponType.RANGE_EXT) {
-            av = wtype.getRoundExtAV();
+            av = weaponType.getRoundExtAV();
         }
 
         // For squadrons, total the missile armor for the launched volley
-        if (ae.isCapitalFighter()) {
-            armor = armor * nweapons;
+        if (attackingEntity.isCapitalFighter()) {
+            armor = armor * numWeapons;
         }
         CapMissileArmor = armor - (int) counterAV;
         CapMissileAMSMod = calcCapMissileAMSMod();
@@ -143,14 +142,9 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
         return CapMissileAMSMod;
     }
 
-    @Override
-    protected int getCapMissileAMSMod() {
-        return CapMissileAMSMod;
-    }
-
-    @Override
     //Thunderbolts apply damage all in one block.
     //This was referenced incorrectly for Aero damage.
+    @Override
     protected boolean usesClusterTable() {
         return false;
     }
@@ -178,7 +172,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
             }
         }
         bSalvo = true;
-        // Report AMS/Pointdefense failure due to Overheating.
+        // Report AMS/Point defense failure due to Overheating.
         if (pdOverheated
               && (!(amsBayEngaged
               || amsBayEngagedCap
@@ -238,7 +232,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
     // For AntiShip missiles, which behave more like Thunderbolts than capital missiles except for this
     // All other thunderbolt type large missiles should be unable to score a critical hit here
     protected int getCapMisMod() {
-        if (wtype.hasFlag(WeaponType.F_ANTI_SHIP)) {
+        if (weaponType.hasFlag(WeaponType.F_ANTI_SHIP)) {
             return 11;
         } else {
             return 0;

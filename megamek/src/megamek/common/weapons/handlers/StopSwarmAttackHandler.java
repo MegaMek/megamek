@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,15 +34,16 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.Report;
-import megamek.common.rolls.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.game.Game;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -50,15 +51,13 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sep 23, 2004
  */
 public class StopSwarmAttackHandler extends WeaponHandler {
+    @Serial
     private static final long serialVersionUID = 7078803294398264979L;
 
     /**
-     * @param toHit
-     * @param waa
-     * @param g
+     *
      */
-    public StopSwarmAttackHandler(ToHitData toHit, WeaponAttackAction waa,
-          Game g, TWGameManager m) {
+    public StopSwarmAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
     }
 
@@ -78,13 +77,13 @@ public class StopSwarmAttackHandler extends WeaponHandler {
             vPhaseReport.addElement(r);
             return false;
         }
-        // swarming ended succesfully
-        Report r = new Report(3110);
-        r.subject = subjectId;
-        vPhaseReport.addElement(r);
+        // swarming ended successfully
+        Report report = new Report(3110);
+        report.subject = subjectId;
+        vPhaseReport.addElement(report);
         // Only apply the "stop swarm 'attack'" to the swarmed Mek.
-        if (ae.getSwarmTargetId() != target.getId()) {
-            Entity other = game.getEntity(ae.getSwarmTargetId());
+        if (attackingEntity.getSwarmTargetId() != target.getId()) {
+            Entity other = game.getEntity(attackingEntity.getSwarmTargetId());
 
             if (other != null) {
                 other.setSwarmAttackerId(Entity.NONE);
@@ -92,7 +91,7 @@ public class StopSwarmAttackHandler extends WeaponHandler {
         } else {
             entityTarget.setSwarmAttackerId(Entity.NONE);
         }
-        ae.setSwarmTargetId(Entity.NONE);
+        attackingEntity.setSwarmTargetId(Entity.NONE);
         return false;
     }
 }

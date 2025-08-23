@@ -91,7 +91,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
      * @see megamek.common.weapons.handlers.WeaponHandler#calcnCluster()
      */
     @Override
-    protected int calcnCluster() {
+    protected int calculateNumCluster() {
         return 2;
     }
 
@@ -114,25 +114,25 @@ public class InfantryWeaponHandler extends WeaponHandler {
 
         int troopersHit = 0;
         // when swarming all troopers hit
-        if (ae.getSwarmTargetId() == target.getId()) {
-            troopersHit = ((Infantry) ae).getShootingStrength();
-        } else if (!(ae instanceof Infantry)) {
+        if (attackingEntity.getSwarmTargetId() == target.getId()) {
+            troopersHit = ((Infantry) attackingEntity).getShootingStrength();
+        } else if (!(attackingEntity instanceof Infantry)) {
             troopersHit = 1;
         } else {
-            troopersHit = Compute.missilesHit(((Infantry) ae)
+            troopersHit = Compute.missilesHit(((Infantry) attackingEntity)
                   .getShootingStrength(), nHitMod);
         }
-        double damage = calculateBaseDamage(ae, weapon, wtype);
+        double damage = calculateBaseDamage(attackingEntity, weapon, weaponType);
 
-        if ((ae instanceof Infantry) && (nRange == 0)
-              && ae.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+        if ((attackingEntity instanceof Infantry) && (nRange == 0)
+              && attackingEntity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             damage += 0.14;
         }
         int damageDealt = (int) Math.round(damage * troopersHit);
 
         // beast-mounted infantry get range 0 bonus damage per platoon
-        if ((ae instanceof Infantry) && (nRange == 0)) {
-            InfantryMount mount = ((Infantry) ae).getMount();
+        if ((attackingEntity instanceof Infantry) && (nRange == 0)) {
+            InfantryMount mount = ((Infantry) attackingEntity).getMount();
             if (mount != null) {
                 if (!target.isConventionalInfantry()) {
                     damageDealt += mount.vehicleDamage();
@@ -145,23 +145,24 @@ public class InfantryWeaponHandler extends WeaponHandler {
         // conventional infantry weapons with high damage get treated as if they have
         // the infantry burst mod
         if (target.isConventionalInfantry() &&
-              (wtype.hasFlag(WeaponType.F_INF_BURST) ||
-                    (ae.isConventionalInfantry() && ((Infantry) ae).primaryWeaponDamageCapped()))) {
+              (weaponType.hasFlag(WeaponType.F_INF_BURST) ||
+                    (attackingEntity.isConventionalInfantry()
+                          && ((Infantry) attackingEntity).primaryWeaponDamageCapped()))) {
             damageDealt += Compute.d6();
         }
         if ((target instanceof Infantry) && ((Infantry) target).isMechanized()) {
             damageDealt /= 2;
         }
         // this doesn't work...
-        if ((target instanceof Building) && (wtype.hasFlag(WeaponType.F_INF_NONPENETRATING))) {
+        if ((target instanceof Building) && (weaponType.hasFlag(WeaponType.F_INF_NONPENETRATING))) {
             damageDealt = 0;
         }
-        if (wtype.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
+        if (weaponType.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
             damageType = DamageType.NONPENETRATING;
         }
         Report r = new Report(3325);
         r.subject = subjectId;
-        if (ae instanceof Infantry) {
+        if (attackingEntity instanceof Infantry) {
             r.add(troopersHit);
             r.add(" troopers ");
         } else { // Needed for support tanks with infantry weapons
@@ -185,7 +186,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
 
     // we need to figure out AV damage to aeros for AA weapons
     @Override
-    protected int calcnClusterAero(Entity entityTarget) {
+    protected int calculateNumClusterAero(Entity entityTarget) {
         return 5;
     }
 
@@ -194,9 +195,9 @@ public class InfantryWeaponHandler extends WeaponHandler {
         int av;
         // Sigh, another rules oversight - nobody bothered to figure this out
         // To be consistent with other cluster weapons we will assume 60% hit
-        if (ae.isConventionalInfantry()) {
-            double damage = ((Infantry) ae).getDamagePerTrooper();
-            av = (int) Math.round(damage * 0.6 * ((Infantry) ae).getShootingStrength());
+        if (attackingEntity.isConventionalInfantry()) {
+            double damage = ((Infantry) attackingEntity).getDamagePerTrooper();
+            av = (int) Math.round(damage * 0.6 * ((Infantry) attackingEntity).getShootingStrength());
         } else {
             // Small fixed wing support
             av = super.calcAttackValue();
@@ -210,16 +211,16 @@ public class InfantryWeaponHandler extends WeaponHandler {
 
     @Override
     public void useAmmo() {
-        if (ae.isSupportVehicle()) {
+        if (attackingEntity.isSupportVehicle()) {
             Mounted<?> ammo = weapon.getLinked();
             if (ammo == null) {
-                ae.loadWeapon(weapon);
+                attackingEntity.loadWeapon(weapon);
                 ammo = weapon.getLinked();
             }
             if (ammo == null) {// Can't happen. w/o legal ammo, the weapon
                 // *shouldn't* fire.
                 logger.error(String.format("Handler can't find any ammo for %s firing %s",
-                      ae.getShortName(), weapon.getName()));
+                      attackingEntity.getShortName(), weapon.getName()));
                 return;
             }
 
@@ -259,12 +260,12 @@ public class InfantryWeaponHandler extends WeaponHandler {
 
     @Override
     protected void initHit(Entity entityTarget) {
-        if ((entityTarget instanceof BattleArmor) && ae.isConventionalInfantry()) {
+        if ((entityTarget instanceof BattleArmor) && attackingEntity.isConventionalInfantry()) {
             // TacOps crits against BA do not happen for infantry weapon attacks
             hit = ((BattleArmor) entityTarget).rollHitLocation(toHit.getSideTable(),
-                  waa.getAimedLocation(), waa.getAimingMode(), true);
+                  weaponAttackAction.getAimedLocation(), weaponAttackAction.getAimingMode(), true);
             hit.setGeneralDamageType(generalDamageType);
-            hit.setCapital(wtype.isCapital());
+            hit.setCapital(weaponType.isCapital());
             hit.setBoxCars(roll.getIntValue() == 12);
             hit.setCapMisCritMod(getCapMisMod());
             hit.setFirstHit(firstHit);

@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -60,32 +60,32 @@ public class ACWeaponHandler extends AmmoWeaponHandler {
 
     @Override
     protected int calcDamagePerHit() {
-        double toReturn = wtype.getDamage();
+        double toReturn = weaponType.getDamage();
         // during a swarm, all damage gets applied as one block to one location
-        if ((ae instanceof BattleArmor)
+        if ((attackingEntity instanceof BattleArmor)
               && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
               && !(weapon.isSquadSupportWeapon())
-              && (ae.getSwarmTargetId() == target.getId())) {
-            toReturn *= ((BattleArmor) ae).getShootingStrength();
+              && (attackingEntity.getSwarmTargetId() == target.getId())) {
+            toReturn *= ((BattleArmor) attackingEntity).getShootingStrength();
         }
         // we default to direct fire weapons for anti-infantry damage
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                   bDirect ? toHit.getMoS() / 3 : 0,
-                  wtype.getInfantryDamageClass(),
+                  weaponType.getInfantryDamageClass(),
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null,
-                  ae.getId(), calcDmgPerHitReport);
+                  attackingEntity.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
-            toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
+            toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0), toReturn * 2);
         }
         toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
-              && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
+              && nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG]) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
-              && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+              && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
         }
 

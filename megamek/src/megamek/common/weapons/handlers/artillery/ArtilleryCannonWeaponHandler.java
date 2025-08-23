@@ -1,7 +1,7 @@
 /*
 
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,9 +35,12 @@
 
 package megamek.common.weapons.handlers.artillery;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.NukeDetonatedAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Board;
@@ -61,8 +64,9 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Numien, based work by Sebastian Brocks
  */
 public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
-    private static final MMLogger logger = MMLogger.create(ArtilleryCannonWeaponHandler.class);
+    private static final MMLogger LOGGER = MMLogger.create(ArtilleryCannonWeaponHandler.class);
 
+    @Serial
     private static final long serialVersionUID = 1L;
     boolean handledAmmoAndReport = false;
 
@@ -75,65 +79,65 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         if (!cares(phase)) {
             return true;
         }
-        if (ae == null) {
-            logger.error("Artillery Entity is null!");
+        if (attackingEntity == null) {
+            LOGGER.error("Artillery Entity is null!");
             return true;
         }
 
         Coords targetPos = target.getPosition();
         Hex targetHex = game.getHexOf(target);
         boolean targetIsEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
-        boolean isFlak = targetIsEntity && Compute.isFlakAttack(ae, (Entity) target);
+        boolean isFlak = targetIsEntity && Compute.isFlakAttack(attackingEntity, (Entity) target);
         boolean asfFlak = isFlak && target.isAirborne();
-        Mounted<?> ammoUsed = ae.getEquipment(waa.getAmmoId());
+        Mounted<?> ammoUsed = attackingEntity.getEquipment(weaponAttackAction.getAmmoId());
         final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
 
         // Report weapon attack and its to-hit value.
-        Report r = new Report(3120);
-        r.indent();
-        r.newlines = 0;
-        r.subject = subjectId;
-        if (wtype != null) {
-            r.add(wtype.getName());
+        Report report = new Report(3120);
+        report.indent();
+        report.newlines = 0;
+        report.subject = subjectId;
+        if (weaponType != null) {
+            report.add(weaponType.getName());
         } else {
-            r.add("Error: From Nowhere");
+            report.add("Error: From Nowhere");
         }
 
-        r.add(target.getDisplayName(), true);
-        vPhaseReport.addElement(r);
+        report.add(target.getDisplayName(), true);
+        vPhaseReport.addElement(report);
         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-            r = new Report(3135);
-            r.subject = subjectId;
-            r.add(toHit.getDesc());
-            vPhaseReport.addElement(r);
+            report = new Report(3135);
+            report.subject = subjectId;
+            report.add(toHit.getDesc());
+            vPhaseReport.addElement(report);
             return false;
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
-            r = new Report(3140);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(toHit.getDesc());
-            vPhaseReport.addElement(r);
+            report = new Report(3140);
+            report.newlines = 0;
+            report.subject = subjectId;
+            report.add(toHit.getDesc());
+            vPhaseReport.addElement(report);
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
-            r = new Report(3145);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(toHit.getDesc());
-            vPhaseReport.addElement(r);
+            report = new Report(3145);
+            report.newlines = 0;
+            report.subject = subjectId;
+            report.add(toHit.getDesc());
+            vPhaseReport.addElement(report);
         } else {
             // roll to hit
-            r = new Report(3150);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(toHit);
-            vPhaseReport.addElement(r);
+            report = new Report(3150);
+            report.newlines = 0;
+            report.subject = subjectId;
+            report.add(toHit);
+            vPhaseReport.addElement(report);
         }
 
         // dice have been rolled, thanks
-        r = new Report(3155);
-        r.newlines = 0;
-        r.subject = subjectId;
-        r.add(roll);
-        vPhaseReport.addElement(r);
+        report = new Report(3155);
+        report.newlines = 0;
+        report.subject = subjectId;
+        report.add(roll);
+        vPhaseReport.addElement(report);
 
         // do we hit?
         bMissed = roll.getIntValue() < toHit.getValue();
@@ -147,13 +151,13 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         }
         if (!bMissed) {
             if (!isFlak) {
-                r = new Report(3190);
+                report = new Report(3190);
             } else {
-                r = new Report(3191);
+                report = new Report(3191);
             }
-            r.subject = subjectId;
-            r.add(targetPos.getBoardNum());
-            vPhaseReport.addElement(r);
+            report.subject = subjectId;
+            report.add(targetPos.getBoardNum());
+            vPhaseReport.addElement(report);
         } else {
             Board board = game.getBoard(target);
             if (!board.isSpace()) {
@@ -161,30 +165,30 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                 if (board.contains(targetPos)) {
                     // misses and scatters to another hex
                     if (!isFlak) {
-                        r = new Report(3195);
+                        report = new Report(3195);
                     } else {
-                        r = new Report(3192);
+                        report = new Report(3192);
                     }
-                    r.subject = subjectId;
-                    r.add(targetPos.getBoardNum());
-                    vPhaseReport.addElement(r);
+                    report.subject = subjectId;
+                    report.add(targetPos.getBoardNum());
+                    vPhaseReport.addElement(report);
                 } else {
                     // misses and scatters off-board
                     if (isFlak) {
-                        r = new Report(3193);
+                        report = new Report(3193);
                     } else {
-                        r = new Report(3200);
+                        report = new Report(3200);
                     }
-                    r.subject = subjectId;
-                    vPhaseReport.addElement(r);
+                    report.subject = subjectId;
+                    vPhaseReport.addElement(report);
                     return !bMissed;
                 }
             } else {
                 // No scattering in space
-                r = new Report(3196);
-                r.subject = subjectId;
-                r.add(targetPos.getBoardNum());
-                vPhaseReport.addElement(r);
+                report = new Report(3196);
+                report.subject = subjectId;
+                report.add(targetPos.getBoardNum());
+                vPhaseReport.addElement(report);
                 return !bMissed;
             }
         }
@@ -196,7 +200,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             height += target.getElevation();
         }
 
-        // According to TacOps eratta, artillery cannons can only fire standard
+        // According to TacOps errata, artillery cannons can only fire standard
         // rounds and fuel-air cannon shells (Interstellar Ops p165).
         // But, they're still in as unofficial tech, because they're fun. :)
         if (null != ammoType) {
@@ -212,18 +216,17 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                 gameManager.deliverArtilleryFlare(targetPos, radius);
                 return false;
             } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DAVY_CROCKETT_M)) {
-                // The appropriate term here is "Bwahahahahaha..."
                 gameManager.drawNukeHitOnBoard(targetPos);
                 gameManager.getGame().processGameEvent(
                       new GamePlayerStrategicActionEvent(gameManager,
-                            new NukeDetonatedAction(ae.getId(),
-                                  ae.getOwnerId(),
+                            new NukeDetonatedAction(attackingEntity.getId(),
+                                  attackingEntity.getOwnerId(),
                                   AmmoType.Munitions.M_DAVY_CROCKETT_M)));
                 gameManager.doNuclearExplosion(targetPos, 1, vPhaseReport);
                 return false;
             } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FASCAM)) {
-                gameManager.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(),
-                      ammoType.getRackSize(), ae.getId());
+                gameManager.deliverFASCAMMinefield(targetPos, attackingEntity.getOwner().getId(),
+                      ammoType.getRackSize(), attackingEntity.getId());
                 return false;
             } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_SMOKE)) {
                 gameManager.deliverArtillerySmoke(targetPos, vPhaseReport);
@@ -233,13 +236,31 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                 // If this is an ASF Flak attack we know we hit an entity by itself in the air,
                 // so just hit it for full damage.
                 if (asfFlak) {
-                    AreaEffectHelper.artilleryDamageEntity((Entity) target, ammoType.getRackSize(), null,
-                          0, false, asfFlak, isFlak, height,
-                          targetPos, atype, targetPos, false, ae, null, getAttackerId(),
-                          vPhaseReport, gameManager);
+                    AreaEffectHelper.artilleryDamageEntity((Entity) target,
+                          ammoType.getRackSize(),
+                          null,
+                          0,
+                          false,
+                          true,
+                          isFlak,
+                          height,
+                          targetPos,
+                          this.ammoType,
+                          targetPos,
+                          false,
+                          attackingEntity,
+                          null,
+                          getAttackerId(),
+                          vPhaseReport,
+                          gameManager);
                 } else {
-                    AreaEffectHelper.processFuelAirDamage(targetPos, target.getBoardId(), height,
-                          ammoType, ae, vPhaseReport, gameManager);
+                    AreaEffectHelper.processFuelAirDamage(targetPos,
+                          target.getBoardId(),
+                          height,
+                          ammoType,
+                          attackingEntity,
+                          vPhaseReport,
+                          gameManager);
                 }
 
                 return false;
@@ -252,24 +273,26 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         // TODO: Does this apply to arty cannons?
         boolean mineClear = target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR;
         if (mineClear && !isFlak && !bMissed) {
-            r = new Report(3255);
-            r.indent(1);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
+            report = new Report(3255);
+            report.indent(1);
+            report.subject = subjectId;
+            vPhaseReport.addElement(report);
 
-            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON, ae, vPhaseReport, game,
+            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON,
+                  attackingEntity, vPhaseReport, game,
                   gameManager);
         }
 
         gameManager.artilleryDamageArea(targetPos, ammoType,
-              subjectId, ae, isFlak, height, mineClear, vPhaseReport,
+              subjectId, attackingEntity, isFlak, height, mineClear, vPhaseReport,
               asfFlak);
 
         // artillery may unintentionally clear minefields, but only if it wasn't trying
         // to
         // TODO : Does this apply to arty cannons?
         if (!mineClear) {
-            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, ae, vPhaseReport, game,
+            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT,
+                  attackingEntity, vPhaseReport, game,
                   gameManager);
         }
 
@@ -278,7 +301,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
 
     @Override
     protected int calcDamagePerHit() {
-        double toReturn = wtype.getDamage();
+        double toReturn = weaponType.getDamage();
         // area effect damage is double
         if (target.isConventionalInfantry()) {
             toReturn /= 0.5;

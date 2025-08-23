@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.weapons.handlers.ac;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.RangeType;
@@ -53,16 +54,15 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sep 25, 2004
  */
 public class ACFlechetteHandler extends AmmoWeaponHandler {
+    @Serial
     private static final long serialVersionUID = 7965585014230084304L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
+     *
      */
-    public ACFlechetteHandler(ToHitData t, WeaponAttackAction w, Game g,
-          TWGameManager m) {
-        super(t, w, g, m);
+    public ACFlechetteHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
+          TWGameManager twGameManager) {
+        super(toHitData, weaponAttackAction, game, twGameManager);
         damageType = DamageType.FLECHETTE;
     }
 
@@ -73,20 +73,20 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        double toReturn = wtype.getDamage();
+        double toReturn = weaponType.getDamage();
 
         if (bDirect) {
-            toReturn += toHit.getMoS() / 3;
+            toReturn += toHit.getMoS() / 3.0;
         }
 
         toReturn = applyGlancingBlowModifier(toReturn, false);
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
-              && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+              && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
-              && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+              && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
         }
 
@@ -101,7 +101,7 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             vPhaseReport.addElement(r);
         }
-        // Flechette weapons do double damage to woods
+        // Fléchette weapons do double damage to woods
         nDamage *= 2;
 
         // report that damage was "applied" to terrain
@@ -117,7 +117,7 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
         // Buildings can't be accidentally ignited.
         if ((bldg != null)
               && gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, false, false,
-              new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
+              new TargetRoll(weaponType.getFireTN(), weaponType.getName()), 5, vPhaseReport)) {
             return;
         }
 

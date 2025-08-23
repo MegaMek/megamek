@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.Report;
@@ -57,13 +58,11 @@ public class AR10Handler extends AmmoWeaponHandler {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -2536312899803153911L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
     public AR10Handler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
@@ -86,27 +85,26 @@ public class AR10Handler extends AmmoWeaponHandler {
               : null;
 
         if (entityTarget != null) {
-            ae.setLastTarget(entityTarget.getId());
-            ae.setLastTargetDisplayName(entityTarget.getDisplayName());
+            attackingEntity.setLastTarget(entityTarget.getId());
+            attackingEntity.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
-        String number = nweapons > 1 ? " (" + nweapons + ")" : "";
+        String number = numWeapons > 1 ? " (" + numWeapons + ")" : "";
         for (int i = numAttacks; i > 0; i--) {
             // Report weapon attack and its to-hit value.
             Report r = new Report(3115);
             r.indent();
             r.newlines = 0;
             r.subject = subjectId;
-            r.add(wtype.getName() + number);
+            r.add(weaponType.getName() + number);
             if (entityTarget != null) {
-                if ((wtype.getAmmoType() != AmmoType.AmmoTypeEnum.NA)
+                if ((weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.NA)
                       && (weapon.getLinked() != null)
-                      && (weapon.getLinked().getType() instanceof AmmoType)) {
-                    AmmoType atype = (AmmoType) weapon.getLinked().getType();
-                    if (!atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
+                      && (weapon.getLinked().getType() instanceof AmmoType ammoType)) {
+                    if (!ammoType.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
                         r.messageId = 3116;
-                        r.add(atype.getSubMunitionName());
+                        r.add(ammoType.getSubMunitionName());
                     }
                 }
                 r.addDesc(entityTarget);
@@ -198,7 +196,7 @@ public class AR10Handler extends AmmoWeaponHandler {
 
                 if (bDirect) {
                     r = new Report(3189);
-                    r.subject = ae.getId();
+                    r.subject = attackingEntity.getId();
                     r.newlines = 0;
                     vPhaseReport.addElement(r);
                 }
@@ -232,11 +230,11 @@ public class AR10Handler extends AmmoWeaponHandler {
                 reportMiss(vPhaseReport);
             }
             // Handle damage.
-            int nCluster = calcnCluster();
+            int nCluster = calculateNumCluster();
             int id = vPhaseReport.size();
             int hits = calcHits(vPhaseReport);
 
-            if (target.isAirborne() || game.getBoard().isSpace() || ae.usesWeaponBays()) {
+            if (target.isAirborne() || game.getBoard().isSpace() || attackingEntity.usesWeaponBays()) {
                 // if we added a line to the phase report for calc hits, remove
                 // it now
                 while (vPhaseReport.size() > id) {
@@ -272,7 +270,7 @@ public class AR10Handler extends AmmoWeaponHandler {
             if (!bMissed && (entityTarget != null)) {
                 handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                       nCluster, bldgAbsorbs);
-                gameManager.creditKill(entityTarget, ae);
+                gameManager.creditKill(entityTarget, attackingEntity);
             } else if (!bMissed) { // Hex is targeted, need to report a hit
                 r = new Report(3390);
                 r.subject = subjectId;
@@ -290,11 +288,11 @@ public class AR10Handler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcAttackValue() {
-        int av = 0;
-        AmmoType atype = (AmmoType) ammo.getType();
-        if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+        int av;
+        AmmoType ammoType = ammo.getType();
+        if (ammoType.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
             av = 4;
-        } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+        } else if (ammoType.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
             av = 3;
         } else {
             av = 2;
@@ -309,11 +307,11 @@ public class AR10Handler extends AmmoWeaponHandler {
 
     @Override
     protected int getCapMisMod() {
-        int mod = 0;
-        AmmoType atype = (AmmoType) ammo.getType();
-        if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+        int mod;
+        AmmoType ammoType = ammo.getType();
+        if (ammoType.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
             mod = 10;
-        } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+        } else if (ammoType.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
             mod = 9;
         } else {
             mod = 11;

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,19 +34,20 @@
 
 package megamek.common.weapons.handlers;
 
-import megamek.common.game.Game;
+import java.io.Serial;
+
 import megamek.common.HitData;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.game.Game;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class BombastLaserWeaponHandler extends EnergyWeaponHandler {
+    @Serial
     private static final long serialVersionUID = 2452514543790235562L;
 
     /**
-     * @param toHit
-     * @param waa
-     * @param g
+     *
      */
     public BombastLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);

@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.RangeType;
@@ -50,16 +51,13 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Andrew Hunter Created on Oct 15, 2004
  */
 public class CLLBXPrototypeHandler extends LBXHandler {
+    @Serial
     private static final long serialVersionUID = -7348571086193319403L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
-    public CLLBXPrototypeHandler(ToHitData t, WeaponAttackAction w, Game g,
-          TWGameManager m) {
+    public CLLBXPrototypeHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 
@@ -81,20 +79,20 @@ public class CLLBXPrototypeHandler extends LBXHandler {
         int nHitsModifier = getClusterModifiers(true);
 
         if (allShotsHit()) {
-            shotsHit = wtype.getRackSize();
+            shotsHit = weaponType.getRackSize();
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
-                  && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+                  && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG])) {
                 shotsHit = (int) Math.ceil(shotsHit * .75);
             }
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
-                  && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+                  && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
                 shotsHit = (int) Math.ceil(shotsHit * .5);
             }
         } else {
             // flat modifier of -1, because of prototype
             nHitsModifier -= 1;
             PlanetaryConditions conditions = game.getPlanetaryConditions();
-            shotsHit = Compute.missilesHit(wtype.getRackSize(), nHitsModifier, conditions.getEMI().isEMI());
+            shotsHit = Compute.missilesHit(weaponType.getRackSize(), nHitsModifier, conditions.getEMI().isEMI());
         }
 
         Report r = new Report(3325);

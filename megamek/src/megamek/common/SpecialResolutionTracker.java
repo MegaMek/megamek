@@ -35,8 +35,8 @@
 package megamek.common;
 
 /**
- * Class that tracks whether this shot was fired using a weapon with special to-hit handling. Allows this waa to bypass
- * all the standard to-hit modifier checks
+ * Class that tracks whether this shot was fired using a weapon with special to-hit handling. Allows this
+ * weaponAttackAction to bypass all the standard to-hit modifier checks
  */
 public class SpecialResolutionTracker {
     private boolean specialResolution;

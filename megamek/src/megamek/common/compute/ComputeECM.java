@@ -67,7 +67,7 @@ public class ComputeECM {
 
     /**
      * This method checks to see if a line from a to b is affected by any ECM field (including Angel) of the enemy of
-     * ae
+     * attackingEntity
      *
      */
     public static boolean isAffectedByECM(Entity ae, Coords a, Coords b) {
@@ -76,7 +76,7 @@ public class ComputeECM {
 
     /**
      * This method checks to see if a line from a to b is affected by any ECM field (including Angel) of the enemy of
-     * ae
+     * attackingEntity
      *
      * @param allECMInfo A collection of ECMInfo for each Entity in the Game.
      *
@@ -88,7 +88,7 @@ public class ComputeECM {
     }
 
     /**
-     * This method checks to see if a line from a to b is affected by an ECCM field of the enemy of ae.
+     * This method checks to see if a line from a to b is affected by an ECCM field of the enemy of attackingEntity.
      *
      */
     public static boolean isAffectedByECCM(Entity ae, Coords a, Coords b) {
@@ -97,7 +97,7 @@ public class ComputeECM {
     }
 
     /**
-     * This method checks to see if a line from a to b is affected by an Angel ECM field of the enemy of ae (ignoring
+     * This method checks to see if a line from a to b is affected by an Angel ECM field of the enemy of attackingEntity (ignoring
      * other kinds of ECM).
      *
      * @return shows if you are in a friendly ECCM field positive number means you are in a friendly ECCM field Negative
@@ -108,7 +108,7 @@ public class ComputeECM {
     }
 
     /**
-     * This method checks to see if a line from a to b is affected by an Angel ECM field of the enemy of ae (ignoring
+     * This method checks to see if a line from a to b is affected by an Angel ECM field of the enemy of attackingEntity (ignoring
      * other kinds of ECM).
      *
      * @param allECMInfo A collection of ECMInfo for each Entity in the Game.

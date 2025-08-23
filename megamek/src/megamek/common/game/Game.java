@@ -498,7 +498,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         // prevents issues from aerospace homing artillery with the aerospace unit having left the field already, for
         // example
         return getAttacksVector().stream()
-              .map(AttackHandler::getWaa)
+              .map(AttackHandler::getWeaponAttackAction)
               .filter(Objects::nonNull)
               .anyMatch(waa -> waa.getAmmoMunitionType().contains(AmmoType.Munitions.M_HOMING));
     }

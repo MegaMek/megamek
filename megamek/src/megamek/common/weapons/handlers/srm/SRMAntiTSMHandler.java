@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -67,9 +67,9 @@ public class SRMAntiTSMHandler extends SRMSmokeWarheadHandler {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
         if (target.isConventionalInfantry()) {
-            if (ae instanceof BattleArmor) {
+            if (attackingEntity instanceof BattleArmor) {
                 bSalvo = true;
-                return ((BattleArmor) ae).getShootingStrength();
+                return ((BattleArmor) attackingEntity).getShootingStrength();
             }
             return 1;
         }
@@ -83,19 +83,19 @@ public class SRMAntiTSMHandler extends SRMSmokeWarheadHandler {
             Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                   : null;
             if (entityTarget != null && entityTarget.isLargeCraft()) {
-                nMissilesModifier -= getAeroSanityAMSHitsMod();
+                nMissilesModifier -= (int) Math.floor(getAeroSanityAMSHitsMod());
             }
         }
 
         if (allShotsHit()) {
             // We want buildings and large craft to be able to affect this number with AMS
             // treat as a Streak launcher (cluster roll 11) to make this happen
-            missilesHit = Compute.missilesHit(wtype.getRackSize(),
+            missilesHit = Compute.missilesHit(weaponType.getRackSize(),
                   nMissilesModifier, weapon.isHotLoaded(), true,
                   isAdvancedAMS());
         } else {
             // anti tsm hit with half the normal number, round up
-            missilesHit = Compute.missilesHit(wtype.getRackSize(),
+            missilesHit = Compute.missilesHit(weaponType.getRackSize(),
                   nMissilesModifier, weapon.isHotLoaded(), false, isAdvancedAMS());
             missilesHit = (int) Math.ceil((double) missilesHit / 2);
         }

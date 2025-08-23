@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,21 +34,23 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.units.Building;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.units.IBomber;
 import megamek.common.Report;
 import megamek.common.TagInfo;
-import megamek.common.units.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.game.Game;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
+import megamek.common.units.IBomber;
+import megamek.common.units.Targetable;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class TAGHandler extends WeaponHandler {
+    @Serial
     private static final long serialVersionUID = -967656770476044773L;
 
     public TAGHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
@@ -69,19 +71,19 @@ public class TAGHandler extends WeaponHandler {
             vPhaseReport.addElement(r);
         } else {
 
-            TagInfo info = new TagInfo(ae.getId(), Targetable.TYPE_ENTITY,
+            TagInfo info = new TagInfo(attackingEntity.getId(), Targetable.TYPE_ENTITY,
                   entityTarget, false);
             game.addTagInfo(info);
-            entityTarget.setTaggedBy(ae.getId());
+            entityTarget.setTaggedBy(attackingEntity.getId());
 
             if (weapon.isInternalBomb()) {
                 // Firing an internally-mounted TAG pod counts for bomb bay explosion check
-                ((IBomber) ae).increaseUsedInternalBombs(1);
+                ((IBomber) attackingEntity).increaseUsedInternalBombs(1);
             }
 
             // per errata, being painted by a TAG also spots the target for indirect fire
-            ae.setSpotting(true);
-            ae.setSpotTargetId(entityTarget.getId());
+            attackingEntity.setSpotting(true);
+            attackingEntity.setSpotTargetId(entityTarget.getId());
 
             Report r = new Report(3188);
             r.subject = subjectId;
@@ -93,7 +95,7 @@ public class TAGHandler extends WeaponHandler {
     protected boolean handleSpecialMiss(Entity entityTarget, boolean bldgDamagedOnMiss,
           Building bldg, Vector<Report> vPhaseReport) {
         // add even misses, as they waste homing missiles.
-        TagInfo info = new TagInfo(ae.getId(), target.getTargetType(), target, true);
+        TagInfo info = new TagInfo(attackingEntity.getId(), target.getTargetType(), target, true);
         game.addTagInfo(info);
         return false;
     }

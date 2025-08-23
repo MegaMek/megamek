@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,10 +36,10 @@ package megamek.common.weapons.handlers;
 
 import java.util.Vector;
 
-import megamek.common.units.Entity;
 import megamek.common.Report;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.units.Entity;
 
 /**
  * Describes a set of methods a class can use to represent an attack from some weapon.
@@ -80,25 +80,23 @@ public interface AttackHandler {
 
     void setAnnouncedEntityFiring(boolean announcedEntityFiring);
 
-    WeaponAttackAction getWaa();
+    WeaponAttackAction getWeaponAttackAction();
 
     /**
      * Used to determine if the AttackHandler is handling a strafing run.
      *
-     * @return
      */
-    public boolean isStrafing();
+    boolean isStrafing();
 
-    public void setStrafing(boolean isStrafing);
+    void setStrafing(boolean isStrafing);
 
     /**
-     * Used to determine if this is the firt time a weapon is firing as part of a strafing run.  This is used for
+     * Used to determine if this is the first time a weapon is firing as part of a strafing run.  This is used for
      * handling heat, to prevent shots after the first one from generating heat.
      *
-     * @return
      */
-    public boolean isStrafingFirstShot();
+    boolean isStrafingFirstShot();
 
-    public void setStrafingFirstShot(boolean isFirstShotStrafing);
+    void setStrafingFirstShot(boolean isFirstShotStrafing);
 
 }

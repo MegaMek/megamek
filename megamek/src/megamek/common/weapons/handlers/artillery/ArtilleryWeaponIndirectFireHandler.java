@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,6 +33,7 @@
  */
 package megamek.common.weapons.handlers.artillery;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -65,7 +66,7 @@ import megamek.common.weapons.ArtilleryHandlerHelper;
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.common.weapons.handlers.AreaEffectHelper;
-import megamek.common.weapons.handlers.AreaEffectHelper.DamageFalloff;
+import megamek.common.weapons.handlers.DamageFalloff;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -76,6 +77,7 @@ import megamek.server.totalwarfare.TWGameManager;
 public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
     private static final MMLogger logger = MMLogger.create(ArtilleryBayWeaponIndirectFireHandler.class);
 
+    @Serial
     private static final long serialVersionUID = -1277649123562229298L;
     boolean handledAmmoAndReport = false;
     private int shootingBA = -1;
@@ -98,7 +100,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return true;
         }
         String artyMsg;
-        ArtilleryAttackAction artilleryAttackAction = (ArtilleryAttackAction) waa;
+        ArtilleryAttackAction artilleryAttackAction = (ArtilleryAttackAction) weaponAttackAction;
         if (phase.isTargeting()) {
             if (!handledAmmoAndReport) {
                 addHeat();
@@ -107,7 +109,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 r.indent();
                 r.newlines = 0;
                 r.subject = subjectId;
-                r.add(wtype.getName() + " (" + atype.getShortName() + ')');
+                r.add(weaponType.getName() + " (" + ammoType.getShortName() + ')');
                 r.add(artilleryAttackAction.getTurnsTilHit());
                 vPhaseReport.addElement(r);
                 Report.addNewline(vPhaseReport);
@@ -148,39 +150,26 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             Report r = new Report(3158);
             r.indent();
             r.subject = subjectId;
-            r.add(wtype.getName());
+            r.add(weaponType.getName());
             vPhaseReport.add(r);
             return true;
         }
         final Vector<Integer> spottersBefore = artilleryAttackAction.getSpotterIds();
 
         Coords targetPos = target.getPosition();
-        Coords finalPos = target.getPosition();
+        Coords finalPos;
 
         // Handle counter-battery on fleeing/fled off-board targets.
         if (null == targetPos) {
-            logger
-                  .error(String.format("Artillery Target %s is missing; off-board target fled?", waa.getTargetId()));
+            logger.error("Artillery Target {} is missing; off-board target fled?", weaponAttackAction.getTargetId());
             return false;
         }
 
-        final int playerId = artilleryAttackAction.getPlayerId();
-        boolean isFlak = targetIsEntity && Compute.isFlakAttack(ae, (Entity) target);
+        boolean isFlak = targetIsEntity && Compute.isFlakAttack(attackingEntity, (Entity) target);
         boolean asfFlak = isFlak && target.isAirborne();
-        if (ae == null) {
+        if (attackingEntity == null) {
             logger.error("Artillery Entity is null!");
             return true;
-        }
-
-        // Trailers can share ammo, which means the entity carrying the ammo might not
-        // be
-        // the firing entity, so we get the specific ammo used from the ammo carrier
-        // However, we only bother with this if the ammo carrier is actually different
-        // from the attacker
-        Entity ammoCarrier = ae;
-
-        if (artilleryAttackAction.getAmmoCarrier() != ae.getId()) {
-            ammoCarrier = artilleryAttackAction.getEntity(game, artilleryAttackAction.getAmmoCarrier());
         }
 
         // Use the Artillery skill for spotting if enabled, as per page 144 of the
@@ -210,7 +199,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             // This should only happen for indirect shots
             if (roll.getIntValue() >= toHit.getValue()
                   && !(this instanceof ArtilleryWeaponDirectFireHandler)) {
-                ae.aTracker.setModifier(TargetRoll.AUTOMATIC_SUCCESS, targetPos);
+                attackingEntity.aTracker.setModifier(TargetRoll.AUTOMATIC_SUCCESS, targetPos);
             }
             // If the shot missed, but was adjusted by a
             // spotter, future shots are more likely to hit.
@@ -224,11 +213,12 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             // Only apply these modifiers to indirect artillery
             else if ((bestSpotter.isPresent()) && !(this instanceof ArtilleryWeaponDirectFireHandler)) {
                 // only add mods if it's not an automatic success
-                if (ae.aTracker.getModifier(weapon, targetPos) != TargetRoll.AUTOMATIC_SUCCESS) {
+                if (attackingEntity.aTracker.getModifier(weapon, targetPos) != TargetRoll.AUTOMATIC_SUCCESS) {
                     if (bestSpotter.get().hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
-                        ae.aTracker.setSpotterHasForwardObs(true);
+                        attackingEntity.aTracker.setSpotterHasForwardObs(true);
                     }
-                    ae.aTracker.setModifier(ae.aTracker.getModifier(weapon, targetPos) - 1, targetPos);
+                    attackingEntity.aTracker.setModifier(attackingEntity.aTracker.getModifier(weapon, targetPos) - 1,
+                          targetPos);
                 }
             }
         }
@@ -238,8 +228,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        if (wtype != null) {
-            r.add(wtype.getName() + " (" + atype.getShortName() + ')');
+        if (weaponType != null) {
+            r.add(weaponType.getName() + " (" + ammoType.getShortName() + ')');
         } else {
             r.add("Error: From Nowhere");
         }
@@ -320,26 +310,25 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
         // if we have no ammo for this attack then don't bother doing anything else, but
         // log the error
-        if (atype == null) {
-            logger
-                  .error("Artillery weapon fired with no ammo.\n\n" + Thread.currentThread().getStackTrace());
+        if (ammoType == null) {
+            logger.warn("Artillery weapon fired with no ammo.\n\n{}", (Object) Thread.currentThread().getStackTrace());
             return false;
         }
 
-        if (atype.getMunitionType().contains(Munitions.M_FAE)) {
+        if (ammoType.getMunitionType().contains(Munitions.M_FAE)) {
             handleArtilleryDriftMarker(targetPos, finalPos, artilleryAttackAction,
                   AreaEffectHelper.processFuelAirDamage(
-                        finalPos, height, atype, artilleryAttackAction.getEntity(game), vPhaseReport, gameManager));
+                        finalPos, height, ammoType, artilleryAttackAction.getEntity(game), vPhaseReport, gameManager));
             return false;
         }
 
-        if (atype.getMunitionType().contains(Munitions.M_FLARE)) {
+        if (ammoType.getMunitionType().contains(Munitions.M_FLARE)) {
             int radius;
-            if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV) {
+            if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV) {
                 radius = 4;
-            } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LONG_TOM) {
+            } else if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LONG_TOM) {
                 radius = 3;
-            } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SNIPER) {
+            } else if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SNIPER) {
                 radius = 2;
             } else {
                 radius = 1;
@@ -347,13 +336,12 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             gameManager.deliverArtilleryFlare(finalPos, radius);
             return false;
         }
-        if (atype.getMunitionType().contains(Munitions.M_DAVY_CROCKETT_M)) {
-            // The appropriate term here is "Bwahahahahaha..."
+        if (ammoType.getMunitionType().contains(Munitions.M_DAVY_CROCKETT_M)) {
             if (target.isOffBoard()) {
                 gameManager.getGame().processGameEvent(
                       new GamePlayerStrategicActionEvent(gameManager,
-                            new NukeDetonatedAction(ae.getId(),
-                                  ae.getOwnerId(),
+                            new NukeDetonatedAction(attackingEntity.getId(),
+                                  attackingEntity.getOwnerId(),
                                   AmmoType.Munitions.M_DAVY_CROCKETT_M)));
                 AreaEffectHelper.doNuclearExplosion((Entity) artilleryAttackAction.getTarget(game),
                       finalPos,
@@ -364,36 +352,39 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 gameManager.drawNukeHitOnBoard(targetPos);
                 gameManager.getGame().processGameEvent(
                       new GamePlayerStrategicActionEvent(gameManager,
-                            new NukeDetonatedAction(ae.getId(),
-                                  ae.getOwnerId(),
+                            new NukeDetonatedAction(attackingEntity.getId(),
+                                  attackingEntity.getOwnerId(),
                                   AmmoType.Munitions.M_DAVY_CROCKETT_M)));
                 gameManager.doNuclearExplosion(finalPos, 1, vPhaseReport);
             }
             return false;
         }
-        if (atype.getMunitionType().contains(Munitions.M_FASCAM)) {
-            int rackSize = atype.getRackSize();
-            if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV) {
-                rackSize = atype.isClan() ? 30 : 20;
+        if (ammoType.getMunitionType().contains(Munitions.M_FASCAM)) {
+            int rackSize = ammoType.getRackSize();
+            if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV) {
+                rackSize = ammoType.isClan() ? 30 : 20;
             }
-            gameManager.deliverFASCAMMinefield(finalPos, ae.getOwner().getId(), rackSize, ae.getId());
+            gameManager.deliverFASCAMMinefield(finalPos,
+                  attackingEntity.getOwner().getId(),
+                  rackSize,
+                  attackingEntity.getId());
             return false;
         }
-        if (atype.getMunitionType().contains(Munitions.M_INFERNO_IV)) {
+        if (ammoType.getMunitionType().contains(Munitions.M_INFERNO_IV)) {
             handleArtilleryDriftMarker(targetPos, finalPos, artilleryAttackAction,
-                  gameManager.deliverArtilleryInferno(finalPos, ae, subjectId, vPhaseReport));
+                  gameManager.deliverArtilleryInferno(finalPos, attackingEntity, subjectId, vPhaseReport));
             return false;
         }
-        if (atype.getMunitionType().contains(Munitions.M_VIBRABOMB_IV)) {
-            gameManager.deliverThunderVibraMinefield(finalPos, ae.getOwner().getId(), 30,
-                  waa.getOtherAttackInfo(), ae.getId());
+        if (ammoType.getMunitionType().contains(Munitions.M_VIBRABOMB_IV)) {
+            gameManager.deliverThunderVibraMinefield(finalPos, attackingEntity.getOwner().getId(), 30,
+                  weaponAttackAction.getOtherAttackInfo(), attackingEntity.getId());
             return false;
         }
-        if (atype.getMunitionType().contains(Munitions.M_SMOKE)) {
+        if (ammoType.getMunitionType().contains(Munitions.M_SMOKE)) {
             gameManager.deliverArtillerySmoke(finalPos, vPhaseReport);
             return false;
         }
-        if (atype.getMunitionType().contains(Munitions.M_LASER_INHIB)) {
+        if (ammoType.getMunitionType().contains(Munitions.M_LASER_INHIB)) {
             gameManager.deliverLIsmoke(finalPos, vPhaseReport);
             return false;
         }
@@ -408,22 +399,23 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             vPhaseReport.addElement(r);
 
-            AreaEffectHelper.clearMineFields(finalPos, Minefield.CLEAR_NUMBER_WEAPON, ae, vPhaseReport, game,
+            AreaEffectHelper.clearMineFields(finalPos, Minefield.CLEAR_NUMBER_WEAPON,
+                  attackingEntity, vPhaseReport, game,
                   gameManager);
         }
 
         Targetable updatedTarget = artilleryAttackAction.getTarget(game);
         // Calculate blast damage and falloff
-        DamageFalloff damageFalloff = AreaEffectHelper.calculateDamageFallOff(atype, shootingBA, mineClear);
+        DamageFalloff damageFalloff = AreaEffectHelper.calculateDamageFallOff(ammoType, shootingBA, mineClear);
 
         // the attack's target may have been destroyed or fled since the attack was generated
         // so we need to carry out offboard/null checks against the "current" version of the target.
         // Note: currently this only damages the target and does not deal blast damage to "nearby" off-board units.
-        // TODO: Sleet01: rename atype, ae, etc. to comport with current coding standards
+        // TODO: Sleet01: rename ammoType, attackingEntity, etc. to comport with current coding standards
         if ((updatedTarget != null) && updatedTarget.isOffBoard()) {
             // Calculate blast damage shape
             HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(
-                  atype, finalPos, damageFalloff, 0, true, false, false, game, false
+                  ammoType, finalPos, damageFalloff, 0, true, false, false, game, false
             );
 
             Map.Entry<Integer, Coords> entry = Map.entry(updatedTarget.getElevation(), updatedTarget.getPosition());
@@ -431,21 +423,22 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 AreaEffectHelper.artilleryDamageEntity(
                       (Entity) updatedTarget, blastShape.get(entry), null,
                       0, false, asfFlak, isFlak, entry.getKey(),
-                      finalPos, atype, entry.getValue(), false, ae, null, updatedTarget.getId(),
+                      finalPos, ammoType, entry.getValue(), false, attackingEntity, null, updatedTarget.getId(),
                       vPhaseReport, gameManager
                 );
             }
         } else {
             handleArtilleryDriftMarker(targetPos, finalPos, artilleryAttackAction,
-                  gameManager.artilleryDamageArea(finalPos, target.getBoardId(), atype,
-                        subjectId, ae, damageFalloff, isFlak, height, vPhaseReport,
+                  gameManager.artilleryDamageArea(finalPos, target.getBoardId(), ammoType,
+                        subjectId, attackingEntity, damageFalloff, isFlak, height, vPhaseReport,
                         asfFlak));
         }
 
         // artillery may unintentionally clear minefields, but only if it wasn't trying
         // to
         if (!mineClear) {
-            AreaEffectHelper.clearMineFields(finalPos, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, ae, vPhaseReport, game,
+            AreaEffectHelper.clearMineFields(finalPos, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT,
+                  attackingEntity, vPhaseReport, game,
                   gameManager);
         }
 
@@ -455,7 +448,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
     /**
      * Worker function that handles "artillery round landed here" reports, and direct artillery scatter.
      *
-     * @return Whether or not we should continue attack resolution afterwards
+     * @return Whether we should continue attack resolution afterward
      */
     private Coords handleReportsAndDirectScatter(boolean isFlak, Coords targetPos, Vector<Report> vPhaseReport,
           ArtilleryAttackAction aaa) {
@@ -507,7 +500,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             // in the ArtilleryWeaponDirectFireHandler
             Coords origPos = targetPos;
             int moF = toHit.getMoS();
-            if (ae.hasAbility("oblique_artillery")) {
+            if (attackingEntity.hasAbility("oblique_artillery")) {
                 // getMoS returns a negative MoF
                 // simple math is better so lets make it positive
                 moF = Math.max(moF + 2, 0);
@@ -620,13 +613,13 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        double toReturn = wtype.getRackSize();
-        if (wtype instanceof CapitalMissileWeapon) {
-            toReturn = wtype.getRoundShortAV();
+        double toReturn = weaponType.getRackSize();
+        if (weaponType instanceof CapitalMissileWeapon) {
+            toReturn = weaponType.getRoundShortAV();
         }
         // BA Tube artillery is the only artillery that can be mounted by BA
         // so we do the multiplication here
-        if (ae instanceof BattleArmor ba) {
+        if (attackingEntity instanceof BattleArmor ba) {
             toReturn *= ba.getNumberActiveTroopers();
         }
         // area effect damage is double

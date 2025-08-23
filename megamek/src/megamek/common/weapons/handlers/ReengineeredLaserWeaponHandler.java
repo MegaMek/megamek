@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2013 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,13 +34,16 @@
 
 package megamek.common.weapons.handlers;
 
-import megamek.common.game.Game;
+import java.io.Serial;
+
 import megamek.common.HitData;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.game.Game;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class ReengineeredLaserWeaponHandler extends EnergyWeaponHandler {
+    @Serial
     private static final long serialVersionUID = -7390162086880372388L;
 
     public ReengineeredLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g,

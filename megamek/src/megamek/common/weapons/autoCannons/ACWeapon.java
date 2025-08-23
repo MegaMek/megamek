@@ -49,7 +49,7 @@ import megamek.common.units.Entity;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.AttackHandler;
-import megamek.common.weapons.handlers.RapidfireACWeaponHandler;
+import megamek.common.weapons.handlers.RapidFireACWeaponHandler;
 import megamek.common.weapons.handlers.ac.ACAPHandler;
 import megamek.common.weapons.handlers.ac.ACCaselessHandler;
 import megamek.common.weapons.handlers.ac.ACFlakHandler;
@@ -90,7 +90,7 @@ public abstract class ACWeapon extends AmmoWeapon {
                 Mounted<?> weapon = entity.getEquipment(waa.getWeaponId());
 
                 if (weapon.curMode().equals("Rapid")) {
-                    return new RapidfireACWeaponHandler(toHit, waa, game, gameManager);
+                    return new RapidFireACWeaponHandler(toHit, waa, game, gameManager);
                 }
 
                 if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING)) {

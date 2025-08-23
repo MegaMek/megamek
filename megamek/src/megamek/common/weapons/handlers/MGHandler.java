@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 207-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.RangeType;
@@ -53,15 +54,13 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Andrew Hunter Created on Oct 20, 2004
  */
 public class MGHandler extends AmmoWeaponHandler {
+    @Serial
     private static final long serialVersionUID = 5635871269404561702L;
 
     private int nRapidDamHeatPerHit;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
     public MGHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
@@ -77,27 +76,27 @@ public class MGHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         double toReturn = nDamPerHit;
         if (weapon.isRapidFire() && !(target.isConventionalInfantry())) {
-            // Check for rapid fire Option. Only MGs can be rapidfire.
+            // Check for rapid fire Option. Only MGs can be rapid fire.
             // nDamPerHit was already set in useAmmo
             toReturn = applyGlancingBlowModifier(toReturn, false);
 
             if (bDirect) {
-                toReturn = Math.min(toReturn + (toHit.getMoS() / 3),
+                toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0),
                       toReturn * 2);
             }
         } else {
             if (target.isConventionalInfantry()) {
                 toReturn = Compute.directBlowInfantryDamage(
-                      wtype.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
-                      wtype.getInfantryDamageClass(),
+                      weaponType.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
+                      weaponType.getInfantryDamageClass(),
                       ((Infantry) target).isMechanized(),
-                      toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                      toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
 
                 toReturn = applyGlancingBlowModifier(toReturn, true);
             } else {
-                toReturn = wtype.getDamage();
+                toReturn = weaponType.getDamage();
                 if (bDirect) {
-                    toReturn = Math.min(toReturn + (toHit.getMoS() / 3),
+                    toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0),
                           toReturn * 2);
                 }
 
@@ -105,12 +104,12 @@ public class MGHandler extends AmmoWeaponHandler {
             }
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
-              && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+              && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn *= .75;
             toReturn = (int) Math.floor(toReturn);
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
-              && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+              && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
         }
         nDamPerHit = (int) toReturn;
@@ -127,7 +126,7 @@ public class MGHandler extends AmmoWeaponHandler {
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             if (weapon.isRapidFire()) {
-                ae.heatBuildup += nRapidDamHeatPerHit;
+                attackingEntity.heatBuildup += nRapidDamHeatPerHit;
             } else {
                 super.addHeat();
             }
@@ -164,7 +163,7 @@ public class MGHandler extends AmmoWeaponHandler {
         if (weapon.isRapidFire()) {
 
             // TacOps p.102 Rapid Fire MG Rules
-            switch (wtype.getAmmoType()) {
+            switch (weaponType.getAmmoType()) {
                 case MG:
                     nDamPerHit = Compute.d6();
                     break;
@@ -186,7 +185,7 @@ public class MGHandler extends AmmoWeaponHandler {
             int ammoUsage = 3 * nRapidDamHeatPerHit;
             for (int i = 0; i < ammoUsage; i++) {
                 if (ammo.getUsableShotsLeft() <= 0) {
-                    ae.loadWeapon(weapon);
+                    attackingEntity.loadWeapon(weapon);
                     ammo = (AmmoMounted) weapon.getLinked();
                 }
                 ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);

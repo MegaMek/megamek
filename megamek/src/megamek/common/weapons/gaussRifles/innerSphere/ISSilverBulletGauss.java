@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.gaussRifles.innerSphere;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -58,6 +60,7 @@ import megamek.server.totalwarfare.TWGameManager;
  *       at runtime.  This seems less janky than writing a new handler, but only just.
  */
 public class ISSilverBulletGauss extends GaussWeapon {
+    @Serial
     private static final long serialVersionUID = -6873790245999096707L;
 
     public ISSilverBulletGauss() {

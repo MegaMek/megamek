@@ -6961,23 +6961,23 @@ public abstract class Entity extends TurnOrdered
         getActiveAMS().stream().filter(ams -> !ams.isAPDS()).forEach(ams -> {
             // make a new list of only incoming attacks in arc
             final List<WeaponAttackAction> attacksInArc = attacks.stream()
-                  .filter(weaponHandler -> (weaponHandler.getWaa() !=
+                  .filter(weaponHandler -> (weaponHandler.getWeaponAttackAction() !=
                         null) &&
                         !targets.contains(
-                              weaponHandler.getWaa()) &&
+                              weaponHandler.getWeaponAttackAction()) &&
                         ComputeArc.isInArc(getGame(),
                               getId(),
                               getEquipmentNum(ams),
                               (weaponHandler instanceof CapitalMissileBearingsOnlyHandler) ?
                                     getGame().getTarget(
-                                          weaponHandler.getWaa()
+                                          weaponHandler.getWeaponAttackAction()
                                                 .getOriginalTargetType(),
-                                          weaponHandler.getWaa()
+                                          weaponHandler.getWeaponAttackAction()
                                                 .getOriginalTargetId()) :
                                     getGame().getEntity(
-                                          weaponHandler.getWaa()
+                                          weaponHandler.getWeaponAttackAction()
                                                 .getEntityId())))
-                  .map(WeaponHandler::getWaa)
+                  .map(WeaponHandler::getWeaponAttackAction)
                   .collect(Collectors.toList());
 
             if (attacksInArc.isEmpty()) {

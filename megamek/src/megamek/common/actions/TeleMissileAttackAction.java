@@ -133,7 +133,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
             if (e.usesWeaponBays()) {
                 for (Enumeration<AttackHandler> i = e.getGame().getAttacks(); i.hasMoreElements(); ) {
                     AttackHandler ah = i.nextElement();
-                    WeaponAttackAction prevAttack = ah.getWaa();
+                    WeaponAttackAction prevAttack = ah.getWeaponAttackAction();
                     if (prevAttack.getEntityId() == e.getId()) {
                         WeaponMounted prevWeapon = (WeaponMounted) e.getEquipment(prevAttack.getWeaponId());
                         for (WeaponMounted bayW : prevWeapon.getBayWeapons()) {
@@ -144,7 +144,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
             } else {
                 for (Enumeration<AttackHandler> i = e.getGame().getAttacks(); i.hasMoreElements(); ) {
                     AttackHandler ah = i.nextElement();
-                    WeaponAttackAction prevAttack = ah.getWaa();
+                    WeaponAttackAction prevAttack = ah.getWeaponAttackAction();
                     if (prevAttack.getEntityId() == e.getId()) {
                         Mounted<?> prevWeapon = e.getEquipment(prevAttack.getWeaponId());
                         totalHeat += prevWeapon.getCurrentHeat();

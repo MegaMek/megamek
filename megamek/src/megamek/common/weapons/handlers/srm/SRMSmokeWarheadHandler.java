@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -64,12 +64,12 @@ public class SRMSmokeWarheadHandler extends SRMHandler {
         Coords coords = target.getPosition();
         Coords center = coords;
 
-        AmmoType atype = ammo.getType();
+        AmmoType ammoType = ammo.getType();
 
         if (!bMissed) {
             Report r = new Report(3190);
             r.subject = subjectId;
-            r.player = ae.getOwnerId();
+            r.player = attackingEntity.getOwnerId();
             r.add(coords.getBoardNum());
             vPhaseReport.addElement(r);
         } else {
@@ -91,15 +91,15 @@ public class SRMSmokeWarheadHandler extends SRMHandler {
         }
 
         // Handle munitions.
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD)) {
-            int damage = wtype.getRackSize() * calcDamagePerHit();
+        if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD)) {
+            int damage = weaponType.getRackSize() * calcDamagePerHit();
             int smokeType = SmokeCloud.SMOKE_LIGHT;
             if (damage > 5) {
                 smokeType = SmokeCloud.SMOKE_HEAVY;
             }
 
             gameManager.deliverMissileSmoke(center, smokeType, vPhaseReport);
-        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_ANTI_TSM)) {
+        } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ANTI_TSM)) {
             gameManager.deliverMissileSmoke(center, SmokeCloud.SMOKE_GREEN, vPhaseReport);
         }
         return true;

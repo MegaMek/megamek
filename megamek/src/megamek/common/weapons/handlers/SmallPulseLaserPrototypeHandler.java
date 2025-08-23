@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,11 +34,13 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
+
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -49,16 +51,13 @@ public class SmallPulseLaserPrototypeHandler extends EnergyWeaponHandler {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 6832340682515730916L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
-    public SmallPulseLaserPrototypeHandler(ToHitData t, WeaponAttackAction w, Game g,
-          TWGameManager m) {
+    public SmallPulseLaserPrototypeHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 
@@ -75,7 +74,7 @@ public class SmallPulseLaserPrototypeHandler extends EnergyWeaponHandler {
         }
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             super.addHeat();
-            ae.heatBuildup += Compute.d6() / 2;
+            attackingEntity.heatBuildup += Compute.d6() / 2;
         }
 
     }

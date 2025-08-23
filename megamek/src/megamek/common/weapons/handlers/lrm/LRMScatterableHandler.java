@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,14 +38,14 @@ import java.io.Serial;
 import java.util.EnumSet;
 import java.util.Vector;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.compute.Compute;
-import megamek.common.board.Coords;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.MissileWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -64,8 +64,8 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
     protected boolean specialResolution(Vector<Report> vPhaseReport,
           Entity entityTarget) {
         Coords coords = target.getPosition();
-        AmmoType atype = (AmmoType) ammo.getType();
-        EnumSet<AmmoType.Munitions> amType = atype.getMunitionType();
+        AmmoType ammoType = ammo.getType();
+        EnumSet<AmmoType.Munitions> amType = ammoType.getMunitionType();
         boolean mineDelivery = amType.contains(AmmoType.Munitions.M_THUNDER)
               || amType.contains(AmmoType.Munitions.M_THUNDER_ACTIVE)
               || amType.contains(AmmoType.Munitions.M_THUNDER_AUGMENTED)
@@ -76,14 +76,14 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
         if (mineDelivery) {
             whoReport = Report.HIDDEN;
         }
-        int density = atype.getRackSize();
+        int density = ammoType.getRackSize();
         if (amType.contains(AmmoType.Munitions.M_THUNDER_AUGMENTED)) {
             density = density / 2 + density % 2;
         }
         if (!bMissed) {
             Report r = new Report(3190, whoReport);
             r.subject = subjectId;
-            r.player = ae.getOwnerId();
+            r.player = attackingEntity.getOwnerId();
             r.add(coords.getBoardNum());
             vPhaseReport.addElement(r);
         } else {
@@ -97,7 +97,7 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
                 if (density <= 0) {
                     Report r = new Report(3198, whoReport);
                     r.subject = subjectId;
-                    r.player = ae.getOwnerId();
+                    r.player = attackingEntity.getOwnerId();
                     vPhaseReport.addElement(r);
                     return true;
                 }
@@ -107,34 +107,46 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
                 int reportNr = mineDelivery ? 3197 : 3195;
                 Report r = new Report(reportNr, whoReport);
                 r.subject = subjectId;
-                r.player = ae.getOwnerId();
+                r.player = attackingEntity.getOwnerId();
                 r.add(coords.getBoardNum());
                 vPhaseReport.addElement(r);
             } else {
                 // misses and scatters off-board
                 Report r = new Report(3200);
                 r.subject = subjectId;
-                r.player = ae.getOwnerId();
+                r.player = attackingEntity.getOwnerId();
                 vPhaseReport.addElement(r);
                 return true;
             }
         }
 
         // Handle the thunder munitions.
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_AUGMENTED)) {
-            gameManager.deliverThunderAugMinefield(coords, ae.getOwner().getId(), density, ae.getId());
-        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER)) {
-            gameManager.deliverThunderMinefield(coords, ae.getOwner().getId(), density, ae.getId());
-        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_INFERNO)) {
-            gameManager.deliverThunderInfernoMinefield(coords, ae.getOwner().getId(), density, ae.getId());
-        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB)) {
-            gameManager.deliverThunderVibraMinefield(coords,
-                  ae.getOwner().getId(),
+        if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_AUGMENTED)) {
+            gameManager.deliverThunderAugMinefield(coords,
+                  attackingEntity.getOwner().getId(),
                   density,
-                  waa.getOtherAttackInfo(),
-                  ae.getId());
-        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_ACTIVE)) {
-            gameManager.deliverThunderActiveMinefield(coords, ae.getOwner().getId(), density, ae.getId());
+                  attackingEntity.getId());
+        } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_THUNDER)) {
+            gameManager.deliverThunderMinefield(coords,
+                  attackingEntity.getOwner().getId(),
+                  density,
+                  attackingEntity.getId());
+        } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_INFERNO)) {
+            gameManager.deliverThunderInfernoMinefield(coords,
+                  attackingEntity.getOwner().getId(),
+                  density,
+                  attackingEntity.getId());
+        } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB)) {
+            gameManager.deliverThunderVibraMinefield(coords,
+                  attackingEntity.getOwner().getId(),
+                  density,
+                  weaponAttackAction.getOtherAttackInfo(),
+                  attackingEntity.getId());
+        } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_ACTIVE)) {
+            gameManager.deliverThunderActiveMinefield(coords,
+                  attackingEntity.getOwner().getId(),
+                  density,
+                  attackingEntity.getId());
         }
         return true;
     }

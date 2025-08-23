@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.CriticalSlot;
@@ -52,10 +53,11 @@ import megamek.common.units.Terrains;
 import megamek.server.SmokeCloud;
 import megamek.server.totalwarfare.TWGameManager;
 
-public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
+public class RapidFireHVACWeaponHandler extends RapidFireACWeaponHandler {
+    @Serial
     private static final long serialVersionUID = 7326881584091651519L;
 
-    public RapidfireHVACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public RapidFireHVACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 
@@ -71,10 +73,10 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_START_FIRE)
               && !conditions.getAtmosphere().isVacuum()) {
-            int rear = (ae.getFacing() + 3 + (weapon.isMekTurretMounted() ? weapon.getFacing() : 0)) % 6;
-            Coords src = ae.getPosition();
+            int rear = (attackingEntity.getFacing() + 3 + (weapon.isMekTurretMounted() ? weapon.getFacing() : 0)) % 6;
+            Coords src = attackingEntity.getPosition();
             Coords rearCoords = src.translated(rear);
-            Board board = game.getBoard(ae);
+            Board board = game.getBoard(attackingEntity);
             Hex currentHex = board.getHex(src);
 
             if (!board.contains(rearCoords)) {
@@ -100,25 +102,25 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
             return true;
         }
 
-        if ((roll.getIntValue() == 2) && !ae.isConventionalInfantry()) {
+        if ((roll.getIntValue() == 2) && !attackingEntity.isConventionalInfantry()) {
             Report r = new Report(3162);
             r.subject = subjectId;
             weapon.setJammed(true);
             weapon.setHit(true);
-            int wloc = weapon.getLocation();
-            for (int i = 0; i < ae.getNumberOfCriticalSlots(wloc); i++) {
-                CriticalSlot slot1 = ae.getCritical(wloc, i);
+            int weaponLocation = weapon.getLocation();
+            for (int i = 0; i < attackingEntity.getNumberOfCriticalSlots(weaponLocation); i++) {
+                CriticalSlot slot1 = attackingEntity.getCritical(weaponLocation, i);
                 if ((slot1 == null) ||
                       (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                     continue;
                 }
                 Mounted<?> mounted = slot1.getMount();
                 if (mounted.equals(weapon)) {
-                    ae.hitAllCriticalSlots(wloc, i);
+                    attackingEntity.hitAllCriticalSlots(weaponLocation, i);
                     break;
                 }
             }
-            vPhaseReport.addAll(gameManager.explodeEquipment(ae, wloc, weapon));
+            vPhaseReport.addAll(gameManager.explodeEquipment(attackingEntity, weaponLocation, weapon));
             r.choose(false);
             vPhaseReport.addElement(r);
             return false;

@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -84,7 +84,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             int extraHeat = 0;
             // if this is a fighter squadron, we need to account for the number of weapons should default to one for
             // non-squadrons
-            for (int i = 0; i < nweaponsHit; i++) {
+            for (int i = 0; i < numWeaponsHit; i++) {
                 extraHeat += Compute.d6();
             }
 
@@ -119,11 +119,11 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             int toReturn = 10;
             toReturn = applyGlancingBlowModifier(toReturn, false);
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE) &&
-                  (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+                  (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG])) {
                 toReturn -= 1;
             }
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE) &&
-                  (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+                  (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
                 toReturn = (int) Math.floor(toReturn / 2.0);
             }
             return toReturn;
@@ -132,7 +132,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected int calcnCluster() {
+    protected int calculateNumCluster() {
         if (target.tracksHeat()) {
             bSalvo = false;
             return 1;
@@ -183,7 +183,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             vPhaseReport.addElement(report);
         }
 
-        TargetRoll targetRoll = new TargetRoll(wtype.getFireTN(), wtype.getName());
+        TargetRoll targetRoll = new TargetRoll(weaponType.getFireTN(), weaponType.getName());
         if (targetRoll.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
             gameManager.tryIgniteHex(target.getPosition(),
@@ -224,7 +224,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
               gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId,
                     true,
                     false,
-                    new TargetRoll(wtype.getFireTN(), wtype.getName()),
+                    new TargetRoll(weaponType.getFireTN(), weaponType.getName()),
                     5,
                     vPhaseReport)) {
             return;

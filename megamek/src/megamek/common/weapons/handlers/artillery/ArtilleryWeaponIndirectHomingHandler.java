@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -64,22 +64,18 @@ import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirectFireHandler {
-    private static final MMLogger logger = MMLogger.create(ArtilleryBayWeaponIndirectHomingHandler.class);
+    private static final MMLogger LOGGER = MMLogger.create(ArtilleryBayWeaponIndirectHomingHandler.class);
 
     @Serial
     private static final long serialVersionUID = -7243477723032010917L;
-    boolean amsEngaged = false;
-    boolean apdsEngaged = false;
     boolean advancedAMS;
     boolean advancedPD;
 
     /**
-     * @param toHitData
-     * @param weaponAttackAction
-     * @param game
+     *
      */
-    public ArtilleryWeaponIndirectHomingHandler(ToHitData toHitData,
-          WeaponAttackAction weaponAttackAction, Game game, TWGameManager gameManager) {
+    public ArtilleryWeaponIndirectHomingHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
+          TWGameManager gameManager) {
         super(toHitData, weaponAttackAction, game, gameManager);
         advancedAMS = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS);
         advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);
@@ -95,18 +91,19 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         if (!cares(phase)) {
             return true;
         }
-        ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
+
+        ArtilleryAttackAction aaa = (ArtilleryAttackAction) weaponAttackAction;
         if (phase.isTargeting()) {
             if (!handledAmmoAndReport) {
                 addHeat();
                 // Report the firing itself
-                Report r = new Report(3121);
-                r.indent();
-                r.newlines = 0;
-                r.subject = subjectId;
-                r.add(wtype.getName() + " (" + atype.getShortName() + ")");
-                r.add(aaa.getTurnsTilHit());
-                vPhaseReport.addElement(r);
+                Report report = new Report(3121);
+                report.indent();
+                report.newlines = 0;
+                report.subject = subjectId;
+                report.add(weaponType.getName() + " (" + ammoType.getShortName() + ")");
+                report.add(aaa.getTurnsTilHit());
+                vPhaseReport.addElement(report);
                 Report.addNewline(vPhaseReport);
                 handledAmmoAndReport = true;
             }
@@ -130,7 +127,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
               entityTarget);
         final boolean bldgDamagedOnMiss = targetInBuilding
               && !(target instanceof Infantry)
-              && ae.getPosition().distance(target.getPosition()) <= 1;
+              && attackingEntity.getPosition().distance(target.getPosition()) <= 1;
 
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
@@ -140,7 +137,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        r.add(wtype.getName() + " (" + atype.getShortName() + ")");
+        r.add(weaponType.getName() + " (" + ammoType.getShortName() + ")");
         if (entityTarget != null) {
             r.addDesc(entityTarget);
         } else {
@@ -195,7 +192,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
               && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
-            r.subject = ae.getId();
+            r.subject = attackingEntity.getId();
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
@@ -213,7 +210,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         if (missReported) {
             bMissed = true;
         }
-        nDamPerHit = wtype.getRackSize();
+        nDamPerHit = weaponType.getRackSize();
 
         AmmoType ammoType = ammo.getType();
 
@@ -234,7 +231,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         if (bMissed && !missReported) {
             // Notify player of last-second miss that hits the hex instead
             r = new Report(3201);
-            r.subject = ae.getId();
+            r.subject = attackingEntity.getId();
             r.newlines = 0;
             vPhaseReport.addElement(r);
 
@@ -288,7 +285,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
 
         if (!bMissed && (entityTarget != null)) {
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
-            gameManager.creditKill(entityTarget, ae);
+            gameManager.creditKill(entityTarget, attackingEntity);
         } else if (!bMissed && // The attack is targeting a specific building
               (target.getTargetType() == Targetable.TYPE_BLDG_TAG)) {
             r = new Report(3390);
@@ -314,7 +311,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         // homing artillery splash damage is area effect.
         // do damage to woods, 2 * normal damage (TW page 112)
         // on the other hand, if the hex *is* the target, do full damage
-        int hexDamage = targetingHex ? wtype.getRackSize() : ratedDamage * 2;
+        int hexDamage = targetingHex ? weaponType.getRackSize() : ratedDamage * 2;
 
         bldg = game.getBoard().getBuildingAt(coords);
         bldgAbsorbs = (bldg != null) ? bldg.getAbsorption(coords) : 0;
@@ -334,7 +331,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                       entity, ratedDamage, bldg, bldgAbsorbs,
                       false, false, false, 0,
                       coords, ammoType, coords, false,
-                      ae, hex, ae.getId(), vPhaseReport, gameManager);
+                      attackingEntity, hex, attackingEntity.getId(), vPhaseReport, gameManager);
             }
         }
         Report.addNewline(vPhaseReport);
@@ -345,7 +342,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
      * Find the tagged entity for this attack Uses a CFR to let the player choose from eligible TAG
      */
     public void convertHomingShotToEntityTarget() {
-        ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
+        ArtilleryAttackAction aaa = (ArtilleryAttackAction) weaponAttackAction;
 
         final Coords tc = target.getPosition();
         Targetable newTarget = null;
@@ -367,7 +364,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                     allowed.add(ti);
                     break;
                 case Targetable.TYPE_ENTITY:
-                    if (ae.isEnemyOf((Entity) ti.target)
+                    if (attackingEntity.isEnemyOf((Entity) ti.target)
                           || game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
                         allowed.add(ti);
                     }
@@ -386,7 +383,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             newTarget = ti.target;
             if (!ti.missed && (newTarget != null)) {
                 v.add(ti);
-                logger.debug(new StringBuilder("Found valid TAG on target ")
+                LOGGER.debug(new StringBuilder("Found valid TAG on target ")
                       .append(ti.target.getDisplayName()).append("; Range to original target is ")
                       .append(tc.distance(ti.target.getPosition())));
             }
@@ -431,7 +428,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                 targetIds.add(target.target.getId());
                 targetTypes.add(target.target.getTargetType());
             }
-            int choice = gameManager.processTAGTargetCFR(ae.getOwnerId(), targetIds, targetTypes);
+            int choice = gameManager.processTAGTargetCFR(attackingEntity.getOwnerId(), targetIds, targetTypes);
             newTarget = allowed.get(choice).target;
             target = newTarget;
             aaa.setTargetId(target.getId());
@@ -489,14 +486,14 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
     protected int handleAMS(Vector<Report> vPhaseReport) {
 
         int hits = 1;
-        boolean isArrowIV = ((AmmoType) ammo.getType()).getAmmoType() == AmmoTypeEnum.ARROW_IV;
+        boolean isArrowIV = ammo.getType().getAmmoType() == AmmoTypeEnum.ARROW_IV;
         boolean isHoming = ammo.isHomingAmmoInHomingMode();
         // TODO: this logic seems to be a bit off, rules need to be checked.
         if (!isArrowIV && !isHoming) {
             // If this is not an Arrow IV or homing shot, we don't need to do AMS/PD
             return hits;
         }
-        // this has to be called here or it fires before the TAG shot and we have no
+        // this has to be called here, or it fires before the TAG shot and we have no
         // target
         gameManager.assignAMS();
         calcCounterAV();
@@ -515,7 +512,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         }
         // PD/AMS bays should engage using AV and missile armor per SO Errata
         if (amsBayEngagedCap || pdBayEngagedCap) {
-            CapMissileArmor = wtype.getMissileArmor() - CounterAV;
+            CapMissileArmor = weaponType.getMissileArmor() - CounterAV;
             CapMissileAMSMod = calcCapMissileAMSMod();
             Report r = new Report(3235);
             r.subject = subjectId;

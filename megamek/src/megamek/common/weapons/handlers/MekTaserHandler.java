@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,7 +37,9 @@ package megamek.common.weapons.handlers;
 import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.HitData;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
@@ -62,24 +64,27 @@ public class MekTaserHandler extends AmmoWeaponHandler {
     @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget) {
         boolean done = false;
+
         if (bMissed) {
-            return done;
+            return false;
         }
-        Report r = new Report(3700);
+        Report report = new Report(3700);
         Roll diceRoll = Compute.rollD6(2);
-        r.add(diceRoll);
-        r.newlines = 0;
-        vPhaseReport.add(r);
+        report.add(diceRoll);
+        report.newlines = 0;
+        vPhaseReport.add(report);
+
         if (entityTarget.getWeight() > 100) {
-            return done;
+            return false;
         }
+
         if (entityTarget instanceof BattleArmor) {
-            r = new Report(3706);
-            r.addDesc(entityTarget);
+            report = new Report(3706);
+            report.addDesc(entityTarget);
             // shut down for rest of scenario, so we actually kill it
             // TODO: fix for salvage purposes
-            r.add(entityTarget.getLocationAbbr(hit));
-            vPhaseReport.add(r);
+            report.add(entityTarget.getLocationAbbr(hit));
+            vPhaseReport.add(report);
             entityTarget.destroyLocation(hit.getLocation());
             // Check to see if the squad has been eliminated
             if (entityTarget.getTransferLocation(hit).getLocation() == Entity.LOC_DESTROYED) {
@@ -90,31 +95,31 @@ public class MekTaserHandler extends AmmoWeaponHandler {
         } else if (entityTarget instanceof Mek) {
             if (((Mek) entityTarget).isIndustrial()) {
                 if (diceRoll.getIntValue() >= 8) {
-                    r = new Report(3705);
-                    r.addDesc(entityTarget);
-                    r.add(4);
+                    report = new Report(3705);
+                    report.addDesc(entityTarget);
+                    report.add(4);
                     entityTarget.taserShutdown(4, false);
                 } else {
                     // suffer +2 to piloting and gunnery for 4 rounds
-                    r = new Report(3710);
-                    r.addDesc(entityTarget);
-                    r.add(2);
-                    r.add(4);
+                    report = new Report(3710);
+                    report.addDesc(entityTarget);
+                    report.add(2);
+                    report.add(4);
                     entityTarget.setTaserInterference(2, 4, true);
                 }
             } else {
                 if (diceRoll.getIntValue() >= 11) {
-                    r = new Report(3705);
-                    r.addDesc(entityTarget);
-                    r.add(3);
-                    vPhaseReport.add(r);
+                    report = new Report(3705);
+                    report.addDesc(entityTarget);
+                    report.add(3);
+                    vPhaseReport.add(report);
                     entityTarget.taserShutdown(3, false);
                 } else {
-                    r = new Report(3710);
-                    r.addDesc(entityTarget);
-                    r.add(2);
-                    r.add(3);
-                    vPhaseReport.add(r);
+                    report = new Report(3710);
+                    report.addDesc(entityTarget);
+                    report.add(2);
+                    report.add(3);
+                    vPhaseReport.add(report);
                     entityTarget.setTaserInterference(2, 3, true);
                 }
             }
@@ -122,17 +127,17 @@ public class MekTaserHandler extends AmmoWeaponHandler {
               || (entityTarget instanceof Tank)
               || (entityTarget instanceof Aero)) {
             if (diceRoll.getIntValue() >= 8) {
-                r = new Report(3705);
-                r.addDesc(entityTarget);
-                r.add(4);
-                vPhaseReport.add(r);
+                report = new Report(3705);
+                report.addDesc(entityTarget);
+                report.add(4);
+                vPhaseReport.add(report);
                 entityTarget.taserShutdown(4, false);
             } else {
-                r = new Report(3710);
-                r.addDesc(entityTarget);
-                r.add(2);
-                r.add(4);
-                vPhaseReport.add(r);
+                report = new Report(3710);
+                report.addDesc(entityTarget);
+                report.add(2);
+                report.add(4);
+                vPhaseReport.add(report);
                 entityTarget.setTaserInterference(2, 4, false);
             }
         }

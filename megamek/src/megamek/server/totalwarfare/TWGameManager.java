@@ -122,8 +122,9 @@ import megamek.common.weapons.DamageType;
 import megamek.common.weapons.TeleMissile;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.AreaEffectHelper;
-import megamek.common.weapons.handlers.AreaEffectHelper.DamageFalloff;
 import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.DamageFalloff;
+import megamek.common.weapons.handlers.NukeStats;
 import megamek.common.weapons.handlers.TAGHandler;
 import megamek.common.weapons.handlers.WeaponHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponIndirectHomingHandler;
@@ -9717,7 +9718,7 @@ public class TWGameManager extends AbstractGameManager {
 
                     for (Enumeration<AttackHandler> j = game.getAttacks(); !firingAtNewHex && j.hasMoreElements(); ) {
                         WeaponHandler wh = (WeaponHandler) j.nextElement();
-                        if (wh.waa instanceof ArtilleryAttackAction oaaa) {
+                        if (wh.weaponAttackAction instanceof ArtilleryAttackAction oaaa) {
 
                             if ((oaaa.getEntityId() == aaa.getEntityId()) &&
                                   !Targetable.areAtSamePosition(oaaa.getTarget(game), attackTarget)) {
@@ -9842,7 +9843,7 @@ public class TWGameManager extends AbstractGameManager {
 
         for (AttackHandler ah : game.getAttacksVector()) {
             WeaponHandler wh = (WeaponHandler) ah;
-            WeaponAttackAction waa = wh.waa;
+            WeaponAttackAction waa = wh.weaponAttackAction;
 
             Entity artilleryFirer = game.getEntity(waa.getEntityId());
 
@@ -9937,7 +9938,7 @@ public class TWGameManager extends AbstractGameManager {
             // Ensure we only target each attack once
             List<WeaponHandler> targetsToRemove = new ArrayList<>();
             for (WeaponHandler wh : potentialTargets) {
-                if (targetedAttacks.contains(wh.getWaa())) {
+                if (targetedAttacks.contains(wh.getWeaponAttackAction())) {
                     targetsToRemove.add(wh);
                 }
             }
@@ -9974,10 +9975,10 @@ public class TWGameManager extends AbstractGameManager {
             boolean isInArc = ComputeArc.isInArc(e.getGame(),
                   e.getId(),
                   e.getEquipmentNum(apds),
-                  game.getEntity(wr.waa.getEntityId()));
-            boolean isInRange = e.getPosition().distance(wr.getWaa().getTarget(game).getPosition()) <= 3;
+                  game.getEntity(wr.weaponAttackAction.getEntityId()));
+            boolean isInRange = e.getPosition().distance(wr.getWeaponAttackAction().getTarget(game).getPosition()) <= 3;
             if (isInArc && isInRange) {
-                vAttacksInArc.add(wr.waa);
+                vAttacksInArc.add(wr.weaponAttackAction);
             }
         }
 
@@ -10049,12 +10050,12 @@ public class TWGameManager extends AbstractGameManager {
             // Create a list of valid assignments for this AMS
             List<WeaponAttackAction> vAttacksInArc = new ArrayList<>(vAttacks.size());
             for (WeaponHandler wr : vAttacks) {
-                if (!amsTargets.contains(wr.waa) &&
+                if (!amsTargets.contains(wr.weaponAttackAction) &&
                       ComputeArc.isInArc(game,
                             e.getId(),
                             e.getEquipmentNum(ams),
-                            game.getEntity(wr.waa.getEntityId()))) {
-                    vAttacksInArc.add(wr.waa);
+                            game.getEntity(wr.weaponAttackAction.getEntityId()))) {
+                    vAttacksInArc.add(wr.weaponAttackAction);
                 }
             }
 
@@ -11636,7 +11637,7 @@ public class TWGameManager extends AbstractGameManager {
                     // since retracting/extending is a freebie in the movement
                     // phase, lets assume that the
                     // blade retracts to its original mode
-                    // ae.extendBlade(paa.getArm());
+                    // attackingEntity.extendBlade(paa.getArm());
                     // check for breaking a nail
                     if (Compute.d6(2) > 9) {
                         addNewLines();
@@ -18380,7 +18381,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param vDesc    a vector that contains the output report
      */
     public void doNuclearExplosion(Coords position, int nukeType, Vector<Report> vDesc) {
-        AreaEffectHelper.NukeStats nukeStats = AreaEffectHelper.getNukeStats(nukeType);
+        NukeStats nukeStats = AreaEffectHelper.getNukeStats(nukeType);
 
         if (nukeStats == null) {
             logger.error("Illegal nuke not listed in HS:3070");
@@ -25290,7 +25291,7 @@ public class TWGameManager extends AbstractGameManager {
         int team = p.getTeam();
         for (Enumeration<AttackHandler> i = game.getAttacks(); i.hasMoreElements(); ) {
             WeaponHandler wh = (WeaponHandler) i.nextElement();
-            if (wh.waa instanceof ArtilleryAttackAction aaa) {
+            if (wh.weaponAttackAction instanceof ArtilleryAttackAction aaa) {
                 if ((aaa.getPlayerId() == p.getId()) ||
                       ((team != Player.TEAM_NONE) && (team == game.getPlayer(aaa.getPlayerId()).getTeam())) ||
                       p.canIgnoreDoubleBlind()) {
@@ -26414,9 +26415,9 @@ public class TWGameManager extends AbstractGameManager {
     private void clearArtillerySpotters(int entityID, int weaponID) {
         for (Enumeration<AttackHandler> i = game.getAttacks(); i.hasMoreElements(); ) {
             WeaponHandler wh = (WeaponHandler) i.nextElement();
-            if ((wh.waa instanceof ArtilleryAttackAction aaa) &&
-                  (wh.waa.getEntityId() == entityID) &&
-                  (wh.waa.getWeaponId() == weaponID)) {
+            if ((wh.weaponAttackAction instanceof ArtilleryAttackAction aaa) &&
+                  (wh.weaponAttackAction.getEntityId() == entityID) &&
+                  (wh.weaponAttackAction.getWeaponId() == weaponID)) {
                 aaa.setSpotterIds(null);
             }
         }

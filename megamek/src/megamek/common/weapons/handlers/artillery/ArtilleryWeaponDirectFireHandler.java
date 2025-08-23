@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,10 +34,12 @@
 
 package megamek.common.weapons.handlers.artillery;
 
-import megamek.common.game.Game;
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.game.Game;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -45,12 +47,11 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sep 24, 2004
  */
 public class ArtilleryWeaponDirectFireHandler extends ArtilleryWeaponIndirectFireHandler {
+    @Serial
     private static final long serialVersionUID = 7116191142234200717L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
+     *
      */
     public ArtilleryWeaponDirectFireHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);

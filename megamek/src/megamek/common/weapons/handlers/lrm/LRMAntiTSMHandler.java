@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -69,71 +69,75 @@ public class LRMAntiTSMHandler extends LRMSmokeWarheadHandler {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
         if (target.isConventionalInfantry()) {
-            if (ae instanceof BattleArmor) {
+            if (attackingEntity instanceof BattleArmor) {
                 bSalvo = true;
-                return ((BattleArmor) ae).getShootingStrength();
+                return ((BattleArmor) attackingEntity).getShootingStrength();
             }
             return 1;
         }
+
         int missilesHit;
         int nMissilesModifier = getClusterModifiers(false);
 
         boolean bMekTankStealthActive = false;
-        if ((ae instanceof Mek) || (ae instanceof Tank)) {
-            bMekTankStealthActive = ae.isStealthActive();
+        if ((attackingEntity instanceof Mek) || (attackingEntity instanceof Tank)) {
+            bMekTankStealthActive = attackingEntity.isStealthActive();
         }
 
         // AMS mod
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
-            Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
-                  : null;
+            Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target : null;
             if (entityTarget != null && entityTarget.isLargeCraft()) {
-                nMissilesModifier -= getAeroSanityAMSHitsMod();
+                nMissilesModifier -= (int) Math.floor(getAeroSanityAMSHitsMod());
             }
         }
 
         if (allShotsHit()) {
             // We want buildings and large craft to be able to affect this number with AMS
             // treat as a Streak launcher (cluster roll 11) to make this happen
-            missilesHit = Compute.missilesHit(wtype.getRackSize(),
+            missilesHit = Compute.missilesHit(weaponType.getRackSize(),
                   nMissilesModifier, weapon.isHotLoaded(), true,
                   isAdvancedAMS());
         } else {
             // anti tsm hit with half the normal number, round up
-            missilesHit = Compute.missilesHit(wtype.getRackSize(),
+            missilesHit = Compute.missilesHit(weaponType.getRackSize(),
                   nMissilesModifier, weapon.isHotLoaded(), false, isAdvancedAMS());
             missilesHit = (int) Math.ceil((double) missilesHit / 2);
         }
-        Report r = new Report(3325);
-        r.subject = subjectId;
-        r.add(missilesHit);
-        r.add(sSalvoType);
-        r.add(toHit.getTableDesc());
-        r.newlines = 0;
-        vPhaseReport.addElement(r);
+
+        Report report = new Report(3325);
+        report.subject = subjectId;
+        report.add(missilesHit);
+        report.add(sSalvoType);
+        report.add(toHit.getTableDesc());
+        report.newlines = 0;
+        vPhaseReport.addElement(report);
+
         if (bMekTankStealthActive) {
             // stealth prevents bonus
-            r = new Report(3335);
-            r.subject = subjectId;
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
+            report = new Report(3335);
+            report.subject = subjectId;
+            report.newlines = 0;
+            vPhaseReport.addElement(report);
         }
+
         if (nMissilesModifier != 0) {
             if (nMissilesModifier > 0) {
-                r = new Report(3340);
+                report = new Report(3340);
             } else {
-                r = new Report(3341);
+                report = new Report(3341);
             }
-            r.subject = subjectId;
-            r.add(nMissilesModifier);
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
+            report.subject = subjectId;
+            report.add(nMissilesModifier);
+            report.newlines = 0;
+            vPhaseReport.addElement(report);
         }
-        r = new Report(3345);
-        r.subject = subjectId;
-        vPhaseReport.addElement(r);
+
+        report = new Report(3345);
+        report.subject = subjectId;
+        vPhaseReport.addElement(report);
         bSalvo = true;
         return missilesHit;
     }

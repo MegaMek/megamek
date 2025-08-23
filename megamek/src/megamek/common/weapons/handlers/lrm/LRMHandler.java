@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -93,7 +93,7 @@ public class LRMHandler extends MissileWeaponHandler {
             ArrayList<Minefield> mfRemoved = new ArrayList<>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
-                if (gameManager.clearMinefield(mf, ae,
+                if (gameManager.clearMinefield(mf, attackingEntity,
                       Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
                     mfRemoved.add(mf);
                 }
@@ -112,21 +112,21 @@ public class LRMHandler extends MissileWeaponHandler {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
         if (target.isConventionalInfantry()) {
-            if (ae instanceof BattleArmor) {
+            if (attackingEntity instanceof BattleArmor) {
                 bSalvo = true;
                 Report r = new Report(3325);
                 r.subject = subjectId;
-                r.add(wtype.getRackSize()
-                      * ((BattleArmor) ae).getShootingStrength());
+                r.add(weaponType.getRackSize()
+                      * ((BattleArmor) attackingEntity).getShootingStrength());
                 r.add(sSalvoType);
                 r.add(toHit.getTableDesc());
                 vPhaseReport.add(r);
-                return ((BattleArmor) ae).getShootingStrength();
+                return ((BattleArmor) attackingEntity).getShootingStrength();
             }
             Report r = new Report(3326);
             r.newlines = 0;
             r.subject = subjectId;
-            r.add(wtype.getRackSize());
+            r.add(weaponType.getRackSize());
             r.add(sSalvoType);
             vPhaseReport.add(r);
             return 1;
@@ -137,25 +137,24 @@ public class LRMHandler extends MissileWeaponHandler {
         int nMissilesModifier = getClusterModifiers(false);
 
         boolean bMekTankStealthActive = false;
-        if ((ae instanceof Mek) || (ae instanceof Tank)) {
-            bMekTankStealthActive = ae.isStealthActive();
+        if ((attackingEntity instanceof Mek) || (attackingEntity instanceof Tank)) {
+            bMekTankStealthActive = attackingEntity.isStealthActive();
         }
         Mounted<?> mLinker = weapon.getLinkedBy();
-        AmmoType atype = (AmmoType) ammo.getType();
+        AmmoType ammoType = ammo.getType();
         // is any hex in the flight path of the missile ECM affected?
-        boolean bECMAffected = false;
         // if the attacker is affected by ECM or the target is protected by ECM
         // then act as if affected.
-        if (ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
-            bECMAffected = true;
-        }
+        boolean bECMAffected = ComputeECM.isAffectedByECM(attackingEntity,
+              attackingEntity.getPosition(),
+              target.getPosition());
 
         if (!weapon.curMode().equals("Indirect")) {
             if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
                   && !mLinker.isDestroyed() && !mLinker.isMissing()
                   && !mLinker.isBreached() && mLinker.getType().hasFlag(
                   MiscType.F_ARTEMIS))
-                  && (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))) {
+                  && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))) {
                 if (bECMAffected) {
                     // ECM prevents bonus
                     Report r = new Report(3330);
@@ -176,7 +175,7 @@ public class LRMHandler extends MissileWeaponHandler {
                   && !mLinker.isDestroyed() && !mLinker.isMissing()
                   && !mLinker.isBreached() && mLinker.getType().hasFlag(
                   MiscType.F_ARTEMIS_PROTO))
-                  && (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))) {
+                  && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))) {
                 if (bECMAffected) {
                     // ECM prevents bonus
                     Report r = new Report(3330);
@@ -197,7 +196,7 @@ public class LRMHandler extends MissileWeaponHandler {
                   && !mLinker.isDestroyed() && !mLinker.isMissing()
                   && !mLinker.isBreached() && mLinker.getType().hasFlag(
                   MiscType.F_ARTEMIS_V))
-                  && (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE))) {
+                  && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE))) {
                 if (bECMAffected) {
                     // ECM prevents bonus
                     Report r = new Report(3330);
@@ -213,7 +212,7 @@ public class LRMHandler extends MissileWeaponHandler {
                 } else {
                     nMissilesModifier += 3;
                 }
-            } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) {
+            } else if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) {
                 if (bECMAffected) {
                     // ECM prevents bonus
                     Report r = new Report(3330);
@@ -230,22 +229,22 @@ public class LRMHandler extends MissileWeaponHandler {
                     nMissilesModifier += 2;
                 }
             } else if ((entityTarget != null)
-                  && (entityTarget.isNarcedBy(ae.getOwner().getTeam()) || entityTarget
-                  .isINarcedBy(ae.getOwner().getTeam()))) {
-                // only apply Narc bonus if we're not suffering ECM effect
+                  && (entityTarget.isNarcedBy(attackingEntity.getOwner().getTeam()) || entityTarget
+                  .isINarcedBy(attackingEntity.getOwner().getTeam()))) {
+                // only apply Narc bonus if we're not suffering ECM effect,
                 // and we are using narc ammo, and we're not firing indirectly.
                 // narc capable missiles are only affected if the narc pod, which
                 // sits on the target, is ECM affected
-                boolean bTargetECMAffected = false;
-                bTargetECMAffected = ComputeECM.isAffectedByECM(ae,
-                      target.getPosition(), target.getPosition());
-                if (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
-                      || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)
-                      || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM)
-                      || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)
-                      || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML)
-                      || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM))
-                      && (atype.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE))) {
+                boolean bTargetECMAffected = ComputeECM.isAffectedByECM(attackingEntity,
+                      target.getPosition(),
+                      target.getPosition());
+                if (((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
+                      || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)
+                      || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SRM)
+                      || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)
+                      || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML)
+                      || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM))
+                      && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE))) {
                     if (bTargetECMAffected) {
                         // ECM prevents bonus
                         Report r = new Report(3330);
@@ -264,17 +263,17 @@ public class LRMHandler extends MissileWeaponHandler {
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)
               && entityTarget != null && entityTarget.isLargeCraft()) {
-            nMissilesModifier -= getAeroSanityAMSHitsMod();
+            nMissilesModifier -= (int) Math.floor(getAeroSanityAMSHitsMod());
         }
 
-        int rackSize = wtype.getRackSize();
+        int rackSize = weaponType.getRackSize();
         boolean minRangeELRMAttack = false;
 
         // ELRMs only hit with half their rack size rounded up at minimum range.
         // Ignore this for space combat. 1 hex is 18km across.
-        if (wtype instanceof ExtendedLRMWeapon
+        if (weaponType instanceof ExtendedLRMWeapon
               && !game.getBoard().isSpace()
-              && (nRange <= wtype.getMinimumRange())) {
+              && (nRange <= weaponType.getMinimumRange())) {
             rackSize = rackSize / 2 + rackSize % 2;
             minRangeELRMAttack = true;
         }
@@ -286,9 +285,9 @@ public class LRMHandler extends MissileWeaponHandler {
                   nMissilesModifier, weapon.isHotLoaded(), true,
                   isAdvancedAMS());
         } else {
-            if (ae instanceof BattleArmor) {
+            if (attackingEntity instanceof BattleArmor) {
                 missilesHit = Compute.missilesHit(rackSize
-                            * ((BattleArmor) ae).getShootingStrength(),
+                            * ((BattleArmor) attackingEntity).getShootingStrength(),
                       nMissilesModifier, weapon.isHotLoaded(), false,
                       isAdvancedAMS());
             } else {

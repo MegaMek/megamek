@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -81,7 +81,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
      */
     @Override
     protected int calcAttackValue() {
-        BombLoadout payload = waa.getBombPayload();
+        BombLoadout payload = weaponAttackAction.getBombPayload();
         if (null == payload) {
             return 0;
         }
@@ -106,13 +106,13 @@ public class SpaceBombAttackHandler extends WeaponHandler {
 
     @Override
     protected void useAmmo() {
-        BombLoadout payload = waa.getBombPayload();
-        if (!(ae.isAero()) || null == payload || payload.isEmpty()) {
+        BombLoadout payload = weaponAttackAction.getBombPayload();
+        if (!(attackingEntity.isAero()) || null == payload || payload.isEmpty()) {
             return;
         }
 
         // Need to remove ammo from fighters within a squadron
-        if (ae instanceof FighterSquadron) {
+        if (attackingEntity instanceof FighterSquadron) {
             handleSquadronAmmoExpenditure(payload);
         } else {
             // Ammo expenditure for a single fighter
@@ -127,7 +127,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
      * equipped with the proper type.
      */
     private void handleSquadronAmmoExpenditure(BombLoadout payload) {
-        List<Entity> activeFighters = ae.getActiveSubEntities();
+        List<Entity> activeFighters = attackingEntity.getActiveSubEntities();
         if (activeFighters.isEmpty()) {
             return;
         }
@@ -181,7 +181,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
         int numSalvos = (int) Math.ceil((double) bombCount / activeFighterCount);
 
         for (int salvo = 0; salvo < numSalvos; salvo++) {
-            if (!removeBombFromEntity(ae, bombType)) {
+            if (!removeBombFromEntity(attackingEntity, bombType)) {
                 LOGGER.warn("Could not remove squadron bomb for salvo {} of type: {}",
                       salvo, bombType.getDisplayName());
                 break;
@@ -198,7 +198,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
             int bombCount = entry.getValue();
 
             for (int i = 0; i < bombCount; i++) {
-                if (!removeBombFromEntity(ae, bombType)) {
+                if (!removeBombFromEntity(attackingEntity, bombType)) {
                     LOGGER.warn("Could not remove bomb {} of {} for type: {}",
                           i + 1, bombCount, bombType.getDisplayName());
                     break;

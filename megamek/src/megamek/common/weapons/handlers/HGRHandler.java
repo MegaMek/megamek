@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.Report;
@@ -50,13 +51,11 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Oct 19, 2004
  */
 public class HGRHandler extends GRHandler {
+    @Serial
     private static final long serialVersionUID = -6599352761593455842L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
     public HGRHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
@@ -73,24 +72,27 @@ public class HGRHandler extends GRHandler {
             return true;
         }
 
-        if ((ae.mpUsed > 0) && (ae instanceof Mek) && ae.canFall()
+        if ((attackingEntity.mpUsed > 0) && (attackingEntity instanceof Mek) && attackingEntity.canFall()
               // Only check up to assault class, superheavies do not roll.
-              && ae.getWeightClass() <= EntityWeightClass.WEIGHT_ASSAULT) {
+              && attackingEntity.getWeightClass() <= EntityWeightClass.WEIGHT_ASSAULT) {
             // Modifier is weight-based.
-            int nMod;
-            if (ae.getWeightClass() <= EntityWeightClass.WEIGHT_LIGHT) {
-                nMod = 2;
-            } else if (ae.getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM) {
-                nMod = 1;
-            } else if (ae.getWeightClass() <= EntityWeightClass.WEIGHT_HEAVY) {
-                nMod = 0;
-            } else {
-                nMod = -1;
-            }
-            PilotingRollData psr = new PilotingRollData(ae.getId(), nMod,
-                  "fired HeavyGauss unbraced", false);
+            PilotingRollData psr = getPilotingRollData();
             game.addPSR(psr);
         }
         return false;
+    }
+
+    private PilotingRollData getPilotingRollData() {
+        int nMod;
+        if (attackingEntity.getWeightClass() <= EntityWeightClass.WEIGHT_LIGHT) {
+            nMod = 2;
+        } else if (attackingEntity.getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM) {
+            nMod = 1;
+        } else if (attackingEntity.getWeightClass() <= EntityWeightClass.WEIGHT_HEAVY) {
+            nMod = 0;
+        } else {
+            nMod = -1;
+        }
+        return new PilotingRollData(attackingEntity.getId(), nMod, "fired HeavyGauss unbraced", false);
     }
 }

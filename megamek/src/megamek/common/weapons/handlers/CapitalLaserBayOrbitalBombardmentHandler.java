@@ -42,7 +42,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.Player;
+import megamek.common.Report;
+import megamek.common.SpecialHexDisplay;
+import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Board;
@@ -74,7 +77,7 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
 
     @Override
     public boolean handle(GamePhase phase, Vector<Report> reports) {
-        if (ae == null || target == null || wtype == null || !game.hasBoardLocationOf(target)) {
+        if (attackingEntity == null || target == null || weaponType == null || !game.hasBoardLocationOf(target)) {
             LOGGER.error("Attack info incomplete!");
             return false;
         }
@@ -109,21 +112,21 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
 
         // If the shot hit the target hex, then all subsequent fire will hit the hex automatically.
         if (!bMissed) {
-            ae.aTracker.setModifier(TargetRoll.AUTOMATIC_SUCCESS, target.getPosition());
+            attackingEntity.aTracker.setModifier(TargetRoll.AUTOMATIC_SUCCESS, target.getPosition());
         } else if (spotter.isPresent()) {
             // If the shot missed, but was adjusted by a spotter, future shots are more likely to hit.
             // only add mods if it's not an automatic success
-            int currentModifier = ae.aTracker.getModifier(weapon, target.getPosition());
+            int currentModifier = attackingEntity.aTracker.getModifier(weapon, target.getPosition());
             if (currentModifier != TargetRoll.AUTOMATIC_SUCCESS) {
                 if (isForwardObserver(spotter.get())) {
-                    ae.aTracker.setSpotterHasForwardObs(true);
+                    attackingEntity.aTracker.setSpotterHasForwardObs(true);
                 }
-                ae.aTracker.setModifier(currentModifier - 1, target.getPosition());
+                attackingEntity.aTracker.setModifier(currentModifier - 1, target.getPosition());
             }
         }
 
         // Report weapon attack and its to-hit value.
-        Report report = new Report(3120).indent().noNL().subject(subjectId).add(wtype.getName());
+        Report report = new Report(3120).indent().noNL().subject(subjectId).add(weaponType.getName());
         report.add(target.getDisplayName(), true);
         reports.addElement(report);
 
@@ -147,14 +150,14 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
         Board board = game.getBoard(target);
 
         if (!bMissed) {
-            report = new Report(3203).subject(subjectId).add(nweaponsHit).add(target.getPosition().getBoardNum());
+            report = new Report(3203).subject(subjectId).add(numWeaponsHit).add(target.getPosition().getBoardNum());
             reports.addElement(report);
             String message = "Orbital Bombardment by %s hit here on round %d (this hex is now an auto-hit)"
                   .formatted(owner().getName(), game.getRoundCount());
 
             board.addSpecialHexDisplay(target.getPosition(),
                   new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT, game.getRoundCount(), owner(), message));
-            for (int i = 0; i < nweaponsHit; i++) {
+            for (int i = 0; i < numWeaponsHit; i++) {
                 actualHits.add(target.getPosition());
             }
         } else {
@@ -165,7 +168,7 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
             board.addSpecialHexDisplay(target.getPosition(),
                   SpecialHexDisplay.createArtyMiss(owner(), game.getRoundCount(), message));
 
-            while (nweaponsHit > 0) {
+            while (numWeaponsHit > 0) {
                 // Scatter individual weapons (not sure where this is applicable)
                 // Scatter distance, see SO:AA, p.91; I decided to have Oblique Artilleryman (CO, p.78) not apply to
                 // Capital Laser Weapons as they are not "artillery pieces"
@@ -181,7 +184,7 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
                     // misses and scatters off-board
                     reports.addElement(new Report(3200).subject(subjectId));
                 }
-                nweaponsHit--;
+                numWeaponsHit--;
             }
 
             // If we managed to land everything off the board, this handler is finished for good
@@ -190,14 +193,14 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
             }
         }
 
-        AreaEffectHelper.DamageFalloff falloff = new AreaEffectHelper.DamageFalloff();
+        DamageFalloff falloff = new DamageFalloff();
         falloff.damage = calcAttackValue() * 10;
         falloff.falloff = calcAttackValue() * 2;
         falloff.radius = 4;
         falloff.clusterMunitionsFlag = false;
 
         for (Coords actualHit : actualHits) {
-            clearMines(reports, actualHit, game, ae, gameManager);
+            clearMines(reports, actualHit, game, attackingEntity, gameManager);
 
             Vector<Integer> alreadyHit = new Vector<>();
             var blastShape = AreaEffectHelper.shapeBlast(null, actualHit, falloff, board.getHex(actualHit).getLevel(),
@@ -205,7 +208,7 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
 
             for (var entry : blastShape.keySet()) {
                 alreadyHit = gameManager.artilleryDamageHex(entry.getValue(), board.getBoardId(), actualHit,
-                      blastShape.get(entry), null, subjectId, ae, null, false, entry.getKey(),
+                      blastShape.get(entry), null, subjectId, attackingEntity, null, false, entry.getKey(),
                       board.getHex(actualHit).getLevel(), reports,
                       false, alreadyHit, false, falloff);
             }
@@ -219,7 +222,7 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
 
     private void reportFiring(Vector<Report> reports, ArtilleryAttackAction aaa) {
         Report report = new Report(3121).indent().noNL().subject(subjectId);
-        report.add(wtype.getName());
+        report.add(weaponType.getName());
         report.add(aaa.getTurnsTilHit());
         reports.addElement(report);
         Report.addNewline(reports);

@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,16 +34,17 @@
 
 package megamek.common.weapons.handlers.mekMortar;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.units.Building;
-import megamek.common.compute.Compute;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.Report;
-import megamek.common.units.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -51,15 +52,13 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author arlith
  */
 public class MekMortarAntiPersonnelHandler extends AmmoWeaponHandler {
+    @Serial
     private static final long serialVersionUID = -2073773899108954657L;
 
     String sSalvoType = " shell(s) ";
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
     public MekMortarAntiPersonnelHandler(ToHitData t, WeaponAttackAction w,
           Game g, TWGameManager m) {
@@ -79,9 +78,9 @@ public class MekMortarAntiPersonnelHandler extends AmmoWeaponHandler {
         int nMissilesModifier = getClusterModifiers(true);
 
         if (targetHex) {
-            missilesHit = wtype.getRackSize();
+            missilesHit = weaponType.getRackSize();
         } else {
-            missilesHit = Compute.missilesHit(wtype.getRackSize(),
+            missilesHit = Compute.missilesHit(weaponType.getRackSize(),
                   nMissilesModifier);
         }
 
@@ -116,16 +115,6 @@ public class MekMortarAntiPersonnelHandler extends AmmoWeaponHandler {
         return missilesHit;
     }
 
-    /**
-     * Calculate the clustering of the hits
-     *
-     * @return a <code>int</code> value saying how much hits are in each cluster of damage.
-     */
-    @Override
-    protected int calcnCluster() {
-        return 1;
-    }
-
     /*
      * (non-Javadoc)
      *
@@ -134,7 +123,7 @@ public class MekMortarAntiPersonnelHandler extends AmmoWeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
-            int damage;
+            double damage;
             int numDice = 1;
             if (bDirect) {
                 numDice += (toHit.getMoS() / 3);

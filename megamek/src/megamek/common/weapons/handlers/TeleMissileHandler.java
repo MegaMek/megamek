@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,17 +34,18 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
-import megamek.common.equipment.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.capitalMissile.CapitalMissileBayHandler;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
@@ -55,16 +56,13 @@ import megamek.server.totalwarfare.TWGameManager;
 public class TeleMissileHandler extends CapitalMissileBayHandler {
     private static final MMLogger logger = MMLogger.create(TeleMissileHandler.class);
 
+    @Serial
     private static final long serialVersionUID = -1618484541772117621L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
-    public TeleMissileHandler(ToHitData t, WeaponAttackAction w, Game g,
-          TWGameManager m) {
+    public TeleMissileHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 
@@ -81,7 +79,7 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
             AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
 
             if (bayWAmmo == null) {
-                logger.debug("Handler can't find any ammo! Oh no!");
+                logger.debug("getBayAmmoTypes - Handler can't find any ammo! Oh no!");
                 continue;
             }
             // Once we have some ammo to send to the server, stop looking
@@ -96,7 +94,7 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
         for (WeaponMounted bayW : weapon.getBayWeapons()) {
             WeaponType bayWType = bayW.getType();
             damage += (int) bayWType.getShortAV();
-            ae.heatBuildup += bayW.getCurrentHeat();
+            attackingEntity.heatBuildup += bayW.getCurrentHeat();
             missileArmor = bayWType.getMissileArmor();
         }
         return damage;
@@ -117,7 +115,7 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
                 if (null == bayWAmmo
                       || bayWAmmo.getUsableShotsLeft() < 1) {
                     // try loading something else
-                    ae.loadWeaponWithSameAmmo(bayW);
+                    attackingEntity.loadWeaponWithSameAmmo(bayW);
                     bayWAmmo = bayW.getLinkedAmmo();
                 }
                 if (null != bayWAmmo) {
@@ -130,12 +128,15 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
     /**
      * handle this weapons firing
      *
-     * @return a <code>boolean</code> value indicating wether this should be kept or not
+     * @return a <code>boolean</code> value indicating whether this should be kept or not
      */
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         // just launch the tele-missile
-        gameManager.deployTeleMissile(ae, wtype, getBayAmmoType(), ae.getEquipmentNum(weapon),
+        gameManager.deployTeleMissile(attackingEntity,
+              weaponType,
+              getBayAmmoType(),
+              attackingEntity.getEquipmentNum(weapon),
               getCapMisMod(), calcBayDamageAndHeat(), missileArmor, vPhaseReport);
 
         return false;

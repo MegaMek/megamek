@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,12 +34,13 @@
 
 package megamek.common.weapons.handlers.prototype;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.game.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.UltraWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -48,12 +49,11 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sept 29, 2004
  */
 public class PrototypeCLUltraWeaponHandler extends UltraWeaponHandler {
+    @Serial
     private static final long serialVersionUID = -3509611454455522296L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
+     *
      */
     public PrototypeCLUltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
@@ -68,7 +68,7 @@ public class PrototypeCLUltraWeaponHandler extends UltraWeaponHandler {
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (doAmmoFeedProblemCheck(vPhaseReport)) {
             return true;
-        } else if (ae.isConventionalInfantry()) {
+        } else if (attackingEntity.isConventionalInfantry()) {
             return false;
         }
 

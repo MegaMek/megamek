@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.MMConstants;
@@ -59,18 +60,16 @@ import megamek.common.units.Tank;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
- * Weaponhandler for the Tight-Stream Electro-Magnetic Pulse (TSEMP) weapon, which is found in FM:3145 pg 255.
+ * Weapon handler for the Tight-Stream Electro-Magnetic Pulse (TSEMP) weapon, which is found in FM:3145 pg 255.
  *
  * @author arlith Created on Sept 5, 2005
  */
 public class TSEMPHandler extends EnergyWeaponHandler {
+    @Serial
     private static final long serialVersionUID = 5545991061428671743L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
+     *
      */
     public TSEMPHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
@@ -96,25 +95,25 @@ public class TSEMPHandler extends EnergyWeaponHandler {
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (roll.getIntValue() == 2 && weapon.is("TSEMP Repeating Cannon")) {
-            Report r = new Report(3162);
-            r.subject = subjectId;
+            Report report = new Report(3162);
+            report.subject = subjectId;
             weapon.setHit(true);
-            int wloc = weapon.getLocation();
-            for (int i = 0; i < ae.getNumberOfCriticalSlots(wloc); i++) {
-                CriticalSlot slot1 = ae.getCritical(wloc, i);
+            int weaponLocation = weapon.getLocation();
+            for (int i = 0; i < attackingEntity.getNumberOfCriticalSlots(weaponLocation); i++) {
+                CriticalSlot slot1 = attackingEntity.getCritical(weaponLocation, i);
                 if ((slot1 == null) ||
                       (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                     continue;
                 }
                 Mounted<?> mounted = slot1.getMount();
                 if (mounted.equals(weapon)) {
-                    ae.hitAllCriticalSlots(wloc, i);
+                    attackingEntity.hitAllCriticalSlots(weaponLocation, i);
                     break;
                 }
             }
-            vPhaseReport.addAll(gameManager.explodeEquipment(ae, wloc, weapon));
-            r.choose(false);
-            vPhaseReport.addElement(r);
+            vPhaseReport.addAll(gameManager.explodeEquipment(attackingEntity, weaponLocation, weapon));
+            report.choose(false);
+            vPhaseReport.addElement(report);
             return true;
         } else {
             return super.doChecks(vPhaseReport);
@@ -125,11 +124,11 @@ public class TSEMPHandler extends EnergyWeaponHandler {
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         weapon.setFired(true);
 
-        ae.setFiredTsempThisTurn(true);
-        ae.setHasFiredTsemp(true);
+        attackingEntity.setFiredTsempThisTurn(true);
+        attackingEntity.setHasFiredTsemp(true);
 
-        if (ae.getTsempEffect() == MMConstants.TSEMP_EFFECT_NONE) {
-            ae.setTsempEffect(MMConstants.TSEMP_EFFECT_INTERFERENCE);
+        if (attackingEntity.getTsempEffect() == MMConstants.TSEMP_EFFECT_NONE) {
+            attackingEntity.setTsempEffect(MMConstants.TSEMP_EFFECT_INTERFERENCE);
         }
 
         return super.handle(phase, vPhaseReport);

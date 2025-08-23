@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,25 +34,24 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.compute.Compute;
-import megamek.common.game.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class InsulatedLaserWeaponHandler extends EnergyWeaponHandler {
+    @Serial
     private static final long serialVersionUID = -7951442134048385366L;
 
     /**
-     * @param toHit
-     * @param waa
-     * @param g
+     *
      */
-    public InsulatedLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa,
-          Game g, TWGameManager m) {
+    public InsulatedLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
     }
 
@@ -61,10 +60,10 @@ public class InsulatedLaserWeaponHandler extends EnergyWeaponHandler {
         if (roll.getIntValue() == 2) {
             int damageRoll = Compute.d6(2);
             if (damageRoll >= 8) {
-                Report r = new Report();
-                r.subject = subjectId;
-                r.messageId = 3172;
-                vPhaseReport.addElement(r);
+                Report report = new Report();
+                report.subject = subjectId;
+                report.messageId = 3172;
+                vPhaseReport.addElement(report);
                 weapon.setHit(true);
                 return false;
             }

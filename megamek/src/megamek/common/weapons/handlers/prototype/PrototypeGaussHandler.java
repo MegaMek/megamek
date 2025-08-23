@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,12 +34,13 @@
 
 package megamek.common.weapons.handlers.prototype;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.game.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.GRHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -48,12 +49,11 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sept 8, 2005
  */
 public class PrototypeGaussHandler extends GRHandler {
+    @Serial
     private static final long serialVersionUID = -156828547249911617L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
+     *
      */
     public PrototypeGaussHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
@@ -70,7 +70,7 @@ public class PrototypeGaussHandler extends GRHandler {
             return true;
         }
 
-        if ((roll.getIntValue() == 2) && !ae.isConventionalInfantry()) {
+        if ((roll.getIntValue() == 2) && !attackingEntity.isConventionalInfantry()) {
             Report r = new Report(3165);
             r.subject = subjectId;
             weapon.setJammed(true);

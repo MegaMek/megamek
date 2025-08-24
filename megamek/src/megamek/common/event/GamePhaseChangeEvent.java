@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,30 +34,31 @@
 
 package megamek.common.event;
 
+import java.io.Serial;
+
 import megamek.common.enums.GamePhase;
 
 /**
  * Instances of this class are sent when Game phase changes
  */
 public class GamePhaseChangeEvent extends GameEvent {
+    @Serial
     private static final long serialVersionUID = 5589252062756476819L;
 
     /**
      * Old phase
      */
-    private GamePhase oldPhase;
+    private final GamePhase oldPhase;
 
     /**
      * new phase
      */
-    private GamePhase newPhase;
+    private final GamePhase newPhase;
 
     /**
      * Constructs new <code>GamePhaseChangeEvent</code>
      *
-     * @param source   Event source
-     * @param oldPhase
-     * @param newPhase
+     * @param source Event source
      */
     public GamePhaseChangeEvent(Object source, GamePhase oldPhase, GamePhase newPhase) {
         super(source);

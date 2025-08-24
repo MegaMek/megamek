@@ -39,6 +39,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.PrintWriter;
+import java.io.Serial;
 import java.util.Objects;
 
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
@@ -55,8 +56,9 @@ import org.w3c.dom.Node;
  * @see AbstractIcon
  */
 public class Camouflage extends AbstractIcon {
-    private static final MMLogger logger = MMLogger.create(Camouflage.class);
+    private static final MMLogger LOGGER = MMLogger.create(Camouflage.class);
 
+    @Serial
     private static final long serialVersionUID = 1093277025745250375L;
 
     public static final String NO_CAMOUFLAGE = "-- No Camo --";
@@ -140,7 +142,7 @@ public class Camouflage extends AbstractIcon {
         try {
             return (Image) MMStaticDirectoryManager.getCamouflage().getItem(category, getFilename());
         } catch (Exception ex) {
-            logger.error("", ex);
+            LOGGER.error("", ex);
         }
 
         return null;
@@ -153,7 +155,7 @@ public class Camouflage extends AbstractIcon {
      */
     private @Nullable Image getColourCamouflageImage(final @Nullable Color colour) {
         if (colour == null) {
-            logger.error("A null colour was passed.");
+            LOGGER.error("A null colour was passed.");
             return null;
         }
         BufferedImage result = new BufferedImage(84, 72, BufferedImage.TYPE_INT_RGB);
@@ -174,7 +176,7 @@ public class Camouflage extends AbstractIcon {
         try {
             icon.parseNodes(wn.getChildNodes());
         } catch (Exception ex) {
-            logger.error("", ex);
+            LOGGER.error("", ex);
             return new Camouflage();
         }
         return icon;
@@ -232,8 +234,7 @@ public class Camouflage extends AbstractIcon {
 
     @Override
     public boolean equals(Object other) {
-        if (super.equals(other) && other instanceof Camouflage) {
-            Camouflage otherCamo = (Camouflage) other;
+        if (super.equals(other) && other instanceof Camouflage otherCamo) {
             return (otherCamo.rotationAngle == rotationAngle) && (otherCamo.scale == scale);
         } else {
             return false;

@@ -47,7 +47,7 @@ import java.util.Vector;
 
 import megamek.client.ui.tileset.TilesetManager;
 import megamek.common.Configuration;
-import megamek.common.Terrain;
+import megamek.common.units.Terrain;
 import megamek.common.util.StringUtil;
 
 /**

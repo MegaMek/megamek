@@ -40,7 +40,7 @@ import java.util.stream.Stream;
 import megamek.client.bot.princess.ChatCommands;
 import megamek.client.bot.princess.Princess;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.Game;
+import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.logging.MMLogger;

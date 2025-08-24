@@ -54,8 +54,8 @@ import megamek.client.ui.widget.picmap.PMSimplePolygonArea;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PMValueLabel;
 import megamek.common.Configuration;
-import megamek.common.Entity;
-import megamek.common.ProtoMek;
+import megamek.common.units.Entity;
+import megamek.common.units.ProtoMek;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
@@ -119,10 +119,10 @@ public class ProtoMekMapSet implements DisplayMapSet {
     private void setAreas() {
         areas[ProtoMek.LOC_HEAD] = new PMSimplePolygonArea(head, unitDisplayPanel, ProtoMek.LOC_HEAD);
         areas[ProtoMek.LOC_LEG] = new PMSimplePolygonArea(legs, unitDisplayPanel, ProtoMek.LOC_LEG);
-        areas[ProtoMek.LOC_LARM] = new PMSimplePolygonArea(leftArm, unitDisplayPanel, ProtoMek.LOC_LARM);
-        areas[ProtoMek.LOC_RARM] = new PMSimplePolygonArea(rightArm, unitDisplayPanel, ProtoMek.LOC_RARM);
+        areas[ProtoMek.LOC_LEFT_ARM] = new PMSimplePolygonArea(leftArm, unitDisplayPanel, ProtoMek.LOC_LEFT_ARM);
+        areas[ProtoMek.LOC_RIGHT_ARM] = new PMSimplePolygonArea(rightArm, unitDisplayPanel, ProtoMek.LOC_RIGHT_ARM);
         areas[ProtoMek.LOC_TORSO] = new PMSimplePolygonArea(torso, unitDisplayPanel, ProtoMek.LOC_TORSO);
-        areas[ProtoMek.LOC_MAINGUN] = new PMSimplePolygonArea(mainGun, unitDisplayPanel, ProtoMek.LOC_MAINGUN);
+        areas[ProtoMek.LOC_MAIN_GUN] = new PMSimplePolygonArea(mainGun, unitDisplayPanel, ProtoMek.LOC_MAIN_GUN);
 
         for (int i = 0; i <= 5; i++) {
             content.addArea(areas[i]);
@@ -144,18 +144,18 @@ public class ProtoMekMapSet implements DisplayMapSet {
         sectionLabels[ProtoMek.LOC_TORSO].moveTo(70, 70);
         armorLabels[ProtoMek.LOC_TORSO].moveTo(70, 85);
         internalLabels[ProtoMek.LOC_TORSO].moveTo(70, 100);
-        sectionLabels[ProtoMek.LOC_RARM].moveTo(125, 55);
-        armorLabels[ProtoMek.LOC_RARM].moveTo(125, 70);
-        internalLabels[ProtoMek.LOC_RARM].moveTo(125, 85);
-        sectionLabels[ProtoMek.LOC_LARM].moveTo(15, 55);
-        armorLabels[ProtoMek.LOC_LARM].moveTo(15, 70);
-        internalLabels[ProtoMek.LOC_LARM].moveTo(15, 85);
+        sectionLabels[ProtoMek.LOC_RIGHT_ARM].moveTo(125, 55);
+        armorLabels[ProtoMek.LOC_RIGHT_ARM].moveTo(125, 70);
+        internalLabels[ProtoMek.LOC_RIGHT_ARM].moveTo(125, 85);
+        sectionLabels[ProtoMek.LOC_LEFT_ARM].moveTo(15, 55);
+        armorLabels[ProtoMek.LOC_LEFT_ARM].moveTo(15, 70);
+        internalLabels[ProtoMek.LOC_LEFT_ARM].moveTo(15, 85);
         sectionLabels[ProtoMek.LOC_LEG].moveTo(70, 150);
         armorLabels[ProtoMek.LOC_LEG].moveTo(60, 165);
         internalLabels[ProtoMek.LOC_LEG].moveTo(80, 165);
-        sectionLabels[ProtoMek.LOC_MAINGUN].moveTo(35, 15);
-        armorLabels[ProtoMek.LOC_MAINGUN].moveTo(25, 30);
-        internalLabels[ProtoMek.LOC_MAINGUN].moveTo(45, 30);
+        sectionLabels[ProtoMek.LOC_MAIN_GUN].moveTo(35, 15);
+        armorLabels[ProtoMek.LOC_MAIN_GUN].moveTo(25, 30);
+        internalLabels[ProtoMek.LOC_MAIN_GUN].moveTo(45, 30);
     }
 
     @Override
@@ -179,13 +179,13 @@ public class ProtoMekMapSet implements DisplayMapSet {
 
         int loc = protoMek.locations();
         if (!protoMek.hasMainGun()) {
-            armorLabels[ProtoMek.LOC_MAINGUN].setVisible(false);
-            internalLabels[ProtoMek.LOC_MAINGUN].setVisible(false);
-            sectionLabels[ProtoMek.LOC_MAINGUN].setVisible(false);
+            armorLabels[ProtoMek.LOC_MAIN_GUN].setVisible(false);
+            internalLabels[ProtoMek.LOC_MAIN_GUN].setVisible(false);
+            sectionLabels[ProtoMek.LOC_MAIN_GUN].setVisible(false);
         } else {
-            armorLabels[ProtoMek.LOC_MAINGUN].setVisible(true);
-            internalLabels[ProtoMek.LOC_MAINGUN].setVisible(true);
-            sectionLabels[ProtoMek.LOC_MAINGUN].setVisible(true);
+            armorLabels[ProtoMek.LOC_MAIN_GUN].setVisible(true);
+            internalLabels[ProtoMek.LOC_MAIN_GUN].setVisible(true);
+            sectionLabels[ProtoMek.LOC_MAIN_GUN].setVisible(true);
         }
         for (int i = 0; i < loc; i++) {
             armorLabels[i].setValue(protoMek.getArmorString(i));

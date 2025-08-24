@@ -33,14 +33,14 @@
 
 package megamek.common.verifier;
 
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.units.EntityMovementMode;
 
 public class Structure {
 
     private int structureType;
     private boolean isSuperHeavy;
-    private EntityMovementMode movementmode;
+    private EntityMovementMode movementMode;
 
     public Structure() {
     }
@@ -49,19 +49,18 @@ public class Structure {
           EntityMovementMode movementMode) {
         this.structureType = structureType;
         isSuperHeavy = superHeavy;
-        movementmode = movementMode;
+        this.movementMode = movementMode;
     }
 
-    public double getWeightStructure(double weight, TestEntity.Ceil roundWeight) {
+    public double getWeightStructure(double weight, Ceil roundWeight) {
         return Structure.getWeightStructure(structureType, weight, roundWeight,
-              isSuperHeavy, movementmode);
+              isSuperHeavy, movementMode);
     }
 
-    public static double getWeightStructure(int structureType, double weight,
-          TestEntity.Ceil roundWeight, boolean isSuperHeavy,
-          EntityMovementMode movementmode) {
+    public static double getWeightStructure(int structureType, double weight, Ceil roundWeight,
+          boolean isSuperHeavy, EntityMovementMode movementMode) {
         double multiplier = 1.0;
-        if (movementmode == EntityMovementMode.TRIPOD) {
+        if (movementMode == EntityMovementMode.TRIPOD) {
             multiplier = 1.1;
         }
         if (structureType == EquipmentType.T_STRUCTURE_ENDO_STEEL) {
@@ -100,8 +99,8 @@ public class Structure {
             }
         }
         if (isSuperHeavy
-              && ((movementmode != EntityMovementMode.NAVAL)
-              && (movementmode != EntityMovementMode.SUBMARINE))) {
+              && ((movementMode != EntityMovementMode.NAVAL)
+              && (movementMode != EntityMovementMode.SUBMARINE))) {
             return TestEntity.ceilMaxHalf((weight / 5.0f) * multiplier,
                   roundWeight);
         } else {

@@ -62,8 +62,8 @@ import megamek.client.bot.BotClient;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Board;
-import megamek.common.IStartingPositions;
+import megamek.common.board.Board;
+import megamek.common.interfaces.IStartingPositions;
 import megamek.common.Player;
 import megamek.common.options.OptionsConstants;
 

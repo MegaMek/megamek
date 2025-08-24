@@ -32,6 +32,8 @@
  */
 package megamek.common.moves;
 
+import megamek.common.enums.MoveStepType;
+
 /**
  * PhasePassSelector is a selector/factory which will return a static reference to the correct phase pass based on the
  * move step type.
@@ -58,7 +60,7 @@ class PhasePassSelector {
     private static final PhasePass HULL_DOWN_STEP = new HullDownStep();
     private static final PhasePass CLIMB_MODE_STEP = new ClimbModeStep();
     private static final PhasePass SHAKE_OFF_SWARMERS_STEP = new ShakeOffSwarmersStep();
-    private static final PhasePass LAND_VLAND_STEP = new LandVLandStep();
+    private static final PhasePass LAND_VERTICAL_LAND_STEP = new LandVLandStep();
     private static final PhasePass ACCELERATION_STEP = new AccelerationStep();
     private static final PhasePass EVADE_STEP = new EvadeStep();
     private static final PhasePass STARTUP_STEP = new StartupStep();
@@ -79,11 +81,11 @@ class PhasePassSelector {
     /**
      * Returns the correct phase pass for  {@link MoveStep} compilation based on the move step type.
      *
-     * @param moveStepType the {@link megamek.common.moves.MovePath.MoveStepType}
+     * @param moveStepType the {@link MoveStepType}
      *
-     * @return the phase pass {@link PhasePass} for that specific {@link megamek.common.moves.MovePath.MoveStepType}
+     * @return the phase pass {@link PhasePass} for that specific {@link MoveStepType}
      */
-    static PhasePass getPhasePass(MovePath.MoveStepType moveStepType) {
+    static PhasePass getPhasePass(MoveStepType moveStepType) {
         return switch (moveStepType) {
             case FORWARDS, DFA, SWIM -> FORWARD_STEP;
             case BACKWARDS -> BACKWARD_STEP;
@@ -102,9 +104,9 @@ class PhasePassSelector {
             case HULL_DOWN -> HULL_DOWN_STEP;
             case CLIMB_MODE_ON, CLIMB_MODE_OFF -> CLIMB_MODE_STEP;
             case SHAKE_OFF_SWARMERS -> SHAKE_OFF_SWARMERS_STEP;
-            case LAND, VLAND -> LAND_VLAND_STEP;
+            case LAND, VERTICAL_LAND -> LAND_VERTICAL_LAND_STEP;
             case EVADE -> EVADE_STEP;
-            case ACCN, DECN, ACC, DEC -> ACCELERATION_STEP;
+            case ACCELERATION, DECELERATION, ACC, DEC -> ACCELERATION_STEP;
             case SHUTDOWN -> SHUTDOWN_STEP;
             case STARTUP -> STARTUP_STEP;
             case SELF_DESTRUCT -> SELF_DESTRUCT_STEP;

@@ -45,7 +45,7 @@ import javax.swing.JTree;
 import javax.swing.TransferHandler;
 import javax.swing.tree.TreePath;
 
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.force.Force;
 import megamek.logging.MMLogger;
 

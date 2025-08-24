@@ -33,7 +33,7 @@
 
 package megamek.server.trigger;
 
-import megamek.common.IGame;
+import megamek.common.game.IGame;
 
 /**
  * This Trigger is satisfied at any point during its given game round. It is intended to be used as a component in a

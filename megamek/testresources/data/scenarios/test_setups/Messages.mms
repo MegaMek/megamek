@@ -25,7 +25,7 @@ messages:
     text: |
       In this test setup scenario, several messages are shown at various points of the game.
 
-      This is supposed to be a test for the message system and the trigger system.
+      This is supposed to be a test for the message systemFluff and the trigger systemFluff.
     trigger:
       type: gamestart
 

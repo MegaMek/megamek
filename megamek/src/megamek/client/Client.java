@@ -67,7 +67,11 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.Report;
+import megamek.common.SpecialHexDisplay;
+import megamek.common.TagInfo;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -76,7 +80,15 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.BoardDimensions;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.Flare;
+import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.Minefield;
+import megamek.common.equipment.Mounted;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEntityChangeEvent;
@@ -85,14 +97,27 @@ import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameVictoryEvent;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.game.Game;
+import megamek.common.game.GameTurn;
+import megamek.common.game.IGame;
+import megamek.common.interfaces.IEntityRemovalConditions;
+import megamek.common.loaders.MapSettings;
 import megamek.common.moves.MovePath;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.turns.UnloadStrandedTurn;
+import megamek.common.units.Building;
+import megamek.common.units.Crew;
+import megamek.common.units.DemolitionCharge;
+import megamek.common.units.Entity;
+import megamek.common.units.EntitySelector;
+import megamek.common.units.FighterSquadron;
+import megamek.common.units.UnitLocation;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
@@ -225,7 +250,7 @@ public class Client extends AbstractClient {
             case MOVEMENT:
             case PREMOVEMENT:
             case OFFBOARD:
-            case PREFIRING:
+            case PRE_FIRING:
             case FIRING:
             case PHYSICAL:
                 memDump("entering phase " + phase);
@@ -375,7 +400,7 @@ public class Client extends AbstractClient {
         } else {
             send(new Packet(PacketCommand.ENTITY_WORDER_UPDATE, entity.getId(), entity.getWeaponSortOrder()));
         }
-        entity.setWeapOrderChanged(false);
+        entity.setWeaponOrderChanged(false);
     }
 
     /**
@@ -424,7 +449,7 @@ public class Client extends AbstractClient {
      * Sends a "set Artillery AutoHit Hexes" packet
      */
     public void sendArtyAutoHitHexes(List<BoardLocation> hexes) {
-        send(new Packet(PacketCommand.SET_ARTILLERY_AUTOHIT_HEXES, hexes));
+        send(new Packet(PacketCommand.SET_ARTILLERY_AUTO_HIT_HEXES, hexes));
     }
 
     /**
@@ -438,7 +463,7 @@ public class Client extends AbstractClient {
      * Sends a packet containing multiple entity updates. Should only be used in the lobby phase.
      */
     public void sendUpdateEntity(Collection<Entity> entities) {
-        send(new Packet(PacketCommand.ENTITY_MULTIUPDATE, entities));
+        send(new Packet(PacketCommand.ENTITY_MULTI_UPDATE, entities));
     }
 
     /**
@@ -484,7 +509,7 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.ENTITY_TOW, id, tractorId));
     }
 
-    public void sendExplodeBuilding(Building.DemolitionCharge charge) {
+    public void sendExplodeBuilding(DemolitionCharge charge) {
         send(new Packet(PacketCommand.BLDG_EXPLODE, charge));
     }
 
@@ -901,7 +926,7 @@ public class Client extends AbstractClient {
             case ENTITY_UPDATE:
                 receiveEntityUpdate(packet);
                 break;
-            case ENTITY_MULTIUPDATE:
+            case ENTITY_MULTI_UPDATE:
                 receiveEntitiesUpdate(packet);
                 break;
             case ENTITY_REMOVE:
@@ -919,10 +944,10 @@ public class Client extends AbstractClient {
             case SENDING_MINEFIELDS:
                 receiveSendingMinefields(packet);
                 break;
-            case SENDING_ILLUM_HEXES:
+            case SENDING_ILLUMINATED_HEXES:
                 receiveIlluminatedHexes(packet);
                 break;
-            case CLEAR_ILLUM_HEXES:
+            case CLEAR_ILLUMINATED_HEXES:
                 game.clearIlluminatedPositions();
                 break;
             case UPDATE_MINEFIELDS:
@@ -1130,7 +1155,7 @@ public class Client extends AbstractClient {
                             break;
                         case CFR_APDS_ASSIGN:
                             cfrEvt.setEntityId(packet.getIntValue(1));
-                            cfrEvt.setApdsDists(packet.getIntList(2));
+                            cfrEvt.setApdsDistances(packet.getIntList(2));
                             cfrEvt.setWAAs(packet.getWeaponAttackActionList(3));
                             break;
                         case CFR_HIDDEN_PBS:
@@ -1323,7 +1348,7 @@ public class Client extends AbstractClient {
      * Send mode-change data to the server
      */
     public void sendModeChange(int nEntity, int nEquip, int nMode) {
-        send(new Packet(PacketCommand.ENTITY_MODECHANGE, nEntity, nEquip, nMode));
+        send(new Packet(PacketCommand.ENTITY_MODE_CHANGE, nEntity, nEquip, nMode));
     }
 
     /**
@@ -1337,35 +1362,35 @@ public class Client extends AbstractClient {
      * Send called shot change data to the server
      */
     public void sendCalledShotChange(int nEntity, int nEquip) {
-        send(new Packet(PacketCommand.ENTITY_CALLEDSHOTCHANGE, nEntity, nEquip));
+        send(new Packet(PacketCommand.ENTITY_CALLED_SHOT_CHANGE, nEntity, nEquip));
     }
 
     /**
      * Send system mode-change data to the server
      */
     public void sendSystemModeChange(int nEntity, int nSystem, int nMode) {
-        send(new Packet(PacketCommand.ENTITY_SYSTEMMODECHANGE, nEntity, nSystem, nMode));
+        send(new Packet(PacketCommand.ENTITY_SYSTEM_MODE_CHANGE, nEntity, nSystem, nMode));
     }
 
     /**
      * Send mode-change data to the server
      */
     public void sendAmmoChange(int nEntity, int nWeapon, int nAmmo, int reason) {
-        send(new Packet(PacketCommand.ENTITY_AMMOCHANGE, nEntity, nWeapon, nAmmo, reason));
+        send(new Packet(PacketCommand.ENTITY_AMMO_CHANGE, nEntity, nWeapon, nAmmo, reason));
     }
 
     /**
      * Send sensor-change data to the server
      */
     public void sendSensorChange(int nEntity, int nSensor) {
-        send(new Packet(PacketCommand.ENTITY_SENSORCHANGE, nEntity, nSensor));
+        send(new Packet(PacketCommand.ENTITY_SENSOR_CHANGE, nEntity, nSensor));
     }
 
     /**
      * Send sinks-change data to the server
      */
     public void sendSinksChange(int nEntity, int activeSinks) {
-        send(new Packet(PacketCommand.ENTITY_SINKSCHANGE, nEntity, activeSinks));
+        send(new Packet(PacketCommand.ENTITY_SINKS_CHANGE, nEntity, activeSinks));
     }
 
     /**

@@ -34,9 +34,9 @@ package megamek.common.enums;
 
 import java.util.function.Function;
 
-import megamek.common.Coords;
-import megamek.common.Targetable;
-import megamek.common.UnitPosition;
+import megamek.common.board.Coords;
+import megamek.common.units.Targetable;
+import megamek.common.units.UnitPosition;
 
 /**
  * All the different possible facing arcs
@@ -46,24 +46,24 @@ import megamek.common.UnitPosition;
 public enum FacingArc {
     ARC_360(0, 0, 360, arc -> true),
     ARC_FORWARD(1, 300, 60, arc -> ((arc.target() >= arc.start()) || (arc.target() <= arc.end()))),
-    ARC_LEFTARM(2, 240, 60, arc -> ((arc.target() >= arc.start()) || (arc.target() <= arc.end()))),
-    ARC_RIGHTARM(3, 300, 120, arc -> ((arc.target() >= arc.start()) || (arc.target() <= arc.end()))),
+    ARC_LEFT_ARM(2, 240, 60, arc -> ((arc.target() >= arc.start()) || (arc.target() <= arc.end()))),
+    ARC_RIGHT_ARM(3, 300, 120, arc -> ((arc.target() >= arc.start()) || (arc.target() <= arc.end()))),
     ARC_REAR(4, 120, 240, arc -> ((arc.target() > arc.start()) && (arc.target() < arc.end()))),
-    ARC_LEFTSIDE(5, 240, 300, arc -> ((arc.target() >= arc.start()) && (arc.target() < arc.end()))),
-    ARC_RIGHTSIDE(6, 60, 120, arc -> ((arc.target() > arc.start()) && (arc.target() <= arc.end()))),
-    ARC_MAINGUN(7, 240, 120, arc -> ((arc.target() >= arc.start()) || (arc.target() <= arc.end()))),
+    ARC_LEFT_SIDE(5, 240, 300, arc -> ((arc.target() >= arc.start()) && (arc.target() < arc.end()))),
+    ARC_RIGHT_SIDE(6, 60, 120, arc -> ((arc.target() > arc.start()) && (arc.target() <= arc.end()))),
+    ARC_MAIN_GUN(7, 240, 120, arc -> ((arc.target() >= arc.start()) || (arc.target() <= arc.end()))),
     ARC_NORTH(8, 270, 30, arc -> ((arc.target() >= arc.start()) || (arc.target() <= arc.end()))),
     ARC_EAST(9, 30, 150, arc -> ((arc.target() >= arc.start()) && (arc.target() <= arc.end()))),
     ARC_WEST(10, 150, 270, arc -> ((arc.target() >= arc.start()) && (arc.target() <= arc.end()))),
     ARC_NOSE(11, 300, 60, arc -> ((arc.target() > arc.start()) || (arc.target() < arc.end()))),
-    ARC_LWING(12, 300, 0, arc -> ((arc.target() > arc.start()) || (arc.target() <= arc.end()))),
-    ARC_RWING(13, 0, 60, arc -> ((arc.target() >= arc.start()) && (arc.target() < arc.end()))),
-    ARC_LWINGA(14, 180, 240, arc -> ((arc.target() >= arc.start()) && (arc.target() < arc.end()))),
-    ARC_RWINGA(15, 120, 180, arc -> ((arc.target() > arc.start()) && (arc.target() <= arc.end()))),
-    ARC_LEFTSIDE_SPHERE(16, 240, 0, arc -> ((arc.target() > arc.start()) || (arc.target() < arc.end()))),
-    ARC_RIGHTSIDE_SPHERE(17, 0, 120, arc -> ((arc.target() > arc.start()) && (arc.target() < arc.end()))),
-    ARC_LEFTSIDEA_SPHERE(18, 180, 300, arc -> ((arc.target() > arc.start()) && (arc.target() < arc.end()))),
-    ARC_RIGHTSIDEA_SPHERE(19, 60, 180, arc -> ((arc.target() > arc.start()) && (arc.target() < arc.end()))),
+    ARC_LEFT_WING(12, 300, 0, arc -> ((arc.target() > arc.start()) || (arc.target() <= arc.end()))),
+    ARC_RIGHT_WING(13, 0, 60, arc -> ((arc.target() >= arc.start()) && (arc.target() < arc.end()))),
+    ARC_LEFT_WING_AFT(14, 180, 240, arc -> ((arc.target() >= arc.start()) && (arc.target() < arc.end()))),
+    ARC_RIGHT_WING_AFT(15, 120, 180, arc -> ((arc.target() > arc.start()) && (arc.target() <= arc.end()))),
+    ARC_LEFT_SIDE_SPHERE(16, 240, 0, arc -> ((arc.target() > arc.start()) || (arc.target() < arc.end()))),
+    ARC_RIGHT_SIDE_SPHERE(17, 0, 120, arc -> ((arc.target() > arc.start()) && (arc.target() < arc.end()))),
+    ARC_LEFT_SIDE_AFT_SPHERE(18, 180, 300, arc -> ((arc.target() > arc.start()) && (arc.target() < arc.end()))),
+    ARC_RIGHT_SIDE_AFT_SPHERE(19, 60, 180, arc -> ((arc.target() > arc.start()) && (arc.target() < arc.end()))),
     ARC_LEFT_BROADSIDE(20, 240, 300, arc -> ((arc.target() >= arc.start()) && (arc.target() <= arc.end()))),
     ARC_RIGHT_BROADSIDE(21, 60, 120, arc -> ((arc.target() >= arc.start()) && (arc.target() <= arc.end()))),
     ARC_AFT(22, 120, 240, arc -> ((arc.target() > arc.start()) && (arc.target() < arc.end()))),
@@ -85,14 +85,14 @@ public enum FacingArc {
 
     // Expanded arcs for Waypoint Launched Capital Missiles
     ARC_NOSE_WPL(38, 240, 120, arc -> ((arc.target() > arc.start()) || (arc.target() < arc.end()))),
-    ARC_LWING_WPL(39, 240, 60, arc -> ((arc.target() > arc.start()) || (arc.target() < arc.end()))),
-    ARC_RWING_WPL(40, 300, 120, arc -> ((arc.target() > arc.start()) || (arc.target() < arc.end()))),
-    ARC_LWINGA_WPL(41, 120, 300, arc -> ((arc.target() > arc.start()) && (arc.target() < arc.end()))),
-    ARC_RWINGA_WPL(42, 60, 240, arc -> ((arc.target() > arc.start()) && (arc.target() < arc.end()))),
-    ARC_LEFTSIDE_SPHERE_WPL(43, 180, 60, arc -> ((arc.target() > arc.start()) || (arc.target() < arc.end()))),
-    ARC_RIGHTSIDE_SPHERE_WPL(44, 300, 180, arc -> ((arc.target() > arc.start()) || (arc.target() < arc.end()))),
-    ARC_LEFTSIDEA_SPHERE_WPL(45, 120, 360, arc -> ((arc.target() > arc.start()) && (arc.target() < arc.end()))),
-    ARC_RIGHTSIDEA_SPHERE_WPL(46, 0, 240, arc -> ((arc.target() > arc.start()) && (arc.target() < arc.end()))),
+    ARC_LEFT_WING_WPL(39, 240, 60, arc -> ((arc.target() > arc.start()) || (arc.target() < arc.end()))),
+    ARC_RIGHT_WING_WPL(40, 300, 120, arc -> ((arc.target() > arc.start()) || (arc.target() < arc.end()))),
+    ARC_LEFT_WING_AFT_WPL(41, 120, 300, arc -> ((arc.target() > arc.start()) && (arc.target() < arc.end()))),
+    ARC_RIGHT_WING_AFT_WPL(42, 60, 240, arc -> ((arc.target() > arc.start()) && (arc.target() < arc.end()))),
+    ARC_LEFT_SIDE_SPHERE_WPL(43, 180, 60, arc -> ((arc.target() > arc.start()) || (arc.target() < arc.end()))),
+    ARC_RIGHT_SIDE_SPHERE_WPL(44, 300, 180, arc -> ((arc.target() > arc.start()) || (arc.target() < arc.end()))),
+    ARC_LEFT_SIDE_AFT_SPHERE_WPL(45, 120, 360, arc -> ((arc.target() > arc.start()) && (arc.target() < arc.end()))),
+    ARC_RIGHT_SIDE_AFT_SPHERE_WPL(46, 0, 240, arc -> ((arc.target() > arc.start()) && (arc.target() < arc.end()))),
     ARC_AFT_WPL(47, 60, 300, arc -> ((arc.target() > arc.start()) && (arc.target() < arc.end()))),
     ARC_LEFT_BROADSIDE_WPL(48, 180, 360, arc -> ((arc.target() > arc.start()) && (arc.target() <= arc.end()))),
     ARC_RIGHT_BROADSIDE_WPL(49, 0, 180, arc -> ((arc.target() > arc.start()) && (arc.target() < arc.end())));

@@ -40,7 +40,7 @@ import java.awt.Transparency;
 
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.tileset.HexTileset;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 
 /**
  * An ancestor class for all Sprites that can be enclosed within a single hex.

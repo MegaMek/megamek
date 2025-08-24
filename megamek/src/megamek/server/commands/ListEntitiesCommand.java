@@ -33,7 +33,7 @@
 
 package megamek.server.commands;
 
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.Player;
 import megamek.server.Server;
 import megamek.server.totalwarfare.TWGameManager;

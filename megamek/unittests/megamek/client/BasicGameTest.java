@@ -47,8 +47,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import megamek.common.Compute;
-import megamek.common.MekSummaryCache;
+import megamek.common.compute.Compute;
+import megamek.common.loaders.MekSummaryCache;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;

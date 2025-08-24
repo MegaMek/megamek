@@ -132,24 +132,40 @@ import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.BASE64ToolKit;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.Report;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
-import megamek.common.hexarea.HexArea;
+import megamek.common.game.Game;
+import megamek.common.hexArea.HexArea;
 import megamek.common.icons.Camouflage;
+import megamek.common.loaders.MULParser;
+import megamek.common.loaders.MekSummaryCache;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.options.GameOptions;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityListFile;
+import megamek.common.units.IBomber;
+import megamek.common.units.Targetable;
 import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
+import megamek.common.weapons.handlers.WeaponOrderHandler;
 import megamek.logging.MMLogger;
 
 public class ClientGUI extends AbstractClientGUI
@@ -421,7 +437,7 @@ public class ClientGUI extends AbstractClientGUI
 
     /**
      * Construct a client which will display itself in a new frame. It will not try to connect to a server yet. When the
-     * frame closes, this client will clean up after itself as much as possible, but will not call System.exit().
+     * frame closes, this client will clean up after itself as much as possible, but will not call SystemFluff.exit().
      */
     public ClientGUI(Client client, MegaMekController c) {
         super(client);
@@ -1248,14 +1264,14 @@ public class ClientGUI extends AbstractClientGUI
                 boardViews().forEach(bv -> ((BoardView) bv).getTilesetManager().reset());
                 break;
             case POINTBLANK_SHOT:
-            case SET_ARTILLERY_AUTOHIT_HEXES:
+            case SET_ARTILLERY_AUTO_HIT_HEXES:
             case DEPLOY_MINEFIELDS:
             case DEPLOYMENT:
             case TARGETING:
             case PREMOVEMENT:
             case MOVEMENT:
             case OFFBOARD:
-            case PREFIRING:
+            case PRE_FIRING:
             case FIRING:
             case PHYSICAL:
             case INITIATIVE_REPORT:
@@ -1340,7 +1356,7 @@ public class ClientGUI extends AbstractClientGUI
                 component.setName(main);
                 panMain.add(component, main);
                 break;
-            case SET_ARTILLERY_AUTOHIT_HEXES:
+            case SET_ARTILLERY_AUTO_HIT_HEXES:
                 component = new SelectArtyAutoHitHexDisplay(this);
                 main = CG_BOARD_VIEW;
                 secondary = CG_SELECT_ARTY_AUTO_HIT_HEX_DISPLAY;
@@ -1421,8 +1437,8 @@ public class ClientGUI extends AbstractClientGUI
                 currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
-            case PREFIRING:
-                component = new PrephaseDisplay(this, GamePhase.PREFIRING);
+            case PRE_FIRING:
+                component = new PrephaseDisplay(this, GamePhase.PRE_FIRING);
                 ((PrephaseDisplay) component).initializeListeners();
                 main = CG_BOARD_VIEW;
                 secondary = CG_PRE_FIRING;
@@ -2806,7 +2822,7 @@ public class ClientGUI extends AbstractClientGUI
                 case CFR_APDS_ASSIGN:
                     ArrayList<String> apdsOptions = new ArrayList<>();
                     apdsOptions.add(Messages.getString("NONE"));
-                    Iterator<Integer> distIt = gameCFREvent.getApdsDists().iterator();
+                    Iterator<Integer> distIt = gameCFREvent.getApdsDistances().iterator();
                     for (WeaponAttackAction waa : gameCFREvent.getWAAs()) {
                         Entity ae = waa.getEntity(client.getGame());
                         int dist = distIt.next();

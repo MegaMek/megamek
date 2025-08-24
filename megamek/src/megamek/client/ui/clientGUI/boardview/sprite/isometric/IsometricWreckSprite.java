@@ -42,7 +42,7 @@ import java.awt.image.ImageObserver;
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.AbstractWreckSprite;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 
 /**
  * Sprite for a wreck. Consists of an image, drawn from the Tile Manager and an identification label.

@@ -37,8 +37,8 @@ package megamek.server.commands;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
-import megamek.common.MekSummary;
-import megamek.common.MekSummaryCache;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
 import megamek.server.Server;
 
 /**

@@ -43,8 +43,8 @@ import java.util.Vector;
 import java.util.stream.Stream;
 
 import megamek.client.ui.Messages;
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;

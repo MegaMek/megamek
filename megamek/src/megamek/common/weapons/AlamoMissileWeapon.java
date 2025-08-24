@@ -34,10 +34,12 @@
 
 package megamek.common.weapons;
 
-import megamek.common.AmmoType;
-import megamek.common.BombType.BombTypeEnum;
-import megamek.common.TechAdvancement;
-import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
+import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 
 /**
  * @author Jay Lawson
@@ -58,9 +60,9 @@ public class AlamoMissileWeapon extends CapitalMissileWeapon {
         longRange = 24;
         extremeRange = 40;
         tonnage = 0;
-        criticals = 0;
+        criticalSlots = 0;
         hittable = false;
-        bv = 0;
+        bv = 0.0;
         cost = 0;
         shortAV = 10;
         medAV = 10;
@@ -68,7 +70,7 @@ public class AlamoMissileWeapon extends CapitalMissileWeapon {
         maxRange = RANGE_MED;
         ammoType = AmmoType.AmmoTypeEnum.ALAMO;
         capital = true;
-        techAdvancement.setTechBase(TechAdvancement.TechBase.IS)
+        techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3071, DATE_NONE, DATE_NONE)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E);

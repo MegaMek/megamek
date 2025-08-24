@@ -37,7 +37,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
+import megamek.common.equipment.EquipmentType;
 import megamek.common.eras.Eras;
+import megamek.common.loaders.MekSummaryCache;
+import megamek.common.units.AeroSpaceFighter;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

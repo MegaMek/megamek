@@ -35,9 +35,10 @@ package megamek.common.moves;
 import java.util.Collections;
 import java.util.Set;
 
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.enums.MoveStepType;
+import megamek.common.game.Game;
 import megamek.common.pathfinder.CachedEntityState;
+import megamek.common.units.Entity;
 
 /**
  * All other move steps that are not covered by a specific case are instead covered by the Default Step. DefaultStep
@@ -47,10 +48,10 @@ import megamek.common.pathfinder.CachedEntityState;
  * @since 0.50.07
  */
 class DefaultStep implements PhasePass {
-    private static final Set<MovePath.MoveStepType> TYPES = Collections.emptySet();
+    private static final Set<MoveStepType> TYPES = Collections.emptySet();
 
     @Override
-    public Set<MovePath.MoveStepType> getTypesOfInterest() {
+    public Set<MoveStepType> getTypesOfInterest() {
         return TYPES;
     }
 

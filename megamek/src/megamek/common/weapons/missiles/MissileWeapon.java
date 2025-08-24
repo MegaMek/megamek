@@ -34,16 +34,16 @@
 
 package megamek.common.weapons.missiles;
 
-import megamek.common.Compute;
-import megamek.common.Game;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.weapons.AmmoWeapon;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.MissileWeaponHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.MissileWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -58,7 +58,7 @@ public abstract class MissileWeapon extends AmmoWeapon {
      */
     public MissileWeapon() {
         super();
-        damage = DAMAGE_BY_CLUSTERTABLE;
+        damage = DAMAGE_BY_CLUSTER_TABLE;
         flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON)
               .or(F_AERO_WEAPON).or(F_MISSILE);
         infDamageClass = WEAPON_CLUSTER_MISSILE;
@@ -69,10 +69,10 @@ public abstract class MissileWeapon extends AmmoWeapon {
      *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
+     * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new MissileWeaponHandler(toHit, waa, game, manager);
     }

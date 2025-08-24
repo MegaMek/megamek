@@ -37,8 +37,8 @@ package megamek.server.victory;
 import java.io.Serializable;
 import java.util.List;
 
-import megamek.common.Game;
-import megamek.common.IGame;
+import megamek.common.game.Game;
+import megamek.common.game.IGame;
 import megamek.common.Player;
 
 /**

@@ -35,10 +35,11 @@ package megamek.common.moves;
 import java.util.EnumSet;
 import java.util.Set;
 
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.QuadVee;
+import megamek.common.enums.MoveStepType;
+import megamek.common.game.Game;
 import megamek.common.pathfinder.CachedEntityState;
+import megamek.common.units.Entity;
+import megamek.common.units.QuadVee;
 
 /**
  * This class handles the convert mode step of a unit. It is used in the MoveStep compilation to calculate the movement
@@ -48,10 +49,10 @@ import megamek.common.pathfinder.CachedEntityState;
  * @since 0.50.07
  */
 class ConvertModeStep implements PhasePass {
-    private static final EnumSet<MovePath.MoveStepType> TYPES = EnumSet.of(MovePath.MoveStepType.CONVERT_MODE);
+    private static final EnumSet<MoveStepType> TYPES = EnumSet.of(MoveStepType.CONVERT_MODE);
 
     @Override
-    public Set<MovePath.MoveStepType> getTypesOfInterest() {
+    public Set<MoveStepType> getTypesOfInterest() {
         return TYPES;
     }
 

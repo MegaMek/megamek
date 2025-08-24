@@ -34,8 +34,12 @@
 
 package megamek.common.weapons.prototypes;
 
-import megamek.common.AmmoType;
 import megamek.common.SimpleTechLevel;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.AmmoType;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 
 /**
@@ -59,7 +63,7 @@ public class PrototypeArrowIV extends ArtilleryWeapon {
         longRange = 8;
         extremeRange = 8; // No extreme range.
         tonnage = 16;
-        criticals = 16;
+        criticalSlots = 16;
         bv = 240;
         cost = 1800000;
         this.flags = flags.or(F_MISSILE).or(F_PROTOTYPE).or(F_ARTILLERY);

@@ -1,7 +1,6 @@
 /*
-
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,7 +34,11 @@
 
 package megamek.common;
 
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 
 /**
  * Contains some constants representing equipment/unit tech levels
@@ -51,7 +54,7 @@ public class TechConstants {
      */
     public static final int T_ALLOWED_ALL = -2;
     public static final int T_TECH_UNKNOWN = -1;
-    public static final int T_INTRO_BOXSET = 0;
+    public static final int T_INTRO_BOX_SET = 0;
     public static final int T_IS_TW_NON_BOX = 1;
     public static final int T_CLAN_TW = 2;
 
@@ -117,9 +120,6 @@ public class TechConstants {
     /**
      * Get the displayable name for the given tech level.
      *
-     * @param level
-     *
-     * @return
      */
     public static String getLevelDisplayableName(int level) {
         if (level == T_ALLOWED_ALL) {
@@ -151,9 +151,6 @@ public class TechConstants {
      * Return the numeric value for a simple level name. This is necessary because the options get stored as Strings
      * instead of ints, but it's easier to compare ints.
      *
-     * @param simpleLevel
-     *
-     * @return
      */
     public static int getSimpleLevel(String simpleLevel) {
         for (int i = 0; i < SIMPLE_SIZE; i++) {
@@ -168,9 +165,6 @@ public class TechConstants {
      * Return the numeric value for a simple level name. This is necessary because the options get stored as Strings
      * instead of ints, but it's easier to compare ints.
      *
-     * @param techLevel
-     *
-     * @return
      */
     public static int getTechLevel(String techLevel) {
         for (int i = 0; i < SIZE; i++) {
@@ -187,23 +181,16 @@ public class TechConstants {
      * @return the Game's tech level as an integer.
      */
     public static int getSimpleLevel(Game game) {
-        return getSimpleLevel(game.getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
+        return getSimpleLevel(game.getOptions().stringOption(OptionsConstants.ALLOWED_TECH_LEVEL));
     }
 
     /**
      * Given a simple tech level and a tech base, convert to the lvl+base format
      *
-     * @param simpleTechLvl
-     * @param isClan
-     *
-     * @return
      */
-    public static int convertFromSimplelevel(int simpleTechLvl, boolean isClan) {
+    public static int convertFromSimpleLevel(int simpleTechLvl, boolean isClan) {
         int legalLevel;
         switch (simpleTechLvl) {
-            case TechConstants.T_SIMPLE_INTRO:
-                legalLevel = TechConstants.T_INTRO_BOXSET;
-                break;
             case TechConstants.T_SIMPLE_STANDARD:
                 if (isClan) {
                     legalLevel = TechConstants.T_CLAN_TW;
@@ -233,7 +220,7 @@ public class TechConstants {
                 }
                 break;
             default:
-                legalLevel = TechConstants.T_INTRO_BOXSET;
+                legalLevel = TechConstants.T_INTRO_BOX_SET;
 
         }
         return legalLevel;
@@ -253,7 +240,7 @@ public class TechConstants {
         // Arrays.binarySearch could return -1 if string isn't found
         simpleTechLvl = Math.max(0, simpleTechLvl);
         // Convert to TL+tech type
-        return TechConstants.convertFromSimplelevel(simpleTechLvl, isClan);
+        return TechConstants.convertFromSimpleLevel(simpleTechLvl, isClan);
     }
 
     public static int convertFromNormalToSimple(int techLevel) {
@@ -263,37 +250,33 @@ public class TechConstants {
         if (techLevel == T_TECH_UNKNOWN) {
             return T_TECH_UNKNOWN;
         }
-        int simpleTL = Integer.parseInt(T_SIMPLE_LEVEL[techLevel]) - 1;
-        return simpleTL;
+        return Integer.parseInt(T_SIMPLE_LEVEL[techLevel]) - 1;
     }
 
     /**
      * Returns true if the equipment is legal for a unit with the paired tech levels; Returns false if it is not.
      */
-    public static boolean isLegal(int entityTechlevel, int equipmentTechlevel, boolean mixed) {
-        return TechConstants.isLegal(entityTechlevel, equipmentTechlevel, false, mixed);
+    public static boolean isLegal(int entityTechLevel, int equipmentTechLevel, boolean mixed) {
+        return TechConstants.isLegal(entityTechLevel, equipmentTechLevel, false, mixed);
     }
 
     /**
      * Returns true if the equipment is legal for a unit with the paired tech levels; Returns false if it is not.
      */
-    public static boolean isLegal(int entityTechlevel, int equipmentTechlevel, boolean ignoreUnknown, boolean mixed) {
+    public static boolean isLegal(int entityTechLevel, int equipmentTechLevel, boolean ignoreUnknown, boolean mixed) {
         // If it's allowed to all, ALWAYS return true.
-        if (equipmentTechlevel == T_ALLOWED_ALL || equipmentTechlevel == T_ALL) {
+        if (equipmentTechLevel == T_ALLOWED_ALL || equipmentTechLevel == T_ALL) {
             return true;
         }
 
-        // If it's unknown, we're not gonna be able to check it one way or the
+        // If it's unknown, we're not going to be able to check it one way or the
         // other, so...
-        if (equipmentTechlevel == T_TECH_UNKNOWN) {
-            if (ignoreUnknown) {
-                return true;
-            }
-            return false;
+        if (equipmentTechLevel == T_TECH_UNKNOWN) {
+            return ignoreUnknown;
         }
 
         // If they match, we're all good.
-        if (entityTechlevel == equipmentTechlevel) {
+        if (entityTechLevel == equipmentTechLevel) {
             return true;
         }
 
@@ -301,16 +284,16 @@ public class TechConstants {
         // if it's advanced and mixed, allow all but unofficial and experimental
         // if it's unofficial and mixed, allow everything
         if (mixed) {
-            if (((entityTechlevel == T_IS_EXPERIMENTAL) || (entityTechlevel == T_CLAN_EXPERIMENTAL)) &&
-                  ((equipmentTechlevel != T_IS_UNOFFICIAL) && (equipmentTechlevel != T_CLAN_UNOFFICIAL))) {
+            if (((entityTechLevel == T_IS_EXPERIMENTAL) || (entityTechLevel == T_CLAN_EXPERIMENTAL)) &&
+                  ((equipmentTechLevel != T_IS_UNOFFICIAL) && (equipmentTechLevel != T_CLAN_UNOFFICIAL))) {
                 return true;
             }
-            if (((entityTechlevel == T_IS_ADVANCED) || (entityTechlevel == T_CLAN_ADVANCED)) &&
-                  ((equipmentTechlevel != T_IS_UNOFFICIAL) && (equipmentTechlevel != T_CLAN_UNOFFICIAL)) &&
-                  ((equipmentTechlevel != T_IS_EXPERIMENTAL) && (equipmentTechlevel != T_CLAN_EXPERIMENTAL))) {
+            if (((entityTechLevel == T_IS_ADVANCED) || (entityTechLevel == T_CLAN_ADVANCED)) &&
+                  ((equipmentTechLevel != T_IS_UNOFFICIAL) && (equipmentTechLevel != T_CLAN_UNOFFICIAL)) &&
+                  ((equipmentTechLevel != T_IS_EXPERIMENTAL) && (equipmentTechLevel != T_CLAN_EXPERIMENTAL))) {
                 return true;
             }
-            if ((entityTechlevel == T_IS_UNOFFICIAL) || (entityTechlevel == T_CLAN_UNOFFICIAL)) {
+            if ((entityTechLevel == T_IS_UNOFFICIAL) || (entityTechLevel == T_CLAN_UNOFFICIAL)) {
                 return true;
             }
         }
@@ -318,82 +301,79 @@ public class TechConstants {
         // If none of the catch-alls above are true, we go to specific cases
 
         // If the equipment is allowed to all clan and the entity is clan...
-        if ((equipmentTechlevel == T_ALL_IS) && !isClan(entityTechlevel)) {
+        if ((equipmentTechLevel == T_ALL_IS) && !isClan(entityTechLevel)) {
             return true;
         }
 
         // IS box set can be in any IS
-        if ((equipmentTechlevel == T_INTRO_BOXSET) &&
-              ((entityTechlevel == T_IS_TW_NON_BOX) ||
-                    (entityTechlevel == T_IS_TW_ALL) ||
-                    (entityTechlevel == T_TW_ALL) ||
-                    (entityTechlevel == T_IS_ADVANCED) ||
-                    (entityTechlevel == T_IS_EXPERIMENTAL) ||
-                    (entityTechlevel == T_IS_UNOFFICIAL) ||
-                    (entityTechlevel == T_ALL))) {
+        if ((equipmentTechLevel == T_INTRO_BOX_SET) &&
+              ((entityTechLevel == T_IS_TW_NON_BOX) ||
+                    (entityTechLevel == T_IS_TW_ALL) ||
+                    (entityTechLevel == T_TW_ALL) ||
+                    (entityTechLevel == T_IS_ADVANCED) ||
+                    (entityTechLevel == T_IS_EXPERIMENTAL) ||
+                    (entityTechLevel == T_IS_UNOFFICIAL) ||
+                    (entityTechLevel == T_ALL))) {
             return true;
         }
 
         // IS TW stuff can be in any IS unit
-        if ((equipmentTechlevel == T_IS_TW_NON_BOX ||
-              equipmentTechlevel == T_TW_ALL ||
-              equipmentTechlevel == T_IS_TW_ALL) &&
-              ((entityTechlevel == T_IS_TW_ALL) ||
-                    (entityTechlevel == T_IS_TW_NON_BOX) ||
-                    (entityTechlevel == T_TW_ALL) ||
-                    (entityTechlevel == T_IS_ADVANCED) ||
-                    (entityTechlevel == T_IS_EXPERIMENTAL) ||
-                    (entityTechlevel == T_IS_UNOFFICIAL) ||
-                    (entityTechlevel == T_ALL))) {
+        if ((equipmentTechLevel == T_IS_TW_NON_BOX ||
+              equipmentTechLevel == T_TW_ALL ||
+              equipmentTechLevel == T_IS_TW_ALL) &&
+              ((entityTechLevel == T_IS_TW_ALL) ||
+                    (entityTechLevel == T_IS_TW_NON_BOX) ||
+                    (entityTechLevel == T_TW_ALL) ||
+                    (entityTechLevel == T_IS_ADVANCED) ||
+                    (entityTechLevel == T_IS_EXPERIMENTAL) ||
+                    (entityTechLevel == T_IS_UNOFFICIAL) ||
+                    (entityTechLevel == T_ALL))) {
             return true;
         }
         // clan TW stuff can be in any clan
-        if ((equipmentTechlevel == T_CLAN_TW || equipmentTechlevel == T_TW_ALL) &&
-              ((entityTechlevel == T_CLAN_TW) ||
-                    (entityTechlevel == T_CLAN_ADVANCED) ||
-                    (entityTechlevel == T_CLAN_EXPERIMENTAL) ||
-                    (entityTechlevel == T_CLAN_UNOFFICIAL) ||
-                    (entityTechlevel == T_ALL))) {
+        if ((equipmentTechLevel == T_CLAN_TW || equipmentTechLevel == T_TW_ALL) &&
+              ((entityTechLevel == T_CLAN_TW) ||
+                    (entityTechLevel == T_CLAN_ADVANCED) ||
+                    (entityTechLevel == T_CLAN_EXPERIMENTAL) ||
+                    (entityTechLevel == T_CLAN_UNOFFICIAL) ||
+                    (entityTechLevel == T_ALL))) {
             return true;
         }
         // IS advanced stuff can be in IS advanced or higher
-        if ((equipmentTechlevel == T_IS_ADVANCED) &&
-              ((entityTechlevel == T_IS_EXPERIMENTAL) ||
-                    (entityTechlevel == T_IS_UNOFFICIAL) ||
-                    (entityTechlevel == T_ALL))) {
+        if ((equipmentTechLevel == T_IS_ADVANCED) &&
+              ((entityTechLevel == T_IS_EXPERIMENTAL) ||
+                    (entityTechLevel == T_IS_UNOFFICIAL) ||
+                    (entityTechLevel == T_ALL))) {
             return true;
         }
 
         // If the equipment is allowed to all clan and the entity is clan...
-        if ((equipmentTechlevel == T_ALL_CLAN) && isClan(entityTechlevel)) {
+        if ((equipmentTechLevel == T_ALL_CLAN) && isClan(entityTechLevel)) {
             return true;
         }
 
         // clan advanced stuff can be in clan advanced or higher
-        if ((equipmentTechlevel == T_CLAN_ADVANCED) &&
-              ((entityTechlevel == T_CLAN_EXPERIMENTAL) ||
-                    (entityTechlevel == T_CLAN_UNOFFICIAL) ||
-                    (entityTechlevel == T_ALL))) {
+        if ((equipmentTechLevel == T_CLAN_ADVANCED) &&
+              ((entityTechLevel == T_CLAN_EXPERIMENTAL) ||
+                    (entityTechLevel == T_CLAN_UNOFFICIAL) ||
+                    (entityTechLevel == T_ALL))) {
             return true;
         }
-        // IS experimental stuff can be in IS unoffical or all (identical level
+        // IS experimental stuff can be in IS unofficial or all (identical level
         // is caught above
-        if ((equipmentTechlevel == T_IS_EXPERIMENTAL) &&
-              ((entityTechlevel == T_IS_UNOFFICIAL) || (entityTechlevel == T_ALL))) {
+        if ((equipmentTechLevel == T_IS_EXPERIMENTAL) &&
+              ((entityTechLevel == T_IS_UNOFFICIAL) || (entityTechLevel == T_ALL))) {
             return true;
         }
-        // clan experimental stuff can be in clan unoffical or all (identical
+        // clan experimental stuff can be in clan unofficial or all (identical
         // level
         // is caught above
-        if ((equipmentTechlevel == T_CLAN_EXPERIMENTAL) &&
-              ((entityTechlevel == T_CLAN_UNOFFICIAL) || (entityTechlevel == T_ALL))) {
-            return true;
-        }
-        return false;
+        return (equipmentTechLevel == T_CLAN_EXPERIMENTAL) &&
+              ((entityTechLevel == T_CLAN_UNOFFICIAL) || (entityTechLevel == T_ALL));
     }
 
     public static String getTechName(int level) {
-        if ((level == T_INTRO_BOXSET) ||
+        if ((level == T_INTRO_BOX_SET) ||
               (level == T_IS_TW_NON_BOX) ||
               (level == T_IS_ADVANCED) ||
               (level == T_IS_EXPERIMENTAL) ||
@@ -412,51 +392,30 @@ public class TechConstants {
     }
 
     public static boolean isClan(int level) {
-        switch (level) {
-            case T_CLAN_TW:
-            case T_CLAN_ADVANCED:
-            case T_CLAN_EXPERIMENTAL:
-            case T_CLAN_UNOFFICIAL:
-            case T_ALL_CLAN:
-                return true;
-            default:
-                return false;
-        }
+        return switch (level) {
+            case T_CLAN_TW, T_CLAN_ADVANCED, T_CLAN_EXPERIMENTAL, T_CLAN_UNOFFICIAL, T_ALL_CLAN -> true;
+            default -> false;
+        };
     }
 
     public static int getOppositeTechLevel(int level) {
-        switch (level) {
-            case T_INTRO_BOXSET:
-            case T_IS_TW_NON_BOX:
-                return T_CLAN_TW;
-            case T_IS_ADVANCED:
-                return T_CLAN_ADVANCED;
-            case T_IS_EXPERIMENTAL:
-                return T_CLAN_EXPERIMENTAL;
-            case T_IS_UNOFFICIAL:
-                return T_CLAN_UNOFFICIAL;
-            case T_CLAN_TW:
-                return T_IS_TW_NON_BOX;
-            case T_CLAN_ADVANCED:
-                return T_IS_ADVANCED;
-            case T_CLAN_EXPERIMENTAL:
-                return T_IS_EXPERIMENTAL;
-            case T_CLAN_UNOFFICIAL:
-                return T_IS_UNOFFICIAL;
-            default:
-                return T_TECH_UNKNOWN;
-        }
+        return switch (level) {
+            case T_INTRO_BOX_SET, T_IS_TW_NON_BOX -> T_CLAN_TW;
+            case T_IS_ADVANCED -> T_CLAN_ADVANCED;
+            case T_IS_EXPERIMENTAL -> T_CLAN_EXPERIMENTAL;
+            case T_IS_UNOFFICIAL -> T_CLAN_UNOFFICIAL;
+            case T_CLAN_TW -> T_IS_TW_NON_BOX;
+            case T_CLAN_ADVANCED -> T_IS_ADVANCED;
+            case T_CLAN_EXPERIMENTAL -> T_IS_EXPERIMENTAL;
+            case T_CLAN_UNOFFICIAL -> T_IS_UNOFFICIAL;
+            default -> T_TECH_UNKNOWN;
+        };
     }
 
     /**
      * Return the tech level of the given gyro. This is necessary because gyros are systems and hence don't have
      * MiscType entries.
      *
-     * @param gyroType
-     * @param isClan
-     * @param year
-     *
-     * @return
      */
     public static int getGyroTechLevel(int gyroType, boolean isClan, int year) {
         switch (gyroType) {
@@ -475,9 +434,9 @@ public class TechConstants {
                 } else if (year < 2505) {
                     return T_IS_ADVANCED;
                 } else {
-                    return T_INTRO_BOXSET;
+                    return T_INTRO_BOX_SET;
                 }
-            case Mek.GYRO_XL:
+            case Mek.GYRO_XL, Mek.GYRO_HEAVY_DUTY:
                 if (isClan) {
                     return T_CLAN_UNOFFICIAL;
                 }
@@ -498,20 +457,6 @@ public class TechConstants {
                 if (year <= 3050) {
                     return T_IS_UNOFFICIAL;
                 } else if (year <= 3068) {
-                    return T_IS_EXPERIMENTAL;
-                } else if (year <= 3072) {
-                    return T_IS_ADVANCED;
-                } else {
-                    return T_IS_TW_NON_BOX;
-                }
-
-            case Mek.GYRO_HEAVY_DUTY:
-                if (isClan) {
-                    return T_CLAN_UNOFFICIAL;
-                }
-                if (year <= 3050) {
-                    return T_IS_UNOFFICIAL;
-                } else if (year <= 3067) {
                     return T_IS_EXPERIMENTAL;
                 } else if (year <= 3072) {
                     return T_IS_ADVANCED;
@@ -540,12 +485,6 @@ public class TechConstants {
      * Return the tech level of the given cockpit. THis is necessary because cockpits are systems and hence don't have
      * MiscType entries.
      *
-     * @param cockpitType
-     * @param entityType
-     * @param isClan
-     * @param year
-     *
-     * @return
      */
     public static int getCockpitTechLevel(int cockpitType, long entityType, boolean isClan, int year) {
         if ((entityType & Entity.ETYPE_MEK) != 0) {
@@ -564,7 +503,7 @@ public class TechConstants {
                     } else if (year <= 2487) {
                         return T_IS_ADVANCED;
                     } else {
-                        return T_INTRO_BOXSET;
+                        return T_INTRO_BOX_SET;
                     }
                 case Mek.COCKPIT_SMALL:
                     if (isClan) {
@@ -806,7 +745,7 @@ public class TechConstants {
                     } else if (year <= 2491) {
                         return T_IS_ADVANCED;
                     } else {
-                        return T_INTRO_BOXSET;
+                        return T_INTRO_BOX_SET;
                     }
                 case Aero.COCKPIT_SMALL:
                     if (isClan) {

@@ -40,8 +40,18 @@ import static org.mockito.Mockito.when;
 
 import megamek.client.Client;
 import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.common.*;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
+import megamek.common.rolls.PilotingRollData;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Crew;
+import megamek.common.units.CrewType;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadMek;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -82,14 +92,14 @@ class SharedUtilityTest {
 
     @BeforeEach
     void setUp() {
-        bipedMek.setArmor(10, Mek.LOC_LLEG);
-        bipedMek.setArmor(10, Mek.LOC_RLEG);
+        bipedMek.setArmor(10, Mek.LOC_LEFT_LEG);
+        bipedMek.setArmor(10, Mek.LOC_RIGHT_LEG);
         bipedMek.setWeight(50.0);
 
-        quadMek.setArmor(10, Mek.LOC_LLEG);
-        quadMek.setArmor(10, Mek.LOC_RLEG);
-        quadMek.setArmor(10, Mek.LOC_LARM);
-        quadMek.setArmor(10, Mek.LOC_RARM);
+        quadMek.setArmor(10, Mek.LOC_LEFT_LEG);
+        quadMek.setArmor(10, Mek.LOC_RIGHT_LEG);
+        quadMek.setArmor(10, Mek.LOC_LEFT_ARM);
+        quadMek.setArmor(10, Mek.LOC_RIGHT_ARM);
         quadMek.setWeight(85.0);
     }
 

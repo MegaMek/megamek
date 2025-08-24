@@ -37,9 +37,9 @@ import static megamek.client.ui.clientGUI.tooltip.SBFInGameObjectTooltip.ownerCo
 
 import java.util.List;
 
-import megamek.common.Compute;
-import megamek.common.Roll;
 import megamek.common.actions.sbf.SBFStandardUnitAttack;
+import megamek.common.compute.Compute;
+import megamek.common.rolls.Roll;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFFormationReportEntry;
 import megamek.common.strategicBattleSystems.SBFPlayerNameReportEntry;
@@ -73,7 +73,7 @@ public class SBFStandardUnitAttackHandler extends AbstractSBFActionHandler {
             List<SBFUnit> targetUnits = target.getUnits();
             SBFUnit targetUnit = targetUnits.get(0);
 
-            SBFToHitData toHit = SBFToHitData.compiletoHit(game(), attack);
+            SBFToHitData toHit = SBFToHitData.compileToHit(game(), attack);
             SBFReportEntry report = new SBFReportEntry(2001).noNL();
             report.add(new SBFUnitReportEntry(attacker, attack.getUnitNumber(), ownerColor(attacker, game())).text());
             report.add(new SBFFormationReportEntry(target, game()).text());

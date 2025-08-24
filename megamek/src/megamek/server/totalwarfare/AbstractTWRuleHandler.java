@@ -36,7 +36,7 @@ package megamek.server.totalwarfare;
 
 import java.util.Vector;
 
-import megamek.common.Game;
+import megamek.common.game.Game;
 import megamek.common.Report;
 
 /**

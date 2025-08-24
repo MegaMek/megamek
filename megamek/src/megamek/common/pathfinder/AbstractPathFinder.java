@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.PriorityQueue;
 
+import megamek.common.pathfinder.filters.Filter;
 import megamek.logging.MMLogger;
 
 /**
@@ -74,104 +75,9 @@ public class AbstractPathFinder<N, C, E> {
     // after switching to java 8 and including java.util.function some of this
     // subclasses should be removed
 
-    /**
-     * Factory for retrieving neighbouring edges.
-     *
-     * @param <E> the type of directed edges used by the graph.
-     */
-    public interface AdjacencyMap<E> {
-        /**
-         * @param e a directed edge
-         *
-         * @return all the edges that lead from destination node of e
-         */
-        Collection<E> getAdjacent(E e);
-    }
-
-    /**
-     * Represents a function for retrieving destination node of an edge.
-     *
-     * @param <N> the type of nodes in the graph
-     * @param <E> the type of directed edges used by the graph
-     */
-    public interface DestinationMap<N, E> {
-        /**
-         * Returns a destination node of a given edge.
-         *
-         * @param e a directed edge
-         *
-         * @return the destination node of the given edge
-         */
-        N getDestination(E e);
-    }
-
-    /**
-     * Represents a function that relaxes an edge.
-     *
-     * @param <C> the type of computed lowest cost for a node
-     * @param <E> the type of directed edges used by the graph
-     */
-    public interface EdgeRelaxer<C, E> {
-        /**
-         * Relaxes an edge.
-         *
-         * @param v          best value till now. Might be null.
-         * @param e          candidate for the new best value
-         * @param comparator edge comparator
-         *
-         * @return new best value or null if no relaxation happened
-         */
-        C doRelax(C v, E e, Comparator<E> comparator);
-    }
-
-    /**
-     * Represents a function that allows removing unwanted objects from a collection.
-     */
-    public static abstract class Filter<T> {
-        /**
-         * Returns filtered collection by removing those objects that fail {@link #shouldStay} test.
-         *
-         * @param collection collection to be filtered
-         *
-         * @return filtered collection
-         */
-        public Collection<T> doFilter(Collection<T> collection) {
-            List<T> filteredMoves = new ArrayList<>();
-            for (T e : collection) {
-                if (shouldStay(e)) {
-                    filteredMoves.add(e);
-                }
-            }
-            return filteredMoves;
-        }
-
-        /**
-         * Tests if the object should stay in the collection.
-         *
-         * @param object tested object
-         *
-         * @return true if the object should stay in the collection
-         */
-        public abstract boolean shouldStay(T object);
-    }
-
-    /**
-     * The stop condition that is processed after every successful relaxation.
-     *
-     * @param <E> the type of directed edges used by the graph
-     */
-    public interface StopCondition<E> {
-        /**
-         * @param e the last edge that was successfully relaxed
-         *
-         * @return true iff algorithm should stop searching for new paths
-         */
-        boolean shouldStop(E e);
-    }
-
     // way of checking multiple conditions and returning their alternation.
     private static class StopConditionsAlternation<E> implements StopCondition<E> {
-        private List<StopCondition<? super E>> conditions = new ArrayList<>();
+        private final List<StopCondition<? super E>> conditions = new ArrayList<>();
 
         @Override
         public boolean shouldStop(E e) {
@@ -183,50 +89,6 @@ public class AbstractPathFinder<N, C, E> {
         }
     }
 
-    /**
-     * A timeout stop condition. The shouldStop() returns answer based on time elapsed since initialisation or last
-     * restart() call.
-     */
-    public static class StopConditionTimeout<E> implements StopCondition<E> {
-        // this class should be redesigned to use an executor.
-        private E lastEdge;
-        private long start;
-        private long stop;
-        final int timeout;
-
-        public boolean timeoutEngaged;
-
-        public StopConditionTimeout(int timeoutMillis) {
-            this.timeout = timeoutMillis;
-            restart();
-        }
-
-        public E getLastEdge() {
-            return lastEdge;
-        }
-
-        public int getTimeout() {
-            return timeout;
-        }
-
-        public void restart() {
-            start = System.currentTimeMillis();
-            stop = start + timeout;
-            lastEdge = null;
-            timeoutEngaged = false;
-        }
-
-        @Override
-        public boolean shouldStop(E e) {
-            if (System.currentTimeMillis() > stop) {
-                timeoutEngaged = true;
-                lastEdge = e;
-                return true;
-            }
-            return false;
-        }
-    }
-
     private AdjacencyMap<E> adjacencyMap;
 
     private PriorityQueue<E> candidates;
@@ -235,18 +97,18 @@ public class AbstractPathFinder<N, C, E> {
     private DestinationMap<N, E> destinationMap;
     private EdgeRelaxer<C, E> edgeRelaxer;
 
-    private List<Filter<E>> filters = new ArrayList<>();
+    private final List<Filter<E>> filters = new ArrayList<>();
 
-    private Map<N, C> pathsCosts = new HashMap<>();
+    private final Map<N, C> pathsCosts = new HashMap<>();
 
-    private StopConditionsAlternation<E> stopCondition = new StopConditionsAlternation<>();
+    private final StopConditionsAlternation<E> stopCondition = new StopConditionsAlternation<>();
 
     /**
      * @param edgeDestinationMap functional interface for retrieving destination node of an edge.
      * @param edgeRelaxer        functional interface for calculating relaxed cost.
      * @param edgeAdjacencyMap   functional interface for retrieving neighbouring edges.
      * @param edgeComparator     implementation of path comparator. Each path is defined by its last edge. <i>(path:=
-     *                           edge concatenated with best path to the source of the edge)</i>
+     *                           edge concatenated with the best path to the source of the edge)</i>
      */
     public AbstractPathFinder(DestinationMap<N, E> edgeDestinationMap, EdgeRelaxer<C, E> edgeRelaxer,
           AdjacencyMap<E> edgeAdjacencyMap, Comparator<E> edgeComparator) {
@@ -349,8 +211,6 @@ public class AbstractPathFinder<N, C, E> {
     }
 
     /**
-     * @param node
-     *
      * @return calculated cost for this node or null if this node has not been reached.
      */
     protected C getCostOf(N node) {

@@ -48,7 +48,7 @@ import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.clientGUI.boardview.sprite.Sprite;
 import megamek.client.ui.clientGUI.boardview.toolTip.BoardViewTooltipProvider;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 import megamek.common.Player;
 
 public interface IBoardView {

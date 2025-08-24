@@ -33,7 +33,7 @@
  */
 package megamek.client.ui.clientGUI;
 
-import megamek.common.MapSettings;
+import megamek.common.loaders.MapSettings;
 
 /**
  * @author ShaneK

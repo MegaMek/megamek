@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 
 public class SmokeCloud implements Serializable {
     @Serial

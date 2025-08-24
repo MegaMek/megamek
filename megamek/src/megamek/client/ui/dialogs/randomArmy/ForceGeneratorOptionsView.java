@@ -57,12 +57,12 @@ import megamek.client.ratgenerator.Ruleset.ProgressListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.Entity;
-import megamek.common.EntityWeightClass;
-import megamek.common.Game;
 import megamek.common.Player;
-import megamek.common.UnitType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.UnitType;
 import megamek.logging.MMLogger;
 
 /**
@@ -550,7 +550,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     }
                     break;
                 case UnitType.AERO:
-                case UnitType.AEROSPACEFIGHTER:
+                case UnitType.AEROSPACE_FIGHTER:
                     if (chkRoleAirRecon.isSelected()) {
                         fd.getRoles().add(MissionRole.RECON);
                     }
@@ -701,7 +701,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             if (unitType != null) {
                 panGroundRole.setVisible(unitType == UnitType.MEK || unitType == UnitType.TANK);
                 panInfRole.setVisible(unitType == UnitType.INFANTRY || unitType == UnitType.BATTLE_ARMOR);
-                panAirRole.setVisible(unitType == UnitType.AEROSPACEFIGHTER || unitType == UnitType.CONV_FIGHTER);
+                panAirRole.setVisible(unitType == UnitType.AEROSPACE_FIGHTER || unitType == UnitType.CONV_FIGHTER);
             }
         }
 

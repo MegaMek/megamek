@@ -41,7 +41,12 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import megamek.client.bot.princess.geometry.CoordFacingCombo;
-import megamek.common.*;
+import megamek.common.ECMInfo;
+import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.Report;
+import megamek.common.SpecialHexDisplay;
+import megamek.common.TagInfo;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -51,12 +56,25 @@ import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.compute.ComputeECM;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.Flare;
+import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.Minefield;
+import megamek.common.equipment.Mounted;
 import megamek.common.event.*;
+import megamek.common.game.Game;
+import megamek.common.game.GameTurn;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.GameOptions;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
+import megamek.common.units.UnitLocation;
 import megamek.logging.MMLogger;
 import megamek.server.SmokeCloud;
 
@@ -166,10 +184,10 @@ public class Precognition implements Runnable {
                 case SENDING_MINEFIELDS:
                     receiveSendingMinefields(c);
                     break;
-                case SENDING_ILLUM_HEXES:
+                case SENDING_ILLUMINATED_HEXES:
                     receiveIlluminatedHexes(c);
                     break;
-                case CLEAR_ILLUM_HEXES:
+                case CLEAR_ILLUMINATED_HEXES:
                     getGame().clearIlluminatedPositions();
                     break;
                 case UPDATE_MINEFIELDS:
@@ -278,7 +296,7 @@ public class Precognition implements Runnable {
                             break;
                         case CFR_APDS_ASSIGN:
                             cfrEvt.setEntityId((int) c.data()[1]);
-                            cfrEvt.setApdsDists((List<Integer>) c.data()[2]);
+                            cfrEvt.setApdsDistances((List<Integer>) c.data()[2]);
                             cfrEvt.setWAAs((List<WeaponAttackAction>) c.data()[3]);
                             break;
                         default:
@@ -290,7 +308,7 @@ public class Precognition implements Runnable {
                     GameVictoryEvent gve = new GameVictoryEvent(this, getGame());
                     getGame().processGameEvent(gve);
                     break;
-                case ENTITY_MULTIUPDATE:
+                case ENTITY_MULTI_UPDATE:
                     receiveEntitiesUpdate(c);
                     break;
                 case UPDATE_GROUND_OBJECTS:

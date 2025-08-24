@@ -33,7 +33,7 @@
 
 package megamek.server.trigger;
 
-import megamek.common.IGame;
+import megamek.common.game.IGame;
 
 /**
  * This interface is implemented by Triggers that enable events like messages, game end, defeat or victory.

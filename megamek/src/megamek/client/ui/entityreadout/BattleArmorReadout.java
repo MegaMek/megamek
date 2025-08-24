@@ -40,18 +40,18 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import megamek.client.ui.Messages;
-import megamek.common.BattleArmor;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.ITechnology;
-import megamek.common.Infantry;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.WeaponTypeFlag;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.enums.TechBase;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.weapons.LegAttack;
-import megamek.common.weapons.StopSwarmAttack;
-import megamek.common.weapons.SwarmAttack;
+import megamek.common.equipment.WeaponTypeFlag;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.weapons.attacks.LegAttack;
+import megamek.common.weapons.attacks.StopSwarmAttack;
+import megamek.common.weapons.attacks.SwarmAttack;
 
 class BattleArmorReadout extends GeneralEntityReadout {
 
@@ -128,10 +128,10 @@ class BattleArmorReadout extends GeneralEntityReadout {
         String location = getLocation(mounted);
 
         String name = sanitizeMountedDesc(mounted) + quirkMarker(mounted);
-        if (battleArmor.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.IS)) {
+        if (battleArmor.isClan() && (mounted.getType().getTechBase() == TechBase.IS)) {
             name += Messages.getString("MekView.IS");
         }
-        if (!battleArmor.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
+        if (!battleArmor.isClan() && (mounted.getType().getTechBase() == TechBase.CLAN)) {
             name += Messages.getString("MekView.Clan");
         }
         ViewElement nameElement = new PlainElement(name);

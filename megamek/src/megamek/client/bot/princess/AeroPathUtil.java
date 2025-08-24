@@ -39,14 +39,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import megamek.client.commands.ClientCommand;
-import megamek.common.Coords;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.IAero;
-import megamek.common.UnitType;
+import megamek.common.board.Coords;
+import megamek.common.enums.MoveStepType;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.units.IAero;
+import megamek.common.units.UnitType;
 import megamek.logging.MMLogger;
 
 /**
@@ -118,7 +118,7 @@ public class AeroPathUtil {
 
         return (isSpheroid && (movePath.getFinalNDown() == 0) &&
               (movePath.getMpUsed() == 0) &&
-              !movePath.contains(MoveStepType.VLAND));
+              !movePath.contains(MoveStepType.VERTICAL_LAND));
     }
 
     /**
@@ -132,7 +132,7 @@ public class AeroPathUtil {
         return movePath.getEntity().isAero() &&
               movePath.isOnAtmosphericGroundMap() &&
               (movePath.getFinalAltitude() < 1) &&
-              !movePath.contains(MoveStepType.VLAND) &&
+              !movePath.contains(MoveStepType.VERTICAL_LAND) &&
               !movePath.contains(MoveStepType.LAND);
     }
 
@@ -347,10 +347,10 @@ public class AeroPathUtil {
                     case Dropship.LOC_NOSE:
                         // Turn 180, face away from enemy.
                         dir = (enemyDir + 3) % 6;
-                    case Dropship.LOC_LWING:
+                    case Dropship.LOC_LEFT_WING:
                         // Turn left two hex sides.
                         dir = (enemyDir + 4) % 6;
-                    case Dropship.LOC_RWING:
+                    case Dropship.LOC_RIGHT_WING:
                         // Turn right two hex sides.
                         dir = (enemyDir + 2) % 6;
                     case Dropship.LOC_AFT:

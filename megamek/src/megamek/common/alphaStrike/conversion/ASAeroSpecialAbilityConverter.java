@@ -42,9 +42,9 @@ import static megamek.common.alphaStrike.BattleForceSUA.SPC;
 import static megamek.common.alphaStrike.BattleForceSUA.VSTOL;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.Aero;
-import megamek.common.Entity;
-import megamek.common.FixedWingSupport;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.FixedWingSupport;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 
 public class ASAeroSpecialAbilityConverter extends ASSpecialAbilityConverter {

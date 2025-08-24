@@ -35,7 +35,7 @@ package megamek.common.strategicBattleSystems;
 
 import java.io.Serializable;
 
-import megamek.common.BoardLocation;
+import megamek.common.board.BoardLocation;
 
 public abstract class SBFMoveStep implements Serializable {
 
@@ -51,7 +51,7 @@ public abstract class SBFMoveStep implements Serializable {
 
     /**
      * Assembles and computes all data for this step. Tests if the start and end are on the same board and actually on
-     * that board and if the step distance is more than one. Override to procide more tests.
+     * that board and if the step distance is more than one. Override to provide more tests.
      *
      * @param game The game
      */

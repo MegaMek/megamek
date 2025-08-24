@@ -55,11 +55,11 @@ import megamek.client.ui.widget.picmap.PMPicArea;
 import megamek.client.ui.widget.picmap.PMSimpleLabel;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.common.Configuration;
-import megamek.common.Entity;
-import megamek.common.Infantry;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
@@ -256,7 +256,7 @@ public class PilotMapSet implements DisplayMapSet {
         }
 
         if ((en.getGame() != null)
-              && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)
+              && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_FATIGUE)
               && !en.getCrew().isMissing(slot)) {
             fatigueBR.setString(Integer.toString(en.getCrew().getCrewFatigue(slot)));
         } else {

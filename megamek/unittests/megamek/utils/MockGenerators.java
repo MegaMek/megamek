@@ -40,9 +40,17 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 
 import megamek.common.*;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.options.GameOptions;
 import megamek.common.options.PilotOptions;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Aero;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Crew;
+import megamek.common.units.Entity;
 
 public class MockGenerators {
     /**

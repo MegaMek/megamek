@@ -37,9 +37,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.Entity;
-import megamek.common.MekSummary;
-import megamek.common.MekSummaryCache;
+import megamek.common.units.Entity;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
 
 /**
  * This program will generate a list of all the units that use the default (generic) icons. It ignores non-canon units.

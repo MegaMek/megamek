@@ -33,12 +33,21 @@
 
 package megamek.common;
 
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
+
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Era;
+import megamek.common.enums.Faction;
+import megamek.common.enums.FactionAffiliation;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.interfaces.ITechnology;
 
 /**
  * Handles the progression of technology through prototype, production, extinction and reintroduction phases. Calculates
@@ -336,7 +345,6 @@ public class TechAdvancement implements ITechnology {
      *
      * @param prog A map of tech progression years.
      *
-     * @return
      */
     public TechAdvancement setAdvancement(Map<AdvancementPhase, Integer> prog) {
         setISAdvancement(prog);
@@ -348,9 +356,6 @@ public class TechAdvancement implements ITechnology {
      * A convenience method that will set identical values for IS and Clan factions. Prototype, Production, Common,
      * Extinct, Reintroduced
      *
-     * @param prog
-     *
-     * @return
      */
     public TechAdvancement setAdvancement(int... prog) {
         setISAdvancement(prog);
@@ -379,7 +384,6 @@ public class TechAdvancement implements ITechnology {
      *
      * @param approx A map of tech progression years.
      *
-     * @return
      */
     public TechAdvancement setApproximate(Map<AdvancementPhase, Boolean> approx) {
         setISApproximate(approx);
@@ -390,9 +394,6 @@ public class TechAdvancement implements ITechnology {
     /**
      * A convenience method that will set identical values for IS and Clan factions.
      *
-     * @param approx
-     *
-     * @return
      */
     public TechAdvancement setApproximate(boolean... approx) {
         setISApproximate(approx);
@@ -405,7 +406,6 @@ public class TechAdvancement implements ITechnology {
      *
      * @param phases the phases to set as approximate
      *
-     * @return
      */
     public TechAdvancement setApproximate(AdvancementPhase... phases) {
         setISApproximate(phases);
@@ -415,9 +415,7 @@ public class TechAdvancement implements ITechnology {
 
     private TechAdvancement setFactionsAdvancement(Set<Faction> factionAdvancement, Faction... factions) {
         factionAdvancement = EnumSet.noneOf(Faction.class);
-        for (Faction f : factions) {
-            factionAdvancement.add(f);
-        }
+        Collections.addAll(factionAdvancement, factions);
         return this;
     }
 
@@ -426,7 +424,6 @@ public class TechAdvancement implements ITechnology {
      *
      * @param factions A list of Faction enums
      *
-     * @return
      */
     public TechAdvancement setPrototypeFactions(Faction... factions) {
         return setFactionsAdvancement(prototypeFactions, factions);
@@ -637,27 +634,27 @@ public class TechAdvancement implements ITechnology {
      */
     @Override
     public int getReintroductionDate(boolean clan, Faction faction) {
-        int reintroDate = getDate(AdvancementPhase.REINTRODUCED, clan);
-        if (reintroDate == DATE_NONE) {
+        int reIntroDate = getDate(AdvancementPhase.REINTRODUCED, clan);
+        if (reIntroDate == DATE_NONE) {
             return DATE_NONE;
         }
         if (!reintroductionFactions.isEmpty() && faction != null && faction != Faction.NONE) {
             if (reintroductionFactions.contains(faction)
                   || (reintroductionFactions.contains(Faction.IS) && !clan)
                   || (reintroductionFactions.contains(Faction.CLAN) && clan)) {
-                return reintroDate;
+                return reIntroDate;
             }
             // If the production or common date is later than the reintroduction date, that is
-            // when it becomes available to other factions. Otherwise we use reintro + 10 as with
+            // when it becomes available to other factions. Otherwise, we use reintro + 10 as with
             // production date.
             final int prodDate = getProductionDate(clan, faction);
             final int commonDate = getDate(AdvancementPhase.COMMON, clan);
-            if (prodDate > reintroDate) {
+            if (prodDate > reIntroDate) {
                 return prodDate;
-            } else if (commonDate > reintroDate) {
+            } else if (commonDate > reIntroDate) {
                 return commonDate;
             } else {
-                return reintroDate + REINTRODUCTION_DATE_OFFSET;
+                return reIntroDate + REINTRODUCTION_DATE_OFFSET;
             }
         }
         return getDate(AdvancementPhase.REINTRODUCED, clan);
@@ -698,22 +695,19 @@ public class TechAdvancement implements ITechnology {
      * Convenience method for calculating approximations.
      */
     private int getDate(AdvancementPhase phase, boolean clan) {
+        Integer date;
+        Boolean approx;
         if (clan) {
-            Integer date = clanAdvancement.get(phase);
-            Boolean approx = clanApproximate.get(phase);
-            if (Boolean.TRUE.equals(approx) && date != null && date > 0) {
-                return date + ((phase == AdvancementPhase.EXTINCT) ? APPROXIMATE_MARGIN : -APPROXIMATE_MARGIN);
-            } else {
-                return date != null ? date : DATE_NONE;
-            }
+            date = clanAdvancement.get(phase);
+            approx = clanApproximate.get(phase);
         } else {
-            Integer date = isAdvancement.get(phase);
-            Boolean approx = isApproximate.get(phase);
-            if (Boolean.TRUE.equals(approx) && date != null && date > 0) {
-                return date + ((phase == AdvancementPhase.EXTINCT) ? APPROXIMATE_MARGIN : -APPROXIMATE_MARGIN);
-            } else {
-                return date != null ? date : DATE_NONE;
-            }
+            date = isAdvancement.get(phase);
+            approx = isApproximate.get(phase);
+        }
+        if (Boolean.TRUE.equals(approx) && date != null && date > 0) {
+            return date + ((phase == AdvancementPhase.EXTINCT) ? APPROXIMATE_MARGIN : -APPROXIMATE_MARGIN);
+        } else {
+            return date != null ? date : DATE_NONE;
         }
     }
 
@@ -737,8 +731,8 @@ public class TechAdvancement implements ITechnology {
     }
 
     /**
-     * If the tech base is IS or Clan, returns the extinction date that matches the tech base. Otherwise returns the
-     * later of the IS and Clan dates, or DATE_NONE if the tech has not gone extinct for both.
+     * If the tech base is IS or Clan, returns the extinction date that matches the tech base. Otherwise, returns the
+     * latter of the IS and Clan dates, or DATE_NONE if the tech has not gone extinct for both.
      *
      * @return Universe-wide extinction date.
      */
@@ -782,7 +776,6 @@ public class TechAdvancement implements ITechnology {
      * @param clan     Use the Clan progression
      * @param factions A list of factions to include in parentheses after the date.
      *
-     * @return
      */
     private String formatDate(AdvancementPhase phase, boolean clan, Set<Faction> factions) {
         Integer date = clan ? clanAdvancement.get(phase) : isAdvancement.get(phase);
@@ -906,7 +899,7 @@ public class TechAdvancement implements ITechnology {
                 // If there is no Clan date, choose the IS date
                 return getExtinctionDateName(false);
             } else {
-                // Pick the later of the two dates for extinction
+                // Pick the latter of the two dates for extinction
                 boolean useClan = clanDate > isDate;
                 return formatDate(AdvancementPhase.EXTINCT, useClan, extinctionFactions);
             }

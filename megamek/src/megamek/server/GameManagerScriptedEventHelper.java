@@ -33,7 +33,7 @@
 
 package megamek.server;
 
-import megamek.common.IGame;
+import megamek.common.game.IGame;
 import megamek.server.scriptedevent.TriggeredActiveEvent;
 import megamek.server.trigger.TriggerSituation;
 

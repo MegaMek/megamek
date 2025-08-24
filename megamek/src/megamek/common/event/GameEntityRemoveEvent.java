@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,17 +34,19 @@
 
 package megamek.common.event;
 
-import megamek.common.Entity;
+import java.io.Serial;
+
+import megamek.common.units.Entity;
 
 /**
  * Instances of this class are sent when entity is removed
  */
 public class GameEntityRemoveEvent extends GameEntityEvent {
+    @Serial
     private static final long serialVersionUID = -4694809256962666172L;
 
     /**
-     * @param source
-     * @param entity
+     *
      */
     public GameEntityRemoveEvent(Object source, Entity entity) {
         super(source);

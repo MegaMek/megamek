@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -90,9 +90,8 @@ public interface GameListener extends java.util.EventListener {
     /**
      * This event is used in SBF games when a unit (formation) changes.
      *
-     * @param event
      */
     default void gameUnitChange(GameEvent event) {}
 
-    default void gamePlayerStrategicAction(GamePlayerStrategicActionEvent e) {}
+    default void gamePlayerStrategicAction(GamePlayerStrategicActionEvent event) {}
 }

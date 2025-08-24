@@ -34,6 +34,8 @@
 
 package megamek.common.net.events;
 
+import java.io.Serial;
+
 import megamek.common.net.enums.ConnectionEventType;
 import megamek.common.net.packets.Packet;
 
@@ -42,6 +44,7 @@ import megamek.common.net.packets.Packet;
  */
 public class PacketReceivedEvent extends AbstractConnectionEvent {
     //region Variable Declarations
+    @Serial
     private static final long serialVersionUID = -3542045596045067466L;
     private final Packet packet;
     //endregion Variable Declarations

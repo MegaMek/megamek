@@ -36,8 +36,19 @@ package megamek.common.alphaStrike.conversion;
 import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Jumpship;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Tank;
+import megamek.common.units.Warship;
 import megamek.logging.MMLogger;
 
 final class ASArmStrConverter {
@@ -66,8 +77,8 @@ final class ASArmStrConverter {
     };
 
     static int convertArmor(ASConverter.ConversionData conversionData, boolean currentIntegrity) {
-        Entity entity = conversionData.entity;
-        CalculationReport report = conversionData.conversionReport;
+        Entity entity = conversionData.entity();
+        CalculationReport report = conversionData.conversionReport();
         report.addEmptyLine();
         report.addSubHeader("Armor:");
 
@@ -78,15 +89,14 @@ final class ASArmStrConverter {
                 divisor /= 2.0;
                 report.addLine("Mechanized", "/ 2", "= ", divisor);
             }
+            int finalArmor;
             if (currentIntegrity) {
-                int finalArmor = (int) Math.round(divisor / 15.0d * ((Infantry) entity).getShootingStrength());
-                report.addLine("Armor:", "#Men x Divisor / 2", "= " + finalArmor);
-                return finalArmor;
+                finalArmor = (int) Math.round(divisor / 15.0d * ((Infantry) entity).getShootingStrength());
             } else {
-                int finalArmor = (int) Math.round(divisor / 15.0d * ((Infantry) entity).getOInternal(0));
-                report.addLine("Armor:", "#Men x Divisor / 2", "= " + finalArmor);
-                return finalArmor;
+                finalArmor = (int) Math.round(divisor / 15.0d * entity.getOInternal(0));
             }
+            report.addLine("Armor:", "#Men x Divisor / 2", "= " + finalArmor);
+            return finalArmor;
         }
 
         double armorPoints = 0;
@@ -94,20 +104,21 @@ final class ASArmStrConverter {
         for (int loc = 0; loc < entity.locations(); loc++) {
             String calculation = "";
             double armorMod = 1;
-            switch (entity.getArmorType(loc)) {
-                case EquipmentType.T_ARMOR_COMMERCIAL:
+            calculation = switch (entity.getArmorType(loc)) {
+                case EquipmentType.T_ARMOR_COMMERCIAL -> {
                     armorMod = .5;
-                    calculation = "0.5 (Commercial) x ";
-                    break;
-                case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
+                    yield "0.5 (Commercial) x ";
+                }
+                case EquipmentType.T_ARMOR_FERRO_LAMELLOR -> {
                     armorMod = 1.2;
-                    calculation = "1.2 (Ferro-Lamellor) x ";
-                    break;
-                case EquipmentType.T_ARMOR_HARDENED:
+                    yield "1.2 (Ferro-Lamellor) x ";
+                }
+                case EquipmentType.T_ARMOR_HARDENED -> {
                     armorMod = 2;
-                    calculation = "2 (Hardened) x ";
-                    break;
-            }
+                    yield "2 (Hardened) x ";
+                }
+                default -> calculation;
+            };
 
             if ((entity.getBARRating(0) < 9) && (entity.getArmorType(loc) != EquipmentType.T_ARMOR_COMMERCIAL)) {
                 armorMod *= 0.1 * entity.getBARRating(0);
@@ -178,8 +189,8 @@ final class ASArmStrConverter {
      * Determines the Aerospace Armor Threshold, AlphaStrike Companion p.95
      */
     static int convertThreshold(ASConverter.ConversionData conversionData) {
-        CalculationReport report = conversionData.conversionReport;
-        AlphaStrikeElement element = conversionData.element;
+        CalculationReport report = conversionData.conversionReport();
+        AlphaStrikeElement element = conversionData.element();
 
         if (element.isAero()) {
             int arcs = element.isFighter() ? 1 : 4;
@@ -200,8 +211,8 @@ final class ASArmStrConverter {
      * Calculates the Structure value, AlphaStrike Companion p.97
      */
     static int convertStructure(ASConverter.ConversionData conversionData, boolean currentIntegrity) {
-        Entity entity = conversionData.entity;
-        CalculationReport report = conversionData.conversionReport;
+        Entity entity = conversionData.entity();
+        CalculationReport report = conversionData.conversionReport();
         report.addEmptyLine();
         report.addSubHeader("Structure:");
 
@@ -290,8 +301,8 @@ final class ASArmStrConverter {
     }
 
     private static int getEngineIndex(ASConverter.ConversionData conversionData) {
-        Entity entity = conversionData.entity;
-        CalculationReport report = conversionData.conversionReport;
+        Entity entity = conversionData.entity();
+        CalculationReport report = conversionData.conversionReport();
 
         if (entity.getEngine().isClan()) {
             if (entity.getEngine().hasFlag(Engine.LARGE_ENGINE)) {
@@ -304,50 +315,60 @@ final class ASArmStrConverter {
                         return 7;
                 }
             } else {
-                switch (entity.getEngine().getEngineType()) {
-                    case Engine.XL_ENGINE:
+                return switch (entity.getEngine().getEngineType()) {
+                    case Engine.XL_ENGINE -> {
                         report.addLine("Clan XL Engine", "");
-                        return 3;
-                    case Engine.XXL_ENGINE:
+                        yield 3;
+                    }
+                    case Engine.XXL_ENGINE -> {
                         report.addLine("Clan XXL Engine", "");
-                        return 5;
-                    default:
+                        yield 5;
+                    }
+                    default -> {
                         report.addLine("Clan Fusion or other Engine", "");
-                        return 0;
-                }
+                        yield 0;
+                    }
+                };
             }
         } else {
             if (entity.getEngine().hasFlag(Engine.LARGE_ENGINE)) {
-                switch (entity.getEngine().getEngineType()) {
-                    case Engine.XL_ENGINE:
-                    case Engine.LIGHT_ENGINE:
+                return switch (entity.getEngine().getEngineType()) {
+                    case Engine.XL_ENGINE, Engine.LIGHT_ENGINE -> {
                         report.addLine("IS Large XL or Light Engine", "");
-                        return 4;
-                    case Engine.XXL_ENGINE:
+                        yield 4;
+                    }
+                    case Engine.XXL_ENGINE -> {
                         report.addLine("IS Large XXL Engine", "");
-                        return 8;
-                    default:
+                        yield 8;
+                    }
+                    default -> {
                         report.addLine("IS Large Fusion Engine", "");
-                        return 2;
-                }
+                        yield 2;
+                    }
+                };
             } else {
-                switch (entity.getEngine().getEngineType()) {
-                    case Engine.XL_ENGINE:
+                return switch (entity.getEngine().getEngineType()) {
+                    case Engine.XL_ENGINE -> {
                         report.addLine("IS XL Engine", "");
-                        return 4;
-                    case Engine.COMPACT_ENGINE:
+                        yield 4;
+                    }
+                    case Engine.COMPACT_ENGINE -> {
                         report.addLine("IS Compact Engine", "");
-                        return 1;
-                    case Engine.LIGHT_ENGINE:
+                        yield 1;
+                    }
+                    case Engine.LIGHT_ENGINE -> {
                         report.addLine("IS Light Engine", "");
-                        return 3;
-                    case Engine.XXL_ENGINE:
+                        yield 3;
+                    }
+                    case Engine.XXL_ENGINE -> {
                         report.addLine("IS CXL Engine", "");
-                        return 6;
-                    default:
+                        yield 6;
+                    }
+                    default -> {
                         report.addLine("IS Fusion or other Engine", "");
-                        return 0;
-                }
+                        yield 0;
+                    }
+                };
             }
         }
         report.addLine("Unknown Engine", "");

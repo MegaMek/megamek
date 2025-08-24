@@ -33,7 +33,7 @@
  */
 package megamek.client.bot.princess.geometry;
 
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 import megamek.logging.MMLogger;
 
 /**

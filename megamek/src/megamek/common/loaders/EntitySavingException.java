@@ -33,6 +33,8 @@
 
 package megamek.common.loaders;
 
+import java.io.Serial;
+
 /**
  * This exception is thrown if a mek or other cannot be properly saved from a file due to IO errors, file format errors,
  * missing fields, or whatever.
@@ -40,6 +42,7 @@ package megamek.common.loaders;
  * @author sleet01
  */
 public class EntitySavingException extends Exception {
+    @Serial
     private static final long serialVersionUID = -4472736483205970852L;
 
     /**

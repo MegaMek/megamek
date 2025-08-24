@@ -88,8 +88,7 @@ public class FileCamouflage extends Camouflage {
 
     @Override
     public boolean equals(Object other) {
-        if (super.equals(other) && other instanceof FileCamouflage) {
-            FileCamouflage otherCamo = (FileCamouflage) other;
+        if (super.equals(other) && other instanceof FileCamouflage otherCamo) {
             return otherCamo.file.equals(file);
         } else {
             return false;

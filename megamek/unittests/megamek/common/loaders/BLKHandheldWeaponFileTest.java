@@ -37,9 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 
-import megamek.common.EquipmentType;
-import megamek.common.HandheldWeapon;
-import megamek.common.MekFileParser;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.HandheldWeapon;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

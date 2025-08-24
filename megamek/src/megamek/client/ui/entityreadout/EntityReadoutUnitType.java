@@ -33,12 +33,12 @@
 package megamek.client.ui.entityreadout;
 
 import megamek.client.ui.Messages;
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
-import megamek.common.HandheldWeapon;
-import megamek.common.Infantry;
-import megamek.common.ProtoMek;
-import megamek.common.QuadVee;
+import megamek.common.units.Entity;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.HandheldWeapon;
+import megamek.common.units.Infantry;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.QuadVee;
 
 final class EntityReadoutUnitType {
 

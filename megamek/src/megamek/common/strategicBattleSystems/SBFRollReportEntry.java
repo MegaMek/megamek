@@ -36,7 +36,7 @@ package megamek.common.strategicBattleSystems;
 import java.util.List;
 
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Roll;
+import megamek.common.rolls.Roll;
 
 public class SBFRollReportEntry extends SBFReportEntry {
 

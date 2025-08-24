@@ -35,9 +35,10 @@ package megamek.common.moves;
 import java.util.EnumSet;
 import java.util.Set;
 
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.enums.MoveStepType;
+import megamek.common.game.Game;
 import megamek.common.pathfinder.CachedEntityState;
+import megamek.common.units.Entity;
 
 /**
  * This class handles the climb mode on and off step of a unit. It is used in the MoveStep compilation to calculate the
@@ -47,18 +48,18 @@ import megamek.common.pathfinder.CachedEntityState;
  * @since 0.50.07
  */
 class ClimbModeStep implements PhasePass {
-    private static final EnumSet<MovePath.MoveStepType> TYPES = EnumSet.of(MovePath.MoveStepType.CLIMB_MODE_ON,
-          MovePath.MoveStepType.CLIMB_MODE_OFF);
+    private static final EnumSet<MoveStepType> TYPES = EnumSet.of(MoveStepType.CLIMB_MODE_ON,
+          MoveStepType.CLIMB_MODE_OFF);
 
     @Override
-    public Set<MovePath.MoveStepType> getTypesOfInterest() {
+    public Set<MoveStepType> getTypesOfInterest() {
         return TYPES;
     }
 
     @Override
     public PhasePassResult preCompilation(final MoveStep moveStep, final Game game, final Entity entity, MoveStep prev,
           final CachedEntityState cachedEntityState) {
-        moveStep.setClimbMode(moveStep.getType() == MovePath.MoveStepType.CLIMB_MODE_ON);
+        moveStep.setClimbMode(moveStep.getType() == MoveStepType.CLIMB_MODE_ON);
         return PhasePassResult.BREAK;
     }
 }

@@ -37,11 +37,11 @@ package megamek.common.alphaStrike.conversion;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.BattleArmor;
-import megamek.common.Entity;
-import megamek.common.Infantry;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.options.OptionsConstants;
 

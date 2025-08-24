@@ -36,14 +36,24 @@ package megamek.common.weapons.lrms;
 
 import java.io.Serial;
 
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.*;
+import megamek.common.units.Entity;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.MissileMineClearanceHandler;
+import megamek.common.weapons.handlers.lrm.LRMAntiTSMHandler;
+import megamek.common.weapons.handlers.lrm.LRMDeadFireHandler;
+import megamek.common.weapons.handlers.lrm.LRMFollowTheLeaderHandler;
+import megamek.common.weapons.handlers.lrm.LRMFragHandler;
+import megamek.common.weapons.handlers.lrm.LRMHandler;
+import megamek.common.weapons.handlers.lrm.LRMScatterableHandler;
+import megamek.common.weapons.handlers.lrm.LRMSmokeWarheadHandler;
+import megamek.common.weapons.handlers.lrm.LRMSwarmHandler;
+import megamek.common.weapons.handlers.lrm.LRMSwarmIHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -77,14 +87,14 @@ public abstract class LRMWeapon extends MissileWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return getLRMHandler(toHit, waa, game, manager);
     }
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_LRM;
+        return BF_CLASS_LRM;
     }
 
     @Override
@@ -111,7 +121,7 @@ public abstract class LRMWeapon extends MissileWeapon {
         if (sortingName != null) {
             return sortingName;
         } else {
-            String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
+            String oneShotTag = hasFlag(F_ONE_SHOT) ? "OS " : "";
             if (name.contains("I-OS")) {
                 oneShotTag = "XIOS ";
             }

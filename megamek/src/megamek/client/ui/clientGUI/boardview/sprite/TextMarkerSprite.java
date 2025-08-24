@@ -43,7 +43,7 @@ import megamek.MMConstants;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 
 public class TextMarkerSprite extends HexSprite {
 

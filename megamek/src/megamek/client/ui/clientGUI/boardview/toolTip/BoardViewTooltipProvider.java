@@ -36,7 +36,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 import megamek.client.ui.clientGUI.boardview.BoardView;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 import megamek.common.annotations.Nullable;
 
 /**

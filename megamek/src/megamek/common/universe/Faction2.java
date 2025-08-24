@@ -86,8 +86,8 @@ public class Faction2 {
     private final NavigableMap<Integer, String> capitalChanges = new TreeMap<>();
     private final ArrayList<FactionRecord.DateRange> yearsActive = new ArrayList<>();
     private String successor;
-    private Set<FactionTag> tags = new HashSet<>();
-    private Color color = Color.LIGHT_GRAY;
+    private final Set<FactionTag> tags = new HashSet<>();
+    private final Color color = Color.LIGHT_GRAY;
     private String logo;
     private String background;
 
@@ -101,9 +101,9 @@ public class Faction2 {
     private final Set<String> fallBackFactions = new HashSet<>();
     private final HonorRating preInvasionHonorRating = HonorRating.NONE;
     private final HonorRating postInvasionHonorRating = HonorRating.NONE;
-    private int formationBaseSize = UNKNOWN;
-    private int formationGrouping = UNKNOWN;
-    private String rankSystem = null;
+    private final int formationBaseSize = UNKNOWN;
+    private final int formationGrouping = UNKNOWN;
+    private final String rankSystem = null;
     private List<FactionLeaderData> factionLeaders = new ArrayList<>();
 
     public List<String> getRatingLevels() {
@@ -256,7 +256,7 @@ public class Faction2 {
 
     /**
      * Returns the size of the lowest formation type (lance). If this faction gives the size directly
-     * (formationBaseSize:) this value is returned. Otherwise the fallback Factions are called recursively. When there
+     * (formationBaseSize) this value is returned. Otherwise, the fallback Factions are called recursively. When there
      * is no callback Faction, 5 is returned for a clan faction and 4 otherwise.
      * <p>
      * This means that the Word of Blake Faction will give a value of 6 and WoB subcommands do not have to give any
@@ -280,9 +280,9 @@ public class Faction2 {
 
     /**
      * Returns the grouping multiplier for accumulated formations such as company, galaxy or level 3. If this faction
-     * gives the value directly (formationGrouping:) this value is returned. Otherwise the fallback Factions are called
+     * gives the value directly (formationGrouping) this value is returned. Otherwise, the fallback Factions are called
      * recursively. When there is no callback Faction, 5 is returned for a clan faction and 3 otherwise (3 lances form a
-     * company, 3 companies form a battalion etc)
+     * company, 3 companies form a battalion etc.)
      * <p>
      * This means that the Word of Blake Faction will give a value of 6 and WoB subcommands do not have to give any
      * value as long as their fallback Faction is WoB.
@@ -426,7 +426,7 @@ public class Faction2 {
 
     /**
      * Writes this faction as YAML to the standard directories in data/universe/factions or data/universe/commands with
-     * the standard name (key).yml, depending on whether the key contains a ".".
+     * the standard name (key).yml, depending on whether the key contains a "."
      *
      * @throws IOException When an error occurs
      */
@@ -513,7 +513,7 @@ public class Faction2 {
     }
 
     /**
-     * @return True if this faction performs Batchalls.
+     * @return True if this faction performs BatchAlls.
      */
     public boolean performsBatchalls() {
         return tags.contains(FactionTag.BATCHALL);

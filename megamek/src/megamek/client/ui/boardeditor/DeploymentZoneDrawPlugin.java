@@ -32,7 +32,7 @@
  */
 package megamek.client.ui.boardeditor;
 
-import static megamek.common.Terrains.DEPLOYMENT_ZONE;
+import static megamek.common.units.Terrains.DEPLOYMENT_ZONE;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -42,11 +42,11 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.HexDrawPlugin;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.StringDrawer;
-import megamek.common.Board;
-import megamek.common.Coords;
-import megamek.common.Game;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.game.Game;
 import megamek.common.Hex;
-import megamek.common.Terrain;
+import megamek.common.units.Terrain;
 
 /**
  * This plugin is used in the Board Editor to draw markers on hexes that are deployment zones

@@ -34,12 +34,12 @@
 package megamek.common.cost;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.Engine;
-import megamek.common.EntityWeightClass;
-import megamek.common.FixedWingSupport;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.WeaponType;
+import megamek.common.equipment.Engine;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.FixedWingSupport;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.ArmorType;
 import megamek.common.verifier.SupportVeeStructure;
 

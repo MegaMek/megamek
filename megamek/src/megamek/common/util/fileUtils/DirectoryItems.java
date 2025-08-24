@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -55,8 +55,7 @@ public class DirectoryItems extends AbstractDirectory {
 
     /**
      * Create a categorized collection of all files beneath the given directory. Please note, the name of any
-     * sub-directories will be added to the root category name to create the name of the sub-directories' category
-     * path.
+     * subdirectories will be added to the root category name to create the name of the subdirectories' category path.
      *
      * @param root         the <code>File</code> object for the root directory of the image files. All files in this
      *                     root will be included in this collection. This value must not be
@@ -84,8 +83,7 @@ public class DirectoryItems extends AbstractDirectory {
 
         final String[] children = root.list();
         if (children == null) {
-            logger.error(
-                  "Failed to parse the " + categoryName + " directory, getting null children calling root.list()");
+            logger.error("Failed to parse the {} directory, getting null children calling root.list()", categoryName);
             return;
         }
 
@@ -93,7 +91,7 @@ public class DirectoryItems extends AbstractDirectory {
             final File file = new File(root, content);
 
             if (file.isDirectory()) {
-                // Construct the category name for this sub-directory, and add it to the map
+                // Construct the category name for this subdirectory, and add it to the map
                 getCategories().put(content,
                       new DirectoryItems(file, content, getRootPath() + content + "/", itemFactory));
             } else if (itemFactory.accept(root, content)) {

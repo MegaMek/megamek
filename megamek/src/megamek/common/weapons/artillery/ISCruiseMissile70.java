@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,14 +34,21 @@
 
 package megamek.common.weapons.artillery;
 
-import megamek.common.AmmoType;
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.AmmoType;
 
 /**
  * @author Sebastian Brocks
  * @since Oct 20, 2004
  */
 public class ISCruiseMissile70 extends ArtilleryWeapon {
+    @Serial
     private static final long serialVersionUID = 5323886711682442495L;
 
     public ISCruiseMissile70() {
@@ -57,8 +64,8 @@ public class ISCruiseMissile70 extends ArtilleryWeapon {
         longRange = 90;
         extremeRange = 90; // No extreme range.
         tonnage = 80;
-        criticals = 80;
-        svslots = 35;
+        criticalSlots = 80;
+        svSlots = 35;
         flags = flags.or(F_CRUISE_MISSILE);
         bv = 1031;
         cost = 1250000;

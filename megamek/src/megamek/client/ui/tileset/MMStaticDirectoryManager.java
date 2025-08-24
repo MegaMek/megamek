@@ -100,7 +100,7 @@ public class MMStaticDirectoryManager {
                 }
 
                 // check for portraits in story arcs subdirectories
-                File storyArcsDir = Configuration.storyarcsDir();
+                File storyArcsDir = Configuration.storyArcsDir();
                 if (storyArcsDir.exists() && storyArcsDir.isDirectory()) {
                     File[] fileList = storyArcsDir.listFiles();
 
@@ -147,7 +147,7 @@ public class MMStaticDirectoryManager {
                 }
 
                 // check for camouflage in story arcs subdirectories
-                File storyArcsDir = Configuration.storyarcsDir();
+                File storyArcsDir = Configuration.storyArcsDir();
                 if (storyArcsDir.exists() && storyArcsDir.isDirectory()) {
                     File[] fileList = storyArcsDir.listFiles();
                     if (fileList != null) {

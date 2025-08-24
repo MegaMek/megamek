@@ -44,16 +44,16 @@ import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
 
-import megamek.common.AmmoType;
-import megamek.common.EquipmentMode;
-import megamek.common.EquipmentType;
-import megamek.common.ITechnology.AvailabilityValue;
-import megamek.common.ITechnology.Era;
-import megamek.common.ITechnology.Faction;
-import megamek.common.MiscType;
 import megamek.common.TechAdvancement;
 import megamek.common.TechAdvancement.AdvancementPhase;
-import megamek.common.WeaponType;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Era;
+import megamek.common.enums.Faction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentMode;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.WeaponType;
 import megamek.logging.MMLogger;
 
 /**
@@ -242,9 +242,9 @@ public class YamlSerializerEquipmentType {
         addVariableOrFixedValue(stats, "cost", getDoubleFieldValue(equipment, "cost"), equipment::isVariableCost);
         addVariableOrFixedValue(stats, "bv", getDoubleFieldValue(equipment, "bv"), equipment::isVariableBV);
         addVariableOrFixedValue(stats,
-              "criticals",
-              getIntegerFieldValue(equipment, "criticals"),
-              equipment::isVariableCriticals);
+              "criticalSlots",
+              getIntegerFieldValue(equipment, "criticalSlots"),
+              equipment::isVariableCriticalSlots);
 
         // Optional statistics
         YamlEncDec.addPropIfNotDefault(stats,
@@ -264,13 +264,13 @@ public class YamlSerializerEquipmentType {
               getIntegerFieldValue(equipment, "toHitModifier"),
               getIntegerFieldValue(defaultEquipment, "toHitModifier"));
         YamlEncDec.addPropIfNotDefault(stats,
-              "tankslots",
-              getIntegerFieldValue(equipment, "tankslots"),
-              getIntegerFieldValue(defaultEquipment, "tankslots"));
+              "tankSlots",
+              getIntegerFieldValue(equipment, "tankSlots"),
+              getIntegerFieldValue(defaultEquipment, "tankSlots"));
         YamlEncDec.addPropIfNotDefault(stats,
-              "svslots",
-              getIntegerFieldValue(equipment, "svslots"),
-              getIntegerFieldValue(defaultEquipment, "svslots"));
+              "svSlots",
+              getIntegerFieldValue(equipment, "svSlots"),
+              getIntegerFieldValue(defaultEquipment, "svSlots"));
         YamlEncDec.addPropIfNotDefault(stats,
               "omniFixedOnly",
               getBooleanFieldValue(equipment, "omniFixedOnly"),
@@ -311,7 +311,7 @@ public class YamlSerializerEquipmentType {
                 return new EquipmentType();
             }
         } catch (Exception e) {
-            logger.warn("Failed to create default instance for comparison: " + e.getMessage());
+            logger.warn("Failed to create default instance for comparison: {}", e.getMessage());
             return new EquipmentType();
         }
     }

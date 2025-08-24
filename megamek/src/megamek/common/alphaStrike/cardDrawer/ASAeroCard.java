@@ -156,13 +156,13 @@ public class ASAeroCard extends ASHeatTrackingCard {
         new StringDrawer("L (+4)").at(posS + 2 * delta, upperY).center().maxWidth(110).draw(g);
         new StringDrawer("E (+6)").at(posS + 3 * delta, upperY).center().maxWidth(110).draw(g);
         g.setFont(valueFont);
-        new StringDrawer(damage.S.toStringWithZero()).at(posS, lowerY).useConfig(valueConfig).center().maxWidth(110)
+        new StringDrawer(damage.S().toStringWithZero()).at(posS, lowerY).useConfig(valueConfig).center().maxWidth(110)
               .draw(g);
-        new StringDrawer(damage.M.toStringWithZero()).at(posS + delta, lowerY).useConfig(valueConfig).center()
+        new StringDrawer(damage.M().toStringWithZero()).at(posS + delta, lowerY).useConfig(valueConfig).center()
               .maxWidth(110).draw(g);
-        new StringDrawer(damage.L.toStringWithZero()).at(posS + 2 * delta, lowerY).useConfig(valueConfig).center()
+        new StringDrawer(damage.L().toStringWithZero()).at(posS + 2 * delta, lowerY).useConfig(valueConfig).center()
               .maxWidth(110).draw(g);
-        new StringDrawer(damage.E.toStringWithZero()).at(posS + 3 * delta, lowerY).useConfig(valueConfig).center()
+        new StringDrawer(damage.E().toStringWithZero()).at(posS + 3 * delta, lowerY).useConfig(valueConfig).center()
               .maxWidth(110).draw(g);
     }
 }

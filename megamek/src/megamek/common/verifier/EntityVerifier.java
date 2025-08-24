@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -50,11 +50,11 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import megamek.common.Configuration;
-import megamek.common.Entity;
-import megamek.common.MekFileParser;
-import megamek.common.MekSummary;
-import megamek.common.MekSummaryCache;
-import megamek.common.UnitType;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
+import megamek.common.units.Entity;
+import megamek.common.units.UnitType;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 
@@ -144,16 +144,15 @@ public class EntityVerifier implements MekSummaryCache.Listener {
         final NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.getDefault());
         boolean retVal = false;
         TestEntity testEntity = TestEntity.getEntityVerifier(entity);
-        String message = "";
+        String message;
 
         if (testEntity == null) {
-            message = String.format("Unknown Type: %s%nFound in: %s", entity.getDisplayName(), fileString);
-            logger.error(message);
+            logger.error("Unknown Type: {}\nFound in: {}", entity.getDisplayName(), fileString);
             return false;
         }
 
+        StringBuffer buff = new StringBuffer();
         if (verbose) {
-            StringBuffer buff = new StringBuffer();
             boolean valid = testEntity.correctEntity(buff, ammoTechLvl);
 
             if (!valid || !failsOnly) {
@@ -167,24 +166,22 @@ public class EntityVerifier implements MekSummaryCache.Listener {
                 logger.info(message);
             }
         } else {
-            StringBuffer buff = new StringBuffer();
             if (testEntity.correctEntity(buff, ammoTechLvl)) {
                 retVal = true;
             } else {
-                message = String.format("""
-                            %s
-                            Found in: %s
-                            Intro year: %d
-                            BV: %d    Cost: %s
-                            %s
+                logger.info("""
+                            {}
+                            Found in: {}
+                            Intro year: {}
+                            BV: {}    Cost: {}
+                            {}
                             """,
                       testEntity.getName(),
                       testEntity.fileString,
                       entity.getYear(),
                       entity.calculateBattleValue(),
                       numberFormat.format(entity.getCost(false)),
-                      buff.toString());
-                logger.info(message);
+                      buff);
             }
         }
 
@@ -209,17 +206,17 @@ public class EntityVerifier implements MekSummaryCache.Listener {
     // MegaMek normally runs should be checked).
     @Override
     public void doneLoading() {
-        String message = "";
+        String message;
         MekSummary[] ms = mekSummaryCache.getAllMeks();
 
-        message = String.format("""
+        logger.info("""
                     
-                    Mek Options: %s
-                    Protomek Options: %s
-                    Tank Options: %s
-                    Aero Options: %s
-                    BattleArmor Options: %s
-                    Infantry Options: %s
+                    Mek Options: {}
+                    Protomek Options: {}
+                    Tank Options: {}
+                    Aero Options: {}
+                    BattleArmor Options: {}
+                    Infantry Options: {}
                     """,
               mekOption.printOptions(),
               protomekOption.printOptions(),
@@ -227,20 +224,19 @@ public class EntityVerifier implements MekSummaryCache.Listener {
               aeroOption.printOptions(),
               baOption.printOptions(),
               infOption.printOptions());
-        logger.info(message);
 
         int failures = 0;
         Map<Integer, Integer> failedByType = new HashMap<>();
 
-        for (int i = 0; i < ms.length; i++) {
-            int unitType = UnitType.determineUnitTypeCode(ms[i].getUnitType());
+        for (MekSummary m : ms) {
+            int unitType = UnitType.determineUnitTypeCode(m.getUnitType());
             if (unitType != UnitType.GUN_EMPLACEMENT) {
-                Entity entity = loadEntity(ms[i].getSourceFile(), ms[i].getEntryName());
+                Entity entity = loadEntity(m.getSourceFile(), m.getEntryName());
                 if (entity == null) {
                     continue;
                 }
 
-                if (!checkEntity(entity, ms[i].getSourceFile().toString(), loadingVerbosity, entity.getTechLevel(),
+                if (!checkEntity(entity, m.getSourceFile().toString(), loadingVerbosity, entity.getTechLevel(),
                       failsOnly)) {
                     failures++;
                     failedByType.merge(unitType, 1, Integer::sum);
@@ -272,7 +268,7 @@ public class EntityVerifier implements MekSummaryCache.Listener {
               failedByType.getOrDefault(UnitType.TANK, 0),
               failedByType.getOrDefault(UnitType.VTOL, 0),
               failedByType.getOrDefault(UnitType.NAVAL, 0),
-              failedByType.getOrDefault(UnitType.AEROSPACEFIGHTER, 0),
+              failedByType.getOrDefault(UnitType.AEROSPACE_FIGHTER, 0),
               failedByType.getOrDefault(UnitType.AERO, 0),
               failedByType.getOrDefault(UnitType.CONV_FIGHTER, 0),
               failedByType.getOrDefault(UnitType.SMALL_CRAFT, 0),
@@ -294,50 +290,50 @@ public class EntityVerifier implements MekSummaryCache.Listener {
         boolean failsOnly = true;
 
         for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-file")) {
-                i++;
-                if (i >= args.length) {
-                    logger.error("Missing argument filename!");
-                    return;
-                }
-
-                f = new File(args[i]);
-
-                if (!f.exists()) {
-                    String message = String.format("Can't find %s!", args[i]);
-                    logger.info(message);
-                    return;
-                }
-
-                if (args[i].endsWith(".zip")) {
+            switch (args[i]) {
+                case "-file" -> {
                     i++;
                     if (i >= args.length) {
-                        logger.info("Missing Entity Name!");
+                        logger.error("Missing argument filename!");
                         return;
                     }
-                    entityName = args[i];
+
+                    f = new File(args[i]);
+
+                    if (!f.exists()) {
+                        String message = String.format("Can't find %s!", args[i]);
+                        logger.info(message);
+                        return;
+                    }
+
+                    if (args[i].endsWith(".zip")) {
+                        i++;
+                        if (i >= args.length) {
+                            logger.info("Missing Entity Name!");
+                            return;
+                        }
+                        entityName = args[i];
+                    }
                 }
-            } else if (args[i].equals("-v") || args[i].equals("-verbose")) {
-                verbose = true;
-            } else if (args[i].equals("-valid")) {
-                failsOnly = false;
-            } else if (args[i].equals("-unofficial")) {
-                ignoreUnofficial = false;
-            } else {
-                logger.error("""
-                      Error: Invalid argument.
-                      Usage:
-                      
-                      EntityVerifier [flags]
-                      
-                      Valid Flags:
-                          -file <FILENAME> Specify a file to validate,
-                                          else the data directory is checked
-                          -v              Verbose -- print detailed report
-                          -unofficial      Consider unofficial units in data dir
-                          -valid          Print verbose reports for valid units
-                      """);
-                return;
+                case "-v", "-verbose" -> verbose = true;
+                case "-valid" -> failsOnly = false;
+                case "-unofficial" -> ignoreUnofficial = false;
+                default -> {
+                    logger.error("""
+                          Error: Invalid argument.
+                          Usage:
+                          
+                          EntityVerifier [flags]
+                          
+                          Valid Flags:
+                              -file <FILENAME> Specify a file to validate,
+                                              else the data directory is checked
+                              -v              Verbose -- print detailed report
+                              -unofficial      Consider unofficial units in data dir
+                              -valid          Print verbose reports for valid units
+                          """);
+                    return;
+                }
             }
         }
 

@@ -34,6 +34,11 @@
 
 package megamek.common.weapons.tag;
 
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+
 /**
  * @author Sebastian Brocks
  * @since Sep 7, 2005
@@ -48,7 +53,7 @@ public class CLLightTAG extends TAGWeapon {
         addLookupName("Clan Light TAG");
         addLookupName("Light TAG [Clan]");
         tonnage = 0.5;
-        criticals = 1;
+        criticalSlots = 1;
         hittable = true;
         spreadable = false;
         heat = 0;

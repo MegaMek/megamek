@@ -34,9 +34,9 @@ package megamek.client.generator.skillGenerators;
 
 import megamek.client.generator.enums.SkillGeneratorMethod;
 import megamek.client.generator.enums.SkillGeneratorType;
-import megamek.common.Entity;
-import megamek.common.Infantry;
-import megamek.common.LAMPilot;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.LAMPilot;
 import megamek.common.enums.SkillLevel;
 
 public abstract class AbstractSkillGenerator {

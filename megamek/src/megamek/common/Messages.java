@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -51,9 +51,6 @@ public class Messages {
     /**
      * Returns the translated value given the key for that value in the common Resource Bundle directory.
      *
-     * @param key
-     *
-     * @return
      */
     public static String getString(String key) {
         try {
@@ -66,9 +63,6 @@ public class Messages {
     /**
      * Returns true if the resource bundle has a translated value for the given key.
      *
-     * @param key
-     *
-     * @return
      */
     public static boolean hasString(String key) {
         return RESOURCE_BUNDLE.containsKey(key);

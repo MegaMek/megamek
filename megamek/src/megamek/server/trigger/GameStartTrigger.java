@@ -33,7 +33,7 @@
 
 package megamek.server.trigger;
 
-import megamek.common.IGame;
+import megamek.common.game.IGame;
 import megamek.common.enums.GamePhase;
 
 /**

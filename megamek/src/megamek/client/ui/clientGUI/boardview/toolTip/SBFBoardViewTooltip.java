@@ -38,9 +38,9 @@ import java.util.List;
 
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.tooltip.SBFInGameObjectTooltip;
-import megamek.common.BoardLocation;
-import megamek.common.Coords;
-import megamek.common.InGameObject;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.game.InGameObject;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.common.strategicBattleSystems.SBFUnitPlaceHolder;
 

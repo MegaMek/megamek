@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -69,15 +69,15 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String MEK_HIT_LOC_LOG = "MekHitLocLog";
     public static final String MEMORY_DUMP_ON = "MemoryDumpOn";
     public static final String DEBUG_OUTPUT_ON = "DebugOutputOn";
-    public static final String GAMELOG_KEEP = "KeepGameLog";
-    public static final String GAMELOG_FILENAME = "GameLogFilename";
-    public static final String AUTO_RESOLVE_GAMELOG_FILENAME = "AutoResolveGameLogFilename";
+    public static final String GAME_LOG_KEEP = "KeepGameLog";
+    public static final String GAME_LOG_FILENAME = "GameLogFilename";
+    public static final String AUTO_RESOLVE_GAME_LOG_FILENAME = "AutoResolveGameLogFilename";
     public static final String STAMP_FILENAMES = "StampFilenames";
     public static final String DATA_LOGGING = "GameDatasetLogging";
     public static final String STAMP_FORMAT = "StampFormat";
     public static final String SHOW_UNIT_ID = "ShowUnitId";
     public static final String UNIT_START_CHAR = "UnitStartChar";
-    public static final String DEFAULT_AUTOEJECT_DISABLED = "DefaultAutoejectDisabled";
+    public static final String DEFAULT_AUTO_EJECT_DISABLED = "DefaultAutoejectDisabled";
     public static final String USE_AVERAGE_SKILLS = "UseAverageSkills";
     public static final String USE_GP_IN_UNIT_SELECTION = "UseGPinUnitSelection";
     public static final String GENERATE_NAMES = "GenerateNames";
@@ -90,7 +90,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String MAP_WIDTH = "MapWidth";
     public static final String MAP_HEIGHT = "MapHeight";
     public static final String REPORT_KEYWORDS = "ReportKeywords";
-    private static final String REPORTKEYWORDSDEFAULTS = "Needs\nRolls\nTakes\nHit\nFalls\nSkill Roll\nPilot Skill\nPhase\nDestroyed\nDamage";
+    private static final String REPORT_KEYWORDS_DEFAULTS = "Needs\nRolls\nTakes\nHit\nFalls\nSkill Roll\nPilot Skill\nPhase\nDestroyed\nDamage";
     public static final String IP_ADDRESSES_IN_CHAT = "IPAddressesInChat";
     public static final String START_SEARCHLIGHTS_ON = "StartSearchlightsOn";
     public static final String ENABLE_EXPERIMENTAL_BOT_FEATURES = "EnableExperimentalBotFeatures";
@@ -122,9 +122,9 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(LOG_DIRECTORY, "logs");
         store.setDefault(MEK_DIRECTORY, store.getDefaultString(DATA_DIRECTORY) + File.separator + "mekfiles");
         store.setDefault(METASERVER_NAME, "https://api.megamek.org/servers/announce");
-        store.setDefault(GAMELOG_KEEP, true);
-        store.setDefault(GAMELOG_FILENAME, "gamelog.html");
-        store.setDefault(AUTO_RESOLVE_GAMELOG_FILENAME, "simulation.html");
+        store.setDefault(GAME_LOG_KEEP, true);
+        store.setDefault(GAME_LOG_FILENAME, "gamelog.html");
+        store.setDefault(AUTO_RESOLVE_GAME_LOG_FILENAME, "simulation.html");
         store.setDefault(STAMP_FORMAT, "_yyyy-MM-dd_HH-mm-ss");
         store.setDefault(UNIT_START_CHAR, 'A');
         store.setDefault(GUI_NAME, "swing");
@@ -138,7 +138,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(MAP_HEIGHT, 1);
         store.setDefault(DEBUG_OUTPUT_ON, false);
         store.setDefault(MEMORY_DUMP_ON, false);
-        store.setDefault(REPORT_KEYWORDS, REPORTKEYWORDSDEFAULTS);
+        store.setDefault(REPORT_KEYWORDS, REPORT_KEYWORDS_DEFAULTS);
         store.setDefault(IP_ADDRESSES_IN_CHAT, false);
         store.setDefault(START_SEARCHLIGHTS_ON, true);
         store.setDefault(ENABLE_EXPERIMENTAL_BOT_FEATURES, false);
@@ -165,8 +165,8 @@ public class ClientPreferences extends PreferenceStoreProxy {
         return store.getAdvancedProperties();
     }
 
-    public boolean defaultAutoejectDisabled() {
-        return store.getBoolean(DEFAULT_AUTOEJECT_DISABLED);
+    public boolean defaultAutoEjectDisabled() {
+        return store.getBoolean(DEFAULT_AUTO_EJECT_DISABLED);
     }
 
     public boolean useAverageSkills() {
@@ -244,11 +244,11 @@ public class ClientPreferences extends PreferenceStoreProxy {
     }
 
     public String getGameLogFilename() {
-        return store.getString(GAMELOG_FILENAME);
+        return store.getString(GAME_LOG_FILENAME);
     }
 
     public String getAutoResolveGameLogFilename() {
-        return store.getString(AUTO_RESOLVE_GAMELOG_FILENAME);
+        return store.getString(AUTO_RESOLVE_GAME_LOG_FILENAME);
     }
 
     public boolean dataLoggingEnabled() {
@@ -272,7 +272,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     }
 
     public boolean keepGameLog() {
-        return store.getBoolean(GAMELOG_KEEP);
+        return store.getBoolean(GAME_LOG_KEEP);
     }
 
     public boolean memoryDumpOn() {
@@ -283,8 +283,8 @@ public class ClientPreferences extends PreferenceStoreProxy {
         return store.getBoolean(DEBUG_OUTPUT_ON);
     }
 
-    public void setDefaultAutoejectDisabled(boolean state) {
-        store.setValue(DEFAULT_AUTOEJECT_DISABLED, state);
+    public void setDefaultAutoEjectDisabled(boolean state) {
+        store.setValue(DEFAULT_AUTO_EJECT_DISABLED, state);
     }
 
     public void setUseAverageSkills(boolean state) {
@@ -300,7 +300,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     }
 
     public void setKeepGameLog(boolean state) {
-        store.setValue(GAMELOG_KEEP, state);
+        store.setValue(GAME_LOG_KEEP, state);
     }
 
     public void setLastConnectAddr(String serverAddr) {
@@ -332,11 +332,11 @@ public class ClientPreferences extends PreferenceStoreProxy {
     }
 
     public void setGameLogFilename(String name) {
-        store.setValue(GAMELOG_FILENAME, name);
+        store.setValue(GAME_LOG_FILENAME, name);
     }
 
     public void setAutoResolveGameLogFilename(String name) {
-        store.setValue(AUTO_RESOLVE_GAMELOG_FILENAME, name);
+        store.setValue(AUTO_RESOLVE_GAME_LOG_FILENAME, name);
     }
 
     public void setPrintEntityChange(boolean print) {

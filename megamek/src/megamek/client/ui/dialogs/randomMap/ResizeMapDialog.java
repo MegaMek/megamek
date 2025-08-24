@@ -65,7 +65,7 @@ import megamek.client.ui.clientGUI.IMapSettingsObserver;
 import megamek.client.ui.util.verifier.VerifyInRange;
 import megamek.client.ui.widget.VerifiableTextField;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.MapSettings;
+import megamek.common.loaders.MapSettings;
 import megamek.logging.MMLogger;
 
 /**

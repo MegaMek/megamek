@@ -33,7 +33,11 @@
 
 package megamek.common;
 
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
+import megamek.common.units.Entity;
 
 public class AtmosphericLandingMovePath extends MovePath {
 

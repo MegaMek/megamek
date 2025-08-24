@@ -38,7 +38,7 @@ import java.util.Collections;
 import java.util.List;
 
 import megamek.client.ui.Messages;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 
 /**
  * <p>Argument for a List of Coords from HexNumber type.</p>

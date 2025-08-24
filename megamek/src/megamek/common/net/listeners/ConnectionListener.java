@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -60,9 +60,9 @@ public class ConnectionListener implements EventListener {
     /**
      * Called when connection is established. The default behavior is to do nothing.
      *
-     * @param evt connection event
+     * @param event connection event
      */
-    public void connected(ConnectedEvent evt) {
+    public void connected(ConnectedEvent event) {
 
     }
 

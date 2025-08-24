@@ -66,17 +66,31 @@ import java.util.Vector;
 
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.*;
+import megamek.common.CriticalSlot;
+import megamek.common.Hex;
+import megamek.common.LosEffects;
+import megamek.common.TargetRollModifier;
+import megamek.common.ToHitData;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentFlag;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
-import megamek.common.planetaryconditions.Atmosphere;
-import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.common.weapons.StopSwarmAttack;
+import megamek.common.planetaryConditions.Atmosphere;
+import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.units.*;
+import megamek.common.weapons.attacks.StopSwarmAttack;
 import megamek.common.weapons.missiles.ATMWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
 import megamek.server.SmokeCloud;
@@ -241,7 +255,7 @@ class FireControlTest {
         // weapon type is AMS
         // since it's more of a pain to set up all the weapon types, we simply pretend
         // the feature is turned on
-        when(mockGameOptions.booleanOption(eq(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS))).thenReturn(true);
+        when(mockGameOptions.booleanOption(eq(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_MANUAL_AMS))).thenReturn(true);
 
         mockHex = mock(Hex.class);
 
@@ -1255,7 +1269,8 @@ class FireControlTest {
         when(mockTargetState.isProne()).thenReturn(false);
         when(mockTarget.isAirborne()).thenReturn(false);
         when(mockTarget.isAirborneVTOLorWIGE()).thenReturn(false);
-        when(mockGameOptions.booleanOption(eq(OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL))).thenReturn(false);
+        when(mockGameOptions.booleanOption(eq(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_STANDING_STILL))).thenReturn(
+              false);
         when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(Terrain.LEVEL_NONE);
         when(mockHex.terrainLevel(Terrains.JUNGLE)).thenReturn(Terrain.LEVEL_NONE);
         when(mockHex.terrainLevel(Terrains.SMOKE)).thenReturn(Terrain.LEVEL_NONE);
@@ -1438,7 +1453,8 @@ class FireControlTest {
         when(mockTargetState.getMovementType()).thenReturn(EntityMovementType.MOVE_NONE);
 
         // Turn on Tac-Ops Standing Still rules.
-        when(mockGameOptions.booleanOption(eq(OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL))).thenReturn(true);
+        when(mockGameOptions.booleanOption(eq(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_STANDING_STILL))).thenReturn(
+              true);
         expected = new ToHitData();
         expected.addModifier(FireControl.TH_TAR_NO_MOVE);
         assertToHitDataEquals(expected,
@@ -1457,7 +1473,8 @@ class FireControlTest {
                     mockTargetState,
                     10,
                     mockGame));
-        when(mockGameOptions.booleanOption(eq(OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL))).thenReturn(false);
+        when(mockGameOptions.booleanOption(eq(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_STANDING_STILL))).thenReturn(
+              false);
         when(mockTargetState.getMovementType()).thenReturn(EntityMovementType.MOVE_NONE);
 
         // Have the target sprint.
@@ -1714,14 +1731,14 @@ class FireControlTest {
         when(mockShooter.getElevation()).thenReturn(0);
         when(mockShooter.relHeight()).thenReturn(2);
         when(mockShooter.getWeightClass()).thenReturn(EntityWeightClass.WEIGHT_LIGHT);
-        when(mockShooter.isLocationBad(Mek.LOC_LARM)).thenReturn(false);
-        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LARM)).thenReturn(true);
-        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_LARM)).thenReturn(true);
-        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LARM)).thenReturn(true);
-        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM)).thenReturn(true);
-        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_UPPER_LEG, Mek.LOC_LLEG)).thenReturn(true);
-        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_LOWER_LEG, Mek.LOC_LLEG)).thenReturn(true);
-        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LLEG)).thenReturn(true);
+        when(mockShooter.isLocationBad(Mek.LOC_LEFT_ARM)).thenReturn(false);
+        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LEFT_ARM)).thenReturn(true);
+        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_LEFT_ARM)).thenReturn(true);
+        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LEFT_ARM)).thenReturn(true);
+        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM)).thenReturn(true);
+        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_UPPER_LEG, Mek.LOC_LEFT_LEG)).thenReturn(true);
+        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_LOWER_LEG, Mek.LOC_LEFT_LEG)).thenReturn(true);
+        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_LEG)).thenReturn(true);
 
         final Hex mockTargetHex = mock(Hex.class);
         when(mockTargetHex.getLevel()).thenReturn(0);
@@ -1755,7 +1772,8 @@ class FireControlTest {
         when(((Mek) mockShooter).getCockpitType()).thenReturn(Mek.COCKPIT_STANDARD);
 
         // Test turning on the TacOps Attacker Weight modifier.
-        when(mockGameOptions.booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR)).thenReturn(true);
+        when(mockGameOptions.booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_PHYSICAL_ATTACK_PSR)).thenReturn(
+              true);
         expected = new ToHitData();
         expected.addModifier(mockCrew.getPiloting() - 2, FireControl.TH_PHY_BASE);
         expected.addModifier(FireControl.TH_PHY_LIGHT);
@@ -1787,7 +1805,8 @@ class FireControlTest {
                     mockTargetState,
                     PhysicalAttackType.LEFT_KICK,
                     mockGame));
-        when(mockGameOptions.booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR)).thenReturn(false);
+        when(mockGameOptions.booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_PHYSICAL_ATTACK_PSR)).thenReturn(
+              false);
         when(mockShooter.getWeightClass()).thenReturn(EntityWeightClass.WEIGHT_LIGHT);
 
         // Test trying to kick infantry in a different hex.
@@ -1816,7 +1835,7 @@ class FireControlTest {
         when(mockTargetState.getPosition()).thenReturn(new Coords(0, 1));
 
         // Test kicking with a busted foot.
-        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LLEG)).thenReturn(false);
+        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_LEG)).thenReturn(false);
         expected = new ToHitData();
         expected.addModifier(mockCrew.getPiloting() - 2, FireControl.TH_PHY_BASE);
         expected.addModifier(FireControl.TH_PHY_K_FOOT);
@@ -1827,10 +1846,10 @@ class FireControlTest {
                     mockTargetState,
                     PhysicalAttackType.LEFT_KICK,
                     mockGame));
-        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LLEG)).thenReturn(true);
+        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_LEG)).thenReturn(true);
 
         // Test kicking with a bad lower leg actuator.
-        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_LOWER_LEG, Mek.LOC_LLEG)).thenReturn(false);
+        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_LOWER_LEG, Mek.LOC_LEFT_LEG)).thenReturn(false);
         expected = new ToHitData();
         expected.addModifier(mockCrew.getPiloting() - 2, FireControl.TH_PHY_BASE);
         expected.addModifier(FireControl.TH_PHY_K_LOWER_LEG);
@@ -1841,10 +1860,10 @@ class FireControlTest {
                     mockTargetState,
                     PhysicalAttackType.LEFT_KICK,
                     mockGame));
-        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_LOWER_LEG, Mek.LOC_LLEG)).thenReturn(true);
+        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_LOWER_LEG, Mek.LOC_LEFT_LEG)).thenReturn(true);
 
         // Test kicking with a bad upper leg actuator.
-        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_UPPER_LEG, Mek.LOC_LLEG)).thenReturn(false);
+        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_UPPER_LEG, Mek.LOC_LEFT_LEG)).thenReturn(false);
         expected = new ToHitData();
         expected.addModifier(mockCrew.getPiloting() - 2, FireControl.TH_PHY_BASE);
         expected.addModifier(FireControl.TH_PHY_K_UPPER_LEG);
@@ -1855,7 +1874,7 @@ class FireControlTest {
                     mockTargetState,
                     PhysicalAttackType.LEFT_KICK,
                     mockGame));
-        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_UPPER_LEG, Mek.LOC_RLEG)).thenReturn(true);
+        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_UPPER_LEG, Mek.LOC_RIGHT_LEG)).thenReturn(true);
 
         // Test kicking with a busted hip.
         when(mockShooter.hasHipCrit()).thenReturn(true);
@@ -1918,7 +1937,7 @@ class FireControlTest {
         when(mockCrew.getPiloting()).thenReturn(5);
 
         /// Test having a damaged/missing hand.
-        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM)).thenReturn(false);
+        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM)).thenReturn(false);
         expected = new ToHitData();
         expected.addModifier(mockCrew.getPiloting(), FireControl.TH_PHY_BASE);
         expected.addModifier(FireControl.TH_PHY_P_HAND);
@@ -1929,10 +1948,10 @@ class FireControlTest {
                     mockTargetState,
                     PhysicalAttackType.LEFT_PUNCH,
                     mockGame));
-        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM)).thenReturn(true);
+        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM)).thenReturn(true);
 
         /// Test having a damaged/missing upper arm.
-        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_LARM)).thenReturn(false);
+        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_LEFT_ARM)).thenReturn(false);
         expected = new ToHitData();
         expected.addModifier(mockCrew.getPiloting(), FireControl.TH_PHY_BASE);
         expected.addModifier(FireControl.TH_PHY_P_UPPER_ARM);
@@ -1943,10 +1962,10 @@ class FireControlTest {
                     mockTargetState,
                     PhysicalAttackType.LEFT_PUNCH,
                     mockGame));
-        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_LARM)).thenReturn(true);
+        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_LEFT_ARM)).thenReturn(true);
 
         /// Test having a damaged/missing lower arm.
-        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LARM)).thenReturn(false);
+        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LEFT_ARM)).thenReturn(false);
         expected = new ToHitData();
         expected.addModifier(mockCrew.getPiloting(), FireControl.TH_PHY_BASE);
         expected.addModifier(FireControl.TH_PHY_P_LOWER_ARM);
@@ -1957,10 +1976,10 @@ class FireControlTest {
                     mockTargetState,
                     PhysicalAttackType.LEFT_PUNCH,
                     mockGame));
-        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LARM)).thenReturn(true);
+        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LEFT_ARM)).thenReturn(true);
 
         // Test trying to punch with a bad shoulder.
-        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RARM)).thenReturn(false);
+        when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RIGHT_ARM)).thenReturn(false);
         expected = new ToHitData(FireControl.TH_PHY_P_NO_SHOULDER);
         assertToHitDataEquals(expected,
               testFireControl.guessToHitModifierPhysical(mockShooter,
@@ -1971,7 +1990,7 @@ class FireControlTest {
                     mockGame));
 
         // Test trying to punch with a destroyed arm.
-        when(mockShooter.isLocationBad(Mek.LOC_RARM)).thenReturn(true);
+        when(mockShooter.isLocationBad(Mek.LOC_RIGHT_ARM)).thenReturn(true);
         expected = new ToHitData(FireControl.TH_PHY_P_NO_ARM);
         assertToHitDataEquals(expected,
               testFireControl.guessToHitModifierPhysical(mockShooter,
@@ -2063,7 +2082,7 @@ class FireControlTest {
 
     @Test
     void testGuessToHitModifierForWeapon() {
-        when(mockGameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)).thenReturn(false);
+        when(mockGameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)).thenReturn(false);
         when(mockTarget.hasQuirk(eq(OptionsConstants.QUIRK_POS_LOW_PROFILE))).thenReturn(false);
         when(mockShooterState.getFacing()).thenReturn(1);
         doReturn(true).when(testFireControl).isInArc(any(Coords.class), anyInt(), any(Coords.class), anyInt());
@@ -2091,7 +2110,7 @@ class FireControlTest {
         final int MOCK_WEAPON_ID = 1;
         final WeaponMounted mockWeapon = mock(WeaponMounted.class);
         when(mockWeapon.canFire()).thenReturn(true);
-        when(mockWeapon.getLocation()).thenReturn(Mek.LOC_RARM);
+        when(mockWeapon.getLocation()).thenReturn(Mek.LOC_RIGHT_ARM);
         when(mockShooter.getEquipmentNum(eq(mockWeapon))).thenReturn(MOCK_WEAPON_ID);
         when(mockShooter.isSecondaryArcWeapon(MOCK_WEAPON_ID)).thenReturn(false);
 
@@ -2119,7 +2138,7 @@ class FireControlTest {
                     mockGame));
 
         // Test weapon quirks.
-        when(mockWeapon.hasQuirk(eq(OptionsConstants.QUIRK_WEAP_POS_ACCURATE))).thenReturn(true);
+        when(mockWeapon.hasQuirk(eq(OptionsConstants.QUIRK_WEAPON_POS_ACCURATE))).thenReturn(true);
         expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expected.addModifier(FireControl.TH_MEDIUM_RANGE);
         expected.addModifier(FireControl.TH_ACCURATE_WEAPON);
@@ -2131,8 +2150,8 @@ class FireControlTest {
                     mockWeapon,
                     mockAmmo,
                     mockGame));
-        when(mockWeapon.hasQuirk(eq(OptionsConstants.QUIRK_WEAP_POS_ACCURATE))).thenReturn(false);
-        when(mockWeapon.hasQuirk(eq(OptionsConstants.QUIRK_WEAP_NEG_INACCURATE))).thenReturn(true);
+        when(mockWeapon.hasQuirk(eq(OptionsConstants.QUIRK_WEAPON_POS_ACCURATE))).thenReturn(false);
+        when(mockWeapon.hasQuirk(eq(OptionsConstants.QUIRK_WEAPON_NEG_INACCURATE))).thenReturn(true);
         expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expected.addModifier(FireControl.TH_MEDIUM_RANGE);
         expected.addModifier(FireControl.TH_INACCURATE_WEAPON);
@@ -2144,7 +2163,7 @@ class FireControlTest {
                     mockWeapon,
                     mockAmmo,
                     mockGame));
-        when(mockWeapon.hasQuirk(eq(OptionsConstants.QUIRK_WEAP_NEG_INACCURATE))).thenReturn(false);
+        when(mockWeapon.hasQuirk(eq(OptionsConstants.QUIRK_WEAPON_NEG_INACCURATE))).thenReturn(false);
 
         // Test long range shooter quirks.
         when(mockTargetState.getPosition()).thenReturn(new Coords(0, 15));
@@ -2442,7 +2461,7 @@ class FireControlTest {
                     mockWeapon,
                     mockAmmo,
                     mockGame));
-        when(mockGameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)).thenReturn(true);
+        when(mockGameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)).thenReturn(true);
         when(mockTargetState.getPosition()).thenReturn(new Coords(20, 0));
         expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expected.addModifier(FireControl.TH_EXTREME_RANGE);
@@ -2456,14 +2475,14 @@ class FireControlTest {
                     mockGame));
         // todo Test infantry range mods.
         when(mockTargetState.getPosition()).thenReturn(mockTargetCoords);
-        when(mockGameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)).thenReturn(false);
+        when(mockGameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)).thenReturn(false);
 
         // todo Test swarming and leg attacks.
 
         // Test sensor damage.
         expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expected.addModifier(FireControl.TH_MEDIUM_RANGE);
-        when(mockShooter.getBadCriticals(eq(CriticalSlot.TYPE_SYSTEM),
+        when(mockShooter.getBadCriticalSlots(eq(CriticalSlot.TYPE_SYSTEM),
               eq(Mek.SYSTEM_SENSORS),
               eq(Mek.LOC_HEAD))).thenReturn(2);
         expected.addModifier(2, FireControl.TH_SENSORS);
@@ -2489,7 +2508,7 @@ class FireControlTest {
                     mockWeapon,
                     mockAmmo,
                     mockGame));
-        when(mockShooter.getBadCriticals(eq(CriticalSlot.TYPE_SYSTEM),
+        when(mockShooter.getBadCriticalSlots(eq(CriticalSlot.TYPE_SYSTEM),
               eq(Mek.SYSTEM_SENSORS),
               eq(Mek.LOC_HEAD))).thenReturn(0);
 
@@ -2562,8 +2581,8 @@ class FireControlTest {
 
         // Test a prone mek w/ no arms.
         when(mockShooterState.isProne()).thenReturn(true);
-        when(mockShooter.isLocationBad(Mek.LOC_RARM)).thenReturn(true);
-        when(mockShooter.isLocationBad(Mek.LOC_LARM)).thenReturn(true);
+        when(mockShooter.isLocationBad(Mek.LOC_RIGHT_ARM)).thenReturn(true);
+        when(mockShooter.isLocationBad(Mek.LOC_LEFT_ARM)).thenReturn(true);
         expected = new ToHitData(FireControl.TH_WEAPON_PRONE_ARMLESS);
         assertToHitDataEquals(expected,
               testFireControl.guessToHitModifierForWeapon(mockShooter,
@@ -2574,7 +2593,7 @@ class FireControlTest {
                     mockAmmo,
                     mockGame));
         // Propping self up on firing arm.
-        when(mockShooter.isLocationBad(Mek.LOC_LARM)).thenReturn(false);
+        when(mockShooter.isLocationBad(Mek.LOC_LEFT_ARM)).thenReturn(false);
         expected = new ToHitData(FireControl.TH_WEAPON_ARM_PROP);
         assertToHitDataEquals(expected,
               testFireControl.guessToHitModifierForWeapon(mockShooter,
@@ -2585,7 +2604,7 @@ class FireControlTest {
                     mockAmmo,
                     mockGame));
         // Trying to fire a leg weapon.
-        when(mockWeapon.getLocation()).thenReturn(Mek.LOC_LLEG);
+        when(mockWeapon.getLocation()).thenReturn(Mek.LOC_LEFT_LEG);
         expected = new ToHitData(FireControl.TH_WEAPON_PRONE_LEG);
         assertToHitDataEquals(expected,
               testFireControl.guessToHitModifierForWeapon(mockShooter,

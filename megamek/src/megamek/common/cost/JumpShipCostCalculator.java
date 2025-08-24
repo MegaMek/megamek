@@ -34,11 +34,11 @@
 package megamek.common.cost;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.BattleArmorBay;
-import megamek.common.Bay;
-import megamek.common.InfantryBay;
-import megamek.common.Jumpship;
+import megamek.common.bays.BattleArmorBay;
+import megamek.common.bays.Bay;
+import megamek.common.bays.InfantryBay;
 import megamek.common.equipment.ArmorType;
+import megamek.common.units.Jumpship;
 
 public class JumpShipCostCalculator {
 
@@ -59,7 +59,7 @@ public class JumpShipCostCalculator {
         // Fire Control Computer
         costs[costIdx++] += 100000;
         // Gunnery Control Systems
-        costs[costIdx++] += 10000 * jumpShip.getArcswGuns();
+        costs[costIdx++] += 10000 * jumpShip.getArcsWithGuns();
         // Structural Integrity
         costs[costIdx++] += 100000 * jumpShip.getSI();
 
@@ -83,7 +83,7 @@ public class JumpShipCostCalculator {
         driveCost[driveIdx++] += 50000.0 * jumpShip.getKFIntegrity();
         // Sail
         driveCost[driveIdx++] += 50000.0 * (30 + (jumpShip.getWeight() / 7500.0));
-        // Charging System
+        // Charging SystemFluff
         driveCost[driveIdx++] += 500000.0 + (200000.0 * jumpShip.getDocks(true));
 
         for (int i = 0; i < driveIdx; i++) {
@@ -127,19 +127,19 @@ public class JumpShipCostCalculator {
         costs[costIdx++] += deckCost;
 
         // Transport Bays
-        int baydoors = 0;
+        int bayDoors = 0;
         long bayCost = 0;
         long quartersCost = 0;
         // Passenger and crew quarters and infantry bays are considered part of the structure
         // and don't add to the cost
         for (Bay next : jumpShip.getTransportBays()) {
-            baydoors += next.getDoors();
+            bayDoors += next.getDoors();
             if (!next.isQuarters() && !(next instanceof InfantryBay) && !(next instanceof BattleArmorBay)) {
                 bayCost += next.getCost();
             }
         }
 
-        costs[costIdx++] += bayCost + (baydoors * 1000L);
+        costs[costIdx++] += bayCost + (bayDoors * 1000L);
         costs[costIdx++] = quartersCost;
 
         // HPG
@@ -162,7 +162,7 @@ public class JumpShipCostCalculator {
 
         String[] systemNames = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunnery Control Systems",
                                  "Structural Integrity", "Engine", "Engine Control Unit",
-                                 "KF Drive", "KF Drive Support System", "Attitude Thrusters", "Docking Collars",
+                                 "KF Drive", "KF Drive Support SystemFluff", "Attitude Thrusters", "Docking Collars",
                                  "Fuel Tanks", "Armor", "Heat Sinks", "Life Boats/Escape Pods", "Grav Decks",
                                  "Bays", "Quarters", "HPG", "Weapons/Equipment", "Weight Multiplier" };
         CostCalculator.fillInReport(costReport, jumpShip, ignoreAmmo, systemNames, 20, cost, costs);

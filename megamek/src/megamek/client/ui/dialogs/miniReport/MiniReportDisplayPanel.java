@@ -59,7 +59,7 @@ import megamek.client.ui.dialogs.unitDisplay.IHasUnitDisplay;
 import megamek.client.ui.util.BASE64ToolKit;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.enums.GamePhase;

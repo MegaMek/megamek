@@ -56,9 +56,9 @@ import megamek.client.ui.widget.picmap.PMSimplePolygonArea;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PMValueLabel;
 import megamek.common.Configuration;
-import megamek.common.DockingCollar;
-import megamek.common.Entity;
-import megamek.common.Jumpship;
+import megamek.common.equipment.DockingCollar;
+import megamek.common.units.Entity;
+import megamek.common.units.Jumpship;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**

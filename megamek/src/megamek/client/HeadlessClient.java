@@ -41,8 +41,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-import megamek.common.Entity;
-import megamek.common.EntityListFile;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityListFile;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEndEvent;
 import megamek.common.event.GameListenerAdapter;

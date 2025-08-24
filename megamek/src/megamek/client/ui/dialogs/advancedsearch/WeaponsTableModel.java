@@ -37,7 +37,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 import megamek.common.TechConstants;
-import megamek.common.WeaponType;
+import megamek.common.equipment.WeaponType;
 
 /**
  * A table model for displaying weapons

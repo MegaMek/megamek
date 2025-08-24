@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,7 +43,7 @@ import megamek.common.net.connections.DataStreamConnection;
  * Connections factory. Creates the Client/Server connections
  */
 public class ConnectionFactory {
-    private static ConnectionFactory instance = new ConnectionFactory();
+    private static final ConnectionFactory instance = new ConnectionFactory();
 
     private ConnectionFactory() {
 

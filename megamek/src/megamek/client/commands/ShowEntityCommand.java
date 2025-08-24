@@ -33,7 +33,7 @@
 package megamek.client.commands;
 
 import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.options.OptionsConstants;
 
 /**

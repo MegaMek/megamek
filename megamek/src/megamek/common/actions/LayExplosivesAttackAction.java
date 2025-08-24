@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,18 +34,21 @@
 
 package megamek.common.actions;
 
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
+import java.io.Serial;
+
 import megamek.common.ToHitData;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Targetable;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 public class LayExplosivesAttackAction extends AbstractAttackAction {
+    @Serial
     private static final long serialVersionUID = -8799415934269686590L;
 
     public LayExplosivesAttackAction(int entityId, int targetId) {
@@ -60,20 +63,25 @@ public class LayExplosivesAttackAction extends AbstractAttackAction {
      * Damage that the specified platoon does with explosives
      */
     public static int getDamageFor(Entity entity) {
-        if (!(entity instanceof Infantry)) {
+        if (!(entity instanceof Infantry inf)) {
             return 0;
         }
-        Infantry inf = (Infantry) entity;
-        InfantryWeapon srmWeap = (InfantryWeapon) EquipmentType
+        InfantryWeapon srmWeapon = (InfantryWeapon) EquipmentType
               .get("SRM Launcher (Std, Two-Shot)");
-        int dmg = (int) Math.round(srmWeap.getInfantryDamage()
+        int dmg = (int) Math.round(srmWeapon.getInfantryDamage()
               * inf.getShootingStrength());
         int numTurns = Math.min(6, inf.turnsLayingExplosives);
         return dmg * numTurns;
     }
 
     public ToHitData toHit(Game game) {
-        return toHit(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()));
+        Targetable target = game.getTarget(getTargetType(), getTargetId());
+
+        if (target == null) {
+            return null;
+        }
+
+        return toHit(game, getEntityId(), target);
     }
 
     /**

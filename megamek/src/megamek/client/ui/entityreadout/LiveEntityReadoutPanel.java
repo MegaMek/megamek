@@ -35,7 +35,7 @@ package megamek.client.ui.entityreadout;
 import java.util.Objects;
 
 import megamek.client.ui.dialogs.unitSelectorDialogs.ConfigurableMekViewPanel;
-import megamek.common.Game;
+import megamek.common.game.Game;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameEntityNewOffboardEvent;

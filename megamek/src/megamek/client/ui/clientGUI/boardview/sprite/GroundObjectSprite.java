@@ -40,7 +40,7 @@ import java.awt.Rectangle;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 

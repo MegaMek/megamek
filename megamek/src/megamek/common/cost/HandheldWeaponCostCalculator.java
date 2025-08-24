@@ -34,7 +34,7 @@
 package megamek.common.cost;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.HandheldWeapon;
+import megamek.common.equipment.HandheldWeapon;
 
 public class HandheldWeaponCostCalculator {
     public static double calculateCost(HandheldWeapon hhw, CalculationReport report, boolean ignoreAmmo) {

@@ -39,7 +39,7 @@ import java.awt.Rectangle;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.common.Configuration;
-import megamek.common.Flare;
+import megamek.common.equipment.Flare;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -54,8 +54,8 @@ import megamek.common.alphaStrike.ASSpecialAbilityCollection;
 import megamek.common.alphaStrike.ASSpecialAbilityCollector;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSUA;
-import megamek.common.jacksonadapters.SBFUnitDeserializer;
-import megamek.common.jacksonadapters.SBFUnitSerializer;
+import megamek.common.jacksonAdapters.SBFUnitDeserializer;
+import megamek.common.jacksonAdapters.SBFUnitSerializer;
 
 /**
  * Represents an SBF Unit (Ground SBF Unit or Aerospace Flight) which contains between 1 and 6 AlphaStrike elements and
@@ -86,7 +86,7 @@ public class SBFUnit implements ASSpecialAbilityCollector, BattleForceSUAFormatt
     private final ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
     private List<AlphaStrikeElement> elements = new ArrayList<>();
 
-    // ingame values
+    // in game values
     private int currentArmor;
     private int damageCrits = 0;
     private int targetingCrits = 0;
@@ -281,10 +281,7 @@ public class SBFUnit implements ASSpecialAbilityCollector, BattleForceSUAFormatt
         if ((type == SBFElementType.BM) && (sua == SOA || sua == SRCH)) {
             return false;
         }
-        if ((type == SBFElementType.V) && (sua == SRCH)) {
-            return false;
-        }
-        return true;
+        return (type != SBFElementType.V) || (sua != SRCH);
     }
 
     @Override
@@ -303,7 +300,7 @@ public class SBFUnit implements ASSpecialAbilityCollector, BattleForceSUAFormatt
             return sua.toString();
         } else if (sua == FLK) {
             ASDamageVector flkDamage = specialAbilities.getFLK();
-            return sua.toString() + flkDamage.M.damage + "/" + flkDamage.L.damage;
+            return sua.toString() + flkDamage.M().damage + "/" + flkDamage.L().damage;
         } else if (sua.isTransport()) {
             String result = sua + suaObject.toString();
             BattleForceSUA door = sua.getDoor();

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org) Copyright (C)
  * Copyright (C) 2005 Mike Gratton <mike@vee.net>
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,8 +35,8 @@
 
 package megamek.common.loaders;
 
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.units.Entity;
 import megamek.common.util.BuildingBlock;
 
 /**

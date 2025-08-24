@@ -60,9 +60,22 @@ import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PicMap;
-import megamek.common.*;
+import megamek.common.Configuration;
+import megamek.common.CriticalSlot;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentMode;
+import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Tank;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
@@ -357,7 +370,7 @@ class SystemPanel extends PicMap
         locModel.insertElementAt("-----", LOC_SPACER);
         for (int loc = 0; loc < en.locations(); loc++) {
             int idx = loc + LOC_OFFSET;
-            if (en.getNumberOfCriticals(loc) > 0) {
+            if (en.getNumberOfCriticalSlots(loc) > 0) {
                 locModel.insertElementAt(en.getLocationName(loc), idx);
             }
         }
@@ -393,7 +406,7 @@ class SystemPanel extends PicMap
 
         // Standard location handling
         loc -= LOC_OFFSET;
-        for (int i = 0; i < en.getNumberOfCriticals(loc); i++) {
+        for (int i = 0; i < en.getNumberOfCriticalSlots(loc); i++) {
             final CriticalSlot cs = en.getCritical(loc, i);
             StringBuilder sb = new StringBuilder(32);
             if (cs == null) {
@@ -763,12 +776,12 @@ class SystemPanel extends PicMap
                 m_chMode.setEnabled(false);
                 Mounted<?> m = getSelectedEquipment();
                 boolean carryingBAsOnBack = (en instanceof Mek)
-                      && ((en.getExteriorUnitAt(Mek.LOC_CT, true) != null)
-                      || (en.getExteriorUnitAt(Mek.LOC_LT, true) != null) || (en
-                      .getExteriorUnitAt(Mek.LOC_RT, true) != null));
+                      && ((en.getExteriorUnitAt(Mek.LOC_CENTER_TORSO, true) != null)
+                      || (en.getExteriorUnitAt(Mek.LOC_LEFT_TORSO, true) != null) || (en
+                      .getExteriorUnitAt(Mek.LOC_RIGHT_TORSO, true) != null));
 
                 boolean invalidEnvironment = (en instanceof Mek)
-                      && (en.getLocationStatus(Mek.LOC_CT) > ILocationExposureStatus.NORMAL);
+                      && (en.getLocationStatus(Mek.LOC_CENTER_TORSO) > ILocationExposureStatus.NORMAL);
 
                 if ((en instanceof Tank) && !(en instanceof GunEmplacement)
                       && (en.getLocationStatus(Tank.LOC_REAR) > ILocationExposureStatus.NORMAL)) {
@@ -820,9 +833,9 @@ class SystemPanel extends PicMap
                     } // if the max tech eccm option is not set then the ECM
                     // should not show anything.
                     if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_ECM)
-                          && !(client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)
+                          && !(client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_ECCM)
                           || client.getGame().getOptions()
-                          .booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET))) {
+                          .booleanOption(OptionsConstants.ADVANCED_TAC_OPS_GHOST_TARGET))) {
                         return;
                     }
                     for (Enumeration<EquipmentMode> e = m.getType()
@@ -832,7 +845,7 @@ class SystemPanel extends PicMap
                         // be overwritten by every entity update if made also in the client
                         if (em.equals("HotLoad") && en instanceof Mek
                               && !client.getGame().getOptions()
-                              .booleanOption(OptionsConstants.ADVCOMBAT_HOTLOAD_IN_GAME)) {
+                              .booleanOption(OptionsConstants.ADVANCED_COMBAT_HOT_LOAD_IN_GAME)) {
                             continue;
                         }
                         m_chMode.addItem(em.getDisplayableName());

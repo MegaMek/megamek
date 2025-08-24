@@ -36,7 +36,7 @@ package megamek.common.eras;
 import static megamek.common.eras.EraFlag.EARLY_REPUBLIC;
 import static megamek.common.eras.EraFlag.EARLY_SUCCESSION_WARS;
 import static megamek.common.eras.EraFlag.LATE_REPUBLIC;
-import static megamek.common.eras.EraFlag.LATE_SUCCESSION_WARS_LOSTECH;
+import static megamek.common.eras.EraFlag.LATE_SUCCESSION_WARS_LOS_TECH;
 import static megamek.common.eras.EraFlag.LATE_SUCCESSION_WARS_RENAISSANCE;
 
 import java.io.File;
@@ -65,7 +65,7 @@ import megamek.logging.MMLogger;
  * @author Simon (Juliez)
  */
 public final class Era {
-    private static final MMLogger logger = MMLogger.create(Era.class);
+    private static final MMLogger LOGGER = MMLogger.create(Era.class);
 
     /** @return The full name of the Era, e.g. "Clan Invasion". */
     public String name() {
@@ -108,8 +108,8 @@ public final class Era {
 
     public ImageIcon getIcon() {
         try {
-            MegaMekFile iconfile = new MegaMekFile(Configuration.universeImagesDir(), iconFilePath);
-            return new ImageIcon(iconfile.getFile().getPath());
+            MegaMekFile iconFile = new MegaMekFile(Configuration.universeImagesDir(), iconFilePath);
+            return new ImageIcon(iconFile.getFile().getPath());
         } catch (Exception exception) {
             return new ImageIcon(ImageUtil.failStandardImage());
         }
@@ -122,7 +122,7 @@ public final class Era {
 
     /** @return True when this Era is part of the Succession Wars. */
     public boolean isSuccessionWars() {
-        return hasAnyFlagOf(EARLY_SUCCESSION_WARS, LATE_SUCCESSION_WARS_LOSTECH, LATE_SUCCESSION_WARS_RENAISSANCE);
+        return hasAnyFlagOf(EARLY_SUCCESSION_WARS, LATE_SUCCESSION_WARS_LOS_TECH, LATE_SUCCESSION_WARS_RENAISSANCE);
     }
 
     /** @return True when this Era is part of the Republic eras. */
@@ -212,7 +212,7 @@ public final class Era {
         if (iconFilePath != null) {
             File iconFile = new File(Configuration.universeImagesDir(), iconFilePath);
             if (!iconFile.exists()) {
-                logger.warn("Icon file at " + iconFilePath + " not found.");
+                LOGGER.warn("Icon file at {} not found.", iconFilePath);
                 this.iconFilePath = "";
             } else {
                 this.iconFilePath = iconFilePath;

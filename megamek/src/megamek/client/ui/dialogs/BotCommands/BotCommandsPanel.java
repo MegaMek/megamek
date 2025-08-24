@@ -57,7 +57,7 @@ import megamek.client.ui.clientGUI.audio.SoundType;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.MenuScroller;
-import megamek.common.InGameObject;
+import megamek.common.game.InGameObject;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;

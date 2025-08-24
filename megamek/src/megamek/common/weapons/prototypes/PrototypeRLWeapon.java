@@ -34,12 +34,12 @@
 
 package megamek.common.weapons.prototypes;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.PrototypeRLHandler;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.prototype.PrototypeRLHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -59,7 +59,7 @@ public abstract class PrototypeRLWeapon extends MissileWeapon {
     public PrototypeRLWeapon() {
         super();
         ammoType = AmmoType.AmmoTypeEnum.ROCKET_LAUNCHER;
-        flags = flags.or(F_ONESHOT);
+        flags = flags.or(F_ONE_SHOT);
         toHitModifier = 1;
         atClass = CLASS_ROCKET_LAUNCHER;
     }
@@ -69,11 +69,11 @@ public abstract class PrototypeRLWeapon extends MissileWeapon {
      *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game,
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new PrototypeRLHandler(toHit, waa, game, manager);
     }

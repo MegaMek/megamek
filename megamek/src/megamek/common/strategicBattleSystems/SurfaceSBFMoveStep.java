@@ -34,10 +34,10 @@
 package megamek.common.strategicBattleSystems;
 
 import megamek.client.commands.ClientCommand;
-import megamek.common.BoardLocation;
+import megamek.common.board.BoardLocation;
 import megamek.common.Hex;
 import megamek.common.Player;
-import megamek.common.Terrains;
+import megamek.common.units.Terrains;
 
 /**
  * This is an SBF move step that happens on the surface of a hex, i.e. on the ground or, if the destination has water,

@@ -41,7 +41,7 @@ import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.logging.MMLogger;
 
-class SendPacket implements INetworkPacket {
+public class SendPacket implements INetworkPacket {
     private static final MMLogger logger = MMLogger.create(SendPacket.class);
 
     private byte[] data;
@@ -71,12 +71,12 @@ class SendPacket implements INetworkPacket {
     }
 
     @Override
-    public int getMarshallingType() {
+    public int marshallingType() {
         return connection.getMarshallingType();
     }
 
     @Override
-    public byte[] getData() {
+    public byte[] data() {
         return data;
     }
 

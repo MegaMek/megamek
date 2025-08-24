@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import megamek.common.interfaces.FullGameReport;
 import megamek.common.strategicBattleSystems.SBFReportEntry;
 
 /**
@@ -55,7 +56,7 @@ public class SBFFullGameReport implements FullGameReport<SBFReportEntry> {
     }
 
     @Override
-    public boolean hasReportsforRound(int round) {
+    public boolean hasReportsForRound(int round) {
         return fullReport.containsKey(round);
     }
 
@@ -80,16 +81,7 @@ public class SBFFullGameReport implements FullGameReport<SBFReportEntry> {
         //TODO  But it is optional to hide units entirely; may check this game option
         Map<Integer, List<SBFReportEntry>> filteredReports = new HashMap<>();
         for (int round : fullReport.keySet()) {
-            List<SBFReportEntry> filteredRoundReports = new ArrayList<>();
-            for (SBFReportEntry r : fullReport.get(round)) {
-                //TODO cannot filter at this time, as Report uses Entity
-                //                if (r.isObscuredRecipient(recipient.getName())) {
-                //                    r = filterReport(r, null, true);
-                //                }
-                //                if (r != null) {
-                filteredRoundReports.add(r);
-                //                }
-            }
+            List<SBFReportEntry> filteredRoundReports = new ArrayList<>(fullReport.get(round));
             filteredReports.put(round, filteredRoundReports);
         }
         return filteredReports;

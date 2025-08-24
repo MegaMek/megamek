@@ -34,12 +34,12 @@ package megamek.client.generator.skillGenerators;
 
 import megamek.client.generator.enums.SkillGeneratorMethod;
 import megamek.client.generator.enums.SkillGeneratorType;
-import megamek.common.BattleArmor;
-import megamek.common.Entity;
-import megamek.common.Infantry;
-import megamek.common.LandAirMek;
-import megamek.common.Mek;
-import megamek.common.Tank;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.LandAirMek;
+import megamek.common.units.Mek;
+import megamek.common.units.Tank;
 
 public class ModifiedTotalWarfareSkillGenerator extends TotalWarfareSkillGenerator {
     //region Constructors

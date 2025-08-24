@@ -34,16 +34,20 @@
 
 package megamek.common.weapons.lrms;
 
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.StreakLRMHandler;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.lrm.StreakLRMHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -77,7 +81,7 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new StreakLRMHandler(toHit, waa, game, manager);
     }
@@ -89,12 +93,12 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_STANDARD;
+        return BF_CLASS_STANDARD;
     }
 
     @Override
     public String getSortingName() {
-        String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
+        String oneShotTag = hasFlag(F_ONE_SHOT) ? "OS " : "";
         if (name.contains("I-OS")) {
             oneShotTag = "OSI ";
         }

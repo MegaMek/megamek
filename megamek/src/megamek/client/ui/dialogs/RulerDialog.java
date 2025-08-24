@@ -58,12 +58,12 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.boardview.BoardView;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
 import megamek.common.LosEffects;
-import megamek.common.Mek;
-import megamek.common.TargetRoll;
+import megamek.common.units.Mek;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.logging.MMLogger;
 

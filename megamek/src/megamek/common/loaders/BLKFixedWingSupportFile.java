@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,7 +36,16 @@ package megamek.common.loaders;
 
 import java.util.Objects;
 
-import megamek.common.*;
+import megamek.common.TechConstants;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.FixedWingSupport;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -49,7 +58,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  */
 public class BLKFixedWingSupportFile extends BLKFile implements IMekLoader {
 
-    // armor locatioms
+    // armor locations
     public static final int NOSE = 0;
     public static final int RW = 1;
     public static final int LW = 2;
@@ -114,8 +123,8 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMekLoader {
         }
 
         a.initializeArmor(armor[BLKAeroSpaceFighterFile.NOSE], Aero.LOC_NOSE);
-        a.initializeArmor(armor[BLKAeroSpaceFighterFile.RW], Aero.LOC_RWING);
-        a.initializeArmor(armor[BLKAeroSpaceFighterFile.LW], Aero.LOC_LWING);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.RW], Aero.LOC_RIGHT_WING);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.LW], Aero.LOC_LEFT_WING);
         a.initializeArmor(armor[BLKAeroSpaceFighterFile.AFT], Aero.LOC_AFT);
 
         // Set the structural tech rating
@@ -125,12 +134,12 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMekLoader {
         }
         a.setStructuralTechRating(dataFile
               .getDataAsInt("structural_tech_rating")[0]);
-        // Set armor tech rating, if it exists (defaults to structural tr)
+        // Set armor tech rating, if it exists (defaults to structural tech rating)
         if (dataFile.exists("armor_tech_rating")) {
             a.setArmorTechRating(dataFile
                   .getDataAsInt("armor_tech_rating")[0]);
         }
-        // Set engine tech rating, if it exists (defaults to structural tr)
+        // Set engine tech rating, if it exists (defaults to structural tech rating)
         if (dataFile.exists("engine_tech_rating")) {
             a.setEngineTechRating(dataFile
                   .getDataAsInt("engine_tech_rating")[0]);
@@ -142,8 +151,8 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMekLoader {
         a.autoSetThresh();
 
         loadEquipment(a, "Nose", Aero.LOC_NOSE);
-        loadEquipment(a, "Right Wing", Aero.LOC_RWING);
-        loadEquipment(a, "Left Wing", Aero.LOC_LWING);
+        loadEquipment(a, "Right Wing", Aero.LOC_RIGHT_WING);
+        loadEquipment(a, "Left Wing", Aero.LOC_LEFT_WING);
         loadEquipment(a, "Aft", Aero.LOC_AFT);
         loadEquipment(a, "Body", FixedWingSupport.LOC_BODY);
 
@@ -180,7 +189,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMekLoader {
             prefix = "IS ";
         }
 
-        boolean rearMount = false;
+        boolean rearMount;
 
         if (saEquip[0] != null) {
             for (String element : saEquip) {

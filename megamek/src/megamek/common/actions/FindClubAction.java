@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,15 +36,15 @@ package megamek.common.actions;
 
 import java.io.Serial;
 
-import megamek.common.BipedMek;
-import megamek.common.Entity;
-import megamek.common.Game;
 import megamek.common.Hex;
-import megamek.common.Mek;
-import megamek.common.Terrains;
-import megamek.common.TripodMek;
 import megamek.common.enums.BuildingType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.Terrains;
+import megamek.common.units.TripodMek;
 
 /**
  * The entity tries to find a club.
@@ -93,10 +93,12 @@ public class FindClubAction extends AbstractEntityAction {
         }
 
         // also, need shoulders and hands; Claws can substitute as hands --Torren
-        if (!entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RARM)
-              || !entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LARM)
-              || (!entity.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM) && !((Mek) entity).hasClaw(Mek.LOC_RARM))
-              || (!entity.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM) && !((Mek) entity).hasClaw(Mek.LOC_LARM))) {
+        if (!entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RIGHT_ARM)
+              || !entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LEFT_ARM)
+              || (!entity.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM)
+              && !((Mek) entity).hasClaw(Mek.LOC_RIGHT_ARM))
+              || (!entity.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM)
+              && !((Mek) entity).hasClaw(Mek.LOC_LEFT_ARM))) {
             return false;
         }
 

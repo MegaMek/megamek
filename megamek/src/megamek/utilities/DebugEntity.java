@@ -39,13 +39,13 @@ import java.awt.datatransfer.StringSelection;
 import java.util.List;
 
 import megamek.common.CriticalSlot;
-import megamek.common.Entity;
-import megamek.common.FighterSquadron;
-import megamek.common.Infantry;
-import megamek.common.Mek;
-import megamek.common.ProtoMek;
-import megamek.common.Transporter;
+import megamek.common.equipment.Transporter;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.units.Entity;
+import megamek.common.units.FighterSquadron;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
 
 /**
  * This class is for debugging Entity with respect to the internal state of equipment.
@@ -123,7 +123,7 @@ public final class DebugEntity {
             result.append("Locations:\n");
             for (int location = 0; location < entity.locations(); location++) {
                 result.append(entity.getLocationAbbr(location)).append(":\n");
-                for (int slot = 0; slot < entity.getNumberOfCriticals(location); slot++) {
+                for (int slot = 0; slot < entity.getNumberOfCriticalSlots(location); slot++) {
                     CriticalSlot criticalSlot = entity.getCritical(location, slot);
                     if (criticalSlot != null) {
                         result.append("[").append(slot).append("] ").append(criticalSlot);

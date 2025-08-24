@@ -36,7 +36,7 @@ package megamek.server.trigger;
 import java.util.Arrays;
 import java.util.List;
 
-import megamek.common.IGame;
+import megamek.common.game.IGame;
 
 /**
  * This Trigger implements a logic AND for all its subtriggers, i.e. it triggers only at a moment when all its

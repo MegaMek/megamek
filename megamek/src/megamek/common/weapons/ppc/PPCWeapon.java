@@ -34,16 +34,16 @@
 
 package megamek.common.weapons.ppc;
 
-import megamek.common.Game;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.PPCHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.PPCHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -65,11 +65,11 @@ public abstract class PPCWeapon extends EnergyWeapon {
      *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game,
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new PPCHandler(toHit, waa, game, manager);
     }
@@ -109,7 +109,7 @@ public abstract class PPCWeapon extends EnergyWeapon {
         // The benefit is removing the minimum range, so only PPCs with a minimum range
         // get the modes.
         if (minimumRange > 0) {
-            if (gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)) {
+            if (gameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PPC_INHIBITORS)) {
                 addMode("Field Inhibitor ON");
                 addMode("Field Inhibitor OFF");
             } else {

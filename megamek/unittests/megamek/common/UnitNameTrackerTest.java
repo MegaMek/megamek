@@ -39,6 +39,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import megamek.common.units.Entity;
+import megamek.common.units.UnitNameTracker;
 import megamek.utils.MockGenerators;
 import org.junit.jupiter.api.Test;
 

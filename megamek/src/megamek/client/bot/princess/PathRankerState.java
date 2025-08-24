@@ -36,15 +36,15 @@ package megamek.client.bot.princess;
 import java.util.HashMap;
 import java.util.Map;
 
-import megamek.common.Coords;
-import megamek.common.moves.MovePath;
+import megamek.common.board.Coords;
+import megamek.common.moves.Key;
 
 /**
  * This class handles state information for Princess' path ranking algorithms, as the path ranker and its subclasses are
  * intended to be basically stateless.
  */
 public class PathRankerState {
-    private final Map<MovePath.Key, Double> pathSuccessProbabilities = new HashMap<>();
+    private final Map<Key, Double> pathSuccessProbabilities = new HashMap<>();
     private final Map<Coords, Double> incomingFriendlyArtilleryDamage = new HashMap<>();
 
     /**
@@ -53,7 +53,7 @@ public class PathRankerState {
      *
      * @return Map of path keys to success probabilities.
      */
-    public Map<MovePath.Key, Double> getPathSuccessProbabilities() {
+    public Map<Key, Double> getPathSuccessProbabilities() {
         return pathSuccessProbabilities;
     }
 

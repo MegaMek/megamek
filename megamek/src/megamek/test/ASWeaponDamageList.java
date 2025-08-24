@@ -37,10 +37,10 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import megamek.common.EquipmentType;
-import megamek.common.WeaponType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.WeaponType;
+import megamek.common.weapons.bayWeapons.BayWeapon;
 
 public class ASWeaponDamageList {
 
@@ -49,13 +49,13 @@ public class ASWeaponDamageList {
         List<String> wpLine;
         for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements(); ) {
             EquipmentType etype = e.nextElement();
-            if (etype instanceof WeaponType && !etype.rulesRefs.equals("Unofficial")
+            if (etype instanceof WeaponType && !etype.getRulesRefs().equals("Unofficial")
                   && !(etype instanceof BayWeapon)) {
                 wpLine = new ArrayList<>();
                 wpLine.add(etype.getName());
                 wpLine.add(etype.getInternalName());
                 wpLine.add(etype.isClan() ? "-Clan-" : "-IS-");
-                double mult = etype.hasFlag(WeaponType.F_ONESHOT) ? 0.1 : 1;
+                double mult = etype.hasFlag(WeaponType.F_ONE_SHOT) ? 0.1 : 1;
                 double s = mult * ((WeaponType) etype).getBattleForceDamage(AlphaStrikeElement.SHORT_RANGE, null);
                 String sT = s == 0 ? "--" : "" + s;
                 double m = mult * ((WeaponType) etype).getBattleForceDamage(AlphaStrikeElement.MEDIUM_RANGE, null);

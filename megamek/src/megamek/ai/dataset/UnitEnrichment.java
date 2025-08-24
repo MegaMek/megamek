@@ -35,8 +35,8 @@ package megamek.ai.dataset;
 import java.util.List;
 
 import megamek.ai.utility.EntityFeatureUtils;
-import megamek.common.Compute;
-import megamek.common.Entity;
+import megamek.common.compute.Compute;
+import megamek.common.units.Entity;
 
 /**
  * Flexible container for unit state data using a map-based approach with enum keys.

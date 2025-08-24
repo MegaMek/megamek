@@ -57,12 +57,12 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.comboBoxes.MMComboBox;
 import megamek.client.ui.util.IntRangeTextField;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.MekSummary;
-import megamek.common.UnitRole;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.loaders.MekSummary;
+import megamek.common.units.UnitRole;
 
 /**
  * This panel shows advanced search filters for AlphaStrike values.
@@ -255,23 +255,23 @@ public class ASAdvancedSearchPanel extends JPanel {
 
         ASDamageVector stdDamage = mekSummary.getStandardDamage();
         if (useDamageS.isSelected() && (damageSFrom.getSelectedItem() != null) && (damageSTo.getSelectedItem() != null)
-              && !((stdDamage.S.asDoubleValue() >= damageSFrom.getSelectedItem().asDoubleValue())
-              && (stdDamage.S.asDoubleValue() <= damageSTo.getSelectedItem().asDoubleValue()))) {
+              && !((stdDamage.S().asDoubleValue() >= damageSFrom.getSelectedItem().asDoubleValue())
+              && (stdDamage.S().asDoubleValue() <= damageSTo.getSelectedItem().asDoubleValue()))) {
             return false;
         } else if (useDamageM.isSelected() && (damageMFrom.getSelectedItem() != null)
               && (damageMTo.getSelectedItem() != null)
-              && !((stdDamage.M.asDoubleValue() >= damageMFrom.getSelectedItem().asDoubleValue())
-              && (stdDamage.M.asDoubleValue() <= damageMTo.getSelectedItem().asDoubleValue()))) {
+              && !((stdDamage.M().asDoubleValue() >= damageMFrom.getSelectedItem().asDoubleValue())
+              && (stdDamage.M().asDoubleValue() <= damageMTo.getSelectedItem().asDoubleValue()))) {
             return false;
         } else if (useDamageL.isSelected() && (damageLFrom.getSelectedItem() != null)
               && (damageLTo.getSelectedItem() != null)
-              && !((stdDamage.L.asDoubleValue() >= damageLFrom.getSelectedItem().asDoubleValue())
-              && (stdDamage.L.asDoubleValue() <= damageLTo.getSelectedItem().asDoubleValue()))) {
+              && !((stdDamage.L().asDoubleValue() >= damageLFrom.getSelectedItem().asDoubleValue())
+              && (stdDamage.L().asDoubleValue() <= damageLTo.getSelectedItem().asDoubleValue()))) {
             return false;
         } else if (useDamageE.isSelected() && (damageEFrom.getSelectedItem() != null)
               && (damageETo.getSelectedItem() != null)
-              && !((stdDamage.E.asDoubleValue() >= damageEFrom.getSelectedItem().asDoubleValue())
-              && (stdDamage.E.asDoubleValue() <= damageETo.getSelectedItem().asDoubleValue()))) {
+              && !((stdDamage.E().asDoubleValue() >= damageEFrom.getSelectedItem().asDoubleValue())
+              && (stdDamage.E().asDoubleValue() <= damageETo.getSelectedItem().asDoubleValue()))) {
             return false;
         } else if (useOV.isSelected() && !(selectedOVs().contains(mekSummary.getOV()) && mekSummary.usesOV())) {
             return false;

@@ -34,7 +34,7 @@
 package megamek.common.board.postprocess;
 
 import megamek.common.Hex;
-import megamek.common.Terrain;
+import megamek.common.units.Terrain;
 
 public class TerrainLevelBoardProcessor extends AbstractSimpleBoardProcessor {
 

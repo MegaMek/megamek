@@ -35,12 +35,12 @@ package megamek.client.bot.princess;
 import java.util.List;
 
 import megamek.client.bot.princess.FireControl.FireControlType;
-import megamek.common.Coords;
-import megamek.common.EjectedCrew;
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.board.Coords;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.EjectedCrew;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 public class InfantryPathRanker extends BasicPathRanker {
@@ -65,8 +65,8 @@ public class InfantryPathRanker extends BasicPathRanker {
         FiringPhysicalDamage damageEstimate = new FiringPhysicalDamage();
 
         double expectedDamageTaken = checkPathForHazards(pathCopy, movingUnit, game);
-        boolean extremeRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
-        boolean losRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
+        boolean extremeRange = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE);
+        boolean losRange = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE);
         for (Entity enemy : enemies) {
             // Skip ejected pilots.
             if (enemy instanceof EjectedCrew) {

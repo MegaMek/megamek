@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -59,7 +59,7 @@ import megamek.logging.MMLogger;
  * Generic bidirectional connection between client and server
  */
 public abstract class AbstractConnection {
-    private static final MMLogger logger = MMLogger.create(AbstractConnection.class);
+    private static final MMLogger LOGGER = MMLogger.create(AbstractConnection.class);
 
     private static final PacketMarshallerFactory marshallerFactory = PacketMarshallerFactory.getInstance();
     private static final int DEFAULT_MARSHALLING = PacketMarshaller.NATIVE_SERIALIZATION_MARSHALING;
@@ -67,7 +67,7 @@ public abstract class AbstractConnection {
     private Socket socket;
     private int connectionId;
 
-    /** Peer Host Non null in case if it's a client connection */
+    /** Peer Host Non-null in case if it's a client connection */
     private String host;
 
     /** Peer port != 0 in case if it's a client connection */
@@ -167,7 +167,7 @@ public abstract class AbstractConnection {
     /** Closes the socket and shuts down the receiver and sender threads. */
     public void close() {
         synchronized (this) {
-            logger.info("Starting to close " + getConnectionTypeText());
+            LOGGER.info("Starting to close {}", getConnectionTypeText());
             sendQueue.reportContents();
             sendQueue.finish();
             try {
@@ -175,7 +175,7 @@ public abstract class AbstractConnection {
                     socket.close();
                 }
             } catch (Exception e) {
-                logger.error("Failed closing connection " + getId(), e);
+                LOGGER.error("Failed closing connection {}", getId(), e);
             }
             socket = null;
         }
@@ -235,9 +235,9 @@ public abstract class AbstractConnection {
     /** Send the packet now, on a separate thread; This is the blocking call. */
     public void sendNow(SendPacket packet) {
         try {
-            sendNetworkPacket(packet.getData(), packet.isCompressed());
+            sendNetworkPacket(packet.data(), packet.isCompressed());
         } catch (Exception ex) {
-            logger.error("", ex);
+            LOGGER.error("", ex);
         }
     }
 
@@ -306,21 +306,18 @@ public abstract class AbstractConnection {
      */
     public void update() {
         try {
-            INetworkPacket np;
-            while ((np = readNetworkPacket()) != null) {
-                processPacket(np);
+            INetworkPacket networkPacket;
+            while ((networkPacket = readNetworkPacket()) != null) {
+                processPacket(networkPacket);
             }
-        } catch (java.io.InvalidClassException ex) {
-            logger.error(getConnectionTypeText(), ex);
-            close();
         } catch (SocketException | EOFException ignored) {
             // Do nothing, happens when the socket closes
             close();
         } catch (IOException ex) {
-            logger.error(getConnectionTypeText(), ex);
+            LOGGER.error(getConnectionTypeText(), ex);
             close();
         } catch (Exception ex) {
-            logger.error(getConnectionTypeText() + " had an error receiving a packet", ex);
+            LOGGER.error("{} had an error receiving a packet", getConnectionTypeText(), ex);
             close();
         }
     }
@@ -336,11 +333,12 @@ public abstract class AbstractConnection {
             }
         } catch (Exception ex) {
             if (packet == null) {
-                logger.error(String.format("%s had an error sending a null packet",
-                      getConnectionTypeText()), ex);
+                LOGGER.error(ex, "{} had an error sending a null packet", getConnectionTypeText());
             } else {
-                logger.error(String.format("%s had an error sending command %s",
-                      getConnectionTypeText(), packet.getCommand().name()), ex);
+                LOGGER.error(ex,
+                      "{} had an error sending command {}",
+                      getConnectionTypeText(),
+                      packet.getCommand().name());
             }
             close();
         }
@@ -348,9 +346,9 @@ public abstract class AbstractConnection {
 
     /** Processes a received packet. */
     protected void processPacket(INetworkPacket np) throws Exception {
-        PacketMarshaller pm = marshallerFactory.getMarshaller(np.getMarshallingType());
+        PacketMarshaller pm = marshallerFactory.getMarshaller(np.marshallingType());
         Objects.requireNonNull(pm);
-        byte[] data = np.getData();
+        byte[] data = np.data();
         bytesReceived += data.length;
         ByteArrayInputStream bis = new ByteArrayInputStream(data);
         InputStream in = np.isCompressed() ? new GZIPInputStream(bis) : bis;

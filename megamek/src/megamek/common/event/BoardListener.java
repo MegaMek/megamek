@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -53,20 +53,20 @@ public interface BoardListener extends java.util.EventListener {
      *
      * @param b an event containing information about the change
      */
-    public void boardNewBoard(BoardEvent b);
+    void boardNewBoard(BoardEvent b);
 
     /**
      * Sent when a single hex on the Board changed.
      *
      * @param b an event containing information about the change
      */
-    public void boardChangedHex(BoardEvent b);
+    void boardChangedHex(BoardEvent b);
 
     /**
      * Sent when all hexes on the board changed.
      *
      * @param b an event containing information about the change
      */
-    public void boardChangedAllHexes(BoardEvent b);
+    void boardChangedAllHexes(BoardEvent b);
 
 }

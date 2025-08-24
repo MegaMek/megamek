@@ -40,8 +40,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
 
-import megamek.common.MekSummary;
-import megamek.common.MekSummaryCache;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
 import megamek.common.loaders.MtfFile;
 import megamek.logging.MMLogger;
 

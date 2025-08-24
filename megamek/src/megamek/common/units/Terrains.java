@@ -1,0 +1,631 @@
+/*
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
+package megamek.common.units;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Set;
+
+import megamek.common.Messages;
+import megamek.common.enums.HazardousLiquidPoolType;
+import megamek.server.SmokeCloud;
+
+public class Terrains implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -4333807226569945079L;
+
+    // base terrain types
+    public static final int WOODS = 1; // 1: light 2: heavy 3: ultra
+    public static final int WATER = 2; // level = depth
+    public static final int ROUGH = 3; // 1: normal 2: ultra
+    public static final int RUBBLE = 4; // 1: light bldg 2: medium bldg 3: heavy
+    // bldg 4: hardened bldg 5: wall 6:
+    // ultra
+    public static final int JUNGLE = 5; // 1: light 2: heavy 3: ultra
+    public static final int SAND = 6;
+    public static final int TUNDRA = 7;
+    public static final int MAGMA = 8; // 1: crust 2: liquid
+    public static final int FIELDS = 9;
+    public static final int INDUSTRIAL = 10; // level indicates height
+    public static final int SPACE = 11;
+    // unimplemented
+    // Level 1 Foliage
+
+    // Terrain modifications
+    public static final int PAVEMENT = 12;
+    public static final int ROAD = 13; // 1: normal 2: alley 3: dirt 4: gravel
+
+    public static final int ROAD_LVL_DIRT = 3;
+    public static final int ROAD_LVL_GRAVEL = 4;
+
+    public static final int SWAMP = 14; // 1: normal 2: just became quicksand 3:
+    // quicksand
+    public static final int MUD = 15;
+    public static final int RAPIDS = 16; // 1: rapids 2: torrent
+    public static final int ICE = 17;
+
+    public static final int SNOW = 18; // 1: thin 2: deep
+    public static final int FIRE = 19; // 1: normal, fire 2: inferno fire, 3:
+    // inferno bombs, 4: inferno IV
+    /** The SMOKE terrain type includes laser-inhibiting smoke and chaff from chaff pods (TO:AUE p111). */
+    public static final int SMOKE = 20; // 1: light smoke 2: heavy smoke 3:light
+    // LI smoke 4: Heavy LI smoke
+    public static final int GEYSER = 21; // 1: dormant 2: active 3: magma vent
+    // unimplemented
+    // Bug Storm
+    // Extreme Depths
+    // Rail
+    // Water Flow
+
+    public static final int FIRE_LVL_NORMAL = 1;
+    public static final int FIRE_LVL_INFERNO = 2;
+    public static final int FIRE_LVL_INFERNO_BOMB = 3;
+    public static final int FIRE_LVL_INFERNO_IV = 4;
+
+    // Building stuff
+    public static final int BUILDING = 22; // 1: light 2: medium 3: heavy 4:
+    // hardened [5: wall not implemented]
+    public static final int BLDG_CF = 23;
+    public static final int BLDG_ELEV = 24;
+    public static final int BLDG_BASEMENT_TYPE = 25; // level equals
+    // BasemenType, one of the
+    // values of the
+    // BasementType enum
+    public static final int BLDG_CLASS = 26; // 1: hangars 2: fortresses 3: gun
+    // emplacements
+    public static final int BLDG_ARMOR = 27;
+    // leaving this empty will be interpreted as standard
+    public static final int BRIDGE = 28;
+    public static final int BRIDGE_CF = 29;
+    public static final int BRIDGE_ELEV = 30;
+    public static final int FUEL_TANK = 31;
+    public static final int FUEL_TANK_CF = 32;
+    public static final int FUEL_TANK_ELEV = 33;
+    public static final int FUEL_TANK_MAGN = 34;
+
+    // special types
+    public static final int IMPASSABLE = 35;
+    public static final int ELEVATOR = 36; // level = elevation it moves to, exits = d6 rolls it moves on
+    public static final int FORTIFIED = 37;
+    /** The SCREEN terrain type stands for chaff hexes generated by screen launchers in space. */
+    public static final int SCREEN = 38;
+
+    // fluff
+    public static final int FLUFF = 39;
+    public static final int ARMS = 40; // blown off arms for use as clubs, level
+    // = number of arms in that hex
+    public static final int LEGS = 41; // blown off legs for use as clubs, level
+    // = number of legs in that hex
+
+    public static final int METAL_CONTENT = 42; // Is there metal content that
+    // will block mag scan sensors?
+    public static final int BLDG_BASE_COLLAPSED = 43; // 1 means collapsed
+
+    // Additional fluff types so that stacking of special images is possible
+    public static final int BLDG_FLUFF = 44; // Ideally used to denote special bldg images
+    public static final int ROAD_FLUFF = 45; // Ideally used to denote special road images
+    public static final int GROUND_FLUFF = 46; // Ideally used to denote special ground images
+    // these should be supers, not bases, as base image
+    // matching is not exact while super is
+    public static final int WATER_FLUFF = 47; // Ideally used to denote special water images
+
+    // Cliffs, use with exits to denote cliffsides; only valid when there's
+    // actually a level drop/rise in the specified direction
+    public static final int CLIFF_TOP = 48;
+    public static final int CLIFF_BOTTOM = 49;
+
+    // Terrain for the incline at a hex edge towards a higher or lower
+    // neighboring hex. Used to add highlighting/images to hex sides
+    // This is added to hexes automatically by MegaMek, not for
+    // manual use in the Editor
+    public static final int INCLINE_TOP = 50;
+    public static final int INCLINE_BOTTOM = 51;
+
+    // Hex level differences of at least 3 levels, used with exits to
+    // denote the hex side. Used to add highlighting/images to hex sides
+    // This is added to hexes automatically by MegaMek, not for
+    // manual use in the Editor
+    public static final int INCLINE_HIGH_TOP = 52;
+    public static final int INCLINE_HIGH_BOTTOM = 53;
+
+    // Helper terrain that gives the elevation for foliage (woods and jungle).
+    // Allowed values are 1 for L/H/U, 2 for L/H and 3 for U foliage.
+    // This terrain is meaningless when alone but must be present in any
+    // hex that has either woods or jungle. It is added by the board loader
+    // when it's not present in the board file.
+    public static final int FOLIAGE_ELEV = 54;
+
+    public static final int BLACK_ICE = 55;
+
+    // This is for low atmosphere maps to indicate that an empty hex is to be drawn as sky, not grassland
+    public static final int SKY = 56;
+
+    public static final int DEPLOYMENT_ZONE = 57;
+
+    public static final int HAZARDOUS_LIQUID = 58;
+
+    public static final int ULTRA_SUBLEVEL = 59;
+
+    /**
+     * Keeps track of the different type of terrains that can have exits.
+     */
+    public static final int[] exitableTerrains = { PAVEMENT, ROAD, BUILDING, FUEL_TANK, BRIDGE, WATER };
+
+    private static final String[] names = { "none", "woods", "water", "rough", "rubble", "jungle", "sand", "tundra",
+                                            "magma", "planted_fields", "heavy_industrial", "space", "pavement", "road",
+                                            "swamp", "mud", "rapids", "ice",
+                                            "snow", "fire", "smoke", "geyser", "building", "bldg_cf", "bldg_elev",
+                                            "bldg_basement_type", "bldg_class",
+                                            "bldg_armor", "bridge", "bridge_cf", "bridge_elev", "fuel_tank",
+                                            "fuel_tank_cf", "fuel_tank_elev",
+                                            "fuel_tank_magn", "impassable", "elevator", "fortified", "screen", "fluff",
+                                            "arms", "legs", "metal_deposit",
+                                            "bldg_base_collapsed", "bldg_fluff", "road_fluff", "ground_fluff",
+                                            "water_fluff", "cliff_top", "cliff_bottom",
+                                            "incline_top", "incline_bottom", "incline_high_top", "incline_high_bottom",
+                                            "foliage_elev", "black_ice", "sky",
+                                            "deployment_zone", "hazardous_liquid", "ultra_sublevel" };
+
+    /** Terrains in this set are hidden in the Editor, not saved to board files and handled internally. */
+    public static final HashSet<Integer> AUTOMATIC = new HashSet<>(Arrays.asList(
+          INCLINE_TOP, INCLINE_BOTTOM, INCLINE_HIGH_TOP, INCLINE_HIGH_BOTTOM, CLIFF_BOTTOM, SKY));
+
+    public static final int SIZE = names.length;
+
+    private static Hashtable<String, Integer> hash;
+
+    // Set of all hazardous terrain types
+    public static final Set<Integer> HAZARDS = Set.of(
+          Terrains.FIRE,
+          Terrains.MAGMA,
+          Terrains.ICE,
+          Terrains.WATER,
+          Terrains.BUILDING,
+          Terrains.BRIDGE,
+          Terrains.BLACK_ICE,
+          Terrains.SNOW,
+          Terrains.SWAMP,
+          Terrains.MUD,
+          Terrains.TUNDRA,
+          Terrains.HAZARDOUS_LIQUID,
+          Terrains.ULTRA_SUBLEVEL);
+
+    // Set of all hazardous terrain types + black ice
+    public static final Set<Integer> HAZARDS_WITH_BLACK_ICE = Set.of(Terrains.PAVEMENT,
+          Terrains.FIRE,
+          Terrains.MAGMA,
+          Terrains.ICE,
+          Terrains.WATER,
+          Terrains.BUILDING,
+          Terrains.BRIDGE,
+          Terrains.BLACK_ICE,
+          Terrains.SNOW,
+          Terrains.SWAMP,
+          Terrains.MUD,
+          Terrains.TUNDRA,
+          Terrains.HAZARDOUS_LIQUID,
+          Terrains.ULTRA_SUBLEVEL);
+
+    /**
+     * Checks to see if the given terrain type can have exits.
+     *
+     * @param terrType The terrain type to test
+     *
+     * @return True if the input terrain type can have exits, else false.
+     */
+    public static boolean exitableTerrain(int terrType) {
+        boolean exitableTerrainType = false;
+        for (int i = 0; i < Terrains.exitableTerrains.length; i++) {
+            exitableTerrainType |= terrType == Terrains.exitableTerrains[i];
+        }
+        return exitableTerrainType;
+    }
+
+    /**
+     * @param type the type of terrain to get the name for
+     *
+     * @return the name of the specified type of terrain
+     */
+    public static String getName(int type) {
+        return names[type];
+    }
+
+    /**
+     * @param type the type of terrain to get a localized name for
+     *
+     * @return the localised name of the type of terrain
+     */
+    public static String getEditorName(int type) {
+        return Messages.getString("Terrains.editorName." + names[type]);
+    }
+
+    /**
+     * @param type the type of terrain to get a localized name for
+     *
+     * @return the localised tool tip for the type of terrain
+     */
+    public static String getEditorTooltip(int type) {
+        String key = "Terrains.editorTooltip." + names[type];
+        if (Messages.hasString(key)) {
+            return Messages.getString(key);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns a name to be displayed in tooltips. Intentionally returns null for terrains that should be treated
+     * separately such as buildings and for terrains that should not be listed such as cliff-tops.
+     *
+     * @param type  the type of terrain to get the name for
+     * @param level the level of the terrain to get the specific name
+     *
+     * @return a displayable name for this terrain (for tooltips)
+     */
+    public static String getDisplayName(int type, int level) {
+        switch (type) {
+            case BUILDING:
+                if (level == 1) {
+                    return "Light building";
+                } else if (level == 2) {
+                    return "Medium building";
+                } else if (level == 3) {
+                    return "Heavy building";
+                } else if (level == 4) {
+                    return "Hardened Building";
+                }
+            case BLDG_CLASS:
+                if (level == 1) {
+                    return "Hangar";
+                } else if (level == 2) {
+                    return "Fortress";
+                } else if (level == 3) {
+                    return "Gun Emplacement";
+                } else {
+                    return "No Class";
+                }
+            case WOODS:
+                if (level == 1) {
+                    return "Light woods";
+                } else if (level == 2) {
+                    return "Heavy woods";
+                } else if (level == 3) {
+                    return "Ultra-heavy woods";
+                } else {
+                    return "Woods (unknown)";
+                }
+            case FOLIAGE_ELEV:
+                return "Woods/Jungle elevation: " + level;
+            case ROUGH:
+                if (level == 1) {
+                    return "Rough";
+                } else if (level == 2) {
+                    return "Ultra rough";
+                } else {
+                    return "Rough (unknown)";
+                }
+            case RUBBLE:
+                if (level > 5) {
+                    return "Ultra rubble";
+                } else {
+                    return "Rubble";
+                }
+            case WATER:
+                return "Water (depth " + level + ")";
+            case PAVEMENT:
+                return "Pavement";
+            case ROAD:
+                return "Road";
+            case FIRE:
+                if (level == 1) {
+                    return "Fire";
+                }
+                if (level == 2 || level == 3 || level == 4) {
+                    return "Inferno fire";
+                }
+                return "Fire (unknown)";
+            case SMOKE:
+                return switch (level) {
+                    case SmokeCloud.SMOKE_LIGHT -> "Light smoke";
+                    case SmokeCloud.SMOKE_HEAVY -> "Heavy smoke";
+                    case SmokeCloud.SMOKE_LI_LIGHT, SmokeCloud.SMOKE_LI_HEAVY -> "LASER inhibiting smoke";
+                    case SmokeCloud.SMOKE_CHAFF_LIGHT -> "Chaff (ECM)";
+                    case SmokeCloud.SMOKE_GREEN -> "Green smoke (anti-TSM)";
+                    default -> "Smoke (unknown)";
+                };
+            case SWAMP:
+                if ((level == 2) || (level == 3)) {
+                    return "Quicksand";
+                } else {
+                    return "Swamp";
+                }
+            case ICE:
+                return "Ice";
+            case BLACK_ICE:
+                return "Black Ice";
+            case FORTIFIED:
+                return "Improved position";
+            case GEYSER:
+                if (level == 1) {
+                    return "Dormant";
+                } else if (level == 2) {
+                    return "Active";
+                } else if (level == 3) {
+                    return "Magma vent";
+                } else {
+                    return "Geyser (unknown)";
+                }
+            case JUNGLE:
+                if (level == 1) {
+                    return "Light jungle";
+                } else if (level == 2) {
+                    return "Heavy jungle";
+                } else if (level == 3) {
+                    return "Ultra-heavy jungle";
+                } else {
+                    return "Jungle (unknown)";
+                }
+            case MAGMA:
+                if (level == 1) {
+                    return "Magma crust";
+                } else if (level == 2) {
+                    return "Magma liquid";
+                } else {
+                    return "Magma (unknown)";
+                }
+            case MUD:
+                return "Mud";
+            case RAPIDS:
+                if (level == 1) {
+                    return "Rapids";
+                } else if (level == 2) {
+                    return "Torrent";
+                } else {
+                    return "Rapids (unknown)";
+                }
+            case SAND:
+                return "Sand";
+            case SNOW:
+                if (level == 1) {
+                    return "Thin snow";
+                } else if (level == 2) {
+                    return "Heavy snow";
+                } else {
+                    return "Snow (unknown)";
+                }
+            case TUNDRA:
+                return "Tundra";
+            case SPACE:
+                return "Space";
+            case SCREEN:
+                return "Screen";
+            case FIELDS:
+                return "Planted fields";
+            case INDUSTRIAL:
+                return "Heavy industrial zone (height " + level + ")";
+            case IMPASSABLE:
+                return "Impassable terrain";
+            case ELEVATOR:
+                return "Elevator";
+            case METAL_CONTENT:
+                if (level < 1) {
+                    return "No metal content";
+                } else if (level == 1) {
+                    return "Very low metal content";
+                } else if (level == 2) {
+                    return "Low metal content";
+                } else if ((level == 3) || (level == 4)) {
+                    return "Medium metal content";
+                } else if ((level == 5) || (level == 6)) {
+                    return "High metal content";
+                } else if ((level == 7) || (level == 8)) {
+                    return "Very high metal content";
+                } else {
+                    return "Extremely high metal content";
+                }
+            case DEPLOYMENT_ZONE:
+                return "Deployment Zone";
+            case HAZARDOUS_LIQUID:
+                HazardousLiquidPoolType hazardousLiquidPoolType = HazardousLiquidPoolType.getType(level);
+                return switch (hazardousLiquidPoolType) {
+                    case WIND_BLOWN -> "Hazardous Liquid (Wind Blown)";
+                    case FLOWS -> "Hazardous Liquid (Flows)";
+                    case FLOWS_AND_WIND_BLOWN -> "Hazardous Liquid (Flows and Wind Blown)";
+                    default -> "Hazardous Liquid";
+                };
+            case ULTRA_SUBLEVEL:
+                return "Ultra Sublevel";
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * This function converts the name of a terrain into the constant.
+     *
+     * @param name the name of the terrain (from the names list above)
+     *
+     * @return an integer corresponding to the terrain, or 0 if no match (terrain none)
+     */
+    public static int getType(String name) {
+        Integer o = getHash().get(name);
+        if (o != null) {
+            return o;
+        }
+        return 0;
+    }
+
+    protected static Hashtable<String, Integer> getHash() {
+        if (hash == null) {
+            hash = new Hashtable<>(SIZE);
+            for (int i = 0; i < names.length; i++) {
+                hash.put(names[i], i);
+            }
+        }
+        return hash;
+    }
+
+    /**
+     * @param type  the type of terrain specified
+     * @param level the level of the specified terrain
+     *
+     * @return the terrain factor for the given type and level - pg. 64, TacOps
+     */
+    public static int getTerrainFactor(int type, int level) {
+        switch (type) {
+            case WOODS:
+                if (level == 2) {
+                    return 90;
+                } else if (level == 3) {
+                    return 120;
+                } else {
+                    return 50;
+                }
+            case JUNGLE:
+                if (level == 2) {
+                    return 100;
+                } else if (level == 3) {
+                    return 130;
+                } else {
+                    return 60;
+                }
+            case ROUGH:
+            case PAVEMENT:
+                return 200;
+            case ROAD:
+                if (level == 3) {
+                    return 20;
+                }
+                if (level == 4) {
+                    return 50;
+                }
+                return 150;
+            case ICE:
+            case BLACK_ICE:
+                return 40;
+            case MAGMA:
+                if (level == 1) {
+                    return 30;
+                } else {
+                    return 0;
+                }
+            case SAND:
+                return 100;
+            case SNOW:
+                if (level == 1) {
+                    return 15;
+                } else if (level == 2) {
+                    return 30;
+                } else {
+                    return 15;
+                }
+            case TUNDRA:
+                return 70;
+            case FIELDS:
+                return 30;
+            default:
+                return 0;
+        }
+    }
+
+    /**
+     * Returns the number of elevations or altitudes above the hex level a given terrainType rises.  Has to be explicit
+     * about the *_ELEV values, because _everything else_ that comes through here is a "level", a ranking of
+     * "denseness", not an elevation _or_ altitude.
+     *
+     * @param terrainType  this specifies the type of terrain to get the information for
+     * @param inAtmosphere Flag that determines whether elevations or altitudes should be returned.
+     *
+     * @return The number of altitudes or elevations the given terrain type rises above the hex level.
+     */
+    public static int getTerrainElevation(int terrainType, int terrainLevel, boolean inAtmosphere) {
+        if (inAtmosphere) {
+            // Handle altitudes
+            if (terrainType == FOLIAGE_ELEV) {
+                return 1;
+            }
+            return 0;
+        } else {
+            // Handle elevations
+            return switch (terrainType) {
+                case INDUSTRIAL, BLDG_ELEV, BRIDGE_ELEV, FOLIAGE_ELEV -> terrainLevel;
+                case FIELDS -> 1;
+                default -> 0;
+            };
+        }
+    }
+
+    /**
+     * Modifier to control roll when the terrain is in the landing path.
+     *
+     * @param terrainType  Type of terrain
+     * @param terrainLevel The level of the terrain
+     *
+     * @return The control roll modifier
+     */
+    public static int landingModifier(int terrainType, int terrainLevel) {
+        return switch (terrainType) {
+            case WOODS, JUNGLE -> (terrainLevel == 3) ? 7 : terrainLevel + 3;
+            case WATER -> (terrainLevel > 0) ? 3 : 2;
+            case ROUGH -> terrainLevel == 2 ? 5 : 3;
+            case RUBBLE -> terrainLevel == 6 ? 5 : 3;
+            case SAND, TUNDRA, MAGMA, FIELDS, SWAMP -> 2;
+            case BUILDING -> terrainLevel + 1;
+            case ROAD -> switch (terrainLevel) {
+                case ROAD_LVL_DIRT -> 2;
+                case ROAD_LVL_GRAVEL -> 1;
+                default -> 0;
+            };
+            case SNOW -> (terrainLevel == 2) ? 1 : 0;
+            case ICE, MUD -> 1;
+            default -> 0;
+        };
+    }
+
+
+    /**
+     * Returns true if the terrain is a base terrain type, excluding "Clear"
+     *
+     */
+    public static boolean isBaseTerrain(int terrainType) {
+        return terrainType == WOODS || terrainType == WATER || terrainType == ROUGH
+              || terrainType == RUBBLE || terrainType == JUNGLE || terrainType == SAND
+              || terrainType == TUNDRA || terrainType == MAGMA || terrainType == FIELDS
+              || terrainType == INDUSTRIAL || terrainType == SPACE || terrainType == BUILDING;
+    }
+}

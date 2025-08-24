@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,7 +34,9 @@
 
 package megamek.common.event;
 
-import megamek.common.Game;
+import java.io.Serial;
+
+import megamek.common.game.Game;
 
 /**
  * Instances of this class are sent when the game finished
@@ -47,6 +49,7 @@ public class GameEndEvent extends GameEvent {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -8470655646019563063L;
 
     /**

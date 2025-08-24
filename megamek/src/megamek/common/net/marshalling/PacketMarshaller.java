@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,7 +47,7 @@ import megamek.logging.MMLogger;
  * Generic marshaller that [un]marshalls the <code>Packet</code>
  */
 public abstract class PacketMarshaller {
-    private static final MMLogger logger = MMLogger.create(PacketMarshaller.class);
+    private static final MMLogger LOGGER = MMLogger.create(PacketMarshaller.class);
 
     /**
      * Java native serialization marshalling
@@ -68,7 +68,7 @@ public abstract class PacketMarshaller {
             bo.flush();
             return bo.toByteArray();
         } catch (Exception ex) {
-            logger.error("", ex);
+            LOGGER.error("", ex);
             return null;
         }
     }
@@ -80,7 +80,6 @@ public abstract class PacketMarshaller {
      * @param stream <code>OutputStream</code> to marshall the
      *               <code>Packet</code> to
      *
-     * @throws Exception
      */
     public abstract void marshall(Packet packet, OutputStream stream) throws Exception;
 
@@ -96,7 +95,7 @@ public abstract class PacketMarshaller {
         try {
             return unmarshall(new ByteArrayInputStream(data));
         } catch (Exception ex) {
-            logger.error("", ex);
+            LOGGER.error("", ex);
             return null;
         }
     }
@@ -109,7 +108,6 @@ public abstract class PacketMarshaller {
      * @return the new <code>Packet</code>unmarshalled from the given
      *       <code>InputStream</code>
      *
-     * @throws Exception
      */
     public abstract Packet unmarshall(InputStream stream) throws Exception;
 }

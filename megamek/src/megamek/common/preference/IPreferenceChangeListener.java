@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,5 +36,5 @@ package megamek.common.preference;
 
 public interface IPreferenceChangeListener {
 
-    public abstract void preferenceChange(PreferenceChangeEvent e);
+    void preferenceChange(PreferenceChangeEvent e);
 }

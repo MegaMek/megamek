@@ -45,8 +45,8 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.mapset.PilotMapSet;
 import megamek.client.ui.widget.picmap.PicMap;
-import megamek.common.CrewType;
-import megamek.common.Entity;
+import megamek.common.units.CrewType;
+import megamek.common.units.Entity;
 
 /**
  * The pilot panel contains all the information about the pilot/crew of this unit.

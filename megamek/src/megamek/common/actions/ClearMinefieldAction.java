@@ -35,22 +35,25 @@
 
 package megamek.common.actions;
 
-import megamek.common.Minefield;
+import java.io.Serial;
+
+import megamek.common.equipment.Minefield;
 
 public class ClearMinefieldAction extends AbstractEntityAction {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 4465058967763135772L;
 
-    private Minefield mf;
+    private final Minefield minefield;
 
-    public ClearMinefieldAction(int entityId, Minefield mf) {
+    public ClearMinefieldAction(int entityId, Minefield minefield) {
         super(entityId);
-        this.mf = mf;
+        this.minefield = minefield;
     }
 
     public Minefield getMinefield() {
-        return mf;
+        return minefield;
     }
 }

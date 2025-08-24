@@ -114,10 +114,10 @@ public class ASStatsExporter {
 
     private HashMap<String, Object> dmgData(ASDamageVector dmg) {
         HashMap<String, Object> dmgData = new HashMap<>();
-        dmgData.put("dmgS", dmg.S.toStringWithZero());
-        dmgData.put("dmgM", dmg.M.toStringWithZero());
-        dmgData.put("dmgL", dmg.L.toStringWithZero());
-        dmgData.put("dmgE", dmg.E.toStringWithZero());
+        dmgData.put("dmgS", dmg.S().toStringWithZero());
+        dmgData.put("dmgM", dmg.M().toStringWithZero());
+        dmgData.put("dmgL", dmg.L().toStringWithZero());
+        dmgData.put("dmgE", dmg.E().toStringWithZero());
         return dmgData;
     }
 

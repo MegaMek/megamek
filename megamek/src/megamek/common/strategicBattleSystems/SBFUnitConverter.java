@@ -115,7 +115,7 @@ public class SBFUnitConverter {
 
     private void calcUnitType() {
         int majorityCount = (int) Math.round(2.0 / 3 * elements.size());
-        List<SBFElementType> types = elements.stream().map(SBFElementType::getUnitType).collect(toList());
+        List<SBFElementType> types = elements.stream().map(SBFElementType::getUnitType).toList();
         Map<SBFElementType, Long> occurrenceCount = types.stream().collect(groupingBy(Function.identity(), counting()));
         long highestCount = occurrenceCount.values().stream().max(Long::compare).orElse(0L);
         SBFElementType highestType = types.stream()
@@ -180,10 +180,10 @@ public class SBFUnitConverter {
               * SBFFormation.getSbfArtilleryDamage(ARTSC);
         double dmgS = elements.stream()
               .map(AlphaStrikeElement::getStandardDamage)
-              .mapToDouble(d -> d.S.asDoubleValue())
+              .mapToDouble(d -> d.S().asDoubleValue())
               .sum();
         String sCalculation = elements.stream()
-              .map(u -> formatForReport(u.getStandardDamage().S.asDoubleValue()))
+              .map(u -> formatForReport(u.getStandardDamage().S().asDoubleValue()))
               .collect(joining(" + "));
         String rangeType = "S";
         double ovValue = elements.stream().mapToDouble(AlphaStrikeElement::getOV).sum() / 2;
@@ -206,14 +206,14 @@ public class SBFUnitConverter {
 
         double dmgM = elements.stream()
               .map(AlphaStrikeElement::getStandardDamage)
-              .mapToDouble(d -> d.M.asDoubleValue())
+              .mapToDouble(d -> d.M().asDoubleValue())
               .sum();
         ovValue = elements.stream()
-              .filter(e -> e.getStandardDamage().M.damage >= 1)
+              .filter(e -> e.getStandardDamage().M().damage >= 1)
               .mapToDouble(AlphaStrikeElement::getOV)
               .sum() / 2;
         String mCalculation = elements.stream()
-              .map(u -> formatForReport(u.getStandardDamage().M.asDoubleValue()))
+              .map(u -> formatForReport(u.getStandardDamage().M().asDoubleValue()))
               .collect(joining(" + "));
         rangeType = "M";
         if (ovValue > 0) {
@@ -230,15 +230,15 @@ public class SBFUnitConverter {
 
         double dmgL = elements.stream()
               .map(AlphaStrikeElement::getStandardDamage)
-              .mapToDouble(d -> d.L.asDoubleValue())
+              .mapToDouble(d -> d.L().asDoubleValue())
               .sum();
         String lCalculation = elements.stream()
-              .map(u -> formatForReport(u.getStandardDamage().L.asDoubleValue()))
+              .map(u -> formatForReport(u.getStandardDamage().L().asDoubleValue()))
               .collect(joining(" + "));
         rangeType = "L";
         double ovLValue = elements.stream()
               .filter(e -> e.hasSUA(OVL))
-              .filter(e -> e.getStandardDamage().L.damage >= 1)
+              .filter(e -> e.getStandardDamage().L().damage >= 1)
               .mapToDouble(AlphaStrikeElement::getOV).sum() / 2;
         if (ovLValue > 0) {
             dmgL += ovLValue;
@@ -255,10 +255,10 @@ public class SBFUnitConverter {
         if (unit.getType() == AS) {
             double dmgE = elements.stream()
                   .map(AlphaStrikeElement::getStandardDamage)
-                  .mapToDouble(d -> d.E.asDoubleValue())
+                  .mapToDouble(d -> d.E().asDoubleValue())
                   .sum();
             String eCalculation = elements.stream()
-                  .map(u -> formatForReport(u.getStandardDamage().E.asDoubleValue()))
+                  .map(u -> formatForReport(u.getStandardDamage().E().asDoubleValue()))
                   .collect(joining(" + "));
             rangeType = "E";
             if (artTC + artLTC > 0) {
@@ -276,7 +276,7 @@ public class SBFUnitConverter {
     }
 
     private void calcUnitSpecialAbilities() {
-        report.addLine("Special Abilites:", "");
+        report.addLine("Special Abilities:", "");
         addUnitSUAsIfAny(WAT, PRB, AECM, BHJ2, BHJ3, BH, BT, ECM, HPG, LPRB, LECM, TAG);
         addUnitSUAsIfHalf(AMS, ARM, ARS, BAR, BFC, CR, ENG, RBT, SRCH, SHLD);
         addUnitSUAsIfAll(AMP, AM, BHJ, XMEC, MCS, UCS, MEC, PAR, SAW, TRN);
@@ -335,23 +335,23 @@ public class SBFUnitConverter {
         double flkMSum = elements.stream()
               .filter(e -> e.hasSUA(FLK))
               .map(e -> (ASDamageVector) e.getSUA(FLK))
-              .mapToDouble(dv -> dv.M.asDoubleValue())
+              .mapToDouble(dv -> dv.M().asDoubleValue())
               .sum();
         flkMSum += elements.stream()
               .filter(e -> e.hasSUA(AC))
               .map(e -> (ASDamageVector) e.getSUA(AC))
-              .mapToDouble(dv -> dv.M.asDoubleValue())
+              .mapToDouble(dv -> dv.M().asDoubleValue())
               .sum();
         int flkM = (int) Math.round(flkMSum / 3);
         double flkLSum = elements.stream()
               .filter(e -> e.hasSUA(FLK))
               .map(e -> (ASDamageVector) e.getSUA(FLK))
-              .mapToDouble(dv -> dv.L.asDoubleValue())
+              .mapToDouble(dv -> dv.L().asDoubleValue())
               .sum();
         flkLSum += elements.stream()
               .filter(e -> e.hasSUA(AC))
               .map(e -> (ASDamageVector) e.getSUA(AC))
-              .mapToDouble(dv -> dv.L.asDoubleValue())
+              .mapToDouble(dv -> dv.L().asDoubleValue())
               .sum();
         int flkL = (int) Math.round(flkLSum / 3);
         if (flkM + flkL > 0) {
@@ -423,8 +423,8 @@ public class SBFUnitConverter {
         }
     }
 
-    private void sumUnitSUAs(BattleForceSUA... suas) {
-        for (BattleForceSUA sua : suas) {
+    private void sumUnitSUAs(BattleForceSUA... SUAs) {
+        for (BattleForceSUA sua : SUAs) {
             List<String> summands = new ArrayList<>();
             double sum = 0;
             for (AlphaStrikeElement element : elements) {
@@ -442,11 +442,11 @@ public class SBFUnitConverter {
                         summands.add(formatForReport((Double) element.getSUA(sua)));
                         sum += (Double) element.getSUA(sua);
                     } else if (element.getSUA(sua) instanceof ASDamageVector
-                          && ((ASDamageVector) element.getSUA(sua)).rangeBands == 1) {
+                          && ((ASDamageVector) element.getSUA(sua)).rangeBands() == 1) {
                         unit.getSpecialAbilities()
-                              .mergeSUA(sua, ((ASDamageVector) element.getSUA(sua)).S.asDoubleValue());
-                        summands.add(formatForReport(((ASDamageVector) element.getSUA(sua)).S.asDoubleValue()));
-                        sum += ((ASDamageVector) element.getSUA(sua)).S.asDoubleValue();
+                              .mergeSUA(sua, ((ASDamageVector) element.getSUA(sua)).S().asDoubleValue());
+                        summands.add(formatForReport(((ASDamageVector) element.getSUA(sua)).S().asDoubleValue()));
+                        sum += ((ASDamageVector) element.getSUA(sua)).S().asDoubleValue();
                     }
                 }
             }
@@ -458,8 +458,8 @@ public class SBFUnitConverter {
         }
     }
 
-    private void sumUnitArtillery(BattleForceSUA... suas) {
-        for (BattleForceSUA sua : suas) {
+    private void sumUnitArtillery(BattleForceSUA... SUAs) {
+        for (BattleForceSUA sua : SUAs) {
             int count = 0;
             List<String> summands = new ArrayList<>();
             for (AlphaStrikeElement element : elements) {
@@ -480,8 +480,8 @@ public class SBFUnitConverter {
         }
     }
 
-    private void sumUnitSUAsDivideBy3(BattleForceSUA... suas) {
-        for (BattleForceSUA sua : suas) {
+    private void sumUnitSUAsDivideBy3(BattleForceSUA... SUAs) {
+        for (BattleForceSUA sua : SUAs) {
             List<String> summands = new ArrayList<>();
             double suaValue = 0;
             for (AlphaStrikeElement element : elements) {

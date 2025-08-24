@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -141,8 +141,8 @@ public enum BattleForceSUA {
     }
 
     /** Returns true if this SUA is equal to any of the given SUAs. */
-    public boolean isAnyOf(BattleForceSUA sua, BattleForceSUA... furtherSuas) {
-        return (this == sua) || Arrays.stream(furtherSuas).anyMatch(furtherSua -> this == furtherSua);
+    public boolean isAnyOf(BattleForceSUA sua, BattleForceSUA... furtherSUAs) {
+        return (this == sua) || Arrays.stream(furtherSUAs).anyMatch(furtherSua -> this == furtherSua);
     }
 
     /** @return True when this SUA uses an Integer as its value. */
@@ -193,7 +193,7 @@ public enum BattleForceSUA {
     /**
      * Tries to parse the given text for a single SUA (not a list) with its additional information, e.g. "ECM",
      * "SRM2/2", "ARTAIS-2" or "AT34D2". Returns a map of found SUAs linking to their value, if any, such as 2/2, 0* or
-     * 3.158. Typically the map will contain exactly one SUA. In some cases, e.g. transport SUAs, the map may have two
+     * 3.158. Typically, the map will contain exactly one SUA. In some cases, e.g. transport SUAs, the map may have two
      * SUAs, namely the transport (AT) and the door count (ATxD). If the SUA cannot be parsed entirely, the returned map
      * is empty.
      *

@@ -40,14 +40,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Vector;
 
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.INarcPod;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
+import megamek.common.equipment.INarcPod;
 import megamek.common.LosEffects;
-import megamek.common.Minefield;
+import megamek.common.equipment.Minefield;
 import megamek.common.Report;
-import megamek.common.Targetable;
+import megamek.common.units.Targetable;
 import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
 

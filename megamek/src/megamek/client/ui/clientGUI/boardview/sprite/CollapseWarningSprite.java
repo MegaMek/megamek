@@ -40,7 +40,7 @@ import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 
 /**
  * Represents structure CF warnings for entities during deployment and movement phase that will collapse if the entity

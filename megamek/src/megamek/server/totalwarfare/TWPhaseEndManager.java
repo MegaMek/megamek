@@ -33,11 +33,11 @@
 
 package megamek.server.totalwarfare;
 
-import megamek.common.Entity;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameVictoryEvent;
+import megamek.common.units.Entity;
 import megamek.server.ServerHelper;
 
 class TWPhaseEndManager {
@@ -57,9 +57,9 @@ class TWPhaseEndManager {
             case EXCHANGE:
             case STARTING_SCENARIO:
                 gameManager.getGame().addReports(gameManager.getMainPhaseReport());
-                gameManager.changePhase(GamePhase.SET_ARTILLERY_AUTOHIT_HEXES);
+                gameManager.changePhase(GamePhase.SET_ARTILLERY_AUTO_HIT_HEXES);
                 break;
-            case SET_ARTILLERY_AUTOHIT_HEXES:
+            case SET_ARTILLERY_AUTO_HIT_HEXES:
                 gameManager.sendSpecialHexDisplayPackets();
                 gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                 boolean hasMinesToDeploy = gameManager.getGame()
@@ -138,7 +138,7 @@ class TWPhaseEndManager {
             case MOVEMENT_REPORT:
                 gameManager.changePhase(GamePhase.OFFBOARD);
                 break;
-            case PREFIRING:
+            case PRE_FIRING:
                 gameManager.changePhase(GamePhase.FIRING);
                 break;
             case FIRING:
@@ -254,12 +254,12 @@ class TWPhaseEndManager {
                     gameManager.addReport(new Report(1205, Report.PUBLIC));
                     gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                     gameManager.sendReport();
-                    gameManager.changePhase(GamePhase.PREFIRING);
+                    gameManager.changePhase(GamePhase.PRE_FIRING);
                 }
                 break;
             case OFFBOARD_REPORT:
                 gameManager.sendSpecialHexDisplayPackets();
-                gameManager.changePhase(GamePhase.PREFIRING);
+                gameManager.changePhase(GamePhase.PRE_FIRING);
                 break;
             case TARGETING_REPORT:
                 gameManager.changePhase(GamePhase.PREMOVEMENT);

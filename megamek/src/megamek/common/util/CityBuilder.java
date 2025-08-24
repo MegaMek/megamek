@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,15 +39,15 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Vector;
 
-import megamek.common.Board;
-import megamek.common.Compute;
-import megamek.common.Coords;
 import megamek.common.Hex;
-import megamek.common.MapSettings;
-import megamek.common.Terrain;
-import megamek.common.Terrains;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.enums.BuildingType;
+import megamek.common.loaders.MapSettings;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
 
 /**
  * @author Torren + Coelocanth
@@ -64,8 +64,8 @@ public class CityBuilder {
     static final int W = 6;
     static final int E = 7;
 
-    private MapSettings mapSettings;
-    private Board board;
+    private final MapSettings mapSettings;
+    private final Board board;
     private HashSet<Coords> cityPlan;
 
     public CityBuilder(MapSettings mapSettings, Board board) {
@@ -79,8 +79,6 @@ public class CityBuilder {
     /**
      * This function will generate a city with a grid lay out. 4 rounds running North and South and 4 roads running east
      * west
-     *
-     * @return
      *
      * @author Torren (Jason Tighe)
      */
@@ -118,7 +116,7 @@ public class CityBuilder {
         ArrayList<BuildingTemplate> buildingList = new ArrayList<>();
         HashSet<Coords> buildingUsed = new HashSet<>();
 
-        ArrayList<Coords> coordList = new ArrayList<>();
+        ArrayList<Coords> coordList;
 
         Coords centre = new Coords(width / 2, height / 2);
         double falloff = (double) mapSettings.getCityDensity()
@@ -134,20 +132,20 @@ public class CityBuilder {
                     continue;
                 }
 
-                int localdensity = mapSettings.getCityDensity();
+                int localDensity = mapSettings.getCityDensity();
                 if (radius > 0) {
                     int distance = coord.distance(centre);
-                    localdensity = (int) (mapSettings.getCityDensity() - (falloff
+                    localDensity = (int) (mapSettings.getCityDensity() - (falloff
                           * distance * distance));
                 }
 
-                if (Compute.randomInt(100) > localdensity) {
+                if (Compute.randomInt(100) > localDensity) {
                     continue; // empty lot
                 }
                 coordList = new ArrayList<>();
                 coordList.add(coord);
                 buildingUsed.add(coord);
-                while (Compute.randomInt(100) < localdensity) {
+                while (Compute.randomInt(100) < localDensity) {
                     // try to make a bigger building!
                     int dir = Compute.randomInt(6);
                     Coords next = coord.translated(dir);
@@ -231,10 +229,10 @@ public class CityBuilder {
         roads = Math.max(roads, 4);
         cityPlan.add(new Coords(midX, midY));
 
-        int x = 0;
-        int y = 0;
+        int x;
+        int y;
         for (int dir = 0; dir < roads; dir++) {
-            int baseDirection = -1;
+            int baseDirection;
             int roadStyle = Compute.randomInt(2) + 1;
 
             if (dir < 8) {
@@ -305,7 +303,7 @@ public class CityBuilder {
     private void buildMetroCity(int maxX, int maxY) {
         int midX = maxX / 2;
         int midY = maxY / 2;
-        // have the city hub be the mid point with all the hexes around it
+        // have the city hub be the mid-point with all the surrounding hexes
         // cleared out
         Coords mid = new Coords(midX, midY);
         cityPlan.add(mid);
@@ -349,8 +347,6 @@ public class CityBuilder {
     }
 
     /**
-     * @param hex
-     *
      * @return true if it is reasonable to build on this hex
      */
     private boolean isHexBuildable(Hex hex) {
@@ -360,15 +356,10 @@ public class CityBuilder {
               || hex.containsTerrain(Terrains.SWAMP)) {
             return false; // uneconomic to build here
         }
-        if (hex.getLevel() >= 4) {
-            return false; // don't build on mountaintops (aesthetics)
-        }
-        return true;
+        return hex.getLevel() < 4; // don't build on mountaintops (aesthetics)
     }
 
     /**
-     * @param hex
-     *
      * @return true if the hex needs a bridge to cross
      */
     private boolean hexNeedsBridge(Hex hex) {
@@ -414,9 +405,6 @@ public class CityBuilder {
 
     /**
      * Build a bridge across an obstacle
-     *
-     * @param start
-     * @param direction
      *
      * @return coordinates to resume roadbuilding
      *
@@ -523,8 +511,6 @@ public class CityBuilder {
     /**
      * Utility function for setting building type from CF table
      *
-     * @param cf
-     *
      * @return building type
      */
     public static BuildingType getBuildingTypeByCF(int cf) {
@@ -540,7 +526,7 @@ public class CityBuilder {
     }
 
     /**
-     * Adds an Road to the map. Goes from one border to another, and has one turn in it. Map must be at least 3x3.
+     * Adds a Road to the map. Goes from one border to another, and has one turn in it. Map must be at least 3x3.
      */
     private void addGenericRoad() {
         Coords c = new Coords(Compute.randomInt(board.getWidth()), Compute.randomInt(board.getHeight()));

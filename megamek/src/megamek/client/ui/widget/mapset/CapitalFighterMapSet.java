@@ -53,10 +53,10 @@ import megamek.client.ui.widget.picmap.PMPicArea;
 import megamek.client.ui.widget.picmap.PMSimpleLabel;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PMValueLabel;
-import megamek.common.Aero;
 import megamek.common.Configuration;
-import megamek.common.Entity;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
@@ -130,7 +130,7 @@ public class CapitalFighterMapSet implements DisplayMapSet {
         int armorO = t.getCap0Armor();
         armorVLabel.setValue(Integer.toString(armor));
 
-        if (t.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if (t.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             armor = (int) Math.ceil(armor / 10.0);
             armorO = (int) Math.ceil(armorO / 10.0);
         }

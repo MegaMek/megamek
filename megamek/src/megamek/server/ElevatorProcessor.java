@@ -39,14 +39,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.common.Board;
-import megamek.common.BoardLocation;
-import megamek.common.Compute;
-import megamek.common.Coords;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
+import megamek.common.compute.Compute;
+import megamek.common.board.Coords;
 import megamek.common.Hex;
 import megamek.common.Report;
-import megamek.common.Terrain;
-import megamek.common.Terrains;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**

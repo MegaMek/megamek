@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2001-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2006-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,14 +34,26 @@
 
 package megamek.common.actions;
 
-import static megamek.common.QuadVee.CONV_MODE_VEHICLE;
+import static megamek.common.units.QuadVee.CONV_MODE_VEHICLE;
+
+import java.io.Serial;
 
 import megamek.client.ui.Messages;
-import megamek.common.*;
+import megamek.common.CriticalSlot;
+import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.RangeType;
+import megamek.common.ToHitData;
 import megamek.common.annotations.Nullable;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.*;
 
 public class PhysicalAttackAction extends AbstractAttackAction {
+    @Serial
     private static final long serialVersionUID = -4702357516725749181L;
 
     public PhysicalAttackAction(int entityId, int targetId) {
@@ -70,7 +82,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                  && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                  && ((target.getOwnerId() == ae.getOwnerId())
                   || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
                   && (ae.getOwner().getTeam() != Player.TEAM_NONE)
                   && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
@@ -111,12 +123,12 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                 return "You can't target yourself";
             }
 
-            // can't target airborne aeros
+            // can't target airborne aero's
             if (te.isAirborne()) {
                 return "can't target airborne units";
             }
 
-            // Can't target a entity conducting a swarm attack.
+            // Can't target an entity conducting a swarm attack.
             if (Entity.NONE != te.getSwarmTargetId()) {
                 return "Target is swarming a Mek.";
             }
@@ -199,14 +211,15 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         // If it has a torso-mounted cockpit and two head sensor hits or three
         // sensor hits...
         // It gets a =4 penalty for being blind!
-        if (((Mek) ae).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
-            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                  Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
-            int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                  Mek.SYSTEM_SENSORS, Mek.LOC_CT);
+        if ((ae instanceof Mek attackingMek) && attackingMek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
+            int sensorHits = attackingMek.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM,
+                  Mek.SYSTEM_SENSORS,
+                  Mek.LOC_HEAD);
+            int sensorHits2 = attackingMek.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM,
+                  Mek.SYSTEM_SENSORS,
+                  Mek.LOC_CENTER_TORSO);
             if ((sensorHits + sensorHits2) == 3) {
-                toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
-                      "Sensors Completely Destroyed for Torso-Mounted Cockpit");
+                toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "Sensors Completely Destroyed for Torso-Mounted Cockpit");
                 return;
             } else if (sensorHits == 2) {
                 toHit.addModifier(4, "Head Sensors Destroyed for Torso-Mounted Cockpit");
@@ -260,7 +273,8 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
             // Attacking Weight Class Modifier.
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR)) {
+            if (game.getOptions()
+                  .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_PHYSICAL_ATTACK_PSR)) {
                 if (ae.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) {
                     toHit.addModifier(-2, "Weight Class Attack Modifier");
                 } else if (ae.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {

@@ -108,7 +108,7 @@ public class TipOfTheDay {
     private float currentOffset = 0.0f;
     private boolean isFading = false;
     private boolean isVisible = true;
-    private Component repaintComponent;
+    private final Component repaintComponent;
     private List<String> allTips;
     private int currentTipIndex = 0;
     private Rectangle tipClickBounds;
@@ -670,22 +670,17 @@ public class TipOfTheDay {
         int contentWidthToDraw = Math.min(preferredSize.width, availableWidth);
         int actualHeight = preferredSize.height;
 
-        float drawX;
-        switch (position) {
-            case BOTTOM_LEFT_CORNER:
-                drawX = startX + currentOffset;
-                break;
-            case BOTTOM_RIGHT_CORNER:
-                drawX = referenceBounds.x + referenceBounds.width
-                      - contentWidthToDraw
-                      - scaledSidePadding
-                      - currentOffset;
-                break;
-            default: // BOTTOM_BORDER
+        float drawX = switch (position) {
+            case BOTTOM_LEFT_CORNER -> startX + currentOffset;
+            case BOTTOM_RIGHT_CORNER -> referenceBounds.x + referenceBounds.width
+                  - contentWidthToDraw
+                  - scaledSidePadding
+                  - currentOffset;
+            default -> {
                 drawX = startX + (availableWidth - contentWidthToDraw) / 2f;
-                drawX = Math.max(startX, drawX);
-                break;
-        }
+                yield Math.max(startX, drawX);
+            }
+        };
         htmlPane.setBounds(0, 0, contentWidthToDraw, actualHeight);
 
         Graphics2D g2d = (Graphics2D) graphics.create();
@@ -751,7 +746,7 @@ public class TipOfTheDay {
         }
         for (String cmd : keybindCommands) {
             String keybindVariable = KEYBIND_VARIABLE_PREFIX + cmd + VARIABLE_SUFFIX;
-            KeyCommandBind kcb = null;
+            KeyCommandBind kcb;
             try {
                 // We try to find it by enum first (faster)
                 kcb = KeyCommandBind.valueOf(cmd.toUpperCase());

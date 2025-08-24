@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -49,7 +49,7 @@ import megamek.logging.MMLogger;
  * Implementation of the AbstractConnection that uses the DataInputStream and DataOutputStream to send/receive data.
  */
 public class DataStreamConnection extends AbstractConnection {
-    private static final MMLogger logger = MMLogger.create(DataStreamConnection.class);
+    private static final MMLogger LOGGER = MMLogger.create(DataStreamConnection.class);
 
     private DataInputStream in;
     private DataOutputStream out;
@@ -112,13 +112,13 @@ public class DataStreamConnection extends AbstractConnection {
     }
 
     @Override
-    protected void sendNetworkPacket(byte[] data, boolean iszipped) throws Exception {
+    protected void sendNetworkPacket(byte[] data, boolean isZipped) throws Exception {
         if (out == null) {
             out = new DataOutputStream(new BufferedOutputStream(getOutputStream(), getSendBufferSize()));
         }
 
         synchronized (out) {
-            out.writeBoolean(iszipped);
+            out.writeBoolean(isZipped);
             out.writeInt(marshallingType);
             out.writeInt(data.length);
             out.write(data);
@@ -126,7 +126,7 @@ public class DataStreamConnection extends AbstractConnection {
     }
 
     /**
-     * override flush to flush the datastream after flushing packetqueue
+     * override flush to flush the data stream after flushing packet queue
      */
     @Override
     public synchronized void flush() {
@@ -140,13 +140,11 @@ public class DataStreamConnection extends AbstractConnection {
                 }
             }
         } catch (SocketException ignored) {
-            // close this connection, because it's broken. This can happen if the connection
-            // is closed while
-            // being written to, and it's not a big deal, since the connection is being
-            // broken anyway
+            // close this connection, because it's broken. This can happen if the connection is closed while being
+            // written to, and it's not a big deal, since the connection is being broken anyway
             close();
         } catch (IOException ex) {
-            logger.error("", ex);
+            LOGGER.error("", ex);
             // close this connection, because it's broken
             close();
         }

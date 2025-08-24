@@ -40,8 +40,8 @@ import java.util.Map;
 
 import megamek.client.bot.princess.EntityState;
 import megamek.client.bot.princess.FiringPlanCalculationParameters;
-import megamek.common.Entity;
-import megamek.common.Targetable;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.WeaponMounted;
 import megamek.logging.MMLogger;

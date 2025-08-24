@@ -37,17 +37,17 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 
 import megamek.MegaMek;
-import megamek.common.Aero;
-import megamek.common.Entity;
-import megamek.common.EntitySelector;
-import megamek.common.FighterSquadron;
-import megamek.common.GameTurn;
-import megamek.common.IAero;
-import megamek.common.MapSettings;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.enums.GamePhase;
+import megamek.common.game.GameTurn;
+import megamek.common.loaders.MapSettings;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.EntitySelector;
+import megamek.common.units.FighterSquadron;
+import megamek.common.units.IAero;
 import megamek.common.util.EmailService;
 import megamek.logging.MMLogger;
 import megamek.server.DynamicTerrainProcessor;
@@ -131,7 +131,7 @@ public class TWPhasePreparationManager {
                 gameManager.getGame().resetTurnIndex();
                 gameManager.sendCurrentTurns();
                 break;
-            case SET_ARTILLERY_AUTOHIT_HEXES:
+            case SET_ARTILLERY_AUTO_HIT_HEXES:
                 gameManager.deployOffBoardEntities();
                 gameManager.checkForObservers();
                 gameManager.transmitAllPlayerUpdates();
@@ -155,7 +155,7 @@ public class TWPhasePreparationManager {
             case PREMOVEMENT:
             case MOVEMENT:
             case DEPLOYMENT:
-            case PREFIRING:
+            case PRE_FIRING:
             case FIRING:
             case PHYSICAL:
             case TARGETING:
@@ -262,7 +262,9 @@ public class TWPhasePreparationManager {
                     }
                     // fix the armor and SI of aeros if using aero sanity rules for
                     // the MUL
-                    if (gameManager.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+                    if (gameManager.getGame()
+                          .getOptions()
+                          .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)
                           && (entity instanceof Aero)) {
                         // need to rescale SI and armor
                         int scale = 1;

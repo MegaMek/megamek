@@ -32,9 +32,9 @@
  */
 package megamek.common.util;
 
-import megamek.common.EquipmentType;
-import megamek.common.MiscType;
-import megamek.common.WeaponType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.WeaponType;
 import megamek.common.weapons.lrms.LRMWeapon;
 import megamek.common.weapons.srms.SRMWeapon;
 

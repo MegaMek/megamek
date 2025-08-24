@@ -34,15 +34,19 @@
 
 package megamek.common.weapons;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
-import megamek.common.Mounted;
-import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.CLIATMHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -64,7 +68,7 @@ public abstract class CLIATMWeapon extends MissileWeapon {
         // assume bad things will happen.
         atClass = CLASS_ATM; // Do I need to change this? Streak LRMs still use the CLASS_LRM flag... I think
         // I can leave it.
-        techAdvancement.setTechBase(TechAdvancement.TechBase.CLAN);
+        techAdvancement.setTechBase(TechBase.CLAN);
         techAdvancement.setClanAdvancement(3049, 3070);
         techAdvancement.setTechRating(TechRating.F);
         techAdvancement.setAvailability(AvailabilityValue.X,
@@ -79,11 +83,11 @@ public abstract class CLIATMWeapon extends MissileWeapon {
      *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game,
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
 
         // MML does different handlers here. I think I'll go with implementing different
@@ -104,7 +108,7 @@ public abstract class CLIATMWeapon extends MissileWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_IATM;
+        return BF_CLASS_IATM;
     }
 
     @Override

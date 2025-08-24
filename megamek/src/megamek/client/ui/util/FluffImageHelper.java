@@ -41,12 +41,12 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
 
-import megamek.common.BTObject;
 import megamek.common.Configuration;
-import megamek.common.Mek;
-import megamek.common.MekSummary;
+import megamek.common.loaders.MekSummary;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.units.BTObject;
+import megamek.common.units.Mek;
 
 /**
  * This class provides methods for retrieving fluff images, for use in MM, MML and MHQ; also for record sheets (where

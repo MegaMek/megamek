@@ -40,11 +40,11 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.util.Vector;
 
-import megamek.common.Bay;
-import megamek.common.Entity;
-import megamek.common.Jumpship;
-import megamek.common.NavalRepairFacility;
-import megamek.common.SpaceStation;
+import megamek.common.bays.Bay;
+import megamek.common.units.Entity;
+import megamek.common.units.Jumpship;
+import megamek.common.units.NavalRepairFacility;
+import megamek.common.units.SpaceStation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

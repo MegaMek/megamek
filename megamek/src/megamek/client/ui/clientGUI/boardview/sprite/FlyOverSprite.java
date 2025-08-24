@@ -43,8 +43,8 @@ import java.awt.Stroke;
 import java.awt.image.ImageObserver;
 
 import megamek.client.ui.clientGUI.boardview.BoardView;
-import megamek.common.Coords;
-import megamek.common.Entity;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
 
 /**
  * Sprite and info for an aero flyover route. Does not actually use the image buffer as this can be horribly inefficient

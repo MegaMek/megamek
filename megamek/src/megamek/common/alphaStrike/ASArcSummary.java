@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
 
 /**
- * This class holds the AlphaStrike information for a firing arc of any element that uses arcs such as a WarShip (WS)..
+ * This class holds the AlphaStrike information for a firing arc of any element that uses arcs such as a WarShip (WS).
  * It is a standard ASSpecialAbilityCollection except that
  * {@link #getSpecialsExportString(String, BattleForceSUAFormatter)} can be used to export the arc information including
  * the STD, CAP, SCAP and MSL damage values which are otherwise not listed among the special abilities.

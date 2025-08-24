@@ -36,7 +36,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
+import megamek.common.rolls.TargetRoll;
 import org.junit.jupiter.api.Test;
 
 class TargetRollTest {

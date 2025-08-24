@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,10 +36,10 @@ package megamek.common.util;
 import java.text.MessageFormat;
 
 import megamek.client.ui.Messages;
-import megamek.common.Entity;
-import megamek.common.Infantry;
-import megamek.common.Tank;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Tank;
 
 public class CrewSkillSummaryUtil {
     private static final String SKILL_SUMMARY_PILOT = "{0}/{1}";

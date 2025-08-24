@@ -54,7 +54,7 @@ import javax.swing.JScrollPane;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.common.Board;
+import megamek.common.board.Board;
 import megamek.common.ManeuverType;
 import megamek.common.moves.MovePath;
 

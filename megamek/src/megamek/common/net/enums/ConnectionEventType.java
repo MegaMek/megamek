@@ -61,7 +61,7 @@ public enum ConnectionEventType {
                 break;
             default:
                 MMLogger.create(ConnectionEventType.class)
-                      .error("Received unknown connection event type of " + event.getType().name());
+                      .error("Received unknown connection event type of {}", event.getType().name());
                 break;
         }
     }

@@ -36,7 +36,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-import megamek.common.*;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Jumpship;
+import megamek.common.units.Mek;
+import megamek.common.units.SpaceStation;
+import megamek.common.units.SuperHeavyTank;
+import megamek.common.units.Tank;
+import megamek.common.units.Warship;
 
 /**
  * Utility class for calculating multiple features from entities.
@@ -185,12 +194,16 @@ public class EntityFeatureUtils {
                       unit.getArmor(SuperHeavyTank.LOC_FRONT));
 
                 registerPercent(Mek.class, unit ->
-                      (unit.getArmor(Mek.LOC_CT) + unit.getArmor(Mek.LOC_LT) + unit.getArmor(Mek.LOC_RT)) /
-                            (float) (unit.getOArmor(Mek.LOC_CT)
-                                  + unit.getOArmor(Mek.LOC_LT)
-                                  + unit.getOArmor(Mek.LOC_RT)));
+                      (unit.getArmor(Mek.LOC_CENTER_TORSO)
+                            + unit.getArmor(Mek.LOC_LEFT_TORSO)
+                            + unit.getArmor(Mek.LOC_RIGHT_TORSO)) /
+                            (float) (unit.getOArmor(Mek.LOC_CENTER_TORSO)
+                                  + unit.getOArmor(Mek.LOC_LEFT_TORSO)
+                                  + unit.getOArmor(Mek.LOC_RIGHT_TORSO)));
                 registerDiscrete(Mek.class, unit ->
-                      (unit.getArmor(Mek.LOC_CT) + unit.getArmor(Mek.LOC_LT) + unit.getArmor(Mek.LOC_RT)));
+                      (unit.getArmor(Mek.LOC_CENTER_TORSO)
+                            + unit.getArmor(Mek.LOC_LEFT_TORSO)
+                            + unit.getArmor(Mek.LOC_RIGHT_TORSO)));
 
                 registerPercent(Jumpship.class, unit ->
                       unit.getArmor(Jumpship.LOC_NOSE) / (float) unit.getOArmor(Jumpship.LOC_NOSE));
@@ -240,13 +253,14 @@ public class EntityFeatureUtils {
                       unit.getArmor(SuperHeavyTank.LOC_REAR));
 
                 registerPercent(Mek.class, unit ->
-                      (unit.getArmor(Mek.LOC_LT, true) + unit.getArmor(Mek.LOC_CT, true) +
-                            unit.getArmor(Mek.LOC_RT, true)) /
-                            (float) (unit.getOArmor(Mek.LOC_LT, true) + unit.getOArmor(Mek.LOC_CT, true) +
-                                  unit.getOArmor(Mek.LOC_RT, true)));
+                      (unit.getArmor(Mek.LOC_LEFT_TORSO, true) + unit.getArmor(Mek.LOC_CENTER_TORSO, true) +
+                            unit.getArmor(Mek.LOC_RIGHT_TORSO, true)) /
+                            (float) (unit.getOArmor(Mek.LOC_LEFT_TORSO, true) + unit.getOArmor(Mek.LOC_CENTER_TORSO,
+                                  true) +
+                                  unit.getOArmor(Mek.LOC_RIGHT_TORSO, true)));
                 registerDiscrete(Mek.class, unit ->
-                      (unit.getArmor(Mek.LOC_LT, true) + unit.getArmor(Mek.LOC_CT, true) +
-                            unit.getArmor(Mek.LOC_RT, true)));
+                      (unit.getArmor(Mek.LOC_LEFT_TORSO, true) + unit.getArmor(Mek.LOC_CENTER_TORSO, true) +
+                            unit.getArmor(Mek.LOC_RIGHT_TORSO, true)));
 
                 registerPercent(Jumpship.class, unit ->
                       (unit.getArmor(Jumpship.LOC_AFT) + unit.getArmor(Jumpship.LOC_ARS)) /
@@ -287,9 +301,9 @@ public class EntityFeatureUtils {
             @Override
             protected void registerCalculators() {
                 registerPercent(Aero.class, unit ->
-                      unit.getArmor(Aero.LOC_LWING) / (float) unit.getOArmor(Aero.LOC_LWING));
+                      unit.getArmor(Aero.LOC_LEFT_WING) / (float) unit.getOArmor(Aero.LOC_LEFT_WING));
                 registerDiscrete(Aero.class, unit ->
-                      unit.getArmor(Aero.LOC_LWING));
+                      unit.getArmor(Aero.LOC_LEFT_WING));
 
                 registerPercent(Tank.class, unit ->
                       unit.getArmor(Tank.LOC_LEFT) / (float) unit.getOArmor(Tank.LOC_LEFT));
@@ -297,18 +311,22 @@ public class EntityFeatureUtils {
                       unit.getArmor(Tank.LOC_LEFT));
 
                 registerPercent(SuperHeavyTank.class, unit ->
-                      (unit.getArmor(SuperHeavyTank.LOC_FRONTLEFT) + unit.getArmor(SuperHeavyTank.LOC_REARLEFT)) /
-                            (float) (unit.getOArmor(SuperHeavyTank.LOC_FRONTLEFT) +
-                                  unit.getOArmor(SuperHeavyTank.LOC_REARLEFT)));
+                      (unit.getArmor(SuperHeavyTank.LOC_FRONT_LEFT) + unit.getArmor(SuperHeavyTank.LOC_REAR_LEFT)) /
+                            (float) (unit.getOArmor(SuperHeavyTank.LOC_FRONT_LEFT) +
+                                  unit.getOArmor(SuperHeavyTank.LOC_REAR_LEFT)));
                 registerDiscrete(SuperHeavyTank.class, unit ->
-                      (unit.getArmor(SuperHeavyTank.LOC_FRONTLEFT) + unit.getArmor(SuperHeavyTank.LOC_REARLEFT)));
+                      (unit.getArmor(SuperHeavyTank.LOC_FRONT_LEFT) + unit.getArmor(SuperHeavyTank.LOC_REAR_LEFT)));
 
                 registerPercent(Mek.class, unit ->
-                      (unit.getArmor(Mek.LOC_LT) + unit.getArmor(Mek.LOC_LARM) + unit.getArmor(Mek.LOC_LLEG)) /
-                            (float) (unit.getOArmor(Mek.LOC_LT) + unit.getOArmor(Mek.LOC_LARM) +
-                                  unit.getOArmor(Mek.LOC_LLEG)));
+                      (unit.getArmor(Mek.LOC_LEFT_TORSO)
+                            + unit.getArmor(Mek.LOC_LEFT_ARM)
+                            + unit.getArmor(Mek.LOC_LEFT_LEG)) /
+                            (float) (unit.getOArmor(Mek.LOC_LEFT_TORSO) + unit.getOArmor(Mek.LOC_LEFT_ARM) +
+                                  unit.getOArmor(Mek.LOC_LEFT_LEG)));
                 registerDiscrete(Mek.class, unit ->
-                      (unit.getArmor(Mek.LOC_LT) + unit.getArmor(Mek.LOC_LARM) + unit.getArmor(Mek.LOC_LLEG)));
+                      (unit.getArmor(Mek.LOC_LEFT_TORSO)
+                            + unit.getArmor(Mek.LOC_LEFT_ARM)
+                            + unit.getArmor(Mek.LOC_LEFT_LEG)));
 
                 registerPercent(Jumpship.class, unit ->
                       (unit.getArmor(Jumpship.LOC_FLS) + unit.getArmor(Jumpship.LOC_ALS)) /
@@ -349,9 +367,9 @@ public class EntityFeatureUtils {
             @Override
             protected void registerCalculators() {
                 registerPercent(Aero.class, unit ->
-                      unit.getArmor(Aero.LOC_RWING) / (float) unit.getOArmor(Aero.LOC_RWING));
+                      unit.getArmor(Aero.LOC_RIGHT_WING) / (float) unit.getOArmor(Aero.LOC_RIGHT_WING));
                 registerDiscrete(Aero.class, unit ->
-                      unit.getArmor(Aero.LOC_RWING));
+                      unit.getArmor(Aero.LOC_RIGHT_WING));
 
                 registerPercent(Tank.class, unit ->
                       unit.getArmor(Tank.LOC_RIGHT) / (float) unit.getOArmor(Tank.LOC_RIGHT));
@@ -359,18 +377,23 @@ public class EntityFeatureUtils {
                       unit.getArmor(Tank.LOC_RIGHT));
 
                 registerPercent(SuperHeavyTank.class, unit ->
-                      (unit.getArmor(SuperHeavyTank.LOC_FRONTRIGHT) + unit.getArmor(SuperHeavyTank.LOC_REARRIGHT)) /
-                            (float) (unit.getOArmor(SuperHeavyTank.LOC_FRONTRIGHT) +
-                                  unit.getOArmor(SuperHeavyTank.LOC_REARRIGHT)));
+                      (unit.getArmor(SuperHeavyTank.LOC_FRONT_RIGHT) + unit.getArmor(SuperHeavyTank.LOC_REAR_RIGHT)) /
+                            (float) (unit.getOArmor(SuperHeavyTank.LOC_FRONT_RIGHT) +
+                                  unit.getOArmor(SuperHeavyTank.LOC_REAR_RIGHT)));
                 registerDiscrete(SuperHeavyTank.class, unit ->
-                      (unit.getArmor(SuperHeavyTank.LOC_FRONTRIGHT) + unit.getArmor(SuperHeavyTank.LOC_REARRIGHT)));
+                      (unit.getArmor(SuperHeavyTank.LOC_FRONT_RIGHT) + unit.getArmor(SuperHeavyTank.LOC_REAR_RIGHT)));
 
                 registerPercent(Mek.class, unit ->
-                      (unit.getArmor(Mek.LOC_RT) + unit.getArmor(Mek.LOC_RARM) + unit.getArmor(Mek.LOC_RLEG)) /
-                            (float) (unit.getOArmor(Mek.LOC_RT) + unit.getOArmor(Mek.LOC_RARM) +
-                                  unit.getOArmor(Mek.LOC_RLEG)));
+                      (unit.getArmor(Mek.LOC_RIGHT_TORSO)
+                            + unit.getArmor(Mek.LOC_RIGHT_ARM)
+                            + unit.getArmor(Mek.LOC_RIGHT_LEG))
+                            /
+                            (float) (unit.getOArmor(Mek.LOC_RIGHT_TORSO) + unit.getOArmor(Mek.LOC_RIGHT_ARM) +
+                                  unit.getOArmor(Mek.LOC_RIGHT_LEG)));
                 registerDiscrete(Mek.class, unit ->
-                      (unit.getArmor(Mek.LOC_RT) + unit.getArmor(Mek.LOC_RARM) + unit.getArmor(Mek.LOC_RLEG)));
+                      (unit.getArmor(Mek.LOC_RIGHT_TORSO)
+                            + unit.getArmor(Mek.LOC_RIGHT_ARM)
+                            + unit.getArmor(Mek.LOC_RIGHT_LEG)));
 
                 registerPercent(Jumpship.class, unit ->
                       (unit.getArmor(Jumpship.LOC_FRS) + unit.getArmor(Jumpship.LOC_ARS)) /

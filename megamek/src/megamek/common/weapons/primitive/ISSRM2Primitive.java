@@ -35,13 +35,17 @@
 
 package megamek.common.weapons.primitive;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.SRMHandler;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.srm.SRMHandler;
 import megamek.common.weapons.srms.SRMWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -69,7 +73,7 @@ public class ISSRM2Primitive extends SRMWeapon {
         longRange = 9;
         extremeRange = 12;
         tonnage = 1.0;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 21;
         flags = flags.or(F_NO_FIRES);
         cost = 10000;
@@ -92,7 +96,7 @@ public class ISSRM2Primitive extends SRMWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new SRMHandler(toHit, waa, game, manager, -2);
     }

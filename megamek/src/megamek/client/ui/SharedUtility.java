@@ -39,13 +39,23 @@ import java.util.Enumeration;
 import java.util.List;
 
 import megamek.client.Client;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.MPCalculationSetting;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.enums.MoveStepType;
+import megamek.common.equipment.EscapePods;
+import megamek.common.game.Game;
 import megamek.common.internationalization.I18n;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.PilotingRollData;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.*;
+import megamek.common.weapons.TeleMissile;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -119,7 +129,7 @@ public class SharedUtility {
             curFacing = step.getFacing();
 
             // check for vertical takeoff
-            if (step.getType() == MoveStepType.VTAKEOFF) {
+            if (step.getType() == MoveStepType.VERTICAL_TAKE_OFF) {
                 rollTarget = ((IAero) entity).checkVerticalTakeOff();
                 checkNag(rollTarget, nagReport, psrList);
             }
@@ -130,7 +140,7 @@ public class SharedUtility {
                 checkNag(rollTarget, nagReport, psrList);
             }
 
-            if (step.getType() == MoveStepType.VLAND) {
+            if (step.getType() == MoveStepType.VERTICAL_LAND) {
                 rollTarget = ((IAero) entity).getLandingControlRoll(step.getVelocity(), curPos, curFacing, true);
                 checkNag(rollTarget, nagReport, psrList);
             }
@@ -151,7 +161,7 @@ public class SharedUtility {
 
         // Atmospheric checks
         if (!game.getBoard(md.getFinalBoardId()).isSpace() && !md.contains(MoveStepType.LAND)
-              && !md.contains(MoveStepType.VLAND)) {
+              && !md.contains(MoveStepType.VERTICAL_LAND)) {
             // check to see if velocity is 2x thrust
             rollTarget = a.checkVelocityDouble(md.getFinalVelocity(),
                   overallMoveType);
@@ -251,7 +261,7 @@ public class SharedUtility {
             final Hex curHex = board.getHex(curPos);
 
             // check for vertical takeoff
-            if ((step.getType() == MoveStepType.VTAKEOFF)
+            if ((step.getType() == MoveStepType.VERTICAL_TAKE_OFF)
                   && entity.isAero()) {
                 rollTarget = ((IAero) entity).checkVerticalTakeOff();
                 checkNag(rollTarget, nagReport, psrList);
@@ -263,7 +273,7 @@ public class SharedUtility {
                 rollTarget = ((IAero) entity).getLandingControlRoll(step.getVelocity(), curPos, curFacing, false);
                 checkNag(rollTarget, nagReport, psrList);
             }
-            if ((step.getType() == MoveStepType.VLAND)
+            if ((step.getType() == MoveStepType.VERTICAL_LAND)
                   && entity.isAero()) {
                 rollTarget = ((IAero) entity).getLandingControlRoll(step.getVelocity(), curPos, curFacing, true);
                 checkNag(rollTarget, nagReport, psrList);
@@ -272,7 +282,7 @@ public class SharedUtility {
             // check for leap
             if (!lastPos.equals(curPos) && (moveType != EntityMovementType.MOVE_JUMP) && (entity instanceof Mek)
                   && !entity.isAirborne() && (step.getClearance() <= 0) // Don't check airborne LAMs
-                  && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING)) {
+                  && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING)) {
                 int leapDistance = (lastElevation + board.getHex(lastPos).getLevel())
                       - (curElevation + curHex.getLevel());
                 if (leapDistance > 2) {
@@ -545,7 +555,7 @@ public class SharedUtility {
 
             if (step.getType() == MoveStepType.UNLOAD) {
                 Targetable targ = step.getTarget(game);
-                if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES)
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES)
                       && (entity instanceof VTOL)
                       && (md.getFinalElevation() > 0)
                       && (targ instanceof Infantry)
@@ -614,7 +624,7 @@ public class SharedUtility {
             // jumped into water?
             Hex hex = game.getBoard(curBoardId).getHex(curPos);
             // check for jumping into heavy woods
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_PSR_JUMP_HEAVY_WOODS)) {
                 rollTarget = entity.checkLandingInHeavyWoods(overallMoveType,
                       hex);
                 checkNag(rollTarget, nagReport, psrList);
@@ -660,7 +670,7 @@ public class SharedUtility {
 
             // Atmospheric checks
             if (!game.getBoard(curBoardId).isSpace() && !md.contains(MoveStepType.LAND)
-                  && !md.contains(MoveStepType.VLAND)) {
+                  && !md.contains(MoveStepType.VERTICAL_LAND)) {
                 // check to see if velocity is 2x thrust
                 rollTarget = a.checkVelocityDouble(md.getFinalVelocity(), overallMoveType);
                 checkNag(rollTarget, nagReport, psrList);
@@ -796,7 +806,7 @@ public class SharedUtility {
                 }
                 if (!game.getBoard().contains(movePath.getFinalCoords())) {
                     movePath.removeLastStep();
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER)) {
                         // Telemissiles shouldn't get aero return option
                         if (entity instanceof TeleMissile) {
                             movePath.addStep(MoveStepType.OFF);
@@ -923,7 +933,7 @@ public class SharedUtility {
             }
 
             if (!game.getBoard().contains(c)) {
-                if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER)) {
                     // Telemissiles shouldn't get a return option
                     if (en instanceof TeleMissile) {
                         md.addStep(MoveStepType.OFF);
@@ -994,7 +1004,7 @@ public class SharedUtility {
     public static double predictLeapFallDamage(Entity movingEntity, TargetRoll data) {
         // Rough guess based on normal pilots
         double odds = Compute.oddsAbove(data.getValue(), false) / 100d;
-        int fallHeight = data.getModifiers().get(data.getModifiers().size() - 1).getValue();
+        int fallHeight = data.getModifiers().get(data.getModifiers().size() - 1).value();
         double fallDamage = Math.round(movingEntity.getWeight() / 10.0)
               * (fallHeight + 1);
         LOGGER.trace("Predicting Leap fall damage for {} at {}% odds, {} fall height",
@@ -1013,13 +1023,14 @@ public class SharedUtility {
     public static double predictLeapDamage(Entity movingEntity, TargetRoll data) {
         int legMultiplier = (movingEntity.isQuadMek()) ? 4 : 2;
         double odds = Compute.oddsAbove(data.getValue(), false) / 100d;
-        int fallHeight = data.getModifiers().get(data.getModifiers().size() - 1).getValue() / 2;
+        int fallHeight = data.getModifiers().get(data.getModifiers().size() - 1).value() / 2;
         double legDamage = fallHeight * (legMultiplier);
         LOGGER.trace("Predicting Leap damage for {} at {}% odds, {} fall height",
               movingEntity.getDisplayName(),
               odds,
               fallHeight);
-        int[] legLocations = { BipedMek.LOC_LLEG, BipedMek.LOC_RLEG, QuadMek.LOC_LARM, QuadMek.LOC_RARM };
+        int[] legLocations = { BipedMek.LOC_LEFT_LEG, BipedMek.LOC_RIGHT_LEG, QuadMek.LOC_LEFT_ARM,
+                               QuadMek.LOC_RIGHT_ARM };
 
         // Add required crits; say the effective leg "damage" from a crit is 20 for now.
         int CRIT_VALUE = 100;

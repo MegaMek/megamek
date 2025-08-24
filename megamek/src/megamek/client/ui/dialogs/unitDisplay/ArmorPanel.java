@@ -39,7 +39,10 @@ import java.util.Enumeration;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.mapset.*;
 import megamek.client.ui.widget.picmap.PicMap;
-import megamek.common.*;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.game.Game;
+import megamek.common.units.*;
 import megamek.logging.MMLogger;
 
 /**

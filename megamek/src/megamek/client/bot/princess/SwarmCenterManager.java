@@ -36,11 +36,11 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.codeUtilities.MathUtility;
-import megamek.common.Board;
-import megamek.common.Coords;
-import megamek.common.CubeCoords;
-import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.board.CubeCoords;
+import megamek.common.units.Entity;
 
 /**
  * Manages the center of a swarm of friendly units.

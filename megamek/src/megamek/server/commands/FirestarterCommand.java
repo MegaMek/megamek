@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Objects;
 
 import megamek.client.ui.Messages;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 import megamek.common.Hex;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;

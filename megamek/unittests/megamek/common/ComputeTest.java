@@ -46,10 +46,22 @@ import java.util.List;
 
 import megamek.client.Client;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.WeaponType;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
+import megamek.common.units.AeroSpaceFighter;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Crew;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,7 +96,7 @@ class ComputeTest {
         game.setOptions(mockGameOptions);
 
         when(mockGameOptions.booleanOption(eq(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL))).thenReturn(false);
-        when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)).thenReturn("Experimental");
+        when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECH_LEVEL)).thenReturn("Experimental");
         when(mockGameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED)).thenReturn(true);
         when(mockGameOptions.booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT)).thenReturn(false);
         Option mockTrueBoolOpt = mock(Option.class);
@@ -440,7 +452,7 @@ class ComputeTest {
         faller.setId(1);
         faller.setWeight(weight);
 
-        assertEquals(expectedDamage, Compute.getAffaDamageFor(faller, elevation));
+        assertEquals(expectedDamage, Compute.getAccidentalFallFromAboveDamageFor(faller, elevation));
     }
 
     @Test
@@ -454,7 +466,7 @@ class ComputeTest {
         faller.setId(1);
         faller.setWeight(weight);
 
-        assertEquals(expectedDamage, Compute.getAffaDamageFor(faller, elevation));
+        assertEquals(expectedDamage, Compute.getAccidentalFallFromAboveDamageFor(faller, elevation));
     }
 
     @Test
@@ -468,6 +480,6 @@ class ComputeTest {
         faller.setId(1);
         faller.setWeight(weight);
 
-        assertEquals(expectedDamage, Compute.getAffaDamageFor(faller, elevation));
+        assertEquals(expectedDamage, Compute.getAccidentalFallFromAboveDamageFor(faller, elevation));
     }
 }

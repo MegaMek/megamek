@@ -35,10 +35,11 @@ package megamek.common.moves;
 import java.util.EnumSet;
 import java.util.Set;
 
-import megamek.common.Entity;
-import megamek.common.Game;
 import megamek.common.ManeuverType;
+import megamek.common.enums.MoveStepType;
+import megamek.common.game.Game;
 import megamek.common.pathfinder.CachedEntityState;
+import megamek.common.units.Entity;
 
 /**
  * This class handles the maneuver step of a unit. It is used in the MoveStep compilation to calculate the movement of a
@@ -48,10 +49,10 @@ import megamek.common.pathfinder.CachedEntityState;
  * @since 0.50.07
  */
 class ManeuverStep implements PhasePass {
-    private static final EnumSet<MovePath.MoveStepType> TYPES = EnumSet.of(MovePath.MoveStepType.MANEUVER);
+    private static final EnumSet<MoveStepType> TYPES = EnumSet.of(MoveStepType.MANEUVER);
 
     @Override
-    public Set<MovePath.MoveStepType> getTypesOfInterest() {
+    public Set<MoveStepType> getTypesOfInterest() {
         return TYPES;
     }
 

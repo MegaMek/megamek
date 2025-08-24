@@ -42,7 +42,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import megamek.common.MekSummary;
+import megamek.common.loaders.MekSummary;
 import org.junit.jupiter.api.Test;
 
 /**

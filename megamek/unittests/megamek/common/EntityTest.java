@@ -43,6 +43,16 @@ import java.util.Collections;
 import java.util.Vector;
 
 import megamek.common.actions.DfaAttackAction;
+import megamek.common.board.Coords;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Crew;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.Tank;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
 import megamek.utils.EntityLoader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

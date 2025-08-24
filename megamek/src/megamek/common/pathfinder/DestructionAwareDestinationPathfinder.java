@@ -42,9 +42,17 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.common.*;
-import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
+import megamek.common.BulldozerMovePath;
+import megamek.common.Hex;
+import megamek.common.MPCalculationSetting;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.enums.MoveStepType;
+import megamek.common.game.Game;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Terrains;
 
 /**
  * Handles the generation of ground-based move paths that contain information relating to the destruction of terrain
@@ -54,7 +62,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
 
     private Comparator<BulldozerMovePath> movePathComparator;
     private int maximumCost = Integer.MAX_VALUE;
-    private Map<Coords, Boolean> friendlyFireCheckResults = new HashMap<>();
+    private final Map<Coords, Boolean> friendlyFireCheckResults = new HashMap<>();
 
     /**
      * Uses an A* search to find the "optimal" path to the destination coordinates. Ignores move cost and makes note of
@@ -126,12 +134,15 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
 
             candidates.addAll(generateChildNodes(currentPath, shortestPathsToCoords, clusterTracker, closest));
 
-            if (destinationCoords.contains(currentPath.getFinalCoords()) &&
-                  ((bestPath == null) || (movePathComparator.compare(bestPath, currentPath) > 0))) {
-                bestPath = currentPath;
-                // Keep a record of where this path is headed
-                bestPath.setDestination(closest);
-                maximumCost = bestPath.getMpUsed() + bestPath.getLevelingCost();
+            if (currentPath != null) {
+                Coords finalCoords = currentPath.getFinalCoords();
+                if (finalCoords != null && destinationCoords.contains(finalCoords) &&
+                      ((bestPath == null) || (movePathComparator.compare(bestPath, currentPath) > 0))) {
+                    bestPath = currentPath;
+                    // Keep a record of where this path is headed
+                    bestPath.setDestination(closest);
+                    maximumCost = bestPath.getMpUsed() + bestPath.getLevelingCost();
+                }
             }
         }
 
@@ -208,12 +219,12 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
     protected void processChild(BulldozerMovePath child, List<BulldozerMovePath> children,
           Map<Coords, BulldozerMovePath> shortestPathsToCoords, BoardClusterTracker clusterTracker,
           Coords destinationCoords) {
-        // (if we haven't visited these coordinates before or we have, and this is a
-        // shorter path) and (it is a legal move or it needs some "terrain adjustment"
+        // (if we haven't visited these coordinates before, or we have, and this is a
+        // shorter path) and (it is a legal move, or it needs some "terrain adjustment"
         // to become a legal move) and we haven't already found a path to the
-        // destination that's cheaper than what we're considering and we're not going
+        // destination that's cheaper than what we're considering, and we're not going
         // off board
-        MoveLegalityIndicator mli = isLegalMove((MovePath) child);
+        MoveLegalityIndicator mli = isLegalMove(child);
 
         // if this path goes through terrain that can be leveled but has other problems
         // with it (e.g. elevation change, or the "reduced" terrain still won't let you
@@ -250,7 +261,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
               destinationUseBridge);
 
         // if we jumped into a hole and this results into us moving into a different
-        // cluster than the destination, that's not great and we should not consider the
+        // cluster than the destination, that's not great, and we should not consider the
         // possibility for long range path finding.
         if (irreversibleJumpDown &&
               !clusterTracker.coordinatesShareCluster(child.getEntity(), child.getFinalCoords(), destinationCoords,
@@ -259,7 +270,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         }
 
         // let's avoid pathing through buildings containing our immobile units - they're
-        // not going to get out of the way and we can probably do better than killing
+        // not going to get out of the way, and we can probably do better than killing
         // our own guys
         if (!child.isJumping()
               && friendlyFireCheck(child.getEntity(), child.getGame(), child.getFinalCoords(), false)) {
@@ -324,7 +335,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         Hex hex = path.getGame().getBoard(path.getFinalBoardId()).getHex(path.getFinalCoords());
 
         // investigate: do we want quad meks with a single breached leg to risk this
-        // move? Currently not, but if we did, this is probably where this logic would
+        // move? Currently, not, but if we did, this is probably where this logic would
         // go.
         return path.getCachedEntityState().getNumBreachedLegs() > 0 &&
               hex != null &&
@@ -337,16 +348,13 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
      *
      * @author NickAragua
      */
-    private class AStarComparator implements Comparator<BulldozerMovePath> {
-        private Coords destination;
-
+    private record AStarComparator(Coords destination) implements Comparator<BulldozerMovePath> {
         /**
          * Constructor - initializes the destination edge.
          *
-         * @param targetRegion Destination edge
+         * @param destination Destination edge
          */
-        public AStarComparator(Coords destination) {
-            this.destination = destination;
+        private AStarComparator {
         }
 
         /**

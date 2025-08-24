@@ -41,7 +41,7 @@ import java.awt.image.ImageObserver;
 
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.tileset.HexTileset;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 
 /**
  * Sprite and info for a C3 network. Does not actually use the image buffer as this can be horribly inefficient for long

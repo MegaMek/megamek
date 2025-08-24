@@ -54,11 +54,11 @@ import megamek.client.ui.widget.picmap.PMSimpleLabel;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PMValueLabel;
 import megamek.common.Configuration;
-import megamek.common.Entity;
-import megamek.common.FighterSquadron;
-import megamek.common.Game;
-import megamek.common.IAero;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.FighterSquadron;
+import megamek.common.units.IAero;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
@@ -107,7 +107,7 @@ public class SquadronMapSet implements DisplayMapSet {
         /*
          * Set the max_size based on current game options
          */
-        if ((g != null) && g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS)) {
+        if ((g != null) && g.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_ALLOW_LARGE_SQUADRONS)) {
             max_size = FighterSquadron.ALTERNATE_MAX_SIZE;
         } else {
             max_size = FighterSquadron.MAX_SIZE;
@@ -166,7 +166,7 @@ public class SquadronMapSet implements DisplayMapSet {
                 int armorO = a.getCap0Armor();
                 armorVLabel[i].setValue(Integer.toString(armor));
 
-                if (fighter.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+                if (fighter.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
                     armor = (int) Math.ceil(armor / 10.0);
                     armorO = (int) Math.ceil(armorO / 10.0);
                 }

@@ -39,15 +39,15 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
-import megamek.common.Compute;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.Infantry;
 import megamek.common.Messages;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.WeaponType;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.options.IOption;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Infantry;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -102,7 +102,7 @@ public class InfantryTROView extends TROView {
         }
 
         if (inf.getMount() != null) {
-            setModelData("motiveType", Messages.getString("TROView.BeastMounted") + ", " + inf.getMount().getName());
+            setModelData("motiveType", Messages.getString("TROView.BeastMounted") + ", " + inf.getMount().name());
         } else {
             switch (inf.getMovementMode()) {
                 case INF_LEG:
@@ -226,13 +226,13 @@ public class InfantryTROView extends TROView {
                 notes.add(String.format(Messages.getString("TROView.InfantryNote.MountInfantryDamage.format"),
                       inf.getMount().getBurstDamageDice()));
             }
-            if (inf.getMount().getVehicleDamage() > 0) {
+            if (inf.getMount().vehicleDamage() > 0) {
                 notes.add(String.format(Messages.getString("TROView.InfantryNote.MountVehicleDamage.format"),
-                      inf.getMount().getVehicleDamage()));
+                      inf.getMount().vehicleDamage()));
             }
-            if (inf.getMount().getSize().toHitMod != 0) {
+            if (inf.getMount().size().toHitMod != 0) {
                 notes.add(String.format(Messages.getString("TROView.InfantryNote.MountSizeMod.format"),
-                      inf.getMount().getSize().toHitMod));
+                      inf.getMount().size().toHitMod));
             }
         }
     }

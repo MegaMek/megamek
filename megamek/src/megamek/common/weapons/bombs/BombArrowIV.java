@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,8 +34,14 @@
 
 package megamek.common.weapons.bombs;
 
-import megamek.common.AmmoType;
-import megamek.common.BombType.BombTypeEnum;
+import java.io.Serial;
+
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 
 /**
@@ -43,6 +49,7 @@ import megamek.common.weapons.artillery.ArtilleryWeapon;
  * @since Oct 20, 2004
  */
 public class BombArrowIV extends ArtilleryWeapon {
+    @Serial
     private static final long serialVersionUID = -1321502140176775035L;
 
     public BombArrowIV() {
@@ -57,7 +64,7 @@ public class BombArrowIV extends ArtilleryWeapon {
         this.longRange = 9;
         this.extremeRange = 9; // No extreme range.
         this.tonnage = 0;
-        this.criticals = 0;
+        this.criticalSlots = 0;
         this.hittable = false;
         this.bv = 0;
         this.cost = 0;

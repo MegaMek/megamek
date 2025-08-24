@@ -37,15 +37,15 @@ package megamek.utilities;
 import java.util.Set;
 import java.util.TreeSet;
 
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.MekFileParser;
-import megamek.common.MekSummary;
-import megamek.common.MekSummaryCache;
-import megamek.common.Mounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.units.Entity;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
+import megamek.common.equipment.Mounted;
 import megamek.common.SimpleTechLevel;
-import megamek.common.WeaponType;
+import megamek.common.equipment.WeaponType;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.logging.MMLogger;
 

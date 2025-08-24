@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,18 +43,34 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import megamek.common.*;
-import megamek.common.ITechnology.AvailabilityValue;
-import megamek.common.ITechnology.TechBase;
+import megamek.common.MPCalculationSetting;
+import megamek.common.SimpleTechLevel;
+import megamek.common.TechAdvancement;
+import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
-import megamek.common.equipment.ArmorType;
-import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.WeaponMounted;
+import megamek.common.bays.Bay;
+import megamek.common.bays.CrewQuartersCargoBay;
+import megamek.common.bays.FirstClassQuartersCargoBay;
+import megamek.common.bays.SecondClassQuartersCargoBay;
+import megamek.common.bays.StandardSeatCargoBay;
+import megamek.common.bays.SteerageQuartersCargoBay;
+import megamek.common.compute.Compute;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.*;
+import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.interfaces.ITechManager;
+import megamek.common.interfaces.ITechnology;
+import megamek.common.interfaces.ITechnologyDelegator;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.*;
+import megamek.common.util.RoundWeight;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
-import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
+import megamek.common.weapons.lasers.clan.CLChemicalLaserWeapon;
 import megamek.logging.MMLogger;
 
 /**
@@ -133,33 +149,19 @@ public class TestSupportVehicle extends TestEntity {
             if (entity instanceof FixedWingSupport) {
                 return FIXED_WING;
             }
-            switch (entity.getMovementMode()) {
-                case AIRSHIP:
-                    return AIRSHIP;
-                case AERODYNE:
-                    return FIXED_WING;
-                case HOVER:
-                    return HOVERCRAFT;
-                case TRACKED:
-                    return TRACKED;
-                case WHEELED:
-                    return WHEELED;
-                case NAVAL:
-                case HYDROFOIL:
-                case SUBMARINE:
-                    return NAVAL;
-                case VTOL:
-                    return VTOL;
-                case WIGE:
-                    return WIGE;
-                case RAIL:
-                case MAGLEV:
-                    return RAIL;
-                case STATION_KEEPING:
-                    return SATELLITE;
-                default:
-                    return null;
-            }
+            return switch (entity.getMovementMode()) {
+                case AIRSHIP -> AIRSHIP;
+                case AERODYNE -> FIXED_WING;
+                case HOVER -> HOVERCRAFT;
+                case TRACKED -> TRACKED;
+                case WHEELED -> WHEELED;
+                case NAVAL, HYDROFOIL, SUBMARINE -> NAVAL;
+                case VTOL -> VTOL;
+                case WIGE -> WIGE;
+                case RAIL, MAGLEV -> RAIL;
+                case STATION_KEEPING -> SATELLITE;
+                default -> null;
+            };
         }
 
         /**
@@ -234,21 +236,17 @@ public class TestSupportVehicle extends TestEntity {
         public ITechnology getTechSource() {
             /*
              * Support vehicle availability advancement can vary with the size class. The
-             * small is the least restrictive, so it serves as the base line for each type
+             * small is the least restrictive, so it serves as the baseline for each type
              * as a whole.
              */
-            switch (defaultMovementMode) {
-                case AERODYNE:
-                case AIRSHIP:
-                case STATION_KEEPING:
-                    return FixedWingSupport.getConstructionTechAdvancement(defaultMovementMode,
-                          EntityWeightClass.WEIGHT_SMALL_SUPPORT);
-                case VTOL:
-                    return SupportVTOL.getConstructionTechAdvancement(EntityWeightClass.WEIGHT_SMALL_SUPPORT);
-                default:
-                    return SupportTank.getConstructionTechAdvancement(defaultMovementMode,
-                          EntityWeightClass.WEIGHT_SMALL_SUPPORT);
-            }
+            return switch (defaultMovementMode) {
+                case AERODYNE, AIRSHIP, STATION_KEEPING ->
+                      FixedWingSupport.getConstructionTechAdvancement(defaultMovementMode,
+                            EntityWeightClass.WEIGHT_SMALL_SUPPORT);
+                case VTOL -> SupportVTOL.getConstructionTechAdvancement(EntityWeightClass.WEIGHT_SMALL_SUPPORT);
+                default -> SupportTank.getConstructionTechAdvancement(defaultMovementMode,
+                      EntityWeightClass.WEIGHT_SMALL_SUPPORT);
+            };
         }
     }
 
@@ -274,7 +272,7 @@ public class TestSupportVehicle extends TestEntity {
               EnumSet.of(SVType.NAVAL)),
         MONOCYCLE(0.5, EquipmentTypeLookup.MONOCYCLE_CHASSIS_MOD,
               EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED), true),
-        OFFROAD(1.5, EquipmentTypeLookup.OFFROAD_CHASSIS_MOD,
+        OFF_ROAD(1.5, EquipmentTypeLookup.OFF_ROAD_CHASSIS_MOD,
               EnumSet.of(SVType.WHEELED)),
         OMNI(1.0, EquipmentTypeLookup.OMNI_CHASSIS_MOD),
         PROP(1.2, EquipmentTypeLookup.PROP_CHASSIS_MOD,
@@ -346,16 +344,13 @@ public class TestSupportVehicle extends TestEntity {
          * @return Whether this chassis mod is required by the vehicle.
          */
         public boolean requiredFor(Entity supportVehicle) {
-            switch (this) {
-                case PROP:
-                    return supportVehicle instanceof FixedWingSupport fixedWingSupport
-                          && SVEngine.getEngineType(fixedWingSupport.getEngine()).electric;
-                case EXTERNAL_POWER_PICKUP:
-                    return supportVehicle.getMovementMode().equals(EntityMovementMode.RAIL)
-                          && SVEngine.getEngineType(supportVehicle.getEngine()).equals(SVEngine.EXTERNAL);
-                default:
-                    return false;
-            }
+            return switch (this) {
+                case PROP -> supportVehicle instanceof FixedWingSupport fixedWingSupport
+                      && SVEngine.getEngineType(fixedWingSupport.getEngine()).electric;
+                case EXTERNAL_POWER_PICKUP -> supportVehicle.getMovementMode().equals(EntityMovementMode.RAIL)
+                      && SVEngine.getEngineType(supportVehicle.getEngine()).equals(SVEngine.EXTERNAL);
+                default -> false;
+            };
         }
 
         /**
@@ -366,25 +361,16 @@ public class TestSupportVehicle extends TestEntity {
          * @return Whether this chassis mod can be installed on the same vehicle as another mod.
          */
         public boolean compatibleWith(ChassisModification other) {
-            switch (this) {
-                case ARMORED:
-                    return other != ULTRA_LIGHT;
-                case ULTRA_LIGHT:
-                    return other != ARMORED;
-                case BICYCLE:
-                    return other != MONOCYCLE;
-                case MONOCYCLE:
-                    return other != BICYCLE;
-                case SNOWMOBILE:
-                    return other != DUNE_BUGGY && other != AMPHIBIOUS && other != OFFROAD;
-                case DUNE_BUGGY:
-                    return other != SNOWMOBILE && other != AMPHIBIOUS && other != OFFROAD;
-                case AMPHIBIOUS:
-                case OFFROAD:
-                    return other != SNOWMOBILE && other != DUNE_BUGGY;
-                default:
-                    return true;
-            }
+            return switch (this) {
+                case ARMORED -> other != ULTRA_LIGHT;
+                case ULTRA_LIGHT -> other != ARMORED;
+                case BICYCLE -> other != MONOCYCLE;
+                case MONOCYCLE -> other != BICYCLE;
+                case SNOWMOBILE -> other != DUNE_BUGGY && other != AMPHIBIOUS && other != OFF_ROAD;
+                case DUNE_BUGGY -> other != SNOWMOBILE && other != AMPHIBIOUS && other != OFF_ROAD;
+                case AMPHIBIOUS, OFF_ROAD -> other != SNOWMOBILE && other != DUNE_BUGGY;
+                default -> true;
+            };
         }
 
         @Override
@@ -509,34 +495,34 @@ public class TestSupportVehicle extends TestEntity {
      * proposal to the rules committee for E.
      */
     public static final TechAdvancement[] TECH_LEVEL_TA = {
-          new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.A)
+          new TechAdvancement(TechBase.ALL).setTechRating(TechRating.A)
                 .setAdvancement(ITechnology.DATE_PS, ITechnology.DATE_PS, ITechnology.DATE_PS)
                 .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A,
                 AvailabilityValue.A),
 
-          new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.B)
+          new TechAdvancement(TechBase.ALL).setTechRating(TechRating.B)
                 .setAdvancement(ITechnology.DATE_PS, ITechnology.DATE_PS, ITechnology.DATE_PS)
                 .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B,
                 AvailabilityValue.A),
 
-          new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.C)
+          new TechAdvancement(TechBase.ALL).setTechRating(TechRating.C)
                 .setAdvancement(ITechnology.DATE_ES, ITechnology.DATE_ES, ITechnology.DATE_ES)
-                .setPrototypeFactions(ITechnology.Faction.TA).setProductionFactions(ITechnology.Faction.TA)
+                .setPrototypeFactions(Faction.TA).setProductionFactions(Faction.TA)
                 .setAvailability(AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B,
                 AvailabilityValue.B),
 
-          new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.D)
+          new TechAdvancement(TechBase.ALL).setTechRating(TechRating.D)
                 .setAdvancement(2420, 2430, 2435).setApproximate(true, true, false)
-                .setPrototypeFactions(ITechnology.Faction.TH).setProductionFactions(ITechnology.Faction.TH)
+                .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
                 .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C,
                 AvailabilityValue.B),
 
-          new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.E)
+          new TechAdvancement(TechBase.ALL).setTechRating(TechRating.E)
                 .setISAdvancement(2557, 2571, 3055).setClanAdvancement(2557, 2571, 2815)
                 .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.D,
                 AvailabilityValue.C),
 
-          new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.F)
+          new TechAdvancement(TechBase.ALL).setTechRating(TechRating.F)
                 .setISAdvancement(ITechnology.DATE_NONE, ITechnology.DATE_NONE, 3065)
                 .setISApproximate(false, false, true)
                 .setClanAdvancement(2820, 2825, 2830).setClanApproximate(true, true, false)
@@ -547,15 +533,15 @@ public class TestSupportVehicle extends TestEntity {
     /**
      * The chassis weight multiplier for tech ratings A-F
      */
-    private static final EnumMap<ITechnology.TechRating, Double> STRUCTURE_TECH_MULTIPLIER = new EnumMap<>(ITechnology.TechRating.class);
+    private static final EnumMap<TechRating, Double> STRUCTURE_TECH_MULTIPLIER = new EnumMap<>(TechRating.class);
 
     static {
-        STRUCTURE_TECH_MULTIPLIER.put(ITechnology.TechRating.A, 1.6);
-        STRUCTURE_TECH_MULTIPLIER.put(ITechnology.TechRating.B, 1.3);
-        STRUCTURE_TECH_MULTIPLIER.put(ITechnology.TechRating.C, 1.15);
-        STRUCTURE_TECH_MULTIPLIER.put(ITechnology.TechRating.D, 1.0);
-        STRUCTURE_TECH_MULTIPLIER.put(ITechnology.TechRating.E, 0.85);
-        STRUCTURE_TECH_MULTIPLIER.put(ITechnology.TechRating.F, 0.66);
+        STRUCTURE_TECH_MULTIPLIER.put(TechRating.A, 1.6);
+        STRUCTURE_TECH_MULTIPLIER.put(TechRating.B, 1.3);
+        STRUCTURE_TECH_MULTIPLIER.put(TechRating.C, 1.15);
+        STRUCTURE_TECH_MULTIPLIER.put(TechRating.D, 1.0);
+        STRUCTURE_TECH_MULTIPLIER.put(TechRating.E, 0.85);
+        STRUCTURE_TECH_MULTIPLIER.put(TechRating.F, 0.66);
     }
 
     /**
@@ -773,7 +759,7 @@ public class TestSupportVehicle extends TestEntity {
             // to metric tons.
             return Math.ceil(Math.round(val * 1000000.0) / 1000.0) / 1000.0;
         } else {
-            return ceil(val, Ceil.HALFTON);
+            return ceil(val, Ceil.HALF_TON);
         }
     }
 
@@ -801,7 +787,7 @@ public class TestSupportVehicle extends TestEntity {
                 if (null != mod) {
                     weight *= mod.multiplier;
                 } else {
-                    logger.warn("Could not find multiplier for %s chassis mod.", mounted.getType().getName());
+                    logger.warn("Could not find multiplier for {} chassis mod.", mounted.getType().getName());
                 }
             }
         }
@@ -818,8 +804,8 @@ public class TestSupportVehicle extends TestEntity {
 
     private double getWeightFireControl() {
         for (Mounted<?> mounted : supportVee.getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_BASIC_FIRECONTROL)
-                  || mounted.getType().hasFlag(MiscType.F_ADVANCED_FIRECONTROL)) {
+            if (mounted.getType().hasFlag(MiscType.F_BASIC_FIRE_CONTROL)
+                  || mounted.getType().hasFlag(MiscType.F_ADVANCED_FIRE_CONTROL)) {
                 return mounted.getTonnage();
             }
         }
@@ -841,7 +827,7 @@ public class TestSupportVehicle extends TestEntity {
 
     @Override
     public double getWeightControls() {
-        // No need to add Firecontrol weights here; they are included in Misc Equipment
+        // No need to add FireControl weights here; they are included in Misc Equipment
         return getWeightCrewAccommodations();
     }
 
@@ -914,8 +900,8 @@ public class TestSupportVehicle extends TestEntity {
         return 0;
     }
 
-    private static final EquipmentBitSet EXCLUDE = MiscType.F_BASIC_FIRECONTROL.asEquipmentBitSet()
-          .or(MiscType.F_ADVANCED_FIRECONTROL)
+    private static final EquipmentBitSet EXCLUDE = MiscType.F_BASIC_FIRE_CONTROL.asEquipmentBitSet()
+          .or(MiscType.F_ADVANCED_FIRE_CONTROL)
           .or(MiscType.F_CHASSIS_MODIFICATION);
 
     @Override
@@ -957,8 +943,8 @@ public class TestSupportVehicle extends TestEntity {
     public String printWeightControls() {
         String fireCon = "";
         for (Mounted<?> mounted : supportVee.getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_BASIC_FIRECONTROL)
-                  || mounted.getType().hasFlag(MiscType.F_ADVANCED_FIRECONTROL)) {
+            if (mounted.getType().hasFlag(MiscType.F_BASIC_FIRE_CONTROL)
+                  || mounted.getType().hasFlag(MiscType.F_ADVANCED_FIRE_CONTROL)) {
                 fireCon = StringUtil.makeLength(mounted.getName(), getPrintSize() - 5)
                       + TestEntity.makeWeightString(mounted.getTonnage(), usesKgStandard()) + "\n";
                 break;
@@ -1131,7 +1117,7 @@ public class TestSupportVehicle extends TestEntity {
                 sponson = true;
             } else if (mounted.getType().hasFlag(MiscType.F_PINTLE_TURRET)) {
                 pintle = true;
-            } else if (mounted.getType().hasFlag(MiscTypeFlag.F_ADVANCED_FIRECONTROL)) {
+            } else if (mounted.getType().hasFlag(MiscTypeFlag.F_ADVANCED_FIRE_CONTROL)) {
                 hasAdvancedFireControl = true;
             }
         }
@@ -1164,8 +1150,8 @@ public class TestSupportVehicle extends TestEntity {
         }
 
         if (supportVee.isOmni()
-              && (supportVee.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)
-              || supportVee.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL))
+              && (supportVee.hasWorkingMisc(MiscType.F_BASIC_FIRE_CONTROL)
+              || supportVee.hasWorkingMisc(MiscType.F_ADVANCED_FIRE_CONTROL))
               && (weaponWeight / 10.0 > supportVee.getBaseChassisFireConWeight())) {
             buff.append("Omni configuration exceeds weapon capacity of base chassis fire control system.\n");
             correct = false;
@@ -1237,7 +1223,7 @@ public class TestSupportVehicle extends TestEntity {
             correct = false;
         }
 
-        if (!correctCriticals(buff)) {
+        if (!correctCriticalSlots(buff)) {
             correct = false;
         }
 
@@ -1258,7 +1244,7 @@ public class TestSupportVehicle extends TestEntity {
     }
 
     public static boolean isSmallSupportVehicleWeapon(EquipmentType type) {
-        // I don't see an explicit rule that excludes archaic weapons but it seems to make sense
+        // I don't see an explicit rule that excludes archaic weapons, but it seems to make sense
         return (type instanceof InfantryWeapon) && !type.hasFlag(WeaponType.F_INF_ARCHAIC);
     }
 
@@ -1407,7 +1393,7 @@ public class TestSupportVehicle extends TestEntity {
         }
     }
 
-    public boolean correctCriticals(StringBuffer buff) {
+    public boolean correctCriticalSlots(StringBuffer buff) {
         List<Mounted<?>> unallocated = new ArrayList<>();
         boolean correct = true;
 
@@ -1497,10 +1483,9 @@ public class TestSupportVehicle extends TestEntity {
                     buff.append(StringUtil.makeLength(mount.getName(), 30));
                     buff.append(mountType.getSupportVeeSlots(supportVee)).append("\n");
                     addedCargo = true;
-                    continue;
-                } else {
-                    continue;
                 }
+
+                continue;
             }
 
             if (!(mount.getType() instanceof AmmoType)
@@ -1524,10 +1509,7 @@ public class TestSupportVehicle extends TestEntity {
         } else {
             for (int loc = 0; loc < supportVee.locations(); loc++) {
                 ArmorType armor = ArmorType.forEntity(supportVee, loc);
-
-                if (null != armor) {
-                    armorSlots += armor.getPatchworkSlotsMekSV();
-                }
+                armorSlots += armor.getPatchworkSlotsMekSV();
             }
         }
 
@@ -1607,10 +1589,7 @@ public class TestSupportVehicle extends TestEntity {
             for (int loc = 0; loc < supportVee.locations(); loc++) {
                 ArmorType armor = ArmorType.of(supportVee.getArmorType(loc),
                       TechConstants.isClan(supportVee.getArmorTechLevel(loc)));
-
-                if (null != armor) {
-                    space += armor.getPatchworkSlotsMekSV();
-                }
+                space += armor.getPatchworkSlotsMekSV();
             }
 
             return space;
@@ -1642,7 +1621,7 @@ public class TestSupportVehicle extends TestEntity {
         int slots = 0;
         Set<String> foundAmmo = new HashSet<>();
         for (Mounted<?> ammo : supportVee.getAmmo()) {
-            // don't count oneshot
+            // don't count one shot
             if (ammo.isOneShotAmmo()) {
                 continue;
             }

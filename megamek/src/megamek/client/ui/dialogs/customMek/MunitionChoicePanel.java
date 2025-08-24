@@ -46,15 +46,15 @@ import javax.swing.JPanel;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Mounted;
-import megamek.common.ProtoMek;
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.ProtoMek;
 
 public class MunitionChoicePanel extends JPanel {
     @Serial
@@ -187,7 +187,7 @@ public class MunitionChoicePanel extends JPanel {
             add(chDump, GBC.eol());
         }
 
-        if (gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD) &&
+        if (gameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HOT_LOAD) &&
               ammoType.hasFlag(AmmoType.F_HOTLOAD)) {
             add(labHotLoad, GBC.std());
             add(chHotLoad, GBC.eol());
@@ -215,7 +215,7 @@ public class MunitionChoicePanel extends JPanel {
             ammoMounted.setShotsLeft(0);
         }
 
-        if (gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) {
+        if (gameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HOT_LOAD)) {
             if (chHotLoad.isSelected() != ammoMounted.isHotLoaded()) {
                 ammoMounted.setHotLoad(chHotLoad.isSelected());
                 // Set the mode too, so vehicles can switch back

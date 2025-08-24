@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,17 +35,19 @@
 
 package megamek.common.actions;
 
+import java.io.Serial;
+
 /**
  * Concrete implementation of and entity action for unloading entities that are stranded on immobile transports. Please
- * note that the value,
- * <code>Enity.NONE</code> <em>is</em> a valid value for entityId.
+ * note that the value, <code>Entity.NONE</code> <em>is</em> a valid value for entityId.
  */
 public class UnloadStrandedAction extends AbstractEntityAction {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -8319076127334875298L;
-    private int playerId;
+    private final int playerId;
 
     public UnloadStrandedAction(int playerId, int entityId) {
         super(entityId);

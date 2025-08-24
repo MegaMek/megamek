@@ -34,8 +34,8 @@ package megamek.client.bot.princess.commands;
 
 import megamek.client.bot.Messages;
 import megamek.client.bot.princess.Princess;
-import megamek.common.GunEmplacement;
-import megamek.common.InGameObject;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.game.InGameObject;
 import megamek.server.commands.arguments.Arguments;
 
 /**

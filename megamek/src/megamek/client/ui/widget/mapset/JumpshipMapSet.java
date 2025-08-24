@@ -56,9 +56,9 @@ import megamek.client.ui.widget.picmap.PMSimplePolygonArea;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PMValueLabel;
 import megamek.common.Configuration;
-import megamek.common.DockingCollar;
-import megamek.common.Entity;
-import megamek.common.Jumpship;
+import megamek.common.equipment.DockingCollar;
+import megamek.common.units.Entity;
+import megamek.common.units.Jumpship;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
@@ -232,7 +232,7 @@ public class JumpshipMapSet implements DisplayMapSet {
         labels[Jumpship.LOC_NOSE] = WidgetUtils.createLabel("NOS", fm, Color.black, 50, 20);
         //labels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.FrontIS"), fm, Color.black, 10, 57);
         labels[Jumpship.LOC_FLS] = WidgetUtils.createLabel("FLS", fm, Color.black, 30, 80);
-        //labels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.LIS"), fm, Color.black, 10, 106);
+        //labels[Aero.LOC_LEFT_WING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.LIS"), fm, Color.black, 10, 106);
         labels[Jumpship.LOC_FRS] = WidgetUtils.createLabel("FRS", fm, Color.black, 70, 80);
         labels[Jumpship.LOC_ALS] = WidgetUtils.createLabel("ALS", fm, Color.black, 30, 130);
         labels[Jumpship.LOC_ARS] = WidgetUtils.createLabel("ARS", fm, Color.black, 70, 130);
@@ -255,11 +255,11 @@ public class JumpshipMapSet implements DisplayMapSet {
         vLabels[Jumpship.LOC_NOSE] = WidgetUtils.createValueLabel(50, 35, "", fm);
         //vLabels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 58, "", fm);
         vLabels[Jumpship.LOC_FLS] = WidgetUtils.createValueLabel(30, 95, "", fm);
-        //vLabels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 100, "", fm);
+        //vLabels[Aero.LOC_LEFT_WING + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 100, "", fm);
         vLabels[Jumpship.LOC_FRS] = WidgetUtils.createValueLabel(70, 95, "", fm);
         vLabels[Jumpship.LOC_ALS] = WidgetUtils.createValueLabel(30, 145, "", fm);
         vLabels[Jumpship.LOC_ARS] = WidgetUtils.createValueLabel(70, 145, "", fm);
-        //vLabels[Aero.LOC_RWING + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 100, "", fm);
+        //vLabels[Aero.LOC_RIGHT_WING + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 100, "", fm);
         vLabels[Jumpship.LOC_AFT] = WidgetUtils.createValueLabel(50, 185, "", fm);
         vLabels[6] = WidgetUtils.createValueLabel(50, 135, "", fm);
         vLabels[7] = WidgetUtils.createValueLabel(40, 210, "", fm);

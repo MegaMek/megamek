@@ -34,8 +34,8 @@
 package megamek.common.cost;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.EquipmentType;
-import megamek.common.Infantry;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.units.Infantry;
 
 public class InfantryCostCalculator {
 
@@ -44,13 +44,13 @@ public class InfantryCostCalculator {
         int idx = 0;
 
         // Weapon Cost Calculation
-        double pweaponCost = 0; // Primary Weapon Cost
+        double primaryWeaponCost = 0; // Primary Weapon Cost
         if (null != infantry.getPrimaryWeapon()) {
-            pweaponCost = Math.sqrt(infantry.getPrimaryWeapon().getCost(infantry, false, -1)) * 2000;
+            primaryWeaponCost = Math.sqrt(infantry.getPrimaryWeapon().getCost(infantry, false, -1)) * 2000;
         }
-        double sweaponCost = 0; // Secondary Weapon Cost
+        double secondaryWeaponCost = 0; // Secondary Weapon Cost
         if (null != infantry.getSecondaryWeapon()) {
-            sweaponCost = Math.sqrt(infantry.getSecondaryWeapon().getCost(infantry, false, -1)) * 2000;
+            secondaryWeaponCost = Math.sqrt(infantry.getSecondaryWeapon().getCost(infantry, false, -1)) * 2000;
         }
 
         // Determining Break down of who would have primary and secondary weapons.
@@ -59,7 +59,7 @@ public class InfantryCostCalculator {
         double secondSquad = infantry.getOInternal(0) - primarySquad; // OInternal = menStarting
 
         // Squad Cost with just the weapons.
-        costs[idx++] = primarySquad * pweaponCost + secondSquad * sweaponCost;
+        costs[idx++] = primarySquad * primaryWeaponCost + secondSquad * secondaryWeaponCost;
 
         // Check whether the unit has an armor kit. If not, calculate value for custom
         // armor settings
@@ -102,7 +102,7 @@ public class InfantryCostCalculator {
             }
         }
 
-        // Cost of armor on a per man basis added
+        // Cost of armor on a per-man basis added
         costs[idx++] = armorCost * infantry.getOInternal(0); // OInternal = menStarting
 
         // For all additive costs - replace negatives with 0 to separate from multipliers

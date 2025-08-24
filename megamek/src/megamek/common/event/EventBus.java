@@ -49,10 +49,10 @@ public final class EventBus {
 
     private final Object REGISTER_LOCK = new Object[0];
 
-    private ConcurrentHashMap<Object, List<EventListener>> handlerMap = new ConcurrentHashMap<>();
-    private ConcurrentHashMap<Class<? extends MMEvent>, List<EventListener>> eventMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Object, List<EventListener>> handlerMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Class<? extends MMEvent>, List<EventListener>> eventMap = new ConcurrentHashMap<>();
     // There is no Java-supplied IdentityHashSet ...
-    private Map<Object, Object> unregisterQueue = new IdentityHashMap<>();
+    private final Map<Object, Object> unregisterQueue = new IdentityHashMap<>();
 
     public static EventBus getInstance() {
         synchronized (INSTANCE_LOCK) {
@@ -97,20 +97,7 @@ public final class EventBus {
                 try {
                     Method realMethod = cls.getDeclaredMethod(method.getName(), method.getParameterTypes());
                     if (realMethod.isAnnotationPresent(Subscribe.class)) {
-                        Class<?>[] parameterTypes = method.getParameterTypes();
-                        if (parameterTypes.length != 1) {
-                            throw new IllegalArgumentException(
-                                  String.format("@Subscribe annotation requires single-argument method; %s has %d",
-                                        method, parameterTypes.length));
-                        }
-                        Class<?> eventType = parameterTypes[0];
-                        if (!MMEvent.class.isAssignableFrom(eventType)) {
-                            throw new IllegalArgumentException(
-                                  String.format(
-                                        "@Subscribe annotation of %s requires the argument type to be some subtype of MMEvent, not %s",
-                                        method,
-                                        eventType));
-                        }
+                        Class<?> eventType = getEventType(method);
                         internalRegister(handler, realMethod, (Class<? extends MMEvent>) eventType);
                     }
                 } catch (NoSuchMethodException e) {
@@ -120,20 +107,30 @@ public final class EventBus {
         }
     }
 
+    private static Class<?> getEventType(Method method) {
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        if (parameterTypes.length != 1) {
+            throw new IllegalArgumentException(
+                  String.format("@Subscribe annotation requires single-argument method; %s has %d",
+                        method, parameterTypes.length));
+        }
+        Class<?> eventType = parameterTypes[0];
+        if (!MMEvent.class.isAssignableFrom(eventType)) {
+            throw new IllegalArgumentException(
+                  String.format(
+                        "@Subscribe annotation of %s requires the argument type to be some subtype of MMEvent, not %s",
+                        method,
+                        eventType));
+        }
+        return eventType;
+    }
+
     private void internalRegister(Object handler, Method method, Class<? extends MMEvent> eventType) {
         synchronized (REGISTER_LOCK) {
             EventListener listener = new EventListener(handler, method, eventType);
-            List<EventListener> handlerListeners = handlerMap.get(handler);
-            if (null == handlerListeners) {
-                handlerListeners = new ArrayList<>();
-                handlerMap.put(handler, handlerListeners);
-            }
+            List<EventListener> handlerListeners = handlerMap.computeIfAbsent(handler, k -> new ArrayList<>());
             handlerListeners.add(listener);
-            List<EventListener> eventListeners = eventMap.get(eventType);
-            if (null == eventListeners) {
-                eventListeners = new ArrayList<>();
-                eventMap.put(eventType, eventListeners);
-            }
+            List<EventListener> eventListeners = eventMap.computeIfAbsent(eventType, k -> new ArrayList<>());
             eventListeners.add(listener);
         }
     }

@@ -35,16 +35,16 @@ package megamek.common.scenario;
 
 import java.io.IOException;
 
-import megamek.common.GameType;
-import megamek.common.IGame;
-import megamek.common.jacksonadapters.BotParser;
+import megamek.common.game.GameType;
+import megamek.common.game.IGame;
+import megamek.common.jacksonAdapters.BotParser;
 import megamek.server.IGameManager;
 
 public interface Scenario {
 
     String COMMENT_MARK = "#";
     String FILE_SUFFIX_BOARD = ".board";
-    String MMSVERSION = "MMSVersion";
+    String MMS_VERSION = "MMSVersion";
 
     String NAME = "name";
     String DESCRIPTION = "description";
@@ -58,8 +58,8 @@ public interface Scenario {
     String PARAM_SINGLEPLAYER = "singleplayer";
 
 
-    String MMS_PLANETCOND = "planetaryconditions";
-    String PARAM_PLANETCOND_FIXED = "fixedplanetaryconditions";
+    String MMS_PLANET_CONDITIONS = "planetaryconditions";
+    String PARAM_PLANET_CONDITIONS_FIXED = "fixedplanetaryconditions";
 
     String PARAM_MAP_WIDTH = "MapWidth";
     String PARAM_MAP_HEIGHT = "MapHeight";

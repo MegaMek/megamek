@@ -48,19 +48,40 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import megamek.client.ui.util.PlayerColour;
-import megamek.common.*;
+import megamek.common.Player;
+import megamek.common.Team;
 import megamek.common.alphaStrike.ASGame;
 import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
-import megamek.common.hexarea.HexArea;
+import megamek.common.game.AbstractGame;
+import megamek.common.game.Game;
+import megamek.common.game.GameType;
+import megamek.common.game.IGame;
+import megamek.common.game.InGameObject;
+import megamek.common.hexArea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.FileCamouflage;
-import megamek.common.jacksonadapters.*;
+import megamek.common.interfaces.IStartingPositions;
+import megamek.common.interfaces.PlanetaryConditionsUsing;
+import megamek.common.jacksonAdapters.BoardDeserializer;
+import megamek.common.jacksonAdapters.BotParser;
+import megamek.common.jacksonAdapters.EntityDeserializer;
+import megamek.common.jacksonAdapters.GeneralEventDeserializer;
+import megamek.common.jacksonAdapters.HexAreaDeserializer;
+import megamek.common.jacksonAdapters.MMUReader;
+import megamek.common.jacksonAdapters.MessageDeserializer;
+import megamek.common.jacksonAdapters.TriggerDeserializer;
+import megamek.common.jacksonAdapters.VictoryDeserializer;
+import megamek.common.jacksonAdapters.dtos.CarryableInfo;
 import megamek.common.options.GameOptions;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
+import megamek.common.units.Entity;
+import megamek.common.units.IBomber;
 import megamek.common.util.C3Util;
 import megamek.logging.MMLogger;
 import megamek.server.IGameManager;
@@ -139,7 +160,7 @@ public class ScenarioV2 implements Scenario {
 
     @Override
     public boolean hasFixedPlanetaryConditions() {
-        return !node.has(PARAM_PLANETCOND_FIXED) || node.get(PARAM_PLANETCOND_FIXED).booleanValue();
+        return !node.has(PARAM_PLANET_CONDITIONS_FIXED) || node.get(PARAM_PLANET_CONDITIONS_FIXED).booleanValue();
     }
 
     @Override
@@ -228,8 +249,8 @@ public class ScenarioV2 implements Scenario {
     }
 
     private void parsePlanetaryConditions(PlanetaryConditionsUsing plGame) throws JsonProcessingException {
-        if (node.has(MMS_PLANETCOND)) {
-            PlanetaryConditions conditions = yamlMapper.treeToValue(node.get(MMS_PLANETCOND),
+        if (node.has(MMS_PLANET_CONDITIONS)) {
+            PlanetaryConditions conditions = yamlMapper.treeToValue(node.get(MMS_PLANET_CONDITIONS),
                   PlanetaryConditions.class);
             conditions.determineWind();
             plGame.setPlanetaryConditions(conditions);
@@ -397,12 +418,12 @@ public class ScenarioV2 implements Scenario {
             // Carryables
             if (playerNode.has(OBJECTS) && (game instanceof AbstractGame)) {
                 JsonNode carryablesNode = playerNode.get(OBJECTS);
-                List<CarryableDeserializer.CarryableInfo> carryables = new MMUReader(scenariofile)
-                      .read(carryablesNode, CarryableDeserializer.CarryableInfo.class).stream()
-                      .filter(o -> o instanceof CarryableDeserializer.CarryableInfo)
-                      .map(o -> (CarryableDeserializer.CarryableInfo) o)
+                List<CarryableInfo> carryables = new MMUReader(scenariofile)
+                      .read(carryablesNode, CarryableInfo.class).stream()
+                      .filter(o -> o instanceof CarryableInfo)
+                      .map(o -> (CarryableInfo) o)
                       .toList();
-                for (CarryableDeserializer.CarryableInfo carryableInfo : carryables) {
+                for (CarryableInfo carryableInfo : carryables) {
                     if (carryableInfo.position() == null) {
                         player.getGroundObjectsToPlace().add(carryableInfo.carryable());
                     } else {

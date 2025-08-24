@@ -38,7 +38,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.Game;
+import megamek.common.game.Game;
 import megamek.common.Player;
 
 /**

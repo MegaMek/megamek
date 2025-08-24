@@ -50,18 +50,18 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 import megamek.client.ui.util.ImageCache;
-import megamek.common.Board;
 import megamek.common.Configuration;
 import megamek.common.Hex;
-import megamek.common.IGame;
-import megamek.common.Terrain;
-import megamek.common.Terrains;
+import megamek.common.board.Board;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameBoardNewEvent;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
+import megamek.common.game.IGame;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -318,7 +318,7 @@ public class HexTileset implements BoardListener {
                 } else {
                     if (st.ttype == 62) { // ">"
                         if (st.nextToken() == StreamTokenizer.TT_NUMBER) { // e.g. ">4"
-                            elevation = (int) (Terrain.ATLEAST + st.nval);
+                            elevation = (int) (Terrain.AT_LEAST + st.nval);
                         }
                     } else {
                         elevation = Terrain.WILDCARD;
@@ -377,14 +377,14 @@ public class HexTileset implements BoardListener {
      */
     private double orthographicMatch(Hex org, Hex com) {
         // exact elevation
-        if ((com.getLevel() != Terrain.WILDCARD) && (com.getLevel() < Terrain.ATLEAST)
+        if ((com.getLevel() != Terrain.WILDCARD) && (com.getLevel() < Terrain.AT_LEAST)
               && (org.getLevel() != com.getLevel())) {
             return 0;
         }
 
         // greater than elevation (e.g. >4), the "-100" to allow >-3
-        if ((com.getLevel() != Terrain.WILDCARD) && (com.getLevel() >= Terrain.ATLEAST - 100)
-              && (org.getLevel() < com.getLevel() - Terrain.ATLEAST)) {
+        if ((com.getLevel() != Terrain.WILDCARD) && (com.getLevel() >= Terrain.AT_LEAST - 100)
+              && (org.getLevel() < com.getLevel() - Terrain.AT_LEAST)) {
             return 0;
         }
 
@@ -422,14 +422,14 @@ public class HexTileset implements BoardListener {
      */
     private double superMatch(Hex org, Hex com) {
         // exact elevation
-        if ((com.getLevel() != Terrain.WILDCARD) && (com.getLevel() < Terrain.ATLEAST)
+        if ((com.getLevel() != Terrain.WILDCARD) && (com.getLevel() < Terrain.AT_LEAST)
               && (org.getLevel() != com.getLevel())) {
             return 0;
         }
 
         // greater than elevation (e.g. >4), the "-100" to allow >-3
-        if ((com.getLevel() != Terrain.WILDCARD) && (com.getLevel() >= Terrain.ATLEAST - 100)
-              && (org.getLevel() < com.getLevel() - Terrain.ATLEAST)) {
+        if ((com.getLevel() != Terrain.WILDCARD) && (com.getLevel() >= Terrain.AT_LEAST - 100)
+              && (org.getLevel() < com.getLevel() - Terrain.AT_LEAST)) {
             return 0;
         }
 
@@ -472,11 +472,11 @@ public class HexTileset implements BoardListener {
         // check elevation
         if (com.getLevel() == Terrain.WILDCARD) {
             elevation = 1.0;
-        } else if (com.getLevel() >= Terrain.ATLEAST - 100) {
-            if (org.getLevel() >= com.getLevel() - Terrain.ATLEAST) {
+        } else if (com.getLevel() >= Terrain.AT_LEAST - 100) {
+            if (org.getLevel() >= com.getLevel() - Terrain.AT_LEAST) {
                 elevation = 1.0;
             } else {
-                elevation = 1.01 / (Math.abs(org.getLevel() - com.getLevel() - Terrain.ATLEAST) + 1.01);
+                elevation = 1.01 / (Math.abs(org.getLevel() - com.getLevel() - Terrain.AT_LEAST) + 1.01);
             }
         } else {
             elevation = 1.01 / (Math.abs(org.getLevel() - com.getLevel()) + 1.01);
@@ -499,11 +499,11 @@ public class HexTileset implements BoardListener {
 
             if (cTerr.getLevel() == Terrain.WILDCARD) {
                 thisMatch = 1.0;
-            } else if (cTerr.getLevel() >= Terrain.ATLEAST - 100) {
-                if (oTerr.getLevel() >= com.getLevel() - Terrain.ATLEAST) {
+            } else if (cTerr.getLevel() >= Terrain.AT_LEAST - 100) {
+                if (oTerr.getLevel() >= com.getLevel() - Terrain.AT_LEAST) {
                     thisMatch = 1.0;
                 } else {
-                    thisMatch = 1.0 / (Math.abs(oTerr.getLevel() - cTerr.getLevel() - Terrain.ATLEAST) + 1.0);
+                    thisMatch = 1.0 / (Math.abs(oTerr.getLevel() - cTerr.getLevel() - Terrain.AT_LEAST) + 1.0);
                 }
             } else {
                 thisMatch = 1.0 / (Math.abs(oTerr.getLevel() - cTerr.getLevel()) + 1.0);

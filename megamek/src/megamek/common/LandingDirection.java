@@ -33,7 +33,7 @@
 
 package megamek.common;
 
-import megamek.common.moves.MovePath;
+import megamek.common.enums.MoveStepType;
 
 /**
  * This enum is used to indicate whether a landing is horizontal or vertical.
@@ -44,8 +44,8 @@ public enum LandingDirection {
     /**
      * @return The MoveStepType that is used to indicate a landing of this direction in a move path.
      */
-    public MovePath.MoveStepType moveStepType() {
-        return this == VERTICAL ? MovePath.MoveStepType.VLAND : MovePath.MoveStepType.LAND;
+    public MoveStepType moveStepType() {
+        return this == VERTICAL ? MoveStepType.VERTICAL_LAND : MoveStepType.LAND;
     }
 
     public boolean isHorizontal() {

@@ -33,7 +33,7 @@
 
 package megamek.server.trigger;
 
-import megamek.common.IGame;
+import megamek.common.game.IGame;
 
 /**
  * This Trigger reacts at the end of the specified game round. This is more or less the same as a RoundStartTrigger of

@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -64,10 +64,12 @@ public class ReportMessages {
      * @return the string
      */
     public static String getString(String key, Object... args) {
-        String s = getString(key);
-        if (s != null) {
-            return MessageFormat.format(getString(key), args);
+        String string = getString(key);
+
+        if (string != null) {
+            return MessageFormat.format(string, args);
         }
+
         return null;
     }
 }

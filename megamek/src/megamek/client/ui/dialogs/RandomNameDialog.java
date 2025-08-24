@@ -51,7 +51,7 @@ import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.CloseAction;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.enums.Gender;
 
 /**

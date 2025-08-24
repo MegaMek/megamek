@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,13 +40,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ScenarioLoader {
-
-    private final File scenarioFile;
-
-    public ScenarioLoader(File f) {
-        scenarioFile = f;
-    }
+public record ScenarioLoader(File scenarioFile) {
 
     public ScenarioLoader(String filename) {
         this(new File(filename));
@@ -78,7 +72,7 @@ public class ScenarioLoader {
      */
     private int findMmsVersion() throws IOException {
         Scanner scanner = new Scanner(scenarioFile);
-        Pattern versionPattern = Pattern.compile("^\\s*" + Scenario.MMSVERSION + "\\s*[:=]\\s*(\\d)");
+        Pattern versionPattern = Pattern.compile("^\\s*" + Scenario.MMS_VERSION + "\\s*[:=]\\s*(\\d)");
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             Matcher versionMatcher = versionPattern.matcher(line);

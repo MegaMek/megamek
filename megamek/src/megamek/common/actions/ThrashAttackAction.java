@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,16 +34,28 @@
 
 package megamek.common.actions;
 
-import megamek.common.*;
+import java.io.Serial;
+
+import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.ToHitData;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.Targetable;
+import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 
 /**
  * The prone attacker thrashes at the target.
  */
 public class ThrashAttackAction extends AbstractAttackAction {
-    private static final MMLogger logger = MMLogger.create(ThrashAttackAction.class);
+    private static final MMLogger LOGGER = MMLogger.create(ThrashAttackAction.class);
 
+    @Serial
     private static final long serialVersionUID = -1527653560370040648L;
 
     public ThrashAttackAction(int entityId, int targetId) {
@@ -72,11 +84,11 @@ public class ThrashAttackAction extends AbstractAttackAction {
         final Targetable target = getTarget(game);
         // arguments legal?
         if (ae == null) {
-            logger.error("Attacker not valid");
+            LOGGER.error("Attacker not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
         }
         if (target == null) {
-            logger.error("target not valid");
+            LOGGER.error("target not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
         }
 
@@ -88,7 +100,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                  && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                  && ((target.getOwnerId() == ae.getOwnerId())
                   || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
                   && (ae.getOwner().getTeam() != Player.TEAM_NONE)
                   && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
@@ -157,9 +169,9 @@ public class ThrashAttackAction extends AbstractAttackAction {
         }
 
         // Mek must have at least one working arm or leg.
-        if (ae.isLocationBad(Mek.LOC_RARM) && ae.isLocationBad(Mek.LOC_LARM)
-              && ae.isLocationBad(Mek.LOC_RLEG)
-              && ae.isLocationBad(Mek.LOC_LLEG)) {
+        if (ae.isLocationBad(Mek.LOC_RIGHT_ARM) && ae.isLocationBad(Mek.LOC_LEFT_ARM)
+              && ae.isLocationBad(Mek.LOC_RIGHT_LEG)
+              && ae.isLocationBad(Mek.LOC_LEFT_LEG)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Mek has no arms or legs to thrash");
         }
 

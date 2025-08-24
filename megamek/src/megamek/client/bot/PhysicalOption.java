@@ -35,9 +35,9 @@ package megamek.client.bot;
 
 import java.util.Vector;
 
-import megamek.common.Entity;
-import megamek.common.INarcPod;
-import megamek.common.Targetable;
+import megamek.common.units.Entity;
+import megamek.common.equipment.INarcPod;
+import megamek.common.units.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.BrushOffAttackAction;

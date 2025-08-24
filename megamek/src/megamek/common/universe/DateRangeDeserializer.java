@@ -51,7 +51,7 @@ public class DateRangeDeserializer extends StdDeserializer<FactionRecord.DateRan
     }
 
     @Override
-    public FactionRecord.DateRange deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+    public FactionRecord.DateRange deserialize(JsonParser jp, DeserializationContext context) throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
         Integer start = null;
         if (node.has("start")) {

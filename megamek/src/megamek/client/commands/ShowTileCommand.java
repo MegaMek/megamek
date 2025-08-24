@@ -37,8 +37,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.common.Coords;
-import megamek.common.Entity;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
 import megamek.common.Hex;
 import megamek.common.options.OptionsConstants;
 

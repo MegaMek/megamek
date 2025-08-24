@@ -66,7 +66,7 @@ import megamek.client.ui.util.FluffImageHelper;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedXPanel;
 import megamek.client.ui.util.ViewFormatting;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.Report;
 import megamek.common.templates.TROView;
 

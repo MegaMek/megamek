@@ -37,8 +37,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.*;
+import megamek.common.MPCalculationSetting;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Jumpship;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.QuadVee;
+import megamek.common.units.Warship;
 
 final class ASMovementConverter {
 
@@ -46,8 +57,8 @@ final class ASMovementConverter {
      * Movement conversion, AlphaStrike Companion, p.92
      */
     static Map<String, Integer> convertMovement(ASConverter.ConversionData conversionData) {
-        Entity entity = conversionData.entity;
-        CalculationReport report = conversionData.conversionReport;
+        Entity entity = conversionData.entity();
+        CalculationReport report = conversionData.conversionReport();
         report.addEmptyLine();
         report.addSubHeader("Movement:");
 
@@ -61,8 +72,8 @@ final class ASMovementConverter {
     }
 
     private static Map<String, Integer> convertMovementForAero(ASConverter.ConversionData conversionData) {
-        Entity entity = conversionData.entity;
-        CalculationReport report = conversionData.conversionReport;
+        Entity entity = conversionData.entity();
+        CalculationReport report = conversionData.conversionReport();
 
         var result = new HashMap<String, Integer>();
         if (entity instanceof Warship) {
@@ -82,9 +93,9 @@ final class ASMovementConverter {
     }
 
     private static Map<String, Integer> convertMovementForNonInfantry(ASConverter.ConversionData conversionData) {
-        Entity entity = conversionData.entity;
-        AlphaStrikeElement element = conversionData.element;
-        CalculationReport report = conversionData.conversionReport;
+        Entity entity = conversionData.entity();
+        AlphaStrikeElement element = conversionData.element();
+        CalculationReport report = conversionData.conversionReport();
 
         var result = new HashMap<String, Integer>();
         double walkMP = entity.getOriginalWalkMP();
@@ -146,9 +157,9 @@ final class ASMovementConverter {
     }
 
     private static Map<String, Integer> convertMovementForInfantry(ASConverter.ConversionData conversionData) {
-        Entity entity = conversionData.entity;
-        AlphaStrikeElement element = conversionData.element;
-        CalculationReport report = conversionData.conversionReport;
+        Entity entity = conversionData.entity();
+        AlphaStrikeElement element = conversionData.element();
+        CalculationReport report = conversionData.conversionReport();
 
         var result = new HashMap<String, Integer>();
         int walkingMP = entity.getWalkMP(MPCalculationSetting.AS_CONVERSION);
@@ -172,8 +183,8 @@ final class ASMovementConverter {
     }
 
     private static void addUMUMovement(Map<String, Integer> moves, ASConverter.ConversionData conversionData) {
-        Entity entity = conversionData.entity;
-        CalculationReport report = conversionData.conversionReport;
+        Entity entity = conversionData.entity();
+        CalculationReport report = conversionData.conversionReport();
 
         int umu = entity.getAllUMUCount();
         if (umu > 0) {
@@ -185,15 +196,15 @@ final class ASMovementConverter {
     /** Returns true if the given entity has a Supercharger, regardless of its state (convert as if undamaged). */
     private static boolean hasSupercharger(Entity entity) {
         return entity.getMisc().stream()
-              .map(m -> (MiscType) m.getType())
+              .map(Mounted::getType)
               .anyMatch(m -> (m.hasFlag(MiscType.F_MASC) && m.hasSubType(MiscType.S_SUPERCHARGER)));
     }
 
     /** Returns true if the given entity has a Jet Booster, regardless of its state (convert as if undamaged). */
     private static boolean hasJetBooster(Entity entity) {
         return entity.getMisc().stream()
-              .map(m -> (MiscType) m.getType())
-              .anyMatch(m -> (m.hasFlag(MiscType.F_MASC) && m.hasSubType(MiscType.S_JETBOOSTER)));
+              .map(Mounted::getType)
+              .anyMatch(m -> (m.hasFlag(MiscType.F_MASC) && m.hasSubType(MiscType.S_JET_BOOSTER)));
     }
 
     /** Returns true if the given entity has a ProtoMek Myomer Booster. */
@@ -205,7 +216,7 @@ final class ASMovementConverter {
     private static boolean hasMekMASC(Entity entity) {
         return (entity instanceof Mek)
               && entity.getMisc().stream()
-              .map(m -> (MiscType) m.getType())
+              .map(Mounted::getType)
               .anyMatch(m -> (m.hasFlag(MiscType.F_MASC) && !m.hasSubType(MiscType.S_SUPERCHARGER)));
     }
 
@@ -215,7 +226,7 @@ final class ASMovementConverter {
      */
     private static boolean hasMPReducingShield(Entity entity) {
         return entity.getMisc().stream()
-              .map(m -> (MiscType) m.getType())
+              .map(Mounted::getType)
               .anyMatch(m -> (m.hasFlag(MiscType.F_CLUB)
                     && (m.hasSubType(MiscType.S_SHIELD_LARGE)
                     || m.hasSubType(MiscType.S_SHIELD_MEDIUM))));
@@ -223,8 +234,8 @@ final class ASMovementConverter {
 
     /** Returns the AlphaStrike movement type code letter such as "v" for VTOL. */
     public static String getMovementCode(ASConverter.ConversionData conversionData) {
-        Entity entity = conversionData.entity;
-        CalculationReport report = conversionData.conversionReport;
+        Entity entity = conversionData.entity();
+        CalculationReport report = conversionData.conversionReport();
         String type = "Movement Code:";
 
         if (entity instanceof QuadVee) {
@@ -307,8 +318,8 @@ final class ASMovementConverter {
      * Determines the element's TMM, AlphaStrike Companion Errata v1.4, p.8
      */
     static int convertTMM(ASConverter.ConversionData conversionData) {
-        CalculationReport report = conversionData.conversionReport;
-        AlphaStrikeElement element = conversionData.element;
+        CalculationReport report = conversionData.conversionReport();
+        AlphaStrikeElement element = conversionData.element();
         if (element.isAerospace()) {
             return 0;
         }

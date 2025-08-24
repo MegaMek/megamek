@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2014 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,6 +35,7 @@
 
 package megamek.common.event;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,9 +51,10 @@ import megamek.common.net.enums.PacketCommand;
  * @see GameListener
  */
 public class GameCFREvent extends GameEvent {
+    @Serial
     private static final long serialVersionUID = 230173422932412803L;
 
-    private PacketCommand cfrType;
+    private final PacketCommand cfrType;
 
     private int eId;
 
@@ -63,12 +65,12 @@ public class GameCFREvent extends GameEvent {
      */
     private int amsEquipNum;
 
-    private List<Integer> apdsDists;
+    private List<Integer> apdsDistances;
 
     /**
      * List of WeaponAttackActions that can have an AMS assigned to them for AMS_ASSIGN CFRs.
      */
-    private List<WeaponAttackAction> waas;
+    private List<WeaponAttackAction> weaponAttackActions;
 
     /**
      * List of Target IDs for targets of a teleguided missile.
@@ -163,19 +165,19 @@ public class GameCFREvent extends GameEvent {
     }
 
     public List<WeaponAttackAction> getWAAs() {
-        return waas;
+        return weaponAttackActions;
     }
 
-    public void setWAAs(List<WeaponAttackAction> waas) {
-        this.waas = waas;
+    public void setWAAs(List<WeaponAttackAction> weaponAttackActions) {
+        this.weaponAttackActions = weaponAttackActions;
     }
 
-    public List<Integer> getApdsDists() {
-        return apdsDists;
+    public List<Integer> getApdsDistances() {
+        return apdsDistances;
     }
 
-    public void setApdsDists(List<Integer> apdsDist) {
-        this.apdsDists = apdsDist;
+    public void setApdsDistances(List<Integer> apdsDist) {
+        this.apdsDistances = apdsDist;
     }
 
     public int getTargetId() {

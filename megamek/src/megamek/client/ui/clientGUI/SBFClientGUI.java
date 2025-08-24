@@ -68,11 +68,11 @@ import megamek.client.ui.panels.phaseDisplay.SBFReportDisplay;
 import megamek.client.ui.panels.phaseDisplay.StatusBarPhaseDisplay;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.SBFReportPanel;
-import megamek.common.Coords;
-import megamek.common.Game;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListener;
+import megamek.common.game.Game;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.util.Distractable;
@@ -362,7 +362,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
         String secondary;
         String main = CG_BOARD_VIEW;
         switch (phase) {
-            case LOUNGE, SET_ARTILLERY_AUTOHIT_HEXES, DEPLOY_MINEFIELDS, DEPLOYMENT, POINTBLANK_SHOT, PHYSICAL:
+            case LOUNGE, SET_ARTILLERY_AUTO_HIT_HEXES, DEPLOY_MINEFIELDS, DEPLOYMENT, POINTBLANK_SHOT, PHYSICAL:
                 break;
             case STARTING_SCENARIO:
                 initializeSingleComponent(phase, new StartingScenarioPanel(), CG_STARTING_SCENARIO);
@@ -400,7 +400,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
                 currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
-            case PREFIRING:
+            case PRE_FIRING:
                 secondary = CG_PRE_FIRING;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {

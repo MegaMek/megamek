@@ -34,8 +34,8 @@ package megamek.client.ui.clientGUI.boardview;
 
 import java.awt.Graphics2D;
 
-import megamek.common.Coords;
-import megamek.common.Game;
+import megamek.common.board.Coords;
+import megamek.common.game.Game;
 import megamek.common.Hex;
 
 /**

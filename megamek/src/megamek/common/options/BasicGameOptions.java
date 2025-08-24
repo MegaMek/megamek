@@ -52,12 +52,12 @@ public abstract class BasicGameOptions extends AbstractOptions {
         addOption(base, OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT, true);
         addOption(base, OptionsConstants.BASE_BLIND_DROP, false);
         addOption(base, OptionsConstants.BASE_REAL_BLIND_DROP, false);
-        addOption(base, OptionsConstants.BASE_SET_ARTY_PLAYER_HOMEEDGE, false);
+        addOption(base, OptionsConstants.BASE_SET_ARTY_PLAYER_HOME_EDGE, false);
         addOption(base, OptionsConstants.BASE_SET_DEFAULT_TEAM_1, false);
         addOption(base, OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER_0, false);
         addOption(base, OptionsConstants.BASE_RESTRICT_GAME_COMMANDS, false);
         addOption(base, OptionsConstants.BASE_DISABLE_LOCAL_SAVE, false);
-        addOption(base, OptionsConstants.BASE_BRIDGECF, 0);
+        addOption(base, OptionsConstants.BASE_BRIDGE_CF, 0);
         addOption(base, OptionsConstants.BASE_RNG_TYPE, 1);
         addOption(base, OptionsConstants.BASE_RNG_LOG, false);
         addOption(base, OptionsConstants.BASE_TURN_TIMER_TARGETING, 0);

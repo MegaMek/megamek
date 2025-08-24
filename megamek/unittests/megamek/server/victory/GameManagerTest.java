@@ -45,7 +45,7 @@ import java.util.Collections;
 import java.util.Vector;
 
 import megamek.client.ui.util.PlayerColour;
-import megamek.common.Game;
+import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;

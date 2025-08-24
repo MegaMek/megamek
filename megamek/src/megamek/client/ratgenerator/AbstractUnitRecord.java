@@ -35,7 +35,7 @@ package megamek.client.ratgenerator;
 
 import java.util.HashSet;
 
-import megamek.common.UnitType;
+import megamek.common.units.UnitType;
 
 /**
  * Base functionality for chassis and model records for RAT generator.
@@ -169,7 +169,7 @@ public class AbstractUnitRecord {
             case "Naval" -> UnitType.NAVAL;
             case "Gun Emplacement" -> UnitType.GUN_EMPLACEMENT;
             case "Conventional Fighter" -> UnitType.CONV_FIGHTER;
-            case "AeroSpaceFighter" -> UnitType.AEROSPACEFIGHTER;
+            case "AeroSpaceFighter" -> UnitType.AEROSPACE_FIGHTER;
             case "Aero" -> UnitType.AERO;
             case "Small Craft" -> UnitType.SMALL_CRAFT;
             case "Dropship" -> UnitType.DROPSHIP;

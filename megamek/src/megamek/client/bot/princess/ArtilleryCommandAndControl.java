@@ -37,8 +37,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
-import megamek.common.Coords;
-import megamek.common.Entity;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
 
 /**
  * ArtilleryCommandAndControl class represents the artillery command and control for the bot. It keeps track of the

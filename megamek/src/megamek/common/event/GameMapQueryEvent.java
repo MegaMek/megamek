@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,7 +34,9 @@
 
 package megamek.common.event;
 
-import megamek.common.MapSettings;
+import java.io.Serial;
+
+import megamek.common.loaders.MapSettings;
 
 /**
  * Instances of this class are sent when Client is asked for the Map
@@ -44,12 +46,12 @@ public class GameMapQueryEvent extends GameEvent {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -2525971548410030612L;
     protected MapSettings settings;
 
     /**
-     * @param source
-     * @param settings
+     *
      */
     public GameMapQueryEvent(Object source, MapSettings settings) {
         super(source);
@@ -57,7 +59,7 @@ public class GameMapQueryEvent extends GameEvent {
     }
 
     /**
-     * @return
+     *
      */
     public MapSettings getSettings() {
         return settings;

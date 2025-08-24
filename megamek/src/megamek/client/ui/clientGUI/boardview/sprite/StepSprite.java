@@ -50,15 +50,15 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.HexDrawUtilities;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityMovementType;
-import megamek.common.Game;
-import megamek.common.MiscType;
 import megamek.common.ToHitData;
-import megamek.common.moves.MovePath.MoveStepType;
+import megamek.common.compute.Compute;
+import megamek.common.enums.MoveStepType;
+import megamek.common.equipment.MiscType;
+import megamek.common.game.Game;
 import megamek.common.moves.MoveStep;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.EntityMovementType;
 
 /**
  * Sprite for a step in a movement path. Only one sprite should exist for any hex in a path. Contains a colored number,
@@ -169,9 +169,9 @@ public class StepSprite extends Sprite {
             case LATERAL_LEFT_BACKWARDS:
             case LATERAL_RIGHT_BACKWARDS:
             case DEC:
-            case DECN:
+            case DECELERATION:
             case ACC:
-            case ACCN:
+            case ACCELERATION:
             case LOOP:
                 // forward movement arrow
                 drawArrowShape(g2D, moveArrow, col);

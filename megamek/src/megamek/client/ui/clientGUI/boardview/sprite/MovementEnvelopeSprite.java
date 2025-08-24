@@ -45,7 +45,7 @@ import java.awt.Graphics2D;
 
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 
 /**
  * Sprite for displaying information about where a unit can move to.

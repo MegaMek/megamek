@@ -33,9 +33,9 @@
 
 package megamek.common.actions;
 
-import megamek.common.Compute;
-import megamek.common.Game;
-import megamek.common.WeaponType;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
+import megamek.common.equipment.WeaponType;
 
 public class OrbitToSurfaceAttackAction extends ArtilleryAttackAction {
 

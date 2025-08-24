@@ -35,7 +35,7 @@ package megamek.server.scriptedevent;
 
 import java.util.Map;
 
-import megamek.common.Game;
+import megamek.common.game.Game;
 import megamek.server.trigger.Trigger;
 import megamek.server.trigger.TriggerSituation;
 import megamek.server.victory.VictoryCondition;

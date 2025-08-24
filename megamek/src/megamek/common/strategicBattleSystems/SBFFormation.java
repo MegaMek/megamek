@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -51,19 +51,19 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
-import megamek.common.BoardLocation;
-import megamek.common.Deployable;
-import megamek.common.Entity;
-import megamek.common.ForceAssignable;
 import megamek.common.Player;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASSpecialAbilityCollection;
 import megamek.common.alphaStrike.ASSpecialAbilityCollector;
 import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.board.BoardLocation;
 import megamek.common.enums.GamePhase;
 import megamek.common.force.Force;
-import megamek.common.jacksonadapters.SBFFormationDeserializer;
-import megamek.common.jacksonadapters.SBFFormationSerializer;
+import megamek.common.interfaces.ForceAssignable;
+import megamek.common.jacksonAdapters.SBFFormationDeserializer;
+import megamek.common.jacksonAdapters.SBFFormationSerializer;
+import megamek.common.units.Deployable;
+import megamek.common.units.Entity;
 
 /**
  * Represents a Strategic Battle Force Formation composed of one or more SBF Units.
@@ -97,7 +97,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     private int ownerId = Player.PLAYER_NONE;
 
     /** Hidden deployment (not unseen) */
-    private boolean isHidden = false;
+    private final boolean isHidden = false;
     private boolean isDeployed = false;
     private int deployRound = 0;
     private BoardLocation position;
@@ -255,31 +255,17 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
      * not an Artillery SPA.
      */
     public static int getSbfArtilleryDamage(BattleForceSUA spa) {
-        switch (spa) {
-            case ARTTC:
-                return 1;
-            case ARTT:
-            case ARTBA:
-            case ARTSC:
-                return 2;
-            case ARTAIS:
-            case ARTAC:
-            case ARTS:
-            case ARTLTC:
-                return 3;
-            case ARTLT:
-                return 6;
-            case ARTCM5:
-                return 8;
-            case ARTCM7:
-                return 13;
-            case ARTCM9:
-                return 22;
-            case ARTCM12:
-                return 36;
-            default:
-                return 0;
-        }
+        return switch (spa) {
+            case ARTTC -> 1;
+            case ARTT, ARTBA, ARTSC -> 2;
+            case ARTAIS, ARTAC, ARTS, ARTLTC -> 3;
+            case ARTLT -> 6;
+            case ARTCM5 -> 8;
+            case ARTCM7 -> 13;
+            case ARTCM9 -> 22;
+            case ARTCM12 -> 36;
+            default -> 0;
+        };
     }
 
     /**
@@ -367,7 +353,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
             return sua.toString();
         } else if (sua == FLK) {
             ASDamageVector flkDamage = specialAbilities.getFLK();
-            return sua.toString() + flkDamage.M.damage + "/" + flkDamage.L.damage;
+            return sua.toString() + flkDamage.M().damage + "/" + flkDamage.L().damage;
         } else if (sua.isTransport()) {
             String result = sua + suaObject.toString();
             BattleForceSUA door = sua.getDoor();
@@ -519,7 +505,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
 
     public boolean isEligibleForPhase(GamePhase phase) {
         return !isDone && switch (phase) {
-            case PREMOVEMENT, PREFIRING -> isHidden;
+            case PREMOVEMENT, PRE_FIRING -> isHidden;
             default -> isDeployed;
         };
     }

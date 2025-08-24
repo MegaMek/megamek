@@ -39,12 +39,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Infantry;
+import megamek.common.compute.Compute;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
+import megamek.common.units.Infantry;
 import megamek.common.Player;
-import megamek.common.ProtoMek;
+import megamek.common.units.ProtoMek;
 import megamek.logging.MMLogger;
 
 /**

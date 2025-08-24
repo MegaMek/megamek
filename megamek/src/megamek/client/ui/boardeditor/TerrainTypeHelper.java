@@ -32,8 +32,8 @@
  */
 package megamek.client.ui.boardeditor;
 
-import megamek.common.Terrain;
-import megamek.common.Terrains;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
 
 /**
  * Class to make it easier to display a <code>Terrain</code> in a JList or JComboBox.

@@ -53,14 +53,14 @@ import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.SkinSpecification;
-import megamek.common.Board;
-import megamek.common.BoardLocation;
-import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.SpecialHexDisplay;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
 import megamek.common.containers.PlayerIDAndList;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 
 public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
@@ -192,8 +192,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         player = clientgui.getClient().getLocalPlayer();
         // By default, we should get 5 hexes per 4 map sheets (4 map sheets is 16*17*4 = 1088 hexes)
         Board board = game().getBoard();
-        int preDesignateArea = game().getOptions().intOption(OptionsConstants.ADVCOMBAT_MAP_AREA_PREDESIGNATE);
-        int hexesPer = game().getOptions().intOption(OptionsConstants.ADVCOMBAT_NUM_HEXES_PREDESIGNATE);
+        int preDesignateArea = game().getOptions().intOption(OptionsConstants.ADVANCED_COMBAT_MAP_AREA_PREDESIGNATE);
+        int hexesPer = game().getOptions().intOption(OptionsConstants.ADVANCED_COMBAT_NUM_HEXES_PREDESIGNATE);
         double mapArea = board.getWidth() * board.getHeight();
         allowedNumberOfHexes = (int) Math.ceil(mapArea / preDesignateArea) * hexesPer;
         plannedAutoHits.clear();
@@ -304,7 +304,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         if (isIgnoringEvents()) {
             return;
         }
-        if (game().getPhase().isSetArtilleryAutohitHexes()) {
+        if (game().getPhase().isSetArtilleryAutoHitHexes()) {
             setStatusBarText(Messages.getString("SelectArtyAutoHitHexDisplay.waitingMinefieldPhase"));
         } else if (isMyTurn()) {
             endMyTurn();

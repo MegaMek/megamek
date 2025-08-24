@@ -41,7 +41,7 @@ import java.util.Vector;
  *
  * @author arlith
  */
-class RatEntry {
+public class RatEntry {
     private Vector<String> units;
     private Vector<Float> weights;
 

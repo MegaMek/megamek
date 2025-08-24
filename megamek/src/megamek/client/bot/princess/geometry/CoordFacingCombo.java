@@ -33,8 +33,8 @@
  */
 package megamek.client.bot.princess.geometry;
 
-import megamek.common.Coords;
-import megamek.common.Entity;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
 import megamek.common.moves.MovePath;
 
 /**

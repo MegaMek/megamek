@@ -36,8 +36,8 @@ package megamek.client.bot.princess.geometry;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import megamek.common.Board;
-import megamek.common.Coords;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.logging.MMLogger;
 
 /**

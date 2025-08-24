@@ -39,7 +39,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-import megamek.common.Compute;
+import megamek.common.compute.Compute;
 import megamek.common.annotations.Nullable;
 
 public class ObjectUtility {

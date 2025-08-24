@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2006-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,13 +34,29 @@
 
 package megamek.common.actions;
 
-import megamek.common.*;
+import java.io.Serial;
+
+import megamek.common.Hex;
+import megamek.common.ToHitData;
+import megamek.common.compute.ComputeSideTable;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
+import megamek.common.units.LandAirMek;
+import megamek.common.units.Mek;
+import megamek.common.units.Targetable;
 
 /**
  * The attacker kicks the target.
  */
 public class JumpJetAttackAction extends PhysicalAttackAction {
+    @Serial
     private static final long serialVersionUID = 5068155731614378911L;
     public static final int BOTH = 0;
     public static final int LEFT = 1;
@@ -77,11 +93,11 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
 
         int[] kickLegs = new int[2];
         if (entity.entityIsQuad() && !entity.isProne()) {
-            kickLegs[0] = Mek.LOC_RARM;
-            kickLegs[1] = Mek.LOC_LARM;
+            kickLegs[0] = Mek.LOC_RIGHT_ARM;
+            kickLegs[1] = Mek.LOC_LEFT_ARM;
         } else {
-            kickLegs[0] = Mek.LOC_RLEG;
-            kickLegs[1] = Mek.LOC_LLEG;
+            kickLegs[0] = Mek.LOC_RIGHT_LEG;
+            kickLegs[1] = Mek.LOC_LEFT_LEG;
         }
 
         final int legLoc = kickLegs[(leg == RIGHT) ? 0 : 1];
@@ -118,7 +134,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
         }
 
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_JUMP_JET_ATTACK)) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_JUMP_JET_ATTACK)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "no Jump Jet attack");
         }
 
@@ -142,11 +158,11 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
 
         int[] kickLegs = new int[2];
         if (ae.entityIsQuad() && !ae.isProne()) {
-            kickLegs[0] = Mek.LOC_RARM;
-            kickLegs[1] = Mek.LOC_LARM;
+            kickLegs[0] = Mek.LOC_RIGHT_ARM;
+            kickLegs[1] = Mek.LOC_LEFT_ARM;
         } else {
-            kickLegs[0] = Mek.LOC_RLEG;
-            kickLegs[1] = Mek.LOC_LLEG;
+            kickLegs[0] = Mek.LOC_RIGHT_LEG;
+            kickLegs[1] = Mek.LOC_LEFT_LEG;
         }
 
         ToHitData toHit;

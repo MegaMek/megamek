@@ -36,6 +36,7 @@ package megamek.common.icons;
 import java.awt.Image;
 import java.io.File;
 import java.io.PrintWriter;
+import java.io.Serial;
 
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.common.annotations.Nullable;
@@ -48,9 +49,10 @@ import org.w3c.dom.Node;
  * @see AbstractIcon
  */
 public class Portrait extends AbstractIcon {
-    private static final MMLogger logger = MMLogger.create(Portrait.class);
+    private static final MMLogger LOGGER = MMLogger.create(Portrait.class);
 
     // region Variable Declarations
+    @Serial
     private static final long serialVersionUID = -7562297705213174435L;
     public static final String DEFAULT_PORTRAIT_FILENAME = "default.gif";
     public static final String XML_TAG = "portrait";
@@ -120,7 +122,7 @@ public class Portrait extends AbstractIcon {
                       DEFAULT_PORTRAIT_FILENAME);
             }
         } catch (Exception ex) {
-            logger.error("", ex);
+            LOGGER.error("", ex);
         }
 
         return portrait;
@@ -137,7 +139,7 @@ public class Portrait extends AbstractIcon {
         try {
             icon.parseNodes(wn.getChildNodes());
         } catch (Exception ex) {
-            logger.error("", ex);
+            LOGGER.error("", ex);
             return new Portrait();
         }
         return icon;

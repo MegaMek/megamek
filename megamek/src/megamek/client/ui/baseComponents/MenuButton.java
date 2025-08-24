@@ -38,12 +38,13 @@ import javax.swing.JButton;
 import javax.swing.UIManager;
 
 import com.formdev.flatlaf.icons.FlatAbstractIcon;
+import megamek.common.ui.EnhancedTabbedPane;
 
 /**
  * This is an icon button with a three-stacked-lines icon that indicates a menu of some kind. Usable e.g. as an action
  * button in an EnhancedTabbedPane.
  *
- * @see megamek.common.EnhancedTabbedPane
+ * @see EnhancedTabbedPane
  */
 public class MenuButton extends JButton {
 

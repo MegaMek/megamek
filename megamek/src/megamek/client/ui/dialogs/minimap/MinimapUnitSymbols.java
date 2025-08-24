@@ -41,13 +41,13 @@ import java.awt.Dimension;
 import java.awt.geom.Path2D;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.Mek;
-import megamek.common.MekWarrior;
-import megamek.common.ProtoMek;
-import megamek.common.Tank;
-import megamek.common.VTOL;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Mek;
+import megamek.common.units.MekWarrior;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Tank;
+import megamek.common.units.VTOL;
 
 /** Contains geometric paths for drawing the minimap unit symbols. */
 public class MinimapUnitSymbols {

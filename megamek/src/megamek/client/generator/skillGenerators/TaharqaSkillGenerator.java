@@ -33,9 +33,9 @@
 package megamek.client.generator.skillGenerators;
 
 import megamek.client.generator.enums.SkillGeneratorMethod;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.LandAirMek;
+import megamek.common.compute.Compute;
+import megamek.common.units.Entity;
+import megamek.common.units.LandAirMek;
 import megamek.common.enums.SkillLevel;
 
 public class TaharqaSkillGenerator extends TotalWarfareSkillGenerator {

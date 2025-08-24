@@ -62,8 +62,8 @@ public class SBFRuleOptions extends BasicGameOptions {
     /** Evading, IO BF p.198 */
     public static final String MOVE_EVASIVE = "move_evasive";
 
-    /** Hulldown, IO BF p.199 */
-    public static final String MOVE_HULLDOWN = "move_hulldown";
+    /** Hull down, IO BF p.199 */
+    public static final String MOVE_HULL_DOWN = "move_hulldown";
 
     /** Sprinting, IO BF p.199 */
     public static final String MOVE_SPRINT = "move_sprint";
@@ -96,7 +96,7 @@ public class SBFRuleOptions extends BasicGameOptions {
         addOption(init, INIT_BATTLEFIELD_INT, false);
 
         IBasicOptionGroup move = addGroup("movement");
-        addOption(move, MOVE_HULLDOWN, false);
+        addOption(move, MOVE_HULL_DOWN, false);
         addOption(move, MOVE_EVASIVE, false);
         addOption(move, MOVE_SPRINT, false);
     }

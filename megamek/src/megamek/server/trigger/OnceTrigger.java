@@ -33,7 +33,7 @@
 
 package megamek.server.trigger;
 
-import megamek.common.IGame;
+import megamek.common.game.IGame;
 
 /**
  * This Trigger can be used to turn a given sub-trigger into a one-time-only trigger. This is useful for scenarios or

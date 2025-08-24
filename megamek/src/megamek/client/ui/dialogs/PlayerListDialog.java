@@ -53,7 +53,7 @@ import javax.swing.JList;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.common.IGame;
+import megamek.common.game.IGame;
 import megamek.common.Player;
 import megamek.common.Team;
 

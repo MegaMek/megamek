@@ -94,24 +94,6 @@ public final class SBFReportMessages {
      */
     public static String getString(String key, List<Object> data) {
         return getString(key, data.toArray());
-        //        try {
-        //            String message = getString(key);
-        //            return MessageFormat.format(message, data.toArray(new Object[]{}));
-        //        } catch (NullPointerException ex) {
-        //            return "[Missing report message " + key + "]";
-        //        } catch (IllegalArgumentException exception) {
-        //            return "[Invalid message data for " + key + "]";
-        //        }
-        //        String message = getString(key);
-        //        if (message != null) {
-        //            try {
-        //                return MessageFormat.format(message, data.toArray(new Object[]{}));
-        //            } catch (IllegalArgumentException exception) {
-        //                return "[Invalid message data for " + key + "]";
-        //            }
-        //        } else {
-        //            return null;
-        //        }
     }
 
     private SBFReportMessages() {}

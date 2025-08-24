@@ -49,10 +49,24 @@ import megamek.client.ui.clientGUI.boardview.sprite.AttackSprite;
 import megamek.client.ui.clientGUI.tooltip.HexTooltip;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.LosEffects;
+import megamek.common.Player;
+import megamek.common.SpecialHexDisplay;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityVisibilityUtils;
+import megamek.common.units.Targetable;
 
 public class TWBoardViewTooltip implements BoardViewTooltipProvider {
 
@@ -102,7 +116,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                 int maxSensorRange = 0;
                 int minSensorRange = 0;
 
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS)) {
                     LosEffects los = bv.getFovHighlighting().getCachedLosEffects(selectedEntity.getPosition(),
                           coords, bv.getBoardId());
                     int bracket = Compute.getSensorRangeBracket(selectedEntity, null,
@@ -166,7 +180,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
 
         // Show the player(s) that may deploy here
         // in the artillery auto hit designation phase
-        if (game.getPhase().isSetArtilleryAutohitHexes() && (mhex != null)) {
+        if (game.getPhase().isSetArtilleryAutoHitHexes() && (mhex != null)) {
             result.append(HexTooltip.getArtilleryHit(game, coords, bv.getBoardId()));
         }
 
@@ -318,7 +332,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         if (shdList != null) {
             String sSpecialHex = "";
             for (SpecialHexDisplay shd : shdList) {
-                boolean isTypeAutoHit = shd.getType() == SpecialHexDisplay.Type.ARTILLERY_AUTOHIT;
+                boolean isTypeAutoHit = shd.getType() == SpecialHexDisplay.Type.ARTILLERY_AUTO_HIT;
                 // Don't draw if this SHD is obscured from this player The SHD list may also contain stale SHDs, so
                 // don't show tooltips for SHDs that aren't drawn. The exception is auto hits.  There will be an icon
                 // for auto hits, so we need to draw a tooltip
@@ -436,7 +450,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             // the arty auto hit hexes phase. These could be displayed if the player
             // uses the /reset command in some situations
             if ((selectedUnit != null)
-                  && !game.getPhase().isSetArtilleryAutohitHexes()
+                  && !game.getPhase().isSetArtilleryAutoHitHexes()
                   && Objects.equals(localPlayer(), selectedUnit.getOwner())
                   && (selectedWeapon.getType() instanceof WeaponType)
                   && selectedWeapon.getType().hasFlag(WeaponType.F_ARTILLERY)) {

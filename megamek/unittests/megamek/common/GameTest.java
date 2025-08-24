@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
+import megamek.common.game.Game;
 import megamek.server.victory.VictoryResult;
 import org.junit.jupiter.api.Test;
 

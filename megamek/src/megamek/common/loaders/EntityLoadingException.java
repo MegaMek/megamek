@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.loaders;
 
+import java.io.Serial;
+
 /**
  * This exception is thrown if a mek or other cannot be properly loaded from a file due to IO errors, file format
  * errors, or whatever.
@@ -42,6 +44,7 @@ package megamek.common.loaders;
  * @since June 21, 2002, 11:05 AM
  */
 public class EntityLoadingException extends Exception {
+    @Serial
     private static final long serialVersionUID = -4472736483205970852L;
 
     /**

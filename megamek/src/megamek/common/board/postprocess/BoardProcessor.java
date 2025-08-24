@@ -33,7 +33,7 @@
 
 package megamek.common.board.postprocess;
 
-import megamek.common.Board;
+import megamek.common.board.Board;
 
 /**
  * This interface is implemented by classes that perform some action on a Board, such as making terrain changes.

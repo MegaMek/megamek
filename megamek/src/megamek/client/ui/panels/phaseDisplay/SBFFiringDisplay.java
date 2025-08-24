@@ -49,19 +49,19 @@ import megamek.client.ui.clientGUI.SBFClientGUI;
 import megamek.client.ui.dialogs.phaseDisplay.SBFTargetDialog;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.widget.MegaMekButton;
-import megamek.common.BTObject;
-import megamek.common.BoardLocation;
-import megamek.common.InGameObject;
-import megamek.common.TargetRoll;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.sbf.SBFStandardUnitAttack;
 import megamek.common.alphaStrike.ASRange;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.BoardLocation;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.game.InGameObject;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFFormationTurn;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.common.strategicBattleSystems.SBFToHitData;
+import megamek.common.units.BTObject;
 
 public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelectionListener {
 
@@ -345,7 +345,7 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelec
             if (firingUnit >= attacker.getUnits().size() || firingUnit < 0) {
                 toHitData.addModifier(TargetRoll.IMPOSSIBLE, "Invalid Unit");
             } else {
-                toHitData = SBFToHitData.compiletoHit(game(),
+                toHitData = SBFToHitData.compileToHit(game(),
                       new SBFStandardUnitAttack(attacker.getId(), firingUnit, selectedTarget.getId(), ASRange.LONG));
             }
         }

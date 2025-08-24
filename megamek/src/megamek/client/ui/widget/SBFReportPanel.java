@@ -360,7 +360,7 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
         SBFGame game = currentClient.getGame();
         SBFFullGameReport report = game.getGameReport();
         for (int round = startIndex; round <= numRounds; round++) {
-            if (report.hasReportsforRound(round)) {
+            if (report.hasReportsForRound(round)) {
                 String text =
                       report.get(round).stream().map(SBFReportEntry::text).collect(Collectors.joining());
                 tabs.add(Messages.getString("MiniReportDisplay.Round") + " " + round, loadHtmlScrollPane(text));

@@ -35,6 +35,9 @@
 package megamek.common.weapons.prototypes;
 
 import megamek.common.SimpleTechLevel;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 
 /**
  * @author Sebastian Brocks
@@ -55,7 +58,7 @@ public class PrototypeRL10 extends PrototypeRLWeapon {
         longRange = 18;
         extremeRange = 27;
         tonnage = .5;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 15;
         cost = 15000;
         shortAV = 6;

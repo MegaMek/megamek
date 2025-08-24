@@ -36,6 +36,10 @@
 package megamek.common.weapons.primitive;
 
 import megamek.common.SimpleTechLevel;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.weapons.lasers.LaserWeapon;
 
 /**
@@ -64,7 +68,7 @@ public class ISLaserPrimitiveMedium extends LaserWeapon {
         waterLongRange = 6;
         waterExtremeRange = 8;
         tonnage = 1.0;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 46;
         cost = 40000;
         shortAV = 5;

@@ -33,6 +33,7 @@
 
 package megamek.common;
 
+import megamek.common.units.Entity;
 import megamek.common.weapons.DamageType;
 
 /**

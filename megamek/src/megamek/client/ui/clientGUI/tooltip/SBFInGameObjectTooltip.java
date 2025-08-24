@@ -41,8 +41,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import megamek.client.ui.util.UIUtil;
-import megamek.common.IGame;
-import megamek.common.InGameObject;
+import megamek.common.game.IGame;
+import megamek.common.game.InGameObject;
 import megamek.common.Player;
 import megamek.common.ReportMessages;
 import megamek.common.annotations.Nullable;

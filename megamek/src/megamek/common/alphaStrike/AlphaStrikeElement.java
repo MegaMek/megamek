@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,18 +45,18 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
-import megamek.common.Deployable;
-import megamek.common.Entity;
-import megamek.common.EntityFluff;
-import megamek.common.ForceAssignable;
 import megamek.common.Player;
-import megamek.common.UnitRole;
 import megamek.common.annotations.Nullable;
 import megamek.common.force.Force;
-import megamek.common.jacksonadapters.ASElementDeserializer;
-import megamek.common.jacksonadapters.ASElementSerializer;
+import megamek.common.interfaces.ForceAssignable;
+import megamek.common.jacksonAdapters.ASElementDeserializer;
+import megamek.common.jacksonAdapters.ASElementSerializer;
 import megamek.common.options.Quirks;
 import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
+import megamek.common.units.Deployable;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityFluff;
+import megamek.common.units.UnitRole;
 
 /**
  * This class represents an AlphaStrike Element which is a single unit such as a Mek with AlphaStrike values such as S,
@@ -71,8 +71,8 @@ import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
 public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSpecialAbilityCollector,
                                            BattleForceSUAFormatter, ForceAssignable, Deployable {
 
-    static final int RANGEBANDS_SML = 3;
-    static final int RANGEBANDS_SMLE = 4;
+    static final int RANGE_BANDS_SML = 3;
+    static final int RANGE_BANDS_SMLE = 4;
     public static final int RANGE_BAND_SHORT = 0;
     public static final int RANGE_BAND_MEDIUM = 1;
     public static final int RANGE_BAND_LONG = 2;
@@ -242,7 +242,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     }
 
     public double getHealthPercentage() {
-        return (getArmorPercentage() + getStructurePercentage()) / 2;
+        return (getArmorPercentage() + getStructurePercentage()) / 2.0;
     }
 
     @Override
@@ -277,7 +277,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
      * @return The number of damage range bands this element uses, 3 (SML) for ground units, 4 (SMLE) for aero.
      */
     public int getRangeBands() {
-        return usesSML() ? RANGEBANDS_SML : RANGEBANDS_SMLE;
+        return usesSML() ? RANGE_BANDS_SML : RANGE_BANDS_SMLE;
     }
 
     @Override
@@ -316,7 +316,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     }
 
     /**
-     * @return The conversion report for this unit. May be a DummyCalculationReport without information.
+     * @return The conversion report for this unit. Maybe a DummyCalculationReport without information.
      */
     public CalculationReport getConversionReport() {
         return conversionReport;
@@ -338,16 +338,12 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
      * @return The ASSpecialAbilityCollection object holding the damage and specials info for the given arc.
      */
     public ASSpecialAbilityCollection getArc(ASArcs arc) {
-        switch (arc) {
-            case FRONT:
-                return frontArc;
-            case LEFT:
-                return leftArc;
-            case REAR:
-                return rearArc;
-            default:
-                return rightArc;
-        }
+        return switch (arc) {
+            case FRONT -> frontArc;
+            case LEFT -> leftArc;
+            case REAR -> rearArc;
+            default -> rightArc;
+        };
     }
 
     public void setQuirks(Quirks quirks) {

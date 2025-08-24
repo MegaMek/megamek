@@ -50,13 +50,29 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.client.bot.princess.PathRanker.PathRankerType;
-import megamek.common.*;
+import megamek.common.Facing;
+import megamek.common.Hex;
+import megamek.common.MPCalculationSetting;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.IArmorState;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
+import megamek.common.game.GameTurn;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.rolls.PilotingRollData;
+import megamek.common.units.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -611,8 +627,8 @@ class PrincessTest {
 
         // Set up unit
         Mek mek1 = new BipedMek();
-        Mounted<?> bin1 = mek1.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
-        Mounted<?> wpn1 = mek1.addEquipment(mockAC5, Mek.LOC_RT);
+        Mounted<?> bin1 = mek1.addEquipment(mockAC5AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> wpn1 = mek1.addEquipment(mockAC5, Mek.LOC_RIGHT_TORSO);
 
         // Check default toHitThresholds
         // Default toHitThreshold for 7+ rounds for this level should allow firing on
@@ -649,8 +665,8 @@ class PrincessTest {
 
         // Set up unit
         Mek mek1 = new BipedMek();
-        Mounted<?> bin1 = mek1.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
-        Mounted<?> wpn1 = mek1.addEquipment(mockAC5, Mek.LOC_RT);
+        Mounted<?> bin1 = mek1.addEquipment(mockAC5AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> wpn1 = mek1.addEquipment(mockAC5, Mek.LOC_RIGHT_TORSO);
 
         // Check default toHitThresholds
         // Default toHitThreshold for 7+ rounds for this level should allow firing on
@@ -686,8 +702,8 @@ class PrincessTest {
 
         // Set up unit
         Mek mek1 = new BipedMek();
-        Mounted<?> bin1 = mek1.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
-        Mounted<?> wpn1 = mek1.addEquipment(mockAC5, Mek.LOC_RT);
+        Mounted<?> bin1 = mek1.addEquipment(mockAC5AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> wpn1 = mek1.addEquipment(mockAC5, Mek.LOC_RIGHT_TORSO);
 
         // Check default toHitThresholds
         // Default toHitThreshold for 7+ rounds for this level should allow firing on
@@ -720,7 +736,7 @@ class PrincessTest {
 
         // Set up unit
         Mek mek1 = new BipedMek();
-        Mounted<?> wpn1 = mek1.addEquipment(mockRL20, Mek.LOC_LT);
+        Mounted<?> wpn1 = mek1.addEquipment(mockRL20, Mek.LOC_LEFT_TORSO);
 
         // Check default toHitThresholds
         // For max aggro, shoot OS weapons at TN 10 or better

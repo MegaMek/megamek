@@ -44,7 +44,7 @@ import static megamek.common.alphaStrike.BattleForceSUA.LECM;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Game;
+import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.options.GameOptions;

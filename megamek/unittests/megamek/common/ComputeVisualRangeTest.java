@@ -43,8 +43,15 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.Vector;
 
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.Tank;
 import org.junit.jupiter.api.Test;
 
 public class ComputeVisualRangeTest {

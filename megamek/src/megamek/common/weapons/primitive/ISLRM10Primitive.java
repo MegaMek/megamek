@@ -35,13 +35,17 @@
 
 package megamek.common.weapons.primitive;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.LRMHandler;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.lrm.LRMHandler;
 import megamek.common.weapons.lrms.LRMWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -66,7 +70,7 @@ public class ISLRM10Primitive extends LRMWeapon {
         rackSize = 10;
         minimumRange = 6;
         tonnage = 5.0;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 90;
         cost = 100000;
         shortAV = 6;
@@ -90,7 +94,7 @@ public class ISLRM10Primitive extends LRMWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new LRMHandler(toHit, waa, game, manager, -2);
     }

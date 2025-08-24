@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2006-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,13 +34,27 @@
 
 package megamek.common.actions;
 
-import megamek.common.*;
+import java.io.Serial;
+
+import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.ToHitData;
+import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeArc;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadMek;
+import megamek.common.units.Targetable;
 
 /**
  * The attacker kicks the target.
  */
 public class TripAttackAction extends PhysicalAttackAction {
+    @Serial
     private static final long serialVersionUID = -8639566786588420601L;
 
     public TripAttackAction(int entityId, int targetId) {
@@ -64,7 +78,7 @@ public class TripAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
         }
 
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_TRIP_ATTACK)) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_TRIP_ATTACK)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "no Trip attack");
         }
 
@@ -80,7 +94,7 @@ public class TripAttackAction extends PhysicalAttackAction {
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                  && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                  && ((target.getOwnerId() == ae.getOwnerId())
                   || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
                   && (ae.getOwner().getTeam() != Player.TEAM_NONE)
                   && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
@@ -103,7 +117,7 @@ public class TripAttackAction extends PhysicalAttackAction {
 
         // described as a leg hook
         // needs 2 legs present
-        if (ae.isLocationBad(Mek.LOC_LLEG) || ae.isLocationBad(Mek.LOC_RLEG)) {
+        if (ae.isLocationBad(Mek.LOC_LEFT_LEG) || ae.isLocationBad(Mek.LOC_RIGHT_LEG)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Leg missing");
         }
 
@@ -153,31 +167,31 @@ public class TripAttackAction extends PhysicalAttackAction {
         }
 
         // check for good hips / shoulders
-        if (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RLEG)) {
-            usedWeapons[Mek.LOC_RLEG] = true;
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_LEG)) {
+            usedWeapons[Mek.LOC_RIGHT_LEG] = true;
         }
-        if (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LLEG)) {
-            usedWeapons[Mek.LOC_LLEG] = true;
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_LEG)) {
+            usedWeapons[Mek.LOC_LEFT_LEG] = true;
         }
-        if (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RARM)) {
-            usedWeapons[Mek.LOC_RARM] = true;
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_ARM)) {
+            usedWeapons[Mek.LOC_RIGHT_ARM] = true;
         }
-        if (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LARM)) {
-            usedWeapons[Mek.LOC_LARM] = true;
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_ARM)) {
+            usedWeapons[Mek.LOC_LEFT_ARM] = true;
         }
 
         if (ae instanceof QuadMek) {
-            if (usedWeapons[Mek.LOC_RARM]) {
-                if (usedWeapons[Mek.LOC_LARM]) {
+            if (usedWeapons[Mek.LOC_RIGHT_ARM]) {
+                if (usedWeapons[Mek.LOC_LEFT_ARM]) {
                     return new ToHitData(TargetRoll.IMPOSSIBLE, "both legs unusable");
                 }
-                limb1 = Mek.LOC_LARM;
+                limb1 = Mek.LOC_LEFT_ARM;
             }
-        } else if (usedWeapons[Mek.LOC_RLEG]) { // normal attack uses both legs
-            if (usedWeapons[Mek.LOC_LLEG]) {
+        } else if (usedWeapons[Mek.LOC_RIGHT_LEG]) { // normal attack uses both legs
+            if (usedWeapons[Mek.LOC_LEFT_LEG]) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "both legs unusable");
             }
-            limb1 = Mek.LOC_LLEG;
+            limb1 = Mek.LOC_LEFT_LEG;
         }
 
         // Set the base BTH
@@ -192,8 +206,8 @@ public class TripAttackAction extends PhysicalAttackAction {
         // Get best leg
         if (ae instanceof QuadMek) {
             if (limb1 == Entity.LOC_NONE) {
-                ToHitData left = TripAttackAction.getLimbModifier(Mek.LOC_LARM, ae);
-                ToHitData right = TripAttackAction.getLimbModifier(Mek.LOC_RARM, ae);
+                ToHitData left = TripAttackAction.getLimbModifier(Mek.LOC_LEFT_ARM, ae);
+                ToHitData right = TripAttackAction.getLimbModifier(Mek.LOC_RIGHT_ARM, ae);
                 if (left.getValue() < right.getValue()) {
                     toHit.append(left);
                 } else {
@@ -203,8 +217,8 @@ public class TripAttackAction extends PhysicalAttackAction {
                 toHit.append(TripAttackAction.getLimbModifier(limb1, ae));
             }
         } else if (limb1 == Entity.LOC_NONE) {
-            ToHitData left = TripAttackAction.getLimbModifier(Mek.LOC_LLEG, ae);
-            ToHitData right = TripAttackAction.getLimbModifier(Mek.LOC_RLEG, ae);
+            ToHitData left = TripAttackAction.getLimbModifier(Mek.LOC_LEFT_LEG, ae);
+            ToHitData right = TripAttackAction.getLimbModifier(Mek.LOC_RIGHT_LEG, ae);
             if (left.getValue() < right.getValue()) {
                 toHit.append(left);
             } else {

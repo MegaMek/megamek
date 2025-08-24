@@ -1,0 +1,163 @@
+/*
+  Copyright (C) 2002-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
+package megamek.common.battleArmor;
+
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
+
+import megamek.common.annotations.Nullable;
+import megamek.common.equipment.Transporter;
+import megamek.common.game.Game;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+
+/**
+ * Represents a set of handles on an OmniMek used by Battle Armor units equipped with Boarding Claws to attach
+ * themselves for transport. This is standard equipment on OmniMeks.
+ *
+ * @see MekFileParser#postLoadInit
+ */
+public class BattleArmorHandles implements Transporter {
+    @Serial
+    private static final long serialVersionUID = -7149931565043762975L;
+
+    /** The troopers being carried. */
+    protected int carriedUnit = Entity.NONE;
+    transient Game game;
+
+    private static final String NO_VACANCY_STRING = "A squad is loaded";
+    private static final String HAVE_VACANCY_STRING = "One battle armor squad";
+
+    @Override
+    public boolean canLoad(Entity unit) {
+        return (carriedUnit == Entity.NONE)
+              && (unit instanceof BattleArmor)
+              && ((BattleArmor) unit).canDoMechanizedBA();
+    }
+
+    @Override
+    public final void load(Entity unit) throws IllegalArgumentException {
+        // If we can't load the unit, throw an exception.
+        if (!canLoad(unit)) {
+            throw new IllegalArgumentException("Can not load " + unit.getShortName() + " onto this OmniMek.");
+        }
+
+        // Assign the unit as our carried troopers.
+        carriedUnit = unit.getId();
+    }
+
+    @Override
+    public final List<Entity> getLoadedUnits() {
+        List<Entity> units = new ArrayList<>(1);
+        Entity entity = game.getEntity(carriedUnit);
+        if (entity != null) {
+            units.add(entity);
+        }
+        return units;
+    }
+
+    @Override
+    public final boolean unload(Entity unit) {
+        // Are we carrying the unit?
+        Entity trooper = game.getEntity(carriedUnit);
+        if ((trooper == null) || !trooper.equals(unit)) {
+            // Nope.
+            return false;
+        }
+
+        // Remove the troopers.
+        carriedUnit = Entity.NONE;
+        return true;
+    }
+
+    @Override
+    public String getUnusedString() {
+        return (carriedUnit != Entity.NONE) ? NO_VACANCY_STRING : HAVE_VACANCY_STRING;
+    }
+
+    @Override
+    public double getUnused() {
+        return (carriedUnit == Entity.NONE) ? 1 : 0;
+    }
+
+    @Override
+    public void resetTransporter() {
+        carriedUnit = Entity.NONE;
+    }
+
+    @Override
+    public boolean isWeaponBlockedAt(int loc, boolean isRear) {
+        Entity carriedBA = game.getEntity(carriedUnit);
+        if (carriedBA == null) {
+            return false;
+        } else {
+            int trooperLocation = BattleArmor.LOC_SQUAD;
+            trooperLocation = switch (loc) {
+                case Mek.LOC_CENTER_TORSO -> isRear ? BattleArmor.LOC_TROOPER_5 : BattleArmor.LOC_TROOPER_6;
+                case Mek.LOC_LEFT_TORSO -> isRear ? BattleArmor.LOC_TROOPER_4 : BattleArmor.LOC_TROOPER_2;
+                case Mek.LOC_RIGHT_TORSO -> isRear ? BattleArmor.LOC_TROOPER_3 : BattleArmor.LOC_TROOPER_1;
+                default -> trooperLocation;
+            };
+            return (carriedBA.locations() > trooperLocation) && (carriedBA.getInternal(trooperLocation) > 0);
+        }
+    }
+
+    @Override
+    public final @Nullable Entity getExteriorUnitAt(int loc, boolean isRear) {
+        return isWeaponBlockedAt(loc, isRear) ? game.getEntity(carriedUnit) : null;
+    }
+
+    @Override
+    public final List<Entity> getExternalUnits() {
+        return getLoadedUnits();
+    }
+
+    @Override
+    public int getCargoMpReduction(Entity carrier) {
+        return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "BattleArmorHandles - troopers:" + carriedUnit;
+    }
+
+    @Override
+    public void setGame(Game game) {
+        this.game = game;
+    }
+}

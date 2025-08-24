@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,8 +34,8 @@
 
 package megamek.common.event;
 
-import megamek.common.Board;
-import megamek.common.Game;
+import megamek.common.board.Board;
+import megamek.common.game.Game;
 
 /**
  * Instances of this class are sent when the new board for game is set

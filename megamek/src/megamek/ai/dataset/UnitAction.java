@@ -39,10 +39,10 @@ import java.util.stream.Collectors;
 
 import megamek.ai.utility.EntityFeatureUtils;
 import megamek.client.ui.SharedUtility;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.IAero;
-import megamek.common.UnitRole;
+import megamek.common.compute.Compute;
+import megamek.common.units.Entity;
+import megamek.common.units.IAero;
+import megamek.common.units.UnitRole;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 

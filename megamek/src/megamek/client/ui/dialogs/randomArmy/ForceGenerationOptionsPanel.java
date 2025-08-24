@@ -57,10 +57,10 @@ import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.AnalyzeFormationDialog;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityWeightClass;
-import megamek.common.MekSummary;
-import megamek.common.UnitType;
+import megamek.common.loaders.MekSummary;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.UnitType;
 
 /**
  * Panel that allows choice of year, faction, rating, unit type
@@ -90,7 +90,7 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
 
     private static final int[] UNIT_TYPES = { UnitType.MEK, UnitType.TANK, UnitType.BATTLE_ARMOR, UnitType.INFANTRY,
                                               UnitType.PROTOMEK, UnitType.VTOL, UnitType.NAVAL, UnitType.CONV_FIGHTER,
-                                              UnitType.AEROSPACEFIGHTER, UnitType.SMALL_CRAFT, UnitType.DROPSHIP,
+                                              UnitType.AEROSPACE_FIGHTER, UnitType.SMALL_CRAFT, UnitType.DROPSHIP,
                                               UnitType.JUMPSHIP, UnitType.WARSHIP, UnitType.SPACE_STATION };
     private static final int EARLIEST_YEAR = 2398;
     private static final int LATEST_YEAR = 3160;
@@ -630,7 +630,7 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
                           EntityWeightClass.WEIGHT_ASSAULT,
                           true);
                     break;
-                case UnitType.AEROSPACEFIGHTER:
+                case UnitType.AEROSPACE_FIGHTER:
                     addWeightClasses(panWeightClass,
                           EntityWeightClass.WEIGHT_LIGHT,
                           EntityWeightClass.WEIGHT_HEAVY,
@@ -695,7 +695,7 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
                 case UnitType.VTOL:
                 case UnitType.NAVAL:
                 case UnitType.CONV_FIGHTER:
-                case UnitType.AEROSPACEFIGHTER:
+                case UnitType.AEROSPACE_FIGHTER:
                     addNetworkButton(panNetwork,
                           c,
                           networkButtons,

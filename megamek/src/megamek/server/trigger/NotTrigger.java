@@ -33,7 +33,7 @@
 
 package megamek.server.trigger;
 
-import megamek.common.IGame;
+import megamek.common.game.IGame;
 
 /**
  * This "Trigger" is used to invert another Trigger. It reacts (returns true) when the given subtrigger returns false.

@@ -33,12 +33,12 @@
 
 package megamek.common.board.postprocess;
 
-import megamek.common.Board;
 import megamek.common.Hex;
+import megamek.common.board.Board;
 
 /**
- * This is a base class for simple BoardPostProcessors where each hex can be processed independently from other hexes.
- * An example is a processor that converts all woods hexes to heavy woods or removes all water.
+ * This is a base class for simple BoardPostProcessors where each hex can be processed independently of other hexes. An
+ * example is a processor that converts all woods hexes to heavy woods or removes all water.
  */
 abstract class AbstractSimpleBoardProcessor implements BoardProcessor {
 

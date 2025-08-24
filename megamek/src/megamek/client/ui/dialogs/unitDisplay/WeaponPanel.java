@@ -67,21 +67,34 @@ import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PicMap;
-import megamek.common.*;
-import megamek.common.AmmoType.AmmoTypeEnum;
-import megamek.common.AmmoType.Munitions;
+import megamek.common.Configuration;
+import megamek.common.Hex;
+import megamek.common.RangeType;
+import megamek.common.ToHitData;
 import megamek.common.annotations.Nullable;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.AmmoType.AmmoTypeEnum;
+import megamek.common.equipment.AmmoType.Munitions;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.*;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.weapons.AreaEffectHelper;
-import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
-import megamek.common.weapons.bayweapons.BayWeapon;
-import megamek.common.weapons.gaussrifles.HAGWeapon;
+import megamek.common.weapons.bayWeapons.BayWeapon;
+import megamek.common.weapons.gaussRifles.HAGWeapon;
+import megamek.common.weapons.handlers.AreaEffectHelper;
+import megamek.common.weapons.handlers.DamageFalloff;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 
@@ -896,8 +909,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         entity = en;
 
         // Check Game Options for max external heat
-        int max_ext_heat = game != null ? game.getOptions().intOption(OptionsConstants.ADVCOMBAT_MAX_EXTERNAL_HEAT)
-              : 15;
+        int max_ext_heat = game != null ?
+              game.getOptions().intOption(OptionsConstants.ADVANCED_COMBAT_MAX_EXTERNAL_HEAT)
+              :
+              15;
         if (max_ext_heat < 0) {
             max_ext_heat = 15; // Standard value specified in TW p.159
         }
@@ -1008,7 +1023,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 // add heat from weapons fire to heat tracker
                 if (entity.isLargeCraft()) {
                     // if using bay heat option then don't add total arc
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_HEAT_BY_BAY)) {
                         currentHeatBuildup += mounted.getHeatByBay();
                     } else {
                         // check whether arc has fired
@@ -1084,7 +1099,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             wBayWeapon.setVisible(false);
         }
         if ((!entity.isLargeCraft())
-              || ((game != null) && (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)))) {
+              || ((game != null) && (game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_HEAT_BY_BAY)))) {
             wArcHeatL.setVisible(false);
             wArcHeatR.setVisible(false);
         } else {
@@ -1126,7 +1142,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
 
         // If MaxTech range rules are in play, display the extreme range.
-        if (((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE))
+        if (((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE))
               || (entity.isAero() && (entity.isAirborne() || entity.usesWeaponBays()))) {
             wExtL.setVisible(true);
             wExtR.setVisible(true);
@@ -1635,14 +1651,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 wMinR.setVisible(true);
             }
             if (((entity.getGame() != null)
-                  && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE))
+                  && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE))
                   || aerospaceAttack) {
                 wExtL.setVisible(true);
                 wExtR.setVisible(true);
             }
         }
 
-        if (weaponType.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+        if (weaponType.getDamage() == WeaponType.DAMAGE_BY_CLUSTER_TABLE) {
             if (weaponType instanceof HAGWeapon) {
                 wDamR.setText(Messages.getString("MekDisplay.Variable"));
             } else {
@@ -1684,7 +1700,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
               && mounted.hasModes()
               && (unitDisplayPanel.getClientGUI() != null)
               && unitDisplayPanel.getClientGUI().getClient().getGame().getOptions().booleanOption(
-              OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)) {
+              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ENERGY_WEAPONS)) {
             if (mounted.hasChargedCapacitor() != 0) {
                 if (mounted.hasChargedCapacitor() == 1) {
                     wDamR.setText(Integer.toString(Compute.dialDownDamage(
@@ -1718,7 +1734,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             mediumR = weaponType.getWMediumRange();
             longR = weaponType.getWLongRange();
             extremeR = weaponType.getWExtremeRange();
-        } else if (weaponType.hasFlag(WeaponType.F_PDBAY)) {
+        } else if (weaponType.hasFlag(WeaponType.F_PD_BAY)) {
             // Point Defense bays have a variable range, depending on the mode they're in
             if (mounted.hasModes() && mounted.curMode().equals("Point Defense")) {
                 shortR = 1;
@@ -1833,7 +1849,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         if (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.NA) {
             m_chAmmo.setEnabled(false);
-        } else if (weaponType.hasFlag(WeaponType.F_DOUBLE_ONESHOT)
+        } else if (weaponType.hasFlag(WeaponType.F_DOUBLE_ONE_SHOT)
               || (entity.isSupportVehicle() && (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.INFANTRY))) {
             int count = 0;
             vAmmo = new ArrayList<>();
@@ -1852,7 +1868,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             m_chAmmo.setSelectedIndex(0);
             m_chAmmo.setEnabled(count > 0);
 
-        } else if (weaponType.hasFlag(WeaponType.F_ONESHOT)) {
+        } else if (weaponType.hasFlag(WeaponType.F_ONE_SHOT)) {
             // this is the situation where there's some kind of ammo, but it's not changeable
             m_chAmmo.setEnabled(false);
             Mounted<?> mountedAmmo = mounted.getLinked();
@@ -2100,7 +2116,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             maxRange = (int) changes[4];
         }
 
-        if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+        if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)
               && weaponType.isCapital()) {
             avShort *= 10;
             avMed *= 10;
@@ -2121,7 +2137,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         wShortAVR.setText(Integer.toString(avShort));
         if (weaponType.isCapital()) {
             wShortR.setText("1-12");
-        } else if (weaponType.hasFlag(WeaponType.F_PDBAY)) {
+        } else if (weaponType.hasFlag(WeaponType.F_PD_BAY)) {
             // Point Defense bays have a variable range too, depending on the mode they're
             // in
             if (weapon.hasModes() && weapon.curMode().equals("Point Defense")) {
@@ -2361,7 +2377,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         avLong = multiplier * avLong;
         avExt = multiplier * avExt;
 
-        if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+        if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)
               && weaponType.isCapital()) {
             avShort *= 10;
             avMed *= 10;

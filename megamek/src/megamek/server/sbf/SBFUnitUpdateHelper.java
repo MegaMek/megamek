@@ -33,7 +33,7 @@
 
 package megamek.server.sbf;
 
-import megamek.common.InGameObject;
+import megamek.common.game.InGameObject;
 import megamek.common.Player;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;

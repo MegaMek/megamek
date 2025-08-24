@@ -40,12 +40,12 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.HexSprite;
 import megamek.client.ui.util.EntityWreckHelper;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
 import megamek.common.Player;
+import megamek.common.board.Coords;
+import megamek.common.equipment.GunEmplacement;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
 
 /**
  * Sprite used for isometric rendering to render an entity partially hidden behind a hill.
@@ -242,9 +242,9 @@ public class IsometricSprite extends HexSprite {
      *
      */
     private boolean onlyDetectedBySensors() {
-        boolean sensors = (bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS) ||
+        boolean sensors = (bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS) ||
               bv.game.getOptions()
-                    .booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS));
+                    .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS));
         boolean sensorsDetectAll = bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
         boolean doubleBlind = bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
         boolean hasVisual = entity.hasSeenEntity(bv.getLocalPlayer());

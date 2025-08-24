@@ -45,8 +45,12 @@ import megamek.client.ui.clientGUI.boardview.LabelDisplayStyle;
 import megamek.client.ui.util.EntityWreckHelper;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.units.*;
 
 /**
  * Sprite for an entity. Changes whenever the entity changes. Consists of an image, drawn from the Tile Manager; facing

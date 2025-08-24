@@ -41,15 +41,29 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import megamek.common.*;
-import megamek.common.AmmoType.AmmoTypeEnum;
+import megamek.common.CriticalSlot;
+import megamek.common.bays.Bay;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.interfaces.ITechManager;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.Jumpship;
+import megamek.common.units.NavalRepairFacility;
+import megamek.common.units.Warship;
+import megamek.common.util.RoundWeight;
 import megamek.common.util.StringUtil;
-import megamek.common.weapons.bayweapons.BayWeapon;
-import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
+import megamek.common.weapons.bayWeapons.BayWeapon;
+import megamek.common.weapons.capitalWeapons.ScreenLauncherWeapon;
 
 /**
  * Validation and construction data for advanced aerospace units (jump ships, warships, space stations)
@@ -97,13 +111,13 @@ public class TestAdvancedAerospace extends TestAero {
         // max armor tonnage is based on SI weight
         if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
             // SI weight (SI/1000) / 50
-            return floor(vessel.getOSI() * vessel.getWeight() / 50000.0, Ceil.HALFTON);
+            return floor(vessel.getOSI() * vessel.getWeight() / 50000.0, Ceil.HALF_TON);
         } else if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
             // SI weight (SI/100) / 3 + 60
-            return floor(vessel.getOSI() * vessel.getWeight() / 300.0 + 60, Ceil.HALFTON);
+            return floor(vessel.getOSI() * vessel.getWeight() / 300.0 + 60, Ceil.HALF_TON);
         } else {
             // SI weight (SI/150) / 12
-            return floor(vessel.getOSI() * vessel.getWeight() / 1800.0, Ceil.HALFTON);
+            return floor(vessel.getOSI() * vessel.getWeight() / 1800.0, Ceil.HALF_TON);
         }
     }
 
@@ -151,7 +165,7 @@ public class TestAdvancedAerospace extends TestAero {
         for (int arc = 0; arc < arcs; arc++) {
             int excess = (weaponsPerArc[arc] - 1) / slotsPerArc;
             if (excess > 0) {
-                retVal[arc] = ceil(excess * weaponTonnage[arc] / 10.0, Ceil.HALFTON);
+                retVal[arc] = ceil(excess * weaponTonnage[arc] / 10.0, Ceil.HALF_TON);
             }
             if (hasNC3) {
                 retVal[arc] *= 2;
@@ -187,13 +201,13 @@ public class TestAdvancedAerospace extends TestAero {
      */
     public static double calculateEngineTonnage(Jumpship vessel) {
         if (vessel.hasStationKeepingDrive()) {
-            return round(vessel.getWeight() * 0.012, Ceil.HALFTON);
+            return round(vessel.getWeight() * 0.012, Ceil.HALF_TON);
         } else if (vessel.isPrimitive()) {
             return round(vessel.getWeight() *
                   vessel.getOriginalWalkMP() *
-                  primitiveEngineMultiplier(vessel.getOriginalBuildYear()), Ceil.HALFTON);
+                  primitiveEngineMultiplier(vessel.getOriginalBuildYear()), Ceil.HALF_TON);
         } else {
-            return round(vessel.getWeight() * vessel.getOriginalWalkMP() * 0.06, Ceil.HALFTON);
+            return round(vessel.getWeight() * vessel.getOriginalWalkMP() * 0.06, Ceil.HALF_TON);
         }
     }
 
@@ -436,7 +450,7 @@ public class TestAdvancedAerospace extends TestAero {
 
             AmmoType mt = (AmmoType) m.getType();
             int slots = (int) Math.ceil((double) m.getBaseShotsLeft() / mt.getShots());
-            weight += ceil(m.getTonnage() * slots, Ceil.HALFTON);
+            weight += ceil(m.getTonnage() * slots, Ceil.HALF_TON);
         }
         return weight;
     }
@@ -530,7 +544,7 @@ public class TestAdvancedAerospace extends TestAero {
                       .append("\n");
             }
             for (AmmoMounted a : m.getBayAmmo()) {
-                double weight = ceil(a.getTonnage() * a.getBaseShotsLeft() / a.getType().getShots(), Ceil.HALFTON);
+                double weight = ceil(a.getTonnage() * a.getBaseShotsLeft() / a.getType().getShots(), Ceil.HALF_TON);
                 buffer.append("   ")
                       .append(StringUtil.makeLength(a.getName(), getPrintSize() - 25))
                       .append(weight)
@@ -651,7 +665,7 @@ public class TestAdvancedAerospace extends TestAero {
         correct &= correctCrew(buff);
         correct &= correctGravDecks(buff);
         correct &= correctBays(buff);
-        correct &= correctCriticals(buff);
+        correct &= correctCriticalSlots(buff);
         if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) ||
               getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
@@ -989,7 +1003,7 @@ public class TestAdvancedAerospace extends TestAero {
         buff.append(printArmorPlacement());
         correctArmor(buff);
         buff.append(printLocations());
-        correctCriticals(buff);
+        correctCriticalSlots(buff);
 
         // printArmor(buff);
         printFailedEquipment(buff);
@@ -1052,10 +1066,10 @@ public class TestAdvancedAerospace extends TestAero {
         for (int i = 0; i < getEntity().locations(); i++) {
             String locationName = getEntity().getLocationName(i);
             buff.append(locationName).append(":").append("\n");
-            for (int j = 0; j < getEntity().getNumberOfCriticals(i); j++) {
+            for (int j = 0; j < getEntity().getNumberOfCriticalSlots(i); j++) {
                 CriticalSlot slot = getEntity().getCritical(i, j);
                 if (slot == null) {
-                    j = getEntity().getNumberOfCriticals(i);
+                    j = getEntity().getNumberOfCriticalSlots(i);
                 } else if (slot.getType() == CriticalSlot.TYPE_SYSTEM) {
                     buff.append(j).append(". UNKNOWN SYSTEM NAME");
                     buff.append("\n");

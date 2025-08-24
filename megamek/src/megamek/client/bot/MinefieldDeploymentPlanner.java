@@ -34,7 +34,7 @@ package megamek.client.bot;
 
 import java.util.Deque;
 
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 
 /**
  * Interface for classes that can plan minefield deployments.

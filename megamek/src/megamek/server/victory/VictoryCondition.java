@@ -36,7 +36,7 @@ package megamek.server.victory;
 
 import java.util.Map;
 
-import megamek.common.Game;
+import megamek.common.game.Game;
 
 /**
  * Interface for classes judging whether a victory occurred or not. These classes must not modify the game state.

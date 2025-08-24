@@ -39,15 +39,15 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.HashSet;
 
-import megamek.common.BattleArmorBay;
-import megamek.common.Bay;
-import megamek.common.DropshuttleBay;
-import megamek.common.InfantryBay;
-import megamek.common.InfantryTransporter.PlatoonType;
-import megamek.common.Jumpship;
-import megamek.common.MekBay;
-import megamek.common.NavalRepairFacility;
+import megamek.common.bays.BattleArmorBay;
+import megamek.common.bays.Bay;
+import megamek.common.bays.InfantryBay;
+import megamek.common.bays.MekBay;
 import megamek.common.loaders.BLKFile.ParsedBayInfo;
+import megamek.common.units.DropShuttleBay;
+import megamek.common.units.Jumpship;
+import megamek.common.units.NavalRepairFacility;
+import megamek.common.units.PlatoonType;
 import org.junit.jupiter.api.Test;
 
 class BLKFileTest {
@@ -190,7 +190,7 @@ class BLKFileTest {
 
     @Test
     void parseDropShuttleBay() {
-        Bay bay = new DropshuttleBay(1, -1, Jumpship.LOC_AFT);
+        Bay bay = new DropShuttleBay(1, -1, Jumpship.LOC_AFT);
 
         try {
             ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());

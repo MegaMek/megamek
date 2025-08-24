@@ -36,7 +36,7 @@ package megamek.client.event;
 import java.util.EventListener;
 
 import megamek.client.ui.clientGUI.boardview.IBoardView;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 
 /**
  * Classes which implement this interface provide methods that deal with the events that are generated when the

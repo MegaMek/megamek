@@ -3180,7 +3180,7 @@ v0.41.14 (2016-02-02 13:10 UTC)
 + Errata: Turret Tech Level Changes
 + Data: New Sprites
 + Bug [#4679]: Entity deploymentZone won't save as -1 in MUL
-+ Bug: It was possible to select mult/even init options with individual init on
++ Bug: It was possible to select multiplier/even init options with individual init on
 + Bug #4: Disallow simultaneous enabling of Lance Movement and Individual Init
 + Bug [#4577]: ECCM effective beyond its nominal range
 + Bug: Sprinting with low gravity could cause MASC failure checks

@@ -49,11 +49,11 @@ public record SBFPhaseEndManager(SBFGameManager gameManager) implements SBFGameM
             case STARTING_SCENARIO:
                 gameManager.addPendingReportsToGame();
                 // IO BF p.103: Arty auto is a thing in SBF
-                // gameManager.changePhase(GamePhase.SET_ARTILLERY_AUTOHIT_HEXES);
+                // gameManager.changePhase(GamePhase.SET_ARTILLERY_AUTO_HIT_HEXES);
                 gameManager.changePhase(GamePhase.INITIATIVE); // FIXME <- only for testing to get past arty auto and
                 // minefields
                 break;
-            case SET_ARTILLERY_AUTOHIT_HEXES:
+            case SET_ARTILLERY_AUTO_HIT_HEXES:
                 // sendSpecialHexDisplayPackets();
                 gameManager.addPendingReportsToGame();
                 boolean hasMinesToDeploy = gameManager.getGame().getPlayersList().stream()
@@ -118,7 +118,7 @@ public record SBFPhaseEndManager(SBFGameManager gameManager) implements SBFGameM
             case MOVEMENT_REPORT:
                 gameManager.changePhase(GamePhase.OFFBOARD);
                 break;
-            case PREFIRING:
+            case PRE_FIRING:
                 gameManager.changePhase(GamePhase.FIRING);
                 break;
             case FIRING:
@@ -153,12 +153,12 @@ public record SBFPhaseEndManager(SBFGameManager gameManager) implements SBFGameM
                     // gameManager.addReport(new Report(1205, Report.PUBLIC));
                     gameManager.getGame().addReports(gameManager.getPendingReports());
                     gameManager.sendReport();
-                    gameManager.changePhase(GamePhase.PREFIRING);
+                    gameManager.changePhase(GamePhase.PRE_FIRING);
                 }
                 break;
             case OFFBOARD_REPORT:
                 // sendSpecialHexDisplayPackets();
-                gameManager.changePhase(GamePhase.PREFIRING);
+                gameManager.changePhase(GamePhase.PRE_FIRING);
                 break;
             case TARGETING_REPORT:
                 gameManager.changePhase(GamePhase.PREMOVEMENT);

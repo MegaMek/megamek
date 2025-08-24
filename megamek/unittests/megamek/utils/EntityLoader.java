@@ -36,9 +36,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.MekFileParser;
+import megamek.common.units.Entity;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.loaders.MekFileParser;
 
 public class EntityLoader {
 

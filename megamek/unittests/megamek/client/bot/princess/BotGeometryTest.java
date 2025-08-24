@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 import org.junit.jupiter.api.Test;
 
 class BotGeometryTest {

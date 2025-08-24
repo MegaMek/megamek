@@ -1,7 +1,7 @@
 /*
 
  * Copyright (C) 2015 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,6 +37,9 @@ package megamek.common;
 
 import java.util.Comparator;
 import java.util.Objects;
+
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
 
 /**
  * A class that keeps track of information related to an ECM field.

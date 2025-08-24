@@ -38,9 +38,27 @@ import java.util.Vector;
 
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.common.*;
+import megamek.common.CriticalSlot;
+import megamek.common.Hex;
+import megamek.common.Report;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.EquipmentMode;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.PilotingRollData;
+import megamek.common.rolls.Roll;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Aero;
+import megamek.common.units.ConvFighter;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.units.FighterSquadron;
+import megamek.common.units.Jumpship;
+import megamek.common.units.Mek;
+import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 import megamek.server.ServerHelper;
 
@@ -125,7 +143,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                         throw new IllegalStateException("Server.resolveHeat(): " +
                               "Could not find Radical Heat Sink mount on unit that used RHS!");
                     }
-                    for (int s = 0; s < entity.getNumberOfCriticals(loc); s++) {
+                    for (int s = 0; s < entity.getNumberOfCriticalSlots(loc); s++) {
                         CriticalSlot slot = entity.getCritical(loc, s);
                         if ((slot.getType() == CriticalSlot.TYPE_EQUIPMENT) &&
                               slot.getMount().getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
@@ -297,8 +315,8 @@ class HeatResolver extends AbstractTWRuleHandler {
             if (entity.hasVibroblades()) {
                 int vibroHeat;
 
-                vibroHeat = entity.getActiveVibrobladeHeat(Mek.LOC_RARM);
-                vibroHeat += entity.getActiveVibrobladeHeat(Mek.LOC_LARM);
+                vibroHeat = entity.getActiveVibrobladeHeat(Mek.LOC_RIGHT_ARM);
+                vibroHeat += entity.getActiveVibrobladeHeat(Mek.LOC_LEFT_ARM);
 
                 if (vibroHeat > 0) {
                     r = new Report(5018);
@@ -327,7 +345,7 @@ class HeatResolver extends AbstractTWRuleHandler {
             }
 
             // Add heat from external sources to the heat buildup
-            int max_ext_heat = getGame().getOptions().intOption(OptionsConstants.ADVCOMBAT_MAX_EXTERNAL_HEAT);
+            int max_ext_heat = getGame().getOptions().intOption(OptionsConstants.ADVANCED_COMBAT_MAX_EXTERNAL_HEAT);
             // Check Game Options
             if (max_ext_heat < 0) {
                 max_ext_heat = 15; // standard value specified in TW p.159
@@ -368,7 +386,7 @@ class HeatResolver extends AbstractTWRuleHandler {
             // how much heat can we sink?
             int toSink = entity.getHeatCapacityWithWater() + radicalHSBonus;
 
-            if (getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE) &&
+            if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_COOLANT_FAILURE) &&
                   entity.getCoolantFailureAmount() > 0) {
                 int failureAmount = entity.getCoolantFailureAmount();
                 r = new Report(5520);
@@ -464,7 +482,7 @@ class HeatResolver extends AbstractTWRuleHandler {
             int autoShutDownHeat;
             boolean mtHeat;
 
-            if (getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
+            if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT)) {
                 autoShutDownHeat = 50;
                 mtHeat = true;
             } else {
@@ -650,12 +668,17 @@ class HeatResolver extends AbstractTWRuleHandler {
                             hits++;
 
                             for (int j = 0; (j < 12) && (hits > 0); j++) {
-                                var crit = mek.getCritical(Mek.LOC_CT, j);
+                                var crit = mek.getCritical(Mek.LOC_CENTER_TORSO, j);
                                 if ((crit != null) &&
                                       (crit.getType() == CriticalSlot.TYPE_SYSTEM) &&
                                       (crit.getIndex() == Mek.SYSTEM_ENGINE) &&
                                       crit.isHittable()) {
-                                    addReport(gameManager.applyCriticalHit(entity, Mek.LOC_CT, crit, true, 0, false));
+                                    addReport(gameManager.applyCriticalHit(entity,
+                                          Mek.LOC_CENTER_TORSO,
+                                          crit,
+                                          true,
+                                          0,
+                                          false));
                                     hits--;
                                 }
                             }
@@ -708,14 +731,14 @@ class HeatResolver extends AbstractTWRuleHandler {
             int lifeSupportCritCount;
             boolean torsoMountedCockpit = ((Mek) entity).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED;
             if (torsoMountedCockpit) {
-                lifeSupportCritCount = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                lifeSupportCritCount = entity.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM,
                       Mek.SYSTEM_LIFE_SUPPORT,
-                      Mek.LOC_RT);
-                lifeSupportCritCount += entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                      Mek.LOC_RIGHT_TORSO);
+                lifeSupportCritCount += entity.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM,
                       Mek.SYSTEM_LIFE_SUPPORT,
-                      Mek.LOC_LT);
+                      Mek.LOC_LEFT_TORSO);
             } else {
-                lifeSupportCritCount = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                lifeSupportCritCount = entity.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM,
                       Mek.SYSTEM_LIFE_SUPPORT,
                       Mek.LOC_HEAD);
             }
@@ -843,7 +866,7 @@ class HeatResolver extends AbstractTWRuleHandler {
             // heat sink capacity has already been offset by previous coolant failures,
             // further
             // reductions in capacity will have no effect.
-            if (getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE) &&
+            if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_COOLANT_FAILURE) &&
                   (entity.heat >= 5) &&
                   (entity.getCoolantFailureAmount() <
                         ((Mek) entity).getNumberOfSinks() * (((Mek) entity).hasDoubleHeatSinks() ? 2 : 1))) {
@@ -927,7 +950,7 @@ class HeatResolver extends AbstractTWRuleHandler {
 
         // Add heat from external sources to the heat buildup
         int max_ext_heat = getGame().getOptions().intOption(
-              OptionsConstants.ADVCOMBAT_MAX_EXTERNAL_HEAT); // Check Game Options
+              OptionsConstants.ADVANCED_COMBAT_MAX_EXTERNAL_HEAT); // Check Game Options
         if (max_ext_heat < 0) {
             max_ext_heat = 15; // standard value specified in TW p.159
         }
@@ -1019,7 +1042,7 @@ class HeatResolver extends AbstractTWRuleHandler {
         }
 
         int autoShutDownHeat = 30;
-        boolean mtHeat = getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT);
+        boolean mtHeat = getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT);
         if (mtHeat) {
             autoShutDownHeat = 50;
         }

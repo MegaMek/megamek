@@ -33,7 +33,7 @@
 
 package megamek.common.strategicBattleSystems;
 
-import megamek.common.AbstractPlayerTurn;
+import megamek.common.game.AbstractPlayerTurn;
 
 /**
  * This is a subclass of AbstractPlayerTurn that is (for now) only used to have a clear SBF designated turn so that SBF

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,6 +35,8 @@
 
 package megamek.common.actions;
 
+import java.io.Serial;
+
 /**
  * Represents intention to change a fire mode of a weapon.
  */
@@ -42,6 +44,7 @@ public class FiringModeChangeAction extends AbstractEntityAction {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 3706302227286581807L;
     private int equipmentId;
 

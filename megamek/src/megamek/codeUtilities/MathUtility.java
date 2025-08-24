@@ -241,6 +241,28 @@ public class MathUtility {
     }
 
     /**
+     * Utility function to handle parsing strings into Integers and to handle the possible NumberFormatException with
+     * logging and to return defaultValue.
+     *
+     * @param value        String value to parse.
+     * @param defaultValue Default value to set if failed to parse.
+     *
+     * @return The <code>int</code> value or defaultValue.
+     */
+    public static long parseLong(final String value, long defaultValue) {
+        if (value == null || value.isEmpty()) {
+            return defaultValue;
+        }
+
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            LOGGER.warn("Can't parse String `{}` into an Long due to {}", value, e.getMessage());
+            return defaultValue;
+        }
+    }
+
+    /**
      * Utility function to handle parsing strings into Doubles and to handle the possible NumberFormatException with
      * logging and to return defaultValue.
      *

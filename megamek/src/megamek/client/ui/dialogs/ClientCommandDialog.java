@@ -42,7 +42,7 @@ import javax.swing.*;
 
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.util.FlatLafStyleBuilder;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 import megamek.common.annotations.Nullable;
 import megamek.server.commands.ClientServerCommand;
 import megamek.server.commands.arguments.*;

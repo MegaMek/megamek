@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,7 +34,10 @@
 
 package megamek.common.actions;
 
+import java.io.Serial;
+
 public class UnjamTurretAction extends AbstractEntityAction {
+    @Serial
     private static final long serialVersionUID = -872903980148938388L;
 
     public UnjamTurretAction(int entityId) {

@@ -161,7 +161,7 @@ public class TurnTimer {
 
         switch (phase) {
             case TARGETING:
-            case SET_ARTILLERY_AUTOHIT_HEXES:
+            case SET_ARTILLERY_AUTO_HIT_HEXES:
             case DEPLOY_MINEFIELDS:
                 timerLimit = options.getOption(OptionsConstants.BASE_TURN_TIMER_TARGETING).intValue();
                 break;

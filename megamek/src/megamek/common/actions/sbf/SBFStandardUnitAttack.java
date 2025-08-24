@@ -83,30 +83,23 @@ public class SBFStandardUnitAttack extends AbstractSBFAttackAction {
     }
 
     public boolean isDataValid(SBFGame game) {
-        String message = "";
-
         Optional<SBFFormation> possibleAttacker = game.getFormation(getEntityId());
         Optional<SBFFormation> possibleTarget = game.getFormation(getTargetId());
         if (getEntityId() == getTargetId()) {
-            message = String.format("Formations cannot attack themselves! %h", this);
-            logger.error(message);
+            logger.error("Formations cannot attack themselves! {}", this);
             return false;
         } else if (possibleAttacker.isEmpty()) {
-            message = String.format("Could not find attacking formation! %h", this);
-            logger.error(message);
+            logger.error("Could not find attacking formation! {}", this);
             return false;
         } else if (possibleTarget.isEmpty()) {
-            message = String.format("Could not find target formation! %h", this);
-            logger.error(message);
+            logger.error("Could not find target formation! {}", this);
             return false;
         } else if ((getUnitNumber() >= possibleAttacker.get().getUnits().size())
               || (getUnitNumber() < 0)) {
-            message = String.format("SBF Unit not found! %h", this);
-            logger.error(message);
+            logger.error("SBF Unit not found! {}", this);
             return false;
         } else if (possibleTarget.get().getUnits().isEmpty()) {
-            message = String.format("Target has no units! %h", this);
-            logger.error(message);
+            logger.error("Target has no units! {}", this);
             return false;
         }
         return true;

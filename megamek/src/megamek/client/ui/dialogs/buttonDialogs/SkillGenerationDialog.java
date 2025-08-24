@@ -48,7 +48,7 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.comboBoxes.MMComboBox;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.abstractPanels.SkillGenerationOptionsPanel;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.Player;
 
 public class SkillGenerationDialog extends AbstractButtonDialog {

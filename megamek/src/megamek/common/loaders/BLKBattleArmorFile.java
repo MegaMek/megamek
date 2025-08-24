@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,7 +34,16 @@
 
 package megamek.common.loaders;
 
-import megamek.common.*;
+import megamek.common.TechConstants;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.util.BuildingBlock;
 
 /**
@@ -74,7 +83,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
             throw new EntityLoadingException("Could not find chassis block.");
         }
         String chassis = dataFile.getDataAsString("chassis")[0];
-        if (chassis.toLowerCase().equals("biped")) {
+        if (chassis.equalsIgnoreCase("biped")) {
             t.setChassisType(BattleArmor.CHASSIS_TYPE_BIPED);
         } else if (chassis.equalsIgnoreCase("quad")) {
             t.setChassisType(BattleArmor.CHASSIS_TYPE_QUAD);
@@ -156,9 +165,9 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
         }
         t.recalculateTechAdvancement();
 
-        String[] abbrs = t.getLocationAbbrs();
+        String[] abbreviations = t.getLocationAbbreviations();
         for (int loop = 0; loop < t.locations(); loop++) {
-            loadEquipment(t, abbrs[loop], loop);
+            loadEquipment(t, abbreviations[loop], loop);
         }
 
         if (dataFile.exists("cost")) {
@@ -192,10 +201,10 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
                     mountLoc = BattleArmor.MOUNT_LOC_BODY;
                     saEquip[x] = saEquip[x].replace(":Body", "");
                 } else if (saEquip[x].contains(":LA")) {
-                    mountLoc = BattleArmor.MOUNT_LOC_LARM;
+                    mountLoc = BattleArmor.MOUNT_LOC_LEFT_ARM;
                     saEquip[x] = saEquip[x].replace(":LA", "");
                 } else if (saEquip[x].contains(":RA")) {
-                    mountLoc = BattleArmor.MOUNT_LOC_RARM;
+                    mountLoc = BattleArmor.MOUNT_LOC_RIGHT_ARM;
                     saEquip[x] = saEquip[x].replace(":RA", "");
                 } else if (saEquip[x].contains(":TU")) {
                     mountLoc = BattleArmor.MOUNT_LOC_TURRET;

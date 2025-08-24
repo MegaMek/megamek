@@ -36,7 +36,7 @@ package megamek.client.commands;
 import java.util.Vector;
 
 import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 
 /**
  * @author dirk

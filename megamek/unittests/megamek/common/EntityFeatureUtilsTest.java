@@ -40,6 +40,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.List;
 
 import megamek.ai.utility.EntityFeatureUtils;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.loaders.MekSummaryCache;
+import megamek.common.units.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;

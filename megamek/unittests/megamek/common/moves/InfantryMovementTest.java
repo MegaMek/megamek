@@ -37,9 +37,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import megamek.common.Coords;
 import megamek.common.GameBoardTestCase;
-import megamek.common.Infantry;
+import megamek.common.board.Coords;
+import megamek.common.enums.MoveStepType;
+import megamek.common.units.Infantry;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -109,8 +110,8 @@ public class InfantryMovementTest extends GameBoardTestCase {
             System.out.println(movePaths);
 
             MovePath movePath = getMovePathFor(getInfantry(),
-                  MovePath.MoveStepType.CLIMB_MODE_ON,
-                  MovePath.MoveStepType.FORWARDS);
+                  MoveStepType.CLIMB_MODE_ON,
+                  MoveStepType.FORWARDS);
 
             assertTrue(movePath.isMoveLegal(), "Infantry can climb into a building hex paying just 1 like a mek would");
 
@@ -122,7 +123,7 @@ public class InfantryMovementTest extends GameBoardTestCase {
         @Test
         void canClimbIntoBuildingHexFromLowerLevel() {
             setBoard("BOARD_1x2_START_LOW");
-            MovePath movePath = getMovePathFor(getInfantry(), MovePath.MoveStepType.FORWARDS);
+            MovePath movePath = getMovePathFor(getInfantry(), MoveStepType.FORWARDS);
 
             assertTrue(movePath.isMoveLegal(),
                   "Infantry can climb into a building roof if it has the right " +
@@ -137,8 +138,8 @@ public class InfantryMovementTest extends GameBoardTestCase {
         void canClimbIntoBuildingsRoof() {
             setBoard("BOARD_1x2_SAME_LEVEL");
             MovePath movePath = getMovePathFor(getInfantry(),
-                  MovePath.MoveStepType.CLIMB_MODE_ON,
-                  MovePath.MoveStepType.FORWARDS);
+                  MoveStepType.CLIMB_MODE_ON,
+                  MoveStepType.FORWARDS);
 
             assertTrue(movePath.isMoveLegal(), "Infantry can climb into a building hex paying just 1 like a mek would");
 
@@ -151,8 +152,8 @@ public class InfantryMovementTest extends GameBoardTestCase {
         void canMoveIntoBuilding() {
             setBoard("BOARD_1x2_SAME_LEVEL");
             MovePath movePath = getMovePathFor(getInfantry(),
-                  MovePath.MoveStepType.CLIMB_MODE_OFF,
-                  MovePath.MoveStepType.FORWARDS);
+                  MoveStepType.CLIMB_MODE_OFF,
+                  MoveStepType.FORWARDS);
 
             assertTrue(movePath.isMoveLegal(), "Infantry can walk into a building like its clear hex");
             assertMovePathElevations(movePath,
@@ -165,8 +166,8 @@ public class InfantryMovementTest extends GameBoardTestCase {
         void canMoveIntoBuildingRoof() {
             setBoard("BOARD_1x2_HIGH_LEVEL");
             MovePath movePath = getMovePathFor(getInfantry(),
-                  MovePath.MoveStepType.CLIMB_MODE_ON,
-                  MovePath.MoveStepType.FORWARDS);
+                  MoveStepType.CLIMB_MODE_ON,
+                  MoveStepType.FORWARDS);
 
             assertTrue(movePath.isMoveLegal(),
                   "Infantry can walk into a building roof from a high place like its " +
@@ -180,8 +181,8 @@ public class InfantryMovementTest extends GameBoardTestCase {
         void canMoveIntoBuildingFloor() {
             setBoard("BOARD_1x2_HIGH_LEVEL_INTO_BUILDING");
             MovePath movePath = getMovePathFor(getInfantry(),
-                  MovePath.MoveStepType.CLIMB_MODE_OFF,
-                  MovePath.MoveStepType.FORWARDS);
+                  MoveStepType.CLIMB_MODE_OFF,
+                  MoveStepType.FORWARDS);
 
             assertTrue(movePath.isMoveLegal(),
                   "Infantry can walk into a building floor from a high place like its " + "clear hex");

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,7 +38,9 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Vector;
 
-class PreferenceStore implements IPreferenceStore {
+import megamek.codeUtilities.MathUtility;
+
+public class PreferenceStore implements IPreferenceStore {
     protected boolean dirty = false;
 
     protected Properties properties;
@@ -96,18 +98,9 @@ class PreferenceStore implements IPreferenceStore {
         return getDouble(properties, name);
     }
 
-    private double getDouble(Properties p, String name) {
-        String value = p != null ? p.getProperty(name) : null;
-        if (value == null) {
-            return DOUBLE_DEFAULT;
-        }
-        double ival = DOUBLE_DEFAULT;
-        try {
-            ival = Double.parseDouble(value);
-        } catch (Exception ignored) {
-
-        }
-        return ival;
+    private double getDouble(Properties properties, String name) {
+        String value = properties != null ? properties.getProperty(name) : null;
+        return MathUtility.parseDouble(value, DOUBLE_DEFAULT);
     }
 
     @Override
@@ -117,16 +110,7 @@ class PreferenceStore implements IPreferenceStore {
 
     private float getFloat(Properties p, String name) {
         final String value = (p != null) ? p.getProperty(name) : null;
-        if (value == null) {
-            return FLOAT_DEFAULT;
-        }
-        float ival = FLOAT_DEFAULT;
-        try {
-            ival = Float.parseFloat(value);
-        } catch (Exception ignored) {
-
-        }
-        return ival;
+        return MathUtility.parseFloat(value, FLOAT_DEFAULT);
     }
 
     @Override
@@ -136,16 +120,7 @@ class PreferenceStore implements IPreferenceStore {
 
     private int getInt(Properties p, String name) {
         String value = p != null ? p.getProperty(name) : null;
-        if (value == null) {
-            return INT_DEFAULT;
-        }
-        int ival = 0;
-        try {
-            ival = Integer.parseInt(value);
-        } catch (Exception ignored) {
-
-        }
-        return ival;
+        return MathUtility.parseInt(value, INT_DEFAULT);
     }
 
     @Override
@@ -153,18 +128,9 @@ class PreferenceStore implements IPreferenceStore {
         return getLong(properties, name);
     }
 
-    private long getLong(Properties p, String name) {
-        String value = (p != null) ? p.getProperty(name) : null;
-        if (value == null) {
-            return LONG_DEFAULT;
-        }
-        long ival = LONG_DEFAULT;
-        try {
-            ival = Long.parseLong(value);
-        } catch (Exception ignored) {
-
-        }
-        return ival;
+    private long getLong(Properties properties, String name) {
+        String value = (properties != null) ? properties.getProperty(name) : null;
+        return MathUtility.parseLong(value, LONG_DEFAULT);
     }
 
     @Override

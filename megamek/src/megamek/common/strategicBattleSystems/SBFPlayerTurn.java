@@ -33,8 +33,8 @@
 
 package megamek.common.strategicBattleSystems;
 
-import megamek.common.IGame;
-import megamek.common.InGameObject;
+import megamek.common.game.IGame;
+import megamek.common.game.InGameObject;
 
 /**
  * This is a turn for a player action that does not use a unit (formation). Examples are minefield deployment, arty auto

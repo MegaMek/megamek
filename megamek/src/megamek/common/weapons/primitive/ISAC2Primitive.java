@@ -35,16 +35,20 @@
 
 package megamek.common.weapons.primitive;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
-import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.PrimitiveACWeaponHandler;
-import megamek.common.weapons.autocannons.ACWeapon;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.weapons.autoCannons.ACWeapon;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.PrimitiveACWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -76,7 +80,7 @@ public class ISAC2Primitive extends ACWeapon {
         longRange = 24;
         extremeRange = 32;
         tonnage = 6.0;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 37;
         cost = 75000;
         explosive = true; // when firing incendiary ammo
@@ -105,7 +109,7 @@ public class ISAC2Primitive extends ACWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         return new PrimitiveACWeaponHandler(toHit, waa, game, manager);
     }

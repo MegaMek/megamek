@@ -42,8 +42,11 @@ import static org.mockito.Mockito.when;
 import java.util.EnumSet;
 
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

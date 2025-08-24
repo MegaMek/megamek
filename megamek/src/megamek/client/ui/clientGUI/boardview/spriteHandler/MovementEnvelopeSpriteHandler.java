@@ -40,8 +40,8 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.MovementEnvelopeSprite;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
-import megamek.common.Coords;
-import megamek.common.IGame;
+import megamek.common.board.Coords;
+import megamek.common.game.IGame;
 import megamek.common.event.GamePhaseChangeEvent;
 
 /**

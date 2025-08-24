@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,17 +44,19 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
-import megamek.common.*;
-import megamek.common.InfantryTransporter.PlatoonType;
-import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.ArmorType;
-import megamek.common.equipment.WeaponMounted;
+import megamek.common.QuirkEntry;
+import megamek.common.TechConstants;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.bays.*;
+import megamek.common.equipment.*;
+import megamek.common.exceptions.LocationFullException;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
+import megamek.common.units.*;
 import megamek.common.util.BuildingBlock;
-import megamek.common.weapons.InfantryAttack;
-import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.attacks.InfantryAttack;
+import megamek.common.weapons.bayWeapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 
@@ -189,8 +191,8 @@ public class BLKFile {
 
     public int defaultAeroVGLFacing(int location, boolean rearFacing) {
         return switch (location) {
-            case Aero.LOC_LWING -> rearFacing ? 4 : 5;
-            case Aero.LOC_RWING -> rearFacing ? 2 : 1;
+            case Aero.LOC_LEFT_WING -> rearFacing ? 4 : 5;
+            case Aero.LOC_RIGHT_WING -> rearFacing ? 2 : 1;
             case Aero.LOC_AFT -> 4;
             default -> 0;
         };
@@ -448,7 +450,7 @@ public class BLKFile {
         if (dataFile.exists("systemManufacturers")) {
             for (String line : dataFile.getDataAsString("systemManufacturers")) {
                 String[] fields = line.split(":");
-                EntityFluff.System comp = EntityFluff.System.parse(fields[0]);
+                SystemFluff comp = SystemFluff.parse(fields[0]);
                 if ((null != comp) && (fields.length > 1)) {
                     e.getFluff().setSystemManufacturer(comp, fields[1]);
                 }
@@ -458,7 +460,7 @@ public class BLKFile {
         if (dataFile.exists("systemModels")) {
             for (String line : dataFile.getDataAsString("systemModels")) {
                 String[] fields = line.split(":");
-                EntityFluff.System comp = EntityFluff.System.parse(fields[0]);
+                SystemFluff comp = SystemFluff.parse(fields[0]);
                 if ((null != comp) && (fields.length > 1)) {
                     e.getFluff().setSystemModel(comp, fields[1]);
                 }
@@ -514,13 +516,13 @@ public class BLKFile {
         switch (dataFile.getDataAsString("type")[0]) {
             case "IS":
                 if (e.getYear() == 3025) {
-                    e.setTechLevel(TechConstants.T_INTRO_BOXSET);
+                    e.setTechLevel(TechConstants.T_INTRO_BOX_SET);
                 } else {
                     e.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
                 }
                 break;
             case "IS Level 1":
-                e.setTechLevel(TechConstants.T_INTRO_BOXSET);
+                e.setTechLevel(TechConstants.T_INTRO_BOX_SET);
                 break;
             case "IS Level 2":
                 e.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
@@ -1127,7 +1129,7 @@ public class BLKFile {
             }
         } else {
             type = switch (t.getTechLevel()) {
-                case TechConstants.T_INTRO_BOXSET -> "IS Level 1";
+                case TechConstants.T_INTRO_BOX_SET -> "IS Level 1";
                 case TechConstants.T_IS_TW_NON_BOX -> "IS Level 2";
                 case TechConstants.T_IS_ADVANCED -> "IS Level 3";
                 case TechConstants.T_IS_EXPERIMENTAL -> "IS Level 4";
@@ -1190,10 +1192,10 @@ public class BLKFile {
         if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_BODY) {
             name += ":Body";
         }
-        if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
+        if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LEFT_ARM) {
             name += ":LA";
         }
-        if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
+        if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RIGHT_ARM) {
             name += ":RA";
         }
         if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET) {
@@ -1333,7 +1335,7 @@ public class BLKFile {
                             break;
                         case "dropshuttlebay":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                            e.addTransporter(new DropshuttleBay(pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing()),
+                            e.addTransporter(new DropShuttleBay(pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing()),
                                   isPod);
                             break;
                         case "navalrepairpressurized":
@@ -1540,7 +1542,7 @@ public class BLKFile {
             // If 2-field format, return with default values set.
             if (numbersArray.length == 2) {
                 return temp;
-            } else if (numbersArray.length > 2) {
+            } else {
                 // Attempt to parse index 2 as an integer bay number, otherwise leave it as default
                 try {
                     temp[2] = String.valueOf(Integer.parseInt(numbersArray[2]));

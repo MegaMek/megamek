@@ -46,7 +46,7 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.TargetRoll;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.util.FiringSolution;
 
 /**
@@ -139,7 +139,7 @@ public class FiringSolutionSprite extends HexSprite {
             graph.draw(rangeHexPolygon);
         }
 
-        if (firingSolution.isTargetSpotted()) {
+        if (firingSolution.targetSpotted()) {
             graph.setColor(INDIRECT_DASH_COLOR_1);
             graph.setStroke(INDIRECT_STROKE_1);
             graph.draw(BoardView.getHexPoly());

@@ -34,8 +34,8 @@
 package megamek.common.board.postprocess;
 
 import megamek.common.Hex;
-import megamek.common.Terrain;
-import megamek.common.Terrains;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
 
 public class TerrainRemoveBoardProcessor extends AbstractSimpleBoardProcessor {
 

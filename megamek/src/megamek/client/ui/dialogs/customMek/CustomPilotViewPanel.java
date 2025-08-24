@@ -53,16 +53,16 @@ import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.iconChooser.PortraitChooserDialog;
-import megamek.common.Entity;
-import megamek.common.EntitySelector;
-import megamek.common.Infantry;
-import megamek.common.LAMPilot;
-import megamek.common.ProtoMek;
-import megamek.common.Tank;
 import megamek.common.enums.Gender;
 import megamek.common.icons.Portrait;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.units.Entity;
+import megamek.common.units.EntitySelector;
+import megamek.common.units.Infantry;
+import megamek.common.units.LAMPilot;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Tank;
 
 /**
  * Controls for customizing crew in the chat lounge. For most crew types this is part of the pilot tab. For multi-crew
@@ -270,7 +270,7 @@ public class CustomPilotViewPanel extends JPanel {
         }
         fldTough.setText(Integer.toString(entity.getCrew().getToughness(slot)));
 
-        if (parent.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)) {
+        if (parent.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_FATIGUE)) {
             label = new JLabel(Messages.getString("CustomMekDialog.labFatigue"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldFatigue, GBC.eop());

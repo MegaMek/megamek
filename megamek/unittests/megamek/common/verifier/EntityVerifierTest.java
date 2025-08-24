@@ -41,7 +41,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
-import megamek.common.verifier.TestEntity.Ceil;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -60,26 +59,26 @@ class EntityVerifierTest {
         assertNotNull(result.mekOption);
         assertNotNull(result.tankOption);
 
-        assertEquals(Ceil.HALFTON, result.aeroOption.getWeightCeilingEngine());
-        assertEquals(Ceil.HALFTON, result.aeroOption.getWeightCeilingStructure());
-        assertEquals(Ceil.HALFTON, result.aeroOption.getWeightCeilingArmor());
-        assertEquals(Ceil.HALFTON, result.aeroOption.getWeightCeilingControls());
+        assertEquals(Ceil.HALF_TON, result.aeroOption.getWeightCeilingEngine());
+        assertEquals(Ceil.HALF_TON, result.aeroOption.getWeightCeilingStructure());
+        assertEquals(Ceil.HALF_TON, result.aeroOption.getWeightCeilingArmor());
+        assertEquals(Ceil.HALF_TON, result.aeroOption.getWeightCeilingControls());
         assertEquals(Ceil.TON, result.aeroOption.getWeightCeilingWeapons());
         assertEquals(Ceil.TON, result.aeroOption.getWeightCeilingTargComp());
-        assertEquals(Ceil.HALFTON, result.aeroOption.getWeightCeilingTurret());
-        assertEquals(Ceil.HALFTON, result.aeroOption.getWeightCeilingLifting());
-        assertEquals(Ceil.HALFTON, result.aeroOption.getWeightCeilingPowerAmp());
-        assertEquals(Ceil.HALFTON, result.aeroOption.getWeightCeilingGyro());
+        assertEquals(Ceil.HALF_TON, result.aeroOption.getWeightCeilingTurret());
+        assertEquals(Ceil.HALF_TON, result.aeroOption.getWeightCeilingLifting());
+        assertEquals(Ceil.HALF_TON, result.aeroOption.getWeightCeilingPowerAmp());
+        assertEquals(Ceil.HALF_TON, result.aeroOption.getWeightCeilingGyro());
         assertEquals(0.25f, result.aeroOption.getMaxOverweight(), 0.0f);
         assertTrue(result.aeroOption.showOverweightedEntity());
         assertEquals(1.0f, result.aeroOption.getMinUnderweight(), 0.0f);
-        assertFalse(result.aeroOption.showUnderweightedEntity());
+        assertFalse(result.aeroOption.showUnderweightEntity());
         assertFalse(result.aeroOption.ignoreFailedEquip("Claw (THB)"));
         assertFalse(result.aeroOption.skip());
         assertTrue(result.aeroOption.showCorrectArmor());
         assertTrue(result.aeroOption.showCorrectCritical());
         assertTrue(result.aeroOption.showFailedEquip());
-        assertEquals(0, result.aeroOption.getTargCompCrits());
+        assertEquals(0, result.aeroOption.getTargetingComputerCrits());
         assertEquals(70, result.aeroOption.getPrintSize());
     }
 }

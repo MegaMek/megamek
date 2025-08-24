@@ -34,7 +34,7 @@
 package megamek.server.scriptedevent;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import megamek.common.jacksonadapters.MessageDeserializer;
+import megamek.common.jacksonAdapters.MessageDeserializer;
 import megamek.server.IGameManager;
 import megamek.server.trigger.Trigger;
 

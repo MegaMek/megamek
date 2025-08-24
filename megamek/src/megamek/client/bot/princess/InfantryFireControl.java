@@ -35,18 +35,18 @@ package megamek.client.bot.princess;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.Game;
 import megamek.common.Hex;
-import megamek.common.Infantry;
 import megamek.common.RangeType;
-import megamek.common.Targetable;
-import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.compute.Compute;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Targetable;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.server.ServerHelper;
@@ -135,7 +135,7 @@ public class InfantryFireControl extends FireControl {
                 if (shooter.isConventionalInfantry()) {
                     infantryCount = shooter.getInternal(Infantry.LOC_INFANTRY);
                 } else if (shooter instanceof BattleArmor) {
-                    infantryCount = ((BattleArmor) shooter).getNumberActiverTroopers();
+                    infantryCount = ((BattleArmor) shooter).getNumberActiveTroopers();
                 }
 
                 maxInfantryWeaponDamage += ((InfantryWeapon) weaponType).getInfantryDamage()
@@ -167,7 +167,7 @@ public class InfantryFireControl extends FireControl {
                     // field guns can't fire if the infantry unit has done anything
                     // other than turning, so we only get here if infantry has not used MP.
                     // All valid Infantry Field Weapons can consider rackSize as their damage.
-                    maxFGDamage += weaponType.rackSize;
+                    maxFGDamage += weaponType.getRackSize();
                     // Case 6: all other unit types / weapons
                 } else {
                     maxFGDamage += weaponType.getDamage();

@@ -132,11 +132,16 @@ import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedXPanel;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
 import megamek.client.ui.widget.SkinSpecification;
-import megamek.common.*;
+import megamek.common.Configuration;
+import megamek.common.Player;
+import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
-import megamek.common.autoresolve.converter.MMSetupForces;
+import megamek.common.autoResolve.converter.MMSetupForces;
+import megamek.common.board.Board;
+import megamek.common.board.BoardDimensions;
 import megamek.common.board.postprocess.TWBoardTransformer;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.BombLoadout;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -144,15 +149,24 @@ import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.game.Game;
+import megamek.common.game.InGameObject;
 import megamek.common.internationalization.I18n;
+import megamek.common.loaders.MapSettings;
+import megamek.common.loaders.MapSetup;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.units.Entity;
+import megamek.common.units.FighterSquadron;
+import megamek.common.units.IBomber;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.CollectionUtil;
 import megamek.common.util.CrewSkillSummaryUtil;
@@ -1402,7 +1416,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                 entity.getCrew().clearOptions(PilotOptions.MD_ADVANTAGES);
             }
 
-            if (!opts.booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS)) {
+            if (!opts.booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIAL_REPAIRS)) {
                 entity.clearPartialRepairs();
             }
 
@@ -2386,7 +2400,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         lblGameYear.setToolTipText(Messages.getString("ChatLounge.tooltip.techYear"));
 
         String tlString = TechConstants.getLevelDisplayableName(TechConstants.T_TECH_UNKNOWN);
-        IOption tlOpt = opts.getOption(OptionsConstants.ALLOWED_TECHLEVEL);
+        IOption tlOpt = opts.getOption(OptionsConstants.ALLOWED_TECH_LEVEL);
         if (tlOpt != null) {
             tlString = tlOpt.stringValue();
         }

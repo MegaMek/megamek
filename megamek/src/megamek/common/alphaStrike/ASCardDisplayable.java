@@ -41,18 +41,18 @@ import static megamek.common.alphaStrike.BattleForceSUA.VLG;
 import java.util.Arrays;
 import java.util.Map;
 
-import megamek.common.BTObject;
-import megamek.common.CombatRole;
+import megamek.common.interfaces.CombatRole;
 import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
+import megamek.common.units.BTObject;
 
 /**
  * This interface is implemented by classes that can be displayed on an AlphaStrike card
  * {@link megamek.common.alphaStrike.cardDrawer.ASCard}. Implementing classes must be able to return the AlphaStrike
  * values printed on a card. Currently implemented by MekSummary and AlphaStrikeElement. This interface also offers some
  * utility methods for unit information that can be directly derived from the available data; those don't require any
- * overriding (e.g. {@link #isLargeAerospace()}. It also has methods that return current (= possibly damaged) values of
+ * overriding (e.g. {@link #isLargeAerospace()}). It also has methods that return current (= possibly damaged) values of
  * an element. These return an undamaged state by default and thus require overriding in AlphaStrikeElement (e.g.
- * {@link #getCurrentArmor()}.
+ * {@link #getCurrentArmor()}).
  */
 public interface ASCardDisplayable extends BattleForceSUAFormatter, BTObject, CombatRole {
 

@@ -32,8 +32,6 @@
  */
 package megamek.common.eras;
 
-import static java.util.stream.Collectors.toList;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -48,8 +46,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import megamek.MMConstants;
-import megamek.common.ITechnology;
 import megamek.common.annotations.Nullable;
+import megamek.common.interfaces.ITechnology;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
@@ -214,7 +212,7 @@ public final class Eras {
     private final TreeMap<LocalDate, Era> eras = new TreeMap<>();
 
     /**
-     * This list contains all eras, even if they're malformed and is used for trouble-shooting.
+     * This list contains all eras, even if they're malformed and is used for troubleshooting.
      */
     private final List<Era> eraList = new ArrayList<>();
 
@@ -257,7 +255,7 @@ public final class Eras {
         eraList.sort(Comparator.comparing(Era::end));
         if (!areAllValid(null)) {
             logger
-                  .error("The eras definition file " + MMConstants.ERAS_FILE_PATH + "contains malformed eras!");
+                  .error("The eras definition file {}contains malformed eras!", MMConstants.ERAS_FILE_PATH);
         }
     }
 
@@ -284,7 +282,7 @@ public final class Eras {
                     case "flag":
                         flags.add(EraFlag.valueOf(wn.getTextContent().trim()));
                         break;
-                    case "mulID":
+                    case "mulid":
                         mulId = Integer.parseInt(wn.getTextContent().trim());
                         break;
                     case "icon":
@@ -331,7 +329,7 @@ public final class Eras {
 
         // Exactly one era must be the last era
         if (eraList.stream().filter(Era::isLastEra).count() != 1) {
-            invalidErasReturn.addAll(eraList.stream().filter(Era::isLastEra).collect(toList()));
+            invalidErasReturn.addAll(eraList.stream().filter(Era::isLastEra).toList());
         }
 
         return invalidErasReturn.isEmpty();

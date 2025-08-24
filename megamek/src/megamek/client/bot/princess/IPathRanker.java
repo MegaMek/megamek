@@ -35,10 +35,10 @@ package megamek.client.bot.princess;
 import java.util.List;
 import java.util.TreeSet;
 
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Targetable;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
+import megamek.common.units.Targetable;
 import megamek.common.moves.MovePath;
 
 public interface IPathRanker {

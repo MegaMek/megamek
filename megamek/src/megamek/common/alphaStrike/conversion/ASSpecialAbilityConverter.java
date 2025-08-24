@@ -34,7 +34,6 @@
 package megamek.common.alphaStrike.conversion;
 
 import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
-import static megamek.common.MiscType.*;
 import static megamek.common.alphaStrike.ASUnitType.BA;
 import static megamek.common.alphaStrike.ASUnitType.BM;
 import static megamek.common.alphaStrike.ASUnitType.CI;
@@ -44,16 +43,30 @@ import static megamek.common.alphaStrike.ASUnitType.MS;
 import static megamek.common.alphaStrike.ASUnitType.PM;
 import static megamek.common.alphaStrike.ASUnitType.SV;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
+import static megamek.common.equipment.MiscType.*;
 
 import java.util.Arrays;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.*;
+import megamek.common.CriticalSlot;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.AlphaStrikeHelper;
 import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.bays.*;
+import megamek.common.equipment.DockingCollar;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.Sensor;
+import megamek.common.equipment.Transporter;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
+import megamek.common.units.Entity;
+import megamek.common.units.InfantryCompartment;
+import megamek.common.units.NavalRepairFacility;
+import megamek.common.units.Tank;
+import megamek.common.weapons.capitalWeapons.ScreenLauncherWeapon;
 
 public class ASSpecialAbilityConverter {
 
@@ -135,9 +148,9 @@ public class ASSpecialAbilityConverter {
             assign(misc, LPRB);
         } else if (miscType.isAnyOf(Sensor.BAP, Sensor.BAPP, Sensor.CLAN_AP)) {
             assign(misc, PRB);
-        } else if (miscType.isAnyOf(Sensor.CLIMPROVED, Sensor.ISIMPROVED)) {
+        } else if (miscType.isAnyOf(Sensor.CL_IMPROVED, Sensor.IS_IMPROVED)) {
             assign(misc, RCN);
-        } else if (miscType.isAnyOf(Sensor.LIGHT_AP, Sensor.ISBALIGHT_AP)) {
+        } else if (miscType.isAnyOf(Sensor.LIGHT_AP, Sensor.IS_BA_LIGHT_AP)) {
             assign(misc, LPRB);
         } else if (miscType.isAnyOf(Sensor.BLOODHOUND)) {
             assign(misc, BH);
@@ -191,7 +204,7 @@ public class ASSpecialAbilityConverter {
         } else if (miscType.hasFlag(F_SRCS)
               || miscType.hasFlag(F_SASRCS)
               || miscType.hasFlag(F_CASPAR)
-              || miscType.hasFlag(F_CASPARII)) {
+              || miscType.hasFlag(F_CASPAR_II)) {
             assign(misc, RBT);
             if (miscType.hasFlag(F_CASPAR)) {
                 assign(misc, SDCS);
@@ -270,18 +283,18 @@ public class ASSpecialAbilityConverter {
             assign(misc, ITSM);
         } else if (miscType.hasFlag(F_TSM)) {
             assign(misc, TSM);
-        } else if (miscType.hasFlag(F_VOIDSIG)) {
+        } else if (miscType.hasFlag(F_VOID_SIG)) {
             assign(misc, MAS);
-        } else if (miscType.hasFlag(F_NULLSIG)
+        } else if (miscType.hasFlag(F_NULL_SIG)
               || miscType.hasFlag(F_CHAMELEON_SHIELD)) {
             assign(misc, STL);
         } else if (miscType.hasFlag(F_UMU)) {
             assign(misc, UMU);
         } else if (miscType.hasFlag(F_EW_EQUIPMENT)) {
             assign(misc, ECM);
-        } else if (miscType.hasFlag(F_ADVANCED_FIRECONTROL)) {
+        } else if (miscType.hasFlag(F_ADVANCED_FIRE_CONTROL)) {
             assign(misc, AFC);
-        } else if (miscType.hasFlag(F_BASIC_FIRECONTROL)) {
+        } else if (miscType.hasFlag(F_BASIC_FIRE_CONTROL)) {
             assign(misc, BFC);
         } else if (miscType.hasFlag(F_AMPHIBIOUS) || miscType.hasFlag(F_FULLY_AMPHIBIOUS)
               || miscType.hasFlag(F_LIMITED_AMPHIBIOUS)) {
@@ -439,7 +452,7 @@ public class ASSpecialAbilityConverter {
 
     protected void processARM() {
         for (int location = 0; location < entity.locations(); location++) {
-            for (int slot = 0; slot < entity.getNumberOfCriticals(location); slot++) {
+            for (int slot = 0; slot < entity.getNumberOfCriticalSlots(location); slot++) {
                 CriticalSlot crit = entity.getCritical(location, slot);
                 if (null != crit) {
                     if (crit.isArmored()) {
@@ -519,14 +532,14 @@ public class ASSpecialAbilityConverter {
         if ((equipment.getType() instanceof MiscType) && equipment.getType().hasFlag(F_BOOBY_TRAP)) {
             return true;
         }
-        // Oneshot weapons internally have normal ammo allocated to them which must
+        // One shot weapons internally have normal ammo allocated to them which must
         // be disqualified as explosive; such ammo has no location
         return equipment.getType().isExplosive(null) && (equipment.getExplosionDamage() > 0)
               && (equipment.getLocation() != Entity.LOC_NONE);
     }
 
     protected void finalizeSpecials() {
-        // For MHQ, the values may contain decimals, but the the final MHQ value is
+        // For MHQ, the values may contain decimals, but the final MHQ value is
         // rounded down to an int.
         if (element.getSUA(MHQ) instanceof Double) {
             double mhqValue = (double) element.getSUA(MHQ);
@@ -606,9 +619,9 @@ public class ASSpecialAbilityConverter {
     /**
      * Adds the sua(s) to the element and writes a report line for each, if it is not yet present.
      */
-    protected void assign(Mounted<?> equipment, BattleForceSUA firstSua, BattleForceSUA... moreSuas) {
+    protected void assign(Mounted<?> equipment, BattleForceSUA firstSua, BattleForceSUA... moreSUAs) {
         assign(equipment.getType().getName(), firstSua);
-        Arrays.stream(moreSuas).forEach(sua -> assign(equipment.getType().getName(), sua));
+        Arrays.stream(moreSUAs).forEach(sua -> assign(equipment.getType().getName(), sua));
     }
 
     /**

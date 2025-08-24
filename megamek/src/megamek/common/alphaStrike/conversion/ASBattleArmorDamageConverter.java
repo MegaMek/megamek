@@ -46,16 +46,16 @@ import static megamek.common.alphaStrike.BattleForceSUA.HT;
 import static megamek.common.alphaStrike.BattleForceSUA.IF;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Entity;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.WeaponType;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSUA;
-import megamek.common.weapons.InfantryAttack;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.units.Entity;
+import megamek.common.weapons.attacks.InfantryAttack;
 
 public class ASBattleArmorDamageConverter extends ASDamageConverter {
 

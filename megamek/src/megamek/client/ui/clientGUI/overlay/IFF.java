@@ -35,7 +35,7 @@ package megamek.client.ui.clientGUI.overlay;
 
 import java.awt.Color;
 
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.Player;
 
 public enum IFF {

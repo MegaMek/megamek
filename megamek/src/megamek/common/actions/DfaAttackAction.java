@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,12 +38,30 @@ import java.io.Serial;
 import java.util.Enumeration;
 
 import megamek.client.ui.Messages;
-import megamek.common.*;
+import megamek.common.CriticalSlot;
+import megamek.common.Player;
+import megamek.common.ToHitData;
 import megamek.common.annotations.Nullable;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.enums.MoveStepType;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.MiscType;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.Tank;
+import megamek.common.units.Targetable;
 
 /**
  * @author Ben
@@ -219,7 +237,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
         int targetId;
         Entity te;
 
-        if (target.getTargetType() == megamek.common.Targetable.TYPE_ENTITY) {
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
             targetId = target.getId();
         } else {
@@ -356,8 +374,10 @@ public class DfaAttackAction extends DisplacementAttackAction {
         // sensor hits...
         // It gets a =4 penalty for being blind!
         if ((ae instanceof Mek) && (((Mek) ae).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED)) {
-            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
-            int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_CT);
+            int sensorHits = ae.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
+            int sensorHits2 = ae.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM,
+                  Mek.SYSTEM_SENSORS,
+                  Mek.LOC_CENTER_TORSO);
             if ((sensorHits + sensorHits2) == 3) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Sensors Completely Destroyed for Torso-Mounted Cockpit");
             } else if (sensorHits == 2) {
@@ -388,7 +408,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
             toHit.setHitTable(ToHitData.HIT_PUNCH);
         }
         // Attacking Weight Class Modifier.
-        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_PHYSICAL_ATTACK_PSR)) {
             if (ae.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) {
                 toHit.addModifier(-2, "Weight Class Attack Modifier");
             } else if (ae.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
@@ -410,19 +430,19 @@ public class DfaAttackAction extends DisplacementAttackAction {
 
             if (entity instanceof BipedMek) {
 
-                return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_RLEG) &&
-                      entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RLEG)) ||
-                      (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_LLEG) &&
-                            entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LLEG));
+                return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_RIGHT_LEG) &&
+                      entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RIGHT_LEG)) ||
+                      (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_LEFT_LEG) &&
+                            entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_LEG));
             }
-            return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_RLEG) &&
-                  entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RLEG)) ||
-                  (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_LLEG) &&
-                        entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LLEG)) ||
-                  ((entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_RARM)) &&
-                        (entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RARM) ||
-                              (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_LARM) &&
-                                    entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LARM))));
+            return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_RIGHT_LEG) &&
+                  entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RIGHT_LEG)) ||
+                  (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_LEFT_LEG) &&
+                        entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_LEG)) ||
+                  ((entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_RIGHT_ARM)) &&
+                        (entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RIGHT_ARM) ||
+                              (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_LEFT_ARM) &&
+                                    entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_ARM))));
         }
 
         return false;

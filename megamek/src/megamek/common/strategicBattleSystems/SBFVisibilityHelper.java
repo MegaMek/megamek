@@ -44,10 +44,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import megamek.common.InGameObject;
 import megamek.common.Player;
-import megamek.common.ServerOnly;
 import megamek.common.Team;
+import megamek.common.game.InGameObject;
+import megamek.common.interfaces.ServerOnly;
 import megamek.common.options.SBFRuleOptions;
 import megamek.logging.MMLogger;
 
@@ -66,7 +66,7 @@ public final class SBFVisibilityHelper implements SBFRuleOptionsUser {
 
     /**
      * This map holds the visibility status. It maps a player ID to an inner map having pairs of formation ID and
-     * visibility status. The default value if no entry can be found is INVISIBLE when double blind rules are in use
+     * visibility status. The default value if no entry can be found is INVISIBLE when double-blind rules are in use
      * (Detection and Recon, IO:BF p.195), VISIBLE otherwise.
      */
     private final Map<Integer, Map<Integer, SBFVisibilityStatus>> visibilityMap = new HashMap<>();
@@ -79,7 +79,7 @@ public final class SBFVisibilityHelper implements SBFRuleOptionsUser {
 
     /**
      * Returns true when the given formation is fully visible to the given player, depending on the game's options. When
-     * double blind rules are not used, this is always true. Otherwise it depends on previous detection. Players always
+     * double-blind rules are not used, this is always true. Otherwise, it depends on previous detection. Players always
      * see their own units.
      *
      * @param viewingPlayer the player that is doing the looking
@@ -94,7 +94,7 @@ public final class SBFVisibilityHelper implements SBFRuleOptionsUser {
 
     /**
      * Returns the visibility status for the given formation to the given player, depending on the game's options. When
-     * double blind rules are not used, the status is always {@link SBFVisibilityStatus#VISIBLE}. Otherwise it depends
+     * double-blind rules are not used, the status is always {@link SBFVisibilityStatus#VISIBLE}. Otherwise, it depends
      * on previous detection. Players always see their own units.
      *
      * @param viewingPlayer the player that is doing the looking
@@ -117,7 +117,7 @@ public final class SBFVisibilityHelper implements SBFRuleOptionsUser {
     /**
      * Sets the given formation as fully visible to the given player.
      * <p>
-     * Note: that the ID values are not checked; when they don't map to anything, no error will happen and they will
+     * Note: that the ID values are not checked; when they don't map to anything, no error will happen, and they will
      * have no effect.
      *
      * @param viewingPlayer The player
@@ -131,7 +131,7 @@ public final class SBFVisibilityHelper implements SBFRuleOptionsUser {
     /**
      * Sets the given formation as invisible to the given player.
      * <p>
-     * Note: that the ID values are not checked; when they don't map to anything, no error will happen and they will
+     * Note: that the ID values are not checked; when they don't map to anything, no error will happen, and they will
      * have no effect.
      *
      * @param viewingPlayer The player
@@ -148,7 +148,7 @@ public final class SBFVisibilityHelper implements SBFRuleOptionsUser {
     /**
      * Sets the given {@link SBFVisibilityStatus} for the given formation as viewed by the given player.
      * <p>
-     * Note: that the ID values are not checked; when they don't map to anything, no error will happen and they will
+     * Note: that the ID values are not checked; when they don't map to anything, no error will happen, and they will
      * have no effect.
      *
      * @param viewingPlayer    The player

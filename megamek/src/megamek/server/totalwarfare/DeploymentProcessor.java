@@ -36,10 +36,20 @@ package megamek.server.totalwarfare;
 import java.util.Vector;
 
 import megamek.common.*;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.enums.BuildingType;
+import megamek.common.game.GameTurn;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.Atmosphere;
+import megamek.common.planetaryConditions.Atmosphere;
+import megamek.common.turns.SpecificEntityTurn;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.IAero;
+import megamek.common.units.Terrains;
+import megamek.common.units.VTOL;
 import megamek.logging.MMLogger;
 
 /**

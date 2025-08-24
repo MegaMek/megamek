@@ -40,10 +40,10 @@ import static megamek.common.alphaStrike.BattleForceSUA.SOA;
 import static megamek.common.alphaStrike.BattleForceSUA.SRCH;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.Entity;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.VTOL;
+import megamek.common.units.Entity;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.VTOL;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 
 public class ASVehicleSpecialAbilityConverter extends ASSpecialAbilityConverter {

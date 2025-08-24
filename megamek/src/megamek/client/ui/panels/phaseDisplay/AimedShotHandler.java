@@ -42,9 +42,20 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.dialogs.phaseDisplay.AimedShotDialog;
 import megamek.client.ui.widget.IndexedRadioButton;
-import megamek.common.*;
+import megamek.common.LosEffects;
+import megamek.common.ToHitData;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeSideTable;
 import megamek.common.enums.AimingMode;
+import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.units.Entity;
+import megamek.common.units.LargeSupportTank;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.SuperHeavyTank;
+import megamek.common.units.Tank;
 
 public class AimedShotHandler implements ActionListener, ItemListener {
     private final FiringDisplay firingDisplay;
@@ -86,19 +97,19 @@ public class AimedShotHandler implements ActionListener, ItemListener {
                 if (aimingMode.isImmobile()) {
                     aimingAt = Mek.LOC_HEAD;
                 } else if (aimingMode.isTargetingComputer()) {
-                    aimingAt = Mek.LOC_CT;
+                    aimingAt = Mek.LOC_CENTER_TORSO;
                 }
             } else if (this.firingDisplay.getTarget() instanceof Tank) {
                 int side = ComputeSideTable.sideTable(this.firingDisplay.ce(), this.firingDisplay.getTarget());
                 if (this.firingDisplay.getTarget() instanceof LargeSupportTank) {
-                    if (side == ToHitData.SIDE_FRONTLEFT) {
-                        aimingAt = LargeSupportTank.LOC_FRONTLEFT;
-                    } else if (side == ToHitData.SIDE_FRONTRIGHT) {
-                        aimingAt = LargeSupportTank.LOC_FRONTRIGHT;
-                    } else if (side == ToHitData.SIDE_REARRIGHT) {
-                        aimingAt = LargeSupportTank.LOC_REARRIGHT;
-                    } else if (side == ToHitData.SIDE_REARLEFT) {
-                        aimingAt = LargeSupportTank.LOC_REARLEFT;
+                    if (side == ToHitData.SIDE_FRONT_LEFT) {
+                        aimingAt = LargeSupportTank.LOC_FRONT_LEFT;
+                    } else if (side == ToHitData.SIDE_FRONT_RIGHT) {
+                        aimingAt = LargeSupportTank.LOC_FRONT_RIGHT;
+                    } else if (side == ToHitData.SIDE_REAR_RIGHT) {
+                        aimingAt = LargeSupportTank.LOC_REAR_RIGHT;
+                    } else if (side == ToHitData.SIDE_REAR_LEFT) {
+                        aimingAt = LargeSupportTank.LOC_REAR_LEFT;
                     }
                 }
                 if (side == ToHitData.SIDE_LEFT) {
@@ -156,77 +167,77 @@ public class AimedShotHandler implements ActionListener, ItemListener {
             // remove non-visible sides
             if (firingDisplay.getTarget() instanceof LargeSupportTank) {
                 if (side == ToHitData.SIDE_FRONT) {
-                    mask[LargeSupportTank.LOC_FRONTLEFT] = false;
-                    mask[LargeSupportTank.LOC_REARLEFT] = false;
-                    mask[LargeSupportTank.LOC_REARRIGHT] = false;
+                    mask[LargeSupportTank.LOC_FRONT_LEFT] = false;
+                    mask[LargeSupportTank.LOC_REAR_LEFT] = false;
+                    mask[LargeSupportTank.LOC_REAR_RIGHT] = false;
                     mask[LargeSupportTank.LOC_REAR] = false;
                 }
-                if (side == ToHitData.SIDE_FRONTLEFT) {
-                    mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
-                    mask[LargeSupportTank.LOC_REARLEFT] = false;
-                    mask[LargeSupportTank.LOC_REARRIGHT] = false;
+                if (side == ToHitData.SIDE_FRONT_LEFT) {
+                    mask[LargeSupportTank.LOC_FRONT_RIGHT] = false;
+                    mask[LargeSupportTank.LOC_REAR_LEFT] = false;
+                    mask[LargeSupportTank.LOC_REAR_RIGHT] = false;
                     mask[LargeSupportTank.LOC_REAR] = false;
                 }
-                if (side == ToHitData.SIDE_FRONTRIGHT) {
-                    mask[LargeSupportTank.LOC_FRONTLEFT] = false;
-                    mask[LargeSupportTank.LOC_REARLEFT] = false;
-                    mask[LargeSupportTank.LOC_REARRIGHT] = false;
+                if (side == ToHitData.SIDE_FRONT_RIGHT) {
+                    mask[LargeSupportTank.LOC_FRONT_LEFT] = false;
+                    mask[LargeSupportTank.LOC_REAR_LEFT] = false;
+                    mask[LargeSupportTank.LOC_REAR_RIGHT] = false;
                     mask[LargeSupportTank.LOC_REAR] = false;
                 }
-                if (side == ToHitData.SIDE_REARRIGHT) {
+                if (side == ToHitData.SIDE_REAR_RIGHT) {
                     mask[Tank.LOC_FRONT] = false;
-                    mask[LargeSupportTank.LOC_FRONTLEFT] = false;
-                    mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
-                    mask[LargeSupportTank.LOC_REARLEFT] = false;
+                    mask[LargeSupportTank.LOC_FRONT_LEFT] = false;
+                    mask[LargeSupportTank.LOC_FRONT_RIGHT] = false;
+                    mask[LargeSupportTank.LOC_REAR_LEFT] = false;
                 }
-                if (side == ToHitData.SIDE_REARLEFT) {
+                if (side == ToHitData.SIDE_REAR_LEFT) {
                     mask[Tank.LOC_FRONT] = false;
-                    mask[LargeSupportTank.LOC_FRONTLEFT] = false;
-                    mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
-                    mask[LargeSupportTank.LOC_REARRIGHT] = false;
+                    mask[LargeSupportTank.LOC_FRONT_LEFT] = false;
+                    mask[LargeSupportTank.LOC_FRONT_RIGHT] = false;
+                    mask[LargeSupportTank.LOC_REAR_RIGHT] = false;
                 }
                 if (side == ToHitData.SIDE_REAR) {
                     mask[Tank.LOC_FRONT] = false;
-                    mask[LargeSupportTank.LOC_FRONTLEFT] = false;
-                    mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
-                    mask[LargeSupportTank.LOC_REARRIGHT] = false;
+                    mask[LargeSupportTank.LOC_FRONT_LEFT] = false;
+                    mask[LargeSupportTank.LOC_FRONT_RIGHT] = false;
+                    mask[LargeSupportTank.LOC_REAR_RIGHT] = false;
                 }
             } else if (this.firingDisplay.getTarget() instanceof SuperHeavyTank) {
                 if (side == ToHitData.SIDE_FRONT) {
-                    mask[SuperHeavyTank.LOC_FRONTLEFT] = false;
-                    mask[SuperHeavyTank.LOC_REARLEFT] = false;
-                    mask[SuperHeavyTank.LOC_REARRIGHT] = false;
+                    mask[SuperHeavyTank.LOC_FRONT_LEFT] = false;
+                    mask[SuperHeavyTank.LOC_REAR_LEFT] = false;
+                    mask[SuperHeavyTank.LOC_REAR_RIGHT] = false;
                     mask[SuperHeavyTank.LOC_REAR] = false;
                 }
-                if (side == ToHitData.SIDE_FRONTLEFT) {
-                    mask[SuperHeavyTank.LOC_FRONTRIGHT] = false;
-                    mask[SuperHeavyTank.LOC_REARLEFT] = false;
-                    mask[SuperHeavyTank.LOC_REARRIGHT] = false;
+                if (side == ToHitData.SIDE_FRONT_LEFT) {
+                    mask[SuperHeavyTank.LOC_FRONT_RIGHT] = false;
+                    mask[SuperHeavyTank.LOC_REAR_LEFT] = false;
+                    mask[SuperHeavyTank.LOC_REAR_RIGHT] = false;
                     mask[SuperHeavyTank.LOC_REAR] = false;
                 }
-                if (side == ToHitData.SIDE_FRONTRIGHT) {
-                    mask[SuperHeavyTank.LOC_FRONTLEFT] = false;
-                    mask[SuperHeavyTank.LOC_REARLEFT] = false;
-                    mask[SuperHeavyTank.LOC_REARRIGHT] = false;
+                if (side == ToHitData.SIDE_FRONT_RIGHT) {
+                    mask[SuperHeavyTank.LOC_FRONT_LEFT] = false;
+                    mask[SuperHeavyTank.LOC_REAR_LEFT] = false;
+                    mask[SuperHeavyTank.LOC_REAR_RIGHT] = false;
                     mask[SuperHeavyTank.LOC_REAR] = false;
                 }
-                if (side == ToHitData.SIDE_REARRIGHT) {
+                if (side == ToHitData.SIDE_REAR_RIGHT) {
                     mask[Tank.LOC_FRONT] = false;
-                    mask[SuperHeavyTank.LOC_FRONTLEFT] = false;
-                    mask[SuperHeavyTank.LOC_FRONTRIGHT] = false;
-                    mask[SuperHeavyTank.LOC_REARLEFT] = false;
+                    mask[SuperHeavyTank.LOC_FRONT_LEFT] = false;
+                    mask[SuperHeavyTank.LOC_FRONT_RIGHT] = false;
+                    mask[SuperHeavyTank.LOC_REAR_LEFT] = false;
                 }
-                if (side == ToHitData.SIDE_REARLEFT) {
+                if (side == ToHitData.SIDE_REAR_LEFT) {
                     mask[Tank.LOC_FRONT] = false;
-                    mask[SuperHeavyTank.LOC_FRONTLEFT] = false;
-                    mask[SuperHeavyTank.LOC_FRONTRIGHT] = false;
-                    mask[SuperHeavyTank.LOC_REARRIGHT] = false;
+                    mask[SuperHeavyTank.LOC_FRONT_LEFT] = false;
+                    mask[SuperHeavyTank.LOC_FRONT_RIGHT] = false;
+                    mask[SuperHeavyTank.LOC_REAR_RIGHT] = false;
                 }
                 if (side == ToHitData.SIDE_REAR) {
                     mask[Tank.LOC_FRONT] = false;
-                    mask[SuperHeavyTank.LOC_FRONTLEFT] = false;
-                    mask[SuperHeavyTank.LOC_FRONTRIGHT] = false;
-                    mask[SuperHeavyTank.LOC_REARRIGHT] = false;
+                    mask[SuperHeavyTank.LOC_FRONT_LEFT] = false;
+                    mask[SuperHeavyTank.LOC_FRONT_RIGHT] = false;
+                    mask[SuperHeavyTank.LOC_REAR_RIGHT] = false;
                 }
             } else {
                 if (side == ToHitData.SIDE_LEFT) {
@@ -247,7 +258,7 @@ public class AimedShotHandler implements ActionListener, ItemListener {
         // remove main gun on protos that don't have one
         if (this.firingDisplay.getTarget() instanceof ProtoMek) {
             if (!((ProtoMek) this.firingDisplay.getTarget()).hasMainGun()) {
-                mask[ProtoMek.LOC_MAINGUN] = false;
+                mask[ProtoMek.LOC_MAIN_GUN] = false;
             }
         }
 
@@ -259,38 +270,38 @@ public class AimedShotHandler implements ActionListener, ItemListener {
 
         // remove locations hidden by partial cover
         if ((partialCover & LosEffects.COVER_HORIZONTAL) != 0) {
-            mask[Mek.LOC_LLEG] = false;
-            mask[Mek.LOC_RLEG] = false;
+            mask[Mek.LOC_LEFT_LEG] = false;
+            mask[Mek.LOC_RIGHT_LEG] = false;
         }
         if (side == ToHitData.SIDE_FRONT) {
-            if ((partialCover & LosEffects.COVER_LOWLEFT) != 0) {
-                mask[Mek.LOC_RLEG] = false;
+            if ((partialCover & LosEffects.COVER_LOW_LEFT) != 0) {
+                mask[Mek.LOC_RIGHT_LEG] = false;
             }
-            if ((partialCover & LosEffects.COVER_LOWRIGHT) != 0) {
-                mask[Mek.LOC_LLEG] = false;
+            if ((partialCover & LosEffects.COVER_LOW_RIGHT) != 0) {
+                mask[Mek.LOC_LEFT_LEG] = false;
             }
             if ((partialCover & LosEffects.COVER_LEFT) != 0) {
-                mask[Mek.LOC_RARM] = false;
-                mask[Mek.LOC_RT] = false;
+                mask[Mek.LOC_RIGHT_ARM] = false;
+                mask[Mek.LOC_RIGHT_TORSO] = false;
             }
             if ((partialCover & LosEffects.COVER_RIGHT) != 0) {
-                mask[Mek.LOC_LARM] = false;
-                mask[Mek.LOC_LT] = false;
+                mask[Mek.LOC_LEFT_ARM] = false;
+                mask[Mek.LOC_LEFT_TORSO] = false;
             }
         } else {
-            if ((partialCover & LosEffects.COVER_LOWLEFT) != 0) {
-                mask[Mek.LOC_LLEG] = false;
+            if ((partialCover & LosEffects.COVER_LOW_LEFT) != 0) {
+                mask[Mek.LOC_LEFT_LEG] = false;
             }
-            if ((partialCover & LosEffects.COVER_LOWRIGHT) != 0) {
-                mask[Mek.LOC_RLEG] = false;
+            if ((partialCover & LosEffects.COVER_LOW_RIGHT) != 0) {
+                mask[Mek.LOC_RIGHT_LEG] = false;
             }
             if ((partialCover & LosEffects.COVER_LEFT) != 0) {
-                mask[Mek.LOC_LARM] = false;
-                mask[Mek.LOC_LT] = false;
+                mask[Mek.LOC_LEFT_ARM] = false;
+                mask[Mek.LOC_LEFT_TORSO] = false;
             }
             if ((partialCover & LosEffects.COVER_RIGHT) != 0) {
-                mask[Mek.LOC_RARM] = false;
-                mask[Mek.LOC_RT] = false;
+                mask[Mek.LOC_RIGHT_ARM] = false;
+                mask[Mek.LOC_RIGHT_TORSO] = false;
             }
         }
 

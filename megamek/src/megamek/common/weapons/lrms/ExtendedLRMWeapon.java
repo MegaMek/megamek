@@ -34,7 +34,7 @@
 
 package megamek.common.weapons.lrms;
 
-import megamek.common.AmmoType;
+import megamek.common.equipment.AmmoType;
 
 /**
  * @author Sebastian Brocks
@@ -57,7 +57,7 @@ public abstract class ExtendedLRMWeapon extends LRMWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_STANDARD;
+        return BF_CLASS_STANDARD;
     }
 
     @Override

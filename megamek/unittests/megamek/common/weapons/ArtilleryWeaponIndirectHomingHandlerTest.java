@@ -46,14 +46,37 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 
 import megamek.client.ui.Messages;
-import megamek.common.*;
-import megamek.common.BombType.BombTypeEnum;
+import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.BombLoadout;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
+import megamek.common.units.AeroSpaceFighter;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Building;
+import megamek.common.units.Crew;
+import megamek.common.units.CrewType;
+import megamek.common.units.Entity;
+import megamek.common.units.IBomber;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.weapons.handlers.TAGHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryWeaponIndirectHomingHandler;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.server.Server;
@@ -92,9 +115,9 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
 
         // GameOptions
         GameOptions options = mock(GameOptions.class);
-        when(options.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMS)).thenReturn(false);
-        when(options.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF)).thenReturn(false);
-        when(options.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)).thenReturn("Experimental");
+        when(options.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS)).thenReturn(false);
+        when(options.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE)).thenReturn(false);
+        when(options.stringOption(OptionsConstants.ALLOWED_TECH_LEVEL)).thenReturn("Experimental");
         game.setOptions(options);
 
         // Board
@@ -270,7 +293,7 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         AeroSpaceFighter attacker = createASF("ATT-10", "Buzzsaw", "Alyce", aPlayer);
         loadBombOnASF(attacker, BombTypeEnum.HOMING);
         Mek tagger = createMek("TAG-3R", "Taggity", "Taggart", aPlayer, 1, 1);
-        Mounted<?> tagWeapon = tagger.addEquipment(tagType, Mek.LOC_CT);
+        Mounted<?> tagWeapon = tagger.addEquipment(tagType, Mek.LOC_CENTER_TORSO);
         Mek defender = createMek("TGT-1A", "Targeto", "Bob", dPlayer);
         Infantry crunchies = createInfantry("LittleGreen", "ArmyMen", "Elgato", dPlayer);
 

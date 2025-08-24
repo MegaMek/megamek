@@ -34,14 +34,14 @@
 package megamek.common.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
 
 public class C3Util {
 
@@ -134,8 +134,7 @@ public class C3Util {
      * Entity, units cannot disconnect from a C3 network with an id that is the entity's own id.
      */
     public static Set<Entity> disconnectFromNetwork(Game game, Collection<Entity> entities) {
-        final Set<Entity> updateCandidates = performDisconnect(game, entities);
-        return updateCandidates;
+        return performDisconnect(game, entities);
     }
 
     /**
@@ -191,22 +190,31 @@ public class C3Util {
     }
 
     /**
-     * Connects the passed entities to a nonhierarchic C3 (NC3, C3i or Nova CEWS) identified by masterID.
+     * Connects the passed entities to a non-hierarchic C3 (NC3, C3i or Nova CEWS) identified by masterID.
      */
     public static void joinNh(Game game, Collection<Entity> entities, int masterID, boolean disconnectFirst)
           throws MismatchingC3MException, C3CapacityException {
         Entity master = game.getEntity(masterID);
+
+        if (master == null) {
+            return;
+        }
+
         if (!master.hasNhC3() || !entities.stream().allMatch(e -> sameNhC3System(master, e))) {
             throw new MismatchingC3MException();
         }
+
         if (disconnectFirst) {
             performDisconnect(game, entities);
         }
+
         int freeNodes = master.calculateFreeC3Nodes();
         freeNodes += entities.contains(master) ? 1 : 0;
+
         if (entities.size() > freeNodes) {
             throw new C3CapacityException();
         }
+
         entities.forEach(e -> e.setC3NetId(master));
     }
 
@@ -216,6 +224,11 @@ public class C3Util {
     public static Set<Entity> connect(Game game, Collection<Entity> entities, int masterID, boolean disconnectFirst)
           throws MismatchingC3MException, C3CapacityException {
         Entity master = game.getEntity(masterID);
+
+        if (master == null) {
+            return Collections.emptySet();
+        }
+
         // To make it possible to mark a C3S/C3S/C3S/C3M lance and connect it:
         entities.remove(master);
         boolean connectMS = master.isC3IndependentMaster() && entities.stream().allMatch(Entity::hasC3S);
@@ -227,7 +240,7 @@ public class C3Util {
         Set<Entity> updateCandidates = new HashSet<>(entities);
         if (disconnectFirst) { // this is only true when a C3 lance is formed from SSSM
             updateCandidates.addAll(performDisconnect(game, entities));
-            updateCandidates.addAll(performDisconnect(game, Arrays.asList(master)));
+            updateCandidates.addAll(performDisconnect(game, List.of(master)));
         }
         int newC3nodeCount = entities.stream().mapToInt(e -> game.getC3SubNetworkMembers(e).size()).sum();
         int masC3nodeCount = game.getC3NetworkMembers(master).size();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,16 +44,16 @@ import java.util.EnumMap;
 public enum Facing {
     N(0), NE(1), SE(2), S(3), SW(4), NW(5), NONE(6);
 
-    private Facing(int intValue) {
+    Facing(int intValue) {
         this.intValue = intValue;
     }
 
     private final int intValue;
 
     static private final Facing[] valuesOfInt = { N, NE, SE, S, SW, NW, NONE };
-    static private EnumMap<Facing, Facing> opposite = new EnumMap<>(Facing.class);
-    static private EnumMap<Facing, Facing> cw = new EnumMap<>(Facing.class);
-    static private EnumMap<Facing, Facing> ccw = new EnumMap<>(Facing.class);
+    static private final EnumMap<Facing, Facing> opposite = new EnumMap<>(Facing.class);
+    static private final EnumMap<Facing, Facing> cw = new EnumMap<>(Facing.class);
+    static private final EnumMap<Facing, Facing> ccw = new EnumMap<>(Facing.class);
 
     static {
         for (Facing f : values()) {
@@ -70,7 +70,7 @@ public enum Facing {
     /**
      * Method provided for backward compatibility with old integer constants.
      *
-     * @param i Integer constant. must be non negative
+     * @param i Integer constant. must be non-negative
      */
     public static Facing valueOfInt(final int i) {
         return valuesOfInt[i % 6];
@@ -108,7 +108,7 @@ public enum Facing {
     }
 
     /**
-     * @return the next facing in counter clockwise direction
+     * @return the next facing in counterclockwise direction
      */
     public Facing getNextCounterClockwise() {
         return ccw.get(this);

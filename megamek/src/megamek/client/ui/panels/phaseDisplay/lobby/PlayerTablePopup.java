@@ -42,8 +42,8 @@ import javax.swing.JPopupMenu;
 
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.util.ScalingPopup;
-import megamek.common.Board;
-import megamek.common.IStartingPositions;
+import megamek.common.board.Board;
+import megamek.common.interfaces.IStartingPositions;
 import megamek.common.Player;
 import megamek.common.util.CollectionUtil;
 

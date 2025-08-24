@@ -110,7 +110,7 @@ public class I18n {
      *
      * @param bundleName the name of the bundle
      *
-     * @return the list of keys with localization
+     * @return the set of keys with localization
      */
     public static Set<String> getKeys(String bundleName) {
         return I18n.getInstance().getResourceBundle(bundleName).keySet();
@@ -171,7 +171,7 @@ public class I18n {
      *              to not fill the cache with strings that might never be referenced again. For example, strings typed
      *              by the user shouldn't be cached, but unit names should be.
      *
-     * @return The normalized String, such as <i>Gun</i> or <i>Gotterdammerung</i>.<br/> The returned string is
+     * @return The normalized String, such as <i>Gun</i> or <i>Götterdämmerung</i>.<br/> The returned string is
      *       <i>not</i> guaranteed to be only ASCII. Normalization will fail if there's no direct mapping from a
      *       character to its ASCII equivalent.
      */

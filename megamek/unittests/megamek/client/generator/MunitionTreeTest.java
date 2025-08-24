@@ -115,7 +115,7 @@ class MunitionTreeTest {
     }
 
     @Test
-    void testGetCountsOfAmmosForKey() {
+    void testGetCountsOfAmmunitionForKey() {
         MunitionTree mt = new MunitionTree();
         lrmHash.put("LRM", "Standard:Smoke:Thunder:");
         acHash.put("AC", "Standard:Precision:Caseless");
@@ -130,14 +130,14 @@ class MunitionTreeTest {
         assertEquals(1, mt.getCountOfAmmoForKey("Mauler", "any", "any", "LRM", "Standard"));
 
         // Should be three AC ammo types defined, each with a count of 1.
-        HashMap<String, Integer> binCounts = mt.getCountsOfAmmosForKey("Mauler", "any", "any", "AC20");
+        HashMap<String, Integer> binCounts = mt.getCountsOfAmmunitionForKey("Mauler", "any", "any", "AC20");
         assertEquals(3, binCounts.values().size());
         assertEquals(1, binCounts.get("Precision"));
         assertEquals(1, binCounts.get("Caseless"));
         assertEquals(1, binCounts.get("Standard"));
 
         // Should be zero ATM
-        binCounts = mt.getCountsOfAmmosForKey("Mauler", "any", "any", "ATM");
+        binCounts = mt.getCountsOfAmmunitionForKey("Mauler", "any", "any", "ATM");
         assertEquals(0, binCounts.values().size());
         assertEquals(0, binCounts.getOrDefault("Precision", 0));
     }
@@ -146,11 +146,11 @@ class MunitionTreeTest {
     void testOrderingOfImperatives() {
         MunitionTree mt = new MunitionTree();
         ltHash.put("Long Tom", "Standard:FAE:Flak:Thunder:Flare:Smoke");
-        mt.insertImperatives("Paladin Defense System", "any", "any", ltHash);
+        mt.insertImperatives("Paladin Defense SystemFluff", "any", "any", ltHash);
 
         // Expect Standard to be first; this will be used if all imperatives are
         // fulfilled and bins remain
-        List<String> ammoOrdering = mt.getPriorityList("Paladin Defense System", "any", "any", "Long Tom");
+        List<String> ammoOrdering = mt.getPriorityList("Paladin Defense SystemFluff", "any", "any", "Long Tom");
         assertEquals("Standard", ammoOrdering.get(0));
         assertEquals("Thunder", ammoOrdering.get(3));
         assertEquals("Smoke", ammoOrdering.get(ammoOrdering.size() - 1));
@@ -168,12 +168,12 @@ class MunitionTreeTest {
         MunitionTree mt = new MunitionTree();
         mt.readFromADF(br);
         // 3 ammo types set for Catapult C1
-        assertEquals(3, mt.getCountsOfAmmosForKey("Catapult", "CPLT-C1", "any", "LRM-15").size());
+        assertEquals(3, mt.getCountsOfAmmunitionForKey("Catapult", "CPLT-C1", "any", "LRM-15").size());
 
         // 1 ammo type each for each of three Shadow Hawk weapons
-        assertEquals(1, mt.getCountsOfAmmosForKey("Shadow Hawk", "SHD-2D", "any", "LRM-5").size());
-        assertEquals(1, mt.getCountsOfAmmosForKey("Shadow Hawk", "SHD-2D", "any", "SRM-2").size());
-        assertEquals(1, mt.getCountsOfAmmosForKey("Shadow Hawk", "SHD-2D", "any", "AC-5").size());
+        assertEquals(1, mt.getCountsOfAmmunitionForKey("Shadow Hawk", "SHD-2D", "any", "LRM-5").size());
+        assertEquals(1, mt.getCountsOfAmmunitionForKey("Shadow Hawk", "SHD-2D", "any", "SRM-2").size());
+        assertEquals(1, mt.getCountsOfAmmunitionForKey("Shadow Hawk", "SHD-2D", "any", "AC-5").size());
     }
 
     @Test

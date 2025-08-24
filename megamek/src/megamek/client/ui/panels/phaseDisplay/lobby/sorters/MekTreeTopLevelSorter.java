@@ -35,8 +35,8 @@ package megamek.client.ui.panels.phaseDisplay.lobby.sorters;
 import java.util.Comparator;
 
 import megamek.client.Client;
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;

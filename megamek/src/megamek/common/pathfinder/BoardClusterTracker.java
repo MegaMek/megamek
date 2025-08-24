@@ -42,14 +42,13 @@ import java.util.Map;
 import java.util.Set;
 
 import megamek.client.bot.princess.CardinalEdge;
-import megamek.common.Board;
-import megamek.common.Building;
 import megamek.common.BulldozerMovePath;
-import megamek.common.Coords;
-import megamek.common.Entity;
 import megamek.common.Hex;
-import megamek.common.MiscType;
-import megamek.common.Terrains;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
+import megamek.common.units.Terrains;
 import megamek.common.util.BoardUtilities;
 
 /**
@@ -57,74 +56,11 @@ import megamek.common.util.BoardUtilities;
  * destruction awareness.
  */
 public class BoardClusterTracker {
-    /**
-     * Movement types that are relevant for "destruction-aware pathfinding" Have a close relationship but are not
-     * exactly one to one with entity movement modes.
-     */
-    public static enum MovementType {
-        Walker,
-        Wheeled,
-        WheeledAmphi,
-        Tracked,
-        TrackedAmphi,
-        Hover,
-        Foot,
-        Jump,
-        Flyer,
-        Water,
-        None;
 
-        public static boolean canUseBridge(MovementType movementType) {
-            return movementType != Jump &&
-                  movementType != Flyer &&
-                  movementType != Water &&
-                  movementType != None;
-        }
-
-        /**
-         * Figures out the relevant entity movement mode (for path caching) based on properties of the entity. Mostly
-         * just movement mode, but some complications exist for tracked/wheeled vehicles.
-         */
-        public static MovementType getMovementType(Entity entity) {
-            switch (entity.getMovementMode()) {
-                case BIPED:
-                case TRIPOD:
-                case QUAD:
-                    return Walker;
-                case INF_LEG:
-                    return Foot;
-                case TRACKED:
-                    return entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ? TrackedAmphi : Tracked;
-                // technically MiscType.F_AMPHIBIOUS and MiscType.F_LIMITED_AMPHIBIOUS apply
-                // here too, but are not implemented in general
-                case INF_MOTORIZED:
-                case WHEELED:
-                    return entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ? WheeledAmphi : Wheeled;
-                case HOVER:
-                    return Hover;
-                case BIPED_SWIM:
-                case QUAD_SWIM:
-                case INF_UMU:
-                case SUBMARINE:
-                case NAVAL:
-                case HYDROFOIL:
-                    return Water;
-                case VTOL:
-                case SPHEROID:
-                case AERODYNE:
-                case AEROSPACE:
-                case AIRSHIP:
-                    return Flyer;
-                default:
-                    return None;
-            }
-        }
-    }
-
-    private Map<MovementType, Map<Coords, BoardCluster>> movableAreas = new HashMap<>();
-    private Map<MovementType, Map<Coords, BoardCluster>> movableAreasWithTerrainReduction = new HashMap<>();
-    private Map<MovementType, Map<Coords, BoardCluster>> movableAreasBridges = new HashMap<>();
-    private Map<MovementType, Map<Coords, BoardCluster>> movableAreasBridgesWithTerrainReduction = new HashMap<>();
+    private final Map<MovementType, Map<Coords, BoardCluster>> movableAreas = new HashMap<>();
+    private final Map<MovementType, Map<Coords, BoardCluster>> movableAreasWithTerrainReduction = new HashMap<>();
+    private final Map<MovementType, Map<Coords, BoardCluster>> movableAreasBridges = new HashMap<>();
+    private final Map<MovementType, Map<Coords, BoardCluster>> movableAreasBridgesWithTerrainReduction = new HashMap<>();
 
     /**
      * Returns the size of the biggest terrain-reduced or non-terrain-reduced board cluster in which the given
@@ -201,7 +137,7 @@ public class BoardClusterTracker {
         updateMovableAreas(entity);
 
         MovementType movementType = MovementType.getMovementType(entity);
-        BoardCluster entityCluster = null;
+        BoardCluster entityCluster;
 
         if (terrainReduction) {
             entityCluster = movableAreasWithTerrainReduction.get(movementType).get(entity.getPosition());
@@ -234,11 +170,6 @@ public class BoardClusterTracker {
     /**
      * Returns a set of coordinates that intersect with the cluster in which the given entity resides.
      *
-     * @param entity
-     * @param destination
-     * @param terrainReduction
-     *
-     * @return
      */
     public Set<Coords> getDestinationCoords(Entity entity, Coords destination, boolean terrainReduction) {
         updateMovableAreas(entity);
@@ -333,8 +264,8 @@ public class BoardClusterTracker {
 
         MovementType movementType = MovementType.getMovementType(entity);
         boolean isHovercraft = movementType == MovementType.Hover;
-        boolean isAmphibious = movementType == MovementType.WheeledAmphi ||
-              movementType == MovementType.TrackedAmphi;
+        boolean isAmphibious = movementType == MovementType.WheeledAmphibious ||
+              movementType == MovementType.TrackedAmphibious;
 
         boolean canUseBridge = MovementType.canUseBridge(movementType);
 
@@ -349,7 +280,7 @@ public class BoardClusterTracker {
                     continue;
                 }
 
-                int myElevation = 0;
+                int myElevation;
 
                 if (useBridgeTop && board.getHex(c).containsTerrain(Terrains.BRIDGE) &&
                       canUseBridge && (entity.getWeight() <= board.getBuildingAt(c).getCurrentCF(c))) {
@@ -367,7 +298,7 @@ public class BoardClusterTracker {
                     Coords neighbor = c.translated(direction);
 
                     if (clusters.containsKey(neighbor)) {
-                        int neighborElevation = 0;
+                        int neighborElevation;
 
                         if (useBridgeTop && board.getHex(neighbor).containsTerrain(Terrains.BRIDGE) &&
                               canUseBridge
@@ -382,7 +313,7 @@ public class BoardClusterTracker {
                         // move on
                         // buildings require special handling - while a tank technically CAN plow
                         // through a building
-                        // it is highly inadvisable and we will avoid it for now.
+                        // it is highly inadvisable, and we will avoid it for now.
                         int elevationDiff = Math.abs(neighborElevation - myElevation);
                         if ((elevationDiff > entity.getMaxElevationChange())
                               || buildingPlowThroughRequired(entity, movementType, neighbor)) {
@@ -413,8 +344,8 @@ public class BoardClusterTracker {
                     clusters.put(c, biggestNeighbor);
 
                     // merge any other clusters belonging to joined neighbors to this cluster
-                    for (int neighborIndex = 0; neighborIndex < neighborsToJoin.size(); neighborIndex++) {
-                        BoardCluster oldCluster = clusters.get(neighborsToJoin.get(neighborIndex));
+                    for (Coords coords : neighborsToJoin) {
+                        BoardCluster oldCluster = clusters.get(coords);
                         if (oldCluster == biggestNeighbor) {
                             continue;
                         }
@@ -433,7 +364,7 @@ public class BoardClusterTracker {
     }
 
     /**
-     * Whether or not we are required to plow through a building if we enter this hex.
+     * Whether we are required to plow through a building if we enter this hex.
      */
     private boolean buildingPlowThroughRequired(Entity entity, MovementType relevantMovementType, Coords coords) {
         // basic premise:
@@ -456,13 +387,11 @@ public class BoardClusterTracker {
             int buildingCF = building.getCurrentCF(coords);
 
             return entity.getWeight() > buildingCF;
-        } else if ((relevantMovementType != MovementType.Flyer) &&
-              (relevantMovementType != MovementType.Jump) &&
-              (relevantMovementType != MovementType.None) &&
-              (relevantMovementType != MovementType.Water)) {
-            return true;
         } else {
-            return false;
+            return (relevantMovementType != MovementType.Flyer) &&
+                  (relevantMovementType != MovementType.Jump) &&
+                  (relevantMovementType != MovementType.None) &&
+                  (relevantMovementType != MovementType.Water);
         }
     }
 

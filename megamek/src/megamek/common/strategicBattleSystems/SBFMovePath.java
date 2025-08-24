@@ -40,11 +40,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import megamek.common.BoardLocation;
 import megamek.common.Player;
 import megamek.common.actions.EntityAction;
+import megamek.common.board.BoardLocation;
 import megamek.logging.MMLogger;
 
 public class SBFMovePath implements EntityAction, Serializable {
@@ -56,7 +55,7 @@ public class SBFMovePath implements EntityAction, Serializable {
     private boolean isIllegal;
     private int jumpUsed = 0;
 
-    // The game is used mainly durinng creation of the movepath and shouldn't be
+    // The game is used mainly during creation of the move path and shouldn't be
     // sent in packets
     private transient SBFGame game;
 
@@ -82,7 +81,7 @@ public class SBFMovePath implements EntityAction, Serializable {
 
     /**
      * Creates a new move path that is a copy of the given original. Note that the steps are copied, i.e. the step list
-     * is a deep copy. The returned move path is completely independent from the original.
+     * is a deep copy. The returned move path is completely independent of the original.
      *
      * @param original The move path to copy
      *
@@ -90,7 +89,7 @@ public class SBFMovePath implements EntityAction, Serializable {
      */
     public static SBFMovePath createMovePathDeep(SBFMovePath original) {
         SBFMovePath newPath = new SBFMovePath(original.formationId, original.startLocation, original.game);
-        newPath.steps.addAll(original.steps.stream().map(SBFMoveStep::copy).collect(Collectors.toList()));
+        newPath.steps.addAll(original.steps.stream().map(SBFMoveStep::copy).toList());
         return newPath;
     }
 

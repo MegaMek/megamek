@@ -34,19 +34,19 @@
 
 package megamek.common.weapons.srms;
 
-import static megamek.common.MountedHelper.isArtemisIV;
-import static megamek.common.MountedHelper.isArtemisProto;
-import static megamek.common.MountedHelper.isArtemisV;
+import static megamek.common.equipment.MountedHelper.isArtemisIV;
+import static megamek.common.equipment.MountedHelper.isArtemisProto;
+import static megamek.common.equipment.MountedHelper.isArtemisV;
 
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.SRMHandler;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.srm.SRMHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -72,7 +72,7 @@ public abstract class SRTWeapon extends MissileWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new SRMHandler(toHit, waa, game, manager);
     }
@@ -124,12 +124,12 @@ public abstract class SRTWeapon extends MissileWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_TORP;
+        return BF_CLASS_TORPEDO;
     }
 
     @Override
     public String getSortingName() {
-        String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
+        String oneShotTag = hasFlag(F_ONE_SHOT) ? "OS " : "";
         if (name.contains("I-OS")) {
             oneShotTag = "XIOS ";
         }

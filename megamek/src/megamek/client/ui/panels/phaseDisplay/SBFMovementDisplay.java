@@ -49,18 +49,19 @@ import megamek.client.ui.dialogs.phaseDisplay.SBFJumpChoiceDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.widget.MegaMekButton;
-import megamek.common.BTObject;
-import megamek.common.BoardLocation;
-import megamek.common.Coords;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.pathfinder.AbstractPathFinder;
+import megamek.common.pathfinder.StopConditionTimeout;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFFormationTurn;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.strategicBattleSystems.SBFMovePathFinder;
+import megamek.common.units.BTObject;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 public class SBFMovementDisplay extends SBFActionPhaseDisplay {
@@ -308,11 +309,10 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
     }
 
     /**
-     * Computes all the possible moves for an {@link megamek.common.Entity} in a particular gear. The
-     * {@link megamek.common.Entity} can either be a suggested {@link megamek.common.Entity} or the currently selected
-     * one. If there is a selected {@link megamek.common.Entity} (which implies it's the current players turn), then the
-     * current gear is used (which is set by the user). If there is no selected {@link megamek.common.Entity}, then the
-     * current gear is invalid, and it defaults to GEAR_LAND (standard "walk forward").
+     * Computes all the possible moves for an {@link Entity} in a particular gear. The {@link Entity} can either be a
+     * suggested {@link Entity} or the currently selected one. If there is a selected {@link Entity} (which implies it's
+     * the current players turn), then the current gear is used (which is set by the user). If there is no selected
+     * {@link Entity}, then the current gear is invalid, and it defaults to GEAR_LAND (standard "walk forward").
      */
     public void computeMovementEnvelope(SBFFormation formation) {
         if ((formation == null) || (formation.getPosition() == null) || !formation.isDeployed()) {
@@ -379,7 +379,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
 
         final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
         SBFMovePathFinder pf = SBFMovePathFinder.aStarFinder(dest, game());
-        AbstractPathFinder.StopConditionTimeout<SBFMovePath> timeoutCondition = new AbstractPathFinder.StopConditionTimeout<>(
+        StopConditionTimeout<SBFMovePath> timeoutCondition = new StopConditionTimeout<>(
               timeLimit);
         pf.addStopCondition(timeoutCondition);
         pf.run(SBFMovePath.createMovePathShallow(currentPath));

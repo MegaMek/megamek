@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,17 +34,19 @@
 
 package megamek.common.event;
 
+import java.io.Serial;
+
 import megamek.common.Player;
 
 /**
  * Instances of this class are sent when some Player connected
  */
 public class GamePlayerConnectedEvent extends GamePlayerEvent {
+    @Serial
     private static final long serialVersionUID = -4745294587017447893L;
 
     /**
-     * @param source
-     * @param player
+     *
      */
     public GamePlayerConnectedEvent(Object source, Player player) {
         super(source, player);

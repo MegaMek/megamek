@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004,2005, 2022 MegaMekTeam
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.infantry.pistol;
 
+import java.io.Serial;
+
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -46,6 +48,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  * @since March 20, 2022
  */
 public class InfantryPistolMPH45 extends InfantryWeapon {
+    @Serial
     private static final long serialVersionUID = -3164871600230559641L;
 
     public InfantryPistolMPH45() {

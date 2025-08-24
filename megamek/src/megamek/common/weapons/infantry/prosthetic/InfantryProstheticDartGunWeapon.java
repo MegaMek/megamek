@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -31,52 +32,45 @@
  * affiliated with Microsoft.
  */
 
-/*
- * Created on March 20, 2022
- * @author Hammer
- */
+package megamek.common.weapons.infantry.prosthetic;
 
-package megamek.common.weapons.infantry.pistol;
+import java.io.Serial;
 
 import megamek.common.enums.AvailabilityValue;
-import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
-
-public class InfantryPistolType74Ppistol extends InfantryWeapon {
-
-    /**
-     *
-     */
+/**
+ * @author Dave Nawton
+ * @since Sep 7, 2005
+ */
+public class InfantryProstheticDartGunWeapon extends InfantryWeapon {
+    @Serial
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolType74Ppistol() {
+    public InfantryProstheticDartGunWeapon() {
         super();
 
-        name = "Pistol (Type 74P Pistol)";
+        name = "Prosthetic Dart Gun";
         setInternalName(name);
-        addLookupName("Type 74P Pistol");
-        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
-        bv = .28;
-        tonnage = 0.0008;
-        infantryDamage = 0.28;
-        infantryRange = 1;
-        ammoWeight = 0.000001;
-        cost = 150;
-        ammoCost = 7;
-        shots = 14;
-        bursts = 1;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        rulesRefs = "Shrapnel #3";
-        techAdvancement
-              .setTechBase(TechBase.IS)
-              .setTechRating(TechRating.D)
-              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
-              .setISAdvancement(DATE_NONE, DATE_NONE, 2100, DATE_NONE, DATE_NONE)
-              .setISApproximate(false, false, true, false, false)
-              .setProductionFactions(Faction.CC);
+        addLookupName("ProstheticDartGun");
+        ammoType = AmmoType.AmmoTypeEnum.NA;
+        cost = 750;
+        bv = 0.0;
+        flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        infantryDamage = 0.0;
+        infantryRange = 0;
+        rulesRefs = "84, IO";
+        techAdvancement.setTechBase(TechBase.ALL)
+              .setIntroLevel(false)
+              .setUnofficial(false)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
+              .setISAdvancement(DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setISApproximate(false, false, false, false, false)
+              .setClanAdvancement(DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, false, false, false, false);
     }
 }

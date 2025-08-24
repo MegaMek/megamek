@@ -150,7 +150,7 @@ import megamek.common.weapons.infantry.grenade.InfantryGrenadeMicroWeapon;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeMiniInfernoWeapon;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeRAGWeapon;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeStandardWeapon;
-import megamek.common.weapons.infantry.laser.InfantryLaserCarbineBrightstarL15;
+import megamek.common.weapons.infantry.laser.InfantryLaserCarbineBrightStarL15;
 import megamek.common.weapons.infantry.laser.InfantryLaserSniperRifleDWSL5L;
 import megamek.common.weapons.infantry.laser.pistol.*;
 import megamek.common.weapons.infantry.laser.rifle.InfantryLaserRifleDWSL5S;
@@ -1848,17 +1848,17 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryPistolMPH45());
         EquipmentType.addType(new InfantryPistolNambu380());
         EquipmentType.addType(new InfantryPistolNambu480());
-        EquipmentType.addType(new InfantryPistolRFWgalahad());
+        EquipmentType.addType(new InfantryPistolRFWGalahad());
         EquipmentType.addType(new InfantryPistolSerrek7994());
         EquipmentType.addType(new InfantryPistolSerrek7994SF());
         EquipmentType.addType(new InfantryPistolSturmEagleMK4M());
         EquipmentType.addType(new InfantryPistolSturmEagleMK4P());
-        EquipmentType.addType(new InfantryPistolType74Dpistol());
-        EquipmentType.addType(new InfantryPistolType74Ppistol());
+        EquipmentType.addType(new InfantryPistolType74DPistol());
+        EquipmentType.addType(new InfantryPistolType74PPistol());
         EquipmentType.addType(new InfantryPistolWhisper4Standard());
         EquipmentType.addType(new InfantryPistolWhisper4Subsonic());
         EquipmentType.addType(new InfantryPistolWolfM30());
-        EquipmentType.addType(new InfantryPistolYanjingshe());
+        EquipmentType.addType(new InfantryPistolYaNjingshe());
 
         EquipmentType.addType(new InfantryLaserPistolAA75L());
         EquipmentType.addType(new InfantryLaserPistolAWAWilibyMk4LaserPistol());
@@ -2007,7 +2007,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySniperRifleMinolta9000Weapon());
 
         // Shrapnel Laser Rifles
-        EquipmentType.addType(new InfantryLaserCarbineBrightstarL15());
+        EquipmentType.addType(new InfantryLaserCarbineBrightStarL15());
         EquipmentType.addType(new InfantryLaserRifleDarkLightCLLight());
         EquipmentType.addType(new InfantryLaserRifleDWSL5S());
         EquipmentType.addType(new InfantryLaserRifleScorcherVIBlazerRifle());
@@ -2120,7 +2120,7 @@ public class WeaponType extends EquipmentType {
         // Prosthetic Weapon from ATOW Companion
         EquipmentType.addType(new InfantryProstheticLaserWeapon());
         EquipmentType.addType(new InfantryProstheticBallisticWeapon());
-        EquipmentType.addType(new InfantryProstheticDartgunWeapon());
+        EquipmentType.addType(new InfantryProstheticDartGunWeapon());
         EquipmentType.addType(new InfantryProstheticNeedlerWeapon());
         EquipmentType.addType(new InfantryProstheticShotgunWeapon());
         EquipmentType.addType(new InfantryProstheticSonicStunnerWeapon());

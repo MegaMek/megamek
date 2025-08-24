@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.infantry.pulseLaser;
 
+import java.io.Serial;
+
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -44,12 +46,13 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 
 public class InfantryPulseLaserPistolRDISunSwarmPulsar extends InfantryWeapon {
 
+    @Serial
     private static final long serialVersionUID = 1L; // Update for each unique class
 
     public InfantryPulseLaserPistolRDISunSwarmPulsar() {
         super();
 
-        name = "Pulse Laser Pistol (RDI Sunswarm Pulsar)";
+        name = "Pulse Laser Pistol (RDI SunSwarm Pulsar)";
         setInternalName(name);
         addLookupName("SUNSWARM");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;

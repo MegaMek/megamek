@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -31,12 +32,10 @@
  * affiliated with Microsoft.
  */
 
-/*
- * Created on March 20, 2022
- * @author Hammer
- */
 
-package megamek.common.weapons.infantry.pistol;
+package megamek.common.weapons.infantry.laser;
+
+import java.io.Serial;
 
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -46,35 +45,34 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 
-public class InfantryPistolType74Dpistol extends InfantryWeapon {
+public class InfantryLaserCarbineBrightStarL15 extends InfantryWeapon {
 
-    private static final long serialVersionUID = -3164871600230559641L;
+    @Serial
+    private static final long serialVersionUID = 1L; // Update for each unique class
 
-    public InfantryPistolType74Dpistol() {
+    public InfantryLaserCarbineBrightStarL15() {
         super();
 
-        name = "Pistol (Type 74D Pistol)";
+        name = "Laser Carbine (BrightStar L-15)";
         setInternalName(name);
-        addLookupName("Type 74D Pistol");
+        addLookupName("BrightstarCarbine");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
-        bv = .28;
-        tonnage = 0.0007;
-        infantryDamage = 0.28;
-        infantryRange = 0;
-        ammoWeight = 0.000015;
-        cost = 140;
-        ammoCost = 6;
-        shots = 11;
+        cost = 2500;
+        bv = 0.2625;
+        tonnage = 0.0018;
+        infantryDamage = 0.44;
+        infantryRange = 4;
+        shots = 3;
         bursts = 1;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        rulesRefs = "Shrapnel #3";
-        techAdvancement
-              .setTechBase(TechBase.IS)
-              .setTechRating(TechRating.D)
-              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
-              .setISAdvancement(DATE_NONE, DATE_NONE, 2100, DATE_NONE, DATE_NONE)
-              .setISApproximate(false, false, true, false, false)
-              .setProductionFactions(Faction.CC);
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
+        rulesRefs = "Shrapnel #9";
 
+        techAdvancement
+              .setTechBase(TechBase.CLAN)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
+              .setClanAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, false, true, false, false)
+              .setProductionFactions(Faction.CLAN);
     }
 }

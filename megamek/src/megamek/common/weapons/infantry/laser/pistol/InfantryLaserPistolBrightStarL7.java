@@ -35,6 +35,8 @@
 
 package megamek.common.weapons.infantry.laser.pistol;
 
+import java.io.Serial;
+
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -44,12 +46,13 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 
 public class InfantryLaserPistolBrightStarL7 extends InfantryWeapon {
 
+    @Serial
     private static final long serialVersionUID = 1L; // Update for each unique class
 
     public InfantryLaserPistolBrightStarL7() {
         super();
 
-        name = "Laser Pistol (Brightstar L-7)";
+        name = "Laser Pistol (BrightStar L-7)";
         setInternalName(name);
         addLookupName("BRIGHTSTARL7");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;

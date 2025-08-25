@@ -521,6 +521,14 @@ class ComputeToHitIsImpossible {
             return Messages.getString("WeaponAttackAction.TorpOutOfWater");
         }
 
+        // arty fire from fully submerged units, TO:AR p.193
+        if ((isArtilleryIndirect || isArtilleryDirect)
+              && attacker.getElevation() < -attacker.getHeight()
+              && game.getHexOf(attacker).hasDepth1WaterOrDeeper()
+              && !weapon.getType().hasFlag(WeaponTypeFlag.F_CRUISE_MISSILE)) {
+            return Messages.getString("WeaponAttackAction.ArtyOutOfWater");
+        }
+
         // Is the weapon blocked by a passenger?
         if (weapon != null && (attacker.isWeaponBlockedAt(weapon.getLocation(), weapon.isRearMounted()))) {
             return Messages.getString("WeaponAttackAction.PassengerBlock");

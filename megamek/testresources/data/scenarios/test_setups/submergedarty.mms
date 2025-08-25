@@ -24,3 +24,11 @@ factions:
         at: [ 24, 37 ]
         elevation: -2
 
+      - fullname: Test Cruise Missile Sub
+        at: [ 21, 36 ]
+        elevation: 0
+
+      - fullname: New Arrow Sub
+        at: [ 23, 36 ]
+        elevation: 0
+

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,29 +34,26 @@
 
 package megamek.common.weapons.lrms;
 
-import static megamek.common.MountedHelper.isArtemisIV;
-import static megamek.common.MountedHelper.isArtemisProto;
-import static megamek.common.MountedHelper.isArtemisV;
+import static megamek.common.equipment.MountedHelper.isArtemisIV;
+import static megamek.common.equipment.MountedHelper.isArtemisProto;
+import static megamek.common.equipment.MountedHelper.isArtemisV;
 
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Mounted;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
+import java.io.Serial;
+
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.MissileWeaponHandler;
+import megamek.common.units.Entity;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
  */
 public abstract class LRTWeapon extends MissileWeapon {
 
+    @Serial
     private static final long serialVersionUID = -7350712286691532142L;
 
     public LRTWeapon() {
@@ -81,14 +78,8 @@ public abstract class LRTWeapon extends MissileWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-          WeaponAttackAction waa, Game game, TWGameManager manager) {
-        return new MissileWeaponHandler(toHit, waa, game, manager);
-    }
-
-    @Override
     public int getBattleForceClass() {
-        return BFCLASS_TORP;
+        return BF_CLASS_TORPEDO;
     }
 
     @Override
@@ -139,7 +130,7 @@ public abstract class LRTWeapon extends MissileWeapon {
 
     @Override
     public String getSortingName() {
-        String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
+        String oneShotTag = hasFlag(F_ONE_SHOT) ? "OS " : "";
         if (name.contains("I-OS")) {
             oneShotTag = "XIOS ";
         }

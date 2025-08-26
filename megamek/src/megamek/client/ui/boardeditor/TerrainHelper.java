@@ -34,7 +34,7 @@ package megamek.client.ui.boardeditor;
 
 import java.util.Objects;
 
-import megamek.common.Terrains;
+import megamek.common.units.Terrains;
 
 /**
  * Class to make terrains in JComboBoxes easier. This enables keeping the terrain type int separate from the name that

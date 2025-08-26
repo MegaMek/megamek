@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,8 +37,20 @@ package megamek.common.actions;
 import java.io.Serial;
 
 import megamek.client.ui.Messages;
-import megamek.common.*;
+import megamek.common.CriticalSlot;
+import megamek.common.Hex;
+import megamek.common.ToHitData;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.Mek;
+import megamek.common.units.Targetable;
+import megamek.common.units.Terrains;
 
 /**
  * The attacker pushes the target.
@@ -56,7 +68,13 @@ public class PushAttackAction extends DisplacementAttackAction {
     }
 
     public ToHitData toHit(Game game) {
-        return toHit(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()));
+        Targetable target = game.getTarget(getTargetType(), getTargetId());
+
+        if (target == null) {
+            return null;
+        }
+
+        return toHit(game, getEntityId(), target);
     }
 
     /**
@@ -76,7 +94,8 @@ public class PushAttackAction extends DisplacementAttackAction {
         }
 
         // can't push if carrying any cargo per TW
-        if ((attacker instanceof Mek mek) && !(mek.canFireWeapon(Mek.LOC_LARM) || mek.canFireWeapon(Mek.LOC_RARM))) {
+        if ((attacker instanceof Mek mek) && !(mek.canFireWeapon(Mek.LOC_LEFT_ARM)
+              || mek.canFireWeapon(Mek.LOC_RIGHT_ARM))) {
             return Messages.getString("WeaponAttackAction.CantFireWhileCarryingCargo");
         }
 
@@ -166,13 +185,13 @@ public class PushAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is a passenger.");
         }
 
-        // Can't target a entity conducting a swarm attack.
+        // Can't target an entity conducting a swarm attack.
         if (Entity.NONE != te.getSwarmTargetId()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is swarming a Mek.");
         }
 
         // check if both arms are present
-        if (ae.isLocationBad(Mek.LOC_RARM) || ae.isLocationBad(Mek.LOC_LARM)) {
+        if (ae.isLocationBad(Mek.LOC_RIGHT_ARM) || ae.isLocationBad(Mek.LOC_LEFT_ARM)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
         }
 
@@ -182,7 +201,7 @@ public class PushAttackAction extends DisplacementAttackAction {
         }
 
         // check if attacker has fired arm-mounted weapons
-        if (ae.weaponFiredFrom(Mek.LOC_RARM) || ae.weaponFiredFrom(Mek.LOC_LARM)) {
+        if (ae.weaponFiredFrom(Mek.LOC_RIGHT_ARM) || ae.weaponFiredFrom(Mek.LOC_LEFT_ARM)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Weapons fired from arm this turn");
         }
 
@@ -285,10 +304,10 @@ public class PushAttackAction extends DisplacementAttackAction {
         toHit.append(Compute.getTargetTerrainModifier(game, te, 0, inSameBuilding));
 
         // damaged or missing actuators
-        if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RARM)) {
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RIGHT_ARM)) {
             toHit.addModifier(2, "Right Shoulder destroyed");
         }
-        if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LARM)) {
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LEFT_ARM)) {
             toHit.addModifier(2, "Left Shoulder destroyed");
         }
 
@@ -320,8 +339,10 @@ public class PushAttackAction extends DisplacementAttackAction {
         // sensor hits...
         // It gets a =4 penalty for being blind!
         if (((Mek) ae).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
-            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
-            int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_CT);
+            int sensorHits = ae.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
+            int sensorHits2 = ae.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM,
+                  Mek.SYSTEM_SENSORS,
+                  Mek.LOC_CENTER_TORSO);
             if ((sensorHits + sensorHits2) == 3) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Sensors Completely Destroyed for Torso-Mounted Cockpit");
             } else if (sensorHits == 2) {
@@ -330,7 +351,7 @@ public class PushAttackAction extends DisplacementAttackAction {
         }
 
         // Attacking Weight Class Modifier.
-        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_PHYSICAL_ATTACK_PSR)) {
             if (ae.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) {
                 toHit.addModifier(-2, "Weight Class Attack Modifier");
             } else if (ae.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,7 +34,13 @@
 
 package megamek.common.weapons.c3;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.weapons.tag.TAGWeapon;
 
 /**
@@ -42,6 +48,7 @@ import megamek.common.weapons.tag.TAGWeapon;
  * @since Sep 7, 2005
  */
 public class ISC3M extends TAGWeapon {
+    @Serial
     private static final long serialVersionUID = -8367068184993071837L;
 
     public ISC3M() {
@@ -53,9 +60,9 @@ public class ISC3M extends TAGWeapon {
         addLookupName("ISC3MasterComputer");
         addLookupName("C3 Computer [Master]");
         tonnage = 5;
-        criticals = 5;
-        tankslots = 1;
-        svslots = 1;
+        criticalSlots = 5;
+        tankSlots = 1;
+        svSlots = 1;
         hittable = true;
         spreadable = false;
         cost = 1500000;

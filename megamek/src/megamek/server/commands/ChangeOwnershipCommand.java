@@ -36,7 +36,7 @@ package megamek.server.commands;
 import java.util.List;
 
 import megamek.client.ui.Messages;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.Player;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;

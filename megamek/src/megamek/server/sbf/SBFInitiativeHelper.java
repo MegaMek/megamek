@@ -40,13 +40,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import megamek.common.AbstractGame;
-import megamek.common.Deployable;
-import megamek.common.InGameObject;
+import megamek.common.game.AbstractGame;
+import megamek.common.units.Deployable;
+import megamek.common.game.InGameObject;
 import megamek.common.Player;
 import megamek.common.Team;
 import megamek.common.enums.GamePhase;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFFormationTurn;
 import megamek.common.strategicBattleSystems.SBFInitiativeRollReportEntry;

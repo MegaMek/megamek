@@ -39,8 +39,24 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.LosEffects;
+import megamek.common.Report;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.Minefield;
+import megamek.common.equipment.MiscType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.Roll;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -195,7 +211,7 @@ public class ServerHelper {
      * Loops through all active entities in the game and performs mine detection
      */
     public static void detectMinefields(Game game, Vector<Report> vPhaseReport, TWGameManager gameManager) {
-        boolean tacOpsBap = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP);
+        boolean tacOpsBap = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_BAP);
 
         // if the entity is on the board
         // and it either a) hasn't moved or b) we're not using TacOps BAP rules

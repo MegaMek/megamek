@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,21 +34,25 @@
 
 package megamek.common.weapons.lasers;
 
+import static megamek.common.game.IGame.LOGGER;
+
+import java.io.Serial;
 import java.util.Collections;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IGameOptions;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.EnergyWeaponHandler;
-import megamek.common.weapons.InsulatedLaserWeaponHandler;
-import megamek.common.weapons.PulseLaserWeaponHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.EnergyWeaponHandler;
+import megamek.common.weapons.handlers.InsulatedLaserWeaponHandler;
+import megamek.common.weapons.handlers.PulseLaserWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -56,6 +60,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sep 2, 2004
  */
 public abstract class LaserWeapon extends EnergyWeapon {
+    @Serial
     private static final long serialVersionUID = -9210696480919833245L;
 
     public LaserWeapon() {
@@ -115,16 +120,23 @@ public abstract class LaserWeapon extends EnergyWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    @Nullable
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
-        Mounted<?> linkedBy = waa.getEntity(game).getEquipment(waa.getWeaponId()).getLinkedBy();
-        if ((linkedBy != null) && !linkedBy.isInoperable()) {
-            if (linkedBy.getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
-                return new InsulatedLaserWeaponHandler(toHit, waa, game, manager);
-            } else if (linkedBy.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                return new PulseLaserWeaponHandler(toHit, waa, game, manager);
+        try {
+            Mounted<?> linkedBy = waa.getEntity(game).getEquipment(waa.getWeaponId()).getLinkedBy();
+            if ((linkedBy != null) && !linkedBy.isInoperable()) {
+                if (linkedBy.getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
+                    return new InsulatedLaserWeaponHandler(toHit, waa, game, manager);
+                } else if (linkedBy.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                    return new PulseLaserWeaponHandler(toHit, waa, game, manager);
+                }
             }
+
+            return new EnergyWeaponHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
         }
-        return new EnergyWeaponHandler(toHit, waa, game, manager);
+        return null;
     }
 }

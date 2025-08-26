@@ -64,13 +64,29 @@ import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.IndexedRadioButton;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.MekPanelTabStrip;
-import megamek.common.*;
+import megamek.common.ToHitData;
 import megamek.common.actions.*;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeArc;
 import megamek.common.enums.AimingMode;
+import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.game.GameTurn;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.turns.CounterGrappleTurn;
+import megamek.common.units.BipedMek;
+import megamek.common.units.BuildingTarget;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadMek;
+import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
 
 public class PhysicalDisplay extends AttackPhaseDisplay {
@@ -421,7 +437,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             return;
         }
 
-        if ((ce() != null) && ce().isWeapOrderChanged()) {
+        if ((ce() != null) && ce().isWeaponOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }
 
@@ -577,7 +593,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         removeAllAttacks();
         // close aimed shot display, if any
         ash.closeDialog();
-        if (ce().isWeapOrderChanged()) {
+        if (ce().isWeaponOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }
         endMyTurn();
@@ -656,24 +672,24 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             if ((en instanceof Mek)
                   && (target instanceof Entity)
                   && game.getOptions()
-                  .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RETRACTABLE_BLADES)
+                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES)
                   && (leftArm.getValue() != TargetRoll.IMPOSSIBLE)
-                  && ((Mek) ce()).hasRetractedBlade(Mek.LOC_LARM)) {
+                  && ((Mek) ce()).hasRetractedBlade(Mek.LOC_LEFT_ARM)) {
                 leftBladeExtend = clientgui.doYesNoDialog(
                       Messages.getString("PhysicalDisplay.ExtendBladeDialog.title"),
                       Messages.getString("PhysicalDisplay.ExtendBladeDialog.message",
-                            ce().getLocationName(Mek.LOC_LARM)));
+                            ce().getLocationName(Mek.LOC_LEFT_ARM)));
             }
             if ((en instanceof Mek)
                   && (target instanceof Entity)
                   && (rightArm.getValue() != TargetRoll.IMPOSSIBLE)
                   && game.getOptions()
-                  .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RETRACTABLE_BLADES)
-                  && ((Mek) en).hasRetractedBlade(Mek.LOC_RARM)) {
+                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES)
+                  && ((Mek) en).hasRetractedBlade(Mek.LOC_RIGHT_ARM)) {
                 rightBladeExtend = clientgui.doYesNoDialog(
                       Messages.getString("PhysicalDisplay.ExtendBladeDialog" + ".title"),
                       Messages.getString("PhysicalDisplay.ExtendBladeDialog.message",
-                            en.getLocationName(Mek.LOC_RARM)));
+                            en.getLocationName(Mek.LOC_RIGHT_ARM)));
             }
 
             boolean zweihandering = false;
@@ -843,16 +859,16 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
         if (game.getEntity(currentEntity) instanceof QuadMek) {
             rightRearLeg = KickAttackAction.toHit(clientgui.getClient()
-                  .getGame(), currentEntity, target, KickAttackAction.RIGHTMULE);
+                  .getGame(), currentEntity, target, KickAttackAction.RIGHT_MULE);
             leftRearLeg = KickAttackAction.toHit(clientgui.getClient()
-                  .getGame(), currentEntity, target, KickAttackAction.LEFTMULE);
+                  .getGame(), currentEntity, target, KickAttackAction.LEFT_MULE);
             if (value > rightRearLeg.getValue()) {
                 value = rightRearLeg.getValue();
-                attackSide = KickAttackAction.RIGHTMULE;
+                attackSide = KickAttackAction.RIGHT_MULE;
                 attackLeg = rightRearLeg;
             }
             if (value > leftRearLeg.getValue()) {
-                attackSide = KickAttackAction.LEFTMULE;
+                attackSide = KickAttackAction.LEFT_MULE;
                 attackLeg = leftRearLeg;
             }
         }
@@ -1291,7 +1307,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
 
         // Build the rest of the warning string.
         // Use correct text when the target is an iNarc pod.
-        if (Targetable.TYPE_INARC_POD == target.getTargetType()) {
+        if (Targetable.TYPE_I_NARC_POD == target.getTargetType()) {
             warn.append(Messages.getString("PhysicalDisplay.brushOff1", target));
         } else {
             warn.append(Messages.getString("PhysicalDisplay.brushOff2"));
@@ -1485,7 +1501,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         if ((currentEntity != Entity.NONE) &&
               ce().equals(clientgui.getUnitDisplay().getCurrentEntity()) &&
               (target != null)) {
-            if (target.getTargetType() != Targetable.TYPE_INARC_POD) {
+            if (target.getTargetType() != Targetable.TYPE_I_NARC_POD) {
                 // punch?
                 final ToHitData leftArm = PunchAttackAction.toHit(clientgui.getClient().getGame(),
                       currentEntity,
@@ -1515,11 +1531,11 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                 ToHitData rightRearLeg = KickAttackAction.toHit(clientgui.getClient().getGame(),
                       currentEntity,
                       target,
-                      KickAttackAction.RIGHTMULE);
+                      KickAttackAction.RIGHT_MULE);
                 ToHitData leftRearLeg = KickAttackAction.toHit(clientgui.getClient().getGame(),
                       currentEntity,
                       target,
-                      KickAttackAction.LEFTMULE);
+                      KickAttackAction.LEFT_MULE);
                 canKick |= (leftRearLeg.getValue() != TargetRoll.IMPOSSIBLE) ||
                       (rightRearLeg.getValue() != TargetRoll.IMPOSSIBLE);
 

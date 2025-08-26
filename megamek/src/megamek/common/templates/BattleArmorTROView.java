@@ -38,18 +38,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityWeightClass;
-import megamek.common.EquipmentType;
 import megamek.common.Messages;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
 import megamek.common.TechConstants;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.EntityWeightClass;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
-import megamek.common.weapons.InfantryAttack;
+import megamek.common.weapons.attacks.InfantryAttack;
 
 /**
  * Creates a TRO template model for BattleArmor.
@@ -108,14 +108,14 @@ public class BattleArmorTROView extends TROView {
             setModelData("jumpMass", testBA.getWeightSecondaryMotiveSystem() * 1000);
         }
         final List<Map<String, Object>> manipulators = new ArrayList<>();
-        manipulators.add(formatManipulatorRow(BattleArmor.MOUNT_LOC_LARM, ba.getLeftManipulator()));
-        manipulators.add(formatManipulatorRow(BattleArmor.MOUNT_LOC_RARM, ba.getRightManipulator()));
+        manipulators.add(formatManipulatorRow(BattleArmor.MOUNT_LOC_LEFT_ARM, ba.getLeftManipulator()));
+        manipulators.add(formatManipulatorRow(BattleArmor.MOUNT_LOC_RIGHT_ARM, ba.getRightManipulator()));
         setModelData("manipulators", manipulators);
         final String armorName = EquipmentType.getArmorTypeName(ba.getArmorType(BattleArmor.LOC_TROOPER_1),
               TechConstants.isClan(ba.getArmorTechLevel(BattleArmor.LOC_TROOPER_1)));
         final EquipmentType armor = EquipmentType.get(armorName);
         setModelData("armorType", armor == null ? "Unknown" : armor.getName().replaceAll("^BA\\s+", ""));
-        setModelData("armorSlots", armor == null ? 0 : armor.getCriticals(ba));
+        setModelData("armorSlots", armor == null ? 0 : armor.getNumCriticalSlots(ba));
         setModelData("armorMass", testBA.getWeightArmor() * 1000);
         setModelData("armorValue", ba.getOArmor(BattleArmor.LOC_TROOPER_1));
         setModelData("internal", ba.getOInternal(BattleArmor.LOC_TROOPER_1));
@@ -184,7 +184,7 @@ public class BattleArmorTROView extends TROView {
             if (name.length() >= nameWidth) {
                 nameWidth = name.length() + 1;
             }
-            row.put("slots", m.getCriticals());
+            row.put("slots", m.getNumCriticalSlots());
             if (m.getType() instanceof AmmoType) {
                 row.put("mass", ((AmmoType) m.getType()).getKgPerShot() * m.getOriginalShots());
             } else {

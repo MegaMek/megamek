@@ -35,7 +35,7 @@ package megamek.server.props;
 
 import java.util.List;
 
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 
 /**
  * Represents an orbital bombardment event. x and y are board positions, damageFactor is the damage at impact point

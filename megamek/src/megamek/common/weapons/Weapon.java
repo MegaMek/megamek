@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,19 +34,26 @@
 
 package megamek.common.weapons;
 
+import static megamek.common.game.IGame.LOGGER;
+
+import java.io.Serial;
 import java.io.Serializable;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
-import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
-import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.bayweapons.CapitalLaserBayWeapon;
-import megamek.common.weapons.bayweapons.SubCapLaserBayWeapon;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.weapons.bayWeapons.capital.CapitalLaserBayWeapon;
+import megamek.common.weapons.bayWeapons.subCapital.SubCapLaserBayWeapon;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.WeaponHandler;
+import megamek.common.weapons.handlers.lrm.LRMSwarmHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -56,6 +63,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since May 10, 2004
  */
 public abstract class Weapon extends WeaponType implements Serializable {
+    @Serial
     private static final long serialVersionUID = -8781224279449654544L;
 
     public Weapon() {
@@ -111,19 +119,24 @@ public abstract class Weapon extends WeaponType implements Serializable {
     public static final String MODE_NORMAL = "Normal";
 
 
-    public @Nullable AttackHandler fire(WeaponAttackAction waa, Game game, TWGameManager gameManager) {
-        ToHitData toHit = waa.toHit(game);
-        // FIXME: SUPER DUPER EVIL HACK: swarm missile handlers must be returned even
-        // if the have an impossible to hit, because there might be other targets
-        // someone else please please figure out how to do this nice
-        AttackHandler ah = getCorrectHandler(toHit, waa, game, gameManager);
-        return (ah instanceof LRMSwarmHandler) ? ah
-              : (toHit.getValue() == TargetRoll.IMPOSSIBLE) ? null : ah;
+    public @Nullable AttackHandler fire(WeaponAttackAction weaponAttackAction, Game game, TWGameManager gameManager) {
+        ToHitData toHit = weaponAttackAction.toHit(game);
+        // FIXME: SUPER DUPER EVIL HACK: swarm missile handlers must be returned even if the have an impossible to
+        //  hit, because there might be other targets someone else please please figure out how to do this nice
+        AttackHandler attackHandler = getCorrectHandler(toHit, weaponAttackAction, game, gameManager);
+        return (attackHandler instanceof LRMSwarmHandler) ? attackHandler
+              : (toHit.getValue() == TargetRoll.IMPOSSIBLE) ? null : attackHandler;
     }
 
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    @Nullable
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager gameManager) {
-        return new WeaponHandler(toHit, waa, game, gameManager);
+        try {
+            return new WeaponHandler(toHit, waa, game, gameManager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
     }
 
     /**
@@ -155,7 +168,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
 
                 if ((this instanceof CapitalLaserBayWeapon)
                       || (this instanceof SubCapLaserBayWeapon)) {
-                    if (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AAA_LASER)) {
+                    if (gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_AAA_LASER)) {
                         addMode("");
                         addMode("AAA");
                         addEndTurnMode("AAA");
@@ -163,7 +176,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
                         removeMode("AAA");
                     }
                 }
-                if (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BRACKET_FIRE)) {
+                if (gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_BRACKET_FIRE)) {
                     addMode("");
                     addMode("Bracket 80%");
                     addMode("Bracket 60%");
@@ -185,11 +198,11 @@ public abstract class Weapon extends WeaponType implements Serializable {
                     addMode(MODE_CAP_MISSILE_TELE_OPERATED);
                 }
 
-                if (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH)) {
+                if (gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_WAYPOINT_LAUNCH)) {
                     setInstantModeSwitch(true);
                     addMode(MODE_NORMAL);
                     addMode(MODE_CAP_MISSILE_WAYPOINT);
-                    if (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
+                    if (gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
                         addMode(MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT);
                         addMode(MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG);
                         addMode(MODE_CAP_MISSILE_WAYPOINT_BEARING_MED);
@@ -204,7 +217,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
                     removeMode(MODE_CAP_MISSILE_WAYPOINT);
                 }
 
-                if (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
+                if (gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
                     setInstantModeSwitch(true);
                     addMode(MODE_NORMAL);
                     addMode(MODE_CAP_MISSILE_BEARING_EXT);
@@ -221,7 +234,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
         }
 
         if (hasFlag(WeaponType.F_AMS)) {
-            if (gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)) {
+            if (gameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_MANUAL_AMS)) {
                 addMode(Weapon.MODE_AMS_MANUAL);
             }
             if (gameOptions.booleanOption(OptionsConstants.BASE_AUTO_AMS)) {

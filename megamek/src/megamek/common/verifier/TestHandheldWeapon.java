@@ -36,13 +36,13 @@ package megamek.common.verifier;
 import java.util.HashSet;
 import java.util.Set;
 
-import megamek.common.AmmoType;
-import megamek.common.AmmoType.AmmoTypeEnum;
-import megamek.common.Entity;
-import megamek.common.HandheldWeapon;
-import megamek.common.MiscType;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.AmmoType.AmmoTypeEnum;
+import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.MiscType;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class TestHandheldWeapon extends TestEntity {
@@ -136,7 +136,7 @@ public class TestHandheldWeapon extends TestEntity {
         }
         if (hhw.getMiscEquipment(MiscType.F_CLUB).isEmpty()) {
             var items = hhw.getEquipment().stream()
-                  // Ammo and weapon enhancements (artemis, ppc capacitors, etc) don't count towards the
+                  // Ammo and weapon enhancements (artemis, ppc capacitors, etc.) don't count towards the
                   // item limit
                   .filter(m -> !(m.getType() instanceof AmmoType) && !(m instanceof MiscMounted && m.getType()
                         .hasFlag(MiscType.F_WEAPON_ENHANCEMENT)))

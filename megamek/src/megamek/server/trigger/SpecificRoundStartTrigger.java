@@ -33,7 +33,7 @@
 
 package megamek.server.trigger;
 
-import megamek.common.IGame;
+import megamek.common.game.IGame;
 
 /**
  * This Trigger reacts at the start of the specified game round. Note that this Trigger can react multiple times!

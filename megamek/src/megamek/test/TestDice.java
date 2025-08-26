@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,7 +32,7 @@
  */
 package megamek.test;
 
-import megamek.common.Compute;
+import megamek.common.compute.Compute;
 
 public class TestDice {
 
@@ -45,7 +45,7 @@ public class TestDice {
 
         long start = System.currentTimeMillis();
         for (long i = 0; i < rolls; i++) {
-            hits[megamek.common.Compute.d6(2) - 2]++;
+            hits[Compute.d6(2) - 2]++;
         }
         long end = System.currentTimeMillis();
 

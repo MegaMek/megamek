@@ -52,13 +52,13 @@ import megamek.client.ui.dialogs.phaseDisplay.MineDensityDialog;
 import megamek.client.ui.dialogs.phaseDisplay.SeaMineDepthDialog;
 import megamek.client.ui.dialogs.phaseDisplay.VibrabombSettingDialog;
 import megamek.client.ui.widget.MegaMekButton;
-import megamek.common.Coords;
-import megamek.common.Game;
+import megamek.common.board.Coords;
+import megamek.common.game.Game;
 import megamek.common.Hex;
-import megamek.common.ICarryable;
-import megamek.common.Minefield;
+import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.Minefield;
 import megamek.common.Player;
-import megamek.common.Terrains;
+import megamek.common.units.Terrains;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 

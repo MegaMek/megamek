@@ -42,9 +42,9 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.StraightArrowPolygon;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
+import megamek.common.compute.Compute;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
 
 /**
  * Sprite and info for movement vector (AT2 advanced movement). Does not actually use the image buffer as this can be

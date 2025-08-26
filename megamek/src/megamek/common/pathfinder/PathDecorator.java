@@ -38,15 +38,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import megamek.common.Board;
 import megamek.common.BulldozerMovePath;
-import megamek.common.Coords;
-import megamek.common.EntityMovementMode;
 import megamek.common.Hex;
-import megamek.common.Terrains;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.enums.MoveStepType;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.pathfinder.LongestPathFinder.MovePathMinefieldAvoidanceMinMPMaxDistanceComparator;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Terrains;
 
 /**
  * This class contains functionality that takes a given path and generates a list of child paths that go up to
@@ -83,7 +83,7 @@ public class PathDecorator {
         MovePath clippedSource = source.clone();
         clippedSource.clipToPossible();
 
-        // jumping move paths are pretty easy to clip
+        // jumping to move paths are pretty easy to clip
         // there are two interesting MP amounts - current jump MP and jump MP without "bonus" for low gravity.
         Set<Integer> desiredMPs = new HashSet<>();
         desiredMPs.add(source.getCachedEntityState().getJumpMP());
@@ -130,9 +130,9 @@ public class PathDecorator {
 
         Set<Integer> desiredMPs = new HashSet<>();
         desiredMPs.add(source.getCachedEntityState().getSprintMP());
-        desiredMPs.add(source.getCachedEntityState().getSprintMPwithoutMASC());
+        desiredMPs.add(source.getCachedEntityState().getSprintMPWithoutMASC());
         desiredMPs.add(source.getCachedEntityState().getRunMP());
-        desiredMPs.add(source.getCachedEntityState().getRunMPwithoutMASC());
+        desiredMPs.add(source.getCachedEntityState().getRunMPWithoutMASC());
         desiredMPs.add(source.getCachedEntityState().getRunMPNoGravity());
         desiredMPs.add(source.getCachedEntityState().getWalkMP());
 
@@ -198,7 +198,7 @@ public class PathDecorator {
             return;
         }
 
-        // If the unit cannot go up in it's current hex, nothing can be done
+        // If the unit cannot go up in its current hex, nothing can be done
         int entityElevation = source.getFinalElevation();
         boolean canGoUp = source.getEntity()
               .canGoUp(entityElevation, source.getFinalCoords(), source.getFinalBoardId());

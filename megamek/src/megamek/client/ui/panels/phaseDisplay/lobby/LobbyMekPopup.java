@@ -63,12 +63,27 @@ import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.util.MenuScroller;
 import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.*;
+import megamek.common.Player;
+import megamek.common.battleArmor.ProtoMekClampMount;
+import megamek.common.bays.Bay;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.Transporter;
+import megamek.common.equipment.WeaponType;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.game.Game;
 import megamek.common.icons.Camouflage;
+import megamek.common.interfaces.ForceAssignable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.FighterSquadron;
+import megamek.common.units.Jumpship;
+import megamek.common.units.ProtoMek;
 import megamek.common.util.C3Util;
 import megamek.logging.MMLogger;
 
@@ -147,9 +162,9 @@ class LobbyMekPopup {
         Game game = lobby.game();
         var opts = game.getOptions();
 
-        boolean optBurstMG = opts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST);
-        boolean optLRMHotLoad = opts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD);
-        boolean optCapFighters = opts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER);
+        boolean optBurstMG = opts.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BURST);
+        boolean optLRMHotLoad = opts.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HOT_LOAD);
+        boolean optCapFighters = opts.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_CAPITAL_FIGHTER);
 
         // A set of all selected entities and all entities in selected forces and their
         // subForces
@@ -543,7 +558,7 @@ class LobbyMekPopup {
             menu.add(menuItem("Standing", LMP_STAND + "|" + LMP_STAND + eIds, true, listener));
             menu.add(menuItem("Prone", LMP_STAND + "|" + LMP_PRONE + eIds, true, listener));
             if (clientGui.getClient().getGame().getOptions()
-                  .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN)) {
+                  .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN)) {
                 menu.add(menuItem("Hull-Down", LMP_STAND + "|" + LMP_HULL_DOWN + eIds, true, listener));
             }
             menu.add(ScalingPopup.spacer());
@@ -980,7 +995,7 @@ class LobbyMekPopup {
     private static boolean hasRapidFireMG(Entity entity) {
         for (Mounted<?> m : entity.getWeaponList()) {
             EquipmentType etype = m.getType();
-            if (etype.hasFlag(WeaponType.F_MG) && m.isRapidfire()) {
+            if (etype.hasFlag(WeaponType.F_MG) && m.isRapidFire()) {
                 return true;
             }
         }
@@ -991,7 +1006,7 @@ class LobbyMekPopup {
     private static boolean hasNormalFireMG(Entity entity) {
         for (Mounted<?> m : entity.getWeaponList()) {
             EquipmentType etype = m.getType();
-            if (etype.hasFlag(WeaponType.F_MG) && !m.isRapidfire()) {
+            if (etype.hasFlag(WeaponType.F_MG) && !m.isRapidFire()) {
                 return true;
             }
         }

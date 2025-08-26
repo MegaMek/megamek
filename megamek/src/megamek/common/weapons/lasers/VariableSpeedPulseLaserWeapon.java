@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,11 +34,17 @@
 
 package megamek.common.weapons.lasers;
 
-import megamek.common.Game;
+import static megamek.common.game.IGame.LOGGER;
+
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.VariableSpeedPulseLaserWeaponHandler;
+import megamek.common.annotations.Nullable;
+import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.VariableSpeedPulseLaserWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -46,6 +52,7 @@ import megamek.server.totalwarfare.TWGameManager;
  */
 public class VariableSpeedPulseLaserWeapon extends LaserWeapon {
 
+    @Serial
     private static final long serialVersionUID = -731162221147163665L;
 
     public VariableSpeedPulseLaserWeapon() {
@@ -56,9 +63,16 @@ public class VariableSpeedPulseLaserWeapon extends LaserWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    @Nullable
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
-        return new VariableSpeedPulseLaserWeaponHandler(toHit, waa, game, manager);
+        try {
+            return new VariableSpeedPulseLaserWeaponHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
+
     }
 
     @Override

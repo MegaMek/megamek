@@ -34,11 +34,14 @@
 
 package megamek.common.actions;
 
+import java.io.Serial;
+
 /**
  * Disengagement action for offboard artillery
  */
 public class DisengageAction extends AbstractEntityAction {
 
+    @Serial
     private static final long serialVersionUID = 1377645828083097957L;
 
     public DisengageAction(int entityId) {

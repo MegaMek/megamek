@@ -48,9 +48,9 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.TipList;
 import megamek.client.ui.util.UIUtil.TipTextField;
-import megamek.common.Board;
-import megamek.common.Building;
-import megamek.common.Coords;
+import megamek.common.board.Board;
+import megamek.common.units.Building;
+import megamek.common.board.Coords;
 import megamek.common.annotations.Nullable;
 import megamek.server.ServerBoardHelper;
 

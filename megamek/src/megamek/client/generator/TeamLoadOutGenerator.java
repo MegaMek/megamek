@@ -42,14 +42,31 @@ import java.util.*;
 
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ui.dialogs.unitSelectorDialogs.AbstractUnitSelectorDialog;
-import megamek.common.*;
-import megamek.common.BombType.BombTypeEnum;
-import megamek.common.ITechnology.Faction;
+import megamek.common.SimpleTechLevel;
+import megamek.common.Team;
+import megamek.common.TechConstants;
+import megamek.common.compute.Compute;
 import megamek.common.containers.MunitionTree;
+import megamek.common.enums.Faction;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.BombLoadout;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.enums.BombType;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
+import megamek.common.game.Game;
+import megamek.common.loaders.MapSettings;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.BTObject;
+import megamek.common.units.Entity;
+import megamek.common.units.IBomber;
+import megamek.common.units.Mek;
+import megamek.common.units.Targetable;
+import megamek.common.units.UnitRole;
 import megamek.logging.MMLogger;
 
 /**
@@ -372,10 +389,10 @@ public class TeamLoadOutGenerator {
     public void updateOptionValues(GameOptions gameOpts) {
         gameOptions = gameOpts;
         allowedYear = gameOptions.intOption(OptionsConstants.ALLOWED_YEAR);
-        gameTechLevel = TechConstants.getSimpleLevel(gameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
+        gameTechLevel = TechConstants.getSimpleLevel(gameOptions.stringOption(OptionsConstants.ALLOWED_TECH_LEVEL));
         legalLevel = SimpleTechLevel.getGameTechLevel(game);
         eraBasedTechLevel = gameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED);
-        advAeroRules = gameOptions.booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS);
+        advAeroRules = gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_ARTILLERY_MUNITIONS);
         showExtinct = gameOptions.booleanOption((OptionsConstants.ALLOWED_SHOW_EXTINCT));
     }
 
@@ -415,7 +432,7 @@ public class TeamLoadOutGenerator {
 
         // Nukes are not allowed... unless they are!
         legal &= (!aType.hasFlag(AmmoType.F_NUCLEAR) ||
-              gameOptions.booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES));
+              gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AT2_NUKES));
 
         return legal;
     }
@@ -1261,7 +1278,7 @@ public class TeamLoadOutGenerator {
     private void iterativelyLoadAmmo(Entity e, MunitionTree mt, List<AmmoMounted> binList, String binName,
           String techBase, String faction) {
         // Copy counts that we will update, otherwise mt entry gets edited permanently.
-        HashMap<String, Integer> counts = new HashMap<>(mt.getCountsOfAmmosForKey(e.getFullChassis(),
+        HashMap<String, Integer> counts = new HashMap<>(mt.getCountsOfAmmunitionForKey(e.getFullChassis(),
               e.getModel(),
               e.getCrew().getName(0),
               binName));

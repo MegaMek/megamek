@@ -40,7 +40,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import megamek.common.EntityMovementMode;
+import megamek.common.units.EntityMovementMode;
 import megamek.logging.MMLogger;
 
 /**

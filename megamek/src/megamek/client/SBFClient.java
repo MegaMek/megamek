@@ -39,8 +39,8 @@ import java.util.List;
 import java.util.Objects;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.common.ForceAssignable;
-import megamek.common.InGameObject;
+import megamek.common.interfaces.ForceAssignable;
+import megamek.common.game.InGameObject;
 import megamek.common.Report;
 import megamek.common.actions.EntityAction;
 import megamek.common.force.Forces;

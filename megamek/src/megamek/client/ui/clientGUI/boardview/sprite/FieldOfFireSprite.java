@@ -47,7 +47,7 @@ import java.awt.image.ImageObserver;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 import megamek.common.RangeType;
 
 /**

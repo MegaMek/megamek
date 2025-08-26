@@ -38,7 +38,7 @@ import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.FieldOfFireSprite;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 
 public class FleeZoneSpriteHandler extends BoardViewSpriteHandler {
 

@@ -47,7 +47,7 @@ import javax.swing.JLabel;
 
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.common.MekSummaryCache;
+import megamek.common.loaders.MekSummaryCache;
 
 public class UnitLoadingDialog extends JDialog {
     @Serial

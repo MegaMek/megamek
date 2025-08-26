@@ -39,9 +39,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.IGame;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
+import megamek.common.game.IGame;
 import megamek.common.Player;
 import megamek.common.Report;
 

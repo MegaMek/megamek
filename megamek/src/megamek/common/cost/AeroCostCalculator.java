@@ -34,7 +34,7 @@
 package megamek.common.cost;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.Aero;
+import megamek.common.units.Aero;
 import megamek.common.equipment.ArmorType;
 
 public class AeroCostCalculator {

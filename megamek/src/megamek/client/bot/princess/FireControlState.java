@@ -38,8 +38,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.Entity;
-import megamek.common.Targetable;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 
 /**
  * This class is a data structure meant to hold Fire Control related state, to keep the FireControl class relatively

@@ -33,9 +33,9 @@
  */
 package megamek.client.bot.princess;
 
-import static megamek.common.AmmoType.FLARE_MUNITIONS;
-import static megamek.common.AmmoType.MINE_MUNITIONS;
-import static megamek.common.AmmoType.SMOKE_MUNITIONS;
+import static megamek.common.equipment.AmmoType.FLARE_MUNITIONS;
+import static megamek.common.equipment.AmmoType.MINE_MUNITIONS;
+import static megamek.common.equipment.AmmoType.SMOKE_MUNITIONS;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -46,19 +46,36 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.HexTarget;
+import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.TechBase;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.BombLoadout;
 import megamek.common.equipment.BombMounted;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.BombType;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.AreaEffectHelper;
-import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
-import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import megamek.common.units.BuildingTarget;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.Targetable;
+import megamek.common.units.Terrains;
+import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
+import megamek.common.weapons.handlers.AreaEffectHelper;
+import megamek.common.weapons.handlers.DamageFalloff;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.infantry.InfantryWeaponHandler;
 import megamek.logging.MMLogger;
@@ -90,7 +107,7 @@ public class WeaponFireInfo {
     private int damageDirection = -1; // direction damage is coming from relative to target
     private ToHitData toHit = null;
     private double expectedCriticals;
-    private double killProbability; // probability to destroy CT or HEAD (ignores criticals)
+    private double killProbability; // probability to destroy CT or HEAD (ignores criticalSlots)
     private Game game;
     private EntityState shooterState = null;
     private EntityState targetState = null;
@@ -107,10 +124,10 @@ public class WeaponFireInfo {
     /**
      * Basic constructor.
      *
-     * @param shooter The {@link megamek.common.Entity} doing the attacking.
-     * @param target  The {@link megamek.common.Targetable} of the attack.
-     * @param weapon  The {@link megamek.common.Mounted} weapon used for the attack.
-     * @param ammo    The {@link megamek.common.Mounted} ammo to use for the attack; may be null.
+     * @param shooter The {@link Entity} doing the attacking.
+     * @param target  The {@link Targetable} of the attack.
+     * @param weapon  The {@link Mounted} weapon used for the attack.
+     * @param ammo    The {@link Mounted} ammo to use for the attack; may be null.
      * @param game    The current {@link Game}
      * @param guess   Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
@@ -127,11 +144,11 @@ public class WeaponFireInfo {
     /**
      * Constructor including the shooter and target's state information.
      *
-     * @param shooter      The {@link megamek.common.Entity} doing the attacking.
+     * @param shooter      The {@link Entity} doing the attacking.
      * @param shooterState The current {@link megamek.client.bot.princess.EntityState} of the attacker.
-     * @param target       The {@link megamek.common.Targetable} of the attack.
+     * @param target       The {@link Targetable} of the attack.
      * @param targetState  The current {@link megamek.client.bot.princess.EntityState} of the target.
-     * @param weapon       The {@link megamek.common.Mounted} weapon used for the attack.
+     * @param weapon       The {@link Mounted} weapon used for the attack.
      * @param game         The current {@link Game}
      * @param guess        Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
@@ -150,11 +167,11 @@ public class WeaponFireInfo {
     /**
      * Constructor for aerospace units performing Strike attacks.
      *
-     * @param shooter               The {@link megamek.common.Entity} doing the attacking.
+     * @param shooter               The {@link Entity} doing the attacking.
      * @param shooterPath           The {@link MovePath} of the attacker.
-     * @param target                The {@link megamek.common.Targetable} of the attack.
+     * @param target                The {@link Targetable} of the attack.
      * @param targetState           The current {@link megamek.client.bot.princess.EntityState} of the target.
-     * @param weapon                The {@link megamek.common.Mounted} weapon used for the attack.
+     * @param weapon                The {@link Mounted} weapon used for the attack.
      * @param game                  The current {@link Game}
      * @param assumeUnderFlightPath Set TRUE for aerial units performing air-to-ground attacks.
      * @param guess                 Set TRUE to estimate the chance to hit rather than doing the full calculation.
@@ -180,12 +197,12 @@ public class WeaponFireInfo {
      * This constructs a WeaponFireInfo using the best guess of how likely an aerospace unit using a strike attack will
      * hit, without actually constructing the {@link WeaponAttackAction}
      *
-     * @param shooter               The {@link megamek.common.Entity} doing the attacking.
+     * @param shooter               The {@link Entity} doing the attacking.
      * @param shooterState          The current {@link megamek.client.bot.princess.EntityState} of the attacker.
      * @param shooterPath           The {@link MovePath} of the attacker.
-     * @param target                The {@link megamek.common.Targetable} of the attack.
+     * @param target                The {@link Targetable} of the attack.
      * @param targetState           The current {@link megamek.client.bot.princess.EntityState} of the target.
-     * @param weapon                The {@link megamek.common.Mounted} weapon used for the attack.
+     * @param weapon                The {@link Mounted} weapon used for the attack.
      * @param game                  The current {@link Game}
      * @param assumeUnderFlightPath Set TRUE for aerial units performing air-to-ground attacks.
      * @param guess                 Set TRUE to estimate the chance to hit rather than going through the full
@@ -439,7 +456,7 @@ public class WeaponFireInfo {
             }
 
             // Handle woods blocking cluster shots
-            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_WOODS_COVER)) {
                 // SRMs, LB-X, Flak AC, AC-2 derivatives, MGs, smaller LRMs,
                 // and Silver Bullet Gauss are among the weapons
                 // that lose all effectiveness if this rule is
@@ -455,7 +472,7 @@ public class WeaponFireInfo {
                           game.getBoard().getHex(target.getPosition()).terrainLevel(Terrains.JUNGLE)
                     );
                     boolean blockedByWoods = (
-                          weapon.getType().getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE
+                          weapon.getType().getDamage() == WeaponType.DAMAGE_BY_CLUSTER_TABLE
                     );
                     blockedByWoods |= weapon.getType().getRackSize() <= woodsLevel
                           || weapon.getType().getDamage() <= woodsLevel;
@@ -481,7 +498,7 @@ public class WeaponFireInfo {
             int bayBuilding = 0;
             for (WeaponMounted bayWeapon : weapon.getBayWeapons()) {
                 WeaponType weaponType = bayWeapon.getType();
-                int maxRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
+                int maxRange = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
                       ? weaponType.getExtremeRange()
                       : weaponType.getLongRange();
                 int targetDistance = getShooter().getPosition().distance(getTarget().getPosition());
@@ -500,7 +517,7 @@ public class WeaponFireInfo {
                             // Rough estimate of collateral damage
                             bayFriendly += weaponType.getRackSize() * 4;
                             bayBuilding += weaponType.getRackSize() * 8;
-                        case WeaponType.DAMAGE_BY_CLUSTERTABLE:
+                        case WeaponType.DAMAGE_BY_CLUSTER_TABLE:
                         case WeaponType.DAMAGE_SPECIAL:
                         case WeaponType.DAMAGE_VARIABLE:
                             bayDamage += weaponType.getRackSize();
@@ -516,14 +533,14 @@ public class WeaponFireInfo {
         // For clan plasma cannon, assume 7 "damage".
         final WeaponType weaponType = weapon.getType();
         if (weaponType.hasFlag(WeaponType.F_PLASMA) &&
-              TechAdvancement.TechBase.CLAN == weaponType.getTechBase()) {
+              TechBase.CLAN == weaponType.getTechBase()) {
             return new double[] { 7D, 0D, 0D };
         }
 
         // artillery and cluster table use the rack size as the base damage amount,
         // but we'll roll an "average" cluster for the given weapon size to estimate
         // damage.
-        if ((weaponType.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) ||
+        if ((weaponType.getDamage() == WeaponType.DAMAGE_BY_CLUSTER_TABLE) ||
               (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY)) {
             // Assume average cluster size for this weapon, unless it has Streak
             // capabilities
@@ -939,7 +956,7 @@ public class WeaponFireInfo {
             int hitLocation = i;
 
             while (targetMek.isLocationBad(hitLocation) &&
-                  (Mek.LOC_CT != hitLocation)) {
+                  (Mek.LOC_CENTER_TORSO != hitLocation)) {
 
                 // Head shots don't travel inward if the head is removed. Instead, a new roll
                 // gets made.
@@ -963,7 +980,7 @@ public class WeaponFireInfo {
             // If the location could be destroyed outright...
             if (getExpectedDamage() > ((targetArmor + targetInternals))) {
                 setExpectedCriticals(getExpectedCriticals() + (hitLocationProbability * getProbabilityToHit()));
-                if (Mek.LOC_CT == hitLocation) {
+                if (Mek.LOC_CENTER_TORSO == hitLocation) {
                     setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
                 } else if ((Mek.LOC_HEAD == hitLocation) &&
                       (Mek.COCKPIT_TORSO_MOUNTED != targetMek.getCockpitType())) {

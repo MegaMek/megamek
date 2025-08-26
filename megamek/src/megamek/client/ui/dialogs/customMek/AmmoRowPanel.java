@@ -32,8 +32,8 @@
  */
 package megamek.client.ui.dialogs.customMek;
 
-import static megamek.common.AmmoType.F_BATTLEARMOR;
-import static megamek.common.AmmoType.F_PROTOMEK;
+import static megamek.common.equipment.AmmoType.F_BATTLEARMOR;
+import static megamek.common.equipment.AmmoType.F_PROTOMEK;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -53,15 +53,15 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import megamek.client.ui.Messages;
-import megamek.common.AmmoType;
-import megamek.common.EquipmentType;
-import megamek.common.ITechnology;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
-import megamek.common.WeaponType;
+import megamek.common.enums.TechBase;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.options.OptionsConstants;
 
 class AmmoRowPanel extends JPanel implements ChangeListener {
@@ -74,7 +74,7 @@ class AmmoRowPanel extends JPanel implements ChangeListener {
     final WeaponMounted bay;
     private final AmmoType.AmmoTypeEnum at;
     private final int rackSize;
-    private final ITechnology.TechBase techBase;
+    private final TechBase techBase;
     final List<AmmoMounted> ammoMounts;
 
     final List<JSpinner> spinners;
@@ -97,7 +97,7 @@ class AmmoRowPanel extends JPanel implements ChangeListener {
         // set the bay's tech base to that of any weapon in the bay
         // an assumption is made here that bays don't mix clan-only and IS-only tech
         // base
-        this.techBase = weaponType.map(EquipmentType::getTechBase).orElse(WeaponType.TechBase.ALL);
+        this.techBase = weaponType.map(EquipmentType::getTechBase).orElse(TechBase.ALL);
 
         munitions = AmmoType.getMunitionsFor(at).stream()
               .filter(this::includeMunition)
@@ -161,24 +161,24 @@ class AmmoRowPanel extends JPanel implements ChangeListener {
     private boolean includeMunition(AmmoType ammoType) {
         if (!ammoType
               .canAeroUse(bayMunitionsChoicePanel.getGame().getOptions()
-                    .booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))
+                    .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_ARTILLERY_MUNITIONS))
               || (ammoType.getAmmoType() != at)
               || (ammoType.getRackSize() != rackSize)
               || ((ammoType.getTechBase() != techBase)
-              && (ammoType.getTechBase() != AmmoType.TechBase.ALL)
-              && (techBase != AmmoType.TechBase.ALL))
+              && (ammoType.getTechBase() != TechBase.ALL)
+              && (techBase != TechBase.ALL))
               || !ammoType.isLegal(bayMunitionsChoicePanel.getGame()
                     .getOptions()
                     .intOption(OptionsConstants.ALLOWED_YEAR),
               SimpleTechLevel.getGameTechLevel(bayMunitionsChoicePanel.getGame()),
-              techBase == AmmoType.TechBase.CLAN,
-              techBase == AmmoType.TechBase.ALL,
+              techBase == TechBase.CLAN,
+              techBase == TechBase.ALL,
               bayMunitionsChoicePanel.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
             return false;
         }
         if (ammoType.hasFlag(AmmoType.F_NUCLEAR)
               && !bayMunitionsChoicePanel.getGame().getOptions().booleanOption(
-              OptionsConstants.ADVAERORULES_AT2_NUKES)) {
+              OptionsConstants.ADVANCED_AERO_RULES_AT2_NUKES)) {
             return false;
         }
         if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE)) {
@@ -235,7 +235,7 @@ class AmmoRowPanel extends JPanel implements ChangeListener {
         }
 
         if (bayMunitionsChoicePanel.getGame().getOptions()
-              .booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS)) {
+              .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_ARTILLERY_MUNITIONS)) {
             if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV
                   || ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LONG_TOM
                   || ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SNIPER

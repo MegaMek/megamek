@@ -34,6 +34,7 @@
 
 package megamek.common.net.events;
 
+import java.io.Serial;
 import java.util.EventObject;
 
 import megamek.common.net.connections.AbstractConnection;
@@ -47,6 +48,7 @@ import megamek.common.net.listeners.ConnectionListener;
  */
 public abstract class AbstractConnectionEvent extends EventObject {
     //region Variable Declarations
+    @Serial
     private static final long serialVersionUID = 6124300183866317006L;
     private final ConnectionEventType type;
     //endregion Variable Declarations

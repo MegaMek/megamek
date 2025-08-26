@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2009-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,7 +40,18 @@ import static megamek.common.options.OptionsConstants.*;
 import java.io.Serial;
 import java.util.List;
 
-import megamek.common.*;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.units.Aero;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.units.Jumpship;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Tank;
+import megamek.common.units.VTOL;
+import megamek.common.units.Warship;
 
 /**
  * Contains the options determining Unit Quirks of a unit (but not weapon quirks). When changing this, note that all
@@ -59,7 +70,7 @@ public class Quirks extends AbstractOptions {
         IBasicOptionGroup posQuirk = addGroup("pos_quirks", POS_QUIRKS);
         addOption(posQuirk, QUIRK_POS_ANIMALISTIC, false);
         addOption(posQuirk, QUIRK_POS_ANTI_AIR, false);
-        addOption(posQuirk, QUIRK_POS_ATMO_FLYER, false);
+        addOption(posQuirk, QUIRK_POS_ATMOSPHERE_FLYER, false);
         addOption(posQuirk, QUIRK_POS_BATTLE_COMP, false);
         addOption(posQuirk, QUIRK_POS_BARREL_FIST_LA, false);
         addOption(posQuirk, QUIRK_POS_BARREL_FIST_RA, false);
@@ -160,7 +171,7 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, QUIRK_NEG_WEAK_HEAD_5, false);
         addOption(negQuirk, QUIRK_NEG_WEAK_LEGS, false);
         addOption(negQuirk, QUIRK_NEG_WEAK_UNDERCARRIAGE, false);
-        addOption(negQuirk, QUIRK_NEG_ATMO_INSTABILITY, false);
+        addOption(negQuirk, QUIRK_NEG_ATMOSPHERE_INSTABILITY, false);
         addOption(negQuirk, QUIRK_NEG_OVERSIZED, false);
 
         //quirks not implemented yet
@@ -198,16 +209,16 @@ public class Quirks extends AbstractOptions {
 
         if (en instanceof Mek) {
             return switch (qName) {
-                case QUIRK_POS_BATTLE_FIST_LA -> en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM);
-                case QUIRK_POS_BATTLE_FIST_RA -> en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM);
-                case QUIRK_POS_BARREL_FIST_RA -> en.hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RARM)
-                      && !en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM);
-                case QUIRK_POS_BARREL_FIST_LA -> en.hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LARM)
-                      && !en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM);
+                case QUIRK_POS_BATTLE_FIST_LA -> en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM);
+                case QUIRK_POS_BATTLE_FIST_RA -> en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM);
+                case QUIRK_POS_BARREL_FIST_RA -> en.hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RIGHT_ARM)
+                      && !en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM);
+                case QUIRK_POS_BARREL_FIST_LA -> en.hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LEFT_ARM)
+                      && !en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM);
                 case QUIRK_NEG_OVERSIZED -> en.getWeight() >= 60;
                 case QUIRK_POS_COMPACT -> en.getWeight() <= 55;
-                default -> quirk.isNoneOf(
-                      QUIRK_POS_ATMO_FLYER, QUIRK_NEG_ATMO_INSTABILITY, QUIRK_POS_DOCKING_ARMS,
+                default -> quirk.isNoneOf(QUIRK_POS_ATMOSPHERE_FLYER,
+                      QUIRK_NEG_ATMOSPHERE_INSTABILITY, QUIRK_POS_DOCKING_ARMS,
                       QUIRK_NEG_FRAGILE_FUEL, QUIRK_POS_INTERNAL_BOMB, QUIRK_POS_TRAILER_HITCH,
                       QUIRK_NEG_LARGE_DROPPER, QUIRK_NEG_WEAK_UNDERCARRIAGE, QUIRK_POS_VTOL_ROTOR_COAXIAL,
                       QUIRK_POS_VTOL_ROTOR_DUAL, QUIRK_POS_POWER_REVERSE, QUIRK_NEG_UNSTREAMLINED);
@@ -261,13 +272,12 @@ public class Quirks extends AbstractOptions {
         }
 
         if (en instanceof Aero) {
-            if (quirk.isAnyOf(
-                  QUIRK_POS_ATMO_FLYER, QUIRK_POS_COMBAT_COMPUTER, QUIRK_POS_EASY_MAINTAIN,
+            if (quirk.isAnyOf(QUIRK_POS_ATMOSPHERE_FLYER, QUIRK_POS_COMBAT_COMPUTER, QUIRK_POS_EASY_MAINTAIN,
                   QUIRK_POS_EASY_PILOT, QUIRK_POS_GOOD_REP_1, QUIRK_POS_GOOD_REP_2,
                   QUIRK_POS_IMP_COM, QUIRK_POS_IMP_LIFE_SUPPORT, QUIRK_POS_IMP_TARG_L,
                   QUIRK_POS_IMP_TARG_M, QUIRK_POS_IMP_TARG_S, QUIRK_POS_INTERNAL_BOMB,
                   QUIRK_POS_RUGGED_1, QUIRK_POS_RUGGED_2, QUIRK_POS_RUMBLE_SEAT,
-                  QUIRK_POS_UBIQUITOUS_IS, QUIRK_POS_UBIQUITOUS_CLAN, QUIRK_NEG_ATMO_INSTABILITY,
+                  QUIRK_POS_UBIQUITOUS_IS, QUIRK_POS_UBIQUITOUS_CLAN, QUIRK_NEG_ATMOSPHERE_INSTABILITY,
                   QUIRK_NEG_BAD_REP_IS, QUIRK_NEG_BAD_REP_CLAN, QUIRK_NEG_CRAMPED_COCKPIT,
                   QUIRK_NEG_DIFFICULT_EJECT, QUIRK_NEG_DIFFICULT_MAINTAIN, QUIRK_NEG_FRAGILE_FUEL,
                   QUIRK_NEG_HARD_PILOT, QUIRK_NEG_ILLEGAL_DESIGN, QUIRK_NEG_NO_EJECT,
@@ -285,15 +295,15 @@ public class Quirks extends AbstractOptions {
                 return quirk.is(QUIRK_POS_DOCKING_ARMS);
             } else if (en instanceof Dropship) {
                 return quirk.isAnyOf(
-                      QUIRK_NEG_ATMO_INSTABILITY, QUIRK_NEG_EM_INTERFERENCE_WHOLE,
+                      QUIRK_NEG_ATMOSPHERE_INSTABILITY, QUIRK_NEG_EM_INTERFERENCE_WHOLE,
                       QUIRK_NEG_LARGE_DROPPER, QUIRK_NEG_UNSTREAMLINED, QUIRK_NEG_WEAK_UNDERCARRIAGE,
-                      QUIRK_POS_ATMO_FLYER, QUIRK_POS_INTERNAL_BOMB, QUIRK_NEG_POOR_PERFORMANCE);
+                      QUIRK_POS_ATMOSPHERE_FLYER, QUIRK_POS_INTERNAL_BOMB, QUIRK_NEG_POOR_PERFORMANCE);
             } else { // Fighter/SmallCraft
                 return quirk.isAnyOf(
-                      QUIRK_NEG_ATMO_INSTABILITY, QUIRK_NEG_CRAMPED_COCKPIT, QUIRK_NEG_DIFFICULT_EJECT,
+                      QUIRK_NEG_ATMOSPHERE_INSTABILITY, QUIRK_NEG_CRAMPED_COCKPIT, QUIRK_NEG_DIFFICULT_EJECT,
                       QUIRK_NEG_EM_INTERFERENCE_WHOLE, QUIRK_NEG_POOR_LIFE_SUPPORT,
                       QUIRK_NEG_POOR_PERFORMANCE, QUIRK_NEG_UNSTREAMLINED, QUIRK_NEG_WEAK_UNDERCARRIAGE,
-                      QUIRK_POS_ATMO_FLYER, QUIRK_POS_COMBAT_COMPUTER, QUIRK_POS_FAST_RELOAD,
+                      QUIRK_POS_ATMOSPHERE_FLYER, QUIRK_POS_COMBAT_COMPUTER, QUIRK_POS_FAST_RELOAD,
                       QUIRK_POS_IMP_LIFE_SUPPORT, QUIRK_POS_INTERNAL_BOMB, QUIRK_NEG_NO_EJECT);
             }
         }

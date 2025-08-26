@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,15 +34,22 @@
 
 package megamek.common.weapons.lasers;
 
-import megamek.common.Game;
+import static megamek.common.game.IGame.LOGGER;
+
+import java.io.Serial;
+
 import megamek.common.ToHitData;
-import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.EnergyWeaponHandler;
 import megamek.common.weapons.Weapon;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.EnergyWeaponHandler;
+import megamek.common.weapons.lasers.innerSphere.ISBombastLaser;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -50,6 +57,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since May 29, 2004
  */
 public abstract class EnergyWeapon extends Weapon {
+    @Serial
     private static final long serialVersionUID = 3128205629152612073L;
 
     public EnergyWeapon() {
@@ -57,9 +65,15 @@ public abstract class EnergyWeapon extends Weapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    @Nullable
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
-        return new EnergyWeaponHandler(toHit, waa, game, manager);
+        try {
+            return new EnergyWeaponHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
     }
 
     @Override
@@ -72,7 +86,7 @@ public abstract class EnergyWeapon extends Weapon {
         // The bombast laser has its own rules with to-hit modifiers and does not
         // get additional dial-down
         if (!(this instanceof ISBombastLaser)) {
-            if (gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)) {
+            if (gameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ENERGY_WEAPONS)) {
                 int dmg = (damage == WeaponType.DAMAGE_VARIABLE) ? damageShort : damage;
                 for (; dmg >= 0; dmg--) {
                     addMode("Damage " + dmg);

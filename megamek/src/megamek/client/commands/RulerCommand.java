@@ -34,9 +34,9 @@
 package megamek.client.commands;
 
 import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 import megamek.common.LosEffects;
-import megamek.common.TargetRoll;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.ToHitData;
 
 /**

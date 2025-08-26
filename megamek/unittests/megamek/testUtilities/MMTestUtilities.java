@@ -35,9 +35,9 @@ package megamek.testUtilities;
 
 import java.io.File;
 
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.MekFileParser;
+import megamek.common.units.Entity;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.loaders.MekFileParser;
 import megamek.common.annotations.Nullable;
 
 public class MMTestUtilities {

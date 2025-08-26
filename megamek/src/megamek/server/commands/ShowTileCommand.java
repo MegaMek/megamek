@@ -35,8 +35,8 @@ package megamek.server.commands;
 
 import java.util.Iterator;
 
-import megamek.common.Coords;
-import megamek.common.Entity;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
 import megamek.common.Hex;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;

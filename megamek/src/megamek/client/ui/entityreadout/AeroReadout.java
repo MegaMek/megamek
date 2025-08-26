@@ -36,12 +36,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.client.ui.Messages;
-import megamek.common.Aero;
-import megamek.common.ConvFighter;
-import megamek.common.EquipmentType;
-import megamek.common.IArmorState;
-import megamek.common.Jumpship;
-import megamek.common.SmallCraft;
+import megamek.common.units.Aero;
+import megamek.common.units.ConvFighter;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.IArmorState;
+import megamek.common.units.Jumpship;
+import megamek.common.units.SmallCraft;
 import megamek.common.equipment.ArmorType;
 
 class AeroReadout extends GeneralEntityReadout {

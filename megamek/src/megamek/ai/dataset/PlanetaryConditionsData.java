@@ -32,7 +32,7 @@
  */
 package megamek.ai.dataset;
 
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.PlanetaryConditions;
 
 /**
  * Flexible container for planetary conditions data using a map-based approach with enum keys.

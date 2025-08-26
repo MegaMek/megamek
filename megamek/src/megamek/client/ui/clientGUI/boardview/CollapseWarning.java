@@ -40,12 +40,12 @@ import java.util.List;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.panels.phaseDisplay.DeploymentDisplay;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
-import megamek.common.Board;
-import megamek.common.BoardLocation;
-import megamek.common.Building;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
+import megamek.common.units.Building;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
 import megamek.common.enums.GamePhase;
 import megamek.logging.MMLogger;
 

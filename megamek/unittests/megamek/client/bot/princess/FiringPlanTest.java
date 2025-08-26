@@ -43,14 +43,14 @@ import static org.mockito.Mockito.when;
 import java.util.EnumSet;
 import java.util.Vector;
 
-import megamek.common.AmmoType;
-import megamek.common.Mounted;
-import megamek.common.Targetable;
-import megamek.common.WeaponType;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.units.Targetable;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -207,7 +207,7 @@ class FiringPlanTest {
         when(mockInfoLRM.getWeapon()).thenReturn(mockLRM);
         WeaponType mockTypeLRM = mock(WeaponType.class);
         when(mockLRM.getType()).thenReturn(mockTypeLRM);
-        when(mockTypeLRM.getDamage()).thenReturn(WeaponType.DAMAGE_BY_CLUSTERTABLE);
+        when(mockTypeLRM.getDamage()).thenReturn(WeaponType.DAMAGE_BY_CLUSTER_TABLE);
         AmmoMounted mockAmmoLRM = mock(AmmoMounted.class);
         when(mockLRM.getLinkedAmmo()).thenReturn(mockAmmoLRM);
         AmmoType mockAmmoTypeLRM = mock(AmmoType.class);
@@ -239,7 +239,7 @@ class FiringPlanTest {
         when(mockInfoSRM.getWeapon()).thenReturn(mockSRM);
         WeaponType mockTypeSRM = mock(WeaponType.class);
         when(mockSRM.getType()).thenReturn(mockTypeSRM);
-        when(mockTypeSRM.getDamage()).thenReturn(WeaponType.DAMAGE_BY_CLUSTERTABLE);
+        when(mockTypeSRM.getDamage()).thenReturn(WeaponType.DAMAGE_BY_CLUSTER_TABLE);
         AmmoMounted mockAmmoSRM = mock(AmmoMounted.class);
         when(mockSRM.getLinkedAmmo()).thenReturn(mockAmmoSRM);
         AmmoType mockAmmoTypeSRM = mock(AmmoType.class);

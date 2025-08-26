@@ -46,10 +46,19 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import megamek.codeUtilities.StringUtility;
-import megamek.common.*;
+import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
 import megamek.common.templates.TROView;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.SystemFluff;
 import megamek.logging.MMLogger;
 
 /**
@@ -241,17 +250,17 @@ public final class MekCacheCSVTool {
                     }
                     csvLine.append(DELIM);
 
-                    csvLine.append(TROView.formatSystemFluff(EntityFluff.System.TARGETING, entity.getFluff(),
+                    csvLine.append(TROView.formatSystemFluff(SystemFluff.TARGETING, entity.getFluff(),
                           () -> "--")).append(DELIM);
-                    csvLine.append(TROView.formatSystemFluff(EntityFluff.System.COMMUNICATIONS, entity.getFluff(),
+                    csvLine.append(TROView.formatSystemFluff(SystemFluff.COMMUNICATIONS, entity.getFluff(),
                           () -> "--")).append(DELIM);
-                    csvLine.append(TROView.formatSystemFluff(EntityFluff.System.ARMOR, entity.getFluff(),
+                    csvLine.append(TROView.formatSystemFluff(SystemFluff.ARMOR, entity.getFluff(),
                           () -> "--")).append(DELIM);
-                    csvLine.append(TROView.formatSystemFluff(EntityFluff.System.JUMPJET, entity.getFluff(),
+                    csvLine.append(TROView.formatSystemFluff(SystemFluff.JUMP_JET, entity.getFluff(),
                           () -> "--")).append(DELIM);
-                    csvLine.append(TROView.formatSystemFluff(EntityFluff.System.ENGINE, entity.getFluff(),
+                    csvLine.append(TROView.formatSystemFluff(SystemFluff.ENGINE, entity.getFluff(),
                           () -> "--")).append(DELIM);
-                    csvLine.append(TROView.formatSystemFluff(EntityFluff.System.CHASSIS, entity.getFluff(),
+                    csvLine.append(TROView.formatSystemFluff(SystemFluff.CHASSIS, entity.getFluff(),
                           () -> "--")).append(DELIM);
 
                     csvLine.append(entity.getFluff().getCapabilities().isBlank() ? "no" : "yes").append(DELIM);

@@ -33,10 +33,10 @@
 
 package megamek.server.commands;
 
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 import megamek.common.LosEffects;
 import megamek.common.LosEffects.AttackInfo;
-import megamek.common.TargetRoll;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.server.Server;
 import megamek.server.totalwarfare.TWGameManager;

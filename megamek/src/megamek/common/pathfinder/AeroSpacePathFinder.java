@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,11 +37,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.common.Game;
-import megamek.common.IAero;
+import megamek.common.enums.MoveStepType;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
-import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
+import megamek.common.units.IAero;
 
 /**
  * This class generates move paths suitable for use by an aerospace unit operating on a space map, with 'advanced
@@ -77,7 +76,6 @@ public class AeroSpacePathFinder extends NewtonianAerospacePathFinder {
      */
     @Override
     protected List<MovePath> generateStartingPaths(MovePath startingEdge) {
-        List<MovePath> startingPaths = new ArrayList<>();
 
         // calculate max and min safe velocity
         // in space, we can go as slow or as fast as we want.
@@ -85,7 +83,9 @@ public class AeroSpacePathFinder extends NewtonianAerospacePathFinder {
         int maxThrust = AeroPathUtil.calculateMaxSafeThrust(aero);
         int maxVelocity = aero.getCurrentVelocity() + maxThrust;
         int minVelocity = Math.max(0, aero.getCurrentVelocity() - maxThrust);
-        startingPaths.addAll(AeroPathUtil.generateValidAccelerations(startingEdge, minVelocity, maxVelocity));
+        List<MovePath> startingPaths = new ArrayList<>(AeroPathUtil.generateValidAccelerations(startingEdge,
+              minVelocity,
+              maxVelocity));
 
         // all non-zero-velocity paths must move at least one hex forward
         for (MovePath path : startingPaths) {
@@ -117,7 +117,7 @@ public class AeroSpacePathFinder extends NewtonianAerospacePathFinder {
      *
      * @param path The move path to consider
      *
-     * @return Whether to keep or dicsard.
+     * @return Whether to keep or discard.
      */
     @Override
     protected boolean discardPath(MovePath path, CoordsWithFacing pathDestination) {
@@ -139,10 +139,6 @@ public class AeroSpacePathFinder extends NewtonianAerospacePathFinder {
         }
 
         // there's no reason to consider off-board paths in the standard flight model.
-        if (!path.getGame().getBoard().contains(pathDestination.getCoords())) {
-            return true;
-        }
-
-        return false;
+        return !path.getGame().getBoard().contains(pathDestination.coords());
     }
 }

@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 
 /**
  * A command that displays unit or terrain information given an entity ID, parameters and maximum distance

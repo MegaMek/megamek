@@ -41,8 +41,8 @@ import javax.swing.JPanel;
 
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.common.Entity;
-import megamek.common.Mounted;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.Entity;
 
 public class RapidFireMGPanel extends JPanel {
     @Serial
@@ -61,12 +61,12 @@ public class RapidFireMGPanel extends JPanel {
         GridBagLayout gridBagLayout = new GridBagLayout();
         setLayout(gridBagLayout);
         add(labelLocation, GBC.std().anchor(GridBagConstraints.EAST));
-        chRapid.setSelected(mounted.isRapidfire());
+        chRapid.setSelected(mounted.isRapidFire());
         add(chRapid, GBC.eol());
     }
 
     public void applyChoice() {
-        mounted.setRapidfire(chRapid.isSelected());
+        mounted.setRapidFire(chRapid.isSelected());
     }
 
     @Override

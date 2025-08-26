@@ -38,13 +38,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.client.bot.princess.AeroPathUtil;
+import megamek.common.enums.MoveStepType;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.options.OptionsConstants;
 
 /**
  * This class handles pathfinding for situations where the unit is prone and wants to remain prone for whatever reason
- * (no leg, getting up will result in exposure to fire, etc)
+ * (no leg, getting up will result in exposure to fire, etc.)
  *
  * @author NickAragua
  */
@@ -65,7 +65,9 @@ public class PronePathFinder {
 
             // if we can go hull down, consider doing so - going "hull down" from prone
             // doesn't require a PSR.
-            if (startingEdge.getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN)
+            if (startingEdge.getGame()
+                  .getOptions()
+                  .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN)
                   && startingEdge.getEntity().canGoHullDown()) {
                 MovePath hullDown = startingEdge.clone().addStep(MoveStepType.HULL_DOWN);
 

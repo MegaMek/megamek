@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,6 +35,8 @@
 
 package megamek.common;
 
+import megamek.common.board.Coords;
+
 /**
  * Represents a hex, not in the game but in an ideal coordinate system. Used for Compute.intervening() calculations and
  * a few others. This ideal hex is 2.0 units tall. Tries to keep a cache of IdealHexes requested, as intervening() sure
@@ -46,7 +48,7 @@ public class IdealHex {
     public static final int STRAIGHT = 0;
     public static final int RIGHT = -1;
 
-    private static final double XCONST = Math.tan(Math.PI / 6.0);
+    private static final double X_CONST = Math.tan(Math.PI / 6.0);
 
     public double[] x = new double[6];
     public double[] y = new double[6];
@@ -60,16 +62,16 @@ public class IdealHex {
 
     public IdealHex(Coords c) {
         // determine origin
-        double ox = c.getX() * XCONST * 3;
+        double ox = c.getX() * X_CONST * 3;
         double oy = c.getY() * 2 + (c.isXOdd() ? 1 : 0);
 
         // center
-        cx = ox + (XCONST * 2);
+        cx = ox + (X_CONST * 2);
         cy = oy + 1;
 
-        x[0] = ox + XCONST;
-        x[1] = ox + (XCONST * 3);
-        x[2] = ox + (XCONST * 4);
+        x[0] = ox + X_CONST;
+        x[1] = ox + (X_CONST * 3);
+        x[2] = ox + (X_CONST * 4);
         x[3] = x[1];
         x[4] = x[0];
         x[5] = ox;

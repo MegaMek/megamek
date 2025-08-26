@@ -53,18 +53,28 @@ import megamek.client.ui.dialogs.phaseDisplay.VibrabombSettingDialog;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.MegaMekButton;
-import megamek.common.*;
+import megamek.common.HexTarget;
+import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeArc;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 import megamek.common.weapons.Weapon;
-import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 import megamek.logging.MMLogger;
 
 /**
@@ -352,7 +362,7 @@ public class PointblankShotDisplay extends FiringDisplay {
         if (numButtonGroups > 1) {
             buttons.get(FiringCommand.FIRE_MORE).setEnabled(true);
         }
-        setFireCalledEnabled(game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS));
+        setFireCalledEnabled(game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CALLED_SHOTS));
         setStatusBarText(Messages.getString("StatusBarPhaseDisplay.pointblankShot"));
     }
 
@@ -531,7 +541,7 @@ public class PointblankShotDisplay extends FiringDisplay {
         // close aimed shot display, if any
         ash.closeDialog();
 
-        if ((ce() != null) && ce().isWeapOrderChanged()) {
+        if ((ce() != null) && ce().isWeaponOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }
         endMyTurn();
@@ -708,7 +718,7 @@ public class PointblankShotDisplay extends FiringDisplay {
             int effectiveDistance = Compute.effectiveDistance(game, ce(), target);
             clientgui.getUnitDisplay().wPan.wRangeR.setText("" + effectiveDistance);
             WeaponMounted m = ce().getWeapon(weaponId);
-            // If we have a Centurion Weapon System selected, we may need to
+            // If we have a Centurion Weapon SystemFluff selected, we may need to
             // update ranges.
             if (m.getType().hasFlag(WeaponType.F_CWS)) {
                 clientgui.getUnitDisplay().wPan.selectWeapon(weaponId);

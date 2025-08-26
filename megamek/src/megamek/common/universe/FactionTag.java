@@ -75,19 +75,19 @@ public enum FactionTag {
     SPECIAL,
     /** Faction is meant to be played */
     PLAYABLE,
-    /** Faction is an independent noble (Camops p. 39) */
+    /** Faction is an independent noble (CamOps p. 39) */
     NOBLE,
-    /** Faction is an independent planetary government (Camops p. 39) */
+    /** Faction is an independent planetary government (CamOps p. 39) */
     PLANETARY_GOVERNMENT,
-    /** Faction is an independent corporation (Camops p. 39) */
+    /** Faction is an independent corporation (CamOps p. 39) */
     CORPORATION,
-    /** Faction is stingy and tends to pay less for contracts (Camops p. 42) */
+    /** Faction is stingy and tends to pay less for contracts (CamOps p. 42) */
     STINGY,
-    /** Faction is generous and tends to pay more for contracts (Camops p. 42) */
+    /** Faction is generous and tends to pay more for contracts (CamOps p. 42) */
     GENEROUS,
-    /** Faction is controlling with mercenary command rights (Camops p. 42) */
+    /** Faction is controlling with mercenary command rights (CamOps p. 42) */
     CONTROLLING,
-    /** Faction is lenient with mercenary command rights (Camops p. 42) */
+    /** Faction is lenient with mercenary command rights (CamOps p. 42) */
     LENIENT,
     /** Faction performs batchall */
     BATCHALL,

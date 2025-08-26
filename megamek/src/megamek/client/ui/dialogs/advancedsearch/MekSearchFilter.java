@@ -44,10 +44,10 @@ import java.util.stream.IntStream;
 import megamek.client.ui.dialogs.advancedsearch.exceptions.FilterParsingException;
 import megamek.client.ui.dialogs.advancedsearch.expressions.ExpNode;
 import megamek.client.ui.dialogs.advancedsearch.expressions.ExpressionTree;
-import megamek.common.Entity;
-import megamek.common.MekSummary;
 import megamek.common.Messages;
 import megamek.common.annotations.Nullable;
+import megamek.common.loaders.MekSummary;
+import megamek.common.units.Entity;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 
@@ -664,15 +664,15 @@ public class MekSearchFilter {
             return false;
         }
 
-        if (!StringUtil.isBetween(mek.getDropshuttleBays(), f.sStartDropShuttleBays, f.sEndDropShuttleBays)) {
+        if (!StringUtil.isBetween(mek.getDropShuttleBays(), f.sStartDropShuttleBays, f.sEndDropShuttleBays)) {
             return false;
         }
 
-        if (!StringUtil.isBetween(mek.getDropshuttleDoors(), f.sStartDropShuttleDoors, f.sEndDropShuttleDoors)) {
+        if (!StringUtil.isBetween(mek.getDropShuttleDoors(), f.sStartDropShuttleDoors, f.sEndDropShuttleDoors)) {
             return false;
         }
 
-        if (!StringUtil.isBetween(mek.getDropshuttelUnits(), f.sStartDropShuttleUnits, f.sEndDropShuttleUnits)) {
+        if (!StringUtil.isBetween(mek.getDropShuttleUnits(), f.sStartDropShuttleUnits, f.sEndDropShuttleUnits)) {
             return false;
         }
 
@@ -877,7 +877,7 @@ public class MekSearchFilter {
             entityTypes = entityTypes | Entity.ETYPE_SUPER_HEAVY_TANK;
         }
         if (f.iAerospaceFighter == 1) {
-            entityTypes = entityTypes | Entity.ETYPE_AEROSPACEFIGHTER;
+            entityTypes = entityTypes | Entity.ETYPE_AEROSPACE_FIGHTER;
         }
 
         if ((!((entityType & entityTypes) > 0) && (entityTypes != 0))) {
@@ -959,7 +959,7 @@ public class MekSearchFilter {
             entityTypes = entityTypes | Entity.ETYPE_SUPER_HEAVY_TANK;
         }
         if (f.iAerospaceFighter == 2) {
-            entityTypes = entityTypes | Entity.ETYPE_AEROSPACEFIGHTER;
+            entityTypes = entityTypes | Entity.ETYPE_AEROSPACE_FIGHTER;
         }
 
         return ((entityType & entityTypes) <= 0) || (entityTypes == 0);

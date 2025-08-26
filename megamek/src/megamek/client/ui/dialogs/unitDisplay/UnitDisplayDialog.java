@@ -42,7 +42,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 
 /**
  * A dialog for displaying detailed unit information in MegaMek.

@@ -40,11 +40,11 @@ import java.util.List;
 import java.util.Set;
 
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.common.Coords;
-import megamek.common.Game;
-import megamek.common.IAero;
+import megamek.common.board.Coords;
+import megamek.common.enums.MoveStepType;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
+import megamek.common.units.IAero;
 import megamek.logging.MMLogger;
 
 /**
@@ -56,11 +56,11 @@ import megamek.logging.MMLogger;
 public class SpheroidPathFinder {
     private static final MMLogger logger = MMLogger.create(SpheroidPathFinder.class);
 
-    private Game game;
+    private final Game game;
     private int direction;
     private List<MovePath> spheroidPaths;
 
-    private Set<Coords> visitedCoords = new HashSet<>();
+    private final Set<Coords> visitedCoords = new HashSet<>();
 
     private SpheroidPathFinder(Game game) {
         // Default to heading north
@@ -75,7 +75,6 @@ public class SpheroidPathFinder {
     /**
      * We want to be able to set the direction the entity should turn to face
      *
-     * @param direction
      */
     public void setDirection(int direction) {
         this.direction = direction;
@@ -132,10 +131,8 @@ public class SpheroidPathFinder {
             spheroidPaths.addAll(altitudePaths);
             spheroidPaths.add(hoverPath);
 
-            List<MovePath> validRotations = new ArrayList<>();
-
             // Allow the entity to rotate any direction if it hovers.
-            validRotations.addAll(AeroPathUtil.generateValidRotations(hoverPath));
+            List<MovePath> validRotations = new ArrayList<>(AeroPathUtil.generateValidRotations(hoverPath));
 
             spheroidPaths.addAll(validRotations);
 
@@ -183,20 +180,17 @@ public class SpheroidPathFinder {
      * Recursive method that generates the possible child paths from the given path. Eliminates paths to hexes we've
      * already visited. Generates *shortest* paths to destination hexes
      *
-     * @param startingPath
-     *
-     * @return
      */
     private List<MovePath> generateChildren(MovePath startingPath) {
-        List<MovePath> retval = new ArrayList<>();
+        List<MovePath> retVal = new ArrayList<>();
 
         // terminator conditions:
         // - we've visited this hex already
-        // - we've moved further than 1 hex on a low-atmo map
+        // - we've moved further than 1 hex on a low-atmosphere map
         // - we've moved further than 8 hexes on a ground map
         if (visitedCoords.contains(startingPath.getFinalCoords()) ||
               (startingPath.getMpUsed() > startingPath.getEntity().getRunMP())) {
-            return retval;
+            return retVal;
         }
 
         visitedCoords.add(startingPath.getFinalCoords());
@@ -234,10 +228,10 @@ public class SpheroidPathFinder {
                 continue;
             }
 
-            retval.add(childPath.clone());
-            retval.addAll(generateChildren(childPath));
+            retVal.add(childPath.clone());
+            retVal.addAll(generateChildren(childPath));
         }
 
-        return retval;
+        return retVal;
     }
 }

@@ -33,8 +33,10 @@
 
 package megamek.common.util.weightedMaps;
 
-import megamek.common.Compute;
+import java.io.Serial;
+
 import megamek.common.annotations.Nullable;
+import megamek.common.compute.Compute;
 
 /**
  * Constructs a table of values each with an int weight that makes them more or less likely to be selected at random
@@ -43,6 +45,7 @@ import megamek.common.annotations.Nullable;
  */
 public class WeightedIntMap<T> extends AbstractWeightedMap<Integer, T> {
     //region Variable Declarations
+    @Serial
     private static final long serialVersionUID = -568712793616821291L;
     //endregion Variable Declarations
 

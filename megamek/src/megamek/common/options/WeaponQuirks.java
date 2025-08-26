@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2009-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,7 +39,17 @@ import static java.util.stream.Collectors.toList;
 import java.io.Serial;
 import java.util.List;
 
-import megamek.common.*;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.Jumpship;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Tank;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.lasers.EnergyWeapon;
 
@@ -62,23 +72,23 @@ public class WeaponQuirks extends AbstractOptions {
     @Override
     public void initialize() {
         IBasicOptionGroup wpnQuirk = addGroup("wpn_quirks", WPN_QUIRKS);
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_ACCURATE, false);
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_INACCURATE, false);
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON, false);
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING, false);
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING, false);
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING, false);
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_EXPOSED_LINKAGE, false);
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS, false);
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED, false);
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE, false);
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD, false);
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_DIRECT_TORSO_MOUNT, false);
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_MOD_WEAPONS, false);
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_JETTISON_CAPABLE, false);
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_NON_FUNCTIONAL, false);
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_MISREPAIRED, false);
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_MISREPLACED, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_POS_ACCURATE, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_NEG_INACCURATE, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_POS_STABLE_WEAPON, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_POS_IMP_COOLING, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_NEG_POOR_COOLING, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_NEG_NO_COOLING, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_NEG_EXPOSED_LINKAGE, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_NEG_AMMO_FEED_PROBLEMS, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_NEG_STATIC_FEED, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_NEG_EM_INTERFERENCE, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_POS_FAST_RELOAD, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_POS_MOD_WEAPONS, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_POS_JETTISON_CAPABLE, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_NEG_NON_FUNCTIONAL, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_NEG_MISREPAIRED, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_NEG_MIS_REPLACED, false);
 
     }
 
@@ -113,13 +123,13 @@ public class WeaponQuirks extends AbstractOptions {
         if (!(equipmentType instanceof WeaponType) && !equipmentType.hasFlag(MiscType.F_CLUB)) {
             return true;
         } else if ((equipmentType instanceof MiscType) && equipmentType.hasFlag(MiscType.F_CLUB)) {
-            return qName.equals(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS)
-                  || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)
-                  || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)
-                  || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
-                  || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)
-                  || qName.equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
-                  || qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD);
+            return qName.equals(OptionsConstants.QUIRK_WEAPON_NEG_AMMO_FEED_PROBLEMS)
+                  || qName.equals(OptionsConstants.QUIRK_WEAPON_NEG_EM_INTERFERENCE)
+                  || qName.equals(OptionsConstants.QUIRK_WEAPON_NEG_NO_COOLING)
+                  || qName.equals(OptionsConstants.QUIRK_WEAPON_NEG_POOR_COOLING)
+                  || qName.equals(OptionsConstants.QUIRK_WEAPON_NEG_STATIC_FEED)
+                  || qName.equals(OptionsConstants.QUIRK_WEAPON_POS_IMP_COOLING)
+                  || qName.equals(OptionsConstants.QUIRK_WEAPON_POS_FAST_RELOAD);
         }
         if (!(equipmentType instanceof WeaponType weaponType)) {
             throw new IllegalArgumentException("EquipmentType must be a WeaponType");
@@ -127,28 +137,28 @@ public class WeaponQuirks extends AbstractOptions {
 
         if (!(weaponType instanceof AmmoWeapon)) {
             switch (qName) {
-                case OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS,
-                     OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED,
-                     OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD -> {
+                case OptionsConstants.QUIRK_WEAPON_NEG_AMMO_FEED_PROBLEMS,
+                     OptionsConstants.QUIRK_WEAPON_NEG_STATIC_FEED,
+                     OptionsConstants.QUIRK_WEAPON_POS_FAST_RELOAD -> {
                     return true;
                 }
             }
         }
 
-        if (!(weaponType instanceof EnergyWeapon) && qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)) {
+        if (!(weaponType instanceof EnergyWeapon) && qName.equals(OptionsConstants.QUIRK_WEAPON_NEG_EM_INTERFERENCE)) {
             return true;
         }
 
         if (en instanceof ProtoMek) {
-            if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)
-                  || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)) {
+            if (qName.equals(OptionsConstants.QUIRK_WEAPON_POS_FAST_RELOAD)
+                  || qName.equals(OptionsConstants.QUIRK_WEAPON_NEG_STATIC_FEED)) {
                 return true;
             }
         }
 
-        boolean hasBadCoolingQuirk = qName.equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
-              || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
-              || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING);
+        boolean hasBadCoolingQuirk = qName.equals(OptionsConstants.QUIRK_WEAPON_POS_IMP_COOLING)
+              || qName.equals(OptionsConstants.QUIRK_WEAPON_NEG_POOR_COOLING)
+              || qName.equals(OptionsConstants.QUIRK_WEAPON_NEG_NO_COOLING);
         if (en instanceof Tank || en instanceof BattleArmor || en instanceof ProtoMek) {
             if (hasBadCoolingQuirk) {
                 return true;
@@ -165,7 +175,7 @@ public class WeaponQuirks extends AbstractOptions {
             }
         }
 
-        if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_JETTISON_CAPABLE)) {
+        if (qName.equals(OptionsConstants.QUIRK_WEAPON_POS_JETTISON_CAPABLE)) {
             if (en instanceof ProtoMek
                   || en instanceof Aero
                   || en instanceof GunEmplacement) {
@@ -174,34 +184,32 @@ public class WeaponQuirks extends AbstractOptions {
             }
         }
 
-        if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_MOD_WEAPONS)) {
+        if (qName.equals(OptionsConstants.QUIRK_WEAPON_POS_MOD_WEAPONS)) {
             if ((en instanceof ProtoMek) || (en instanceof Jumpship)) {
                 return true;
             }
         }
 
-        if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_DIRECT_TORSO_MOUNT)) {
+        if (qName.equals(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT)) {
             if ((en instanceof Aero) || (en instanceof BattleArmor) || (en instanceof Tank)) {
                 return true;
             }
         }
 
-        if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON)) {
+        if (qName.equals(OptionsConstants.QUIRK_WEAPON_POS_STABLE_WEAPON)) {
             if (en instanceof Aero) {
                 return true;
             }
         }
 
-        if (qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EXPOSED_LINKAGE)) {
+        if (qName.equals(OptionsConstants.QUIRK_WEAPON_NEG_EXPOSED_LINKAGE)) {
             if (en instanceof Aero) {
                 return true;
             }
         }
 
-        if (qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)) {
-            if (en instanceof Jumpship) {
-                return true;
-            }
+        if (qName.equals(OptionsConstants.QUIRK_WEAPON_NEG_EM_INTERFERENCE)) {
+            return en instanceof Jumpship;
         }
 
         return false;

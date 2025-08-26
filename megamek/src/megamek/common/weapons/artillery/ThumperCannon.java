@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2009-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,16 +34,23 @@
 
 package megamek.common.weapons.artillery;
 
-import megamek.common.AmmoType;
-import megamek.common.Mounted;
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
 
 /**
  * @author Sebastian Brocks
  * @since Oct 20, 2004
  */
 public class ThumperCannon extends ArtilleryCannonWeapon {
+    @Serial
     private static final long serialVersionUID = -1951764278554798130L;
 
     public ThumperCannon() {
@@ -66,7 +73,7 @@ public class ThumperCannon extends ArtilleryCannonWeapon {
         longRange = 14;
         extremeRange = 21;
         tonnage = 10;
-        criticals = 7;
+        criticalSlots = 7;
         bv = 41;
         cost = 200000;
         shortAV = 5;

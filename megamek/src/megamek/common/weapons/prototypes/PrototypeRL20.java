@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,12 +34,18 @@
 
 package megamek.common.weapons.prototypes;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 
 /**
  * @author Sebastian Brocks
  */
 public class PrototypeRL20 extends PrototypeRLWeapon {
+    @Serial
     private static final long serialVersionUID = -1726964787852929811L;
 
     public PrototypeRL20() {
@@ -56,7 +62,7 @@ public class PrototypeRL20 extends PrototypeRLWeapon {
         longRange = 12;
         extremeRange = 18;
         tonnage = 1.5;
-        criticals = 3;
+        criticalSlots = 3;
         bv = 19;
         cost = 45000;
         shortAV = 12;

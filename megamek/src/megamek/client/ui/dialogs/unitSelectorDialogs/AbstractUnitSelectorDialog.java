@@ -71,21 +71,21 @@ import megamek.client.ui.dialogs.abstractDialogs.BVDisplayDialog;
 import megamek.client.ui.dialogs.advancedsearch.AdvancedSearchDialog;
 import megamek.client.ui.dialogs.advancedsearch.MekSearchFilter;
 import megamek.client.ui.models.XTableColumnModel;
-import megamek.common.Entity;
-import megamek.common.EntityWeightClass;
-import megamek.common.MekFileParser;
-import megamek.common.MekSummary;
-import megamek.common.MekSummaryCache;
 import megamek.common.TechConstants;
-import megamek.common.UnitType;
 import megamek.common.annotations.Nullable;
-import megamek.common.battlevalue.BVCalculator;
+import megamek.common.battleValue.BVCalculator;
 import megamek.common.internationalization.I18n;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.UnitType;
 import megamek.common.util.sorter.NaturalOrderComparator;
 import megamek.logging.MMLogger;
 
@@ -568,7 +568,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         }
 
         int maxTech = switch (gameTechLevel) {
-            case TechConstants.T_SIMPLE_INTRO -> TechConstants.T_INTRO_BOXSET;
+            case TechConstants.T_SIMPLE_INTRO -> TechConstants.T_INTRO_BOX_SET;
             case TechConstants.T_SIMPLE_STANDARD -> TechConstants.T_TW_ALL;
             case TechConstants.T_SIMPLE_ADVANCED -> TechConstants.T_CLAN_ADVANCED;
             case TechConstants.T_SIMPLE_EXPERIMENTAL -> TechConstants.T_CLAN_EXPERIMENTAL;
@@ -1014,10 +1014,10 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                 return ms.getFullChassis();
             } else if (col == COL_WEIGHT) {
                 if ((gameOptions != null) && ms.getUnitType().equals("BattleArmor")) {
-                    if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT)) {
-                        return ms.getTOweight();
+                    if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_BA_WEIGHT)) {
+                        return ms.getTOWeight();
                     } else {
-                        return ms.getTWweight();
+                        return ms.getTWWeight();
                     }
                 }
                 return ms.getTons();

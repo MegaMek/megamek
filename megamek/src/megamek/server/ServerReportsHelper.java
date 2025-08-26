@@ -33,10 +33,10 @@
 
 package megamek.server;
 
-import megamek.common.EjectedCrew;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.MekWarrior;
+import megamek.common.units.EjectedCrew;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
+import megamek.common.units.MekWarrior;
 import megamek.common.Player;
 
 public class ServerReportsHelper {

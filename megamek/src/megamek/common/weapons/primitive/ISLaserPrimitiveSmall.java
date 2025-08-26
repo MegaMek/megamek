@@ -1,7 +1,6 @@
 /*
-
  * Copyright (C) 2000-2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,13 +34,20 @@
 
 package megamek.common.weapons.primitive;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.weapons.lasers.LaserWeapon;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  */
 public class ISLaserPrimitiveSmall extends LaserWeapon {
+    @Serial
     private static final long serialVersionUID = -7637928016342153078L;
 
     public ISLaserPrimitiveSmall() {
@@ -63,7 +69,7 @@ public class ISLaserPrimitiveSmall extends LaserWeapon {
         waterLongRange = 2;
         waterExtremeRange = 2;
         tonnage = 0.5;
-        criticals = 1;
+        criticalSlots = 1;
         flags = flags.or(F_NO_FIRES).or(F_PROTOTYPE);
         bv = 9;
         cost = 11250;

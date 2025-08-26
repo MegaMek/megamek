@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,15 +34,18 @@
 
 package megamek.common.event;
 
+import java.io.Serial;
+
 /**
  * Instances of this class are sent when Game settings are changed
  */
 public class GameSettingsChangeEvent extends GameEvent {
+    @Serial
     private static final long serialVersionUID = 7470732576407688193L;
     protected boolean mapSettingsOnlyChange = false;
 
     /**
-     * @param source
+     *
      */
     public GameSettingsChangeEvent(Object source) {
         super(source);

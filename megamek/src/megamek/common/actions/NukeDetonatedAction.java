@@ -35,7 +35,7 @@ package megamek.common.actions;
 
 import java.io.Serial;
 
-import megamek.common.AmmoType;
+import megamek.common.equipment.AmmoType;
 
 public class NukeDetonatedAction extends AbstractEntityAction {
 

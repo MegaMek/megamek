@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,14 +34,23 @@
 
 package megamek.common.weapons.bombs;
 
-import megamek.common.AmmoType;
-import megamek.common.BombType.BombTypeEnum;
-import megamek.common.Game;
+import static megamek.common.game.IGame.LOGGER;
+
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.PrototypeRLHandler;
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
+import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.prototype.PrototypeRLHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -49,6 +58,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Jay Lawson
  */
 public class BombISRLP10 extends MissileWeapon {
+    @Serial
     private static final long serialVersionUID = 5763858241912399084L;
 
     public BombISRLP10() {
@@ -64,7 +74,7 @@ public class BombISRLP10 extends MissileWeapon {
         this.longRange = 18;
         this.extremeRange = 22;
         this.tonnage = 1;
-        this.criticals = 0;
+        this.criticalSlots = 0;
         this.hittable = false;
         this.bv = 0;
         this.cost = 0;
@@ -88,8 +98,14 @@ public class BombISRLP10 extends MissileWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    @Nullable
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
-        return new PrototypeRLHandler(toHit, waa, game, manager);
+        try {
+            return new PrototypeRLHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
     }
 }

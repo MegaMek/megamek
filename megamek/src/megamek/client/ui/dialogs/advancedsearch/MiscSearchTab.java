@@ -46,11 +46,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import megamek.client.ui.Messages;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.Mek;
+import megamek.common.equipment.Engine;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.units.Mek;
 import megamek.common.SimpleTechLevel;
 import megamek.common.equipment.ArmorType;
 

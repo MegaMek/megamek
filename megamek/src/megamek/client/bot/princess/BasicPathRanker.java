@@ -52,12 +52,22 @@ import megamek.client.bot.princess.coverage.Builder;
 import megamek.client.bot.princess.geometry.ConvexBoardArea;
 import megamek.client.bot.princess.geometry.CoordFacingCombo;
 import megamek.client.bot.princess.geometry.HexLine;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.LosEffects;
 import megamek.common.annotations.Nullable;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.MiscType;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.*;
 import megamek.common.util.HazardousLiquidPoolUtil;
 import megamek.logging.MMLogger;
 
@@ -980,11 +990,11 @@ public class BasicPathRanker extends PathRanker {
     }
 
     protected boolean isLosRange(Game game) {
-        return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE);
     }
 
     protected boolean isExtremeRange(Game game) {
-        return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE);
     }
 
     /**
@@ -1570,7 +1580,7 @@ public class BasicPathRanker extends PathRanker {
         // Find the submerged locations.
         Set<Integer> submergedLocations = new HashSet<>();
         for (int loc = 0; loc < movingUnit.locations(); loc++) {
-            if (Mek.LOC_CLEG == loc && !(movingUnit instanceof TripodMek)) {
+            if (Mek.LOC_CENTER_LEG == loc && !(movingUnit instanceof TripodMek)) {
                 continue;
             }
 
@@ -1579,12 +1589,12 @@ public class BasicPathRanker extends PathRanker {
                 continue;
             }
 
-            if (Mek.LOC_RLEG == loc || Mek.LOC_LLEG == loc || Mek.LOC_CLEG == loc) {
+            if (Mek.LOC_RIGHT_LEG == loc || Mek.LOC_LEFT_LEG == loc || Mek.LOC_CENTER_LEG == loc) {
                 submergedLocations.add(loc);
                 continue;
             }
 
-            if ((movingUnit instanceof QuadMek) && (Mek.LOC_RARM == loc || Mek.LOC_LARM == loc)) {
+            if ((movingUnit instanceof QuadMek) && (Mek.LOC_RIGHT_ARM == loc || Mek.LOC_LEFT_ARM == loc)) {
                 submergedLocations.add(loc);
             }
         }
@@ -1602,7 +1612,7 @@ public class BasicPathRanker extends PathRanker {
             // For other units, any breach is deadly.
             // noinspection ConstantConditions
             if ((Mek.LOC_HEAD == loc) ||
-                  (Mek.LOC_CT == loc) ||
+                  (Mek.LOC_CENTER_TORSO == loc) ||
                   (ProtoMek.LOC_HEAD == loc) ||
                   (ProtoMek.LOC_TORSO == loc) ||
                   (!movingUnit.isMek() && !movingUnit.isProtoMek())) {
@@ -1748,14 +1758,16 @@ public class BasicPathRanker extends PathRanker {
             logger.trace("Prone Mek damage = {}, exposed armor = {}", dmg, exposedArmor);
         } else if (movingUnit instanceof BipedMek) {
             dmg = 14;
-            exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG).mapToInt(movingUnit::getArmor).sum();
+            exposedArmor = Stream.of(Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_LEG).mapToInt(movingUnit::getArmor).sum();
             logger.trace("Biped Mek damage = {}, exposed armor = {}", dmg, exposedArmor);
         } else if (movingUnit instanceof TripodMek) {
-            exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_CLEG).mapToInt(movingUnit::getArmor).sum();
+            exposedArmor = Stream.of(Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_LEG, Mek.LOC_CENTER_LEG)
+                  .mapToInt(movingUnit::getArmor)
+                  .sum();
             dmg = 21;
             logger.trace("Tripod Mek damage = {}, exposed armor = {}", dmg, exposedArmor);
         } else {
-            exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_LARM, Mek.LOC_RARM)
+            exposedArmor = Stream.of(Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_ARM, Mek.LOC_RIGHT_ARM)
                   .mapToInt(movingUnit::getArmor)
                   .sum();
             dmg = 28;
@@ -1806,13 +1818,15 @@ public class BasicPathRanker extends PathRanker {
             exposedArmor = movingUnit.getTotalArmor();
             logger.trace("Fully Submerged damage = {}, exposed armor = {}", dmg, exposedArmor);
         } else if (movingUnit instanceof BipedMek) {
-            exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG).mapToInt(movingUnit::getArmor).sum();
+            exposedArmor = Stream.of(Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_LEG).mapToInt(movingUnit::getArmor).sum();
             logger.trace("Biped Mek damage = {}, exposed armor = {}", dmg, exposedArmor);
         } else if (movingUnit instanceof TripodMek) {
-            exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_CLEG).mapToInt(movingUnit::getArmor).sum();
+            exposedArmor = Stream.of(Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_LEG, Mek.LOC_CENTER_LEG)
+                  .mapToInt(movingUnit::getArmor)
+                  .sum();
             logger.trace("Tripod Mek damage = {}, exposed armor = {}", dmg, exposedArmor);
         } else if (movingUnit instanceof QuadMek) {
-            exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_LARM, Mek.LOC_RARM)
+            exposedArmor = Stream.of(Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_ARM, Mek.LOC_RIGHT_ARM)
                   .mapToInt(movingUnit::getArmor)
                   .sum();
             logger.trace("Quad Mek damage = {}, exposed armor = {}", dmg, exposedArmor);

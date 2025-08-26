@@ -51,8 +51,8 @@ import javax.swing.text.DefaultCaret;
 
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Entity;
-import megamek.common.Infantry;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
 import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestInfantry;
 

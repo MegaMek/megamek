@@ -34,8 +34,8 @@
 package megamek.common.cost;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.SmallCraft;
 import megamek.common.equipment.ArmorType;
+import megamek.common.units.SmallCraft;
 import megamek.common.verifier.TestSmallCraft;
 
 public class SmallCraftCostCalculator {
@@ -75,7 +75,7 @@ public class SmallCraftCostCalculator {
         costs[idx++] = 5000 * (smallCraft.getNCrew() + smallCraft.getNPassenger());
         costs[idx++] = 80000;
         costs[idx++] = 100000;
-        costs[idx++] = 10000 * smallCraft.getArcswGuns();
+        costs[idx++] = 10000 * smallCraft.getArcsWithGuns();
 
         // Structure, Attitude Thruster, Landing Gear
         costs[idx++] = 100000 * smallCraft.getSI();

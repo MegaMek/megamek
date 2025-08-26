@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -60,9 +60,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, OptionsConstants.PILOT_ANIMAL_MIMIC, false);
         addOption(adv, OptionsConstants.PILOT_CROSS_COUNTRY, false);
         addOption(adv, OptionsConstants.PILOT_DODGE_MANEUVER, false);
-        // addOption(adv, OptionsConstants.PILOT_DUST_OFF, false);
         addOption(adv, OptionsConstants.PILOT_HVY_LIFTER, false);
-        // addOption(adv, OptionsConstants.PILOT_HOPPER, false);
         addOption(adv, OptionsConstants.PILOT_HOPPING_JACK, false);
         addOption(adv, OptionsConstants.PILOT_HOT_DOG, false);
         addOption(adv, OptionsConstants.PILOT_JUMPING_JACK, false);
@@ -70,45 +68,30 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, OptionsConstants.PILOT_MELEE_MASTER, false);
         addOption(adv, OptionsConstants.PILOT_MELEE_SPECIALIST, false);
         addOption(adv, OptionsConstants.PILOT_APTITUDE_PILOTING, false);
-        // addOption(adv, OptionsConstants.PILOT_NATURAL_GRACE, false);
-        // addOption(adv, OptionsConstants.PILOT_RIDE_WASH, false);
         addOption(adv, OptionsConstants.PILOT_SHAKY_STICK, false);
-        // addOption(adv, OptionsConstants.PILOT_SLUGGER, false);
-        // addOption(adv, OptionsConstants.PILOT_SPEED_DEMON, false);
-        // addOption(adv, OptionsConstants.PILOT_STAND_ASIDE, false);
-        // addOption(adv, OptionsConstants.PILOT_SWORDSMAN, false);
-        // addOption(adv, OptionsConstants.PILOT_TM_, false);
         addOption(adv, OptionsConstants.PILOT_TM_FOREST_RANGER, false);
         addOption(adv, OptionsConstants.PILOT_TM_FROGMAN, false);
         addOption(adv, OptionsConstants.PILOT_TM_MOUNTAINEER, false);
         addOption(adv, OptionsConstants.PILOT_TM_NIGHTWALKER, false);
         addOption(adv, OptionsConstants.PILOT_TM_SWAMP_BEAST, false);
-        // addOption(adv, OptionsConstants.PILOT_WIND_WALKER, false);
         addOption(adv, OptionsConstants.PILOT_ZWEIHANDER, false);
 
         // Gunnery Abilities
         addOption(adv, OptionsConstants.GUNNERY_BLOOD_STALKER, false);
         addOption(adv, OptionsConstants.GUNNERY_CLUSTER_HITTER, false);
         addOption(adv, OptionsConstants.GUNNERY_CLUSTER_MASTER, false);
-        // addOption(adv, OptionsConstants.GUNNERY_FIST_FIRE, false);
         addOption(adv, OptionsConstants.GUNNERY_GOLDEN_GOOSE, false);
-        // addOption(adv, OptionsConstants.GUNNERY_GROUND_HUGGER, false);
         addOption(adv, OptionsConstants.GUNNERY_SPECIALIST, new Vector<>());
-        // addOption(adv, OptionsConstants.GUNNERY_MARKSMAN, false);
         addOption(adv, OptionsConstants.GUNNERY_MULTI_TASKER, false);
         addOption(adv, OptionsConstants.PILOT_APTITUDE_GUNNERY, false);
         addOption(adv, OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY, false);
         addOption(adv, OptionsConstants.GUNNERY_OBLIQUE_ATTACKER, false);
         addOption(adv, OptionsConstants.GUNNERY_RANGE_MASTER, new Vector<>());
         addOption(adv, OptionsConstants.GUNNERY_SANDBLASTER, new Vector<>());
-        // addOption(adv, OptionsConstants.GUNNERY_SHARPSHOOTER, false);
         addOption(adv, OptionsConstants.GUNNERY_SNIPER, false);
         addOption(adv, OptionsConstants.GUNNERY_WEAPON_SPECIALIST, new Vector<>());
 
         // Misc Abilities
-        // addOption(adv, OptionsConstants.MISC_ANTAGONIZER, false);
-        // addOption(adv, OptionsConstants.MISC_COMBAT_INTUITION, false);
-        // addOption(adv, OptionsConstants.MISC_DEMORALIZER, false);
         addOption(adv, OptionsConstants.MISC_EAGLE_EYES, false);
         addOption(adv, OptionsConstants.MISC_ENV_SPECIALIST, new Vector<>());
         addOption(adv, OptionsConstants.MISC_FORWARD_OBSERVER, false);
@@ -124,17 +107,17 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, OptionsConstants.INFANTRY_URBAN_GUERRILLA, false);
 
         // Unofficial
-        addOption(adv, OptionsConstants.UNOFF_EI_IMPLANT, false);
-        addOption(adv, OptionsConstants.UNOFF_GUNNERY_LASER, false);
-        addOption(adv, OptionsConstants.UNOFF_GUNNERY_MISSILE, false);
-        addOption(adv, OptionsConstants.UNOFF_GUNNERY_BALLISTIC, false);
-        addOption(adv, OptionsConstants.UNOFF_CLAN_PILOT_TRAINING, false);
-        addOption(adv, OptionsConstants.UNOFF_SOME_LIKE_IT_HOT, false);
-        addOption(adv, OptionsConstants.UNOFF_WEATHERED, false);
-        addOption(adv, OptionsConstants.UNOFF_ALLWEATHER, false);
-        addOption(adv, OptionsConstants.UNOFF_BLIND_FIGHTER, false);
-        addOption(adv, OptionsConstants.UNOFF_SENSOR_GEEK, false);
-        addOption(adv, OptionsConstants.UNOFF_SMALL_PILOT, false);
+        addOption(adv, OptionsConstants.UNOFFICIAL_EI_IMPLANT, false);
+        addOption(adv, OptionsConstants.UNOFFICIAL_GUNNERY_LASER, false);
+        addOption(adv, OptionsConstants.UNOFFICIAL_GUNNERY_MISSILE, false);
+        addOption(adv, OptionsConstants.UNOFFICIAL_GUNNERY_BALLISTIC, false);
+        addOption(adv, OptionsConstants.UNOFFICIAL_CLAN_PILOT_TRAINING, false);
+        addOption(adv, OptionsConstants.UNOFFICIAL_SOME_LIKE_IT_HOT, false);
+        addOption(adv, OptionsConstants.UNOFFICIAL_WEATHERED, false);
+        addOption(adv, OptionsConstants.UNOFFICIAL_ALL_WEATHER, false);
+        addOption(adv, OptionsConstants.UNOFFICIAL_BLIND_FIGHTER, false);
+        addOption(adv, OptionsConstants.UNOFFICIAL_SENSOR_GEEK, false);
+        addOption(adv, OptionsConstants.UNOFFICIAL_SMALL_PILOT, false);
 
         IBasicOptionGroup edge = addGroup("edge", EDGE_ADVANTAGES);
         addOption(edge, "edge", 0);
@@ -156,7 +139,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(edge, OptionsConstants.EDGE, 0);
         // different edge triggers
         //Mek Triggers
-        addOption(edge, OptionsConstants.EDGE_WHEN_HEADHIT, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_HEAD_HIT, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_TAC, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_KO, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_EXPLOSION, true);
@@ -182,7 +165,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(md, OptionsConstants.MD_MM_IMPLANTS, false);
         addOption(md, OptionsConstants.MD_ENH_MM_IMPLANTS, false);
         addOption(md, OptionsConstants.MD_FILTRATION, false);
-        addOption(md, OptionsConstants.MD_GAS_EFFUSER_PHERO, false);
+        addOption(md, OptionsConstants.MD_GAS_EFFUSER_PHEROMONE, false);
         addOption(md, OptionsConstants.MD_GAS_EFFUSER_TOXIN, false);
         addOption(md, OptionsConstants.MD_DERMAL_ARMOR, false);
         addOption(md, OptionsConstants.MD_DERMAL_CAMO_ARMOR, false);
@@ -193,7 +176,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(md, OptionsConstants.MD_PROTO_DNI, false);
         //Prosthetic Limbs (not MD Exclusive)
         addOption(md, OptionsConstants.MD_PL_ENHANCED, false);
-        addOption(md, OptionsConstants.MD_PL_IENHANCED, false);
+        addOption(md, OptionsConstants.MD_PL_I_ENHANCED, false);
         addOption(md, OptionsConstants.MD_PL_EXTRA_LIMBS, false);
         addOption(md, OptionsConstants.MD_PL_TAIL, false);
         addOption(md, OptionsConstants.MD_PL_MASC, false);

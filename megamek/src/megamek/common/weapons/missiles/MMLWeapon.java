@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,13 +36,13 @@ package megamek.common.weapons.missiles;
 
 import java.io.Serial;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.lrms.LRMWeapon;
 import megamek.common.weapons.srms.SRMWeapon;
 import megamek.server.totalwarfare.TWGameManager;
@@ -62,7 +62,7 @@ public abstract class MMLWeapon extends MissileWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
               .getEquipment(waa.getWeaponId())
@@ -77,7 +77,7 @@ public abstract class MMLWeapon extends MissileWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_MML;
+        return BF_CLASS_MML;
     }
 
     @Override

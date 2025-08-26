@@ -52,7 +52,7 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.IndexedRadioButton;
-import megamek.common.Targetable;
+import megamek.common.units.Targetable;
 
 public class AimedShotDialog extends JDialog {
     @Serial

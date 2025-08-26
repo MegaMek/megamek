@@ -42,7 +42,7 @@ import javax.swing.table.AbstractTableModel;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.minimap.MinimapPanel;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Board;
+import megamek.common.board.Board;
 import megamek.common.Configuration;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;

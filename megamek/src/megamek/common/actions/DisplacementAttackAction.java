@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,13 +34,16 @@
 
 package megamek.common.actions;
 
-import megamek.common.Coords;
+import java.io.Serial;
+
+import megamek.common.board.Coords;
 
 /**
  * @author Ben
  * @since May 23, 2002, 12:05 PM
  */
 public class DisplacementAttackAction extends AbstractAttackAction {
+    @Serial
     private static final long serialVersionUID = -1713221946987876208L;
     private Coords targetPos;
 

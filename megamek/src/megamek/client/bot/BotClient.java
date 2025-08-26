@@ -57,25 +57,50 @@ import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.common.*;
-import megamek.common.AmmoType.AmmoTypeEnum;
-import megamek.common.AmmoType.Munitions;
+import megamek.common.ECMInfo;
+import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeECM;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.AmmoType.AmmoTypeEnum;
+import megamek.common.equipment.AmmoType.Munitions;
+import megamek.common.equipment.Minefield;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.turns.SpecificEntityTurn;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityListFile;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Infantry;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Terrains;
+import megamek.common.units.VTOL;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
@@ -606,7 +631,7 @@ public abstract class BotClient extends Client {
                 calculateDeployment();
             } else if (game.getPhase().isDeployMinefields()) {
                 deployMinefields();
-            } else if (game.getPhase().isSetArtilleryAutohitHexes()) {
+            } else if (game.getPhase().isSetArtilleryAutoHitHexes()) {
                 // For now, declare no auto hit hexes.
                 Vector<BoardLocation> autoHitHexes = calculateArtyAutoHitHexes();
                 sendArtyAutoHitHexes(autoHitHexes);
@@ -614,7 +639,7 @@ public abstract class BotClient extends Client {
                 // Princess implements arty targeting
                 // TODO: TAG should be handled separately.
                 calculateTargetingOffBoardTurn();
-            } else if (game.getPhase().isPremovement() || game.getPhase().isPrefiring()) {
+            } else if (game.getPhase().isPremovement() || game.getPhase().isPreFiring()) {
                 calculatePrePhaseTurn();
             }
 
@@ -1053,7 +1078,7 @@ public abstract class BotClient extends Client {
 
         float fDamage;
         WeaponType wt = (WeaponType) weapon.getType();
-        if (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+        if (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTER_TABLE) {
             if (weapon.getLinked() == null) {
                 return 0.0f;
             }

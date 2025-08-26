@@ -44,7 +44,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import megamek.common.Compute;
+import megamek.common.compute.Compute;
 import megamek.common.util.sorter.NaturalOrderComparator;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;

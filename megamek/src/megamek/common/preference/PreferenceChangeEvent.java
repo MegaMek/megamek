@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.preference;
 
+import java.io.Serial;
 import java.util.EventObject;
 
 public class PreferenceChangeEvent extends EventObject {
@@ -41,6 +42,7 @@ public class PreferenceChangeEvent extends EventObject {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 8514064293889126724L;
     protected String name;
     protected Object oldValue;
@@ -58,7 +60,7 @@ public class PreferenceChangeEvent extends EventObject {
         return name;
     }
 
-    public Object getOldvalue() {
+    public Object getOldValue() {
         return oldValue;
     }
 

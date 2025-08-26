@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,14 +34,30 @@
 
 package megamek.common.actions;
 
+import java.io.Serial;
 import java.util.Enumeration;
 import java.util.Objects;
 
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.ToHitData;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.enums.MoveStepType;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
+import megamek.common.units.FighterSquadron;
+import megamek.common.units.IAero;
+import megamek.common.units.Jumpship;
+import megamek.common.units.SpaceStation;
+import megamek.common.units.Targetable;
+import megamek.common.units.Warship;
 
 /**
  * Represents one unit charging another. Stores information about where the target is supposed to be for the charge to
@@ -51,6 +67,7 @@ import megamek.common.options.OptionsConstants;
  * @since May 28, 2008
  */
 public class RamAttackAction extends AbstractAttackAction {
+    @Serial
     private static final long serialVersionUID = -3549351664290057785L;
 
     public RamAttackAction(Entity attacker, Targetable target) {
@@ -66,9 +83,17 @@ public class RamAttackAction extends AbstractAttackAction {
      */
     public ToHitData toHit(Game game) {
         final Entity entity = game.getEntity(getEntityId());
-        return toHit(game, game.getTarget(getTargetType(), getTargetId()),
-              entity.getPosition(), entity.getElevation(),
-              entity.getPriorPosition(), entity.moved);
+
+        if (entity != null) {
+            return toHit(game,
+                  game.getTarget(getTargetType(), getTargetId()),
+                  entity.getPosition(),
+                  entity.getElevation(),
+                  entity.getPriorPosition(),
+                  entity.moved);
+        }
+
+        return null;
     }
 
     /**
@@ -109,7 +134,7 @@ public class RamAttackAction extends AbstractAttackAction {
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                  && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                  && ((target.getOwnerId() == ae.getOwnerId())
                   || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
                   && (ae.getOwner().getTeam() != Player.TEAM_NONE)
                   && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
@@ -222,11 +247,19 @@ public class RamAttackAction extends AbstractAttackAction {
      * Checks if a ram can hit the target, taking account of movement
      */
     public ToHitData toHit(Game game, MovePath md) {
-        final Entity ae = game.getEntity(getEntityId());
+        final Entity attackingEntity = game.getEntity(getEntityId());
         final Targetable target = getTarget(game);
-        Coords ramSrc = ae.getPosition();
-        int ramEl = ae.getElevation();
-        Coords priorSrc = md.getSecondFinalPosition(ae.getPosition());
+
+        Coords ramSrc = null;
+        Coords priorSrc = null;
+        int ramEl = 0;
+
+        if (attackingEntity != null) {
+            ramSrc = attackingEntity.getPosition();
+            ramEl = attackingEntity.getElevation();
+            priorSrc = md.getSecondFinalPosition(attackingEntity.getPosition());
+        }
+
         MoveStep ramStep = null;
 
         // let's just check this
@@ -235,7 +268,7 @@ public class RamAttackAction extends AbstractAttackAction {
         }
 
         // determine last valid step
-        md.compile(game, ae);
+        md.compile(game, attackingEntity);
         for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements(); ) {
             final MoveStep step = i.nextElement();
             if (step.getMovementType(md.isEndStep(step)) == EntityMovementType.MOVE_ILLEGAL) {
@@ -260,33 +293,39 @@ public class RamAttackAction extends AbstractAttackAction {
      * Damage that an Aero does on a successful ramming attack
      */
     public static int getDamageFor(IAero attacker, Entity target) {
-        int avel = attacker.getCurrentVelocity();
-        int tvel = 0;
+        int attackerVelocity = attacker.getCurrentVelocity();
+        int targetVelocity = 0;
         if (target.isAero()) {
-            tvel = ((IAero) target).getCurrentVelocity();
+            targetVelocity = ((IAero) target).getCurrentVelocity();
         }
-        return getDamageFor(attacker, target, ((Entity) attacker).getPriorPosition(), avel, tvel);
+        return getDamageFor(attacker, target, ((Entity) attacker).getPriorPosition(), attackerVelocity, targetVelocity);
     }
 
-    public static int getDamageFor(IAero attacker, Entity target, Coords atthex, int avel, int tvel) {
-        int netv = Compute.getNetVelocity(atthex, target, avel, tvel);
-        return (int) Math.ceil((((Entity) attacker).getWeight() / 10.0) * netv);
+    public static int getDamageFor(IAero attacker, Entity target, Coords attackHex, int attackVelocity,
+          int targetVelocity) {
+        int netVelocity = Compute.getNetVelocity(attackHex, target, attackVelocity, targetVelocity);
+        return (int) Math.ceil((((Entity) attacker).getWeight() / 10.0) * netVelocity);
     }
 
     /**
      * Damage that an Aero suffers after a successful charge.
      */
     public static int getDamageTakenBy(IAero attacker, Entity target) {
-        int avel = attacker.getCurrentVelocity();
-        int tvel = 0;
+        int attackVelocity = attacker.getCurrentVelocity();
+        int targetVelocity = 0;
         if (target.isAero()) {
-            tvel = ((IAero) target).getCurrentVelocity();
+            targetVelocity = ((IAero) target).getCurrentVelocity();
         }
-        return getDamageTakenBy(attacker, target, ((Entity) attacker).getPriorPosition(), avel, tvel);
+        return getDamageTakenBy(attacker,
+              target,
+              ((Entity) attacker).getPriorPosition(),
+              attackVelocity,
+              targetVelocity);
     }
 
-    public static int getDamageTakenBy(IAero attacker, Entity target, Coords atthex, int avel, int tvel) {
-        int netv = Compute.getNetVelocity(atthex, target, avel, tvel);
-        return (int) Math.ceil((target.getWeight() / 10.0) * netv);
+    public static int getDamageTakenBy(IAero attacker, Entity target, Coords attackHex, int attackVelocity,
+          int targetVelocity) {
+        int netVelocity = Compute.getNetVelocity(attackHex, target, attackVelocity, targetVelocity);
+        return (int) Math.ceil((target.getWeight() / 10.0) * netVelocity);
     }
 }

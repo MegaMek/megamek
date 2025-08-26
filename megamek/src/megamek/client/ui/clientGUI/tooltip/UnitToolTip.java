@@ -38,7 +38,7 @@ import static megamek.client.ui.clientGUI.tooltip.TipUtil.getOptionList;
 import static megamek.client.ui.util.UIUtil.DOT_SPACER;
 import static megamek.client.ui.util.UIUtil.ECM_SIGN;
 import static megamek.client.ui.util.UIUtil.repeat;
-import static megamek.common.LandAirMek.CONV_MODE_FIGHTER;
+import static megamek.common.units.LandAirMek.CONV_MODE_FIGHTER;
 
 import java.awt.Color;
 import java.text.MessageFormat;
@@ -56,17 +56,28 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.tooltip.info.WeaponInfo;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.*;
-import megamek.common.BombType.BombTypeEnum;
+import megamek.common.CriticalSlot;
+import megamek.common.Hex;
+import megamek.common.MPCalculationSetting;
+import megamek.common.Player;
+import megamek.common.RangeType;
+import megamek.common.ReportMessages;
+import megamek.common.Team;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
-import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.WeaponMounted;
+import megamek.common.board.Board;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.*;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
+import megamek.common.game.Game;
+import megamek.common.game.InGameObject;
+import megamek.common.loaders.MapSettings;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.templates.TROView;
+import megamek.common.units.*;
 import megamek.logging.MMLogger;
 
 public final class UnitToolTip {
@@ -225,8 +236,7 @@ public final class UnitToolTip {
             return UnitToolTip.getEntityTipAsTarget((Entity) target, (client != null) ? client.getLocalPlayer() : null)
                   .toString();
         } else if (target instanceof BuildingTarget buildingTarget) {
-            Board board =
-                  (client != null) ? client.getBoard(target.getBoardId()) : null;
+            Board board = (client != null) ? client.getBoard(target.getBoardId()) : null;
             return HexTooltip.getBuildingTargetTip(buildingTarget, board);
         } else if (target instanceof Hex hex) {
             // LEGACY replace with real board ID
@@ -426,10 +436,10 @@ public final class UnitToolTip {
 
     private static StringBuilder sysCrits(Entity entity, int type, int index, int loc, String locAbbr) {
         String result;
-        int total = entity.getNumberOfCriticals(type, index, loc);
-        int hits = entity.getHitCriticals(type, index, loc);
+        int total = entity.getNumberOfCriticalSlots(type, index, loc);
+        int hits = entity.getHitCriticalSlots(type, index, loc);
         int good = total - hits;
-        boolean bad = (entity.getBadCriticals(type, index, loc) > 0);
+        boolean bad = (entity.getBadCriticalSlots(type, index, loc) > 0);
 
         if ((good + hits) > 0) {
             result = "&nbsp;&nbsp;" + locAbbr + ":&nbsp;";
@@ -563,17 +573,13 @@ public final class UnitToolTip {
                           loc,
                           msgAbbrLifeSupport).toString();
                     break;
-                case Mek.LOC_CT:
+                case Mek.LOC_CENTER_TORSO:
                     result = sysCrits(entity,
                           CriticalSlot.TYPE_SYSTEM,
                           Mek.SYSTEM_ENGINE,
                           loc,
                           msgAbbrEngine).toString();
-                    result += sysCrits(entity,
-                          CriticalSlot.TYPE_SYSTEM,
-                          Mek.SYSTEM_GYRO,
-                          loc,
-                          msgAbbrGyro).toString();
+                    result += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, loc, msgAbbrGyro).toString();
                     result += sysCrits(entity,
                           CriticalSlot.TYPE_SYSTEM,
                           Mek.SYSTEM_SENSORS,
@@ -585,8 +591,8 @@ public final class UnitToolTip {
                           loc,
                           msgAbbrLifeSupport).toString();
                     break;
-                case Mek.LOC_RT:
-                case Mek.LOC_LT:
+                case Mek.LOC_RIGHT_TORSO:
+                case Mek.LOC_LEFT_TORSO:
                     result = sysCrits(entity,
                           CriticalSlot.TYPE_SYSTEM,
                           Mek.SYSTEM_ENGINE,
@@ -598,8 +604,8 @@ public final class UnitToolTip {
                           loc,
                           msgAbbrLifeSupport).toString();
                     break;
-                case Mek.LOC_RARM:
-                case Mek.LOC_LARM:
+                case Mek.LOC_RIGHT_ARM:
+                case Mek.LOC_LEFT_ARM:
                     result = sysCrits(entity,
                           CriticalSlot.TYPE_SYSTEM,
                           Mek.ACTUATOR_SHOULDER,
@@ -620,11 +626,7 @@ public final class UnitToolTip {
                           Mek.ACTUATOR_HAND,
                           loc,
                           msgAbbrHand).toString();
-                    result += sysCrits(entity,
-                          CriticalSlot.TYPE_SYSTEM,
-                          Mek.ACTUATOR_HIP,
-                          loc,
-                          msgAbbrHip).toString();
+                    result += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc, msgAbbrHip).toString();
                     result += sysCrits(entity,
                           CriticalSlot.TYPE_SYSTEM,
                           Mek.ACTUATOR_UPPER_LEG,
@@ -641,9 +643,9 @@ public final class UnitToolTip {
                           loc,
                           msgAbbrFoot).toString();
                     break;
-                case Mek.LOC_RLEG:
-                case Mek.LOC_LLEG:
-                case Mek.LOC_CLEG:
+                case Mek.LOC_RIGHT_LEG:
+                case Mek.LOC_LEFT_LEG:
+                case Mek.LOC_CENTER_LEG:
                     result = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc, msgAbbrHip).toString();
                     result += sysCrits(entity,
                           CriticalSlot.TYPE_SYSTEM,
@@ -672,8 +674,8 @@ public final class UnitToolTip {
                 case SuperHeavyTank.LOC_FRONT:
                 case SuperHeavyTank.LOC_RIGHT:
                 case SuperHeavyTank.LOC_LEFT:
-                case SuperHeavyTank.LOC_REARRIGHT:
-                case SuperHeavyTank.LOC_REARLEFT:
+                case SuperHeavyTank.LOC_REAR_RIGHT:
+                case SuperHeavyTank.LOC_REAR_LEFT:
                 case SuperHeavyTank.LOC_REAR:
                     result = sysStabilizers(tank, loc, msgAbbrStabilizers).toString();
                     break;
@@ -1032,7 +1034,7 @@ public final class UnitToolTip {
             }
 
             // Distinguish equal weapons with and without rapid fire
-            if (isRapidFireActive(entity.getGame()) && curWp.isRapidfire() && !curWp.isDestroyed()) {
+            if (isRapidFireActive(entity.getGame()) && curWp.isRapidFire() && !curWp.isDestroyed()) {
                 weaponDesc += RAPID_FIRE;
             }
 
@@ -1086,7 +1088,7 @@ public final class UnitToolTip {
 
                 int maxRange = RangeType.RANGE_LONG;
 
-                if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
+                if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)) {
                     maxRange = RangeType.RANGE_EXTREME;
                 }
 
@@ -1101,7 +1103,9 @@ public final class UnitToolTip {
                 WeaponType wpT = curWp.getType();
 
                 if (!wpT.hasFlag(WeaponType.F_AMS) ||
-                      entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)) {
+                      entity.getGame()
+                            .getOptions()
+                            .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_MANUAL_AMS)) {
                     currentWp.range = rangeString.toString();
                 }
 
@@ -1112,7 +1116,8 @@ public final class UnitToolTip {
                 // Check wpInfos for dual entries to avoid displaying ammo twice for
                 // non/rapid-fire
                 if ((weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.NA) &&
-                      (!weaponType.hasFlag(WeaponType.F_ONESHOT) || weaponType.hasFlag(WeaponType.F_BA_INDIVIDUAL)) &&
+                      (!weaponType.hasFlag(WeaponType.F_ONE_SHOT) ||
+                            weaponType.hasFlag(WeaponType.F_BA_INDIVIDUAL)) &&
                       (weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.INFANTRY)) {
                     String msg_ammo = Messages.getString("BoardView1.Tooltip.Ammo");
 
@@ -1540,10 +1545,19 @@ public final class UnitToolTip {
         }
 
         if (e.isAirborneAeroOnGroundMap()) {
-            return e.getActiveSensor().getDisplayName() + " (" + srh.minSensorRange + "-"
-                  + srh.maxSensorRange + ")" + " {"
-                  + Messages.getString("BoardView1.Tooltip.sensor_range_vs_ground_target")
-                  + " (" + srh.minGroundSensorRange + "-" + srh.maxGroundSensorRange + ")}";
+            return e.getActiveSensor().getDisplayName() +
+                  " (" +
+                  srh.minSensorRange +
+                  "-" +
+                  srh.maxSensorRange +
+                  ")" +
+                  " {" +
+                  Messages.getString("BoardView1.Tooltip.sensor_range_vs_ground_target") +
+                  " (" +
+                  srh.minGroundSensorRange +
+                  "-" +
+                  srh.maxGroundSensorRange +
+                  ")}";
         }
         return e.getActiveSensor().getDisplayName() + " (" + srh.minSensorRange + "-" + srh.maxSensorRange + ")";
     }
@@ -1657,7 +1671,7 @@ public final class UnitToolTip {
                 String sUnJamming = " ";
                 String msgUnjammingRAC = Messages.getString("BoardView1.Tooltip.UnjammingRAC");
                 sUnJamming += msgUnjammingRAC;
-                if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {
+                if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC)) {
                     String msgAndAC = Messages.getString("BoardView1.Tooltip.AndAC");
                     sUnJamming += msgAndAC;
                 }
@@ -1881,8 +1895,8 @@ public final class UnitToolTip {
     private static String getSensorInfo(GameOptions gameOptions, Entity entity, PlanetaryConditions conditions) {
         String sensors = "";
         // If sensors, display what sensors this unit is using
-        if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS) ||
-              (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) &&
+        if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS) ||
+              (gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS)) &&
                     entity.isSpaceborne()) {
             String visualRange = Compute.getMaxVisualRange(entity, false) + "";
             if (conditions.getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
@@ -1896,7 +1910,7 @@ public final class UnitToolTip {
             }
             sensors += addToTT("Visual", NOBR, visualRange);
         }
-        if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP) && entity.hasBAP()) {
+        if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_BAP) && entity.hasBAP()) {
             sensors += addToTT("BAPRange", NOBR, entity.getBAPRange());
         }
 
@@ -2049,7 +2063,7 @@ public final class UnitToolTip {
                                     if ((entity.getGame() == null) ||
                                           (!entity.getGame()
                                                 .getOptions()
-                                                .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE))) {
+                                                .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE))) {
                                         continue;
                                     }
                                 }
@@ -2086,14 +2100,22 @@ public final class UnitToolTip {
                     }
                     if (mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
                         int eNum = entity.getEquipmentNum(mounted);
-                        partialWing += entity.getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mek.LOC_RT);
-                        partialWing += entity.getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mek.LOC_LT);
-                        partialWingDestroyed += entity.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mek.LOC_RT);
-                        partialWingDestroyed += entity.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mek.LOC_LT);
+                        partialWing += entity.getGoodCriticalSlots(CriticalSlot.TYPE_EQUIPMENT,
+                              eNum,
+                              Mek.LOC_RIGHT_TORSO);
+                        partialWing += entity.getGoodCriticalSlots(CriticalSlot.TYPE_EQUIPMENT,
+                              eNum,
+                              Mek.LOC_LEFT_TORSO);
+                        partialWingDestroyed += entity.getBadCriticalSlots(CriticalSlot.TYPE_EQUIPMENT,
+                              eNum,
+                              Mek.LOC_RIGHT_TORSO);
+                        partialWingDestroyed += entity.getBadCriticalSlots(CriticalSlot.TYPE_EQUIPMENT,
+                              eNum,
+                              Mek.LOC_LEFT_TORSO);
 
                         if (entity instanceof Mek mek) {
-                            partialWingWeatherMod = mek.getPartialWingJumpAtmoBonus()
-                                  - mek.getPartialWingJumpWeightClassBonus();
+                            partialWingWeatherMod = mek.getPartialWingJumpAtmosphereBonus() -
+                                  mek.getPartialWingJumpWeightClassBonus();
                         }
                     }
                 }
@@ -2566,12 +2588,12 @@ public final class UnitToolTip {
 
     /** Returns true when Hot-Loading LRMs is on. */
     static boolean isHotLoadActive(Game game) {
-        return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD);
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HOT_LOAD);
     }
 
     /** Returns true when Hot-Loading LRMs is on. */
     static boolean isRapidFireActive(Game game) {
-        return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST);
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BURST);
     }
 
     private UnitToolTip() {

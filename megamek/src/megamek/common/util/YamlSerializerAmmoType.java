@@ -35,8 +35,8 @@ package megamek.common.util;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import megamek.common.AmmoType;
-import megamek.common.EquipmentType;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
 
 public class YamlSerializerAmmoType extends YamlSerializerEquipmentType {
     static public final String TYPENAME = "ammo";

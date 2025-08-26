@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,13 +34,19 @@
 
 package megamek.common.weapons.artillery;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
-import megamek.common.Mounted;
+import static megamek.common.game.IGame.LOGGER;
+
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.ADAMissileWeaponHandler;
-import megamek.common.weapons.AttackHandler;
+import megamek.common.annotations.Nullable;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
+import megamek.common.weapons.handlers.ADAMissileWeaponHandler;
+import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -49,6 +55,7 @@ import megamek.server.totalwarfare.TWGameManager;
  */
 
 public abstract class ArrowIV extends ArtilleryWeapon {
+    @Serial
     private static final long serialVersionUID = -4495524659692575107L;
 
     // Air-Defense Arrow IV (ADA) missile ranges differ from normal Arrow IV ammo
@@ -64,8 +71,8 @@ public abstract class ArrowIV extends ArtilleryWeapon {
         name = "Arrow IV";
         setInternalName("ArrowIV");
         addLookupName("ArrowIVSystem");
-        addLookupName("Arrow IV System");
-        addLookupName("Arrow IV Missile System");
+        addLookupName("Arrow IV SystemFluff");
+        addLookupName("Arrow IV Missile SystemFluff");
         heat = 10;
         rackSize = 20;
         ammoType = AmmoType.AmmoTypeEnum.ARROW_IV;
@@ -86,8 +93,8 @@ public abstract class ArrowIV extends ArtilleryWeapon {
         int eRange = getExtremeRange();
         boolean hasLoadedAmmo = (weapon.getLinked() != null);
         if (hasLoadedAmmo) {
-            AmmoType atype = (AmmoType) weapon.getLinked().getType();
-            if (atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
+            AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
+            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
                 minRange = ADA_MIN_RANGE;
                 sRange = ADA_SHORT_RANGE;
                 mRange = ADA_MED_RANGE;
@@ -99,11 +106,17 @@ public abstract class ArrowIV extends ArtilleryWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    @Nullable
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
-        if (waa.getAmmoMunitionType().contains(AmmoType.Munitions.M_ADA)) {
-            return new ADAMissileWeaponHandler(toHit, waa, game, manager);
+        try {
+            if (waa.getAmmoMunitionType().contains(AmmoType.Munitions.M_ADA)) {
+                return new ADAMissileWeaponHandler(toHit, waa, game, manager);
+            }
+            return super.getCorrectHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
         }
-        return super.getCorrectHandler(toHit, waa, game, manager);
+        return null;
     }
 }

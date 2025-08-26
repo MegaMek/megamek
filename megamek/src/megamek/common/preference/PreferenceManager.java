@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -167,7 +167,7 @@ public class PreferenceManager {
                 }
             }
         } catch (Exception e) {
-            logger.error("Error loading XML for client settings: " + e.getMessage(), e);
+            logger.error(e, "Error loading XML for client settings: {}", e.getMessage());
         }
     }
 
@@ -194,7 +194,7 @@ public class PreferenceManager {
     }
 
     /**
-     * A wrapper class for all of the client settings.
+     * A wrapper class for all the client settings.
      */
     @XmlRootElement(name = ROOT_NODE_NAME)
     @XmlAccessorType(XmlAccessType.NONE)

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,13 +34,14 @@
 
 package megamek.common.event;
 
+import java.io.Serial;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.IEntityRemovalConditions;
+import megamek.common.game.Game;
+import megamek.common.interfaces.IEntityRemovalConditions;
+import megamek.common.units.Entity;
 
 /**
  * An event that is fired at the end of the victory phase, before the game state is reset. It can be used to retrieve
@@ -50,23 +51,23 @@ import megamek.common.IEntityRemovalConditions;
  * @see GameListener
  */
 public class GameVictoryEvent extends GameEvent implements PostGameResolution {
+    @Serial
     private static final long serialVersionUID = -8470655646019563063L;
 
     /**
      * Track game entities
      */
-    private Vector<Entity> entities = new Vector<>();
-    private Hashtable<Integer, Entity> entityIds = new Hashtable<>();
+    private final Vector<Entity> entities = new Vector<>();
+    private final Hashtable<Integer, Entity> entityIds = new Hashtable<>();
 
     /**
      * Track entities removed from the game (probably by death)
      */
-    Vector<Entity> vOutOfGame = new Vector<>();
+    Vector<Entity> vOutOfGame;
 
     /**
      * @param source event source
      */
-    @SuppressWarnings("unchecked")
     public GameVictoryEvent(Object source, Game game) {
         super(source);
         for (Entity entity : game.getEntitiesVector()) {

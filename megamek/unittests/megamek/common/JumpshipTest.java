@@ -34,6 +34,9 @@ package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import megamek.common.equipment.EquipmentType;
+import megamek.common.units.Jumpship;
+import megamek.common.util.RoundWeight;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

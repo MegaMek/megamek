@@ -33,7 +33,7 @@
 
 package megamek.common.event;
 
-import megamek.common.InGameObject;
+import megamek.common.game.InGameObject;
 import megamek.common.annotations.Nullable;
 
 public class UnitChangedGameEvent extends GameEvent {

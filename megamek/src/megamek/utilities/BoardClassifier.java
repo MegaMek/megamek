@@ -42,8 +42,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import megamek.common.Board;
-import megamek.common.BoardDimensions;
+import megamek.common.board.Board;
+import megamek.common.board.BoardDimensions;
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utilities.BoardsTagger.Tags;

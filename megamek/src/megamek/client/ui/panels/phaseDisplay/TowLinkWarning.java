@@ -38,12 +38,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import megamek.common.Board;
-import megamek.common.BoardLocation;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.LargeSupportTank;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
+import megamek.common.units.LargeSupportTank;
 
 /**
  * When deploying units that are towing units, let's mark hexes that would break the tow linkage with warning. or

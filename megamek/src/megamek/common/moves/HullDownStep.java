@@ -35,12 +35,13 @@ package megamek.common.moves;
 import java.util.EnumSet;
 import java.util.Set;
 
-import megamek.common.BipedMek;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Mek;
-import megamek.common.QuadMek;
+import megamek.common.enums.MoveStepType;
+import megamek.common.game.Game;
 import megamek.common.pathfinder.CachedEntityState;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadMek;
 
 /**
  * This class handles the hull down step of a unit. It is used in the MoveStep compilation to calculate the movement of
@@ -50,10 +51,10 @@ import megamek.common.pathfinder.CachedEntityState;
  * @since 0.50.07
  */
 class HullDownStep implements PhasePass {
-    private static final EnumSet<MovePath.MoveStepType> TYPES = EnumSet.of(MovePath.MoveStepType.HULL_DOWN);
+    private static final EnumSet<MoveStepType> TYPES = EnumSet.of(MoveStepType.HULL_DOWN);
 
     @Override
-    public Set<MovePath.MoveStepType> getTypesOfInterest() {
+    public Set<MoveStepType> getTypesOfInterest() {
         return TYPES;
     }
 
@@ -64,7 +65,7 @@ class HullDownStep implements PhasePass {
             int mpUsed = 1;
             if (entity instanceof BipedMek) {
                 // TODO - make unit test to evaluate if we can safely change this for loop
-                for (int location = Mek.LOC_RLEG; location <= Mek.LOC_LLEG; location++) {
+                for (int location = Mek.LOC_RIGHT_LEG; location <= Mek.LOC_LEFT_LEG; location++) {
                     if (entity.isLocationBad(location)) {
                         mpUsed += 99;
                         break;
@@ -77,7 +78,7 @@ class HullDownStep implements PhasePass {
                 moveStep.setHasJustStood(true);
             } else {
                 // TODO - make unit test to evaluate if we can safely change this for loop
-                for (int location = Mek.LOC_RARM; location <= Mek.LOC_LLEG; location++) {
+                for (int location = Mek.LOC_RIGHT_ARM; location <= Mek.LOC_LEFT_LEG; location++) {
                     if (entity.isLocationBad(location)) {
                         mpUsed += 99;
                         break;

@@ -40,9 +40,9 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.BipedMek;
-import megamek.common.Coords;
-import megamek.common.Entity;
+import megamek.common.units.BipedMek;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
 import org.junit.jupiter.api.Test;
 
 /**

@@ -35,11 +35,12 @@ package megamek.common.moves;
 import java.util.EnumSet;
 import java.util.Set;
 
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.Game;
-import megamek.common.ProtoMek;
+import megamek.common.enums.MoveStepType;
+import megamek.common.game.Game;
 import megamek.common.pathfinder.CachedEntityState;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.ProtoMek;
 
 /**
  * This class handles the down step of a unit. It is used in the MoveStep compilation to calculate the movement of a
@@ -49,10 +50,10 @@ import megamek.common.pathfinder.CachedEntityState;
  * @since 0.50.07
  */
 class DownStep implements PhasePass {
-    private static final EnumSet<MovePath.MoveStepType> TYPES = EnumSet.of(MovePath.MoveStepType.DOWN);
+    private static final EnumSet<MoveStepType> TYPES = EnumSet.of(MoveStepType.DOWN);
 
     @Override
-    public Set<MovePath.MoveStepType> getTypesOfInterest() {
+    public Set<MoveStepType> getTypesOfInterest() {
         return TYPES;
     }
 

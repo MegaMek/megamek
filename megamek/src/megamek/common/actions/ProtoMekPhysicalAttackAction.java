@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,17 +35,31 @@
 
 package megamek.common.actions;
 
+import java.io.Serial;
+
 import megamek.client.ui.Messages;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.ToHitData;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.MiscType;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
 
 /**
  * The attacking ProtoMek makes its combo physical attack action.
  */
 public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
-    private static final MMLogger logger = MMLogger.create(ProtoMekPhysicalAttackAction.class);
+    private static final MMLogger LOGGER = MMLogger.create(ProtoMekPhysicalAttackAction.class);
 
+    @Serial
     private static final long serialVersionUID = 1432011536091665084L;
 
     public ProtoMekPhysicalAttackAction(int entityId, int targetId) {
@@ -58,7 +72,7 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
     }
 
     /**
-     * Damage a ProtoMek does with its Combo-physicalattack.
+     * Damage a ProtoMek does with its Combo-physical attack.
      */
     public static int getDamageFor(Entity entity, Targetable target) {
         int toReturn;
@@ -105,11 +119,11 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
         Entity te = null;
         // arguments legal?
         if (ae == null) {
-            logger.error("Attacker not valid");
+            LOGGER.error("Attacker not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
         }
         if (target == null) {
-            logger.error("target not valid");
+            LOGGER.error("target not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
         }
 
@@ -121,7 +135,7 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                  && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                  && ((target.getOwnerId() == ae.getOwnerId())
                   || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
                   && (ae.getOwner().getTeam() != Player.TEAM_NONE)
                   && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
@@ -149,9 +163,9 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
                   "You can't target yourself");
         }
 
-        // non-protos can't make protomek-physicalattacks
+        // non-proto's can't make protomek-physical attacks
         if (!(ae instanceof ProtoMek)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-protos can't make proto-physicalattacks");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-ProtoMeks can't make proto-physical attacks");
         }
 
         // Can't target a transported entity.
@@ -159,7 +173,7 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is a passenger.");
         }
 
-        // Can't target a entity conducting a swarm attack.
+        // Can't target an entity conducting a swarm attack.
         if ((te != null) && (Entity.NONE != te.getSwarmTargetId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is swarming a Mek.");
         }

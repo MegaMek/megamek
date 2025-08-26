@@ -32,11 +32,11 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Mek;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Coords;
 import megamek.common.moves.MovePath;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 
 /**
  * This class calculates the difference between a unit's current facing and its optimal facing.
@@ -180,8 +180,12 @@ record FacingDiffCalculator(int allowFacingTolerance) {
         int biasTowardsFacing = 0;
         if (unit.isMek()) {
             // if we're a mek, we want to face the enemy towards the side that has more armor left
-            int leftArmor = unit.getArmor(Mek.LOC_LARM) + unit.getArmor(Mek.LOC_LLEG) + unit.getArmor(Mek.LOC_LT);
-            int rightArmor = unit.getArmor(Mek.LOC_RARM) + unit.getArmor(Mek.LOC_RLEG) + unit.getArmor(Mek.LOC_RT);
+            int leftArmor = unit.getArmor(Mek.LOC_LEFT_ARM)
+                  + unit.getArmor(Mek.LOC_LEFT_LEG)
+                  + unit.getArmor(Mek.LOC_LEFT_TORSO);
+            int rightArmor = unit.getArmor(Mek.LOC_RIGHT_ARM)
+                  + unit.getArmor(Mek.LOC_RIGHT_LEG)
+                  + unit.getArmor(Mek.LOC_RIGHT_TORSO);
             if (leftArmor > rightArmor) {
                 biasTowardsFacing = 1;
             } else if (rightArmor > leftArmor) {

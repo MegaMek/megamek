@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,17 +35,20 @@
 
 package megamek.common.actions;
 
+import java.io.Serial;
+
 import megamek.client.ui.Messages;
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
 
 public class SpotAction extends AbstractEntityAction {
 
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 3629300334304478911L;
-    private int targetId;
+    private final int targetId;
 
     public SpotAction(int entityId, int targetId) {
         super(entityId);

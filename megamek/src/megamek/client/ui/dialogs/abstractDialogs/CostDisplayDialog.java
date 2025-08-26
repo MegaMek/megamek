@@ -51,7 +51,7 @@ import javax.swing.border.EmptyBorder;
 
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.annotations.Nullable;
 
 /** A dialog to display the cost calculation for a given entity. */

@@ -34,12 +34,12 @@
 
 package megamek.common.board.postprocess;
 
-import megamek.common.Board;
 import megamek.common.Configuration;
-import megamek.common.MapSettings;
+import megamek.common.board.Board;
+import megamek.common.loaders.MapSettings;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.fileUtils.MegaMekFile;
 
@@ -76,8 +76,8 @@ public class TWBoardTransformer {
     }
 
     private static void setupOptions(IGameOptions options, Board newBoard) {
-        if (options.getOption(OptionsConstants.BASE_BRIDGECF).intValue() > 0) {
-            newBoard.setBridgeCF(options.getOption(OptionsConstants.BASE_BRIDGECF).intValue());
+        if (options.getOption(OptionsConstants.BASE_BRIDGE_CF).intValue() > 0) {
+            newBoard.setBridgeCF(options.getOption(OptionsConstants.BASE_BRIDGE_CF).intValue());
         }
 
         if (!options.booleanOption(OptionsConstants.BASE_RANDOM_BASEMENTS)) {

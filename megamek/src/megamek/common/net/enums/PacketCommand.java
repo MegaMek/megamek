@@ -85,15 +85,15 @@ public enum PacketCommand {
     /** A packet instructing the Client to forget the unit of the given id as it is / has become invisible (SBF). */
     UNIT_INVISIBLE,
 
-    ENTITY_MULTIUPDATE,
+    ENTITY_MULTI_UPDATE,
     ENTITY_WORDER_UPDATE,
     ENTITY_ASSIGN,
-    ENTITY_MODECHANGE,
-    ENTITY_AMMOCHANGE,
-    ENTITY_SENSORCHANGE,
-    ENTITY_SINKSCHANGE,
+    ENTITY_MODE_CHANGE,
+    ENTITY_AMMO_CHANGE,
+    ENTITY_SENSOR_CHANGE,
+    ENTITY_SINKS_CHANGE,
     ENTITY_ACTIVATE_HIDDEN,
-    ENTITY_SYSTEMMODECHANGE,
+    ENTITY_SYSTEM_MODE_CHANGE,
     FORCE_UPDATE,
     FORCE_ADD,
     FORCE_DELETE,
@@ -122,8 +122,8 @@ public enum PacketCommand {
     /** A Server to Client packet instructing the Client to replace all boards with the newly sent ones. */
     SENDING_BOARD,
 
-    SENDING_ILLUM_HEXES,
-    CLEAR_ILLUM_HEXES,
+    SENDING_ILLUMINATED_HEXES,
+    CLEAR_ILLUMINATED_HEXES,
     SENDING_ENTITIES,
     SENDING_PLAYERS,
 
@@ -137,7 +137,7 @@ public enum PacketCommand {
     /** A packet transmitting the entire game's accumulated reports to the Client, possibly obscured. */
     SENDING_REPORTS_ALL,
 
-    /** A packet having a options to share with other Clients (C -> S) or implement on the receiving Client (S -> C). */
+    /** A packet having an options to share with other Clients (C -> S) or implement on the receiving Client (S -> C). */
     SENDING_GAME_SETTINGS,
 
     SENDING_MAP_DIMENSIONS,
@@ -151,7 +151,7 @@ public enum PacketCommand {
     UPDATE_GROUND_OBJECTS,
     REROLL_INITIATIVE,
     UNLOAD_STRANDED,
-    SET_ARTILLERY_AUTOHIT_HEXES,
+    SET_ARTILLERY_AUTO_HIT_HEXES,
     SENDING_ARTILLERY_ATTACKS,
     SENDING_FLARES,
     SERVER_CORRECT_NAME,
@@ -171,7 +171,7 @@ public enum PacketCommand {
     FORWARD_INITIATIVE,
     SENDING_PLANETARY_CONDITIONS,
     SQUADRON_ADD,
-    ENTITY_CALLEDSHOTCHANGE,
+    ENTITY_CALLED_SHOT_CHANGE,
     ENTITY_MOUNTED_FACING_CHANGE,
     SENDING_AVAILABLE_MAP_SIZES,
     ENTITY_LOAD,

@@ -33,6 +33,7 @@
 
 package megamek.common.util.weightedMaps;
 
+import java.io.Serial;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
@@ -41,6 +42,7 @@ import megamek.common.annotations.Nullable;
 
 public abstract class AbstractWeightedMap<K extends Number, T> extends TreeMap<K, T> {
     //region Variable Declarations
+    @Serial
     private static final long serialVersionUID = 6745329554873562471L;
     //endregion Variable Declarations
 
@@ -48,7 +50,7 @@ public abstract class AbstractWeightedMap<K extends Number, T> extends TreeMap<K
      * @param weight the weight to put the item at
      * @param value  the value of the item
      *
-     * @return the return value of {@link TreeMap#put}, or null if the value is not added to the map
+     * @return the return value of TreeMap#Put, or null if the value is not added to the map
      */
     public abstract @Nullable T add(final K weight, final T value);
 

@@ -32,7 +32,7 @@
  */
 package megamek.client.ratgenerator;
 
-import static megamek.common.UnitRole.*;
+import static megamek.common.units.UnitRole.*;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -41,12 +41,21 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.WeaponType;
+import megamek.common.loaders.MekSummary;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.UnitRole;
+import megamek.common.units.UnitType;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
-import megamek.common.weapons.autocannons.ACWeapon;
-import megamek.common.weapons.autocannons.LBXACWeapon;
-import megamek.common.weapons.autocannons.UACWeapon;
+import megamek.common.weapons.autoCannons.ACWeapon;
+import megamek.common.weapons.autoCannons.LBXACWeapon;
+import megamek.common.weapons.autoCannons.UACWeapon;
 import megamek.common.weapons.lrms.LRMWeapon;
 import megamek.common.weapons.srms.SRMWeapon;
 import megamek.common.weapons.tag.TAGWeapon;
@@ -66,7 +75,7 @@ public class FormationType {
     public static final int FLAG_NAVAL = 1 << UnitType.NAVAL;
 
     public static final int FLAG_CONV_FIGHTER = 1 << UnitType.CONV_FIGHTER;
-    public static final int FLAG_AERO = 1 << UnitType.AEROSPACEFIGHTER;
+    public static final int FLAG_AERO = 1 << UnitType.AEROSPACE_FIGHTER;
     public static final int FLAG_SMALL_CRAFT = 1 << UnitType.SMALL_CRAFT;
     public static final int FLAG_DROPSHIP = 1 << UnitType.DROPSHIP;
 

@@ -35,10 +35,11 @@ package megamek.common.moves;
 import java.util.EnumSet;
 import java.util.Set;
 
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.enums.MoveStepType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;
+import megamek.common.units.Entity;
 
 /**
  * This class handles the lateral backwards step of a unit. It is used in the MoveStep compilation to calculate the
@@ -48,11 +49,11 @@ import megamek.common.pathfinder.CachedEntityState;
  * @since 0.50.07
  */
 class LateralBackwardStep extends SideStepStep {
-    private static final EnumSet<MovePath.MoveStepType> TYPES = EnumSet.of(MovePath.MoveStepType.LATERAL_LEFT_BACKWARDS,
-          MovePath.MoveStepType.LATERAL_RIGHT_BACKWARDS);
+    private static final EnumSet<MoveStepType> TYPES = EnumSet.of(MoveStepType.LATERAL_LEFT_BACKWARDS,
+          MoveStepType.LATERAL_RIGHT_BACKWARDS);
 
     @Override
-    public Set<MovePath.MoveStepType> getTypesOfInterest() {
+    public Set<MoveStepType> getTypesOfInterest() {
         return TYPES;
     }
 

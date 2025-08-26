@@ -33,7 +33,7 @@
 
 package megamek.common.actions.sbf;
 
-import megamek.common.BoardLocation;
+import megamek.common.board.BoardLocation;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.server.sbf.SBFActionHandler;
 import megamek.server.sbf.SBFGameManager;

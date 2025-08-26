@@ -42,7 +42,7 @@ public enum EraFlag {
     AGE_OF_WAR,
     STAR_LEAGUE,
     EARLY_SUCCESSION_WARS,
-    LATE_SUCCESSION_WARS_LOSTECH,
+    LATE_SUCCESSION_WARS_LOS_TECH,
     LATE_SUCCESSION_WARS_RENAISSANCE,
     CLAN_INVASION,
     CIVIL_WAR,
@@ -74,7 +74,7 @@ public enum EraFlag {
     }
 
     public boolean isLateSuccessionWarsLosTech() {
-        return this == LATE_SUCCESSION_WARS_LOSTECH;
+        return this == LATE_SUCCESSION_WARS_LOS_TECH;
     }
 
     public boolean isLateSuccessionWarsRenaissance() {

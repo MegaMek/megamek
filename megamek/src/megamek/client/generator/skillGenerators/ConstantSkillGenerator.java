@@ -33,7 +33,7 @@
 package megamek.client.generator.skillGenerators;
 
 import megamek.client.generator.enums.SkillGeneratorMethod;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 
 public class ConstantSkillGenerator extends AbstractSkillGenerator {
     //region Constructors

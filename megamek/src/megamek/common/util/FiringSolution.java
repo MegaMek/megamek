@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,27 +41,16 @@ import megamek.common.ToHitData;
  *
  * @author arlith
  */
-public class FiringSolution {
-
-    private ToHitData toHit;
-
-    private boolean targetSpotted;
+public record FiringSolution(ToHitData toHit, boolean targetSpotted) {
 
     /**
-     * @param toHit
-     * @param targetSpotted
+     *
      */
-    public FiringSolution(ToHitData toHit, boolean targetSpotted) {
-        this.toHit = toHit;
-        this.targetSpotted = targetSpotted;
+    public FiringSolution {
     }
 
     public ToHitData getToHitData() {
         return toHit;
-    }
-
-    public boolean isTargetSpotted() {
-        return targetSpotted;
     }
 
 }

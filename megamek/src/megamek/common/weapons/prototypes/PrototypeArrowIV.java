@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,8 +34,14 @@
 
 package megamek.common.weapons.prototypes;
 
-import megamek.common.AmmoType;
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.AmmoType;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 
 /**
@@ -43,6 +49,7 @@ import megamek.common.weapons.artillery.ArtilleryWeapon;
  * @since Oct 20, 2004
  */
 public class PrototypeArrowIV extends ArtilleryWeapon {
+    @Serial
     private static final long serialVersionUID = -4495524659692575107L;
 
     public PrototypeArrowIV() {
@@ -59,7 +66,7 @@ public class PrototypeArrowIV extends ArtilleryWeapon {
         longRange = 8;
         extremeRange = 8; // No extreme range.
         tonnage = 16;
-        criticals = 16;
+        criticalSlots = 16;
         bv = 240;
         cost = 1800000;
         this.flags = flags.or(F_MISSILE).or(F_PROTOTYPE).or(F_ARTILLERY);

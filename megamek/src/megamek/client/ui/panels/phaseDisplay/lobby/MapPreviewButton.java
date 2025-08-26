@@ -57,7 +57,7 @@ import javax.swing.TransferHandler;
 
 import megamek.MMConstants;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.MapSettings;
+import megamek.common.loaders.MapSettings;
 import megamek.common.util.ImageUtil;
 import megamek.logging.MMLogger;
 

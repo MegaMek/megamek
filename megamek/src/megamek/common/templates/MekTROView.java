@@ -36,7 +36,16 @@ package megamek.common.templates;
 import java.text.NumberFormat;
 import java.util.StringJoiner;
 
-import megamek.common.*;
+import megamek.common.Messages;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.Entity;
+import megamek.common.units.LandAirMek;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadVee;
+import megamek.common.units.SystemFluff;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestMek;
 
@@ -142,8 +151,8 @@ public class MekTROView extends TROView {
             setModelData("qvFlank", qv.getRunMPasString());
             qv.setConversionMode(mode);
         }
-        setModelData("rightArmActuators", countArmActuators(Mek.LOC_RARM));
-        setModelData("leftArmActuators", countArmActuators(Mek.LOC_LARM));
+        setModelData("rightArmActuators", countArmActuators(Mek.LOC_RIGHT_ARM));
+        setModelData("leftArmActuators", countArmActuators(Mek.LOC_LEFT_ARM));
     }
 
     private String countArmActuators(int location) {
@@ -159,17 +168,19 @@ public class MekTROView extends TROView {
     protected void addFluff() {
         addMekVeeAeroFluff(mek);
         setModelData("chassisDesc",
-              formatSystemFluff(EntityFluff.System.CHASSIS, mek.getFluff(), this::formatChassisDesc));
-        setModelData("jjDesc", formatSystemFluff(EntityFluff.System.JUMPJET, mek.getFluff(), this::formatJJDesc));
+              formatSystemFluff(SystemFluff.CHASSIS, mek.getFluff(), this::formatChassisDesc));
+        setModelData("jjDesc", formatSystemFluff(SystemFluff.JUMP_JET, mek.getFluff(), this::formatJJDesc));
         setModelData("jumpCapacity", mek.getJumpMP() * 30);
         setModelData("jumpBoosterCapacity", mek.getMechanicalJumpBoosterMP() * 30);
     }
 
-    private static final int[][] MEK_ARMOR_LOCS = { { Mek.LOC_HEAD }, { Mek.LOC_CT }, { Mek.LOC_RT, Mek.LOC_LT },
-                                                    { Mek.LOC_RARM, Mek.LOC_LARM },
-                                                    { Mek.LOC_RLEG, Mek.LOC_CLEG, Mek.LOC_LLEG } };
+    private static final int[][] MEK_ARMOR_LOCS = { { Mek.LOC_HEAD }, { Mek.LOC_CENTER_TORSO },
+                                                    { Mek.LOC_RIGHT_TORSO, Mek.LOC_LEFT_TORSO },
+                                                    { Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM },
+                                                    { Mek.LOC_RIGHT_LEG, Mek.LOC_CENTER_LEG, Mek.LOC_LEFT_LEG } };
 
-    private static final int[][] MEK_ARMOR_LOCS_REAR = { { Mek.LOC_CT }, { Mek.LOC_RT, Mek.LOC_LT } };
+    private static final int[][] MEK_ARMOR_LOCS_REAR = { { Mek.LOC_CENTER_TORSO },
+                                                         { Mek.LOC_RIGHT_TORSO, Mek.LOC_LEFT_TORSO } };
 
     private void addArmorAndStructure() {
         setModelData("structureValues",
@@ -219,7 +230,7 @@ public class MekTROView extends TROView {
         return ((index != Mek.SYSTEM_COCKPIT) || (loc != Mek.LOC_HEAD))
               && ((index != Mek.SYSTEM_SENSORS) || (loc != Mek.LOC_HEAD))
               && ((index != Mek.SYSTEM_LIFE_SUPPORT) || (loc != Mek.LOC_HEAD))
-              && ((index != Mek.SYSTEM_ENGINE) || (loc != Mek.LOC_CT)) && (index != Mek.SYSTEM_GYRO)
+              && ((index != Mek.SYSTEM_ENGINE) || (loc != Mek.LOC_CENTER_TORSO)) && (index != Mek.SYSTEM_GYRO)
               && (index != Mek.ACTUATOR_SHOULDER) && (index != Mek.ACTUATOR_UPPER_ARM)
               && (index != Mek.ACTUATOR_LOWER_ARM) && (index != Mek.ACTUATOR_HAND) && (index != Mek.ACTUATOR_HIP)
               && (index != Mek.ACTUATOR_UPPER_LEG) && (index != Mek.ACTUATOR_LOWER_LEG)
@@ -267,7 +278,7 @@ public class MekTROView extends TROView {
         if (mount.getLocation() == Entity.LOC_NONE) {
             // Skip heat sinks, Clan CASE, armor, and structure. We do want to show things
             // like robotic control systems.
-            return (mount.getCriticals() > 0)
+            return (mount.getNumCriticalSlots() > 0)
                   || mount.getType().hasFlag(MiscType.F_CASE)
                   || EquipmentType.isArmorType(mount.getType())
                   || EquipmentType.isStructureType(mount.getType());

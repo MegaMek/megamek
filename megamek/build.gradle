@@ -50,6 +50,7 @@ dependencies {
     implementation 'commons-io:commons-io:2.20.0'
 
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
+    implementation 'jakarta.annotation:jakarta.annotation-api:3.0.0'
 
     implementation 'org.apache.commons:commons-collections4:4.5.0'
     implementation 'org.apache.commons:commons-lang3:3.18.0'

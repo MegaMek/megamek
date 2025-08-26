@@ -42,17 +42,16 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.BipedMek;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.Mounted;
-import megamek.common.ProtoMek;
-import megamek.common.RoundWeight;
 import megamek.common.TechConstants;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.verifier.TestEntity.Ceil;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.ProtoMek;
+import megamek.common.util.RoundWeight;
 import org.junit.jupiter.api.Test;
 
 public class TestProtoMekTest {
@@ -129,7 +128,7 @@ public class TestProtoMekTest {
         }
 
         @Override
-        public boolean showUnderweightedEntity() {
+        public boolean showUnderweightEntity() {
             return false;
         }
 
@@ -174,7 +173,7 @@ public class TestProtoMekTest {
         }
 
         @Override
-        public int getTargCompCrits() {
+        public int getTargetingComputerCrits() {
             return 0;
         }
 
@@ -348,7 +347,7 @@ public class TestProtoMekTest {
         ProtoMek mockProtoMek = createGenericMockProtoMek();
         when(mockProtoMek.isQuad()).thenReturn(true);
         Mounted<?> m = Mounted.createMounted(mockProtoMek, EquipmentType.get("CLERSmallLaser"));
-        m.setLocation(ProtoMek.LOC_LARM);
+        m.setLocation(ProtoMek.LOC_LEFT_ARM);
         List<Mounted<?>> eqList = new ArrayList<>();
         eqList.add(m);
         when(mockProtoMek.getEquipment()).thenReturn(eqList);
@@ -387,11 +386,11 @@ public class TestProtoMekTest {
 
         m.setLocation(ProtoMek.LOC_TORSO, true);
         assertFalse(test.hasIllegalEquipmentCombinations(new StringBuffer()));
-        m.setLocation(ProtoMek.LOC_LARM, true);
+        m.setLocation(ProtoMek.LOC_LEFT_ARM, true);
         assertTrue(test.hasIllegalEquipmentCombinations(new StringBuffer()));
-        m.setLocation(ProtoMek.LOC_RARM, true);
+        m.setLocation(ProtoMek.LOC_RIGHT_ARM, true);
         assertTrue(test.hasIllegalEquipmentCombinations(new StringBuffer()));
-        m.setLocation(ProtoMek.LOC_MAINGUN, true);
+        m.setLocation(ProtoMek.LOC_MAIN_GUN, true);
         assertTrue(test.hasIllegalEquipmentCombinations(new StringBuffer()));
     }
 

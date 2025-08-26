@@ -1,7 +1,6 @@
 /*
-
  * Copyright (C) 2000-2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,20 +34,31 @@
 
 package megamek.common.weapons.primitive;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
+import static megamek.common.game.IGame.LOGGER;
+
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.PrimitiveACWeaponHandler;
-import megamek.common.weapons.autocannons.ACWeapon;
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
+import megamek.common.weapons.autoCannons.ACWeapon;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.PrimitiveACWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  */
 public class ISAC5Primitive extends ACWeapon {
+    @Serial
     private static final long serialVersionUID = 8826026540026351600L;
 
     public ISAC5Primitive() {
@@ -74,7 +84,7 @@ public class ISAC5Primitive extends ACWeapon {
         longRange = 18;
         extremeRange = 24;
         tonnage = 8.0;
-        criticals = 4;
+        criticalSlots = 4;
         bv = 70;
         cost = 125000;
         shortAV = 5;
@@ -98,8 +108,15 @@ public class ISAC5Primitive extends ACWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    @Nullable
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
-        return new PrimitiveACWeaponHandler(toHit, waa, game, manager);
+        try {
+            return new PrimitiveACWeaponHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
+
     }
 }

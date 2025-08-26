@@ -165,27 +165,20 @@ public enum SkillLevel {
      * @return the default skill array pairing
      */
     public int[] getDefaultSkillValues() {
-        switch (this) {
-            case NONE:
+        return switch (this) {
+            case NONE -> {
                 MMLogger.create(SkillLevel.class).error(
                       "Attempting to get illegal default skill values for NONE Skill Level. Returning { 8, 8 }");
-                return new int[] { 8, 8 };
-            case ULTRA_GREEN:
-                return new int[] { 6, 7 };
-            case GREEN:
-                return new int[] { 5, 6 };
-            case VETERAN:
-                return new int[] { 3, 4 };
-            case ELITE:
-                return new int[] { 2, 3 };
-            case HEROIC:
-                return new int[] { 1, 2 };
-            case LEGENDARY:
-                return new int[] { 0, 1 };
-            case REGULAR:
-            default:
-                return new int[] { 4, 5 };
-        }
+                yield new int[] { 8, 8 };
+            }
+            case ULTRA_GREEN -> new int[] { 6, 7 };
+            case GREEN -> new int[] { 5, 6 };
+            case VETERAN -> new int[] { 3, 4 };
+            case ELITE -> new int[] { 2, 3 };
+            case HEROIC -> new int[] { 1, 2 };
+            case LEGENDARY -> new int[] { 0, 1 };
+            default -> new int[] { 4, 5 };
+        };
     }
 
     /**
@@ -224,7 +217,7 @@ public enum SkillLevel {
 
         }
 
-        MMLogger.create(SkillLevel.class).error("Unable to parse " + text + " into a SkillLevel. Returning REGULAR.");
+        MMLogger.create(SkillLevel.class).error("Unable to parse {} into a SkillLevel. Returning REGULAR.", text);
 
         return REGULAR;
     }

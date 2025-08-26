@@ -34,12 +34,12 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
 import megamek.common.HitData;
 import megamek.common.Report;
-import megamek.common.WeaponType;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.WeaponType;
+import megamek.common.units.Entity;
 
 /**
  * Helper class that contains common functionality for flamer-type weapons.
@@ -50,15 +50,15 @@ public class FlamerHandlerHelper {
     /**
      * Handles flamer heat damage.
      */
-    public static void doHeatDamage(Entity entityTarget, Vector<Report> vPhaseReport, WeaponType wtype, int subjectId,
-          HitData hit) {
-        Report r = new Report(3400);
-        r.subject = subjectId;
-        r.indent(2);
-        int heatDamage = wtype.getDamage();
+    public static void doHeatDamage(Entity entityTarget, Vector<Report> vPhaseReport, WeaponType weaponType,
+          int subjectId, HitData hit) {
+        Report report = new Report(3400);
+        report.subject = subjectId;
+        report.indent(2);
+        int heatDamage = weaponType.getDamage();
 
         // ER flamers don't do as much heat damage
-        if (wtype.hasFlag(WeaponType.F_ER_FLAMER)) {
+        if (weaponType.hasFlag(WeaponType.F_ER_FLAMER)) {
             heatDamage = Math.max(1, heatDamage / 2);
         }
 
@@ -81,17 +81,17 @@ public class FlamerHandlerHelper {
 
         if (heatDamageReducedByArmor) {
             entityTarget.heatFromExternal += actualDamage;
-            r.add(actualDamage);
-            r.choose(true);
-            r.messageId = 3406;
-            r.add(heatDamage);
-            r.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
+            report.add(actualDamage);
+            report.choose(true);
+            report.messageId = 3406;
+            report.add(heatDamage);
+            report.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
         } else {
             entityTarget.heatFromExternal += heatDamage;
-            r.add(heatDamage);
-            r.choose(true);
+            report.add(heatDamage);
+            report.choose(true);
         }
 
-        vPhaseReport.addElement(r);
+        vPhaseReport.addElement(report);
     }
 }

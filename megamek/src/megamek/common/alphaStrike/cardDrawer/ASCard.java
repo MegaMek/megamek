@@ -130,7 +130,7 @@ public class ASCard {
      * to display a typical AlphaStrike element card. The element can be null in which case the card will contain a
      * message instead of the element's values; the card image will still have the correct size.
      * <p>
-     * Note that depending on unit type this method may return an ASCard object or a subclass object but it is not
+     * Note that depending on unit type this method may return an ASCard object or a subclass object, but it is not
      * necessary to pay attention to this.
      *
      * @param element The element to display on the card.
@@ -264,7 +264,7 @@ public class ASCard {
         drawModelChassis(g2D);
     }
 
-    /** Scales the fluff image according to control variables which may be set in overriden initialize(). */
+    /** Scales the fluff image according to control variables which may be set in overridden initialize(). */
     private void drawFluffImage(Graphics2D g) {
         if (fluffImage != null) {
             ImageIcon icon = new ImageIcon(ImageUtil.fitImage(fluffImage,
@@ -345,9 +345,12 @@ public class ASCard {
         new StringDrawer("M (+2)").at(posS + delta, upperY).center().maxWidth(145).draw(g);
         new StringDrawer("L (+4)").at(posS + 2 * delta, upperY).center().maxWidth(145).draw(g);
         g.setFont(valueFont);
-        new StringDrawer(damage.S.toStringWithZero()).at(posS, lowerY).useConfig(valueConfig).center().draw(g);
-        new StringDrawer(damage.M.toStringWithZero()).at(posS + delta, lowerY).useConfig(valueConfig).center().draw(g);
-        new StringDrawer(damage.L.toStringWithZero()).at(posS + 2 * delta, lowerY)
+        new StringDrawer(damage.S().toStringWithZero()).at(posS, lowerY).useConfig(valueConfig).center().draw(g);
+        new StringDrawer(damage.M().toStringWithZero()).at(posS + delta, lowerY)
+              .useConfig(valueConfig)
+              .center()
+              .draw(g);
+        new StringDrawer(damage.L().toStringWithZero()).at(posS + 2 * delta, lowerY)
               .useConfig(valueConfig)
               .center()
               .draw(g);
@@ -421,7 +424,7 @@ public class ASCard {
             return;
         } else if (specialsWidth + headerWidth > 3 * width) {
             // the 1.05 makes lines a little wider to balance line breaks putting too much text in the last line
-            width = (int) ((specialsWidth + headerWidth) / 3 * 1.05);
+            width = (int) ((specialsWidth + headerWidth) / 3.0 * 1.05);
         }
 
         int line = 1;

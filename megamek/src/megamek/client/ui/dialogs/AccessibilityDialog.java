@@ -52,8 +52,8 @@ import megamek.client.commands.ClientCommand;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.Coords;
-import megamek.common.Entity;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
 import megamek.common.event.*;
 import megamek.logging.MMLogger;
 

@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.client.ui.Messages;
-import megamek.common.FighterSquadron;
+import megamek.common.units.FighterSquadron;
 
 class FighterSquadronReadout extends AeroReadout {
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,6 +35,10 @@
 package megamek.common.weapons.artillery;
 
 import megamek.common.SimpleTechLevel;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 
 /**
  * @author Sebastian Brocks
@@ -47,15 +51,15 @@ public class ISArrowIV extends ArrowIV {
 
         setInternalName("ISArrowIV");
         addLookupName("ISArrowIVSystem");
-        addLookupName("IS Arrow IV System");
-        addLookupName("IS Arrow IV Missile System");
+        addLookupName("IS Arrow IV SystemFluff");
+        addLookupName("IS Arrow IV Missile SystemFluff");
         shortRange = 1;
         mediumRange = 2;
         longRange = 8;
         extremeRange = 8; // No extreme range.
         tonnage = 15;
-        criticals = 15;
-        svslots = 7;
+        criticalSlots = 15;
+        svSlots = 7;
         techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)

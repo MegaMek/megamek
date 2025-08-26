@@ -205,12 +205,12 @@ public class ASPointValueConverter {
         processOffensiveSUAMod(TSEMP, e -> 5 * (double) (int) element.getSUA(TSEMP));
         processOffensiveSUAMod(TSEMPO, e -> Math.min(5.0, (int) element.getSUA(TSEMPO)));
         processOffensiveBT();
-        processOffensiveSUAMod(IATM, e -> (double) ((ASDamageVector) element.getSUA(IATM)).L.damage);
+        processOffensiveSUAMod(IATM, e -> (double) ((ASDamageVector) element.getSUA(IATM)).L().damage);
         processOffensiveSUAMod(OVL, e -> 0.25 * element.getOV());
         processOffensiveSUAMod(BOMB, e -> (double) (int) element.getSUA(BOMB));
         processOffensiveSUAMod(HT, e -> {
             ASDamageVector ht = element.getHT();
-            return Math.max(ht.S.damage, Math.max(ht.M.damage, ht.L.damage)) + ((ht.M.damage > 0) ? 0.5 : 0);
+            return Math.max(ht.S().damage, Math.max(ht.M().damage, ht.L().damage)) + ((ht.M().damage > 0) ? 0.5 : 0);
         });
         processOffensiveSUAMod(IF,
               e -> (element.getIF().minimal ? 0.5 : element.getIF().damage));
@@ -385,38 +385,38 @@ public class ASPointValueConverter {
     }
 
     protected void processStructure() {
-        double strucMultiplier = 1;
+        double structureMultiplier = 1;
         String modifiers = "";
         if (element.isInfantry()) {
             modifiers = " (Infantry)";
-            strucMultiplier = 2;
+            structureMultiplier = 2;
         } else if (element.isType(IM) || element.hasSUA(BAR)) {
             modifiers = element.isType(IM) ? " (IM)" : " (BAR)";
-            strucMultiplier = 0.5;
+            structureMultiplier = 0.5;
         }
-        dir += element.getFullStructure() * strucMultiplier;
+        dir += element.getFullStructure() * structureMultiplier;
         report.addLine("- Structure",
-              "+ " + element.getFullStructure() + " x " + formatForReport(strucMultiplier) + modifiers,
+              "+ " + element.getFullStructure() + " x " + formatForReport(structureMultiplier) + modifiers,
               "= " + formatForReport(dir));
     }
 
     private double getDefenseFactor() {
         double result = 0;
-        double movemod = element.getTMM();
+        double movementMod = element.getTMM();
         if (element.isJumpCapable() && (element.isInfantry()
               || (!element.getStandardDamage().hasDamage() && !element.hasAnySUAOf(TSEMP, ARTS,
               ARTAC, ARTAIS, ARTBA, ARTCM12, ARTCM5, ARTCM7, ARTCM9, ARTLT, ARTLTC, ARTSC, ARTT, ARTTC)))) {
-            movemod += 1;
+            movementMod += 1;
         }
         List<String> modifierList = new ArrayList<>();
-        if (element.hasSUA(MAS) && (3 > movemod)) {
+        if (element.hasSUA(MAS) && (3 > movementMod)) {
             result += 3;
             modifierList.add("MAS");
-        } else if (element.hasSUA(LMAS) && (2 > movemod)) {
+        } else if (element.hasSUA(LMAS) && (2 > movementMod)) {
             result += 2;
             modifierList.add("LMAS");
         } else {
-            result += movemod;
+            result += movementMod;
             modifierList.add("TMM");
         }
         if (element.isAerospace()) {
@@ -508,8 +508,8 @@ public class ASPointValueConverter {
         double result = 0;
         double modifiedTMM = element.getTMM() + 0.5 * element.getJMPS() + 0.5 * element.getSUBS();
         if (modifiedTMM > 1) {
-            double dmgS = element.getStandardDamage().S.minimal ? 0.5 : element.getStandardDamage().S.damage;
-            double dmgM = element.getStandardDamage().M.minimal ? 0.5 : element.getStandardDamage().M.damage;
+            double dmgS = element.getStandardDamage().S().minimal ? 0.5 : element.getStandardDamage().S().damage;
+            double dmgM = element.getStandardDamage().M().minimal ? 0.5 : element.getStandardDamage().M().damage;
             if (dmgM > 0) {
                 result = (modifiedTMM - 1) * dmgM;
             } else if (element.getTMM() >= 3) {
@@ -592,17 +592,17 @@ public class ASPointValueConverter {
 
     /** @return The Short Range damage value with minimal damage represented as 0.5 (including TOR). */
     private double pointValueSDamage(AlphaStrikeElement element) {
-        return pointValueDamage(element.getStandardDamage().S) + pointValueDamage(element.getTOR().S);
+        return pointValueDamage(element.getStandardDamage().S()) + pointValueDamage(element.getTOR().S());
     }
 
     /** @return The Medium Range damage value with minimal damage represented as 0.5 (including TOR). */
     private double pointValueMDamage(AlphaStrikeElement element) {
-        return pointValueDamage(element.getStandardDamage().M) + pointValueDamage(element.getTOR().M);
+        return pointValueDamage(element.getStandardDamage().M()) + pointValueDamage(element.getTOR().M());
     }
 
     /** @return The Long Range damage value with minimal damage represented as 0.5 (including TOR). */
     private double pointValueLDamage(AlphaStrikeElement element) {
-        return pointValueDamage(element.getStandardDamage().L) + pointValueDamage(element.getTOR().L);
+        return pointValueDamage(element.getStandardDamage().L()) + pointValueDamage(element.getTOR().L());
     }
 
     /** @return The damage value of the given ASDamage or 0.5 when it's minimal damage. */
@@ -610,7 +610,7 @@ public class ASPointValueConverter {
         return asDamage.minimal ? 0.5 : asDamage.damage;
     }
 
-    /** @return The highest movement capability of any of the element's movement modes. */
+    /** @return The highest movement capability of the element's movement modes. */
     protected int getHighestMove(AlphaStrikeElement element) {
         return element.getMovement().values().stream().mapToInt(m -> m).max().orElse(0);
     }

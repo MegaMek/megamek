@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,15 +34,22 @@
 
 package megamek.common.weapons.artillery;
 
-import megamek.common.AmmoType;
-import megamek.common.EquipmentTypeLookup;
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentTypeLookup;
 
 /**
  * @author Sebastian Brocks
  * @since Oct 20, 2004
  */
 public class Sniper extends ArtilleryWeapon {
+    @Serial
     private static final long serialVersionUID = -5022670163785084036L;
 
     public Sniper() {
@@ -63,8 +70,8 @@ public class Sniper extends ArtilleryWeapon {
         longRange = 18;
         extremeRange = 18; // No extreme range.
         tonnage = 20;
-        criticals = 20;
-        svslots = 10;
+        criticalSlots = 20;
+        svSlots = 10;
         bv = 85;
         cost = 300000;
         rulesRefs = "284, TO";

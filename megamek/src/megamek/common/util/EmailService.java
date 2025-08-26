@@ -42,16 +42,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import jakarta.mail.Authenticator;
 import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.Report;
+import megamek.common.game.Game;
 import megamek.logging.MMLogger;
 
 public class EmailService {
@@ -105,7 +104,7 @@ public class EmailService {
         }
 
         @Override
-        protected void updateMessageID() throws MessagingException {
+        protected void updateMessageID() {
             // no-op, we have already set it in the ctor
         }
 

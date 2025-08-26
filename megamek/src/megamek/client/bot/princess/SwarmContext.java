@@ -35,13 +35,13 @@ package megamek.client.bot.princess;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import megamek.common.Board;
-import megamek.common.Coords;
-import megamek.common.CubeCoords;
-import megamek.common.Entity;
 import megamek.common.Hex;
-import megamek.common.Terrains;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.board.CubeCoords;
+import megamek.common.units.Entity;
+import megamek.common.units.Terrains;
 
 /**
  * Context class to control the units as a swarm. Contains information about the current state of the game
@@ -63,7 +63,7 @@ public class SwarmContext {
     private final List<SwarmCluster> clusters = new ArrayList<>();
 
     public SwarmContext() {
-        
+
     }
 
     /**

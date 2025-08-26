@@ -39,9 +39,9 @@ import java.util.List;
 import java.util.Locale;
 
 import megamek.client.bot.princess.RankedPath;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.UnitRole;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
+import megamek.common.units.UnitRole;
 import megamek.logging.MMLogger;
 
 /**

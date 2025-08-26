@@ -36,6 +36,7 @@ package megamek.server.commands;
 import java.util.List;
 
 import megamek.client.ui.Messages;
+import megamek.common.enums.MoveStepType;
 import megamek.common.moves.MovePath;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
@@ -74,7 +75,7 @@ public class RescueCommand extends GamemasterServerCommand {
             return;
         }
         MovePath path = new MovePath(gameManager.getGame(), unit);
-        path.addStep(MovePath.MoveStepType.FLEE);
+        path.addStep(MoveStepType.FLEE);
         gameManager.addReport(gameManager.processLeaveMap(path));
         server.sendServerChat(Messages.getString("Gamemaster.cmd.rescue.success", unit.getDisplayName()));
     }

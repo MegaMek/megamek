@@ -43,7 +43,7 @@ import javax.swing.JPanel;
 import javax.swing.Scrollable;
 
 import megamek.client.ui.tileset.HexTileset;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 
 /**
  * This class represents the specialized JPanel that paints the contents of the BoardView. For its drawing, it refers

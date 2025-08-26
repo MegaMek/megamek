@@ -41,7 +41,15 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Era;
+import megamek.common.enums.Faction;
+import megamek.common.enums.FactionAffiliation;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.eras.Eras;
+import megamek.common.interfaces.ITechnology;
+import megamek.common.units.Entity;
 
 /**
  * Determines tech level dates based on tech progression of components.
@@ -61,7 +69,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     private Integer standard;
     private List<DateRange> extinct;
     private TechRating techRating;
-    private EnumMap<Era, AvailabilityValue> availability;
+    private final EnumMap<Era, AvailabilityValue> availability;
     private int earliest;
 
     // Provides a set tech level for non-era-based use.
@@ -324,7 +332,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
             if (clan) {
                 return TechConstants.T_CLAN_TW;
             } else if (getStaticTechLevel() == SimpleTechLevel.INTRO) {
-                return TechConstants.T_INTRO_BOXSET;
+                return TechConstants.T_INTRO_BOX_SET;
             } else {
                 return TechConstants.T_IS_TW_NON_BOX;
             }

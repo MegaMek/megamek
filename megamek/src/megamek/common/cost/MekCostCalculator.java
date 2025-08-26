@@ -35,12 +35,12 @@ package megamek.common.cost;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.CriticalSlot;
-import megamek.common.EquipmentType;
-import megamek.common.LandAirMek;
-import megamek.common.Mek;
-import megamek.common.QuadVee;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.LandAirMek;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadVee;
 
 public class MekCostCalculator {
 
@@ -74,15 +74,15 @@ public class MekCostCalculator {
             default -> 200000;
         };
         if (mek.hasEiCockpit()
-              && ((null != mek.getCrew()) && mek.hasAbility(OptionsConstants.UNOFF_EI_IMPLANT))) {
+              && ((null != mek.getCrew()) && mek.hasAbility(OptionsConstants.UNOFFICIAL_EI_IMPLANT))) {
             cockpitCost = 400000;
         }
         costs[i++] = cockpitCost;
         costs[i++] = 50000;// life support
         costs[i++] = mek.getWeight() * 2000;// sensors
-        int muscCost = mek.hasSCM() ? 10000 : mek.hasTSM(false) ? 16000 :
+        int musculatureCost = mek.hasSCM() ? 10000 : mek.hasTSM(false) ? 16000 :
               mek.hasTSM(true) ? 32000 : mek.hasIndustrialTSM() ? 12000 : mek.isSuperHeavy() ? 12000 : 2000;
-        costs[i++] = muscCost * mek.getWeight();// musculature
+        costs[i++] = musculatureCost * mek.getWeight();// musculature
         double structureCost = getStructureCost(mek) * mek.getWeight() * (mek.isTripodMek() ? 1.2 : 1);// IS
         costs[i++] = structureCost;
         costs[i++] = mek.getActuatorCost() * (mek.isSuperHeavy() ? 2 : 1);// arm and/or leg actuators
@@ -122,7 +122,7 @@ public class MekCostCalculator {
         // armored components
         int armoredCrits = 0;
         for (int j = 0; j < mek.locations(); j++) {
-            int numCrits = mek.getNumberOfCriticals(j);
+            int numCrits = mek.getNumberOfCriticalSlots(j);
             for (int k = 0; k < numCrits; k++) {
                 CriticalSlot ccs = mek.getCritical(j, k);
                 if ((ccs != null) && ccs.isArmored() && (ccs.getType() == CriticalSlot.TYPE_SYSTEM)) {
@@ -182,8 +182,8 @@ public class MekCostCalculator {
         costs[i] = -weightMultiplier; // negative just marks it as multiplier
         cost = Math.round(cost * weightMultiplier);
         String[] systemNames = { "Cockpit", "Life Support", "Sensors", "Myomer", "Structure", "Actuators",
-                                 "Engine", "Gyro", "Jump Jets", "Heatsinks", "Full Head Ejection System",
-                                 "Armored System Components", "Armor", "Equipment",
+                                 "Engine", "Gyro", "Jump Jets", "Heatsinks", "Full Head Ejection SystemFluff",
+                                 "Armored SystemFluff Components", "Armor", "Equipment",
                                  "Conversion Equipment", "Quirk Multiplier", "Omni Multiplier", "Weight Multiplier" };
         CostCalculator.fillInReport(costReport, mek, ignoreAmmo, systemNames, 13, cost, costs);
         return cost;

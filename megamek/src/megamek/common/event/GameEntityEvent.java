@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2018-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,11 +34,13 @@
 
 package megamek.common.event;
 
-import megamek.common.Entity;
+import java.io.Serial;
+
+import megamek.common.units.Entity;
 
 /**
  * Instances of descendant classes are sent as a result of Game changes related to entities such as
- * addind/removing/changing
+ * adding/removing/changing
  *
  * @see GameEntityChangeEvent
  * @see GameEntityNewEvent
@@ -49,6 +51,7 @@ public abstract class GameEntityEvent extends GameEvent {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -2152420685366625391L;
     protected Entity entity;
 
@@ -60,8 +63,6 @@ public abstract class GameEntityEvent extends GameEvent {
     /**
      * Constructs new GameEntityEvent
      *
-     * @param source
-     * @param entity
      */
     public GameEntityEvent(Object source, Entity entity) {
         super(source);

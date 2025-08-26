@@ -35,7 +35,8 @@ package megamek.common.alphaStrike;
 
 import java.util.Arrays;
 
-import megamek.common.*;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.units.*;
 
 /** Represents the AlphaStrike Element Types (ASC, page 91) */
 public enum ASUnitType {
@@ -61,7 +62,7 @@ public enum ASUnitType {
         } else if (en instanceof Jumpship) {
             return JS;
         } else if (en instanceof Dropship) {
-            return ((Dropship) en).isSpheroid() ? DS : DA;
+            return en.isSpheroid() ? DS : DA;
         } else if (en instanceof SmallCraft) {
             return SC;
         } else if (en instanceof FixedWingSupport) {

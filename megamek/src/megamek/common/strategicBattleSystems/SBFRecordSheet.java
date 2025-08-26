@@ -57,7 +57,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
  * This class represents a Strategic BattleForce Record Sheet. It can be drawn to a Graphics2D context using
  * {@link #drawSheet(Graphics)} and supports printing using {@link Printable}. The font for the headers and other fixed
  * texts can be set using {@link #setFont(Font)}; the font for the formation values can be set independently using
- * {@link #setValueFont(Font)}. The color of the lines under values can be set using {@link #setLineColor(Color)}.
+ * {@link #setValueFont(Font)}. The color of the lines undervalues can be set using {@link #setLineColor(Color)}.
  */
 public class SBFRecordSheet implements Printable {
 
@@ -136,7 +136,7 @@ public class SBFRecordSheet implements Printable {
         unitValueFont = valueFont.deriveFont((float) UNIT_VALUE_FONT_SIZE);
     }
 
-    /** Sets the color of the underlining under values to the given lineColor. */
+    /** Sets the color of the underlining undervalues to the given lineColor. */
     public void setLineColor(Color lineColor) {
         underlineColor = new Color(lineColor.getRGB());
     }
@@ -313,16 +313,12 @@ public class SBFRecordSheet implements Printable {
     }
 
     private String indexString(int index) {
-        switch (index) {
-            case 0:
-                return "One";
-            case 1:
-                return "Two";
-            case 2:
-                return "Three";
-            default:
-                return "Four";
-        }
+        return switch (index) {
+            case 0 -> "One";
+            case 1 -> "Two";
+            case 2 -> "Three";
+            default -> "Four";
+        };
     }
 
     private void drawUnitOverviewLines(Graphics2D g, Color color, int y) {
@@ -446,7 +442,7 @@ public class SBFRecordSheet implements Printable {
             new StringDrawer(element.getName()).at(34, y).maxWidth(315).font(valueFont).draw(g);
             new StringDrawer(element.getASUnitType() + "").at(388, y).maxWidth(52).font(valueFont).centerX().draw(g);
             new StringDrawer(element.getSize() + "").at(451, y).maxWidth(52).font(valueFont).centerX().draw(g);
-            new StringDrawer(element.getMovementAsString() + "").at(529, y)
+            new StringDrawer(element.getMovementAsString()).at(529, y)
                   .maxWidth(74)
                   .font(valueFont)
                   .centerX()

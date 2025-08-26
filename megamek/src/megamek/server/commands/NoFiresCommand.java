@@ -36,7 +36,7 @@ package megamek.server.commands;
 import java.util.HashSet;
 
 import megamek.client.ui.Messages;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 import megamek.common.Hex;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Arguments;

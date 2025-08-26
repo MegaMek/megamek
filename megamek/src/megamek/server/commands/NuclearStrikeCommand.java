@@ -37,8 +37,8 @@ import java.util.List;
 import java.util.Optional;
 
 import megamek.client.ui.Messages;
-import megamek.common.AmmoType;
-import megamek.common.Entity;
+import megamek.common.equipment.AmmoType;
+import megamek.common.units.Entity;
 import megamek.common.Player;
 import megamek.common.actions.NukeDetonatedAction;
 import megamek.common.event.GamePlayerStrategicActionEvent;

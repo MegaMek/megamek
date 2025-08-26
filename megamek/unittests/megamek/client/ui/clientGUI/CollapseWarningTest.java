@@ -44,11 +44,11 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.client.ui.clientGUI.boardview.CollapseWarning;
-import megamek.common.Board;
-import megamek.common.Building;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.board.Board;
+import megamek.common.units.Building;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
 import megamek.common.enums.GamePhase;
 import org.junit.jupiter.api.Test;
 

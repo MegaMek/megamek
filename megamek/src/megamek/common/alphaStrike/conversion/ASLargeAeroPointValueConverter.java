@@ -76,113 +76,113 @@ public class ASLargeAeroPointValueConverter extends ASAeroPointValueConverter {
         ASDamageVector ltSCP = element.getLeftArc().getSCAP();
         ASDamageVector rtSCP = element.getRightArc().getSCAP();
         ASDamageVector rrSCP = element.getRearArc().getSCAP();
-        double stdAndMslDamage = ftStd.S.damage + ftStd.M.damage + ftStd.L.damage;
+        double stdAndMslDamage = ftStd.S().damage + ftStd.M().damage + ftStd.L().damage;
         report.addLine("STD Damage Front",
-              formatForReport(ftStd.S.damage)
+              formatForReport(ftStd.S().damage)
                     + " + "
-                    + formatForReport(ftStd.M.damage)
+                    + formatForReport(ftStd.M().damage)
                     + " + "
-                    + formatForReport(ftStd.L.damage),
+                    + formatForReport(ftStd.L().damage),
               "= " + formatForReport(stdAndMslDamage));
-        stdAndMslDamage += ltStd.S.damage + ltStd.M.damage + ltStd.L.damage;
+        stdAndMslDamage += ltStd.S().damage + ltStd.M().damage + ltStd.L().damage;
         report.addLine("STD Damage Left",
               "+ "
-                    + formatForReport(ltStd.S.damage)
+                    + formatForReport(ltStd.S().damage)
                     + " + "
-                    + formatForReport(ltStd.M.damage)
+                    + formatForReport(ltStd.M().damage)
                     + " + "
-                    + formatForReport(ltStd.L.damage),
+                    + formatForReport(ltStd.L().damage),
               "= " + formatForReport(stdAndMslDamage));
-        stdAndMslDamage += rtStd.S.damage + rtStd.M.damage + rtStd.L.damage;
+        stdAndMslDamage += rtStd.S().damage + rtStd.M().damage + rtStd.L().damage;
         report.addLine("STD Damage Right",
               "+ "
-                    + formatForReport(rtStd.S.damage)
+                    + formatForReport(rtStd.S().damage)
                     + " + "
-                    + formatForReport(rtStd.M.damage)
+                    + formatForReport(rtStd.M().damage)
                     + " + "
-                    + formatForReport(rtStd.L.damage),
+                    + formatForReport(rtStd.L().damage),
               "= " + formatForReport(stdAndMslDamage));
-        stdAndMslDamage += ftMSL.S.damage + ftMSL.M.damage + ftMSL.L.damage;
+        stdAndMslDamage += ftMSL.S().damage + ftMSL.M().damage + ftMSL.L().damage;
         report.addLine("MSL Damage Front",
               "+ "
-                    + formatForReport(ftMSL.S.damage)
+                    + formatForReport(ftMSL.S().damage)
                     + " + "
-                    + formatForReport(ftMSL.M.damage)
+                    + formatForReport(ftMSL.M().damage)
                     + " + "
-                    + formatForReport(ftMSL.L.damage),
+                    + formatForReport(ftMSL.L().damage),
               "= " + formatForReport(stdAndMslDamage));
-        stdAndMslDamage += ltMSL.S.damage + ltMSL.M.damage + ltMSL.L.damage;
+        stdAndMslDamage += ltMSL.S().damage + ltMSL.M().damage + ltMSL.L().damage;
         report.addLine("MSL Damage Left",
               "+ "
-                    + formatForReport(ltMSL.S.damage)
+                    + formatForReport(ltMSL.S().damage)
                     + " + "
-                    + formatForReport(ltMSL.M.damage)
+                    + formatForReport(ltMSL.M().damage)
                     + " + "
-                    + formatForReport(ltMSL.L.damage),
+                    + formatForReport(ltMSL.L().damage),
               "= " + formatForReport(stdAndMslDamage));
-        stdAndMslDamage += rtMSL.S.damage + rtMSL.M.damage + rtMSL.L.damage;
+        stdAndMslDamage += rtMSL.S().damage + rtMSL.M().damage + rtMSL.L().damage;
         report.addLine("MSL Damage Right",
               "+ "
-                    + formatForReport(rtMSL.S.damage)
+                    + formatForReport(rtMSL.S().damage)
                     + " + "
-                    + formatForReport(rtMSL.M.damage)
+                    + formatForReport(rtMSL.M().damage)
                     + " + "
-                    + formatForReport(rtMSL.L.damage),
+                    + formatForReport(rtMSL.L().damage),
               "= " + formatForReport(stdAndMslDamage));
 
         report.addEmptyLine();
-        double capAndScapDmg = ftCAP.S.damage + ftCAP.M.damage + ftCAP.L.damage;
+        double capAndScapDmg = ftCAP.S().damage + ftCAP.M().damage + ftCAP.L().damage;
         report.addLine("CAP Damage Front",
-              formatForReport(ftCAP.S.damage)
+              formatForReport(ftCAP.S().damage)
                     + " + "
-                    + formatForReport(ftCAP.M.damage)
+                    + formatForReport(ftCAP.M().damage)
                     + " + "
-                    + formatForReport(ftCAP.L.damage),
+                    + formatForReport(ftCAP.L().damage),
               "= " + formatForReport(capAndScapDmg));
-        capAndScapDmg += ltCAP.S.damage + ltCAP.M.damage + ltCAP.L.damage;
+        capAndScapDmg += ltCAP.S().damage + ltCAP.M().damage + ltCAP.L().damage;
         report.addLine("CAP Damage Left",
               "+ "
-                    + formatForReport(ltCAP.S.damage)
+                    + formatForReport(ltCAP.S().damage)
                     + " + "
-                    + formatForReport(ltCAP.M.damage)
+                    + formatForReport(ltCAP.M().damage)
                     + " + "
-                    + formatForReport(ltCAP.L.damage),
+                    + formatForReport(ltCAP.L().damage),
               "= " + formatForReport(capAndScapDmg));
-        capAndScapDmg += rtCAP.S.damage + rtCAP.M.damage + rtCAP.L.damage;
+        capAndScapDmg += rtCAP.S().damage + rtCAP.M().damage + rtCAP.L().damage;
         report.addLine("CAP Damage Right",
               "+ "
-                    + formatForReport(rtCAP.S.damage)
+                    + formatForReport(rtCAP.S().damage)
                     + " + "
-                    + formatForReport(rtCAP.M.damage)
+                    + formatForReport(rtCAP.M().damage)
                     + " + "
-                    + formatForReport(rtCAP.L.damage),
+                    + formatForReport(rtCAP.L().damage),
               "= " + formatForReport(capAndScapDmg));
-        capAndScapDmg += ftSCP.S.damage + ftSCP.M.damage + ftSCP.L.damage;
+        capAndScapDmg += ftSCP.S().damage + ftSCP.M().damage + ftSCP.L().damage;
         report.addLine("SCAP Damage Front",
               "+ "
-                    + formatForReport(ftSCP.S.damage)
+                    + formatForReport(ftSCP.S().damage)
                     + " + "
-                    + formatForReport(ftSCP.M.damage)
+                    + formatForReport(ftSCP.M().damage)
                     + " + "
-                    + formatForReport(ftSCP.L.damage),
+                    + formatForReport(ftSCP.L().damage),
               "= " + formatForReport(capAndScapDmg));
-        capAndScapDmg += ltSCP.S.damage + ltSCP.M.damage + ltSCP.L.damage;
+        capAndScapDmg += ltSCP.S().damage + ltSCP.M().damage + ltSCP.L().damage;
         report.addLine("SCAP Damage Left",
               "+ "
-                    + formatForReport(ltSCP.S.damage)
+                    + formatForReport(ltSCP.S().damage)
                     + " + "
-                    + formatForReport(ltSCP.M.damage)
+                    + formatForReport(ltSCP.M().damage)
                     + " + "
-                    + formatForReport(ltSCP.L.damage),
+                    + formatForReport(ltSCP.L().damage),
               "= " + formatForReport(capAndScapDmg));
-        capAndScapDmg += rtSCP.S.damage + rtSCP.M.damage + rtSCP.L.damage;
+        capAndScapDmg += rtSCP.S().damage + rtSCP.M().damage + rtSCP.L().damage;
         report.addLine("SCAP Damage Right",
               "+ "
-                    + formatForReport(rtSCP.S.damage)
+                    + formatForReport(rtSCP.S().damage)
                     + " + "
-                    + formatForReport(rtSCP.M.damage)
+                    + formatForReport(rtSCP.M().damage)
                     + " + "
-                    + formatForReport(rtSCP.L.damage),
+                    + formatForReport(rtSCP.L().damage),
               "= " + formatForReport(capAndScapDmg));
         if (element.hasMovementMode("a")) {
             offensiveValue = stdAndMslDamage + capAndScapDmg / 4;
@@ -193,33 +193,39 @@ public class ASLargeAeroPointValueConverter extends ASAeroPointValueConverter {
             report.addEmptyLine();
             report.addLine("Non-Aerodyne:", "");
             report.addLine("STD Damage Rear",
-                  formatForReport(stdAndMslDamage) + " + " + formatForReport(rrStd.S.damage) + " + " + formatForReport(
-                        rrStd.M.damage) + " + " + formatForReport(rrStd.L.damage),
-                  "= " + formatForReport(stdAndMslDamage + rrStd.S.damage + rrStd.M.damage + rrStd.L.damage));
-            stdAndMslDamage += rrStd.S.damage + rrStd.M.damage + rrStd.L.damage;
-            stdAndMslDamage += rrMSL.S.damage + rrMSL.M.damage + rrMSL.L.damage;
+                  formatForReport(stdAndMslDamage)
+                        + " + "
+                        + formatForReport(rrStd.S().damage)
+                        + " + "
+                        + formatForReport(
+                        rrStd.M().damage)
+                        + " + "
+                        + formatForReport(rrStd.L().damage),
+                  "= " + formatForReport(stdAndMslDamage + rrStd.S().damage + rrStd.M().damage + rrStd.L().damage));
+            stdAndMslDamage += rrStd.S().damage + rrStd.M().damage + rrStd.L().damage;
+            stdAndMslDamage += rrMSL.S().damage + rrMSL.M().damage + rrMSL.L().damage;
             report.addLine("MSL Damage Rear",
                   "+ "
-                        + formatForReport(rrMSL.S.damage)
+                        + formatForReport(rrMSL.S().damage)
                         + " + "
-                        + formatForReport(rrMSL.M.damage)
+                        + formatForReport(rrMSL.M().damage)
                         + " + "
-                        + formatForReport(rrMSL.L.damage),
+                        + formatForReport(rrMSL.L().damage),
                   "= " + formatForReport(stdAndMslDamage));
 
             report.addLine("CAP Damage Rear",
-                  formatForReport(capAndScapDmg) + " + " + formatForReport(rrCAP.S.damage) + " + " + formatForReport(
-                        rrCAP.M.damage) + " + " + formatForReport(rrCAP.L.damage),
-                  "= " + formatForReport(capAndScapDmg + rrCAP.S.damage + rrCAP.M.damage + rrCAP.L.damage));
-            capAndScapDmg += rrCAP.S.damage + rrCAP.M.damage + rrCAP.L.damage;
-            capAndScapDmg += rrSCP.S.damage + rrSCP.M.damage + rrSCP.L.damage;
+                  formatForReport(capAndScapDmg) + " + " + formatForReport(rrCAP.S().damage) + " + " + formatForReport(
+                        rrCAP.M().damage) + " + " + formatForReport(rrCAP.L().damage),
+                  "= " + formatForReport(capAndScapDmg + rrCAP.S().damage + rrCAP.M().damage + rrCAP.L().damage));
+            capAndScapDmg += rrCAP.S().damage + rrCAP.M().damage + rrCAP.L().damage;
+            capAndScapDmg += rrSCP.S().damage + rrSCP.M().damage + rrSCP.L().damage;
             report.addLine("SCAP Damage Rear",
                   "+ "
-                        + formatForReport(rrSCP.S.damage)
+                        + formatForReport(rrSCP.S().damage)
                         + " + "
-                        + formatForReport(rrSCP.M.damage)
+                        + formatForReport(rrSCP.M().damage)
                         + " + "
-                        + formatForReport(rrSCP.L.damage),
+                        + formatForReport(rrSCP.L().damage),
                   "= " + formatForReport(capAndScapDmg));
             offensiveValue = stdAndMslDamage + capAndScapDmg / 5;
             report.addLine("Damage Sum",

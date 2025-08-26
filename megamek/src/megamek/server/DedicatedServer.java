@@ -38,9 +38,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Properties;
 
-import megamek.common.commandline.AbstractCommandLineParser;
-import megamek.common.commandline.ClientServerCommandLineParser;
-import megamek.common.commandline.MegaMekCommandLineFlag;
+import megamek.common.commandLine.AbstractCommandLineParser;
+import megamek.common.commandLine.ClientServerCommandLineParser;
+import megamek.common.commandLine.MegaMekCommandLineFlag;
+import megamek.common.compute.Compute;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EmailService;
 import megamek.logging.MMLogger;
@@ -81,7 +82,7 @@ public class DedicatedServer {
         }
 
         // kick off a RNG check
-        megamek.common.Compute.d6();
+        Compute.d6();
 
         // start server
         Server server;

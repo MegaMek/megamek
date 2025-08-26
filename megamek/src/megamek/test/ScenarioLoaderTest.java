@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,18 +40,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import megamek.common.Game;
-import megamek.common.MekSummaryCache;
+import megamek.common.game.Game;
+import megamek.common.loaders.MekSummaryCache;
 import megamek.common.scenario.ScenarioLoader;
 import megamek.common.scenario.ScenarioLoaderException;
 import megamek.common.scenario.ScenarioV1;
+import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class ScenarioLoaderTest {
-    private List<String> errCache = new ArrayList<>();
-    private PrintStream cachedPs;
-    private PrintStream originalOut;
+    private final static MMLogger LOGGER = MMLogger.create(ScenarioLoaderTest.class);
+    private final List<String> errCache = new ArrayList<>();
     private PrintStream originalErr;
 
     public static void main(String[] args) throws ScenarioLoaderException, IOException {
@@ -60,21 +60,21 @@ public class ScenarioLoaderTest {
         System.exit(0);
     }
 
-    public List<String> runTests() throws ScenarioLoaderException, IOException {
+    public void runTests() throws ScenarioLoaderException, IOException {
         List<String> errorAccumulator = new ArrayList<>();
         PrintStream nullPs = new PrintStream(new OutputStream() {
             @Override
-            public void write(int b) throws IOException {
+            public void write(int b) {
                 // Output nothing
             }
         });
-        originalOut = System.out;
+        PrintStream originalOut = System.out;
         System.setOut(nullPs);
-        cachedPs = new PrintStream(new OutputStream() {
-            private StringBuilder line = new StringBuilder();
+        PrintStream cachedPs = new PrintStream(new OutputStream() {
+            private final StringBuilder line = new StringBuilder();
 
             @Override
-            public void write(int b) throws IOException {
+            public void write(int b) {
                 if (b == '\n') {
                     String s = line.toString();
                     if (!s.startsWith("MMRandom: generating RNG")) {
@@ -105,7 +105,6 @@ public class ScenarioLoaderTest {
         System.setErr(originalErr);
         cachedPs.close();
         nullPs.close();
-        return errorAccumulator;
     }
 
     private void checkScenarioFile(File file, List<String> errorAccumulator)
@@ -125,7 +124,7 @@ public class ScenarioLoaderTest {
                 scenario.applyDamage(gameManager);
                 server.die();
             } catch (Exception ex) {
-                ex.printStackTrace();
+                LOGGER.error(ex, "Check Scenario File : {} ", ex.getMessage());
             }
 
             if (!errCache.isEmpty()) {
@@ -138,8 +137,12 @@ public class ScenarioLoaderTest {
                 errCache.clear();
             }
         } else if (file.isDirectory()) {
-            for (File subFile : file.listFiles()) {
-                checkScenarioFile(subFile, errorAccumulator);
+            File[] files = file.listFiles();
+
+            if (files != null) {
+                for (File subFile : files) {
+                    checkScenarioFile(subFile, errorAccumulator);
+                }
             }
         }
     }

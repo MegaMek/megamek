@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,10 +34,11 @@
 
 package megamek.common.event;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.Entity;
-import megamek.common.UnitLocation;
+import megamek.common.units.Entity;
+import megamek.common.units.UnitLocation;
 
 /**
  * Instances of this class are sent game entity is changed
@@ -45,6 +46,7 @@ import megamek.common.UnitLocation;
  * @see GameListener
  */
 public class GameEntityChangeEvent extends GameEntityEvent {
+    @Serial
     private static final long serialVersionUID = -7241101183271789555L;
     protected Vector<UnitLocation> movePath;
     protected Entity oldEntity;
@@ -52,8 +54,6 @@ public class GameEntityChangeEvent extends GameEntityEvent {
     /**
      * Constructs new GameEntityChangeEvent
      *
-     * @param source
-     * @param entity
      */
     public GameEntityChangeEvent(final Object source, final Entity entity) {
         this(source, entity, null);
@@ -62,9 +62,6 @@ public class GameEntityChangeEvent extends GameEntityEvent {
     /**
      * Constructs new GameEntityChangeEvent
      *
-     * @param source
-     * @param entity
-     * @param movePath
      */
     public GameEntityChangeEvent(final Object source, final Entity entity,
           final Vector<UnitLocation> movePath) {
@@ -77,9 +74,6 @@ public class GameEntityChangeEvent extends GameEntityEvent {
      * Constructs new GameEntityChangeEvent, storing the entity prior to changes. This old entity may be needed in
      * certain cases, like when a Dropship is taking off, since some of the old state is important.
      *
-     * @param source
-     * @param entity
-     * @param movePath
      */
     public GameEntityChangeEvent(final Object source, final Entity entity,
           final Vector<UnitLocation> movePath, Entity oldEntity) {

@@ -34,14 +34,14 @@
 package megamek.common.alphaStrike.conversion;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.Aero;
-import megamek.common.Entity;
-import megamek.common.FixedWingSupport;
-import megamek.common.Infantry;
-import megamek.common.Jumpship;
-import megamek.common.SmallCraft;
-import megamek.common.Tank;
-import megamek.common.Warship;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.FixedWingSupport;
+import megamek.common.units.Infantry;
+import megamek.common.units.Jumpship;
+import megamek.common.units.SmallCraft;
+import megamek.common.units.Tank;
+import megamek.common.units.Warship;
 
 final class ASSizeConverter {
 
@@ -49,8 +49,8 @@ final class ASSizeConverter {
      * Determines the element's size, AlphaStrike Companion, p.92
      */
     static int convertSize(ASConverter.ConversionData conversionData) {
-        Entity entity = conversionData.entity;
-        CalculationReport report = conversionData.conversionReport;
+        Entity entity = conversionData.entity();
+        CalculationReport report = conversionData.conversionReport();
 
         if ((entity instanceof Tank) && entity.isSupportVehicle()) {
             if (entity.getWeight() < 5) {

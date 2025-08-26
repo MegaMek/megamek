@@ -34,10 +34,10 @@ package megamek.client.ratgenerator;
 
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
-import megamek.common.Compute;
-import megamek.common.Crew;
-import megamek.common.CrewType;
-import megamek.common.UnitType;
+import megamek.common.compute.Compute;
+import megamek.common.units.Crew;
+import megamek.common.units.CrewType;
+import megamek.common.units.UnitType;
 import megamek.common.enums.Gender;
 
 /**

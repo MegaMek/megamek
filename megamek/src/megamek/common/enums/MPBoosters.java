@@ -78,7 +78,7 @@ public enum MPBoosters {
 
     public int calculateRunMP(int walkMP) {
         if (isMASCXorSupercharger() || isJetBooster()) {
-            return (int) Math.ceil(walkMP * 2);
+            return walkMP * 2;
         } else if (isMASCAndSupercharger()) {
             return (int) Math.ceil(walkMP * 2.5);
         } else {
@@ -90,9 +90,9 @@ public enum MPBoosters {
         if (isMASCXorSupercharger() || isJetBooster()) {
             return (int) Math.ceil(walkMP * 2.5);
         } else if (isMASCAndSupercharger()) {
-            return (int) Math.ceil(walkMP * 3);
+            return walkMP * 3;
         } else {
-            return (int) Math.ceil(walkMP * 2);
+            return walkMP * 2;
         }
     }
 }

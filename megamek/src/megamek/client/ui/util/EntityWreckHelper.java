@@ -36,6 +36,16 @@ package megamek.client.ui.util;
 
 import megamek.client.ui.tileset.TilesetManager;
 import megamek.common.*;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.interfaces.IEntityRemovalConditions;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.Tank;
+import megamek.common.units.Terrains;
 
 /**
  * This class handles logic for displaying various kinds of damage and destruction decals

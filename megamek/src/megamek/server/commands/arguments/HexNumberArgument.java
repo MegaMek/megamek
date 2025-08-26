@@ -34,7 +34,7 @@
 package megamek.server.commands.arguments;
 
 import megamek.client.ui.Messages;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 
 /**
  * Argument for a Coords from HexNumber type.

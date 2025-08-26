@@ -43,8 +43,8 @@ import java.awt.image.ImageObserver;
 
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.boardview.BoardView;
-import megamek.common.Coords;
-import megamek.common.Entity;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
 import megamek.common.util.ImageUtil;
 
 public class MovingEntitySprite extends Sprite {

@@ -46,10 +46,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import megamek.common.*;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.HandheldWeapon;
+import megamek.common.units.*;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.fileUtils.StandardTextfileStreamTokenizer;
+import megamek.common.weapons.TeleMissile;
 import megamek.logging.MMLogger;
 
 /**
@@ -249,7 +253,7 @@ public class MekTileset {
         } else if (entity instanceof LandAirMek) {
             return switch (entity.getConversionMode()) {
                 case LandAirMek.CONV_MODE_FIGHTER -> default_lam_fighter;
-                case LandAirMek.CONV_MODE_AIRMEK -> default_lam_air_mek;
+                case LandAirMek.CONV_MODE_AIR_MEK -> default_lam_air_mek;
                 default -> default_lam_mek;
             };
         } else if (entity instanceof Mek) {

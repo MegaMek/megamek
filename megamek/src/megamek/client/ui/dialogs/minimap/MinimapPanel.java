@@ -40,7 +40,7 @@ import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_BASE_RE
 import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_CX;
 import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_DESTROYED;
 import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_SYMBOL_SIZE;
-import static megamek.common.Terrains.*;
+import static megamek.common.units.Terrains.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -53,6 +53,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
 import java.io.StreamTokenizer;
+import java.lang.System;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -83,17 +84,28 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.*;
+import megamek.common.Configuration;
+import megamek.common.Hex;
+import megamek.common.Player;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.BoardHelper;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.event.*;
+import megamek.common.game.Game;
+import megamek.common.game.GameTurn;
+import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.units.*;
 import megamek.common.util.ImageUtil;
 import megamek.logging.MMLogger;
 import megamek.utilities.GifWriter;
@@ -305,7 +317,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
                 if ((GUIP.getGameSummaryMinimap() || GUIP.getGifGameSummaryMinimap())
                       && (e.getOldPhase().isDeployment() || e.getOldPhase().isMovement()
                       || e.getOldPhase().isTargeting() || e.getOldPhase().isPremovement()
-                      || e.getOldPhase().isPrefiring() || e.getOldPhase().isFiring()
+                      || e.getOldPhase().isPreFiring() || e.getOldPhase().isFiring()
                       || e.getOldPhase().isPhysical())) {
 
                     File dir = new File(Configuration.gameSummaryImagesMMDir(), game.getUUIDString());
@@ -1228,7 +1240,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
             return;
         }
 
-        if (attack.getTargetType() == Targetable.TYPE_INARC_POD) {
+        if (attack.getTargetType() == Targetable.TYPE_I_NARC_POD) {
             // iNarc pods don't have a position
             return;
         }
@@ -1540,7 +1552,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         int ecmRange = entity.getECMRange();
         boolean ecmActive = entity.hasActiveECM();
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS)) {
             int bracket = Compute.getSensorRangeBracket(entity, null, null);
             int range = Compute.getSensorRangeByBracket(game, entity, null, null);
 

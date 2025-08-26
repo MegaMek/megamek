@@ -58,24 +58,24 @@ import org.apache.logging.log4j.spi.ExtendedLoggerWrapper;
  * </p>
  *
  * <pre>{@code
- * private static final MMLogger logger = MMLogger.create(MegaMek.class);
+ * private static final MMLogger LOGGER = MMLogger.create(MegaMek.class);
  * }</pre>
  * <p>
- * And then for use, use {@code logger.info(message)} and pass a string to it. Currently supported levels include trace,
+ * And then for use, use {@code LOGGER.info(message)} and pass a string to it. Currently supported levels include trace,
  * info, warn, debug, error, and fatal. Warn, Error and Fatal can take any Throwable for sending to Sentry and has an
  * overload for a title to allow for displaying of a dialog box.
  * </p>
  * <p>
- * This class also implements both the parametric pattern and the string format for the functions that are overriden and
- * added here. This means that you can use the following formats for the messages in some cases:
+ * This class also implements both the parametric pattern and the string format for the functions that are overridden
+ * and added here. This means that you can use the following formats for the messages in some cases:
  * </p>
  *
  * <pre>{@code
- * logger.info("number: {} string: {}", 42, "Hello");
- * logger.info("number: %d string: %s", 42, "Hello");
+ * LOGGER.info("number: {} string: {}", 42, "Hello");
+ * LOGGER.info("number: %d string: %s", 42, "Hello");
  * }</pre>
  * <p>
- * Due to how the logger works, the first format using curly braces is preferred, but the second one is grandfathered
+ * Due to how the LOGGER works, the first format using curly braces is preferred, but the second one is grandfathered
  * exclusively for logs already existing, and it is not recommended for any new log.
  * </p>
  */
@@ -318,7 +318,7 @@ public class MMLogger extends ExtendedLoggerWrapper {
 
     /**
      * Takes the passed in Level and checks if the current log level is more specific than provided. This is a helper
-     * method around the default logger's method.
+     * method around the default LOGGER's method.
      *
      * @param checkedLevel Passed in Level to compare to.
      *
@@ -330,7 +330,7 @@ public class MMLogger extends ExtendedLoggerWrapper {
 
     /**
      * Takes the passed in Level and checks if the current log level is less specific than provided. This is a helper
-     * method around the default logger's method.
+     * method around the default LOGGER's method.
      *
      * @param checkedLevel Passed in Level to compare to.
      *

@@ -38,12 +38,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import megamek.common.*;
-import megamek.common.AmmoType.AmmoTypeEnum;
+import megamek.common.CriticalSlot;
+import megamek.common.bays.Bay;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.interfaces.ITechManager;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.SmallCraft;
 import megamek.common.util.StringUtil;
 
 /**
@@ -55,14 +66,14 @@ public class TestSmallCraft extends TestAero {
 
     // Indices used to specify firing arcs with aliases for AeroDyne and spheroid
     public static final int ARC_NOSE = SmallCraft.LOC_NOSE;
-    public static final int ARC_LWING = SmallCraft.LOC_LWING;
-    public static final int ARC_RWING = SmallCraft.LOC_RWING;
+    public static final int ARC_LEFT_WING = SmallCraft.LOC_LEFT_WING;
+    public static final int ARC_RIGHT_WING = SmallCraft.LOC_RIGHT_WING;
     public static final int ARC_AFT = SmallCraft.LOC_AFT;
     public static final int REAR_ARC_OFFSET = SmallCraft.LOC_HULL;
-    public static final int ARC_FWD_LEFT = SmallCraft.LOC_LWING;
-    public static final int ARC_FWD_RIGHT = SmallCraft.LOC_RWING;
-    public static final int ARC_AFT_LEFT = SmallCraft.LOC_LWING + REAR_ARC_OFFSET;
-    public static final int ARC_AFT_RIGHT = SmallCraft.LOC_RWING + REAR_ARC_OFFSET;
+    public static final int ARC_FWD_LEFT = SmallCraft.LOC_LEFT_WING;
+    public static final int ARC_FWD_RIGHT = SmallCraft.LOC_RIGHT_WING;
+    public static final int ARC_AFT_LEFT = SmallCraft.LOC_LEFT_WING + REAR_ARC_OFFSET;
+    public static final int ARC_AFT_RIGHT = SmallCraft.LOC_RIGHT_WING + REAR_ARC_OFFSET;
 
     private final SmallCraft smallCraft;
 
@@ -91,9 +102,9 @@ public class TestSmallCraft extends TestAero {
      */
     public static double maxArmorWeight(SmallCraft smallCraft) {
         if (smallCraft.isSpheroid()) {
-            return floor(smallCraft.getOSI() * 3.6, Ceil.HALFTON);
+            return floor(smallCraft.getOSI() * 3.6, Ceil.HALF_TON);
         } else {
-            return floor(smallCraft.getOSI() * 4.5, Ceil.HALFTON);
+            return floor(smallCraft.getOSI() * 4.5, Ceil.HALF_TON);
         }
     }
 
@@ -134,7 +145,7 @@ public class TestSmallCraft extends TestAero {
         for (int arc = 0; arc < arcs; arc++) {
             int excess = (weaponsPerArc[arc] - 1) / slotsPerArc(sc);
             if (excess > 0) {
-                retVal[arc] = ceil(excess * weaponTonnage[arc] / 10.0, Ceil.HALFTON);
+                retVal[arc] = ceil(excess * weaponTonnage[arc] / 10.0, Ceil.HALF_TON);
             }
             if (hasNC3) {
                 retVal[arc] *= 2;
@@ -164,7 +175,7 @@ public class TestSmallCraft extends TestAero {
         } else {
             multiplier = smallCraftEngineMultiplier(year);
         }
-        return ceil(tonnage * desiredSafeThrust * multiplier, Ceil.HALFTON);
+        return ceil(tonnage * desiredSafeThrust * multiplier, Ceil.HALF_TON);
     }
 
     public static int weightFreeHeatSinks(SmallCraft sc) {
@@ -305,7 +316,7 @@ public class TestSmallCraft extends TestAero {
         if (smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
             return ceil(smallCraft.getWeight() * dropshipControlMultiplier(year), Ceil.TON);
         } else {
-            return ceil(smallCraft.getWeight() * smallCraftControlMultiplier(year), Ceil.HALFTON);
+            return ceil(smallCraft.getWeight() * smallCraftControlMultiplier(year), Ceil.HALF_TON);
         }
     }
 
@@ -328,7 +339,7 @@ public class TestSmallCraft extends TestAero {
     @Override
     public double getWeightFuel() {
         // Add 2% for pumps and round up to the half ton
-        return ceil(smallCraft.getFuelTonnage() * 1.02, Ceil.HALFTON);
+        return ceil(smallCraft.getFuelTonnage() * 1.02, Ceil.HALF_TON);
     }
 
     @Override
@@ -520,7 +531,7 @@ public class TestSmallCraft extends TestAero {
         correct &= !hasIllegalEquipmentCombinations(buff);
         correct &= correctHeatSinks(buff);
         correct &= correctCrew(buff);
-        correct &= correctCriticals(buff);
+        correct &= correctCriticalSlots(buff);
         if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) ||
               getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
@@ -600,13 +611,13 @@ public class TestSmallCraft extends TestAero {
                 buff.append("Cannot mount ").append(m.getType().getName()).append("\n");
                 illegal = true;
             } else if (m.getType() instanceof WeaponType) {
-                if (m.getLocation() == SmallCraft.LOC_LWING) {
+                if (m.getLocation() == SmallCraft.LOC_LEFT_WING) {
                     if (m.isRearMounted()) {
                         leftAft.merge(m.getType(), 1, Integer::sum);
                     } else {
                         leftFwd.merge(m.getType(), 1, Integer::sum);
                     }
-                } else if (m.getLocation() == SmallCraft.LOC_RWING) {
+                } else if (m.getLocation() == SmallCraft.LOC_RIGHT_WING) {
                     if (m.isRearMounted()) {
                         rightAft.merge(m.getType(), 1, Integer::sum);
                     } else {
@@ -739,7 +750,7 @@ public class TestSmallCraft extends TestAero {
         buff.append(printArmorPlacement());
         correctArmor(buff);
         buff.append(printLocations());
-        correctCriticals(buff);
+        correctCriticalSlots(buff);
         printFailedEquipment(buff);
         return buff;
     }
@@ -788,10 +799,10 @@ public class TestSmallCraft extends TestAero {
             String locationName = getEntity().getLocationName(i);
             buff.append(locationName).append(":");
             buff.append("\n");
-            for (int j = 0; j < getEntity().getNumberOfCriticals(i); j++) {
+            for (int j = 0; j < getEntity().getNumberOfCriticalSlots(i); j++) {
                 CriticalSlot slot = getEntity().getCritical(i, j);
                 if (slot == null) {
-                    j = getEntity().getNumberOfCriticals(i);
+                    j = getEntity().getNumberOfCriticalSlots(i);
                 } else if (slot.getType() == CriticalSlot.TYPE_SYSTEM) {
                     buff.append(j).append(". UNKNOWN SYSTEM NAME");
                     buff.append("\n");

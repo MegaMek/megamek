@@ -1,7 +1,6 @@
 /*
-
  * Copyright (C) 2000-2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,13 +34,23 @@
 
 package megamek.common.weapons.primitive;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
+import static megamek.common.game.IGame.LOGGER;
+
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.SRMHandler;
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.srm.SRMHandler;
 import megamek.common.weapons.srms.SRMWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -49,6 +58,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  */
 public class ISSRM6Primitive extends SRMWeapon {
+    @Serial
     private static final long serialVersionUID = -2484546662230634777L;
 
     public ISSRM6Primitive() {
@@ -69,7 +79,7 @@ public class ISSRM6Primitive extends SRMWeapon {
         longRange = 9;
         extremeRange = 12;
         tonnage = 3.0;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 59;
         cost = 80000;
         shortAV = 8;
@@ -91,8 +101,14 @@ public class ISSRM6Primitive extends SRMWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    @Nullable
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
-        return new SRMHandler(toHit, waa, game, manager, -2);
+        try {
+            return new SRMHandler(toHit, waa, game, manager, -2);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
     }
 }

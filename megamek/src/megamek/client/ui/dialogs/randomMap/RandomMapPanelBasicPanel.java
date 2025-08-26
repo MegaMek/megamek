@@ -46,7 +46,7 @@ import javax.swing.SpringLayout;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.widget.CheckpointComboBox;
-import megamek.common.MapSettings;
+import megamek.common.loaders.MapSettings;
 import megamek.logging.MMLogger;
 
 /**
@@ -360,7 +360,7 @@ public class RandomMapPanelBasicPanel extends JPanel {
     }
 
     private String convertMountain(int peaks, int minHeight, int minWidth, int style) {
-        if (MapSettings.MOUNTAIN_SNOWCAPPED == style) {
+        if (MapSettings.MOUNTAIN_SNOW_CAPPED == style) {
             return HIGH;
         }
 
@@ -596,7 +596,7 @@ public class RandomMapPanelBasicPanel extends JPanel {
         } else if (MEDIUM.equalsIgnoreCase(mountainsValue)) {
             mapSettings.setMountainParams(2, 7, 10, 6, 8, 0);
         } else {
-            mapSettings.setMountainParams(3, 9, 14, 8, 10, MapSettings.MOUNTAIN_SNOWCAPPED);
+            mapSettings.setMountainParams(3, 9, 14, 8, 10, MapSettings.MOUNTAIN_SNOW_CAPPED);
         }
     }
 

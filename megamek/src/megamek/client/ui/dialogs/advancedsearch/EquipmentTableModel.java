@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
-import megamek.common.EquipmentType;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.TechConstants;
 
 /**

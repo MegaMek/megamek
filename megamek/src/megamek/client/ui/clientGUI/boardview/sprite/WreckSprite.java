@@ -37,7 +37,7 @@ import java.awt.Rectangle;
 
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.boardview.BoardView;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 
 /**
  * Sprite for an wreck. Consists of an image, drawn from the Tile Manager and an identification label.

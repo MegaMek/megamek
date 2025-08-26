@@ -35,7 +35,7 @@ package megamek.ai.dataset;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.Board;
+import megamek.common.board.Board;
 import megamek.common.Hex;
 
 /**

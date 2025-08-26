@@ -33,8 +33,7 @@
 
 package megamek.common.weapons;
 
-import static megamek.common.weapons.AreaEffectHelper.DamageFalloff;
-import static megamek.common.weapons.AreaEffectHelper.calculateDamageFallOff;
+import static megamek.common.weapons.handlers.AreaEffectHelper.calculateDamageFallOff;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -49,10 +48,21 @@ import java.util.Map;
 
 import megamek.client.Client;
 import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.Team;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
+import megamek.common.weapons.handlers.AreaEffectHelper;
+import megamek.common.weapons.handlers.DamageFalloff;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -91,7 +101,7 @@ class AreaEffectHelperTest {
         game.setOptions(mockGameOptions);
 
         when(mockGameOptions.booleanOption(eq(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL))).thenReturn(false);
-        when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)).thenReturn("Experimental");
+        when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECH_LEVEL)).thenReturn("Experimental");
         when(mockGameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED)).thenReturn(true);
         when(mockGameOptions.booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT)).thenReturn(false);
         Option mockTrueBoolOpt = mock(Option.class);

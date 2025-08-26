@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2016 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -58,9 +58,9 @@ import megamek.MMConstants;
 import megamek.client.ui.util.ImageAtlasMap;
 import megamek.client.ui.util.ImprovedAveragingScaleFilter;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Coords;
 import megamek.common.Report;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Coords;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 

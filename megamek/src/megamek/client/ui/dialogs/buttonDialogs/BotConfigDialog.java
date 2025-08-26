@@ -33,15 +33,15 @@
  */
 package megamek.client.ui.dialogs.buttonDialogs;
 
-import static megamek.common.Terrains.BLDG_CF;
-import static megamek.common.Terrains.BLDG_ELEV;
-import static megamek.common.Terrains.BRIDGE;
-import static megamek.common.Terrains.BRIDGE_CF;
-import static megamek.common.Terrains.BRIDGE_ELEV;
-import static megamek.common.Terrains.BUILDING;
-import static megamek.common.Terrains.FUEL_TANK;
-import static megamek.common.Terrains.FUEL_TANK_CF;
-import static megamek.common.Terrains.FUEL_TANK_MAGN;
+import static megamek.common.units.Terrains.BLDG_CF;
+import static megamek.common.units.Terrains.BLDG_ELEV;
+import static megamek.common.units.Terrains.BRIDGE;
+import static megamek.common.units.Terrains.BRIDGE_CF;
+import static megamek.common.units.Terrains.BRIDGE_ELEV;
+import static megamek.common.units.Terrains.BUILDING;
+import static megamek.common.units.Terrains.FUEL_TANK;
+import static megamek.common.units.Terrains.FUEL_TANK_CF;
+import static megamek.common.units.Terrains.FUEL_TANK_MAGN;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -85,16 +85,16 @@ import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.*;
-import megamek.common.Board;
-import megamek.common.Building;
-import megamek.common.Coords;
-import megamek.common.Entity;
 import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.common.internationalization.I18n;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 import megamek.server.ServerBoardHelper;
 

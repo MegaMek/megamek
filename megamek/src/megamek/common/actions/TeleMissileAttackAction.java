@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2004 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,11 +39,20 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import megamek.common.*;
+import megamek.common.Player;
+import megamek.common.ToHitData;
+import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.AttackHandler;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
+import megamek.common.weapons.TeleMissile;
+import megamek.common.weapons.handlers.AttackHandler;
 
 /**
  * Represents one tele-controlled missile attack
@@ -80,7 +89,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
 
     /**
      * Returns the list of Counter Equipment used against this physical attack This is for AMS assignment to manual
-     * tele-operated missiles
+     * teleoperated missiles
      */
     public List<WeaponMounted> getCounterEquipment() {
         if (vCounterEquipment == null) {
@@ -91,7 +100,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
 
     /**
      * Adds 'm' to the list of Counter Equipment used against this physical attack This is for AMS assignment to manual
-     * tele-operated missiles
+     * teleoperated missiles
      */
     public void addCounterEquipment(WeaponMounted m) {
         if (vCounterEquipment == null) {
@@ -106,7 +115,8 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
      */
     private boolean checkPDConditions(Game game, Targetable target) {
         // true if advanced StratOps game rule is on
-        boolean advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
+        boolean advancedPD = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);
         return (target != null) && (target.getTargetType() == Targetable.TYPE_ENTITY) && advancedPD;
     }
 
@@ -123,7 +133,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
             if (e.usesWeaponBays()) {
                 for (Enumeration<AttackHandler> i = e.getGame().getAttacks(); i.hasMoreElements(); ) {
                     AttackHandler ah = i.nextElement();
-                    WeaponAttackAction prevAttack = ah.getWaa();
+                    WeaponAttackAction prevAttack = ah.getWeaponAttackAction();
                     if (prevAttack.getEntityId() == e.getId()) {
                         WeaponMounted prevWeapon = (WeaponMounted) e.getEquipment(prevAttack.getWeaponId());
                         for (WeaponMounted bayW : prevWeapon.getBayWeapons()) {
@@ -134,7 +144,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
             } else {
                 for (Enumeration<AttackHandler> i = e.getGame().getAttacks(); i.hasMoreElements(); ) {
                     AttackHandler ah = i.nextElement();
-                    WeaponAttackAction prevAttack = ah.getWaa();
+                    WeaponAttackAction prevAttack = ah.getWeaponAttackAction();
                     if (prevAttack.getEntityId() == e.getId()) {
                         Mounted<?> prevWeapon = e.getEquipment(prevAttack.getWeaponId());
                         totalHeat += prevWeapon.getCurrentHeat();
@@ -193,8 +203,8 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                 }
 
                 // Set up differences between point defense and AMS bays
-                boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMSBAY);
-                boolean isPDBay = counter.getType().hasFlag(WeaponType.F_PDBAY);
+                boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMS_BAY);
+                boolean isPDBay = counter.getType().hasFlag(WeaponType.F_PD_BAY);
 
                 // Point defense bays can only fire at one attack per round
                 if (isPDBay) {
@@ -222,7 +232,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                         pdOverheated = true;
                         break;
                     }
-                    if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
+                    if (counter.getType().hasFlag(WeaponType.F_HEAT_AS_DICE)) {
                         int heatDice = Compute.d6(bayW.getCurrentHeat());
                         pdEnt.heatBuildup += heatDice;
                         weaponHeat += heatDice;

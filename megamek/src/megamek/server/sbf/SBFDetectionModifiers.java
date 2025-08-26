@@ -38,7 +38,7 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.TargetRoll;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.TargetRollModifier;
 import megamek.common.strategicBattleSystems.SBFElementType;
 import megamek.common.strategicBattleSystems.SBFFormation;

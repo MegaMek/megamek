@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import megamek.common.Game;
+import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.Report;
 

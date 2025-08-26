@@ -32,16 +32,16 @@
  */
 package megamek.common.verifier;
 
-import static megamek.common.EquipmentType.T_ARMOR_FERRO_FIBROUS;
+import static megamek.common.equipment.EquipmentType.T_ARMOR_FERRO_FIBROUS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import megamek.common.EquipmentType;
-import megamek.common.ITechnology;
-import megamek.common.MiscType;
-import megamek.common.SupportTank;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.units.SupportTank;
 import megamek.common.verifier.TestSupportVehicle.ChassisModification;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -67,13 +67,13 @@ class TestSupportVehicleTest {
         SupportTank st = new SupportTank();
         st.setArmorType(EquipmentType.T_ARMOR_SV_BAR_10);
         // Rating E should return CV slots for IS FF
-        st.setArmorTechRating(ITechnology.TechRating.E);
+        st.setArmorTechRating(TechRating.E);
         assertEquals(
               2,
               ArmorType.of(T_ARMOR_FERRO_FIBROUS, false).getSupportVeeSlots(st));
 
         // Rating F should return CV slots for Clan FF
-        st.setArmorTechRating(ITechnology.TechRating.F);
+        st.setArmorTechRating(TechRating.F);
         assertEquals(
               1,
               ArmorType.of(T_ARMOR_FERRO_FIBROUS, true).getSupportVeeSlots(st));

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,7 +35,9 @@
 
 package megamek.common.event;
 
-import megamek.common.Coords;
+import java.io.Serial;
+
+import megamek.common.board.Coords;
 
 /**
  * Instances of this class are sent as a result of Board change
@@ -46,13 +48,14 @@ public class BoardEvent extends java.util.EventObject {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 6895134212472497607L;
     public static final int BOARD_NEW_BOARD = 0;
     public static final int BOARD_CHANGED_HEX = 1;
     public static final int BOARD_CHANGED_ALL_HEXES = 2;
 
-    private Coords coords;
-    private int type;
+    private final Coords coords;
+    private final int type;
 
     public BoardEvent(Object source, Coords coords, int type) {
         super(source);

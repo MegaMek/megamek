@@ -33,8 +33,8 @@
 
 package megamek.common.loaders;
 
-import megamek.common.Entity;
-import megamek.common.HandheldWeapon;
+import megamek.common.units.Entity;
+import megamek.common.equipment.HandheldWeapon;
 import megamek.common.util.BuildingBlock;
 
 public class BLKHandheldWeaponFile extends BLKFile implements IMekLoader {

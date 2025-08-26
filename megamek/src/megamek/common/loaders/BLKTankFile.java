@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,14 +34,14 @@
 
 package megamek.common.loaders;
 
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.FuelType;
-import megamek.common.SuperHeavyTank;
-import megamek.common.Tank;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.enums.FuelType;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.SuperHeavyTank;
+import megamek.common.units.Tank;
 import megamek.common.util.BuildingBlock;
 import megamek.logging.MMLogger;
 
@@ -61,35 +61,19 @@ public class BLKTankFile extends BLKFile implements IMekLoader {
     @Override
     protected int defaultVGLFacing(int location, boolean rearFacing) {
         if (superheavy) {
-            switch (location) {
-                case SuperHeavyTank.LOC_FRONTRIGHT:
-                    return 1;
-                case SuperHeavyTank.LOC_REARRIGHT:
-                case SuperHeavyTank.LOC_REAR:
-                    return 2;
-                case SuperHeavyTank.LOC_REARLEFT:
-                case SuperHeavyTank.LOC_FRONTLEFT:
-                    return 4;
-                case SuperHeavyTank.LOC_FRONT:
-                case SuperHeavyTank.LOC_TURRET:
-                case SuperHeavyTank.LOC_TURRET_2:
-                default:
-                    return 0;
-            }
+            return switch (location) {
+                case SuperHeavyTank.LOC_FRONT_RIGHT -> 1;
+                case SuperHeavyTank.LOC_REAR_RIGHT, SuperHeavyTank.LOC_REAR -> 2;
+                case SuperHeavyTank.LOC_REAR_LEFT, SuperHeavyTank.LOC_FRONT_LEFT -> 4;
+                default -> 0;
+            };
         } else {
-            switch (location) {
-                case Tank.LOC_RIGHT:
-                    return 2;
-                case Tank.LOC_REAR:
-                    return 3;
-                case Tank.LOC_LEFT:
-                    return 5;
-                case Tank.LOC_FRONT:
-                case Tank.LOC_TURRET:
-                case Tank.LOC_TURRET_2:
-                default:
-                    return 0;
-            }
+            return switch (location) {
+                case Tank.LOC_RIGHT -> 2;
+                case Tank.LOC_REAR -> 3;
+                case Tank.LOC_LEFT -> 5;
+                default -> 0;
+            };
         }
     }
 
@@ -219,10 +203,10 @@ public class BLKTankFile extends BLKFile implements IMekLoader {
 
         if (superheavy) {
             loadEquipment(t, "Front", Tank.LOC_FRONT);
-            loadEquipment(t, "Front Right", SuperHeavyTank.LOC_FRONTRIGHT);
-            loadEquipment(t, "Front Left", SuperHeavyTank.LOC_FRONTLEFT);
-            loadEquipment(t, "Rear Left", SuperHeavyTank.LOC_REARLEFT);
-            loadEquipment(t, "Rear Left", SuperHeavyTank.LOC_REARRIGHT);
+            loadEquipment(t, "Front Right", SuperHeavyTank.LOC_FRONT_RIGHT);
+            loadEquipment(t, "Front Left", SuperHeavyTank.LOC_FRONT_LEFT);
+            loadEquipment(t, "Rear Left", SuperHeavyTank.LOC_REAR_LEFT);
+            loadEquipment(t, "Rear Left", SuperHeavyTank.LOC_REAR_RIGHT);
             loadEquipment(t, "Rear", SuperHeavyTank.LOC_REAR);
             if (t.hasNoDualTurret()) {
                 if (!t.hasNoTurret()) {
@@ -271,9 +255,9 @@ public class BLKTankFile extends BLKFile implements IMekLoader {
             try {
                 t.setICEFuelType(FuelType.valueOf(dataFile.getDataAsString("fuelType")[0]));
             } catch (IllegalArgumentException ex) {
-                logger.error("While loading " + t.getShortNameRaw()
-                      + ": Could not parse ICE fuel type "
-                      + dataFile.getDataAsString("fuelType")[0]);
+                logger.error("While loading {}: Could not parse ICE fuel type {}",
+                      t.getShortNameRaw(),
+                      dataFile.getDataAsString("fuelType")[0]);
                 t.setICEFuelType(FuelType.PETROCHEMICALS);
             }
         }

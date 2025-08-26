@@ -33,16 +33,12 @@
 
 package megamek.common.board.postprocess;
 
-import megamek.common.Board;
-import megamek.common.Coords;
-import megamek.common.Terrain;
-import megamek.common.hexarea.HexArea;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.hexArea.HexArea;
+import megamek.common.units.Terrain;
 
-public class TerrainAddPostProcessor implements BoardProcessor {
-
-    private final int terrainType;
-    private final int level;
-    private final HexArea area;
+public record TerrainAddPostProcessor(int terrainType, int level, HexArea area) implements BoardProcessor {
 
     /**
      * Creates a board processor that adds the given terrain to each hex of the given HexArea.
@@ -53,10 +49,7 @@ public class TerrainAddPostProcessor implements BoardProcessor {
      * @param level       the terrain level to add
      * @param area        the HexArea to apply the change to
      */
-    public TerrainAddPostProcessor(int terrainType, int level, HexArea area) {
-        this.terrainType = terrainType;
-        this.level = level;
-        this.area = area;
+    public TerrainAddPostProcessor {
     }
 
 

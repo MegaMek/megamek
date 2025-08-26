@@ -40,8 +40,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import megamek.common.UnitType;
 import megamek.common.annotations.Nullable;
+import megamek.common.units.UnitType;
 import megamek.common.universe.DateRangeDeserializer;
 import megamek.common.universe.Faction2;
 import megamek.common.universe.Factions2;
@@ -730,7 +730,7 @@ public class FactionRecord {
             factionRecordBuilder.append("\t\t<salvage pct='").append(pct).append("'>")
                   .append(sj).append("</salvage>\n");
         }
-        final int[] unitWeightKeys = { UnitType.MEK, UnitType.TANK, UnitType.AEROSPACEFIGHTER };
+        final int[] unitWeightKeys = { UnitType.MEK, UnitType.TANK, UnitType.AEROSPACE_FIGHTER };
         if (weightDistribution.containsKey(era)) {
             for (int unitType : unitWeightKeys) {
                 if (weightDistribution.get(era).containsKey(unitType)

@@ -1,7 +1,7 @@
 /*
-  Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -55,7 +55,7 @@ public class SpecialHexDisplay implements Serializable {
     public static final int LARGE_EXPLOSION_IMAGE_RADIUS = 4;
 
     public enum Type {
-        ARTILLERY_AUTOHIT(new MegaMekFile(Configuration.hexesDir(), "artyauto.gif")) {
+        ARTILLERY_AUTO_HIT(new MegaMekFile(Configuration.hexesDir(), "artyauto.gif")) {
             @Override
             public boolean drawBefore() {
                 return false;
@@ -203,17 +203,17 @@ public class SpecialHexDisplay implements Serializable {
     /**
      * Only the owner may see this display
      */
-    public static int SHD_VISIBLETO_OWNER = 0;
+    public static int SHD_VISIBLE_TO_OWNER = 0;
 
     /**
      * The owner and members of his team can see this display
      */
-    public static int SHD_VISIBLETO_TEAM = 1;
+    public static int SHD_VISIBLE_TO_TEAM = 1;
 
     /**
      * Everyone can see this display
      */
-    public static int SHD_VISIBLETO_ALL = 2;
+    public static int SHD_VISIBLE_TO_ALL = 2;
 
     private String info;
     private Type type;
@@ -221,7 +221,7 @@ public class SpecialHexDisplay implements Serializable {
     private Player owner;
     private String imageSignature;
 
-    private int obscured = SHD_VISIBLETO_ALL;
+    private int obscured = SHD_VISIBLE_TO_ALL;
 
     public static int NO_ROUND = -99;
 
@@ -250,16 +250,16 @@ public class SpecialHexDisplay implements Serializable {
     }
 
     /**
-     * Creates an Artillery Autohit marker for the given player. It has no round limitation and is visible to team
+     * Creates an Artillery Auto hit marker for the given player. It has no round limitation and is visible to team
      * members of the owner.
      *
-     * @param owner The owner of this autohit hex
+     * @param owner The owner of this auto hit hex
      *
-     * @return A SpecialHexDisplay autohit marker
+     * @return A SpecialHexDisplay auto hit marker
      */
     public static SpecialHexDisplay createArtyAutoHit(Player owner) {
-        return new SpecialHexDisplay(Type.ARTILLERY_AUTOHIT, NO_ROUND, owner,
-              "Artillery autohit for player " + owner.getName(), SHD_VISIBLETO_TEAM);
+        return new SpecialHexDisplay(Type.ARTILLERY_AUTO_HIT, NO_ROUND, owner,
+              "Artillery auto hit for player " + owner.getName(), SHD_VISIBLE_TO_TEAM);
     }
 
     /**
@@ -285,11 +285,11 @@ public class SpecialHexDisplay implements Serializable {
      * @return A SpecialHexDisplay Incoming marker
      */
     public static SpecialHexDisplay createIncomingFire(Player owner, int landingGameRound, String message) {
-        return new SpecialHexDisplay(Type.ARTILLERY_INCOMING, landingGameRound, owner, message, SHD_VISIBLETO_TEAM);
+        return new SpecialHexDisplay(Type.ARTILLERY_INCOMING, landingGameRound, owner, message, SHD_VISIBLE_TO_TEAM);
     }
 
     /**
-     * Creates an Artillery Missmarker for the given owner and the given round in which it landed. It has no round
+     * Creates an Artillery miss marker for the given owner and the given round in which it landed. It has no round
      * limitation and is visible to everyone.
      *
      * @param owner   The owner of this artillery attack
@@ -299,7 +299,7 @@ public class SpecialHexDisplay implements Serializable {
      * @return A SpecialHexDisplay Artillery Miss marker
      */
     public static SpecialHexDisplay createArtyMiss(Player owner, int round, String message) {
-        return new SpecialHexDisplay(Type.ARTILLERY_MISS, round, owner, message, SHD_VISIBLETO_ALL);
+        return new SpecialHexDisplay(Type.ARTILLERY_MISS, round, owner, message, SHD_VISIBLE_TO_ALL);
     }
 
     public boolean thisRound(int testRound) {
@@ -365,7 +365,7 @@ public class SpecialHexDisplay implements Serializable {
     }
 
     public void setObscuredLevel(int o) {
-        if (o >= SHD_VISIBLETO_OWNER && o <= SHD_VISIBLETO_ALL) {
+        if (o >= SHD_VISIBLE_TO_OWNER && o <= SHD_VISIBLE_TO_ALL) {
             obscured = o;
         }
     }
@@ -386,14 +386,14 @@ public class SpecialHexDisplay implements Serializable {
         if (owner == null) {
             return false;
         }
-        if ((obscured == SHD_VISIBLETO_OWNER) && owner.equals(other)) {
+        if ((obscured == SHD_VISIBLE_TO_OWNER) && owner.equals(other)) {
             return false;
-        } else if ((obscured == SHD_VISIBLETO_TEAM) && (other != null)
+        } else if ((obscured == SHD_VISIBLE_TO_TEAM) && (other != null)
               && (owner.getTeam() == other.getTeam())) {
             return false;
         }
 
-        return obscured != SHD_VISIBLETO_ALL;
+        return obscured != SHD_VISIBLE_TO_ALL;
     }
 
     public void setObscured(int obscured) {

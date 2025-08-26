@@ -39,7 +39,7 @@ import javax.swing.JFrame;
 import megamek.client.ui.dialogs.abstractDialogs.AbstractDialog;
 import megamek.client.ui.preferences.JTabbedPanePreference;
 import megamek.client.ui.preferences.PreferencesNode;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 
 /**
  * A dialog showing the unit readout for a given unit. It shows an {@link EntityViewPane} with the entity summary, TRO

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.event;
 
+import java.io.Serial;
+
 import megamek.common.Player;
 
 /**
@@ -44,12 +46,12 @@ import megamek.common.Player;
  * @see GameListener
  */
 public abstract class GamePlayerEvent extends GameEvent {
+    @Serial
     private static final long serialVersionUID = -3259778708415623296L;
     protected Player player;
 
     /**
-     * @param source
-     * @param player
+     *
      */
     public GamePlayerEvent(Object source, Player player) {
         super(source);

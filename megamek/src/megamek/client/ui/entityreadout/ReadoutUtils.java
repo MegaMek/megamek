@@ -40,11 +40,13 @@ import java.util.Collections;
 import java.util.List;
 
 import megamek.client.ui.Messages;
-import megamek.common.*;
-import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.WeaponMounted;
-import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.bays.Bay;
+import megamek.common.enums.TechBase;
+import megamek.common.equipment.*;
+import megamek.common.units.Entity;
+import megamek.common.units.InfantryCompartment;
+import megamek.common.units.Mek;
+import megamek.common.weapons.bayWeapons.BayWeapon;
 
 /**
  * This class contains some readout modules that are used by Entity types that are not in the same hierarchy (e.g.
@@ -177,10 +179,10 @@ final class ReadoutUtils {
 
     private static ViewElement[] createWeaponTableRow(Mounted<?> mounted, Entity entity, boolean withHeatColumn) {
         String name = mounted.getDesc() + GeneralEntityReadout.quirkMarker(mounted);
-        if (entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.IS)) {
+        if (entity.isClan() && (mounted.getType().getTechBase() == TechBase.IS)) {
             name += Messages.getString("MekView.IS");
         }
-        if (!entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
+        if (!entity.isClan() && (mounted.getType().getTechBase() == TechBase.CLAN)) {
             name += Messages.getString("MekView.Clan");
         }
         ViewElement nameElement = new PlainElement(name);
@@ -202,10 +204,10 @@ final class ReadoutUtils {
         for (WeaponMounted m : mounted.getBayWeapons()) {
 
             String name = "- " + m.getDesc();
-            if (entity.isClan() && (m.getType().getTechBase() == ITechnology.TechBase.IS)) {
+            if (entity.isClan() && (m.getType().getTechBase() == TechBase.IS)) {
                 name += Messages.getString("MekView.IS");
             }
-            if (!entity.isClan() && (m.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
+            if (!entity.isClan() && (m.getType().getTechBase() == TechBase.CLAN)) {
                 name += Messages.getString("MekView.Clan");
             }
             ViewElement nameElement = new PlainElement(name);
@@ -248,7 +250,7 @@ final class ReadoutUtils {
         String name = mounted.getName();
         return (((mounted.getLocation() == Entity.LOC_NONE)
               // Meks can have zero-slot equipment in LOC_NONE that needs to be shown.
-              && (!(entity instanceof Mek) || mounted.getCriticals() > 0)))
+              && (!(entity instanceof Mek) || mounted.getNumCriticalSlots() > 0)))
               || name.contains("Jump Jet")
               || (name.contains("CASE") && !name.contains("II") && entity.isClan())
               || (name.contains("Heat Sink") && !name.contains("Radical"))

@@ -35,9 +35,9 @@ package megamek.server;
 
 import java.util.List;
 
-import megamek.common.IGame;
+import megamek.common.game.IGame;
 import megamek.common.Player;
-import megamek.common.ReportEntry;
+import megamek.common.interfaces.ReportEntry;
 import megamek.common.net.packets.Packet;
 import megamek.server.commands.ServerCommand;
 

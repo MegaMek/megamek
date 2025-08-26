@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,10 +35,13 @@
 
 package megamek.common.actions;
 
+import java.io.Serial;
+
 public class DodgeAction extends AbstractEntityAction {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 918785289096319255L;
 
     public DodgeAction(int entityId) {

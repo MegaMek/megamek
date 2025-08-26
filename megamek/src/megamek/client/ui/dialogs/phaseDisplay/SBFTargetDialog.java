@@ -46,7 +46,7 @@ import megamek.client.ui.dialogs.abstractDialogs.AbstractDialog;
 import megamek.client.ui.sbf.SBFTargetingToHitDisplay;
 import megamek.client.ui.sbf.SBFUnitAttackSelector;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.InGameObject;
+import megamek.common.game.InGameObject;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;

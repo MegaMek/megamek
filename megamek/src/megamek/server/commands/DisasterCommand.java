@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Random;
 
 import megamek.client.ui.Messages;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;

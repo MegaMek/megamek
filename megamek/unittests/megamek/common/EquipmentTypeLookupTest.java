@@ -38,7 +38,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.StringJoiner;
 
-import megamek.common.EquipmentTypeLookup.EquipmentName;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.EquipmentTypeLookup.EquipmentName;
 import org.junit.jupiter.api.Test;
 
 class EquipmentTypeLookupTest {

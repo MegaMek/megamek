@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,14 +34,21 @@
 
 package megamek.common.weapons.other;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
-import megamek.common.Mounted;
+import static megamek.common.game.IGame.LOGGER;
+
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.NarcExplosiveHandler;
-import megamek.common.weapons.NarcHandler;
+import megamek.common.annotations.Nullable;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
+import megamek.common.units.Entity;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.NarcExplosiveHandler;
+import megamek.common.weapons.handlers.NarcHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -53,6 +60,7 @@ public abstract class NarcWeapon extends MissileWeapon {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 1651402906360520759L;
 
     /**
@@ -69,19 +77,27 @@ public abstract class NarcWeapon extends MissileWeapon {
      *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game,
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-          WeaponAttackAction waa, Game game, TWGameManager manager) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-              .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if ((atype.getMunitionType().contains(AmmoType.Munitions.M_NARC_EX))
-              || (atype.getMunitionType().contains(AmmoType.Munitions.M_EXPLOSIVE))) {
-            return new NarcExplosiveHandler(toHit, waa, game, manager);
+    @Nullable
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
+        try {
+            Entity entity = game.getEntity(waa.getEntityId());
+
+            if (entity != null) {
+                AmmoType ammoType = (AmmoType) entity.getEquipment(waa.getWeaponId()).getLinked().getType();
+                if ((ammoType.getMunitionType().contains(AmmoType.Munitions.M_NARC_EX))
+                      || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXPLOSIVE))) {
+                    return new NarcExplosiveHandler(toHit, waa, game, manager);
+                }
+            }
+            return new NarcHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
         }
-        return new NarcHandler(toHit, waa, game, manager);
+        return null;
     }
 
     @Override

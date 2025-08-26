@@ -83,7 +83,7 @@ public final class StandardTextfileStreamTokenizer extends StreamTokenizer {
      * obtained from {@link #getLineTokens()}. A valid include line has exactly two tokens, the first being "include"
      * and the second a filename.
      *
-     * @param lineTokens The tokens representing an input stream line
+     * @param lineTokens The tokens representing an input streamline
      *
      * @return True when the tokens represent a valid include statement
      *
@@ -95,7 +95,7 @@ public final class StandardTextfileStreamTokenizer extends StreamTokenizer {
     }
 
     /**
-     * Returns a list of tokens making up the next available input stream line. Empty lines are skipped, i.e. the tokens
+     * Returns a list of tokens making up the next available input streamline. Empty lines are skipped, i.e. the tokens
      * list will normally not be empty. It may be empty when the end of the input stream is reached. Use
      * {@link #isFinished()} to test if the stream is at its end.
      *

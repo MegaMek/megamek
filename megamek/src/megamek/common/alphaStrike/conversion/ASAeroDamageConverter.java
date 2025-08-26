@@ -45,14 +45,14 @@ import static megamek.common.alphaStrike.BattleForceSUA.REL;
 import static megamek.common.alphaStrike.BattleForceSUA.TOR;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.Aero;
-import megamek.common.Entity;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.WeaponType;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
 
 class ASAeroDamageConverter extends ASDamageConverter {
 
@@ -105,7 +105,7 @@ class ASAeroDamageConverter extends ASDamageConverter {
     @Override
     protected double determineDamage(Mounted<?> weapon, int range) {
         WeaponType weaponType = (WeaponType) weapon.getType();
-        if (weaponType.getBattleForceClass() == WeaponType.BFCLASS_TORP) {
+        if (weaponType.getBattleForceClass() == WeaponType.BF_CLASS_TORPEDO) {
             return 0;
         }
         return ((WeaponType) weapon.getType()).getBattleForceDamage(range, weapon.getLinkedBy());
@@ -140,7 +140,7 @@ class ASAeroDamageConverter extends ASDamageConverter {
     @Override
     protected int weaponHeat(Mounted<?> weapon, boolean onlyRear, boolean onlyLongRange) {
         WeaponType weaponType = (WeaponType) weapon.getType();
-        if (weaponType.hasFlag(WeaponType.F_ONESHOT)
+        if (weaponType.hasFlag(WeaponType.F_ONE_SHOT)
               || (onlyRear && !weapon.isRearMounted() && (weapon.getLocation() != Aero.LOC_AFT))
               || (!onlyRear && (weapon.isRearMounted() || (weapon.getLocation() == Aero.LOC_AFT)))
               || (onlyLongRange && weaponType.getBattleForceDamage(LONG_RANGE) == 0)) {

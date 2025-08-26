@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,16 +34,22 @@
 
 package megamek.common.weapons.ppc;
 
-import megamek.common.Game;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
+import static megamek.common.game.IGame.LOGGER;
+
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.annotations.Nullable;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.PPCHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.PPCHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -52,6 +58,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sep 13, 2004
  */
 public abstract class PPCWeapon extends EnergyWeapon {
+    @Serial
     private static final long serialVersionUID = -8128018700095507410L;
 
     public PPCWeapon() {
@@ -65,13 +72,19 @@ public abstract class PPCWeapon extends EnergyWeapon {
      *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game,
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    @Nullable
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
-        return new PPCHandler(toHit, waa, game, manager);
+        try {
+            return new PPCHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
     }
 
     @Override
@@ -109,7 +122,7 @@ public abstract class PPCWeapon extends EnergyWeapon {
         // The benefit is removing the minimum range, so only PPCs with a minimum range
         // get the modes.
         if (minimumRange > 0) {
-            if (gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)) {
+            if (gameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PPC_INHIBITORS)) {
                 addMode("Field Inhibitor ON");
                 addMode("Field Inhibitor OFF");
             } else {

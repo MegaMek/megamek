@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,6 +38,12 @@
  */
 package megamek.common.weapons.infantry;
 
+import java.io.Serial;
+
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+
 /**
  * @author Sebastian Brocks
  */
@@ -46,6 +52,7 @@ public class InfantryTWFlamerWeapon extends InfantryWeapon {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -5741978934100309295L;
 
     public InfantryTWFlamerWeapon() {

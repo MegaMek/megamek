@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -95,52 +95,52 @@ public class TestXMLOption implements TestEntityOption {
     }
 
     @Override
-    public TestEntity.Ceil getWeightCeilingEngine() {
+    public Ceil getWeightCeilingEngine() {
         return weightCeiling.engine;
     }
 
     @Override
-    public TestEntity.Ceil getWeightCeilingStructure() {
+    public Ceil getWeightCeilingStructure() {
         return weightCeiling.structure;
     }
 
     @Override
-    public TestEntity.Ceil getWeightCeilingArmor() {
+    public Ceil getWeightCeilingArmor() {
         return weightCeiling.armor;
     }
 
     @Override
-    public TestEntity.Ceil getWeightCeilingControls() {
+    public Ceil getWeightCeilingControls() {
         return weightCeiling.controls;
     }
 
     @Override
-    public TestEntity.Ceil getWeightCeilingWeapons() {
+    public Ceil getWeightCeilingWeapons() {
         return weightCeiling.weapons;
     }
 
     @Override
-    public TestEntity.Ceil getWeightCeilingTargComp() {
+    public Ceil getWeightCeilingTargComp() {
         return weightCeiling.targComp;
     }
 
     @Override
-    public TestEntity.Ceil getWeightCeilingGyro() {
+    public Ceil getWeightCeilingGyro() {
         return weightCeiling.gyro;
     }
 
     @Override
-    public TestEntity.Ceil getWeightCeilingTurret() {
+    public Ceil getWeightCeilingTurret() {
         return weightCeiling.turret;
     }
 
     @Override
-    public TestEntity.Ceil getWeightCeilingLifting() {
+    public Ceil getWeightCeilingLifting() {
         return weightCeiling.lifting;
     }
 
     @Override
-    public TestEntity.Ceil getWeightCeilingPowerAmp() {
+    public Ceil getWeightCeilingPowerAmp() {
         return weightCeiling.powerAmp;
     }
 
@@ -155,7 +155,7 @@ public class TestXMLOption implements TestEntityOption {
     }
 
     @Override
-    public boolean showUnderweightedEntity() {
+    public boolean showUnderweightEntity() {
         return showUnderweighted;
     }
 
@@ -205,7 +205,7 @@ public class TestXMLOption implements TestEntityOption {
     }
 
     @Override
-    public int getTargCompCrits() {
+    public int getTargetingComputerCrits() {
         return targCompCrits;
     }
 
@@ -227,7 +227,7 @@ public class TestXMLOption implements TestEntityOption {
         return "Skip: " + skip() + "\n" + "Show Overweighted Entity: "
               + showOverweightedEntity() + "\n" + "Max Overweight: "
               + getMaxOverweight() + "\n"
-              + "Show Underweighted Entity: " + showUnderweightedEntity()
+              + "Show Underweighted Entity: " + showUnderweightEntity()
               + "\n" + "Min Underweight: "
               + getMinUnderweight() + "\n"
               + "Show bad Armor Placement: " + showCorrectArmor() + "\n"
@@ -236,25 +236,25 @@ public class TestXMLOption implements TestEntityOption {
               + "\n" + "Show Incorrect Intro Year: " + showIncorrectIntroYear()
               + "\n" + "Margin of error for Intro Year: " + getIntroYearMargin()
               + "\n" + "Weight Ceiling Engine: "
-              + 1 / getWeightCeilingEngine().mult + "\n"
+              + 1 / getWeightCeilingEngine().multiplier + "\n"
               + "Weight Ceiling Structure: "
-              + 1 / getWeightCeilingStructure().mult + "\n"
+              + 1 / getWeightCeilingStructure().multiplier + "\n"
               + "Weight Ceiling Armor: "
-              + 1 / getWeightCeilingArmor().mult + "\n"
+              + 1 / getWeightCeilingArmor().multiplier + "\n"
               + "Weight Ceiling Controls: "
-              + 1 / getWeightCeilingControls().mult + "\n"
+              + 1 / getWeightCeilingControls().multiplier + "\n"
               + "Weight Ceiling Weapons: "
-              + 1 / getWeightCeilingWeapons().mult + "\n"
+              + 1 / getWeightCeilingWeapons().multiplier + "\n"
               + "Weight Ceiling TargComp: "
-              + 1 / getWeightCeilingTargComp().mult + "\n"
+              + 1 / getWeightCeilingTargComp().multiplier + "\n"
               + "Weight Ceiling Gyro: "
-              + 1 / getWeightCeilingGyro().mult + "\n"
+              + 1 / getWeightCeilingGyro().multiplier + "\n"
               + "Weight Ceiling Turret: "
-              + 1 / getWeightCeilingTurret().mult + "\n"
+              + 1 / getWeightCeilingTurret().multiplier + "\n"
               + "Weight Ceiling Lifting:"
-              + 1 / getWeightCeilingLifting().mult + "\n"
+              + 1 / getWeightCeilingLifting().multiplier + "\n"
               + "Weight Ceiling PowerAmp: "
-              + 1 / getWeightCeilingPowerAmp().mult + "\n"
+              + 1 / getWeightCeilingPowerAmp().multiplier + "\n"
               + "Ignore Failed Equipment: \n" + printIgnoredFailedEquip();
     }
 
@@ -264,51 +264,51 @@ public class TestXMLOption implements TestEntityOption {
     @XmlType
     private static class WeightCeiling {
         @XmlElement
-        TestEntity.Ceil engine = TestEntity.Ceil.HALFTON;
+        Ceil engine = Ceil.HALF_TON;
 
         @XmlElement
-        TestEntity.Ceil structure = TestEntity.Ceil.HALFTON;
+        Ceil structure = Ceil.HALF_TON;
 
         @XmlElement
-        TestEntity.Ceil armor = TestEntity.Ceil.HALFTON;
+        Ceil armor = Ceil.HALF_TON;
 
         @XmlElement
-        TestEntity.Ceil controls = TestEntity.Ceil.HALFTON;
+        Ceil controls = Ceil.HALF_TON;
 
         @XmlElement
-        TestEntity.Ceil weapons = TestEntity.Ceil.TON;
+        Ceil weapons = Ceil.TON;
 
         @XmlElement(name = "targcomp")
-        TestEntity.Ceil targComp = TestEntity.Ceil.TON;
+        Ceil targComp = Ceil.TON;
 
         @XmlElement
-        TestEntity.Ceil turret = TestEntity.Ceil.HALFTON;
+        Ceil turret = Ceil.HALF_TON;
 
         @XmlElement
-        TestEntity.Ceil lifting = TestEntity.Ceil.HALFTON;
+        Ceil lifting = Ceil.HALF_TON;
 
         @XmlElement(name = "poweramp")
-        TestEntity.Ceil powerAmp = TestEntity.Ceil.HALFTON;
+        Ceil powerAmp = Ceil.HALF_TON;
 
         @XmlElement
-        TestEntity.Ceil gyro = TestEntity.Ceil.HALFTON;
+        Ceil gyro = Ceil.HALF_TON;
 
         WeightCeiling() {
         }
     }
 
     /**
-     * An adapter that unmarshals a comma-separated string of values into a list of values.
+     * An adapter that unmarshal a comma-separated string of values into a list of values.
      */
     private static class CSVAdapter extends XmlAdapter<String, List<String>> {
 
         @Override
-        public String marshal(final List<String> v) throws Exception {
+        public String marshal(final List<String> v) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
-        public List<String> unmarshal(final String v) throws Exception {
+        public List<String> unmarshal(final String v) {
             List<String> list = new ArrayList<>();
             StringTokenizer st = new StringTokenizer(v, ",");
 

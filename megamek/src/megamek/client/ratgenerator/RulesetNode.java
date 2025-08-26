@@ -37,8 +37,8 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import megamek.common.EntityMovementMode;
-import megamek.common.UnitType;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.UnitType;
 import megamek.logging.MMLogger;
 import org.w3c.dom.Node;
 

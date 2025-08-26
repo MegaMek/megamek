@@ -34,11 +34,11 @@
 package megamek.client.bot.princess;
 
 import megamek.client.bot.princess.geometry.CoordFacingCombo;
-import megamek.common.BuildingTarget;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
-import megamek.common.Targetable;
+import megamek.common.units.BuildingTarget;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
+import megamek.common.units.Targetable;
 import megamek.common.moves.MovePath;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.message.ParameterizedMessage;

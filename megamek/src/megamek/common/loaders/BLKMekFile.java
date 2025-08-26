@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,7 +37,19 @@ package megamek.common.loaders;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.CriticalSlot;
+import megamek.common.TechConstants;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadMek;
 import megamek.common.util.BuildingBlock;
 import megamek.logging.MMLogger;
 
@@ -48,7 +60,7 @@ import megamek.logging.MMLogger;
 public class BLKMekFile extends BLKFile implements IMekLoader {
     private static final MMLogger logger = MMLogger.create(BLKMekFile.class);
 
-    // armor locatioms
+    // armor locations
     public static final int HD = 0;
     public static final int LA = 1;
     public static final int LF = 2;
@@ -73,14 +85,14 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
     @SuppressWarnings("unchecked")
     public Entity getEntity() throws EntityLoadingException {
 
-        int chassisType = 0;
+        int chassisType;
         if (!dataFile.exists("chassis_type")) {
             chassisType = 0;
         } else {
             chassisType = dataFile.getDataAsInt("chassis_type")[0];
         }
 
-        Mek mek = null;
+        Mek mek;
 
         if (chassisType == 1) {
             mek = new QuadMek();
@@ -159,19 +171,19 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
 
         mek.initializeArmor(armor[BLKMekFile.HD], Mek.LOC_HEAD);
 
-        mek.initializeArmor(armor[BLKMekFile.LA], Mek.LOC_LARM);
-        mek.initializeArmor(armor[BLKMekFile.RA], Mek.LOC_RARM);
-        mek.initializeArmor(armor[BLKMekFile.LL], Mek.LOC_LLEG);
-        mek.initializeArmor(armor[BLKMekFile.RL], Mek.LOC_RLEG);
+        mek.initializeArmor(armor[BLKMekFile.LA], Mek.LOC_LEFT_ARM);
+        mek.initializeArmor(armor[BLKMekFile.RA], Mek.LOC_RIGHT_ARM);
+        mek.initializeArmor(armor[BLKMekFile.LL], Mek.LOC_LEFT_LEG);
+        mek.initializeArmor(armor[BLKMekFile.RL], Mek.LOC_RIGHT_LEG);
 
-        mek.initializeArmor(armor[BLKMekFile.CF], Mek.LOC_CT);
-        mek.initializeArmor(armor[BLKMekFile.LF], Mek.LOC_LT);
-        mek.initializeArmor(armor[BLKMekFile.RF], Mek.LOC_RT);
+        mek.initializeArmor(armor[BLKMekFile.CF], Mek.LOC_CENTER_TORSO);
+        mek.initializeArmor(armor[BLKMekFile.LF], Mek.LOC_LEFT_TORSO);
+        mek.initializeArmor(armor[BLKMekFile.RF], Mek.LOC_RIGHT_TORSO);
 
         // changed...
-        mek.initializeRearArmor(armor[BLKMekFile.CB], Mek.LOC_CT);
-        mek.initializeRearArmor(armor[BLKMekFile.LB], Mek.LOC_LT);
-        mek.initializeRearArmor(armor[BLKMekFile.RB], Mek.LOC_RT);
+        mek.initializeRearArmor(armor[BLKMekFile.CB], Mek.LOC_CENTER_TORSO);
+        mek.initializeRearArmor(armor[BLKMekFile.LB], Mek.LOC_LEFT_TORSO);
+        mek.initializeRearArmor(armor[BLKMekFile.RB], Mek.LOC_RIGHT_TORSO);
 
         mek.recalculateTechAdvancement();
 
@@ -188,34 +200,36 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
         // check for removed arm actuators...
 
         // no lower right arm
-        if (!dataFile.getDataAsString("ra criticals")[2].trim().equalsIgnoreCase("Lower Arm Actuator")) {
-            mek.removeCriticals(Mek.LOC_RARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM));
+        if (!dataFile.getDataAsString("ra criticalSlots")[2].trim().equalsIgnoreCase("Lower Arm Actuator")) {
+            mek.removeCriticalSlots(Mek.LOC_RIGHT_ARM,
+                  new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM));
         }
         // no right hand
-        if (!dataFile.getDataAsString("ra criticals")[3].trim().equalsIgnoreCase("Hand Actuator")) {
-            mek.removeCriticals(Mek.LOC_RARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND));
+        if (!dataFile.getDataAsString("ra criticalSlots")[3].trim().equalsIgnoreCase("Hand Actuator")) {
+            mek.removeCriticalSlots(Mek.LOC_RIGHT_ARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND));
         }
 
         // no lower left arm
-        if (!dataFile.getDataAsString("la criticals")[2].trim().equalsIgnoreCase("Lower Arm Actuator")) {
-            mek.removeCriticals(Mek.LOC_LARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM));
+        if (!dataFile.getDataAsString("la criticalSlots")[2].trim().equalsIgnoreCase("Lower Arm Actuator")) {
+            mek.removeCriticalSlots(Mek.LOC_LEFT_ARM,
+                  new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM));
         }
         // no left hand
-        if (!dataFile.getDataAsString("la criticals")[3].trim().equalsIgnoreCase("Hand Actuator")) {
-            mek.removeCriticals(Mek.LOC_LARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND));
+        if (!dataFile.getDataAsString("la criticalSlots")[3].trim().equalsIgnoreCase("Hand Actuator")) {
+            mek.removeCriticalSlots(Mek.LOC_LEFT_ARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND));
         }
 
         // load equipment stuff...
-        List<String>[] criticals = new Vector[8];
+        List<String>[] criticalSlots = new Vector[8];
 
-        criticals[Mek.LOC_HEAD] = dataFile.getDataAsVector("hd criticals");
-        criticals[Mek.LOC_LARM] = dataFile.getDataAsVector("la criticals");
-        criticals[Mek.LOC_RARM] = dataFile.getDataAsVector("ra criticals");
-        criticals[Mek.LOC_LLEG] = dataFile.getDataAsVector("ll criticals");
-        criticals[Mek.LOC_RLEG] = dataFile.getDataAsVector("rl criticals");
-        criticals[Mek.LOC_LT] = dataFile.getDataAsVector("lt criticals");
-        criticals[Mek.LOC_RT] = dataFile.getDataAsVector("rt criticals");
-        criticals[Mek.LOC_CT] = dataFile.getDataAsVector("ct criticals");
+        criticalSlots[Mek.LOC_HEAD] = dataFile.getDataAsVector("hd criticalSlots");
+        criticalSlots[Mek.LOC_LEFT_ARM] = dataFile.getDataAsVector("la criticalSlots");
+        criticalSlots[Mek.LOC_RIGHT_ARM] = dataFile.getDataAsVector("ra criticalSlots");
+        criticalSlots[Mek.LOC_LEFT_LEG] = dataFile.getDataAsVector("ll criticalSlots");
+        criticalSlots[Mek.LOC_RIGHT_LEG] = dataFile.getDataAsVector("rl criticalSlots");
+        criticalSlots[Mek.LOC_LEFT_TORSO] = dataFile.getDataAsVector("lt criticalSlots");
+        criticalSlots[Mek.LOC_RIGHT_TORSO] = dataFile.getDataAsVector("rt criticalSlots");
+        criticalSlots[Mek.LOC_CENTER_TORSO] = dataFile.getDataAsVector("ct criticalSlots");
 
         // prefix is "Clan " or "IS "
         String prefix;
@@ -225,9 +239,9 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
             prefix = "IS ";
         }
 
-        for (int loc = 0; loc < criticals.length; loc++) {
-            for (int c = 0; c < criticals[loc].size(); c++) {
-                String critName = criticals[loc].get(c).toString().trim();
+        for (int loc = 0; loc < criticalSlots.length; loc++) {
+            for (int c = 0; c < criticalSlots[loc].size(); c++) {
+                String critName = criticalSlots[loc].get(c).trim();
                 boolean rearMounted = false;
                 boolean turretMounted = false;
                 boolean armored = false;

@@ -42,11 +42,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import megamek.MMConstants;
-import megamek.common.Board;
-import megamek.common.BoardDimensions;
+import megamek.common.board.Board;
+import megamek.common.board.BoardDimensions;
 import megamek.common.Configuration;
 import megamek.common.Hex;
-import megamek.common.MapSettings;
+import megamek.common.loaders.MapSettings;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;

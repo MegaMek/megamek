@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,25 +34,39 @@
 
 package megamek.common.weapons.lasers;
 
-import megamek.common.Game;
+import static megamek.common.game.IGame.LOGGER;
+
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.ReengineeredLaserWeaponHandler;
+import megamek.common.annotations.Nullable;
+import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.ReengineeredLaserWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 public abstract class ReengineeredLaserWeapon extends PulseLaserWeapon {
 
+    @Serial
     private static final long serialVersionUID = 2113437667446946251L;
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    @Nullable
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
-        return new ReengineeredLaserWeaponHandler(toHit, waa, game, manager);
+        try {
+            return new ReengineeredLaserWeaponHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
+
     }
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_REL;
+        return BF_CLASS_REL;
     }
 }

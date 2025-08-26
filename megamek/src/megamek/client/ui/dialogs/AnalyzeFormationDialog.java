@@ -54,9 +54,9 @@ import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.EntityWeightClass;
-import megamek.common.MekSummary;
-import megamek.common.UnitRole;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.loaders.MekSummary;
+import megamek.common.units.UnitRole;
 
 /**
  * Shows a table of all units matching the chosen faction/unit type/era parameters and general criteria for a formation

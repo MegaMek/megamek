@@ -32,8 +32,8 @@
  */
 package megamek.common.moves;
 
-import megamek.common.Entity;
-import megamek.common.QuadMek;
+import megamek.common.units.Entity;
+import megamek.common.units.QuadMek;
 
 /**
  * This class handles code common to the lateral and lateral backward steps of a unit. It is used in the MoveStep

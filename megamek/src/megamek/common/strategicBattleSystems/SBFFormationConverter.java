@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,13 +36,13 @@ package megamek.common.strategicBattleSystems;
 import java.util.ArrayList;
 
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
-import megamek.common.Entity;
-import megamek.common.ForceAssignable;
-import megamek.common.Game;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ForceAssignable;
+import megamek.common.units.Entity;
 
 public final class SBFFormationConverter extends BaseFormationConverter<SBFFormation> {
 

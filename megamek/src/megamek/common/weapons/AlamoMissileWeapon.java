@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,15 +34,20 @@
 
 package megamek.common.weapons;
 
-import megamek.common.AmmoType;
-import megamek.common.BombType.BombTypeEnum;
-import megamek.common.TechAdvancement;
-import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import java.io.Serial;
+
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
+import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 
 /**
  * @author Jay Lawson
  */
 public class AlamoMissileWeapon extends CapitalMissileWeapon {
+    @Serial
     private static final long serialVersionUID = 3672430739887768960L;
 
     public AlamoMissileWeapon() {
@@ -58,9 +63,9 @@ public class AlamoMissileWeapon extends CapitalMissileWeapon {
         longRange = 24;
         extremeRange = 40;
         tonnage = 0;
-        criticals = 0;
+        criticalSlots = 0;
         hittable = false;
-        bv = 0;
+        bv = 0.0;
         cost = 0;
         shortAV = 10;
         medAV = 10;
@@ -68,7 +73,7 @@ public class AlamoMissileWeapon extends CapitalMissileWeapon {
         maxRange = RANGE_MED;
         ammoType = AmmoType.AmmoTypeEnum.ALAMO;
         capital = true;
-        techAdvancement.setTechBase(TechAdvancement.TechBase.IS)
+        techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3071, DATE_NONE, DATE_NONE)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E);

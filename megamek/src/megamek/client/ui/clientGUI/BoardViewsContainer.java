@@ -44,8 +44,8 @@ import javax.swing.event.ChangeEvent;
 
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
-import megamek.common.Board;
-import megamek.common.IGame;
+import megamek.common.board.Board;
+import megamek.common.game.IGame;
 
 /**
  * The BoardViewsContainer manages the JPanel that contains the BoardView(s) of a ClientGUI. When only one BoardView is

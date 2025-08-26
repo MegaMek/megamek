@@ -44,22 +44,22 @@ import java.util.Map;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.sprite.StepSprite;
-import megamek.common.Board;
-import megamek.common.Compute;
-import megamek.common.ComputeECM;
-import megamek.common.Coords;
 import megamek.common.ECMInfo;
-import megamek.common.Entity;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeECM;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.IlluminationLevel;
+import megamek.common.planetaryConditions.IlluminationLevel;
 import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**
@@ -141,9 +141,9 @@ public class FovHighlightingAndDarkening {
             final int pad = 0;
             final int lw = 7;
 
-            boolean sensorsOn = (boardView.game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS) ||
+            boolean sensorsOn = (boardView.game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS) ||
                   boardView.game.getOptions()
-                        .booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS));
+                        .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS));
             boolean doubleBlindOn = boardView.game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
             boolean inclusiveSensorsOn = boardView.game.getOptions()
                   .booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE);

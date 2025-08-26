@@ -34,6 +34,8 @@
 
 package megamek.common.net.events;
 
+import java.io.Serial;
+
 import megamek.common.net.enums.ConnectionEventType;
 
 /**
@@ -41,6 +43,7 @@ import megamek.common.net.enums.ConnectionEventType;
  */
 public class DisconnectedEvent extends AbstractConnectionEvent {
     //region Variable Declarations
+    @Serial
     private static final long serialVersionUID = -1427252999207396447L;
     //endregion Variable Declarations
 

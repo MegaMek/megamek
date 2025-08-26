@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,35 +34,39 @@
 
 package megamek.common;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import megamek.common.equipment.Mounted;
+
 public class CriticalSlot implements Serializable {
+    @Serial
     private static final long serialVersionUID = -8744251501251495923L;
     public static final int TYPE_SYSTEM = 0;
     public static final int TYPE_EQUIPMENT = 1;
 
     /**
      * Determines what the type of this CriticalSlot is, either system or equipment. Systems represent core components
-     * of a unit that are located in specific criticals, such as gyros, engines, and cockpits. Equipment represents
+     * of a unit that are located in specific criticalSlots, such as gyros, engines, and cockpits. Equipment represents
      * everything else, and will have an entry in an EquipmentType subclass.
      */
-    private int type;
+    private final int type;
 
     /**
      * Index is only used for system type critical slots. It is used as an index into a collection to determine what the
      * system actually is.
      */
-    private int index = -1;
+    private int index;
     private Mounted<?> mount;
     private Mounted<?> mount2;
 
     private boolean hit = false; // hit
     private boolean missing = false; // location destroyed
     private boolean destroyed = false;
-    private boolean hittable = true; // false = hits rerolled
+    private final boolean hittable; // false = hits rerolled
     private boolean breached = false; // true = breached
     private boolean repairing = false; // true = currently being repaired
     private boolean repairable = true; // true = can be repaired
@@ -108,8 +112,6 @@ public class CriticalSlot implements Serializable {
      * set that this CriticalSlot was or was not hit with a crit this phase Note: stuff that was hit in a phase can
      * still be used in that phase, if that's not desired, use setDestroyed instead
      *
-     * @param hit
-     *
      * @see #setDestroyed(boolean)
      */
     public void setHit(boolean hit) {
@@ -123,8 +125,6 @@ public class CriticalSlot implements Serializable {
     /**
      * Set this Mounted's destroyed status NOTE: only set this if this Mounted cannot be used in the current phase
      * anymore. If it still can, use setHit instead
-     *
-     * @param destroyed
      *
      * @see #setHit(boolean)
      */
@@ -191,9 +191,8 @@ public class CriticalSlot implements Serializable {
             return false;
         }
         CriticalSlot other = (CriticalSlot) object;
-        return ((other.getType() == type) && (other.getIndex() == index) && (((other
-              .getMount() != null) && (mount != null) && other.getMount()
-              .equals(mount))
+        return ((other.getType() == type) && (other.getIndex() == index) && (((other.getMount() != null)
+              && other.getMount().equals(mount))
               || ((mount == null) && (other.getMount() == null))));
     }
 
@@ -248,9 +247,9 @@ public class CriticalSlot implements Serializable {
 
     @Override
     public String toString() {
-        String typeString = type == 0 ? "System Slot" : "Equipment Slot";
+        String typeString = type == 0 ? "SystemFluff Slot" : "Equipment Slot";
         List<String> state = new ArrayList<>();
-        if (type == 0) {state.add("System No: " + index);}
+        if (type == 0) {state.add("SystemFluff No: " + index);}
         if (mount != null) {
             state.add("[" + mount.equipmentIndex() + "] " + mount.getType().getInternalName()
                   + (mount.isWeaponGroup() ? " -Group-" : ""));
@@ -275,6 +274,6 @@ public class CriticalSlot implements Serializable {
      */
     public boolean isArmorable() {
         return ((getType() == CriticalSlot.TYPE_SYSTEM) || ((getMount() != null) && getMount().getType()
-              .isArmorable()));
+              .isEligibleForBeingArmored()));
     }
 }

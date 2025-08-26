@@ -57,16 +57,22 @@ import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.bot.princess.geometry.HexLine;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.common.equipment.ArmorType;
+import megamek.common.game.Game;
+import megamek.common.moves.Key;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.Key;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
-import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.common.planetaryconditions.Weather;
+import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.Weather;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.*;
 import megamek.utils.MockGenerators;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -1460,12 +1466,12 @@ class BasicPathRankerTest {
         when(mockHexTwo.depth()).thenReturn(0);
         when(mockHexThree.depth()).thenReturn(1);
         when(mockFinalHex.depth()).thenReturn(2);
-        when(mockUnit.getArmor(Mek.LOC_CT)).thenReturn(0);
+        when(mockUnit.getArmor(Mek.LOC_CENTER_TORSO)).thenReturn(0);
         assertEquals(2000, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
-        when(mockUnit.getArmor(Mek.LOC_CT)).thenReturn(10);
-        when(mockUnit.getArmor(Mek.LOC_RARM)).thenReturn(0);
+        when(mockUnit.getArmor(Mek.LOC_CENTER_TORSO)).thenReturn(10);
+        when(mockUnit.getArmor(Mek.LOC_RIGHT_ARM)).thenReturn(0);
         assertEquals(2000, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
-        when(mockUnit.getArmor(Mek.LOC_RARM)).thenReturn(10);
+        when(mockUnit.getArmor(Mek.LOC_RIGHT_ARM)).thenReturn(10);
         when(mockHexTwo.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(0)));
         when(mockHexThree.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(0)));
         when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(0)));
@@ -1518,9 +1524,9 @@ class BasicPathRankerTest {
         when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.ICE, Terrains.WATER)));
         when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(2);
         when(mockFinalHex.depth()).thenReturn(2);
-        when(mockUnit.getArmor(eq(Mek.LOC_LLEG))).thenReturn(0);
+        when(mockUnit.getArmor(eq(Mek.LOC_LEFT_LEG))).thenReturn(0);
         assertEquals(1000.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
-        when(mockUnit.getArmor(eq(Mek.LOC_LLEG))).thenReturn(10);
+        when(mockUnit.getArmor(eq(Mek.LOC_LEFT_LEG))).thenReturn(10);
         when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(0);
         when(mockFinalHex.depth()).thenReturn(0);
         when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.MAGMA)));
@@ -1571,8 +1577,8 @@ class BasicPathRankerTest {
 
         // Test jumping onto Magma Crust.
         when(mockPath.isJumping()).thenReturn(true);
-        when(mockUnit.getArmor(eq(Mek.LOC_LLEG))).thenReturn(24);
-        when(mockUnit.getArmor(eq(Mek.LOC_RLEG))).thenReturn(24);
+        when(mockUnit.getArmor(eq(Mek.LOC_LEFT_LEG))).thenReturn(24);
+        when(mockUnit.getArmor(eq(Mek.LOC_RIGHT_LEG))).thenReturn(24);
         when(mockFinalHex.depth()).thenReturn(0);
         when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.MAGMA)));
         // Only 50% chance to break through Crust, but must make PSR to avoid getting
@@ -1611,8 +1617,8 @@ class BasicPathRankerTest {
         // increases)
         when(mockCrew.getPiloting()).thenReturn(5);
         when(mockPath.isJumping()).thenReturn(false);
-        when(mockUnit.getArmor(eq(Mek.LOC_LLEG))).thenReturn(2);
-        when(mockUnit.getArmor(eq(Mek.LOC_RLEG))).thenReturn(2);
+        when(mockUnit.getArmor(eq(Mek.LOC_LEFT_LEG))).thenReturn(2);
+        when(mockUnit.getArmor(eq(Mek.LOC_RIGHT_LEG))).thenReturn(2);
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(1);
         when(mockFinalHex.depth()).thenReturn(0);
         // Moderate damage means moderate hazard
@@ -1804,8 +1810,8 @@ class BasicPathRankerTest {
 
             // Test jumping into Hazardous Liquid.
             when(mockPath.isJumping()).thenReturn(true);
-            when(mockUnit.getArmor(eq(Mek.LOC_LLEG))).thenReturn(24);
-            when(mockUnit.getArmor(eq(Mek.LOC_RLEG))).thenReturn(24);
+            when(mockUnit.getArmor(eq(Mek.LOC_LEFT_LEG))).thenReturn(24);
+            when(mockUnit.getArmor(eq(Mek.LOC_RIGHT_LEG))).thenReturn(24);
             when(mockFinalHex.depth()).thenReturn(1);
             when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.HAZARDOUS_LIQUID,
                   Terrains.WATER)));
@@ -1852,8 +1858,8 @@ class BasicPathRankerTest {
         void testCrippledHazardousLiquidWalkingHazard() {
             when(mockUnit.locations()).thenReturn(8);
             when(mockUnit.getArmor(anyInt())).thenReturn(10);
-            when(mockUnit.getArmor(eq(Mek.LOC_LLEG))).thenReturn(2);
-            when(mockUnit.getArmor(eq(Mek.LOC_RLEG))).thenReturn(2);
+            when(mockUnit.getArmor(eq(Mek.LOC_LEFT_LEG))).thenReturn(2);
+            when(mockUnit.getArmor(eq(Mek.LOC_RIGHT_LEG))).thenReturn(2);
 
             when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.HAZARDOUS_LIQUID,
                   Terrains.WATER)));

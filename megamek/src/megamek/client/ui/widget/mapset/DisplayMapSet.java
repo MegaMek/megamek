@@ -38,7 +38,7 @@ import java.util.Vector;
 
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.picmap.PMAreasGroup;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 
 /**
  * Generic set of PicMap areas do represent various units in MekDisplay class

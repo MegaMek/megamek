@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,6 +43,10 @@ import java.util.Objects;
 
 import megamek.client.ratgenerator.FactionRecord;
 import megamek.common.annotations.Nullable;
+import megamek.common.game.Game;
+import megamek.common.game.IGame;
+import megamek.common.turns.TurnOrdered;
+import megamek.common.turns.TurnVectors;
 
 /**
  * The Team class holds information about a team. It holds the initiative for the team, and contains a list of players
@@ -271,9 +275,7 @@ public final class Team extends TurnOrdered {
     /**
      * Determine if another team is an enemy of this team
      *
-     * @param t
      *
-     * @return
      */
     public boolean isEnemyOf(Team t) {
         boolean enemy = true;

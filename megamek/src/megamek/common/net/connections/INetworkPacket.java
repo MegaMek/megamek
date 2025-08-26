@@ -34,13 +34,13 @@
 package megamek.common.net.connections;
 
 /** This is an interface for a connection layer data packet. */
-interface INetworkPacket {
+public interface INetworkPacket {
 
     /** @return The data marshalling type. */
-    int getMarshallingType();
+    int marshallingType();
 
     /** @return The packet data. */
-    byte[] getData();
+    byte[] data();
 
     /** @return True if the data is compressed. */
     boolean isCompressed();

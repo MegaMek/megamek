@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,26 +34,29 @@
 
 package megamek.common.actions;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Vector;
 
-import megamek.common.Board;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.EquipmentType;
-import megamek.common.Game;
 import megamek.common.RangeType;
-import megamek.common.Targetable;
-import megamek.common.WeaponType;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
-import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
+import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
+import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 
 /**
  * ArtilleryAttackAction Holds the data needed for an artillery attack in flight.
  */
 public class ArtilleryAttackAction extends WeaponAttackAction implements Serializable {
+    @Serial
     private static final long serialVersionUID = -3893844894076028005L;
     protected int turnsTilHit;
     private Vector<Integer> spotterIds = new Vector<>(); // IDs of possible spotters, won't know
@@ -62,16 +65,21 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
     private Coords firingCoords;
     private Coords oldTargetCoords;
 
-    public ArtilleryAttackAction(int entityId, int targetType, int targetId,
-          int weaponId, Game game) {
+    public ArtilleryAttackAction(int entityId, int targetType, int targetId, int weaponId, Game game) {
         super(entityId, targetType, targetId, weaponId);
-        playerId = game.getEntity(entityId).getOwnerId();
-        firingCoords = game.getEntity(entityId).getPosition();
+
+        Entity playerEntity = game.getEntity(entityId);
+
+        if (playerEntity != null) {
+            playerId = playerEntity.getOwnerId();
+            firingCoords = playerEntity.getPosition();
+        }
+
         Targetable target = getTarget(game);
         EquipmentType eType = getEntity(game).getEquipment(weaponId).getType();
         WeaponType wType = (WeaponType) eType;
         WeaponMounted mounted = (WeaponMounted) getEntity(game).getEquipment(weaponId);
-        // Remove altitude from Artillery Flak and ADA distance calcs
+        // Remove altitude from Artillery Flak and ADA distance calculations
         if ((target != null) && target.isAirborne() && (mounted.getLinkedAmmo() != null)
               && mounted.getLinkedAmmo().getType().countsAsFlak()) {
             turnsTilHit = 0;
@@ -104,11 +112,11 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
         if (mounted.isInBearingsOnlyMode()
               && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
             this.launchVelocity = game.getOptions()
-                  .intOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY);
+                  .intOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_BEARINGS_ONLY_VELOCITY);
             turnsTilHit = distance / launchVelocity;
             return;
         }
-        // Capital missiles fired surface to surface as artillery have a flight time of their capital hex range / 6
+        // Capital missiles fired surface-to-surface as artillery have a flight time of their capital hex range / 6
         if (wType instanceof CapitalMissileWeapon || wType instanceof CapitalMissileBayWeapon) {
             turnsTilHit = (distance / Board.DEFAULT_BOARD_HEIGHT);
             return;
@@ -122,7 +130,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
                 turnsTilHit = 2;
             }
         } else if (eType.hasFlag(WeaponType.F_CRUISE_MISSILE)) {
-            // See TO p181. Cruise missile flight time is (1 + (Mapsheets / 5, round down)
+            // See TO p181. Cruise missile flight time is (1 + (Map sheets / 5, round down)
             turnsTilHit = 1 + (distance / Board.DEFAULT_BOARD_HEIGHT / 5);
         } else {
             turnsTilHit = Compute.turnsTilHit(distance);

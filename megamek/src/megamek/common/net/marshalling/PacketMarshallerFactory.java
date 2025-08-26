@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,7 +37,7 @@ package megamek.common.net.marshalling;
 import megamek.common.annotations.Nullable;
 
 public class PacketMarshallerFactory {
-    private static PacketMarshallerFactory instance = new PacketMarshallerFactory();
+    private static final PacketMarshallerFactory instance = new PacketMarshallerFactory();
     private NativeSerializationMarshaller nativeSerializationMarshaller;
 
     private PacketMarshallerFactory() {
@@ -49,14 +49,12 @@ public class PacketMarshallerFactory {
     }
 
     public @Nullable PacketMarshaller getMarshaller(int marshallingType) {
-        switch (marshallingType) {
-            case PacketMarshaller.NATIVE_SERIALIZATION_MARSHALING:
-                if (nativeSerializationMarshaller == null) {
-                    nativeSerializationMarshaller = new NativeSerializationMarshaller();
-                }
-                return nativeSerializationMarshaller;
-            default:
-                return null;
+        if (marshallingType == PacketMarshaller.NATIVE_SERIALIZATION_MARSHALING) {
+            if (nativeSerializationMarshaller == null) {
+                nativeSerializationMarshaller = new NativeSerializationMarshaller();
+            }
+            return nativeSerializationMarshaller;
         }
+        return null;
     }
 }

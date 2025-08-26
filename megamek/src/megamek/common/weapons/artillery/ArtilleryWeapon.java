@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,16 +34,23 @@
 
 package megamek.common.weapons.artillery;
 
-import megamek.common.Game;
-import megamek.common.Mounted;
+import static megamek.common.game.IGame.LOGGER;
+
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
+import megamek.common.units.Entity;
 import megamek.common.weapons.AmmoWeapon;
-import megamek.common.weapons.ArtilleryWeaponDirectFireHandler;
-import megamek.common.weapons.ArtilleryWeaponDirectHomingHandler;
-import megamek.common.weapons.ArtilleryWeaponIndirectFireHandler;
-import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
-import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryWeaponDirectFireHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryWeaponDirectHomingHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryWeaponIndirectFireHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryWeaponIndirectHomingHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -51,6 +58,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sep 25, 2004
  */
 public abstract class ArtilleryWeapon extends AmmoWeapon {
+    @Serial
     private static final long serialVersionUID = -732023379991213890L;
 
     public ArtilleryWeapon() {
@@ -75,24 +83,33 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
      *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game,
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-          WeaponAttackAction waa, Game game, TWGameManager manager) {
-        Mounted<?> ammo = game.getEntity(waa.getEntityId())
-              .getEquipment(waa.getWeaponId()).getLinked();
+    @Nullable
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
+        Entity linkedEntity = game.getEntity(waa.getEntityId());
+        try {
+            if (linkedEntity != null) {
+                Mounted<?> ammo = linkedEntity.getEquipment(waa.getWeaponId()).getLinked();
 
-        if (ammo.isHomingAmmoInHomingMode()) {
-            if (game.getPhase().isFiring()) {
-                return new ArtilleryWeaponDirectHomingHandler(toHit, waa, game, manager);
+                if (ammo.isHomingAmmoInHomingMode()) {
+                    if (game.getPhase().isFiring()) {
+                        return new ArtilleryWeaponDirectHomingHandler(toHit, waa, game, manager);
+                    }
+
+                    return new ArtilleryWeaponIndirectHomingHandler(toHit, waa, game, manager);
+                } else if (game.getPhase().isFiring()) {
+                    return new ArtilleryWeaponDirectFireHandler(toHit, waa, game, manager);
+                }
             }
-            return new ArtilleryWeaponIndirectHomingHandler(toHit, waa, game, manager);
-        } else if (game.getPhase().isFiring()) {
-            return new ArtilleryWeaponDirectFireHandler(toHit, waa, game, manager);
-        } else {
+
             return new ArtilleryWeaponIndirectFireHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
         }
+        return null;
+
     }
 }

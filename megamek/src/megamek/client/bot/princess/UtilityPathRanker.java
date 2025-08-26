@@ -41,16 +41,16 @@ import java.util.List;
 import java.util.TreeSet;
 
 import megamek.codeUtilities.MathUtility;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.EjectedCrew;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.UnitRole;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.units.EjectedCrew;
+import megamek.common.units.Entity;
+import megamek.common.units.UnitRole;
 import megamek.logging.MMLogger;
 
 public class UtilityPathRanker extends BasicPathRanker {
@@ -105,8 +105,8 @@ public class UtilityPathRanker extends BasicPathRanker {
         // look at all of my enemies
         FiringPhysicalDamage damageEstimate = new FiringPhysicalDamage();
 
-        boolean extremeRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
-        boolean losRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
+        boolean extremeRange = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE);
+        boolean losRange = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE);
 
         for (Entity enemy : enemies) {
             // Skip ejected pilots.

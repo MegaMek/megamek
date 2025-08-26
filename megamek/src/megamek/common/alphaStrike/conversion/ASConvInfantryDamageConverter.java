@@ -40,14 +40,14 @@ import static megamek.common.alphaStrike.BattleForceSUA.FLK;
 import static megamek.common.alphaStrike.BattleForceSUA.HT;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.Entity;
-import megamek.common.Infantry;
-import megamek.common.Mounted;
-import megamek.common.WeaponType;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.weapons.InfantryAttack;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.weapons.attacks.InfantryAttack;
 
 public class ASConvInfantryDamageConverter extends ASDamageConverter {
 

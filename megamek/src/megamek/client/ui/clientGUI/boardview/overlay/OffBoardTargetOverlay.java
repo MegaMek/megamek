@@ -50,12 +50,21 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.panels.phaseDisplay.TargetingPhaseDisplay;
-import megamek.common.*;
+import megamek.common.Configuration;
+import megamek.common.HexTarget;
+import megamek.common.OffBoardDirection;
+import megamek.common.Player;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Coords;
+import megamek.common.compute.ComputeArc;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.bayWeapons.BayWeapon;
 
 /**
  * This class handles the display and logic for the off board targeting overlay.

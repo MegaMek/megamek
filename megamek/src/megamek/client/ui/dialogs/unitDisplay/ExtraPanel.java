@@ -52,10 +52,23 @@ import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PicMap;
-import megamek.common.*;
+import megamek.common.Configuration;
+import megamek.common.Player;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Coords;
+import megamek.common.compute.ComputeECM;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.INarcPod;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.Sensor;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.Tank;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
@@ -554,7 +567,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
                     hasTSM = true;
                 }
 
-                if (gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
+                if (gameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT)) {
                     mtHeat = true;
                 }
                 heatR.setForeground(GUIPreferences.getInstance().getColorForHeat(en.heat));
@@ -570,8 +583,8 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
             if (null != en.getActiveSensor()) {
                 String sensorDesc = "";
-                if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
-                      || (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS))
+                if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS)
+                      || (gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS))
                       && en.isSpaceborne()) {
                     sensorDesc = UnitToolTip.getSensorDesc(en);
                 }
@@ -605,7 +618,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
                 condition = " (Disabled)";
             }
             chSensors.addItem(sensor.getDisplayName() + condition);
-            if ((en.getNextSensor() != null) && (sensor.getType() == en.getNextSensor().getType())) {
+            if ((en.getNextSensor() != null) && (sensor.type() == en.getNextSensor().type())) {
                 chSensors.setSelectedIndex(i);
             }
         }

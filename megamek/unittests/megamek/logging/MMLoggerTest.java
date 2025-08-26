@@ -189,7 +189,7 @@ public class MMLoggerTest {
         assertEquals(e, throwableCaptor.getValue());
     }
 
-    // Simulate pressing the Enter key, necessary to dismiss the dialogs created by the logger on some types of logs
+    // Simulate pressing the Enter key, necessary to dismiss the dialogs created by the LOGGER on some types of logs
     private static void automaticallyDismissDialog() {
         try {
             Robot robot = new Robot();
@@ -208,7 +208,7 @@ public class MMLoggerTest {
         }
     }
 
-    // Custom logger implementation for testing
+    // Custom LOGGER implementation for testing
     private static class CustomLogger extends AbstractLogger {
 
         protected CustomLogger(String name) {

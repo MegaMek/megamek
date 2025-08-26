@@ -35,7 +35,7 @@ package megamek.client.bot.princess;
 
 import megamek.client.bot.princess.geometry.ConvexBoardArea;
 import megamek.client.bot.princess.geometry.HexLine;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 import megamek.logging.MMLogger;
 
 /**

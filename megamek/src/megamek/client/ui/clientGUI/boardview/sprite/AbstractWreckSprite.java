@@ -43,9 +43,9 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.EntityWreckHelper;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Terrains;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
+import megamek.common.units.Terrains;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
 

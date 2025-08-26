@@ -34,18 +34,12 @@
 
 package megamek.common.copy;
 
-import megamek.common.Crew;
+import megamek.common.units.Crew;
 
 /**
  * @author Luana Coppio
  */
-public class CrewRefBreak implements RefBreak<Crew> {
-
-    private final Crew originalCrew;
-
-    public CrewRefBreak(Crew originalCrew) {
-        this.originalCrew = originalCrew;
-    }
+public record CrewRefBreak(Crew originalCrew) implements RefBreak<Crew> {
 
     @Override
     public Crew copy() {

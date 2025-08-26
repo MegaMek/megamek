@@ -37,6 +37,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.PrintWriter;
+import java.io.Serial;
 import java.io.Serializable;
 import javax.swing.ImageIcon;
 
@@ -54,6 +55,7 @@ import org.w3c.dom.NodeList;
  */
 public abstract class AbstractIcon implements Serializable {
     //region Variable Declarations
+    @Serial
     private static final long serialVersionUID = 870271199001476289L;
 
     public static final String ROOT_CATEGORY = "-- General --";

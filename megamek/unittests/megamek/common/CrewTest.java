@@ -40,8 +40,13 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import megamek.common.battlevalue.BVCalculator;
+import megamek.common.battleValue.BVCalculator;
+import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
+import megamek.common.units.Crew;
+import megamek.common.units.CrewType;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
 import org.junit.jupiter.api.Test;
 
 /**

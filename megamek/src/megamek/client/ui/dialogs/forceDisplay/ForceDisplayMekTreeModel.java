@@ -39,8 +39,8 @@ import javax.swing.tree.DefaultTreeModel;
 
 import megamek.client.Client;
 import megamek.client.ui.panels.phaseDisplay.lobby.sorters.MekTreeTopLevelSorter;
-import megamek.common.Entity;
-import megamek.common.ForceAssignable;
+import megamek.common.units.Entity;
+import megamek.common.interfaces.ForceAssignable;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 

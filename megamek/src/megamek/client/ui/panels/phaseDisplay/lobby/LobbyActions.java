@@ -61,13 +61,24 @@ import megamek.client.ui.dialogs.UnitEditorDialog;
 import megamek.client.ui.dialogs.abstractDialogs.ASStatsDialog;
 import megamek.client.ui.dialogs.customMek.CustomMekDialog;
 import megamek.client.ui.dialogs.iconChooser.CamoChooserDialog;
-import megamek.common.*;
+import megamek.common.Player;
+import megamek.common.bays.Bay;
 import megamek.common.enums.Gender;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.Transporter;
+import megamek.common.equipment.WeaponType;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.game.Game;
 import megamek.common.icons.Camouflage;
+import megamek.common.interfaces.ForceAssignable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.strategicBattleSystems.SBFFormationConverter;
+import megamek.common.units.Crew;
+import megamek.common.units.Entity;
+import megamek.common.units.FighterSquadron;
+import megamek.common.units.LandAirMek;
+import megamek.common.units.UnitType;
 import megamek.common.util.C3Util;
 import megamek.common.util.C3Util.C3CapacityException;
 import megamek.common.util.C3Util.MismatchingC3MException;
@@ -561,7 +572,7 @@ public class LobbyActions {
         for (Entity entity : entities) {
             for (Mounted<?> mounted : entity.getWeaponList()) {
                 if (mounted.getType().hasFlag(WeaponType.F_MG)) {
-                    mounted.setRapidfire(burstOn);
+                    mounted.setRapidFire(burstOn);
                     updateCandidates.add(entity);
                 }
             }
@@ -1027,7 +1038,8 @@ public class LobbyActions {
             LobbyErrors.showLoadOnlyAllied(frame());
             return;
         }
-        boolean largeSquadrons = game().getOptions().booleanOption(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS);
+        boolean largeSquadrons = game().getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_ALLOW_LARGE_SQUADRONS);
         if ((!largeSquadrons && entities.size() > FighterSquadron.MAX_SIZE)
               || entities.size() > FighterSquadron.ALTERNATE_MAX_SIZE) {
             LobbyErrors.showSquadronTooMany(frame());

@@ -34,8 +34,8 @@ package megamek.common.verifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import megamek.common.AeroSpaceFighter;
-import megamek.common.EquipmentType;
+import megamek.common.units.AeroSpaceFighter;
+import megamek.common.equipment.EquipmentType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

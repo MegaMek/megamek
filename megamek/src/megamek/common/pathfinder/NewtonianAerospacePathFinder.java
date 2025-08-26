@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,11 +39,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.Game;
-import megamek.common.IAero;
+import megamek.common.enums.MoveStepType;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
-import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
+import megamek.common.units.IAero;
 import megamek.logging.MMLogger;
 
 /**
@@ -55,7 +54,7 @@ import megamek.logging.MMLogger;
 public class NewtonianAerospacePathFinder {
     private static final MMLogger logger = MMLogger.create(NewtonianAerospacePathFinder.class);
 
-    private Game game;
+    private final Game game;
     protected List<MovePath> aerospacePaths;
     protected MovePath offBoardPath;
 
@@ -161,30 +160,26 @@ public class NewtonianAerospacePathFinder {
      * already visited. Generates *shortest* paths to destination hexes, because, look, infantry isn't going to get
      * beyond a move 1 mod anyway.
      *
-     * @param startingPath
-     *
-     * @return
      */
     private List<MovePath> generateChildren(MovePath startingPath) {
-        List<MovePath> retval = new ArrayList<>();
+        List<MovePath> retVal = new ArrayList<>();
 
         // generate all possible children, add them to list
         // for aerospace units, these are:
         // turn left
         // turn right
         // thrust
-        for (int moveType = 0; moveType < moves.size(); moveType++) {
+        for (MoveStepType move : moves) {
             MovePath childPath = startingPath.clone();
 
             // two things we want to avoid:
             // 1: turning back and forth
             // 2: turning more than 2 hexes in a row
-            MoveStepType nextStepType = moves.get(moveType);
-            if (tooMuchTurning(childPath, nextStepType)) {
+            if (tooMuchTurning(childPath, move)) {
                 continue;
             }
 
-            childPath.addStep(nextStepType);
+            childPath.addStep(move);
 
             CoordsWithFacing pathDestination = new CoordsWithFacing(childPath);
             if (discardPath(childPath, pathDestination)) {
@@ -193,7 +188,7 @@ public class NewtonianAerospacePathFinder {
 
             // keep track of a single path that takes us off board, if there is such a thing
             // this should always be the shortest one.
-            if (game.getBoard().getHex(pathDestination.getCoords()) == null &&
+            if (game.getBoard().getHex(pathDestination.coords()) == null &&
                   (offBoardPath == null || childPath.getMpUsed() < offBoardPath.getMpUsed())) {
                 offBoardPath = childPath;
             }
@@ -201,13 +196,13 @@ public class NewtonianAerospacePathFinder {
             if (!isIntermediatePath(childPath)) {
                 visitedCoords.put(pathDestination, childPath.getMpUsed());
 
-                retval.add(childPath.clone());
+                retVal.add(childPath.clone());
             }
 
-            retval.addAll(generateChildren(childPath));
+            retVal.addAll(generateChildren(childPath));
         }
 
-        return retval;
+        return retVal;
     }
 
     /**
@@ -229,7 +224,7 @@ public class NewtonianAerospacePathFinder {
      *
      * @param path The move path to consider
      *
-     * @return Whether to keep or dicsard.
+     * @return Whether to keep or discard.
      */
     protected boolean discardPath(MovePath path, CoordsWithFacing pathDestination) {
         boolean maxMPExceeded = path.getMpUsed() > path.getEntity().getRunMP();
@@ -270,11 +265,7 @@ public class NewtonianAerospacePathFinder {
         }
 
         // turning back and forth in place is no good
-        if ((stepType == MoveStepType.TURN_LEFT && path.getLastStep().getType() == MoveStepType.TURN_RIGHT) ||
-              (stepType == MoveStepType.TURN_RIGHT && path.getLastStep().getType() == MoveStepType.TURN_LEFT)) {
-            return true;
-        }
-
-        return false;
+        return (stepType == MoveStepType.TURN_LEFT && path.getLastStep().getType() == MoveStepType.TURN_RIGHT) ||
+              (stepType == MoveStepType.TURN_RIGHT && path.getLastStep().getType() == MoveStepType.TURN_LEFT);
     }
 }

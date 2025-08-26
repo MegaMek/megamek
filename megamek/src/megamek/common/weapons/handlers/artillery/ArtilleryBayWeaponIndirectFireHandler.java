@@ -65,6 +65,7 @@ import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.EntitySelector;
 import megamek.common.units.Targetable;
+import megamek.common.weapons.ArtilleryHandlerHelper;
 import megamek.common.weapons.handlers.AmmoBayWeaponHandler;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
@@ -575,18 +576,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             // artillery may unintentionally clear minefields, but only if it wasn't
             // trying to. For a hit on the target, just do this once.
             if (!mineClear && game.containsMinefield(targetPos)) {
-                Enumeration<Minefield> minefields = game.getMinefields(targetPos).elements();
-                ArrayList<Minefield> mfRemoved = new ArrayList<>();
-                while (minefields.hasMoreElements()) {
-                    Minefield mf = minefields.nextElement();
-                    if (gameManager.clearMinefield(mf, attackingEntity, 10, vPhaseReport)) {
-                        mfRemoved.add(mf);
-                    }
-                }
-                // we have to do it this way to avoid a concurrent error problem
-                for (Minefield mf : mfRemoved) {
-                    gameManager.removeMinefield(mf);
-                }
+                ArtilleryHandlerHelper.getMinefields(vPhaseReport, targetPos, game, attackingEntity, gameManager);
             }
             // Here we're doing damage for each hit with more standard artillery shells
             while (numWeaponsHit > 0) {
@@ -604,17 +594,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 height = heights.get(index);
                 // Accidental mine clearance...
                 if (!mineClear && game.containsMinefield(c)) {
-                    Enumeration<Minefield> minefields = game.getMinefields(c).elements();
-                    ArrayList<Minefield> mfRemoved = new ArrayList<>();
-                    while (minefields.hasMoreElements()) {
-                        Minefield mf = minefields.nextElement();
-                        if (gameManager.clearMinefield(mf, attackingEntity, 10, vPhaseReport)) {
-                            mfRemoved.add(mf);
-                        }
-                    }
-                    for (Minefield mf : mfRemoved) {
-                        gameManager.removeMinefield(mf);
-                    }
+                    ArtilleryHandlerHelper.getMinefields(vPhaseReport, c, game, attackingEntity, gameManager);
                 }
                 handleArtilleryDriftMarker(origPos, c, aaa,
                       gameManager.artilleryDamageArea(c, ammoType, subjectId, attackingEntity, isFlak,

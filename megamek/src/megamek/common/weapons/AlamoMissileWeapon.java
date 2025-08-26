@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons;
 
+import java.io.Serial;
+
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -45,6 +47,7 @@ import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
  * @author Jay Lawson
  */
 public class AlamoMissileWeapon extends CapitalMissileWeapon {
+    @Serial
     private static final long serialVersionUID = 3672430739887768960L;
 
     public AlamoMissileWeapon() {

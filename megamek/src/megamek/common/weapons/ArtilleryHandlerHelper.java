@@ -40,15 +40,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Vector;
 
-import megamek.common.board.Coords;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.equipment.INarcPod;
 import megamek.common.LosEffects;
-import megamek.common.equipment.Minefield;
 import megamek.common.Report;
-import megamek.common.units.Targetable;
+import megamek.common.board.Coords;
+import megamek.common.equipment.INarcPod;
+import megamek.common.equipment.Minefield;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -69,7 +69,7 @@ public final class ArtilleryHandlerHelper {
                       && spottersBefore.contains(id)
                       && !LosEffects.calculateLOS(game, entity, target, true).isBlocked()
                       && entity.isActive()
-                      // airborne aeros can't spot for arty
+                      // airborne aerospace can't spot for arty
                       && !(entity.isAero() && entity.isAirborne())
                       && !entity.isINarcedWith(INarcPod.HAYWIRE);
             });
@@ -108,17 +108,22 @@ public final class ArtilleryHandlerHelper {
     public static void clearMines(Vector<Report> reports, Coords coords, Game game, Entity attacker,
           TWGameManager gameManager) {
         if (game.containsMinefield(coords)) {
-            Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
-            ArrayList<Minefield> mfRemoved = new ArrayList<>();
-            while (minefields.hasMoreElements()) {
-                Minefield mf = minefields.nextElement();
-                if (gameManager.clearMinefield(mf, attacker, 10, reports)) {
-                    mfRemoved.add(mf);
-                }
+            getMinefields(reports, coords, game, attacker, gameManager);
+        }
+    }
+
+    public static void getMinefields(Vector<Report> reports, Coords coords, Game game, Entity attacker,
+          TWGameManager gameManager) {
+        Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
+        ArrayList<Minefield> mfRemoved = new ArrayList<>();
+        while (minefields.hasMoreElements()) {
+            Minefield mf = minefields.nextElement();
+            if (gameManager.clearMinefield(mf, attacker, 10, reports)) {
+                mfRemoved.add(mf);
             }
-            for (Minefield mf : mfRemoved) {
-                gameManager.removeMinefield(mf);
-            }
+        }
+        for (Minefield mf : mfRemoved) {
+            gameManager.removeMinefield(mf);
         }
     }
 

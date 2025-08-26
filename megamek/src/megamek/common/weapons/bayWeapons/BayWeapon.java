@@ -48,6 +48,7 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.AttackHandler;
@@ -78,11 +79,12 @@ public abstract class BayWeapon extends Weapon {
     }
 
     @Override
-    public AttackHandler fire(WeaponAttackAction waa, Game game, TWGameManager manager) {
+    public AttackHandler fire(WeaponAttackAction weaponAttackAction, Game game, TWGameManager manager)
+          throws EntityLoadingException {
         // Just in case. Often necessary when/if multiple ammo weapons are
         // fired; if this line not present
         // then when one ammo slots run dry the rest silently don't fire.
-        return super.fire(waa, game, manager);
+        return super.fire(weaponAttackAction, game, manager);
     }
 
     @Override

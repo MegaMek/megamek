@@ -44,9 +44,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
+import megamek.common.ECCMComparator;
+import megamek.common.ECMComparator;
 import megamek.common.ECMInfo;
-import megamek.common.ECMInfo.ECCMComparator;
-import megamek.common.ECMInfo.ECMComparator;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
@@ -97,8 +97,8 @@ public class ComputeECM {
     }
 
     /**
-     * This method checks to see if a line from a to b is affected by an Angel ECM field of the enemy of attackingEntity (ignoring
-     * other kinds of ECM).
+     * This method checks to see if a line from a to b is affected by an Angel ECM field of the enemy of attackingEntity
+     * (ignoring other kinds of ECM).
      *
      * @return shows if you are in a friendly ECCM field positive number means you are in a friendly ECCM field Negative
      *       number means you are in an enemy ECM field 0 means you are not affect by enemy or friendly fields.
@@ -108,8 +108,8 @@ public class ComputeECM {
     }
 
     /**
-     * This method checks to see if a line from a to b is affected by an Angel ECM field of the enemy of attackingEntity (ignoring
-     * other kinds of ECM).
+     * This method checks to see if a line from a to b is affected by an Angel ECM field of the enemy of attackingEntity
+     * (ignoring other kinds of ECM).
      *
      * @param allECMInfo A collection of ECMInfo for each Entity in the Game.
      *
@@ -367,7 +367,7 @@ public class ComputeECM {
     public static ArrayList<ECMInfo> computeAllEntitiesECMInfo(
           List<Entity> entities) {
         Comparator<ECMInfo> ecmComparator;
-        ecmComparator = new ECMInfo.ECCMComparator();
+        ecmComparator = new ECCMComparator();
 
         ArrayList<ECMInfo> allEcmInfo = new ArrayList<>(entities.size());
         ArrayList<ECMInfo> allEccmInfo = new ArrayList<>(entities.size());
@@ -579,7 +579,7 @@ public class ComputeECM {
 
         ECMInfo bestInfo = null;
         Comparator<ECMInfo> ecmComparator;
-        ecmComparator = new ECMInfo.ECCMComparator();
+        ecmComparator = new ECCMComparator();
         for (MiscMounted m : entity.getMisc()) {
             // Ignore if inoperable
             if (m.isInoperable()) {
@@ -663,7 +663,7 @@ public class ComputeECM {
 
         ECMInfo bestInfo = null;
         Comparator<ECMInfo> ecmComparator;
-        ecmComparator = new ECMInfo.ECCMComparator();
+        ecmComparator = new ECCMComparator();
         for (MiscMounted m : entity.getMisc()) {
             ECMInfo newInfo = null;
             if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS) && m.curMode().equals("ECCM")) {

@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.weapons;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import megamek.common.ToHitData;
@@ -60,6 +61,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since May 10, 2004
  */
 public abstract class Weapon extends WeaponType implements Serializable {
+    @Serial
     private static final long serialVersionUID = -8781224279449654544L;
 
     public Weapon() {
@@ -115,14 +117,14 @@ public abstract class Weapon extends WeaponType implements Serializable {
     public static final String MODE_NORMAL = "Normal";
 
 
-    public @Nullable AttackHandler fire(WeaponAttackAction waa, Game game, TWGameManager gameManager) {
-        ToHitData toHit = waa.toHit(game);
-        // FIXME: SUPER DUPER EVIL HACK: swarm missile handlers must be returned even
-        // if the have an impossible to hit, because there might be other targets
-        // someone else please please figure out how to do this nice
-        AttackHandler ah = getCorrectHandler(toHit, waa, game, gameManager);
-        return (ah instanceof LRMSwarmHandler) ? ah
-              : (toHit.getValue() == TargetRoll.IMPOSSIBLE) ? null : ah;
+    public @Nullable AttackHandler fire(WeaponAttackAction weaponAttackAction, Game game, TWGameManager gameManager)
+          throws EntityLoadingException {
+        ToHitData toHit = weaponAttackAction.toHit(game);
+        // FIXME: SUPER DUPER EVIL HACK: swarm missile handlers must be returned even if the have an impossible to
+        //  hit, because there might be other targets someone else please please figure out how to do this nice
+        AttackHandler attackHandler = getCorrectHandler(toHit, weaponAttackAction, game, gameManager);
+        return (attackHandler instanceof LRMSwarmHandler) ? attackHandler
+              : (toHit.getValue() == TargetRoll.IMPOSSIBLE) ? null : attackHandler;
     }
 
     public AttackHandler getCorrectHandler(ToHitData toHit,

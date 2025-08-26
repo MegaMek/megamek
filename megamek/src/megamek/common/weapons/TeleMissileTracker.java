@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,13 +34,13 @@
 
 package megamek.common.weapons;
 
+import java.io.Serial;
 import java.io.Serializable;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
 /**
- * TeleMissile Tracker  - holds a list of tele-missiles controled by this entity and information on what particular
+ * TeleMissile Tracker  - holds a list of tele-missiles controlled by this entity and information on what particular
  * weapon controls them
  */
 public class TeleMissileTracker implements Serializable {
@@ -48,11 +48,12 @@ public class TeleMissileTracker implements Serializable {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -6913144265531983734L;
     /**
      * map the entity id of the missile to the weapon that it came from
      */
-    private Hashtable<Integer, Integer> missiles;
+    private final Hashtable<Integer, Integer> missiles;
 
     /**
      * Creates new instance of the tracker
@@ -78,14 +79,6 @@ public class TeleMissileTracker implements Serializable {
     }
 
     public Vector<Integer> getMissiles() {
-        //I could probably do this more directly with a Collection
-        // but I don't know how to work with collections
-        Vector<Integer> m = new Vector<>();
-        for (Enumeration<Integer> k = missiles.keys(); k.hasMoreElements(); ) {
-            int wId = k.nextElement();
-            int missileId = missiles.get(wId);
-            m.add(missileId);
-        }
-        return m;
+        return new Vector<>(missiles.values());
     }
 }

@@ -709,4 +709,12 @@ public final class Configuration {
 
     /** The configured fonts' directory. */
     private static File fontsDir = null;
+
+    public static File getNamesDir() {
+        return namesDir;
+    }
+
+    public static void setNamesDir(File namesDir) {
+        Configuration.namesDir = namesDir;
+    }
 }

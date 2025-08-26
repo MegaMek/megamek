@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons;
 
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
@@ -55,16 +57,14 @@ import megamek.server.totalwarfare.TWGameManager;
  */
 public abstract class CLIATMWeapon extends MissileWeapon {
 
-    /**
-     * I think i can just assign 1? I don't think SVUIDs conflict with those from other classes
-     */
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public CLIATMWeapon() {
         super();
-        ammoType = AmmoType.AmmoTypeEnum.IATM; // the Artemis Bonus is Tied to the ATM ammo, but i think i can ignore it in the
-        // handler. However, i think i still need a new ammo type since i dont know if
-        // the special ammo could get used with regular ATMs if i don#t change it. And i
+        ammoType = AmmoType.AmmoTypeEnum.IATM; // the Artemis Bonus is Tied to the ATM ammo, but I think I can ignore it in the
+        // handler. However, I think I still need a new ammo type since I don't know if
+        // the special ammo could get used with regular ATMs if I don#t change it. And I
         // assume bad things will happen.
         atClass = CLASS_ATM; // Do I need to change this? Streak LRMs still use the CLASS_LRM flag... I think
         // I can leave it.
@@ -144,6 +144,6 @@ public abstract class CLIATMWeapon extends MissileWeapon {
      * This is a streak weapon, so we use the rack size for the Aero damage.
      */
     protected double getBaseAeroDamage() {
-        return Math.ceil(2 * this.getRackSize());
+        return 2 * this.getRackSize();
     }
 }

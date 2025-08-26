@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,11 +34,14 @@
 
 package megamek.common.weapons;
 
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.common.weapons.handlers.AttackHandler;
@@ -49,6 +52,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sep 24, 2004
  */
 public abstract class AmmoWeapon extends Weapon {
+    @Serial
     private static final long serialVersionUID = -1657672242932169730L;
 
     public AmmoWeapon() {
@@ -63,12 +67,13 @@ public abstract class AmmoWeapon extends Weapon {
      * , megamek.common.game.Game)
      */
     @Override
-    public AttackHandler fire(WeaponAttackAction waa, Game game, TWGameManager manager) {
+    public AttackHandler fire(WeaponAttackAction weaponAttackAction, Game game, TWGameManager manager)
+          throws EntityLoadingException {
         // Just in case. Often necessary when/if multiple ammo weapons are
         // fired; if this line not present
         // then when one ammo slots run dry the rest silently don't fire.
-        checkAmmo(waa, game);
-        return super.fire(waa, game, manager);
+        checkAmmo(weaponAttackAction, game);
+        return super.fire(weaponAttackAction, game, manager);
     }
 
     protected void checkAmmo(WeaponAttackAction waa, Game g) {

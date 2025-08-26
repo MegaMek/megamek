@@ -35,6 +35,7 @@ package megamek.common;
 
 import java.util.Objects;
 
+import jakarta.annotation.Nonnull;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.options.OptionsConstants;
 
@@ -139,6 +140,7 @@ public record QuirkEntry(String code, String location, int slot, String weaponNa
     }
 
     @Override
+    @Nonnull
     public String toString() {
         return getQuirk() + (isWeaponQuirk() ? " [" + location + slot + ", " + weaponName + "]" : "");
     }

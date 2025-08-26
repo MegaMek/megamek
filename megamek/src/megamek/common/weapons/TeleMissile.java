@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2007 - Jay Lawson
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -56,7 +56,7 @@ public class TeleMissile extends Aero {
 
     public static final int LOC_BODY = 0;
 
-    private static final String[] LOCATION_ABBRS = { "BODY" };
+    private static final String[] LOCATION_ABBREVIATIONS = { "BODY" };
     private static final String[] LOCATION_NAMES = { "Body" };
 
     private int originalRideId;
@@ -81,29 +81,28 @@ public class TeleMissile extends Aero {
         this();
 
         String name;
-        int fuel;
-        switch (type) {
-            case KRAKEN_T:
+        int fuel = switch (type) {
+            case KRAKEN_T -> {
                 name = "Kraken-T Missile";
-                fuel = 25;
-                break;
-            case WHITE_SHARK_T:
+                yield 25;
+            }
+            case WHITE_SHARK_T -> {
                 name = "White Shark-T Missile";
-                fuel = 40;
-                break;
-            case KILLER_WHALE_T:
+                yield 40;
+            }
+            case KILLER_WHALE_T -> {
                 name = "Killer Whale-T Missile";
-                fuel = 30;
-                break;
-            case BARRACUDA_T:
+                yield 30;
+            }
+            case BARRACUDA_T -> {
                 name = "Barracuda-T Missile";
-                fuel = 30;
-                break;
-            default:
+                yield 30;
+            }
+            default -> {
                 name = "T-Op Missile";
-                fuel = 30;
-                break;
-        }
+                yield 30;
+            }
+        };
 
         setCritMod(capMisMod);
 
@@ -115,7 +114,7 @@ public class TeleMissile extends Aero {
         setDamageValue(damageValue);
         initializeArmor(armorValue, LOC_BODY);
         autoSetInternal();
-        initializeSI(0);
+        setOSI(0);
         setMovementMode(EntityMovementMode.AERODYNE);
 
         setOwner(originalRide.getOwner());
@@ -171,7 +170,7 @@ public class TeleMissile extends Aero {
 
     @Override
     public String[] getLocationAbbreviations() {
-        return LOCATION_ABBRS;
+        return LOCATION_ABBREVIATIONS;
     }
 
     @Override

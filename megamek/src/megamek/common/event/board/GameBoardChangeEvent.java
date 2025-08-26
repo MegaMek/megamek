@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,36 +32,40 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.event;
+package megamek.common.event.board;
 
 import java.io.Serial;
 
-import megamek.common.Player;
+import megamek.common.event.GameEvent;
+import megamek.common.event.GameListener;
 
 /**
- * Instances of descendant classes are sent as a result of Game changes related to Players
+ * Instances of this class are sent when game board changed - added/removed minefield and so on
  *
- * @see GamePlayerChangeEvent
- * @see GamePlayerChatEvent
  * @see GameListener
  */
-public abstract class GamePlayerEvent extends GameEvent {
-    @Serial
-    private static final long serialVersionUID = -3259778708415623296L;
-    protected Player player;
+public class GameBoardChangeEvent extends GameEvent {
 
     /**
      *
      */
-    public GamePlayerEvent(Object source, Player player) {
-        super(source);
-        this.player = player;
-    }
+    @Serial
+    private static final long serialVersionUID = -6307225739747874155L;
 
     /**
-     * @return the player.
+     * @param source event source
      */
-    public Player getPlayer() {
-        return player;
+    public GameBoardChangeEvent(Object source) {
+        super(source);
+    }
+
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gameBoardChanged(this);
+    }
+
+    @Override
+    public String getEventName() {
+        return "Board Changed";
     }
 }

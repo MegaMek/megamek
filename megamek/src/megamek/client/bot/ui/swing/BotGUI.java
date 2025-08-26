@@ -39,6 +39,16 @@ import megamek.client.bot.BotClient;
 import megamek.client.ui.dialogs.buttonDialogs.BotReadmeNagDialog;
 import megamek.client.ui.dialogs.helpDialogs.BotHelpDialog;
 import megamek.common.event.*;
+import megamek.common.event.board.GameBoardChangeEvent;
+import megamek.common.event.board.GameBoardNewEvent;
+import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.event.entity.GameEntityNewEvent;
+import megamek.common.event.entity.GameEntityNewOffboardEvent;
+import megamek.common.event.entity.GameEntityRemoveEvent;
+import megamek.common.event.player.GamePlayerChangeEvent;
+import megamek.common.event.player.GamePlayerChatEvent;
+import megamek.common.event.player.GamePlayerConnectedEvent;
+import megamek.common.event.player.GamePlayerDisconnectedEvent;
 
 public record BotGUI(JFrame frame, BotClient bot) implements GameListener {
 

@@ -53,9 +53,9 @@ public final class MMLoggingConstants {
     // endregion Argument Parser
 
     // region Starting Servers/Clients
-    public static final String SC_STARTING_DEDICATED_SERVER = "Starting Dedicated Server. %s";
-    public static final String SC_STARTING_HOST_SERVER = "Starting Host Server. %s";
-    public static final String SC_STARTING_CLIENT_SERVER = "Starting Client Server. %s";
+    public static final String SC_STARTING_DEDICATED_SERVER = "Starting Dedicated Server. {}";
+    public static final String SC_STARTING_HOST_SERVER = "Starting Host Server. {}";
+    public static final String SC_STARTING_CLIENT_SERVER = "Starting Client Server. {}";
     // endregion Starting Servers/Clients
 
     // region Version Constants

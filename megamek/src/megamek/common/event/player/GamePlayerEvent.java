@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -31,17 +32,38 @@
  * affiliated with Microsoft.
  */
 
-package megamek;
+package megamek.common.event.player;
 
-import megamek.common.event.MMEvent;
+import java.io.Serial;
+
+import megamek.common.Player;
+import megamek.common.event.GameEvent;
+import megamek.common.event.GameListener;
 
 /**
- * An event triggered after the SuiteOptions are changed. The event handlers cannot modify these options.
+ * Instances of descendant classes are sent as a result of Game changes related to Players
+ *
+ * @see GamePlayerChangeEvent
+ * @see GamePlayerChatEvent
+ * @see GameListener
  */
-public class SuiteOptionsChangedEvent extends MMEvent {
-    // region Constructors
-    public SuiteOptionsChangedEvent() {
-        super();
+public abstract class GamePlayerEvent extends GameEvent {
+    @Serial
+    private static final long serialVersionUID = -3259778708415623296L;
+    protected Player player;
+
+    /**
+     *
+     */
+    public GamePlayerEvent(Object source, Player player) {
+        super(source);
+        this.player = player;
     }
-    // endregion Constructors
+
+    /**
+     * @return the player.
+     */
+    public Player getPlayer() {
+        return player;
+    }
 }

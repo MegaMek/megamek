@@ -37,6 +37,7 @@ package megamek.common.event;
 import java.io.Serial;
 
 import megamek.common.Player;
+import megamek.common.event.player.GamePlayerEvent;
 
 /**
  * Instances of this class are sent when Game turn changes.  This even keeps track of the player who will be taking the

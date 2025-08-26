@@ -32,37 +32,60 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.event;
+package megamek.common.event.entity;
 
 import java.io.Serial;
+import java.util.List;
+import java.util.Vector;
+
+import megamek.common.event.GameEvent;
+import megamek.common.event.GameListener;
+import megamek.common.units.Entity;
 
 /**
- * Instances of this class are sent when game board changed - added/removed minefield and so on
- *
- * @see GameListener
+ * Instances of this class are sent when entity is added to game
  */
-public class GameBoardChangeEvent extends GameEvent {
+public class GameEntityNewEvent extends GameEvent {
 
     /**
      *
      */
     @Serial
-    private static final long serialVersionUID = -6307225739747874155L;
+    private static final long serialVersionUID = -1223834507320730181L;
+    protected List<Entity> entities;
 
     /**
-     * @param source event source
+     *
      */
-    public GameBoardChangeEvent(Object source) {
+    public GameEntityNewEvent(Object source, Entity entity) {
         super(source);
+        entities = new Vector<>();
+        entities.add(entity);
+    }
+
+    /**
+     *
+     */
+    public GameEntityNewEvent(Object source, List<Entity> entities) {
+        super(source);
+        this.entities = entities;
+    }
+
+    public List<Entity> GetEntities() {
+        return entities;
+    }
+
+    public int getNumberOfEntities() {
+        return entities.size();
     }
 
     @Override
     public void fireEvent(GameListener gl) {
-        gl.gameBoardChanged(this);
+        gl.gameEntityNew(this);
     }
 
     @Override
     public String getEventName() {
-        return "Board Changed";
+        return "New Entities";
     }
 }

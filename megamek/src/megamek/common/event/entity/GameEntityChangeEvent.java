@@ -32,11 +32,12 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.event;
+package megamek.common.event.entity;
 
 import java.io.Serial;
 import java.util.Vector;
 
+import megamek.common.event.GameListener;
 import megamek.common.units.Entity;
 import megamek.common.units.UnitLocation;
 

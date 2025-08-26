@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,58 +32,34 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.event;
+package megamek.common.event.player;
 
 import java.io.Serial;
-import java.util.List;
-import java.util.Vector;
 
-import megamek.common.units.Entity;
+import megamek.common.Player;
+import megamek.common.event.GameListener;
 
 /**
- * Instances of this class are sent when entity is added to game
+ * Instances of this class are sent when some Player is changed
  */
-public class GameEntityNewEvent extends GameEvent {
-
-    /**
-     *
-     */
+public class GamePlayerChangeEvent extends GamePlayerEvent {
     @Serial
-    private static final long serialVersionUID = -1223834507320730181L;
-    protected List<Entity> entities;
+    private static final long serialVersionUID = -3708864968498633017L;
 
     /**
      *
      */
-    public GameEntityNewEvent(Object source, Entity entity) {
-        super(source);
-        entities = new Vector<>();
-        entities.add(entity);
-    }
-
-    /**
-     *
-     */
-    public GameEntityNewEvent(Object source, List<Entity> entities) {
-        super(source);
-        this.entities = entities;
-    }
-
-    public List<Entity> GetEntities() {
-        return entities;
-    }
-
-    public int getNumberOfEntities() {
-        return entities.size();
+    public GamePlayerChangeEvent(Object source, Player player) {
+        super(source, player);
     }
 
     @Override
     public void fireEvent(GameListener gl) {
-        gl.gameEntityNew(this);
+        gl.gamePlayerChange(this);
     }
 
     @Override
     public String getEventName() {
-        return "New Entities";
+        return "Status Change";
     }
 }

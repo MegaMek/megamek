@@ -32,35 +32,41 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.event;
 
-import java.io.Serial;
+package megamek.common.event.board;
 
 /**
- * Instances of this class are sent when new Offboard entity is added to game
+ * Classes which implement this interface provide methods that deal with the events that are generated when the Board is
+ * changed.
+ * <p>
+ * After creating an instance of a class that implements this interface it can be added to a Board using the
+ * <code>addBoardListener</code> method and removed using the <code>removeBoardListener</code> method. When board is
+ * changed the appropriate method will be invoked.
+ * </p>
+ *
+ * @see BoardListenerAdapter
+ * @see BoardEvent
  */
-public class GameEntityNewOffboardEvent extends GameEvent {
+public interface BoardListener extends java.util.EventListener {
+    /**
+     * Sent when the Board is completely changed. The board's size may have changed.
+     *
+     * @param b an event containing information about the change
+     */
+    void boardNewBoard(BoardEvent b);
 
     /**
+     * Sent when a single hex on the Board changed.
      *
+     * @param b an event containing information about the change
      */
-    @Serial
-    private static final long serialVersionUID = 8497680533582651572L;
+    void boardChangedHex(BoardEvent b);
 
     /**
+     * Sent when all hexes on the board changed.
      *
+     * @param b an event containing information about the change
      */
-    public GameEntityNewOffboardEvent(Object source) {
-        super(source);
-    }
+    void boardChangedAllHexes(BoardEvent b);
 
-    @Override
-    public void fireEvent(GameListener gl) {
-        gl.gameEntityNewOffboard(this);
-    }
-
-    @Override
-    public String getEventName() {
-        return "Entity New Off-board";
-    }
 }

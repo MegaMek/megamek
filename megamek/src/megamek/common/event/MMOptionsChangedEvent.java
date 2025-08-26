@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,31 +33,13 @@
 
 package megamek.common.event;
 
-import java.io.Serial;
-
-import megamek.common.Player;
-
 /**
- * Instances of this class are sent when some Player disconnected
+ * An event triggered after the MMOptions are changed. The event handlers cannot modify these options.
  */
-public class GamePlayerDisconnectedEvent extends GamePlayerEvent {
-    @Serial
-    private static final long serialVersionUID = -8555075206331285489L;
-
-    /**
-     *
-     */
-    public GamePlayerDisconnectedEvent(Object source, Player player) {
-        super(source, player);
+public class MMOptionsChangedEvent extends MMEvent {
+    // region Constructors
+    public MMOptionsChangedEvent() {
+        super();
     }
-
-    @Override
-    public void fireEvent(GameListener gl) {
-        gl.gamePlayerDisconnected(this);
-    }
-
-    @Override
-    public String getEventName() {
-        return "Game Player Disconnected";
-    }
+    // endregion Constructors
 }

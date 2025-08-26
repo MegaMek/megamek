@@ -34,15 +34,19 @@
 
 package megamek.common.weapons.autoCannons;
 
+import static megamek.common.game.IGame.LOGGER;
+
 import java.io.Serial;
 
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.TechBase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.RACHandler;
@@ -78,20 +82,26 @@ public abstract class RACWeapon extends UACWeapon {
      * megamek.server.Server)
      */
     @Override
+    @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
-        Entity entity = game.getEntity(waa.getEntityId());
+        try {
+            Entity entity = game.getEntity(waa.getEntityId());
 
-        if (entity != null) {
-            Mounted<?> weapon = entity.getEquipment(waa.getWeaponId());
-            if (weapon.curMode().equals(MODE_RAC_SIX_SHOT)
-                  || weapon.curMode().equals(MODE_RAC_FIVE_SHOT)
-                  || weapon.curMode().equals(MODE_RAC_FOUR_SHOT)
-                  || weapon.curMode().equals(MODE_RAC_THREE_SHOT)) {
-                return new RACHandler(toHit, waa, game, manager);
+            if (entity != null) {
+                Mounted<?> weapon = entity.getEquipment(waa.getWeaponId());
+                if (weapon.curMode().equals(MODE_RAC_SIX_SHOT)
+                      || weapon.curMode().equals(MODE_RAC_FIVE_SHOT)
+                      || weapon.curMode().equals(MODE_RAC_FOUR_SHOT)
+                      || weapon.curMode().equals(MODE_RAC_THREE_SHOT)) {
+                    return new RACHandler(toHit, waa, game, manager);
+                }
             }
-        }
 
-        return new UltraWeaponHandler(toHit, waa, game, manager);
+            return new UltraWeaponHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
     }
 
     @Override

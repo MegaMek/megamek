@@ -46,6 +46,7 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
@@ -65,7 +66,8 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
     // ultra AC using the unofficial "two rolls" rule. Can be final because
     // this isn't really going to change over the course of a game.
 
-    public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
         twoRollsUltra = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_UAC_TWO_ROLLS)
               && ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA)

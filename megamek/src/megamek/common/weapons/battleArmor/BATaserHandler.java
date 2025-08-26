@@ -44,6 +44,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.Roll;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
@@ -58,7 +59,7 @@ public class BATaserHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = 1308895663099714573L;
 
     public BATaserHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
-          TWGameManager twGameManager) {
+          TWGameManager twGameManager) throws EntityLoadingException {
         super(toHitData, weaponAttackAction, game, twGameManager);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }

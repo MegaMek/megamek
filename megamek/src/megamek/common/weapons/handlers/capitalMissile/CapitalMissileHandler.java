@@ -46,6 +46,7 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Building;
@@ -66,7 +67,8 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
     /**
      *
      */
-    public CapitalMissileHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public CapitalMissileHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);
     }

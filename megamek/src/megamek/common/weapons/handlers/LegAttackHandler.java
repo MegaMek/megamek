@@ -44,6 +44,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Building;
 import megamek.common.units.Crew;
@@ -59,7 +60,8 @@ public class LegAttackHandler extends WeaponHandler {
     @Serial
     private static final long serialVersionUID = 4429993211361286138L;
 
-    public LegAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
+    public LegAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(toHit, waa, g, m);
     }
 

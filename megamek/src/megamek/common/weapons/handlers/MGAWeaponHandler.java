@@ -47,6 +47,7 @@ import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Building;
 import megamek.common.units.Entity;
@@ -67,7 +68,7 @@ public class MGAWeaponHandler extends MGHandler {
     /**
      *
      */
-    public MGAWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public MGAWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
     }
 

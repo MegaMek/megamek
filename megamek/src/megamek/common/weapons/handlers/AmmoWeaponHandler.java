@@ -46,6 +46,7 @@ import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
 import megamek.common.units.IBomber;
@@ -63,7 +64,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
 
     protected AmmoMounted ammo;
 
-    public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_BALLISTIC;
     }

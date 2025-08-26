@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.lasers;
 
+import static megamek.common.game.IGame.LOGGER;
+
 import java.io.Serial;
 import java.util.Collections;
 
@@ -45,6 +47,7 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IGameOptions;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.EnergyWeaponHandler;
@@ -117,16 +120,23 @@ public abstract class LaserWeapon extends EnergyWeapon {
     }
 
     @Override
+    @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
-        Mounted<?> linkedBy = waa.getEntity(game).getEquipment(waa.getWeaponId()).getLinkedBy();
-        if ((linkedBy != null) && !linkedBy.isInoperable()) {
-            if (linkedBy.getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
-                return new InsulatedLaserWeaponHandler(toHit, waa, game, manager);
-            } else if (linkedBy.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                return new PulseLaserWeaponHandler(toHit, waa, game, manager);
+        try {
+            Mounted<?> linkedBy = waa.getEntity(game).getEquipment(waa.getWeaponId()).getLinkedBy();
+            if ((linkedBy != null) && !linkedBy.isInoperable()) {
+                if (linkedBy.getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
+                    return new InsulatedLaserWeaponHandler(toHit, waa, game, manager);
+                } else if (linkedBy.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                    return new PulseLaserWeaponHandler(toHit, waa, game, manager);
+                }
             }
+
+            return new EnergyWeaponHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
         }
-        return new EnergyWeaponHandler(toHit, waa, game, manager);
+        return null;
     }
 }

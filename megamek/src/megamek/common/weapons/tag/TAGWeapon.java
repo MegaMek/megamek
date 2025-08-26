@@ -34,9 +34,15 @@
 
 package megamek.common.weapons.tag;
 
+import static megamek.common.game.IGame.LOGGER;
+
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.TAGHandler;
@@ -47,6 +53,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sep 7, 2005
  */
 public abstract class TAGWeapon extends Weapon {
+    @Serial
     private static final long serialVersionUID = 6794299593713032006L;
 
     public TAGWeapon() {
@@ -56,8 +63,15 @@ public abstract class TAGWeapon extends Weapon {
     }
 
     @Override
+    @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
-        return new TAGHandler(toHit, waa, game, manager);
+        try {
+            return new TAGHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
+
     }
 }

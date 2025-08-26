@@ -53,6 +53,7 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
@@ -68,7 +69,7 @@ public class ATMHandler extends MissileWeaponHandler {
     @Serial
     private static final long serialVersionUID = -2536312899803153911L;
 
-    public ATMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public ATMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
     }
 

@@ -42,6 +42,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
 import megamek.common.units.Building;
@@ -61,7 +62,8 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
     /**
      *
      */
-    public CenturionWeaponSystemHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public CenturionWeaponSystemHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
     }
 

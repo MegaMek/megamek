@@ -41,6 +41,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Infantry;
 import megamek.server.totalwarfare.TWGameManager;
@@ -50,7 +51,7 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
     private static final long serialVersionUID = -5701939682138221449L;
 
     public VariableSpeedPulseLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g,
-          TWGameManager m) {
+          TWGameManager m) throws EntityLoadingException {
         super(toHit, waa, g, m);
     }
 

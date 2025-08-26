@@ -34,11 +34,15 @@
 
 package megamek.common.weapons.lasers;
 
+import static megamek.common.game.IGame.LOGGER;
+
 import java.io.Serial;
 
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.VariableSpeedPulseLaserWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
@@ -59,9 +63,16 @@ public class VariableSpeedPulseLaserWeapon extends LaserWeapon {
     }
 
     @Override
+    @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
-        return new VariableSpeedPulseLaserWeaponHandler(toHit, waa, game, manager);
+        try {
+            return new VariableSpeedPulseLaserWeaponHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
+
     }
 
     @Override

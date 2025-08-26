@@ -34,13 +34,17 @@
 
 package megamek.common.weapons.flamers;
 
+import static megamek.common.game.IGame.LOGGER;
+
 import java.io.Serial;
 
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.FlamerHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
@@ -67,9 +71,14 @@ public abstract class FlamerWeapon extends EnergyWeapon {
     }
 
     @Override
-    public AttackHandler getCorrectHandler(ToHitData toHit,
-          WeaponAttackAction waa, Game game, TWGameManager manager) {
-        return new FlamerHandler(toHit, waa, game, manager);
+    @Nullable
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
+        try {
+            return new FlamerHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
     }
 
     @Override

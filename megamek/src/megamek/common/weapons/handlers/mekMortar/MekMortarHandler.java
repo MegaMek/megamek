@@ -43,6 +43,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
@@ -59,7 +60,7 @@ public class MekMortarHandler extends AmmoWeaponHandler {
     /**
      *
      */
-    public MekMortarHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public MekMortarHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_MISSILE;
     }

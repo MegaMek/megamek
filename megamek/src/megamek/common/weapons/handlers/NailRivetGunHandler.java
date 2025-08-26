@@ -40,6 +40,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.DamageType;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -55,7 +56,7 @@ public class NailRivetGunHandler extends AmmoWeaponHandler {
      *
      */
     public NailRivetGunHandler(ToHitData t, WeaponAttackAction w, Game g,
-          TWGameManager m) {
+          TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
         damageType = DamageType.NAIL_RIVET;
     }

@@ -46,6 +46,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
@@ -69,7 +70,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
      * @param twGameManager      {@link TWGameManager} Object
      */
     public SpaceBombAttackHandler(ToHitData toHit, WeaponAttackAction weaponAttackAction, Game game,
-          TWGameManager twGameManager) {
+          TWGameManager twGameManager) throws EntityLoadingException {
         super(toHit, weaponAttackAction, game, twGameManager);
         generalDamageType = HitData.DAMAGE_NONE;
     }

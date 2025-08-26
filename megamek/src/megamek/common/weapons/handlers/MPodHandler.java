@@ -42,6 +42,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -55,7 +56,7 @@ public class MPodHandler extends LBXHandler {
     /**
      *
      */
-    public MPodHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public MPodHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
         sSalvoType = " pellet(s) ";
     }

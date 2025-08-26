@@ -34,12 +34,15 @@
 
 package megamek.common.weapons.bayWeapons;
 
+import static megamek.common.game.IGame.LOGGER;
+
 import java.io.Serial;
 
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -79,8 +82,8 @@ public abstract class BayWeapon extends Weapon {
     }
 
     @Override
-    public AttackHandler fire(WeaponAttackAction weaponAttackAction, Game game, TWGameManager manager)
-          throws EntityLoadingException {
+    @Nullable
+    public AttackHandler fire(WeaponAttackAction weaponAttackAction, Game game, TWGameManager manager) {
         // Just in case. Often necessary when/if multiple ammo weapons are
         // fired; if this line not present
         // then when one ammo slots run dry the rest silently don't fire.
@@ -88,13 +91,20 @@ public abstract class BayWeapon extends Weapon {
     }
 
     @Override
+    @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
-        if ((isCapital() || isSubCapital()) && waa.isOrbitToSurface(game)) {
-            return new ArtilleryBayWeaponIndirectFireHandler(toHit, waa, game, manager);
-        } else {
-            return new BayWeaponHandler(toHit, waa, game, manager);
+        try {
+            if ((isCapital() || isSubCapital()) && waa.isOrbitToSurface(game)) {
+                return new ArtilleryBayWeaponIndirectFireHandler(toHit, waa, game, manager);
+            } else {
+                return new BayWeaponHandler(toHit, waa, game, manager);
+            }
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
         }
+        return null;
+
     }
 
     @Override

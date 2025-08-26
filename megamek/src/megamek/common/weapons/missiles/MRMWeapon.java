@@ -34,13 +34,19 @@
 
 package megamek.common.weapons.missiles;
 
+import static megamek.common.game.IGame.LOGGER;
+
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.MRMHandler;
 import megamek.server.totalwarfare.TWGameManager;
@@ -50,6 +56,7 @@ import megamek.server.totalwarfare.TWGameManager;
  */
 public abstract class MRMWeapon extends MissileWeapon {
 
+    @Serial
     private static final long serialVersionUID = 274817921444431878L;
 
     public MRMWeapon() {
@@ -60,9 +67,14 @@ public abstract class MRMWeapon extends MissileWeapon {
     }
 
     @Override
-    public AttackHandler getCorrectHandler(ToHitData toHit,
-          WeaponAttackAction waa, Game game, TWGameManager manager) {
-        return new MRMHandler(toHit, waa, game, manager);
+    @Nullable
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
+        try {
+            return new MRMHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
     }
 
     @Override

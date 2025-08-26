@@ -49,6 +49,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Building;
@@ -75,7 +76,8 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     /**
      *
      */
-    public CapitalMissileBayHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public CapitalMissileBayHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);
     }
@@ -511,17 +513,20 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         for (int wId : insertedAttacks) {
             Mounted<?> bayW = attackingEntity.getEquipment(wId);
             WeaponAttackAction newWaa = new WeaponAttackAction(attackingEntity.getId(),
-                  weaponAttackAction.getTargetId(), wId);
+                  weaponAttackAction.getTargetId(),
+                  wId);
             Weapon w = (Weapon) bayW.getType();
             // increase ammo by one, we'll use one that we shouldn't use
             // in the next line
             Vector<Report> newReports = new Vector<>();
-            bayW.getLinked().setShotsLeft(
-                  bayW.getLinked().getBaseShotsLeft() + 1);
+            bayW.getLinked().setShotsLeft(bayW.getLinked().getBaseShotsLeft() + 1);
+
             (w.fire(newWaa, game, gameManager)).handle(phase, newReports);
-            for (Report r : newReports) {
-                r.indent();
+
+            for (Report report : newReports) {
+                report.indent();
             }
+
             vPhaseReport.addAll(newReports);
         }
     }

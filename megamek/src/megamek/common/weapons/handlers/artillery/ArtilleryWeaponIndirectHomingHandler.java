@@ -53,6 +53,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Building;
@@ -75,7 +76,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
      *
      */
     public ArtilleryWeaponIndirectHomingHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
-          TWGameManager gameManager) {
+          TWGameManager gameManager) throws EntityLoadingException {
         super(toHitData, weaponAttackAction, game, gameManager);
         advancedAMS = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS);
         advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);

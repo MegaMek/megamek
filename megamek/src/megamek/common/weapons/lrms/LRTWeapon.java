@@ -38,19 +38,13 @@ import static megamek.common.equipment.MountedHelper.isArtemisIV;
 import static megamek.common.equipment.MountedHelper.isArtemisProto;
 import static megamek.common.equipment.MountedHelper.isArtemisV;
 
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
-import megamek.common.game.Game;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
-import megamek.common.weapons.handlers.AttackHandler;
-import megamek.common.weapons.handlers.MissileWeaponHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -78,12 +72,6 @@ public abstract class LRTWeapon extends MissileWeapon {
         } else {
             return super.getTonnage(entity, location, size);
         }
-    }
-
-    @Override
-    public AttackHandler getCorrectHandler(ToHitData toHit,
-          WeaponAttackAction waa, Game game, TWGameManager manager) {
-        return new MissileWeaponHandler(toHit, waa, game, manager);
     }
 
     @Override

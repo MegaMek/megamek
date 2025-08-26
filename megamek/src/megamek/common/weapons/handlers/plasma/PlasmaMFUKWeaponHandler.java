@@ -43,6 +43,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Building;
 import megamek.common.units.Entity;
@@ -54,7 +55,8 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
     @Serial
     private static final long serialVersionUID = -6816799343788643259L;
 
-    public PlasmaMFUKWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
+    public PlasmaMFUKWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(toHit, waa, g, m);
     }
 

@@ -48,6 +48,7 @@ import megamek.common.compute.Compute;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Building;
@@ -67,7 +68,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
      * @param twGameManager      A {@link TWGameManager} to use.
      */
     public PlasmaRifleHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
-          TWGameManager twGameManager) {
+          TWGameManager twGameManager) throws EntityLoadingException {
         super(toHitData, weaponAttackAction, game, twGameManager);
         generalDamageType = HitData.DAMAGE_ENERGY;
 

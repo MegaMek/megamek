@@ -34,11 +34,14 @@
 
 package megamek.common.weapons.infantry;
 
+import static megamek.common.game.IGame.LOGGER;
+
 import java.io.Serial;
 
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
@@ -284,26 +287,31 @@ public abstract class InfantryWeapon extends Weapon {
      * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game)
      */
     @Override
-    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager)
-          throws EntityLoadingException {
-        Entity entity = game.getEntity(waa.getEntityId());
+    @Nullable
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
+        try {
+            Entity entity = game.getEntity(waa.getEntityId());
 
-        if (entity != null) {
-            Mounted<?> mounted = entity.getEquipment(waa.getWeaponId());
-            if (((null != mounted) && ((mounted.hasModes() && mounted.curMode().isHeat())
-                  || (waa.getEntity(game).isSupportVehicle()
-                  && mounted.getLinked() != null
-                  && mounted.getLinked().getType() != null
-                  && (((AmmoType) mounted.getLinked().getType()).getMunitionType()
-                  .contains(AmmoType.Munitions.M_INFERNO)))))) {
-                return new InfantryHeatWeaponHandler(toHit, waa, game, manager);
-            } else if (game.getOptions().booleanOption(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT)
-                  && (isFlameBased() || (mounted instanceof InfantryWeaponMounted)
-                  && ((InfantryWeaponMounted) mounted).getOtherWeapon().isFlameBased())) {
-                return new InfantryHeatWeaponHandler(toHit, waa, game, manager);
+            if (entity != null) {
+                Mounted<?> mounted = entity.getEquipment(waa.getWeaponId());
+                if (((null != mounted) && ((mounted.hasModes() && mounted.curMode().isHeat())
+                      || (waa.getEntity(game).isSupportVehicle()
+                      && mounted.getLinked() != null
+                      && mounted.getLinked().getType() != null
+                      && (((AmmoType) mounted.getLinked().getType()).getMunitionType()
+                      .contains(AmmoType.Munitions.M_INFERNO)))))) {
+                    return new InfantryHeatWeaponHandler(toHit, waa, game, manager);
+                } else if (game.getOptions().booleanOption(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT)
+                      && (isFlameBased() || (mounted instanceof InfantryWeaponMounted)
+                      && ((InfantryWeaponMounted) mounted).getOtherWeapon().isFlameBased())) {
+                    return new InfantryHeatWeaponHandler(toHit, waa, game, manager);
+                }
             }
+            return new InfantryWeaponHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
         }
-        return new InfantryWeaponHandler(toHit, waa, game, manager);
+        return null;
     }
 
     @Override

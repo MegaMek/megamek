@@ -51,6 +51,7 @@ import megamek.common.equipment.Minefield;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
@@ -67,11 +68,12 @@ public class LRMHandler extends MissileWeaponHandler {
     @Serial
     private static final long serialVersionUID = -9160255801810263821L;
 
-    public LRMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public LRMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         this(t, w, g, m, 0);
     }
 
-    public LRMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m, int salvoMod) {
+    public LRMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m, int salvoMod)
+          throws EntityLoadingException {
         super(t, w, g, m);
         nSalvoBonus = salvoMod;
     }

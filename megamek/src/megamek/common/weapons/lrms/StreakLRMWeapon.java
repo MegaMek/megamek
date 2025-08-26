@@ -34,10 +34,13 @@
 
 package megamek.common.weapons.lrms;
 
+import static megamek.common.game.IGame.LOGGER;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -45,6 +48,7 @@ import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.lrm.StreakLRMHandler;
@@ -81,9 +85,15 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
     }
 
     @Override
+    @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
-        return new StreakLRMHandler(toHit, waa, game, manager);
+        try {
+            return new StreakLRMHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
     }
 
     @Override

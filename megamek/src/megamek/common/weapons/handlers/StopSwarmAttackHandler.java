@@ -42,6 +42,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.server.totalwarfare.TWGameManager;
@@ -57,7 +58,8 @@ public class StopSwarmAttackHandler extends WeaponHandler {
     /**
      *
      */
-    public StopSwarmAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
+    public StopSwarmAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(toHit, waa, g, m);
     }
 

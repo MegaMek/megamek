@@ -34,15 +34,19 @@
 
 package megamek.common.weapons.bayWeapons;
 
+import static megamek.common.game.IGame.LOGGER;
+
 import java.io.Serial;
 
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponDirectFireHandler;
@@ -86,31 +90,38 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
      * megamek.server.Server)
      */
     @Override
+    @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
-        Entity ae = game.getEntity(waa.getEntityId());
-        boolean useHoming = false;
-        for (WeaponMounted bayW : ((WeaponMounted) ae.getEquipment(waa.getWeaponId())).getBayWeapons()) {
-            // check the currently loaded ammo
-            AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
-            waa.setAmmoId(ae.getEquipmentNum(bayWAmmo));
-            waa.setAmmoMunitionType(((AmmoType) bayWAmmo.getType()).getMunitionType());
-            waa.setAmmoCarrier(ae.getId());
-            if (bayWAmmo.isHomingAmmoInHomingMode()) {
-                useHoming = true;
+        try {
+
+            Entity ae = game.getEntity(waa.getEntityId());
+            boolean useHoming = false;
+            for (WeaponMounted bayW : ((WeaponMounted) ae.getEquipment(waa.getWeaponId())).getBayWeapons()) {
+                // check the currently loaded ammo
+                AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
+                waa.setAmmoId(ae.getEquipmentNum(bayWAmmo));
+                waa.setAmmoMunitionType(((AmmoType) bayWAmmo.getType()).getMunitionType());
+                waa.setAmmoCarrier(ae.getId());
+                if (bayWAmmo.isHomingAmmoInHomingMode()) {
+                    useHoming = true;
+                }
+                //We only need to get this information for the first weapon in the bay to return the right handler
+                break;
             }
-            //We only need to get this information for the first weapon in the bay to return the right handler
-            break;
-        }
-        if (useHoming) {
-            if (game.getPhase().isFiring()) {
-                return new ArtilleryBayWeaponDirectHomingHandler(toHit, waa, game, manager);
+            if (useHoming) {
+                if (game.getPhase().isFiring()) {
+                    return new ArtilleryBayWeaponDirectHomingHandler(toHit, waa, game, manager);
+                }
+                return new ArtilleryBayWeaponIndirectHomingHandler(toHit, waa, game, manager);
+            } else if (game.getPhase().isFiring()) {
+                return new ArtilleryBayWeaponDirectFireHandler(toHit, waa, game, manager);
+            } else {
+                return new ArtilleryBayWeaponIndirectFireHandler(toHit, waa, game, manager);
             }
-            return new ArtilleryBayWeaponIndirectHomingHandler(toHit, waa, game, manager);
-        } else if (game.getPhase().isFiring()) {
-            return new ArtilleryBayWeaponDirectFireHandler(toHit, waa, game, manager);
-        } else {
-            return new ArtilleryBayWeaponIndirectFireHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
         }
+        return null;
     }
 }

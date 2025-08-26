@@ -46,6 +46,7 @@ import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
@@ -64,7 +65,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
      *
      */
     public PopUpMineLauncherHandler(ToHitData toHit, WeaponAttackAction waa,
-          Game g, TWGameManager m) {
+          Game g, TWGameManager m) throws EntityLoadingException {
         super(toHit, waa, g, m);
         sSalvoType = " mine(s) ";
     }

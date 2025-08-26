@@ -34,12 +34,16 @@
 
 package megamek.common.weapons.mortars;
 
+import static megamek.common.game.IGame.LOGGER;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AmmoWeapon;
@@ -68,25 +72,31 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
     }
 
     @Override
+    @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
-
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-              .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_AIRBURST)) {
-            return new MekMortarAirburstHandler(toHit, waa, game, manager);
-        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_ANTI_PERSONNEL)) {
-            return new MekMortarAntiPersonnelHandler(toHit, waa, game, manager);
-        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_FLARE)) {
-            return new MekMortarFlareHandler(toHit, waa, game, manager);
-        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED)) {
-            // Semi-guided works like shaped-charge, but can benefit from tag
+        try {
+            AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
+                  .getEquipment(waa.getWeaponId()).getLinked().getType();
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_AIRBURST)) {
+                return new MekMortarAirburstHandler(toHit, waa, game, manager);
+            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_ANTI_PERSONNEL)) {
+                return new MekMortarAntiPersonnelHandler(toHit, waa, game, manager);
+            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_FLARE)) {
+                return new MekMortarFlareHandler(toHit, waa, game, manager);
+            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED)) {
+                // Semi-guided works like shaped-charge, but can benefit from tag
+                return new MekMortarHandler(toHit, waa, game, manager);
+            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD)) {
+                return new MekMortarSmokeHandler(toHit, waa, game, manager);
+            }
+            // If it doesn't match other types, it's the default armor-piercing
             return new MekMortarHandler(toHit, waa, game, manager);
-        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD)) {
-            return new MekMortarSmokeHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
         }
-        // If it doesn't match other types, it's the default armor-piercing
-        return new MekMortarHandler(toHit, waa, game, manager);
+        return null;
+
     }
 
     @Override

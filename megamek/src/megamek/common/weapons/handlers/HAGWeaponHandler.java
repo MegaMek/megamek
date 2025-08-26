@@ -42,6 +42,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Infantry;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -56,7 +57,7 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
     /**
      *
      */
-    public HAGWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public HAGWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
         sSalvoType = " projectiles ";
     }

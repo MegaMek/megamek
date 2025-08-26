@@ -44,6 +44,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
@@ -64,7 +65,8 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
     /**
      *
      */
-    public ScreenLauncherBayHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public ScreenLauncherBayHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
     }
 

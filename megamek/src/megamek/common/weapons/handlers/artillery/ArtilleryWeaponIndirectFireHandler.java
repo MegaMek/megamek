@@ -58,6 +58,7 @@ import megamek.common.equipment.AmmoType.Munitions;
 import megamek.common.equipment.Minefield;
 import megamek.common.event.GamePlayerStrategicActionEvent;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
@@ -82,7 +83,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
     boolean handledAmmoAndReport = false;
     private int shootingBA = -1;
 
-    public ArtilleryWeaponIndirectFireHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public ArtilleryWeaponIndirectFireHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
         if (w.getEntity(g) instanceof BattleArmor) {
             shootingBA = ((BattleArmor) w.getEntity(g)).getNumberActiveTroopers();

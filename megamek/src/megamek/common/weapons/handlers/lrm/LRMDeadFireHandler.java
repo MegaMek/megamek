@@ -41,6 +41,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -50,7 +51,8 @@ public class LRMDeadFireHandler extends LRMHandler {
     @Serial
     private static final long serialVersionUID = 9200751420492807777L;
 
-    public LRMDeadFireHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public LRMDeadFireHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
         sSalvoType = " dead fire missile(s) ";
     }

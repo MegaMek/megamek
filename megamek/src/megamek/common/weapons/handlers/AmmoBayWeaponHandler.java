@@ -45,6 +45,7 @@ import megamek.common.equipment.AmmoType.Munitions;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -63,7 +64,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
      *
      */
     public AmmoBayWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-          TWGameManager m) {
+          TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
     }
 

@@ -47,6 +47,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Building;
@@ -67,7 +68,7 @@ public class LRMSwarmHandler extends LRMHandler {
     private int swarmMissilesNowLeft = 0;
     private boolean handledHeat = false;
 
-    public LRMSwarmHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public LRMSwarmHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
         sSalvoType = " swarm missile(s) ";
     }

@@ -36,13 +36,7 @@ package megamek.common.weapons.bayWeapons;
 
 import java.io.Serial;
 
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.EquipmentTypeLookup;
-import megamek.common.game.Game;
-import megamek.common.weapons.handlers.AmmoBayWeaponHandler;
-import megamek.common.weapons.handlers.AttackHandler;
-import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jay Lawson
@@ -72,9 +66,4 @@ public class PointDefenseBayWeapon extends AmmoBayWeapon {
         setInstantModeSwitch(false);
     }
 
-    @Override
-    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-          TWGameManager manager) {
-        return new AmmoBayWeaponHandler(toHit, waa, game, manager);
-    }
 }

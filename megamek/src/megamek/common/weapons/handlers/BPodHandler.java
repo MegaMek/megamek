@@ -43,6 +43,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Infantry;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -56,7 +57,7 @@ public class BPodHandler extends AmmoWeaponHandler {
     /**
      *
      */
-    public BPodHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public BPodHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
     }
 

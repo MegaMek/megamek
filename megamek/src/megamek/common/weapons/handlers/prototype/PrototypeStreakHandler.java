@@ -39,6 +39,7 @@ import java.io.Serial;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.srm.SRMHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -49,7 +50,8 @@ public class PrototypeStreakHandler extends SRMHandler {
     @Serial
     private static final long serialVersionUID = -6640810158443025266L;
 
-    public PrototypeStreakHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public PrototypeStreakHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
         nSalvoBonus = 4;
     }

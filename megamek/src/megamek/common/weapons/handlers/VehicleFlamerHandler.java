@@ -46,6 +46,7 @@ import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Building;
@@ -67,7 +68,8 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
     /**
      *
      */
-    public VehicleFlamerHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
+    public VehicleFlamerHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }

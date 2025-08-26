@@ -40,6 +40,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Infantry;
 import megamek.common.weapons.handlers.MissileWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
@@ -51,11 +52,12 @@ public class SRMHandler extends MissileWeaponHandler {
     @Serial
     private static final long serialVersionUID = -1618484541772117621L;
 
-    public SRMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public SRMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         this(t, w, g, m, 0);
     }
 
-    public SRMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m, int salvoMod) {
+    public SRMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m, int salvoMod)
+          throws EntityLoadingException {
         super(t, w, g, m);
         nSalvoBonus = salvoMod;
     }

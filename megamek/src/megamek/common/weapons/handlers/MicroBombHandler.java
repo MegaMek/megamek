@@ -45,6 +45,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.server.totalwarfare.TWGameManager;
@@ -60,7 +61,8 @@ public class MicroBombHandler extends AmmoWeaponHandler {
     /**
      *
      */
-    public MicroBombHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
+    public MicroBombHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(toHit, waa, g, m);
     }
 

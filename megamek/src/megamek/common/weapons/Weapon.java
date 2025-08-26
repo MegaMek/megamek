@@ -34,6 +34,8 @@
 
 package megamek.common.weapons;
 
+import static megamek.common.game.IGame.LOGGER;
+
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -117,8 +119,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
     public static final String MODE_NORMAL = "Normal";
 
 
-    public @Nullable AttackHandler fire(WeaponAttackAction weaponAttackAction, Game game, TWGameManager gameManager)
-          throws EntityLoadingException {
+    public @Nullable AttackHandler fire(WeaponAttackAction weaponAttackAction, Game game, TWGameManager gameManager) {
         ToHitData toHit = weaponAttackAction.toHit(game);
         // FIXME: SUPER DUPER EVIL HACK: swarm missile handlers must be returned even if the have an impossible to
         //  hit, because there might be other targets someone else please please figure out how to do this nice
@@ -127,9 +128,15 @@ public abstract class Weapon extends WeaponType implements Serializable {
               : (toHit.getValue() == TargetRoll.IMPOSSIBLE) ? null : attackHandler;
     }
 
+    @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit,
-          WeaponAttackAction waa, Game game, TWGameManager gameManager) throws EntityLoadingException {
-        return new WeaponHandler(toHit, waa, game, gameManager);
+          WeaponAttackAction waa, Game game, TWGameManager gameManager) {
+        try {
+            return new WeaponHandler(toHit, waa, game, gameManager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
     }
 
     /**

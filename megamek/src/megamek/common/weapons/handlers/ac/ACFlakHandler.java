@@ -40,6 +40,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.LBXHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -54,7 +55,7 @@ public class ACFlakHandler extends LBXHandler {
      *
      */
     public ACFlakHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
-          TWGameManager twGameManager) {
+          TWGameManager twGameManager) throws EntityLoadingException {
         super(toHitData, weaponAttackAction, game, twGameManager);
         sSalvoType = " fragment(s) ";
     }

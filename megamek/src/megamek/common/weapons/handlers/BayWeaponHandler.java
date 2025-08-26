@@ -47,6 +47,7 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Building;
@@ -71,7 +72,7 @@ public class BayWeaponHandler extends WeaponHandler {
         // deserialization only
     }
 
-    public BayWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public BayWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
     }
 
@@ -593,18 +594,20 @@ public class BayWeaponHandler extends WeaponHandler {
                           weaponAttackAction.getTargetType(),
                           weaponAttackAction.getTargetId(),
                           m.getEquipmentNum());
-                    AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game,
+                    AttackHandler weaponBayHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game,
                           gameManager);
-                    bayWHandler.setAnnouncedEntityFiring(false);
+                    weaponBayHandler.setAnnouncedEntityFiring(false);
                     // This should always be true
-                    if (bayWHandler instanceof WeaponHandler wHandler) {
+                    if (weaponBayHandler instanceof WeaponHandler wHandler) {
                         wHandler.setParentBayHandler(this);
                     } else {
-                        LOGGER.error("bayWHandler {} is not a weapon handler! Cannot set parent bay handler.",
-                              bayWHandler.getClass());
+                        LOGGER.error("weaponBayHandler {} is not a weapon handler! Cannot set parent bay handler.",
+                              weaponBayHandler.getClass());
                         continue;
                     }
-                    bayWHandler.handle(phase, vPhaseReport);
+
+                    weaponBayHandler.handle(phase, vPhaseReport);
+
                     if (vPhaseReport.size() > replaceReport) {
                         // fix the reporting - is there a better way to do this
                         Report currentReport = vPhaseReport.get(replaceReport);

@@ -48,6 +48,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.Roll;
 import megamek.common.units.Aero;
 import megamek.common.units.Building;
@@ -71,7 +72,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
     /**
      *
      */
-    public TSEMPHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public TSEMPHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
     }
 

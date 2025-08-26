@@ -44,6 +44,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.server.SmokeCloud;
 import megamek.server.totalwarfare.TWGameManager;
@@ -55,7 +56,8 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
     @Serial
     private static final long serialVersionUID = -30934685350251837L;
 
-    public LRMSmokeWarheadHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public LRMSmokeWarheadHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
     }
 

@@ -34,12 +34,16 @@
 
 package megamek.common.weapons.other;
 
+import static megamek.common.game.IGame.LOGGER;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.FluidGunCoolHandler;
@@ -74,14 +78,20 @@ public abstract class FluidGunWeapon extends AmmoWeapon {
      * megamek.server.Server)
      */
     @Override
+    @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-              .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_COOLANT)) {
-            return new FluidGunCoolHandler(toHit, waa, game, manager);
+        try {
+            AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
+                  .getEquipment(waa.getWeaponId()).getLinked().getType();
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_COOLANT)) {
+                return new FluidGunCoolHandler(toHit, waa, game, manager);
+            }
+            return super.getCorrectHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
         }
-        return super.getCorrectHandler(toHit, waa, game, manager);
+        return null;
 
     }
 

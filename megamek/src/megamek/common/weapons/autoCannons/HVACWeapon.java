@@ -34,13 +34,17 @@
 
 package megamek.common.weapons.autoCannons;
 
+import static megamek.common.game.IGame.LOGGER;
+
 import java.io.Serial;
 
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.HVACWeaponHandler;
@@ -60,18 +64,24 @@ public abstract class HVACWeapon extends ACWeapon {
     }
 
     @Override
+    @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
-        Entity entity = game.getEntity(waa.getEntityId());
+        try {
+            Entity entity = game.getEntity(waa.getEntityId());
 
-        if (entity != null) {
-            Mounted<?> weapon = entity.getEquipment(waa.getWeaponId());
+            if (entity != null) {
+                Mounted<?> weapon = entity.getEquipment(waa.getWeaponId());
 
-            if (weapon.curMode().equals("Rapid")) {
-                return new RapidFireHVACWeaponHandler(toHit, waa, game, manager);
+                if (weapon.curMode().equals("Rapid")) {
+                    return new RapidFireHVACWeaponHandler(toHit, waa, game, manager);
+                }
             }
-        }
 
-        return new HVACWeaponHandler(toHit, waa, game, manager);
+            return new HVACWeaponHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
     }
 
     @Override

@@ -34,14 +34,18 @@
 
 package megamek.common.weapons.autoCannons;
 
+import static megamek.common.game.IGame.LOGGER;
+
 import java.io.Serial;
 
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
@@ -79,47 +83,53 @@ public abstract class ACWeapon extends AmmoWeapon {
     }
 
     @Override
+    @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager gameManager) {
-        Entity entity = game.getEntity(waa.getEntityId());
+        try {
+            Entity entity = game.getEntity(waa.getEntityId());
 
-        if (entity != null) {
-            Object mountedEquipment = entity.getEquipment(waa.getWeaponId()).getLinked().getType();
+            if (entity != null) {
+                Object mountedEquipment = entity.getEquipment(waa.getWeaponId()).getLinked().getType();
 
-            if (mountedEquipment instanceof AmmoType ammoType) {
-                Mounted<?> weapon = entity.getEquipment(waa.getWeaponId());
+                if (mountedEquipment instanceof AmmoType ammoType) {
+                    Mounted<?> weapon = entity.getEquipment(waa.getWeaponId());
 
-                if (weapon.curMode().equals("Rapid")) {
-                    return new RapidFireACWeaponHandler(toHit, waa, game, gameManager);
-                }
+                    if (weapon.curMode().equals("Rapid")) {
+                        return new RapidFireACWeaponHandler(toHit, waa, game, gameManager);
+                    }
 
-                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING)) {
-                    return new ACAPHandler(toHit, waa, game, gameManager);
-                }
+                    if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING)) {
+                        return new ACAPHandler(toHit, waa, game, gameManager);
+                    }
 
-                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)) {
-                    return new ACFlechetteHandler(toHit, waa, game, gameManager);
-                }
+                    if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)) {
+                        return new ACFlechetteHandler(toHit, waa, game, gameManager);
+                    }
 
-                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_AC)) {
-                    return new ACIncendiaryHandler(toHit, waa, game, gameManager);
-                }
+                    if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_AC)) {
+                        return new ACIncendiaryHandler(toHit, waa, game, gameManager);
+                    }
 
-                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_TRACER)) {
-                    return new ACTracerHandler(toHit, waa, game, gameManager);
-                }
+                    if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_TRACER)) {
+                        return new ACTracerHandler(toHit, waa, game, gameManager);
+                    }
 
-                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLAK)) {
-                    return new ACFlakHandler(toHit, waa, game, gameManager);
-                }
+                    if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLAK)) {
+                        return new ACFlakHandler(toHit, waa, game, gameManager);
+                    }
 
-                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_CASELESS)) {
-                    return new ACCaselessHandler(toHit, waa, game, gameManager);
+                    if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_CASELESS)) {
+                        return new ACCaselessHandler(toHit, waa, game, gameManager);
+                    }
                 }
             }
-        }
 
-        return new ACWeaponHandler(toHit, waa, game, gameManager);
+            return new ACWeaponHandler(toHit, waa, game, gameManager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
     }
 
     @Override

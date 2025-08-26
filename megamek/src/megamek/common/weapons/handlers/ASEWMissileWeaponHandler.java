@@ -41,6 +41,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Building;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
@@ -64,7 +65,8 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
      * @param g - The current game
      * @param m - The current GameManager instance
      */
-    public ASEWMissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public ASEWMissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
     }
 

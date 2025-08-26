@@ -56,6 +56,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
@@ -77,7 +78,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     boolean advancedAMS;
     boolean multiAMS;
 
-    public MissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public MissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_MISSILE;
         advancedAMS = g.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS);
@@ -694,20 +696,21 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 newWaa.setNemesisConfused(true);
                 Mounted<?> m = attackingEntity.getEquipment(weaponAttackAction.getWeaponId());
                 Weapon w = (Weapon) m.getType();
-                AttackHandler ah = w.fire(newWaa, game, gameManager);
+                AttackHandler attackHandler = w.fire(newWaa, game, gameManager);
                 // increase ammo by one, because we just incorrectly used one up
                 weapon.getLinked().setShotsLeft(weapon.getLinked().getBaseShotsLeft() + 1);
                 // if the new attack has an impossible to-hit, go on to next entity
-                if (ah == null) {
+                if (attackHandler == null) {
                     continue;
                 }
-                WeaponHandler wh = (WeaponHandler) ah;
+                WeaponHandler wh = (WeaponHandler) attackHandler;
                 // attack the new target, and if we hit it, return;
                 wh.handle(phase, vPhaseReport);
                 // if the new attack hit, we are finished.
                 if (!wh.bMissed) {
                     return false;
                 }
+
                 shotAtNemesisTarget = true;
             }
 

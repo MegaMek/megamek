@@ -44,6 +44,7 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.AmmoBayWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -59,7 +60,7 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
      *
      */
     public ACBayHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
-          TWGameManager twGameManager) {
+          TWGameManager twGameManager) throws EntityLoadingException {
         super(toHitData, weaponAttackAction, game, twGameManager);
     }
 

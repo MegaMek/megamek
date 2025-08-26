@@ -45,6 +45,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.weapons.DamageType;
@@ -59,7 +60,7 @@ public class ACAPHandler extends ACWeaponHandler {
     private static final long serialVersionUID = -4251291510045646817L;
 
     public ACAPHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
-          TWGameManager twGameManager) {
+          TWGameManager twGameManager) throws EntityLoadingException {
         super(toHitData, weaponAttackAction, game, twGameManager);
         generalDamageType = HitData.DAMAGE_ARMOR_PIERCING;
     }

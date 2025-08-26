@@ -43,6 +43,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.units.IBomber;
@@ -53,7 +54,7 @@ public class TAGHandler extends WeaponHandler {
     @Serial
     private static final long serialVersionUID = -967656770476044773L;
 
-    public TAGHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
+    public TAGHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) throws EntityLoadingException {
         super(toHit, waa, g, m);
     }
 

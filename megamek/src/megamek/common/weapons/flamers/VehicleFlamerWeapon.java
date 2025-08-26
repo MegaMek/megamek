@@ -38,12 +38,16 @@
  */
 package megamek.common.weapons.flamers;
 
+import static megamek.common.game.IGame.LOGGER;
+
 import java.io.Serial;
 
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
@@ -73,21 +77,27 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
     }
 
     @Override
+    @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
-        Entity entity = game.getEntity(waa.getEntityId());
+        try {
+            Entity entity = game.getEntity(waa.getEntityId());
 
-        if (entity != null) {
-            Object ammo = entity.getEquipment(waa.getWeaponId()).getLinked().getType();
+            if (entity != null) {
+                Object ammo = entity.getEquipment(waa.getWeaponId()).getLinked().getType();
 
-            if (ammo instanceof AmmoType ammoType) {
-                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_COOLANT)) {
-                    return new VehicleFlamerCoolHandler(toHit, waa, game, manager);
+                if (ammo instanceof AmmoType ammoType) {
+                    if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_COOLANT)) {
+                        return new VehicleFlamerCoolHandler(toHit, waa, game, manager);
+                    }
+
                 }
-
             }
-        }
 
-        return new VehicleFlamerHandler(toHit, waa, game, manager);
+            return new VehicleFlamerHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
     }
 
 }

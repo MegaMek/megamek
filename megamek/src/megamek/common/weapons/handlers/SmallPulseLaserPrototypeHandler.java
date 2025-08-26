@@ -40,6 +40,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.TargetRoll;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -57,7 +58,8 @@ public class SmallPulseLaserPrototypeHandler extends EnergyWeaponHandler {
     /**
      *
      */
-    public SmallPulseLaserPrototypeHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public SmallPulseLaserPrototypeHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
     }
 

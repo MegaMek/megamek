@@ -55,6 +55,7 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Aero;
@@ -101,7 +102,8 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         super();
     }
 
-    public CapitalMissileBearingsOnlyHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public CapitalMissileBearingsOnlyHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
     }
 

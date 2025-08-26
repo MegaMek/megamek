@@ -47,6 +47,7 @@ import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.units.Terrains;
@@ -57,7 +58,8 @@ public class RapidFireHVACWeaponHandler extends RapidFireACWeaponHandler {
     @Serial
     private static final long serialVersionUID = 7326881584091651519L;
 
-    public RapidFireHVACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public RapidFireHVACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
     }
 

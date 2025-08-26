@@ -40,6 +40,7 @@ import megamek.common.HitData;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.DamageType;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -50,7 +51,7 @@ public class SRMAXHandler extends SRMHandler {
     @Serial
     private static final long serialVersionUID = 8049199984294733124L;
 
-    public SRMAXHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public SRMAXHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
         sSalvoType = " acid-head missile(s) ";
         nSalvoBonus = -2;

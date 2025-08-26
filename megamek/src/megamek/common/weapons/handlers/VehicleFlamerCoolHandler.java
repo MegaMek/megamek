@@ -43,6 +43,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.Roll;
 import megamek.common.units.Building;
 import megamek.common.units.Entity;
@@ -65,7 +66,7 @@ public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
      * @param twGameManager      A {@link TWGameManager} to use.
      */
     public VehicleFlamerCoolHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
-          TWGameManager twGameManager) {
+          TWGameManager twGameManager) throws EntityLoadingException {
         super(toHitData, weaponAttackAction, game, twGameManager);
     }
 

@@ -50,6 +50,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Building;
@@ -74,7 +75,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
      *
      */
     public MissileBayWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-          TWGameManager m) {
+          TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
     }
 

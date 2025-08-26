@@ -46,6 +46,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.Minefield;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
@@ -59,7 +60,7 @@ public class StreakLRMHandler extends StreakHandler {
     /**
      *
      */
-    public StreakLRMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public StreakLRMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
     }
 

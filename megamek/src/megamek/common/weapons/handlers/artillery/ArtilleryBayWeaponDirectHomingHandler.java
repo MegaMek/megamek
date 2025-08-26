@@ -40,6 +40,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -54,7 +55,7 @@ public class ArtilleryBayWeaponDirectHomingHandler extends ArtilleryBayWeaponInd
      *
      */
     public ArtilleryBayWeaponDirectHomingHandler(ToHitData t,
-          WeaponAttackAction w, Game g, TWGameManager m) {
+          WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
 
     }

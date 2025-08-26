@@ -34,9 +34,13 @@
 
 package megamek.common.weapons.other;
 
+import static megamek.common.game.IGame.LOGGER;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.TSEMPHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
@@ -65,8 +69,15 @@ public class TSEMPWeapon extends EnergyWeapon {
     }
 
     @Override
+    @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
-        return new TSEMPHandler(toHit, waa, game, manager);
+        try {
+            return new TSEMPHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
+
     }
 }

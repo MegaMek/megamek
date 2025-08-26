@@ -42,6 +42,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Infantry;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
@@ -54,7 +55,7 @@ public class ACWeaponHandler extends AmmoWeaponHandler {
     @Serial
     private static final long serialVersionUID = 7326881584091651519L;
 
-    public ACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public ACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
     }
 

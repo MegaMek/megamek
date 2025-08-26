@@ -34,14 +34,18 @@
 
 package megamek.common.weapons.capitalWeapons;
 
+import static megamek.common.game.IGame.LOGGER;
+
 import java.io.Serial;
 
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
@@ -72,20 +76,26 @@ public abstract class CapitalMissileWeapon extends AmmoWeapon {
      * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game)
      */
     @Override
+    @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
-        Mounted<?> weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
-        Entity attacker = game.getEntity(waa.getEntityId());
-        int rangeToTarget = attacker.getPosition().distance(waa.getTarget(game).getPosition());
-        // Capital missiles work like artillery for surface to surface fire
-        if (Compute.isGroundToGround(attacker, waa.getTarget(game))) {
-            return new ArtilleryWeaponIndirectFireHandler(toHit, waa, game, manager);
+        try {
+            Mounted<?> weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
+            Entity attacker = game.getEntity(waa.getEntityId());
+            int rangeToTarget = attacker.getPosition().distance(waa.getTarget(game).getPosition());
+            // Capital missiles work like artillery for surface to surface fire
+            if (Compute.isGroundToGround(attacker, waa.getTarget(game))) {
+                return new ArtilleryWeaponIndirectFireHandler(toHit, waa, game, manager);
+            }
+            if (weapon.isInBearingsOnlyMode()
+                  && (rangeToTarget >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM)) {
+                return new CapitalMissileBearingsOnlyHandler(toHit, waa, game, manager);
+            }
+            return new CapitalMissileHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
         }
-        if (weapon.isInBearingsOnlyMode()
-              && (rangeToTarget >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM)) {
-            return new CapitalMissileBearingsOnlyHandler(toHit, waa, game, manager);
-        }
-        return new CapitalMissileHandler(toHit, waa, game, manager);
+        return null;
     }
 
     @Override

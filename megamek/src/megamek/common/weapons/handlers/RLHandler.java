@@ -45,6 +45,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Coords;
 import megamek.common.equipment.Minefield;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
 import megamek.server.totalwarfare.TWGameManager;
@@ -60,7 +61,7 @@ public class RLHandler extends MissileWeaponHandler {
     /**
      *
      */
-    public RLHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public RLHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
     }
 

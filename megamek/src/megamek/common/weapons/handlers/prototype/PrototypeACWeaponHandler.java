@@ -41,6 +41,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.ac.ACWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -51,7 +52,8 @@ public class PrototypeACWeaponHandler extends ACWeaponHandler {
     @Serial
     private static final long serialVersionUID = 1562727719699124106L;
 
-    public PrototypeACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public PrototypeACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
     }
 

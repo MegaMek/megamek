@@ -46,6 +46,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.logging.MMLogger;
@@ -60,7 +61,8 @@ public class MekMortarSmokeHandler extends AmmoWeaponHandler {
     @Serial
     private static final long serialVersionUID = -2073773899108954657L;
 
-    public MekMortarSmokeHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public MekMortarSmokeHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
     }
 

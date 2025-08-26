@@ -48,6 +48,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Aero;
 import megamek.common.units.Building;
@@ -65,7 +66,8 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
     /**
      *
      */
-    public PlasmaBayWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
+    public PlasmaBayWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }

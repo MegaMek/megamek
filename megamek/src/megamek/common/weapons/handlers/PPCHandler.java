@@ -47,6 +47,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
 import megamek.common.units.Entity;
@@ -63,7 +64,7 @@ public class PPCHandler extends EnergyWeaponHandler {
     private static final long serialVersionUID = 5545991061428671743L;
     private int chargedCapacitor = 0;
 
-    public PPCHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public PPCHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
         // remember capacitor state and turn it off here,
         // so a crit in the firing phase does not cause an explosion, per the

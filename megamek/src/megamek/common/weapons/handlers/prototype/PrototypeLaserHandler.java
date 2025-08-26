@@ -40,6 +40,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.weapons.handlers.EnergyWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
@@ -59,7 +60,7 @@ public class PrototypeLaserHandler extends EnergyWeaponHandler {
      *
      */
     public PrototypeLaserHandler(ToHitData t, WeaponAttackAction w, Game g,
-          TWGameManager m) {
+          TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
     }
 

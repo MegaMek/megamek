@@ -52,6 +52,7 @@ import megamek.common.equipment.Minefield;
 import megamek.common.equipment.Mounted;
 import megamek.common.event.GamePlayerStrategicActionEvent;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
@@ -70,7 +71,8 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = 1L;
     boolean handledAmmoAndReport = false;
 
-    public ArtilleryCannonWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public ArtilleryCannonWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
     }
 

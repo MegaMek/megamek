@@ -47,6 +47,7 @@ import megamek.common.compute.ComputeECM;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Building;
@@ -71,7 +72,7 @@ public class StreakHandler extends MissileWeaponHandler {
     /**
      *
      */
-    public StreakHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public StreakHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
     }
 

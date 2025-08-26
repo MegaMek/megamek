@@ -44,6 +44,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Building;
@@ -60,7 +61,7 @@ public class SRMInfernoHandler extends SRMHandler {
     @Serial
     private static final long serialVersionUID = 826674238068613732L;
 
-    public SRMInfernoHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public SRMInfernoHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
         damageType = DamageType.INFERNO;
         sSalvoType = " inferno missile(s) ";

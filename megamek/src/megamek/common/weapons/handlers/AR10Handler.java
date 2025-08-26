@@ -43,6 +43,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Building;
@@ -64,7 +65,7 @@ public class AR10Handler extends AmmoWeaponHandler {
     /**
      *
      */
-    public AR10Handler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public AR10Handler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
     }
 

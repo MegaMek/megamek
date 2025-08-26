@@ -41,6 +41,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.EntityWeightClass;
 import megamek.common.units.Mek;
@@ -57,7 +58,7 @@ public class HGRHandler extends GRHandler {
     /**
      *
      */
-    public HGRHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public HGRHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
     }
 

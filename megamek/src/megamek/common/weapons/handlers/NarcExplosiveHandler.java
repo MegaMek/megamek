@@ -45,6 +45,7 @@ import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.Roll;
 import megamek.common.units.Infantry;
 import megamek.server.totalwarfare.TWGameManager;
@@ -59,7 +60,8 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
     /**
      *
      */
-    public NarcExplosiveHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public NarcExplosiveHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
         sSalvoType = " explosive pod ";
     }

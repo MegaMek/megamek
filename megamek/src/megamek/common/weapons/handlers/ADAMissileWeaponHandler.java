@@ -41,6 +41,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -56,7 +57,8 @@ public class ADAMissileWeaponHandler extends MissileWeaponHandler {
     @Serial
     private static final long serialVersionUID = 6329291710822071023L;
 
-    public ADAMissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public ADAMissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
     }
 

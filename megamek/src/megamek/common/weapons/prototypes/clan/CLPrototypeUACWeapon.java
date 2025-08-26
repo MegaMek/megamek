@@ -34,10 +34,16 @@
 
 package megamek.common.weapons.prototypes.clan;
 
+import static megamek.common.game.IGame.LOGGER;
+
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.autoCannons.UACWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.prototype.PrototypeCLUltraWeaponHandler;
@@ -48,6 +54,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sept 29, 2004
  */
 public abstract class CLPrototypeUACWeapon extends UACWeapon {
+    @Serial
     private static final long serialVersionUID = 8905222321912752035L;
 
     /*
@@ -58,12 +65,18 @@ public abstract class CLPrototypeUACWeapon extends UACWeapon {
      * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game)
      */
     @Override
+    @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
-        Mounted<?> weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
-        if (weapon.curMode().equals("Ultra")) {
-            return new PrototypeCLUltraWeaponHandler(toHit, waa, game, manager);
+        try {
+            Mounted<?> weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
+            if (weapon.curMode().equals("Ultra")) {
+                return new PrototypeCLUltraWeaponHandler(toHit, waa, game, manager);
+            }
+            return super.getCorrectHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
         }
-        return super.getCorrectHandler(toHit, waa, game, manager);
+        return null;
     }
 }

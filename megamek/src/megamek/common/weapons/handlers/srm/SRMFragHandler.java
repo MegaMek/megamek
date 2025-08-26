@@ -43,6 +43,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Building;
 import megamek.common.units.Entity;
@@ -56,7 +57,7 @@ public class SRMFragHandler extends SRMHandler {
     @Serial
     private static final long serialVersionUID = -2281133981582906299L;
 
-    public SRMFragHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public SRMFragHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
         sSalvoType = " fragmentation missile(s) ";
         damageType = DamageType.FRAGMENTATION;

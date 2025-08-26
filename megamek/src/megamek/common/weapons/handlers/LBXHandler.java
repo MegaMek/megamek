@@ -45,6 +45,7 @@ import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.units.Infantry;
@@ -60,7 +61,7 @@ public class LBXHandler extends AmmoWeaponHandler {
     /**
      *
      */
-    public LBXHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public LBXHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
         sSalvoType = " pellet(s) ";
     }

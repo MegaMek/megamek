@@ -42,6 +42,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.UltraWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -56,7 +57,8 @@ public class PrototypeISUltraWeaponHandler extends UltraWeaponHandler {
     /**
      *
      */
-    public PrototypeISUltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public PrototypeISUltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
     }
 

@@ -46,6 +46,7 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.capitalMissile.CapitalMissileBayHandler;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
@@ -62,7 +63,8 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
     /**
      *
      */
-    public TeleMissileHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public TeleMissileHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
     }
 

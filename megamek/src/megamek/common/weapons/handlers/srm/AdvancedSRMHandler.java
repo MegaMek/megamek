@@ -39,6 +39,7 @@ import java.io.Serial;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -48,7 +49,8 @@ public class AdvancedSRMHandler extends SRMHandler {
     @Serial
     private static final long serialVersionUID = -1688593262282782251L;
 
-    public AdvancedSRMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public AdvancedSRMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
         nSalvoBonus = 1;
     }

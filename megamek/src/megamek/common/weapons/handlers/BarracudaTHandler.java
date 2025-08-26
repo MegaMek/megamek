@@ -39,6 +39,7 @@ import java.io.Serial;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -56,7 +57,7 @@ public class BarracudaTHandler extends TeleMissileHandler {
      *
      */
     public BarracudaTHandler(ToHitData t, WeaponAttackAction w, Game g,
-          TWGameManager m) {
+          TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
     }
 

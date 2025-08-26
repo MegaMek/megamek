@@ -45,6 +45,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Building;
@@ -60,7 +61,8 @@ public class FlamerHandler extends WeaponHandler {
     @Serial
     private static final long serialVersionUID = -7348456582587703751L;
 
-    public FlamerHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
+    public FlamerHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }

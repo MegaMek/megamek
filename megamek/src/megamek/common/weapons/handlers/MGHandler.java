@@ -44,6 +44,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Infantry;
@@ -62,7 +63,7 @@ public class MGHandler extends AmmoWeaponHandler {
     /**
      *
      */
-    public MGHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public MGHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
         damageType = DamageType.ANTI_INFANTRY;
     }

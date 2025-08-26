@@ -43,6 +43,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
@@ -56,7 +57,7 @@ public class SRMAntiTSMHandler extends SRMSmokeWarheadHandler {
     @Serial
     private static final long serialVersionUID = 6380017303917455020L;
 
-    public SRMAntiTSMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public SRMAntiTSMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
         sSalvoType = " anti-TSM missile(s) ";
         damageType = DamageType.ANTI_TSM;

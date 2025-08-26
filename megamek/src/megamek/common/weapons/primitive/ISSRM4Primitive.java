@@ -35,15 +35,19 @@
 
 package megamek.common.weapons.primitive;
 
+import static megamek.common.game.IGame.LOGGER;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.srm.SRMHandler;
 import megamek.common.weapons.srms.SRMWeapon;
@@ -95,8 +99,15 @@ public class ISSRM4Primitive extends SRMWeapon {
     }
 
     @Override
+    @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
-        return new SRMHandler(toHit, waa, game, manager, -2);
+        try {
+            return new SRMHandler(toHit, waa, game, manager, -2);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
+
     }
 }

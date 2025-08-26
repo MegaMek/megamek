@@ -41,6 +41,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.weapons.Weapon;
 import megamek.server.totalwarfare.TWGameManager;
@@ -56,7 +57,7 @@ public class RACHandler extends UltraWeaponHandler {
     /**
      *
      */
-    public RACHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public RACHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
     }
 

@@ -34,10 +34,13 @@
 
 package megamek.common.weapons;
 
+import static megamek.common.game.IGame.LOGGER;
+
 import java.io.Serial;
 
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
@@ -67,8 +70,8 @@ public abstract class AmmoWeapon extends Weapon {
      * , megamek.common.game.Game)
      */
     @Override
-    public AttackHandler fire(WeaponAttackAction weaponAttackAction, Game game, TWGameManager manager)
-          throws EntityLoadingException {
+    @Nullable
+    public AttackHandler fire(WeaponAttackAction weaponAttackAction, Game game, TWGameManager manager) {
         // Just in case. Often necessary when/if multiple ammo weapons are
         // fired; if this line not present
         // then when one ammo slots run dry the rest silently don't fire.
@@ -96,8 +99,14 @@ public abstract class AmmoWeapon extends Weapon {
      * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game)
      */
     @Override
-    public AttackHandler getCorrectHandler(ToHitData toHit,
-          WeaponAttackAction waa, Game game, TWGameManager manager) {
-        return new AmmoWeaponHandler(toHit, waa, game, manager);
+    @Nullable
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
+        try {
+            return new AmmoWeaponHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Ammo Weapon Handler has Null Entity.");
+        }
+
+        return null;
     }
 }

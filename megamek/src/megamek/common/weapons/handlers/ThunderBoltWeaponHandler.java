@@ -45,6 +45,7 @@ import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
 import megamek.common.units.Entity;
@@ -63,7 +64,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
      *
      */
     public ThunderBoltWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-          TWGameManager m) {
+          TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
     }
 

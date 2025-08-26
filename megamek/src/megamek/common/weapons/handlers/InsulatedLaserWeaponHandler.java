@@ -42,6 +42,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class InsulatedLaserWeaponHandler extends EnergyWeaponHandler {
@@ -51,7 +52,8 @@ public class InsulatedLaserWeaponHandler extends EnergyWeaponHandler {
     /**
      *
      */
-    public InsulatedLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
+    public InsulatedLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(toHit, waa, g, m);
     }
 

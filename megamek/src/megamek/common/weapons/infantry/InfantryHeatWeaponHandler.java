@@ -46,6 +46,7 @@ import megamek.common.compute.ComputeSideTable;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Building;
 import megamek.common.units.Entity;
@@ -70,7 +71,7 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
      *
      */
     public InfantryHeatWeaponHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
-          TWGameManager twGameManager) {
+          TWGameManager twGameManager) throws EntityLoadingException {
         super(toHitData, weaponAttackAction, game, twGameManager);
         bSalvo = true;
     }

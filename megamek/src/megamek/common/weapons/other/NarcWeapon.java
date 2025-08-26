@@ -34,11 +34,16 @@
 
 package megamek.common.weapons.other;
 
+import static megamek.common.game.IGame.LOGGER;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
+import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.NarcExplosiveHandler;
 import megamek.common.weapons.handlers.NarcHandler;
@@ -73,15 +78,23 @@ public abstract class NarcWeapon extends MissileWeapon {
      * megamek.server.Server)
      */
     @Override
-    public AttackHandler getCorrectHandler(ToHitData toHit,
-          WeaponAttackAction waa, Game game, TWGameManager manager) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-              .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if ((atype.getMunitionType().contains(AmmoType.Munitions.M_NARC_EX))
-              || (atype.getMunitionType().contains(AmmoType.Munitions.M_EXPLOSIVE))) {
-            return new NarcExplosiveHandler(toHit, waa, game, manager);
+    @Nullable
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
+        try {
+            Entity entity = game.getEntity(waa.getEntityId());
+
+            if (entity != null) {
+                AmmoType ammoType = (AmmoType) entity.getEquipment(waa.getWeaponId()).getLinked().getType();
+                if ((ammoType.getMunitionType().contains(AmmoType.Munitions.M_NARC_EX))
+                      || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXPLOSIVE))) {
+                    return new NarcExplosiveHandler(toHit, waa, game, manager);
+                }
+            }
+            return new NarcHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
         }
-        return new NarcHandler(toHit, waa, game, manager);
+        return null;
     }
 
     @Override

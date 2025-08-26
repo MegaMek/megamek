@@ -45,6 +45,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Infantry;
 import megamek.server.totalwarfare.TWGameManager;
@@ -53,7 +54,8 @@ public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
     @Serial
     private static final long serialVersionUID = -5701939682138221449L;
 
-    public PulseLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
+    public PulseLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(toHit, waa, g, m);
     }
 

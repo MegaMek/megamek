@@ -45,6 +45,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Infantry;
 import megamek.server.totalwarfare.TWGameManager;
@@ -56,7 +57,8 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
     /**
      *
      */
-    public HyperLaserHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
+    public HyperLaserHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(toHit, waa, g, m);
     }
 

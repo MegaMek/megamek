@@ -43,6 +43,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Infantry;
 import megamek.common.weapons.handlers.WeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
@@ -53,8 +54,9 @@ public class BALBXHandler extends WeaponHandler {
 
     private static final String sSalvoType = " pellet(s) ";
 
-    public BALBXHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
-        super(t, w, g, m);
+    public BALBXHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
+          TWGameManager twGameManager) throws EntityLoadingException {
+        super(toHitData, weaponAttackAction, game, twGameManager);
     }
 
     /*

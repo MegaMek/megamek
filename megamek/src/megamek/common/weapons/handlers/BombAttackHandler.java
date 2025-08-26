@@ -58,6 +58,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
@@ -76,7 +77,8 @@ public class BombAttackHandler extends WeaponHandler {
     /**
      *
      */
-    public BombAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
+    public BombAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_NONE;
     }

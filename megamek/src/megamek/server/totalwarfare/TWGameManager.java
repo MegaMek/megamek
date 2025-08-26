@@ -6276,6 +6276,7 @@ public class TWGameManager extends AbstractGameManager {
                                     ah.setStrafingFirstShot(waa.isStrafingFirstShot());
                                     game.addAttack(ah);
                                 }
+
                             }
                         }
                     }

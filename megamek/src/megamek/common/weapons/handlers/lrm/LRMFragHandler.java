@@ -43,6 +43,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Building;
 import megamek.common.units.Entity;
@@ -56,7 +57,7 @@ public class LRMFragHandler extends LRMHandler {
     @Serial
     private static final long serialVersionUID = 2308151080895016663L;
 
-    public LRMFragHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public LRMFragHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
         sSalvoType = " fragmentation missile(s) ";
         damageType = DamageType.FRAGMENTATION;

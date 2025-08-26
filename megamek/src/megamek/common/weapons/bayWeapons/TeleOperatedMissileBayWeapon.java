@@ -34,14 +34,18 @@
 
 package megamek.common.weapons.bayWeapons;
 
+import static megamek.common.game.IGame.LOGGER;
+
 import java.io.Serial;
 
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
@@ -89,23 +93,24 @@ public class TeleOperatedMissileBayWeapon extends CapitalMissileBayWeapon {
      * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game)
      */
     @Override
-    public AttackHandler getCorrectHandler(ToHitData toHit,
-          WeaponAttackAction waa, Game game, TWGameManager manager) {
-        Mounted<?> weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
-        Entity attacker = game.getEntity(waa.getEntityId());
-        int rangeToTarget = attacker.getPosition().distance(waa.getTarget(game).getPosition());
-        if (weapon.isInBearingsOnlyMode()
-              && rangeToTarget >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
-            return new CapitalMissileBearingsOnlyHandler(toHit, waa, game, manager);
-        } else if (weapon.curMode().equals(Weapon.MODE_CAP_MISSILE_TELE_OPERATED)) {
-            return new TeleMissileHandler(toHit, waa, game, manager);
-        } else {
-            return new CapitalMissileBayHandler(toHit, waa, game, manager);
+    @Nullable
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
+        try {
+            Mounted<?> weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
+            Entity attacker = game.getEntity(waa.getEntityId());
+            int rangeToTarget = attacker.getPosition().distance(waa.getTarget(game).getPosition());
+            if (weapon.isInBearingsOnlyMode()
+                  && rangeToTarget >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
+                return new CapitalMissileBearingsOnlyHandler(toHit, waa, game, manager);
+            } else if (weapon.curMode().equals(Weapon.MODE_CAP_MISSILE_TELE_OPERATED)) {
+                return new TeleMissileHandler(toHit, waa, game, manager);
+            } else {
+                return new CapitalMissileBayHandler(toHit, waa, game, manager);
+            }
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
         }
+        return null;
     }
 
-    @Override
-    public int getBattleForceClass() {
-        return BF_CLASS_CAPITAL_MISSILE;
-    }
 }

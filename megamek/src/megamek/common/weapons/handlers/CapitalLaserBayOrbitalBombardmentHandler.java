@@ -53,6 +53,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
@@ -65,7 +66,8 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
     private boolean isReported = false;
     private final ArtilleryAttackAction attackAction;
 
-    public CapitalLaserBayOrbitalBombardmentHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public CapitalLaserBayOrbitalBombardmentHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
         attackAction = (ArtilleryAttackAction) w;
     }

@@ -45,6 +45,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.MissileWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
@@ -56,7 +57,8 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
     @Serial
     private static final long serialVersionUID = -3661776853552779877L;
 
-    public LRMScatterableHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public LRMScatterableHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+          throws EntityLoadingException {
         super(t, w, g, m);
     }
 

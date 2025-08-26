@@ -525,7 +525,7 @@ class ComputeToHitIsImpossible {
         if ((isArtilleryIndirect || isArtilleryDirect)
               && attacker.getElevation() < -attacker.getHeight()
               && game.getHexOf(attacker).hasDepth1WaterOrDeeper()
-              && !weapon.getType().hasFlag(WeaponTypeFlag.F_CRUISE_MISSILE)) {
+              && (weapon == null || !weapon.getType().hasFlag(WeaponTypeFlag.F_CRUISE_MISSILE))) {
             return Messages.getString("WeaponAttackAction.ArtyOutOfWater");
         }
 

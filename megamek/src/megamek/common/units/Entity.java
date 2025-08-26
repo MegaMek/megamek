@@ -83,7 +83,7 @@ import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.eras.Eras;
-import megamek.common.event.GameEntityChangeEvent;
+import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.force.Force;
 import megamek.common.game.Game;

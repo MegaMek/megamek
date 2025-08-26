@@ -39,8 +39,8 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.FlareSprite;
 import megamek.common.equipment.Flare;
+import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.game.Game;
-import megamek.common.event.GameBoardChangeEvent;
 
 public class FlareSpritesHandler extends BoardViewSpriteHandler {
 

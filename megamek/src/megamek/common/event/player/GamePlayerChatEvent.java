@@ -32,11 +32,12 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.event;
+package megamek.common.event.player;
 
 import java.io.Serial;
 
 import megamek.common.Player;
+import megamek.common.event.GameListener;
 
 /**
  * Instances of this class are sent when chat message received

@@ -32,59 +32,49 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.event;
 
-import megamek.common.board.Board;
-import megamek.common.game.Game;
+package megamek.common.event.board;
+
+import java.io.Serial;
+
+import megamek.common.board.Coords;
 
 /**
- * Instances of this class are sent when the new board for game is set
+ * Instances of this class are sent as a result of Board change
  *
- * @see Game#setBoard(Board)
- * @see GameListener
+ * @see BoardListener
  */
-public class GameBoardNewEvent extends GameEvent {
-
-    private final Board oldBoard;
-    private final Board newBoard;
-    private final int boardId;
-
+public class BoardEvent extends java.util.EventObject {
     /**
-     * Constructs the new event with the specified old/new board objects
      *
-     * @param source   The event source
-     * @param oldBoard old game board
-     * @param newBoard new game board
      */
-    public GameBoardNewEvent(Object source, Board oldBoard, Board newBoard, int boardId) {
+    @Serial
+    private static final long serialVersionUID = 6895134212472497607L;
+    public static final int BOARD_NEW_BOARD = 0;
+    public static final int BOARD_CHANGED_HEX = 1;
+    public static final int BOARD_CHANGED_ALL_HEXES = 2;
+
+    private final Coords coords;
+    private final int type;
+
+    public BoardEvent(Object source, Coords coords, int type) {
         super(source);
-        this.oldBoard = oldBoard;
-        this.newBoard = newBoard;
-        this.boardId = boardId;
-    }
-
-    public Board getNewBoard() {
-        return newBoard;
-    }
-
-    public Board getOldBoard() {
-        return oldBoard;
-    }
-
-    @Override
-    public void fireEvent(GameListener gameListener) {
-        gameListener.gameBoardNew(this);
-    }
-
-    @Override
-    public String getEventName() {
-        return "New Board";
+        this.coords = coords;
+        this.type = type;
     }
 
     /**
-     * @return The ID of both the old and new Board.
+     * @return the type of event that this is
      */
-    public int getBoardId() {
-        return boardId;
+    public int getType() {
+        return type;
+    }
+
+    /**
+     * @return the coordinate where this event occurred, if applicable;
+     *       <code>null</code> otherwise.
+     */
+    public Coords getCoords() {
+        return coords;
     }
 }

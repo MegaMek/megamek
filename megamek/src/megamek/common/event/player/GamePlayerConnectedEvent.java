@@ -32,47 +32,34 @@
  * affiliated with Microsoft.
  */
 
+package megamek.common.event.player;
 
-package megamek.common.event;
+import java.io.Serial;
+
+import megamek.common.Player;
+import megamek.common.event.GameListener;
 
 /**
- * This adapter class provides default implementations for the methods described by the <code>BoardListener</code>
- * interface.
- * <p>
- * Classes that wish to deal with <code>BoardEvent</code>s can extend this class and override only the methods which
- * they are interested in.
- * </p>
- *
- * @see BoardListener
- * @see BoardEvent
+ * Instances of this class are sent when some Player connected
  */
-public class BoardListenerAdapter implements BoardListener {
+public class GamePlayerConnectedEvent extends GamePlayerEvent {
+    @Serial
+    private static final long serialVersionUID = -4745294587017447893L;
 
     /**
-     * Sent when Board completely changed The default behavior is to do nothing.
      *
-     * @param b an event containing information about the change
      */
-    @Override
-    public void boardNewBoard(BoardEvent b) {
+    public GamePlayerConnectedEvent(Object source, Player player) {
+        super(source, player);
     }
 
-    /**
-     * Sent when Hex on the Board changed The default behavior is to do nothing.
-     *
-     * @param b an event containing information about the change
-     */
     @Override
-    public void boardChangedHex(BoardEvent b) {
+    public void fireEvent(GameListener gl) {
+        gl.gamePlayerConnected(this);
     }
 
-    /**
-     * Sent when all Hexes on the Board changed The default behavior is to do nothing.
-     *
-     * @param b an event containing information about the change
-     */
     @Override
-    public void boardChangedAllHexes(BoardEvent b) {
+    public String getEventName() {
+        return "Game Player Connected";
     }
-
 }

@@ -56,7 +56,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.AmmoType.Munitions;
 import megamek.common.equipment.Minefield;
-import megamek.common.event.GamePlayerStrategicActionEvent;
+import megamek.common.event.player.GamePlayerStrategicActionEvent;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;

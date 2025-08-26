@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,32 +33,13 @@
 
 package megamek.common.event;
 
-import java.io.Serial;
-
-import megamek.common.units.Entity;
-
 /**
- * Instances of this class are sent when entity is removed
+ * An event triggered after the SuiteOptions are changed. The event handlers cannot modify these options.
  */
-public class GameEntityRemoveEvent extends GameEntityEvent {
-    @Serial
-    private static final long serialVersionUID = -4694809256962666172L;
-
-    /**
-     *
-     */
-    public GameEntityRemoveEvent(Object source, Entity entity) {
-        super(source);
-        this.entity = entity;
+public class SuiteOptionsChangedEvent extends MMEvent {
+    // region Constructors
+    public SuiteOptionsChangedEvent() {
+        super();
     }
-
-    @Override
-    public void fireEvent(GameListener gl) {
-        gl.gameEntityRemove(this);
-    }
-
-    @Override
-    public String getEventName() {
-        return "Entity Remove";
-    }
+    // endregion Constructors
 }

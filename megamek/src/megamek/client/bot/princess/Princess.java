@@ -34,7 +34,6 @@
 package megamek.client.bot.princess;
 
 import java.io.File;
-import java.lang.System;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
@@ -90,7 +89,7 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.event.GameCFREvent;
-import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.game.IGame;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;

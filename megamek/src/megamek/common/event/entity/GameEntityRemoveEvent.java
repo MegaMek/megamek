@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,41 +32,35 @@
  * affiliated with Microsoft.
  */
 
+package megamek.common.event.entity;
 
-package megamek.common.event;
+import java.io.Serial;
+
+import megamek.common.event.GameListener;
+import megamek.common.units.Entity;
 
 /**
- * Classes which implement this interface provide methods that deal with the events that are generated when the Board is
- * changed.
- * <p>
- * After creating an instance of a class that implements this interface it can be added to a Board using the
- * <code>addBoardListener</code> method and removed using the <code>removeBoardListener</code> method. When board is
- * changed the appropriate method will be invoked.
- * </p>
- *
- * @see BoardListenerAdapter
- * @see BoardEvent
+ * Instances of this class are sent when entity is removed
  */
-public interface BoardListener extends java.util.EventListener {
-    /**
-     * Sent when the Board is completely changed. The board's size may have changed.
-     *
-     * @param b an event containing information about the change
-     */
-    void boardNewBoard(BoardEvent b);
+public class GameEntityRemoveEvent extends GameEntityEvent {
+    @Serial
+    private static final long serialVersionUID = -4694809256962666172L;
 
     /**
-     * Sent when a single hex on the Board changed.
      *
-     * @param b an event containing information about the change
      */
-    void boardChangedHex(BoardEvent b);
+    public GameEntityRemoveEvent(Object source, Entity entity) {
+        super(source);
+        this.entity = entity;
+    }
 
-    /**
-     * Sent when all hexes on the board changed.
-     *
-     * @param b an event containing information about the change
-     */
-    void boardChangedAllHexes(BoardEvent b);
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gameEntityRemove(this);
+    }
 
+    @Override
+    public String getEventName() {
+        return "Entity Remove";
+    }
 }

@@ -60,13 +60,23 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayDialog;
 import megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility;
 import megamek.client.ui.util.ScalingPopup;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.event.*;
+import megamek.common.event.board.GameBoardChangeEvent;
+import megamek.common.event.board.GameBoardNewEvent;
+import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.event.entity.GameEntityNewEvent;
+import megamek.common.event.entity.GameEntityNewOffboardEvent;
+import megamek.common.event.entity.GameEntityRemoveEvent;
+import megamek.common.event.player.GamePlayerChangeEvent;
+import megamek.common.event.player.GamePlayerChatEvent;
+import megamek.common.event.player.GamePlayerConnectedEvent;
+import megamek.common.event.player.GamePlayerDisconnectedEvent;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.game.Game;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**

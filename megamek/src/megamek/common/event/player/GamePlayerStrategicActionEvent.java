@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,48 +31,49 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.event;
+package megamek.common.event.player;
 
 import java.io.Serial;
 
-import megamek.common.units.Entity;
+import megamek.common.actions.EntityAction;
+import megamek.common.event.GameEvent;
+import megamek.common.event.GameListener;
 
 /**
- * Instances of descendant classes are sent as a result of Game changes related to entities such as
- * adding/removing/changing
+ * Instances of this class are sent when a strategic action is created in the game
  *
- * @see GameEntityChangeEvent
- * @see GameEntityNewEvent
  * @see GameListener
  */
-public abstract class GameEntityEvent extends GameEvent {
+public class GamePlayerStrategicActionEvent extends GameEvent {
 
-    /**
-     *
-     */
     @Serial
-    private static final long serialVersionUID = -2152420685366625391L;
-    protected Entity entity;
-
-    public GameEntityEvent(Object source) {
-        super(source);
-        this.entity = null;
-    }
+    private static final long serialVersionUID = 928848699583079097L;
+    protected EntityAction action;
 
     /**
-     * Constructs new GameEntityEvent
+     * Construct new GameNewActionEvent
      *
+     * @param source sender
      */
-    public GameEntityEvent(Object source, Entity entity) {
+    public GamePlayerStrategicActionEvent(Object source, EntityAction action) {
         super(source);
-        this.entity = entity;
+        this.action = action;
     }
 
     /**
-     * @return the entity.
+     * @return the action.
      */
-    public Entity getEntity() {
-        return entity;
+    public EntityAction getAction() {
+        return action;
     }
 
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gamePlayerStrategicAction(this);
+    }
+
+    @Override
+    public String getEventName() {
+        return "Game New Action";
+    }
 }

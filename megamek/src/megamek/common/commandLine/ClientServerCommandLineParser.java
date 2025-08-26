@@ -325,7 +325,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
             }
 
             if ((playerName == null) || playerName.isBlank()) {
-                playerName = MMConstants.DEFAULT_PLAYERNAME;
+                playerName = MMConstants.DEFAULT_PLAYER_NAME;
             }
 
             if ((serverAddress == null) || serverAddress.isBlank()) {

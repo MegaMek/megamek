@@ -39,9 +39,9 @@ import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.GroundObjectSprite;
 import megamek.common.board.Coords;
-import megamek.common.game.Game;
 import megamek.common.equipment.ICarryable;
-import megamek.common.event.GameBoardChangeEvent;
+import megamek.common.event.board.GameBoardChangeEvent;
+import megamek.common.game.Game;
 
 public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
 

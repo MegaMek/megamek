@@ -98,7 +98,7 @@ public final class MMConstants extends SuiteConstants {
     public static final int MIN_PORT_FOR_QUICK_GAME = 1024; // Minimum port for quick games for testing or AI usage to
     // prevent possible issues with needing root access to run.
     public static final int MAX_PORT = 65535;
-    public static final String DEFAULT_PLAYERNAME = "Player";
+    public static final String DEFAULT_PLAYER_NAME = "Player";
     public static final String LOCALHOST = "localhost";
     public static final String LOCALHOST_IP = "127.0.0.1";
     // endregion ClientServer
@@ -126,5 +126,5 @@ public final class MMConstants extends SuiteConstants {
     public static final int TSEMP_EFFECT_SHUTDOWN = 2;
     // endregion Magic Numbers That Should Be Enums
 
-    public static final String CL_KEY_FILEEXTENTION_BOARD = ".board";
+    public static final String CL_KEY_FILE_EXTENSION_BOARD = ".board";
 }

@@ -34,6 +34,17 @@
 
 package megamek.common.event;
 
+import megamek.common.event.board.GameBoardChangeEvent;
+import megamek.common.event.board.GameBoardNewEvent;
+import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.event.entity.GameEntityNewEvent;
+import megamek.common.event.entity.GameEntityNewOffboardEvent;
+import megamek.common.event.entity.GameEntityRemoveEvent;
+import megamek.common.event.player.GamePlayerChangeEvent;
+import megamek.common.event.player.GamePlayerChatEvent;
+import megamek.common.event.player.GamePlayerConnectedEvent;
+import megamek.common.event.player.GamePlayerDisconnectedEvent;
+
 /**
  * This adapter class provides default implementations for the methods described by the <code>GameListener</code>
  * interface.

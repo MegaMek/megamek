@@ -58,7 +58,7 @@ import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.event.GamePlayerStrategicActionEvent;
+import megamek.common.event.player.GamePlayerStrategicActionEvent;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;

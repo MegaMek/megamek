@@ -143,10 +143,10 @@ import megamek.common.board.postprocess.TWBoardTransformer;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.BombLoadout;
 import megamek.common.event.GameCFREvent;
-import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.event.entity.GameEntityNewEvent;
+import megamek.common.event.player.GamePlayerChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.game.Game;
@@ -1169,7 +1169,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         boardTags.clear();
         for (String boardName : mapSettings.getBoardsAvailableVector()) {
             File boardFile = new MegaMekFile(Configuration.boardsDir(),
-                  boardName + MMConstants.CL_KEY_FILEEXTENTION_BOARD).getFile();
+                  boardName + MMConstants.CL_KEY_FILE_EXTENSION_BOARD).getFile();
             Set<String> tags = Board.getTags(boardFile);
             boardTags.put(boardName, String.join("||", tags).toLowerCase());
         }
@@ -1267,13 +1267,13 @@ public class ChatLounge extends AbstractPhaseDisplay
                         }
 
                         File boardFile = new MegaMekFile(Configuration.boardsDir(),
-                              boardForImage + MMConstants.CL_KEY_FILEEXTENTION_BOARD).getFile();
+                              boardForImage + MMConstants.CL_KEY_FILE_EXTENSION_BOARD).getFile();
                         if (boardFile.exists()) {
                             buttonBoard = new Board(16, 17);
                             buttonBoard.load(new MegaMekFile(Configuration.boardsDir(),
-                                  boardForImage + MMConstants.CL_KEY_FILEEXTENTION_BOARD).getFile());
+                                  boardForImage + MMConstants.CL_KEY_FILE_EXTENSION_BOARD).getFile());
                             try (InputStream is = new FileInputStream(new MegaMekFile(Configuration.boardsDir(),
-                                  boardForImage + MMConstants.CL_KEY_FILEEXTENTION_BOARD).getFile())) {
+                                  boardForImage + MMConstants.CL_KEY_FILE_EXTENSION_BOARD).getFile())) {
                                 buttonBoard.load(is, null, true);
                                 BoardUtilities.flip(buttonBoard, rotateBoard, rotateBoard);
                             } catch (IOException ex) {
@@ -3516,7 +3516,7 @@ public class ChatLounge extends AbstractPhaseDisplay
 
         private Image prepareImage(String boardName) {
             File boardFile = new MegaMekFile(Configuration.boardsDir(),
-                  boardName + MMConstants.CL_KEY_FILEEXTENTION_BOARD).getFile();
+                  boardName + MMConstants.CL_KEY_FILE_EXTENSION_BOARD).getFile();
             Board board;
             java.util.List<String> errors = new ArrayList<>();
             if (boardFile.exists()) {

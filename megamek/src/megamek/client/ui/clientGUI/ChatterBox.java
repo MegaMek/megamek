@@ -58,14 +58,14 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.PlayerListDialog;
 import megamek.client.ui.panels.phaseDisplay.AbstractPhaseDisplay;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.event.GameEntityChangeEvent;
-import megamek.common.event.GameEntityNewEvent;
-import megamek.common.event.GameEntityRemoveEvent;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.event.GamePlayerChangeEvent;
-import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.event.entity.GameEntityNewEvent;
+import megamek.common.event.entity.GameEntityRemoveEvent;
+import megamek.common.event.player.GamePlayerChangeEvent;
+import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.preference.PreferenceManager;
 
 /**

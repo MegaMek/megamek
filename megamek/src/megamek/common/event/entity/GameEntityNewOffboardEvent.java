@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -31,47 +32,38 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.event;
+package megamek.common.event.entity;
 
 import java.io.Serial;
 
-import megamek.common.actions.EntityAction;
+import megamek.common.event.GameEvent;
+import megamek.common.event.GameListener;
 
 /**
- * Instances of this class are sent when a strategic action is created in the game
- *
- * @see GameListener
+ * Instances of this class are sent when new Offboard entity is added to game
  */
-public class GamePlayerStrategicActionEvent extends GameEvent {
-
-    @Serial
-    private static final long serialVersionUID = 928848699583079097L;
-    protected EntityAction action;
+public class GameEntityNewOffboardEvent extends GameEvent {
 
     /**
-     * Construct new GameNewActionEvent
      *
-     * @param source sender
      */
-    public GamePlayerStrategicActionEvent(Object source, EntityAction action) {
-        super(source);
-        this.action = action;
-    }
+    @Serial
+    private static final long serialVersionUID = 8497680533582651572L;
 
     /**
-     * @return the action.
+     *
      */
-    public EntityAction getAction() {
-        return action;
+    public GameEntityNewOffboardEvent(Object source) {
+        super(source);
     }
 
     @Override
     public void fireEvent(GameListener gl) {
-        gl.gamePlayerStrategicAction(this);
+        gl.gameEntityNewOffboard(this);
     }
 
     @Override
     public String getEventName() {
-        return "Game New Action";
+        return "Entity New Off-board";
     }
 }

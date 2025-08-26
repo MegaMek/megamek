@@ -33,11 +33,11 @@
 
 package megamek.client.ui.clientGUI;
 
-import megamek.common.event.GameBoardNewEvent;
-import megamek.common.event.GameEntityChangeEvent;
-import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.board.GameBoardNewEvent;
+import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.event.entity.GameEntityNewEvent;
 
 public class SBFClientGUIGameListener extends GameListenerAdapter {
 

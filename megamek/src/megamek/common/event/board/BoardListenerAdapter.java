@@ -33,48 +33,46 @@
  */
 
 
-package megamek.common.event;
-
-import java.io.Serial;
-
-import megamek.common.board.Coords;
+package megamek.common.event.board;
 
 /**
- * Instances of this class are sent as a result of Board change
+ * This adapter class provides default implementations for the methods described by the <code>BoardListener</code>
+ * interface.
+ * <p>
+ * Classes that wish to deal with <code>BoardEvent</code>s can extend this class and override only the methods which
+ * they are interested in.
+ * </p>
  *
  * @see BoardListener
+ * @see BoardEvent
  */
-public class BoardEvent extends java.util.EventObject {
+public class BoardListenerAdapter implements BoardListener {
+
     /**
+     * Sent when Board completely changed The default behavior is to do nothing.
      *
+     * @param b an event containing information about the change
      */
-    @Serial
-    private static final long serialVersionUID = 6895134212472497607L;
-    public static final int BOARD_NEW_BOARD = 0;
-    public static final int BOARD_CHANGED_HEX = 1;
-    public static final int BOARD_CHANGED_ALL_HEXES = 2;
-
-    private final Coords coords;
-    private final int type;
-
-    public BoardEvent(Object source, Coords coords, int type) {
-        super(source);
-        this.coords = coords;
-        this.type = type;
+    @Override
+    public void boardNewBoard(BoardEvent b) {
     }
 
     /**
-     * @return the type of event that this is
+     * Sent when Hex on the Board changed The default behavior is to do nothing.
+     *
+     * @param b an event containing information about the change
      */
-    public int getType() {
-        return type;
+    @Override
+    public void boardChangedHex(BoardEvent b) {
     }
 
     /**
-     * @return the coordinate where this event occurred, if applicable;
-     *       <code>null</code> otherwise.
+     * Sent when all Hexes on the Board changed The default behavior is to do nothing.
+     *
+     * @param b an event containing information about the change
      */
-    public Coords getCoords() {
-        return coords;
+    @Override
+    public void boardChangedAllHexes(BoardEvent b) {
     }
+
 }

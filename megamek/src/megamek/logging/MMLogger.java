@@ -66,8 +66,8 @@ import org.apache.logging.log4j.spi.ExtendedLoggerWrapper;
  * overload for a title to allow for displaying of a dialog box.
  * </p>
  * <p>
- * This class also implements both the parametric pattern and the string format for the functions that are overriden and
- * added here. This means that you can use the following formats for the messages in some cases:
+ * This class also implements both the parametric pattern and the string format for the functions that are overridden
+ * and added here. This means that you can use the following formats for the messages in some cases:
  * </p>
  *
  * <pre>{@code

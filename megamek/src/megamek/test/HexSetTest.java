@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,8 +47,8 @@ import java.util.Vector;
 
 import megamek.client.ui.tileset.TilesetManager;
 import megamek.common.Configuration;
-import megamek.common.units.Terrain;
 import megamek.common.util.StringUtil;
+import megamek.logging.MMLogger;
 
 /**
  * This class provides a utility to read in a HexTileSet and test to make sure all images are accessible
@@ -56,6 +56,7 @@ import megamek.common.util.StringUtil;
  * @author arlith
  */
 public class HexSetTest {
+    private final static MMLogger LOGGER = MMLogger.create(HexSetTest.class);
 
     private static class StringCompCaseInsensitive implements Comparator<String> {
         @Override
@@ -68,62 +69,35 @@ public class HexSetTest {
      * Reads the *set file in the given directory and filename.  It looks at the given image file and prints a message
      * if the file cannot be opened and if the case does not match.
      *
-     * @param dir
-     * @param filename
-     *
-     * @throws IOException
      */
-    private static void testFile(File dir, String filename, int incDepth)
-          throws IOException {
-        System.out.println("Checking file: " + filename);
+    private static void testFile(File dir, String filename, int incDepth) throws IOException {
+        LOGGER.info("Checking file: {}", filename);
 
-        // make inpustream for board
-        Reader r = new BufferedReader(new FileReader(new File(dir, filename)));
+        // make input stream for board
+        Reader bufferedReader = new BufferedReader(new FileReader(new File(dir, filename)));
         // read board, looking for "size"
-        StreamTokenizer st = new StreamTokenizer(r);
+        StreamTokenizer streamTokenizer = new StreamTokenizer(bufferedReader);
 
-        st.eolIsSignificant(true);
-        st.commentChar('#');
-        st.quoteChar('"');
-        st.wordChars('_', '_');
-        @SuppressWarnings("unused")
-        int bases, supers, orthos;
-        bases = supers = orthos = 0;
-        while (st.nextToken() != StreamTokenizer.TT_EOF) {
-            @SuppressWarnings("unused")
-            int elevation = 0;
-            // int levity = 0;
-            String terrain = null;
-            String theme = null;
-            String imageName = null;
-            if ((st.ttype == StreamTokenizer.TT_WORD)
-                  && (st.sval.equals("base") || st.sval.equals("super") ||
-                  st.sval.equals("ortho"))) {
-                boolean bas = st.sval.equals("base");
-                boolean sup = st.sval.equals("super");
-                boolean ort = st.sval.equals("ortho");
+        streamTokenizer.eolIsSignificant(true);
+        streamTokenizer.commentChar('#');
+        streamTokenizer.quoteChar('"');
+        streamTokenizer.wordChars('_', '_');
+        while (streamTokenizer.nextToken() != StreamTokenizer.TT_EOF) {
+            String terrain;
+            String theme;
+            String imageName;
+            if ((streamTokenizer.ttype == StreamTokenizer.TT_WORD)
+                  && (streamTokenizer.sval.equals("base")
+                  || streamTokenizer.sval.equals("super")
+                  || streamTokenizer.sval.equals("ortho"))) {
 
-                if (st.nextToken() == StreamTokenizer.TT_NUMBER) {
-                    elevation = (int) st.nval;
-                } else {
-                    elevation = Terrain.WILDCARD;
-                }
-                st.nextToken();
-                terrain = st.sval;
-                st.nextToken();
-                theme = st.sval;
-                st.nextToken();
-                imageName = st.sval;
-                // add to list
-                if (bas) {
-                    bases++;
-                }
-                if (sup) {
-                    supers++;
-                }
-                if (ort) {
-                    orthos++;
-                }
+                streamTokenizer.nextToken();
+                streamTokenizer.nextToken();
+                terrain = streamTokenizer.sval;
+                streamTokenizer.nextToken();
+                theme = streamTokenizer.sval;
+                streamTokenizer.nextToken();
+                imageName = streamTokenizer.sval;
                 Vector<String> filenames = StringUtil.splitString(imageName, ";");
                 for (String entryFile : filenames) {
                     String entryName;
@@ -134,42 +108,36 @@ public class HexSetTest {
                     }
                     testImageName(dir, entryFile, entryName);
                 }
-            } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equals("include")) {
-                st.nextToken();
+            } else if ((streamTokenizer.ttype == StreamTokenizer.TT_WORD) && streamTokenizer.sval.equals("include")) {
+                streamTokenizer.nextToken();
                 incDepth++;
                 if (incDepth < 100) {
-                    String incFile = st.sval;
+                    String incFile = streamTokenizer.sval;
                     testFile(dir, incFile, incDepth);
                 }
             }
         }
-        r.close();
-        System.out.println("\n");
+        bufferedReader.close();
         incDepth--;
     }
 
-    private static void testImageName(File dir, String imageName,
-          String entryName) throws IOException {
+    private static void testImageName(File dir, String imageName, String entryName) throws IOException {
         File imgFile = new File(dir, imageName);
 
-        boolean exactmatch = imgFile.exists()
-              && imgFile.getCanonicalPath().endsWith(imgFile.getName());
-        if (!exactmatch) {
-            System.out.print("Error with " + entryName + ": ");
+        boolean exactMatch = imgFile.exists() && imgFile.getCanonicalPath().endsWith(imgFile.getName());
+        if (!exactMatch) {
+            LOGGER.info("Error with {}: ", entryName);
             String[] dirFiles = imgFile.getParentFile().list();
             if (dirFiles != null) {
                 Arrays.sort(dirFiles, new StringCompCaseInsensitive());
-                int result = Arrays.binarySearch(dirFiles, imgFile.getName(),
-                      new StringCompCaseInsensitive());
+                int result = Arrays.binarySearch(dirFiles, imgFile.getName(), new StringCompCaseInsensitive());
                 if (result >= 0) {
-                    System.out.println("Case mismatch!  Entry Path: "
-                          + imageName);
+                    LOGGER.warn("Case mismatch! Entry Path: {}", imageName);
                 } else {
-                    System.out.println("File not found! Entry Path: "
-                          + imageName);
+                    LOGGER.warn("File not found! Entry Path: {}", imageName);
                 }
             } else {
-                System.out.println("File not found! Entry Path: " + imageName);
+                LOGGER.warn("Files not found! Entry Path: {}", imageName);
             }
         }
     }
@@ -179,20 +147,19 @@ public class HexSetTest {
         try {
             File hexesDir = Configuration.hexesDir();
 
-            String[] tilesetFiles = Configuration.hexesDir().list(
-                  (directory, fileName) -> fileName.endsWith(".tileset"));
+            String[] tilesetFiles = Configuration.hexesDir()
+                  .list((directory, fileName) -> fileName.endsWith(".tileset"));
             if (tilesetFiles != null) {
                 Arrays.sort(tilesetFiles);
                 for (String tileset : tilesetFiles) {
                     testFile(hexesDir, tileset, 0);
                 }
             }
-            // Create the default hexset, so we can validate it as well
+            // Create the default hex set, so we can validate it as well
             testFile(hexesDir, TilesetManager.FILENAME_DEFAULT_HEX_SET, 0);
 
         } catch (IOException e) {
-            System.out.println("IOException!");
-            e.printStackTrace();
+            LOGGER.error(e, "IO Exception: {}", e.getMessage());
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -55,15 +55,21 @@ public class ASWeaponDamageList {
                 wpLine.add(etype.getName());
                 wpLine.add(etype.getInternalName());
                 wpLine.add(etype.isClan() ? "-Clan-" : "-IS-");
-                double mult = etype.hasFlag(WeaponType.F_ONE_SHOT) ? 0.1 : 1;
-                double s = mult * ((WeaponType) etype).getBattleForceDamage(AlphaStrikeElement.SHORT_RANGE, null);
-                String sT = s == 0 ? "--" : "" + s;
-                double m = mult * ((WeaponType) etype).getBattleForceDamage(AlphaStrikeElement.MEDIUM_RANGE, null);
-                String mT = m == 0 ? "--" : "" + m;
-                double l = mult * ((WeaponType) etype).getBattleForceDamage(AlphaStrikeElement.LONG_RANGE, null);
-                String lT = l == 0 ? "--" : "" + l;
-                double ex = mult * ((WeaponType) etype).getBattleForceDamage(AlphaStrikeElement.EXTREME_RANGE, null);
-                String exT = ex == 0 ? "--" : "" + ex;
+                double multiplier = etype.hasFlag(WeaponType.F_ONE_SHOT) ? 0.1 : 1;
+                double shortRange = multiplier
+                      * ((WeaponType) etype).getBattleForceDamage(AlphaStrikeElement.SHORT_RANGE, null);
+                String sT = shortRange == 0 ? "--" : "" + shortRange;
+                double mediumRange = multiplier
+                      * ((WeaponType) etype).getBattleForceDamage(AlphaStrikeElement.MEDIUM_RANGE,
+                      null);
+                String mT = mediumRange == 0 ? "--" : "" + mediumRange;
+                double longRange = multiplier * ((WeaponType) etype).getBattleForceDamage(AlphaStrikeElement.LONG_RANGE,
+                      null);
+                String lT = longRange == 0 ? "--" : "" + longRange;
+                double extremeRange = multiplier
+                      * ((WeaponType) etype).getBattleForceDamage(AlphaStrikeElement.EXTREME_RANGE,
+                      null);
+                String exT = extremeRange == 0 ? "--" : "" + extremeRange;
                 wpLine.add(sT);
                 wpLine.add(mT);
                 wpLine.add(lT);

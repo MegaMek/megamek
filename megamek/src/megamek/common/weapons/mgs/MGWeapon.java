@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,8 @@ package megamek.common.weapons.mgs;
 
 import static megamek.common.game.IGame.LOGGER;
 
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -52,13 +54,18 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Oct 20, 2004
  */
 public abstract class MGWeapon extends AmmoWeapon {
+    @Serial
     private static final long serialVersionUID = 923749421748564257L;
 
     public MGWeapon() {
         super();
         ammoType = AmmoType.AmmoTypeEnum.MG;
-        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
-              .or(F_BALLISTIC).or(F_MG).or(F_PROTO_WEAPON)
+        flags = flags.or(F_MEK_WEAPON)
+              .or(F_TANK_WEAPON)
+              .or(F_AERO_WEAPON)
+              .or(F_BALLISTIC)
+              .or(F_MG)
+              .or(F_PROTO_WEAPON)
               .or(F_BURST_FIRE);
         atClass = CLASS_POINT_DEFENSE;
     }

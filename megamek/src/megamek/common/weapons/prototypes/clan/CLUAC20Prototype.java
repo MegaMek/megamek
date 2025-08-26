@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.prototypes.clan;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -45,6 +47,7 @@ import megamek.common.enums.TechRating;
  * @since Oct 2, 2004
  */
 public class CLUAC20Prototype extends CLPrototypeUACWeapon {
+    @Serial
     private static final long serialVersionUID = -8297688910484314546L;
 
     public CLUAC20Prototype() {

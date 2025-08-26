@@ -33,6 +33,8 @@
 
 package megamek.common.weapons.other.innerSphere;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -42,6 +44,7 @@ import megamek.common.weapons.other.TSEMPWeapon;
 
 public class ISTSEMPRepeatingCannon extends TSEMPWeapon {
 
+    @Serial
     private static final long serialVersionUID = -4861067053206502295L;
 
     public ISTSEMPRepeatingCannon() {

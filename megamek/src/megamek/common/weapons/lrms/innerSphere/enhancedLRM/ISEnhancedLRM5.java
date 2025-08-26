@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.lrms.innerSphere.enhancedLRM;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -46,6 +48,7 @@ import megamek.common.weapons.lrms.EnhancedLRMWeapon;
  */
 public class ISEnhancedLRM5 extends EnhancedLRMWeapon {
 
+    @Serial
     private static final long serialVersionUID = 3287950524687857609L;
 
     public ISEnhancedLRM5() {

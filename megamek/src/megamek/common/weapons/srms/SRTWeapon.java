@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,6 +39,8 @@ import static megamek.common.equipment.MountedHelper.isArtemisProto;
 import static megamek.common.equipment.MountedHelper.isArtemisV;
 import static megamek.common.game.IGame.LOGGER;
 
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
@@ -57,6 +59,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Sebastian Brocks
  */
 public abstract class SRTWeapon extends MissileWeapon {
+    @Serial
     private static final long serialVersionUID = 2209880229033489588L;
 
     public SRTWeapon() {

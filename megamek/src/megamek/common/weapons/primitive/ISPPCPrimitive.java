@@ -1,7 +1,6 @@
 /*
-
  * Copyright (C) 2000-2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,6 +34,8 @@
 
 package megamek.common.weapons.primitive;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -46,6 +47,7 @@ import megamek.common.weapons.ppc.PPCWeapon;
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  */
 public class ISPPCPrimitive extends PPCWeapon {
+    @Serial
     private static final long serialVersionUID = 1767670595802648539L;
 
     public ISPPCPrimitive() {

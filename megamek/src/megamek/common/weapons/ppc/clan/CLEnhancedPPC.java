@@ -1,6 +1,6 @@
 /*
-  Copyright (c) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.ppc.clan;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -46,6 +48,7 @@ import megamek.common.weapons.ppc.PPCWeapon;
  * @since Sep 13, 2004
  */
 public class CLEnhancedPPC extends PPCWeapon {
+    @Serial
     private static final long serialVersionUID = 5108976056064542099L;
 
     public CLEnhancedPPC() {

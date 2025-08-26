@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.lrms.clan.oneShot;
 
+import java.io.Serial;
+
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -44,6 +46,7 @@ import megamek.common.weapons.lrms.LRMWeapon;
  * @author Sebastian Brocks
  */
 public class CLLRM5OS extends LRMWeapon {
+    @Serial
     private static final long serialVersionUID = 767564661100835293L;
 
     public CLLRM5OS() {

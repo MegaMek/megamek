@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.mortars.clan;
 
+import java.io.Serial;
+
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -44,6 +46,7 @@ import megamek.common.weapons.mortars.MekMortarWeapon;
  * @author Jason Tighe
  */
 public class CLMekMortar1 extends MekMortarWeapon {
+    @Serial
     private static final long serialVersionUID = -2449264496450109574L;
 
     public CLMekMortar1() {

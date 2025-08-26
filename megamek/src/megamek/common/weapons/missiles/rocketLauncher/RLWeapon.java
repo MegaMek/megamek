@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,8 @@ package megamek.common.weapons.missiles.rocketLauncher;
 
 import static megamek.common.game.IGame.LOGGER;
 
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -55,6 +57,7 @@ public abstract class RLWeapon extends MissileWeapon {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -1718301014226423896L;
 
     /**

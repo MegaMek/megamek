@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,6 +38,8 @@ import static megamek.common.equipment.MountedHelper.isArtemisIV;
 import static megamek.common.equipment.MountedHelper.isArtemisProto;
 import static megamek.common.equipment.MountedHelper.isArtemisV;
 
+import java.io.Serial;
+
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -51,6 +53,7 @@ import megamek.common.weapons.lrms.LRMWeapon;
  */
 public class CLLRM10 extends LRMWeapon {
 
+    @Serial
     private static final long serialVersionUID = -3159588360292537303L;
 
     public CLLRM10() {

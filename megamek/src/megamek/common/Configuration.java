@@ -1,5 +1,4 @@
 /*
-
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *

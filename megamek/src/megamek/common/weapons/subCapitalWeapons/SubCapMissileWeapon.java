@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.subCapitalWeapons;
 
+import java.io.Serial;
+
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 
 /**
@@ -41,6 +43,7 @@ import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
  * @since Sep 2, 2004
  */
 public abstract class SubCapMissileWeapon extends CapitalMissileWeapon {
+    @Serial
     private static final long serialVersionUID = 9186993166684654767L;
 
     public SubCapMissileWeapon() {

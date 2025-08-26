@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.subCapitalWeapons;
 
+import java.io.Serial;
+
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.Mounted;
 import megamek.common.weapons.lasers.EnergyWeapon;
@@ -43,6 +45,7 @@ import megamek.common.weapons.lasers.EnergyWeapon;
  * @since Sep 2, 2004
  */
 public abstract class SubCapLaserWeapon extends EnergyWeapon {
+    @Serial
     private static final long serialVersionUID = -4293264735637352953L;
 
     public SubCapLaserWeapon() {

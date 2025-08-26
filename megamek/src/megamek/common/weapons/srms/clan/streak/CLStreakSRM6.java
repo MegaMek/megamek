@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,6 +33,8 @@
 
 package megamek.common.weapons.srms.clan.streak;
 
+import java.io.Serial;
+
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -47,6 +49,7 @@ public class CLStreakSRM6 extends StreakSRMWeapon {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -6416567366717880864L;
 
     /**

@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.

@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005, 2006, 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,8 @@ package megamek.common.weapons.mgs.clan;
 
 import static megamek.common.game.IGame.LOGGER;
 
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -56,6 +58,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Sebastian Brocks
  */
 public class CLHeavyMGA extends AmmoWeapon {
+    @Serial
     private static final long serialVersionUID = 7515050923963957889L;
 
     public CLHeavyMGA() {

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.subCapitalWeapons;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -45,6 +47,7 @@ import megamek.common.enums.TechRating;
  * @since Sep 25, 2004
  */
 public class SubCapLaserWeapon2 extends SubCapLaserWeapon {
+    @Serial
     private static final long serialVersionUID = 8756042527483383101L;
 
     public SubCapLaserWeapon2() {

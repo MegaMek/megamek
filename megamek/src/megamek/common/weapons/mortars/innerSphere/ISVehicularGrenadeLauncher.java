@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.mortars.innerSphere;
 
+import java.io.Serial;
+
 import megamek.common.weapons.mortars.VehicularGrenadeLauncherWeapon;
 
 /**
@@ -41,6 +43,7 @@ import megamek.common.weapons.mortars.VehicularGrenadeLauncherWeapon;
  * @since Sep 24, 2004
  */
 public class ISVehicularGrenadeLauncher extends VehicularGrenadeLauncherWeapon {
+    @Serial
     private static final long serialVersionUID = 2888705202399185703L;
 
     public ISVehicularGrenadeLauncher() {

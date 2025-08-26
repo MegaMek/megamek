@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,8 @@ package megamek.common.weapons.other.innerSphere;
 
 import static megamek.common.game.IGame.LOGGER;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -55,6 +57,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sep 24, 2004
  */
 public class ISFireExtinguisher extends Weapon {
+    @Serial
     private static final long serialVersionUID = -5387366609676650747L;
 
     public ISFireExtinguisher() {

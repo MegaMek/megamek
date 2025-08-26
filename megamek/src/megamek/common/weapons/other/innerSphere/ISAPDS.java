@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.other.innerSphere;
 
+import java.io.Serial;
+
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -46,6 +48,7 @@ import megamek.common.weapons.AmmoWeapon;
  * @since Sep 25, 2004
  */
 public class ISAPDS extends AmmoWeapon {
+    @Serial
     private static final long serialVersionUID = 5678281956614161074L;
 
     public ISAPDS() {

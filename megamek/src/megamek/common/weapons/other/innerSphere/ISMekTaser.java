@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2009-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,8 @@ package megamek.common.weapons.other.innerSphere;
 
 import static megamek.common.game.IGame.LOGGER;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -57,6 +59,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Jason Tighe
  */
 public class ISMekTaser extends AmmoWeapon {
+    @Serial
     private static final long serialVersionUID = 4393086562754363816L;
 
     public ISMekTaser() {

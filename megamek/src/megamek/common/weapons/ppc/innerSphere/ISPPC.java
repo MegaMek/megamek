@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.ppc.innerSphere;
 
+import java.io.Serial;
+
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -45,6 +47,7 @@ import megamek.common.weapons.ppc.PPCWeapon;
  * @since Sep 13, 2004
  */
 public class ISPPC extends PPCWeapon {
+    @Serial
     private static final long serialVersionUID = 5775665622863346537L;
 
     public ISPPC() {

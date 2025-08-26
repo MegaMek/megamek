@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.missiles.clan;
 
+import java.io.Serial;
+
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -46,6 +48,7 @@ import megamek.common.weapons.CLIATMWeapon;
  * @author Sebastian Brocks, edited by Greg
  */
 public class CLIATM6 extends CLIATMWeapon {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public CLIATM6() {

@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.srms.clan.improvedSRM;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -46,6 +48,7 @@ import megamek.common.weapons.srms.SRMWeapon;
  * @author Sebastian Brocks
  */
 public class CLImprovedSRM6 extends SRMWeapon {
+    @Serial
     private static final long serialVersionUID = -2774209761562289905L;
 
     public CLImprovedSRM6() {

@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.unofficial.innerSphere.thb;
 
+import java.io.Serial;
+
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -46,6 +48,7 @@ import megamek.common.weapons.autoCannons.LBXACWeapon;
  * @since Oct 15, 2004
  */
 public class ISTHBLB2XAC extends LBXACWeapon {
+    @Serial
     private static final long serialVersionUID = -4782097045393989538L;
 
     public ISTHBLB2XAC() {

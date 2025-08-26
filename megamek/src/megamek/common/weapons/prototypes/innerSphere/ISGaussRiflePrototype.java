@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,8 @@ package megamek.common.weapons.prototypes.innerSphere;
 
 import static megamek.common.game.IGame.LOGGER;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -57,6 +59,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Oct 19, 2004
  */
 public class ISGaussRiflePrototype extends GaussWeapon {
+    @Serial
     private static final long serialVersionUID = 317770140657000258L;
 
     public ISGaussRiflePrototype() {

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.srms.clan.torpedo.oneShot;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -45,6 +47,7 @@ import megamek.common.weapons.srms.SRTWeapon;
  * @author Sebastian Brocks
  */
 public class CLSRT4IOS extends SRTWeapon {
+    @Serial
     private static final long serialVersionUID = -1622623253640255529L;
 
     public CLSRT4IOS() {

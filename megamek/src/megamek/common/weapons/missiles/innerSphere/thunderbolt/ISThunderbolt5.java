@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,12 +34,15 @@
 
 package megamek.common.weapons.missiles.innerSphere.thunderbolt;
 
+import java.io.Serial;
+
 import megamek.common.weapons.missiles.thuunderbolt.Thunderbolt5Weapon;
 
 /**
  * @author Sebastian Brocks
  */
 public class ISThunderbolt5 extends Thunderbolt5Weapon {
+    @Serial
     private static final long serialVersionUID = 5295837076559643763L;
 
     public ISThunderbolt5() {

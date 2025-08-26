@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.unofficial.innerSphere;
 
+import java.io.Serial;
+
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -46,6 +48,7 @@ import megamek.common.weapons.lasers.LaserWeapon;
  * @since Sep 25, 2004
  */
 public class ISLaserAMSTHB extends LaserWeapon {
+    @Serial
     private static final long serialVersionUID = -1940059603781427515L;
 
     public ISLaserAMSTHB() {
@@ -71,8 +74,14 @@ public class ISLaserAMSTHB extends LaserWeapon {
         atClass = CLASS_AMS;
         // we need to remove the direct fire flag again, so TC weight is not
         // affected
-        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).andNot(F_PROTO_WEAPON)
-              .or(F_AUTO_TARGET).or(F_HEAT_AS_DICE).or(F_AMS).or(F_ENERGY)
+        flags = flags.or(F_MEK_WEAPON)
+              .or(F_TANK_WEAPON)
+              .or(F_AERO_WEAPON)
+              .andNot(F_PROTO_WEAPON)
+              .or(F_AUTO_TARGET)
+              .or(F_HEAT_AS_DICE)
+              .or(F_AMS)
+              .or(F_ENERGY)
               .andNot(F_DIRECT_FIRE);
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.lrms;
 
+import java.io.Serial;
+
 import megamek.common.equipment.AmmoType;
 
 /**
@@ -44,6 +46,7 @@ public abstract class EnhancedLRMWeapon extends LRMWeapon {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 8755275511561446251L;
 
     public EnhancedLRMWeapon() {

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,8 @@ package megamek.common.weapons.missiles;
 
 import static megamek.common.game.IGame.LOGGER;
 
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
@@ -55,6 +57,7 @@ import megamek.server.totalwarfare.TWGameManager;
  */
 public abstract class MissileWeapon extends AmmoWeapon {
 
+    @Serial
     private static final long serialVersionUID = -2759022204865126991L;
 
     /**
@@ -63,8 +66,7 @@ public abstract class MissileWeapon extends AmmoWeapon {
     public MissileWeapon() {
         super();
         damage = DAMAGE_BY_CLUSTER_TABLE;
-        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON)
-              .or(F_AERO_WEAPON).or(F_MISSILE);
+        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_MISSILE);
         infDamageClass = WEAPON_CLUSTER_MISSILE;
     }
 

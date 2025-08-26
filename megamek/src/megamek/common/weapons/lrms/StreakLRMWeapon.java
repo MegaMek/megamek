@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,8 @@ package megamek.common.weapons.lrms;
 
 import static megamek.common.game.IGame.LOGGER;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -59,6 +61,7 @@ import megamek.server.totalwarfare.TWGameManager;
  */
 public abstract class StreakLRMWeapon extends LRMWeapon {
 
+    @Serial
     private static final long serialVersionUID = -2552069184709782928L;
 
     public StreakLRMWeapon() {

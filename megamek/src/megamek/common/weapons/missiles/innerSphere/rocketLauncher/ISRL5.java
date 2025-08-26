@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,8 +45,8 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.weapons.missiles.rocketLauncher.RLWeapon;
 
 /**
- * No Ammo listed in {@link AmmoType} for this guy. Duplicate of IS BA RL, not available to meks at this
- * rack size Commented out in {@link WeaponType}
+ * No Ammo listed in {@link AmmoType} for this guy. Duplicate of IS BA RL, not available to meks at this rack size
+ * Commented out in {@link WeaponType}
  *
  * @author Sebastian Brocks
  */

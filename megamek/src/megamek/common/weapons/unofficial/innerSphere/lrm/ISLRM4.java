@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.unofficial.innerSphere.lrm;
 
+import java.io.Serial;
+
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -43,6 +45,7 @@ import megamek.common.weapons.lrms.LRMWeapon;
  * @author Sebastian Brocks
  */
 public class ISLRM4 extends LRMWeapon {
+    @Serial
     private static final long serialVersionUID = 5929285415982964603L;
 
     public ISLRM4() {

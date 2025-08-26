@@ -1,7 +1,6 @@
 /*
-
  * Copyright (C) 2000-2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,6 +36,8 @@ package megamek.common.weapons.primitive;
 
 import static megamek.common.game.IGame.LOGGER;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -57,6 +58,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  */
 public class ISAC10Primitive extends ACWeapon {
+    @Serial
     private static final long serialVersionUID = 4614699958561953757L;
 
     public ISAC10Primitive() {

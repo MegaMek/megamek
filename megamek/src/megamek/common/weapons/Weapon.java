@@ -42,6 +42,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
@@ -125,7 +126,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
     }
 
     public AttackHandler getCorrectHandler(ToHitData toHit,
-          WeaponAttackAction waa, Game game, TWGameManager gameManager) {
+          WeaponAttackAction waa, Game game, TWGameManager gameManager) throws EntityLoadingException {
         return new WeaponHandler(toHit, waa, game, gameManager);
     }
 

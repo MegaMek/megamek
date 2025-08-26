@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.lasers.innerSphere;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -54,6 +56,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sep 12, 2004
  */
 public class ISBombastLaser extends LaserWeapon {
+    @Serial
     private static final long serialVersionUID = 3379805005243042138L;
 
     public ISBombastLaser() {

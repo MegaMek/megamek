@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,7 +36,9 @@
  * Created on Sep 7, 2005
  *
  */
-package megamek.common.weapons.infantry.smg;
+package megamek.common.weapons.infantry.support.laser;
+
+import java.io.Serial;
 
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -48,37 +50,36 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 /**
  * @author Ben Grills
  */
-public class InfantrySMGKA23SubgunWeapon extends InfantryWeapon {
+public class InfantrySupportDragonsbaneDisposablePulseLaserWeapon extends InfantryWeapon {
 
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySMGKA23SubgunWeapon() {
+    public InfantrySupportDragonsbaneDisposablePulseLaserWeapon() {
         super();
 
-        name = "SMG (KA-23 Subgun)";
+        name = "Pulse Laser (Dragonsbane Disposable)";
         setInternalName(name);
-        addLookupName("InfantryKA23");
-        addLookupName("KA-23 Subgun");
-        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
-        cost = 350;
-        bv = 0.20;
-        tonnage = .0025;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.22;
-        infantryRange = 0;
-        ammoWeight = 0.0003;
-        ammoCost = 6;
-        shots = 40;
-        bursts = 4;
+        addLookupName("InfantryDragonsbane");
+        addLookupName("InfantryDragonsbanePulseLaser");
+        addLookupName("Infantry Dragonsbane Disposable Pulse Laser");
+        ammoType = AmmoType.AmmoTypeEnum.NA;
+        cost = 5000;
+        bv = 5.08;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PULSE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
+        infantryDamage = 0.49;
+        infantryRange = 3;
+        crew = 1;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechBase.IS).setISAdvancement(2890, 2895, 2950, DATE_NONE, DATE_NONE)
+        tonnage = .007;
+        techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3054, 3058, 3068, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.DC)
-              .setProductionFactions(Faction.DC).setTechRating(TechRating.D)
-              .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D);
+              .setProductionFactions(Faction.DC).setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.F);
 
     }
 }

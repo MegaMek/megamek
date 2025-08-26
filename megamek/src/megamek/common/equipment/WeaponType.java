@@ -180,6 +180,10 @@ import megamek.common.weapons.infantry.support.clan.InfantrySupportClanERLaserWe
 import megamek.common.weapons.infantry.support.clan.InfantrySupportClanSemiPortableERLaserWeapon;
 import megamek.common.weapons.infantry.support.clan.InfantrySupportClanSemiPortableHeavyLaserWeapon;
 import megamek.common.weapons.infantry.support.clan.InfantrySupportClanSemiPortablePulseLaserWeapon;
+import megamek.common.weapons.infantry.support.gauss.InfantrySupportDavidLightGaussRifleWeapon;
+import megamek.common.weapons.infantry.support.gauss.InfantrySupportGrandMaulerGaussCannonWeapon;
+import megamek.common.weapons.infantry.support.gauss.InfantrySupportGungnirHeavyGaussWeapon;
+import megamek.common.weapons.infantry.support.gauss.InfantrySupportKingDavidLightGaussRifleWeapon;
 import megamek.common.weapons.infantry.support.grenadeLauncher.InfantrySupportGrenadeLauncherAutoInfernoWeapon;
 import megamek.common.weapons.infantry.support.grenadeLauncher.InfantrySupportGrenadeLauncherAutoWeapon;
 import megamek.common.weapons.infantry.support.grenadeLauncher.InfantrySupportGrenadeLauncherCompactWeapon;
@@ -193,6 +197,14 @@ import megamek.common.weapons.infantry.support.heavy.InfantrySupportHeavyGrenade
 import megamek.common.weapons.infantry.support.heavy.InfantrySupportHeavyLaserWeapon;
 import megamek.common.weapons.infantry.support.heavy.InfantrySupportHeavyPPCWeapon;
 import megamek.common.weapons.infantry.support.heavy.InfantrySupportHeavyPulseLaserWeapon;
+import megamek.common.weapons.infantry.support.laser.InfantrySupportDragonsbaneDisposablePulseLaserWeapon;
+import megamek.common.weapons.infantry.support.laser.InfantrySupportERHeavyLaserWeapon;
+import megamek.common.weapons.infantry.support.laser.InfantrySupportERLaserWeapon;
+import megamek.common.weapons.infantry.support.laser.InfantrySupportHellboreAssaultLaserWeapon;
+import megamek.common.weapons.infantry.support.laser.InfantrySupportLaserUltraHeavyWeapon;
+import megamek.common.weapons.infantry.support.laser.InfantrySupportLaserWeapon;
+import megamek.common.weapons.infantry.support.laser.InfantrySupportPulseLaserWeapon;
+import megamek.common.weapons.infantry.support.laser.InfantrySupportSemiPortableLaserWeapon;
 import megamek.common.weapons.infantry.support.mg.InfantrySupportMGLightWeapon;
 import megamek.common.weapons.infantry.support.mg.InfantrySupportMGPortableWeapon;
 import megamek.common.weapons.infantry.support.mg.InfantrySupportMGSemiPortableWeapon;
@@ -1931,8 +1943,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryShotgunCombatWeapon());
         EquipmentType.addType(new InfantryShotgunDoubleBarrelWeapon());
         EquipmentType.addType(new InfantryShotgunPumpActionWeapon());
-        EquipmentType.addType(new InfantryShotgunSawnoffDoubleBarrelWeapon());
-        EquipmentType.addType(new InfantryShotgunSawnoffPumpActionWeapon());
+        EquipmentType.addType(new InfantryShotgunSawedOffDoubleBarrelWeapon());
+        EquipmentType.addType(new InfantryShotgunSawedOffPumpActionWeapon());
         EquipmentType.addType(new InfantryShotgunWakazashiWeapon());
 
         // Shrapnel Shotguns
@@ -1969,7 +1981,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySMGClanGaussWeapon());
         EquipmentType.addType(new InfantrySMGGuntherMP20Weapon());
         EquipmentType.addType(new InfantrySMGImperator2894A1Weapon());
-        EquipmentType.addType(new InfantrySMGKA23SubgunWeapon());
+        EquipmentType.addType(new InfantrySMGKA23Weapon());
         EquipmentType.addType(new InfantrySMGRorynexRM3XXIWeapon());
         EquipmentType.addType(new InfantrySMGRuganWeapon());
         EquipmentType.addType(new InfantrySMGWeapon());
@@ -2031,7 +2043,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySniperRiflePraetorianS5());
         EquipmentType.addType(new InfantrySniperRifleSairentosutomu());
         EquipmentType.addType(new InfantrySniperRifleSR17SunsKiller());
-        EquipmentType.addType(new InfantrySniperRifleThorshammer());
+        EquipmentType.addType(new InfantrySniperRifleThorsHammer());
         EquipmentType.addType(new InfantrySniperRifleWilimtonRS14());
         EquipmentType.addType(new InfantrySniperRifleWilimtonRS17Stripped());
         EquipmentType.addType(new InfantrySniperRifleYuanLing());

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,7 +36,9 @@
  * Created on Sep 7, 2005
  *
  */
-package megamek.common.weapons.infantry.support;
+package megamek.common.weapons.infantry.smg;
+
+import java.io.Serial;
 
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -48,44 +50,38 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 /**
  * @author Ben Grills
  */
-public class InfantrySupportDavidLightGaussRifleWeapon extends InfantryWeapon {
+public class InfantrySMGKA23Weapon extends InfantryWeapon {
 
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportDavidLightGaussRifleWeapon() {
+    public InfantrySMGKA23Weapon() {
         super();
 
-        name = "Gauss Rifle, Light (David)";
+        name = "SMG (KA-23 Submachine Gun)";
         setInternalName(name);
-        addLookupName("Infantry David Light Gauss Rifle");
+        addLookupName("InfantryKA23");
+        addLookupName("KA-23 Subgun");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
-        cost = 6000;
-        bv = 4.01;
-        tonnage = .018;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
-        infantryDamage = 0.56;
-        infantryRange = 3;
-        crew = 1;
-        ammoWeight = 0.002;
-        ammoCost = 20;
-        shots = 8;
-        bursts = 2;
-        damage = 1;
-        minimumRange = 0;
-        shortRange = 3;
-        mediumRange = 6;
-        longRange = 9;
-        extremeRange = 12;
+        cost = 350;
+        bv = 0.20;
+        tonnage = .0025;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        infantryDamage = 0.22;
+        infantryRange = 0;
+        ammoWeight = 0.0003;
+        ammoCost = 6;
+        shots = 40;
+        bursts = 4;
         rulesRefs = "273, TM";
-        tonnage = .018;
-        techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3060, 3063, 3075, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.IS).setISAdvancement(2890, 2895, 2950, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.FW)
-              .setProductionFactions(Faction.FW).setTechRating(TechRating.E)
-              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D);
+              .setPrototypeFactions(Faction.DC)
+              .setProductionFactions(Faction.DC).setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D);
 
     }
 }

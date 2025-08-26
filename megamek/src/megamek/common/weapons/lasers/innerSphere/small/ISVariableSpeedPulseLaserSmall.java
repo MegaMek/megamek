@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.lasers.innerSphere.small;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
@@ -48,6 +50,7 @@ import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
  * @since Sep 12, 2004
  */
 public class ISVariableSpeedPulseLaserSmall extends VariableSpeedPulseLaserWeapon {
+    @Serial
     private static final long serialVersionUID = 2676144961105838316L;
 
     public ISVariableSpeedPulseLaserSmall() {

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,7 +36,9 @@
  * Created on Sep 7, 2005
  *
  */
-package megamek.common.weapons.infantry.support;
+package megamek.common.weapons.infantry.support.laser;
+
+import java.io.Serial;
 
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -48,36 +50,37 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 /**
  * @author Ben Grills
  */
-public class InfantrySupportHellboreAssaultLaserWeapon extends InfantryWeapon {
+public class InfantrySupportERLaserWeapon extends InfantryWeapon {
 
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportHellboreAssaultLaserWeapon() {
+    public InfantrySupportERLaserWeapon() {
         super();
 
-        name = "Laser (Hellbore Assault)";
+        name = "Support Laser (ER, IS)";
         setInternalName(name);
-        addLookupName("InfantryHellbore");
-        addLookupName("InfantryHellboreAssaultLaser");
-        addLookupName("Infantry Hellbore Assault Laser");
+        addLookupName("InfantryERLaser");
+        addLookupName("InfantryERSmallLaser");
+        addLookupName("Infantry ER Laser");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
-        cost = 2500;
-        bv = 3.22;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_ENCUMBER).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
-        infantryDamage = 0.63;
-        infantryRange = 2;
-        crew = 1;
-        tonnage = .020;
+        cost = 11250;
+        bv = 8.21;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
+        infantryDamage = 0.84;
+        infantryRange = 4;
+        crew = 2;
         ammoWeight = 0.003;
-        shots = 15;
+        shots = 10;
+        tonnage = .110;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3054, 3058, 3062, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3054, 3059, 3075, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.CS)
-              .setProductionFactions(Faction.CS).setTechRating(TechRating.E)
+              .setPrototypeFactions(Faction.FW)
+              .setProductionFactions(Faction.FW).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D);
 
     }

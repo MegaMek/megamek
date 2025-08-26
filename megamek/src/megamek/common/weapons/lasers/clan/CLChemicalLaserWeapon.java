@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2009-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.lasers.clan;
 
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoType;
@@ -48,13 +50,18 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since May 29, 2004
  */
 public abstract class CLChemicalLaserWeapon extends AmmoWeapon {
+    @Serial
     private static final long serialVersionUID = -854810886500324094L;
 
     public CLChemicalLaserWeapon() {
         ammoType = AmmoType.AmmoTypeEnum.CHEMICAL_LASER;
         minimumRange = WEAPON_NA;
-        flags = flags.or(F_DIRECT_FIRE).or(F_ENERGY).or(F_MEK_WEAPON)
-              .or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON);
+        flags = flags.or(F_DIRECT_FIRE)
+              .or(F_ENERGY)
+              .or(F_MEK_WEAPON)
+              .or(F_TANK_WEAPON)
+              .or(F_AERO_WEAPON)
+              .or(F_PROTO_WEAPON);
         atClass = CLASS_LASER;
     }
 

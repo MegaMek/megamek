@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,6 +38,8 @@
  */
 package megamek.common.weapons.infantry.smg;
 
+import java.io.Serial;
+
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -53,12 +55,13 @@ public class InfantrySMGClanGaussWeapon extends InfantryWeapon {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -3164871600230559641L;
 
     public InfantrySMGClanGaussWeapon() {
         super();
 
-        name = "Gauss Submachinegun";
+        name = "Gauss Submachine Gun";
         setInternalName(name);
         addLookupName("InfantryGaussSMG");
         addLookupName("InfantryClanGaussSMG");

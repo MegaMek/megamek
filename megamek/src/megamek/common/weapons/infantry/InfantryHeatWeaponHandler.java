@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2012-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,6 +35,7 @@
 
 package megamek.common.weapons.infantry;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.Hex;
@@ -62,23 +63,21 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 8430370552107061610L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
+     *
      */
-    public InfantryHeatWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-          TWGameManager m) {
-        super(t, w, g, m);
+    public InfantryHeatWeaponHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
+          TWGameManager twGameManager) {
+        super(toHitData, weaponAttackAction, game, twGameManager);
         bSalvo = true;
     }
 
     @Override
-    protected void handleEntityDamage(Entity entityTarget,
-          Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-          int bldgAbsorbs) {
+    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, Building bldg, int hits,
+          int nCluster, int bldgAbsorbs) {
         if (entityTarget.tracksHeat()) {
             Report.addNewline(vPhaseReport);
             // heat
@@ -104,9 +103,9 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
                 return;
             }
 
-            Report r = new Report(3400);
-            r.subject = subjectId;
-            r.indent(2);
+            Report report = new Report(3400);
+            report.subject = subjectId;
+            report.indent(2);
             int nDamage = nDamPerHit * Math.min(nCluster, hits);
             // Building may absorb some damage.
             boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
@@ -130,19 +129,18 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
                   (entityTarget.getArmorType(hit.getLocation()) ==
                         EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
                 entityTarget.heatFromExternal += nDamage / 2;
-                r.add(nDamage / 2);
-                r.choose(true);
-                r.messageId = 3406;
-                r.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
+                report.add(nDamage / 2);
+                report.choose(true);
+                report.messageId = 3406;
+                report.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
             } else {
                 entityTarget.heatFromExternal += nDamage;
-                r.add(nDamage);
-                r.choose(true);
+                report.add(nDamage);
+                report.choose(true);
             }
-            vPhaseReport.addElement(r);
+            vPhaseReport.addElement(report);
         } else {
-            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                  nCluster, bldgAbsorbs);
+            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
         }
     }
 }

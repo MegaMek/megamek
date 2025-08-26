@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,11 +31,7 @@
  * affiliated with Microsoft.
  */
 
-/*
- * Created on Sep 7, 2005
- *
- */
-package megamek.common.weapons.infantry.support;
+package megamek.common.weapons.infantry.sniperRifle;
 
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -46,46 +41,36 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
- * @author Ben Grills
+ * @author Hammer
+ * @since March 20, 2022
  */
-public class InfantrySupportLaserWeapon extends InfantryWeapon {
-
-    /**
-     *
-     */
+public class InfantrySniperRifleThorsHammer extends InfantryWeapon {
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportLaserWeapon() {
+    public InfantrySniperRifleThorsHammer() {
         super();
 
-        name = "Support Laser";
+        name = "Sniper Rifle (Thors Hammer)";
         setInternalName(name);
-        addLookupName("InfantrySupportLaser");
-        addLookupName("Infantry Support Laser");
-        addLookupName("InfantrySmallLaser");
+        addLookupName("Thorshammer");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
-        cost = 10000;
-        bv = 6.02;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
-        infantryDamage = 0.84;
-        infantryRange = 3;
-        crew = 2;
-        ammoWeight = 0.003;
-        shots = 15;
-        damage = 1;
-        minimumRange = 0;
-        shortRange = 3;
-        mediumRange = 6;
-        longRange = 9;
-        extremeRange = 12;
-        rulesRefs = "273, TM";
-        tonnage = .072;
-        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2377, 2380, 2410, DATE_NONE, DATE_NONE)
-              .setISApproximate(true, false, false, false, false)
-              .setClanAdvancement(2377, 2380, 2410, DATE_NONE, DATE_NONE)
-              .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
-              .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C);
-
+        bv = 0.28;
+        tonnage = 0.007;
+        infantryDamage = 0.28;
+        infantryRange = 6;
+        ammoWeight = 0.007;
+        cost = 750;
+        ammoCost = 12;
+        shots = 10;
+        bursts = 1;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        rulesRefs = "Shrapnel #1";
+        techAdvancement
+              .setTechBase(TechBase.IS)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
+              .setISAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE)
+              .setISApproximate(false, false, true, false, false)
+              .setProductionFactions(Faction.LC);
     }
 }

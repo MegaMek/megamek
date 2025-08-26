@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.lasers;
 
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.WeaponType;
@@ -51,6 +53,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since May 29, 2004
  */
 public abstract class EnergyWeapon extends Weapon {
+    @Serial
     private static final long serialVersionUID = 3128205629152612073L;
 
     public EnergyWeapon() {

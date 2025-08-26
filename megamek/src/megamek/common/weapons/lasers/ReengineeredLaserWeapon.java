@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.lasers;
 
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.game.Game;
@@ -43,6 +45,7 @@ import megamek.server.totalwarfare.TWGameManager;
 
 public abstract class ReengineeredLaserWeapon extends PulseLaserWeapon {
 
+    @Serial
     private static final long serialVersionUID = 2113437667446946251L;
 
     @Override

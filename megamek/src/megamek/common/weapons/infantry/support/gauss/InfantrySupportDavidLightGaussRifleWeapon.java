@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,7 +36,9 @@
  * Created on Sep 7, 2005
  *
  */
-package megamek.common.weapons.infantry.support;
+package megamek.common.weapons.infantry.support.gauss;
+
+import java.io.Serial;
 
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -48,35 +50,40 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 /**
  * @author Ben Grills
  */
-public class InfantrySupportKingDavidLightGaussRifleWeapon extends InfantryWeapon {
+public class InfantrySupportDavidLightGaussRifleWeapon extends InfantryWeapon {
 
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportKingDavidLightGaussRifleWeapon() {
+    public InfantrySupportDavidLightGaussRifleWeapon() {
         super();
 
-        name = "Gauss Rifle, Light (King David)";
+        name = "Gauss Rifle, Light (David)";
         setInternalName(name);
-        addLookupName("InfantryKingDavid");
-        addLookupName("InfantryKingDavidLightGaussRifle");
-        addLookupName("Infantry King David Light Gauss Rifle");
+        addLookupName("Infantry David Light Gauss Rifle");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
-        cost = 8000;
-        bv = 4.87;
-        tonnage = .03;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
-        infantryDamage = 0.68;
+        cost = 6000;
+        bv = 4.01;
+        tonnage = .018;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
+        infantryDamage = 0.56;
         infantryRange = 3;
-        crew = 2;
-        tonnage = .030;
-        ammoWeight = 0.016;
-        ammoCost = 200;
-        shots = 80;
-        bursts = 16;
+        crew = 1;
+        ammoWeight = 0.002;
+        ammoCost = 20;
+        shots = 8;
+        bursts = 2;
+        damage = 1;
+        minimumRange = 0;
+        shortRange = 3;
+        mediumRange = 6;
+        longRange = 9;
+        extremeRange = 12;
         rulesRefs = "273, TM";
+        tonnage = .018;
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3060, 3063, 3075, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.FW)

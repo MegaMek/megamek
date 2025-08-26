@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,9 +36,12 @@
  * Created on Sep 7, 2005
  *
  */
-package megamek.common.weapons.infantry.shotgun;
+package megamek.common.weapons.infantry.support.laser;
+
+import java.io.Serial;
 
 import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
@@ -47,36 +50,37 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 /**
  * @author Ben Grills
  */
-public class InfantryShotgunSawnoffDoubleBarrelWeapon extends InfantryWeapon {
+public class InfantrySupportLaserUltraHeavyWeapon extends InfantryWeapon {
 
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryShotgunSawnoffDoubleBarrelWeapon() {
+    public InfantrySupportLaserUltraHeavyWeapon() {
         super();
 
-        name = "Shotgun (Double-Barrel, Sawed Off)";
+        name = "Support Laser (Ultra-Heavy)";
         setInternalName(name);
-        addLookupName("InfantryDoubleSawnOff");
-        addLookupName("Double Barrel Sawed-off Shotgun");
+        addLookupName("InfantryUltraHeavyLaser");
+        addLookupName("InfantryHeavyMediumLaser");
+        addLookupName("Infantry Ultra-Heavy Support Laser");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
-        cost = 30;
-        bv = 0.03;
-        tonnage = .003;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.03;
-        infantryRange = 0;
-        ammoWeight = 0.00004;
-        ammoCost = 1;
-        shots = 2;
-        rulesRefs = " 273, TM";
-        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-              .setISApproximate(false, false, false, false, false)
-              .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-              .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.B)
-              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
+        cost = 100000;
+        bv = 20.31;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
+        infantryDamage = 1.72;
+        infantryRange = 5;
+        crew = 4;
+        ammoWeight = 0.003;
+        shots = 5;
+        rulesRefs = "273, TM";
+        tonnage = .250;
+        techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(3055, 3062, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CBR)
+              .setProductionFactions(Faction.CSA).setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D);
 
     }
 }

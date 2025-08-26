@@ -33,6 +33,8 @@
 
 package megamek.common.weapons.infantry.support;
 
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.AvailabilityValue;
@@ -53,6 +55,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @author Neoancient
  */
 public class InfantrySupportTAGWeapon extends InfantryWeapon {
+    @Serial
     private static final long serialVersionUID = 4986981464279987117L;
 
     public InfantrySupportTAGWeapon() {

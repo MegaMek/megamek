@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,11 +32,9 @@
  * affiliated with Microsoft.
  */
 
-/*
- * Created on Sep 7, 2005
- *
- */
-package megamek.common.weapons.infantry.support;
+package megamek.common.weapons.infantry.support.gauss;
+
+import java.io.Serial;
 
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -47,36 +45,36 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * @author Ben Grills
+ * @since Sep 7, 2005
  */
-public class InfantrySupportDragonsbaneDisposablePulseLaserWeapon extends InfantryWeapon {
-
-    /**
-     *
-     */
+public class InfantrySupportGungnirHeavyGaussWeapon extends InfantryWeapon {
+    @Serial
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportDragonsbaneDisposablePulseLaserWeapon() {
+    public InfantrySupportGungnirHeavyGaussWeapon() {
         super();
 
-        name = "Pulse Laser (Dragonsbane Disposable)";
+        name = "Gauss Rifle (Gungnir Heavy Support)";
         setInternalName(name);
-        addLookupName("InfantryDragonsbane");
-        addLookupName("InfantryDragonsbanePulseLaser");
-        addLookupName("Infantry Dragonsbane Disposable Pulse Laser");
-        ammoType = AmmoType.AmmoTypeEnum.NA;
-        cost = 5000;
-        bv = 5.08;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PULSE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
-        infantryDamage = 0.49;
+        addLookupName("InfantryGungnirHeavySupportGaussRifle");
+        addLookupName("GungnirHeavySupportGaussRifle");
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
+        cost = 15000;
+        tonnage = 0.006;
+        bv = 0.0;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
+        infantryDamage = 1.23;
         infantryRange = 3;
-        crew = 1;
-        rulesRefs = "273, TM";
-        tonnage = .007;
-        techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3054, 3058, 3068, DATE_NONE, DATE_NONE)
+        crew = 3;
+        ammoWeight = 0.02;
+        ammoCost = 50;
+        shots = 10;
+        tonnage = .060;
+        rulesRefs = "176, AToW-C";
+        techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3074, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.DC)
-              .setProductionFactions(Faction.DC).setTechRating(TechRating.E)
-              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.F);
-
+              .setPrototypeFactions(Faction.LC)
+              .setProductionFactions(Faction.LC).setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E);
     }
 }

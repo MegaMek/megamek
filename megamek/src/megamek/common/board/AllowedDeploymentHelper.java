@@ -167,10 +167,17 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
         return result;
     }
 
+    /**
+     * Adds a 0 elevation deployment option if there isn't already one by other considerations and there should be one.
+     *
+     * @return Up to one additional surface deployment option
+     */
     private List<ElevationOption> allowedZeroElevation() {
         List<ElevationOption> result = new ArrayList<>();
         if (!entity.getMovementMode().isSubmarine() && hex.terrainLevel(Terrains.WATER) < 1) {
             result.add(new ElevationOption(0, ON_GROUND));
+        } else if (entity.getMovementMode().isSubmarine() && hex.terrainLevel(Terrains.WATER) > 0) {
+            result.add(new ElevationOption(0, WATER_SURFACE));
         }
         return result;
     }

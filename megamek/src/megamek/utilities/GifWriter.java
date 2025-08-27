@@ -71,7 +71,7 @@ public class GifWriter {
     /**
      * Creates a gif from a series of images of a game summary.
      *
-     * @param gameSummary the game summary to create the gif from, its commonly a UUID inside the
+     * @param gameSummary the game summary to create the gif from, it's commonly a UUID inside the
      *                    /logs/gameSummary/minimap folder
      *
      * @throws IOException if an I/O error occurs

@@ -2,7 +2,7 @@
   Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * Copyright © 2013 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,12 +35,12 @@ package megamek.utilities;
 
 import java.io.File;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
-import megamek.common.units.Entity;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.loaders.MekSummary;
 import megamek.common.loaders.MekSummaryCache;
-import megamek.common.annotations.Nullable;
+import megamek.common.units.Entity;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.logging.MMLogger;
@@ -56,19 +56,19 @@ public final class FilteredUnitListTool {
     /**
      * Edit the return value filter to any sort of check on entity or summary that, when true, should make the unit be
      * listed. E.g. when looking for all SV with a fusion engine, use:
-     *
+     * <p>
      * <code>
      * passesFilter = entity.isSupportVehicle() && entity.getEngine().isFusion();
      * </code>
      * <p>
      * All Primitive Meks with a standard gyro:
-     *
+     * <p>
      * <code>
      * passesFilter = entity instanceof Mek && entity.isPrimitive() && entity.getGyroType() == Mek.GYRO_STANDARD;
      * </code>
      * <p>
      * SV with amphibious chassis:
-     *
+     * <p>
      * <code>
      * passesFilter = entity.isSupportVehicle() && entity.hasWorkingMisc(MiscType.F_AMPHIBIOUS);
      * </code>

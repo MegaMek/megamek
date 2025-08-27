@@ -30,7 +30,7 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.utilities;
+package megamek.common.ui;
 
 import static megamek.common.internationalization.I18n.getTextAt;
 
@@ -56,7 +56,7 @@ import org.apache.pdfbox.rendering.PDFRenderer;
  * {@code PDFReaderUtilityPanel} is a reusable Swing {@link JPanel} component for viewing and navigating PDF documents.
  *
  * <p>This utility leverages the Apache PDFBox library to render each page of a PDF document as an image. Users can
- * scroll through pages and use zoom controls (zoom in, zoom out, and reset zoom) to adjust the viewing scale. All
+ * scroll through pages and use Zoom controls (zoom in, zoom out, and reset zoom) to adjust the viewing scale. All
  * rendering and file I/O operations that might block the Event Dispatch Thread are performed asynchronously using
  * {@link SwingWorker}, ensuring UI responsiveness even for large documents.</p>
  *

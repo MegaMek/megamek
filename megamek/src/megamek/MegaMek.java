@@ -64,10 +64,10 @@ import megamek.common.commandLine.MegaMekCommandLineFlag;
 import megamek.common.commandLine.MegaMekCommandLineParser;
 import megamek.common.net.marshalling.SanityInputFilter;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.ui.RATGeneratorEditor;
 import megamek.logging.MMLogger;
 import megamek.server.DedicatedServer;
 import megamek.utilities.GifWriter;
-import megamek.utilities.RATGeneratorEditor;
 
 /**
  * This is the primary MegaMek class.

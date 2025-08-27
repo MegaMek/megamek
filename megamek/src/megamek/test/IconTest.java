@@ -31,7 +31,7 @@
  * affiliated with Microsoft.
  */
 
-package megamek.utilities;
+package megamek.test;
 
 import java.io.IOException;
 

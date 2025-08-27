@@ -87,7 +87,7 @@ public class NameChangesValidator {
             InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
             BufferedReader br = new BufferedReader(isr);
 
-            String line = "";
+            String line;
 
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("#")) {

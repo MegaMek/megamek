@@ -31,7 +31,7 @@
  * affiliated with Microsoft.
  */
 
-package megamek.utilities;
+package megamek.common.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -39,6 +39,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.io.File;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -537,20 +538,7 @@ public class RATGeneratorEditor extends JFrame {
             }
         });
 
-        JButton copyButton = new JButton("Copy");
-        copyButton.addActionListener(ev -> {
-            if (!txtNewFaction.getText().isBlank()
-                  && (tblMasterFactionList.getSelectedRow() >= 0)) {
-                FactionRecord from = masterFactionListModel.getFactionRecord(
-                      tblMasterFactionList.convertRowIndexToModel(
-                            tblMasterFactionList.getSelectedRow()));
-                FactionRecord rec = new FactionRecord(txtNewFaction.getText());
-                rec.setClan(from.isClan());
-                rec.setRatings(String.join(",", from.getRatingLevels()));
-                rg.addFaction(rec);
-                masterFactionListModel.addRecord(rec);
-            }
-        });
+        JButton copyButton = getCopyButton();
 
         chkShowSubfactions.setText("Show Subfactions");
         chkShowSubfactions.setSelected(true);
@@ -651,6 +639,24 @@ public class RATGeneratorEditor extends JFrame {
         return factionTab;
     }
 
+    private JButton getCopyButton() {
+        JButton copyButton = new JButton("Copy");
+        copyButton.addActionListener(ev -> {
+            if (!txtNewFaction.getText().isBlank()
+                  && (tblMasterFactionList.getSelectedRow() >= 0)) {
+                FactionRecord from = masterFactionListModel.getFactionRecord(
+                      tblMasterFactionList.convertRowIndexToModel(
+                            tblMasterFactionList.getSelectedRow()));
+                FactionRecord rec = new FactionRecord(txtNewFaction.getText());
+                rec.setClan(from.isClan());
+                rec.setRatings(String.join(",", from.getRatingLevels()));
+                rg.addFaction(rec);
+                masterFactionListModel.addRecord(rec);
+            }
+        });
+        return copyButton;
+    }
+
     private void filterFactionList() {
         RowFilter<FactionListTableModel, Integer> rf = new RowFilter<>() {
             @Override
@@ -693,6 +699,7 @@ public class RATGeneratorEditor extends JFrame {
     }
 
     private static class MasterUnitListTableModel extends DefaultTableModel {
+        @Serial
         private static final long serialVersionUID = 2792332961159226169L;
 
         public static final int COL_CHASSIS = 0;
@@ -763,20 +770,20 @@ public class RATGeneratorEditor extends JFrame {
                     return data.get(row).getModel();
                 case COL_UNIT_TYPE:
                     if (data.get(row).getMekSummary() == null) {
-                        System.err.println("Could not find meksummary for " + data.get(row).getKey());
+                        System.err.println("Could not find MekSummary for " + data.get(row).getKey());
                     }
                     return data.get(row).getMekSummary().getUnitType();
                 case COL_WEIGHT:
                     return data.get(row).getMekSummary().getTons();
                 case COL_YEAR:
                     if (data.get(row).getMekSummary() == null) {
-                        System.err.println("Could not find meksummary for " + data.get(row).getKey());
+                        System.err.println("Could not find MekSummary for " + data.get(row).getKey());
                     }
                     return data.get(row).getMekSummary().getYear();
 
                 case COL_EXTINCT_RANGE:
                     if (data.get(row).getMekSummary() == null) {
-                        System.err.println("Could not find meksummary for " + data.get(row).getKey());
+                        System.err.println("Could not find MekSummary for " + data.get(row).getKey());
                     }
                     return data.get(row).getMekSummary().getExtinctRange();
 
@@ -938,10 +945,9 @@ public class RATGeneratorEditor extends JFrame {
 
         @Override
         public void setValueAt(Object value, int row, int col) {
-            if (!(value instanceof String)) {
+            if (!(value instanceof String stringValue)) {
                 return;
             }
-            String stringValue = (String) value;
             if (!stringValue.isBlank() && !stringValue.matches("\\d+[+\\-]?(:\\d+)?")) {
                 return;
             }
@@ -1001,7 +1007,7 @@ public class RATGeneratorEditor extends JFrame {
             return true;
         }
 
-        public boolean addEntry(RowData rowData) {
+        public void addEntry(RowData rowData) {
             boolean rowAdded = addEntry(rowData.faction, rowData.eraData);
             if (rowAdded) {
                 for (int i = 0; i < ERAS.length; i++) {
@@ -1016,7 +1022,6 @@ public class RATGeneratorEditor extends JFrame {
                     }
                 }
             }
-            return rowAdded;
         }
 
         public void removeEntry(int row) {
@@ -1059,10 +1064,6 @@ public class RATGeneratorEditor extends JFrame {
                 }
             }
             fireTableDataChanged();
-        }
-
-        public int getMode() {
-            return mode;
         }
     }
 
@@ -1205,26 +1206,17 @@ public class RATGeneratorEditor extends JFrame {
 
         @Override
         public Object getValueAt(int row, int col) {
-            switch (col) {
-                case COL_CODE:
-                    return data.get(row).getKey();
-                case COL_NAME:
-                    return data.get(row).getNamesAsString();
-                case COL_YEARS:
-                    return data.get(row).getYearsAsString();
-                case COL_MINOR:
-                    return data.get(row).isMinor();
-                case COL_CLAN:
-                    return data.get(row).isClan();
-                case COL_PERIPHERY:
-                    return data.get(row).isPeriphery();
-                case COL_RATINGS:
-                    return String.join(",", data.get(row).getRatingLevels());
-                case COL_USE_ALT_FACTION:
-                    return String.join(",", data.get(row).getParentFactions());
-                default:
-                    return "?";
-            }
+            return switch (col) {
+                case COL_CODE -> data.get(row).getKey();
+                case COL_NAME -> data.get(row).getNamesAsString();
+                case COL_YEARS -> data.get(row).getYearsAsString();
+                case COL_MINOR -> data.get(row).isMinor();
+                case COL_CLAN -> data.get(row).isClan();
+                case COL_PERIPHERY -> data.get(row).isPeriphery();
+                case COL_RATINGS -> String.join(",", data.get(row).getRatingLevels());
+                case COL_USE_ALT_FACTION -> String.join(",", data.get(row).getParentFactions());
+                default -> "?";
+            };
         }
 
         @Override
@@ -1358,26 +1350,17 @@ public class RATGeneratorEditor extends JFrame {
                 return factionRec.getWeightDistributionAsString(era, unitType);
             }
             int rating = (row - 1) % factionRec.getRatingLevels().size();
-            switch ((row - 1) / factionRec.getRatingLevels().size()) {
-                case CAT_OMNI_PCT:
-                    return factionRec.getPctTech(TechCategory.OMNI, era, rating);
-                case CAT_CLAN_PCT:
-                    return factionRec.getPctTech(TechCategory.CLAN, era, rating);
-                case CAT_SL_PCT:
-                    return factionRec.getPctTech(TechCategory.IS_ADVANCED, era, rating);
-                case CAT_OMNI_AERO_PCT:
-                    return factionRec.getPctTech(TechCategory.OMNI_AERO, era, rating);
-                case CAT_CLAN_AERO_PCT:
-                    return factionRec.getPctTech(TechCategory.CLAN_AERO, era, rating);
-                case CAT_SL_AERO_PCT:
-                    return factionRec.getPctTech(TechCategory.IS_ADVANCED_AERO, era, rating);
-                case CAT_CLAN_VEE_PCT:
-                    return factionRec.getPctTech(TechCategory.CLAN_VEE, era, rating);
-                case CAT_SL_VEE_PCT:
-                    return factionRec.getPctTech(TechCategory.IS_ADVANCED_VEE, era, rating);
-                default:
-                    return "?";
-            }
+            return switch ((row - 1) / factionRec.getRatingLevels().size()) {
+                case CAT_OMNI_PCT -> factionRec.getPctTech(TechCategory.OMNI, era, rating);
+                case CAT_CLAN_PCT -> factionRec.getPctTech(TechCategory.CLAN, era, rating);
+                case CAT_SL_PCT -> factionRec.getPctTech(TechCategory.IS_ADVANCED, era, rating);
+                case CAT_OMNI_AERO_PCT -> factionRec.getPctTech(TechCategory.OMNI_AERO, era, rating);
+                case CAT_CLAN_AERO_PCT -> factionRec.getPctTech(TechCategory.CLAN_AERO, era, rating);
+                case CAT_SL_AERO_PCT -> factionRec.getPctTech(TechCategory.IS_ADVANCED_AERO, era, rating);
+                case CAT_CLAN_VEE_PCT -> factionRec.getPctTech(TechCategory.CLAN_VEE, era, rating);
+                case CAT_SL_VEE_PCT -> factionRec.getPctTech(TechCategory.IS_ADVANCED_VEE, era, rating);
+                default -> "?";
+            };
         }
 
         @Override
@@ -1596,7 +1579,7 @@ public class RATGeneratorEditor extends JFrame {
                 if (dir.exists() && dir.isDirectory()) {
                     ui = new RATGeneratorEditor(dir);
                 } else {
-                    logger.info(args[0] + " is not a valid directory name");
+                    logger.info("{} is not a valid directory name", args[0]);
                     ui = new RATGeneratorEditor();
                 }
             } else {

@@ -42,8 +42,8 @@ import javax.swing.table.AbstractTableModel;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.minimap.MinimapPanel;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.board.Board;
 import megamek.common.Configuration;
+import megamek.common.board.Board;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utilities.BoardClassifier;
@@ -129,7 +129,7 @@ class BoardTableModel extends AbstractTableModel {
             String key = Configuration.boardsDir() + path;
             tags.add(bc.getBoardTags().get(key));
             width.add(bc.getBoardWidth().get(key));
-            height.add(bc.getBoardHeigth().get(key));
+            height.add(bc.getBoardHeight().get(key));
         }
 
         fireTableDataChanged();

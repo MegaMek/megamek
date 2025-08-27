@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2016 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -50,9 +50,9 @@ import megamek.common.Configuration;
 import megamek.logging.MMLogger;
 
 /**
- * Program that will scan the data/images directory for images and take all of the images in a subdirectory and store
- * them in a single image atlas. All of the files added to an atlas in this fashion will then be stored and then each
- * tileset file will be scanned and updated to reflect the new image location.
+ * Program that will scan the data/images directory for images and take all the images in a subdirectory and store them
+ * in a single image atlas. All the files added to an atlas in this fashion will then be stored and then each tileset
+ * file will be scanned and updated to reflect the new image location.
  *
  * @author arlith
  */
@@ -105,19 +105,23 @@ public class CreateImageAtlases {
                 return;
             }
             processDirectory(file);
-            for (File subFile : file.listFiles()) {
-                if (subFile.isDirectory()) {
-                    scanDirectory(subFile);
+
+            File[] files = file.listFiles();
+
+            if (files != null) {
+                for (File subFile : files) {
+                    if (subFile.isDirectory()) {
+                        scanDirectory(subFile);
+                    }
                 }
             }
         }
     }
 
     /**
-     * Find all of the image files in the given directory and generate an atlas large enough to hold them, then iterate
+     * Find all the image files in the given directory and generate an atlas large enough to hold them, then iterate
      * through each image and draw it into the atlas. The atlas is then saved as "atlas-dirname.png".
      *
-     * @param dir
      */
     void processDirectory(File dir) {
         logger.info("Processing: {}", dir);
@@ -128,14 +132,19 @@ public class CreateImageAtlases {
               name.toLowerCase().endsWith(".jpeg"))
               && !name.endsWith("_atlas.png")));
 
-        int numRows = (int) Math.ceil(imageFiles.length / (imagesPerRow + 0.0));
+        int numRows = 0;
+
+        if (imageFiles != null) {
+            numRows = (int) Math.ceil(imageFiles.length / ((double) imagesPerRow));
+        }
 
         // No images, nothing to do
         if (numRows <= 0) {
             return;
         }
 
-        BufferedImage atlas = new BufferedImage(imagesPerRow * hexWidth, numRows * hexHeight,
+        BufferedImage atlas = new BufferedImage(imagesPerRow * hexWidth,
+              numRows * hexHeight,
               BufferedImage.TYPE_INT_ARGB);
         Graphics g = atlas.getGraphics();
         File atlasFile = new File(dir, dir.getName() + "_atlas.png");
@@ -156,7 +165,6 @@ public class CreateImageAtlases {
                 currentImg = ImageIO.read(imgFile);
             } catch (IOException e) {
                 logger.error(e, "Error reading image.");
-                e.printStackTrace();
                 continue;
             }
 
@@ -213,7 +221,7 @@ public class CreateImageAtlases {
     }
 
     /**
-     * Main entrypoint for the Image Atlas creation system. Can be ran from gradle with
+     * Main entrypoint for the Image Atlas creation system. Can be run from gradle with
      * <p>
      * ./gradlew createImageAtlases
      * <p>
@@ -221,7 +229,6 @@ public class CreateImageAtlases {
      * <p>
      * java -cp MegaMek.jar megamek.utilities.CreateImageAtlases %lt;optional filename%gt;
      *
-     * @param args
      */
     public static void main(String[] args) {
         String fileName = "atlasedImages.txt";

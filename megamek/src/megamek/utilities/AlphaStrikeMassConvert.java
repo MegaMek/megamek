@@ -39,14 +39,14 @@ import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.units.Entity;
-import megamek.common.loaders.MekFileParser;
-import megamek.common.loaders.MekSummary;
-import megamek.common.loaders.MekSummaryCache;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.AlphaStrikeHelper;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**
@@ -64,9 +64,6 @@ public class AlphaStrikeMassConvert {
     /**
      * Main entry point for unit -> AS conversion.
      *
-     * @param args
-     *
-     * @throws EntityLoadingException
      */
     public static void main(String[] args) throws EntityLoadingException {
         logger.debug("Starting AlphaStrike conversion.");
@@ -95,7 +92,6 @@ public class AlphaStrikeMassConvert {
     /**
      * Creates a tab separated header for the file.
      *
-     * @return
      */
     private static String clipboardHeaderString() {
         List<String> headers = new ArrayList<>();
@@ -120,9 +116,6 @@ public class AlphaStrikeMassConvert {
     /**
      * Returns a String representing the entities to export to the clipboard.
      *
-     * @param element
-     *
-     * @return
      */
     private static StringBuilder clipboardElementString(AlphaStrikeElement element) {
         List<String> stats = new ArrayList<>();

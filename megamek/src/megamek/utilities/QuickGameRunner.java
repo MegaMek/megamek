@@ -60,12 +60,12 @@ import megamek.client.ui.clientGUI.IClientGUI;
 import megamek.client.ui.clientGUI.IDisconnectSilently;
 import megamek.client.ui.clientGUI.MegaMekGUI;
 import megamek.client.ui.util.MegaMekController;
-import megamek.common.game.Game;
-import megamek.common.loaders.MekSummaryCache;
 import megamek.common.Player;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.game.Game;
+import megamek.common.loaders.MekSummaryCache;
 import megamek.common.net.marshalling.SanityInputFilter;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
@@ -73,7 +73,7 @@ import megamek.server.Server;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
- * QuickGameRunner This class is used to run a game without minimal preparation all it needs is a game file to load and
+ * QuickGameRunner This class is used to run a game without minimal preparation all it needs is a game file to load, and
  * it will populate the bots in the game and run the game the predefined number of turns, or until the game ends or
  * until it times out.
  */
@@ -177,8 +177,8 @@ public class QuickGameRunner {
     }
 
     /**
-     * GameThread Based on the GameThread from MekHQ, this thread serves to separate the place where we setup some parts
-     * of the game from the place where we actually run the game.
+     * GameThread Based on the GameThread from MekHQ, this thread serves to separate the place where we set up some
+     * parts of the game from the place where we actually run the game.
      */
     private static class GameThread extends Thread implements CloseClientListener {
         private static final MMLogger logger = MMLogger.create(GameThread.class);

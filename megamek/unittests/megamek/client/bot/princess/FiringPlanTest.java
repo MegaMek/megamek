@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2011 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -125,7 +125,7 @@ class FiringPlanTest {
     }
 
     @Test
-    void testGetExpectedCriticals() {
+    void testGetExpectedCriticalSlots() {
         when(mockWeaponFireInfoMG.getExpectedCriticals()).thenReturn(0.0);
         when(mockWeaponFireInfoPPC.getExpectedCriticals()).thenReturn(0.423);
         when(mockWeaponFireInfoERML.getExpectedCriticals()).thenReturn(0.015);

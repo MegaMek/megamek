@@ -36,10 +36,8 @@ package megamek.server.totalwarfare;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import megamek.common.DamageInfo;
@@ -51,6 +49,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.IArmorState;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
@@ -62,6 +61,7 @@ import megamek.common.units.Mek;
 import megamek.common.weapons.DamageType;
 import megamek.server.Server;
 import megamek.utils.ServerFactory;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -70,9 +70,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class TWDamageManagerTest {
 
-    private final String resourcesPath = "testresources/megamek/common/units/";
-
-    private TWGameManager gameMan = new TWGameManager();
+    private final TWGameManager gameMan = new TWGameManager();
     private TWDamageManager oldMan;
     private TWDamageManagerModular newMan;
     private Game game;
@@ -102,24 +100,25 @@ class TWDamageManagerTest {
         game.addPlayer(1, player);
     }
 
-    Entity loadEntityFromFile(String filename) throws FileNotFoundException {
+    @AfterEach
+    void tearDown() {
+        server.die();
+    }
+
+    Entity loadEntityFromFile(String filename) throws EntityLoadingException {
         File file;
         MekFileParser mfParser;
         Entity e;
 
-        try {
-            file = new File(resourcesPath + filename);
-            mfParser = new MekFileParser(file);
-            e = mfParser.getEntity();
-        } catch (Exception ex) {
-            fail(ex.getMessage());
-            return null;
-        }
+        String resourcesPath = "testresources/megamek/common/units/";
+        file = new File(resourcesPath + filename);
+        mfParser = new MekFileParser(file);
+        e = mfParser.getEntity();
 
         return e;
     }
 
-    BattleArmor loadBA(String filename) throws FileNotFoundException {
+    BattleArmor loadBA(String filename) throws EntityLoadingException {
         BattleArmor battleArmor = (BattleArmor) loadEntityFromFile(filename);
         battleArmor.setId(game.getNextEntityId());
         game.addEntity(battleArmor);
@@ -127,7 +126,7 @@ class TWDamageManagerTest {
         return battleArmor;
     }
 
-    BipedMek loadMek(String filename) throws FileNotFoundException {
+    BipedMek loadMek(String filename) throws EntityLoadingException {
         BipedMek mek = (BipedMek) loadEntityFromFile(filename);
         mek.setId(game.getNextEntityId());
         game.addEntity(mek);
@@ -135,7 +134,7 @@ class TWDamageManagerTest {
         return mek;
     }
 
-    AeroSpaceFighter loadASF(String filename) throws FileNotFoundException {
+    AeroSpaceFighter loadASF(String filename) throws EntityLoadingException {
         AeroSpaceFighter asf = (AeroSpaceFighter) loadEntityFromFile(filename);
         asf.setId(game.getNextEntityId());
         game.addEntity(asf);
@@ -144,7 +143,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageBAComparison() throws FileNotFoundException {
+    void damageBAComparison() throws EntityLoadingException {
         String unit = "Elemental BA [Laser] (Sqd5).blk";
         BattleArmor mek = loadBA(unit);
 
@@ -171,7 +170,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void killBAComparison() throws FileNotFoundException {
+    void killBAComparison() throws EntityLoadingException {
         // We need to show that both old and new damagers kill BAs _dead_.
 
         String unit = "Elemental BA [Laser] (Sqd5).blk";
@@ -206,7 +205,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void destroySectionDamageTransferComparison() throws FileNotFoundException {
+    void destroySectionDamageTransferComparison() throws EntityLoadingException {
         // We need to show that both old and new damagers transfer damage correctly.
 
         String unit = "Crab CRB-20.mtf";
@@ -262,7 +261,7 @@ class TWDamageManagerTest {
 
     @ParameterizedTest()
     @ValueSource(strings = { "Original", "Modular" })
-    void destroySectionCritTransfers(String manager) throws FileNotFoundException {
+    void destroySectionCritTransfers(String manager) throws EntityLoadingException {
         // We need to show that both old and new damage managers transfer damage correctly.
         TWDamageManager damageManager = (manager.equals("Original")) ? oldMan : newMan;
 
@@ -316,7 +315,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageReactiveArmorBA() throws FileNotFoundException {
+    void damageReactiveArmorBA() throws EntityLoadingException {
         String unit = "Black Wolf BA (ER Pulse) (Sqd5).blk";
         BattleArmor mek = loadBA(unit);
 
@@ -336,7 +335,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageMekHardenedArmorNoPSR() throws FileNotFoundException {
+    void damageMekHardenedArmorNoPSR() throws EntityLoadingException {
         String unit = "Hachiwara HCA-6P.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -360,7 +359,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageMekHardenedArmorWithPSR() throws FileNotFoundException {
+    void damageMekHardenedArmorWithPSR() throws EntityLoadingException {
         String unit = "Hachiwara HCA-6P.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -377,7 +376,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageMekHardenedArmorNoCritAP() throws FileNotFoundException {
+    void damageMekHardenedArmorNoCritAP() throws EntityLoadingException {
         String unit = "Hachiwara HCA-6P.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -392,7 +391,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageMekStandardArmorCritFromAP() throws FileNotFoundException {
+    void damageMekStandardArmorCritFromAP() throws EntityLoadingException {
         String unit = "Cyclops CP-10-Z.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -407,11 +406,11 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageMekBallisticReinforcedArmorNoPSR() throws FileNotFoundException {
+    void damageMekBallisticReinforcedArmorNoPSR() throws EntityLoadingException {
         String unit = "Dervish DV-11DK.mtf";
         BipedMek mek = loadMek(unit);
 
-        // Validate starting armor (25 points of BRA ~= 50 - (1xhits) points standard against some damage types)
+        // Validate starting armor (25 points of BRA ~= 50 - (1x hits) points standard against some damage types)
         assertEquals(25, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
 
         // Deal "39" points of damage (should fill 19 circles)
@@ -433,11 +432,11 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageMekBallisticReinforcedArmorWithPSR() throws FileNotFoundException {
+    void damageMekBallisticReinforcedArmorWithPSR() throws EntityLoadingException {
         String unit = "Dervish DV-11DK.mtf";
         BipedMek mek = loadMek(unit);
 
-        // Validate starting armor (25 points of BRA ~= 50 - (1xhits) points standard against some damage types)
+        // Validate starting armor (25 points of BRA ~= 50 - (1x hits) points standard against some damage types)
         assertEquals(25, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
 
         // Deal "40" points of damage (should fill 20 circles)
@@ -451,7 +450,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageMekImpactResistantArmorNoPSR() throws FileNotFoundException {
+    void damageMekImpactResistantArmorNoPSR() throws EntityLoadingException {
         // Takes 2 damage per 3 full damage dealt
         String unit = "Storm Raider STM-R4.mtf";
         BipedMek mek = loadMek(unit);
@@ -478,7 +477,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageMekImpactResistantArmorWithPSR() throws FileNotFoundException {
+    void damageMekImpactResistantArmorWithPSR() throws EntityLoadingException {
         // Takes 2 damage per 3 full damage dealt
         String unit = "Storm Raider STM-R4.mtf";
         BipedMek mek = loadMek(unit);
@@ -497,7 +496,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageMekImpactResistantArmorNonphysicalWithPSR() throws FileNotFoundException {
+    void damageMekImpactResistantArmorNonphysicalWithPSR() throws EntityLoadingException {
         // Takes normal damage when not physical damage
         String unit = "Storm Raider STM-R4.mtf";
         BipedMek mek = loadMek(unit);
@@ -516,7 +515,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageMekFerroLamellorArmorNoPSR() throws FileNotFoundException {
+    void damageMekFerroLamellorArmorNoPSR() throws EntityLoadingException {
         String unit = "Charger C.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -542,7 +541,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageMekFerroLamellorArmorWithPSR() throws FileNotFoundException {
+    void damageMekFerroLamellorArmorWithPSR() throws EntityLoadingException {
         String unit = "Charger C.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -560,7 +559,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageAeroFerroLamellorArmorCritChecksChecks() throws FileNotFoundException {
+    void damageAeroFerroLamellorArmorCritChecksChecks() throws EntityLoadingException {
         String unit = "Slayer SL-CX1.blk";
         AeroSpaceFighter asf = loadASF(unit);
 
@@ -586,7 +585,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageMekCowlDamageCowlOnly() throws FileNotFoundException {
+    void damageMekCowlDamageCowlOnly() throws EntityLoadingException {
         String unit = "Cyclops CP-10-Z.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -611,7 +610,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageMekCowlDamageAllHeadArmor() throws FileNotFoundException {
+    void damageMekCowlDamageAllHeadArmor() throws EntityLoadingException {
         String unit = "Cyclops CP-10-Z.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -629,14 +628,14 @@ class TWDamageManagerTest {
         DamageInfo damageInfo = new DamageInfo(mek, hit, 12);
         newMan.damageEntity(damageInfo);
 
-        // Armor is _gone_ but not _destroyed)
+        // Armor is _gone_ but not _destroyed
         assertEquals(0, mek.getArmor(BipedMek.LOC_HEAD));
         assertEquals(3, mek.getInternal(BipedMek.LOC_HEAD));
         assertFalse(gameMan.checkForPSRFromDamage(mek));
     }
 
     @Test
-    void damageMekReactiveArmorNoPSR() throws FileNotFoundException {
+    void damageMekReactiveArmorNoPSR() throws EntityLoadingException {
         String unit = "Warwolf A.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -662,7 +661,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageMekReactiveArmorWithPSR() throws FileNotFoundException {
+    void damageMekReactiveArmorWithPSR() throws EntityLoadingException {
         String unit = "Warwolf A.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -680,7 +679,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageMekReflectiveArmorNoPSR() throws FileNotFoundException {
+    void damageMekReflectiveArmorNoPSR() throws EntityLoadingException {
         String unit = "Flashman FLS-10E.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -706,7 +705,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageMekReflectiveArmorWithPSR() throws FileNotFoundException {
+    void damageMekReflectiveArmorWithPSR() throws EntityLoadingException {
         String unit = "Flashman FLS-10E.mtf";
         BipedMek mek = loadMek(unit);
 
@@ -724,7 +723,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageAeroReflectiveArmorCritChecks() throws FileNotFoundException {
+    void damageAeroReflectiveArmorCritChecks() throws EntityLoadingException {
         String unit = "Seydlitz C.blk";
         AeroSpaceFighter asf = loadASF(unit);
 
@@ -750,7 +749,7 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void damageAeroSIWithHalvedDamageTransfer() throws FileNotFoundException {
+    void damageAeroSIWithHalvedDamageTransfer() throws EntityLoadingException {
         String unit = "Seydlitz C.blk";
         AeroSpaceFighter asf = loadASF(unit);
 

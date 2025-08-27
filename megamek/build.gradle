@@ -22,7 +22,7 @@ sourceSets {
             srcDirs = ['src']
         }
         resources {
-            srcDirs = ['i18n', 'resources']
+            srcDirs = ['resources']
         }
     }
     test {

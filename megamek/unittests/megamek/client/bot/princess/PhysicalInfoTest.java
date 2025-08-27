@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,17 +43,17 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import megamek.common.units.BipedMek;
+import megamek.common.ToHitData;
+import megamek.common.actions.KickAttackAction;
+import megamek.common.actions.PunchAttackAction;
 import megamek.common.board.Coords;
-import megamek.common.units.Entity;
 import megamek.common.game.Game;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadMek;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.actions.KickAttackAction;
-import megamek.common.actions.PunchAttackAction;
 import org.junit.jupiter.api.Test;
 
 /**

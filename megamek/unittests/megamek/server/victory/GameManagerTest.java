@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,9 +45,9 @@ import java.util.Collections;
 import java.util.Vector;
 
 import megamek.client.ui.util.PlayerColour;
-import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.force.Forces;
+import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.server.totalwarfare.TWGameManager;
 import org.junit.jupiter.api.Test;

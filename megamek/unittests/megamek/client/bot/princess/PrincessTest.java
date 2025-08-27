@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2011 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -319,7 +319,7 @@ class PrincessTest {
         Entity pickedEntity = mockPrincess.getEntityToMove();
         assertEquals(mockBA, pickedEntity);
 
-        // Add the off-board artillery, which should be ignored. Otherwise it would be
+        // Add the off-board artillery, which should be ignored. Otherwise, it would be
         // picked as the next to move.
         testEntityList.add(mockOffBoardArty);
         pickedEntity = mockPrincess.getEntityToMove();

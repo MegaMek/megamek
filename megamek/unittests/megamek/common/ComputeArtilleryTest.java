@@ -34,7 +34,6 @@
 package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -67,22 +66,22 @@ class ComputeArtilleryTest {
 
         // Immobile target
         Coords leadPos = Compute.calculateArtilleryLead(targetPos, 0, 0);
-        assertTrue(leadPos.equals(targetPos));
+        assertEquals(leadPos, targetPos);
 
         // MP 1 target
         leadPos = Compute.calculateArtilleryLead(targetPos, 0, 1);
-        assertTrue(leadPos.getX() == targetPos.getX());
-        assertTrue(leadPos.getY() == targetPos.getY() - 1);
+        assertEquals(leadPos.getX(), targetPos.getX());
+        assertEquals(leadPos.getY(), targetPos.getY() - 1);
 
         // MP 4 target with flight time == 1
         leadPos = Compute.calculateArtilleryLead(targetPos, 0, 8);
-        assertTrue(leadPos.getX() == targetPos.getX());
-        assertTrue(leadPos.getY() == targetPos.getY() - 8);
+        assertEquals(leadPos.getX(), targetPos.getX());
+        assertEquals(leadPos.getY(), targetPos.getY() - 8);
 
         // MP 8 target moving away
         leadPos = Compute.calculateArtilleryLead(targetPos, 3, 16);
-        assertTrue(leadPos.getX() == targetPos.getX());
-        assertTrue(leadPos.getY() == targetPos.getY() + 16);
+        assertEquals(leadPos.getX(), targetPos.getX());
+        assertEquals(leadPos.getY(), targetPos.getY() + 16);
 
         // MP 5 target moving NW; x <- 10, y ^ (10/2 + 1)
         leadPos = Compute.calculateArtilleryLead(targetPos, 5, 10);

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -713,10 +713,6 @@ class ComputeECMTest {
      * Creates a single enemy with basic ECM owned by the supplied owner and returning the supplied game. Other enemies
      * are created without ECM.
      *
-     * @param owner
-     * @param mockGame
-     *
-     * @return
      */
     private static Vector<Entity> createECMEnemy(Player owner, Game mockGame) {
         Vector<Entity> entitiesVector = new Vector<>();
@@ -777,10 +773,6 @@ class ComputeECMTest {
      * Creates a single enemy with Angel ECM owned by the supplied owner and returning the supplied game. Other enemies
      * are created without ECM.
      *
-     * @param owner
-     * @param mockGame
-     *
-     * @return
      */
     private static Vector<Entity> createAngelEnemy(Player owner, Game mockGame) {
         Vector<Entity> entitiesVector = new Vector<>();

@@ -41,11 +41,9 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Hashtable;
-import java.util.Random;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
-import megamek.client.ui.Messages;
 import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.Report;
@@ -63,6 +61,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -78,10 +77,10 @@ import megamek.common.units.Mek;
 import megamek.common.weapons.handlers.TAGHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryWeaponIndirectHomingHandler;
 import megamek.common.weapons.infantry.InfantryWeapon;
-import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.totalwarfare.TWGameManager;
 import megamek.utils.ServerFactory;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -92,9 +91,7 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
     private TWGameManager gameManager;
     private Game game;
     private Server server;
-    private Random random = new Random();
     static WeaponType tagType = (WeaponType) EquipmentType.get("IS TAG");
-    private static final MMLogger logger = MMLogger.create(ArtilleryWeaponIndirectHomingHandlerTest.class);
 
     @BeforeAll
     static void beforeAll() {
@@ -134,9 +131,13 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         server = ServerFactory.createServer(gameManager);
     }
 
+    @AfterEach
+    void tearDown() {
+        server.die();
+    }
+
     Mek createMek(String chassis, String model, String crewName, Player owner) {
-        Mek unit = createMek(chassis, model, crewName, owner, 4, 5);
-        return unit;
+        return createMek(chassis, model, crewName, owner, 4, 5);
     }
 
     Mek createMek(String chassis, String model, String crewName, Player owner, int gSkill, int pSkill) {
@@ -164,8 +165,7 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
     }
 
     Infantry createInfantry(String chassis, String model, String crewName, Player owner) {
-        Infantry unit = createInfantry(chassis, model, crewName, owner, 5, 8);
-        return unit;
+        return createInfantry(chassis, model, crewName, owner, 5, 8);
     }
 
     Infantry createInfantry(String chassis, String model, String crewName, Player owner, int gSkill, int pSkill) {
@@ -243,27 +243,16 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         return thd;
     }
 
-    ToHitData makeIndirectTHD(int skill) {
-        ToHitData iTHD = makeTHD(skill);
-        iTHD.addModifier(7, Messages.getString("WeaponAttackAction.IndirectArty"));
-        return iTHD;
-    }
-
-    ToHitData makeIndirectHomingTHD() {
-        // Not actually skill, but rather auto-miss cutoff
-        return makeTHD(4, "Homing shot (will miss if TAG misses)");
-    }
-
     ToHitData makeAutoHitHomingTHD() {
         // Not actually skill, but rather auto-miss cutoff
         return makeTHD(2, "Homing shot (will miss if TAG misses)");
     }
 
-    WeaponAttackAction makeWAA(Entity attacker, Entity defender, Mounted weapon) {
+    WeaponAttackAction makeWAA(Entity attacker, Entity defender, Mounted<?> weapon) {
         return new WeaponAttackAction(attacker.getId(), defender.getId(), attacker.getEquipmentNum(weapon));
     }
 
-    ArtilleryAttackAction makeArtilleryWAA(Entity attacker, Entity defender, Mounted weapon) {
+    ArtilleryAttackAction makeArtilleryWAA(Entity attacker, Entity defender, Mounted<?> weapon) {
         return new ArtilleryAttackAction(attacker.getId(),
               defender.getTargetType(),
               defender.getId(),
@@ -288,7 +277,7 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
      * handling.
      */
     @Test
-    void handleArrowIVHomingBombTargetMekWithTAG() throws LocationFullException {
+    void handleArrowIVHomingBombTargetMekWithTAG() throws LocationFullException, EntityLoadingException {
         // Create and load entities
         AeroSpaceFighter attacker = createASF("ATT-10", "Buzzsaw", "Alyce", aPlayer);
         loadBombOnASF(attacker, BombTypeEnum.HOMING);
@@ -308,12 +297,12 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
 
         // Create TAG WAA and handler
         WeaponAttackAction tagWAA = makeWAA(tagger, defender, tagWeapon);
-        TAGHandler taggie = new TAGHandler(makeTHD(2), tagWAA, game, gameManager);
+        TAGHandler tagHandler = new TAGHandler(makeTHD(2), tagWAA, game, gameManager);
 
         // Create Artillery WAA and handler
-        ArtilleryAttackAction awaa = makeArtilleryWAA(attacker, defender, attacker.getWeapon(0));
+        ArtilleryAttackAction artilleryAttackAction = makeArtilleryWAA(attacker, defender, attacker.getWeapon(0));
         ArtilleryWeaponIndirectHomingHandler artie = new ArtilleryWeaponIndirectHomingHandler(makeAutoHitHomingTHD(),
-              awaa,
+              artilleryAttackAction,
               game,
               gameManager);
 
@@ -329,7 +318,7 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         // Now handle hit turn!
         game.setPhase(GamePhase.OFFBOARD);
         // This should not signal any further attacks to be processed
-        assertFalse(taggie.handle(game.getPhase(), reports));
+        assertFalse(tagHandler.handle(game.getPhase(), reports));
         // This should not signal any further attacks to be processed
         assertFalse(artie.handle(game.getPhase(), reports));
 
@@ -345,7 +334,7 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
     }
 
     @Test
-    void handleArrowIVHomingBombTargetMekWithASFTAG() throws LocationFullException {
+    void handleArrowIVHomingBombTargetMekWithASFTAG() throws EntityLoadingException {
         // Create and load entities
         AeroSpaceFighter attacker = createASF("ATT-10", "Buzzsaw", "Alyce", aPlayer);
         loadBombOnASF(attacker, BombTypeEnum.HOMING);
@@ -362,9 +351,9 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         defender.setPosition(defenderPosition);
 
         // Create Artillery WAA and handler
-        ArtilleryAttackAction awaa = makeArtilleryWAA(attacker, defender, attacker.getWeapon(0));
+        ArtilleryAttackAction artilleryAttackAction = makeArtilleryWAA(attacker, defender, attacker.getWeapon(0));
         ArtilleryWeaponIndirectHomingHandler artie = new ArtilleryWeaponIndirectHomingHandler(makeAutoHitHomingTHD(),
-              awaa,
+              artilleryAttackAction,
               game,
               gameManager);
 
@@ -382,9 +371,9 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
 
         // Create TAG WAA and handler after Artillery shot (as a test)
         WeaponAttackAction tagWAA = makeWAA(tagger, defender, tagger.getWeapon(0));
-        TAGHandler taggie = new TAGHandler(makeTHD(2), tagWAA, game, gameManager);
+        TAGHandler tagHandler = new TAGHandler(makeTHD(2), tagWAA, game, gameManager);
 
-        assertFalse(taggie.handle(game.getPhase(), reports));
+        assertFalse(tagHandler.handle(game.getPhase(), reports));
         assertFalse(artie.handle(game.getPhase(), reports));
 
         // Change phase and check that the target was destroyed.

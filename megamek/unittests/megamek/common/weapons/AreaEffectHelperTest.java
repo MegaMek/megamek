@@ -259,7 +259,7 @@ class AreaEffectHelperTest {
 
         // We expect a column of one level above and below the target level,
         // plus a disk of 1 + 6 hexes at level
-        // Ref: TO:AR page 153 'Aerospace Units on Ground Mapsheets'
+        // Ref: TO:AR page 153 'Aerospace Units on Ground Map sheets'
         assertEquals(9, shape.size());
         assertTrue(shape.containsKey(Map.entry(1, centerPoint)));
         assertTrue(shape.containsKey(Map.entry(3, centerPoint)));

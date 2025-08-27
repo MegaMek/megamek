@@ -42,8 +42,7 @@ import org.junit.jupiter.api.Test;
 class StringUtilityTest {
     @Test
     void testIsNullOrBlankString() {
-        final String nullString = null;
-        assertTrue(StringUtility.isNullOrBlank(nullString));
+        assertTrue(StringUtility.isNullOrBlank((String) null));
         assertTrue(StringUtility.isNullOrBlank(""));
         assertTrue(StringUtility.isNullOrBlank("  "));
         assertFalse(StringUtility.isNullOrBlank("test"));
@@ -51,8 +50,7 @@ class StringUtilityTest {
 
     @Test
     void testIsNullOrBlankStringBuilder() {
-        final StringBuilder nullStringBuilder = null;
-        assertTrue(StringUtility.isNullOrBlank(nullStringBuilder));
+        assertTrue(StringUtility.isNullOrBlank((StringBuilder) null));
         final StringBuilder mockStringBuilder = mock(StringBuilder.class);
         when(mockStringBuilder.toString()).thenReturn(null);
         assertTrue(StringUtility.isNullOrBlank(mockStringBuilder));

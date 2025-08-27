@@ -65,8 +65,8 @@ class MtfFileTest {
         }
         String mtf = mek.getMtf();
         byte[] bytes = mtf.getBytes();
-        InputStream istream = new ByteArrayInputStream(bytes);
-        return new MtfFile(istream);
+        InputStream inputStream = new ByteArrayInputStream(bytes);
+        return new MtfFile(inputStream);
     }
 
     @Test
@@ -158,8 +158,8 @@ class MtfFileTest {
         double varSize = 25.0;
         mek.setWeight(150.0);
         mek.setEngine(new Engine(300, Engine.NORMAL_ENGINE, 0));
-        EquipmentType commo = EquipmentType.get("CommsGear");
-        Mounted<?> mount = mek.addEquipment(commo, Mek.LOC_LEFT_TORSO, false);
+        EquipmentType commsGear = EquipmentType.get("CommsGear");
+        Mounted<?> mount = mek.addEquipment(commsGear, Mek.LOC_LEFT_TORSO, false);
         mount.setSize(varSize);
         MtfFile loader = toMtfFile(mek);
 

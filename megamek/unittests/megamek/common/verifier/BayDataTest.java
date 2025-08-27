@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -65,7 +65,7 @@ class BayDataTest {
         final double weight = 2.0;
         Bay cargoBay = BayData.LIQUID_CARGO.newBay(weight, 0);
 
-        assertEquals(cargoBay.getWeight(), weight, 0.01);
+        assertEquals(weight, cargoBay.getWeight(), 0.01);
     }
 
     @Test
@@ -73,7 +73,7 @@ class BayDataTest {
         final double weight = 2.0;
         Bay cargoBay = BayData.REFRIGERATED_CARGO.newBay(weight, 0);
 
-        assertEquals(cargoBay.getWeight(), weight, 0.01);
+        assertEquals(weight, cargoBay.getWeight(), 0.01);
     }
 
     @Test
@@ -81,7 +81,7 @@ class BayDataTest {
         final double weight = 2.0;
         Bay cargoBay = BayData.INSULATED_CARGO.newBay(weight, 0);
 
-        assertEquals(cargoBay.getWeight(), weight, 0.01);
+        assertEquals(weight, cargoBay.getWeight(), 0.01);
     }
 
     @Test
@@ -89,140 +89,140 @@ class BayDataTest {
         final double weight = 2.0;
         Bay cargoBay = BayData.LIVESTOCK_CARGO.newBay(weight, 0);
 
-        assertEquals(cargoBay.getWeight(), weight, 0.01);
+        assertEquals(weight, cargoBay.getWeight(), 0.01);
     }
 
     @Test
     void identifyMekBay() {
         Bay bay = new MekBay(1, 1, 0);
 
-        assertEquals(BayData.getBayType(bay), BayData.MEK);
+        assertEquals(BayData.MEK, BayData.getBayType(bay));
     }
 
     @Test
     void identifyProtoMekBay() {
         Bay bay = new ProtoMekBay(1, 1, 0);
 
-        assertEquals(BayData.getBayType(bay), BayData.PROTOMEK);
+        assertEquals(BayData.PROTOMEK, BayData.getBayType(bay));
     }
 
     @Test
     void identifyHeavyVehicleBay() {
         Bay bay = new HeavyVehicleBay(1, 1, 0);
 
-        assertEquals(BayData.getBayType(bay), BayData.VEHICLE_HEAVY);
+        assertEquals(BayData.VEHICLE_HEAVY, BayData.getBayType(bay));
     }
 
     @Test
     void identifyLightVehicleBay() {
         Bay bay = new LightVehicleBay(1, 1, 0);
 
-        assertEquals(BayData.getBayType(bay), BayData.VEHICLE_LIGHT);
+        assertEquals(BayData.VEHICLE_LIGHT, BayData.getBayType(bay));
     }
 
     @Test
     void identifySuperHeavyVehicleBay() {
         Bay bay = new SuperHeavyVehicleBay(1, 1, 0);
 
-        assertEquals(BayData.getBayType(bay), BayData.VEHICLE_SH);
+        assertEquals(BayData.VEHICLE_SH, BayData.getBayType(bay));
     }
 
     @Test
     void identifyFootInfantryBay() {
         Bay bay = new InfantryBay(1, 1, 0, PlatoonType.FOOT);
 
-        assertEquals(BayData.getBayType(bay), BayData.INFANTRY_FOOT);
+        assertEquals(BayData.INFANTRY_FOOT, BayData.getBayType(bay));
     }
 
     @Test
     void identifyJumpInfantryBay() {
         Bay bay = new InfantryBay(1, 1, 0, PlatoonType.JUMP);
 
-        assertEquals(BayData.getBayType(bay), BayData.INFANTRY_JUMP);
+        assertEquals(BayData.INFANTRY_JUMP, BayData.getBayType(bay));
     }
 
     @Test
     void identifyMotorizedInfantryBay() {
         Bay bay = new InfantryBay(1, 1, 0, PlatoonType.MOTORIZED);
 
-        assertEquals(BayData.getBayType(bay), BayData.INFANTRY_MOTORIZED);
+        assertEquals(BayData.INFANTRY_MOTORIZED, BayData.getBayType(bay));
     }
 
     @Test
     void identifyMechanizedInfantryBay() {
         Bay bay = new InfantryBay(1, 1, 0, PlatoonType.MECHANIZED);
 
-        assertEquals(BayData.getBayType(bay), BayData.INFANTRY_MECHANIZED);
+        assertEquals(BayData.INFANTRY_MECHANIZED, BayData.getBayType(bay));
     }
 
     @Test
     void identifyISBABay() {
         Bay bay = new BattleArmorBay(1, 1, 0, false, false);
 
-        assertEquals(BayData.getBayType(bay), BayData.IS_BATTLE_ARMOR);
+        assertEquals(BayData.IS_BATTLE_ARMOR, BayData.getBayType(bay));
     }
 
     @Test
     void identifyClanBABay() {
         Bay bay = new BattleArmorBay(1, 1, 0, true, false);
 
-        assertEquals(BayData.getBayType(bay), BayData.CLAN_BATTLE_ARMOR);
+        assertEquals(BayData.CLAN_BATTLE_ARMOR, BayData.getBayType(bay));
     }
 
     @Test
     void identifyCSBABay() {
         Bay bay = new BattleArmorBay(1, 1, 0, false, true);
 
-        assertEquals(BayData.getBayType(bay), BayData.CS_BATTLE_ARMOR);
+        assertEquals(BayData.CS_BATTLE_ARMOR, BayData.getBayType(bay));
     }
 
     @Test
     void identifyFighterBay() {
         Bay bay = new ASFBay(1, 1, 0);
 
-        assertEquals(BayData.getBayType(bay), BayData.FIGHTER);
+        assertEquals(BayData.FIGHTER, BayData.getBayType(bay));
     }
 
     @Test
     void identifySmallCraftBay() {
         Bay bay = new SmallCraftBay(1, 1, 0);
 
-        assertEquals(BayData.getBayType(bay), BayData.SMALL_CRAFT);
+        assertEquals(BayData.SMALL_CRAFT, BayData.getBayType(bay));
     }
 
     @Test
     void identifyCargoBay() {
         Bay bay = new CargoBay(1, 1, 0);
 
-        assertEquals(BayData.getBayType(bay), BayData.CARGO);
+        assertEquals(BayData.CARGO, BayData.getBayType(bay));
     }
 
     @Test
     void identifyLiquidCargoBay() {
         Bay bay = new LiquidCargoBay(1, 1, 0);
 
-        assertEquals(BayData.getBayType(bay), BayData.LIQUID_CARGO);
+        assertEquals(BayData.LIQUID_CARGO, BayData.getBayType(bay));
     }
 
     @Test
     void identifyRefrigeratedCargoBay() {
         Bay bay = new RefrigeratedCargoBay(1, 1, 0);
 
-        assertEquals(BayData.getBayType(bay), BayData.REFRIGERATED_CARGO);
+        assertEquals(BayData.REFRIGERATED_CARGO, BayData.getBayType(bay));
     }
 
     @Test
     void identifyInsulatedCargoBay() {
         Bay bay = new InsulatedCargoBay(1, 1, 0);
 
-        assertEquals(BayData.getBayType(bay), BayData.INSULATED_CARGO);
+        assertEquals(BayData.INSULATED_CARGO, BayData.getBayType(bay));
     }
 
     @Test
     void identifyLivestockCargoBay() {
         Bay bay = new LivestockCargoBay(1, 1, 0);
 
-        assertEquals(BayData.getBayType(bay), BayData.LIVESTOCK_CARGO);
+        assertEquals(BayData.LIVESTOCK_CARGO, BayData.getBayType(bay));
     }
 
     @Test

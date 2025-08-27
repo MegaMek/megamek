@@ -790,6 +790,18 @@ public class WeaponType extends EquipmentType {
         minimumRange = inMR;
     }
 
+    public void setShortRange(int inSM) {
+        shortRange = inSM;
+    }
+
+    public void setMediumRange(int inMR) {
+        mediumRange = inMR;
+    }
+
+    public void setLongRange(int inSM) {
+        longRange = inSM;
+    }
+
     public void setAmmoType(AmmoTypeEnum inAT) {
         ammoType = inAT;
     }

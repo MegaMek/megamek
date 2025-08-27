@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2011 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -463,9 +463,8 @@ class BasicPathRankerTest {
             return this;
         }
 
-        public RankPathResultBuilder withFriends() {
+        public void withFriends() {
             this.noFriends = false;
-            return this;
         }
 
         public RankPathResultBuilder withFacingMod(int facingModValue, int facingModConstant, int facingDiff) {

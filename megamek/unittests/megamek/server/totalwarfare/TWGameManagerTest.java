@@ -48,7 +48,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class TWGameManagerTest {
-    private Player player;
     private TWGameManager gameManager;
     private Game game;
 
@@ -59,7 +58,7 @@ class TWGameManagerTest {
 
     @BeforeEach
     void setUp() {
-        player = new Player(0, "Test");
+        Player player = new Player(0, "Test");
         gameManager = new TWGameManager();
         game = gameManager.getGame();
         game.addPlayer(0, player);

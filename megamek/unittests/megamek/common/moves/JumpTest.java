@@ -186,7 +186,7 @@ public class JumpTest extends GameBoardTestCase {
             );
 
             assertTrue(movePath.isMoveLegal(),
-                  "A BA cannot jump into a building lower floors comming from a connected side and not on LOS");
+                  "A BA cannot jump into a building lower floors coming from a connected side and not on LOS");
 
             assertMovePathElevations(movePath, 0, 0, 2, 4, 3);
         }
@@ -205,7 +205,7 @@ public class JumpTest extends GameBoardTestCase {
             );
 
             assertFalse(movePath.isMoveLegal(),
-                  "A BA cannot jump into a building lower floors comming from a connected side and not on LOS");
+                  "A BA cannot jump into a building lower floors coming from a connected side and not on LOS");
 
             assertMovePathElevations(movePath, 0, 0, 2, 4, 4, 3);
         }
@@ -297,7 +297,7 @@ public class JumpTest extends GameBoardTestCase {
                   MoveStepType.DOWN
             );
             assertFalse(movePath.isMoveLegal(),
-                  "A BA cannot jump into a building lower floors comming from an exit side");
+                  "A BA cannot jump into a building lower floors coming from an exit side");
             assertMovePathElevations(movePath, 0, 0, 2, 4, 3, 2, 1, 0);
         }
 

@@ -75,7 +75,7 @@ class AeroPathUtilTest {
     }
 
     @Test
-    void testAssertWillCrashWithOutLandOrVland() {
+    void testAssertWillCrashWithOutLandOrVerticalLand() {
         final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
 
         final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
@@ -87,7 +87,7 @@ class AeroPathUtilTest {
     }
 
     @Test
-    void testAssertWillCrashWithLandOrVland() {
+    void testAssertWillCrashWithLandOrVerticalLand() {
         final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
 
         final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);

@@ -84,13 +84,13 @@ public class BulkUnitFileTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("allBlkFiles")
-    void loadVerifySaveVerifyBlks(File file) throws EntitySavingException, IOException {
+    void loadVerifySaveVerifyBLKFiles(File file) throws EntitySavingException, IOException {
         checkEntityFile(file);
     }
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("allMtfFiles")
-    void loadVerifySaveVerifyMtfs(File file) throws EntitySavingException, IOException {
+    void loadVerifySaveVerifyMTFFiles(File file) throws EntitySavingException, IOException {
         checkEntityFile(file);
     }
 
@@ -110,7 +110,7 @@ public class BulkUnitFileTest {
             Entity repersistedEntity = loadUnit(tmpFile);
             var reValidation = verify(repersistedEntity);
             assertEquals(UnitValidation.VALID, reValidation.state(),
-                  "The unit is invalid after repersisting:\n\t"
+                  "The unit is invalid after re-persisting:\n\t"
                         + tmpFile
                         + "\n\t"
                         + entity.getDisplayName()
@@ -206,9 +206,7 @@ public class BulkUnitFileTest {
 
         var succeeded = testEntity.correctEntity(sb, unit.getTechLevel());
 
-        var validation = new Validation(UnitValidation.of(succeeded), sb.toString());
-
-        return validation;
+        return new Validation(UnitValidation.of(succeeded), sb.toString());
     }
 
     public static boolean persistUnit(File outFile, Entity entity) throws EntitySavingException {

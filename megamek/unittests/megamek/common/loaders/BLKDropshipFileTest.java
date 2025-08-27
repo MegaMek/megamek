@@ -41,9 +41,9 @@ import java.util.Vector;
 
 import megamek.common.bays.BattleArmorBay;
 import megamek.common.bays.Bay;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
-import megamek.common.equipment.EquipmentType;
 import megamek.common.util.BuildingBlock;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -108,25 +108,22 @@ class BLKDropshipFileTest {
     }
 
     @Test
-    void testLoadNewFormatDSHasMixedBATechLevels() {
-        boolean parsed = false;
-        boolean mixedTech = false;
-        boolean ISBACorrect = false;
-        boolean ClanBACorrect = false;
-        boolean ComStarBACorrect = false;
+    void testLoadNewFormatDSHasMixedBATechLevels() throws Exception {
+        boolean parsed;
+        boolean mixedTech;
+        boolean ISBACorrect;
+        boolean ClanBACorrect;
+        boolean ComStarBACorrect;
         Vector<Bay> bays;
 
-        try {
-            Dropship ds = loadDropshipFromString(newFormatDSwithMixedBA);
-            parsed = true;
-            mixedTech = ds.isMixedTech() && ds.isClan(); // confirm mixed-tech Clan design
-            bays = ds.getTransportBays();
-            ISBACorrect = confirmBayTypeInBays(bays, "BA_IS");
-            ClanBACorrect = confirmBayTypeInBays(bays, "BA_CLAN");
-            ComStarBACorrect = confirmBayTypeInBays(bays, "BA_CS");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Dropship dropship = loadDropshipFromString(newFormatDSWithMixedBA);
+        parsed = true;
+        mixedTech = dropship.isMixedTech() && dropship.isClan(); // confirm mixed-tech Clan design
+        bays = dropship.getTransportBays();
+        ISBACorrect = confirmBayTypeInBays(bays, "BA_IS");
+        ClanBACorrect = confirmBayTypeInBays(bays, "BA_CLAN");
+        ComStarBACorrect = confirmBayTypeInBays(bays, "BA_CS");
+
         assertTrue(parsed);
         assertTrue(mixedTech);
         assertTrue(ISBACorrect);
@@ -135,27 +132,23 @@ class BLKDropshipFileTest {
     }
 
     @Test
-    void testLoadOldFormatClanDSHasClanBATech() {
+    void testLoadOldFormatClanDSHasClanBATech() throws Exception {
         // We want to verify that the correct tech type is applied to non-mixed
         // Clan BA bays when loading old-format files.
-        boolean parsed = false;
-        boolean mixedTech = false;
-        boolean clan = false;
-        boolean ClanBACorrect = false;
-        boolean ISBAExists = false;
+        boolean parsed;
+        boolean mixedTech;
+        boolean clan;
+        boolean ClanBACorrect;
+        boolean ISBAExists;
         Vector<Bay> bays;
 
-        try {
-            Dropship ds = loadDropshipFromString(oldFormatClanDSwithBA);
-            parsed = true;
-            mixedTech = ds.isMixedTech(); // confirm not mixed tech
-            clan = ds.isClan(); // confirm clan tech base
-            bays = ds.getTransportBays();
-            ClanBACorrect = confirmBayTypeInBays(bays, "BA_CLAN");
-            ISBAExists = confirmBayTypeInBays(bays, "BA_IS");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Dropship dropship = loadDropshipFromString(oldFormatClanDSWithBA);
+        parsed = true;
+        mixedTech = dropship.isMixedTech(); // confirm not mixed tech
+        clan = dropship.isClan(); // confirm clan tech base
+        bays = dropship.getTransportBays();
+        ClanBACorrect = confirmBayTypeInBays(bays, "BA_CLAN");
+        ISBAExists = confirmBayTypeInBays(bays, "BA_IS");
         assertTrue(parsed);
         assertTrue(clan);
         assertFalse(mixedTech);
@@ -164,7 +157,7 @@ class BLKDropshipFileTest {
     }
 
     // region DS definitions
-    private static final String newFormatDSwithMixedBA = String.join(
+    private static final String newFormatDSWithMixedBA = String.join(
           System.lineSeparator(),
           "<BlockVersion>",
           "1",
@@ -274,7 +267,7 @@ class BLKDropshipFileTest {
           "0",
           "</escape_pod>");
 
-    private static final String oldFormatClanDSwithBA = String.join(
+    private static final String oldFormatClanDSWithBA = String.join(
           System.lineSeparator(),
           "<BlockVersion>",
           "1",

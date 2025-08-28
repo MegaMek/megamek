@@ -33,7 +33,9 @@
 
 package megamek.common;
 
+import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -135,11 +137,14 @@ public class EquipmentBitSet {
     }
 
     /**
-     * Returns a new empty EquipmentBitSet and the flag set if it is set in this EquipmentBitSet. Example:
-     * EquipmentBitSet a = new EquipmentBitSet(); a.set(F_HEAT_SINK); a.set(F_DOUBLE_HEATSINK); a.and(F_HEAT_SINK) //
-     * EquipmentBitSet with only F_HEAT_SINK set if it was originally set a.has(F_HEAT_SINK); // true
-     * a.has(F_DOUBLE_HEATSINK); // false
-     *
+     * Returns a new empty EquipmentBitSet and the flag set if it is set in this EquipmentBitSet.
+     * Example:
+     *  EquipmentBitSet a = new EquipmentBitSet();
+     *  a.set(F_HEAT_SINK);
+     *  a.set(F_DOUBLE_HEATSINK);
+     *  a.and(F_HEAT_SINK) // EquipmentBitSet with only F_HEAT_SINK set if it was originally set
+     *  a.has(F_HEAT_SINK); // true
+     *  a.has(F_DOUBLE_HEATSINK); // false
      * @param flag the flag to check
      *
      * @return a new empty EquipmentBitSet and the flag set if it is set in this EquipmentBitSet
@@ -151,6 +156,41 @@ public class EquipmentBitSet {
         }
         return newBitSet;
     }
+
+    /**
+     * Returns a list of string names for all flags that are set in this EquipmentBitSet.
+     * @param flagEnum the enum class to check against (e.g., MiscTypeFlag.class, WeaponTypeFlag.class)
+     * @return list of flag names that are set in this bitset
+     */
+    public <T extends Enum<T> & EquipmentFlag> List<String> getSetFlagNames(Class<T> flagEnum) {
+        List<String> setFlags = new ArrayList<>();
+        T[] enumConstants = flagEnum.getEnumConstants();
+
+        // Only iterate through the bits that are actually set
+        for (int i = bitSet.nextSetBit(0); i >= 0; i = bitSet.nextSetBit(i + 1)) {
+            // Check if this bit index corresponds to a valid enum ordinal
+            if (i < enumConstants.length) {
+                setFlags.add(enumConstants[i].name());
+            }
+            // Handle potential overflow (though very unlikely with 512-bit capacity)
+            if (i == Integer.MAX_VALUE) {
+                break;
+            }
+        }
+
+        return setFlags;
+    }
+
+    /**
+     * Returns an array of string names for all flags that are set in this EquipmentBitSet.
+     * @param flagEnum the enum class to check against (e.g., MiscTypeFlag.class, WeaponTypeFlag.class)
+     * @return array of flag names that are set in this bitset
+     */
+    public <T extends Enum<T> & EquipmentFlag> String[] getSetFlagNamesAsArray(Class<T> flagEnum) {
+        List<String> flagNames = getSetFlagNames(flagEnum);
+        return flagNames.toArray(new String[0]);
+    }
+
 
     @Override
     public String toString() {

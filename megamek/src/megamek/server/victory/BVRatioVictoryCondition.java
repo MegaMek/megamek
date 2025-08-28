@@ -37,7 +37,7 @@ package megamek.server.victory;
 import java.util.HashSet;
 import java.util.Map;
 
-import megamek.common.Game;
+import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.Report;
 

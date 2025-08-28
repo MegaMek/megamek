@@ -39,10 +39,19 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import megamek.common.Coords;
-import megamek.common.NarcPod;
+import megamek.common.board.Coords;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.NarcPod;
+import megamek.common.equipment.Transporter;
+import megamek.common.game.GameTurn;
+import megamek.common.interfaces.ITechnology;
 import megamek.common.net.marshalling.SanityInputFilter;
 import megamek.common.options.AbstractOptions;
+import megamek.common.rolls.Roll;
+import megamek.common.units.BTObject;
+import megamek.common.units.Building;
+import megamek.common.units.Crew;
+import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.victory.VictoryCondition;
 
 /**
@@ -65,19 +74,19 @@ public class SerializationHelper {
 
         xStream.allowTypesByRegExp(SanityInputFilter.getFilterList());
 
-        xStream.allowTypeHierarchy(megamek.common.BTObject.class);
-        xStream.allowTypeHierarchy(megamek.common.Building.class);
-        xStream.allowTypeHierarchy(megamek.common.Crew.class);
-        xStream.allowTypeHierarchy(megamek.common.GameTurn.class);
-        xStream.allowTypeHierarchy(megamek.common.ITechnology.class);
-        xStream.allowTypeHierarchy(megamek.common.Roll.class);
-        xStream.allowTypeHierarchy(megamek.common.Transporter.class);
-        xStream.allowTypeHierarchy(megamek.common.Mounted.class);
+        xStream.allowTypeHierarchy(BTObject.class);
+        xStream.allowTypeHierarchy(Building.class);
+        xStream.allowTypeHierarchy(Crew.class);
+        xStream.allowTypeHierarchy(GameTurn.class);
+        xStream.allowTypeHierarchy(ITechnology.class);
+        xStream.allowTypeHierarchy(Roll.class);
+        xStream.allowTypeHierarchy(Transporter.class);
+        xStream.allowTypeHierarchy(Mounted.class);
         xStream.allowTypeHierarchy(megamek.common.actions.EntityAction.class);
         xStream.allowTypeHierarchy(megamek.common.icons.AbstractIcon.class);
         xStream.allowTypeHierarchy(AbstractOptions.class);
         xStream.allowTypeHierarchy(megamek.common.options.IOption.class);
-        xStream.allowTypeHierarchy(megamek.common.weapons.AttackHandler.class);
+        xStream.allowTypeHierarchy(AttackHandler.class);
         xStream.allowTypeHierarchy(VictoryCondition.class);
         xStream.allowTypeHierarchy(megamek.common.strategicBattleSystems.SBFMoveStep.class);
         return xStream;

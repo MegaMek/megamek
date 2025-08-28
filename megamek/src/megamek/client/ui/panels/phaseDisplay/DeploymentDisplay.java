@@ -63,11 +63,25 @@ import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.MekPanelTabStrip;
-import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.battleArmor.ProtoMekClampMount;
+import megamek.common.bays.Bay;
+import megamek.common.board.AllowedDeploymentHelper;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.board.DeploymentElevationType;
+import megamek.common.board.ElevationOption;
+import megamek.common.equipment.Transporter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.game.Game;
+import megamek.common.game.GameTurn;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.units.IAero;
+import megamek.common.units.Infantry;
 import megamek.logging.MMLogger;
 
 public class DeploymentDisplay extends StatusBarPhaseDisplay {
@@ -236,7 +250,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-        if (entity.isWeapOrderChanged()) {
+        if (entity.isWeaponOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(entity);
         }
 
@@ -409,7 +423,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
               elevationOrAltitude, entity.getLoadedUnits(), assaultDropPreference);
         entity.setDeployed(true);
 
-        if (entity.isWeapOrderChanged()) {
+        if (entity.isWeaponOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(entity);
         }
         endMyTurn();

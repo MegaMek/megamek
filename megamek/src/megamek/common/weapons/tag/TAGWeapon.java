@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,12 +34,18 @@
 
 package megamek.common.weapons.tag;
 
-import megamek.common.Game;
+import static megamek.common.game.IGame.LOGGER;
+
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.TAGHandler;
+import megamek.common.annotations.Nullable;
+import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.Weapon;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.TAGHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -47,6 +53,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sep 7, 2005
  */
 public abstract class TAGWeapon extends Weapon {
+    @Serial
     private static final long serialVersionUID = 6794299593713032006L;
 
     public TAGWeapon() {
@@ -56,8 +63,15 @@ public abstract class TAGWeapon extends Weapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+    @Nullable
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
-        return new TAGHandler(toHit, waa, game, manager);
+        try {
+            return new TAGHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
+
     }
 }

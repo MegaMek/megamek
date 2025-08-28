@@ -42,9 +42,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import megamek.common.Board;
-import megamek.common.BoardDimensions;
 import megamek.common.Configuration;
+import megamek.common.board.Board;
+import megamek.common.board.BoardDimensions;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utilities.BoardsTagger.Tags;
 
@@ -65,9 +65,9 @@ public class BoardClassifier {
 
     // function that maps full board paths to partial board paths
     private Map<String, String> boardPaths = new HashMap<>();
-    private Map<String, String> boardTags = new HashMap<>();
-    private Map<String, Integer> boardWidth = new HashMap<>();
-    private Map<String, Integer> boardHeight = new HashMap<>();
+    private final Map<String, String> boardTags = new HashMap<>();
+    private final Map<String, Integer> boardWidth = new HashMap<>();
+    private final Map<String, Integer> boardHeight = new HashMap<>();
 
     public Map<Tags, List<String>> getBoardsByTag() {
         return boardsByTag;
@@ -105,7 +105,7 @@ public class BoardClassifier {
         return boardWidth;
     }
 
-    public Map<String, Integer> getBoardHeigth() {
+    public Map<String, Integer> getBoardHeight() {
         return boardHeight;
     }
 
@@ -180,7 +180,7 @@ public class BoardClassifier {
                             getBoardPaths().put(filePath.getPath(), partialBoardPath);
                             getBoardTags().put(filePath.getPath(), boardTags.toString());
                             getBoardWidth().put(filePath.getPath(), dimension.width());
-                            getBoardHeigth().put(filePath.getPath(), dimension.height());
+                            getBoardHeight().put(filePath.getPath(), dimension.height());
                         }
                     }
                 }

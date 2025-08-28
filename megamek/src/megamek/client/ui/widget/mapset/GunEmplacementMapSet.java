@@ -47,7 +47,7 @@ import megamek.client.ui.widget.UnitDisplaySkinSpecification;
 import megamek.client.ui.widget.picmap.PMAreasGroup;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.common.Configuration;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**

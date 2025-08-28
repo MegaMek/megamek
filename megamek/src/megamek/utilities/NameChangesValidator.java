@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.common.Configuration;
-import megamek.common.MekSummaryCache;
+import megamek.common.loaders.MekSummaryCache;
 import megamek.logging.MMLogger;
 
 /**
@@ -87,7 +87,7 @@ public class NameChangesValidator {
             InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
             BufferedReader br = new BufferedReader(isr);
 
-            String line = "";
+            String line;
 
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("#")) {

@@ -37,9 +37,9 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
 
-import megamek.common.Board;
-import megamek.common.Compute;
-import megamek.common.Coords;
+import megamek.common.board.Board;
+import megamek.common.compute.Compute;
+import megamek.common.board.Coords;
 import megamek.common.Hex;
 
 /**

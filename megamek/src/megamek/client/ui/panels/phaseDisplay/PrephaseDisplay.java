@@ -53,12 +53,12 @@ import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.MekPanelTabStrip;
-import megamek.common.Entity;
-import megamek.common.Game;
 import megamek.common.enums.GamePhase;
-import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**

@@ -49,7 +49,7 @@ public interface BattleForceSUAFormatter {
 
     /**
      * Returns true when this object wants to have the given SUA displayed among its special abilities. This method
-     * defaults to returning true and must be overridden when some SUAs are not to displayed.
+     * defaults to returning true and must be overridden when some SUAs are not too displayed.
      *
      * @return True when this object wants to have the given sua displayed among its special abilities.
      */

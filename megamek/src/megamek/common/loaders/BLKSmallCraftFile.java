@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,15 +34,15 @@
 
 package megamek.common.loaders;
 
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.IArmorState;
-import megamek.common.LocationFullException;
-import megamek.common.Mounted;
-import megamek.common.SmallCraft;
 import megamek.common.TechConstants;
-import megamek.common.WeaponType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.IArmorState;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.SmallCraft;
 import megamek.common.util.BuildingBlock;
 import megamek.common.verifier.TestEntity;
 import megamek.logging.MMLogger;
@@ -123,7 +123,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMekLoader {
 
         // figure out structural integrity
         if (!dataFile.exists("structural_integrity")) {
-            throw new EntityLoadingException("Could not find structual_integrity block.");
+            throw new EntityLoadingException("Could not find structural_integrity block.");
         }
         a.setOSI(dataFile.getDataAsInt("structural_integrity")[0]);
 
@@ -178,8 +178,8 @@ public class BLKSmallCraftFile extends BLKFile implements IMekLoader {
         }
 
         a.initializeArmor(armor[BLKAeroSpaceFighterFile.NOSE], SmallCraft.LOC_NOSE);
-        a.initializeArmor(armor[BLKAeroSpaceFighterFile.RW], SmallCraft.LOC_RWING);
-        a.initializeArmor(armor[BLKAeroSpaceFighterFile.LW], SmallCraft.LOC_LWING);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.RW], SmallCraft.LOC_RIGHT_WING);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.LW], SmallCraft.LOC_LEFT_WING);
         a.initializeArmor(armor[BLKAeroSpaceFighterFile.AFT], SmallCraft.LOC_AFT);
         a.initializeArmor(IArmorState.ARMOR_NA, SmallCraft.LOC_HULL);
 
@@ -217,7 +217,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMekLoader {
             prefix = "IS ";
         }
 
-        boolean rearMount = false;
+        boolean rearMount;
 
         if (saEquip[0] != null) {
             for (String element : saEquip) {
@@ -266,7 +266,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMekLoader {
                 if (etype != null) {
                     try {
                         int useLoc = TestEntity.eqRequiresLocation(t, etype) ? nLoc : SmallCraft.LOC_HULL;
-                        if (useLoc == SmallCraft.LOC_HULL) {
+                        if (useLoc == SmallCraft.LOC_HULL && rearMount) {
                             // "Rear hull" isn't a valid mount point on small craft,
                             // but bugs in unit construction may cause a unit to be saved with
                             // such an impossible configuration.

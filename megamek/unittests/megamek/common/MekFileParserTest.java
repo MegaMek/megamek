@@ -35,7 +35,12 @@ package megamek.common;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Mek;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -48,13 +53,13 @@ class MekFileParserTest {
     @Test
     void splitMGsBetweenMGAs() throws LocationFullException {
         Mek mek = new BipedMek();
-        WeaponMounted mga1 = (WeaponMounted) mek.addEquipment(EquipmentType.get("ISMGA"), Mek.LOC_LT);
-        mek.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LT);
-        mek.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LT);
-        WeaponMounted mga2 = (WeaponMounted) mek.addEquipment(EquipmentType.get("ISMGA"), Mek.LOC_LT);
-        mek.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LT);
-        mek.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LT);
-        mek.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LT);
+        WeaponMounted mga1 = (WeaponMounted) mek.addEquipment(EquipmentType.get("ISMGA"), Mek.LOC_LEFT_TORSO);
+        mek.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LEFT_TORSO);
+        mek.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LEFT_TORSO);
+        WeaponMounted mga2 = (WeaponMounted) mek.addEquipment(EquipmentType.get("ISMGA"), Mek.LOC_LEFT_TORSO);
+        mek.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LEFT_TORSO);
+        mek.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LEFT_TORSO);
+        mek.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LEFT_TORSO);
 
         MekFileParser.linkMGAs(mek);
 
@@ -65,12 +70,12 @@ class MekFileParserTest {
     @Test
     void loadMGAsFromContiguousBlocks() throws LocationFullException {
         Mek mek = new BipedMek();
-        WeaponMounted mga1 = (WeaponMounted) mek.addEquipment(EquipmentType.get("ISLMGA"), Mek.LOC_LT);
-        WeaponMounted mga2 = (WeaponMounted) mek.addEquipment(EquipmentType.get("ISMGA"), Mek.LOC_LT);
-        mek.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LT);
-        mek.addEquipment(EquipmentType.get("ISLightMG"), Mek.LOC_LT);
-        mek.addEquipment(EquipmentType.get("ISLightMG"), Mek.LOC_LT);
-        WeaponMounted lastMG = (WeaponMounted) mek.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LT);
+        WeaponMounted mga1 = (WeaponMounted) mek.addEquipment(EquipmentType.get("ISLMGA"), Mek.LOC_LEFT_TORSO);
+        WeaponMounted mga2 = (WeaponMounted) mek.addEquipment(EquipmentType.get("ISMGA"), Mek.LOC_LEFT_TORSO);
+        mek.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LEFT_TORSO);
+        mek.addEquipment(EquipmentType.get("ISLightMG"), Mek.LOC_LEFT_TORSO);
+        mek.addEquipment(EquipmentType.get("ISLightMG"), Mek.LOC_LEFT_TORSO);
+        WeaponMounted lastMG = (WeaponMounted) mek.addEquipment(EquipmentType.get("ISMG"), Mek.LOC_LEFT_TORSO);
 
         MekFileParser.linkMGAs(mek);
 

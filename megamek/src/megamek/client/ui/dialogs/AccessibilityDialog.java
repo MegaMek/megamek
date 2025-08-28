@@ -52,9 +52,22 @@ import megamek.client.commands.ClientCommand;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.event.*;
+import megamek.common.board.Coords;
+import megamek.common.event.GameCFREvent;
+import megamek.common.event.GameEndEvent;
+import megamek.common.event.GameListener;
+import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GameNewActionEvent;
+import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GameReportEvent;
+import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.PostGameResolution;
+import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.event.entity.GameEntityNewEvent;
+import megamek.common.event.entity.GameEntityRemoveEvent;
+import megamek.common.event.player.GamePlayerConnectedEvent;
+import megamek.common.event.player.GamePlayerDisconnectedEvent;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 public class AccessibilityDialog extends JDialog {

@@ -38,8 +38,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import megamek.common.Compute;
-import megamek.common.Entity;
+import megamek.common.compute.Compute;
+import megamek.common.units.Entity;
 import megamek.server.Server;
 import megamek.server.totalwarfare.TWGameManager;
 

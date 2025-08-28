@@ -35,8 +35,8 @@ package megamek.common.strategicBattleSystems;
 
 import java.io.Serializable;
 
-import megamek.common.BoardLocation;
-import megamek.common.InGameObject;
+import megamek.common.board.BoardLocation;
+import megamek.common.game.InGameObject;
 
 public class SBFUnitPlaceHolder implements InGameObject, Serializable {
 

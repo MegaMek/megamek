@@ -34,8 +34,8 @@
 
 package megamek.server.commands;
 
-import megamek.common.Building;
-import megamek.common.Entity;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
 import megamek.server.Server;
 import megamek.server.totalwarfare.TWGameManager;
 

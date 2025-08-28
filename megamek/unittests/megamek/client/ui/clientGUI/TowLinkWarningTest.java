@@ -45,12 +45,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import megamek.client.ui.panels.phaseDisplay.TowLinkWarning;
-import megamek.common.Board;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.LargeSupportTank;
+import megamek.common.board.Board;
+import megamek.common.compute.Compute;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
+import megamek.common.units.LargeSupportTank;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

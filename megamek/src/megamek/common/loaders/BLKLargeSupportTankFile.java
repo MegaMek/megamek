@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,13 +34,13 @@
 
 package megamek.common.loaders;
 
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.FuelType;
-import megamek.common.LargeSupportTank;
-import megamek.common.Tank;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.enums.FuelType;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.LargeSupportTank;
+import megamek.common.units.Tank;
 import megamek.common.util.BuildingBlock;
 import megamek.logging.MMLogger;
 
@@ -57,23 +57,12 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMekLoader {
 
     @Override
     protected int defaultVGLFacing(int location, boolean rearFacing) {
-        switch (location) {
-            case LargeSupportTank.LOC_FRONTRIGHT:
-                return 1;
-            case LargeSupportTank.LOC_REARRIGHT:
-                return 2;
-            case LargeSupportTank.LOC_REAR:
-                return 2;
-            case LargeSupportTank.LOC_REARLEFT:
-                return 4;
-            case LargeSupportTank.LOC_FRONTLEFT:
-                return 4;
-            case LargeSupportTank.LOC_FRONT:
-            case LargeSupportTank.LOC_TURRET:
-            case LargeSupportTank.LOC_TURRET_2:
-            default:
-                return 0;
-        }
+        return switch (location) {
+            case LargeSupportTank.LOC_FRONT_RIGHT -> 1;
+            case LargeSupportTank.LOC_REAR_RIGHT, LargeSupportTank.LOC_REAR -> 2;
+            case LargeSupportTank.LOC_REAR_LEFT, LargeSupportTank.LOC_FRONT_LEFT -> 4;
+            default -> 0;
+        };
     }
 
     @Override
@@ -172,10 +161,10 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMekLoader {
         t.recalculateTechAdvancement();
 
         loadEquipment(t, "Front", Tank.LOC_FRONT);
-        loadEquipment(t, "Front Right", LargeSupportTank.LOC_FRONTRIGHT);
-        loadEquipment(t, "Front Left", LargeSupportTank.LOC_FRONTLEFT);
-        loadEquipment(t, "Rear Right", LargeSupportTank.LOC_REARRIGHT);
-        loadEquipment(t, "Rear Left", LargeSupportTank.LOC_REARLEFT);
+        loadEquipment(t, "Front Right", LargeSupportTank.LOC_FRONT_RIGHT);
+        loadEquipment(t, "Front Left", LargeSupportTank.LOC_FRONT_LEFT);
+        loadEquipment(t, "Rear Right", LargeSupportTank.LOC_REAR_RIGHT);
+        loadEquipment(t, "Rear Left", LargeSupportTank.LOC_REAR_LEFT);
         loadEquipment(t, "Rear", LargeSupportTank.LOC_REAR);
         if (!t.hasNoTurret()) {
             loadEquipment(t, "Turret", LargeSupportTank.LOC_TURRET);
@@ -211,9 +200,9 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMekLoader {
             try {
                 t.setICEFuelType(FuelType.valueOf(dataFile.getDataAsString("fuelType")[0]));
             } catch (IllegalArgumentException ex) {
-                logger.error("While loading " + t.getShortNameRaw()
-                      + ": Could not parse ICE fuel type "
-                      + dataFile.getDataAsString("fuelType")[0]);
+                logger.error("While loading {}: Could not parse ICE fuel type {}",
+                      t.getShortNameRaw(),
+                      dataFile.getDataAsString("fuelType")[0]);
                 t.setICEFuelType(FuelType.PETROCHEMICALS);
             }
         }

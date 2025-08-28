@@ -40,18 +40,14 @@ import java.util.Objects;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.ComputeArc;
-import megamek.common.Entity;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeArc;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.WeaponHandler;
-import megamek.common.weapons.gaussrifles.GaussWeapon;
+import megamek.common.units.Entity;
+import megamek.common.weapons.gaussRifles.GaussWeapon;
+import megamek.common.weapons.handlers.WeaponHandler;
 
 public class WeaponMounted extends Mounted<WeaponType> {
 
@@ -73,14 +69,14 @@ public class WeaponMounted extends Mounted<WeaponType> {
               && curMode().equals("Powered Down")) {
             return 0;
         }
-        if ((isHotLoaded() || hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS))
+        if ((isHotLoaded() || hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_AMMO_FEED_PROBLEMS))
               && (getLinked() != null) && (getLinked().getUsableShotsLeft() > 0)) {
             Mounted<?> link = getLinked();
-            AmmoType atype = ((AmmoType) link.getType());
-            int damagePerShot = atype.getDamagePerShot();
+            AmmoType ammoType = ((AmmoType) link.getType());
+            int damagePerShot = ammoType.getDamagePerShot();
             // Launchers with Dead-Fire missiles in them do an extra point of
             // damage per shot when critted
-            if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
+            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
                 damagePerShot++;
             }
 
@@ -128,13 +124,13 @@ public class WeaponMounted extends Mounted<WeaponType> {
         }
         // multiply by number of shots and number of weapons
         heat = heat * getCurrentShots() * getNWeapons();
-        if (hasQuirk(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)) {
+        if (hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_IMP_COOLING)) {
             heat = Math.max(1, heat - 1);
         }
-        if (hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)) {
+        if (hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_POOR_COOLING)) {
             heat += 1;
         }
-        if (hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)) {
+        if (hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_NO_COOLING)) {
             heat += 2;
         }
         if (hasChargedCapacitor() == 2) {
@@ -180,7 +176,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
                       && !m.isDestroyed()
                       && !m.isBreached()
                       && m.getType().hasFlag(WeaponType.F_MG)
-                      && (((WeaponType) m.getType()).getRackSize() == ((WeaponType) getType())
+                      && (m.getType().getRackSize() == getType()
                       .getRackSize())) {
                     nShots++;
                 }
@@ -191,7 +187,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
 
     @Override
     public boolean isOneShot() {
-        return getType().hasFlag(WeaponType.F_ONESHOT);
+        return getType().hasFlag(WeaponType.F_ONE_SHOT);
     }
 
     /**
@@ -349,7 +345,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
      *
      * @param mounted The weapon or ammo.
      *
-     * @return Wehther the bay contains the equipment.
+     * @return Whether the bay contains the equipment.
      */
     public boolean bayContains(Mounted<?> mounted) {
         return bayContains(mounted.getEquipmentNum());
@@ -385,11 +381,11 @@ public class WeaponMounted extends Mounted<WeaponType> {
         for (WeaponHandler wr : vAttacks) {
             boolean isInArc = ComputeArc.isInArc(getEntity().getGame(),
                   getEntity().getId(), getEntity().getEquipmentNum(this),
-                  getEntity().getGame().getEntity(wr.waa.getEntityId()));
+                  getEntity().getGame().getEntity(wr.weaponAttackAction.getEntityId()));
             boolean isInRange = getEntity().getPosition().distance(
-                  wr.getWaa().getTarget(getEntity().getGame()).getPosition()) <= 3;
+                  wr.getWeaponAttackAction().getTarget(getEntity().getGame()).getPosition()) <= 3;
             if (isInArc && isInRange) {
-                vAttacksInArc.add(wr.waa);
+                vAttacksInArc.add(wr.weaponAttackAction);
             }
         }
         // find the most dangerous salvo by expected damage

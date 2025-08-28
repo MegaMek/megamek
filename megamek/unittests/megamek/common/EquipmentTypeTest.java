@@ -34,6 +34,7 @@ package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import megamek.common.equipment.EquipmentType;
 import org.junit.jupiter.api.Test;
 
 class EquipmentTypeTest {

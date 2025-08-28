@@ -37,13 +37,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.IGame;
-import megamek.common.InGameObject;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
-import megamek.common.hexarea.HexArea;
+import megamek.common.game.Game;
+import megamek.common.game.IGame;
+import megamek.common.game.InGameObject;
+import megamek.common.hexArea.HexArea;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**

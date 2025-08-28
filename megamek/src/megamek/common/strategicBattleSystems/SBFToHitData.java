@@ -35,11 +35,11 @@ package megamek.common.strategicBattleSystems;
 
 import java.util.List;
 
-import megamek.common.InGameObject;
-import megamek.common.TargetRoll;
 import megamek.common.TargetRollModifier;
 import megamek.common.actions.sbf.SBFAttackAction;
 import megamek.common.actions.sbf.SBFStandardUnitAttack;
+import megamek.common.game.InGameObject;
+import megamek.common.rolls.TargetRoll;
 
 public class SBFToHitData extends TargetRoll {
 
@@ -49,7 +49,7 @@ public class SBFToHitData extends TargetRoll {
 
     public SBFToHitData() {}
 
-    public static SBFToHitData compiletoHit(SBFGame game, SBFStandardUnitAttack attack) {
+    public static SBFToHitData compileToHit(SBFGame game, SBFStandardUnitAttack attack) {
         if (!attack.isDataValid(game)) {
             return new SBFToHitData(TargetRoll.IMPOSSIBLE, "Invalid attack");
         }
@@ -134,8 +134,8 @@ public class SBFToHitData extends TargetRoll {
 
     /**
      * Returns a list of target IDs of all the targets of all attacks that the attacker of the given attack is
-     * performing this round. The result can be empty (the unit isn't attacking anything or it is not the firing phase),
-     * it can have one or two entries.
+     * performing this round. The result can be empty (the unit isn't attacking anything, or it is not the firing
+     * phase), it can have one or two entries.
      *
      * @param unit The attacker to check attacks for
      * @param game The game

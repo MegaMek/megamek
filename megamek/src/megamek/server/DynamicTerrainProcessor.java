@@ -38,9 +38,9 @@ package megamek.server;
 import java.util.Collection;
 import java.util.Vector;
 
-import megamek.common.Board;
-import megamek.common.BoardLocation;
-import megamek.common.Coords;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
 import megamek.common.Report;
 import megamek.server.totalwarfare.TWGameManager;
 

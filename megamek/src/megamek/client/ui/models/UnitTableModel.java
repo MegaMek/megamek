@@ -37,7 +37,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 import megamek.client.ui.Messages;
-import megamek.common.MekSummary;
+import megamek.common.loaders.MekSummary;
 
 /**
  * A table model for displaying units

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -42,16 +42,36 @@ import java.util.Map;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.common.*;
+import megamek.common.ECMInfo;
+import megamek.common.Hex;
+import megamek.common.LosEffects;
+import megamek.common.ToHitData;
+import megamek.common.actions.compute.ComputeAeroAttackerToHitMods;
+import megamek.common.actions.compute.ComputeAttackerToHitMods;
+import megamek.common.actions.compute.ComputeEnvironmentalToHitMods;
+import megamek.common.actions.compute.ComputeTargetToHitMods;
+import megamek.common.actions.compute.ComputeTerrainMods;
+import megamek.common.actions.compute.ComputeToHit;
+import megamek.common.board.CrossBoardAttackHelper;
+import megamek.common.compute.Compute;
 import megamek.common.enums.AimingMode;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.BombLoadout;
+import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Targetable;
+import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 
 /**
  * Represents intention to fire a weapon at the target.
  */
 public class WeaponAttackAction extends AbstractAttackAction {
-    private static final MMLogger logger = MMLogger.create(WeaponAttackAction.class);
+    private static final MMLogger LOGGER = MMLogger.create(WeaponAttackAction.class);
 
     public static int DEFAULT_VELOCITY = 50;
     @Serial
@@ -94,12 +114,12 @@ public class WeaponAttackAction extends AbstractAttackAction {
     // bomb stuff
     private HashMap<String, BombLoadout> bombPayloads = new HashMap<>();
 
-    // equipment that affects this attack (AMS, ECM?, etc)
+    // equipment that affects this attack (AMS, ECM?, etc.)
     // only used server-side
     private transient List<WeaponMounted> vCounterEquipment;
 
     /**
-     * Boolean flag that determines whether or not this attack is part of a strafing run.
+     * Boolean flag that determines whether this attack is part of a strafing run.
      */
     private boolean isStrafing = false;
 
@@ -178,7 +198,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
     /**
      * Returns the entity id of the unit carrying the ammo used by this attack
      *
-     * @return
      */
     public int getAmmoCarrier() {
         return ammoCarrier;
@@ -205,9 +224,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
     }
 
     /**
-     * Sets the entity id of the ammo carrier for this shot, if different than the firing entity
+     * Sets the entity id of the ammo carrier for this shot, if different from the firing entity
      *
-     * @param entityId
      */
     public void setAmmoCarrier(int entityId) {
         ammoCarrier = entityId;
@@ -299,7 +317,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
     }
 
     /**
-     * @param game
      * @param evenIfAlreadyFired false: an already fired weapon will return a ToHitData with value IMPOSSIBLE true: an
      *                           already fired weapon will return a ToHitData with the value of its chance to hit
      */
@@ -342,7 +359,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId, boolean isStrafing) {
         // Use -1 as ammoId because this method should always use the currently linked
-        // ammo for display calcs
+        // ammo for display calculations
         return toHit(game,
               attackerId,
               target,
@@ -362,7 +379,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId, int aimingAt,
           AimingMode aimingMode, boolean isStrafing) {
         // Use -1 as ammoId because this method should always use the currently linked
-        // ammo for display calcs
+        // ammo for display calculations
         return toHit(game,
               attackerId,
               target,
@@ -429,73 +446,83 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * @param game The current {@link Game}
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target) {
-        final Entity ae = game.getEntity(attackerId);
+        final Entity attackingEntity = game.getEntity(attackerId);
 
-        Entity te = null;
-        int ttype = target.getTargetType();
-        if (ttype == Targetable.TYPE_ENTITY) {
-            te = (Entity) target;
+        if (attackingEntity == null) {
+            return null;
         }
 
-        int aElev = ae.getElevation();
+        Entity targetEntity = null;
+        int targetType = target.getTargetType();
+        if (targetType == Targetable.TYPE_ENTITY) {
+            targetEntity = (Entity) target;
+        }
+
+        int aElev = attackingEntity.getElevation();
         int tElev = target.getElevation();
         int targEl;
         if (target instanceof INarcPod) {
             // brush off attached INarcs on oneself; use left arm as a placeholder here as no choice has been made
             return BrushOffAttackAction.toHit(game, attackerId, target, BrushOffAttackAction.LEFT);
-        } else if (te == null) {
+        } else if (targetEntity == null) {
             targEl = game.getHexOf(target).floor();
         } else {
-            targEl = te.relHeight();
+            targEl = targetEntity.relHeight();
         }
 
-        int distance = Compute.effectiveDistance(game, ae, target);
+        int distance = Compute.effectiveDistance(game, attackingEntity, target);
 
         // EI system
         // 0 if no EI (or switched off)
         // 1 if no intervening light woods
         // 2 if intervening light woods (because target in woods + intervening
         // woods is only +1 total)
-        int eistatus = 0;
+        int eiStatus = 0;
 
         // Bogus value, since this method doesn't account for weapons but some of its
         // calls do
         int weaponId = WeaponType.WEAPON_NA;
 
-        boolean isAttackerInfantry = ae instanceof Infantry;
-        boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
+        boolean isAttackerInfantry = attackingEntity instanceof Infantry;
+        boolean inSameBuilding = Compute.isInSameBuilding(game, attackingEntity, targetEntity);
 
         // check LOS
-        LosEffects los = LosEffects.calculateLOS(game, ae, target);
+        LosEffects los = LosEffects.calculateLOS(game, attackingEntity, target);
 
-        if (ae.hasActiveEiCockpit()) {
+        if (attackingEntity.hasActiveEiCockpit()) {
             if (los.getLightWoods() > 0) {
-                eistatus = 2;
+                eiStatus = 2;
             } else {
-                eistatus = 1;
+                eiStatus = 1;
             }
         }
 
-        ToHitData losMods = los.losModifiers(game, eistatus, ae.isUnderwater());
+        ToHitData losMods = los.losModifiers(game, eiStatus, attackingEntity.isUnderwater());
         ToHitData toHit = new ToHitData(0, Messages.getString("WeaponAttackAction.BaseToHit"));
 
         // Collect the modifiers for the environment
-        toHit = ComputeEnvironmentalToHitMods.compileEnvironmentalToHitMods(game, ae, target, null, null, toHit, false);
+        toHit = ComputeEnvironmentalToHitMods.compileEnvironmentalToHitMods(game,
+              attackingEntity,
+              target,
+              null,
+              null,
+              toHit,
+              false);
 
         // Collect the modifiers for the crew/pilot
-        toHit = ComputeAttackerToHitMods.compileCrewToHitMods(game, ae, toHit, null);
+        toHit = ComputeAttackerToHitMods.compileCrewToHitMods(game, attackingEntity, toHit, null);
 
         // Collect the modifiers for the attacker's condition/actions
         // Conventional fighter, Aerospace and fighter LAM attackers
-        if (ae.isAero()) {
+        if (attackingEntity.isAero()) {
             toHit = ComputeAeroAttackerToHitMods.compileAeroAttackerToHitMods(game,
-                  ae,
+                  attackingEntity,
                   target,
-                  ttype,
+                  targetType,
                   toHit,
                   Entity.LOC_NONE,
                   AimingMode.NONE,
-                  eistatus,
+                  eiStatus,
                   null,
                   null,
                   null,
@@ -508,7 +535,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // Everyone else
         } else {
             toHit = ComputeAttackerToHitMods.compileAttackerToHitMods(game,
-                  ae,
+                  attackingEntity,
                   target,
                   los,
                   toHit,
@@ -528,7 +555,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // Collect the modifiers for the target's condition/actions
         toHit = ComputeTargetToHitMods.compileTargetToHitMods(game,
-              ae,
+              attackingEntity,
               target,
               toHit,
               Entity.LOC_NONE,
@@ -549,9 +576,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // Collect the modifiers for terrain and line-of-sight. This includes any
         // related to-hit table changes
         toHit = ComputeTerrainMods.compileTerrainAndLosToHitMods(game,
-              ae,
+              attackingEntity,
               target,
-              ttype,
+              targetType,
               aElev,
               tElev,
               targEl,
@@ -559,7 +586,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
               los,
               toHit,
               losMods,
-              eistatus,
+              eiStatus,
               null,
               null,
               weaponId,
@@ -649,14 +676,14 @@ public class WeaponAttackAction extends AbstractAttackAction {
     }
 
     /**
-     * @param bpls These are the "bomb payload" for internal and external bomb stores. It's a HashMap of two arrays,
-     *             each indexed by the constants declared in BombType. Each element indicates how many types of that
-     *             bomb should be fired.
+     * @param bombPayloads These are the "bomb payload" for internal and external bomb stores. It's a HashMap of two
+     *                     arrays, each indexed by the constants declared in BombType. Each element indicates how many
+     *                     types of that bomb should be fired.
      */
-    public void setBombPayloads(HashMap<String, BombLoadout> bpls) {
-        bombPayloads = new HashMap<>();
-        for (Map.Entry<String, BombLoadout> entry : bpls.entrySet()) {
-            bombPayloads.put(entry.getKey(), new BombLoadout(entry.getValue()));
+    public void setBombPayloads(HashMap<String, BombLoadout> bombPayloads) {
+        this.bombPayloads = new HashMap<>();
+        for (Map.Entry<String, BombLoadout> entry : bombPayloads.entrySet()) {
+            this.bombPayloads.put(entry.getKey(), new BombLoadout(entry.getValue()));
         }
     }
 
@@ -723,7 +750,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // the idea here is that we're in a building that provides partial cover
         // if the unit involved is tall (at least 2 levels, e.g. mek or superheavy
         // vehicle)
-        // and its height above the hex ceiling (i.e building roof) is 1
+        // and its height above the hex ceiling (i.e. building roof) is 1
         // the height determination takes being prone into account
         return targetHex.containsTerrain(Terrains.BUILDING) &&
               (targetEntity.getHeight() > 0) &&
@@ -733,7 +760,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
     @Override
     public String toAccessibilityDescription(Client client) {
         if (null == client || null == getTarget(client.getGame())) {
-            logger.warn("Unable to construct WAA displayable string due to null reference");
+            LOGGER.warn("Unable to construct WAA displayable string due to null reference");
             return "Attacking Null Target with id " + getTargetId() + " using Weapon with id " + weaponId;
         }
         return "attacking " +

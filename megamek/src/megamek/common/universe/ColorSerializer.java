@@ -50,16 +50,16 @@ public class ColorSerializer extends StdSerializer<Color> {
     }
 
     @Override
-    public void serialize(Color value, JsonGenerator jgen, SerializerProvider provider)
+    public void serialize(Color value, JsonGenerator jsonGenerator, SerializerProvider provider)
           throws IOException {
 
-        jgen.writeStartObject();
-        jgen.writeNumberField("red", value.getRed());
-        jgen.writeNumberField("green", value.getGreen());
-        jgen.writeNumberField("blue", value.getBlue());
+        jsonGenerator.writeStartObject();
+        jsonGenerator.writeNumberField("red", value.getRed());
+        jsonGenerator.writeNumberField("green", value.getGreen());
+        jsonGenerator.writeNumberField("blue", value.getBlue());
         if (value.getAlpha() < 255) {
-            jgen.writeNumberField("alpha", value.getAlpha());
+            jsonGenerator.writeNumberField("alpha", value.getAlpha());
         }
-        jgen.writeEndObject();
+        jsonGenerator.writeEndObject();
     }
 }

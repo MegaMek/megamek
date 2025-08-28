@@ -37,12 +37,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Vector;
 
-import megamek.common.AeroSpaceFighter;
-import megamek.common.EquipmentType;
-import megamek.common.Game;
-import megamek.common.LandAirMek;
-import megamek.common.PilotingRollData;
 import megamek.common.Player;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.game.Game;
+import megamek.common.rolls.PilotingRollData;
+import megamek.common.units.AeroSpaceFighter;
+import megamek.common.units.LandAirMek;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

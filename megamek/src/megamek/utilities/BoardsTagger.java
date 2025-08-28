@@ -34,14 +34,13 @@
 package megamek.utilities;
 
 import static java.util.stream.Collectors.toSet;
-import static megamek.common.Terrains.*;
+import static megamek.common.units.Terrains.*;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.MessageDigest;
@@ -56,12 +55,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import megamek.common.Board;
-import megamek.common.Building;
 import megamek.common.Configuration;
 import megamek.common.Hex;
-import megamek.common.Terrains;
+import megamek.common.board.Board;
 import megamek.common.enums.BuildingType;
+import megamek.common.units.Building;
+import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 
 /**
@@ -85,18 +84,18 @@ public class BoardsTagger {
     private static final String AUTO_SUFFIX = " (Auto)";
 
     public enum Tags {
-        TAG_LIGHTFOREST("LightForest"),
-        TAG_MEDFOREST("MediumForest"),
-        TAG_DENSEFOREST("DenseForest"),
+        TAG_LIGHT_FOREST("LightForest"),
+        TAG_MED_FOREST("MediumForest"),
+        TAG_DENSE_FOREST("DenseForest"),
         TAG_WOODS("Woods"),
         TAG_JUNGLE("Jungle"),
         TAG_ROUGH("Rough"),
-        TAG_MEDURBAN("MediumUrban"),
-        TAG_LIGHTURBAN("LightUrban"),
-        TAG_HEAVYURBAN("HeavyUrban"),
+        TAG_MED_URBAN("MediumUrban"),
+        TAG_LIGHT_URBAN("LightUrban"),
+        TAG_HEAVY_URBAN("HeavyUrban"),
         TAG_SWAMP("Swamp"),
         TAG_HILLS("LowHills"),
-        TAG_HIGHHILLS("HighHills"),
+        TAG_HIGH_HILLS("HighHills"),
         TAG_ROADS("Roads"),
         TAG_FOLIAGE("Foliage"),
         TAG_LAVA("Lava"),
@@ -108,29 +107,29 @@ public class BoardsTagger {
         TAG_TROPICAL("TropicalTheme"),
         TAG_LUNAR("LunarTheme"),
         TAG_VOLCANIC("VolcanicTheme"),
-        TAG_SNOWTHEME("SnowTheme"),
+        TAG_SNOW_THEME("SnowTheme"),
         TAG_MARS("MarsTheme"),
         TAG_OCEAN("Ocean"),
         TAG_WATER("Water"),
         TAG_ICE("IceTerrain"),
         TAG_FLAT("Flat"),
-        TAG_SNOWTERRAIN("SnowTerrain"),
+        TAG_SNOW_TERRAIN("SnowTerrain"),
         TAG_HANGAR("Hangar"),
         TAG_FORTRESS("Fortress"),
-        TAG_GUNEMPLACEMENT("GunEmplacement"),
-        TAG_HEAVYBUILDING("HeavyBuilding"),
-        TAG_HARDENEDBUILDING("HardenedBuilding"),
-        TAG_ARMOREDBUILDING("ArmoredBuilding"),
+        TAG_GUN_EMPLACEMENT("GunEmplacement"),
+        TAG_HEAVY_BUILDING("HeavyBuilding"),
+        TAG_HARDENED_BUILDING("HardenedBuilding"),
+        TAG_ARMORED_BUILDING("ArmoredBuilding"),
         TAG_IMPASSABLE("Impassable"),
         TAG_ELEVATOR("Elevator"),
-        TAG_MULTIPLETHEME("MultipleTheme"),
-        TAG_UNDERWATERBRIDGE("UnderWaterBridge"),
+        TAG_MULTIPLE_THEME("MultipleTheme"),
+        TAG_UNDERWATER_BRIDGE("UnderWaterBridge"),
         TAG_METAL_CONTENT("MetalContent"),
         TAG_HAZARDOUS_LIQUID("HazardousLiquid"),
         TAG_ULTRA_SUBLEVEL("UltraSublevel"),
         TAG_FUEL_TANK("FuelTank");
 
-        private String tagName;
+        private final String tagName;
         private static final Map<String, Tags> internalTagMap;
 
         static {
@@ -194,7 +193,7 @@ public class BoardsTagger {
         int snowTerrain = 0;
         int hangar = 0;
         int fortress = 0;
-        int gunEnplacement = 0;
+        int gunEmplacement = 0;
         int heavyBuilding = 0;
         int hardenedBuilding = 0;
         int armoredBuilding = 0;
@@ -260,7 +259,7 @@ public class BoardsTagger {
                 if (hex.containsTerrain(BUILDING)) {
                     hangar += hex.terrainLevel(BLDG_CLASS) == Building.HANGAR ? 1 : 0;
                     fortress += hex.terrainLevel(BLDG_CLASS) == Building.FORTRESS ? 1 : 0;
-                    gunEnplacement += hex.terrainLevel(BLDG_CLASS) == Building.GUN_EMPLACEMENT ? 1 : 0;
+                    gunEmplacement += hex.terrainLevel(BLDG_CLASS) == Building.GUN_EMPLACEMENT ? 1 : 0;
                     heavyBuilding += hex.terrainLevel(BUILDING) == BuildingType.HEAVY.getTypeValue() ? 1 : 0;
                     hardenedBuilding += hex.terrainLevel(BUILDING) == BuildingType.HARDENED.getTypeValue() ? 1 : 0;
                     armoredBuilding += hex.containsTerrain(BLDG_ARMOR) && hex.terrainLevel(Terrains.BLDG_ARMOR) > 0 ?
@@ -291,11 +290,11 @@ public class BoardsTagger {
         // Calculate which tags apply
         EnumMap<Tags, Boolean> matchingTags = new EnumMap<>(Tags.class);
 
-        matchingTags.put(Tags.TAG_MEDFOREST,
+        matchingTags.put(Tags.TAG_MED_FOREST,
               (forest >= normSide * 5) && (forest < normSide * 10) && (forestHU < normSide * 2));
-        matchingTags.put(Tags.TAG_LIGHTFOREST,
+        matchingTags.put(Tags.TAG_LIGHT_FOREST,
               (forest >= normSide * 2) && (forestHU < normSide) && (forest < normSide * 5));
-        matchingTags.put(Tags.TAG_DENSEFOREST, (forest >= normSide * 10) && (forestHU > normSide * 2));
+        matchingTags.put(Tags.TAG_DENSE_FOREST, (forest >= normSide * 10) && (forestHU > normSide * 2));
         matchingTags.put(Tags.TAG_WOODS, woods > forest / 2);
         matchingTags.put(Tags.TAG_JUNGLE, jungles > forest / 2);
         matchingTags.put(Tags.TAG_ROADS, roads > 10);
@@ -311,29 +310,29 @@ public class BoardsTagger {
         matchingTags.put(Tags.TAG_LUNAR, lunar > area / 2);
         matchingTags.put(Tags.TAG_MARS, mars > area / 2);
         matchingTags.put(Tags.TAG_VOLCANIC, volcanic > area / 2);
-        matchingTags.put(Tags.TAG_SNOWTHEME, snowTheme > area / 2);
+        matchingTags.put(Tags.TAG_SNOW_THEME, snowTheme > area / 2);
         matchingTags.put(Tags.TAG_OCEAN, nEdgeWater > (board.getWidth() * 9 / 10)
               || sEdgeWater > (board.getWidth() * 9 / 10)
               || eEdgeWater > (board.getHeight() * 9 / 10)
               || wEdgeWater > (board.getHeight() * 9 / 10));
         matchingTags.put(Tags.TAG_HILLS, (levelExtent >= 2) && (levelExtent < 5) && (weighedLevels > normSide * 15));
-        matchingTags.put(Tags.TAG_HIGHHILLS, (levelExtent >= 5) && (weighedLevels > normSide * 15));
+        matchingTags.put(Tags.TAG_HIGH_HILLS, (levelExtent >= 5) && (weighedLevels > normSide * 15));
         matchingTags.put(Tags.TAG_WATER, water > normSide / 3);
         matchingTags.put(Tags.TAG_ICE, ice > normSide / 3);
         boolean lightUrban = (lowBuildings > normSide) && (highBuildings < normSide / 3)
               && (lowBuildings < normSide * 2) && (roads > normSide / 3);
-        matchingTags.put(Tags.TAG_LIGHTURBAN, lightUrban);
-        matchingTags.put(Tags.TAG_MEDURBAN, !lightUrban && (stdBuildings >= normSide)
+        matchingTags.put(Tags.TAG_LIGHT_URBAN, lightUrban);
+        matchingTags.put(Tags.TAG_MED_URBAN, !lightUrban && (stdBuildings >= normSide)
               && (roads > normSide / 3) && (stdBuildings < normSide * 4));
-        matchingTags.put(Tags.TAG_HEAVYURBAN, (stdBuildings >= normSide * 4) && (roads > normSide / 3));
-        matchingTags.put(Tags.TAG_SNOWTERRAIN, (snowTerrain > normSide * 2));
+        matchingTags.put(Tags.TAG_HEAVY_URBAN, (stdBuildings >= normSide * 4) && (roads > normSide / 3));
+        matchingTags.put(Tags.TAG_SNOW_TERRAIN, (snowTerrain > normSide * 2));
         matchingTags.put(Tags.TAG_FLAT, (levelExtent <= 2) && (weighedLevels < normSide * 5));
         matchingTags.put(Tags.TAG_HANGAR, hangar > 10);
         matchingTags.put(Tags.TAG_FORTRESS, fortress > 10);
-        matchingTags.put(Tags.TAG_GUNEMPLACEMENT, gunEnplacement > 10);
-        matchingTags.put(Tags.TAG_HEAVYBUILDING, heavyBuilding > 10);
-        matchingTags.put(Tags.TAG_HARDENEDBUILDING, hardenedBuilding > 10);
-        matchingTags.put(Tags.TAG_ARMOREDBUILDING, armoredBuilding > 10);
+        matchingTags.put(Tags.TAG_GUN_EMPLACEMENT, gunEmplacement > 10);
+        matchingTags.put(Tags.TAG_HEAVY_BUILDING, heavyBuilding > 10);
+        matchingTags.put(Tags.TAG_HARDENED_BUILDING, hardenedBuilding > 10);
+        matchingTags.put(Tags.TAG_ARMORED_BUILDING, armoredBuilding > 10);
         matchingTags.put(Tags.TAG_IMPASSABLE, impassable > 0);
         matchingTags.put(Tags.TAG_ELEVATOR, elevator > 0);
         matchingTags.put(Tags.TAG_METAL_CONTENT, metalContent > normSide / 3);
@@ -348,8 +347,8 @@ public class BoardsTagger {
         multipleTheme += mars > 0 ? 1 : 0;
         multipleTheme += snowTheme > 0 ? 1 : 0;
         multipleTheme += volcanic > 0 ? 1 : 0;
-        matchingTags.put(Tags.TAG_MULTIPLETHEME, multipleTheme > 1);
-        matchingTags.put(Tags.TAG_UNDERWATERBRIDGE, underWaterBridge > 0);
+        matchingTags.put(Tags.TAG_MULTIPLE_THEME, multipleTheme > 1);
+        matchingTags.put(Tags.TAG_UNDERWATER_BRIDGE, underWaterBridge > 0);
 
         // Find any applicable tags to give the board
         return matchingTags.keySet().stream().filter(matchingTags::get).map(Tags::getName).toList();
@@ -380,16 +379,18 @@ public class BoardsTagger {
     /**
      * Recursively scans the supplied file/directory for any boards and auto-tags them.
      */
-    private static void scanForBoards(File file, Map<String, List<String>> boardCheckSum) throws IOException {
+    private static void scanForBoards(File file, Map<String, List<String>> boardCheckSum) {
         if (file.isDirectory()) {
             String[] fileList = file.list();
-            for (String filename : fileList) {
-                File filepath = new File(file, filename);
-                if (filepath.isDirectory()) {
-                    scanForBoards(new File(file, filename), boardCheckSum);
-                } else {
-                    tagBoard(filepath);
-                    checkSum(boardCheckSum, filepath);
+            if (fileList != null) {
+                for (String filename : fileList) {
+                    File filepath = new File(file, filename);
+                    if (filepath.isDirectory()) {
+                        scanForBoards(new File(file, filename), boardCheckSum);
+                    } else {
+                        tagBoard(filepath);
+                        checkSum(boardCheckSum, filepath);
+                    }
                 }
             }
         } else {
@@ -468,7 +469,7 @@ public class BoardsTagger {
             List<String> lines = new ArrayList<>();
 
             // remove tag lines
-            try (BufferedReader br = new BufferedReader(new FileReader(boardFile));) {
+            try (BufferedReader br = new BufferedReader(new FileReader(boardFile))) {
                 while ((line = br.readLine()) != null) {
                     if (!line.startsWith("tag ")) {
                         lines.add(line);

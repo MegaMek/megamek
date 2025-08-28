@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Objects;
 
 import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 
 /**
  * This command exists to print entity information to the chat window, it's primarily intended for visually impaired

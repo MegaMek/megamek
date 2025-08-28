@@ -52,9 +52,15 @@ import megamek.client.ui.SharedUtility;
 import megamek.client.ui.panels.phaseDisplay.TowLinkWarning;
 import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.*;
-import megamek.common.BombType.BombTypeEnum;
+import megamek.common.BulldozerMovePath;
 import megamek.common.BulldozerMovePath.MPCostComparator;
+import megamek.common.CalledShot;
+import megamek.common.Hex;
+import megamek.common.HexTarget;
+import megamek.common.LosEffects;
+import megamek.common.MPCalculationSetting;
+import megamek.common.Team;
+import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.DisengageAction;
 import megamek.common.actions.EntityAction;
@@ -62,13 +68,30 @@ import megamek.common.actions.FindClubAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.bays.Bay;
+import megamek.common.board.AllowedDeploymentHelper;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.board.DeploymentElevationType;
+import megamek.common.board.ElevationOption;
+import megamek.common.compute.Compute;
 import megamek.common.containers.PlayerIDAndList;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.MoveStepType;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentMode;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.Transporter;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.event.GameCFREvent;
-import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.event.player.GamePlayerChatEvent;
+import megamek.common.game.IGame;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
@@ -76,11 +99,13 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.PathDecorator;
 import megamek.common.pathfinder.ShortestPathFinder;
+import megamek.common.rolls.PilotingRollData;
+import megamek.common.units.*;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
-import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.Weapon;
+import megamek.common.weapons.attacks.StopSwarmAttack;
 import megamek.logging.MMLogger;
 import org.apache.logging.log4j.Level;
 
@@ -991,7 +1016,7 @@ public class Princess extends BotClient {
                                 primaryFire.getToHit().getCover())) {
 
                         Entity aimTarget = (Mek) primaryFire.getTarget();
-                        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS) &&
+                        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CALLED_SHOTS) &&
                               (!aimTarget.isImmobile() || useCalledShotsOnImmobileTarget)) {
                             isCalledShot = true;
                         }
@@ -1200,7 +1225,7 @@ public class Princess extends BotClient {
                     ammoConservation.put(weapon, 0.01);
                     msg.append(" doesn't use ammo.");
                     continue;
-                } else if (weaponType.hasFlag(WeaponType.F_ONESHOT)) {
+                } else if (weaponType.hasFlag(WeaponType.F_ONE_SHOT)) {
                     // Shoot OS weapons on a 10 / 9 / 8 for Aggro 10 / 5 / 0
                     ammoConservation.put(weapon, (35 - 2.0 * aggroFactor) / 100.0);
                     msg.append(" One Shot weapon.");
@@ -1528,7 +1553,7 @@ public class Princess extends BotClient {
               UnitType.TANK,
               UnitType.VTOL,
               UnitType.CONV_FIGHTER,
-              UnitType.AEROSPACEFIGHTER));
+              UnitType.AEROSPACE_FIGHTER));
 
         if (validAimTypes.contains(target.getUnitType())) {
 
@@ -1539,7 +1564,7 @@ public class Princess extends BotClient {
             }
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CALLED_SHOTS)) {
             // Called shots against immobile targets can be a little too effective, so only use
             // when enabled
             if (!target.isImmobile() || useCalledShotsOnImmobileTarget) {
@@ -1575,7 +1600,7 @@ public class Princess extends BotClient {
               UnitType.TANK,
               UnitType.VTOL,
               UnitType.CONV_FIGHTER,
-              UnitType.AEROSPACEFIGHTER));
+              UnitType.AEROSPACE_FIGHTER));
 
         if (!validAimTypes.contains(((Entity) target).getUnitType())) {
             return aimLocation;
@@ -1695,16 +1720,16 @@ public class Princess extends BotClient {
                   .filter(w -> w.isOperable() && isBigGun(w))
                   .collect(Collectors.toSet())) {
 
-                if (!rankedLocations.contains(Mek.LOC_RARM) &&
-                      curWeapon.getLocation() == Mek.LOC_RARM &&
-                      target.getInternal(Mek.LOC_RARM) > 0) {
-                    rankedLocations.add(Mek.LOC_RARM);
-                } else if (!rankedLocations.contains(Mek.LOC_LARM) &&
-                      curWeapon.getLocation() == Mek.LOC_LARM &&
-                      target.getInternal(Mek.LOC_LARM) > 0) {
-                    rankedLocations.add(Mek.LOC_LARM);
+                if (!rankedLocations.contains(Mek.LOC_RIGHT_ARM) &&
+                      curWeapon.getLocation() == Mek.LOC_RIGHT_ARM &&
+                      target.getInternal(Mek.LOC_RIGHT_ARM) > 0) {
+                    rankedLocations.add(Mek.LOC_RIGHT_ARM);
+                } else if (!rankedLocations.contains(Mek.LOC_LEFT_ARM) &&
+                      curWeapon.getLocation() == Mek.LOC_LEFT_ARM &&
+                      target.getInternal(Mek.LOC_LEFT_ARM) > 0) {
+                    rankedLocations.add(Mek.LOC_LEFT_ARM);
                 }
-                if (rankedLocations.contains(Mek.LOC_RARM) && rankedLocations.contains(Mek.LOC_LARM)) {
+                if (rankedLocations.contains(Mek.LOC_RIGHT_ARM) && rankedLocations.contains(Mek.LOC_LEFT_ARM)) {
                     break;
                 }
 
@@ -1714,32 +1739,32 @@ public class Princess extends BotClient {
             // so going after the right torso first solves both conditions. Putting the right torso
             // first ensures the left torso and other locations will only supersede it if they have
             // taken more damage and make for a better target.
-            if (target.getInternal(Mek.LOC_RT) > 0) {
-                rankedLocations.add(Mek.LOC_RT);
-            } else if (target.getInternal(Mek.LOC_LT) > 0) {
-                rankedLocations.add(Mek.LOC_LT);
+            if (target.getInternal(Mek.LOC_RIGHT_TORSO) > 0) {
+                rankedLocations.add(Mek.LOC_RIGHT_TORSO);
+            } else if (target.getInternal(Mek.LOC_LEFT_TORSO) > 0) {
+                rankedLocations.add(Mek.LOC_LEFT_TORSO);
             }
 
-            if (!rankedLocations.contains(Mek.LOC_LT)) {
-                if (target.getInternal(Mek.LOC_LT) > 0) {
-                    rankedLocations.add((Mek.LOC_LT));
+            if (!rankedLocations.contains(Mek.LOC_LEFT_TORSO)) {
+                if (target.getInternal(Mek.LOC_LEFT_TORSO) > 0) {
+                    rankedLocations.add((Mek.LOC_LEFT_TORSO));
                 }
             }
 
-            rankedLocations.add(Mek.LOC_CT);
+            rankedLocations.add(Mek.LOC_CENTER_TORSO);
         }
 
         // Favor right leg over left due to damage transfer to right torso, except if right leg is
         // completely gone
-        if (target.getInternal(Mek.LOC_RLEG) > 0) {
-            rankedLocations.add(Mek.LOC_RLEG);
-        } else if (target.getInternal(Mek.LOC_LLEG) > 0) {
-            rankedLocations.add(Mek.LOC_LLEG);
+        if (target.getInternal(Mek.LOC_RIGHT_LEG) > 0) {
+            rankedLocations.add(Mek.LOC_RIGHT_LEG);
+        } else if (target.getInternal(Mek.LOC_LEFT_LEG) > 0) {
+            rankedLocations.add(Mek.LOC_LEFT_LEG);
         }
 
-        if (!rankedLocations.contains(Mek.LOC_LLEG)) {
-            if (target.getInternal(Mek.LOC_LLEG) > 0) {
-                rankedLocations.add(Mek.LOC_LLEG);
+        if (!rankedLocations.contains(Mek.LOC_LEFT_LEG)) {
+            if (target.getInternal(Mek.LOC_LEFT_LEG) > 0) {
+                rankedLocations.add(Mek.LOC_LEFT_LEG);
             }
         }
 
@@ -1762,7 +1787,9 @@ public class Princess extends BotClient {
 
             // Doesn't get any better than a torso with no armor
             if (lowestArmor == 0 &&
-                  (aimLocation == Mek.LOC_RT || aimLocation == Mek.LOC_LT || aimLocation == Mek.LOC_CT)) {
+                  (aimLocation == Mek.LOC_RIGHT_TORSO
+                        || aimLocation == Mek.LOC_LEFT_TORSO
+                        || aimLocation == Mek.LOC_CENTER_TORSO)) {
                 break;
             }
         }
@@ -1823,15 +1850,17 @@ public class Princess extends BotClient {
         WeaponFireInfo primaryFire = calledShots.get(0);
 
         // If the target is being shot in a side arc, set the call direction to hit the rear arc
-        if (attackSide == ToHitData.SIDE_LEFT || attackSide == ToHitData.SIDE_REARLEFT) {
+        if (attackSide == ToHitData.SIDE_LEFT || attackSide == ToHitData.SIDE_REAR_LEFT) {
             calledShotDirection = CalledShot.CALLED_RIGHT;
-        } else if (attackSide == ToHitData.SIDE_RIGHT || attackSide == ToHitData.SIDE_REARRIGHT) {
+        } else if (attackSide == ToHitData.SIDE_RIGHT || attackSide == ToHitData.SIDE_REAR_RIGHT) {
             calledShotDirection = CalledShot.CALLED_LEFT;
         }
 
         if (attackSide == ToHitData.SIDE_FRONT || attackSide == ToHitData.SIDE_REAR) {
 
-            List<Integer> upperLocations = new ArrayList<>(Arrays.asList(Mek.LOC_RT, Mek.LOC_LT, Mek.LOC_CT));
+            List<Integer> upperLocations = new ArrayList<>(Arrays.asList(Mek.LOC_RIGHT_TORSO,
+                  Mek.LOC_LEFT_TORSO,
+                  Mek.LOC_CENTER_TORSO));
 
             // Only consider the arms if they have 'big' weapons
             for (WeaponMounted curWeapon : target.getWeaponList()
@@ -1839,16 +1868,16 @@ public class Princess extends BotClient {
                   .filter(w -> w.isOperable() && isBigGun(w))
                   .collect(Collectors.toSet())) {
 
-                if (!upperLocations.contains(Mek.LOC_RARM) &&
-                      curWeapon.getLocation() == Mek.LOC_RARM &&
-                      target.getInternal(Mek.LOC_RARM) > 0) {
-                    upperLocations.add(Mek.LOC_RARM);
-                } else if (!upperLocations.contains(Mek.LOC_LARM) &&
-                      curWeapon.getLocation() == Mek.LOC_LARM &&
-                      target.getInternal(Mek.LOC_LARM) > 0) {
-                    upperLocations.add(Mek.LOC_LARM);
+                if (!upperLocations.contains(Mek.LOC_RIGHT_ARM) &&
+                      curWeapon.getLocation() == Mek.LOC_RIGHT_ARM &&
+                      target.getInternal(Mek.LOC_RIGHT_ARM) > 0) {
+                    upperLocations.add(Mek.LOC_RIGHT_ARM);
+                } else if (!upperLocations.contains(Mek.LOC_LEFT_ARM) &&
+                      curWeapon.getLocation() == Mek.LOC_LEFT_ARM &&
+                      target.getInternal(Mek.LOC_LEFT_ARM) > 0) {
+                    upperLocations.add(Mek.LOC_LEFT_ARM);
                 }
-                if (upperLocations.contains(Mek.LOC_RARM) && upperLocations.contains(Mek.LOC_LARM)) {
+                if (upperLocations.contains(Mek.LOC_RIGHT_ARM) && upperLocations.contains(Mek.LOC_LEFT_ARM)) {
                     break;
                 }
 
@@ -1879,11 +1908,11 @@ public class Princess extends BotClient {
 
             // Only consider shooting low if both legs are intact
             double lowerTargets = 0;
-            if (target.getInternal(Mek.LOC_RLEG) > 0 && target.getInternal(Mek.LOC_LLEG) > 0) {
-                if (target.getArmor(Mek.LOC_RLEG) <= armorThreshold) {
+            if (target.getInternal(Mek.LOC_RIGHT_LEG) > 0 && target.getInternal(Mek.LOC_LEFT_LEG) > 0) {
+                if (target.getArmor(Mek.LOC_RIGHT_LEG) <= armorThreshold) {
                     lowerTargets++;
                 }
-                if (target.getArmor(Mek.LOC_LLEG) <= armorThreshold) {
+                if (target.getArmor(Mek.LOC_LEFT_LEG) <= armorThreshold) {
                     lowerTargets++;
                 }
             }
@@ -1984,7 +2013,7 @@ public class Princess extends BotClient {
                 maximumTN = calcEnhancedTargetingMaxTN(false);
 
                 // If the weapon uses the cluster table, increase the maximum target number
-                if (shot.getWeapon().getType().getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE ||
+                if (shot.getWeapon().getType().getDamage() == WeaponType.DAMAGE_BY_CLUSTER_TABLE ||
                       (shot.getAmmo() != null &&
                             shot.getAmmo().getType().getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) ||
                       shot.getWeapon().getType().hasFlag(WeaponType.F_INFANTRY)) {
@@ -2247,7 +2276,7 @@ public class Princess extends BotClient {
                 return true;
             }
 
-            final MoveStepType type = getBooleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND) ?
+            final MoveStepType type = getBooleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CAREFUL_STAND) ?
                   MoveStepType.CAREFUL_STAND :
                   MoveStepType.GET_UP;
             final MoveStep getUp = new MoveStep(movePath, type);
@@ -3491,7 +3520,7 @@ public class Princess extends BotClient {
 
         // Get conventional infantry if manual mode is available
         List<Entity> enemyInfantry = new ArrayList<>();
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_MANUAL_AMS)) {
             for (Entity curEnemy : getEnemyEntities()
                   .stream()
                   .filter(Entity::isDeployed)

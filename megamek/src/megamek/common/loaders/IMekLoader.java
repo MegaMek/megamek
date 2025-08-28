@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,7 +34,7 @@
 
 package megamek.common.loaders;
 
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 
 /**
  * Classes implementing this interface are expected to be able to return a mek with the getMek method or throw an

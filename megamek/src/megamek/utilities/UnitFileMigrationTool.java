@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,16 +38,17 @@ import java.io.IOException;
 import java.nio.charset.MalformedInputException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.MekSummary;
-import megamek.common.MekSummaryCache;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
 import megamek.common.loaders.MtfFile;
 import megamek.logging.MMLogger;
 
 /**
  * This is not a functional tool, just some template code to use when changing unit files programmatically. Last used to
- * move the unit roles into the unit files. I leave this in so I don't have to reinvent the wheel.
+ * move the unit roles into the unit files. I leave this in, so I don't have to reinvent the wheel.
  */
 public class UnitFileMigrationTool {
     private static final MMLogger logger = MMLogger.create(UnitFileMigrationTool.class);
@@ -56,7 +57,7 @@ public class UnitFileMigrationTool {
         MekSummaryCache cache = MekSummaryCache.getInstance(true);
         MekSummary[] units = cache.getAllMeks();
 
-        List<String> lines = null;
+        List<String> lines = new ArrayList<>();
 
         for (MekSummary unit : units) {
             File file = unit.getSourceFile();

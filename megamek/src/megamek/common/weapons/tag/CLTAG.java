@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,11 +34,19 @@
 
 package megamek.common.weapons.tag;
 
+import java.io.Serial;
+
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+
 /**
  * @author Sebastian Brocks
  * @since Sep 7, 2005
  */
 public class CLTAG extends TAGWeapon {
+    @Serial
     private static final long serialVersionUID = 7446980554102548125L;
 
     public CLTAG() {
@@ -48,7 +56,7 @@ public class CLTAG extends TAGWeapon {
         addLookupName("Clan TAG");
         addLookupName("TAG (Clan)");
         tonnage = 1;
-        criticals = 1;
+        criticalSlots = 1;
         hittable = true;
         spreadable = false;
         heat = 0;

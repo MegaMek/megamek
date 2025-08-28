@@ -35,15 +35,15 @@ package megamek.client.ui.entityreadout;
 import java.util.Objects;
 
 import megamek.client.ui.dialogs.unitSelectorDialogs.ConfigurableMekViewPanel;
-import megamek.common.Game;
-import megamek.common.event.GameEntityChangeEvent;
-import megamek.common.event.GameEntityNewEvent;
-import megamek.common.event.GameEntityNewOffboardEvent;
-import megamek.common.event.GameEntityRemoveEvent;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.event.entity.GameEntityNewEvent;
+import megamek.common.event.entity.GameEntityNewOffboardEvent;
+import megamek.common.event.entity.GameEntityRemoveEvent;
+import megamek.common.game.Game;
 
 class LiveEntityReadoutPanel extends ConfigurableMekViewPanel {
 

@@ -53,7 +53,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import megamek.MMConstants;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
 import megamek.common.annotations.Nullable;
-import megamek.common.jacksonadapters.ColorDeserializer;
+import megamek.common.jacksonAdapters.ColorDeserializer;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 
@@ -161,7 +161,7 @@ public final class Factions2 {
             loadFactionsFromDirectory(new File(userDir, MMConstants.FACTIONS_DIR).toString(), mapper);
             loadFactionsFromDirectory(new File(userDir, MMConstants.COMMANDS_DIR).toString(), mapper);
         }
-        LOGGER.info(String.format("Loaded a total of %d factions and commands", factions.size()));
+        LOGGER.info("Loaded a total of {} factions and commands", factions.size());
     }
 
     /**
@@ -185,8 +185,7 @@ public final class Factions2 {
         Objects.requireNonNull(factionsPath);
         File dir = new File(factionsPath);
         if (!dir.isDirectory()) {
-            LOGGER.warn(
-                  "Cannot load factions from %s (directory not present or not a directory)".formatted(factionsPath));
+            LOGGER.warn("Cannot load factions from {} (directory not present or not a directory)", factionsPath);
             return;
         }
 
@@ -195,7 +194,7 @@ public final class Factions2 {
                 loadFaction(fis, mapper);
             } catch (Exception ex) {
                 // Ignore this file then
-                LOGGER.error("Exception trying to parse %s - ignoring.".formatted(factionFile), ex);
+                LOGGER.error(ex, "Exception trying to parse {} - ignoring.", factionFile);
             }
         }
 
@@ -210,13 +209,12 @@ public final class Factions2 {
                             loadFaction(inputStream, mapper);
                         } catch (Exception ex) {
                             // Ignore this file then
-                            LOGGER.error(
-                                  "Exception trying to parse zip entry %s - ignoring.".formatted(entry.getName()), ex);
+                            LOGGER.error(ex, "Exception trying to parse zip entry {} - ignoring.", entry.getName());
                         }
                     }
                 }
             } catch (Exception ex) {
-                LOGGER.error(String.format("Exception trying to read the zip file %s - ignoring.", factionZipFile), ex);
+                LOGGER.error(ex, "Exception trying to read the zip file {} - ignoring.", factionZipFile);
             }
         }
     }

@@ -36,8 +36,8 @@ package megamek.client.event;
 
 import java.io.Serial;
 
-import megamek.common.Entity;
-import megamek.common.Mounted;
+import megamek.common.units.Entity;
+import megamek.common.equipment.Mounted;
 
 /**
  * Instances of this class are sent as a result of changes in MekDisplay

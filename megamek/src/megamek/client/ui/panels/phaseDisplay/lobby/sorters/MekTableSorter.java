@@ -36,7 +36,7 @@ import java.util.Comparator;
 import java.util.OptionalInt;
 
 import megamek.client.Client;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.Player;
 import megamek.common.options.IGameOptions;
 

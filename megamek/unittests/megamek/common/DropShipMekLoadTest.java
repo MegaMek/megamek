@@ -45,8 +45,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import megamek.common.enums.GamePhase;
+import megamek.common.game.Game;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 import megamek.common.verifier.TestEntity;
 import megamek.server.totalwarfare.TWGameManager;
 import org.junit.jupiter.api.Test;

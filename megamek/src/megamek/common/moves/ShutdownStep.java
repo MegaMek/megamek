@@ -35,9 +35,10 @@ package megamek.common.moves;
 import java.util.EnumSet;
 import java.util.Set;
 
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.enums.MoveStepType;
+import megamek.common.game.Game;
 import megamek.common.pathfinder.CachedEntityState;
+import megamek.common.units.Entity;
 
 /**
  * This class handles the shutdown step of a unit. It is used in the MoveStep compilation to calculate the movement of a
@@ -47,10 +48,10 @@ import megamek.common.pathfinder.CachedEntityState;
  * @since 0.50.07
  */
 class ShutdownStep implements PhasePass {
-    private static final EnumSet<MovePath.MoveStepType> TYPES = EnumSet.of(MovePath.MoveStepType.SHUTDOWN);
+    private static final EnumSet<MoveStepType> TYPES = EnumSet.of(MoveStepType.SHUTDOWN);
 
     @Override
-    public Set<MovePath.MoveStepType> getTypesOfInterest() {
+    public Set<MoveStepType> getTypesOfInterest() {
         return TYPES;
     }
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,12 +34,18 @@
 
 package megamek.common.weapons.c3;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
+import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -51,6 +57,7 @@ public class ISC3RemoteSensorLauncher extends MissileWeapon {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -6850419038862085767L;
 
     /**
@@ -64,8 +71,8 @@ public class ISC3RemoteSensorLauncher extends MissileWeapon {
         flags = flags.or(F_NO_FIRES);
         ammoType = AmmoType.AmmoTypeEnum.C3_REMOTE_SENSOR;
         cost = 400000;
-        criticals = 3;
-        tankslots = 1;
+        criticalSlots = 3;
+        tankSlots = 1;
         tonnage = 4;
         rackSize = 1;
         damage = 0;
@@ -88,11 +95,11 @@ public class ISC3RemoteSensorLauncher extends MissileWeapon {
      *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game,
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
+    public AttackHandler getCorrectHandler(ToHitData toHit,
           WeaponAttackAction waa, Game game, TWGameManager manager) {
         return super.getCorrectHandler(toHit, waa, game, manager);
         // FIXME: Implement handler

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,19 +34,23 @@
 
 package megamek.common.event;
 
+import java.io.Serial;
+
 import megamek.common.Player;
+import megamek.common.event.player.GamePlayerEvent;
 
 /**
  * Instances of this class are sent when Game turn changes.  This even keeps track of the player who will be taking the
  * new turn as well as the player who took the turn that triggered this event.
  */
 public class GameTurnChangeEvent extends GamePlayerEvent {
+    @Serial
     private static final long serialVersionUID = -6812056631576383917L;
 
     /**
      * Track the ID of the player who took the turn that triggered this even.
      */
-    private int prevPlayerId;
+    private final int prevPlayerId;
 
     /**
      * @param source       The Game instance

@@ -33,10 +33,10 @@
 package megamek.client.generator.skillGenerators;
 
 import megamek.client.generator.enums.SkillGeneratorMethod;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.Mek;
-import megamek.common.Tank;
+import megamek.common.compute.Compute;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.Tank;
 import megamek.common.enums.SkillLevel;
 import megamek.logging.MMLogger;
 

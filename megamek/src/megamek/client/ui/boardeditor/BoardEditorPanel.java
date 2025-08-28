@@ -33,7 +33,7 @@
  */
 package megamek.client.ui.boardeditor;
 
-import static megamek.common.Terrains.*;
+import static megamek.common.units.Terrains.*;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -95,15 +95,15 @@ import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
-import megamek.common.Board;
-import megamek.common.Building;
 import megamek.common.Configuration;
-import megamek.common.Coords;
-import megamek.common.Game;
 import megamek.common.Hex;
-import megamek.common.MapSettings;
-import megamek.common.Terrain;
-import megamek.common.Terrains;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.game.Game;
+import megamek.common.loaders.MapSettings;
+import megamek.common.units.Building;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -2125,8 +2125,7 @@ public class BoardEditorPanel extends JPanel
                   BLDG_ELEV,
                   FUEL_TANK,
                   FUEL_TANK_CF,
-                  FUEL_TANK_ELEV,
-                  FUEL_TANK_MAGN);
+                  FUEL_TANK_ELEV, FUEL_TANK_MAGN);
         } else if (ae.getActionCommand().equals(ClientGUI.BOARD_FLATTEN)) {
             boardFlatten();
         } else if (ae.getActionCommand().equals(ClientGUI.VIEW_RESET_WINDOW_POSITIONS)) {

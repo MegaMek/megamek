@@ -42,7 +42,11 @@ package megamek.common;
  * <p>
  * This class is immutable.
  */
-public class MPCalculationSetting {
+public record MPCalculationSetting(boolean ignoreGravity, boolean ignoreHeat, boolean ignoreModularArmor,
+      boolean ignoreChainDrape, boolean ignoreMASC, boolean ignoreMyomerBooster, boolean ignoreDWP,
+      boolean ignoreBurden, boolean ignoreCargo, boolean ignoreWeather, boolean singleMASC,
+      boolean ignoreSubmergedJumpJets, boolean ignoreGrounded, boolean ignoreOptionalRules, boolean ignoreConversion,
+      boolean forceTSM) {
 
     /**
      * The standard in-game setting, taking into account every circumstance except submerged jump jets (in this setting,
@@ -117,47 +121,6 @@ public class MPCalculationSetting {
           .forceTSM()
           .baNoBurden()
           .build();
-
-    public final boolean ignoreGravity;
-    public final boolean ignoreHeat;
-    public final boolean ignoreModularArmor;
-    public final boolean ignoreChainDrape;
-    public final boolean ignoreDWP;
-    public final boolean ignoreMyomerBooster;
-    public final boolean ignoreMASC;
-    public final boolean ignoreBurden;
-    public final boolean ignoreCargo;
-    public final boolean ignoreWeather;
-    public final boolean ignoreGrounded;
-    public final boolean ignoreOptionalRules;
-    public final boolean ignoreConversion;
-    public final boolean singleMASC;
-    public final boolean ignoreSubmergedJumpJets;
-    public final boolean forceTSM;
-
-    private MPCalculationSetting(boolean ignoreGravity, boolean ignoreHeat, boolean ignoreModularArmor,
-          boolean ignoreChainDrape,
-          boolean ignoreMASC, boolean ignoreMyomerBooster, boolean ignoreDWP,
-          boolean ignoreBurden, boolean ignoreCargo, boolean ignoreWeather,
-          boolean singleMASC, boolean ignoreSubmergedJumpJets, boolean ignoreGrounded,
-          boolean ignoreOptionalRules, boolean ignoreConversion, boolean forceTSM) {
-        this.ignoreGravity = ignoreGravity;
-        this.ignoreHeat = ignoreHeat;
-        this.ignoreModularArmor = ignoreModularArmor;
-        this.ignoreChainDrape = ignoreChainDrape;
-        this.ignoreMASC = ignoreMASC;
-        this.ignoreMyomerBooster = ignoreMyomerBooster;
-        this.ignoreDWP = ignoreDWP;
-        this.ignoreBurden = ignoreBurden;
-        this.ignoreCargo = ignoreCargo;
-        this.ignoreWeather = ignoreWeather;
-        this.singleMASC = singleMASC;
-        this.ignoreSubmergedJumpJets = ignoreSubmergedJumpJets;
-        this.ignoreGrounded = ignoreGrounded;
-        this.ignoreOptionalRules = ignoreOptionalRules;
-        this.ignoreConversion = ignoreConversion;
-        this.forceTSM = forceTSM;
-    }
 
     private static class Builder {
 

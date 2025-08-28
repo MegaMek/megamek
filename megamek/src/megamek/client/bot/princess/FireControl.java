@@ -38,8 +38,14 @@ import java.text.NumberFormat;
 import java.util.*;
 
 import megamek.client.bot.princess.coverage.Builder;
-import megamek.common.*;
-import megamek.common.BombType.BombTypeEnum;
+import megamek.common.Hex;
+import megamek.common.HexTarget;
+import megamek.common.LosEffects;
+import megamek.common.Messages;
+import megamek.common.Player;
+import megamek.common.RangeType;
+import megamek.common.TargetRollModifier;
+import megamek.common.ToHitData;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FindClubAction;
 import megamek.common.actions.RepairWeaponMalfunctionAction;
@@ -49,17 +55,24 @@ import megamek.common.actions.UnjamTurretAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.annotations.StaticWrapper;
-import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.ArmorType;
-import megamek.common.equipment.BombMounted;
-import megamek.common.equipment.WeaponMounted;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeArc;
+import megamek.common.equipment.*;
+import megamek.common.equipment.enums.BombType;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AeroGroundPathFinder;
-import megamek.common.planetaryconditions.IlluminationLevel;
-import megamek.common.weapons.StopSwarmAttack;
+import megamek.common.planetaryConditions.IlluminationLevel;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.*;
 import megamek.common.weapons.Weapon;
+import megamek.common.weapons.attacks.StopSwarmAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
 import megamek.logging.MMLogger;
@@ -363,7 +376,7 @@ public class FireControl {
         if (targetState.isImmobile() && !target.isHexBeingBombed()) {
             toHitData.addModifier(TH_TAR_IMMOBILE);
         }
-        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_STANDING_STILL)
               && (EntityMovementType.MOVE_NONE == targetState.getMovementType())
               && !targetState.isImmobile()
               && !((target instanceof Infantry) || (target instanceof VTOL) ||
@@ -498,9 +511,9 @@ public class FireControl {
         // Check if target is within arc
         final int arc;
         if (PhysicalAttackType.LEFT_PUNCH == attackType) {
-            arc = Compute.ARC_LEFTARM;
+            arc = Compute.ARC_LEFT_ARM;
         } else if (PhysicalAttackType.RIGHT_PUNCH == attackType) {
-            arc = Compute.ARC_RIGHTARM;
+            arc = Compute.ARC_RIGHT_ARM;
         } else {
             arc = Compute.ARC_FORWARD; // assume kick
         }
@@ -530,7 +543,7 @@ public class FireControl {
             if (target instanceof Infantry) {
                 return new ToHitData(TH_PHY_P_TAR_INF);
             }
-            final int armLocation = PhysicalAttackType.RIGHT_PUNCH == attackType ? Mek.LOC_RARM : Mek.LOC_LARM;
+            final int armLocation = PhysicalAttackType.RIGHT_PUNCH == attackType ? Mek.LOC_RIGHT_ARM : Mek.LOC_LEFT_ARM;
             if (shooter.isLocationBad(armLocation)) {
                 return new ToHitData(TH_PHY_P_NO_ARM);
             }
@@ -560,7 +573,7 @@ public class FireControl {
             if ((shooter).hasHipCrit()) {
                 return new ToHitData(TH_PHY_K_HIP);
             }
-            final int legLocation = PhysicalAttackType.RIGHT_KICK == attackType ? Mek.LOC_RLEG : Mek.LOC_LLEG;
+            final int legLocation = PhysicalAttackType.RIGHT_KICK == attackType ? Mek.LOC_RIGHT_LEG : Mek.LOC_LEFT_LEG;
 
             // Base to hit chance.
             toHitData.addModifier(shooter.getCrew().getPiloting() - 2, TH_PHY_BASE);
@@ -582,7 +595,7 @@ public class FireControl {
             }
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_PHYSICAL_ATTACK_PSR)) {
             if (EntityWeightClass.WEIGHT_LIGHT == shooter.getWeightClass()) {
                 toHitData.addModifier(TH_PHY_LIGHT);
             } else if (EntityWeightClass.WEIGHT_MEDIUM == shooter.getWeightClass()) {
@@ -771,16 +784,16 @@ public class FireControl {
 
         if (shooterState.isProne()) {
             // Cannot fire if we cannot at least prop ourselves up.
-            if (shooter.isLocationBad(Mek.LOC_LARM) && shooter.isLocationBad(Mek.LOC_RARM)) {
+            if (shooter.isLocationBad(Mek.LOC_LEFT_ARM) && shooter.isLocationBad(Mek.LOC_RIGHT_ARM)) {
                 return new ToHitData(TH_WEAPON_PRONE_ARMLESS);
             }
             // Cannot fire weapons mounted in the propping arm.
-            if ((Mek.LOC_LARM == weapon.getLocation() || Mek.LOC_RARM == weapon.getLocation())
+            if ((Mek.LOC_LEFT_ARM == weapon.getLocation() || Mek.LOC_RIGHT_ARM == weapon.getLocation())
                   && shooter.isLocationBad(weapon.getLocation())) {
                 return new ToHitData(TH_WEAPON_ARM_PROP);
             }
             // Cannot fire leg-mounted weapons while prone.)
-            if ((Mek.LOC_LLEG == weapon.getLocation()) || (Mek.LOC_RLEG == weapon.getLocation())) {
+            if ((Mek.LOC_LEFT_LEG == weapon.getLocation()) || (Mek.LOC_RIGHT_LEG == weapon.getLocation())) {
                 return new ToHitData(TH_WEAPON_PRONE_LEG);
             }
         }
@@ -820,8 +833,8 @@ public class FireControl {
         }
         // BayWeapons do range differently
         int range = RangeType.rangeBracket(distance, weaponType.getRanges(weapon, ammo),
-              game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE),
-              game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE));
+              game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE),
+              game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE));
         if (RangeType.RANGE_OUT == range) {
             return new ToHitData(TH_OUT_OF_RANGE);
         } else if ((RangeType.RANGE_MINIMUM == range) && targetState.isAirborneAero()) {
@@ -1069,13 +1082,13 @@ public class FireControl {
         }
 
         // weapon quirks
-        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_POS_ACCURATE)) {
+        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_ACCURATE)) {
             toHit.addModifier(TH_ACCURATE_WEAPON);
         }
-        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_INACCURATE)) {
+        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_INACCURATE)) {
             toHit.addModifier(TH_INACCURATE_WEAPON);
         }
-        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON)
+        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_STABLE_WEAPON)
               && (EntityMovementType.MOVE_RUN == shooter.moved)) {
             toHit.addModifier(TH_STABLE_WEAPON);
         }
@@ -1089,10 +1102,10 @@ public class FireControl {
      *
      * @param shooter               The {@link Entity} doing the shooting.
      * @param shooterState          The {@link EntityState} of the unit doing the shooting.
-     * @param target                The {@link megamek.common.Targetable} being shot at.
+     * @param target                The {@link Targetable} being shot at.
      * @param targetState           The {@link megamek.client.bot.princess.EntityState} of the unit being shot at.
      * @param flightPath            The path the shooter is taking.
-     * @param weapon                The weapon being fired as a {@link megamek.common.Mounted} object.
+     * @param weapon                The weapon being fired as a {@link Mounted} object.
      * @param ammo                  Ammo to use (usually null because Aerospace aren't allowed as many alt munitions)
      * @param game                  The current {@link Game}
      * @param assumeUnderFlightPlan Set TRUE to assume that the target falls under the given flight path.
@@ -1123,7 +1136,7 @@ public class FireControl {
 
         // Is the weapon loaded?
         AmmoMounted firingAmmo = (ammo == null) ? weapon.getLinkedAmmo() : ammo;
-        if (AmmoType.AmmoTypeEnum.NA != (weapon.getType()).ammoType) {
+        if (AmmoType.AmmoTypeEnum.NA != (weapon.getType()).getAmmoType()) {
             if (null == firingAmmo) {
                 return new ToHitData(TH_WEAPON_NO_AMMO);
             }
@@ -1721,7 +1734,7 @@ public class FireControl {
         for (final WeaponMounted weapon : shooter.getWeaponList()) {
             // respect restriction on manual AMS firing.
             if (weapon.getType().hasFlag(WeaponType.F_AMS) &&
-                  (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) ||
+                  (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_MANUAL_AMS) ||
                         !weapon.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
                 continue;
             }
@@ -2087,7 +2100,7 @@ public class FireControl {
 
             // respect restriction on manual AMS firing.
             if (weapon.getType().hasFlag(WeaponType.F_AMS) &&
-                  (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) ||
+                  (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_MANUAL_AMS) ||
                         !weapon.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
                 continue;
             }
@@ -2795,7 +2808,7 @@ public class FireControl {
             // only a little over half of a cluster will generally hit
             // but some cluster munitions do more than 1 point of damage per individual hit
             // still better than just discounting them completely.
-            if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE || weaponType.hasFlag(WeaponType.F_ARTILLERY)) {
+            if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTER_TABLE || weaponType.hasFlag(WeaponType.F_ARTILLERY)) {
                 weaponDamage = weaponType.getRackSize();
             }
 
@@ -2890,7 +2903,7 @@ public class FireControl {
 
             /* If everything looks okay, update the action with the new values
              *  Don't replace the old action with the clone - the clone doesn't
-             *  consider that the waa might have been a subclass of WeaponAttackAction
+             *  consider that the weaponAttackAction might have been a subclass of WeaponAttackAction
              *  - like ArtilleryAttackAction. So instead update the changed values: */
             info.getAction().setAmmoId(cloneWAA.getAmmoId());
             info.getAction().setAmmoMunitionType(cloneWAA.getAmmoMunitionType());
@@ -3579,7 +3592,7 @@ public class FireControl {
         // one
         for (Mounted<?> mounted : tankShooter.getJammedWeapons()) {
             int weaponDamage = ((WeaponType) mounted.getType()).getDamage();
-            if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+            if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTER_TABLE) {
                 weaponDamage = ((WeaponType) mounted.getType()).getRackSize();
             }
             if (weaponDamage == WeaponType.DAMAGE_ARTILLERY) {

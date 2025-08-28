@@ -51,10 +51,16 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.*;
+import megamek.common.Player;
+import megamek.common.board.Board;
+import megamek.common.equipment.GunEmplacement;
 import megamek.common.force.Force;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ForceAssignable;
+import megamek.common.interfaces.IStartingPositions;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.*;
 import megamek.common.util.CollectionUtil;
 
 class ForceDisplayMekCellFormatter {
@@ -392,7 +398,7 @@ class ForceDisplayMekCellFormatter {
                         msg_alt = ", " + Messages.getString("ChatLounge.compact.altitude") + ": ";
                         msg_alt += aero.getAltitude();
                     }
-                    if (options.booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)) {
+                    if (options.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_FUEL_CONSUMPTION)) {
                         msg_fuel = ", " + Messages.getString("ChatLounge.compact.fuel") + ": ";
                         msg_fuel += aero.getCurrentFuel();
                     }

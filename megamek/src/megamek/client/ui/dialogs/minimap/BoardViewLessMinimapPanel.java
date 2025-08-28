@@ -37,8 +37,8 @@ import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.FACING_ARROW;
 import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_BASE_RECT;
 import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_CX;
 import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_SYMBOL_SIZE;
-import static megamek.common.Terrains.BUILDING;
-import static megamek.common.Terrains.FUEL_TANK;
+import static megamek.common.units.Terrains.BUILDING;
+import static megamek.common.units.Terrains.FUEL_TANK;
 
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
@@ -69,19 +69,26 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.overlay.IFF;
 import megamek.client.ui.clientGUI.overlay.OverlayPainter;
 import megamek.client.ui.clientGUI.overlay.OverlayPanel;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.Player;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
-import megamek.common.event.GameBoardChangeEvent;
-import megamek.common.event.GameEntityChangeEvent;
-import megamek.common.event.GameEntityRemoveEvent;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.board.GameBoardChangeEvent;
+import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.event.entity.GameEntityRemoveEvent;
+import megamek.common.game.Game;
+import megamek.common.game.IGame;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.units.*;
 
 /**
  * This class is WIP, commiting just to have an artifact.
@@ -192,7 +199,7 @@ public class BoardViewLessMinimapPanel extends JPanel implements OverlayPainter 
                         return;
                     }
 
-                    if (attackAction.getTargetType() == Targetable.TYPE_INARC_POD) {
+                    if (attackAction.getTargetType() == Targetable.TYPE_I_NARC_POD) {
                         // iNarc pods don't have a position
                         return;
                     }
@@ -580,7 +587,7 @@ public class BoardViewLessMinimapPanel extends JPanel implements OverlayPainter 
         int maxSensorRange = 0;
         int minSensorRange = 0;
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS)) {
             int bracket = Compute.getSensorRangeBracket(entity, null, null);
             // noinspection ConstantConditions
             int range = Compute.getSensorRangeByBracket((Game) game, entity, null, null);

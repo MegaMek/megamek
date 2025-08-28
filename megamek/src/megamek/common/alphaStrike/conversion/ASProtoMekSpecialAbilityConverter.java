@@ -40,9 +40,9 @@ import static megamek.common.alphaStrike.BattleForceSUA.SOA;
 import static megamek.common.alphaStrike.BattleForceSUA.UCS;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.Entity;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
+import megamek.common.units.Entity;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 
 public class ASProtoMekSpecialAbilityConverter extends ASSpecialAbilityConverter {

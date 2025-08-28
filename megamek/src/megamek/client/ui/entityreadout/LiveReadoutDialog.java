@@ -36,7 +36,7 @@ import java.awt.Container;
 import javax.swing.JFrame;
 
 import megamek.client.ui.dialogs.abstractDialogs.AbstractDialog;
-import megamek.common.Game;
+import megamek.common.game.Game;
 
 /**
  * A dialog showing the unit readout, TRO, AS Card and Faction info for a given unit. The Readout is kept updated until

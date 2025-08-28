@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -42,8 +42,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.Board;
 import megamek.common.Configuration;
+import megamek.common.board.Board;
 import megamek.logging.MMLogger;
 
 /**
@@ -99,7 +99,7 @@ public class BoardsValidator {
 
     /**
      * Check whether the supplied file is a valid board file or not. Ignores files that don't end in .board. Any errors
-     * are logged to System.out.
+     * are logged to SystemFluff.out.
      *
      * @param boardFile the board file to check
      */

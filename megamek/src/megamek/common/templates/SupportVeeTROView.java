@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,7 +39,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.*;
+import megamek.common.Messages;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.LargeSupportTank;
+import megamek.common.units.Tank;
+import megamek.common.units.VTOL;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -134,10 +143,10 @@ public class SupportVeeTROView extends TROView {
                                                      { VTOL.LOC_ROTOR } };
 
     private static final int[][] LARGE_SUPPORT_ARMOR_LOCS = { { LargeSupportTank.LOC_FRONT },
-                                                              { LargeSupportTank.LOC_FRONTRIGHT,
-                                                                LargeSupportTank.LOC_FRONTLEFT },
-                                                              { LargeSupportTank.LOC_REARRIGHT,
-                                                                LargeSupportTank.LOC_REARLEFT },
+                                                              { LargeSupportTank.LOC_FRONT_RIGHT,
+                                                                LargeSupportTank.LOC_FRONT_LEFT },
+                                                              { LargeSupportTank.LOC_REAR_RIGHT,
+                                                                LargeSupportTank.LOC_REAR_LEFT },
                                                               { LargeSupportTank.LOC_REAR },
                                                               { LargeSupportTank.LOC_TURRET },
                                                               { LargeSupportTank.LOC_TURRET_2 } };
@@ -206,7 +215,7 @@ public class SupportVeeTROView extends TROView {
                 if (name.length() >= nameWidth) {
                     nameWidth = name.length() + 1;
                 }
-                fields.put("tonnage", adjustWeight(eq.getTonnage(entity, entry.getKey().getSize()) * count));
+                fields.put("tonnage", adjustWeight(eq.getTonnage(entity, entry.getKey().size()) * count));
                 fields.put("location", loc);
                 fields.put("slots", eq.getSupportVeeSlots(entity) * count);
                 weaponList.add(fields);
@@ -231,7 +240,7 @@ public class SupportVeeTROView extends TROView {
         for (final Map.Entry<EquipmentKey, Integer> entry : miscCount.entrySet()) {
             final EquipmentType eq = entry.getKey().getType();
             final int count = entry.getValue();
-            final double tonnage = eq.getTonnage(tank, entry.getKey().getSize());
+            final double tonnage = eq.getTonnage(tank, entry.getKey().size());
             final StringBuilder sb = new StringBuilder(stripNotes(entry.getKey().name()));
             if (tonnage > 0) {
                 sb.append("(");

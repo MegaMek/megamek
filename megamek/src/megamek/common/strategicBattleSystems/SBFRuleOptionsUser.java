@@ -50,7 +50,7 @@ public interface SBFRuleOptionsUser {
     SBFRuleOptions getOptions();
 
     /**
-     * @return True when this game uses Detection and Reconnaissance, IO:BF p.195 aka double blind.
+     * @return True when this game uses Detection and Reconnaissance, IO:BF p.195 aka double-blind.
      */
     default boolean usesDoubleBlind() {
         return getOptions().booleanOption(SBFRuleOptions.BASE_RECON);

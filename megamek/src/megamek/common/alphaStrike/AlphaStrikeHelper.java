@@ -77,7 +77,7 @@ public class AlphaStrikeHelper {
     }
 
     /**
-     * Returns the formatted String for a single movement mode of the given AS element. E.g., for the movemode "j" and
+     * Returns the formatted String for a single movement mode of the given AS element. E.g., for the move mode "j" and
      * the moveValue 8, returns 8"j.
      *
      * @param element   The AS element (or MekSummary) having the movement mode

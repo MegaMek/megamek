@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,7 +34,13 @@
 
 package megamek.common.weapons.c3;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.weapons.tag.TAGWeapon;
 
 /**
@@ -42,21 +48,22 @@ import megamek.common.weapons.tag.TAGWeapon;
  * @since Sep 7, 2005
  */
 public class ISC3MBS extends TAGWeapon {
+    @Serial
     private static final long serialVersionUID = -6402667441307181946L;
 
     public ISC3MBS() {
         super();
-        name = "C3 Boosted System (Master)";
+        name = "C3 Boosted SystemFluff (Master)";
         shortName = "C3BS (Master)";
         setInternalName("ISC3MasterBoostedSystemUnit");
         addLookupName("IS C3 Computer Boosted");
         addLookupName("ISC3MasterComputerBoosted");
-        addLookupName("C3 Master Boosted System with TAG");
-        addLookupName("C3 Boosted System (C3BS) [Master]");
+        addLookupName("C3 Master Boosted SystemFluff with TAG");
+        addLookupName("C3 Boosted SystemFluff (C3BS) [Master]");
         tonnage = 6;
-        criticals = 6;
-        svslots = 6;
-        tankslots = 1;
+        criticalSlots = 6;
+        svSlots = 6;
+        tankSlots = 1;
         hittable = true;
         spreadable = false;
         cost = 3000000;

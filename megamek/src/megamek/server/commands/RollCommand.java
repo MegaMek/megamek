@@ -34,7 +34,7 @@
 
 package megamek.server.commands;
 
-import megamek.common.Compute;
+import megamek.common.compute.Compute;
 import megamek.server.Server;
 
 /**

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.event;
 
+import java.io.Serial;
+
 /**
  * Normally, reports are dealt with during report phases. When a report is sent at an odd time though, an instance of
  * this class is sent.
@@ -43,8 +45,9 @@ public class GameReportEvent extends GameEvent {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -986977282796844524L;
-    private String report;
+    private final String report;
 
     /**
      * Create a new Report event.

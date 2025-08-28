@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,7 +39,7 @@ import megamek.common.Configuration;
 
 /**
  * This is a local MegaMek version of java.io.File and is designed to support having files that could exist in two
- * locations: the MM install location and a userdata directory. When a file is opened, the path is first checked to see
+ * locations: the MM install location and an userdata directory. When a file is opened, the path is first checked to see
  * if it exists within the userdata directory, and if it does, that file is opened. However, if it doesn't exist, then
  * the file is opened from MM's install directory instead.
  *

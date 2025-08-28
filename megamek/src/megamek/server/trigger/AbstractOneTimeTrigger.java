@@ -33,7 +33,7 @@
 
 package megamek.server.trigger;
 
-import megamek.common.IGame;
+import megamek.common.game.IGame;
 
 /**
  * This is a base class for Triggers that should only ever react once, regardless of how often its prerequisites are

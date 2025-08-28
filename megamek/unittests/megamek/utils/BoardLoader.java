@@ -36,7 +36,7 @@ package megamek.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.Board;
+import megamek.common.board.Board;
 
 /**
  * Utility class to load a board from a string representation.

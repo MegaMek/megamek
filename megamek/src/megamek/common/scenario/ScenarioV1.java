@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,24 +37,52 @@ import java.util.regex.Pattern;
 
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.*;
-import megamek.common.AmmoType.AmmoTypeEnum;
+import megamek.common.Configuration;
+import megamek.common.CriticalSlot;
+import megamek.common.HitData;
+import megamek.common.Player;
+import megamek.common.SimpleTechLevel;
+import megamek.common.TechConstants;
+import megamek.common.ToHitData;
 import megamek.common.annotations.Nullable;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.Gender;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.AmmoType.AmmoTypeEnum;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.IArmorState;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
+import megamek.common.game.IGame;
 import megamek.common.icons.Camouflage;
+import megamek.common.interfaces.IStartingPositions;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.loaders.MapSettings;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.Atmosphere;
-import megamek.common.planetaryconditions.BlowingSand;
-import megamek.common.planetaryconditions.EMI;
-import megamek.common.planetaryconditions.Fog;
-import megamek.common.planetaryconditions.Light;
-import megamek.common.planetaryconditions.Weather;
-import megamek.common.planetaryconditions.Wind;
-import megamek.common.planetaryconditions.WindDirection;
+import megamek.common.planetaryConditions.Atmosphere;
+import megamek.common.planetaryConditions.BlowingSand;
+import megamek.common.planetaryConditions.EMI;
+import megamek.common.planetaryConditions.Fog;
+import megamek.common.planetaryConditions.Light;
+import megamek.common.planetaryConditions.Weather;
+import megamek.common.planetaryConditions.Wind;
+import megamek.common.planetaryConditions.WindDirection;
+import megamek.common.units.Crew;
+import megamek.common.units.Entity;
+import megamek.common.units.IAero;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Tank;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
@@ -479,7 +507,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                         // Is this a valid slot number?
                         else if ((criticalHit.slot < 0) ||
                               (criticalHit.slot >
-                                    criticalHitPlan.entity.getNumberOfCriticals(criticalHit.loc))) {
+                                    criticalHitPlan.entity.getNumberOfCriticalSlots(criticalHit.loc))) {
                             LOGGER.error("{} - invalid slot specified (Slot < 0 OR Slot > Number of Critical Slots) " +
                                         "{}: {}",
                                   criticalHitPlan.entity.getShortName(),
@@ -529,7 +557,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
             for (SetAmmoType setAmmoType : setAmmoPlan.ammoSetType) {
                 // Limit to `Meks for now (needs to be extended later)
                 if (setAmmoPlan.entity instanceof Mek) {
-                    if (setAmmoType.slot < setAmmoPlan.entity.getNumberOfCriticals(setAmmoType.loc)) {
+                    if (setAmmoType.slot < setAmmoPlan.entity.getNumberOfCriticalSlots(setAmmoType.loc)) {
                         CriticalSlot criticalSlot = setAmmoPlan.entity.getCritical(setAmmoType.loc, setAmmoType.slot);
                         if (criticalSlot != null) {
                             AmmoMounted ammo = (AmmoMounted) setAmmoPlan.entity.getCritical(setAmmoType.loc,
@@ -560,7 +588,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
             for (SetAmmoTo setAmmoTo : setAmmoPlan.ammoSetTo) {
                 // Only can be done against Meks
                 if (setAmmoPlan.entity instanceof Mek) {
-                    if (setAmmoTo.slot < setAmmoPlan.entity.getNumberOfCriticals(setAmmoTo.loc)) {
+                    if (setAmmoTo.slot < setAmmoPlan.entity.getNumberOfCriticalSlots(setAmmoTo.loc)) {
                         // Get the piece of equipment and check to make sure it is an ammo item then set its amount!
                         CriticalSlot criticalSlot = setAmmoPlan.entity.getCritical(setAmmoTo.loc, setAmmoTo.slot);
                         if (criticalSlot != null) {
@@ -965,7 +993,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     }
 
     /**
-     * Load board files and create the megaboard.
+     * Load board files and create the mega board.
      */
     private Board createBoard(ScenarioV1 scenarioV1) throws ScenarioLoaderException {
         int mapWidth = 16, mapHeight = 17;
@@ -1202,18 +1230,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     /**
      * This is used specify the one damage location
      */
-    private static class SpecDam {
-        public final int loc;
-        public final int setArmorTo;
-        public final boolean rear;
-        public final boolean internal;
-
-        public SpecDam(int Location, int SetArmorTo, boolean RearHit, boolean Internal) {
-            loc = Location;
-            setArmorTo = SetArmorTo;
-            rear = RearHit;
-            internal = Internal;
-        }
+    private record SpecDam(int loc, int setArmorTo, boolean rear, boolean internal) {
     }
 
     /**

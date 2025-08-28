@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,7 +34,7 @@ package megamek.common.event;
 
 import java.util.Enumeration;
 
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 
 public interface PostGameResolution {
     Enumeration<Entity> getEntities();

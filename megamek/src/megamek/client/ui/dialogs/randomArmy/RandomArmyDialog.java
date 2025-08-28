@@ -93,22 +93,22 @@ import megamek.client.ui.models.UnitTableModel;
 import megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility;
 import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.MekFileParser;
-import megamek.common.MekSummary;
 import megamek.common.Player;
 import megamek.common.TechConstants;
-import megamek.common.UnitType;
 import megamek.common.enums.Gender;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.loaders.MekSummary;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.UnitType;
 import megamek.common.util.RandomArmyCreator;
 import megamek.logging.MMLogger;
 
@@ -899,7 +899,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                                 unitList.addAll(ba);
                             } else if (m_pFormationOptions.getBooleanOption("airLance")) {
                                 UnitTable t = UnitTable.findTable(fRec,
-                                      UnitType.AEROSPACEFIGHTER,
+                                      UnitType.AEROSPACE_FIGHTER,
                                       m_pFormationOptions.getYear(),
                                       m_pFormationOptions.getRating(),
                                       null,
@@ -1069,9 +1069,9 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     private void updateTechChoice() {
         final int gameTL = TechConstants.getSimpleLevel(m_client.getGame()
               .getOptions()
-              .stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
+              .stringOption(OptionsConstants.ALLOWED_TECH_LEVEL));
         final int maxTech = switch (gameTL) {
-            case TechConstants.T_SIMPLE_INTRO -> TechConstants.T_INTRO_BOXSET;
+            case TechConstants.T_SIMPLE_INTRO -> TechConstants.T_INTRO_BOX_SET;
             case TechConstants.T_SIMPLE_ADVANCED -> TechConstants.T_CLAN_ADVANCED;
             case TechConstants.T_SIMPLE_EXPERIMENTAL -> TechConstants.T_CLAN_EXPERIMENTAL;
             case TechConstants.T_SIMPLE_UNOFFICIAL -> TechConstants.T_ALL;

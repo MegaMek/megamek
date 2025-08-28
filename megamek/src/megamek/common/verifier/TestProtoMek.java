@@ -37,16 +37,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import megamek.codeUtilities.MathUtility;
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.ProtoMek;
-import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.ProtoMek;
 import megamek.common.util.StringUtil;
 
 /**
@@ -245,9 +245,11 @@ public class TestProtoMek extends TestEntity {
     @Override
     public boolean correctEntity(StringBuffer buff, int ammoTechLvl) {
         boolean correct = true;
+
         if (skip()) {
-            return correct;
+            return true;
         }
+
         if (!allowOverweightConstruction() && !correctWeight(buff)) {
             buff.insert(0, printTechLevel() + printShortMovement());
             buff.append(printWeightCalculation());
@@ -331,11 +333,11 @@ public class TestProtoMek extends TestEntity {
                     illegal = true;
                 }
                 if (mount.getType().hasSubType(MiscType.S_PROTO_QMS) && !proto.isQuad()) {
-                    buff.append(mount.getType().getName() + "can only be used by quad ProtoMeks.\n");
+                    buff.append(mount.getType().getName()).append("can only be used by quad ProtoMeks.\n");
                     illegal = true;
                 }
                 if (mount.getType().hasSubType(MiscType.S_PROTOMEK_WEAPON) && proto.isQuad()) {
-                    buff.append(mount.getType().getName() + "cannot be used by quad ProtoMeks.\n");
+                    buff.append(mount.getType().getName()).append("cannot be used by quad ProtoMeks.\n");
                     illegal = true;
                 }
             }
@@ -345,7 +347,7 @@ public class TestProtoMek extends TestEntity {
             buff.append("Does not have legal armor type.\n");
             illegal = true;
         } else {
-            slotsByLoc.merge(ProtoMek.LOC_TORSO, armor.getCriticals(proto), Integer::sum);
+            slotsByLoc.merge(ProtoMek.LOC_TORSO, armor.getNumCriticalSlots(proto), Integer::sum);
         }
 
         for (int loc = 0; loc < proto.locations(); loc++) {
@@ -381,7 +383,7 @@ public class TestProtoMek extends TestEntity {
           @Nullable StringBuffer buffer) {
         if (eq instanceof MiscType) {
             if (eq.hasFlag(MiscType.F_PROTOMEK_MELEE) && eq.hasSubType(MiscType.S_PROTOMEK_WEAPON)
-                  && (location != ProtoMek.LOC_LARM) && (location != ProtoMek.LOC_RARM)) {
+                  && (location != ProtoMek.LOC_LEFT_ARM) && (location != ProtoMek.LOC_RIGHT_ARM)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in an arm.\n");
                 }
@@ -611,10 +613,10 @@ public class TestProtoMek extends TestEntity {
                 }
                 return slots;
             }
-            case ProtoMek.LOC_LARM:
-            case ProtoMek.LOC_RARM:
+            case ProtoMek.LOC_LEFT_ARM:
+            case ProtoMek.LOC_RIGHT_ARM:
                 return quad ? 0 : 1;
-            case ProtoMek.LOC_MAINGUN:
+            case ProtoMek.LOC_MAIN_GUN:
                 return (quad && ultra) ? 2 : 1;
             case ProtoMek.LOC_HEAD:
             case ProtoMek.LOC_LEG:
@@ -652,13 +654,13 @@ public class TestProtoMek extends TestEntity {
                 } else {
                     return ultra ? 4.0 : 2.0;
                 }
-            case ProtoMek.LOC_LARM:
-            case ProtoMek.LOC_RARM:
+            case ProtoMek.LOC_LEFT_ARM:
+            case ProtoMek.LOC_RIGHT_ARM:
                 if (quad) {
                     return 0;
                 }
                 return ultra ? 1.0 : 0.5;
-            case ProtoMek.LOC_MAINGUN:
+            case ProtoMek.LOC_MAIN_GUN:
                 return Double.MAX_VALUE;
             case ProtoMek.LOC_HEAD:
             case ProtoMek.LOC_LEG:
@@ -708,14 +710,14 @@ public class TestProtoMek extends TestEntity {
     public static int maxArmorFactor(ProtoMek proto, int location) {
         if (location == ProtoMek.LOC_HEAD) {
             return 2 + (int) proto.getWeight() / 2;
-        } else if (location == ProtoMek.LOC_MAINGUN) {
+        } else if (location == ProtoMek.LOC_MAIN_GUN) {
             if (proto.hasMainGun()) {
                 return proto.getOInternal(location) * 3;
             } else {
                 return 0;
             }
-        } else if ((location == ProtoMek.LOC_LARM)
-              || (location == ProtoMek.LOC_RARM)) {
+        } else if ((location == ProtoMek.LOC_LEFT_ARM)
+              || (location == ProtoMek.LOC_RIGHT_ARM)) {
             if (proto.isQuad()) {
                 return 0;
             } else if (proto.getWeight() < 6) {

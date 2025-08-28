@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2014 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,6 +43,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
+import megamek.logging.MMLogger;
+
 /**
  * This program was designed to test the idea of turning an image into a board file for MegaMek. It takes an image, and
  * then cuts the image into hex-sized bits and saves each of those hex images as a file.  It also generates a board file
@@ -57,6 +59,8 @@ import javax.imageio.ImageIO;
  * @since October 2014
  */
 public class ImageToBoard {
+    private final static MMLogger LOGGER = MMLogger.create(ImageToBoard.class);
+
     boolean loaded = false;
 
     int hexCols = 41;
@@ -96,12 +100,10 @@ public class ImageToBoard {
         try {
             src = ImageIO.read(new File(inPath));
             hexTemplate = ImageIO.read(new File("data/images/misc/hex_filled.png"));
-            tilesetOut = new BufferedWriter(new FileWriter(new File(outputDir,
-                  "new.tileset")));
-            boardOut = new BufferedWriter(new FileWriter(new File(outputDir,
-                  "new.board")));
+            tilesetOut = new BufferedWriter(new FileWriter(new File(outputDir, "new.tileset")));
+            boardOut = new BufferedWriter(new FileWriter(new File(outputDir, "new.board")));
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e, "ImageToBoard - IOException: {}", e.getMessage());
             return;
         }
         loaded = true;
@@ -117,8 +119,7 @@ public class ImageToBoard {
         try {
             boardOut.write("size " + hexCols + " " + hexRows + "\n");
         } catch (IOException e1) {
-            e1.printStackTrace();
-            return;
+            LOGGER.error(e1, "Process - IOException: {}", e1.getMessage());
         }
 
         int black = (255 << 8) & (255 << 16) & (255);
@@ -142,8 +143,7 @@ public class ImageToBoard {
                     continue;
                 }
 
-                BufferedImage hexROI = src.getSubimage(x, y, mapHexWidth,
-                      mapHexHeight);
+                BufferedImage hexROI = src.getSubimage(x, y, mapHexWidth, mapHexHeight);
                 hexGraphics.drawImage(hexROI, 0, 0, hexWidth, hexHeight, null);
                 for (int i = 0; i < hexWidth; i++) {
                     for (int j = 0; j < hexHeight; j++) {
@@ -167,8 +167,7 @@ public class ImageToBoard {
                     boardOut.write("hex " + terrName + " 0 \"fluff:99"
                           + terrName + "\" \"\"\n");
                 } catch (IOException e) {
-                    e.printStackTrace();
-                    return;
+                    LOGGER.error(e, "process - writer IOException: {}", e.getMessage());
                 }
             }
         }
@@ -176,7 +175,7 @@ public class ImageToBoard {
             boardOut.close();
             tilesetOut.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e, "Process Close - IOException: {}", e.getMessage());
         }
     }
 }

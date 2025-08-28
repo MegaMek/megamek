@@ -40,14 +40,14 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.IAero;
+import megamek.common.board.Coords;
+import megamek.common.enums.MoveStepType;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
-import megamek.common.pathfinder.AbstractPathFinder.Filter;
+import megamek.common.pathfinder.filters.Filter;
+import megamek.common.units.Entity;
+import megamek.common.units.IAero;
 import megamek.logging.MMLogger;
 
 /**
@@ -237,7 +237,7 @@ public class AeroGroundPathFinder {
      * @param startingPath    The path to adjust
      * @param desiredAltitude The desired altitude
      *
-     * @return New instance of movepath with as much altitude adjustment as possible
+     * @return New instance of move path with as much altitude adjustment as possible
      */
     private MovePath adjustTowardsDesiredAltitude(MovePath startingPath, int desiredAltitude) {
         MovePath altitudePath = startingPath.clone();
@@ -289,36 +289,36 @@ public class AeroGroundPathFinder {
     // if a hex has already been visited by another branch, then we set the current
     // one as the visitor only if it's shorter
     protected List<MovePath> GenerateAllPaths(MovePath mp) {
-        List<MovePath> retval = new ArrayList<>();
+        List<MovePath> retVal = new ArrayList<>();
 
         for (MovePath path : generateSidePaths(mp, MoveStepType.TURN_RIGHT)) {
             // we want to avoid adding paths that don't visit new hexes
             // off-board paths will get thrown out later
-            if (path.fliesOffBoard() || pathIsntRedundant(path)) {
-                retval.add(path);
+            if (path.fliesOffBoard() || pathIsNotRedundant(path)) {
+                retVal.add(path);
             }
         }
 
         for (MovePath path : generateSidePaths(mp, MoveStepType.TURN_LEFT)) {
             // we want to avoid adding paths that don't visit new hexes
             // off-board paths will get thrown out later
-            if (path.fliesOffBoard() || pathIsntRedundant(path)) {
-                retval.add(path);
+            if (path.fliesOffBoard() || pathIsNotRedundant(path)) {
+                retVal.add(path);
             }
         }
 
         ForwardToTheEnd(mp);
-        if (mp.fliesOffBoard() || pathIsntRedundant(mp)) {
-            retval.add(mp);
+        if (mp.fliesOffBoard() || pathIsNotRedundant(mp)) {
+            retVal.add(mp);
         }
 
-        return retval;
+        return retVal;
     }
 
     // generates and returns all paths that stick straight lines out of the current
     // path to the right or left
     protected List<MovePath> generateSidePaths(MovePath mp, MoveStepType stepType) {
-        List<MovePath> retval = new ArrayList<>();
+        List<MovePath> retVal = new ArrayList<>();
         MovePath straightLine = mp.clone();
 
         if (STACK_DEPTH - mp.length() < 10) {
@@ -356,11 +356,11 @@ public class AeroGroundPathFinder {
                     // the opposite direction of stepType
                     // This *may* result in a drastic increase in generated paths, so maybe hold off
                     // on it for now.
-                    retval.addAll(generateSidePaths(tiltedPath, stepType));
+                    retVal.addAll(generateSidePaths(tiltedPath, stepType));
                 }
 
                 ForwardToTheEnd(tiltedPath);
-                retval.add(tiltedPath);
+                retVal.add(tiltedPath);
                 firstTurn = false;
             }
 
@@ -371,7 +371,7 @@ public class AeroGroundPathFinder {
             }
         }
 
-        return retval;
+        return retVal;
     }
 
     // helper function to move the path forward until we run out of velocity or off
@@ -384,7 +384,7 @@ public class AeroGroundPathFinder {
                 mp.addStep(MoveStepType.FORWARDS);
             }
 
-            // if we have arrived on the edge, and we can turn, then attempt to "bounce off"
+            // if we have arrived at the edge, and we can turn, then attempt to "bounce off"
             // or "ride" the edge.
             // as long as we're not trying to go off board, then forget about it
             // this slightly increases the area covered by the aero in cases where the path
@@ -405,7 +405,7 @@ public class AeroGroundPathFinder {
                     // you can approach the top and bottom edges of the board in such a way that
                     // neither left
                     // nor right produces an off-board path
-                    // there's probably a better mathematical way to formulate this but I'm not
+                    // there's probably a better mathematical way to formulate this, but I'm not
                     // really a math guy.
                     mp.addStep(MoveStepType.TURN_RIGHT);
                     if (mp.nextForwardStepOffBoard()) {
@@ -434,7 +434,7 @@ public class AeroGroundPathFinder {
 
     private final Map<Coords, MovePath> visitedCoords = new HashMap<>();
 
-    protected boolean pathIsntRedundant(MovePath mp) {
+    protected boolean pathIsNotRedundant(MovePath mp) {
         return !pathIsRedundant(mp);
     }
 
@@ -444,7 +444,7 @@ public class AeroGroundPathFinder {
      *
      * @param mp The move path to examine.
      *
-     * @return Whether or not the move path is redundant.
+     * @return Whether the move path is redundant.
      */
     // goes through a path.
     // if it does not take us off-board, records the coordinates it visits

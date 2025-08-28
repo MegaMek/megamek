@@ -38,14 +38,31 @@ import java.util.Iterator;
 
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.IHonorUtil;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.ToHitData;
 import megamek.common.actions.BrushOffAttackAction;
 import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PunchAttackAction;
 import megamek.common.actions.PushAttackAction;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscMounted;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.BuildingTarget;
+import megamek.common.units.EjectedCrew;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Tank;
+import megamek.common.units.Targetable;
+import megamek.common.units.Terrains;
 
 public final class PhysicalCalculator {
     private PhysicalCalculator() {
@@ -171,17 +188,17 @@ public final class PhysicalCalculator {
                     test_ranking = 1.0;
                     test_pod = pod_list.next();
                     // If pod is homing and attacker has no ECM
-                    if ((test_pod.getType() == INarcPod.HOMING) && !entity.hasActiveECM()) {
+                    if ((test_pod.type() == INarcPod.HOMING) && !entity.hasActiveECM()) {
                         // Pod is +1
                         test_ranking += 1.0;
                     }
                     // If pod is ECM and attacker has C3 link
-                    if ((test_pod.getType() == INarcPod.ECM) && (entity.hasC3() || entity.hasC3i())) {
+                    if ((test_pod.type() == INarcPod.ECM) && (entity.hasC3() || entity.hasC3i())) {
                         // Pod is +2
                         test_ranking += 2.0;
                     }
                     // If pod is Nemesis
-                    if (test_pod.getType() == INarcPod.NEMESIS) {
+                    if (test_pod.type() == INarcPod.NEMESIS) {
                         // Pod is +variable, based on movement
                         test_ranking += (entity.getWalkMP() + entity.getAnyTypeMaxJumpMP()) / 2.0;
                     }
@@ -618,54 +635,54 @@ public final class PhysicalCalculator {
                 max_index = 7;
                 armor_values[0] = target.getArmor(Mek.LOC_HEAD, false);
                 if (hitSide != ToHitData.SIDE_FRONT) {
-                    armor_values[1] = target.getArmor(Mek.LOC_CT, true);
+                    armor_values[1] = target.getArmor(Mek.LOC_CENTER_TORSO, true);
                 } else {
-                    armor_values[1] = target.getArmor(Mek.LOC_CT, false);
+                    armor_values[1] = target.getArmor(Mek.LOC_CENTER_TORSO, false);
                 }
                 if (hitSide != ToHitData.SIDE_FRONT) {
-                    armor_values[2] = target.getArmor(Mek.LOC_RT, true);
+                    armor_values[2] = target.getArmor(Mek.LOC_RIGHT_TORSO, true);
                 } else {
-                    armor_values[2] = target.getArmor(Mek.LOC_RT, false);
+                    armor_values[2] = target.getArmor(Mek.LOC_RIGHT_TORSO, false);
                 }
                 if (hitSide != ToHitData.SIDE_FRONT) {
-                    armor_values[3] = target.getArmor(Mek.LOC_LT, true);
+                    armor_values[3] = target.getArmor(Mek.LOC_LEFT_TORSO, true);
                 } else {
-                    armor_values[3] = target.getArmor(Mek.LOC_LT, false);
+                    armor_values[3] = target.getArmor(Mek.LOC_LEFT_TORSO, false);
                 }
-                armor_values[4] = target.getArmor(Mek.LOC_RARM, false);
-                armor_values[5] = target.getArmor(Mek.LOC_LARM, false);
-                armor_values[6] = target.getArmor(Mek.LOC_RLEG, false);
-                armor_values[7] = target.getArmor(Mek.LOC_RLEG, false);
+                armor_values[4] = target.getArmor(Mek.LOC_RIGHT_ARM, false);
+                armor_values[5] = target.getArmor(Mek.LOC_LEFT_ARM, false);
+                armor_values[6] = target.getArmor(Mek.LOC_RIGHT_LEG, false);
+                armor_values[7] = target.getArmor(Mek.LOC_RIGHT_LEG, false);
             }
             if (hitTable == ToHitData.HIT_PUNCH) {
                 armor_values[0] = target.getArmor(Mek.LOC_HEAD, false);
                 if (hitSide == ToHitData.SIDE_RIGHT) {
                     max_index = 3;
-                    armor_values[1] = target.getArmor(Mek.LOC_CT, false);
-                    armor_values[2] = target.getArmor(Mek.LOC_RT, false);
-                    armor_values[3] = target.getArmor(Mek.LOC_RARM, false);
+                    armor_values[1] = target.getArmor(Mek.LOC_CENTER_TORSO, false);
+                    armor_values[2] = target.getArmor(Mek.LOC_RIGHT_TORSO, false);
+                    armor_values[3] = target.getArmor(Mek.LOC_RIGHT_ARM, false);
                 }
                 if (hitSide == ToHitData.SIDE_LEFT) {
                     max_index = 3;
-                    armor_values[1] = target.getArmor(Mek.LOC_CT, false);
-                    armor_values[2] = target.getArmor(Mek.LOC_LT, false);
-                    armor_values[3] = target.getArmor(Mek.LOC_LARM, false);
+                    armor_values[1] = target.getArmor(Mek.LOC_CENTER_TORSO, false);
+                    armor_values[2] = target.getArmor(Mek.LOC_LEFT_TORSO, false);
+                    armor_values[3] = target.getArmor(Mek.LOC_LEFT_ARM, false);
                 }
                 if (hitSide == ToHitData.SIDE_FRONT) {
                     max_index = 5;
-                    armor_values[1] = target.getArmor(Mek.LOC_CT, false);
-                    armor_values[2] = target.getArmor(Mek.LOC_RT, false);
-                    armor_values[3] = target.getArmor(Mek.LOC_LT, false);
-                    armor_values[4] = target.getArmor(Mek.LOC_RARM, false);
-                    armor_values[5] = target.getArmor(Mek.LOC_LARM, false);
+                    armor_values[1] = target.getArmor(Mek.LOC_CENTER_TORSO, false);
+                    armor_values[2] = target.getArmor(Mek.LOC_RIGHT_TORSO, false);
+                    armor_values[3] = target.getArmor(Mek.LOC_LEFT_TORSO, false);
+                    armor_values[4] = target.getArmor(Mek.LOC_RIGHT_ARM, false);
+                    armor_values[5] = target.getArmor(Mek.LOC_LEFT_ARM, false);
                 }
                 if (hitSide == ToHitData.SIDE_REAR) {
                     max_index = 5;
-                    armor_values[1] = target.getArmor(Mek.LOC_CT, true);
-                    armor_values[2] = target.getArmor(Mek.LOC_RT, true);
-                    armor_values[3] = target.getArmor(Mek.LOC_LT, true);
-                    armor_values[4] = target.getArmor(Mek.LOC_RARM, false);
-                    armor_values[5] = target.getArmor(Mek.LOC_LARM, false);
+                    armor_values[1] = target.getArmor(Mek.LOC_CENTER_TORSO, true);
+                    armor_values[2] = target.getArmor(Mek.LOC_RIGHT_TORSO, true);
+                    armor_values[3] = target.getArmor(Mek.LOC_LEFT_TORSO, true);
+                    armor_values[4] = target.getArmor(Mek.LOC_RIGHT_ARM, false);
+                    armor_values[5] = target.getArmor(Mek.LOC_LEFT_ARM, false);
                 }
             }
             if (hitTable == ToHitData.HIT_KICK) {
@@ -674,13 +691,13 @@ public final class PhysicalCalculator {
                       (hitSide == ToHitData.SIDE_REAR) ||
                       (hitSide == ToHitData.SIDE_RIGHT)) {
                     max_index++;
-                    armor_values[max_index] = target.getArmor(Mek.LOC_RLEG, false);
+                    armor_values[max_index] = target.getArmor(Mek.LOC_RIGHT_LEG, false);
                 }
                 if ((hitSide == ToHitData.SIDE_FRONT) ||
                       (hitSide == ToHitData.SIDE_REAR) ||
                       (hitSide == ToHitData.SIDE_LEFT)) {
                     max_index++;
-                    armor_values[max_index] = target.getArmor(Mek.LOC_LLEG, false);
+                    armor_values[max_index] = target.getArmor(Mek.LOC_LEFT_LEG, false);
                 }
             }
         }
@@ -692,14 +709,14 @@ public final class PhysicalCalculator {
             // miss' hit locations
             armor_values[0] = target.getArmor(ProtoMek.LOC_TORSO, false);
             armor_values[1] = target.getArmor(ProtoMek.LOC_LEG, false);
-            armor_values[2] = target.getArmor(ProtoMek.LOC_RARM, false);
-            armor_values[3] = target.getArmor(ProtoMek.LOC_LARM, false);
+            armor_values[2] = target.getArmor(ProtoMek.LOC_RIGHT_ARM, false);
+            armor_values[3] = target.getArmor(ProtoMek.LOC_LEFT_ARM, false);
             armor_values[4] = target.getArmor(ProtoMek.LOC_HEAD, false);
             armor_values[5] = 100;
             armor_values[6] = 100;
             if (((ProtoMek) target).hasMainGun()) {
                 max_index++;
-                armor_values[max_index] = target.getArmor(ProtoMek.LOC_MAINGUN, false);
+                armor_values[max_index] = target.getArmor(ProtoMek.LOC_MAIN_GUN, false);
             }
         }
         // If the target is a vehicle

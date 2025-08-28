@@ -39,9 +39,9 @@ import java.io.PrintWriter;
 
 import megamek.ai.dataset.UnitEnrichment;
 import megamek.ai.dataset.UnitEnrichmentSerializer;
-import megamek.common.Game;
-import megamek.common.MekSummary;
-import megamek.common.MekSummaryCache;
+import megamek.common.game.Game;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
 import megamek.logging.MMLogger;
 
 /**

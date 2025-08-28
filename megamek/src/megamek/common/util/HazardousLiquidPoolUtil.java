@@ -36,16 +36,16 @@ package megamek.common.util;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.common.Compute;
-import megamek.common.Entity;
 import megamek.common.HitData;
-import megamek.common.Infantry;
-import megamek.common.Mek;
-import megamek.common.MiscType;
 import megamek.common.Report;
-import megamek.common.Roll;
 import megamek.common.ToHitData;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.MiscType;
 import megamek.common.internationalization.I18n;
+import megamek.common.rolls.Roll;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -86,7 +86,7 @@ public class HazardousLiquidPoolUtil {
      * liquid.
      *
      * @param entity        Entity in the liquid
-     * @param eruption      If this is from an eruoption
+     * @param eruption      If this is from an eruption
      * @param depth         Int depth of the liquid
      * @param twGameManager Current game manager (to damage entity)
      *
@@ -156,9 +156,6 @@ public class HazardousLiquidPoolUtil {
     /**
      * Support vehicles and industrial meks without environmental sealing take double damage
      *
-     * @param entity
-     *
-     * @return
      */
     public static int getHazardousLiquidPoolDamageMultiplierForUnsealed(Entity entity) {
         // IndustrialMeks and Support Vehicles take Double Damage
@@ -173,9 +170,6 @@ public class HazardousLiquidPoolUtil {
     /**
      * Infantry units take more or less damage depending on if they have XCT training and the appropriate gear
      *
-     * @param entity
-     *
-     * @return
      */
     public static double getHazardousLiquidPoolDamageDivisorForInfantry(Entity entity) {
         // If infantry have XCT training and appropriate gear they take 1/3 damage
@@ -183,7 +177,7 @@ public class HazardousLiquidPoolUtil {
         // BA take damage as normal.
         if (entity.isInfantry() && !entity.isBattleArmor() && entity instanceof Infantry inf) {
             if (inf.hasSpecialization(Infantry.XCT) && inf.getArmorKit() != null && inf.getArmorKit()
-                  .hasSubType(MiscType.S_TOXIC_ATMO)) {
+                  .hasSubType(MiscType.S_TOXIC_ATMOSPHERE)) {
                 return 3.0;
             } else {
                 return .5;

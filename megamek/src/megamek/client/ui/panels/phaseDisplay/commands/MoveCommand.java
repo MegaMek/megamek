@@ -254,9 +254,9 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
         boolean vtolStrafe = false;
 
         if (opts != null) {
-            selfDestruct = opts.booleanOption(OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT);
-            advVehicle = opts.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS);
-            vtolStrafe = opts.booleanOption(OptionsConstants.ADVCOMBAT_VTOL_STRAFING);
+            selfDestruct = opts.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SELF_DESTRUCT);
+            advVehicle = opts.booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_ADVANCED_MANEUVERS);
+            vtolStrafe = opts.booleanOption(OptionsConstants.ADVANCED_COMBAT_VTOL_STRAFING);
         }
 
         ArrayList<MoveCommand> flaggedCommands = new ArrayList<>();

@@ -86,26 +86,65 @@ import megamek.client.ui.widget.MegaMekBorder;
 import megamek.client.ui.widget.SkinSpecification;
 import megamek.client.ui.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.widget.SkinXMLHandler;
-import megamek.common.*;
+import megamek.common.ArtilleryModifier;
+import megamek.common.Configuration;
+import megamek.common.ECMInfo;
+import megamek.common.Hex;
+import megamek.common.KeyBindParser;
+import megamek.common.LosEffects;
+import megamek.common.Player;
+import megamek.common.SpecialHexDisplay;
+import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
-import megamek.common.event.*;
+import megamek.common.board.Board;
+import megamek.common.board.BoardHelper;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeArc;
+import megamek.common.compute.ComputeECM;
+import megamek.common.enums.MoveStepType;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.Minefield;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.event.GameListener;
+import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GameNewActionEvent;
+import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.board.BoardEvent;
+import megamek.common.event.board.BoardListener;
+import megamek.common.event.board.GameBoardChangeEvent;
+import megamek.common.event.board.GameBoardNewEvent;
+import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.event.entity.GameEntityNewEvent;
+import megamek.common.event.entity.GameEntityRemoveEvent;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.BoardClusterTracker.BoardCluster;
-import megamek.common.planetaryconditions.IlluminationLevel;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.IlluminationLevel;
+import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
+import megamek.common.units.EntityVisibilityUtils;
+import megamek.common.units.Infantry;
+import megamek.common.units.Targetable;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
+import megamek.common.units.UnitLocation;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
@@ -820,7 +859,7 @@ public final class BoardView extends AbstractBoardView
         SpecialHexDisplay.Type.ARTILLERY_INCOMING.init();
         SpecialHexDisplay.Type.ARTILLERY_TARGET.init();
         SpecialHexDisplay.Type.ARTILLERY_ADJUSTED.init();
-        SpecialHexDisplay.Type.ARTILLERY_AUTOHIT.init();
+        SpecialHexDisplay.Type.ARTILLERY_AUTO_HIT.init();
         SpecialHexDisplay.Type.BOMB_MISS.init();
         SpecialHexDisplay.Type.BOMB_HIT.init();
         SpecialHexDisplay.Type.BOMB_DRIFT.init();
@@ -1154,7 +1193,7 @@ public final class BoardView extends AbstractBoardView
             drawDeployment(graphics2D);
         }
 
-        if ((game.getPhase().isSetArtilleryAutohitHexes() && showAllDeployment) || ((game.getPhase().isLounge())
+        if ((game.getPhase().isSetArtilleryAutoHitHexes() && showAllDeployment) || ((game.getPhase().isLounge())
               && showLobbyPlayerDeployment)) {
             drawAllDeployment(graphics2D);
         }
@@ -1677,7 +1716,7 @@ public final class BoardView extends AbstractBoardView
     public Mounted<?> getSelectedArtilleryWeapon() {
         // We don't want to display artillery auto-hit/adjusted fire hexes during the ArtyAutoHitHexes phase. These
         // could be displayed if the player uses the /reset command in some situations
-        if (game.getPhase().isSetArtilleryAutohitHexes()) {
+        if (game.getPhase().isSetArtilleryAutoHitHexes()) {
             return null;
         }
 
@@ -1794,7 +1833,7 @@ public final class BoardView extends AbstractBoardView
         // Draw modifiers for selected entity and selectedArtilleryWeapon
         if (selectedArtilleryWeapon != null) {
             // Loop through all the attack modifiers for this selectedArtilleryWeapon
-            for (ArtilleryTracker.ArtilleryModifier attackMod : Objects.requireNonNull(
+            for (ArtilleryModifier attackMod : Objects.requireNonNull(
                   getSelectedEntity()).aTracker.getWeaponModifiers(
                   selectedArtilleryWeapon)) {
                 Coords coords = attackMod.getCoords();
@@ -1973,7 +2012,7 @@ public final class BoardView extends AbstractBoardView
                 drawDeployment(boardGraph);
             }
 
-            if (game.getPhase().isSetArtilleryAutohitHexes() && showAllDeployment) {
+            if (game.getPhase().isSetArtilleryAutoHitHexes() && showAllDeployment) {
                 drawAllDeployment(boardGraph);
             }
 
@@ -3685,8 +3724,8 @@ public final class BoardView extends AbstractBoardView
                   || (step.getType() == MoveStepType.DOWN)
                   || (step.getType() == MoveStepType.ACC)
                   || (step.getType() == MoveStepType.DEC)
-                  || (step.getType() == MoveStepType.ACCN)
-                  || (step.getType() == MoveStepType.DECN))) {
+                  || (step.getType() == MoveStepType.ACCELERATION)
+                  || (step.getType() == MoveStepType.DECELERATION))) {
                 // Mark the previous elevation change sprite hidden so that we can draw a new one in its place
                 // without having overlap.
                 pathSprites.get(pathSprites.size() - 1).setHidden(true);
@@ -3946,7 +3985,7 @@ public final class BoardView extends AbstractBoardView
         Targetable target = game.getTarget(attackAction.getTargetType(), attackAction.getTargetId());
         if ((attacker == null)
               || (target == null)
-              || (target.getTargetType() == Targetable.TYPE_INARC_POD)
+              || (target.getTargetType() == Targetable.TYPE_I_NARC_POD)
               || (target.getPosition() == null)
               || (attacker.getPosition() == null)
               || !game.onTheSameBoard(attacker, target)

@@ -32,8 +32,8 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.common.Coords;
-import megamek.common.Entity;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
 
 /**
  * Validates the coverage of a unit in the battlefield.

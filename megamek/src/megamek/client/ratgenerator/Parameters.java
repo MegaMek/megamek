@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
 
-import megamek.common.EntityMovementMode;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 

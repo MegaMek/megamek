@@ -55,11 +55,11 @@ import megamek.client.ui.widget.picmap.PMSimpleLabel;
 import megamek.client.ui.widget.picmap.PMSimplePolygonArea;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PMValueLabel;
-import megamek.common.Aero;
 import megamek.common.Configuration;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.SmallCraft;
+import megamek.common.units.Aero;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.units.SmallCraft;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
@@ -206,8 +206,8 @@ public class SpheroidMapSet implements DisplayMapSet {
 
     private void setAreas() {
         areas[Aero.LOC_NOSE] = new PMSimplePolygonArea(noseArmor, unitDisplayPanel, Aero.LOC_NOSE);
-        areas[Aero.LOC_RWING] = new PMSimplePolygonArea(rightWingArmor, unitDisplayPanel, Aero.LOC_RWING);
-        areas[Aero.LOC_LWING] = new PMSimplePolygonArea(leftWingArmor, unitDisplayPanel, Aero.LOC_LWING);
+        areas[Aero.LOC_RIGHT_WING] = new PMSimplePolygonArea(rightWingArmor, unitDisplayPanel, Aero.LOC_RIGHT_WING);
+        areas[Aero.LOC_LEFT_WING] = new PMSimplePolygonArea(leftWingArmor, unitDisplayPanel, Aero.LOC_LEFT_WING);
         areas[Aero.LOC_AFT] = new PMSimplePolygonArea(aftArmor, unitDisplayPanel, Aero.LOC_AFT);
         areas[4] = new PMSimplePolygonArea(structure, unitDisplayPanel, Aero.LOC_NOSE);
     }
@@ -219,10 +219,10 @@ public class SpheroidMapSet implements DisplayMapSet {
         //Prefer to use message thingy but don't know how
         labels[Aero.LOC_NOSE] = WidgetUtils.createLabel("NOS", fm, Color.black, 50, 20);
         //   labels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.FrontIS"), fm, Color.black, 10, 57);
-        labels[Aero.LOC_LWING] = WidgetUtils.createLabel("LWG", fm, Color.black, 20, 90);
-        //      labels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.LIS"), fm, Color.black, 10, 106);
-        labels[Aero.LOC_RWING] = WidgetUtils.createLabel("RWG", fm, Color.black, 80, 90);
-        //      labels[Aero.LOC_RWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.RIS"), fm, Color.black, 10, 106);
+        labels[Aero.LOC_LEFT_WING] = WidgetUtils.createLabel("LWG", fm, Color.black, 20, 90);
+        //      labels[Aero.LOC_LEFT_WING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.LIS"), fm, Color.black, 10, 106);
+        labels[Aero.LOC_RIGHT_WING] = WidgetUtils.createLabel("RWG", fm, Color.black, 80, 90);
+        //      labels[Aero.LOC_RIGHT_WING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.RIS"), fm, Color.black, 10, 106);
         labels[Aero.LOC_AFT] = WidgetUtils.createLabel("AFT", fm, Color.black, 50, 160);
         labels[4] = WidgetUtils.createLabel("SI", fm, Color.black, 50, 120);
         labels[5] = WidgetUtils.createLabel("Avionics:", fm, Color.white, 10, 210);
@@ -238,8 +238,8 @@ public class SpheroidMapSet implements DisplayMapSet {
         // front
         fm = jComponent.getFontMetrics(FONT_VALUE);
         vLabels[Aero.LOC_NOSE] = WidgetUtils.createValueLabel(50, 35, "", fm);
-        vLabels[Aero.LOC_LWING] = WidgetUtils.createValueLabel(20, 105, "", fm);
-        vLabels[Aero.LOC_RWING] = WidgetUtils.createValueLabel(80, 105, "", fm);
+        vLabels[Aero.LOC_LEFT_WING] = WidgetUtils.createValueLabel(20, 105, "", fm);
+        vLabels[Aero.LOC_RIGHT_WING] = WidgetUtils.createValueLabel(80, 105, "", fm);
         vLabels[Aero.LOC_AFT] = WidgetUtils.createValueLabel(50, 175, "", fm);
         vLabels[4] = WidgetUtils.createValueLabel(50, 135, "", fm);
         vLabels[5] = WidgetUtils.createValueLabel(40, 210, "", fm);
@@ -317,10 +317,10 @@ public class SpheroidMapSet implements DisplayMapSet {
     private void translateAreas() {
         areas[Aero.LOC_NOSE].translate(0, 0);
         //       areas[Aero.LOC_NOSE + INT_STR_OFFSET].translate(8, 29);
-        areas[Aero.LOC_LWING].translate(0, 0);
-        //      areas[Aero.LOC_LWING + INT_STR_OFFSET].translate(8, 29);
-        areas[Aero.LOC_RWING].translate(0, 0);
-        //    areas[Aero.LOC_RWING + INT_STR_OFFSET].translate(8, 29);
+        areas[Aero.LOC_LEFT_WING].translate(0, 0);
+        //      areas[Aero.LOC_LEFT_WING + INT_STR_OFFSET].translate(8, 29);
+        areas[Aero.LOC_RIGHT_WING].translate(0, 0);
+        //    areas[Aero.LOC_RIGHT_WING + INT_STR_OFFSET].translate(8, 29);
         areas[Aero.LOC_AFT].translate(0, 0);
         areas[4].translate(0, 0);
     }

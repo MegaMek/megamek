@@ -43,11 +43,11 @@ import java.awt.geom.Point2D;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Compute;
-import megamek.common.CrewType;
-import megamek.common.EntityMovementType;
+import megamek.common.compute.Compute;
+import megamek.common.units.CrewType;
+import megamek.common.units.EntityMovementType;
 import megamek.common.Facing;
-import megamek.common.VTOL;
+import megamek.common.units.VTOL;
 import megamek.common.moves.MovePath;
 
 /**

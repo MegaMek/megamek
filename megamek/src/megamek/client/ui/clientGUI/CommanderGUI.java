@@ -57,11 +57,11 @@ import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.RawImagePanel;
 import megamek.common.Configuration;
-import megamek.common.Entity;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.event.player.GamePlayerChatEvent;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**

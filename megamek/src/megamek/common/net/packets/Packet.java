@@ -233,8 +233,8 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     public String getStringValue(int index) {
         Object object = getObject(index);
 
-        if (object instanceof String string) {
-            return string;
+        if (object instanceof String value) {
+            return value;
         }
 
         return "";
@@ -560,6 +560,22 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
 
         return result;
     }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return the {@link Force} value of the object at the specified index or NULL
+     */
+    public @Nullable Force getForce(int index) {
+        Object object = getObject(index);
+
+        if (object instanceof Force value) {
+            return value;
+        }
+
+        return null;
+    }
+
 
     /**
      * @param index the index of the desired object

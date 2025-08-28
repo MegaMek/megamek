@@ -33,19 +33,14 @@
 
 package megamek.server.trigger;
 
+import jakarta.annotation.Nonnull;
 import megamek.common.game.IGame;
 
 /**
  * This Trigger is satisfied at any point during its given game round. It is intended to be used as a component in a
  * combined Trigger using {@link AndTrigger} or {@link OrTrigger}.
  */
-public class RoundTrigger implements Trigger {
-
-    private final int gameRound;
-
-    public RoundTrigger(int round) {
-        gameRound = round;
-    }
+public record RoundTrigger(int gameRound) implements Trigger {
 
     @Override
     public boolean isTriggered(IGame game, TriggerSituation event) {
@@ -53,6 +48,7 @@ public class RoundTrigger implements Trigger {
     }
 
     @Override
+    @Nonnull
     public String toString() {
         return "GameRound: " + gameRound;
     }

@@ -48,6 +48,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.Nonnull;
 import megamek.common.Configuration;
 import megamek.common.CriticalSlot;
 import megamek.common.SimpleTechLevel;
@@ -298,22 +299,23 @@ public abstract class TestEntity implements TestEntityOption {
      *
      * @return Rounded value
      */
-    public static double ceil(double f, Ceil type) {
+    public static double ceil(double f, @Nonnull Ceil type) {
         return Math.ceil(f * type.multiplier) / type.multiplier;
     }
 
-    public static double ceilMaxHalf(double f, Ceil type) {
+    public static double ceilMaxHalf(double f, @Nonnull Ceil type) {
         if (type == Ceil.TON) {
             return TestEntity.ceil(f, Ceil.HALF_TON);
         }
+
         return TestEntity.ceil(f, type);
     }
 
-    public static double floor(double f, Ceil type) {
+    public static double floor(double f, @Nonnull Ceil type) {
         return Math.floor(f * type.multiplier) / type.multiplier;
     }
 
-    public static double round(double f, Ceil type) {
+    public static double round(double f, @Nonnull Ceil type) {
         return Math.round(f * type.multiplier) / type.multiplier;
     }
 
@@ -511,8 +513,7 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public double getWeightStructure() {
-        return structure.getWeightStructure(getWeight(),
-              getWeightCeilingStructure());
+        return structure.getWeightStructure(getWeight(), getWeightCeilingStructure());
     }
 
     public String printWeightArmor() {
@@ -1004,13 +1005,11 @@ public abstract class TestEntity implements TestEntityOption {
             buff.append("Weight: ").append(calculateWeight())
                   .append(" is greater than ").append(getWeight())
                   .append("\n");
-            // buff.append(printWeightCalculation()).append("\n");
             return false;
         }
         if (showU && ((weight - getMinUnderweight()) > weightSum)) {
             buff.append("Weight: ").append(calculateWeight())
                   .append(" is less than ").append(getWeight()).append("\n");
-            // buff.append(printWeightCalculation()).append("\n");
             return false;
         }
         return true;

@@ -63,12 +63,10 @@ import megamek.common.units.SmallCraft;
 import megamek.common.units.Tank;
 import megamek.common.verifier.*;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-@Disabled
 public class BulkUnitFileTest {
 
     @BeforeAll
@@ -122,12 +120,12 @@ public class BulkUnitFileTest {
 
     @Test
     void loadVerifySaveVerifySpecificFile() throws EntitySavingException, IOException {
-        var file = new File("data/mekfiles/vehicles/3085u/Cutting Edge/Zugvogel Omni Support Aircraft D.blk");
+        var file = new File("testresources/data/mekfiles/Aegis Heavy Cruiser (2372).blk");
         checkEntityFile(file);
     }
 
     public static List<File> allMtfFiles() {
-        try (Stream<Path> paths = Files.walk(Paths.get("data/mekfiles"))) {
+        try (Stream<Path> paths = Files.walk(Paths.get("testresources/data/mekfiles"))) {
             return paths
                   .filter(Files::isRegularFile)
                   .filter(path -> path.toString().endsWith(".mtf"))
@@ -140,7 +138,7 @@ public class BulkUnitFileTest {
     }
 
     public static List<File> allBlkFiles() {
-        try (Stream<Path> paths = Files.walk(Paths.get("data/mekfiles"))) {
+        try (Stream<Path> paths = Files.walk(Paths.get("testresources/data/mekfiles"))) {
             return paths
                   .filter(Files::isRegularFile)
                   .filter(path -> path.toString().endsWith(".blk"))
@@ -164,7 +162,7 @@ public class BulkUnitFileTest {
 
     public static TestEntity getEntityVerifier(Entity unit) {
         EntityVerifier entityVerifier = EntityVerifier.getInstance(new File(
-              "data/mekfiles/UnitVerifierOptions.xml"));
+              "testresources/data/mekfiles/UnitVerifierOptions.xml"));
         TestEntity testEntity = null;
 
         if (unit.hasETypeFlag(Entity.ETYPE_MEK)) {

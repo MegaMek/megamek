@@ -1,7 +1,6 @@
 /*
-
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -50,7 +49,7 @@ import megamek.common.units.Terrains;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
- * This is for simulating the vertically moving walls in the Solaris 7 colloseum.
+ * This is for simulating the vertically moving walls in the Solaris 7 coliseum.
  */
 public class ElevatorProcessor extends DynamicTerrainProcessor {
 

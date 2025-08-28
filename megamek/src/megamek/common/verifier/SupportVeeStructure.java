@@ -36,6 +36,7 @@ package megamek.common.verifier;
 
 import java.util.EnumMap;
 
+import jakarta.annotation.Nonnull;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.MiscType;
 import megamek.common.units.Entity;
@@ -128,7 +129,7 @@ public class SupportVeeStructure extends Structure {
     }
 
     @Override
-    public double getWeightStructure(double weight, Ceil roundWeight) {
+    public double getWeightStructure(double weight, @Nonnull Ceil roundWeight) {
         return getWeightStructure(sv);
     }
 

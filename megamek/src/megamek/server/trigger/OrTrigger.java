@@ -36,19 +36,14 @@ package megamek.server.trigger;
 import java.util.Arrays;
 import java.util.List;
 
+import jakarta.annotation.Nonnull;
 import megamek.common.game.IGame;
 
 /**
  * This Trigger implements a logic OR for all its subtriggers, i.e. it triggers at any moment when at least one of its
  * subtriggers is satisfied.
  */
-public class OrTrigger implements Trigger {
-
-    private final List<Trigger> triggers;
-
-    public OrTrigger(List<Trigger> triggers) {
-        this.triggers = triggers;
-    }
+public record OrTrigger(List<Trigger> triggers) implements Trigger {
 
     public OrTrigger(Trigger... triggers) {
         this(Arrays.asList(triggers));
@@ -60,6 +55,7 @@ public class OrTrigger implements Trigger {
     }
 
     @Override
+    @Nonnull
     public String toString() {
         List<String> triggerStrings = triggers.stream().map(Trigger::toString).toList();
         return "(" + String.join(" or ", triggerStrings) + ")";

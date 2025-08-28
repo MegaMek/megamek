@@ -33,18 +33,13 @@
 
 package megamek.server.trigger;
 
+import jakarta.annotation.Nonnull;
 import megamek.common.game.IGame;
 
 /**
  * This Trigger reacts at the start of the specified game round. Note that this Trigger can react multiple times!
  */
-public class SpecificRoundStartTrigger implements Trigger {
-
-    private final int gameRound;
-
-    public SpecificRoundStartTrigger(int round) {
-        gameRound = round;
-    }
+public record SpecificRoundStartTrigger(int gameRound) implements Trigger {
 
     @Override
     public boolean isTriggered(IGame game, TriggerSituation event) {
@@ -52,6 +47,7 @@ public class SpecificRoundStartTrigger implements Trigger {
     }
 
     @Override
+    @Nonnull
     public String toString() {
         return "GameRound Start: " + gameRound;
     }

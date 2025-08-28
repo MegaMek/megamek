@@ -33,18 +33,13 @@
 
 package megamek.server.trigger;
 
+import jakarta.annotation.Nonnull;
 import megamek.common.game.IGame;
 
 /**
  * This "Trigger" is used to invert another Trigger. It reacts (returns true) when the given subtrigger returns false.
  */
-public class NotTrigger implements Trigger {
-
-    private final Trigger trigger;
-
-    public NotTrigger(Trigger trigger) {
-        this.trigger = trigger;
-    }
+public record NotTrigger(Trigger trigger) implements Trigger {
 
     @Override
     public boolean isTriggered(IGame game, TriggerSituation event) {
@@ -52,6 +47,7 @@ public class NotTrigger implements Trigger {
     }
 
     @Override
+    @Nonnull
     public String toString() {
         return "[not] " + trigger;
     }

@@ -33,11 +33,13 @@
 
 package megamek.server;
 
+import java.util.Objects;
+
+import megamek.common.Player;
+import megamek.common.game.Game;
 import megamek.common.units.EjectedCrew;
 import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.units.MekWarrior;
-import megamek.common.Player;
 
 public class ServerReportsHelper {
 
@@ -91,7 +93,9 @@ public class ServerReportsHelper {
         return Math.toIntExact(game.getPlayerEntities(player, false).stream()
               .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() &&
                     ((entity instanceof MekWarrior) && ((MekWarrior) entity).getPickedUpById() != Entity.NONE
-                          && game.getEntity(((MekWarrior) entity).getPickedUpById()).getOwner().getTeam()
+                          && Objects.requireNonNull(game.getEntity(((MekWarrior) entity).getPickedUpById()))
+                          .getOwner()
+                          .getTeam()
                           == player.getTeam())).count());
     }
 
@@ -99,7 +103,9 @@ public class ServerReportsHelper {
         return Math.toIntExact(game.getPlayerEntities(player, false).stream()
               .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() &&
                     ((entity instanceof MekWarrior) && ((MekWarrior) entity).getPickedUpById() != Entity.NONE
-                          && game.getEntity(((MekWarrior) entity).getPickedUpById()).getOwner().getTeam()
+                          && Objects.requireNonNull(game.getEntity(((MekWarrior) entity).getPickedUpById()))
+                          .getOwner()
+                          .getTeam()
                           != player.getTeam())).count());
     }
 
@@ -113,8 +119,6 @@ public class ServerReportsHelper {
     /**
      * get the total BV (unmodified by force size mod) for the units of this player that have fled the field
      *
-     * @param player
-     *
      * @return the BV
      */
     public static int getFledBV(Player player, Game game) {
@@ -127,15 +131,13 @@ public class ServerReportsHelper {
     public static int getFledUnitsCount(Player player, Game game) {
         //TODO: I'm not sure how squadrons are treated here - see getBV()
         return Math.toIntExact(game.getPlayerRetreatedEntities(player).stream()
-              .filter(entity -> !entity.isDestroyed() && !(entity instanceof EjectedCrew))
-              .mapToInt(Entity::calculateBattleValue).count());
+              .filter(entity -> !entity.isDestroyed() && !(entity instanceof EjectedCrew)).count());
     }
 
     public static int getFledEjectedCrew(Player player, Game game) {
         //TODO: I'm not sure how squadrons are treated here - see getBV()
         return Math.toIntExact(game.getPlayerRetreatedEntities(player).stream()
-              .filter(entity -> !entity.isDestroyed() && (entity instanceof EjectedCrew))
-              .mapToInt(Entity::calculateBattleValue).count());
+              .filter(entity -> !entity.isDestroyed() && (entity instanceof EjectedCrew)).count());
     }
 
     private ServerReportsHelper() {}

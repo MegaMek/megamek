@@ -52,7 +52,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 
 public class ServerBoardHelper {
-    private static final MMLogger logger = MMLogger.create(ServerBoardHelper.class);
+    private static final MMLogger LOGGER = MMLogger.create(ServerBoardHelper.class);
 
     /**
      * Returns a list of path names of available boards of the size set in the given mapSettings. The path names are
@@ -168,7 +168,7 @@ public class ServerBoardHelper {
             int totalWidth = mapSettings.getMapWidth() * mapSettings.getBoardWidth();
             int totalHeight = mapSettings.getMapHeight() * mapSettings.getBoardHeight();
             // Hit a failure while trying to read a custom map; log and return a blank map for now.
-            logger.warn("Failed to read one or map board files; using blank Board.");
+            LOGGER.warn("Failed to read one or map board files; using blank Board.");
             finalBoard = new Board(totalWidth, totalHeight);
             Hex[] resultData = new Hex[totalWidth * totalHeight];
             Arrays.fill(resultData, new Hex());

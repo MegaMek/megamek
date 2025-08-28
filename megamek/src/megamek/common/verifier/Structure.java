@@ -33,6 +33,7 @@
 
 package megamek.common.verifier;
 
+import jakarta.annotation.Nonnull;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.units.EntityMovementMode;
 
@@ -52,12 +53,11 @@ public class Structure {
         this.movementMode = movementMode;
     }
 
-    public double getWeightStructure(double weight, Ceil roundWeight) {
-        return Structure.getWeightStructure(structureType, weight, roundWeight,
-              isSuperHeavy, movementMode);
+    public double getWeightStructure(double weight, @Nonnull Ceil roundWeight) {
+        return Structure.getWeightStructure(structureType, weight, roundWeight, isSuperHeavy, movementMode);
     }
 
-    public static double getWeightStructure(int structureType, double weight, Ceil roundWeight,
+    public static double getWeightStructure(int structureType, double weight, @Nonnull Ceil roundWeight,
           boolean isSuperHeavy, EntityMovementMode movementMode) {
         double multiplier = 1.0;
         if (movementMode == EntityMovementMode.TRIPOD) {
@@ -65,47 +65,36 @@ public class Structure {
         }
         if (structureType == EquipmentType.T_STRUCTURE_ENDO_STEEL) {
             if (isSuperHeavy) {
-                return TestEntity.ceilMaxHalf((weight / 10.0f) * multiplier,
-                      roundWeight);
+                return TestEntity.ceilMaxHalf((weight / 10.0f) * multiplier, roundWeight);
             } else {
-                return TestEntity.ceilMaxHalf((weight / 20.0f) * multiplier,
-                      roundWeight);
+                return TestEntity.ceilMaxHalf((weight / 20.0f) * multiplier, roundWeight);
             }
         } else if (structureType == EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE) {
-            return TestEntity.ceilMaxHalf((weight / 20.0f) * multiplier,
-                  roundWeight);
+            return TestEntity.ceilMaxHalf((weight / 20.0f) * multiplier, roundWeight);
         } else if (structureType == EquipmentType.T_STRUCTURE_REINFORCED) {
-            return TestEntity.ceilMaxHalf((weight / 5.0f) * multiplier,
-                  roundWeight);
+            return TestEntity.ceilMaxHalf((weight / 5.0f) * multiplier, roundWeight);
         } else if (structureType == EquipmentType.T_STRUCTURE_COMPOSITE) {
-            return TestEntity.ceilMaxHalf((weight / 20.0f) * multiplier,
-                  roundWeight);
+            return TestEntity.ceilMaxHalf((weight / 20.0f) * multiplier, roundWeight);
         } else if (structureType == EquipmentType.T_STRUCTURE_INDUSTRIAL) {
             if (isSuperHeavy) {
-                return TestEntity.ceilMaxHalf((weight / 2.5f) * multiplier,
-                      roundWeight);
+                return TestEntity.ceilMaxHalf((weight / 2.5f) * multiplier, roundWeight);
             } else {
-                return TestEntity.ceilMaxHalf((weight / 5.0f) * multiplier,
-                      roundWeight);
+                return TestEntity.ceilMaxHalf((weight / 5.0f) * multiplier, roundWeight);
             }
 
         } else if (structureType == EquipmentType.T_STRUCTURE_ENDO_COMPOSITE) {
             if (isSuperHeavy) {
-                return TestEntity.ceilMaxHalf((weight / 10.0f) * 1.5f
-                      * multiplier, roundWeight);
+                return TestEntity.ceilMaxHalf((weight / 10.0f) * 1.5f * multiplier, roundWeight);
             } else {
-                return TestEntity.ceilMaxHalf((weight / 10.0f) * 0.75f
-                      * multiplier, roundWeight);
+                return TestEntity.ceilMaxHalf((weight / 10.0f) * 0.75f * multiplier, roundWeight);
             }
         }
         if (isSuperHeavy
               && ((movementMode != EntityMovementMode.NAVAL)
               && (movementMode != EntityMovementMode.SUBMARINE))) {
-            return TestEntity.ceilMaxHalf((weight / 5.0f) * multiplier,
-                  roundWeight);
+            return TestEntity.ceilMaxHalf((weight / 5.0f) * multiplier, roundWeight);
         } else {
-            return TestEntity.ceilMaxHalf((weight / 10.0f) * multiplier,
-                  roundWeight);
+            return TestEntity.ceilMaxHalf((weight / 10.0f) * multiplier, roundWeight);
         }
     }
 

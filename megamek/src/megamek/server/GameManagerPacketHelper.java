@@ -43,9 +43,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import megamek.common.Player;
+import megamek.common.actions.EntityAction;
 import megamek.common.game.IGame;
 import megamek.common.interfaces.PlanetaryConditionsUsing;
-import megamek.common.actions.EntityAction;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.planetaryConditions.PlanetaryConditions;
@@ -53,13 +54,7 @@ import megamek.common.planetaryConditions.PlanetaryConditions;
 /**
  * This is a helper class used by GameManagers (not Clients) to create packets to send to the Clients.
  */
-public class GameManagerPacketHelper {
-
-    private final AbstractGameManager gameManager;
-
-    GameManagerPacketHelper(AbstractGameManager gameManager) {
-        this.gameManager = gameManager;
-    }
+public record GameManagerPacketHelper(AbstractGameManager gameManager) {
 
     /** @return A Packet containing information about a list of actions (not limited to Entity!). */
     public Packet createAttackPacket(List<? extends EntityAction> actions, boolean isChargeAttacks) {
@@ -124,7 +119,7 @@ public class GameManagerPacketHelper {
      * @param previousPlayerId The ID of the player who triggered the turn change
      *
      * @return A packet containing the current player turn index. The ID of the previous player may be
-     *       {@link megamek.common.Player#PLAYER_NONE}.
+     *       {@link Player#PLAYER_NONE}.
      */
     public Packet createTurnIndexPacket(int previousPlayerId) {
         return new Packet(PacketCommand.TURN, game().getTurnIndex(), previousPlayerId);

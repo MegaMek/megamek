@@ -35,8 +35,8 @@ package megamek.server;
 
 import java.util.List;
 
-import megamek.common.game.IGame;
 import megamek.common.Player;
+import megamek.common.game.IGame;
 import megamek.common.interfaces.ReportEntry;
 import megamek.common.net.packets.Packet;
 import megamek.server.commands.ServerCommand;
@@ -65,7 +65,7 @@ public interface IGameManager {
 
     /**
      * Handles housekeeping for a disconnected player. Removes player from the game in the lounge or victory phase, or
-     * during other phases if the player has no units. Otherwise the player becomes a ghost.
+     * during other phases if the player has no units. Otherwise, the player becomes a ghost.
      *
      * @param player The player that disconnected.
      */

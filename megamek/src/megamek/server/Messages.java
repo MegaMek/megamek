@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,7 +40,7 @@ import megamek.MegaMek;
 import megamek.logging.MMLogger;
 
 public class Messages {
-    private static final MMLogger logger = MMLogger.create(Messages.class);
+    private static final MMLogger LOGGER = MMLogger.create(Messages.class);
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("megamek.server.messages",
           MegaMek.getMMOptions().getLocale());
@@ -53,7 +53,7 @@ public class Messages {
         try {
             return RESOURCE_BUNDLE.getString(key);
         } catch (MissingResourceException e) {
-            logger.error("Missing i18n entry with key " + key);
+            LOGGER.error("Missing i18n entry with key {}", key);
             return '!' + key + '!';
         }
     }

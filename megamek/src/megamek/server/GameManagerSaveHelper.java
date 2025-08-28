@@ -52,14 +52,8 @@ import megamek.common.net.packets.Packet;
 import megamek.common.util.SerializationHelper;
 import megamek.logging.MMLogger;
 
-public class GameManagerSaveHelper {
-    private static final MMLogger logger = MMLogger.create(GameManagerSaveHelper.class);
-
-    private final AbstractGameManager gameManager;
-
-    GameManagerSaveHelper(AbstractGameManager gameManager) {
-        this.gameManager = gameManager;
-    }
+public record GameManagerSaveHelper(AbstractGameManager gameManager) {
+    private static final MMLogger LOGGER = MMLogger.create(GameManagerSaveHelper.class);
 
     /**
      * Saves the game server-side. Will announce the save (or error) in chat if the given sendChat is true.
@@ -67,7 +61,7 @@ public class GameManagerSaveHelper {
      * @param fileName The filename to use
      * @param sendChat When true, the saving (or error) is announced in chat
      */
-    protected void saveGame(String fileName, boolean sendChat) {
+    void saveGame(String fileName, boolean sendChat) {
         // We need to strip the .gz if it exists, otherwise we'll double up on it.
         if (fileName.endsWith(".gz")) {
             fileName = fileName.replace(".gz", "");
@@ -91,7 +85,7 @@ public class GameManagerSaveHelper {
             SerializationHelper.getSaveGameXStream().toXML(gameManager.getGame(), writer);
         } catch (Exception e) {
             String message = String.format("Unable to save file: %s", finalFileName);
-            logger.error(e, message);
+            LOGGER.error(e, message);
 
             if (sendChat) {
                 gameManager.sendChat("MegaMek", "Could not save the game to " + finalFileName);
@@ -135,7 +129,7 @@ public class GameManagerSaveHelper {
             gameManager.sendChat(connId, "***Server", "Save game has been sent to you.");
         } catch (Exception ex) {
             String message = String.format("Unable to load file: %s", localFile);
-            logger.error(ex, message);
+            LOGGER.error(ex, message);
         }
     }
 }

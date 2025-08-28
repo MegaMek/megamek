@@ -37,14 +37,14 @@ package megamek.server.victory;
 import java.io.Serializable;
 import java.util.List;
 
+import megamek.common.Player;
 import megamek.common.game.Game;
 import megamek.common.game.IGame;
-import megamek.common.Player;
 
 /**
  * This is a base interface with default helper methods for bv-checking VictoryConditions
  */
-public interface BvVictoryCondition extends VictoryCondition, Serializable {
+public interface BVVictoryCondition extends VictoryCondition, Serializable {
 
     default int getFriendlyBV(Game game, Player player) {
         return game.getPlayersList().stream()

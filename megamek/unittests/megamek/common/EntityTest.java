@@ -93,8 +93,8 @@ class EntityTest {
 
     @Test
     void testFormatHeat() {
-        Entity e = EntityLoader.loadFromFile("Sagittaire SGT-14D.mtf");
-        assertEquals("28, 42 with RHS", e.formatHeat());
+        Entity entity = EntityLoader.loadFromFile("Sagittaire SGT-14D.mtf");
+        assertEquals("28, 42 with RHS", entity.formatHeat());
     }
 
     /**

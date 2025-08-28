@@ -414,18 +414,18 @@ public class MekSummaryCache {
         Set<String> knownFiles = new HashSet<>();
         // Loop through current contents and make sure the file is still there.
         // Note which files are represented so we can skip them if they haven't changed
-        for (MekSummary ms : data) {
+        for (MekSummary mekSummary : data) {
             if (interrupted) {
                 done();
                 return;
             }
-            File source = ms.getSourceFile();
+            File source = mekSummary.getSourceFile();
             if (source.exists()) {
-                units.add(ms);
-                if (null == ms.getEntryName()) {
+                units.add(mekSummary);
+                if (null == mekSummary.getEntryName()) {
                     knownFiles.add(source.toString());
                 } else {
-                    knownFiles.add(ms.getEntryName());
+                    knownFiles.add(mekSummary.getEntryName());
                 }
             }
         }

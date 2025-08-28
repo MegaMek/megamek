@@ -1,7 +1,7 @@
 /*
-  Copyright (C) 2000, 2001, 2002, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000, 2001, 2002, 2005 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2002, 2004 Joshua Yockey
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *

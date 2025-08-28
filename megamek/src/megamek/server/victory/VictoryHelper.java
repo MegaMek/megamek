@@ -68,7 +68,7 @@ public class VictoryHelper implements Serializable {
         checkForVictory = game.getOptions().booleanOption(OptionsConstants.VICTORY_CHECK_VICTORY);
 
         if (checkForVictory) {
-            buildVClist(game);
+            buildVCList(game);
         }
     }
 
@@ -144,7 +144,7 @@ public class VictoryHelper implements Serializable {
             combinedResult.addScores(victoryResult);
         }
 
-        // find highscore
+        // find high score
         double highScore = 0.0;
         for (int playerId : combinedResult.getScoringPlayers()) {
             double score = combinedResult.getPlayerScore(playerId);
@@ -173,7 +173,7 @@ public class VictoryHelper implements Serializable {
      * options. The conditions include those set in the game options as well as those added by code (e.g. through a
      * scenario).
      */
-    private void buildVClist(Game game) {
+    private void buildVCList(Game game) {
 
         var options = game.getOptions();
         neededVictoryConditionCount = options.intOption(OptionsConstants.VICTORY_ACHIEVE_CONDITIONS);

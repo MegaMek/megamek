@@ -58,7 +58,7 @@ public abstract class AbstractOneTimeTrigger implements Trigger {
     /**
      * Override this to define the trigger conditions as for {@link Trigger#isTriggered(IGame, TriggerSituation)}.
      * Regardless of how these are defined, this trigger will remember if it ever returned true before. If it did, it
-     * will not return true a second time and it will not even call this method again.
+     * will not return true a second time, and it will not even call this method again.
      *
      * @param event The type of event that caused the trigger to be called
      *

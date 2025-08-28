@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -91,15 +91,18 @@ public class ServerHelper {
                 te_hex = game.getBoard().getHex(te.getPosition());
             }
 
-            if ((te_hex != null) && !te_hex.containsTerrain(Terrains.WOODS) && !te_hex.containsTerrain(Terrains.JUNGLE)
-                  && !te_hex.containsTerrain(Terrains.ROUGH) && !te_hex.containsTerrain(Terrains.RUBBLE)
-                  && !te_hex.containsTerrain(Terrains.SWAMP) && !te_hex.containsTerrain(Terrains.BUILDING)
-                  && !te_hex.containsTerrain(Terrains.FUEL_TANK) && !te_hex.containsTerrain(Terrains.FORTIFIED)
+            return (te_hex != null)
+                  && !te_hex.containsTerrain(Terrains.WOODS)
+                  && !te_hex.containsTerrain(Terrains.JUNGLE)
+                  && !te_hex.containsTerrain(Terrains.ROUGH)
+                  && !te_hex.containsTerrain(Terrains.RUBBLE)
+                  && !te_hex.containsTerrain(Terrains.SWAMP)
+                  && !te_hex.containsTerrain(Terrains.BUILDING)
+                  && !te_hex.containsTerrain(Terrains.FUEL_TANK)
+                  && !te_hex.containsTerrain(Terrains.FORTIFIED)
                   && (!te.hasAbility(OptionsConstants.INFANTRY_URBAN_GUERRILLA))
                   && (!te_hex.containsTerrain(Terrains.PAVEMENT) || !te_hex.containsTerrain(Terrains.ROAD))
-                  && !ammoExplosion) {
-                return true;
-            }
+                  && !ammoExplosion;
         }
 
         return false;
@@ -114,7 +117,7 @@ public class ServerHelper {
         }
 
         Hex fallHex = entity.getGame().getBoard().getHex(entity.getPosition());
-        int waterDepth = 0;
+        int waterDepth;
 
         // we're going hull down, we still sink to the bottom if appropriate
         if (fallHex.containsTerrain(Terrains.WATER)) {
@@ -344,22 +347,19 @@ public class ServerHelper {
             boolean beyondPointBlankRange = dist > 1;
 
             // Check for Void/Null Sig - only detected by Bloodhound probes
-            if (beyondPointBlankRange && (detected instanceof Mek)) {
-                Mek m = (Mek) detected;
+            if (beyondPointBlankRange && (detected instanceof Mek m)) {
                 if ((m.isVoidSigActive() || m.isNullSigActive()) && !detectorHasBloodhound) {
                     continue;
                 }
             }
 
             // Check for Infantry stealth armor
-            if (beyondPointBlankRange && (detected instanceof BattleArmor)) {
-                BattleArmor ba = (BattleArmor) detected;
+            if (beyondPointBlankRange && (detected instanceof BattleArmor ba)) {
                 // Need Bloodhound to detect BA stealth armor
                 if (ba.isStealthy() && !detectorHasBloodhound) {
                     continue;
                 }
-            } else if (beyondPointBlankRange && (detected instanceof Infantry)) {
-                Infantry inf = (Infantry) detected;
+            } else if (beyondPointBlankRange && (detected instanceof Infantry inf)) {
                 // Can't detect sneaky infantry
                 if (inf.isStealthy()) {
                     continue;

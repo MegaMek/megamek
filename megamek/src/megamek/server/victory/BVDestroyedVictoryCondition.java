@@ -38,14 +38,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.Report;
+import megamek.common.game.Game;
 
 /**
  * This is a VictoryCondition that will match when a given percentage of all enemy BV is no longer alive.
  */
-public class BVDestroyedVictoryCondition implements BvVictoryCondition {
+public class BVDestroyedVictoryCondition implements BVVictoryCondition {
 
     protected int destroyedPercent;
 

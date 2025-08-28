@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -52,12 +52,11 @@ public class DedicatedServer {
 
     public static void start(String[] args) {
         ClientServerCommandLineParser parser = new ClientServerCommandLineParser(args,
-              MegaMekCommandLineFlag.DEDICATED.toString(),
-              true, false, false);
+              MegaMekCommandLineFlag.DEDICATED.toString(), true, false, false);
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            logger.error("Incorrect arguments:" + e.getMessage() + '\n' + parser.help());
+            logger.error("Incorrect arguments:{}\n{}", e.getMessage(), parser.help());
         }
 
         ClientServerCommandLineParser.Resolver resolver = parser.getResolver(
@@ -73,10 +72,7 @@ public class DedicatedServer {
                 mailProperties.load(propsReader);
                 mailer = new EmailService(mailProperties);
             } catch (Exception ex) {
-                logger.error(
-                      "Error: could not load mail properties file \"" +
-                            propsFile.getAbsolutePath() + "\"",
-                      ex);
+                logger.error("Error: could not load mail properties file \"{}\"", propsFile.getAbsolutePath(), ex);
                 return;
             }
         }
@@ -91,7 +87,7 @@ public class DedicatedServer {
             server = new Server(resolver.password, resolver.port, new TWGameManager(), resolver.registerServer,
                   resolver.announceUrl, mailer, true);
         } catch (Exception ex) {
-            logger.error("Error: could not start server at localhost" + ":" + resolver.port, ex);
+            logger.error("Error: could not start server at localhost:{}", resolver.port, ex);
             return;
         }
 

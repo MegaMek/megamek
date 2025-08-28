@@ -802,7 +802,7 @@ public class TWGameManager extends AbstractGameManager {
                 resetPlayersDone();
                 break;
             case FORCE_ADD_ENTITY:
-                ServerLobbyHelper.receiveAddEntititesToForce(packet, connId, getGame(), this);
+                ServerLobbyHelper.receiveAddEntitiesToForce(packet, connId, getGame(), this);
                 resetPlayersDone();
                 break;
             case FORCE_ASSIGN_FULL:

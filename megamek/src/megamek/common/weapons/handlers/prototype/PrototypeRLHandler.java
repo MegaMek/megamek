@@ -41,7 +41,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.RLHandler;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 public class PrototypeRLHandler extends RLHandler {
     @Serial

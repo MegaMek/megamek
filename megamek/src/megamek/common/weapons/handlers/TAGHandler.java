@@ -48,7 +48,7 @@ import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.units.IBomber;
 import megamek.common.units.Targetable;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 public class TAGHandler extends WeaponHandler {
     @Serial

@@ -37,7 +37,7 @@ import java.awt.Image;
 
 import megamek.client.ui.Base64Image;
 import megamek.common.annotations.Nullable;
-import megamek.server.scriptedevent.NarrativeDisplayProvider;
+import megamek.server.scriptedEvent.NarrativeDisplayProvider;
 
 public class GameScriptedMessageEvent extends GameScriptedEvent implements NarrativeDisplayProvider {
 

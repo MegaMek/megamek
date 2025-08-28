@@ -54,7 +54,7 @@ import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.common.weapons.DamageType;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Jason Tighe

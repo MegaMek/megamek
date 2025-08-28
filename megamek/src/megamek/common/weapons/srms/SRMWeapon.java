@@ -57,7 +57,7 @@ import megamek.common.weapons.handlers.srm.SRMInfernoHandler;
 import megamek.common.weapons.handlers.srm.SRMSmokeWarheadHandler;
 import megamek.common.weapons.handlers.srm.SRMTandemChargeHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks

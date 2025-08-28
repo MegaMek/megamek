@@ -43,7 +43,7 @@ import megamek.server.commands.arguments.CoordXArgument;
 import megamek.server.commands.arguments.CoordYArgument;
 import megamek.server.commands.arguments.IntegerArgument;
 import megamek.server.props.OrbitalBombardment;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Luana Coppio
@@ -56,8 +56,8 @@ public class OrbitalBombardmentCommand extends GamemasterServerCommand {
     public static final String RADIUS = "radius";
 
     public OrbitalBombardmentCommand(Server server, TWGameManager gameManager) {
-        super(server, gameManager, "ob", Messages.getString("Gamemaster.cmd.orbitalbombardment.help"),
-              Messages.getString("Gamemaster.cmd.orbitalbombardment.longName"));
+        super(server, gameManager, "ob", Messages.getString("Gamemaster.cmd.orbitalBombardment.help"),
+              Messages.getString("Gamemaster.cmd.orbitalBombardment.longName"));
     }
 
     @Override
@@ -65,8 +65,8 @@ public class OrbitalBombardmentCommand extends GamemasterServerCommand {
         return List.of(
               new CoordXArgument(X, Messages.getString("Gamemaster.cmd.x")),
               new CoordYArgument(Y, Messages.getString("Gamemaster.cmd.y")),
-              new IntegerArgument(DMG, Messages.getString("Gamemaster.cmd.orbitalbombardment.dmg"), 10, 1_000_000, 100),
-              new IntegerArgument(RADIUS, Messages.getString("Gamemaster.cmd.orbitalbombardment.radius"), 1, 10, 4));
+              new IntegerArgument(DMG, Messages.getString("Gamemaster.cmd.orbitalBombardment.dmg"), 10, 1_000_000, 100),
+              new IntegerArgument(RADIUS, Messages.getString("Gamemaster.cmd.orbitalBombardment.radius"), 1, 10, 4));
     }
 
     /**
@@ -87,14 +87,14 @@ public class OrbitalBombardmentCommand extends GamemasterServerCommand {
         if (!gameManager.getGame().getBoard().contains(orbitalBombardment.getX(), orbitalBombardment.getY())) {
             if (connId != Server.SERVER_CONN) {
                 server.sendServerChat(connId,
-                      Messages.getString("Gamemaster.cmd.orbitalbombardment.error.outofbounds"));
+                      Messages.getString("Gamemaster.cmd.orbitalBombardment.error.outOfBounds"));
             }
             return;
         }
 
         gameManager.addScheduledOrbitalBombardment(orbitalBombardment);
         if (connId != Server.SERVER_CONN) {
-            server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.orbitalbombardment.success"));
+            server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.orbitalBombardment.success"));
         }
     }
 

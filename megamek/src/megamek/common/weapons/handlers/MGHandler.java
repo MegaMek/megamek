@@ -49,7 +49,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Infantry;
 import megamek.common.weapons.DamageType;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter Created on Oct 20, 2004

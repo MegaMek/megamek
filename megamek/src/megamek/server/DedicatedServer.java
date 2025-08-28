@@ -45,7 +45,7 @@ import megamek.common.compute.Compute;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EmailService;
 import megamek.logging.MMLogger;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 public class DedicatedServer {
     private static final MMLogger logger = MMLogger.create(DedicatedServer.class);

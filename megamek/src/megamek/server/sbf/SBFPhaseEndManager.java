@@ -49,12 +49,10 @@ public record SBFPhaseEndManager(SBFGameManager gameManager) implements SBFGameM
             case STARTING_SCENARIO:
                 gameManager.addPendingReportsToGame();
                 // IO BF p.103: Arty auto is a thing in SBF
-                // gameManager.changePhase(GamePhase.SET_ARTILLERY_AUTO_HIT_HEXES);
                 gameManager.changePhase(GamePhase.INITIATIVE); // FIXME <- only for testing to get past arty auto and
                 // minefields
                 break;
             case SET_ARTILLERY_AUTO_HIT_HEXES:
-                // sendSpecialHexDisplayPackets();
                 gameManager.addPendingReportsToGame();
                 boolean hasMinesToDeploy = gameManager.getGame().getPlayersList().stream()
                       .anyMatch(Player::hasMinefields);
@@ -64,7 +62,7 @@ public record SBFPhaseEndManager(SBFGameManager gameManager) implements SBFGameM
                     gameManager.changePhase(GamePhase.INITIATIVE);
                 }
                 break;
-            case DEPLOY_MINEFIELDS:
+            case DEPLOY_MINEFIELDS, END:
                 gameManager.changePhase(GamePhase.INITIATIVE);
                 break;
             case DEPLOYMENT:
@@ -77,8 +75,6 @@ public record SBFPhaseEndManager(SBFGameManager gameManager) implements SBFGameM
                 }
                 break;
             case INITIATIVE:
-                // resolveWhatPlayersCanSeeWhatUnits();
-                // detectSpacecraft();
                 gameManager.addPendingReportsToGame();
                 gameManager.changePhase(GamePhase.INITIATIVE_REPORT);
                 break;
@@ -88,10 +84,8 @@ public record SBFPhaseEndManager(SBFGameManager gameManager) implements SBFGameM
                     // TODO: could be handled in SBFGame.isCurrentPhasePlayable
                     gameManager.changePhase(GamePhase.DEPLOYMENT);
                 } else if (gameManager.usesDoubleBlind()) {
-                    // TODO: Problem: phase "execution" always works with turns. Phases without
-                    // turns
-                    // are skipped and must do their thing in prep or end. Means they must be
-                    // skipped here explciitly
+                    // TODO: Problem: phase "execution" always works with turns. Phases without turns are skipped
+                    //  and must do their thing in prep or end. Means they must be skipped here explicitly
                     gameManager.changePhase(GamePhase.SBF_DETECTION);
                 } else {
                     gameManager.changePhase(GamePhase.TARGETING);
@@ -105,14 +99,6 @@ public record SBFPhaseEndManager(SBFGameManager gameManager) implements SBFGameM
                 gameManager.changePhase(GamePhase.MOVEMENT);
                 break;
             case MOVEMENT:
-                // detectHiddenUnits();
-                // ServerHelper.detectMinefields(game, vPhaseReport, this);
-                // updateSpacecraftDetection();
-                // detectSpacecraft();
-                // applyBuildingDamage();
-                // checkForFlamingDamage();
-                // checkForTeleMissileAttacks();
-                // resolveCallSupport();
                 goToDependingOnReport(GamePhase.MOVEMENT_REPORT, GamePhase.OFFBOARD);
                 break;
             case MOVEMENT_REPORT:
@@ -123,17 +109,7 @@ public record SBFPhaseEndManager(SBFGameManager gameManager) implements SBFGameM
                 break;
             case FIRING:
                 addReport(new SBFReportEntry(3000));
-                // addReport(Report.publicReport(3000));
-                // resolveAllButWeaponAttacks();
-                // resolveSelfDestructions();
-                // reportGhostTargetRolls();
-                // reportLargeCraftECCMRolls();
-                // resolveOnlyWeaponAttacks();
-                // assignAMS();
                 gameManager.actionsProcessor.handleActions();
-                // resolveScheduledNukes();
-                // applyBuildingDamage();
-                // cleanupDestroyedNarcPods();
                 goToDependingOnReport(GamePhase.FIRING_REPORT, GamePhase.END);
                 break;
             case FIRING_REPORT:
@@ -150,7 +126,6 @@ public record SBFPhaseEndManager(SBFGameManager gameManager) implements SBFGameM
                 } else {
                     // just the header, so we'll add the <nothing> label
                     gameManager.addReport(new SBFReportEntry(1205));
-                    // gameManager.addReport(new Report(1205, Report.PUBLIC));
                     gameManager.getGame().addReports(gameManager.getPendingReports());
                     gameManager.sendReport();
                     gameManager.changePhase(GamePhase.PRE_FIRING);
@@ -163,62 +138,9 @@ public record SBFPhaseEndManager(SBFGameManager gameManager) implements SBFGameM
             case TARGETING_REPORT:
                 gameManager.changePhase(GamePhase.PREMOVEMENT);
                 break;
-            case END:
-                // // remove any entities that died in the heat/end phase before
-                // // checking for victory
-                // resetEntityPhase(GamePhase.END);
-                // boolean victory = victory(); // note this may add reports
-                // // check phase report
-                // // HACK: hardcoded message ID check
-                // if ((vPhaseReport.size() > 3) || ((vPhaseReport.size() > 1)
-                // && (vPhaseReport.elementAt(1).messageId != 1205))) {
-                // gameManager.getGame().addReports(vPhaseReport);
-                // gameManager.changePhase(GamePhase.END_REPORT);
-                // } else {
-                // // just the heat and end headers, so we'll add
-                // // the <nothing> label
-                // addReport(new Report(1205, Report.PUBLIC));
-                // gameManager.getGame().addReports(vPhaseReport);
-                // sendReport();
-                // if (victory) {
-                // gameManager.changePhase(GamePhase.VICTORY);
-                // } else {
-                // TODO: remove this and test that after firing, no more selection in
-                // firingdisplay, no more firing
-                gameManager.changePhase(GamePhase.INITIATIVE);
-                // }
-                // }
-                // // Decrement the ASEWAffected counter
-                // decrementASEWTurns();
-
-                break;
-            case END_REPORT:
-                // if (changePlayersTeam) {
-                // processTeamChangeRequest();
-                // }
-                // if (victory()) {
-                // gameManager.changePhase(GamePhase.VICTORY);
-                // } else {
-                // gameManager.changePhase(GamePhase.INITIATIVE);
-                // }
-                break;
-            case VICTORY:
-                // GameVictoryEvent gve = new GameVictoryEvent(this, game);
-                // gameManager.getGame().processGameEvent(gve);
-                // transmitGameVictoryEventToAll();
-                // resetGame();
-                break;
             default:
                 break;
         }
-
-        // Any hidden units that activated this phase, should clear their
-        // activating phase
-        // for (Entity ent : gameManager.getGame().getEntitiesVector()) {
-        // if (ent.getHiddenActivationPhase() == gameManager.getGame().getPhase()) {
-        // ent.setHiddenActivationPhase(GamePhase.UNKNOWN);
-        // }
-        // }
     }
 
     private void goToDependingOnReport(GamePhase reportPhase, GamePhase afterReportPhase) {
@@ -228,7 +150,6 @@ public record SBFPhaseEndManager(SBFGameManager gameManager) implements SBFGameM
         } else {
             // just the header, so we'll add the <nothing> label
             gameManager.addReport(new SBFReportEntry(1205));
-            // gameManager.addReport(new Report(1205, Report.PUBLIC));
             gameManager.getGame().addReports(gameManager.getPendingReports());
             gameManager.sendReport();
             gameManager.changePhase(afterReportPhase);

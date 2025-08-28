@@ -123,10 +123,10 @@ class EntityTest {
     @Test
     void testCanonUnitInCanonUnitListFile() {
         MekFileParser.initCanonUnitNames(EntityLoader.RESOURCE_FOLDER, "mockOfficialUnitList.txt");
-        Entity e = EntityLoader.loadFromFile("Exterminator EXT-4A.mtf");
-        assertTrue(e.isCanon());
-        e = EntityLoader.loadFromFile("Kanga Medium Hovertank.blk");
-        assertTrue(e.isCanon());
+        Entity entity = EntityLoader.loadFromFile("Exterminator EXT-4A.mtf");
+        assertTrue(entity.isCanon());
+        entity = EntityLoader.loadFromFile("Kanga Medium Hovertank.blk");
+        assertTrue(entity.isCanon());
     }
 
     /**

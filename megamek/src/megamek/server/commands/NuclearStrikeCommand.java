@@ -50,7 +50,7 @@ import megamek.server.commands.arguments.CoordXArgument;
 import megamek.server.commands.arguments.CoordYArgument;
 import megamek.server.commands.arguments.EnumArgument;
 import megamek.server.commands.arguments.OptionalIntegerArgument;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Luana Coppio

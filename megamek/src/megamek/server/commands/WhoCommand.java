@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -63,13 +63,11 @@ public class WhoCommand extends ServerCommand {
     }
 
     private String getConnectionDescription(AbstractConnection conn, boolean includeIPAddress) {
-        StringBuilder cb = new StringBuilder();
-        cb.append(conn.getId()).append(" : ");
-        cb.append(server.getPlayer(conn.getId()).getName()).append(", ");
-        cb.append(includeIPAddress ? conn.getInetAddress() : "<hidden>");
-        cb.append(", ").append(conn.hasPending()).append(", ");
-        cb.append(conn.getBytesSent());
-        cb.append(", ").append(conn.getBytesReceived());
-        return cb.toString();
+        return conn.getId() + " : "
+              + server.getPlayer(conn.getId()).getName() + ", "
+              + (includeIPAddress ? conn.getInetAddress() : "<hidden>")
+              + ", " + conn.hasPending() + ", "
+              + conn.getBytesSent()
+              + ", " + conn.getBytesReceived();
     }
 }

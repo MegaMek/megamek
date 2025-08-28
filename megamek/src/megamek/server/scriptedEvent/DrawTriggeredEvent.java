@@ -31,10 +31,11 @@
  * affiliated with Microsoft.
  */
 
-package megamek.server.scriptedevent;
+package megamek.server.scriptedEvent;
 
 import java.util.Map;
 
+import jakarta.annotation.Nonnull;
 import megamek.common.game.Game;
 import megamek.server.trigger.Trigger;
 import megamek.server.trigger.TriggerSituation;
@@ -79,6 +80,7 @@ public record DrawTriggeredEvent(Trigger trigger, boolean endsGame) implements T
     }
 
     @Override
+    @Nonnull
     public String toString() {
         return "Draw: " + trigger + (endsGame ? " [ends]" : "");
     }

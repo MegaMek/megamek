@@ -46,7 +46,7 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Infantry;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 public class ChemicalLaserHandler extends AmmoWeaponHandler {
     @Serial

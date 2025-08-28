@@ -85,7 +85,7 @@ import megamek.common.units.IBomber;
 import megamek.common.util.C3Util;
 import megamek.logging.MMLogger;
 import megamek.server.IGameManager;
-import megamek.server.scriptedevent.GameEndTriggeredEvent;
+import megamek.server.scriptedEvent.GameEndTriggeredEvent;
 
 public class ScenarioV2 implements Scenario {
     private static final MMLogger logger = MMLogger.create(ScenarioV2.class);

@@ -32,7 +32,7 @@
  */
 
 
-package megamek.server.totalwarfare;
+package megamek.server.totalWarfare;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -103,7 +103,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
     private int curBoardId;
     private int curFacing;
     private int curVTOLElevation;
-    private int curElevation;
     private int lastElevation;
     private int curAltitude;
     private boolean curClimbMode;
@@ -135,7 +134,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
     private int cachedGravityLimit = -1;
     private int thrustUsed = 0;
     private int j = 0;
-    private boolean didMove;
     private boolean recovered = false;
     private Entity loader = null;
     private boolean continueTurnFromPBS = false;
@@ -151,7 +149,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
     private final List<Entity> hiddenEnemies = new ArrayList<>();
     private final Vector<UnitLocation> movePath = new Vector<>();
 
-    private Report r;
+    private Report report;
     private PilotingRollData rollTarget;
 
     /**
@@ -160,7 +158,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
      * @param gameManager The server's GameManager
      * @param entity      The Entity that is moving
      * @param md          The MovePath that defines how the Entity moves
-     * @param losCache    A cache that stores Los between various Entities and targets. In double blind games, we may
+     * @param losCache    A cache that stores Los between various Entities and targets. In double-blind games, we may
      *                    need to compute a lot of LosEffects, so caching them can really speed things up.
      */
     MovePathHandler(TWGameManager gameManager, Entity entity, MovePath md, Map<UnitTargetPair, LosEffects> losCache) {
@@ -179,10 +177,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
         if (md.contains(MoveStepType.EJECT)) {
             if (entity.isLargeCraft() && !entity.isCarcass()) {
-                r = new Report(2026);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                addReport(r);
+                report = new Report(2026);
+                report.subject = entity.getId();
+                report.addDesc(entity);
+                addReport(report);
                 Aero ship = (Aero) entity;
                 ship.setEjecting(true);
                 gameManager.entityUpdate(ship.getId());
@@ -202,18 +200,18 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     return;
                 }
             } else if ((entity instanceof Mek) || (entity instanceof Aero)) {
-                r = new Report(2020);
-                r.subject = entity.getId();
-                r.add(entity.getCrew().getName());
-                r.addDesc(entity);
-                addReport(r);
+                report = new Report(2020);
+                report.subject = entity.getId();
+                report.add(entity.getCrew().getName());
+                report.addDesc(entity);
+                addReport(report);
                 addReport(gameManager.ejectEntity(entity, false));
                 return;
             } else if ((entity instanceof Tank) && !entity.isCarcass()) {
-                r = new Report(2025);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                addReport(r);
+                report = new Report(2025);
+                report.subject = entity.getId();
+                report.addDesc(entity);
+                addReport(report);
                 addReport(gameManager.ejectEntity(entity, false));
                 return;
             }
@@ -388,17 +386,17 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if (entity instanceof LandAirMek && md.contains(MoveStepType.CONVERT_MODE)) {
                 entity.setMovementMode(md.getFinalConversionMode());
                 entity.setConvertingNow(true);
-                r = new Report(1210);
-                r.subject = entity.getId();
-                r.addDesc(entity);
+                report = new Report(1210);
+                report.subject = entity.getId();
+                report.addDesc(entity);
                 if (entity.getMovementMode() == EntityMovementMode.WIGE) {
-                    r.messageId = 2452;
+                    report.messageId = 2452;
                 } else if (entity.getMovementMode() == EntityMovementMode.AERODYNE) {
-                    r.messageId = 2453;
+                    report.messageId = 2453;
                 } else {
-                    r.messageId = 2450;
+                    report.messageId = 2450;
                 }
-                addReport(r);
+                addReport(report);
             }
             entity.setDone(true);
             gameManager.entityUpdate(entity.getId());
@@ -424,10 +422,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // If a unit started & ended its turn in magma, let's damage it again (TO:AR 35) TODO: build report for end of move
         if (tookMagmaDamageAtStart && prevHex.terrainLevel(Terrains.MAGMA) == 2
               && !(entity.getElevation() > 0 || entity.getMovementMode() == EntityMovementMode.HOVER)) {
-            r = new Report(2404);
-            r.addDesc(entity);
-            r.subject = entity.getId();
-            addReport(r);
+            report = new Report(2404);
+            report.addDesc(entity);
+            report.subject = entity.getId();
+            addReport(report);
             gameManager.doMagmaDamage(entity, false);
         }
 
@@ -443,9 +441,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if ((entity instanceof Infantry) && (((Infantry) entity).getMount() != null)
                   && entity.getMovementMode().isSubmarine()
                   && entity.underwaterRounds > ((Infantry) entity).getMount().getUWEndurance()) {
-                r = new Report(2412);
-                r.addDesc(entity);
-                addReport(r);
+                report = new Report(2412);
+                report.addDesc(entity);
+                addReport(report);
                 gameManager.destroyEntity(entity, "mount drowned");
             }
         } else {
@@ -464,7 +462,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         entity.setPassedThroughFacing(passedThroughFacing);
         entity.setPassedThroughBoardId(entity.getBoardId());
 
-        // Replace ordinary passed through for aeros on atmospheric board that designate a flight path on a ground
+        // Replace ordinary passed through for aerospace on atmospheric board that designate a flight path on a ground
         // board
         if ((md.getFlightPathHex() != null) && !md.getFlightPathHex().isNoLocation()) {
             BoardLocation location = md.getFlightPathHex();
@@ -496,18 +494,18 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // pilot damage on a 2
         if ((entity instanceof ProtoMek) && ((ProtoMek) entity).hasMyomerBooster()
               && (md.getMpUsed() > entity.getRunMP(MPCalculationSetting.NO_MYOMER_BOOSTER))) {
-            r = new Report(2373);
-            r.addDesc(entity);
-            r.subject = entity.getId();
+            report = new Report(2373);
+            report.addDesc(entity);
+            report.subject = entity.getId();
             Roll diceRoll = Compute.rollD6(2);
-            r.add(diceRoll);
+            report.add(diceRoll);
 
             if (diceRoll.getIntValue() > 2) {
-                r.choose(true);
-                addReport(r);
+                report.choose(true);
+                addReport(report);
             } else {
-                r.choose(false);
-                addReport(r);
+                report.choose(false);
+                addReport(report);
                 addReport(gameManager.damageCrew(entity, 1));
             }
         }
@@ -546,8 +544,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // JumpShips and space stations need to reduce accumulated thrust if
             // they spend some
-            if (entity instanceof Jumpship) {
-                Jumpship js = (Jumpship) entity;
+            if (entity instanceof Jumpship jumpship) {
                 double penalty = 0.0;
                 // JumpShips do not accumulate thrust when they make a turn or
                 // change velocity
@@ -555,13 +552,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // I need to subtract the station keeping thrust from their
                     // accumulated thrust
                     // because they did not actually use it
-                    penalty = js.getStationKeepingThrust();
+                    penalty = jumpship.getStationKeepingThrust();
                 }
                 if (thrust > 0) {
                     penalty = thrust;
                 }
                 if (penalty > 0.0) {
-                    js.setAccumulatedThrust(Math.max(0, js.getAccumulatedThrust() - penalty));
+                    jumpship.setAccumulatedThrust(Math.max(0, jumpship.getAccumulatedThrust() - penalty));
                 }
             }
 
@@ -598,10 +595,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // check for aero stall
                 rollTarget = a.checkStall(md);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    r = new Report(9391);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    addReport(r);
+                    report = new Report(9391);
+                    report.subject = entity.getId();
+                    report.addDesc(entity);
+                    addReport(report);
                     getGame().addControlRoll(new PilotingRollData(entity.getId(), 0,
                           "stalled out"));
                     entity.setAltitude(entity.getAltitude() - 1);
@@ -614,10 +611,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // check to see if spheroids should lose one altitude
                 if (a.isSpheroid() && !a.isSpaceborne()
                       && a.isAirborne() && (md.getFinalNDown() == 0) && (md.getMpUsed() == 0)) {
-                    r = new Report(9392);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    addReport(r);
+                    report = new Report(9392);
+                    report.subject = entity.getId();
+                    report.addDesc(entity);
+                    addReport(report);
                     entity.setAltitude(entity.getAltitude() - 1);
                     // check for crash
                     if (gameManager.checkCrash(entity)) {
@@ -628,11 +625,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // units
                     entity.setAltitude(entity.getAltitude()
                           - getGame().getPlanetaryConditions().getDropRate());
-                    r = new Report(6676);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    r.add(getGame().getPlanetaryConditions().getDropRate());
-                    addReport(r);
+                    report = new Report(6676);
+                    report.subject = entity.getId();
+                    report.addDesc(entity);
+                    report.add(getGame().getPlanetaryConditions().getDropRate());
+                    addReport(report);
                 }
             }
         }
@@ -651,86 +648,88 @@ class MovePathHandler extends AbstractTWRuleHandler {
         final int swarmerId = entity.getSwarmAttackerId();
         if ((Entity.NONE != swarmerId) && md.contains(MoveStepType.SHAKE_OFF_SWARMERS)) {
             final Entity swarmer = getGame().getEntity(swarmerId);
-            rollTarget = entity.getBasePilotingRoll(overallMoveType);
+            if (swarmer != null) {
 
-            entity.addPilotingModifierForTerrain(rollTarget);
 
-            // Add a +4 modifier.
-            if (md.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_RUN) {
-                rollTarget.addModifier(2,
-                      "dislodge swarming infantry with VTOL movement");
-            } else {
-                rollTarget.addModifier(4, "dislodge swarming infantry");
-            }
+                rollTarget = entity.getBasePilotingRoll(overallMoveType);
 
-            // If the swarmer has Assault claws, give a 1 modifier.
-            // We can stop looking when we find our first match.
-            for (Mounted<?> mount : swarmer.getMisc()) {
-                EquipmentType equip = mount.getType();
-                if (equip.hasFlag(MiscType.F_MAGNET_CLAW)) {
-                    rollTarget.addModifier(1, "swarmer has magnetic claws");
-                    break;
-                }
-            }
+                entity.addPilotingModifierForTerrain(rollTarget);
 
-            // okay, print the info
-            r = new Report(2125);
-            r.subject = entity.getId();
-            r.addDesc(entity);
-            addReport(r);
-
-            // roll
-            final Roll diceRoll = Compute.rollD6(2);
-            r = new Report(2130);
-            r.subject = entity.getId();
-            r.add(rollTarget.getValueAsString());
-            r.add(rollTarget.getDesc());
-            r.add(diceRoll);
-
-            if (diceRoll.getIntValue() < rollTarget.getValue()) {
-                r.choose(false);
-                addReport(r);
-            } else {
-                // Dislodged swarmers don't get turns.
-                getGame().removeTurnFor(swarmer);
-                gameManager.send(gameManager.getPacketHelper().createTurnListPacket());
-
-                // Update the report and the swarmer's status.
-                r.choose(true);
-                addReport(r);
-                entity.setSwarmAttackerId(Entity.NONE);
-                swarmer.setSwarmTargetId(Entity.NONE);
-
-                Hex curHex = getGame().getBoard(curBoardId).getHex(curPos);
-
-                // Did the infantry fall into water?
-                if (curHex.terrainLevel(Terrains.WATER) > 0) {
-                    // Swarming infantry die.
-                    swarmer.setPosition(curPos);
-                    r = new Report(2135);
-                    r.subject = entity.getId();
-                    r.indent();
-                    r.addDesc(swarmer);
-                    addReport(r);
-                    addReport(gameManager.destroyEntity(swarmer, "a watery grave", false));
+                // Add a +4 modifier.
+                if (md.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_RUN) {
+                    rollTarget.addModifier(2, "dislodge swarming infantry with VTOL movement");
                 } else {
-                    // Swarming infantry take a 3d6 point hit.
-                    // ASSUMPTION : damage should not be doubled.
-                    r = new Report(2140);
-                    r.subject = entity.getId();
-                    r.indent();
-                    r.addDesc(swarmer);
-                    r.add("3d6");
-                    addReport(r);
-                    addReport(gameManager.damageEntity(swarmer,
-                          swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT),
-                          Compute.d6(3)));
-                    addNewLines();
-                    swarmer.setPosition(curPos);
+                    rollTarget.addModifier(4, "dislodge swarming infantry");
                 }
-                gameManager.entityUpdate(swarmerId);
-            } // End successful-PSR
 
+                // If the swarmer has Assault claws, give a 1 modifier.
+                // We can stop looking when we find our first match.
+                for (Mounted<?> mount : swarmer.getMisc()) {
+                    EquipmentType equip = mount.getType();
+                    if (equip.hasFlag(MiscType.F_MAGNET_CLAW)) {
+                        rollTarget.addModifier(1, "swarmer has magnetic claws");
+                        break;
+                    }
+                }
+
+                // okay, print the info
+                report = new Report(2125);
+                report.subject = entity.getId();
+                report.addDesc(entity);
+                addReport(report);
+
+                // roll
+                final Roll diceRoll = Compute.rollD6(2);
+                report = new Report(2130);
+                report.subject = entity.getId();
+                report.add(rollTarget.getValueAsString());
+                report.add(rollTarget.getDesc());
+                report.add(diceRoll);
+
+                if (diceRoll.getIntValue() < rollTarget.getValue()) {
+                    report.choose(false);
+                    addReport(report);
+                } else {
+                    // Dislodged swarmers don't get turns.
+                    getGame().removeTurnFor(swarmer);
+                    gameManager.send(gameManager.getPacketHelper().createTurnListPacket());
+
+                    // Update the report and the swarmer's status.
+                    report.choose(true);
+                    addReport(report);
+                    entity.setSwarmAttackerId(Entity.NONE);
+                    swarmer.setSwarmTargetId(Entity.NONE);
+
+                    Hex curHex = getGame().getBoard(curBoardId).getHex(curPos);
+
+                    // Did the infantry fall into water?
+                    if (curHex.terrainLevel(Terrains.WATER) > 0) {
+                        // Swarming infantry die.
+                        swarmer.setPosition(curPos);
+                        report = new Report(2135);
+                        report.subject = entity.getId();
+                        report.indent();
+                        report.addDesc(swarmer);
+                        addReport(report);
+                        addReport(gameManager.destroyEntity(swarmer, "a watery grave", false));
+                    } else {
+                        // Swarming infantry take a 3d6 point hit.
+                        // ASSUMPTION : damage should not be doubled.
+                        report = new Report(2140);
+                        report.subject = entity.getId();
+                        report.indent();
+                        report.addDesc(swarmer);
+                        report.add("3d6");
+                        addReport(report);
+                        addReport(gameManager.damageEntity(swarmer,
+                              swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT),
+                              Compute.d6(3)));
+                        addNewLines();
+                        swarmer.setPosition(curPos);
+                    }
+                    gameManager.entityUpdate(swarmerId);
+                } // End successful-PSR
+            }
         } // End try-to-dislodge-swarmers
 
         // but the danger isn't over yet! landing from a jump can be risky!
@@ -771,11 +770,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 if (!(entity instanceof Infantry)) {
                     // check for breaking ice
                     Roll diceRoll = Compute.rollD6(1);
-                    r = new Report(2122);
-                    r.add(entity.getDisplayName(), true);
-                    r.add(diceRoll);
-                    r.subject = entity.getId();
-                    addReport(r);
+                    report = new Report(2122);
+                    report.add(entity.getDisplayName(), true);
+                    report.add(diceRoll);
+                    report.subject = entity.getId();
+                    addReport(report);
 
                     if (diceRoll.getIntValue() >= 4) {
                         // oops!
@@ -791,11 +790,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             // possible breach, if ice is broken
                             entity.applyDamage();
                             Roll diceRoll2 = Compute.rollD6(1);
-                            r = new Report(2118);
-                            r.addDesc(entity);
-                            r.add(diceRoll2);
-                            r.subject = entity.getId();
-                            addReport(r);
+                            report = new Report(2118);
+                            report.addDesc(entity);
+                            report.add(diceRoll2);
+                            report.subject = entity.getId();
+                            addReport(report);
 
                             if (diceRoll2.getIntValue() == 6) {
                                 entity.setPosition(curPos);
@@ -858,10 +857,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                       entity instanceof LargeSupportTank) != TargetRoll.AUTOMATIC_SUCCESS) {
                     if (entity instanceof Mek) {
                         entity.setStuck(true);
-                        r = new Report(2121);
-                        r.add(entity.getDisplayName(), true);
-                        r.subject = entity.getId();
-                        addReport(r);
+                        report = new Report(2121);
+                        report.add(entity.getDisplayName(), true);
+                        report.subject = entity.getId();
+                        addReport(report);
                         // check for quicksand
                         addReport(gameManager.checkQuickSand(curPos));
                     } else if (!entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
@@ -874,10 +873,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         if (0 < gameManager.doSkillCheckWhileMoving(entity, entity.getElevation(), curPos, curPos,
                               rollTarget, false)) {
                             entity.setStuck(true);
-                            r = new Report(2081);
-                            r.add(entity.getDisplayName());
-                            r.subject = entity.getId();
-                            addReport(r);
+                            report = new Report(2081);
+                            report.add(entity.getDisplayName());
+                            report.subject = entity.getId();
+                            addReport(report);
                             // check for quicksand
                             addReport(gameManager.checkQuickSand(curPos));
                         }
@@ -888,75 +887,76 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // If the entity is being swarmed, jumping may dislodge the fleas.
             if (Entity.NONE != swarmerId) {
                 final Entity swarmer = getGame().getEntity(swarmerId);
-                rollTarget = entity.getBasePilotingRoll(overallMoveType);
+                if (swarmer != null) {
+                    rollTarget = entity.getBasePilotingRoll(overallMoveType);
 
-                entity.addPilotingModifierForTerrain(rollTarget);
+                    entity.addPilotingModifierForTerrain(rollTarget);
 
-                // Add a +4 modifier.
-                rollTarget.addModifier(4, "dislodge swarming infantry");
+                    // Add a +4 modifier.
+                    rollTarget.addModifier(4, "dislodge swarming infantry");
 
-                // If the swarmer has Assault claws, give a 1 modifier.
-                // We can stop looking when we find our first match.
-                if (swarmer.hasWorkingMisc(MiscType.F_MAGNET_CLAW, -1)) {
-                    rollTarget.addModifier(1, "swarmer has magnetic claws");
-                }
-
-                // okay, print the info
-                r = new Report(2125);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                addReport(r);
-
-                // roll
-                final Roll diceRoll = Compute.rollD6(2);
-                r = new Report(2130);
-                r.subject = entity.getId();
-                r.add(rollTarget.getValueAsString());
-                r.add(rollTarget.getDesc());
-                r.add(diceRoll);
-
-                if (diceRoll.getIntValue() < rollTarget.getValue()) {
-                    r.choose(false);
-                    addReport(r);
-                } else {
-                    // Dislodged swarmers don't get turns.
-                    getGame().removeTurnFor(swarmer);
-                    gameManager.send(gameManager.getPacketHelper().createTurnListPacket());
-
-                    // Update the report and the swarmer's status.
-                    r.choose(true);
-                    addReport(r);
-                    entity.setSwarmAttackerId(Entity.NONE);
-                    swarmer.setSwarmTargetId(Entity.NONE);
-
-                    // Did the infantry fall into water?
-                    if (curHex.terrainLevel(Terrains.WATER) > 0) {
-                        // Swarming infantry die.
-                        swarmer.setPosition(curPos);
-                        r = new Report(2135);
-                        r.subject = entity.getId();
-                        r.indent();
-                        r.addDesc(swarmer);
-                        addReport(r);
-                        addReport(gameManager.destroyEntity(swarmer, "a watery grave", false));
-                    } else {
-                        // Swarming infantry take a 3d6 point hit.
-                        // ASSUMPTION : damage should not be doubled.
-                        r = new Report(2140);
-                        r.subject = entity.getId();
-                        r.indent();
-                        r.addDesc(swarmer);
-                        r.add("3d6");
-                        addReport(r);
-                        addReport(gameManager.damageEntity(swarmer,
-                              swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT),
-                              Compute.d6(3)));
-                        addNewLines();
-                        swarmer.setPosition(curPos);
+                    // If the swarmer has Assault claws, give a 1 modifier.
+                    // We can stop looking when we find our first match.
+                    if (swarmer.hasWorkingMisc(MiscType.F_MAGNET_CLAW, -1)) {
+                        rollTarget.addModifier(1, "swarmer has magnetic claws");
                     }
-                    gameManager.entityUpdate(swarmerId);
-                } // End successful-PSR
 
+                    // okay, print the info
+                    report = new Report(2125);
+                    report.subject = entity.getId();
+                    report.addDesc(entity);
+                    addReport(report);
+
+                    // roll
+                    final Roll diceRoll = Compute.rollD6(2);
+                    report = new Report(2130);
+                    report.subject = entity.getId();
+                    report.add(rollTarget.getValueAsString());
+                    report.add(rollTarget.getDesc());
+                    report.add(diceRoll);
+
+                    if (diceRoll.getIntValue() < rollTarget.getValue()) {
+                        report.choose(false);
+                        addReport(report);
+                    } else {
+                        // Dislodged swarmers don't get turns.
+                        getGame().removeTurnFor(swarmer);
+                        gameManager.send(gameManager.getPacketHelper().createTurnListPacket());
+
+                        // Update the report and the swarmer's status.
+                        report.choose(true);
+                        addReport(report);
+                        entity.setSwarmAttackerId(Entity.NONE);
+                        swarmer.setSwarmTargetId(Entity.NONE);
+
+                        // Did the infantry fall into water?
+                        if (curHex.terrainLevel(Terrains.WATER) > 0) {
+                            // Swarming infantry die.
+                            swarmer.setPosition(curPos);
+                            report = new Report(2135);
+                            report.subject = entity.getId();
+                            report.indent();
+                            report.addDesc(swarmer);
+                            addReport(report);
+                            addReport(gameManager.destroyEntity(swarmer, "a watery grave", false));
+                        } else {
+                            // Swarming infantry take a 3d6 point hit.
+                            // ASSUMPTION : damage should not be doubled.
+                            report = new Report(2140);
+                            report.subject = entity.getId();
+                            report.indent();
+                            report.addDesc(swarmer);
+                            report.add("3d6");
+                            addReport(report);
+                            addReport(gameManager.damageEntity(swarmer,
+                                  swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT),
+                                  Compute.d6(3)));
+                            addNewLines();
+                            swarmer.setPosition(curPos);
+                        }
+                        gameManager.entityUpdate(swarmerId);
+                    } // End successful-PSR
+                }
             } // End try-to-dislodge-swarmers
 
             // one more check for inferno wash-off
@@ -970,10 +970,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                       || curHex.containsTerrain(Terrains.JUNGLE)) {
                     modifier = 1;
                 }
-                r = new Report(2126);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                gameManager.getMainPhaseReport().add(r);
+                report = new Report(2126);
+                report.subject = entity.getId();
+                report.addDesc(entity);
+                gameManager.getMainPhaseReport().add(report);
                 gameManager.getMainPhaseReport().addAll(gameManager.vehicleMotiveDamage((Tank) entity, modifier,
                       false, -1, true));
                 Report.addNewline(gameManager.getMainPhaseReport());
@@ -983,14 +983,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
         // If converting to another mode, set the final movement mode and report it
         if (entity.isConvertingNow()) {
-            r = new Report(1210);
-            r.subject = entity.getId();
-            r.addDesc(entity);
+            report = new Report(1210);
+            report.subject = entity.getId();
+            report.addDesc(entity);
             if (entity instanceof QuadVee && entity.isProne()
                   && entity.getConversionMode() == QuadVee.CONV_MODE_MEK) {
                 // Fall while converting to vehicle mode cancels conversion.
                 entity.setConvertingNow(false);
-                r.messageId = 2454;
+                report.messageId = 2454;
             } else {
                 // LAMs converting from fighter mode need to have the elevation set properly.
                 if (entity.isAero()) {
@@ -1009,17 +1009,17 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
                 entity.setMovementMode(md.getFinalConversionMode());
                 if (entity instanceof Mek && ((Mek) entity).hasTracks()) {
-                    r.messageId = 2455;
-                    r.choose(entity.getMovementMode() == EntityMovementMode.TRACKED);
+                    report.messageId = 2455;
+                    report.choose(entity.getMovementMode() == EntityMovementMode.TRACKED);
                 } else if (entity.getMovementMode() == EntityMovementMode.TRACKED
                       || entity.getMovementMode() == EntityMovementMode.WHEELED) {
-                    r.messageId = 2451;
+                    report.messageId = 2451;
                 } else if (entity.getMovementMode() == EntityMovementMode.WIGE) {
-                    r.messageId = 2452;
+                    report.messageId = 2452;
                 } else if (entity.getMovementMode() == EntityMovementMode.AERODYNE) {
-                    r.messageId = 2453;
+                    report.messageId = 2453;
                 } else {
-                    r.messageId = 2450;
+                    report.messageId = 2450;
                 }
                 if (entity.isAero()) {
                     int altitude = entity.getAltitude();
@@ -1033,7 +1033,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     }
                 }
             }
-            addReport(r);
+            addReport(report);
         }
 
         // update entity's locations' exposure
@@ -1077,32 +1077,35 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // try to land safely; LAMs require a psr when landing with gyro or leg actuator
                     // damage and ProtoMeks always require a roll
                     int elevation = (null == prevStep) ? entity.getElevation() : prevStep.getElevation();
-                    if (entity.hasETypeFlag(Entity.ETYPE_LAND_AIR_MEK)) {
-                        addReport(gameManager.landAirMek((LandAirMek) entity, entity.getPosition(), elevation,
+                    if (entity.hasETypeFlag(Entity.ETYPE_LAND_AIR_MEK) && entity instanceof LandAirMek landAirMek) {
+                        addReport(gameManager.landAirMek(landAirMek,
+                              entity.getPosition(),
+                              elevation,
                               entity.delta_distance));
-                    } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
+                    } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMEK) && entity instanceof ProtoMek protoMek) {
                         gameManager.getMainPhaseReport()
-                              .addAll(gameManager.landGliderPM((ProtoMek) entity, entity.getPosition(),
-                                    elevation, entity.delta_distance));
+                              .addAll(gameManager.landGliderPM(protoMek,
+                                    entity.getPosition(),
+                                    elevation,
+                                    entity.delta_distance));
                     } else {
-                        r = new Report(2123);
-                        r.addDesc(entity);
-                        r.subject = entity.getId();
-                        addReport(r);
+                        report = new Report(2123);
+                        report.addDesc(entity);
+                        report.subject = entity.getId();
+                        addReport(report);
                     }
 
                     if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
                         Building bldg = getGame().getBoard(curBoardId).getBuildingAt(entity.getPosition());
                         entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
-                        gameManager.addAffectedBldg(bldg, gameManager.checkBuildingCollapseWhileMoving(bldg,
-                              entity, entity.getPosition()));
-                    } else if (entity.isLocationProhibited(entity.getPosition(), 0)
-                          && !hex.hasPavement()) {
+                        gameManager.addAffectedBldg(bldg,
+                              gameManager.checkBuildingCollapseWhileMoving(bldg, entity, entity.getPosition()));
+                    } else if (entity.isLocationProhibited(entity.getPosition(), 0) && !hex.hasPavement()) {
                         // crash
-                        r = new Report(2124);
-                        r.addDesc(entity);
-                        r.subject = entity.getId();
-                        addReport(r);
+                        report = new Report(2124);
+                        report.addDesc(entity);
+                        report.subject = entity.getId();
+                        addReport(report);
                         addReport(gameManager.crashVTOLorWiGE((Tank) entity));
                     } else {
                         entity.setElevation(0);
@@ -1155,15 +1158,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // (such as conversion while dropping), crash now.
             if (entity instanceof LandAirMek
                   && (entity.isLocationBad(Mek.LOC_RIGHT_TORSO) || entity.isLocationBad(Mek.LOC_LEFT_TORSO))) {
-                r = new Report(9710);
-                r.subject = entity.getId();
-                r.addDesc(entity);
+                report = new Report(9710);
+                report.subject = entity.getId();
+                report.addDesc(entity);
                 if (entity.isAirborneVTOLorWIGE()) {
-                    addReport(r);
+                    addReport(report);
                     gameManager.crashAirMek(entity, new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL,
                           "side torso destroyed"), gameManager.getMainPhaseReport());
                 } else if (entity.isAirborne() && entity.isAero()) {
-                    addReport(r);
+                    addReport(report);
                     addReport(gameManager.processCrash(entity, ((IAero) entity).getCurrentVelocity(),
                           entity.getPosition()));
                 }
@@ -1173,28 +1176,29 @@ class MovePathHandler extends AbstractTWRuleHandler {
         }
 
         if (dropshipStillUnloading) {
-            // turns should have already been inserted but we need to set the
-            // entity as not done
+            // turns should have already been inserted, but we need to set the entity as not done
             entity.setDone(false);
         }
 
         // If the entity is being swarmed, update the attacker's position.
         if (Entity.NONE != swarmerId) {
             final Entity swarmer = getGame().getEntity(swarmerId);
-            swarmer.setPosition(curPos);
-            // If the hex is on fire, and the swarming infantry is
-            // *not* Battle Armor, it drops off.
-            if (!(swarmer instanceof BattleArmor) && getGame().getBoard(curBoardId)
-                  .getHex(curPos).containsTerrain(Terrains.FIRE)) {
-                swarmer.setSwarmTargetId(Entity.NONE);
-                entity.setSwarmAttackerId(Entity.NONE);
-                r = new Report(2145);
-                r.subject = entity.getId();
-                r.indent();
-                r.add(swarmer.getShortName(), true);
-                addReport(r);
+            if (swarmer != null) {
+                swarmer.setPosition(curPos);
+                // If the hex is on fire, and the swarming infantry is
+                // *not* Battle Armor, it drops off.
+                if (!(swarmer instanceof BattleArmor) && getGame().getBoard(curBoardId)
+                      .getHex(curPos).containsTerrain(Terrains.FIRE)) {
+                    swarmer.setSwarmTargetId(Entity.NONE);
+                    entity.setSwarmAttackerId(Entity.NONE);
+                    report = new Report(2145);
+                    report.subject = entity.getId();
+                    report.indent();
+                    report.add(swarmer.getShortName(), true);
+                    addReport(report);
+                }
+                gameManager.entityUpdate(swarmerId);
             }
-            gameManager.entityUpdate(swarmerId);
         }
 
         // Update the entity's position,
@@ -1209,15 +1213,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
         // If the entity is towing trailers, update the position of those trailers
         if (!entity.getAllTowedUnits().isEmpty()) {
-            List<Integer> reversedTrailers = new ArrayList<>(entity.getAllTowedUnits()); // initialize with a copy (no
-            // need to initialize to an
-            // empty list first)
-            Collections.reverse(reversedTrailers); // reverse in-place
-            List<Coords> trailerPath = gameManager.initializeTrailerCoordinates(entity, reversedTrailers); // no need to
-            // initialize
-            // to an
-            // empty list
-            // first
+            // initialize with a copy (no need to initialize to an empty list first)
+            List<Integer> reversedTrailers = new ArrayList<>(entity.getAllTowedUnits());
+
+            // reverse in-place
+            Collections.reverse(reversedTrailers);
+
+            // no need to initialize to an empty list first
+            List<Coords> trailerPath = gameManager.initializeTrailerCoordinates(entity, reversedTrailers);
             gameManager.processTrailerMovement(entity, trailerPath);
         }
 
@@ -1227,25 +1230,25 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if (loader.isCapitalFighter()) {
                 if (!(loader instanceof FighterSquadron)) {
                     // this is a solo capital fighter so we need to add a new
-                    // squadron and load both the loader and loadee
-                    FighterSquadron fs = new FighterSquadron();
-                    fs.setDeployed(true);
-                    fs.setId(getGame().getNextEntityId());
-                    fs.setCurrentVelocity(((Aero) loader).getCurrentVelocity());
-                    fs.setNextVelocity(((Aero) loader).getNextVelocity());
-                    fs.setVectors(loader.getVectors());
-                    fs.setFacing(loader.getFacing());
-                    fs.setOwner(entity.getOwner());
+                    // squadron and load both the loader and loaded
+                    FighterSquadron fighterSquadron = new FighterSquadron();
+                    fighterSquadron.setDeployed(true);
+                    fighterSquadron.setId(getGame().getNextEntityId());
+                    fighterSquadron.setCurrentVelocity(((Aero) loader).getCurrentVelocity());
+                    fighterSquadron.setNextVelocity(((Aero) loader).getNextVelocity());
+                    fighterSquadron.setVectors(loader.getVectors());
+                    fighterSquadron.setFacing(loader.getFacing());
+                    fighterSquadron.setOwner(entity.getOwner());
                     // set velocity and heading the same as parent entity
-                    getGame().addEntity(fs);
-                    gameManager.send(gameManager.createAddEntityPacket(fs.getId()));
+                    getGame().addEntity(fighterSquadron);
+                    gameManager.send(gameManager.createAddEntityPacket(fighterSquadron.getId()));
                     // make him not get a move this turn
-                    fs.setDone(true);
+                    fighterSquadron.setDone(true);
                     // place on board
-                    fs.setPosition(loader.getPosition());
-                    gameManager.loadUnit(fs, loader, -1);
-                    loader = fs;
-                    gameManager.entityUpdate(fs.getId());
+                    fighterSquadron.setPosition(loader.getPosition());
+                    gameManager.loadUnit(fighterSquadron, loader, -1);
+                    loader = fighterSquadron;
+                    gameManager.entityUpdate(fighterSquadron.getId());
                 }
                 loader.load(entity);
             } else {
@@ -1268,7 +1271,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             gameManager.entityUpdate(loader.getId());
         }
 
-        // if using double blind, update the player on new units he might see
+        // if using double-blind, update the player on new units he might see
         if (gameManager.doBlind()) {
             gameManager.send(entity.getOwner().getId(),
                   gameManager.createFilteredFullEntitiesPacket(entity.getOwner(), losCache));
@@ -1305,9 +1308,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if (entity.canFlee(entity.getPosition())) {
                 addReport(gameManager.processLeaveMap(md));
             } else {
-                r = new Report(2017, Report.PUBLIC);
-                r.indent();
-                addReport(r);
+                report = new Report(2017, Report.PUBLIC);
+                report.indent();
+                addReport(report);
             }
         }
     }
@@ -1317,7 +1320,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
      * when aero-on-ground movement is not used. Before doing this, test if this can be done with
      * hasAtmosphericMapForLiftOff().
      *
-     * @return True when successful (false when there is no enclosing atmospheric map)
      */
     private void positionOnAtmosphericMap() {
         // without aero on ground movement, lift off places the aero directly on the atmospheric map, TW p. 88
@@ -1343,83 +1345,84 @@ class MovePathHandler extends AbstractTWRuleHandler {
             isOnGround |= stepMoveType != EntityMovementType.MOVE_JUMP;
             isOnGround &= step.getElevation() < 1;
 
-            // Check for hidden units point blank shots
+            // Check for hidden units point-blank shots
             if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
-                for (Entity e : hiddenEnemies) {
-                    int dist = e.getPosition().distance(step.getPosition());
+                for (Entity entity : hiddenEnemies) {
+                    int dist = entity.getPosition().distance(step.getPosition());
                     // Checking for same hex and stacking violation
                     if ((dist == 0) && !continueTurnFromPBS
-                          && (Compute.stackingViolation(getGame(), entity.getId(),
-                          step.getPosition(), entity.climbMode()) != null)) {
+                          && (Compute.stackingViolation(getGame(), this.entity.getId(),
+                          step.getPosition(), this.entity.climbMode()) != null)) {
                         // Moving into hex of a hidden unit detects the unit
-                        e.setHidden(false);
-                        gameManager.entityUpdate(e.getId());
-                        r = new Report(9960);
-                        r.addDesc(entity);
-                        r.subject = entity.getId();
-                        r.add(e.getPosition().getBoardNum());
-                        addReport(r);
+                        entity.setHidden(false);
+                        gameManager.entityUpdate(entity.getId());
+                        report = new Report(9960);
+                        report.addDesc(this.entity);
+                        report.subject = this.entity.getId();
+                        report.add(entity.getPosition().getBoardNum());
+                        addReport(report);
                         // Report the block
                         if (gameManager.doBlind()) {
-                            r = new Report(9961);
-                            r.subject = e.getId();
-                            r.addDesc(e);
-                            r.addDesc(entity);
-                            r.add(step.getPosition().getBoardNum());
-                            addReport(r);
+                            report = new Report(9961);
+                            report.subject = entity.getId();
+                            report.addDesc(entity);
+                            report.addDesc(this.entity);
+                            report.add(step.getPosition().getBoardNum());
+                            addReport(report);
                         }
                         // Report halted movement
-                        r = new Report(9962);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
-                        r.add(step.getPosition().getBoardNum());
-                        addReport(r);
+                        report = new Report(9962);
+                        report.subject = this.entity.getId();
+                        report.addDesc(this.entity);
+                        report.add(step.getPosition().getBoardNum());
+                        addReport(report);
                         addNewLines();
                         addNewLines();
                         // If we aren't at the end, send a special report
                         if ((getGame().getTurnIndex() + 1) < getGame().getTurnsList().size()) {
-                            gameManager.send(e.getOwner().getId(), gameManager.createSpecialReportPacket());
                             gameManager.send(entity.getOwner().getId(), gameManager.createSpecialReportPacket());
+                            gameManager.send(this.entity.getOwner().getId(), gameManager.createSpecialReportPacket());
                         }
-                        entity.setDone(true);
-                        gameManager.entityUpdate(entity.getId(), movePath, true, losCache);
+                        this.entity.setDone(true);
+                        gameManager.entityUpdate(this.entity.getId(), movePath, true, losCache);
                         return;
                         // Potential point-blank shot
-                    } else if ((dist == 1) && !e.madePointblankShot()) {
-                        entity.setPosition(step.getPosition());
-                        entity.setFacing(step.getFacing());
+                    } else if ((dist == 1) && !entity.madePointblankShot()) {
+                        this.entity.setPosition(step.getPosition());
+                        this.entity.setFacing(step.getFacing());
                         // If not set, BV icons could have wrong facing
-                        entity.setSecondaryFacing(step.getFacing());
+                        this.entity.setSecondaryFacing(step.getFacing());
                         // Update entity position on client
-                        gameManager.send(e.getOwnerId(), gameManager.createEntityPacket(entity.getId(), null));
-                        boolean tookPBS = gameManager.processPointblankShotCFR(e, entity);
+                        gameManager.send(entity.getOwnerId(),
+                              gameManager.createEntityPacket(this.entity.getId(), null));
+                        boolean tookPBS = gameManager.processPointblankShotCFR(entity, this.entity);
                         // Movement should be interrupted
                         if (tookPBS) {
                             // Attacking reveals hidden unit
-                            e.setHidden(false);
-                            gameManager.entityUpdate(e.getId());
-                            r = new Report(9960);
-                            r.addDesc(entity);
-                            r.subject = entity.getId();
-                            r.add(e.getPosition().getBoardNum());
-                            gameManager.getMainPhaseReport().addElement(r);
+                            entity.setHidden(false);
+                            gameManager.entityUpdate(entity.getId());
+                            report = new Report(9960);
+                            report.addDesc(this.entity);
+                            report.subject = this.entity.getId();
+                            report.add(entity.getPosition().getBoardNum());
+                            gameManager.getMainPhaseReport().addElement(report);
                             continueTurnFromPBS = true;
 
-                            curFacing = entity.getFacing();
-                            curPos = entity.getPosition();
+                            curFacing = this.entity.getFacing();
+                            curPos = this.entity.getPosition();
                             mpUsed = step.getMpUsed();
                             break;
                         }
-                    } else if (Compute.canDetectHidden(entity, dist, md.isEndStep(step))) {
+                    } else if (Compute.canDetectHidden(this.entity, dist, md.isEndStep(step))) {
                         // There are a variety of other ways to detect a hidden unit.
                         // Reveal the detected unit and add the report to the movement report.
-                        e.setHidden(false);
-                        gameManager.entityUpdate(e.getId());
-                        r = new Report(9960);
-                        r.addDesc(entity);
-                        r.subject = entity.getId();
-                        r.add(e.getPosition().getBoardNum());
-                        addReport(r);
+                        entity.setHidden(false);
+                        gameManager.entityUpdate(entity.getId());
+                        report = new Report(9960);
+                        report.addDesc(this.entity);
+                        report.subject = this.entity.getId();
+                        report.add(entity.getPosition().getBoardNum());
+                        addReport(report);
                     }
                 }
             }
@@ -1573,7 +1576,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // did the entity move?
-            didMove = step.getDistance() > distance;
+            boolean didMove = step.getDistance() > distance;
 
             // check for aero stuff
             if (entity.isAirborne() && entity.isAero()) {
@@ -1607,9 +1610,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             // check for destruction
                             if (a.getSI() == 0) {
                                 // Lets auto-eject if we can!
-                                if (a instanceof LandAirMek) {
+                                if (a instanceof LandAirMek lam) {
                                     // LAMs eject if the CT destroyed switch is on
-                                    LandAirMek lam = (LandAirMek) a;
                                     if (lam.isAutoEject()
                                           && (!getGame().getOptions()
                                           .booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
@@ -1844,12 +1846,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             distribution[l % doors] = distribution[l % doors] + 1;
                         }
                         // ok, now lets launch them
-                        r = new Report(9380);
-                        r.add(entity.getDisplayName());
-                        r.subject = entity.getId();
-                        r.add(nLaunched);
-                        r.add("bay " + currentBay.getBayNumber() + " (" + doors + " doors)");
-                        addReport(r);
+                        report = new Report(9380);
+                        report.add(entity.getDisplayName());
+                        report.subject = entity.getId();
+                        report.add(nLaunched);
+                        report.add("bay " + currentBay.getBayNumber() + " (" + doors + " doors)");
+                        addReport(report);
                         int currentDoor = 0;
                         int fighterCount = 0;
                         boolean doorDamage = false;
@@ -1888,9 +1890,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             Entity fighter = getGame().getEntity(fighterId);
                             if (!gameManager.launchUnit(entity, fighter, curPos, curFacing, step.getVelocity(),
                                   step.getAltitude(), step.getVectors(), bonus)) {
-                                logger.error("Server was told to unload "
-                                      + fighter.getDisplayName() + " from " + entity.getDisplayName()
-                                      + " into " + curPos.getBoardNum());
+                                logger.error("Server was told to unload {} from {} into {}",
+                                      fighter.getDisplayName(),
+                                      entity.getDisplayName(),
+                                      curPos.getBoardNum());
                             }
                             if (doorReport != null) {
                                 addReport(doorReport);
@@ -1905,28 +1908,26 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 if (step.getType() == MoveStepType.UNDOCK) {
                     TreeMap<Integer, Vector<Integer>> launched = step.getLaunched();
                     Set<Integer> collars = launched.keySet();
-                    Iterator<Integer> collarIter = collars.iterator();
-                    while (collarIter.hasNext()) {
-                        int collarId = collarIter.next();
+                    for (int collarId : collars) {
                         Vector<Integer> launches = launched.get(collarId);
                         int nLaunched = launches.size();
                         // ok, now lets launch them
-                        r = new Report(9380);
-                        r.add(entity.getDisplayName());
-                        r.subject = entity.getId();
-                        r.add(nLaunched);
-                        r.add("collar " + collarId);
-                        addReport(r);
+                        report = new Report(9380);
+                        report.add(entity.getDisplayName());
+                        report.subject = entity.getId();
+                        report.add(nLaunched);
+                        report.add("collar " + collarId);
+                        addReport(report);
                         for (int dropShipId : launches) {
                             // check to see if we are in the same door
                             Entity ds = getGame().getEntity(dropShipId);
                             if (!gameManager.launchUnit(entity, ds, curPos, curFacing,
                                   step.getVelocity(), step.getAltitude(),
                                   step.getVectors(), 0)) {
-                                logger.error("Error! Server was told to unload "
-                                      + ds.getDisplayName() + " from "
-                                      + entity.getDisplayName() + " into "
-                                      + curPos.getBoardNum());
+                                logger.error("Error! Server was told to unload {} from {} into {}",
+                                      ds.getDisplayName(),
+                                      entity.getDisplayName(),
+                                      curPos.getBoardNum());
                             }
                         }
                     }
@@ -1944,11 +1945,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         Vector<Integer> drops = dropped.get(bayId);
                         int nDropped = drops.size();
                         // ok, now lets drop them
-                        r = new Report(9386);
-                        r.add(entity.getDisplayName());
-                        r.subject = entity.getId();
-                        r.add(nDropped);
-                        addReport(r);
+                        report = new Report(9386);
+                        report.add(entity.getDisplayName());
+                        report.subject = entity.getId();
+                        report.add(nDropped);
+                        addReport(report);
                         Report dropEntityReport;
                         for (int unitId : drops) {
                             Entity drop = getGame().getEntity(unitId);
@@ -1959,11 +1960,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             // currently this applies to Bays only.
                             if (!drop.isInfantry() && Compute.d6(2) == 2) {
                                 if (currentBay instanceof Bay cbBay) {
-                                    r = new Report(9390);
-                                    r.subject = entity.getId();
-                                    r.indent(1);
-                                    r.add(currentBay.getType());
-                                    addReport(r);
+                                    report = new Report(9390);
+                                    report.subject = entity.getId();
+                                    report.indent(1);
+                                    report.add(currentBay.getType());
+                                    addReport(report);
                                     cbBay.destroyDoorNext();
                                 }
                             }
@@ -2033,7 +2034,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                   && entity.hasSearchlight()) {
                 final boolean SearchOn = !entity.isUsingSearchlight();
                 entity.setSearchlightState(SearchOn);
-                if (gameManager.doBlind()) { // if double blind, we may need to filter the
+                if (gameManager.doBlind()) { // if double-blind, we may need to filter the
                     // players that receive this message
                     List<Player> playersVector = getGame().getPlayersList();
                     Vector<Player> vCanSee = gameManager.whoCanSee(entity);
@@ -2049,7 +2050,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                         + (SearchOn ? "on" : "off") + '.');
                         }
                     }
-                } else { // No double blind, everyone can see this
+                } else { // No double-blind, everyone can see this
                     gameManager.sendServerChat(
                           entity.getDisplayName() + " switched searchlight "
                                 + (SearchOn ? "on" : "off") + '.');
@@ -2261,8 +2262,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // check for dig in or fortify
-            if (entity instanceof Infantry) {
-                Infantry inf = (Infantry) entity;
+            if (entity instanceof Infantry inf) {
                 if (step.getType() == MoveStepType.DIG_IN) {
                     inf.setDugIn(Infantry.DUG_IN_WORKING);
                     continue;
@@ -2293,8 +2293,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // check for tank fortify
-            if (entity instanceof Tank) {
-                Tank tnk = (Tank) entity;
+            if (entity instanceof Tank tnk) {
                 if (step.getType() == MoveStepType.FORTIFY) {
                     if (!tnk.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
                         gameManager.sendServerChat(entity.getDisplayName()
@@ -2371,7 +2370,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             int buildingMove = entity.checkMovementInBuilding(step, prevStep, curPos, lastPos);
             curVTOLElevation = step.getElevation();
             curAltitude = step.getAltitude();
-            curElevation = step.getElevation();
+            int curElevation = step.getElevation();
             curClimbMode = step.climbMode();
             // set elevation in case of collapses
             entity.setElevation(step.getElevation());
@@ -2555,11 +2554,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         }
                         if (sideslipDistance > 0) {
                             sideslipped = true;
-                            r = new Report(2100);
-                            r.subject = entity.getId();
-                            r.addDesc(entity);
-                            r.add(sideslipDistance);
-                            addReport(r);
+                            report = new Report(2100);
+                            report.subject = entity.getId();
+                            report.addDesc(entity);
+                            report.add(sideslipDistance);
+                            addReport(report);
 
                             if (gameManager.processSkid(entity, start, elev, skidDirection,
                                   sideslipDistance, (null == prevStep) ? step : prevStep,
@@ -2611,21 +2610,21 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         if ((0 == curHex.terrainsPresent())
                               || (step.getClearance() > 0)) {
                             if (entity instanceof VTOL) {
-                                r = new Report(2208);
+                                report = new Report(2208);
                             } else {
-                                r = new Report(2206);
+                                report = new Report(2206);
                             }
-                            r.addDesc(entity);
-                            r.subject = entity.getId();
-                            addReport(r);
+                            report.addDesc(entity);
+                            report.subject = entity.getId();
+                            addReport(report);
                             mpUsed = step.getMpUsed() + 1;
                             fellDuringMovement = true;
                             break;
                         }
-                        r = new Report(2207);
-                        r.addDesc(entity);
-                        r.subject = entity.getId();
-                        addReport(r);
+                        report = new Report(2207);
+                        report.addDesc(entity);
+                        report.subject = entity.getId();
+                        addReport(report);
                         // until we get a rules clarification assume that the
                         // entity is both giver and taker
                         // for charge damage
@@ -2652,20 +2651,20 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             if (step.getType() == MoveStepType.CHAFF) {
                 List<Mounted<?>> chaffDispensers = entity.getMiscEquipment(MiscType.F_CHAFF_POD)
-                      .stream().filter(dispenser -> dispenser.isReady())
+                      .stream().filter(Mounted::isReady)
                       .collect(Collectors.toList());
-                if (chaffDispensers.size() > 0) {
+                if (!chaffDispensers.isEmpty()) {
                     chaffDispensers.get(0).setFired(true);
                     gameManager.createSmoke(curPos, getGame().getBoard(step.getBoardId()),
                           SmokeCloud.SMOKE_CHAFF_LIGHT, 1);
                     Hex hex = getGame().getBoard(curBoardId).getHex(curPos);
                     hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_CHAFF_LIGHT));
                     gameManager.sendChangedHex(curPos);
-                    r = new Report(2512)
+                    report = new Report(2512)
                           .addDesc(entity)
                           .subject(entity.getId());
 
-                    addReport(r);
+                    addReport(report);
                 }
             }
 
@@ -2683,10 +2682,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                           curPos, rollTarget, false)) {
                         entity.setStuck(true);
                         entity.setCanUnstickByJumping(true);
-                        r = new Report(2081);
-                        r.add(entity.getDisplayName());
-                        r.subject = entity.getId();
-                        addReport(r);
+                        report = new Report(2081);
+                        report.add(entity.getDisplayName());
+                        report.subject = entity.getId();
+                        addReport(report);
                         // check for quicksand
                         addReport(gameManager.checkQuickSand(curPos));
                         // check for accidental stacking violation
@@ -2737,14 +2736,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         heat /= 2;
                     }
                     entity.heatFromExternal += heat;
-                    r = new Report(2115);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    r.add(heat);
-                    addReport(r);
+                    report = new Report(2115);
+                    report.subject = entity.getId();
+                    report.addDesc(entity);
+                    report.add(heat);
+                    addReport(report);
                     if (isMekWithHeatDissipatingArmor) {
-                        r = new Report(5550);
-                        addReport(r);
+                        report = new Report(5550);
+                        addReport(report);
                     }
                 }
             }
@@ -2804,7 +2803,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                   ((stepMoveType == EntityMovementType.MOVE_JUMP) && !i.hasMoreElements())) {
                 boolean boom = false;
                 if (isOnGround) {
-                    boom = gameManager.checkVibrabombs(entity, curPos, false, lastPos, curPos,
+                    boom = gameManager.checkVibraBombs(entity, curPos, false, lastPos, curPos,
                           gameManager.getMainPhaseReport());
                 }
                 if (getGame().containsMinefield(curPos)) {
@@ -2849,10 +2848,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     Player owner = entity.getOwner();
                     for (Minefield mf : getGame().getMinefields(curPos)) {
                         if (!owner.containsMinefield(mf)) {
-                            r = new Report(2120);
-                            r.subject = entity.getId();
-                            r.add(entity.getShortName(), true);
-                            addReport(r);
+                            report = new Report(2120);
+                            report.subject = entity.getId();
+                            report.add(entity.getShortName(), true);
+                            addReport(report);
                             gameManager.revealMinefield(owner, mf);
                         }
                     }
@@ -2919,9 +2918,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // need to temporarily reset entity's position so it doesn't
                 // fall in the ice
                 entity.setPosition(curPos);
-                r = new Report(2410);
-                r.addDesc(entity);
-                addReport(r);
+                report = new Report(2410);
+                report.addDesc(entity);
+                addReport(report);
                 addReport(gameManager.resolveIceBroken(lastPos));
                 // ok now set back
                 entity.setPosition(lastPos);
@@ -2934,11 +2933,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                   && !(isPavementStep && curHex.containsTerrain(Terrains.BRIDGE))) {
                 if (step.getElevation() == 0) {
                     Roll diceRoll = Compute.rollD6(1);
-                    r = new Report(2118);
-                    r.addDesc(entity);
-                    r.add(diceRoll);
-                    r.subject = entity.getId();
-                    addReport(r);
+                    report = new Report(2118);
+                    report.addDesc(entity);
+                    report.add(diceRoll);
+                    report.subject = entity.getId();
+                    addReport(report);
 
                     if (diceRoll.getIntValue() == 6) {
                         entity.setPosition(curPos);
@@ -2948,9 +2947,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
                 // or intersecting it
                 else if ((step.getElevation() + entity.height()) == 0) {
-                    r = new Report(2410);
-                    r.addDesc(entity);
-                    addReport(r);
+                    report = new Report(2410);
+                    report.addDesc(entity);
+                    addReport(report);
                     addReport(gameManager.resolveIceBroken(curPos));
                 }
             }
@@ -2991,8 +2990,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         // unit and the other should be able to have a turn.
                         if (!entity.canLoad(loaded) || !loaded.isLoadableThisTurn()) {
                             // Something is fishy in Denmark.
-                            logger
-                                  .error(entity.getShortName() + " can not load " + loaded.getShortName());
+                            logger.error("{} can not load {}", entity.getShortName(), loaded.getShortName());
                             loaded = null;
                         } else {
                             // Have the deployed unit load the indicated unit.
@@ -3011,8 +3009,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                 // We were supposed to find someone to load.
                 if (loaded == null) {
-                    logger
-                          .error("Could not find unit for " + entity.getShortName() + " to load in " + curPos);
+                    logger.error("Could not find unit for {} to load in {}", entity.getShortName(), curPos);
                 }
 
             } // End STEP_LOAD
@@ -3026,7 +3023,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                 // This should never ever happen, but just in case...
                 if (loaded == null) {
-                    logger.error("Could not find unit for " + entity.getShortName() + " to tow.");
+                    logger.error("Could not find unit for {} to tow.", entity.getShortName());
                     continue;
                 }
 
@@ -3040,7 +3037,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // streamlined?
                 if (!entity.canTow(loaded.getId())) {
                     // Something is fishy in Denmark.
-                    logger.error(entity.getShortName() + " can not tow " + loaded.getShortName());
+                    logger.error("{} can not tow {}", entity.getShortName(), loaded.getShortName());
                 } else {
                     // Have the deployed unit load the indicated unit.
                     gameManager.towUnit(entity, loaded);
@@ -3053,19 +3050,19 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 if (targetToMountInto instanceof Entity entityToMountInto) {
                     if (!entityToMountInto.canLoad(entity)) {
                         // Something is fishy in Denmark.
-                        logger
-                              .error(entityToMountInto.getShortName() + " can not load " + entity.getShortName());
+                        logger.error("(Mounted) {} can not load {}", entityToMountInto.getShortName(),
+                              entity.getShortName());
                     } else {
                         // Have the indicated unit load this unit.
                         entity.setDone(true);
                         gameManager.loadUnit(entityToMountInto, entity, entity.getTargetBay());
                         Bay currentBay = entityToMountInto.getBay(entity);
                         if ((null != currentBay) && (Compute.d6(2) == 2)) {
-                            r = new Report(9390);
-                            r.subject = entity.getId();
-                            r.indent(1);
-                            r.add(currentBay.getType());
-                            addReport(r);
+                            report = new Report(9390);
+                            report.subject = entity.getId();
+                            report.indent(1);
+                            report.add(currentBay.getType());
+                            addReport(report);
                             currentBay.destroyDoorNext();
                         }
                         // Stop looking.
@@ -3090,9 +3087,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                 Integer cargoPickupLocation = step.getAdditionalData(MoveStep.CARGO_LOCATION_KEY);
 
-                // there have to be objects on the ground and we have to be trying to pick up
-                // one of them
-                if ((groundObjects.size() > 0) &&
+                // there have to be objects on the ground, and we have to be trying to pick up one of them
+                if ((!groundObjects.isEmpty()) &&
                       (cargoPickupIndex != null) && (cargoPickupIndex >= 0)
                       && (cargoPickupIndex < groundObjects.size())) {
 
@@ -3101,26 +3097,29 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         getGame().removeGroundObject(step.getPosition(), pickupTarget);
                         entity.pickupGroundObject(pickupTarget, cargoPickupLocation);
 
-                        r = new Report(2513);
-                        r.subject = entity.getId();
-                        r.add(entity.getDisplayName());
-                        r.add(pickupTarget.specificName());
-                        r.add(step.getPosition().toFriendlyString());
-                        addReport(r);
+                        report = new Report(2513);
+                        report.subject = entity.getId();
+                        report.add(entity.getDisplayName());
+                        report.add(pickupTarget.specificName());
+                        report.add(step.getPosition().toFriendlyString());
+                        addReport(report);
 
                         // a pickup should be the last step. Send an update for the overall ground
                         // object list.
                         gameManager.sendGroundObjectUpdate();
                         break;
                     } else {
-                        logger.warn(entity.getShortName()
-                              + " attempted to pick up object but it is too heavy. Carry capacity: "
-                              + entity.maxGroundObjectTonnage() + ", object weight: " + pickupTarget.getTonnage());
+                        logger.warn(
+                              "{} attempted to pick up object but it is too heavy. Carry capacity: {}, object weight: {}",
+                              entity.getShortName(),
+                              entity.maxGroundObjectTonnage(),
+                              pickupTarget.getTonnage());
                     }
                 } else {
-                    logger
-                          .warn(entity.getShortName() + " attempted to pick up non existent object at coords "
-                                + step.getPosition() + ", index " + cargoPickupIndex);
+                    logger.warn("{} attempted to pick up non existent object at coords {}, index {}",
+                          entity.getShortName(),
+                          step.getPosition(),
+                          cargoPickupIndex);
                 }
             }
 
@@ -3128,9 +3127,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 Integer cargoLocation = step.getAdditionalData(MoveStep.CARGO_LOCATION_KEY);
                 ICarryable cargo;
 
-                // if we're not supplied a specific location, then the assumption is we only
-                // have one
-                // piece of cargo and we're going to just drop that one
+                // if we're not supplied a specific location, then the assumption is we only have one piece of cargo,
+                // and we're going to just drop that one
                 if (cargoLocation == null) {
                     cargo = entity.getDistinctCarriedObjects().get(0);
                 } else {
@@ -3144,17 +3142,17 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     cargoDestroyed = gameManager.damageCargo(step.isFlying() || step.isJumping(), entity, cargo);
                 }
 
-                // note that this should not be moved into the "!isLastStep" block above
-                // as cargo may be either unloaded peacefully or dumped on the move
+                // note that this should not be moved into the "!isLastStep" block above as cargo may be either
+                // unloaded peacefully or dumped on the move
                 if (!cargoDestroyed) {
                     getGame().placeGroundObject(step.getPosition(), cargo);
 
-                    r = new Report(2514);
-                    r.subject = entity.getId();
-                    r.add(entity.getDisplayName());
-                    r.add(cargo.generalName());
-                    r.add(step.getPosition().toFriendlyString());
-                    addReport(r);
+                    report = new Report(2514);
+                    report.subject = entity.getId();
+                    report.add(entity.getDisplayName());
+                    report.add(cargo.generalName());
+                    report.add(step.getPosition().toFriendlyString());
+                    addReport(report);
 
                     // a drop changes board state. Send an update for the overall ground object
                     // list.
@@ -3181,39 +3179,39 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 Roll diceRoll = Compute.rollD6(2);
 
                 if (isDS) {
-                    r = new Report(9388);
+                    report = new Report(9388);
                 } else {
-                    r = new Report(9381);
+                    report = new Report(9381);
                 }
 
-                r.subject = entity.getId();
-                r.add(entity.getDisplayName());
-                r.add(loader.getDisplayName());
-                r.add(rollTarget);
-                r.add(diceRoll);
-                r.newlines = 0;
-                r.indent(1);
+                report.subject = entity.getId();
+                report.add(entity.getDisplayName());
+                report.add(loader.getDisplayName());
+                report.add(rollTarget);
+                report.add(diceRoll);
+                report.newlines = 0;
+                report.indent(1);
 
                 if (diceRoll.getIntValue() < rollTarget.getValue()) {
-                    r.choose(false);
-                    addReport(r);
+                    report.choose(false);
+                    addReport(report);
                     // damage unit
                     HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
                     addReport(gameManager.damageEntity(entity, hit,
                           2 * (rollTarget.getValue() - diceRoll.getIntValue())));
                 } else {
-                    r.choose(true);
-                    addReport(r);
+                    report.choose(true);
+                    addReport(report);
                     recovered = true;
                 }
                 // check for door damage
                 if (diceRoll.getIntValue() == 2) {
                     loader.damageDoorRecovery(entity);
-                    r = new Report(9384);
-                    r.subject = entity.getId();
-                    r.indent(0);
-                    r.add(loader.getDisplayName());
-                    addReport(r);
+                    report = new Report(9384);
+                    report.subject = entity.getId();
+                    report.indent(0);
+                    report.add(loader.getDisplayName());
+                    addReport(report);
                 }
             }
 
@@ -3235,18 +3233,18 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
                 if (!gameManager.unloadUnit(entity, unloaded, unloadPos, unloadFacing,
                       step.getElevation())) {
-                    logger.error("Server was told to unload "
-                          + unloaded.getDisplayName() + " from "
-                          + entity.getDisplayName() + " into "
-                          + curPos.getBoardNum());
+                    logger.error("Server was told to unload {} from {} into {}",
+                          unloaded.getDisplayName(),
+                          entity.getDisplayName(),
+                          curPos.getBoardNum());
                 } else {
                     // Report unloading; anyone who can see the carrier should see the new unit too.
-                    r = new Report(2514);
-                    r.subject = unloaded.getId();
-                    r.add(entity.getDisplayName());
-                    r.add(unloaded.generalName());
-                    r.add(unloadPos.toFriendlyString());
-                    addReport(r);
+                    report = new Report(2514);
+                    report.subject = unloaded.getId();
+                    report.add(entity.getDisplayName());
+                    report.add(unloaded.generalName());
+                    report.add(unloadPos.toFriendlyString());
+                    addReport(report);
                 }
                 // some additional stuff to take care of for small
                 // craft/DropShip unloading
@@ -3254,11 +3252,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     if ((null != currentBay) && (!(unloaded.isInfantry()))
                           && (Compute.d6(2) == 2)
                     ) {
-                        r = new Report(9390);
-                        r.subject = entity.getId();
-                        r.indent(1);
-                        r.add(currentBay.getType());
-                        addReport(r);
+                        report = new Report(9390);
+                        report.subject = entity.getId();
+                        report.indent(1);
+                        report.add(currentBay.getType());
+                        addReport(report);
                         currentBay.destroyDoorNext();
                     }
                     // now apply any damage to bay doors
@@ -3278,7 +3276,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     if (!(unloaded instanceof Infantry)) {
                         GameTurn newTurn = new SpecificEntityTurn(
                               ((Entity) unloaded).getOwner().getId(),
-                              ((Entity) unloaded).getId());
+                              unloaded.getId());
                         // Need to set the new turn's multiTurn state
                         newTurn.setMultiTurn(true);
                         getGame().insertNextTurn(newTurn);
@@ -3296,9 +3294,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     unloadPos = step.getTargetPosition();
                 }
                 if (!gameManager.disconnectUnit(entity, unloaded, unloadPos)) {
-                    logger.error(String.format(
-                          "Server was told to disconnect %s from %s into %s",
-                          unloaded.getDisplayName(), entity.getDisplayName(), curPos.getBoardNum()));
+                    logger.error("Server was told to disconnect {} from {} into {}",
+                          unloaded.getDisplayName(),
+                          entity.getDisplayName(),
+                          curPos.getBoardNum());
                 }
             }
 
@@ -3368,21 +3367,17 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                 boolean collapsed = false;
                 if ((bldgEntered != null)) {
-                    String reason;
-                    if (bldgExited == null) {
-                        // If we're not leaving a building, just handle the "entered".
-                        reason = "entering";
-                    } else if (bldgExited.equals(bldgEntered) && !(entity instanceof ProtoMek)
-                          && !(entity instanceof Infantry)) {
-                        // If we're moving within the same building, just handle the "within".
-                        reason = "moving in";
-                    } else {
-                        // If we have different buildings, roll for each.
-                        reason = "entering";
-                    }
+                    String reason = getReason(bldgExited, bldgEntered);
 
-                    gameManager.passBuildingWall(entity, bldgEntered, lastPos, curPos, distance, reason,
-                          step.isThisStepBackwards(), lastStepMoveType, true);
+                    gameManager.passBuildingWall(entity,
+                          bldgEntered,
+                          lastPos,
+                          curPos,
+                          distance,
+                          reason,
+                          step.isThisStepBackwards(),
+                          lastStepMoveType,
+                          true);
                     gameManager.addAffectedBldg(bldgEntered, collapsed);
                 }
 
@@ -3419,10 +3414,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // back to the client.
                     if (collapse && wigeFlyingOver) {
                         curElevation--;
-                        r = new Report(2378);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
-                        addReport(r);
+                        report = new Report(2378);
+                        report.subject = entity.getId();
+                        report.addDesc(entity);
+                        addReport(report);
                         continueTurnFromLevelDrop = true;
                         entity.setPosition(curPos);
                         entity.setFacing(curFacing);
@@ -3437,7 +3432,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             boolean vehicleAffectedByCliff = entity instanceof Tank
                   && !entity.isAirborneVTOLorWIGE();
             boolean quadveeVehMode = entity instanceof QuadVee
-                  && ((QuadVee) entity).getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
+                  && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
             boolean mekAffectedByCliff = (entity instanceof Mek || entity instanceof ProtoMek)
                   && moveType != EntityMovementType.MOVE_JUMP
                   && !entity.isAero();
@@ -3467,7 +3462,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // Meks and Protomeks moving down a cliff
-            // Quadvees in vee mode ignore PSRs to avoid falls, IO p.133
+            // QuadVees in vee mode ignore PSRs to avoid falls, IO p.133
             if (mekAffectedByCliff && !quadveeVehMode && isDownCliff && !isPavementStep) {
                 rollTarget = entity.getBasePilotingRoll(moveType);
                 rollTarget.append(new PilotingRollData(entity.getId(), -stepHeight - 1, "moving down a sheer cliff"));
@@ -3485,10 +3480,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 rollTarget.append(new PilotingRollData(entity.getId(), stepHeight, "moving up a sheer cliff"));
                 if (gameManager.doSkillCheckWhileMoving(entity, lastElevation,
                       lastPos, lastPos, rollTarget, false) > 0) {
-                    r = new Report(2209);
-                    r.addDesc(entity);
-                    r.subject = entity.getId();
-                    addReport(r);
+                    report = new Report(2209);
+                    report.addDesc(entity);
+                    report.subject = entity.getId();
+                    addReport(report);
                     addNewLines();
                     curPos = entity.getPosition();
                     mpUsed = step.getMpUsed();
@@ -3544,11 +3539,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 Building bldg = getGame().getBoard(curBoardId).getBuildingAt(pos);
                 Hex hex = getGame().getBoard(curBoardId).getHex(pos);
 
-                r = new Report(3443);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                r.add(bldg.getName());
-                gameManager.getMainPhaseReport().add(r);
+                report = new Report(3443);
+                report.subject = entity.getId();
+                report.addDesc(entity);
+                report.add(bldg.getName());
+                gameManager.getMainPhaseReport().add(report);
 
                 final int cf = bldg.getCurrentCF(pos);
                 final int numFloors = Math.max(0, hex.terrainLevel(Terrains.BLDG_ELEV));
@@ -3588,6 +3583,22 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
         }
 
+    }
+
+    private String getReason(Building bldgExited, Building bldgEntered) {
+        String reason;
+        if (bldgExited == null) {
+            // If we're not leaving a building, just handle the "entered".
+            reason = "entering";
+        } else if (bldgExited.equals(bldgEntered) && !(entity instanceof ProtoMek)
+              && !(entity instanceof Infantry)) {
+            // If we're moving within the same building, just handle the "within".
+            reason = "moving in";
+        } else {
+            // If we have different buildings, roll for each.
+            reason = "entering";
+        }
+        return reason;
     }
 
     /**

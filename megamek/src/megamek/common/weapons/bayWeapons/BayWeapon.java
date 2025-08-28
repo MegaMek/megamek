@@ -57,7 +57,7 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.BayWeaponHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponIndirectFireHandler;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * This is my attempt to get weapon bays treated as normal weapons rather than the current hack in place

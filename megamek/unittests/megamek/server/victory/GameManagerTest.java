@@ -49,7 +49,7 @@ import megamek.common.Player;
 import megamek.common.force.Forces;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.Test;
 
 class GameManagerTest {

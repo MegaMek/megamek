@@ -31,7 +31,7 @@
  * affiliated with Microsoft.
  */
 
-package megamek.server.scriptedevent;
+package megamek.server.scriptedEvent;
 
 import megamek.server.trigger.AbstractOneTimeTrigger;
 import megamek.server.trigger.OnceTrigger;

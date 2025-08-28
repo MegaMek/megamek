@@ -1,8 +1,7 @@
 /*
-
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2014 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,7 +37,7 @@ package megamek.server.commands;
 
 import megamek.common.Player;
 import megamek.server.Server;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * This command allows a player to allow another player to switch teams.

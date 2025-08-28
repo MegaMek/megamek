@@ -54,7 +54,7 @@ import megamek.common.weapons.bayWeapons.subCapital.SubCapLaserBayWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.WeaponHandler;
 import megamek.common.weapons.handlers.lrm.LRMSwarmHandler;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * A class representing a weapon.

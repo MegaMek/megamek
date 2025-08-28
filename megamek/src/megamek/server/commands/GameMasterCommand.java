@@ -35,7 +35,7 @@ package megamek.server.commands;
 
 import megamek.common.Player;
 import megamek.server.Server;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * This command starts a vote to allow player to assume the elevated Game Master role

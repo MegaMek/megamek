@@ -45,6 +45,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import jakarta.annotation.Nonnull;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.common.Hex;
 import megamek.common.Player;
@@ -58,6 +59,8 @@ import megamek.common.annotations.Nullable;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
+import megamek.common.containers.PlayerIDAndList;
+import megamek.common.enums.WeaponSortOrder;
 import megamek.common.equipment.Flare;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
@@ -66,13 +69,17 @@ import megamek.common.force.Forces;
 import megamek.common.game.GameTurn;
 import megamek.common.game.InGameObject;
 import megamek.common.loaders.MapSettings;
+import megamek.common.moves.MovePath;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IBasicOption;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.strategicBattleSystems.SBFReportEntry;
 import megamek.common.strategicBattleSystems.SBFTurn;
 import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.FighterSquadron;
 import megamek.common.units.UnitLocation;
 import megamek.server.SmokeCloud;
 
@@ -147,6 +154,30 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
 
         return result;
     }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return a Map of {@link Integer} to {@link Integer}'s value of the object at the specified index
+     */
+    public Map<Integer, Integer> getIntMapToInt(int index) {
+        Object object = getObject(index);
+
+        Map<Integer, Integer> result = new HashMap<>();
+
+        if (object instanceof Map<?, ?> collection) {
+            collection.forEach((key, value) -> {
+                if (key instanceof Integer verifiedKey) {
+                    if (value instanceof Integer verifiedValue) {
+                        result.put(verifiedKey, verifiedValue);
+                    }
+                }
+            });
+        }
+
+        return result;
+    }
+
 
     /**
      * @param index the index of the desired object
@@ -497,6 +528,21 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
+     * @return the {@link FighterSquadron} value of the object at the specified index
+     */
+    public @Nullable FighterSquadron getFighterSquadron(int index) {
+        Object object = getObject(index);
+
+        if (object instanceof FighterSquadron value) {
+            return value;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
      * @return a Vector of {@link Flare}'s value of the object at the specified index
      */
     public Vector<Flare> getFlareVector(int index) {
@@ -605,6 +651,27 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
+     * @return a Vector of {@link Player}'s value of the object at the specified index
+     */
+    public Vector<IBasicOption> getIBasicOptionVector(int index) {
+        Object object = getObject(index);
+
+        Vector<IBasicOption> result = new Vector<>();
+
+        if (object instanceof Vector<?> vector) {
+            for (Object option : vector) {
+                if (option instanceof IBasicOption verifiedValue) {
+                    result.add(verifiedValue);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
      * @return the {@link InGameObject} value of the object at the specified index
      */
     public @Nullable InGameObject getInGameObject(int index) {
@@ -692,6 +759,21 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
+     * @return the {@link MovePath} value of the object at the specified index
+     */
+    public @Nullable MovePath getMovePath(int index) {
+        Object object = getObject(index);
+
+        if (object instanceof MovePath movePath) {
+            return movePath;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
      * @return the {@link PacketCommand} value of the object at the specified index
      */
     public @Nullable PacketCommand getPacketCommand(int index) {
@@ -717,6 +799,44 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
         }
 
         return null;
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return the {@link Player} value of the object at the specified index
+     */
+    public @Nullable Player getPlayer(int index) {
+        Object object = getObject(index);
+
+        if (object instanceof Player value) {
+            return value;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return a Vector of {@link Player}'s value of the object at the specified index
+     */
+    public PlayerIDAndList<BoardLocation> getPlayerIDAndListWithBoardLocation(int index) {
+        Object object = getObject(index);
+
+        PlayerIDAndList<BoardLocation> result = new PlayerIDAndList<>();
+
+        if (object instanceof PlayerIDAndList<?> collection) {
+            result.setPlayerID(collection.getPlayerID());
+
+            for (Object player : collection) {
+                if (player instanceof BoardLocation value) {
+                    result.add(value);
+                }
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -793,6 +913,21 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
+     * @return the {@link megamek.common.strategicBattleSystems.SBFMovePath} value of the object at the specified index
+     */
+    public @Nullable SBFMovePath getSBFMovePath(int index) {
+        Object object = getObject(index);
+
+        if (object instanceof SBFMovePath sbfMovePath) {
+            return sbfMovePath;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
      * @return a List of {@link SBFReportEntry}'s value of the object at the specified index
      */
     public List<SBFReportEntry> getSBFReportEntryList(int index) {
@@ -846,6 +981,22 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
 
         return null;
     }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return the {@link SpecialHexDisplay} value of the object at the specified index
+     */
+    public @Nullable SpecialHexDisplay getSpecialHexDisplay(int index) {
+        Object object = getObject(index);
+
+        if (object instanceof SpecialHexDisplay value) {
+            return value;
+        }
+
+        return null;
+    }
+
 
     /**
      * @param index the index of the desired object
@@ -910,7 +1061,23 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
         return result;
     }
 
+    /**
+     * @param index the index of the desired object
+     *
+     * @return the {@link megamek.common.enums.WeaponSortOrder} value of the object at the specified index
+     */
+    public @Nullable WeaponSortOrder getWeaponSortOrder(int index) {
+        Object object = getObject(index);
+
+        if (object instanceof WeaponSortOrder value) {
+            return value;
+        }
+
+        return null;
+    }
+
     @Override
+    @Nonnull
     public String toString() {
         return "Packet [" + command + "] - " + Arrays.toString(data);
     }

@@ -78,7 +78,7 @@ import megamek.common.weapons.handlers.TAGHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryWeaponIndirectHomingHandler;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.server.Server;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 import megamek.utils.ServerFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;

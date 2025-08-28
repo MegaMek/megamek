@@ -31,48 +31,43 @@
  * affiliated with Microsoft.
  */
 
-package megamek.server.scriptedevent;
 
-import java.awt.Image;
+package megamek.server.totalWarfare;
 
-import megamek.client.ui.Base64Image;
-import megamek.common.annotations.Nullable;
-import megamek.common.net.enums.PacketCommand;
-import megamek.common.net.packets.Packet;
-import megamek.server.IGameManager;
-import megamek.server.trigger.Trigger;
+import java.util.Vector;
 
-public class MessageTriggeredActiveEvent implements TriggeredActiveEvent {
+import megamek.common.Report;
+import megamek.common.game.Game;
 
-    private final Trigger trigger;
-    private final String message;
-    private final String header;
-    private final Base64Image image;
+/**
+ * Classes working closely with TWGameManager can extend this class for less verbose access to report methods and the
+ * Game instance.
+ */
+abstract class AbstractTWRuleHandler {
 
-    public MessageTriggeredActiveEvent(Trigger trigger, String header, String message, @Nullable Image image) {
-        this.trigger = trigger;
-        this.message = message;
-        this.header = header;
-        this.image = new Base64Image(image);
+    final TWGameManager gameManager;
+
+    AbstractTWRuleHandler(TWGameManager gameManager) {
+        this.gameManager = gameManager;
     }
 
-    public MessageTriggeredActiveEvent(Trigger trigger, String header, String message) {
-        this(trigger, header, message, null);
+    void addReport(Report report) {
+        gameManager.addReport(report);
     }
 
-    @Override
-    public Trigger trigger() {
-        return trigger;
+    void addReport(Vector<Report> reports) {
+        gameManager.addReport(reports);
     }
 
-    @Override
-    public void process(IGameManager gameManager) {
-        gameManager.send(new Packet(PacketCommand.SCRIPTED_MESSAGE, header, message, image));
+    void addReport(Vector<Report> reports, int indent) {
+        gameManager.addReport(reports, indent);
     }
 
-    @Override
-    public String toString() {
-        return "Message: " + trigger + ", \"" + message.substring(0, Math.min(message.length(), 20)) + "...\"";
+    void addNewLines() {
+        gameManager.addNewLines();
     }
 
+    Game getGame() {
+        return gameManager.getGame();
+    }
 }

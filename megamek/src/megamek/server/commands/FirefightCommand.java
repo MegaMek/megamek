@@ -37,14 +37,14 @@ import java.util.List;
 import java.util.Objects;
 
 import megamek.client.ui.Messages;
-import megamek.common.board.Coords;
 import megamek.common.Hex;
+import megamek.common.board.Coords;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.CoordXArgument;
 import megamek.server.commands.arguments.CoordYArgument;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * The Server Command "/firefight" that will put one hex on fire.

@@ -31,7 +31,7 @@
  * affiliated with Microsoft.
  */
 
-package megamek.server.totalwarfare;
+package megamek.server.totalWarfare;
 
 import java.awt.Color;
 import java.util.Vector;
@@ -74,7 +74,7 @@ class HeatResolver extends AbstractTWRuleHandler {
      * Each mek sinks the amount of heat appropriate to its current heat capacity.
      */
     void resolveHeat() {
-        Report r;
+        Report report;
         // Heat phase header
         addReport(new Report(5000, Report.PUBLIC));
         for (Entity entity : getGame().inGameTWEntities()) {
@@ -109,25 +109,25 @@ class HeatResolver extends AbstractTWRuleHandler {
                 }
 
                 // RHS activation report
-                r = new Report(5540);
-                r.subject = entity.getId();
-                r.indent();
-                r.addDesc(entity);
-                r.add(radicalHSBonus);
-                rhsReports.add(r);
+                report = new Report(5540);
+                report.subject = entity.getId();
+                report.indent();
+                report.addDesc(entity);
+                report.add(radicalHSBonus);
+                rhsReports.add(report);
 
                 Roll diceRoll = Compute.rollD6(2);
                 entity.setConsecutiveRHSUses(entity.getConsecutiveRHSUses() + 1);
                 int targetNumber = ServerHelper.radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses());
                 boolean rhsFailure = diceRoll.getIntValue() < targetNumber;
 
-                r = new Report(5541);
-                r.indent(2);
-                r.subject = entity.getId();
-                r.add(targetNumber);
-                r.add(diceRoll);
-                r.choose(rhsFailure);
-                rhsReports.add(r);
+                report = new Report(5541);
+                report.indent(2);
+                report.subject = entity.getId();
+                report.add(targetNumber);
+                report.add(diceRoll);
+                report.choose(rhsFailure);
+                rhsReports.add(report);
 
                 if (rhsFailure) {
                     entity.setHasDamagedRHS(true);
@@ -168,13 +168,13 @@ class HeatResolver extends AbstractTWRuleHandler {
                     heatToAdd /= 2;
                 }
                 entity.heatFromExternal += heatToAdd;
-                r = new Report(5030);
-                r.add(heatToAdd);
-                r.subject = entity.getId();
-                heatEffectsReports.add(r);
+                report = new Report(5030);
+                report.add(heatToAdd);
+                report.subject = entity.getId();
+                heatEffectsReports.add(report);
                 if (isMekWithHeatDissipatingArmor) {
-                    r = new Report(5550);
-                    heatEffectsReports.add(r);
+                    report = new Report(5550);
+                    heatEffectsReports.add(report);
                 }
             }
 
@@ -189,7 +189,7 @@ class HeatResolver extends AbstractTWRuleHandler {
             }
 
             // heat doesn't matter for non-meks
-            if (!(entity instanceof Mek)) {
+            if (!(entity instanceof Mek mek)) {
                 entity.heat = 0;
                 entity.heatBuildup = 0;
                 entity.heatFromExternal = 0;
@@ -204,10 +204,10 @@ class HeatResolver extends AbstractTWRuleHandler {
                           !entity.isManualShutdown() &&
                           (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)) {
                         entity.setShutDown(false);
-                        r = new Report(5045);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
-                        heatEffectsReports.add(r);
+                        report = new Report(5045);
+                        report.subject = entity.getId();
+                        report.addDesc(entity);
+                        heatEffectsReports.add(report);
                     }
                 } else if (entity.isBATaserShutdown()) {
                     // if we're shutdown by a BA taser, we might activate again
@@ -230,10 +230,10 @@ class HeatResolver extends AbstractTWRuleHandler {
             if (entity.infernos.isStillBurning()) {
                 int infernoHeat = entity.infernos.getHeat();
                 entity.heatFromExternal += infernoHeat;
-                r = new Report(5010);
-                r.subject = entity.getId();
-                r.add(infernoHeat);
-                heatEffectsReports.add(r);
+                report = new Report(5010);
+                report.subject = entity.getId();
+                report.add(infernoHeat);
+                heatEffectsReports.add(report);
             }
 
             // should we even bother for this mek?
@@ -247,41 +247,41 @@ class HeatResolver extends AbstractTWRuleHandler {
             // If a Mek had an active Stealth suite, add 10 heat.
             if (entity.isStealthOn()) {
                 entity.heatBuildup += ArmorType.STEALTH_ARMOR_HEAT;
-                r = new Report(5015);
-                r.subject = entity.getId();
-                heatEffectsReports.add(r);
+                report = new Report(5015);
+                report.subject = entity.getId();
+                heatEffectsReports.add(report);
             }
 
             // Greg: Nova CEWS If a Mek had an active Nova suite, add 2 heat.
             if (entity.hasActiveNovaCEWS()) {
                 entity.heatBuildup += 2;
-                r = new Report(5013);
-                r.subject = entity.getId();
-                heatEffectsReports.add(r);
+                report = new Report(5013);
+                report.subject = entity.getId();
+                heatEffectsReports.add(report);
             }
 
             // void sig adds 10 heat
             if (entity.isVoidSigOn()) {
                 entity.heatBuildup += 10;
-                r = new Report(5016);
-                r.subject = entity.getId();
-                heatEffectsReports.add(r);
+                report = new Report(5016);
+                report.subject = entity.getId();
+                heatEffectsReports.add(report);
             }
 
             // null sig adds 10 heat
             if (entity.isNullSigOn()) {
                 entity.heatBuildup += 10;
-                r = new Report(5017);
-                r.subject = entity.getId();
-                heatEffectsReports.add(r);
+                report = new Report(5017);
+                report.subject = entity.getId();
+                heatEffectsReports.add(report);
             }
 
             // chameleon polarization field adds 6
             if (entity.isChameleonShieldOn()) {
                 entity.heatBuildup += 6;
-                r = new Report(5014);
-                r.subject = entity.getId();
-                heatEffectsReports.add(r);
+                report = new Report(5014);
+                report.subject = entity.getId();
+                heatEffectsReports.add(report);
             }
 
             // If a Mek is in extreme Temperatures, add or subtract one
@@ -295,17 +295,17 @@ class HeatResolver extends AbstractTWRuleHandler {
                 int magma = entityHex.terrainLevel(Terrains.MAGMA);
                 if ((magma > 0) && (entity.getElevation() == 0)) {
                     int heatToAdd = 5 * magma;
-                    if (((Mek) entity).hasIntactHeatDissipatingArmor()) {
+                    if (mek.hasIntactHeatDissipatingArmor()) {
                         heatToAdd /= 2;
                     }
                     entity.heatFromExternal += heatToAdd;
-                    r = new Report(5032);
-                    r.subject = entity.getId();
-                    r.add(heatToAdd);
-                    heatEffectsReports.add(r);
-                    if (((Mek) entity).hasIntactHeatDissipatingArmor()) {
-                        r = new Report(5550);
-                        heatEffectsReports.add(r);
+                    report = new Report(5032);
+                    report.subject = entity.getId();
+                    report.add(heatToAdd);
+                    heatEffectsReports.add(report);
+                    if (mek.hasIntactHeatDissipatingArmor()) {
+                        report = new Report(5550);
+                        heatEffectsReports.add(report);
                     }
                 }
             }
@@ -319,10 +319,10 @@ class HeatResolver extends AbstractTWRuleHandler {
                 vibroHeat += entity.getActiveVibrobladeHeat(Mek.LOC_LEFT_ARM);
 
                 if (vibroHeat > 0) {
-                    r = new Report(5018);
-                    r.subject = entity.getId();
-                    r.add(vibroHeat);
-                    heatEffectsReports.add(r);
+                    report = new Report(5018);
+                    report.subject = entity.getId();
+                    report.add(vibroHeat);
+                    heatEffectsReports.add(report);
                     entity.heatBuildup += vibroHeat;
                 }
             }
@@ -337,10 +337,10 @@ class HeatResolver extends AbstractTWRuleHandler {
                 }
             }
             if (capHeat > 0) {
-                r = new Report(5019);
-                r.subject = entity.getId();
-                r.add(capHeat);
-                heatEffectsReports.add(r);
+                report = new Report(5019);
+                report.subject = entity.getId();
+                report.add(capHeat);
+                heatEffectsReports.add(report);
                 entity.heatBuildup += capHeat;
             }
 
@@ -359,19 +359,19 @@ class HeatResolver extends AbstractTWRuleHandler {
             // Combat computers help manage heat
             if (entity.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {
                 int reduce = Math.min(entity.heatBuildup, 4);
-                r = new Report(5026);
-                r.subject = entity.getId();
-                r.add(reduce);
-                heatEffectsReports.add(r);
+                report = new Report(5026);
+                report.subject = entity.getId();
+                report.add(reduce);
+                heatEffectsReports.add(report);
                 entity.heatBuildup -= reduce;
             }
 
-            if (entity.hasQuirk(OptionsConstants.QUIRK_NEG_FLAWED_COOLING) && ((Mek) entity).isCoolingFlawActive()) {
+            if (entity.hasQuirk(OptionsConstants.QUIRK_NEG_FLAWED_COOLING) && mek.isCoolingFlawActive()) {
                 int flaw = 5;
-                r = new Report(5021);
-                r.subject = entity.getId();
-                r.add(flaw);
-                heatEffectsReports.add(r);
+                report = new Report(5021);
+                report.subject = entity.getId();
+                report.add(flaw);
+                heatEffectsReports.add(report);
                 entity.heatBuildup += flaw;
             }
             // if heat build up is negative due to temperature, set it to 0
@@ -389,39 +389,39 @@ class HeatResolver extends AbstractTWRuleHandler {
             if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_COOLANT_FAILURE) &&
                   entity.getCoolantFailureAmount() > 0) {
                 int failureAmount = entity.getCoolantFailureAmount();
-                r = new Report(5520);
-                r.subject = entity.getId();
-                r.add(failureAmount);
-                heatEffectsReports.add(r);
+                report = new Report(5520);
+                report.subject = entity.getId();
+                report.add(failureAmount);
+                heatEffectsReports.add(report);
             }
 
             // should we use a coolant pod?
             int safeHeat = entity.hasInfernoAmmo() ? 9 : 13;
-            int possibleSinkage = ((Mek) entity).getNumberOfSinks();
+            int possibleSinkage = mek.getNumberOfSinks();
             for (Mounted<?> m : entity.getEquipment()) {
                 if (m.getType() instanceof AmmoType at) {
                     if ((at.getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD) && m.isAmmoUsable()) {
                         EquipmentMode mode = m.curMode();
                         if (mode.equals("dump")) {
-                            r = new Report(5260);
-                            r.subject = entity.getId();
-                            heatEffectsReports.add(r);
+                            report = new Report(5260);
+                            report.subject = entity.getId();
+                            heatEffectsReports.add(report);
                             m.setShotsLeft(0);
                             toSink += possibleSinkage;
                             break;
                         }
                         if (mode.equals("safe") && ((entity.heat - toSink) > safeHeat)) {
-                            r = new Report(5265);
-                            r.subject = entity.getId();
-                            heatEffectsReports.add(r);
+                            report = new Report(5265);
+                            report.subject = entity.getId();
+                            heatEffectsReports.add(report);
                             m.setShotsLeft(0);
                             toSink += possibleSinkage;
                             break;
                         }
                         if (mode.equals("efficient") && ((entity.heat - toSink) >= possibleSinkage)) {
-                            r = new Report(5270);
-                            r.subject = entity.getId();
-                            heatEffectsReports.add(r);
+                            report = new Report(5270);
+                            report.subject = entity.getId();
+                            heatEffectsReports.add(report);
                             m.setShotsLeft(0);
                             toSink += possibleSinkage;
                             break;
@@ -432,14 +432,14 @@ class HeatResolver extends AbstractTWRuleHandler {
 
             toSink = Math.min(toSink, entity.heat);
             entity.heat -= toSink;
-            r = new Report(5035);
-            r.subject = entity.getId();
-            r.addDesc(entity);
-            r.add(entity.heatBuildup);
-            r.add(toSink);
+            report = new Report(5035);
+            report.subject = entity.getId();
+            report.addDesc(entity);
+            report.add(entity.heatBuildup);
+            report.add(toSink);
             Color color = GUIPreferences.getInstance().getColorForHeat(entity.heat, Color.BLACK);
-            r.add(Report.bold(r.fgColor(color, String.valueOf(entity.heat))));
-            addReport(r);
+            report.add(Report.bold(report.fgColor(color, String.valueOf(entity.heat))));
+            addReport(report);
             entity.heatBuildup = 0;
             gameManager.getMainPhaseReport().addAll(rhsReports);
             gameManager.getMainPhaseReport().addAll(heatEffectsReports);
@@ -456,25 +456,25 @@ class HeatResolver extends AbstractTWRuleHandler {
                           (entity.heat >= 28 ? 2 : 0)) - hotDogMod;
                     Roll diceRoll = Compute.rollD6(2);
                     int rollValue = diceRoll.getIntValue();
-                    r = new Report(5040);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    r.add(boom);
+                    report = new Report(5040);
+                    report.subject = entity.getId();
+                    report.addDesc(entity);
+                    report.add(boom);
                     if (entity.getCrew().hasActiveTechOfficer()) {
                         rollValue += 2;
                         String rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + 2]";
-                        r.addDataWithTooltip(rollCalc, diceRoll.getReport());
+                        report.addDataWithTooltip(rollCalc, diceRoll.getReport());
                     } else {
-                        r.add(diceRoll);
+                        report.add(diceRoll);
                     }
 
                     if (rollValue >= boom) {
                         // avoided
-                        r.choose(true);
-                        addReport(r);
+                        report.choose(true);
+                        addReport(report);
                     } else {
-                        r.choose(false);
-                        addReport(r);
+                        report.choose(false);
+                        addReport(report);
                         addReport(gameManager.explodeInfernoAmmoFromHeat(entity));
                     }
                 }
@@ -496,16 +496,16 @@ class HeatResolver extends AbstractTWRuleHandler {
                     if ((entity.heat < 14) && !(entity.isManualShutdown())) {
                         // automatically starts up again
                         entity.setShutDown(false);
-                        r = new Report(5045);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
-                        addReport(r);
+                        report = new Report(5045);
+                        report.subject = entity.getId();
+                        report.addDesc(entity);
+                        addReport(report);
                     } else if (!(entity.isManualShutdown())) {
-                        // If the pilot is KO and we need to roll, auto-fail.
+                        // If the pilot is KO, and we need to roll, auto-fail.
                         if (!entity.getCrew().isActive()) {
-                            r = new Report(5049);
-                            r.subject = entity.getId();
-                            r.addDesc(entity);
+                            report = new Report(5049);
+                            report.subject = entity.getId();
+                            report.addDesc(entity);
                         } else {
                             // roll for startup
                             int startup = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
@@ -526,21 +526,21 @@ class HeatResolver extends AbstractTWRuleHandler {
                                 }
                             }
                             Roll diceRoll = Compute.rollD6(2);
-                            r = new Report(5050);
-                            r.subject = entity.getId();
-                            r.addDesc(entity);
-                            r.add(startup);
-                            r.add(diceRoll);
+                            report = new Report(5050);
+                            report.subject = entity.getId();
+                            report.addDesc(entity);
+                            report.add(startup);
+                            report.add(diceRoll);
 
                             if (diceRoll.getIntValue() >= startup) {
                                 // start 'er back up
                                 entity.setShutDown(false);
-                                r.choose(true);
+                                report.choose(true);
                             } else {
-                                r.choose(false);
+                                report.choose(false);
                             }
                         }
-                        addReport(r);
+                        addReport(report);
                     }
                 } else {
                     // if we're shutdown by a BA taser, we might activate
@@ -562,10 +562,10 @@ class HeatResolver extends AbstractTWRuleHandler {
             // Don't shut down if you just restarted.
             else if ((entity.heat >= 14) && !entity.isShutDown()) {
                 if (entity.heat >= autoShutDownHeat) {
-                    r = new Report(5055);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    addReport(r);
+                    report = new Report(5055);
+                    report.subject = entity.getId();
+                    report.addDesc(entity);
+                    addReport(report);
                     // add a piloting roll and resolve immediately
                     if (entity.canFall()) {
                         getGame().addPSR(new PilotingRollData(entity.getId(), 3, "reactor shutdown"));
@@ -576,17 +576,17 @@ class HeatResolver extends AbstractTWRuleHandler {
                 } else {
                     // Again, pilot KO means shutdown is automatic.
                     if (!entity.getCrew().isActive()) {
-                        r = new Report(5056);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
-                        addReport(r);
+                        report = new Report(5056);
+                        report.subject = entity.getId();
+                        report.addDesc(entity);
+                        addReport(report);
                         entity.setShutDown(true);
                     } else {
                         int shutdown = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
                         TargetRoll target;
                         if (mtHeat) {
                             shutdown -= 5;
-                            target = new TargetRoll(shutdown, "Base tacops shutdown TN");
+                            target = new TargetRoll(shutdown, "Base TacOps shutdown TN");
                             switch (entity.getCrew().getPiloting()) {
                                 case 0:
                                 case 1:
@@ -603,33 +603,32 @@ class HeatResolver extends AbstractTWRuleHandler {
                         } else {
                             target = new TargetRoll(shutdown, "Base shutdown TN");
                         }
-                        Mek mek = (Mek) entity;
                         if (mek.hasRiscHeatSinkOverrideKit()) {
                             target.addModifier(-2, "RISC Heat Sink Override Kit");
                         }
                         Roll diceRoll = Compute.rollD6(2);
                         int rollValue = diceRoll.getIntValue();
-                        r = new Report(5060);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
-                        r.add(target);
+                        report = new Report(5060);
+                        report.subject = entity.getId();
+                        report.addDesc(entity);
+                        report.add(target);
 
                         if (entity.getCrew().hasActiveTechOfficer()) {
                             rollValue += 2;
                             String rollCalc = rollValue + " [" + diceRoll.getIntValue() + "]";
-                            r.addDataWithTooltip(rollCalc, diceRoll.getReport());
+                            report.addDataWithTooltip(rollCalc, diceRoll.getReport());
                         } else {
-                            r.add(diceRoll);
+                            report.add(diceRoll);
                         }
 
                         if (rollValue >= target.getValue()) {
                             // avoided
-                            r.choose(true);
-                            addReport(r);
+                            report.choose(true);
+                            addReport(report);
                         } else {
                             // shutting down...
-                            r.choose(false);
-                            addReport(r);
+                            report.choose(false);
+                            addReport(report);
                             // add a piloting roll and resolve immediately
                             if (entity.canFall()) {
                                 getGame().addPSR(new PilotingRollData(entity.getId(), 3, "reactor shutdown"));
@@ -640,17 +639,17 @@ class HeatResolver extends AbstractTWRuleHandler {
                         }
 
                         if (diceRoll.getIntValue() == 2 && mek.hasRiscHeatSinkOverrideKit()) {
-                            r = new Report(5545);
-                            r.subject(entity.getId());
-                            addReport(r);
+                            report = new Report(5545);
+                            report.subject(entity.getId());
+                            addReport(report);
 
                             int hits = 0;
                             Roll diceRoll2 = Compute.rollD6(2);
-                            r = new Report(6310);
-                            r.subject = entity.getId();
-                            r.add(diceRoll2);
-                            r.newlines = 0;
-                            addReport(r);
+                            report = new Report(6310);
+                            report.subject = entity.getId();
+                            report.add(diceRoll2);
+                            report.newlines = 0;
+                            addReport(report);
 
                             if ((diceRoll2.getIntValue() == 8) || (diceRoll2.getIntValue() == 9)) {
                                 hits = 1;
@@ -660,10 +659,10 @@ class HeatResolver extends AbstractTWRuleHandler {
                                 hits = 3;
                             }
 
-                            r = new Report(6328);
-                            r.subject = entity.getId();
-                            r.add("%d+1=%d".formatted(hits, hits + 1));
-                            addReport(r);
+                            report = new Report(6328);
+                            report.subject = entity.getId();
+                            report.add("%d+1=%d".formatted(hits, hits + 1));
+                            addReport(report);
 
                             hits++;
 
@@ -698,30 +697,30 @@ class HeatResolver extends AbstractTWRuleHandler {
                     // Last line is a crutch; 45 heat should be no roll
                     // but automatic explosion.
                 }
-                if (((Mek) entity).hasLaserHeatSinks()) {
+                if (mek.hasLaserHeatSinks()) {
                     boom--;
                 }
                 Roll diceRoll = Compute.rollD6(2);
                 int rollValue = diceRoll.getIntValue();
-                r = new Report(5065);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                r.add(boom);
+                report = new Report(5065);
+                report.subject = entity.getId();
+                report.addDesc(entity);
+                report.add(boom);
                 if (entity.getCrew().hasActiveTechOfficer()) {
                     rollValue += 2;
                     String rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + 2]";
-                    r.addDataWithTooltip(rollCalc, diceRoll.getReport());
+                    report.addDataWithTooltip(rollCalc, diceRoll.getReport());
                 } else {
-                    r.add(diceRoll);
+                    report.add(diceRoll);
                 }
                 if (rollValue >= boom) {
                     // mek is ok
-                    r.choose(true);
-                    addReport(r);
+                    report.choose(true);
+                    addReport(report);
                 } else {
                     // boom!
-                    r.choose(false);
-                    addReport(r);
+                    report.choose(false);
+                    addReport(report);
                     addReport(gameManager.explodeAmmoFromHeat(entity));
                 }
             }
@@ -729,7 +728,7 @@ class HeatResolver extends AbstractTWRuleHandler {
             // heat effects: mekwarrior damage
             // N.B. The pilot may already be dead.
             int lifeSupportCritCount;
-            boolean torsoMountedCockpit = ((Mek) entity).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED;
+            boolean torsoMountedCockpit = mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED;
             if (torsoMountedCockpit) {
                 lifeSupportCritCount = entity.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM,
                       Mek.SYSTEM_LIFE_SUPPORT,
@@ -777,16 +776,16 @@ class HeatResolver extends AbstractTWRuleHandler {
                     heatLimitDesc = 15;
                     damageToCrew = 1;
                 }
-                if ((((Mek) entity).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) &&
+                if ((mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) &&
                       !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                     damageToCrew += 1;
                 }
-                r = new Report(5070);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                r.add(heatLimitDesc);
-                r.add(damageToCrew);
-                addReport(r);
+                report = new Report(5070);
+                report.subject = entity.getId();
+                report.addDesc(entity);
+                report.add(heatLimitDesc);
+                report.add(damageToCrew);
+                addReport(report);
                 addReport(gameManager.damageCrew(entity, damageToCrew));
             } else if (mtHeat &&
                   (entity.heat >= 32) &&
@@ -804,29 +803,29 @@ class HeatResolver extends AbstractTWRuleHandler {
                     avoidNumber = 8;
                 }
                 avoidNumber -= hotDogMod;
-                r = new Report(5075);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                r.add(avoidNumber);
-                r.add(diceRoll);
+                report = new Report(5075);
+                report.subject = entity.getId();
+                report.addDesc(entity);
+                report.add(avoidNumber);
+                report.add(diceRoll);
 
                 if (diceRoll.getIntValue() >= avoidNumber) {
                     // damage avoided
-                    r.choose(true);
-                    addReport(r);
+                    report.choose(true);
+                    addReport(report);
                 } else {
-                    r.choose(false);
-                    addReport(r);
+                    report.choose(false);
+                    addReport(report);
                     addReport(gameManager.damageCrew(entity, 1));
                 }
             }
 
             // The pilot may have just expired.
             if ((entity.getCrew().isDead() || entity.getCrew().isDoomed()) && !entity.getCrew().isEjected()) {
-                r = new Report(5080);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                addReport(r);
+                report = new Report(5080);
+                report.subject = entity.getId();
+                report.addDesc(entity);
+                addReport(report);
                 addReport(gameManager.destroyEntity(entity, "crew death", true));
             }
 
@@ -841,23 +840,23 @@ class HeatResolver extends AbstractTWRuleHandler {
                         damageNumber = 8;
                     }
                     damageNumber -= hotDogMod;
-                    r = new Report(5085);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    r.add(damageNumber);
-                    r.add(diceRoll);
-                    r.newlines = 0;
+                    report = new Report(5085);
+                    report.subject = entity.getId();
+                    report.addDesc(entity);
+                    report.add(damageNumber);
+                    report.add(diceRoll);
+                    report.newlines = 0;
 
                     if (diceRoll.getIntValue() >= damageNumber) {
-                        r.choose(true);
+                        report.choose(true);
                     } else {
-                        r.choose(false);
-                        addReport(r);
+                        report.choose(false);
+                        addReport(report);
                         addReport(gameManager.oneCriticalEntity(entity, Compute.randomInt(8), false, 0));
                         // add an empty report, for line breaking
-                        r = new Report(1210, Report.PUBLIC);
+                        report = new Report(1210, Report.PUBLIC);
                     }
-                    addReport(r);
+                    addReport(report);
                 }
             }
 
@@ -868,32 +867,31 @@ class HeatResolver extends AbstractTWRuleHandler {
             // reductions in capacity will have no effect.
             if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_COOLANT_FAILURE) &&
                   (entity.heat >= 5) &&
-                  (entity.getCoolantFailureAmount() <
-                        ((Mek) entity).getNumberOfSinks() * (((Mek) entity).hasDoubleHeatSinks() ? 2 : 1))) {
+                  (entity.getCoolantFailureAmount() < mek.getNumberOfSinks() * (mek.hasDoubleHeatSinks() ? 2 : 1))) {
                 Roll diceRoll = Compute.rollD6(2);
                 int hitNumber = 10;
                 hitNumber -= Math.max(0, (int) Math.ceil(entity.heat / 5.0) - 2);
-                r = new Report(5525);
-                r.subject = entity.getId();
-                r.add(entity.getShortName());
-                r.add(hitNumber);
-                r.add(diceRoll);
-                r.newlines = 0;
-                addReport(r);
+                report = new Report(5525);
+                report.subject = entity.getId();
+                report.add(entity.getShortName());
+                report.add(hitNumber);
+                report.add(diceRoll);
+                report.newlines = 0;
+                addReport(report);
 
                 if (diceRoll.getIntValue() >= hitNumber) {
-                    r = new Report(5052);
-                    r.subject = entity.getId();
-                    addReport(r);
-                    r = new Report(5526);
-                    r.subject = entity.getId();
-                    r.add(entity.getShortNameRaw());
-                    addReport(r);
+                    report = new Report(5052);
+                    report.subject = entity.getId();
+                    addReport(report);
+                    report = new Report(5526);
+                    report.subject = entity.getId();
+                    report.add(entity.getShortNameRaw());
+                    addReport(report);
                     entity.addCoolantFailureAmount(1);
                 } else {
-                    r = new Report(5041);
-                    r.subject = entity.getId();
-                    addReport(r);
+                    report = new Report(5041);
+                    report.subject = entity.getId();
+                    addReport(report);
                 }
             }
         }
@@ -909,7 +907,7 @@ class HeatResolver extends AbstractTWRuleHandler {
      */
     void resolveAeroHeat(Entity entity, Vector<Report> vPhaseReport, Vector<Report> rhsReports,
           int radicalHSBonus, int hotDogMod) {
-        Report r;
+        Report report;
 
         // If this aero is part of a squadron, we will deal with its
         // heat with the fighter squadron
@@ -930,9 +928,9 @@ class HeatResolver extends AbstractTWRuleHandler {
         // If an Aero had an active Stealth suite, add 10 heat.
         if (entity.isStealthOn()) {
             entity.heatBuildup += 10;
-            r = new Report(5015);
-            r.subject = entity.getId();
-            vPhaseReport.add(r);
+            report = new Report(5015);
+            report.subject = entity.getId();
+            vPhaseReport.add(report);
         }
 
         // Add or subtract heat due to extreme temperatures TO:AR p60
@@ -941,10 +939,10 @@ class HeatResolver extends AbstractTWRuleHandler {
         // Combat computers help manage heat
         if (entity.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {
             int reduce = Math.min(entity.heatBuildup, 4);
-            r = new Report(5026);
-            r.subject = entity.getId();
-            r.add(reduce);
-            vPhaseReport.add(r);
+            report = new Report(5026);
+            report.subject = entity.getId();
+            report.add(reduce);
+            vPhaseReport.add(report);
             entity.heatBuildup -= reduce;
         }
 
@@ -964,54 +962,53 @@ class HeatResolver extends AbstractTWRuleHandler {
         entity.heat += entity.heatBuildup;
 
         // how much heat can we sink?
-        int tosink = entity.getHeatCapacityWithWater() + radicalHSBonus;
+        int toSink = entity.getHeatCapacityWithWater() + radicalHSBonus;
 
         // should we use a coolant pod?
         int safeHeat = entity.hasInfernoAmmo() ? 9 : 13;
         int possibleSinkage = ((Aero) entity).getHeatSinks();
-        for (Mounted<?> m : entity.getEquipment()) {
-            if (m.getType() instanceof AmmoType) {
-                AmmoType at = (AmmoType) m.getType();
-                if ((at.getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD) && m.isAmmoUsable()) {
-                    EquipmentMode mode = m.curMode();
+        for (Mounted<?> mounted : entity.getEquipment()) {
+            if (mounted.getType() instanceof AmmoType at) {
+                if ((at.getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD) && mounted.isAmmoUsable()) {
+                    EquipmentMode mode = mounted.curMode();
                     if (mode.equals("dump")) {
-                        r = new Report(5260);
-                        r.subject = entity.getId();
-                        vPhaseReport.add(r);
-                        m.setShotsLeft(0);
-                        tosink += possibleSinkage;
+                        report = new Report(5260);
+                        report.subject = entity.getId();
+                        vPhaseReport.add(report);
+                        mounted.setShotsLeft(0);
+                        toSink += possibleSinkage;
                         break;
                     }
-                    if (mode.equals("safe") && ((entity.heat - tosink) > safeHeat)) {
-                        r = new Report(5265);
-                        r.subject = entity.getId();
-                        vPhaseReport.add(r);
-                        m.setShotsLeft(0);
-                        tosink += possibleSinkage;
+                    if (mode.equals("safe") && ((entity.heat - toSink) > safeHeat)) {
+                        report = new Report(5265);
+                        report.subject = entity.getId();
+                        vPhaseReport.add(report);
+                        mounted.setShotsLeft(0);
+                        toSink += possibleSinkage;
                         break;
                     }
                     if (mode.equals("efficient")
-                          && ((entity.heat - tosink) >= possibleSinkage)) {
-                        r = new Report(5270);
-                        r.subject = entity.getId();
-                        vPhaseReport.add(r);
-                        m.setShotsLeft(0);
-                        tosink += possibleSinkage;
+                          && ((entity.heat - toSink) >= possibleSinkage)) {
+                        report = new Report(5270);
+                        report.subject = entity.getId();
+                        vPhaseReport.add(report);
+                        mounted.setShotsLeft(0);
+                        toSink += possibleSinkage;
                         break;
                     }
                 }
             }
         }
 
-        tosink = Math.min(tosink, entity.heat);
-        entity.heat -= tosink;
-        r = new Report(5035);
-        r.subject = entity.getId();
-        r.addDesc(entity);
-        r.add(entity.heatBuildup);
-        r.add(tosink);
-        r.add(entity.heat);
-        vPhaseReport.add(r);
+        toSink = Math.min(toSink, entity.heat);
+        entity.heat -= toSink;
+        report = new Report(5035);
+        report.subject = entity.getId();
+        report.addDesc(entity);
+        report.add(entity.heatBuildup);
+        report.add(toSink);
+        report.add(entity.heat);
+        vPhaseReport.add(report);
         entity.heatBuildup = 0;
         vPhaseReport.addAll(rhsReports);
 
@@ -1055,16 +1052,16 @@ class HeatResolver extends AbstractTWRuleHandler {
                 if ((entity.heat < 14) && !entity.isManualShutdown()) {
                     // automatically starts up again
                     entity.setShutDown(false);
-                    r = new Report(5045);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    vPhaseReport.add(r);
+                    report = new Report(5045);
+                    report.subject = entity.getId();
+                    report.addDesc(entity);
+                    vPhaseReport.add(report);
                 } else if (!entity.isManualShutdown()) {
-                    // If the pilot is KO and we need to roll, auto-fail.
+                    // If the pilot is KO, and we need to roll, auto-fail.
                     if (!entity.getCrew().isActive()) {
-                        r = new Report(5049);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
+                        report = new Report(5049);
+                        report.subject = entity.getId();
+                        report.addDesc(entity);
                     } else {
                         // roll for startup
                         int startup = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
@@ -1086,21 +1083,21 @@ class HeatResolver extends AbstractTWRuleHandler {
                             }
                         }
                         Roll diceRoll = entity.getCrew().rollPilotingSkill();
-                        r = new Report(5050);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
-                        r.add(startup);
-                        r.add(diceRoll);
+                        report = new Report(5050);
+                        report.subject = entity.getId();
+                        report.addDesc(entity);
+                        report.add(startup);
+                        report.add(diceRoll);
 
                         if (diceRoll.getIntValue() >= startup) {
                             // start 'er back up
                             entity.setShutDown(false);
-                            r.choose(true);
+                            report.choose(true);
                         } else {
-                            r.choose(false);
+                            report.choose(false);
                         }
                     }
-                    vPhaseReport.add(r);
+                    vPhaseReport.add(report);
                 }
             } else {
                 // if we're shutdown by a BA taser, we might activate
@@ -1120,19 +1117,19 @@ class HeatResolver extends AbstractTWRuleHandler {
         // heat effects: shutdown!
         else if ((entity.heat >= 14) && !entity.isShutDown()) {
             if (entity.heat >= autoShutDownHeat) {
-                r = new Report(5055);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                vPhaseReport.add(r);
+                report = new Report(5055);
+                report.subject = entity.getId();
+                report.addDesc(entity);
+                vPhaseReport.add(report);
                 // okay, now mark shut down
                 entity.setShutDown(true);
             } else {
                 // Again, pilot KO means shutdown is automatic.
                 if (!entity.getCrew().isActive()) {
-                    r = new Report(5056);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    vPhaseReport.add(r);
+                    report = new Report(5056);
+                    report.subject = entity.getId();
+                    report.addDesc(entity);
+                    vPhaseReport.add(report);
                     entity.setShutDown(true);
                 } else {
                     int shutdown = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
@@ -1154,20 +1151,20 @@ class HeatResolver extends AbstractTWRuleHandler {
                         }
                     }
                     Roll diceRoll = Compute.rollD6(2);
-                    r = new Report(5060);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    r.add(shutdown);
-                    r.add(diceRoll);
+                    report = new Report(5060);
+                    report.subject = entity.getId();
+                    report.addDesc(entity);
+                    report.add(shutdown);
+                    report.add(diceRoll);
 
                     if (diceRoll.getIntValue() >= shutdown) {
                         // avoided
-                        r.choose(true);
-                        vPhaseReport.add(r);
+                        report.choose(true);
+                        vPhaseReport.add(report);
                     } else {
                         // shutting down...
-                        r.choose(false);
-                        vPhaseReport.add(r);
+                        report.choose(false);
+                        vPhaseReport.add(report);
                         // okay, now mark shut down
                         entity.setShutDown(true);
                     }
@@ -1188,22 +1185,22 @@ class HeatResolver extends AbstractTWRuleHandler {
                 // Last line is a crutch; 45 heat should be no roll
                 // but automatic explosion.
             }
-            r = new Report(5065);
-            r.subject = entity.getId();
-            r.addDesc(entity);
-            r.add(boom);
+            report = new Report(5065);
+            report.subject = entity.getId();
+            report.addDesc(entity);
+            report.add(boom);
 
             Roll diceRoll = Compute.rollD6(2);
-            r.add(diceRoll);
+            report.add(diceRoll);
 
             if (diceRoll.getIntValue() >= boom) {
                 // no ammo explosion
-                r.choose(true);
-                vPhaseReport.add(r);
+                report.choose(true);
+                vPhaseReport.add(report);
             } else {
                 // boom!
-                r.choose(false);
-                vPhaseReport.add(r);
+                report.choose(false);
+                vPhaseReport.add(report);
                 vPhaseReport.addAll(gameManager.explodeAmmoFromHeat(entity));
             }
         }
@@ -1212,20 +1209,20 @@ class HeatResolver extends AbstractTWRuleHandler {
         if (entity.heat >= 21) {
             int ouch = (6 + (entity.heat >= 27 ? 3 : 0)) - hotDogMod;
             Roll diceRoll = Compute.rollD6(2);
-            r = new Report(5075);
-            r.subject = entity.getId();
-            r.addDesc(entity);
-            r.add(ouch);
-            r.add(diceRoll);
+            report = new Report(5075);
+            report.subject = entity.getId();
+            report.addDesc(entity);
+            report.add(ouch);
+            report.add(diceRoll);
 
             if (diceRoll.getIntValue() >= ouch) {
                 // pilot is ok
-                r.choose(true);
-                vPhaseReport.add(r);
+                report.choose(true);
+                vPhaseReport.add(report);
             } else {
                 // pilot is hurting
-                r.choose(false);
-                vPhaseReport.add(r);
+                report.choose(false);
+                vPhaseReport.add(report);
                 vPhaseReport.addAll(gameManager.damageCrew(entity, 1));
             }
         }
@@ -1233,16 +1230,16 @@ class HeatResolver extends AbstractTWRuleHandler {
         // The pilot may have just expired.
         if ((entity.getCrew().isDead() || entity.getCrew().isDoomed())
               && !entity.getCrew().isEjected()) {
-            r = new Report(5080);
-            r.subject = entity.getId();
-            r.addDesc(entity);
-            vPhaseReport.add(r);
+            report = new Report(5080);
+            report.subject = entity.getId();
+            report.addDesc(entity);
+            vPhaseReport.add(report);
             vPhaseReport.addAll(gameManager.destroyEntity(entity, "pilot death", true));
         }
     }
 
     void adjustHeatExtremeTemp(Entity entity, Vector<Report> vPhaseReport) {
-        Report r;
+        Report report;
         int tempDiff = getGame().getPlanetaryConditions().getTemperatureDifference(50, -30);
         boolean heatArmor = false;
         boolean laserHS = false;
@@ -1261,20 +1258,20 @@ class HeatResolver extends AbstractTWRuleHandler {
                     heatToAdd /= 2;
                 }
                 entity.heatFromExternal += heatToAdd;
-                r = new Report(5020);
-                r.subject = entity.getId();
-                r.add(heatToAdd);
-                vPhaseReport.add(r);
+                report = new Report(5020);
+                report.subject = entity.getId();
+                report.add(heatToAdd);
+                vPhaseReport.add(report);
                 if (heatArmor) {
-                    r = new Report(5550);
-                    vPhaseReport.add(r);
+                    report = new Report(5550);
+                    vPhaseReport.add(report);
                 }
             } else {
                 entity.heatFromExternal -= tempDiff;
-                r = new Report(5025);
-                r.subject = entity.getId();
-                r.add(tempDiff);
-                vPhaseReport.add(r);
+                report = new Report(5025);
+                report.subject = entity.getId();
+                report.add(tempDiff);
+                vPhaseReport.add(report);
             }
         }
     }

@@ -31,7 +31,7 @@
  * affiliated with Microsoft.
  */
 
-package megamek.server.totalwarfare;
+package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

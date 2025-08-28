@@ -31,7 +31,7 @@
  * affiliated with Microsoft.
  */
 
-package megamek.server.totalwarfare;
+package megamek.server.totalWarfare;
 
 import megamek.common.Player;
 import megamek.common.Report;
@@ -40,13 +40,7 @@ import megamek.common.event.GameVictoryEvent;
 import megamek.common.units.Entity;
 import megamek.server.ServerHelper;
 
-class TWPhaseEndManager {
-
-    private final TWGameManager gameManager;
-
-    public TWPhaseEndManager(TWGameManager gameManager) {
-        this.gameManager = gameManager;
-    }
+record TWPhaseEndManager(TWGameManager gameManager) {
 
     void managePhase() {
         switch (gameManager.getGame().getPhase()) {
@@ -91,7 +85,7 @@ class TWPhaseEndManager {
                 gameManager.changePhase(GamePhase.INITIATIVE_REPORT);
                 break;
             case INITIATIVE_REPORT:
-                // NOTE: now that aeros can come and go from the battlefield, I need to update the
+                // NOTE: now that aerospace can come and go from the battlefield, I need to update the
                 // deployment table every round. I think this it is OK to go here. (Taharqa)
                 gameManager.getGame().setupDeployment();
                 if (gameManager.getGame().shouldDeployThisRound()) {
@@ -146,7 +140,7 @@ class TWPhaseEndManager {
                 gameManager.addReport(new Report(3000, Report.PUBLIC));
                 gameManager.resolveWhatPlayersCanSeeWhatUnits();
                 gameManager.resolveAllButWeaponAttacks();
-                gameManager.resolveSelfDestructions();
+                gameManager.resolveSelfDestruction();
                 gameManager.reportGhostTargetRolls();
                 gameManager.reportLargeCraftECCMRolls();
                 gameManager.resolveOnlyWeaponAttacks();
@@ -181,7 +175,7 @@ class TWPhaseEndManager {
             case PHYSICAL:
                 gameManager.resolveWhatPlayersCanSeeWhatUnits();
                 gameManager.resolvePhysicalAttacks();
-                gameManager.resolveBoobyTraps(); // booby trap says it resolves "imediately"... could be problematic
+                gameManager.resolveBoobyTraps(); // booby trap says it resolves "immediately"... could be problematic
                 gameManager.applyBuildingDamage();
                 gameManager.checkForPSRFromDamage();
                 gameManager.addReport(gameManager.resolvePilotingRolls());

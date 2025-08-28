@@ -52,7 +52,7 @@ import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.Weapon;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 
 /**

@@ -53,7 +53,7 @@ import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.OptionalEnumArgument;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Luana Coppio
@@ -63,37 +63,37 @@ public class ChangeWeatherCommand extends GamemasterServerCommand {
     private static final String FOG = "fog";
     private static final String LIGHT = "light";
     private static final String WIND = "wind";
-    private static final String WIND_DIR = "winddir";
-    private static final String ATMO = "atmo";
-    private static final String BLOWSAND = "blowsand";
-    private static final String EMIS = "emi";
+    private static final String WIND_DIR = "windDirection";
+    private static final String ATMOSPHERE = "atmosphere";
+    private static final String BLOW_SAND = "blowSand";
+    private static final String EMI = "emi";
     private static final String WEATHER = "weather";
 
     /** Creates new ChangeWeatherCommand */
     public ChangeWeatherCommand(Server server, TWGameManager gameManager) {
-        super(server, gameManager, WEATHER, Messages.getString("Gamemaster.cmd.changeweather.help"),
-              Messages.getString("Gamemaster.cmd.changeweather.longName"));
+        super(server, gameManager, WEATHER, Messages.getString("Gamemaster.cmd.changeWeather.help"),
+              Messages.getString("Gamemaster.cmd.changeWeather.longName"));
     }
 
     @Override
     public List<Argument<?>> defineArguments() {
         return List.of(new OptionalEnumArgument<>(FOG,
-                    Messages.getString("Gamemaster.cmd.changeweather.fog"),
+                    Messages.getString("Gamemaster.cmd.changeWeather.fog"),
                     Fog.class),
-              new OptionalEnumArgument<>(LIGHT, Messages.getString("Gamemaster.cmd.changeweather.light"), Light.class),
-              new OptionalEnumArgument<>(WIND, Messages.getString("Gamemaster.cmd.changeweather.wind"), Wind.class),
+              new OptionalEnumArgument<>(LIGHT, Messages.getString("Gamemaster.cmd.changeWeather.light"), Light.class),
+              new OptionalEnumArgument<>(WIND, Messages.getString("Gamemaster.cmd.changeWeather.wind"), Wind.class),
               new OptionalEnumArgument<>(WIND_DIR,
-                    Messages.getString("Gamemaster.cmd.changeweather.winddir"),
+                    Messages.getString("Gamemaster.cmd.changeWeather.windDirection"),
                     WindDirection.class),
-              new OptionalEnumArgument<>(ATMO,
-                    Messages.getString("Gamemaster.cmd.changeweather.atmo"),
+              new OptionalEnumArgument<>(ATMOSPHERE,
+                    Messages.getString("Gamemaster.cmd.changeWeather.atmosphere"),
                     Atmosphere.class),
-              new OptionalEnumArgument<>(BLOWSAND,
-                    Messages.getString("Gamemaster.cmd.changeweather.blowsand"),
+              new OptionalEnumArgument<>(BLOW_SAND,
+                    Messages.getString("Gamemaster.cmd.changeWeather.blowSand"),
                     BlowingSand.class),
-              new OptionalEnumArgument<>(EMIS, Messages.getString("Gamemaster.cmd.changeweather.emi"), EMI.class),
+              new OptionalEnumArgument<>(EMI, Messages.getString("Gamemaster.cmd.changeWeather.emi"), EMI.class),
               new OptionalEnumArgument<>(WEATHER,
-                    Messages.getString("Gamemaster.cmd.changeweather.weather"),
+                    Messages.getString("Gamemaster.cmd.changeWeather.weather"),
                     Weather.class));
     }
 
@@ -133,33 +133,34 @@ public class ChangeWeatherCommand extends GamemasterServerCommand {
         return Map.of(
               FOG,
               new Condition<>(planetaryConditions::setFog,
-                    value -> Messages.getString("Gamemaster.cmd.changeweather.fog.success")),
+                    value -> Messages.getString("Gamemaster.cmd.changeWeather.fog.success")),
               WIND,
               new Condition<>(planetaryConditions::setWind,
-                    value -> Messages.getString("Gamemaster.cmd.changeweather.wind.success")),
+                    value -> Messages.getString("Gamemaster.cmd.changeWeather.wind.success")),
               WIND_DIR,
               new Condition<>(planetaryConditions::setWindDirection,
-                    value -> Messages.getString("Gamemaster.cmd.changeweather.winddir.success")),
+                    value -> Messages.getString("Gamemaster.cmd.changeWeather.windDirection.success")),
               LIGHT,
               new Condition<>(planetaryConditions::setLight,
-                    value -> Messages.getString("Gamemaster.cmd.changeweather.light.success")),
-              ATMO,
+                    value -> Messages.getString("Gamemaster.cmd.changeWeather.light.success")),
+              ATMOSPHERE,
               new Condition<>(planetaryConditions::setAtmosphere,
                     value -> value.equals(Atmosphere.VACUUM) ?
-                          Messages.getString("Gamemaster.cmd.changeweather.atmo.success0") :
-                          Messages.getString("Gamemaster.cmd.changeweather.atmo.success")),
-              BLOWSAND,
+                          Messages.getString("Gamemaster.cmd.changeWeather.atmosphere.success0") :
+                          Messages.getString("Gamemaster.cmd.changeWeather.atmosphere.success")),
+              BLOW_SAND,
               new Condition<>(planetaryConditions::setBlowingSand,
                     value -> value.equals(BlowingSand.BLOWING_SAND) ?
-                          Messages.getString("Gamemaster.cmd.changeweather.blowsand.success1") :
-                          Messages.getString("Gamemaster.cmd.changeweather.blowsand.success")),
+                          Messages.getString("Gamemaster.cmd.changeWeather.blowSand.success1") :
+                          Messages.getString("Gamemaster.cmd.changeWeather.blowSand.success")),
               WEATHER,
               new Condition<>(planetaryConditions::setWeather,
-                    value -> Messages.getString("Gamemaster.cmd.changeweather.weather.success")),
-              EMIS,
+                    value -> Messages.getString("Gamemaster.cmd.changeWeather.weather.success")),
+              EMI,
               new Condition<>(planetaryConditions::setEMI,
-                    value -> value.equals(EMI.EMI) ? Messages.getString("Gamemaster.cmd.changeweather.emi.success1") :
-                          Messages.getString("Gamemaster.cmd.changeweather.emi.success"))
+                    value -> value.equals(megamek.common.planetaryConditions.EMI.EMI) ?
+                          Messages.getString("Gamemaster.cmd.changeWeather.emi.success1") :
+                          Messages.getString("Gamemaster.cmd.changeWeather.emi.success"))
         );
     }
 }

@@ -42,7 +42,7 @@ import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.UnitArgument;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Luana Coppio

@@ -55,7 +55,7 @@ import megamek.common.units.BuildingTarget;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * Weapon handler for vehicular grenade launchers.  Rather than have a separate handler for each ammo type, all ammo

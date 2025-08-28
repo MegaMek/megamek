@@ -31,7 +31,7 @@
  * affiliated with Microsoft.
  */
 
-package megamek.server.totalwarfare;
+package megamek.server.totalWarfare;
 
 class UnknownEntityTypeException extends Exception {
     public UnknownEntityTypeException() {}

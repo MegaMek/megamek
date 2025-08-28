@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,12 +35,12 @@ package megamek.server.commands;
 
 import java.util.List;
 
-import megamek.common.units.Entity;
 import megamek.common.LosEffects;
-import megamek.common.rolls.TargetRoll;
 import megamek.common.ToHitData;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
 import megamek.server.Server;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 public class ShowValidTargetsCommand extends ServerCommand {
 
@@ -60,36 +60,36 @@ public class ShowValidTargetsCommand extends ServerCommand {
             Entity ent = gameManager.getGame().getEntity(id);
 
             if (ent != null) {
-                String str = "No valid targets.";
+                StringBuilder str = new StringBuilder("No valid targets.");
                 boolean canHit = false;
                 ToHitData thd;
 
                 List<Entity> entList = gameManager.getGame().getValidTargets(ent);
                 Entity target;
 
-                for (int i = 0; i < entList.size(); i++) {
-                    target = entList.get(i);
+                for (Entity entity : entList) {
+                    target = entity;
                     thd = LosEffects.calculateLOS(gameManager.getGame(), ent, target)
                           .losModifiers(gameManager.getGame());
                     if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
                         thd.setSideTable(target.sideTable(ent.getPosition()));
 
                         if (!canHit) {
-                            str = "This entity(" + id
-                                  + ") can shoot the following entities: \n";
+                            str = new StringBuilder("This entity(" + id
+                                  + ") can shoot the following entities: \n");
                             canHit = true;
                         }
-                        str = str + entList.get(i).getId()
-                              + " at a to hit penalty of ";
-                        str = str
-                              + thd.getValue()
-                              + ", at range " + ent.getPosition().distance(entList.get(i).getPosition())
-                              + thd.getTableDesc() + ";\n";
+                        str.append(entity.getId()).append(" at a to hit penalty of ");
+                        str.append(thd.getValue())
+                              .append(", at range ")
+                              .append(ent.getPosition().distance(entity.getPosition()))
+                              .append(thd.getTableDesc())
+                              .append(";\n");
                     }
 
                 }
 
-                server.sendServerChat(connId, str);
+                server.sendServerChat(connId, str.toString());
             } else {
                 server.sendServerChat(connId, "No such entity.");
             }

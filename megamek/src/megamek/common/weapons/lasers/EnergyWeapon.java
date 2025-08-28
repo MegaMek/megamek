@@ -50,7 +50,7 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.EnergyWeaponHandler;
 import megamek.common.weapons.lasers.innerSphere.ISBombastLaser;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter

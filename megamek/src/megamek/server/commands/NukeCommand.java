@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,7 +44,7 @@ import megamek.server.commands.arguments.CoordXArgument;
 import megamek.server.commands.arguments.CoordYArgument;
 import megamek.server.commands.arguments.IntegerArgument;
 import megamek.server.commands.arguments.OptionalIntegerArgument;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author fastsammy
@@ -67,7 +67,7 @@ public class NukeCommand extends ClientServerCommand {
                     +
                     "/nuke <x> <y> <type> and"
                     +
-                    "/nuke <x> <y> <damage> <degredation> <secondary radius> <crater>"
+                    "/nuke <x> <y> <damage> <degradation> <secondary radius> <crater>"
                     +
                     "where type is 0-4 (0: Davy-Crockett-I, 1: Davy-Crockett-M, 2: Alamo, 3: Santa Ana, 4: Peacemaker)"
                     +
@@ -84,7 +84,7 @@ public class NukeCommand extends ClientServerCommand {
               new OptionalIntegerArgument("type", "The type of nuke to drop. " +
                     "(0: Davy-Crockett-I, 1: Davy-Crockett-M, 2: Alamo, 3: Santa Ana, 4: Peacemaker)", 0, 4),
               new OptionalIntegerArgument("dmg", "The damage of the nuke.", 0, 1_000_000),
-              new OptionalIntegerArgument("deg", "The degredation of the nuke.", 0, 1_000_000),
+              new OptionalIntegerArgument("deg", "The degradation of the nuke.", 0, 1_000_000),
               new OptionalIntegerArgument("radius", "The secondary radius of the nuke.", 1, 1000),
               new OptionalIntegerArgument("depth", "The crater depth of the nuke.", 0, 100)
         );
@@ -95,7 +95,7 @@ public class NukeCommand extends ClientServerCommand {
               new CoordXArgument("x", "The x-coordinate of the hex to nuke."),
               new CoordYArgument("y", "The y-coordinate of the hex to nuke."),
               new IntegerArgument("dmg", "The damage of the nuke.", 0, 1_000_000),
-              new IntegerArgument("deg", "The degredation of the nuke.", 0, 1_000_000),
+              new IntegerArgument("deg", "The degradation of the nuke.", 0, 1_000_000),
               new IntegerArgument("radius", "The secondary radius of the nuke.", 1, 1000),
               new IntegerArgument("depth", "The crater depth of the nuke.", 0, 100)
         );

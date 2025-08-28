@@ -46,7 +46,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.TSEMPHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * Tight-Stream Electro-Magnetic Pulse (TSEMP) weapon. Found in FM:3145 pg 255.

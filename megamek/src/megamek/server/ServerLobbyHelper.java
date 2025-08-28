@@ -51,7 +51,7 @@ import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 public class ServerLobbyHelper {
     private static final MMLogger logger = MMLogger.create(ServerLobbyHelper.class);

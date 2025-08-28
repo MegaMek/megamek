@@ -43,7 +43,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.ac.ACWeaponHandler;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * Deric "Netzilla" Page (deric dot page at usa dot net)

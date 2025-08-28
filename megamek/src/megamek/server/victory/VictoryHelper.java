@@ -41,8 +41,8 @@ import java.util.Map;
 
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
-import megamek.server.scriptedevent.TriggeredEvent;
-import megamek.server.scriptedevent.VictoryTriggeredEvent;
+import megamek.server.scriptedEvent.TriggeredEvent;
+import megamek.server.scriptedEvent.VictoryTriggeredEvent;
 import megamek.server.trigger.TriggerSituation;
 
 /**

@@ -47,7 +47,7 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.ADAMissileWeaponHandler;
 import megamek.common.weapons.handlers.AttackHandler;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Martin Metke

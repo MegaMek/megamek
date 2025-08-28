@@ -31,24 +31,21 @@
  * affiliated with Microsoft.
  */
 
-package megamek.server.scriptedevent;
+package megamek.server.scriptedEvent;
 
 import megamek.client.bot.princess.BehaviorSettings;
-import megamek.common.game.Game;
 import megamek.common.Player;
+import megamek.common.game.Game;
 import megamek.common.jacksonAdapters.PrincessSettingsBuilder;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.server.IGameManager;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 import megamek.server.trigger.Trigger;
 import org.apache.logging.log4j.LogManager;
 
-public class PrincessSettingsEvent implements TriggeredActiveEvent {
-
-    private final Trigger trigger;
-    private final String playerName;
-    private final PrincessSettingsBuilder settingsBuilder;
+public record PrincessSettingsEvent(Trigger trigger, String playerName, PrincessSettingsBuilder settingsBuilder)
+      implements TriggeredActiveEvent {
 
     /**
      * Creates a scripted even that changes the Princess settings for the bot player with the given name to the given
@@ -61,10 +58,7 @@ public class PrincessSettingsEvent implements TriggeredActiveEvent {
      *
      * @see Game#getBotSettings()
      */
-    public PrincessSettingsEvent(Trigger trigger, String playerName, PrincessSettingsBuilder settingsBuilder) {
-        this.trigger = trigger;
-        this.playerName = playerName;
-        this.settingsBuilder = settingsBuilder;
+    public PrincessSettingsEvent {
     }
 
     @Override
@@ -101,10 +95,5 @@ public class PrincessSettingsEvent implements TriggeredActiveEvent {
             }
         }
         return Player.PLAYER_NONE;
-    }
-
-    @Override
-    public Trigger trigger() {
-        return trigger;
     }
 }

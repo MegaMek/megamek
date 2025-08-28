@@ -53,7 +53,7 @@ import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.common.weapons.DamageType;
 import megamek.logging.MMLogger;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
     private static final MMLogger LOGGER = MMLogger.create(PopUpMineLauncherHandler.class);

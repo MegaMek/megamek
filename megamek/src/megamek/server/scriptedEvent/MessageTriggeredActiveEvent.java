@@ -31,38 +31,48 @@
  * affiliated with Microsoft.
  */
 
-package megamek.server.scriptedevent;
+package megamek.server.scriptedEvent;
 
 import java.awt.Image;
 
+import megamek.client.ui.Base64Image;
 import megamek.common.annotations.Nullable;
+import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.Packet;
+import megamek.server.IGameManager;
+import megamek.server.trigger.Trigger;
 
-/**
- * This interface is implemented by scripted event objects that show a story or informative messages in a dialog. This
- * is meant to give a common interface to MHQ's story arc NarrativeStoryPoint as well as scripted event messages in MM
- * so that both can be displayed using a common dialog.
- */
-public interface NarrativeDisplayProvider {
+public class MessageTriggeredActiveEvent implements TriggeredActiveEvent {
 
-    /**
-     * @return A header text to show in the dialog. May be empty but not null.
-     */
-    String header();
+    private final Trigger trigger;
+    private final String message;
+    private final String header;
+    private final Base64Image image;
 
-    /**
-     * @return The main narrative (story) text to show in the dialog. May be empty but not null.
-     */
-    String text();
+    public MessageTriggeredActiveEvent(Trigger trigger, String header, String message, @Nullable Image image) {
+        this.trigger = trigger;
+        this.message = message;
+        this.header = header;
+        this.image = new Base64Image(image);
+    }
 
-    /**
-     * @return A portrait or other image to show in the dialog
-     */
-    @Nullable
-    Image portrait();
+    public MessageTriggeredActiveEvent(Trigger trigger, String header, String message) {
+        this(trigger, header, message, null);
+    }
 
-    /**
-     * @return A splash image to show as part of the story
-     */
-    @Nullable
-    Image splashImage();
+    @Override
+    public Trigger trigger() {
+        return trigger;
+    }
+
+    @Override
+    public void process(IGameManager gameManager) {
+        gameManager.send(new Packet(PacketCommand.SCRIPTED_MESSAGE, header, message, image));
+    }
+
+    @Override
+    public String toString() {
+        return "Message: " + trigger + ", \"" + message.substring(0, Math.min(message.length(), 20)) + "...\"";
+    }
+
 }

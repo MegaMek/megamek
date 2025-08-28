@@ -51,7 +51,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.ASEWMissileWeaponHandler;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.missiles.thuunderbolt.ThunderboltWeapon;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Jay Lawson

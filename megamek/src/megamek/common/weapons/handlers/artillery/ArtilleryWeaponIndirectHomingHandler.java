@@ -62,7 +62,7 @@ import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.handlers.AreaEffectHelper;
 import megamek.logging.MMLogger;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirectFireHandler {
     private static final MMLogger LOGGER = MMLogger.create(ArtilleryBayWeaponIndirectHomingHandler.class);

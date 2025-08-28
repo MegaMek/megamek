@@ -31,27 +31,38 @@
  * affiliated with Microsoft.
  */
 
-package megamek.server.scriptedevent;
+package megamek.server.scriptedEvent;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import megamek.common.jacksonAdapters.MessageDeserializer;
-import megamek.server.IGameManager;
-import megamek.server.trigger.Trigger;
+import java.awt.Image;
+
+import megamek.common.annotations.Nullable;
 
 /**
- * This interface is implemented by pre-determined events that may happen over the course of a game, such as story
- * messages or board changes. Much like WeaponHandlers, ScriptedGameManagerEvents are part of the GameManager's code and
- * must fully work out whatever the event brings, including sending the necessary packets. ScriptedEvents are based on a
- * {@link Trigger} that defines when  (and how often) they happen. When they happen, the {@link #process(IGameManager)}
- * method is called to determine the results. (Note: This has nothing to do with an event listener system.)
+ * This interface is implemented by scripted event objects that show a story or informative messages in a dialog. This
+ * is meant to give a common interface to MHQ's story arc NarrativeStoryPoint as well as scripted event messages in MM
+ * so that both can be displayed using a common dialog.
  */
-@JsonDeserialize(using = MessageDeserializer.class)
-public interface TriggeredActiveEvent extends TriggeredEvent {
+public interface NarrativeDisplayProvider {
 
     /**
-     * This method is called when the Trigger of this event is satisfied (returns true). This method must fully work out
-     * whatever the event brings, including sending the necessary packets. The code of this method is essentially part
-     * of the GameManager's code.
+     * @return A header text to show in the dialog. May be empty but not null.
      */
-    void process(IGameManager gameManager);
+    String header();
+
+    /**
+     * @return The main narrative (story) text to show in the dialog. May be empty but not null.
+     */
+    String text();
+
+    /**
+     * @return A portrait or other image to show in the dialog
+     */
+    @Nullable
+    Image portrait();
+
+    /**
+     * @return A splash image to show as part of the story
+     */
+    @Nullable
+    Image splashImage();
 }

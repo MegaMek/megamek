@@ -59,7 +59,7 @@ import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.handlers.MissileWeaponHandler;
 import megamek.common.weapons.lrms.ExtendedLRMWeapon;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks

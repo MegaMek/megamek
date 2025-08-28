@@ -47,7 +47,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.plasma.PlasmaMFUKWeaponHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter

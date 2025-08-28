@@ -37,13 +37,13 @@ package megamek.server;
 
 import java.util.Vector;
 
-import megamek.common.board.Board;
-import megamek.common.compute.Compute;
-import megamek.common.board.Coords;
 import megamek.common.Hex;
 import megamek.common.Report;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.units.Terrains;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 public class ScreenProcessor extends DynamicTerrainProcessor {
 

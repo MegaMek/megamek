@@ -60,7 +60,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 public class FireProcessor extends DynamicTerrainProcessor {
     private static final MMLogger logger = MMLogger.create(FireProcessor.class);

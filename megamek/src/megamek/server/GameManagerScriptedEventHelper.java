@@ -34,7 +34,7 @@
 package megamek.server;
 
 import megamek.common.game.IGame;
-import megamek.server.scriptedevent.TriggeredActiveEvent;
+import megamek.server.scriptedEvent.TriggeredActiveEvent;
 import megamek.server.trigger.TriggerSituation;
 
 public final class GameManagerScriptedEventHelper {

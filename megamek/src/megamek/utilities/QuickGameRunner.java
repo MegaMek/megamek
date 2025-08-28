@@ -70,7 +70,7 @@ import megamek.common.net.marshalling.SanityInputFilter;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 import megamek.server.Server;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * QuickGameRunner This class is used to run a game without minimal preparation all it needs is a game file to load, and

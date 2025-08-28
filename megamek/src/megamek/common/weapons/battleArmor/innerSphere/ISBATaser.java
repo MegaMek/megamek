@@ -52,7 +52,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.battleArmor.BATaserHandler;
 import megamek.common.weapons.handlers.AttackHandler;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks

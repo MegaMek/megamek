@@ -53,7 +53,7 @@ import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.EnergyWeaponHandler;
 import megamek.common.weapons.handlers.InsulatedLaserWeaponHandler;
 import megamek.common.weapons.handlers.PulseLaserWeaponHandler;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter

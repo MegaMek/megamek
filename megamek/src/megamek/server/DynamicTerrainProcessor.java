@@ -38,11 +38,11 @@ package megamek.server;
 import java.util.Collection;
 import java.util.Vector;
 
+import megamek.common.Report;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
-import megamek.common.Report;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 public abstract class DynamicTerrainProcessor {
     protected TWGameManager gameManager;

@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,7 +35,7 @@
 package megamek.server.commands;
 
 import megamek.server.Server;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * Skips the current player's turn, if possible.

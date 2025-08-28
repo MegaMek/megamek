@@ -52,7 +52,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.lrm.LRMHandler;
 import megamek.common.weapons.lrms.LRMWeapon;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)

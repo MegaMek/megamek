@@ -31,10 +31,11 @@
  * affiliated with Microsoft.
  */
 
-package megamek.server.scriptedevent;
+package megamek.server.scriptedEvent;
 
 import java.util.Map;
 
+import jakarta.annotation.Nonnull;
 import megamek.common.Player;
 import megamek.common.game.Game;
 import megamek.logging.MMLogger;
@@ -84,6 +85,7 @@ public record VictoryTriggeredEvent(Trigger trigger, boolean endsGame, String pl
     }
 
     @Override
+    @Nonnull
     public String toString() {
         return "Victory: " + trigger + (endsGame ? " [ends]" : "") + ", player: " + playerName;
     }

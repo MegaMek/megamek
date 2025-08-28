@@ -31,11 +31,11 @@
  * affiliated with Microsoft.
  */
 
-package megamek.server.totalwarfare;
+package megamek.server.totalWarfare;
 
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.Hex;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.BuildingType;
@@ -74,8 +74,8 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
             return;
         }
 
-        Coords coords = (Coords) packet.getObject(1);
-        int boardId = (int) packet.getObject(2);
+        Coords coords = packet.getCoords(1);
+        int boardId = packet.getIntValue(2);
         int nFacing = packet.getIntValue(3);
         int elevation = packet.getIntValue(4);
 
@@ -106,7 +106,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
               && getGame().getBoard(boardId).isLegalDeployment(coords, entity);
 
         if ((turn == null) || !turn.isValid(connId, entity, getGame())
-              // FIXME: The combination with assaultdrop and the assaultdrop check dont look right:
+              // FIXME: The combination with assault drop and the assault drop check dont look right:
               || !(isLegalLocation
               || (assaultDrop && getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP)
               && entity.canAssaultDrop()))) {
@@ -130,7 +130,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
             aero.updateSensorOptions();
         }
 
-        // Update visibility indications if using double blind.
+        // Update visibility indications if using double-blind.
         if (gameManager.doBlind()) {
             gameManager.updateVisibilityIndicator(null);
         }
@@ -193,8 +193,6 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
         // (aka, how do we add the turn with individual initiative?)
         getGame().insertTurnAfter(new SpecificEntityTurn(loaded.getOwnerId(), loaded.getId()),
               getGame().getTurnIndex() - 1);
-        // getGame().insertNextTurn(new GameTurn.SpecificEntityTurn(
-        // loaded.getOwnerId(), loaded.getId()));
         gameManager.send(gameManager.getPacketHelper().createTurnListPacket());
     }
 
@@ -212,7 +210,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
             }
             if (loaded.getPosition() != null) {
                 // Something is fishy in Denmark.
-                LOGGER.error(entity + " can not load entity #" + loaded);
+                LOGGER.error("{} can not load entity #{}", entity, loaded);
                 break;
             }
             // Have the deployed unit load the indicated unit.

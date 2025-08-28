@@ -48,7 +48,7 @@ import megamek.client.ui.MMMarkdownRenderer;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
-import megamek.server.scriptedevent.MessageTriggeredActiveEvent;
+import megamek.server.scriptedEvent.MessageTriggeredActiveEvent;
 import megamek.server.trigger.Trigger;
 
 public class MessageDeserializer extends StdDeserializer<MessageTriggeredActiveEvent> {

@@ -31,8 +31,9 @@
  * affiliated with Microsoft.
  */
 
-package megamek.server.scriptedevent;
+package megamek.server.scriptedEvent;
 
+import jakarta.annotation.Nonnull;
 import megamek.server.trigger.ActiveUnitsTrigger;
 import megamek.server.trigger.AndTrigger;
 import megamek.server.trigger.FledUnitsTrigger;
@@ -66,6 +67,7 @@ import megamek.server.trigger.Trigger;
 public record GameEndTriggeredEvent(Trigger trigger) implements TriggeredEvent {
 
     @Override
+    @Nonnull
     public String toString() {
         return "GameEnd: " + trigger;
     }

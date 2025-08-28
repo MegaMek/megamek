@@ -31,7 +31,7 @@
  * affiliated with Microsoft.
  */
 
-package megamek.server.totalwarfare;
+package megamek.server.totalWarfare;
 
 import java.util.List;
 import java.util.Vector;
@@ -1312,8 +1312,6 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     manager.creditKill(aero, game.getEntity(hit.getAttackerId()));
                 }
             }
-            // All damage should have been applied by now
-            damage = 0;
         }
 
         // Damage _applied_ by this attack should be original damageThisPhase minus current value

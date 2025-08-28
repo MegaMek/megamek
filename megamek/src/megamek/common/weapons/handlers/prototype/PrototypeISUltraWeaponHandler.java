@@ -44,7 +44,7 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.UltraWeaponHandler;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter

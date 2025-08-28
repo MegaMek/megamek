@@ -49,7 +49,7 @@ import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Jay Lawson

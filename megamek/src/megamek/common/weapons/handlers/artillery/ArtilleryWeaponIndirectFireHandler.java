@@ -69,7 +69,7 @@ import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.common.weapons.handlers.AreaEffectHelper;
 import megamek.common.weapons.handlers.DamageFalloff;
 import megamek.logging.MMLogger;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -387,7 +387,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return false;
         }
         if (ammoType.getMunitionType().contains(Munitions.M_LASER_INHIB)) {
-            gameManager.deliverLIsmoke(finalPos, vPhaseReport);
+            gameManager.deliverLISmoke(finalPos, vPhaseReport);
             return false;
         }
 

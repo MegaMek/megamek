@@ -31,7 +31,7 @@
  * affiliated with Microsoft.
  */
 
-package megamek.server.totalwarfare;
+package megamek.server.totalWarfare;
 
 import java.util.Vector;
 import java.util.stream.Collectors;
@@ -54,14 +54,8 @@ import megamek.server.DynamicTerrainProcessor;
 import megamek.server.Server;
 import megamek.server.ServerBoardHelper;
 
-public class TWPhasePreparationManager {
-    private static final MMLogger logger = MMLogger.create(TWPhasePreparationManager.class);
-
-    private final TWGameManager gameManager;
-
-    public TWPhasePreparationManager(TWGameManager gameManager) {
-        this.gameManager = gameManager;
-    }
+public record TWPhasePreparationManager(TWGameManager gameManager) {
+    private static final MMLogger LOGGER = MMLogger.create(TWPhasePreparationManager.class);
 
     void managePhase() {
         GamePhase phase = gameManager.getGame().getPhase();
@@ -112,8 +106,9 @@ public class TWPhasePreparationManager {
 
                 gameManager.bvReports(true);
 
-                logger.info(
-                      "Round " + gameManager.getGame().getRoundCount() + " memory usage: " + MegaMek.getMemoryUsed());
+                LOGGER.info("Round {} memory usage: {}",
+                      gameManager.getGame().getRoundCount(),
+                      MegaMek.getMemoryUsed());
                 break;
             case DEPLOY_MINEFIELDS:
                 gameManager.checkForObservers();
@@ -170,7 +165,7 @@ public class TWPhasePreparationManager {
                         }
                     }
                 }
-                // Update visibility indications if using double blind.
+                // Update visibility indications if using double-blind.
                 if (gameManager.doBlind()) {
                     gameManager.updateVisibilityIndicator(null);
                 }
@@ -260,18 +255,17 @@ public class TWPhasePreparationManager {
                             ((IAero) entity).doDisbandDamage();
                         }
                     }
-                    // fix the armor and SI of aeros if using aero sanity rules for
+                    // fix the armor and SI of aerospace if using aero sanity rules for
                     // the MUL
                     if (gameManager.getGame()
                           .getOptions()
                           .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)
-                          && (entity instanceof Aero)) {
+                          && (entity instanceof Aero a)) {
                         // need to rescale SI and armor
                         int scale = 1;
                         if (entity.isCapitalScale()) {
                             scale = 10;
                         }
-                        Aero a = (Aero) entity;
                         int currentSI = a.getSI() / (2 * scale);
                         a.setOSI(a.getOSI() / (2 * scale));
                         if (currentSI > 0) {
@@ -306,7 +300,7 @@ public class TWPhasePreparationManager {
                                   gameManager.getGame(), gameManager.getMainPhaseReport(), player);
                             mailer.send(message);
                         } catch (Exception ex) {
-                            logger.error("Error sending email" + ex);
+                            LOGGER.error("Error sending email{}", String.valueOf(ex));
                         }
                     }
                 }

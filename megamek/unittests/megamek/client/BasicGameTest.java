@@ -55,7 +55,7 @@ import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.loaders.MekSummaryCache;
 import megamek.common.net.marshalling.SanityInputFilter;
 import megamek.server.Server;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 import megamek.utils.ServerFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;

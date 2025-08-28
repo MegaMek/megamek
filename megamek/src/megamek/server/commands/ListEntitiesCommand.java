@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2012-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,10 +33,10 @@
 
 package megamek.server.commands;
 
-import megamek.common.units.Entity;
 import megamek.common.Player;
+import megamek.common.units.Entity;
 import megamek.server.Server;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Jay Lawson (Taharqa)

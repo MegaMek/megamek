@@ -39,15 +39,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.common.board.Board;
-import megamek.common.board.BoardLocation;
-import megamek.common.compute.Compute;
-import megamek.common.board.Coords;
 import megamek.common.Hex;
 import megamek.common.Report;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * This is for simulating the vertically moving walls in the Solaris 7 colloseum.

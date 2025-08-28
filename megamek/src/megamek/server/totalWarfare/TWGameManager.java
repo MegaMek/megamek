@@ -30,12 +30,11 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.server.totalwarfare;
+package megamek.server.totalWarfare;
 
 import static megamek.common.game.Game.TEAM_HAS_COMBAT_PARALYSIS;
 import static megamek.common.game.Game.TEAM_HAS_COMBAT_SENSE;
 import static megamek.common.game.Game.TEAM_HAS_NO_INITIATIVE_APTITUDE;
-import static megamek.common.game.IGame.LOGGER;
 import static megamek.common.options.OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION;
 import static megamek.common.options.OptionsConstants.RPG_INDIVIDUAL_INITIATIVE;
 import static megamek.common.weapons.handlers.AreaEffectHelper.calculateDamageFallOff;
@@ -141,7 +140,7 @@ import megamek.server.victory.VictoryResult;
  * Manages the Game and processes player actions.
  */
 public class TWGameManager extends AbstractGameManager {
-    private static final MMLogger logger = MMLogger.create(TWGameManager.class);
+    private static final MMLogger LOGGER = MMLogger.create(TWGameManager.class);
     static final GameDatasetLogger datasetLogger = new GameDatasetLogger("game_actions");
     static final String DEFAULT_BOARD = MapSettings.BOARD_GENERATED;
 
@@ -155,7 +154,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     // Track buildings that are affected by an entity's movement.
-    private final Hashtable<Building, Boolean> affectedBldgs = new Hashtable<>();
+    private final Hashtable<Building, Boolean> affectedBuildings = new Hashtable<>();
 
     // Track Physical Action results, HACK to deal with opposing pushes
     // canceling each other
@@ -176,12 +175,12 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Keeps track of what team a player requested to join.
      */
-    private int requestedTeam = Player.TEAM_NONE;
+    final private int requestedTeam = Player.TEAM_NONE;
 
     /**
      * Keeps track of which player made a request to change teams.
      */
-    private Player playerChangingTeam = null;
+    private final Player playerChangingTeam = null;
 
     /**
      * Keeps track of which players have to change teams.
@@ -319,50 +318,50 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     @Override
-    public void setGame(IGame g) {
-        if (!(g instanceof Game)) {
-            logger.error("Attempted to set game to incorrect class.");
+    public void setGame(IGame game) {
+        if (!(game instanceof Game)) {
+            LOGGER.error("Attempted to set game to incorrect class.");
             return;
         }
-        game = (Game) g;
+        this.game = (Game) game;
 
         List<Integer> orphanEntities = new ArrayList<>();
 
         // reattach the transient fields and ghost the players
-        for (Entity entity : game.getEntitiesVector()) {
-            entity.setGame(game);
+        for (Entity entity : this.game.getEntitiesVector()) {
+            entity.setGame(this.game);
 
             if (entity.getOwner() == null) {
                 orphanEntities.add(entity.getId());
                 continue;
             }
 
-            if (entity instanceof Mek) {
-                ((Mek) entity).setBAGrabBars();
-                ((Mek) entity).setProtoMekClampMounts();
+            if (entity instanceof Mek mek) {
+                mek.setBAGrabBars();
+                mek.setProtoMekClampMounts();
             }
-            if (entity instanceof Tank) {
-                ((Tank) entity).setBAGrabBars();
+            if (entity instanceof Tank tank) {
+                tank.setBAGrabBars();
             }
         }
 
-        game.removeEntities(orphanEntities, IEntityRemovalConditions.REMOVE_UNKNOWN);
+        this.game.removeEntities(orphanEntities, IEntityRemovalConditions.REMOVE_UNKNOWN);
 
-        game.setOutOfGameEntitiesVector(game.getOutOfGameEntitiesVector());
-        for (Player player : game.getPlayersList()) {
-            player.setGame(game);
+        this.game.setOutOfGameEntitiesVector(this.game.getOutOfGameEntitiesVector());
+        for (Player player : this.game.getPlayersList()) {
+            player.setGame(this.game);
             player.setGhost(true);
         }
 
         // might need to restore weapon type for some attacks that take multiple
         // turns (like artillery)
-        for (AttackHandler handler : game.getAttacksVector()) {
+        for (AttackHandler handler : this.game.getAttacksVector()) {
             if (handler instanceof WeaponHandler) {
                 ((WeaponHandler) handler).restore();
             }
         }
 
-        game.getForces().setGame(game);
+        this.game.getForces().setGame(this.game);
     }
 
     /**
@@ -377,26 +376,26 @@ public class TWGameManager extends AbstractGameManager {
 
         // remove ghosts
         List<Player> ghosts = new ArrayList<>();
-        for (Player p : getGame().getPlayersList()) {
-            if (p.isGhost()) {
-                ghosts.add(p);
+        for (Player player : getGame().getPlayersList()) {
+            if (player.isGhost()) {
+                ghosts.add(player);
             } else {
                 // non-ghosts set their starting positions to any
-                p.setStartingPos(Board.START_ANY);
-                transmitPlayerUpdate(p);
+                player.setStartingPos(Board.START_ANY);
+                transmitPlayerUpdate(player);
             }
         }
 
-        for (Player p : ghosts) {
-            getGame().removePlayer(p.getId());
-            send(new Packet(PacketCommand.PLAYER_REMOVE, p.getId()));
+        for (Player player : ghosts) {
+            getGame().removePlayer(player.getId());
+            send(new Packet(PacketCommand.PLAYER_REMOVE, player.getId()));
         }
 
         // reset all players
         resetPlayersDone();
 
         // Write end of game to stdout so controlling scripts can rotate logs.
-        logger.info(LocalDateTime.now() + " END OF GAME");
+        LOGGER.info("{} END OF GAME", LocalDateTime.now());
 
         if (Server.getServerInstance().getEmailService() != null) {
             Server.getServerInstance().getEmailService().reset();
@@ -511,13 +510,9 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
-        // if a player has active entities, he becomes a ghost
-        // except the VICTORY_PHASE when the disconnected
-        // player is most likely the Bot disconnected after receiving
-        // the COMMAND_END_OF_GAME command
-        // see the Bug 1225949.
-        // Ghost players (Bots mostly) are now removed during the
-        // resetGame(), so we don't need to do it here.
+        // if a player has active entities, he becomes a ghost except the VICTORY_PHASE when the disconnected player
+        // is most likely the Bot disconnected after receiving the COMMAND_END_OF_GAME command see the Bug 1225949.
+        // Ghost players (Bots mostly) are now removed during the resetGame(), so we don't need to do it here.
         // This fixes Bug 3399000 without reintroducing 1225949
         if (getGame().getPhase().isVictory() || getGame().getPhase().isLounge() || player.isObserver()) {
             getGame().removePlayer(player.getId());
@@ -546,7 +541,7 @@ public class TWGameManager extends AbstractGameManager {
         sendServerChat(player.getName() + " disconnected.");
 
         // log it
-        logger.info("s: removed player " + player.getName());
+        LOGGER.info("s: removed player {}", player.getName());
 
         // Reset the game after Elvis has left the building.
         if (0 == getGame().getNoOfPlayers()) {
@@ -559,9 +554,9 @@ public class TWGameManager extends AbstractGameManager {
      * exception is that there are no observers during the lounge phase.
      */
     public void checkForObservers() {
-        for (Player p : getGame().getPlayersList()) {
-            p.setObserver((!p.isGameMaster()) &&
-                  (getGame().getEntitiesOwnedBy(p) < 1) &&
+        for (Player player : getGame().getPlayersList()) {
+            player.setObserver((!player.isGameMaster()) &&
+                  (getGame().getEntitiesOwnedBy(player) < 1) &&
                   !getGame().getPhase().isLounge());
         }
     }
@@ -854,18 +849,19 @@ public class TWGameManager extends AbstractGameManager {
                 resetPlayersDone();
                 break;
             case ENTITY_WORDER_UPDATE:
-                Object[] data = packet.data();
-                Entity ent = game.getEntity((Integer) data[0]);
-                if (ent != null) {
-                    WeaponSortOrder order = (WeaponSortOrder) data[1];
-                    ent.setWeaponSortOrder(order);
-                    // Used by the client but is set in setWeaponSortOrder
-                    ent.setWeaponOrderChanged(false);
-                    if (order.isCustom()) {
-                        // Unchecked cause of limitations in Java when casting to a collection
-                        @SuppressWarnings(value = "unchecked")
-                        Map<Integer, Integer> customWeaponOrder = (Map<Integer, Integer>) data[2];
-                        ent.setCustomWeaponOrder(customWeaponOrder);
+                Entity entity = packet.getEntity(0);
+                if (entity != null) {
+                    WeaponSortOrder order = packet.getWeaponSortOrder(1);
+
+                    if (order != null) {
+                        entity.setWeaponSortOrder(order);
+
+                        // Used by the client but is set in setWeaponSortOrder
+                        entity.setWeaponOrderChanged(false);
+                        if (order.isCustom()) {
+                            Map<Integer, Integer> customWeaponOrder = packet.getIntMapToInt(2);
+                            entity.setCustomWeaponOrder(customWeaponOrder);
+                        }
                     }
                 }
                 break;
@@ -878,14 +874,16 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             case SENDING_MAP_SETTINGS:
                 if (game.getPhase().isBefore(GamePhase.DEPLOYMENT)) {
-                    MapSettings newSettings = (MapSettings) packet.getObject(0);
-                    if (!game.getMapSettings().equalMapGenParameters(newSettings)) {
-                        sendServerChat(player + " changed map settings");
+                    MapSettings newSettings = packet.getMapSettings(0);
+                    if (newSettings != null) {
+                        if (!game.getMapSettings().equalMapGenParameters(newSettings)) {
+                            sendServerChat(player + " changed map settings");
+                        }
+                        newSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(newSettings));
+                        newSettings.removeUnavailable();
+                        newSettings.setNullBoards(DEFAULT_BOARD);
+                        game.setMapSettings(newSettings);
                     }
-                    newSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(newSettings));
-                    newSettings.removeUnavailable();
-                    newSettings.setNullBoards(DEFAULT_BOARD);
-                    game.setMapSettings(newSettings);
                     cleanupCustomDZs();
                     resetPlayersDone();
                     send(createMapSettingsPacket());
@@ -893,21 +891,23 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             case SENDING_MAP_DIMENSIONS:
                 if (game.getPhase().isBefore(GamePhase.DEPLOYMENT)) {
-                    MapSettings newSettings = (MapSettings) packet.getObject(0);
-                    if (!game.getMapSettings().equalMapGenParameters(newSettings)) {
-                        sendServerChat(player + " changed map dimensions");
+                    MapSettings newSettings = packet.getMapSettings(0);
+                    if (newSettings != null) {
+                        if (!game.getMapSettings().equalMapGenParameters(newSettings)) {
+                            sendServerChat(player + " changed map dimensions");
+                        }
+                        newSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(newSettings));
+                        newSettings.removeUnavailable();
+                        newSettings.setNullBoards(DEFAULT_BOARD);
+                        game.setMapSettings(newSettings);
                     }
-                    newSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(newSettings));
-                    newSettings.removeUnavailable();
-                    newSettings.setNullBoards(DEFAULT_BOARD);
-                    game.setMapSettings(newSettings);
                     resetPlayersDone();
                     send(createMapSettingsPacket());
                 }
                 break;
             case SENDING_PLANETARY_CONDITIONS:
                 if (game.getPhase().isBefore(GamePhase.DEPLOYMENT)) {
-                    PlanetaryConditions conditions = (PlanetaryConditions) packet.getObject(0);
+                    PlanetaryConditions conditions = packet.getPlanetaryConditions(0);
                     sendServerChat(player + " changed planetary conditions");
                     game.setPlanetaryConditions(conditions);
                     resetPlayersDone();
@@ -932,15 +932,15 @@ public class TWGameManager extends AbstractGameManager {
                 game.setupDeployment();
                 break;
             case SPECIAL_HEX_DISPLAY_DELETE:
-                game.getBoard((Integer) packet.getObject(1)).removeSpecialHexDisplay(
-                      (Coords) packet.getObject(0),
-                      (SpecialHexDisplay) packet.getObject(2));
+                game.getBoard(packet.getIntValue(1)).removeSpecialHexDisplay(
+                      packet.getCoords(0),
+                      packet.getSpecialHexDisplay(2));
                 sendSpecialHexDisplayPackets();
                 break;
             case SPECIAL_HEX_DISPLAY_APPEND:
-                game.getBoard((Integer) packet.getObject(1)).addSpecialHexDisplay(
-                      (Coords) packet.getObject(0),
-                      (SpecialHexDisplay) packet.getObject(2));
+                game.getBoard(packet.getIntValue(1)).addSpecialHexDisplay(
+                      packet.getCoords(0),
+                      packet.getSpecialHexDisplay(2));
                 sendSpecialHexDisplayPackets();
                 break;
             case PLAYER_TEAM_CHANGE:
@@ -987,18 +987,17 @@ public class TWGameManager extends AbstractGameManager {
             if (entity != null && entity.isDoomed()) {
                 entity.setDestroyed(true);
 
-                // Is this unit swarming somebody? Better let go before
-                // it's too late.
+                // Is this unit swarming somebody? Better let go before it's too late.
                 final int swarmedId = entity.getSwarmTargetId();
                 if (Entity.NONE != swarmedId) {
                     final Entity swarmed = game.getEntity(swarmedId);
                     if (swarmed != null) {
                         swarmed.setSwarmAttackerId(Entity.NONE);
                         entity.setSwarmTargetId(Entity.NONE);
-                        Report r = new Report(5165);
-                        r.subject = swarmedId;
-                        r.addDesc(swarmed);
-                        addReport(r);
+                        Report report = new Report(5165);
+                        report.subject = swarmedId;
+                        report.addDesc(swarmed);
+                        addReport(report);
                         entityUpdate(swarmedId);
                     }
                 }
@@ -1016,8 +1015,7 @@ public class TWGameManager extends AbstractGameManager {
                 condition = IEntityRemovalConditions.REMOVE_DEVASTATED;
             }
 
-            // If we removed a unit during the movement phase that hasn't moved, remove its
-            // turn.
+            // If we removed a unit during the movement phase that hasn't moved, remove its turn.
             if (getGame().getPhase().isMovement() && entity.isSelectableThisTurn()) {
                 getGame().removeTurnFor(entity);
                 send(packetHelper.createTurnListPacket());
@@ -1059,10 +1057,10 @@ public class TWGameManager extends AbstractGameManager {
                     if (swarmed != null) {
                         swarmed.setSwarmAttackerId(Entity.NONE);
                         entity.setSwarmTargetId(Entity.NONE);
-                        Report r = new Report(5165);
-                        r.subject = swarmedId;
-                        r.addDesc(swarmed);
-                        addReport(r);
+                        Report report = new Report(5165);
+                        report.subject = swarmedId;
+                        report.addDesc(swarmed);
+                        addReport(report);
                         entityUpdate(swarmedId);
                     }
                 }
@@ -1128,8 +1126,8 @@ public class TWGameManager extends AbstractGameManager {
             // between phases
             entity.setTurnInterrupted(false);
 
-            if (entity instanceof MekWarrior) {
-                ((MekWarrior) entity).setLanded(true);
+            if (entity instanceof MekWarrior mekWarrior) {
+                mekWarrior.setLanded(true);
             }
         }
 
@@ -1152,17 +1150,17 @@ public class TWGameManager extends AbstractGameManager {
         for (Entity entity : game.getEntitiesVector()) {
             // Decrement ASEW effects
             if ((entity.getEntityType() & Entity.ETYPE_DROPSHIP) == Entity.ETYPE_DROPSHIP) {
-                Dropship d = (Dropship) entity;
-                for (int loc = 0; loc < d.locations(); loc++) {
-                    if (d.getASEWAffected(loc) > 0) {
-                        d.setASEWAffected(loc, d.getASEWAffected(loc) - 1);
+                Dropship dropship = (Dropship) entity;
+                for (int loc = 0; loc < dropship.locations(); loc++) {
+                    if (dropship.getASEWAffected(loc) > 0) {
+                        dropship.setASEWAffected(loc, dropship.getASEWAffected(loc) - 1);
                     }
                 }
             } else if ((entity.getEntityType() & Entity.ETYPE_JUMPSHIP) != 0) {
-                Jumpship j = (Jumpship) entity;
-                for (int loc = 0; loc < j.locations(); loc++) {
-                    if (j.getASEWAffected(loc) > 0) {
-                        j.setASEWAffected(loc, j.getASEWAffected(loc) - 1);
+                Jumpship jumpship = (Jumpship) entity;
+                for (int loc = 0; loc < jumpship.locations(); loc++) {
+                    if (jumpship.getASEWAffected(loc) > 0) {
+                        jumpship.setASEWAffected(loc, jumpship.getASEWAffected(loc) - 1);
                     }
                 }
             } else {
@@ -1215,36 +1213,36 @@ public class TWGameManager extends AbstractGameManager {
     void prepareVictoryReport() {
         // remove carcasses to the graveyard
         Vector<Entity> toRemove = new Vector<>();
-        for (Entity e : game.getEntitiesVector()) {
-            if (e.isCarcass() && !e.isDestroyed()) {
-                toRemove.add(e);
+        for (Entity entity : game.getEntitiesVector()) {
+            if (entity.isCarcass() && !entity.isDestroyed()) {
+                toRemove.add(entity);
             }
         }
-        for (Entity e : toRemove) {
-            destroyEntity(e, "crew death", false, true);
-            game.removeEntity(e.getId(), IEntityRemovalConditions.REMOVE_SALVAGEABLE);
-            e.setDestroyed(true);
+        for (Entity entity : toRemove) {
+            destroyEntity(entity, "crew death", false, true);
+            game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_SALVAGEABLE);
+            entity.setDestroyed(true);
         }
 
         addReport(new Report(7000, Report.PUBLIC));
 
         // Declare the victor
-        Report r = new Report(1210);
-        r.type = Report.PUBLIC;
+        Report report = new Report(1210);
+        report.type = Report.PUBLIC;
         if (game.getVictoryTeam() == Player.TEAM_NONE) {
             Player player = game.getPlayer(game.getVictoryPlayerId());
             if (null == player) {
-                r.messageId = 7005;
+                report.messageId = 7005;
             } else {
-                r.messageId = 7010;
-                r.add(player.getColorForPlayer());
+                report.messageId = 7010;
+                report.add(player.getColorForPlayer());
             }
         } else {
             // Team victory
-            r.messageId = 7015;
-            r.add(game.getVictoryTeam());
+            report.messageId = 7015;
+            report.add(game.getVictoryTeam());
         }
-        addReport(r);
+        addReport(report);
 
         bvReports(false);
 
@@ -1295,10 +1293,10 @@ public class TWGameManager extends AbstractGameManager {
                     default -> "Edge";
                 };
 
-                r = new Report(7081, Report.PUBLIC);
-                r.indent();
-                r.add(fleeDirection);
-                addReport(r);
+                report = new Report(7081, Report.PUBLIC);
+                report.indent();
+                report.add(fleeDirection);
+                addReport(report);
             }
         }
         // List destroyed units
@@ -1328,7 +1326,7 @@ public class TWGameManager extends AbstractGameManager {
      * Generates a detailed report for campaign use
      */
     private String getDetailedVictoryReport() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
 
         Vector<Entity> vAllUnits = new Vector<>();
         for (Entity entity : game.inGameTWEntities()) {
@@ -1343,43 +1341,43 @@ public class TWGameManager extends AbstractGameManager {
             vAllUnits.addElement(i.nextElement());
         }
 
-        for (Player p : game.getPlayersList()) {
+        for (Player player : game.getPlayersList()) {
             // Record the player.
-            sb.append("++++++++++ ").append(p.getName()).append(" ++++++++++\n");
+            stringBuilder.append("++++++++++ ").append(player.getName()).append(" ++++++++++\n");
 
             // Record the player's alive, retreated, or salvageable units.
             for (int x = 0; x < vAllUnits.size(); x++) {
-                Entity e = vAllUnits.elementAt(x);
-                if (e.getOwner() == p) {
-                    sb.append(UnitStatusFormatter.format(e));
+                Entity entity = vAllUnits.elementAt(x);
+                if (entity.getOwner() == player) {
+                    stringBuilder.append(UnitStatusFormatter.format(entity));
                 }
             }
 
             // Record the player's devastated units.
             Enumeration<Entity> devastated = game.getDevastatedEntities();
             if (devastated.hasMoreElements()) {
-                sb.append("=============================================================\n");
-                sb.append("The following utterly destroyed units are not available for salvage:\n");
+                stringBuilder.append("=============================================================\n");
+                stringBuilder.append("The following utterly destroyed units are not available for salvage:\n");
                 while (devastated.hasMoreElements()) {
-                    Entity e = devastated.nextElement();
-                    if (e.getOwner() == p) {
-                        sb.append(e.getShortName());
-                        for (int pos = 0; pos < e.getCrew().getSlotCount(); pos++) {
-                            sb.append(", ")
-                                  .append(e.getCrew().getNameAndRole(pos))
+                    Entity entity = devastated.nextElement();
+                    if (entity.getOwner() == player) {
+                        stringBuilder.append(entity.getShortName());
+                        for (int pos = 0; pos < entity.getCrew().getSlotCount(); pos++) {
+                            stringBuilder.append(", ")
+                                  .append(entity.getCrew().getNameAndRole(pos))
                                   .append(" (")
-                                  .append(e.getCrew().getGunnery())
+                                  .append(entity.getCrew().getGunnery())
                                   .append('/')
-                                  .append(e.getCrew().getPiloting())
+                                  .append(entity.getCrew().getPiloting())
                                   .append(")\n");
                         }
                     }
                 }
-                sb.append("=============================================================\n");
+                stringBuilder.append("=============================================================\n");
             }
         }
 
-        return sb.toString();
+        return stringBuilder.toString();
     }
 
     /**
@@ -1455,7 +1453,7 @@ public class TWGameManager extends AbstractGameManager {
             try {
                 removed = game.removeFirstTurnFor(entityUsed);
             } catch (Exception e) {
-                logger.error("", e);
+                LOGGER.error(e, "Unable to remove first turn for entity");
             }
             entityUsed.setDone(true);
             turnsChanged = true;
@@ -1467,14 +1465,14 @@ public class TWGameManager extends AbstractGameManager {
         final var gameOpts = game.getOptions();
         final int playerId = null == entityUsed ? Player.PLAYER_NONE : entityUsed.getOwnerId();
         boolean infMoved = entityUsed instanceof Infantry;
-        boolean infMoveMulti = gameOpts.booleanOption(OptionsConstants.INIT_INF_MOVE_MULTI) &&
-              (currPhase.isMovement() || currPhase.isDeployment() || currPhase.isInitiative());
-        boolean protosMoved = entityUsed instanceof ProtoMek;
-        boolean protosMoveMulti = gameOpts.booleanOption(OptionsConstants.INIT_PROTOMEKS_MOVE_MULTI);
+        boolean infMoveMulti = gameOpts.booleanOption(OptionsConstants.INIT_INF_MOVE_MULTI) && (currPhase.isMovement()
+              || currPhase.isDeployment()
+              || currPhase.isInitiative());
+        boolean protoMeksMoved = entityUsed instanceof ProtoMek;
+        boolean protoMeksMoveMulti = gameOpts.booleanOption(OptionsConstants.INIT_PROTOMEKS_MOVE_MULTI);
         boolean tanksMoved = entityUsed instanceof Tank;
         boolean tanksMoveMulti = gameOpts.booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_LANCE_MOVEMENT)
-              &&
-              (currPhase.isMovement() || currPhase.isDeployment() || currPhase.isInitiative());
+              && (currPhase.isMovement() || currPhase.isDeployment() || currPhase.isInitiative());
         boolean meksMoved = entityUsed instanceof Mek;
         boolean meksMoveMulti = gameOpts.booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT) &&
               (currPhase.isMovement() || currPhase.isDeployment() || currPhase.isInitiative());
@@ -1484,7 +1482,7 @@ public class TWGameManager extends AbstractGameManager {
         int multiMask = 0;
         if (infMoveMulti && infMoved) {
             multiMask = EntityClassTurn.CLASS_INFANTRY;
-        } else if (protosMoveMulti && protosMoved) {
+        } else if (protoMeksMoveMulti && protoMeksMoved) {
             multiMask = EntityClassTurn.CLASS_PROTOMEK;
         } else if (tanksMoveMulti && tanksMoved) {
             multiMask = EntityClassTurn.CLASS_TANK;
@@ -1494,7 +1492,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // In certain cases, a new SpecificEntityTurn could have been added for
         // the Entity whose turn we are ending as the next turn. If this has
-        // happened, the remaining entity count will be off and we must ensure
+        // happened, the remaining entity count will be off, and we must ensure
         // that the SpecificEntityTurn for this unit remains the next turn
         List<GameTurn> turnVector = game.getTurnsList();
         int turnIndex = game.getTurnIndex();
@@ -1515,7 +1513,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // Unless overridden by the "protos_move_multi" option, all ProtoMeks
         // in a unit declare fire, and they don't mix with infantry.
-        if (protosMoved && !protosMoveMulti && !isMultiTurn) {
+        if (protoMeksMoved && !protoMeksMoveMulti && !isMultiTurn) {
             // What's the unit number and ID of the entity used?
             final short movingUnit = entityUsed.getUnitNumber();
             final int movingId = entityUsed.getId();
@@ -1547,7 +1545,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
         // Otherwise, we may need to add turns for the "*_move_multi" options.
-        else if (((infMoved && infMoveMulti) || (protosMoved && protosMoveMulti)) && !isMultiTurn) {
+        else if (((infMoved && infMoveMulti) || (protoMeksMoved && protoMeksMoveMulti)) && !isMultiTurn) {
             int remaining = 0;
 
             // Calculate the number of EntityClassTurns need to be added.
@@ -1555,7 +1553,7 @@ public class TWGameManager extends AbstractGameManager {
                 remaining += getGame().getInfantryLeft(playerId);
             }
 
-            if (protosMoveMulti && protosMoved) {
+            if (protoMeksMoveMulti && protoMeksMoved) {
                 remaining += getGame().getProtoMeksLeft(playerId);
             }
 
@@ -1581,8 +1579,7 @@ public class TWGameManager extends AbstractGameManager {
                 remaining--;
             }
             int moreVeeTurns = Math.min(gameOpts.intOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_LANCE_MOVEMENT_NUMBER)
-                  -
-                  1, remaining);
+                  - 1, remaining);
 
             // Add the correct number of turns for the right unit classes.
             for (int i = 0; i < moreVeeTurns; i++) {
@@ -1599,8 +1596,7 @@ public class TWGameManager extends AbstractGameManager {
                 remaining--;
             }
             int moreMekTurns = Math.min(gameOpts.intOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT_NUMBER)
-                        - 1,
-                  remaining);
+                  - 1, remaining);
 
             // Add the correct number of turns for the right unit classes.
             for (int i = 0; i < moreMekTurns; i++) {
@@ -1757,32 +1753,32 @@ public class TWGameManager extends AbstractGameManager {
     private List<Report> bvReport(String name, int playerID, BVCountHelper bvc, boolean checkBlind) {
         List<Report> result = new ArrayList<>();
 
-        Report r = new Report(7016, Report.PUBLIC);
-        r.add(name);
-        result.add(r);
+        Report report = new Report(7016, Report.PUBLIC);
+        report.add(name);
+        result.add(report);
 
-        r = new Report(7017, Report.PUBLIC);
+        report = new Report(7017, Report.PUBLIC);
         if (checkBlind && doBlind() && suppressBlindBV()) {
-            r.type = Report.PLAYER;
-            r.player = playerID;
+            report.type = Report.PLAYER;
+            report.player = playerID;
         }
-        r.add(bvc.bv);
-        r.add(bvc.bvInitial);
-        r.add(Double.toString(Math.round(((double) bvc.bv / bvc.bvInitial) * 10000.0) / 100.0));
-        r.add(bvc.bvFled);
-        r.indent(2);
-        result.add(r);
+        report.add(bvc.bv);
+        report.add(bvc.bvInitial);
+        report.add(Double.toString(Math.round(((double) bvc.bv / bvc.bvInitial) * 10000.0) / 100.0));
+        report.add(bvc.bvFled);
+        report.indent(2);
+        result.add(report);
 
-        r = new Report(7018, Report.PUBLIC);
+        report = new Report(7018, Report.PUBLIC);
         if (checkBlind && doBlind() && suppressBlindBV()) {
-            r.type = Report.PLAYER;
-            r.player = playerID;
+            report.type = Report.PLAYER;
+            report.player = playerID;
         }
-        r.add(bvc.unitsCount);
-        r.add(bvc.unitsInitialCount);
-        r.add(Double.toString(Math.round(((double) bvc.unitsCount / bvc.unitsInitialCount) * 10000.0) / 100.0));
-        r.indent(2);
-        result.add(r);
+        report.add(bvc.unitsCount);
+        report.add(bvc.unitsInitialCount);
+        report.add(Double.toString(Math.round(((double) bvc.unitsCount / bvc.unitsInitialCount) * 10000.0) / 100.0));
+        report.indent(2);
+        result.add(report);
 
         if (bvc.unitsLightDamageCount +
               bvc.unitsModerateDamageCount +
@@ -1792,59 +1788,63 @@ public class TWGameManager extends AbstractGameManager {
               bvc.unitsFledCount +
               bvc.unitsCrewEjectedCount +
               bvc.unitsCrewKilledCount > 0) {
-            r = new Report(7019, Report.PUBLIC);
+            report = new Report(7019, Report.PUBLIC);
             if (checkBlind && doBlind() && suppressBlindBV()) {
-                r.type = Report.PLAYER;
-                r.player = playerID;
+                report.type = Report.PLAYER;
+                report.player = playerID;
             }
-            r.add(bvc.unitsLightDamageCount > 0 ?
-                  r.warning(bvc.unitsLightDamageCount + "") :
+            report.add(bvc.unitsLightDamageCount > 0 ?
+                  report.warning(bvc.unitsLightDamageCount + "") :
                   bvc.unitsLightDamageCount + "");
-            r.add(bvc.unitsModerateDamageCount > 0 ?
-                  r.warning(bvc.unitsModerateDamageCount + "") :
+            report.add(bvc.unitsModerateDamageCount > 0 ?
+                  report.warning(bvc.unitsModerateDamageCount + "") :
                   bvc.unitsModerateDamageCount + "");
-            r.add(bvc.unitsHeavyDamageCount > 0 ?
-                  r.warning(bvc.unitsHeavyDamageCount + "") :
+            report.add(bvc.unitsHeavyDamageCount > 0 ?
+                  report.warning(bvc.unitsHeavyDamageCount + "") :
                   bvc.unitsHeavyDamageCount + "");
-            r.add(bvc.unitsCrippledCount > 0 ? r.warning(bvc.unitsCrippledCount + "") : bvc.unitsCrippledCount + "");
-            r.add(bvc.unitsDestroyedCount > 0 ? r.warning(bvc.unitsDestroyedCount + "") : bvc.unitsDestroyedCount + "");
-            r.add(bvc.unitsFledCount > 0 ? r.warning(bvc.unitsFledCount + "") : bvc.unitsFledCount + "");
-            r.add(bvc.unitsCrewEjectedCount > 0 ?
-                  r.warning(bvc.unitsCrewEjectedCount + "") :
+            report.add(bvc.unitsCrippledCount > 0 ?
+                  report.warning(bvc.unitsCrippledCount + "") :
+                  bvc.unitsCrippledCount + "");
+            report.add(bvc.unitsDestroyedCount > 0 ?
+                  report.warning(bvc.unitsDestroyedCount + "") :
+                  bvc.unitsDestroyedCount + "");
+            report.add(bvc.unitsFledCount > 0 ? report.warning(bvc.unitsFledCount + "") : bvc.unitsFledCount + "");
+            report.add(bvc.unitsCrewEjectedCount > 0 ?
+                  report.warning(bvc.unitsCrewEjectedCount + "") :
                   bvc.unitsCrewEjectedCount + "");
-            r.add(bvc.unitsCrewTrappedCount > 0 ?
-                  r.warning(bvc.unitsCrewTrappedCount + "") :
+            report.add(bvc.unitsCrewTrappedCount > 0 ?
+                  report.warning(bvc.unitsCrewTrappedCount + "") :
                   bvc.unitsCrewTrappedCount + "");
-            r.add(bvc.unitsCrewKilledCount > 0 ?
-                  r.warning(bvc.unitsCrewKilledCount + "") :
+            report.add(bvc.unitsCrewKilledCount > 0 ?
+                  report.warning(bvc.unitsCrewKilledCount + "") :
                   bvc.unitsCrewKilledCount + "");
-            r.indent(2);
-            result.add(r);
+            report.indent(2);
+            result.add(report);
         }
 
         if (bvc.unitsCrewEjectedCount > 0) {
-            r = new Report(7020, Report.PUBLIC);
+            report = new Report(7020, Report.PUBLIC);
             if (checkBlind && doBlind() && suppressBlindBV()) {
-                r.type = Report.PLAYER;
-                r.player = playerID;
+                report.type = Report.PLAYER;
+                report.player = playerID;
             }
-            r.add(bvc.ejectedCrewActiveCount > 0 ?
-                  r.warning(bvc.ejectedCrewActiveCount + "") :
+            report.add(bvc.ejectedCrewActiveCount > 0 ?
+                  report.warning(bvc.ejectedCrewActiveCount + "") :
                   bvc.ejectedCrewActiveCount + "");
-            r.add(bvc.ejectedCrewPickedUpByTeamCount > 0 ?
-                  r.warning(bvc.ejectedCrewPickedUpByTeamCount + "") :
+            report.add(bvc.ejectedCrewPickedUpByTeamCount > 0 ?
+                  report.warning(bvc.ejectedCrewPickedUpByTeamCount + "") :
                   bvc.ejectedCrewPickedUpByTeamCount + "");
-            r.add(bvc.ejectedCrewPickedUpByEnemyTeamCount > 0 ?
-                  r.warning(bvc.ejectedCrewPickedUpByEnemyTeamCount + "") :
+            report.add(bvc.ejectedCrewPickedUpByEnemyTeamCount > 0 ?
+                  report.warning(bvc.ejectedCrewPickedUpByEnemyTeamCount + "") :
                   bvc.ejectedCrewPickedUpByEnemyTeamCount + "");
-            r.add(bvc.ejectedCrewKilledCount > 0 ?
-                  r.warning(bvc.ejectedCrewKilledCount + "") :
+            report.add(bvc.ejectedCrewKilledCount > 0 ?
+                  report.warning(bvc.ejectedCrewKilledCount + "") :
                   bvc.ejectedCrewKilledCount + "");
-            r.add(bvc.ejectedCrewFledCount > 0 ?
-                  r.warning(bvc.ejectedCrewFledCount + "") :
+            report.add(bvc.ejectedCrewFledCount > 0 ?
+                  report.warning(bvc.ejectedCrewFledCount + "") :
                   bvc.ejectedCrewFledCount + "");
-            r.indent(2);
-            result.add(r);
+            report.indent(2);
+            result.add(report);
         }
 
         // blank line
@@ -1868,32 +1868,32 @@ public class TWGameManager extends AbstractGameManager {
         comp = comp.thenComparing(Entity::getDisplayName);
         entities.sort(comp);
 
-        Report r = new Report(7600, Report.PUBLIC);
-        reports.add(r);
+        Report report = new Report(7600, Report.PUBLIC);
+        reports.add(report);
 
-        r = new Report(1230, Report.PUBLIC);
-        r.add("<BR>");
-        reports.add(r);
+        report = new Report(1230, Report.PUBLIC);
+        report.add("<BR>");
+        reports.add(report);
 
-        for (Entity e : entities) {
-            r = new Report(1231);
-            r.subject = e.getId();
-            r.addDesc(e);
+        for (Entity entity : entities) {
+            report = new Report(1231);
+            report.subject = entity.getId();
+            report.addDesc(entity);
             String etr = "";
             try {
-                etr = UnitToolTip.getEntityTipReport(e).toString();
+                etr = UnitToolTip.getEntityTipReport(entity).toString();
             } catch (Exception ex) {
-                logger.error("", ex);
+                LOGGER.error(ex, "Unable to get Entity Tip Report");
             }
-            r.add(etr);
-            reports.add(r);
+            report.add(etr);
+            reports.add(report);
 
-            r = new Report(1230, Report.PUBLIC);
-            r.add("<BR>");
-            reports.add(r);
+            report = new Report(1230, Report.PUBLIC);
+            report.add("<BR>");
+            reports.add(report);
         }
 
-        reports.add(r);
+        reports.add(report);
 
         mainPhaseReport.addAll(reports);
     }
@@ -1909,8 +1909,8 @@ public class TWGameManager extends AbstractGameManager {
             case EXCHANGE:
                 resetPlayersDone();
                 // Update initial BVs, as things may have been modified in lounge
-                for (Entity e : game.getEntitiesVector()) {
-                    e.setInitialBV(e.calculateBattleValue(false, false));
+                for (Entity entity : game.getEntitiesVector()) {
+                    entity.setInitialBV(entity.calculateBattleValue(false, false));
                 }
                 calculatePlayerInitialCounts();
                 // Build teams vector
@@ -1959,9 +1959,7 @@ public class TWGameManager extends AbstractGameManager {
         for (Player player : game.getPlayersList()) {
             player.setInitialEntityCount(Math.toIntExact(game.getPlayerEntities(player, false)
                   .stream()
-                  .filter(entity -> !entity.isDestroyed() &&
-                        !entity.isTrapped())
-                  .count()));
+                  .filter(entity -> !entity.isDestroyed() && !entity.isTrapped()).count()));
             player.setInitialBV(player.getBV());
         }
     }
@@ -1997,24 +1995,24 @@ public class TWGameManager extends AbstractGameManager {
             // if units were loaded in the chat lounge, I need to keep track of
             // it here because they can get dumped in the deployment phase
             if (!entity.getLoadedUnits().isEmpty()) {
-                Vector<Integer> v = new Vector<>();
-                for (Entity en : entity.getLoadedUnits()) {
-                    v.add(en.getId());
+                Vector<Integer> integerVector = new Vector<>();
+                for (Entity loadedEntity : entity.getLoadedUnits()) {
+                    integerVector.add(loadedEntity.getId());
                 }
-                entity.setLoadedKeepers(v);
+                entity.setLoadedKeepers(integerVector);
             }
 
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)
                   && (entity.isAero())) {
-                Aero a = null;
+                Aero aero = null;
                 if (entity instanceof Aero) {
-                    a = (Aero) entity;
+                    aero = (Aero) entity;
                 }
                 if (entity.isCapitalScale()) {
-                    if (a != null) {
-                        int currentSI = a.getSI() * 20;
-                        a.setOSI(a.getOSI() * 20);
-                        a.setSI(currentSI);
+                    if (aero != null) {
+                        int currentSI = aero.getSI() * 20;
+                        aero.setOSI(aero.getOSI() * 20);
+                        aero.setSI(currentSI);
                     }
                     if (entity.isCapitalFighter()) {
                         ((IAero) entity).autoSetCapArmor();
@@ -2031,10 +2029,10 @@ public class TWGameManager extends AbstractGameManager {
                             }
                         }
                     }
-                } else if (a != null) {
-                    int currentSI = a.getSI() * 2;
-                    a.setOSI(a.getOSI() * 2);
-                    a.setSI(currentSI);
+                } else if (aero != null) {
+                    int currentSI = aero.getSI() * 2;
+                    aero.setOSI(aero.getOSI() * 2);
+                    aero.setSI(currentSI);
                 }
             }
             if (entity.getsAutoExternalSearchlight()) {
@@ -2093,18 +2091,15 @@ public class TWGameManager extends AbstractGameManager {
         GameTurn gameTurn = game.getTurn();
 
         if (gameTurn != null && gameTurn.playerId() != current.getId()) {
-            // this player is not the current player, so just ignore this
-            // command!
+            // this player is not the current player, so just ignore this command!
             return;
         }
-        // if individual initiative is active we cannot forward our initiative
-        // ever!
+        // if individual initiative is active we cannot forward our initiative ever!
         if (game.getOptions().booleanOption(RPG_INDIVIDUAL_INITIATIVE)) {
             return;
         }
 
-        // if the player isn't on a team, there is no next team by definition. Skip the
-        // rest.
+        // if the player isn't on a team, there is no next team by definition. Skip the rest.
         Team currentPlayerTeam = game.getTeamForPlayer(current);
         if (currentPlayerTeam == null) {
             return;
@@ -2274,7 +2269,7 @@ public class TWGameManager extends AbstractGameManager {
             case TARGETING:
             case OFFBOARD:
                 if (toSkip != null) {
-                    processAttack(toSkip, new Vector<>(0));
+                    processAttack(toSkip, new ArrayList<>(0));
                 }
                 endCurrentTurn(toSkip);
                 break;
@@ -2304,11 +2299,11 @@ public class TWGameManager extends AbstractGameManager {
      * meks or only one team. will also add some reports to reporting
      */
     public boolean victory() {
-        VictoryResult vr = game.getVictoryResult();
-        for (Report r : vr.processVictory(game)) {
-            addReport(r);
+        VictoryResult victoryResult = game.getVictoryResult();
+        for (Report report : victoryResult.processVictory(game)) {
+            addReport(report);
         }
-        return vr.isVictory();
+        return victoryResult.isVictory();
     }// end victory
 
     private boolean isPlayerForcedVictory() {
@@ -2435,7 +2430,7 @@ public class TWGameManager extends AbstractGameManager {
         Vector<GameTurn> turns = new Vector<>(team_order.getTotalTurns() + team_order.getEvenTurns());
 
         // Stranded units only during movement phases, rebuild the turns vector
-        // TODO maybe move this to Premovemnt?
+        // TODO maybe move this to Pre-movement?
         if (game.getPhase().isMovement()) {
             // See if there are any loaded units stranded on immobile transports.
             Iterator<Entity> strandedUnits = game.getSelectedEntities(entity -> game.isEntityStranded(entity));
@@ -2463,23 +2458,23 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         List<Entity> entities;
-        // If the protos move multi option isn't on, protos move as a unit
+        // If the ProtoMeks move multi option isn't on, ProtoMeks move as a unit
         // Need to adjust entities vector otherwise we'll have too many turns
         // when first proto in a unit moves, new turns get added so rest of the
         // unit will move
-        boolean protosMoveMulti = game.getOptions().booleanOption(OptionsConstants.INIT_PROTOMEKS_MOVE_MULTI);
-        if (!protosMoveMulti) {
+        boolean protoMeksMoveMulti = game.getOptions().booleanOption(OptionsConstants.INIT_PROTOMEKS_MOVE_MULTI);
+        if (!protoMeksMoveMulti) {
             entities = new ArrayList<>(game.getEntitiesVector().size());
             Set<Short> movedUnits = new HashSet<>();
-            for (Entity e : game.getEntitiesVector()) {
-                // This only effects Protos for the time being
-                if (!(e instanceof ProtoMek)) {
-                    entities.add(e);
+            for (Entity entity : game.getEntitiesVector()) {
+                // This only effects ProtoMeks for the time being
+                if (!(entity instanceof ProtoMek)) {
+                    entities.add(entity);
                     continue;
                 }
-                short unitNumber = e.getUnitNumber();
+                short unitNumber = entity.getUnitNumber();
                 if ((unitNumber == Entity.NONE) || !movedUnits.contains(unitNumber)) {
-                    entities.add(e);
+                    entities.add(entity);
                     if (unitNumber != Entity.NONE) {
                         movedUnits.add(unitNumber);
                     }
@@ -2495,7 +2490,7 @@ public class TWGameManager extends AbstractGameManager {
               .collect(Collectors.joining(";"));
 
         if (!noInitiative.isEmpty()) {
-            logger.error("No Initiative rolled for: " + noInitiative);
+            LOGGER.error("No Initiative rolled for: {}", noInitiative);
         }
 
         // Now, generate the global order of all teams' turns.
@@ -2506,12 +2501,12 @@ public class TWGameManager extends AbstractGameManager {
 
         // add the turns (this is easy)
         while (team_order.hasMoreElements()) {
-            Entity e = (Entity) team_order.nextElement();
-            if (e.isSelectableThisTurn()) {
-                if (!protosMoveMulti && (e instanceof ProtoMek) && (e.getUnitNumber() != Entity.NONE)) {
-                    turns.addElement(new UnitNumberTurn(e.getOwnerId(), e.getUnitNumber()));
+            Entity entity = (Entity) team_order.nextElement();
+            if (entity.isSelectableThisTurn()) {
+                if (!protoMeksMoveMulti && (entity instanceof ProtoMek) && (entity.getUnitNumber() != Entity.NONE)) {
+                    turns.addElement(new UnitNumberTurn(entity.getOwnerId(), entity.getUnitNumber()));
                 } else {
-                    turns.addElement(new SpecificEntityTurn(e.getOwnerId(), e.getId()));
+                    turns.addElement(new SpecificEntityTurn(entity.getOwnerId(), entity.getId()));
                 }
             }
         }
@@ -2543,14 +2538,14 @@ public class TWGameManager extends AbstractGameManager {
               (game.getPhase().isInitiative() ||
                     game.getPhase().isMovement() ||
                     game.getPhase().isDeployment());
-        boolean protosMoveEven = (game.getOptions().booleanOption(OptionsConstants.INIT_PROTOMEKS_MOVE_EVEN) &&
+        boolean protoMeksMoveEven = (game.getOptions().booleanOption(OptionsConstants.INIT_PROTOMEKS_MOVE_EVEN) &&
               (game.getPhase().isInitiative() ||
                     game.getPhase().isMovement() ||
                     game.getPhase().isDeployment())) ||
               (game.getOptions().booleanOption(OptionsConstants.INIT_PROTOMEKS_MOVE_EVEN) &&
                     game.getPhase().isDeployment());
-        boolean protosMoveMulti = game.getOptions().booleanOption(OptionsConstants.INIT_PROTOMEKS_MOVE_MULTI);
-        boolean protosMoveByPoint = !protosMoveMulti;
+        boolean protoMeksMoveMulti = game.getOptions().booleanOption(OptionsConstants.INIT_PROTOMEKS_MOVE_MULTI);
+        boolean protoMeksMoveByPoint = !protoMeksMoveMulti;
         boolean tankMoveByLance = game.getOptions()
               .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_LANCE_MOVEMENT) &&
               (game.getPhase().isInitiative() ||
@@ -2567,10 +2562,10 @@ public class TWGameManager extends AbstractGameManager {
             evenMask += EntityClassTurn.CLASS_INFANTRY;
         }
 
-        if (protosMoveEven) {
+        if (protoMeksMoveEven) {
             evenMask += EntityClassTurn.CLASS_PROTOMEK;
         }
-        // Reset all of the Players' turn category counts
+        // Reset all the Players' turn category counts
         for (Player player : game.getPlayersList()) {
             player.resetEvenTurns();
             player.resetMultiTurns();
@@ -2583,10 +2578,10 @@ public class TWGameManager extends AbstractGameManager {
             player.resetAeroTurns();
 
             // Add turns for ProtoMeks weapons declaration.
-            if (protosMoveByPoint) {
+            if (protoMeksMoveByPoint) {
 
                 // How many ProtoMeks does the player have?
-                Iterator<Entity> playerProtos = game.getSelectedEntities(new EntitySelector() {
+                Iterator<Entity> playerProtoMeks = game.getSelectedEntities(new EntitySelector() {
                     private final int ownerId = player.getId();
 
                     @Override
@@ -2597,18 +2592,18 @@ public class TWGameManager extends AbstractGameManager {
                     }
                 });
                 HashSet<Integer> points = new HashSet<>();
-                int numPlayerProtos = 0;
-                while (playerProtos.hasNext()) {
-                    Entity proto = playerProtos.next();
-                    numPlayerProtos++;
+                int numPlayerProtoMeks = 0;
+                while (playerProtoMeks.hasNext()) {
+                    Entity proto = playerProtoMeks.next();
+                    numPlayerProtoMeks++;
                     points.add((int) proto.getUnitNumber());
                 }
-                int numProtoUnits = (int) Math.ceil(numPlayerProtos / 5.0);
-                if (!protosMoveEven) {
+                int numProtoUnits = (int) Math.ceil(numPlayerProtoMeks / 5.0);
+                if (!protoMeksMoveEven) {
                     numProtoUnits = points.size();
                 }
                 for (int unit = 0; unit < numProtoUnits; unit++) {
-                    if (protosMoveEven) {
+                    if (protoMeksMoveEven) {
                         player.incrementEvenTurns();
                     } else {
                         player.incrementOtherTurns();
@@ -2619,9 +2614,8 @@ public class TWGameManager extends AbstractGameManager {
 
         } // Handle the next player
 
-        // Go through all entities, and update the turn categories of the
-        // entity's player. The teams get their totals from their players.
-        // N.B. ProtoMeks declare weapons fire based on their point.
+        // Go through all entities, and update the turn categories of the entity's player. The teams get their totals
+        // from their players. N.B. ProtoMeks declare weapons fire based on their point.
         for (Entity entity : game.inGameTWEntities()) {
             if (entity.isSelectableThisTurn()) {
                 final Player player = entity.getOwner();
@@ -2653,10 +2647,10 @@ public class TWGameManager extends AbstractGameManager {
                         player.incrementOtherTurns();
                     }
                 } else if (entity instanceof ProtoMek) {
-                    if (!protosMoveByPoint) {
-                        if (protosMoveEven) {
+                    if (!protoMeksMoveByPoint) {
+                        if (protoMeksMoveEven) {
                             player.incrementEvenTurns();
-                        } else if (protosMoveMulti) {
+                        } else if (protoMeksMoveMulti) {
                             player.incrementMultiTurns(EntityClassTurn.CLASS_PROTOMEK);
                         } else {
                             player.incrementOtherTurns();
@@ -2694,18 +2688,18 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Now, generate the global order of all teams' turns.
-        TurnVectors team_order = TurnOrdered.generateTurnOrder(game.getTeams(), game);
+        TurnVectors teamOrder = TurnOrdered.generateTurnOrder(game.getTeams(), game);
 
         // Now, we collect everything into a single vector.
-        Vector<GameTurn> turns = initGameTurnsWithStranded(team_order);
+        Vector<GameTurn> turns = initGameTurnsWithStranded(teamOrder);
 
         // Walk through the global order, assigning turns
         // for individual players to the single vector.
         // Keep track of how many turns we've added to the vector.
         Team prevTeam = null;
-        int min = team_order.getMin();
-        for (int numTurn = 0; team_order.hasMoreElements(); numTurn++) {
-            Team team = (Team) team_order.nextElement();
+        int min = teamOrder.getMin();
+        for (int numTurn = 0; teamOrder.hasMoreElements(); numTurn++) {
+            Team team = (Team) teamOrder.nextElement();
             TurnVectors withinTeamTurns = allTeamTurns.get(team);
 
             int[] evenTracker = evenTrackers.get(team);
@@ -2760,14 +2754,14 @@ public class TWGameManager extends AbstractGameManager {
 
                 // If we've added all "normal" turns, allocate turns
                 // for the infantry and/or ProtoMeks moving even.
-                if (numTurn >= team_order.getTotalTurns()) {
+                if (numTurn >= teamOrder.getTotalTurns()) {
                     turn = new EntityClassTurn(player.getId(), evenMask);
                 }
                 // If either Infantry or ProtoMeks move even, only allow
                 // the other classes to move during the "normal" turn.
-                else if (infMoveEven || protosMoveEven) {
+                else if (infMoveEven || protoMeksMoveEven) {
                     int newMask = evenMask;
-                    // if this is the movement phase, then don't allow Aeros on normal turns
+                    // if this is the movement phase, then don't allow Aerospace on normal turns
                     if (getGame().getPhase().isMovement() || getGame().getPhase().isDeployment()) {
                         newMask += aeroMask;
                     }
@@ -2833,24 +2827,24 @@ public class TWGameManager extends AbstractGameManager {
      */
     void writeInitiativeReport(boolean abbreviatedReport) {
         // write to report
-        Report r;
+        Report report;
         boolean deployment = false;
         if (!abbreviatedReport) {
-            r = new Report(1210);
-            r.type = Report.PUBLIC;
+            report = new Report(1210);
+            report.type = Report.PUBLIC;
             if (game.getLastPhase().isDeployment() || game.isDeploymentComplete() || !game.shouldDeployThisRound()) {
-                r.messageId = 1000;
-                r.add(game.getRoundCount());
+                report.messageId = 1000;
+                report.add(game.getRoundCount());
             } else {
                 deployment = true;
                 if (game.getRoundCount() == 0) {
-                    r.messageId = 1005;
+                    report.messageId = 1005;
                 } else {
-                    r.messageId = 1010;
-                    r.add(game.getRoundCount());
+                    report.messageId = 1010;
+                    report.add(game.getRoundCount());
                 }
             }
-            addReport(r);
+            addReport(report);
             // write separator
             addReport(new Report(1200, Report.PUBLIC));
         } else {
@@ -2858,25 +2852,25 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         if (game.getOptions().booleanOption(RPG_INDIVIDUAL_INITIATIVE)) {
-            r = new Report(1040, Report.PUBLIC);
-            addReport(r);
+            report = new Report(1040, Report.PUBLIC);
+            addReport(report);
             for (Enumeration<GameTurn> e = game.getTurns(); e.hasMoreElements(); ) {
-                GameTurn t = e.nextElement();
-                if (t instanceof SpecificEntityTurn) {
-                    Entity entity = game.getEntity(((SpecificEntityTurn) t).getEntityNum());
+                GameTurn gameTurn = e.nextElement();
+                if (gameTurn instanceof SpecificEntityTurn) {
+                    Entity entity = game.getEntity(((SpecificEntityTurn) gameTurn).getEntityNum());
                     if (entity != null && entity.getDeployRound() <= game.getRoundCount()) {
-                        r = new Report(1045);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
-                        r.add(entity.getInitiative().toString());
-                        addReport(r);
+                        report = new Report(1045);
+                        report.subject = entity.getId();
+                        report.addDesc(entity);
+                        report.add(entity.getInitiative().toString());
+                        addReport(report);
                     }
                 } else {
-                    Player player = game.getPlayer(t.playerId());
+                    Player player = game.getPlayer(gameTurn.playerId());
                     if (null != player) {
-                        r = new Report(1050, Report.PUBLIC);
-                        r.add(player.getColorForPlayer());
-                        addReport(r);
+                        report = new Report(1050, Report.PUBLIC);
+                        report.add(player.getColorForPlayer());
+                        addReport(report);
                     }
                 }
             }
@@ -2891,22 +2885,22 @@ public class TWGameManager extends AbstractGameManager {
                 // them as the 'team', and use the team initiative
                 if (team.getNonObserverSize() == 1) {
                     final Player player = team.nonObserverPlayers().get(0);
-                    r = new Report(1015, Report.PUBLIC);
-                    r.add(player.getColorForPlayer());
-                    r.add(team.getInitiative().toString());
-                    addReport(r);
+                    report = new Report(1015, Report.PUBLIC);
+                    report.add(player.getColorForPlayer());
+                    report.add(team.getInitiative().toString());
+                    addReport(report);
                 } else {
                     // Multiple players. List the team, then break it down.
-                    r = new Report(1015, Report.PUBLIC);
-                    r.add(Player.TEAM_NAMES[team.getId()]);
-                    r.add(team.getInitiative().toString());
-                    addReport(r);
+                    report = new Report(1015, Report.PUBLIC);
+                    report.add(Player.TEAM_NAMES[team.getId()]);
+                    report.add(team.getInitiative().toString());
+                    addReport(report);
                     for (Player player : team.nonObserverPlayers()) {
-                        r = new Report(1015, Report.PUBLIC);
-                        r.indent();
-                        r.add(player.getName());
-                        r.add(player.getInitiative().toString());
-                        addReport(r);
+                        report = new Report(1015, Report.PUBLIC);
+                        report.indent();
+                        report.add(player.getName());
+                        report.add(player.getInitiative().toString());
+                        addReport(report);
                     }
                 }
             }
@@ -2914,29 +2908,29 @@ public class TWGameManager extends AbstractGameManager {
             if (!doBlind()) {
                 // The turn order is different in movement phase
                 // if a player has any "even" moving units.
-                r = new Report(1020, Report.PUBLIC);
+                report = new Report(1020, Report.PUBLIC);
 
                 boolean hasEven = false;
                 for (Enumeration<GameTurn> i = game.getTurns(); i.hasMoreElements(); ) {
                     GameTurn turn = i.nextElement();
                     Player player = game.getPlayer(turn.playerId());
                     if (null != player) {
-                        r.add(player.getName());
+                        report.add(player.getName());
                         if (player.getEvenTurns() > 0) {
                             hasEven = true;
                         }
                     }
                 }
-                r.newlines = 2;
-                addReport(r);
+                report.newlines = 2;
+                addReport(report);
                 if (hasEven) {
-                    r = new Report(1021, Report.PUBLIC);
-                    r.choose((game.getOptions().booleanOption(OptionsConstants.INIT_INF_DEPLOY_EVEN) ||
+                    report = new Report(1021, Report.PUBLIC);
+                    report.choose((game.getOptions().booleanOption(OptionsConstants.INIT_INF_DEPLOY_EVEN) ||
                           game.getOptions().booleanOption(OptionsConstants.INIT_PROTOMEKS_MOVE_EVEN)) &&
                           !game.getLastPhase().isEndReport());
-                    r.indent();
-                    r.newlines = 2;
-                    addReport(r);
+                    report.indent();
+                    report.newlines = 2;
+                    addReport(report);
                 }
             }
         }
@@ -2954,29 +2948,29 @@ public class TWGameManager extends AbstractGameManager {
                   .sorted(comp)
                   .toList();
             if (!ue.isEmpty()) {
-                r = new Report(1060, Report.PUBLIC);
-                addReport(r);
+                report = new Report(1060, Report.PUBLIC);
+                addReport(report);
                 int round = -1;
 
                 for (Entity entity : ue) {
                     if (round != entity.getDeployRound()) {
                         round = entity.getDeployRound();
-                        r = new Report(1065, Report.PUBLIC);
-                        r.add(round);
-                        addReport(r);
+                        report = new Report(1065, Report.PUBLIC);
+                        report.add(round);
+                        addReport(report);
                     }
 
-                    r = new Report(1066);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
+                    report = new Report(1066);
+                    report.subject = entity.getId();
+                    report.addDesc(entity);
                     String s = IStartingPositions.START_LOCATION_NAMES[entity.getStartingPos()];
-                    r.add(s);
-                    addReport(r);
+                    report.add(s);
+                    addReport(report);
                 }
 
-                r = new Report(1210, Report.PUBLIC);
-                r.newlines = 2;
-                addReport(r);
+                report = new Report(1210, Report.PUBLIC);
+                report.newlines = 2;
+                addReport(report);
             }
 
             // we don't much care about wind direction and such in a hard vacuum
@@ -3066,27 +3060,26 @@ public class TWGameManager extends AbstractGameManager {
         // anything in the central hex or adjacent hexes is destroyed
         Map<BoardLocation, List<Entity>> positionMap = game.getPositionMapMulti();
 
-        for (Entity en : game.getEntitiesVector(centralPos, boardId)) {
-            if (!en.isAirborne()) {
-                addReport(destroyEntity(en, "DropShip proximity damage", false, false));
-                alreadyHit.add(en.getId());
+        for (Entity entity : game.getEntitiesVector(centralPos, boardId)) {
+            if (!entity.isAirborne()) {
+                addReport(destroyEntity(entity, "DropShip proximity damage", false, false));
+                alreadyHit.add(entity.getId());
             }
         }
         game.getBuildingAt(centralPos, boardId).ifPresent(
               bldg -> buildingCollapseHandler.collapseBuilding(bldg, positionMap, centralPos, mainPhaseReport));
         for (int i = 0; i < 6; i++) {
             Coords pos = centralPos.translated(i);
-            for (Entity en : game.getEntitiesVector(pos)) {
-                if (!en.isAirborne()) {
-                    addReport(destroyEntity(en, "DropShip proximity damage", false, false));
+            for (Entity entity : game.getEntitiesVector(pos)) {
+                if (!entity.isAirborne()) {
+                    addReport(destroyEntity(entity, "DropShip proximity damage", false, false));
                 }
-                alreadyHit.add(en.getId());
+                alreadyHit.add(entity.getId());
             }
             game.getBuildingAt(pos, boardId).ifPresent(
                   building -> buildingCollapseHandler.collapseBuilding(building, positionMap, pos, mainPhaseReport));
         }
 
-        // Report r;
         // ok now I need to look at the damage rings - start at 2 and go to 7
         // Falloff is used for signalling building damage factor
         DamageFalloff falloff = new DamageFalloff();
@@ -3152,19 +3145,18 @@ public class TWGameManager extends AbstractGameManager {
      * @param unit   - the <code>Entity</code> being loaded.
      */
     public void loadUnit(Entity loader, Entity unit, int bayNumber) {
-        // ProtoMeks share a single turn for a Point. When loading one we don't remove
-        // its turn
-        // unless it's the last unit in the Point to act.
-        int remainingProtos = 0;
+        // ProtoMeks share a single turn for a Point. When loading one we don't remove its turn unless it's the last
+        // unit in the Point to act.
+        int remainingProtoMeks = 0;
         if (unit.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
-            remainingProtos = game.getSelectedEntityCount(en -> en.hasETypeFlag(Entity.ETYPE_PROTOMEK) &&
+            remainingProtoMeks = game.getSelectedEntityCount(en -> en.hasETypeFlag(Entity.ETYPE_PROTOMEK) &&
                   en.getId() != unit.getId() &&
                   en.isSelectableThisTurn() &&
                   en.getOwnerId() == unit.getOwnerId() &&
                   en.getUnitNumber() == unit.getUnitNumber());
         }
 
-        if (!getGame().getPhase().isLounge() && !unit.isDone() && (remainingProtos == 0)) {
+        if (!getGame().getPhase().isLounge() && !unit.isDone() && (remainingProtoMeks == 0)) {
             // Remove the *last* friendly turn (removing the *first* penalizes
             // the opponent too much, and re-calculating moves is too hard).
             game.removeTurnFor(unit);
@@ -3210,7 +3202,7 @@ public class TWGameManager extends AbstractGameManager {
         try {
             loader.load(unit, checkElevation, bayNumber);
         } catch (IllegalArgumentException e) {
-            logger.info(e.getMessage());
+            LOGGER.info(e.getMessage());
             sendServerChat(e.getMessage());
             return;
         }
@@ -3376,7 +3368,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
         } else if (game.getBuildingAt(pos, unit.getBoardId()).isPresent()) {
-            // non flying unit unloading units into a building
+            // non-flying unit unloading units into a building
             // -> sit in the building at the same elevation
             unit.setElevation(elevation);
         } else if (hex.terrainLevel(Terrains.WATER) > 0) {
@@ -3388,10 +3380,8 @@ public class TWGameManager extends AbstractGameManager {
                   (unit.getMovementMode() == EntityMovementMode.INF_UMU) ||
                   hex.containsTerrain(Terrains.ICE) ||
                   isBridge) {
-                // units that can float stay on the surface, or we go on the
-                // bridge
-                // this means elevation 0, because elevation is relative to the
-                // surface
+                // units that can float stay on the surface, or we go on the bridge this means elevation 0, because
+                // elevation is relative to the surface
                 unit.setElevation(0);
             }
         } else {
@@ -3415,37 +3405,37 @@ public class TWGameManager extends AbstractGameManager {
                 Roll diceRoll = Compute.rollD6(2);
 
                 // Report ziplining
-                Report r = new Report(9920);
-                r.subject = unit.getId();
-                r.addDesc(unit);
-                r.newlines = 0;
-                addReport(r);
+                Report report = new Report(9920);
+                report.subject = unit.getId();
+                report.addDesc(unit);
+                report.newlines = 0;
+                addReport(report);
 
                 // Report TN
-                r = new Report(9921);
-                r.subject = unit.getId();
-                r.add(psr.getValue());
-                r.add(psr.getDesc());
-                r.add(diceRoll);
-                r.newlines = 0;
-                addReport(r);
+                report = new Report(9921);
+                report.subject = unit.getId();
+                report.add(psr.getValue());
+                report.add(psr.getDesc());
+                report.add(diceRoll);
+                report.newlines = 0;
+                addReport(report);
 
                 if (diceRoll.getIntValue() < psr.getValue()) { // Failure!
-                    r = new Report(9923);
-                    r.subject = unit.getId();
-                    r.add(psr.getValue());
-                    r.add(diceRoll);
-                    addReport(r);
+                    report = new Report(9923);
+                    report.subject = unit.getId();
+                    report.add(psr.getValue());
+                    report.add(diceRoll);
+                    addReport(report);
 
                     HitData hit = unit.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
                     hit.setIgnoreInfantryDoubleDamage(true);
                     addReport(damageEntity(unit, hit, 5));
                 } else { // Report success
-                    r = new Report(9922);
-                    r.subject = unit.getId();
-                    r.add(psr.getValue());
-                    r.add(diceRoll);
-                    addReport(r);
+                    report = new Report(9922);
+                    report.subject = unit.getId();
+                    report.add(psr.getValue());
+                    report.add(diceRoll);
+                    addReport(report);
                 }
                 addNewLines();
             } else {
@@ -3499,22 +3489,22 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // okay, print the info
-        Report r = new Report(9605);
-        r.subject = entity.getId();
-        r.addDesc(entity);
-        r.add(roll.getLastPlainDesc(), true);
-        vReport.add(r);
+        Report report = new Report(9605);
+        report.subject = entity.getId();
+        report.addDesc(entity);
+        report.add(roll.getLastPlainDesc(), true);
+        vReport.add(report);
 
         // roll
         final Roll diceRoll = Compute.rollD6(2);
-        r = new Report(9606);
-        r.subject = entity.getId();
-        r.add(roll.getValueAsString());
-        r.add(roll.getDesc());
-        r.add(diceRoll);
+        report = new Report(9606);
+        report.subject = entity.getId();
+        report.add(roll.getValueAsString());
+        report.add(roll.getDesc());
+        report.add(diceRoll);
         success = diceRoll.getIntValue() >= roll.getValue();
-        r.choose(success);
-        vReport.add(r);
+        report.choose(success);
+        vReport.add(report);
 
         int mof = roll.getValue() - diceRoll.getIntValue();
 
@@ -3550,7 +3540,7 @@ public class TWGameManager extends AbstractGameManager {
         // Landing in a rough for rubble hex damages landing gear.
         Hex hex = game.getHex(finalPos, boardId);
         if (hex == null) {
-            logger.debug("Attempted to check landing terrain effects for null hex " + finalPos.toFriendlyString());
+            LOGGER.debug("Attempted to check landing terrain effects for null hex {}", finalPos.toFriendlyString());
             return;
         }
         Set<Coords> landingPositions = aero.getLandingCoords(vertical, touchdownPos, facing);
@@ -3559,9 +3549,9 @@ public class TWGameManager extends AbstractGameManager {
               .filter(Objects::nonNull)
               .anyMatch(h -> h.containsTerrain(Terrains.ROUGH) || h.containsTerrain(Terrains.RUBBLE))) {
             aero.setGearHit(true);
-            Report r = new Report(9125);
-            r.subject = ((Entity) aero).getId();
-            addReport(r);
+            Report report = new Report(9125);
+            report.subject = ((Entity) aero).getId();
+            addReport(report);
         }
         // Landing in water can destroy or immobilize the unit.
         if ((aero instanceof Aero) &&
@@ -3593,9 +3583,9 @@ public class TWGameManager extends AbstractGameManager {
         if (!unit.isAero() || unit instanceof Jumpship) {
             return false;
         }
-        IAero a = (IAero) unit;
+        IAero iAero = (IAero) unit;
 
-        Report r;
+        Report report;
 
         // Unload the unit.
         if (!unloader.unload(unit)) {
@@ -3622,8 +3612,8 @@ public class TWGameManager extends AbstractGameManager {
         unit.setSecondaryFacing(facing);
 
         // the velocity of the unloaded unit is the same as the loader
-        a.setCurrentVelocity(velocity);
-        a.setNextVelocity(velocity);
+        iAero.setCurrentVelocity(velocity);
+        iAero.setNextVelocity(velocity);
 
         // if using advanced movement then set vectors
         unit.setVectors(moveVec);
@@ -3635,29 +3625,29 @@ public class TWGameManager extends AbstractGameManager {
         unit.setDone(false);
 
         // if the bonus was greater than zero then too many fighters were
-        // launched and they
+        // launched, and they
         // must all make control rolls
         if (bonus > 0) {
             PilotingRollData psr = unit.getBasePilotingRoll();
             psr.addModifier(bonus, "safe launch rate exceeded");
             Roll diceRoll = Compute.rollD6(2);
-            r = new Report(9375);
-            r.subject = unit.getId();
-            r.add(unit.getDisplayName());
-            r.add(psr);
-            r.add(diceRoll);
-            r.indent(1);
+            report = new Report(9375);
+            report.subject = unit.getId();
+            report.add(unit.getDisplayName());
+            report.add(psr);
+            report.add(diceRoll);
+            report.indent(1);
 
             if (diceRoll.getIntValue() < psr.getValue()) {
-                r.choose(false);
-                addReport(r);
+                report.choose(false);
+                addReport(report);
                 // damage the unit
                 int damage = 10 * (psr.getValue() - diceRoll.getIntValue());
                 HitData hit = unit.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                Vector<Report> rep = damageEntity(unit, hit, damage);
-                Report.indentAll(rep, 1);
-                rep.lastElement().newlines++;
-                addReport(rep);
+                Vector<Report> reports = damageEntity(unit, hit, damage);
+                Report.indentAll(reports, 1);
+                reports.lastElement().newlines++;
+                addReport(reports);
                 // did we destroy the unit?
                 if (unit.isDoomed()) {
                     // Clean out the entity.
@@ -3667,17 +3657,17 @@ public class TWGameManager extends AbstractGameManager {
                 }
             } else {
                 // avoided damage
-                r.choose(true);
-                r.newlines++;
-                addReport(r);
+                report.choose(true);
+                report.newlines++;
+                addReport(report);
             }
         } else {
-            r = new Report(9374);
-            r.subject = unit.getId();
-            r.add(unit.getDisplayName());
-            r.indent(1);
-            r.newlines++;
-            addReport(r);
+            report = new Report(9374);
+            report.subject = unit.getId();
+            report.add(unit.getDisplayName());
+            report.indent(1);
+            report.newlines++;
+            addReport(report);
         }
 
         // launching from an OOC vessel causes damage
@@ -3687,11 +3677,11 @@ public class TWGameManager extends AbstractGameManager {
             Roll diceRoll = Compute.rollD6(2);
             int damage = diceRoll.getIntValue() * 10;
             String rollCalc = damage + "[" + diceRoll.getIntValue() + " * 10]";
-            r = new Report(9385);
-            r.subject = unit.getId();
-            r.add(unit.getDisplayName());
-            r.addDataWithTooltip(rollCalc, diceRoll.getReport());
-            addReport(r);
+            report = new Report(9385);
+            report.subject = unit.getId();
+            report.add(unit.getDisplayName());
+            report.addDataWithTooltip(rollCalc, diceRoll.getReport());
+            addReport(report);
             HitData hit = unit.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
             addReport(damageEntity(unit, hit, damage));
             // did we destroy the unit?
@@ -3707,8 +3697,8 @@ public class TWGameManager extends AbstractGameManager {
         entityUpdate(unit.getId());
 
         // Set the turn mask. We need to be specific otherwise we run the risk
-        // of having a unit of another class consume the turn and leave the
-        // unloaded unit without a turn
+        // of having iAero unit of another class consume the turn and leave the
+        // unloaded unit without iAero turn
         int turnMask;
         List<GameTurn> turnVector = game.getTurnsList();
         if (unit instanceof Dropship) {
@@ -3721,7 +3711,7 @@ public class TWGameManager extends AbstractGameManager {
         // Add one, otherwise we consider the turn we're currently processing
         int turnInsertIdx = game.getTurnIndex() + 1;
         // We have to figure out where to insert this turn, to maintain proper
-        // space turn order (JumpShips, Small Craft, DropShips, Aeros)
+        // space turn order (JumpShips, Small Craft, DropShips, Aerospace)
         for (; turnInsertIdx < turnVector.size(); turnInsertIdx++) {
             GameTurn turn = turnVector.get(turnInsertIdx);
             if (turn.isValidEntity(unit, game)) {
@@ -3744,26 +3734,20 @@ public class TWGameManager extends AbstractGameManager {
         // The unloaded unit is no longer being carried.
         drop.setTransportId(Entity.NONE);
 
-        // OK according to Welshman's pending ruling, when on the ground map
-        // units should be deployed in the ring two hexes away from the DropShip
-        // optimally, we should let people choose here, but that would be
-        // complicated
-        // so for now I am just going to distribute them. I will give each unit
-        // the first
-        // emptiest hex that has no water or magma in it.
-        // I will start the circle based on the facing of the dropper
+        // OK according to Welshman's pending ruling, when on the ground map units should be deployed in the ring two
+        // hexes away from the DropShip optimally, we should let people choose here, but that would be complicated
+        // so for now I am just going to distribute them. I will give each unit the first emptiest hex that has no
+        // water or magma in it. I will start the circle based on the facing of the dropper
         // Spheroid - facing
         // Aerodyne - opposite of facing
-        // http://www.classicbattletech.com/forums/index.php?topic=65600.msg1568089#new
         if (game.getBoard().isGround() && (null != curPos)) {
             boolean selected = false;
             int count;
             int max = 0;
             int facing = entity.getFacing();
             if (entity.getMovementMode() == EntityMovementMode.AERODYNE) {
-                // no real rule for this but it seems to make sense that units
-                // would drop behind an
-                // aerodyne rather than in front of it
+                // no real rule for this but it seems to make sense that units would drop behind an aerodyne rather
+                // than in front of it
                 facing = (facing + 3) % 6;
             }
             boolean checkDanger = true;
@@ -3838,8 +3822,7 @@ public class TWGameManager extends AbstractGameManager {
         drop.setFacing(entity.getFacing());
         drop.setSecondaryFacing(entity.getFacing());
 
-        // Units dropped at NOE / Altitude 1 are instantly placed on the ground,
-        // or at elevation 8 for VTOL (TW pg. 225)
+        // Units dropped at NOE / Altitude 1 are instantly placed on the ground, or at elevation 8 for VTOL (TW pg. 225)
         // Infantry treated as did not move; Jump/VTOL infantry get a +1 "Jumped" mod
         if (altitude == 1) {
             Hex hex = getGame().getBoard().getHex(curPos);
@@ -3860,7 +3843,7 @@ public class TWGameManager extends AbstractGameManager {
             drop.setElevation(elevation);
         } else {
             drop.setAltitude(altitude);
-            // For non-aeros, we need to temporarily set elevation to 999 until they land
+            // For non-aerospace, we need to temporarily set elevation to 999 until they land
             drop.setElevation(Aero.AERO_EFFECTIVE_ELEVATION);
         }
         drop.setUnloaded(true);
@@ -3879,9 +3862,9 @@ public class TWGameManager extends AbstractGameManager {
         // If the building collapsed, then the clients have already
         // been notified, so remove it from the notification list.
         if (collapse) {
-            affectedBldgs.remove(bldg);
+            affectedBuildings.remove(bldg);
         } else { // Otherwise, make sure that this building is tracked.
-            affectedBldgs.put(bldg, Boolean.FALSE);
+            affectedBuildings.put(bldg, Boolean.FALSE);
         }
     }
 
@@ -3890,7 +3873,7 @@ public class TWGameManager extends AbstractGameManager {
      * updates to all affected entities and non-collapsed buildings. The affected hexes is then cleared for the next
      * entity's movement.
      */
-    private void applyAffectedBldgs() {
+    private void applyAffectedBuildings() {
         // Build a list of Building updates.
         Vector<Building> bldgUpdates = new Vector<>();
 
@@ -3898,9 +3881,9 @@ public class TWGameManager extends AbstractGameManager {
         boolean bTurnsChanged = false;
 
         // Walk the set of buildings.
-        Enumeration<Building> bldgs = affectedBldgs.keys();
-        while (bldgs.hasMoreElements()) {
-            final Building bldg = bldgs.nextElement();
+        Enumeration<Building> buildings = affectedBuildings.keys();
+        while (buildings.hasMoreElements()) {
+            final Building bldg = buildings.nextElement();
 
             // Walk through the building's coordinates.
             Enumeration<Coords> bldgCoords = bldg.getCoords();
@@ -3944,11 +3927,11 @@ public class TWGameManager extends AbstractGameManager {
             sendChangedBuildings(bldgUpdates);
 
             // Clear the list of affected buildings.
-            affectedBldgs.clear();
+            affectedBuildings.clear();
         }
 
         // And we're done.
-    } // End private void applyAffectedBldgs()
+    } // End private void applyAffectedBuildings()
 
     /**
      * Receives an entity movement packet, and if valid, executes it and ends the current turn.
@@ -3958,92 +3941,96 @@ public class TWGameManager extends AbstractGameManager {
         Entity entity = game.getEntity(packet.getIntValue(0));
 
         if (entity == null) {
-            logger.error("Received packet with invalid entity");
+            LOGGER.error("Received packet with invalid entity");
             return;
         }
 
-        MovePath md = (MovePath) packet.getObject(1);
-        md.setGame(getGame());
-        md.setEntity(entity);
+        MovePath movePath = packet.getMovePath(1);
+        if (movePath != null) {
+            movePath.setGame(getGame());
+            movePath.setEntity(entity);
 
-        // is this the right phase?
-        if (!getGame().getPhase().isMovement()) {
-            logger.error("Server got movement packet in wrong phase");
-            return;
-        }
 
-        // can this player/entity act right now?
-        GameTurn turn = game.getTurn();
-        if (getGame().getPhase().isSimultaneous(getGame())) {
-            turn = game.getTurnForPlayer(connId);
-        }
-
-        if ((turn == null) || !turn.isValid(connId, entity, game)) {
-            String msg = "error: server got invalid movement packet from connection " + connId;
-            msg += ", Entity: " + entity.getShortName();
-            logger.error(msg);
-            return;
-        }
-
-        // looks like mostly everything's okay
-        MovePathHandler handler = new MovePathHandler(this, entity, md, losCache);
-        handler.processMovement();
-        datasetLogger.append(md, true);
-
-        // The attacker may choose to break a chain whip grapple by expending MP
-        if ((entity.getGrappled() != Entity.NONE) &&
-              entity.isChainWhipGrappled() &&
-              entity.isGrappleAttacker() &&
-              (md.getMpUsed() > 0)) {
-
-            Entity te = game.getEntity(entity.getGrappled());
-            if (te != null) {
-                Report r = new Report(4316);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                r.addDesc(te);
-                addReport(r);
-
-                entity.setGrappled(Entity.NONE, false);
-                te.setGrappled(Entity.NONE, false);
-
-                entityUpdate(entity.getId());
-                entityUpdate(te.getId());
+            // is this the right phase?
+            if (!getGame().getPhase().isMovement()) {
+                LOGGER.error("Server got movement packet in wrong phase");
+                return;
             }
-        }
 
-        // check the LOS of any telemissiles owned by this entity
-        for (int missileId : entity.getTMTracker().getMissiles()) {
-            Entity tm = game.getEntity(missileId);
-            if ((null != tm) && !tm.isDestroyed() && (tm instanceof TeleMissile)) {
-                ((TeleMissile) tm).setOutContact(!LosEffects.calculateLOS(game, entity, tm).canSee());
-                entityUpdate(tm.getId());
+            // can this player/entity act right now?
+            GameTurn turn = game.getTurn();
+            if (getGame().getPhase().isSimultaneous(getGame())) {
+                turn = game.getTurnForPlayer(connId);
             }
+
+            if ((turn == null) || !turn.isValid(connId, entity, game)) {
+                LOGGER.error("error: server got invalid movement packet from connection {}, Entity: {}",
+                      connId,
+                      entity.getShortName());
+                return;
+            }
+
+            // looks like mostly everything's okay
+            MovePathHandler handler = new MovePathHandler(this, entity, movePath, losCache);
+            handler.processMovement();
+            datasetLogger.append(movePath, true);
+
+            // The attacker may choose to break a chain whip grapple by expending MP
+            if ((entity.getGrappled() != Entity.NONE) &&
+                  entity.isChainWhipGrappled() &&
+                  entity.isGrappleAttacker() &&
+                  (movePath.getMpUsed() > 0)) {
+
+                Entity te = game.getEntity(entity.getGrappled());
+                if (te != null) {
+                    Report report = new Report(4316);
+                    report.subject = entity.getId();
+                    report.addDesc(entity);
+                    report.addDesc(te);
+                    addReport(report);
+
+                    entity.setGrappled(Entity.NONE, false);
+                    te.setGrappled(Entity.NONE, false);
+
+                    entityUpdate(entity.getId());
+                    entityUpdate(te.getId());
+                }
+
+            }
+            // check the LOS of any telemissiles owned by this entity
+            for (int missileId : entity.getTMTracker().getMissiles()) {
+                Entity tm = game.getEntity(missileId);
+                if ((null != tm) && !tm.isDestroyed() && (tm instanceof TeleMissile)) {
+                    ((TeleMissile) tm).setOutContact(!LosEffects.calculateLOS(game, entity, tm).canSee());
+                    entityUpdate(tm.getId());
+                }
+            }
+
+            // Notify the clients about any building updates.
+            applyAffectedBuildings();
+
+            // Unit movement may detect hidden units
+            detectHiddenUnits();
+
+            // Update visibility indications if using double-blind.
+            if (doBlind()) {
+                updateVisibilityIndicator(losCache);
+            }
+
+            // An entity that is not vulnerable to anti-TSM green smoke that has stayed in a smoke-filled hex takes damage
+            if ((movePath.getHexesMoved() == 0) && game.hasBoardLocation(movePath.getFinalCoords(),
+                  movePath.getFinalBoardId())
+                  && (game.getHex(movePath.getFinalCoords(), movePath.getFinalBoardId()).terrainLevel(Terrains.SMOKE) ==
+                  SmokeCloud.SMOKE_GREEN) &&
+                  entity.antiTSMVulnerable()) {
+                addReport(doGreenSmokeDamage(entity));
+            }
+
+            // This entity's turn is over.
+            // N.B. if the entity fell, a *new* turn has already been added.
+            datasetLogger.append(game, true);
+            endCurrentTurn(entity);
         }
-
-        // Notify the clients about any building updates.
-        applyAffectedBldgs();
-
-        // Unit movement may detect hidden units
-        detectHiddenUnits();
-
-        // Update visibility indications if using double blind.
-        if (doBlind()) {
-            updateVisibilityIndicator(losCache);
-        }
-
-        // An entity that is not vulnerable to anti-TSM green smoke that has stayed in a smoke-filled hex takes damage
-        if ((md.getHexesMoved() == 0) && game.hasBoardLocation(md.getFinalCoords(), md.getFinalBoardId())
-              && (game.getHex(md.getFinalCoords(), md.getFinalBoardId()).terrainLevel(Terrains.SMOKE) ==
-              SmokeCloud.SMOKE_GREEN) &&
-              entity.antiTSMVulnerable()) {
-            addReport(doGreenSmokeDamage(entity));
-        }
-
-        // This entity's turn is over.
-        // N.B. if the entity fell, a *new* turn has already been added.
-        datasetLogger.append(game, true);
-        endCurrentTurn(entity);
     }
 
     /**
@@ -4055,12 +4042,12 @@ public class TWGameManager extends AbstractGameManager {
      */
     private Vector<Report> processSkidDisplacement(Entity skidder, Coords curPos, int direction) {
         Coords nextPos;
-        Report r;
+        Report report;
         Vector<Report> skidDisplacementReports = new Vector<>();
 
         // If the skidding entity violates stacking,
         // displace targets until it doesn't.
-        // Set climb mode off for skid calcs A) in buildings, B) by non-flying vehicles?
+        // Set climb mode off for skid calculations A) in buildings, B) by non-flying vehicles?
         Entity target = Compute.stackingViolation(game, skidder.getId(), curPos, false);
         while (target != null) {
             nextPos = Compute.getValidDisplacement(game, target.getId(), target.getPosition(), direction);
@@ -4071,20 +4058,17 @@ public class TWGameManager extends AbstractGameManager {
             if (null == nextPos) {
                 // But I don't trust the assumption fully.
                 // Report the error and try to continue.
-                logger.error("The skid of " +
-                      skidder.getShortName() +
-                      " should displace " +
-                      target.getShortName() +
-                      " in hex " +
-                      curPos.getBoardNum() +
-                      " but there is nowhere to go.");
+                LOGGER.error("The skid of {} should displace {} in hex {} but there is nowhere to go.",
+                      skidder.getShortName(),
+                      target.getShortName(),
+                      curPos.getBoardNum());
                 break;
             }
             // indent displacement
-            r = new Report(1210, Report.PUBLIC);
-            r.indent();
-            r.newlines = 0;
-            skidDisplacementReports.add(r);
+            report = new Report(1210, Report.PUBLIC);
+            report.indent();
+            report.newlines = 0;
+            skidDisplacementReports.add(report);
             skidDisplacementReports.addAll(doEntityDisplacement(target, curPos, nextPos, null));
             skidDisplacementReports.addAll(doEntityDisplacementMinefieldCheck(skidder,
                   curPos,
@@ -4190,13 +4174,9 @@ public class TWGameManager extends AbstractGameManager {
             } else {
                 // Is there a building to "catch" the unit?
                 if (nextHex.containsTerrain(Terrains.BLDG_ELEV)) {
-                    // unit will land on the roof, if at a higher level,
-                    // otherwise it will skid through the wall onto the same
-                    // floor.
-                    // don't change this if the building starts at an elevation
-                    // higher than the unit
-                    // (e.g. the building is on a hill). Otherwise, we skid into
-                    // solid earth.
+                    // unit will land on the roof, if at a higher level, otherwise it will skid through the wall onto
+                    // the same floor. don't change this if the building starts at an elevation higher than the unit
+                    // (e.g. the building is on a hill). Otherwise, we skid into solid earth.
                     if (curAltitude >= nextHex.floor()) {
                         nextAltitude = Math.min(curAltitude,
                               nextHex.getLevel() + nextHex.terrainLevel(Terrains.BLDG_ELEV));
@@ -4204,8 +4184,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 // Is there a bridge to "catch" the unit?
                 if (nextHex.containsTerrain(Terrains.BRIDGE)) {
-                    // unit will land on the bridge, if at a higher level,
-                    // and the bridge exits towards the current hex,
+                    // unit will land on the bridge, if at a higher level, and the bridge exits towards the current hex,
                     // otherwise the bridge has no effect
                     int exitDir = (direction + 3) % 6;
                     exitDir = 1 << exitDir;
@@ -4268,8 +4247,7 @@ public class TWGameManager extends AbstractGameManager {
                     nextElevation = 1;
                     crashedIntoTerrain = false;
                 } else if ((entity instanceof LandAirMek) && (curAltitude + 1 == nextHex.floor())) {
-                    // LAMs in AirMek mode skid across terrain that is two levels higher rather than
-                    // crashing,
+                    // LAMs in AirMek mode skid across terrain that is two levels higher rather than crashing,
                     // Reset the skid distance for skid damage calculations.
                     nextElevation = 0;
                     skidDistance = 0;
@@ -4314,16 +4292,7 @@ public class TWGameManager extends AbstractGameManager {
 
                 if ((entity.getMovementMode() == EntityMovementMode.WIGE) ||
                       (entity.getMovementMode() == EntityMovementMode.VTOL)) {
-                    int hitSide = (step.getFacing() - direction) + 6;
-                    hitSide %= 6;
-                    int table = switch (hitSide) { // quite hackish... I think it ought to work, though.
-                        case 0 -> // can this happen?
-                              ToHitData.SIDE_FRONT;
-                        case 1, 2 -> ToHitData.SIDE_LEFT;
-                        case 3 -> ToHitData.SIDE_REAR;
-                        case 4, 5 -> ToHitData.SIDE_RIGHT;
-                        default -> 0;
-                    };
+                    int table = getTable(direction, step);
                     elevation = nextElevation;
                     if (entity instanceof Tank) {
                         addReport(crashVTOLorWiGE((Tank) entity, false, true, distance, curPos, elevation, table));
@@ -4376,10 +4345,8 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             // did we hit a DropShip. Oww!
-            // Taharqa: The rules on how to handle this are completely missing, so I am
-            // assuming
-            // we assign damage as per an accidental charge, but do not displace
-            // the DropShip and end the skid
+            // Taharqa: The rules on how to handle this are completely missing, so I am assuming we assign damage as
+            // per an accidental charge, but do not displace the DropShip and end the skid
             else if (null != crashDropShip) {
                 r = new Report(2050);
                 r.subject = entity.getId();
@@ -4395,18 +4362,11 @@ public class TWGameManager extends AbstractGameManager {
                 resolveChargeDamage(entity, crashDropShip, toHit, direction);
                 if ((entity.getMovementMode() == EntityMovementMode.WIGE) ||
                       (entity.getMovementMode() == EntityMovementMode.VTOL)) {
-                    int hitSide = (step.getFacing() - direction) + 6;
-                    hitSide %= 6;
-                    int table = switch (hitSide) { // quite hackish... I think it ought to work, though.
-                        case 0 -> // can this happen?
-                              ToHitData.SIDE_FRONT;
-                        case 1, 2 -> ToHitData.SIDE_LEFT;
-                        case 3 -> ToHitData.SIDE_REAR;
-                        case 4, 5 -> ToHitData.SIDE_RIGHT;
-                        default -> 0;
-                    };
+                    int table = getTable(direction, step);
                     elevation = nextElevation;
-                    addReport(crashVTOLorWiGE((VTOL) entity, false, true, distance, curPos, elevation, table));
+                    if (entity instanceof VTOL vtol) {
+                        addReport(crashVTOLorWiGE(vtol, false, true, distance, curPos, elevation, table));
+                    }
                     break;
                 }
                 if (!crashDropShip.isDoomed() && !crashDropShip.isDestroyed() && !game.isOutOfGame(crashDropShip)) {
@@ -4432,7 +4392,7 @@ public class TWGameManager extends AbstractGameManager {
             // Get any building in the hex.
             Building bldg = null;
             if (nextElevation < nextHex.terrainLevel(Terrains.BLDG_ELEV)) {
-                // We will only run into the building if its at a higher level,
+                // We will only run into the building if it's at a higher level,
                 // otherwise we skid over the roof
                 bldg = board.getBuildingAt(nextPos);
             }
@@ -4544,9 +4504,8 @@ public class TWGameManager extends AbstractGameManager {
                             addReport(r);
                         }
 
-                        // Resolve a charge against the target.
-                        // ASSUMPTION: buildings block damage for
-                        // *EACH* entity charged.
+                        // Resolve a charge against the target. ASSUMPTION: buildings block damage for *EACH* entity
+                        // charged.
                         if (rollValue < toHit.getValue()) {
                             r = new Report(2070);
                             r.subject = entity.getId();
@@ -4554,8 +4513,7 @@ public class TWGameManager extends AbstractGameManager {
                         } else {
                             // Resolve the charge.
                             resolveChargeDamage(entity, target, toHit, direction);
-                            // HACK: set the entity's location
-                            // to the original hex again, for the other targets
+                            // HACK: set the entity's location to the original hex again, for the other targets
                             if (targets.hasNext()) {
                                 entity.setPosition(curPos);
                             }
@@ -4567,11 +4525,8 @@ public class TWGameManager extends AbstractGameManager {
                             }
                         }
 
-                        // if we don't do this here,
-                        // we can have a mek without a leg
-                        // standing on the field and moving
-                        // as if it still had his leg after
-                        // getting skid-charged.
+                        // if we don't do this here, we can have a mek without a leg standing on the field and moving
+                        // as if it still had his leg after getting skid-charged.
                         if (!target.isDone()) {
                             addReport(resolvePilotingRolls(target));
                             game.resetPSRs(target);
@@ -4581,10 +4536,8 @@ public class TWGameManager extends AbstractGameManager {
 
                     }
 
-                    // Resolve "move-through" damage on infantry.
-                    // Infantry inside of a building don't get a
-                    // move-through, but suffer "bleed through"
-                    // from the building.
+                    // Resolve "move-through" damage on infantry. Infantry inside a building don't get a
+                    // move-through, but suffer "bleed through" from the building.
                     else if ((target instanceof Infantry) && (bldg != null)) {
                         // Update report.
                         r = new Report(2075);
@@ -4902,6 +4855,19 @@ public class TWGameManager extends AbstractGameManager {
         return false;
     }
 
+    private static int getTable(int direction, MoveStep step) {
+        int hitSide = (step.getFacing() - direction) + 6;
+        hitSide %= 6;
+        return switch (hitSide) { // quite hackish... I think it ought to work, though.
+            case 0 -> // can this happen?
+                  ToHitData.SIDE_FRONT;
+            case 1, 2 -> ToHitData.SIDE_LEFT;
+            case 3 -> ToHitData.SIDE_REAR;
+            case 4, 5 -> ToHitData.SIDE_RIGHT;
+            default -> 0;
+        };
+    }
+
     /**
      * Roll on the failed vehicle maneuver table.
      *
@@ -4977,7 +4943,7 @@ public class TWGameManager extends AbstractGameManager {
             turnDirection = 0;
         } else if (rollValue < 10) {
             r.messageId = 2507;
-            // moderate fishtail, turn an extra hexside and roll for motive damage at -1.
+            // moderate fishtail, turn an extra hex side and roll for motive damage at -1.
             if (turnDirection == 0) {
                 turnDirection = Compute.d6() < 4 ? -1 : 1;
             } else {
@@ -4987,7 +4953,7 @@ public class TWGameManager extends AbstractGameManager {
             motiveDamageMod = -1;
         } else if (rollValue < 12) {
             r.messageId = 2508;
-            // serious fishtail, turn an extra hexside and roll for motive damage. Turn
+            // serious fishtail, turn an extra hex side and roll for motive damage. Turn
             // ends.
             if (turnDirection == 0) {
                 turnDirection = Compute.d6() < 4 ? -1 : 1;
@@ -5201,7 +5167,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     boolean checkCrash(Entity entity, Coords pos, int boardId, int altitude) {
-        // only Aeros can crash
+        // only Aerospace can crash
         if (!entity.isAero()) {
             return false;
         }
@@ -5240,16 +5206,16 @@ public class TWGameManager extends AbstractGameManager {
      */
     Vector<Report> processCrash(Entity entity, int vel, Coords c) {
         Vector<Report> vReport = new Vector<>();
-        Report r;
+        Report report;
         boolean canCrashLand = true;
         boolean crashLanded = false;
         boolean destroyDropShip = false; // save for later
         List<Entity> passengers = entity.getLoadedUnits();
         if (c == null || (game.getBoard(entity) == null)) {
-            r = new Report(9701);
-            r.subject = entity.getId();
+            report = new Report(9701);
+            report.subject = entity.getId();
 
-            vReport.add(r);
+            vReport.add(report);
             vReport.addAll(destroyEntity(entity, "crashed off the map", true, true));
             return vReport;
         }
@@ -5257,10 +5223,10 @@ public class TWGameManager extends AbstractGameManager {
         Board board = game.getBoard(entity);
         // Low-altitude map: just crash and destroy the unit
         if (board.isLowAltitude()) {
-            r = new Report(9393, Report.PUBLIC);
-            r.indent();
-            r.addDesc(entity);
-            vReport.add(r);
+            report = new Report(9393, Report.PUBLIC);
+            report.indent();
+            report.addDesc(entity);
+            vReport.add(report);
             entity.setDoomed(true);
         } else {
             // 1. Prepare for last-ditch landing attempt per TW Crash and Landing sections.
@@ -5283,10 +5249,9 @@ public class TWGameManager extends AbstractGameManager {
 
             // 2. Check if there is space available to land; if not, they will crash
             //    (but not be auto-destroyed since the attempt was made)
-            canCrashLand &= (null ==
-                  ((vertical) ?
-                        aero.hasRoomForVerticalLanding() :
-                        aero.hasRoomForHorizontalLanding()));
+            canCrashLand &= (null == ((vertical) ?
+                  aero.hasRoomForVerticalLanding() :
+                  aero.hasRoomForHorizontalLanding()));
 
             // 3. Place in final position on ground.  This is to prevent utter destruction
             //    of carried units in some cases.
@@ -5302,15 +5267,15 @@ public class TWGameManager extends AbstractGameManager {
                 checkLandingTerrainEffects(aero, vertical, c, finalPosition, board.getBoardId(), entity.getFacing());
             } else {
                 // Somehow left the map while crashing!  This will count as destroyed.
-                r = new Report(9701);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                vReport.add(r);
+                report = new Report(9701);
+                report.subject = entity.getId();
+                report.addDesc(entity);
+                vReport.add(report);
                 vReport.addAll(destroyEntity(entity, "crashed off the map", false, true));
                 return vReport;
             }
 
-            // 4. If not a DropShip that *will* be destroyed, Aeros get one last-ditch landing attempt.
+            // 4. If not a DropShip that *will* be destroyed, Aerospace get one last-ditch landing attempt.
             if (canCrashLand) {
                 // Generate piloting roll to attempt to land.  This includes all landing mods from
                 // TW pg 86
@@ -5325,11 +5290,11 @@ public class TWGameManager extends AbstractGameManager {
                           "OOC Landing attempt: Landing Roll automatically fails! (MoF 10)");
 
                     // Report auto-failing control roll
-                    r = new Report(9600);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    r.add(rollTarget.getLastPlainDesc(), true);
-                    vReport.add(r);
+                    report = new Report(9600);
+                    report.subject = entity.getId();
+                    report.addDesc(entity);
+                    report.add(rollTarget.getLastPlainDesc(), true);
+                    vReport.add(report);
 
                     executeCrashLanding(entity, 10, vReport);
                 } else {
@@ -5397,11 +5362,11 @@ public class TWGameManager extends AbstractGameManager {
                 buildingCollapseHandler.collapseBuilding(bldg, game.getPositionMapMulti(), hitCoords, true, vReport);
             }
             if (!damageDealt) {
-                r = new Report(9700, Report.PUBLIC);
-                r.indent();
-                r.addDesc(entity);
-                r.add(crash_damage);
-                vReport.add(r);
+                report = new Report(9700, Report.PUBLIC);
+                report.indent();
+                report.addDesc(entity);
+                report.add(crash_damage);
+                vReport.add(report);
                 while (crash_damage > 0) {
                     HitData hit;
                     if ((entity instanceof SmallCraft) && entity.isSpheroid()) {
@@ -5410,7 +5375,7 @@ public class TWGameManager extends AbstractGameManager {
                         hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
                     }
 
-                    // Mark this damage as Crash damage in case the aero is destroyed by damage and we need to
+                    // Mark this damage as Crash damage in case the aero is destroyed by damage, and we need to
                     // kill every single thing inside of it!
                     if (crash_damage > 10) {
                         vReport.addAll(damageEntity(entity, hit, 10, false, DamageType.CRASH, false, false));
@@ -5462,16 +5427,16 @@ public class TWGameManager extends AbstractGameManager {
                         target = 3;
                     }
                     Roll diceRoll = Compute.rollD6(1);
-                    r = new Report(9705, Report.PUBLIC);
-                    r.indent();
-                    r.addDesc(victim);
-                    r.add(target);
-                    r.add(crash_damage);
-                    r.add(diceRoll);
+                    report = new Report(9705, Report.PUBLIC);
+                    report.indent();
+                    report.addDesc(victim);
+                    report.add(target);
+                    report.add(crash_damage);
+                    report.add(diceRoll);
 
                     if (diceRoll.getIntValue() > target) {
-                        r.choose(true);
-                        vReport.add(r);
+                        report.choose(true);
+                        vReport.add(report);
                         // apply half the crash damage in 5 point clusters
                         // (check
                         // hit tables)
@@ -5492,8 +5457,8 @@ public class TWGameManager extends AbstractGameManager {
                         }
 
                     } else {
-                        r.choose(false);
-                        vReport.add(r);
+                        report.choose(false);
+                        vReport.add(report);
                     }
                 }
 
@@ -5593,7 +5558,7 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             if (h.depth() >= lethalDepth) {
-                // Oh snap... we is dead
+                // Oh, snap... we is dead
                 vReport.addAll(destroyEntity(entity, "crashing into deep water", true, true));
             }
         }
@@ -5602,9 +5567,9 @@ public class TWGameManager extends AbstractGameManager {
               !game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_CRASHED_DROPSHIPS_SURVIVE)) {
             // Out-of-control DropShips that impact the surface without making a landing attempt
             // are automatically destroyed (TW pg 81)
-            r = new Report(9708, Report.PUBLIC);
-            r.indent();
-            r.addDesc(entity);
+            report = new Report(9708, Report.PUBLIC);
+            report.indent();
+            report.addDesc(entity);
             // This destruction is not survivable by carried units
             vReport.addAll(destroyEntity(entity, "Crashed while out of control!", false));
         }
@@ -5818,19 +5783,19 @@ public class TWGameManager extends AbstractGameManager {
     protected Report processFlyingOff(Aero aero) {
         String retreatEdge = setRetreatEdge(aero, aero.getFlyingOffDirection());
 
-        // Report aeros flying off at the end of the round
+        // Report aerospace flying off at the end of the round
         Report r = new Report(9370, Report.PUBLIC);
         r.addDesc(aero);
         r.add(retreatEdge);
 
-        // Set undeployed state
+        // Set un-deployed state
         aero.setDeployed(false);
         aero.setPosition(null);
         aero.setFlyingOff(OffBoardDirection.NONE);
 
         // If we're flying off because we're OOC, when we come back we
         // should no longer be OOC
-        // If we don't, this causes a major problem as aeros tend to
+        // If we don't, this causes a major problem as aerospace tend to
         // return, re-deploy then
         // fly off again instantly.
         aero.setOutControl(false);
@@ -5991,7 +5956,7 @@ public class TWGameManager extends AbstractGameManager {
             // Check for failure and process it
             if (mascFailure) {
                 addReport(vReport);
-                ApplyMASCOrSuperchargerCriticals(entity, md, crits);
+                ApplyMASCOrSuperchargerCriticalSlots(entity, md, crits);
                 return true;
             }
         } else {
@@ -6063,7 +6028,7 @@ public class TWGameManager extends AbstractGameManager {
                     }
                     supercharger.setMode("Off");
                 }
-                ApplyMASCOrSuperchargerCriticals(entity, md, crits);
+                ApplyMASCOrSuperchargerCriticalSlots(entity, md, crits);
                 return true;
             }
         } else {
@@ -6072,13 +6037,13 @@ public class TWGameManager extends AbstractGameManager {
         return false;
     }
 
-    private void ApplyMASCOrSuperchargerCriticals(Entity entity, MovePath md,
+    private void ApplyMASCOrSuperchargerCriticalSlots(Entity entity, MovePath md,
           HashMap<Integer, List<CriticalSlot>> crits) {
         for (Integer loc : crits.keySet()) {
             List<CriticalSlot> lcs = crits.get(loc);
             for (CriticalSlot cs : lcs) {
                 // HACK: if loc is -1, we need to deal motive damage to
-                // the tank, the severity of which is stored in the critslot index
+                // the tank, the severity of which is stored in the critical slot index
                 if (loc == -1) {
                     addReport(vehicleMotiveDamage((Tank) entity, 0, true, cs.getIndex()));
                 } else {
@@ -6140,11 +6105,9 @@ public class TWGameManager extends AbstractGameManager {
                 carrier.setSwarmAttackerId(Entity.NONE);
                 rider.setSwarmTargetId(Entity.NONE);
             } else if (!unloadUnit(carrier, rider, curPos, curFacing, 0)) {
-                logger.error("Server was told to unload " +
-                      rider.getDisplayName() +
-                      " from " +
-                      carrier.getDisplayName() +
-                      " into " +
+                LOGGER.error("Server was told to unload {} from {} into {}",
+                      rider.getDisplayName(),
+                      carrier.getDisplayName(),
                       curPos.getBoardNum());
                 return reports;
             }
@@ -6194,18 +6157,20 @@ public class TWGameManager extends AbstractGameManager {
                 // Get the packet, if there's something to get
                 Server.ReceivedPacket rp;
                 rp = cfrPacketQueue.poll();
-                final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
-                // Make sure we got the right type of response
-                if (!cfrType.isCFRHiddenPBS()) {
-                    logger.error("Expected a CFR_HIDDEN_PBS CFR packet, received: " + cfrType);
-                    continue;
+                final PacketCommand cfrType = rp.getPacket().getPacketCommand(0);
+                if (cfrType != null) {
+                    // Make sure we got the right type of response
+                    if (!cfrType.isCFRHiddenPBS()) {
+                        LOGGER.error("Expected a CFR_HIDDEN_PBS CFR packet, received: {}", cfrType);
+                        continue;
+                    }
                 }
                 // Check packet came from right ID
                 if (rp.getConnectionId() != hidden.getOwnerId()) {
-                    logger.error(String.format(
-                          "Expected a CFR_HIDDEN_PBS CFR packet from player %d, but instead it came from player %d",
+                    LOGGER.error(
+                          "Expected a CFR_HIDDEN_PBS CFR packet from player {}, but instead it came from player {}",
                           hidden.getOwnerId(),
-                          rp.getConnectionId()));
+                          rp.getConnectionId());
                     continue;
                 }
                 // First packet indicates whether the PBS is taken or declined
@@ -6236,25 +6201,23 @@ public class TWGameManager extends AbstractGameManager {
                 if (rp.getPacket().getObject(1) == null) {
                     return false;
                 } else {
-                    @SuppressWarnings("unchecked") Vector<EntityAction> attacks = (Vector<EntityAction>) rp.getPacket()
-                          .getObject(
-                                1);
+                    List<EntityAction> attacks = rp.getPacket().getEntityActionList(1);
                     // Mark the hidden unit as having taken a PBS
                     hidden.setMadePointblankShot(true);
                     // Process the Actions
-                    for (EntityAction ea : attacks) {
-                        Entity entity = game.getEntity(ea.getEntityId());
+                    for (EntityAction entityAction : attacks) {
+                        Entity entity = game.getEntity(entityAction.getEntityId());
                         if (entity == null) {
                             continue;
                         }
 
-                        if (ea instanceof TorsoTwistAction tta) {
+                        if (entityAction instanceof TorsoTwistAction tta) {
                             if (entity.canChangeSecondaryFacing()) {
                                 entity.setSecondaryFacing(tta.getFacing());
                             }
-                        } else if (ea instanceof FlipArmsAction faa) {
+                        } else if (entityAction instanceof FlipArmsAction faa) {
                             entity.setArmsFlipped(faa.getIsFlipped());
-                        } else if (ea instanceof SearchlightAttackAction saa) {
+                        } else if (entityAction instanceof SearchlightAttackAction saa) {
                             boolean hexesAdded = saa.setHexesIlluminated(game);
                             // If we added new hexes, send them to all players.
                             // These are spotlights at night, you know they're there.
@@ -6262,7 +6225,7 @@ public class TWGameManager extends AbstractGameManager {
                                 send(createIlluminatedHexesPacket());
                             }
                             addReport(saa.resolveAction(game));
-                        } else if (ea instanceof WeaponAttackAction waa) {
+                        } else if (entityAction instanceof WeaponAttackAction waa) {
                             Entity ae = game.getEntity(waa.getEntityId());
                             if (ae != null) {
                                 Mounted<?> m = ae.getEquipment(waa.getWeaponId());
@@ -6308,18 +6271,18 @@ public class TWGameManager extends AbstractGameManager {
 
                 // Get the packet, if there's something to get
                 Server.ReceivedPacket rp = cfrPacketQueue.poll();
-                final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
+                final PacketCommand cfrType = rp.getPacket().getPacketCommand(0);
                 // Make sure we got the right type of response
-                if (!cfrType.isCFRTeleguidedTarget()) {
-                    logger.error("Expected a CFR_TELEGUIDED_TARGET CFR packet, received: " + cfrType);
+                if (cfrType != null && !cfrType.isCFRTeleguidedTarget()) {
+                    LOGGER.error("Expected a CFR_TELEGUIDED_TARGET CFR packet, received: {}", cfrType);
                     continue;
                 }
                 // Check packet came from right ID
                 if (rp.getConnectionId() != playerId) {
-                    logger.error(String.format(
-                          "Expected a CFR_TELEGUIDED_TARGET CFR packet from player %d, but instead it came from player %d",
+                    LOGGER.error(
+                          "Expected a CFR_TELEGUIDED_TARGET CFR packet from player {}, but instead it came from player {}",
                           playerId,
-                          rp.getConnectionId()));
+                          rp.getConnectionId());
                     continue;
                 }
                 return (int) rp.getPacket().data()[1];
@@ -6340,18 +6303,18 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 // Get the packet, if there's something to get
                 Server.ReceivedPacket rp = cfrPacketQueue.poll();
-                final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
+                final PacketCommand cfrType = rp.getPacket().getPacketCommand(0);
                 // Make sure we got the right type of response
-                if (!cfrType.isCFRTagTarget()) {
-                    logger.error("Expected a CFR_TAG_TARGET CFR packet, received: " + cfrType);
+                if (cfrType != null && !cfrType.isCFRTagTarget()) {
+                    LOGGER.error("Expected a CFR_TAG_TARGET CFR packet, received: {}", cfrType);
                     continue;
                 }
                 // Check packet came from right ID
                 if (rp.getConnectionId() != playerId) {
-                    logger.error(String.format(
-                          "Expected a CFR_TAG_TARGET CFR packet from player %d but instead it came from player %d",
+                    LOGGER.error(
+                          "Expected a CFR_TAG_TARGET CFR packet from player {} but instead it came from player {}",
                           playerId,
-                          rp.getConnectionId()));
+                          rp.getConnectionId());
                     continue;
                 }
                 return (int) rp.getPacket().data()[1];
@@ -6741,7 +6704,7 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @param coords the <code>Coords</code> where to deliver
      */
-    public void deliverLIsmoke(Coords coords, Vector<Report> vPhaseReport) {
+    public void deliverLISmoke(Coords coords, Vector<Report> vPhaseReport) {
         Report r = new Report(5186, Report.PUBLIC);
         r.indent(2);
         r.add(coords.getBoardNum());
@@ -6848,21 +6811,21 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     public void deliverScreen(Coords coords, Vector<Report> vPhaseReport) {
-        Hex h = game.getBoard().getHex(coords);
-        Report r;
+        Hex hex = game.getBoard().getHex(coords);
+        Report report;
         Report.addNewline(vPhaseReport);
-        r = new Report(9070, Report.PUBLIC);
-        r.indent(2);
-        r.add(coords.getBoardNum());
-        vPhaseReport.add(r);
+        report = new Report(9070, Report.PUBLIC);
+        report.indent(2);
+        report.add(coords.getBoardNum());
+        vPhaseReport.add(report);
         // use level to count the number of screens (since level does not matter
         // in space)
-        int nscreens = h.terrainLevel(Terrains.SCREEN);
-        if (nscreens > 0) {
-            h.removeTerrain(Terrains.SCREEN);
-            h.addTerrain(new Terrain(Terrains.SCREEN, nscreens + 1));
+        int numScreens = hex.terrainLevel(Terrains.SCREEN);
+        if (numScreens > 0) {
+            hex.removeTerrain(Terrains.SCREEN);
+            hex.addTerrain(new Terrain(Terrains.SCREEN, numScreens + 1));
         } else {
-            h.addTerrain(new Terrain(Terrains.SCREEN, 1));
+            hex.addTerrain(new Terrain(Terrains.SCREEN, 1));
         }
         sendChangedHex(coords);
     }
@@ -6870,16 +6833,21 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * deploys a new telemissile entity onto the map
      */
-    public void deployTeleMissile(Entity ae, WeaponType wtype, AmmoType atype, int wId, int capMisMod, int damage,
-          int armor, Vector<Report> vPhaseReport) {
-        Report r = new Report(9080);
-        r.subject = ae.getId();
-        r.addDesc(ae);
-        r.indent(2);
-        r.newlines = 0;
-        r.add(wtype.getName());
-        vPhaseReport.add(r);
-        TeleMissile tele = new TeleMissile(ae, damage, armor, atype.getTonnage(ae), atype.getAmmoType(), capMisMod);
+    public void deployTeleMissile(Entity ae, WeaponType weaponType, AmmoType ammoType, int wId, int capMisMod,
+          int damage, int armor, Vector<Report> vPhaseReport) {
+        Report report = new Report(9080);
+        report.subject = ae.getId();
+        report.addDesc(ae);
+        report.indent(2);
+        report.newlines = 0;
+        report.add(weaponType.getName());
+        vPhaseReport.add(report);
+        TeleMissile tele = new TeleMissile(ae,
+              damage,
+              armor,
+              ammoType.getTonnage(ae),
+              ammoType.getAmmoType(),
+              capMisMod);
         tele.setDeployed(true);
         tele.setId(game.getNextEntityId());
         if (ae instanceof Aero a) {
@@ -7130,8 +7098,11 @@ public class TWGameManager extends AbstractGameManager {
                                     report.indent(1);
                                 }
                             } else if (damageableCoverType == LosEffects.DAMAGABLE_COVER_BUILDING) {
-                                BuildingTarget bldgTrgt = new BuildingTarget(coverLoc, game.getBoard(), false);
-                                coverDamageReport = deliverInfernoMissiles(ae, bldgTrgt, 1, CalledShot.CALLED_NONE);
+                                BuildingTarget buildingTarget = new BuildingTarget(coverLoc, game.getBoard(), false);
+                                coverDamageReport = deliverInfernoMissiles(ae,
+                                      buildingTarget,
+                                      1,
+                                      CalledShot.CALLED_NONE);
                             }
                             for (Report report : coverDamageReport) {
                                 report.indent(1);
@@ -7212,7 +7183,7 @@ public class TWGameManager extends AbstractGameManager {
                               0,
                               DamageType.INFERNO));
                     }
-                } else if (te instanceof ConvFighter) {
+                } else if (te instanceof ConvFighter ftr) {
                     // CFs take a point SI damage for every three missiles that hit.
                     // Use the heatFromExternal field to carry the remainder in case of multiple
                     // inferno hits.
@@ -7220,7 +7191,6 @@ public class TWGameManager extends AbstractGameManager {
                     if (te.heatFromExternal >= 3) {
                         int siDamage = te.heatFromExternal / 3;
                         te.heatFromExternal %= 3;
-                        final ConvFighter ftr = (ConvFighter) te;
                         int remaining = Math.max(0, ftr.getSI() - siDamage);
                         r = new Report(9146);
                         r.subject = te.getId();
@@ -7230,7 +7200,7 @@ public class TWGameManager extends AbstractGameManager {
                         vPhaseReport.add(r);
                         ftr.setSI(remaining);
                         te.damageThisPhase += siDamage;
-                        if (remaining <= 0) {
+                        if (remaining == 0) {
                             // Lets auto-eject if we can!
                             if (ftr.isAutoEject() &&
                                   (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
@@ -7252,13 +7222,12 @@ public class TWGameManager extends AbstractGameManager {
                     r.subject = te.getId();
                     r.indent(2);
                     vPhaseReport.add(r);
-                } else if (te instanceof ProtoMek) {
+                } else if (te instanceof ProtoMek proto) {
                     te.heatFromExternal += missiles;
                     while (te.heatFromExternal >= 3) {
                         te.heatFromExternal -= 3;
                         HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
                         if (hit.getLocation() == ProtoMek.LOC_NEAR_MISS) {
-                            ProtoMek proto = (ProtoMek) te;
                             r = new Report(6035);
                             r.subject = te.getId();
                             r.indent(2);
@@ -7277,10 +7246,10 @@ public class TWGameManager extends AbstractGameManager {
                             // Handle ProtoMek pilot damage
                             // due to location destruction
                             int hits = ProtoMek.POSSIBLE_PILOT_DAMAGE[hit.getLocation()] -
-                                  ((ProtoMek) te).getPilotDamageTaken(hit.getLocation());
+                                  proto.getPilotDamageTaken(hit.getLocation());
                             if (hits > 0) {
                                 vPhaseReport.addAll(damageCrew(te, hits));
-                                ((ProtoMek) te).setPilotDamageTaken(hit.getLocation(),
+                                proto.setPilotDamageTaken(hit.getLocation(),
                                       ProtoMek.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]);
                             }
                             if (te.getTransferLocation(hit).getLocation() == Entity.LOC_DESTROYED) {
@@ -7386,7 +7355,7 @@ public class TWGameManager extends AbstractGameManager {
         Vector<Minefield> fieldsToRemove = new Vector<>();
         // loop through mines in this hex
         for (Minefield mf : game.getMinefields(c)) {
-            // vibrabombs are handled differently
+            // VibraBombs are handled differently
             if (mf.getType() == Minefield.TYPE_VIBRABOMB) {
                 continue;
             }
@@ -7402,11 +7371,11 @@ public class TWGameManager extends AbstractGameManager {
                     }
                 }
             } catch (NullPointerException _ignored) {
-                logger.warn("Minefield not found on board: " + mf);
+                LOGGER.warn("Minefield not found on board: {}", mf);
                 continue;
             }
 
-            // Check for mine-sweeping. Vibramines handled elsewhere
+            // Check for mine-sweeping. VibraMines handled elsewhere
             if ((minesweeper != null) &&
                   ((mf.getType() == Minefield.TYPE_CONVENTIONAL) ||
                         (mf.getType() == Minefield.TYPE_ACTIVE) ||
@@ -7759,16 +7728,16 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Checks to see if an entity sets off any vibrabombs.
+     * Checks to see if an entity sets off any VibraBombs.
      */
-    private boolean checkVibrabombs(Entity entity, Coords coords, boolean displaced, Vector<Report> vMineReport) {
-        return checkVibrabombs(entity, coords, displaced, null, null, vMineReport);
+    private boolean checkVibraBombs(Entity entity, Coords coords, boolean displaced, Vector<Report> vMineReport) {
+        return checkVibraBombs(entity, coords, displaced, null, null, vMineReport);
     }
 
     /**
-     * Checks to see if an entity sets off any vibrabombs.
+     * Checks to see if an entity sets off any VibraBombs.
      */
-    boolean checkVibrabombs(Entity entity, Coords coords, boolean displaced, Coords lastPos, Coords curPos,
+    boolean checkVibraBombs(Entity entity, Coords coords, boolean displaced, Coords lastPos, Coords curPos,
           Vector<Report> vMineReport) {
         int mass = (int) entity.getWeight();
 
@@ -7790,7 +7759,7 @@ public class TWGameManager extends AbstractGameManager {
                     continue;
                 }
 
-                // Minesweepers on units within 9 tons of the vibrafield setting
+                // Minesweepers on units within 9 tons of the VibraField setting
                 // automatically clear the minefield
                 if (Math.abs(mass - mf.getSetting()) < 10) {
                     // Clear the minefield
@@ -7845,7 +7814,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         boolean boom = false;
-        // Only meks can set off vibrabombs. QuadVees should only be able to set off a
+        // Only meks can set off VibraBombs. QuadVees should only be able to set off a
         // vibrabomb in Mek mode. Those that are converting to or from Mek mode should
         // are using leg movement and should be able to set them off.
         if (!(entity instanceof Mek) ||
@@ -7862,7 +7831,7 @@ public class TWGameManager extends AbstractGameManager {
 
             try {
                 // Bug 954272: Mines shouldn't work underwater, and BMRr says
-                // Vibrabombs are mines
+                // VibraBombs are mines
                 if (game.getBoard().getHex(mf.getCoords()) != null &&
                       game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.WATER) &&
                       !game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.PAVEMENT) &&
@@ -7870,13 +7839,13 @@ public class TWGameManager extends AbstractGameManager {
                     continue;
                 }
 
-                // Mek weighing 10 tons or less can't set off the bomb
+                // Mek weighing 10 tons or fewer can't set off the bomb
                 if (mass <= (mf.getSetting() - 10)) {
                     continue;
                 }
 
             } catch (NullPointerException _ignored) {
-                logger.warn("Minefield not found on board: " + mf.toString());
+                LOGGER.warn("VibraBombs not found on board: {}", mf.toString());
                 continue;
             }
 
@@ -8067,7 +8036,7 @@ public class TWGameManager extends AbstractGameManager {
         while (targets.hasNext()) {
             Entity entity = targets.next();
 
-            // Airborne entities wont get hit by the mines...
+            // Airborne entities won't get hit by the mines...
             if (entity.isAirborne()) {
                 continue;
             }
@@ -8805,7 +8774,7 @@ public class TWGameManager extends AbstractGameManager {
     Vector<Report> doEntityFallsInto(Entity entity, int entitySrcElevation, Coords origSrc, Coords origDest,
           PilotingRollData roll, boolean causeAffa, int fallReduction) {
         Vector<Report> vPhaseReport = new Vector<>();
-        // use the entity's board ID; can't image a x-board movepath that includes a fall opportunity (aero unit!)
+        // use the entity's board ID; can't image an x-board MovePath that includes a fall opportunity (aero unit!)
         Hex srcHex = game.getHex(origSrc, entity.getBoardId());
         Hex destHex = game.getHex(origDest, entity.getBoardId());
         Coords src, dest;
@@ -9052,7 +9021,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // Handle null hexes.
         if ((srcHex == null) || (destHex == null)) {
-            logger.error("Can not displace " + entity.getShortName() + " from " + src + " to " + dest + ".");
+            LOGGER.error("Can not displace {} from {} to {}.", entity.getShortName(), src, dest);
             return displacementReport;
         }
         int bldgElev = destHex.containsTerrain(Terrains.BLDG_ELEV) ? destHex.terrainLevel(Terrains.BLDG_ELEV) : 0;
@@ -9242,10 +9211,10 @@ public class TWGameManager extends AbstractGameManager {
 
                         if (!cfrPacketQueue.isEmpty()) {
                             Server.ReceivedPacket rp = cfrPacketQueue.poll();
-                            final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
+                            final PacketCommand cfrType = rp.getPacket().getPacketCommand(0);
                             // Make sure we got the right type of response
-                            if (!cfrType.isCFRDominoEffect()) {
-                                logger.error("Excepted a CFR_DOMINO_EFFECT CFR packet, received: " + cfrType);
+                            if (cfrType != null && !cfrType.isCFRDominoEffect()) {
+                                LOGGER.error("Excepted a CFR_DOMINO_EFFECT CFR packet, received: {}", cfrType);
                                 throw new IllegalStateException();
                             }
                             MovePath mp = (MovePath) rp.getPacket().data()[1];
@@ -9311,22 +9280,23 @@ public class TWGameManager extends AbstractGameManager {
               new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_DOMINO_EFFECT, e.getId()));
     }
 
-    private void sendAMSAssignCFR(Entity e, Mounted<?> ams, List<WeaponAttackAction> waas) {
-        send(e.getOwnerId(),
+    private void sendAMSAssignCFR(Entity entity, Mounted<?> ams, List<WeaponAttackAction> weaponAttackActions) {
+        send(entity.getOwnerId(),
               new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST,
                     PacketCommand.CFR_AMS_ASSIGN,
-                    e.getId(),
-                    e.getEquipmentNum(ams),
-                    waas));
+                    entity.getId(),
+                    entity.getEquipmentNum(ams),
+                    weaponAttackActions));
     }
 
-    private void sendAPDSAssignCFR(Entity e, List<Integer> apdsDists, List<WeaponAttackAction> waas) {
-        send(e.getOwnerId(),
+    private void sendAPDSAssignCFR(Entity entity, List<Integer> apdsDistances,
+          List<WeaponAttackAction> weaponAttackActions) {
+        send(entity.getOwnerId(),
               new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST,
                     PacketCommand.CFR_APDS_ASSIGN,
-                    e.getId(),
-                    apdsDists,
-                    waas));
+                    entity.getId(),
+                    apdsDistances,
+                    weaponAttackActions));
     }
 
     private void sendPointBlankShotCFR(Entity hidden, Entity target) {
@@ -9355,7 +9325,7 @@ public class TWGameManager extends AbstractGameManager {
 
     private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity, Coords src, Coords dest, int elev) {
         Vector<Report> vPhaseReport = new Vector<>();
-        boolean boom = checkVibrabombs(entity, dest, true, vPhaseReport);
+        boolean boom = checkVibraBombs(entity, dest, true, vPhaseReport);
         if (game.containsMinefield(dest)) {
             boom = enterMinefield(entity, dest, elev, true, vPhaseReport) || boom;
         }
@@ -9369,21 +9339,21 @@ public class TWGameManager extends AbstractGameManager {
 
     private Vector<Report> doEntityDisplacementBogDownCheck(Entity entity, Coords c, int elev) {
         Vector<Report> vReport = new Vector<>();
-        Report r;
+        Report report;
         Hex destHex = game.getBoard(entity).getHex(c);
         int bgMod = destHex.getBogDownModifier(entity.getMovementMode(), entity instanceof LargeSupportTank);
         if ((bgMod != TargetRoll.AUTOMATIC_SUCCESS) && !entity.getMovementMode().isHoverOrWiGE() && (elev == 0)) {
             PilotingRollData roll = entity.getBasePilotingRoll();
             roll.append(new PilotingRollData(entity.getId(), bgMod, "avoid bogging down"));
-            int stuckroll = Compute.d6(2);
+            int stuckRoll = Compute.d6(2);
             // A DFA-ing mek is "displaced" into the target hex. Since it
             // must be jumping, it will automatically be bogged down
-            if (stuckroll < roll.getValue() || entity.isMakingDfa()) {
+            if (stuckRoll < roll.getValue() || entity.isMakingDfa()) {
                 entity.setStuck(true);
-                r = new Report(2081);
-                r.subject = entity.getId();
-                r.add(entity.getDisplayName(), true);
-                vReport.add(r);
+                report = new Report(2081);
+                report.subject = entity.getId();
+                report.add(entity.getDisplayName(), true);
+                vReport.add(report);
                 // check for quicksand
                 vReport.addAll(checkQuickSand(c));
             }
@@ -9397,14 +9367,13 @@ public class TWGameManager extends AbstractGameManager {
      * @param packet the packet to be processed
      * @param connId the id for connection that received the packet.
      */
-    @SuppressWarnings("unchecked")
     private void receiveArtyAutoHitHexes(Packet packet, int connId) {
-        var artyAutoHitHexes = (PlayerIDAndList<BoardLocation>) packet.getObject(0);
+        PlayerIDAndList<BoardLocation> artyAutoHitHexes = packet.getPlayerIDAndListWithBoardLocation(0);
         int playerId = artyAutoHitHexes.getPlayerID();
 
         // is this the right phase?
         if (!game.getPhase().isSetArtilleryAutoHitHexes()) {
-            logger.error("Server got set artyautohithexespacket in wrong phase");
+            LOGGER.error("Server got set ArtyAutoHitHexesPacket in wrong phase");
             return;
         }
         game.getPlayer(playerId).setArtyAutoHitHexes(artyAutoHitHexes);
@@ -9425,13 +9394,10 @@ public class TWGameManager extends AbstractGameManager {
      * Receives an updated data structure containing carryable objects on the ground
      */
     private void receiveGroundObjectUpdate(Packet packet, int connId) {
-        @SuppressWarnings("unchecked")
-        Map<Coords, List<ICarryable>> groundObjects = (Map<Coords, List<ICarryable>>) packet.getObject(0);
-
+        Map<Coords, List<ICarryable>> groundObjects = packet.getCoordsWithICarryableListMap(0);
         getGame().setGroundObjects(groundObjects);
 
-        // make sure to update the other clients with the new ground objects data
-        // structure
+        // make sure to update the other clients with the new ground objects data structure
         send(packet);
     }
 
@@ -9442,11 +9408,11 @@ public class TWGameManager extends AbstractGameManager {
      * @param connId the id for connection that received the packet.
      */
     private void receiveDeployMinefields(Packet packet, int connId) {
-        @SuppressWarnings("unchecked") Vector<Minefield> minefields = (Vector<Minefield>) packet.getObject(0);
+        Vector<Minefield> minefields = packet.getMinefieldVector(0);
 
         // is this the right phase?
         if (!getGame().getPhase().isDeployMinefields()) {
-            logger.error("Server got deploy minefields packet in wrong phase");
+            LOGGER.error("Server got deploy minefields packet in wrong phase");
             return;
         }
         datasetLogger.append(game, true);
@@ -9502,9 +9468,9 @@ public class TWGameManager extends AbstractGameManager {
      * @param connId the id for connection that received the packet.
      */
     private void receiveGroundToAirHexSelectPacket(Packet packet, int connId) {
-        Integer targetId = (Integer) packet.getObject(0);
-        Integer attackerId = (Integer) packet.getObject(1);
-        Coords pos = (Coords) packet.getObject(2);
+        int targetId = packet.getIntValue(0);
+        int attackerId = packet.getIntValue(1);
+        Coords pos = packet.getCoords(2);
         Entity entity = game.getEntity(targetId);
 
         if (entity != null) {
@@ -9513,19 +9479,19 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * The end of a unit's Premovement or Prefiring
+     * The end of a unit's Premovement or Pre-firing
      */
     private void receivePrephase(Packet packet, int connId) {
         Entity entity = game.getEntity(packet.getIntValue(0));
 
         if (entity == null) {
-            logger.error("Received invalid entity from prephase packet");
+            LOGGER.error("Received invalid entity from prephase packet");
             return;
         }
 
         // is this the right phase?
         if (!getGame().getPhase().isPreFiring() && !getGame().getPhase().isPremovement()) {
-            logger.error("Server got Prephase packet in wrong phase " + game.getPhase());
+            LOGGER.error("Server got Prephase packet in wrong phase {}", game.getPhase());
             return;
         }
 
@@ -9535,10 +9501,10 @@ public class TWGameManager extends AbstractGameManager {
             turn = game.getTurnForPlayer(connId);
         }
         if ((turn == null) || !turn.isValid(connId, entity, game)) {
-            logger.error(String.format("Server got invalid packet from Connection %s, Entity %s, %s Turn",
+            LOGGER.error("Server got invalid packet from Connection {}, Entity {}, {} Turn",
                   connId,
                   entity.getShortName(),
-                  ((turn == null) ? "null" : "invalid")));
+                  ((turn == null) ? "null" : "invalid"));
             send(connId, packetHelper.createTurnListPacket());
             send(connId, packetHelper.createTurnIndexPacket((turn == null) ? Player.PLAYER_NONE : turn.playerId()));
             return;
@@ -9546,7 +9512,7 @@ public class TWGameManager extends AbstractGameManager {
 
         entity.setDone(true);
 
-        // Update visibility indications if using double blind.
+        // Update visibility indications if using double-blind.
         if (doBlind()) {
             updateVisibilityIndicator(null);
         }
@@ -9558,17 +9524,16 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Gets a bunch of entity attacks from the packet. If valid, processes them and ends the current turn.
      */
-    @SuppressWarnings("unchecked")
     private void receiveAttack(Packet packet, int connId) {
         Entity entity = game.getEntity(packet.getIntValue(0));
-        Vector<EntityAction> vector = (Vector<EntityAction>) packet.getObject(1);
+        List<EntityAction> actionList = packet.getEntityActionList(1);
 
         // is this the right phase?
         if (!getGame().getPhase().isFiring() &&
               !getGame().getPhase().isPhysical() &&
               !getGame().getPhase().isTargeting() &&
               !getGame().getPhase().isOffboard()) {
-            logger.error("Server got attack packet in wrong phase");
+            LOGGER.error("Server got attack packet in wrong phase");
             return;
         }
 
@@ -9578,19 +9543,19 @@ public class TWGameManager extends AbstractGameManager {
             turn = game.getTurnForPlayer(connId);
         }
         if ((turn == null) || !turn.isValid(connId, entity, game)) {
-            logger.error(String.format("Server got invalid attack packet from Connection %s, Entity %s, %s Turn",
+            LOGGER.error("Server got invalid attack packet from Connection {}, Entity {}, {} Turn",
                   connId,
                   ((entity == null) ? "null" : entity.getShortName()),
-                  ((turn == null) ? "null" : "invalid")));
+                  ((turn == null) ? "null" : "invalid"));
             send(connId, packetHelper.createTurnListPacket());
             send(connId, packetHelper.createTurnIndexPacket((turn == null) ? Player.PLAYER_NONE : turn.playerId()));
             return;
         }
 
         // looks like mostly everything's okay
-        processAttack(entity, vector);
+        processAttack(entity, actionList);
 
-        // Update visibility indications if using double blind.
+        // Update visibility indications if using double-blind.
         if (doBlind()) {
             updateVisibilityIndicator(null);
         }
@@ -9601,19 +9566,19 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Process a batch of entity attack (or twist) actions by adding them to the proper list to be processed later.
      */
-    private void processAttack(Entity entity, Vector<EntityAction> vector) {
+    private void processAttack(Entity entity, List<EntityAction> entityActions) {
         // Convert any null vectors to empty vectors to avoid NPEs.
-        if (vector == null) {
-            vector = new Vector<>(0);
+        if (entityActions == null) {
+            entityActions = new Vector<>(0);
         }
         boolean withHeader = true;
         // Not **all** actions take up the entity's turn.
         boolean setDone = !((game.getTurn() instanceof TriggerAPPodTurn) ||
               (game.getTurn() instanceof TriggerBPodTurn));
-        for (EntityAction ea : vector) {
+        for (EntityAction ea : entityActions) {
             // is this the right entity?
             if (ea.getEntityId() != entity.getId()) {
-                logger.error("Attack packet has wrong attacker");
+                LOGGER.error("Attack packet has wrong attacker");
                 continue;
             }
             datasetLogger.append(game, ea, withHeader);
@@ -9689,10 +9654,10 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             // If attacker breaks grapple, defender may counter
-            if (ea instanceof BreakGrappleAttackAction bgaa) {
-                final Entity att = (game.getEntity(bgaa.getEntityId()));
+            if (ea instanceof BreakGrappleAttackAction breakGrappleAttackAction) {
+                final Entity att = (game.getEntity(breakGrappleAttackAction.getEntityId()));
                 if (att != null && att.isGrappleAttacker()) {
-                    final Entity def = (game.getEntity(bgaa.getTargetId()));
+                    final Entity def = (game.getEntity(breakGrappleAttackAction.getTargetId()));
                     // Remove existing break grapple by defender (if exists)
                     if (def == null) {
                         continue;
@@ -9719,10 +9684,9 @@ public class TWGameManager extends AbstractGameManager {
 
                     for (Enumeration<AttackHandler> j = game.getAttacks(); !firingAtNewHex && j.hasMoreElements(); ) {
                         WeaponHandler wh = (WeaponHandler) j.nextElement();
-                        if (wh.weaponAttackAction instanceof ArtilleryAttackAction oaaa) {
-
-                            if ((oaaa.getEntityId() == aaa.getEntityId()) &&
-                                  !Targetable.areAtSamePosition(oaaa.getTarget(game), attackTarget)) {
+                        if (wh.weaponAttackAction instanceof ArtilleryAttackAction artilleryAttackAction) {
+                            if ((artilleryAttackAction.getEntityId() == aaa.getEntityId()) &&
+                                  !Targetable.areAtSamePosition(artilleryAttackAction.getTarget(game), attackTarget)) {
                                 firingAtNewHex = true;
                             }
                         }
@@ -9749,7 +9713,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
 
-            // The equipment type of a club needs to be restored.
+            // The equipment type of club needs to be restored.
             if (ea instanceof ClubAttackAction caa) {
                 Mounted<?> club = caa.getClub();
                 club.restore();
@@ -9800,7 +9764,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         entityUpdate(entity.getId());
 
-        Packet p = packetHelper.createAttackPacket(vector, false);
+        Packet p = packetHelper.createAttackPacket(entityActions, false);
         if (getGame().getPhase().isSimultaneous(getGame())) {
             // Update attack only to player who declared it & observers
             for (Player player : game.getPlayersList()) {
@@ -9824,7 +9788,7 @@ public class TWGameManager extends AbstractGameManager {
         // If a telemissile is still on the board and its original target is not, just
         // return.
         if (target == null) {
-            logger.info("Telemissile has no target. AMS not assigned.");
+            LOGGER.info("Telemissile has no target. AMS not assigned.");
             return;
         }
 
@@ -9851,7 +9815,7 @@ public class TWGameManager extends AbstractGameManager {
             // for artillery attacks, the attacking entity might no longer be in the game.
             // TODO : Yeah, I know there's an exploit here, but better able to shoot some ArrowIVs than none, right?
             if (artilleryFirer == null) {
-                logger.info("Can't Assign AMS: Artillery firer is null!");
+                LOGGER.info("Can't Assign AMS: Artillery firer is null!");
                 continue;
             }
 
@@ -9874,10 +9838,10 @@ public class TWGameManager extends AbstractGameManager {
             if (wh instanceof ArtilleryWeaponIndirectHomingHandler ||
                   wh instanceof ArtilleryBayWeaponIndirectHomingHandler) {
                 AmmoMounted ammoUsed = artilleryFirer.getAmmo(waa.getAmmoId());
-                AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed.getType();
+                AmmoType ammoType = ammoUsed == null ? null : ammoUsed.getType();
                 // TODO: this logic seems to be a bit off, rules need to be checked.
-                if (atype != null &&
-                      (atype.getAmmoType() == AmmoTypeEnum.ARROW_IV
+                if (ammoType != null &&
+                      (ammoType.getAmmoType() == AmmoTypeEnum.ARROW_IV
                             || ammoUsed.isHomingAmmoInHomingMode())) {
                     isHomingMissile = true;
                 }
@@ -9994,11 +9958,11 @@ public class TWGameManager extends AbstractGameManager {
             targetedWAA = Compute.getHighestExpectedDamage(game, vAttacksInArc, true);
         } else {
             // Send a client feedback request
-            List<Integer> apdsDists = new ArrayList<>();
-            for (WeaponAttackAction waa : vAttacksInArc) {
-                apdsDists.add(waa.getTarget(game).getPosition().distance(e.getPosition()));
+            List<Integer> apdsDistances = new ArrayList<>();
+            for (WeaponAttackAction weaponAttackAction : vAttacksInArc) {
+                apdsDistances.add(weaponAttackAction.getTarget(game).getPosition().distance(e.getPosition()));
             }
-            sendAPDSAssignCFR(e, apdsDists, vAttacksInArc);
+            sendAPDSAssignCFR(e, apdsDistances, vAttacksInArc);
             synchronized (cfrPacketQueue) {
                 try {
                     cfrPacketQueue.wait();
@@ -10008,10 +9972,10 @@ public class TWGameManager extends AbstractGameManager {
 
                 if (!cfrPacketQueue.isEmpty()) {
                     Server.ReceivedPacket rp = cfrPacketQueue.poll();
-                    final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
+                    final PacketCommand cfrType = rp.getPacket().getPacketCommand(0);
                     // Make sure we got the right type of response
-                    if (!cfrType.isCFRAPDSAssign()) {
-                        logger.error("Expected a CFR_APDS_ASSIGN CFR packet, received: " + cfrType);
+                    if (cfrType != null && !cfrType.isCFRAPDSAssign()) {
+                        LOGGER.error("Expected a CFR_APDS_ASSIGN CFR packet, received: {}", cfrType);
                         throw new IllegalStateException();
                     }
                     Integer waaIndex = (Integer) rp.getPacket().data()[1];
@@ -10081,10 +10045,10 @@ public class TWGameManager extends AbstractGameManager {
 
                     if (!cfrPacketQueue.isEmpty()) {
                         Server.ReceivedPacket rp = cfrPacketQueue.poll();
-                        final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
+                        final PacketCommand cfrType = rp.getPacket().getPacketCommand(0);
                         // Make sure we got the right type of response
-                        if (!cfrType.isCFRAMSAssign()) {
-                            logger.error("Expected a CFR_AMS_ASSIGN CFR packet, received: " + cfrType);
+                        if (cfrType != null && !cfrType.isCFRAMSAssign()) {
+                            LOGGER.error("Expected a CFR_AMS_ASSIGN CFR packet, received: {}", cfrType);
                             throw new IllegalStateException();
                         }
                         Integer waaIndex = (Integer) rp.getPacket().data()[1];
@@ -10226,6 +10190,10 @@ public class TWGameManager extends AbstractGameManager {
             }
             for (int targetId : detector.getSensorContacts()) {
                 Entity target = game.getEntity(targetId);
+                if (target == null) {
+                    continue;
+                }
+
                 // if we already have a firing solution, no need to process a new one
                 if (detector.hasFiringSolutionFor(targetId)) {
                     continue;
@@ -10288,7 +10256,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Called to what players can see what units. This is used to determine who can see what in double blind reports.
+     * Called to what players can see what units. This is used to determine who can see what in double-blind reports.
      */
     void resolveWhatPlayersCanSeeWhatUnits() {
         List<ECMInfo> allECMInfo = null;
@@ -10346,11 +10314,9 @@ public class TWGameManager extends AbstractGameManager {
                     triggerAPPod(entity, tapa.getPodId());
                     triggerPodActions.addElement(tapa);
                 } else {
-                    logger.error("AP Pod #" +
-                          tapa.getPodId() +
-                          " on " +
-                          entity.getDisplayName() +
-                          " was already triggered this round!!");
+                    LOGGER.error("AP Pod #{} on {} was already triggered this round!!",
+                          tapa.getPodId(),
+                          entity.getDisplayName());
                 }
             } else if (ea instanceof TriggerBPodAction tba) {
 
@@ -10359,11 +10325,9 @@ public class TWGameManager extends AbstractGameManager {
                     triggerBPod(entity, tba.getPodId(), game.getEntity(tba.getTargetId()));
                     triggerPodActions.addElement(tba);
                 } else {
-                    logger.error("B Pod #" +
-                          tba.getPodId() +
-                          " on " +
-                          entity.getDisplayName() +
-                          " was already triggered this round!!");
+                    LOGGER.error("B Pod #{} on {} was already triggered this round!!",
+                          tba.getPodId(),
+                          entity.getDisplayName());
                 }
             } else if (ea instanceof SearchlightAttackAction saa) {
                 addReport(saa.resolveAction(game));
@@ -10376,7 +10340,7 @@ public class TWGameManager extends AbstractGameManager {
                     r.addDesc(entity);
                     addReport(r);
                 } else {
-                    logger.error("Non-Tank tried to unjam turret");
+                    LOGGER.error("Non-Tank tried to unjam turret");
                 }
             } else if (ea instanceof RepairWeaponMalfunctionAction) {
                 if (entity instanceof Tank tank) {
@@ -10389,7 +10353,7 @@ public class TWGameManager extends AbstractGameManager {
                     r.add(m.getName());
                     addReport(r);
                 } else {
-                    logger.error("Non-Tank tried to repair weapon malfunction");
+                    LOGGER.error("Non-Tank tried to repair weapon malfunction");
                 }
             } else if (ea instanceof DisengageAction) {
                 MovePath path = new MovePath(game, entity);
@@ -10443,31 +10407,31 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /*
-     * Called during the weapons firing phase to initiate self destruction.
+     * Called during the weapons firing phase to initiate self-destruction.
      */
-    void resolveSelfDestructions() {
+    void resolveSelfDestruction() {
         Vector<Report> vDesc = new Vector<>();
-        Report r;
+        Report report;
         for (Entity e : game.getEntitiesVector()) {
             if (e.getSelfDestructInitiated() && e.hasEngine()) {
-                r = new Report(6166, Report.PUBLIC);
+                report = new Report(6166, Report.PUBLIC);
                 int target = e.getCrew().getPiloting();
                 Roll diceRoll = e.getCrew().rollPilotingSkill();
-                r.subject = e.getId();
-                r.addDesc(e);
-                r.indent();
-                r.add(target);
-                r.add(diceRoll);
-                r.choose(diceRoll.getIntValue() >= target);
-                vDesc.add(r);
+                report.subject = e.getId();
+                report.addDesc(e);
+                report.indent();
+                report.add(target);
+                report.add(diceRoll);
+                report.choose(diceRoll.getIntValue() >= target);
+                vDesc.add(report);
 
                 // Blow it up...
                 if (diceRoll.getIntValue() >= target) {
                     int engineRating = e.getEngine().getRating();
-                    r = new Report(5400, Report.PUBLIC);
-                    r.subject = e.getId();
-                    r.indent(2);
-                    vDesc.add(r);
+                    report = new Report(5400, Report.PUBLIC);
+                    report.subject = e.getId();
+                    report.indent(2);
+                    vDesc.add(report);
 
                     if (e instanceof Mek mek) {
                         if (mek.isAutoEject() &&
@@ -10480,11 +10444,11 @@ public class TWGameManager extends AbstractGameManager {
                     e.setSelfDestructedThisTurn(true);
                     doFusionEngineExplosion(engineRating, e.getBoardLocation(), vDesc, null);
                     Report.addNewline(vDesc);
-                    r = new Report(5410, Report.PUBLIC);
-                    r.subject = e.getId();
-                    r.indent(2);
+                    report = new Report(5410, Report.PUBLIC);
+                    report.subject = e.getId();
+                    report.indent(2);
                     Report.addNewline(vDesc);
-                    vDesc.add(r);
+                    vDesc.add(report);
                 }
                 e.setSelfDestructInitiated(false);
             }
@@ -10621,22 +10585,17 @@ public class TWGameManager extends AbstractGameManager {
 
         // Confirm that this is, indeed, an AP Pod.
         if (null == mount) {
-            logger.error("Expecting to find an AP Pod at " +
-                  podId +
-                  " on the unit, " +
-                  entity.getDisplayName() +
-                  " but found NO equipment at all!!!");
+            LOGGER.error("Expecting to find an AP Pod at {} on the unit, {} but found NO equipment at all!!!",
+                  podId,
+                  entity.getDisplayName());
             return;
         }
         EquipmentType equip = mount.getType();
         if (!(equip instanceof MiscType) || !equip.hasFlag(MiscType.F_AP_POD)) {
-            logger.error("Expecting to find an AP Pod at " +
-                  podId +
-                  " on the unit, " +
-                  entity.getDisplayName() +
-                  " but found " +
-                  equip.getName() +
-                  " instead!!!");
+            LOGGER.error("Expecting to find an AP Pod at {} on the unit, {} but found {} instead!!!",
+                  podId,
+                  entity.getDisplayName(),
+                  equip.getName());
             return;
         }
 
@@ -10647,7 +10606,7 @@ public class TWGameManager extends AbstractGameManager {
         boolean canFire = mount.canFire();
         mount.setUsedThisRound(oldFired);
         if (!canFire) {
-            logger.error("Can not trigger the AP Pod at " + podId + " on the unit, " + entity.getDisplayName() + "!!!");
+            LOGGER.error("Can not trigger the AP Pod at {} on the unit, {}!!!", podId, entity.getDisplayName());
             return;
         }
 
@@ -10700,22 +10659,17 @@ public class TWGameManager extends AbstractGameManager {
 
         // Confirm that this is, indeed, an Anti-BA Pod.
         if (null == mount) {
-            logger.error("Expecting to find an B Pod at " +
-                  podId +
-                  " on the unit, " +
-                  entity.getDisplayName() +
-                  " but found NO equipment at all!!!");
+            LOGGER.error("Expecting to find an B Pod at {} on the unit, {} but found NO equipment at all!!!",
+                  podId,
+                  entity.getDisplayName());
             return;
         }
         EquipmentType equip = mount.getType();
         if (!(equip instanceof WeaponType) || !equip.hasFlag(WeaponType.F_B_POD)) {
-            logger.error("Expecting to find an B Pod at " +
-                  podId +
-                  " on the unit, " +
-                  entity.getDisplayName() +
-                  " but found " +
-                  equip.getName() +
-                  " instead!!!");
+            LOGGER.error("Expecting to find an B Pod at {} on the unit, {} but found {} instead!!!",
+                  podId,
+                  entity.getDisplayName(),
+                  equip.getName());
             return;
         }
 
@@ -10726,7 +10680,7 @@ public class TWGameManager extends AbstractGameManager {
         boolean canFire = mount.canFire();
         mount.setUsedThisRound(oldFired);
         if (!canFire) {
-            logger.error("Can not trigger the B Pod at " + podId + " on the unit, " + entity.getDisplayName() + "!!!");
+            LOGGER.error("Can not trigger the B Pod at {} on the unit, {}!!!", podId, entity.getDisplayName());
             return;
         }
 
@@ -10795,13 +10749,13 @@ public class TWGameManager extends AbstractGameManager {
         addReport(r);
         for (Mounted<?> mounted : entity.getTotalWeaponList()) {
             if (mounted.isJammed() && !mounted.isDestroyed()) {
-                WeaponType wtype = (WeaponType) mounted.getType();
-                if (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY) {
+                WeaponType weaponType = (WeaponType) mounted.getType();
+                if (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY) {
                     Roll diceRoll = Compute.rollD6(2);
                     r = new Report(3030);
                     r.indent();
                     r.subject = entity.getId();
-                    r.add(wtype.getName());
+                    r.add(weaponType.getName());
                     r.add(TN);
                     r.add(diceRoll);
 
@@ -10815,18 +10769,18 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 // Unofficial option to unjam UACs, ACs, and LACs like Rotary
                 // Autocannons
-                if (((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA) ||
-                      (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB) ||
-                      (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC) ||
-                      (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP) ||
-                      (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.PAC) ||
-                      (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.LAC)) &&
+                if (((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA) ||
+                      (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB) ||
+                      (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC) ||
+                      (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP) ||
+                      (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.PAC) ||
+                      (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.LAC)) &&
                       game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC)) {
                     Roll diceRoll = Compute.rollD6(2);
                     r = new Report(3030);
                     r.indent();
                     r.subject = entity.getId();
-                    r.add(wtype.getName());
+                    r.add(weaponType.getName());
                     r.add(TN);
                     r.add(diceRoll);
 
@@ -10915,16 +10869,13 @@ public class TWGameManager extends AbstractGameManager {
             if (found) {
                 clubType = EquipmentType.get(EquipmentTypeLookup.GIRDER_CLUB);
                 r = new Report(3045);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                addReport(r);
             } else {
                 // Sorry, no club for you.
                 r = new Report(3050);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                addReport(r);
             }
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            addReport(r);
         }
 
         // Are there woods in the hex?
@@ -11218,7 +11169,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         sendChangedHex(c, boardId);
 
-        // any attempt to clear an heavy industrial hex may cause an explosion
+        // any attempt to clear a heavy industrial hex may cause an explosion
         checkExplodeIndustrialZone(c, boardId, vPhaseReport);
 
         return vPhaseReport;
@@ -11252,7 +11203,7 @@ public class TWGameManager extends AbstractGameManager {
         // remove any duplicate attack declarations
         cleanupPhysicalAttacks();
 
-        // loop thru received attack actions
+        // loop through received attack actions
         for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
             Object o = i.nextElement();
             // verify that the attacker is still active
@@ -11313,7 +11264,7 @@ public class TWGameManager extends AbstractGameManager {
                     allowed--;
                 }
             } else {
-                logger.error("Removing duplicate phys attack for id#" + entityId + "\n\t\taction was " + action);
+                LOGGER.error("Removing duplicate phys attack for id#{}\n\t\taction was {}", entityId, action);
             }
         }
 
@@ -11380,13 +11331,13 @@ public class TWGameManager extends AbstractGameManager {
         final Entity ae = game.getEntity(paa.getEntityId());
 
         if (ae == null) {
-            logger.error("Invalid entity in Punch Attack Resolve");
+            LOGGER.error("Invalid entity in Punch Attack Resolve");
             return;
         }
 
         final Targetable target = game.getTarget(paa.getTargetType(), paa.getTargetId());
         if (target == null) {
-            logger.error("Invalid target in Punch Attack Resolve");
+            LOGGER.error("Invalid target in Punch Attack Resolve");
             return;
         }
 
@@ -11406,7 +11357,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // get damage, ToHitData and roll from the PhysicalResult
         int damage = paa.getArm() == PunchAttackAction.LEFT ? pr.damage : pr.damageRight;
-        // LAMs in airmek mode do half damage if airborne.
+        // LAMs in AirMek mode do half damage if airborne.
         if (ae.isAirborneVTOLorWIGE()) {
             damage = (int) Math.ceil(damage * 0.5);
         }
@@ -11676,14 +11627,14 @@ public class TWGameManager extends AbstractGameManager {
         final Entity ae = game.getEntity(kaa.getEntityId());
 
         if (ae == null) {
-            logger.error("Entity received was invalid in Kick Attack");
+            LOGGER.error("Entity received was invalid in Kick Attack");
             return;
         }
 
         final Targetable target = game.getTarget(kaa.getTargetType(), kaa.getTargetId());
 
         if (target == null) {
-            logger.error("Invalid Target received for Kick Attack");
+            LOGGER.error("Invalid Target received for Kick Attack");
             return;
         }
 
@@ -11708,7 +11659,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // get damage, ToHitData and roll from the PhysicalResult
         int damage = pr.damage;
-        // LAMs in airmek mode do half damage if airborne.
+        // LAMs in AirMek mode do half damage if airborne.
         if (ae.isAirborneVTOLorWIGE()) {
             damage = (int) Math.ceil(damage * 0.5);
         }
@@ -11933,14 +11884,14 @@ public class TWGameManager extends AbstractGameManager {
         final Entity ae = game.getEntity(kaa.getEntityId());
 
         if (ae == null) {
-            logger.error("Invalid entity with Jump Jet Attack");
+            LOGGER.error("Invalid entity with Jump Jet Attack");
             return;
         }
 
         final Targetable target = game.getTarget(kaa.getTargetType(), kaa.getTargetId());
 
         if (target == null) {
-            logger.error("Invalid target with Jump Jet Attack");
+            LOGGER.error("Invalid target with Jump Jet Attack");
             return;
         }
 
@@ -12144,23 +12095,24 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Handle a ProtoMek physical attack
      */
-    private void resolveProtoAttack(PhysicalResult pr, int lastEntityId) {
-        final ProtoMekPhysicalAttackAction ppaa = (ProtoMekPhysicalAttackAction) pr.aaa;
-        final Entity ae = game.getEntity(ppaa.getEntityId());
+    private void resolveProtoAttack(PhysicalResult physicalResult, int lastEntityId) {
+        final ProtoMekPhysicalAttackAction protoMekPhysicalAttackAction = (ProtoMekPhysicalAttackAction) physicalResult.aaa;
+        final Entity ae = game.getEntity(protoMekPhysicalAttackAction.getEntityId());
 
         if (ae == null) {
-            logger.error("Invalid entity received on proto attack resolution");
+            LOGGER.error("Invalid entity received on proto attack resolution");
             return;
         }
 
         // get damage, ToHitData and roll from the PhysicalResult
-        int damage = pr.damage;
-        final ToHitData toHit = pr.toHit;
-        int rollValue = pr.roll.getIntValue();
-        final Targetable target = game.getTarget(ppaa.getTargetType(), ppaa.getTargetId());
+        int damage = physicalResult.damage;
+        final ToHitData toHit = physicalResult.toHit;
+        int rollValue = physicalResult.roll.getIntValue();
+        final Targetable target = game.getTarget(protoMekPhysicalAttackAction.getTargetType(),
+              protoMekPhysicalAttackAction.getTargetId());
 
         if (target == null) {
-            logger.error("Invalid target entity in Proto Attack resolve");
+            LOGGER.error("Invalid target entity in Proto Attack resolve");
             return;
         }
 
@@ -12220,7 +12172,7 @@ public class TWGameManager extends AbstractGameManager {
             r = new Report(4025);
             r.subject = ae.getId();
             r.add(toHit);
-            r.add(pr.roll);
+            r.add(physicalResult.roll);
             r.newlines = 0;
             addReport(r);
             if (glancing) {
@@ -12418,14 +12370,14 @@ public class TWGameManager extends AbstractGameManager {
         final BrushOffAttackAction baa = (BrushOffAttackAction) pr.aaa;
         final Entity ae = game.getEntity(baa.getEntityId());
         if (ae == null) {
-            logger.error("Bad entity in Brush Off Attack");
+            LOGGER.error("Bad entity in Brush Off Attack");
             return;
         }
 
         // PLEASE NOTE: buildings are *never* the target of a "brush off", but iNarc pods **are**.
         Targetable target = game.getTarget(baa.getTargetType(), baa.getTargetId());
         if (target == null) {
-            logger.error("Bad target received for Brush Off Attack");
+            LOGGER.error("Bad target received for Brush Off Attack");
             return;
         }
 
@@ -12549,7 +12501,7 @@ public class TWGameManager extends AbstractGameManager {
         final Entity ae = game.getEntity(taa.getEntityId());
 
         if (ae == null) {
-            logger.error("Attacking entity does not exist in Resolve Thrash Attack");
+            LOGGER.error("Attacking entity does not exist in Resolve Thrash Attack");
             return;
         }
 
@@ -12693,19 +12645,19 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Handle a thrash attack
      */
-    private void resolveBAVibroClawAttack(PhysicalResult pr, int lastEntityId) {
-        final BAVibroClawAttackAction bvaa = (BAVibroClawAttackAction) pr.aaa;
-        final Entity ae = game.getEntity(bvaa.getEntityId());
+    private void resolveBAVibroClawAttack(PhysicalResult physicalResult, int lastEntityId) {
+        final BAVibroClawAttackAction baVibroClawAttackAction = (BAVibroClawAttackAction) physicalResult.aaa;
+        final Entity ae = game.getEntity(baVibroClawAttackAction.getEntityId());
 
         if (ae == null) {
-            logger.error("Attacking entity is null for Vibro Claw Attack");
+            LOGGER.error("Attacking entity is null for Vibro Claw Attack");
             return;
         }
 
         // get damage, ToHitData and roll from the PhysicalResult
-        int hits = pr.damage;
-        final ToHitData toHit = pr.toHit;
-        int rollValue = pr.roll.getIntValue();
+        int hits = physicalResult.damage;
+        final ToHitData toHit = physicalResult.toHit;
+        int rollValue = physicalResult.roll.getIntValue();
         final boolean glancing = game.getOptions()
               .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS) &&
               (rollValue == toHit.getValue());
@@ -12717,10 +12669,10 @@ public class TWGameManager extends AbstractGameManager {
               ((toHit.getMoS() / 3) >= 1);
 
         // PLEASE NOTE: buildings are *never* the target of a BA vibroclaw attack.
-        final Entity te = game.getEntity(bvaa.getTargetId());
+        final Entity te = game.getEntity(baVibroClawAttackAction.getTargetId());
         Report r;
 
-        if (lastEntityId != bvaa.getEntityId()) {
+        if (lastEntityId != baVibroClawAttackAction.getEntityId()) {
             // who is making the attacks
             r = new Report(4005);
             r.subject = ae.getId();
@@ -12754,7 +12706,7 @@ public class TWGameManager extends AbstractGameManager {
             r = new Report(4025);
             r.subject = ae.getId();
             r.add(toHit);
-            r.add(pr.roll);
+            r.add(physicalResult.roll);
             r.newlines = 0;
             addReport(r);
 
@@ -12836,24 +12788,24 @@ public class TWGameManager extends AbstractGameManager {
         final Entity ae = game.getEntity(caa.getEntityId());
 
         if (ae == null) {
-            logger.error("Entity in Club Attack is null");
+            LOGGER.error("Entity in Club Attack is null");
             return;
         }
 
         // get damage, ToHitData and roll from the PhysicalResult
         int damage = pr.damage;
-        // LAMs in airmek mode do half damage if airborne.
+        // LAMs in AirMek mode do half damage if airborne.
         if (ae.isAirborneVTOLorWIGE()) {
             damage = (int) Math.ceil(damage * 0.5);
         }
         final ToHitData toHit = pr.toHit;
         // TargetRoll.AUTOMATIC_SUCCESS from Flail/Wrecking Ball auto misses on a 2 and
-        // hits themself.
+        // hits themselves.
         int rollValue = toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS ? Integer.MAX_VALUE : pr.roll.getIntValue();
         final Targetable target = game.getTarget(caa.getTargetType(), caa.getTargetId());
 
         if (target == null) {
-            logger.error("No target provided for Club Attack");
+            LOGGER.error("No target provided for Club Attack");
             return;
         }
 
@@ -12907,7 +12859,7 @@ public class TWGameManager extends AbstractGameManager {
         r.newlines = 0;
         addReport(r);
 
-        // Flail/Wrecking Ball auto misses on a 2 and hits themself.
+        // Flail/Wrecking Ball auto misses on a 2 and hits themselves.
         if ((caa.getClub().getType().hasSubType(MiscType.S_FLAIL) ||
               caa.getClub().getType().hasSubType(MiscType.S_WRECKING_BALL)) && (rollValue == 2)) {
             // miss
@@ -13225,7 +13177,7 @@ public class TWGameManager extends AbstractGameManager {
                                   (loc == ProtoMek.LOC_RIGHT_ARM) ||
                                   (loc == ProtoMek.LOC_LEG))
                             // Only check location status after confirming we did
-                            // hit a limb -- Protos have no actual near-miss
+                            // hit a limb -- ProtoMeks have no actual near-miss
                             // "location" and will throw an exception if it's
                             // referenced here.
                             &&
@@ -13325,7 +13277,7 @@ public class TWGameManager extends AbstractGameManager {
         final Entity ae = game.getEntity(paa.getEntityId());
 
         if (ae == null) {
-            logger.error("Invalid Attacking entity in Push Attack");
+            LOGGER.error("Invalid Attacking entity in Push Attack");
             return;
         }
 
@@ -13333,7 +13285,7 @@ public class TWGameManager extends AbstractGameManager {
         final Entity te = game.getEntity(paa.getTargetId());
 
         if (te == null) {
-            logger.error("Targeted entity doesn't exist in Push Attack");
+            LOGGER.error("Targeted entity doesn't exist in Push Attack");
             return;
         }
 
@@ -13503,7 +13455,7 @@ public class TWGameManager extends AbstractGameManager {
         final Entity ae = game.getEntity(paa.getEntityId());
 
         if (ae == null) {
-            logger.error("Entity invalid on Trip Attack");
+            LOGGER.error("Entity invalid on Trip Attack");
             return;
         }
 
@@ -13511,7 +13463,7 @@ public class TWGameManager extends AbstractGameManager {
         final Entity te = game.getEntity(paa.getTargetId());
 
         if (te == null) {
-            logger.error("Entity invalid for target on Trip Attack");
+            LOGGER.error("Entity invalid for target on Trip Attack");
             return;
         }
 
@@ -13599,7 +13551,7 @@ public class TWGameManager extends AbstractGameManager {
         final Entity ae = game.getEntity(paa.getEntityId());
 
         if (ae == null) {
-            logger.error("Invalid entity on Grapple Attack");
+            LOGGER.error("Invalid entity on Grapple Attack");
             return;
         }
 
@@ -13607,7 +13559,7 @@ public class TWGameManager extends AbstractGameManager {
         final Entity te = game.getEntity(paa.getTargetId());
 
         if (te == null) {
-            logger.error("Invalid target for Grapple Attack");
+            LOGGER.error("Invalid target for Grapple Attack");
             return;
         }
         // get roll and ToHitData from the PhysicalResult
@@ -13701,7 +13653,7 @@ public class TWGameManager extends AbstractGameManager {
         final Entity ae = game.getEntity(paa.getEntityId());
 
         if (ae == null) {
-            logger.error("Invalid Entity in Break Grapple Attack");
+            LOGGER.error("Invalid Entity in Break Grapple Attack");
             return;
         }
 
@@ -13709,7 +13661,7 @@ public class TWGameManager extends AbstractGameManager {
         final Entity te = game.getEntity(paa.getTargetId());
 
         if (te == null) {
-            logger.error("Invalid target entity in Grapple Attack");
+            LOGGER.error("Invalid target entity in Grapple Attack");
             return;
         }
 
@@ -13863,7 +13815,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // attacker doesn't fall, unless off a cliff
         if (ae.isGrappleAttacker()) {
-            // move self to least dangerous hex
+            // move self to the least dangerous hex
             PilotingRollData psr = ae.getBasePilotingRoll();
             psr.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "break grapple");
             addReport(doEntityDisplacement(ae, ae.getPosition(), hexes[best], psr));
@@ -13891,7 +13843,7 @@ public class TWGameManager extends AbstractGameManager {
         final Entity ae = game.getEntity(caa.getEntityId());
 
         if (ae == null) {
-            logger.error("Attacking entity invalid for Charge Attack");
+            LOGGER.error("Attacking entity invalid for Charge Attack");
             return;
         }
 
@@ -13930,7 +13882,7 @@ public class TWGameManager extends AbstractGameManager {
 
         final int direction = ae.getFacing();
 
-        // entity isn't charging any more
+        // entity isn't charging anymore
         ae.setDisplacementAttack(null);
 
         if (lastEntityId != caa.getEntityId()) {
@@ -14079,21 +14031,21 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Handle an Airmek ram attack
+     * Handle an AirMek ram attack
      */
     private void resolveAirMekRamAttack(PhysicalResult pr, int lastEntityId) {
         final AirMekRamAttackAction caa = (AirMekRamAttackAction) pr.aaa;
         final Entity ae = game.getEntity(caa.getEntityId());
 
         if (ae == null) {
-            logger.error("Invalid entity for Air Mek Ram Attack");
+            LOGGER.error("Invalid entity for Air Mek Ram Attack");
             return;
         }
 
         final Targetable target = game.getTarget(caa.getTargetType(), caa.getTargetId());
 
         if (target == null) {
-            logger.error("Invalid target entity for Air Mek Ram Attack");
+            LOGGER.error("Invalid target entity for Air Mek Ram Attack");
             return;
         }
 
@@ -14127,7 +14079,7 @@ public class TWGameManager extends AbstractGameManager {
 
         final int direction = ae.getFacing();
 
-        // entity isn't charging any more
+        // entity isn't charging anymore
         ae.setDisplacementAttack(null);
 
         if (lastEntityId != caa.getEntityId()) {
@@ -14438,7 +14390,7 @@ public class TWGameManager extends AbstractGameManager {
 
         boolean glancing = Compute.d6(1) == 6;
 
-        // entity isn't ramming any more
+        // entity isn't ramming anymore
         ae.setRamming(false);
 
         if (lastEntityId != raa.getEntityId()) {
@@ -14669,7 +14621,7 @@ public class TWGameManager extends AbstractGameManager {
         while (damageTaken > 0) {
             int cluster;
             HitData hit;
-            // An airmek ramming attack does all damage to attacker's CT
+            // An AirMek ramming attack does all damage to attacker's CT
             if (airMekRam) {
                 cluster = damageTaken;
                 hit = new HitData(Mek.LOC_CENTER_TORSO);
@@ -14731,7 +14683,7 @@ public class TWGameManager extends AbstractGameManager {
         // track any additional damage to the attacker due to the target having spikes
         while (damage > 0) {
             int cluster = Math.min(5, damage);
-            // Airmek ramming attacks do all damage to a single location
+            // AirMek ramming attacks do all damage to a single location
             if (airMekRam) {
                 cluster = damage;
             }
@@ -15006,7 +14958,7 @@ public class TWGameManager extends AbstractGameManager {
         int rollValue = pr.roll.getIntValue();
         Entity targetEntity = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
-            // Lets re-write around that horrible hack that was here before.
+            // Let's re-write around that horrible hack that was here before.
             // So instead of asking if a specific location is wet and praying that it won't cause an NPE...
             // We'll check
             //
@@ -15069,7 +15021,7 @@ public class TWGameManager extends AbstractGameManager {
                       daa.getTargetPos(),
                       new PilotingRollData(ae.getId(), 4, "executed death from above")));
             }
-            // entity isn't DFAing any more
+            // entity isn't DFA-ing anymore
             ae.setDisplacementAttack(null);
             return;
         }
@@ -15081,13 +15033,13 @@ public class TWGameManager extends AbstractGameManager {
         r.newlines = 0;
         addReport(r);
 
-        // Check if the target didnt move, if it did then exit
+        // Check if the target didn't move, if it did then exit
         if (!target.getPosition().equals(daa.getTargetPos())) {
             r = new Report(4215);
             r.subject = ae.getId();
             addReport(r);
             ae.setDisplacementAttack(null);
-            // entity isn't DFAing any more
+            // entity isn't DFA-ing anymore
             addReport(doEntityFallsInto(ae,
                   ae.getElevation(),
                   ae.getPosition(),
@@ -15159,7 +15111,7 @@ public class TWGameManager extends AbstractGameManager {
                 r.add(dest.getBoardNum(), true);
                 r.indent();
                 addReport(r);
-                // entity isn't DFAing any more
+                // entity isn't DFA-ing anymore
                 ae.setDisplacementAttack(null);
                 addReport(doEntityFall(ae, dest, 2, 3, ae.getBasePilotingRoll(), false, false), 1);
                 Entity violation = Compute.stackingViolation(game, ae.getId(), dest, ae.climbMode());
@@ -15192,7 +15144,7 @@ public class TWGameManager extends AbstractGameManager {
 
         Coords dest = target.getPosition();
 
-        // Can't DFA a target inside of a building.
+        // Can't DFA a target inside a building.
         int damageTaken = DfaAttackAction.getDamageTakenBy(ae);
 
         // Targeting a building.
@@ -15340,7 +15292,7 @@ public class TWGameManager extends AbstractGameManager {
               dest,
               new PilotingRollData(ae.getId(), 4, "executed death from above")));
 
-        // entity isn't DFAing any more
+        // entity isn't DFA-ing anymore
         ae.setDisplacementAttack(null);
 
         // if the target is an industrial mek, it needs to check for crits at the end of
@@ -15578,7 +15530,7 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Resolve Flaming Damage for the given Entity Taharqa: This is now updated to TacOps rules which is much more
-     * lenient So I have change the name to Flaming Damage rather than flaming death
+     * lenient So I have changed the name to Flaming Damage rather than flaming death
      *
      * @param entity      The <code>Entity</code> that may experience flaming damage.
      * @param coordinates the coordinate location of the fire
@@ -15595,7 +15547,7 @@ public class TWGameManager extends AbstractGameManager {
         if ((entity.getMovementMode() == EntityMovementMode.VTOL) && !entity.infernos.isStillBurning()) {
             // VTOLs don't check as long as they are flying higher than
             // the burning terrain. TODO : Check for rules conformity (ATPM?)
-            // according to maxtech, elevation 0 or 1 should be affected,
+            // according to MaxTech, elevation 0 or 1 should be affected,
             // this makes sense for level 2 as well
             if (entity.getElevation() > 1) {
                 return;
@@ -15636,11 +15588,13 @@ public class TWGameManager extends AbstractGameManager {
                 Vector<GunEmplacement> gun = new Vector<>();
                 gun.add((GunEmplacement) entity);
 
-                Building building = getGame().getBuildingAt(entity.getBoardLocation()).get();
-
-                Report.addNewline(mainPhaseReport);
-                addReport(criticalGunEmplacement(gun, building, entity.getPosition()));
-                // Taharqa: TacOps rules, protos and vees no longer die instantly
+                Optional<Building> optionalBuilding = getGame().getBuildingAt(entity.getBoardLocation());
+                if (optionalBuilding.isPresent()) {
+                    Building building = optionalBuilding.get();
+                    Report.addNewline(mainPhaseReport);
+                    addReport(criticalGunEmplacement(gun, building, entity.getPosition()));
+                }
+                // Taharqa: TacOps rules, protomeks and vees no longer die instantly
                 // (hurray!)
             } else if (entity instanceof Tank) {
                 int bonus = -2;
@@ -15650,11 +15604,10 @@ public class TWGameManager extends AbstractGameManager {
                 // roll a critical hit
                 Report.addNewline(mainPhaseReport);
                 addReport(criticalTank((Tank) entity, Tank.LOC_FRONT, bonus, 0, true));
-            } else if (entity instanceof ProtoMek) {
+            } else if (entity instanceof ProtoMek proto) {
                 // this code is taken from inferno hits
                 HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
                 if (hit.getLocation() == ProtoMek.LOC_NEAR_MISS) {
-                    ProtoMek proto = (ProtoMek) entity;
                     r = new Report(6035);
                     r.subject = entity.getId();
                     r.indent(2);
@@ -15672,10 +15625,10 @@ public class TWGameManager extends AbstractGameManager {
                     entity.destroyLocation(hit.getLocation());
                     // Handle ProtoMek pilot damage due to location destruction
                     int hits = ProtoMek.POSSIBLE_PILOT_DAMAGE[hit.getLocation()] -
-                          ((ProtoMek) entity).getPilotDamageTaken(hit.getLocation());
+                          proto.getPilotDamageTaken(hit.getLocation());
                     if (hits > 0) {
                         addReport(damageCrew(entity, hits));
-                        ((ProtoMek) entity).setPilotDamageTaken(hit.getLocation(),
+                        proto.setPilotDamageTaken(hit.getLocation(),
                               ProtoMek.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]);
                     }
                     if (entity.getTransferLocation(hit).getLocation() == Entity.LOC_DESTROYED) {
@@ -16232,7 +16185,7 @@ public class TWGameManager extends AbstractGameManager {
 
     private Vector<Report> resolvePilotingRolls(Entity entity, boolean moving, Coords src, Coords dest) {
         Vector<Report> vPhaseReport = new Vector<>();
-        // dead and undeployed and offboard units don't need to.
+        // dead and un-deployed and offboard units don't need to.
         if (entity.isDoomed()
               || entity.isDestroyed()
               || entity.isOffBoard()
@@ -16380,8 +16333,6 @@ public class TWGameManager extends AbstractGameManager {
                 if (entity.hasUMU()) {
                     return vPhaseReport;
                 }
-                // game.addPSR(new PilotingRollData(entity.getId(),
-                // TargetRoll.AUTOMATIC_FAIL, "lost buoyancy"));
             }
         }
         // add all cumulative mods from other rolls to each PSR
@@ -16404,7 +16355,7 @@ public class TWGameManager extends AbstractGameManager {
             PilotingRollData toUse = entity.getBasePilotingRoll();
             entity.addPilotingModifierForTerrain(toUse);
             toUse.append(psr);
-            // now, append all other roll's cumulative mods, not the
+            // now, append all others roll's cumulative mods, not the
             // non-cumulative
             // ones
             for (Enumeration<PilotingRollData> j = game.getPSRs(); j.hasMoreElements(); ) {
@@ -16612,7 +16563,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Resolves and reports all control skill rolls for a single aero or airborne LAM in airmek mode.
+     * Resolves and reports all control skill rolls for a single aero or airborne LAM in AirMek mode.
      */
     private Vector<Report> resolveControl(Entity e) {
         Vector<Report> vReport = new Vector<>();
@@ -16626,34 +16577,23 @@ public class TWGameManager extends AbstractGameManager {
          * http://forums.classicbattletech.com/index.php/topic,20424.0.html
          */
 
-        IAero a = null;
+        IAero iAero = null;
         boolean canRecover = false;
         if (e.isAero() && (e.isAirborne() || e.isSpaceborne())) {
-            a = (IAero) e;
-            // they should get a shot at a recovery roll at the end of all this
+            iAero = (IAero) e;
+            // they should get iAero shot at iAero recovery roll at the end of all this
             // if they are already out of control
-            canRecover = a.isOutControl();
+            canRecover = iAero.isOutControl();
         } else if (!(e instanceof LandAirMek) || !e.isAirborneVTOLorWIGE()) {
             return vReport;
         }
 
         // if the unit already is moving randomly then it can't get any worse
-        if (a == null || !a.isRandomMove()) {
+        if (iAero == null || !iAero.isRandomMove()) {
             // find control rolls and make them
             Vector<PilotingRollData> rolls = new Vector<>();
             StringBuilder reasons = new StringBuilder();
-            PilotingRollData target = e.getBasePilotingRoll();
-            // maneuvering ace
-            // TODO : pending rules query
-            // http://www.classicbattletech.com/forums/index.php/topic,63552.new.html#new
-            // for now I am assuming Man Ace applies to all out-of-control
-            // rolls, but not other
-            // uses of control rolls (thus it doesn't go in
-            // Entity#addEntityBonuses) and
-            // furthermore it doesn't apply to recovery rolls
-            if (e.isUsingManAce()) {
-                target.addModifier(-1, "maneuvering ace");
-            }
+            PilotingRollData target = getPilotingRollData(e);
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_ATMOSPHERIC_CONTROL)) {
                 addControlWithAdvAtmospheric(e, rolls, reasons);
             } else {
@@ -16662,7 +16602,7 @@ public class TWGameManager extends AbstractGameManager {
                     if (modifier.getEntityId() != e.getId()) {
                         continue;
                     }
-                    // found a roll, add it
+                    // found iAero roll, add it
                     rolls.addElement(modifier);
                     if (!reasons.isEmpty()) {
                         reasons.append("; ");
@@ -16697,7 +16637,7 @@ public class TWGameManager extends AbstractGameManager {
                     Roll diceRoll = Compute.rollD6(2);
 
                     // different reports depending on out-of-control status
-                    if (a != null && a.isOutControl()) {
+                    if (iAero != null && iAero.isOutControl()) {
                         // Starting already out of control...
                         r = new Report(9360);
                         r.subject = e.getId();
@@ -16706,7 +16646,7 @@ public class TWGameManager extends AbstractGameManager {
                         if (diceRoll.getIntValue() < (target.getValue() - 5)) {
                             r.choose(false);
                             vReport.add(r);
-                            a.setRandomMove(true);
+                            iAero.setRandomMove(true);
                         } else {
                             r.choose(true);
                             vReport.add(r);
@@ -16722,25 +16662,25 @@ public class TWGameManager extends AbstractGameManager {
                             // Now out of control
                             r.choose(false);
                             vReport.add(r);
-                            if (a != null) {
-                                a.setOutControl(true);
+                            if (iAero != null) {
+                                iAero.setOutControl(true);
                                 // do we have random movement?
                                 if ((target.getValue() - diceRoll.getIntValue()) > 5) {
                                     r = new Report(9365);
                                     r.newlines = 0;
                                     r.subject = e.getId();
                                     vReport.add(r);
-                                    a.setRandomMove(true);
+                                    iAero.setRandomMove(true);
                                 }
                                 // if on the atmospheric map, then lose altitude
                                 // and check
                                 // for crash
-                                if (!a.isSpaceborne() && a.isAirborne()) {
+                                if (!iAero.isSpaceborne() && iAero.isAirborne()) {
                                     Roll diceRoll2 = Compute.rollD6(1);
 
                                     int origAltitude = e.getAltitude();
                                     e.setAltitude(e.getAltitude() - diceRoll2.getIntValue());
-                                    // Reroll altitude loss with edge if the new altitude would result in a crash
+                                    // Reroll altitude loss with edge if the new altitude would result in iAero crash
                                     if (e.getAltitude() <= 0
                                           // Don't waste the edge if it won't help
                                           &&
@@ -16768,7 +16708,7 @@ public class TWGameManager extends AbstractGameManager {
                                     vReport.add(r);
                                     // check for crash
                                     if (checkCrash(e)) {
-                                        vReport.addAll(processCrash(e, a.getCurrentVelocity(), e.getPosition()));
+                                        vReport.addAll(processCrash(e, iAero.getCurrentVelocity(), e.getPosition()));
                                         break;
                                     }
                                 }
@@ -16796,7 +16736,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
-        // if they were out-of-control to start with, give them a chance to regain
+        // if they were out-of-control to start with, give them iAero chance to regain
         // control
         if (canRecover) {
             PilotingRollData base = e.getBasePilotingRoll();
@@ -16827,12 +16767,28 @@ public class TWGameManager extends AbstractGameManager {
             } else {
                 r.choose(true);
                 vReport.add(r);
-                a.setOutControl(false);
-                a.setOutControlHeat(false);
-                a.setRandomMove(false);
+                iAero.setOutControl(false);
+                iAero.setOutControlHeat(false);
+                iAero.setRandomMove(false);
             }
         }
         return vReport;
+    }
+
+    private static PilotingRollData getPilotingRollData(Entity e) {
+        PilotingRollData target = e.getBasePilotingRoll();
+        // maneuvering ace
+        // TODO : pending rules query
+        // http://www.classicbattletech.com/forums/index.php/topic,63552.new.html#new
+        // for now I am assuming Man Ace applies to all out-of-control
+        // rolls, but not other
+        // uses of control rolls (thus it doesn't go in
+        // Entity#addEntityBonuses) and
+        // furthermore it doesn't apply to recovery rolls
+        if (e.isUsingManAce()) {
+            target.addModifier(-1, "maneuvering ace");
+        }
+        return target;
     }
 
     /**
@@ -16890,7 +16846,6 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Check all aircraft that may have used internal bomb bays for incidental explosions caused by ground fire.
      *
-     * @return
      */
     Vector<Report> resolveInternalBombHits() {
         Vector<Report> vFullReport = new Vector<>();
@@ -16906,7 +16861,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Resolves and reports all control skill rolls for a single aero or airborne LAM in airmek mode.
+     * Resolves and reports all control skill rolls for a single aero or airborne LAM in AirMek mode.
      */
     private Vector<Report> resolveInternalBombHit(Entity e) {
         Vector<Report> vReport = new Vector<>();
@@ -17215,7 +17170,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     void resolveCrewWakeUp() {
         for (Entity entity : game.inGameTWEntities()) {
-            // only unconscious pilots of meks and protos, ASF and Small Craft
+            // only unconscious pilots of meks and protomeks, ASF and Small Craft
             // and MekWarriors can roll to wake up
             if (entity.isTargetable() &&
                   ((entity instanceof Mek) ||
@@ -17278,7 +17233,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /*
-     * Resolve any outstanding self destruction's...
+     * Resolve any outstanding self-destruction's...
      */
     void resolveSelfDestruct() {
         for (Entity e : game.getEntitiesVector()) {
@@ -17335,7 +17290,7 @@ public class TWGameManager extends AbstractGameManager {
                             vDesc.addAll(ejectEntity(en, true, false));
                         }
                     } else {
-                        // Aeros eject if the SI Destroyed switch is on
+                        // Aerospace eject if the SI Destroyed switch is on
                         Aero aero = (Aero) ship;
                         if (aero.isAutoEject() &&
                               (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
@@ -17520,7 +17475,7 @@ public class TWGameManager extends AbstractGameManager {
               underWater,
               nukeS2S
         );
-        logger.debug("Compiled damage info: '{}'", damageInfo.toString());
+        LOGGER.debug("Compiled damage info: '{}'", damageInfo.toString());
         return damager.damageEntity(damageInfo);
     }
 
@@ -17562,15 +17517,7 @@ public class TWGameManager extends AbstractGameManager {
             HitData nextPassHit = passHit;
             do {
                 int armorType = passenger.getArmorType(nextPassHit.getLocation());
-                boolean armorDamageReduction = ((armorType == EquipmentType.T_ARMOR_BA_REACTIVE) &&
-                      ((hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE))) ||
-                      (hit.getGeneralDamageType() ==
-                            HitData.DAMAGE_ARMOR_PIERCING_MISSILE);
-                // Check for reflective armor
-                if ((armorType == EquipmentType.T_ARMOR_BA_REFLECTIVE) &&
-                      (hit.getGeneralDamageType() == HitData.DAMAGE_ENERGY)) {
-                    armorDamageReduction = true;
-                }
+                boolean armorDamageReduction = isArmorDamageReduction(hit, armorType);
                 if (0 < passenger.getArmor(nextPassHit)) {
                     absorb += passenger.getArmor(nextPassHit);
                     if (armorDamageReduction) {
@@ -17650,6 +17597,19 @@ public class TWGameManager extends AbstractGameManager {
         return damage;
     }
 
+    private static boolean isArmorDamageReduction(HitData hit, int armorType) {
+        boolean armorDamageReduction = ((armorType == EquipmentType.T_ARMOR_BA_REACTIVE) &&
+              ((hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE))) ||
+              (hit.getGeneralDamageType() ==
+                    HitData.DAMAGE_ARMOR_PIERCING_MISSILE);
+        // Check for reflective armor
+        if ((armorType == EquipmentType.T_ARMOR_BA_REFLECTIVE) &&
+              (hit.getGeneralDamageType() == HitData.DAMAGE_ENERGY)) {
+            armorDamageReduction = true;
+        }
+        return armorDamageReduction;
+    }
+
     /**
      * Check to see if the entity's engine explodes. Rules for ICE explosions are different to fusion engines.
      *
@@ -17685,7 +17645,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Non meks and meks that already rolled are safe
-        if (en.rolledForEngineExplosion || !(en instanceof Mek)) {
+        if (en.rolledForEngineExplosion || !(en instanceof Mek mek)) {
             return false;
         }
         // ICE can always explode and roll every time hit
@@ -17758,7 +17718,6 @@ public class TWGameManager extends AbstractGameManager {
                 r.indent(2);
                 vDesc.add(r);
 
-                Mek mek = (Mek) en;
                 if (mek.isAutoEject() &&
                       (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
                             (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
@@ -17860,7 +17819,7 @@ public class TWGameManager extends AbstractGameManager {
         while (buildings.hasMoreElements()) {
             final Building bldg = buildings.nextElement();
 
-            // Lets find the closest hex from the building.
+            // Let's find the closest hex from the building.
             Enumeration<Coords> hexes = bldg.getCoords();
 
             while (hexes.hasMoreElements()) {
@@ -17956,7 +17915,7 @@ public class TWGameManager extends AbstractGameManager {
 
             Coords entityPos = entity.getPosition();
             if (entityPos == null) {
-                // maybe its loaded?
+                // maybe it's loaded?
                 Entity transport = game.getEntity(entity.getTransportId());
                 if ((transport != null) && !transport.isAirborne()) {
                     loaded.add(entity);
@@ -18170,7 +18129,7 @@ public class TWGameManager extends AbstractGameManager {
      * add an orbital bombardment to hit the board in the next weapons attack phase
      *
      * @param orbitalBombardment this is an #OrbitalBombardment object, its immutable and must be constructed through
-     *                           it's builder.
+     *                           its builder.
      */
     public void addScheduledOrbitalBombardment(OrbitalBombardment orbitalBombardment) {
         Report r = new Report(1302);
@@ -18217,8 +18176,8 @@ public class TWGameManager extends AbstractGameManager {
                             new SpecialHexDisplay(SpecialHexDisplay.Type.ORBITAL_BOMBARDMENT,
                                   getGame().getRoundCount(),
                                   getGame().getPlayersList().get(0),
-                                  // The player should not matter, I just dont want to
-                                  // cause a nullpointererror
+                                  // The player should not matter, I just don't want to
+                                  // cause a NullPointerError
                                   message,
                                   SpecialHexDisplay.SHD_VISIBLE_TO_ALL,
                                   imageSignature));
@@ -18228,8 +18187,8 @@ public class TWGameManager extends AbstractGameManager {
                             new SpecialHexDisplay(SpecialHexDisplay.Type.BOMB_HIT,
                                   getGame().getRoundCount(),
                                   getGame().getPlayersList().get(0),
-                                  // The player should not matter, I just dont want to
-                                  // cause a nullpointererror
+                                  // The player should not matter, I just don't want to
+                                  // cause a NullPointerError
                                   message,
                                   SpecialHexDisplay.SHD_VISIBLE_TO_ALL));
             }
@@ -18244,8 +18203,6 @@ public class TWGameManager extends AbstractGameManager {
      */
     private void drawOrbitalBombardmentIncomingOnBoard(OrbitalBombardment orbitalBombardment) {
         var allCoords = orbitalBombardment.getAllAffectedCoords();
-        // var allCoords =
-        // orbitalBombardment.getCoords().allAtDistanceOrLess(SpecialHexDisplay.LARGE_EXPLOSION_IMAGE_RADIUS);
         for (var coord : allCoords) {
             if (!getGame().getBoard().contains(coord)) {
                 continue;
@@ -18255,8 +18212,8 @@ public class TWGameManager extends AbstractGameManager {
                         new SpecialHexDisplay(SpecialHexDisplay.Type.ORBITAL_BOMBARDMENT_INCOMING,
                               getGame().getRoundCount(),
                               getGame().getPlayersList().get(0),
-                              // The player should not matter, I just dont want to
-                              // cause a nullpointererror
+                              // The player should not matter, I just don't want to
+                              // cause a NullPointerError
                               Messages.getString("OrbitalBombardment.hitOnRound", getGame().getRoundCount()),
                               SpecialHexDisplay.SHD_VISIBLE_TO_ALL));
             sendChangedHex(coord);
@@ -18344,8 +18301,8 @@ public class TWGameManager extends AbstractGameManager {
                         new SpecialHexDisplay(SpecialHexDisplay.Type.NUKE_HIT,
                               getGame().getRoundCount(),
                               getGame().getPlayersList().get(0),
-                              // The player should not matter, I just dont want to
-                              // cause a nullpointererror
+                              // The player should not matter, I just don't want to
+                              // cause a NullPointerError
                               Messages.getString("Nuke.exploded"),
                               SpecialHexDisplay.SHD_VISIBLE_TO_ALL,
                               imageSignature));
@@ -18366,8 +18323,8 @@ public class TWGameManager extends AbstractGameManager {
                         new SpecialHexDisplay(SpecialHexDisplay.Type.NUKE_INCOMING,
                               getGame().getRoundCount(),
                               getGame().getPlayersList().get(0),
-                              // The player should not matter, I just dont want to
-                              // cause a nullpointererror
+                              // The player should not matter, I just don't want to
+                              // cause a NullPointerError
                               Messages.getString("Nuke.hitOnRound", getGame().getRoundCount()),
                               SpecialHexDisplay.SHD_VISIBLE_TO_ALL));
             sendChangedHex(coord);
@@ -18385,7 +18342,7 @@ public class TWGameManager extends AbstractGameManager {
         NukeStats nukeStats = AreaEffectHelper.getNukeStats(nukeType);
 
         if (nukeStats == null) {
-            logger.error("Illegal nuke not listed in HS:3070");
+            LOGGER.error("Illegal nuke not listed in HS:3070");
             return;
         }
 
@@ -18401,14 +18358,14 @@ public class TWGameManager extends AbstractGameManager {
      * do an orbital bombardment
      *
      * @param position the position that will be hit by the orbital bombardment
-     * @param damage   the damage of the bombardment at target hex
+     * @param damage   the damage to the bombardment at target hex
      * @param radius   the radius which the damage will hit
      */
     public void doOrbitalBombardment(Coords position, int damage, int radius) {
-        Report r = new Report(1300, Report.PUBLIC);
-        r.indent();
-        r.add(position.getBoardNum(), true);
-        getMainPhaseReport().add(r);
+        Report report = new Report(1300, Report.PUBLIC);
+        report.indent();
+        report.add(position.getBoardNum(), true);
+        getMainPhaseReport().add(report);
 
         // Then, do actual blast damage.
         // Use the standard blast function for this.
@@ -18440,7 +18397,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // First, crater the terrain.
         // All terrain, units, buildings... EVERYTHING in here is just gone.
-        // Gotta love nukes.
+        // Got to love nukes.
         Report r = new Report(1215, Report.PUBLIC);
 
         r.indent();
@@ -18533,7 +18490,6 @@ public class TWGameManager extends AbstractGameManager {
                 game.addPSR(new PilotingRollData(o.getId(), 6, "hit by nuclear blast"));
             } else if (o instanceof VTOL vt) {
                 // Needs a piloting check at +6 to avoid crashing.
-                // Wheeeeee!
 
                 // Check only applies if it's in the air.
                 // FIXME: is this actually correct? What about
@@ -19191,17 +19147,17 @@ public class TWGameManager extends AbstractGameManager {
                 // Torso weapon hits are secondary effects and
                 // do not occur when loading from a scenario.
                 else if (secondaryEffects) {
-                    int tweapRoll = Compute.d6(1);
+                    int tWeaponRoll = Compute.d6(1);
                     CriticalSlot newSlot;
 
-                    switch (tweapRoll) {
+                    switch (tWeaponRoll) {
                         case 1:
                             if (pm.isQuad()) {
                                 newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ProtoMek.SYSTEM_TORSO_WEAPON_A);
                                 reports.addAll(applyCriticalHit(pm,
                                       Entity.NONE,
                                       newSlot,
-                                      secondaryEffects,
+                                      true,
                                       damageCaused,
                                       isCapital));
                                 break;
@@ -19212,7 +19168,7 @@ public class TWGameManager extends AbstractGameManager {
                                 reports.addAll(applyCriticalHit(pm,
                                       Entity.NONE,
                                       newSlot,
-                                      secondaryEffects,
+                                      true,
                                       damageCaused,
                                       isCapital));
                                 break;
@@ -19221,7 +19177,7 @@ public class TWGameManager extends AbstractGameManager {
                             reports.addAll(applyCriticalHit(pm,
                                   Entity.NONE,
                                   newSlot,
-                                  secondaryEffects,
+                                  true,
                                   damageCaused,
                                   isCapital));
                             break;
@@ -19231,7 +19187,7 @@ public class TWGameManager extends AbstractGameManager {
                                 reports.addAll(applyCriticalHit(pm,
                                       Entity.NONE,
                                       newSlot,
-                                      secondaryEffects,
+                                      true,
                                       damageCaused,
                                       isCapital));
                                 break;
@@ -19242,7 +19198,7 @@ public class TWGameManager extends AbstractGameManager {
                                 reports.addAll(applyCriticalHit(pm,
                                       Entity.NONE,
                                       newSlot,
-                                      secondaryEffects,
+                                      true,
                                       damageCaused,
                                       isCapital));
                                 break;
@@ -19251,7 +19207,7 @@ public class TWGameManager extends AbstractGameManager {
                             reports.addAll(applyCriticalHit(pm,
                                   Entity.NONE,
                                   newSlot,
-                                  secondaryEffects,
+                                  true,
                                   damageCaused,
                                   isCapital));
                             break;
@@ -19263,7 +19219,7 @@ public class TWGameManager extends AbstractGameManager {
                                     reports.addAll(applyCriticalHit(pm,
                                           Entity.NONE,
                                           newSlot,
-                                          secondaryEffects,
+                                          true,
                                           damageCaused,
                                           isCapital));
                                     break;
@@ -19272,7 +19228,7 @@ public class TWGameManager extends AbstractGameManager {
                                 reports.addAll(applyCriticalHit(pm,
                                       Entity.NONE,
                                       newSlot,
-                                      secondaryEffects,
+                                      true,
                                       damageCaused,
                                       isCapital));
                                 break;
@@ -19285,7 +19241,7 @@ public class TWGameManager extends AbstractGameManager {
                                     reports.addAll(applyCriticalHit(pm,
                                           Entity.NONE,
                                           newSlot,
-                                          secondaryEffects,
+                                          true,
                                           damageCaused,
                                           isCapital));
                                     break;
@@ -19294,7 +19250,7 @@ public class TWGameManager extends AbstractGameManager {
                                 reports.addAll(applyCriticalHit(pm,
                                       Entity.NONE,
                                       newSlot,
-                                      secondaryEffects,
+                                      true,
                                       damageCaused,
                                       isCapital));
                                 break;
@@ -19469,10 +19425,10 @@ public class TWGameManager extends AbstractGameManager {
                     boomTarget = 12;
                 }
                 // check for possible explosion
-                int fuelroll = Compute.d6(2);
+                int fuelRoll = Compute.d6(2);
                 r = new Report(9120);
                 r.subject = aero.getId();
-                if (fuelroll >= boomTarget) {
+                if (fuelRoll >= boomTarget) {
                     // A chance to reroll the explosion with edge
                     if (aero.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)) {
                         // Reporting this is funky because 9120 only has room for 2 choices. Replace it.
@@ -19481,9 +19437,9 @@ public class TWGameManager extends AbstractGameManager {
                         r.newlines = 0;
                         reports.add(r);
                         aero.getCrew().decreaseEdge();
-                        fuelroll = Compute.d6(2);
+                        fuelRoll = Compute.d6(2);
                         // To explode, or not to explode
-                        if (fuelroll >= boomTarget) {
+                        if (fuelRoll >= boomTarget) {
                             r = new Report(9124);
                             r.subject = aero.getId();
                         } else {
@@ -19565,12 +19521,12 @@ public class TWGameManager extends AbstractGameManager {
                     }
                 }
                 if (!bombs.isEmpty()) {
-                    Mounted<?> hitbomb = bombs.get(Compute.randomInt(bombs.size()));
-                    hitbomb.setShotsLeft(0);
-                    hitbomb.setDestroyed(true);
+                    Mounted<?> hitBomb = bombs.get(Compute.randomInt(bombs.size()));
+                    hitBomb.setShotsLeft(0);
+                    hitBomb.setDestroyed(true);
                     r = new Report(9130);
                     r.subject = aero.getId();
-                    r.add(hitbomb.getDesc());
+                    r.add(hitBomb.getDesc());
                     reports.add(r);
                     // If we are part of a squadron, we should recalculate
                     // the bomb salvo for the squadron
@@ -19702,7 +19658,7 @@ public class TWGameManager extends AbstractGameManager {
                           &&
                           !(aero instanceof FighterSquadron)
                           &&
-                          (equipmentHit.getType() instanceof WeaponType wtype)) {
+                          (equipmentHit.getType() instanceof WeaponType weaponType)) {
                         // Bay Weapons
                         if ((equipmentHit instanceof WeaponMounted) && aero.usesWeaponBays()) {
                             // Finish reporting(9150) a hit on the bay
@@ -19748,8 +19704,8 @@ public class TWGameManager extends AbstractGameManager {
                             }
                             // Hit the weapon then also hit all the other weapons in the bay
                             equipmentHit.setHit(true);
-                            for (WeaponMounted bayWeap : ((WeaponMounted) equipmentHit).getBayWeapons()) {
-                                bayWeap.setHit(true);
+                            for (WeaponMounted bayWeapon : ((WeaponMounted) equipmentHit).getBayWeapons()) {
+                                bayWeapon.setHit(true);
                                 // Taharqa : We should also damage the critical slot, or MM and
                                 // MHQ won't remember that this weapon is damaged on the MUL file
                                 for (int i = 0; i < aero.getNumberOfCriticalSlots(loc); i++) {
@@ -19758,7 +19714,7 @@ public class TWGameManager extends AbstractGameManager {
                                         continue;
                                     }
                                     Mounted<?> mounted = slot1.getMount();
-                                    if (mounted.equals(bayWeap)) {
+                                    if (mounted.equals(bayWeapon)) {
                                         aero.hitAllCriticalSlots(loc, i);
                                         break;
                                     }
@@ -19767,10 +19723,10 @@ public class TWGameManager extends AbstractGameManager {
                             break;
                         }
                         // does it use Ammo?
-                        if (wtype.getAmmoType() != AmmoType.AmmoTypeEnum.NA) {
+                        if (weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.NA) {
                             Mounted<?> m = equipmentHit.getLinked();
-                            int ammoroll = Compute.d6(2);
-                            if (ammoroll >= 10) {
+                            int ammoRoll = Compute.d6(2);
+                            if (ammoRoll >= 10) {
                                 // A chance to reroll an explosion with edge
                                 if (aero.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)) {
                                     aero.getCrew().decreaseEdge();
@@ -19778,8 +19734,8 @@ public class TWGameManager extends AbstractGameManager {
                                     r.subject = aero.getId();
                                     r.add(aero.getCrew().getOptions().intOption(OptionsConstants.EDGE));
                                     reports.add(r);
-                                    ammoroll = Compute.d6(2);
-                                    if (ammoroll >= 10) {
+                                    ammoRoll = Compute.d6(2);
+                                    if (ammoRoll >= 10) {
                                         reports.addAll(explodeEquipment(aero, loc, m));
                                         break;
                                     } else {
@@ -19836,8 +19792,8 @@ public class TWGameManager extends AbstractGameManager {
                     }
                     // if this is a weapons bay then also hit all the other weapons
                     if (equipmentHit instanceof WeaponMounted) {
-                        for (WeaponMounted bayWeap : ((WeaponMounted) equipmentHit).getBayWeapons()) {
-                            bayWeap.setHit(true);
+                        for (WeaponMounted bayWeapon : ((WeaponMounted) equipmentHit).getBayWeapons()) {
+                            bayWeapon.setHit(true);
                             // Taharqa : We should also damage the critical slot, or MM and MHQ
                             // won't remember that this weapon is damaged on the MUL file
                             for (int i = 0; i < aero.getNumberOfCriticalSlots(loc); i++) {
@@ -19846,7 +19802,7 @@ public class TWGameManager extends AbstractGameManager {
                                     continue;
                                 }
                                 Mounted<?> mounted = slot1.getMount();
-                                if (mounted.equals(bayWeap)) {
+                                if (mounted.equals(bayWeapon)) {
                                     aero.hitAllCriticalSlots(loc, i);
                                     break;
                                 }
@@ -19919,13 +19875,11 @@ public class TWGameManager extends AbstractGameManager {
                     // damage a random docking collar
                     if (aero.damageDockCollar()) {
                         r = new Report(9176);
-                        r.subject = aero.getId();
-                        reports.add(r);
                     } else {
                         r = new Report(9177);
-                        r.subject = aero.getId();
-                        reports.add(r);
                     }
+                    r.subject = aero.getId();
+                    reports.add(r);
                 }
                 break;
             case Aero.CRIT_KF_BOOM:
@@ -20026,7 +19980,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (js == null) {
                     break;
                 } else if (js.getTotalGravDeck() <= 0) {
-                    logger.error("Cannot handle a grav deck crit for a JumpShip with no grav decks");
+                    LOGGER.error("Cannot handle a grav deck crit for a JumpShip with no grav decks");
                     break;
                 }
                 int choice = Compute.randomInt(js.getTotalGravDeck());
@@ -20059,14 +20013,14 @@ public class TWGameManager extends AbstractGameManager {
         // cargo hit
         // First what percentage of the cargo did the hit destroy?
         double percentDestroyed = 0.0;
-        double mult = 2.0;
+        double multiplier = 2.0;
         if (aero.isLargeCraft() &&
               aero.isClan() &&
               game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_HARJEL)) {
-            mult = 4.0;
+            multiplier = 4.0;
         }
         if (damageCaused > 0) {
-            percentDestroyed = Math.min(damageCaused / (mult * aero.getSI()), 1.0);
+            percentDestroyed = Math.min(damageCaused / (multiplier * aero.getSI()), 1.0);
         }
         List<Bay> bays;
         double destroyed = 0;
@@ -20978,7 +20932,7 @@ public class TWGameManager extends AbstractGameManager {
     private Vector<Report> explodeVTOLorWiGE(@Nullable Tank entity) {
         Vector<Report> newReports = new Vector<>();
         if (entity == null) {
-            LOGGER.error("Tried to explode null entity");
+            IGame.LOGGER.error("Tried to explode null entity");
             return newReports;
 
         } else if (entity.hasEngine() && entity.getEngine().isFusion()) {
@@ -21061,8 +21015,8 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @param vDesc         - {@link Report} <code>Vector</code>
      * @param a             - the entity being critted
-     * @param hit           - the hitdata for the attack
-     * @param damage_orig   - the original damage of the attack
+     * @param hit           - the {@link HitData} for the attack
+     * @param damage_orig   - the original damage to the attack
      * @param critThresh    - did the attack go over the damage threshold
      * @param critSI        - did the attack damage SI
      * @param ammoExplosion - was the damage from an ammo explosion
@@ -21501,7 +21455,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
 
-            // Ignore empty or unhitable slots (this
+            // Ignore empty or un-hittable slots (this
             // includes all previously hit slots).
             if ((slot != null) && (slot.isHittable() || reactiveArmorCrit)) {
 
@@ -21643,11 +21597,11 @@ public class TWGameManager extends AbstractGameManager {
               (entity.isSurfaceNaval() && (loc != ((Tank) entity).getLocTurret()))) {
             // Does the location have armor (check rear armor on Mek)
             // and is the check due to damage?
-            int breachroll = 0;
+            int breachRoll = 0;
             // set the target roll for the breach
             int target = 10;
             PlanetaryConditions conditions = game.getPlanetaryConditions();
-            // if this is a vacuum check and we are in trace atmosphere then
+            // if this is a vacuum check, and we are in trace atmosphere then
             // adjust target
             if ((entity.getLocationStatus(loc) == ILocationExposureStatus.VACUUM) &&
                   conditions.getAtmosphere().isTrace()) {
@@ -21687,7 +21641,7 @@ public class TWGameManager extends AbstractGameManager {
                     target += 1;
                 }
                 Roll diceRoll = Compute.rollD6(2);
-                breachroll = diceRoll.getIntValue();
+                breachRoll = diceRoll.getIntValue();
                 r = new Report(6345);
                 r.subject = entity.getId();
                 r.indent(3);
@@ -21695,11 +21649,11 @@ public class TWGameManager extends AbstractGameManager {
                 r.add(diceRoll);
                 r.newlines = 0;
 
-                r.choose(breachroll < target);
+                r.choose(breachRoll < target);
                 vDesc.addElement(r);
             }
             // Breach by damage or lack of armor.
-            if ((breachroll >= target) ||
+            if ((breachRoll >= target) ||
                   !(entity.getArmor(loc) > 0) ||
                   (dumping &&
                         (!(entity instanceof Mek) ||
@@ -22126,7 +22080,7 @@ public class TWGameManager extends AbstractGameManager {
                       .toList();
             }
 
-            // Get mounted units, but place Aeros first: they cannot move out of the
+            // Get mounted units, but place Aerospace first: they cannot move out of the
             // carrier's occupied hexes!
             LinkedHashSet<Entity> others = new LinkedHashSet<>();
             LinkedHashSet<Entity> grounds = new LinkedHashSet<>();
@@ -22325,7 +22279,7 @@ public class TWGameManager extends AbstractGameManager {
 
                 // If MP required is zero, it's one of the carrier's occupied hexes so
                 // we can just squat there for no MP.
-                // Aeros get first dibs, though.
+                // Aerospace get first dibs, though.
                 if (!viableCoords.containsKey(mpRequired)) {
                     viableCoords.put(mpRequired, new ArrayList<>());
                 }
@@ -22399,7 +22353,7 @@ public class TWGameManager extends AbstractGameManager {
         Vector<Report> vDesc = new Vector<>();
         // is this already destroyed?
         if (mounted.isDestroyed()) {
-            logger.error("Called on destroyed equipment(" + mounted.getName() + ")");
+            LOGGER.error("Called on destroyed equipment({})", mounted.getName());
             return vDesc;
         }
 
@@ -22473,7 +22427,7 @@ public class TWGameManager extends AbstractGameManager {
             en.coolFromExternal += 3;
         }
 
-        // divide damage by 10 for aeros, per TW rules on pg. 161
+        // divide damage by 10 for aerospace, per TW rules on pg. 161
         if (en instanceof Aero) {
             int newDamage = (int) Math.floor(damage / 10.0);
             if ((newDamage == 0) && (damage > 0)) {
@@ -22493,7 +22447,7 @@ public class TWGameManager extends AbstractGameManager {
         r.add(damage);
         r.indent(3);
         vDesc.addElement(r);
-        // Mounted is a weapon and has Hot-Loaded ammo in it and it exploded now
+        // Mounted is a weapon and has Hot-Loaded ammo in it, and it exploded now
         // we need to roll for chain reaction
         if ((mounted.getType() instanceof WeaponType) && mounted.isHotLoaded()) {
             Roll diceRoll = Compute.rollD6(2);
@@ -22541,7 +22495,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // exploding RISC laser pulse module should cause no normal crits, just
-        // automatically crit the first uncritted crit of the laser it's
+        // automatically crit the first un-critted crit of the laser it's
         // attached to
         if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
             hit.setEffect(HitData.EFFECT_NO_CRITICAL_SLOTS);
@@ -22604,8 +22558,8 @@ public class TWGameManager extends AbstractGameManager {
     public Vector<Report> explodeAmmoFromHeat(Entity entity) {
         int damage = 0;
         int rack = 0;
-        int boomloc = -1;
-        int boomslot = -1;
+        int boomLoc = -1;
+        int boomSlot = -1;
         Vector<Report> vDesc = new Vector<>();
 
         for (int j = 0; j < entity.locations(); j++) {
@@ -22615,17 +22569,17 @@ public class TWGameManager extends AbstractGameManager {
                     continue;
                 }
                 Mounted<?> mounted = cs.getMount();
-                if ((mounted == null) || (!(mounted.getType() instanceof AmmoType atype))) {
+                if ((mounted == null) || (!(mounted.getType() instanceof AmmoType ammoType))) {
                     continue;
                 }
-                if (!atype.isExplosive(mounted)) {
+                if (!ammoType.isExplosive(mounted)) {
                     continue;
                 }
                 // coolant pods and flamer coolant ammo don't explode from heat
-                if ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD) ||
-                      (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.VEHICLE_FLAMER) ||
-                            (atype.getAmmoType() == AmmoType.AmmoTypeEnum.HEAVY_FLAMER)) &&
-                            (atype.getMunitionType().contains(Munitions.M_COOLANT)))) {
+                if ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD) ||
+                      (((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.VEHICLE_FLAMER) ||
+                            (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.HEAVY_FLAMER)) &&
+                            (ammoType.getMunitionType().contains(Munitions.M_COOLANT)))) {
                     continue;
                 }
                 // ignore empty, destroyed, or missing bins
@@ -22634,31 +22588,31 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 // TW page 160, compare one rack's
                 // damage. Ties go to most rounds.
-                int newRack = atype.getDamagePerShot() * atype.getRackSize();
+                int newRack = ammoType.getDamagePerShot() * ammoType.getRackSize();
                 int newDamage = mounted.getExplosionDamage();
                 Mounted<?> mount2 = cs.getMount2();
                 if ((mount2 != null) && (mount2.getType() instanceof AmmoType) && (mount2.getHittableShotsLeft() > 0)) {
                     // must be for same weaponType, so rackSize stays
-                    atype = (AmmoType) mount2.getType();
-                    newRack += atype.getDamagePerShot() * atype.getRackSize();
+                    ammoType = (AmmoType) mount2.getType();
+                    newRack += ammoType.getDamagePerShot() * ammoType.getRackSize();
                     newDamage += mount2.getExplosionDamage();
                 }
                 if (!mounted.isHit() && ((rack < newRack) || ((rack == newRack) && (damage < newDamage)))) {
                     rack = newRack;
                     damage = newDamage;
-                    boomloc = j;
-                    boomslot = k;
+                    boomLoc = j;
+                    boomSlot = k;
                 }
             }
         }
-        if ((boomloc != -1) && (boomslot != -1)) {
-            CriticalSlot slot = entity.getCritical(boomloc, boomslot);
+        if ((boomLoc != -1) && (boomSlot != -1)) {
+            CriticalSlot slot = entity.getCritical(boomLoc, boomSlot);
             slot.setHit(true);
             slot.getMount().setHit(true);
             if (slot.getMount2() != null) {
                 slot.getMount2().setHit(true);
             }
-            vDesc.addAll(explodeEquipment(entity, boomloc, boomslot));
+            vDesc.addAll(explodeEquipment(entity, boomLoc, boomSlot));
         } else {
             // Luckily, there is no ammo to explode.
             Report r = new Report(5105);
@@ -22780,11 +22734,9 @@ public class TWGameManager extends AbstractGameManager {
                   (bldg.getBasementCollapsed(fallPos))) {
 
                 if (fallHex.depth(true) == 0) {
-                    logger.error("Entity " +
-                          entity.getDisplayName() +
-                          " is falling into a depth " +
-                          fallHex.depth(true) +
-                          " basement -- not allowed!!");
+                    LOGGER.error("Entity {} is falling into a depth {} basement -- not allowed!!",
+                          entity.getDisplayName(),
+                          fallHex.depth(true));
                     return vPhaseReport;
                 }
                 damageHeight = basement.getDepth();
@@ -23036,7 +22988,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         // if we have to, check if the building/bridge we fell on collapses -
         // unless it's a fall into a basement,
-        // then we're already gonna check that in building collapse, where we
+        // then we're already going to check that in building collapse, where we
         // came from
         if (checkCollapse && !handlingBasement) {
 
@@ -23203,7 +23155,7 @@ public class TWGameManager extends AbstractGameManager {
                         r.add(m.getName());
                         addReport(r);
                         m.setPendingDump(false);
-                        // Also dump all of the ammo in the DWP
+                        // Also dump all the ammo in the DWP
                         for (Mounted<?> ammo : entity.getAmmo()) {
                             if (m.equals(ammo.getLinkedBy())) {
                                 ammo.setMissing(true);
@@ -23257,7 +23209,7 @@ public class TWGameManager extends AbstractGameManager {
         Hex hex = game.getHex(c, boardId);
 
         // The hex might be null due to spreadFire translation
-        // goes outside of the board limit.
+        // goes outside the board limit.
         if (null == hex) {
             return false;
         }
@@ -23272,16 +23224,16 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         Roll diceRoll = Compute.rollD6(2);
-        Report r;
+        Report report;
 
-        if ((vPhaseReport != null) && (entityId != Entity.NONE)) {
-            r = new Report(3430);
-            r.indent(2);
-            r.subject = entityId;
-            r.add(roll.getValueAsString());
-            r.add(roll.getDesc());
-            r.add(diceRoll);
-            vPhaseReport.add(r);
+        if (entityId != Entity.NONE) {
+            report = new Report(3430);
+            report.indent(2);
+            report.subject = entityId;
+            report.add(roll.getValueAsString());
+            report.add(roll.getDesc());
+            report.add(diceRoll);
+            vPhaseReport.add(report);
         }
 
         if (diceRoll.getIntValue() >= roll.getValue()) {
@@ -23449,7 +23401,7 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Recursively scan the specified path to determine the board sizes available.
      *
-     * @param searchDir The directory to search below this path (may be null for all in base path).
+     * @param searchDir The directory to search below this path (maybe null for all in base path).
      * @param sizes     Where to store the discovered board sizes
      */
     private static void getBoardSizesInDir(final File searchDir, TreeSet<BoardDimensions> sizes) {
@@ -23479,7 +23431,7 @@ public class TWGameManager extends AbstractGameManager {
                             sizes.add(Board.getSize(query_file));
                         }
                     } catch (Exception e) {
-                        logger.error("Error parsing board: " + query_file.getAbsolutePath(), e);
+                        LOGGER.error("Error parsing board: {}", query_file.getAbsolutePath(), e);
                     }
                 }
             }
@@ -23508,7 +23460,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * @return whether this game is double blind or not and we should be blind in the current phase
+     * @return whether this game is double-blind or not and we should be blind in the current phase
      */
     boolean doBlind() {
         return game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
@@ -23537,15 +23489,15 @@ public class TWGameManager extends AbstractGameManager {
         Entity eTarget = game.getEntity(nEntityID);
         if (eTarget == null) {
             if (game.getOutOfGameEntity(nEntityID) != null) {
-                logger.error("S: attempted to send entity update for out of game entity, id was " + nEntityID);
+                LOGGER.error("S: attempted to send entity update for out of game entity, id was {}", nEntityID);
             } else {
-                logger.error("S: attempted to send entity update for null entity, id was " + nEntityID);
+                LOGGER.error("S: attempted to send entity update for null entity, id was {}", nEntityID);
             }
 
             return; // do not send the update it will crash the client
         }
 
-        // If we're doing double blind, be careful who can see it...
+        // If we're doing double-blind, be careful who can see it...
         if (doBlind()) {
             List<Player> playersVector = game.getPlayersList();
             Vector<Player> vCanSee;
@@ -23639,7 +23591,7 @@ public class TWGameManager extends AbstractGameManager {
         if (losCache == null) {
             losCache = new HashMap<>();
         }
-        // Some times Null entities are sent to this
+        // Sometimes Null entities are sent to this
         if (entity == null) {
             return new Vector<>();
         }
@@ -23840,20 +23792,20 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Then, break down the list by whether they're friendly,
-        // or whether or not any friendly unit can see them.
-        for (Entity e : vEntities) {
+        // or whether any friendly unit can see them.
+        for (Entity entity : vEntities) {
             // If it's their own unit, obviously, they can see it.
-            if (vMyEntities.contains(e)) {
-                addVisibleEntity(vCanSee, e);
+            if (vMyEntities.contains(entity)) {
+                addVisibleEntity(vCanSee, entity);
                 continue;
-            } else if (e.isHidden()) {
+            } else if (entity.isHidden()) {
                 // If it's NOT friendly and is hidden, they can't see it, period.
                 // LOS doesn't matter.
                 continue;
-            } else if (e.isOffBoardObserved(pViewer.getTeam())) {
+            } else if (entity.isOffBoardObserved(pViewer.getTeam())) {
                 // if it's hostile and has been observed for counter-battery fire, we can "see"
                 // it
-                addVisibleEntity(vCanSee, e);
+                addVisibleEntity(vCanSee, entity);
                 continue;
             }
 
@@ -23865,15 +23817,15 @@ public class TWGameManager extends AbstractGameManager {
                 }
 
                 // See if the LosEffects is cached, and if not cache it
-                UnitTargetPair etp = new UnitTargetPair(spotter, e);
+                UnitTargetPair etp = new UnitTargetPair(spotter, entity);
                 LosEffects los = losCache.get(etp);
                 if (los == null) {
-                    los = LosEffects.calculateLOS(game, spotter, e);
+                    los = LosEffects.calculateLOS(game, spotter, entity);
                     losCache.put(etp, los);
                 }
                 // Otherwise, if they can see the entity in question
-                if (Compute.canSee(game, spotter, e, true, los, allECMInfo)) {
-                    addVisibleEntity(vCanSee, e);
+                if (Compute.canSee(game, spotter, entity, true, los, allECMInfo)) {
+                    addVisibleEntity(vCanSee, entity);
                     break;
                 }
 
@@ -23881,11 +23833,11 @@ public class TWGameManager extends AbstractGameManager {
                 // will need to know about this entity, even if they can't see
                 // it. Otherwise, the client can't properly report things
                 // like to-hits.
-                if ((e.getECMRange() > 0) && (e.getPosition() != null) && (spotter.getPosition() != null)) {
-                    int ecmRange = e.getECMRange();
-                    Coords pos = e.getPosition();
+                if ((entity.getECMRange() > 0) && (entity.getPosition() != null) && (spotter.getPosition() != null)) {
+                    int ecmRange = entity.getECMRange();
+                    Coords pos = entity.getPosition();
                     if (pos.distance(spotter.getPosition()) <= ecmRange) {
-                        addVisibleEntity(vCanSee, e);
+                        addVisibleEntity(vCanSee, entity);
                     }
                 }
             }
@@ -23900,7 +23852,7 @@ public class TWGameManager extends AbstractGameManager {
      * transported units (and their transported units, and so on) are also considered visible, otherwise it can lead to
      * issues. This method also ensures that no duplicate Entities are added.
      *
-     * @param vCanSee A collection of units that can be see
+     * @param vCanSee A collection of units that can be seen
      * @param e       An Entity that is seen and needs to be added to the collection of seen entities. All of
      */
     private void addVisibleEntity(Vector<Entity> vCanSee, Entity e) {
@@ -23913,7 +23865,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Filter a {@link Report} <code>Vector</code> for double blind.
+     * Filter a {@link Report} <code>Vector</code> for double-blind.
      *
      * @param originalReportVector the original <code>Vector<Report></code>
      * @param p                    the <code>Player</code> who should see stuff only visible to him
@@ -23921,7 +23873,7 @@ public class TWGameManager extends AbstractGameManager {
      * @return the <code>Vector<Report></code> with stuff only Player p can see
      */
     private Vector<Report> filterReportVector(Vector<Report> originalReportVector, Player p) {
-        // If no double blind, no filtering to do
+        // If no double-blind, no filtering to do
         if (!doBlind()) {
             return new Vector<>(originalReportVector);
         }
@@ -23952,7 +23904,7 @@ public class TWGameManager extends AbstractGameManager {
     private Report filterReport(Report r, Player p, boolean omitCheck) {
         if ((r.subject == Entity.NONE) && (r.type != Report.PLAYER) && (r.type != Report.PUBLIC)) {
             // Reports that don't have a subject should be public.
-            logger.info("Attempting to filter a Report object that is not public yet but has no subject. messageId: {}",
+            LOGGER.info("Attempting to filter a Report object that is not public yet but has no subject. messageId: {}",
                   r.messageId);
             return r;
         }
@@ -23973,11 +23925,10 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         if ((r.type != Report.PLAYER) && !omitCheck && ((entity == null) || (owner == null))) {
-            logger.error("Attempting to filter a report object that is not public but has a subject (" +
-                  entity +
-                  ") with owner (" +
-                  owner +
-                  ").\n\tmessageId: " +
+            LOGGER.error(
+                  "Attempting to filter a report object that is not public but has a subject ({}) with owner ({}).\n\tmessageId: {}",
+                  entity,
+                  owner,
                   r.messageId);
             return r;
         }
@@ -23985,7 +23936,7 @@ public class TWGameManager extends AbstractGameManager {
         boolean shouldObscure = omitCheck ||
               ((entity != null) && !entity.hasSeenEntity(p)) ||
               ((r.type == Report.PLAYER) && (p.getId() != r.player));
-        // If suppressing double blind messages, don't send this report at all.
+        // If suppressing double-blind messages, don't send this report at all.
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_SUPPRESS_ALL_DB_MESSAGES) && shouldObscure) {
             // Mark the original report to indicate it was filtered
             if (p != null) {
@@ -24018,7 +23969,7 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * @return a vector which has as its keys the round number and as its elements vectors that contain all the reports
-     *       for the specified player that round. The reports returned this way are properly filtered for double blind.
+     *       for the specified player that round. The reports returned this way are properly filtered for double-blind.
      */
     private List<List<Report>> filterPastReports(List<List<Report>> pastReports, Player p) {
         // Only actually bother with the filtering if double-blind is in effect.
@@ -24115,11 +24066,11 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Checks if an entity added by the client is valid and if so, adds it to the list
      *
-     * @param c         the packet to be processed
+     * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
-    private void receiveEntityAdd(Packet c, int connIndex) {
-        @SuppressWarnings("unchecked") final List<Entity> entities = (List<Entity>) c.getObject(0);
+    private void receiveEntityAdd(Packet packet, int connIndex) {
+        final List<Entity> entities = packet.getEntityList(0);
         List<Integer> entityIds = new ArrayList<>(entities.size());
         // Map client-received to server-given IDs:
         Map<Integer, Integer> idMap = new HashMap<>();
@@ -24139,7 +24090,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (testEntity.correctEntity(sb, TechConstants.getGameTechLevel(game, entity.isClan()))) {
                     entity.setDesignValid(true);
                 } else {
-                    logger.error(sb.toString());
+                    LOGGER.error(sb.toString());
                     if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS)) {
                         entity.setDesignValid(false);
                     } else {
@@ -24157,7 +24108,7 @@ public class TWGameManager extends AbstractGameManager {
             // If we're adding a ProtoMek, calculate it's unit number.
             if (entity instanceof ProtoMek) {
                 // How many ProtoMeks does the player already have?
-                int numPlayerProtos = game.getSelectedEntityCount(new EntitySelector() {
+                int numPlayerProtoMeks = game.getSelectedEntityCount(new EntitySelector() {
                     private final int ownerId = entity.getOwnerId();
 
                     @Override
@@ -24169,7 +24120,7 @@ public class TWGameManager extends AbstractGameManager {
                 // According to page 54 of the BMRr, ProtoMeks must be
                 // deployed in full Points of five, unless circumstances have
                 // reduced the number to less than that.
-                entity.setUnitNumber((short) (numPlayerProtos / 5));
+                entity.setUnitNumber((short) (numPlayerProtoMeks / 5));
             }
 
             // Only assign an entity ID when the client hasn't.
@@ -24185,12 +24136,12 @@ public class TWGameManager extends AbstractGameManager {
 
             // Now we relink C3/NC3/C3i to our guys! Yes, this is hackish... but, we
             // do what we must. Its just too bad we have to loop over the entire entities
-            // array..
+            // array.
 
             var c3affected = C3Util.wireC3(game, entity);
             for (Entity e : c3affected) {
                 // Taharqa: we need to update the other entities for
-                // the client or it won't show up right. I am not sure if I
+                // the client, or it won't show up right. I am not sure if I
                 // like the idea of updating other entities in this
                 // method, but it will work for now.
                 if (!entities.contains(e)) {
@@ -24321,54 +24272,61 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * adds a squadron to the game
      *
-     * @param c         the packet to be processed
+     * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
-    @SuppressWarnings("unchecked")
-    private void receiveSquadronAdd(Packet c, int connIndex) {
-        final FighterSquadron fs = (FighterSquadron) c.getObject(0);
-        final Collection<Integer> fighters = (Collection<Integer>) c.getObject(1);
-        if (fighters.isEmpty()) {
+    private void receiveSquadronAdd(Packet packet, int connIndex) {
+        final FighterSquadron fighterSquadron = packet.getFighterSquadron(0);
+        final List<Integer> fighters = packet.getIntList(1);
+
+        if (fighters.isEmpty() || fighterSquadron == null) {
             return;
         }
+
         // Only assign an entity ID when the client hasn't.
-        if (Entity.NONE == fs.getId()) {
-            fs.setId(game.getNextEntityId());
+        if (Entity.NONE == fighterSquadron.getId()) {
+            fighterSquadron.setId(game.getNextEntityId());
         }
-        game.addEntity(fs);
+
+        game.addEntity(fighterSquadron);
         var formerCarriers = new HashSet<Entity>();
 
         for (int id : fighters) {
             Entity fighter = game.getEntity(id);
             if (null != fighter) {
                 formerCarriers.addAll(ServerLobbyHelper.lobbyUnload(game, List.of(fighter)));
-                fs.load(fighter, false);
-                fighter.setTransportId(fs.getId());
+                fighterSquadron.load(fighter, false);
+                fighter.setTransportId(fighterSquadron.getId());
                 entityUpdate(fighter.getId());
             }
         }
-        fs.updateSkills();
-        fs.updateWeaponGroups();
-        fs.updateSensors();
-        fs.autoSetMaxBombPoints();
+        fighterSquadron.updateSkills();
+        fighterSquadron.updateWeaponGroups();
+        fighterSquadron.updateSensors();
+        fighterSquadron.autoSetMaxBombPoints();
         if (!getGame().getPhase().isLounge()) {
-            fs.applyBombs();
+            fighterSquadron.applyBombs();
         }
         if (!formerCarriers.isEmpty()) {
             send(new Packet(PacketCommand.ENTITY_MULTI_UPDATE, formerCarriers));
         }
-        send(createAddEntityPacket(fs.getId()));
+        send(createAddEntityPacket(fighterSquadron.getId()));
     }
 
     /**
      * Updates an entity with the info from the client. Only valid to do this during the lounge phase, except for heat
      * sink changing.
      *
-     * @param c         the packet to be processed
+     * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
-    private void receiveEntityUpdate(Packet c, int connIndex) {
-        Entity entity = (Entity) c.getObject(0);
+    private void receiveEntityUpdate(Packet packet, int connIndex) {
+        Entity entity = packet.getEntity(0);
+
+        if (entity == null) {
+            return;
+        }
+
         Entity oldEntity = game.getEntity(entity.getId());
         if ((oldEntity != null) && (!oldEntity.getOwner().isEnemyOf(game.getPlayer(connIndex)))) {
             game.setEntity(entity.getId(), entity);
@@ -24395,12 +24353,12 @@ public class TWGameManager extends AbstractGameManager {
      * units that are teammates of the sender. Other entities remain unchanged but still be sent back to overwrite
      * incorrect client changes.
      */
-    private void receiveEntitiesUpdate(Packet c, int connIndex) {
+    private void receiveEntitiesUpdate(Packet packet, int connIndex) {
         if (!getGame().getPhase().isLounge()) {
-            logger.error("Multi entity updates should not be used outside the lobby phase!");
+            LOGGER.error("Multi entity updates should not be used outside the lobby phase!");
         }
         Set<Entity> newEntities = new HashSet<>();
-        @SuppressWarnings("unchecked") Collection<Entity> entities = (Collection<Entity>) c.getObject(0);
+        List<Entity> entities = packet.getEntityList(0);
         for (Entity entity : entities) {
             Entity oldEntity = game.getEntity(entity.getId());
             // Only update entities that existed and are owned by a teammate of the sender
@@ -24426,11 +24384,11 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Handles a packet detailing removal of a list of forces. Only valid during the lobby phase.
      *
-     * @param c         the packet to be processed
+     * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
-    private void receiveForcesDelete(Packet c, int connIndex) {
-        @SuppressWarnings("unchecked") List<Integer> forceList = (List<Integer>) c.getObject(0);
+    private void receiveForcesDelete(Packet packet, int connIndex) {
+        List<Integer> forceList = packet.getIntList(0);
 
         // Gather the forces and entities to be deleted
         Forces forces = game.getForces();
@@ -24471,19 +24429,19 @@ public class TWGameManager extends AbstractGameManager {
      * @param connIndex the id for connection that received the packet.
      */
     private void receiveEntityLoad(Packet c, int connIndex) {
-        int loadeeId = (Integer) c.getObject(0);
-        int loaderId = (Integer) c.getObject(1);
-        int bayNumber = (Integer) c.getObject(2);
-        Entity loadee = getGame().getEntity(loadeeId);
+        int loadedId = c.getIntValue(0);
+        int loaderId = c.getIntValue(1);
+        int bayNumber = c.getIntValue(2);
+        Entity loaded = getGame().getEntity(loadedId);
         Entity loader = getGame().getEntity(loaderId);
 
-        if ((loadee != null) && (loader != null)) {
-            loadUnit(loader, loadee, bayNumber);
+        if ((loaded != null) && (loader != null)) {
+            loadUnit(loader, loaded, bayNumber);
             // In the chat lounge, notify players of customizing of unit
             if (getGame().getPhase().isLounge()) {
-                ServerLobbyHelper.entityUpdateMessage(loadee, getGame());
+                ServerLobbyHelper.entityUpdateMessage(loaded, getGame());
                 // Set this so units can be unloaded in the first movement phase
-                loadee.setLoadedThisTurn(false);
+                loaded.setLoadedThisTurn(false);
             }
         }
     }
@@ -24491,12 +24449,12 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Set an entity to be towed by another entity. Meant to be called from the chat lounge.
      *
-     * @param c         the packet to be processed
+     * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
-    private void receiveEntityTow(Packet c, int connIndex) {
-        int trailerId = (Integer) c.getObject(0);
-        int towingEntId = (Integer) c.getObject(1);
+    private void receiveEntityTow(Packet packet, int connIndex) {
+        int trailerId = packet.getIntValue(0);
+        int towingEntId = packet.getIntValue(1);
         Entity trailer = getGame().getEntity(trailerId);
         Entity towingEnt = getGame().getEntity(towingEntId);
 
@@ -24518,14 +24476,16 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * @param c         the packet to be processed
+     * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
-    private void receiveCustomInit(Packet c, int connIndex) {
+    private void receiveCustomInit(Packet packet, int connIndex) {
         // In the chat lounge, notify players of customizing of unit
         if (game.getPhase().isLounge()) {
-            Player p = (Player) c.getObject(0);
-            sendServerChat(p.getName() + " has customized initiative.");
+            Player player = packet.getPlayer(0);
+            if (player != null) {
+                sendServerChat(player.getName() + " has customized initiative.");
+            }
         }
     }
 
@@ -24584,7 +24544,7 @@ public class TWGameManager extends AbstractGameManager {
                           ": " +
                           e.getLocationName(m.getLocation()) +
                           " trying to compensate";
-                    logger.error(message);
+                    LOGGER.error(message);
                     sendServerChat(message);
                     e.setGameOptions();
 
@@ -24595,13 +24555,13 @@ public class TWGameManager extends AbstractGameManager {
                               ": " +
                               e.getLocationName(m.getLocation()) +
                               " unable to compensate";
-                        logger.error(message);
+                        LOGGER.error(message);
                         sendServerChat(message);
                     }
                 }
             }
         } catch (Exception ex) {
-            logger.error("", ex);
+            LOGGER.error("", ex);
         }
     }
 
@@ -24644,11 +24604,11 @@ public class TWGameManager extends AbstractGameManager {
         GamePhase phase = (GamePhase) c.getObject(1);
         Entity activatingUnit = game.getEntity(entityId);
         if (activatingUnit == null) {
-            logger.error("Unit #%d not found".formatted(entityId));
+            LOGGER.error("Unit #{} not found", entityId);
             return;
         } else if (connIndex != activatingUnit.getOwnerId()) {
-            logger.error("Player #%d tried to activate a hidden unit owned by Player #%d".formatted(connIndex,
-                  activatingUnit.getOwnerId()));
+            LOGGER.error("Player #{} tried to activate a hidden unit owned by Player #{}", connIndex,
+                  activatingUnit.getOwnerId());
             return;
         }
         activatingUnit.setHiddenActivationPhase(phase);
@@ -24658,23 +24618,23 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * receive and process an entity nova network mode change packet
      *
-     * @param c         the packet to be processed
+     * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
-    private void receiveEntityNovaNetworkModeChange(Packet c, int connIndex) {
+    private void receiveEntityNovaNetworkModeChange(Packet packet, int connIndex) {
         try {
-            int entityId = c.getIntValue(0);
-            String networkID = c.getObject(1).toString();
-            Entity e = game.getEntity(entityId);
+            int entityId = packet.getIntValue(0);
+            String networkID = packet.getStringValue(1);
+            Entity entity = game.getEntity(entityId);
 
-            if (e == null || e.getOwner() != game.getPlayer(connIndex)) {
+            if (entity == null || entity.getOwner() != game.getPlayer(connIndex)) {
                 return;
             }
             // FIXME: Greg: This can result in setting the network to link to hostile units. However, it should be
             //  caught by both the isMemberOfNetwork test from the c3 module as well as by the clients possible input.
-            e.setNewRoundNovaNetworkString(networkID);
+            entity.setNewRoundNovaNetworkString(networkID);
         } catch (Exception ex) {
-            logger.error("", ex);
+            LOGGER.error("", ex);
         }
     }
 
@@ -24743,62 +24703,57 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Receive a packet that contains an Entity ammo change
      *
-     * @param c         the packet to be processed
+     * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
-    private void receiveEntityAmmoChange(Packet c, int connIndex) {
-        int entityId = c.getIntValue(0);
-        int weaponId = c.getIntValue(1);
-        int ammoId = c.getIntValue(2);
-        int reason = c.getIntValue(3);
+    private void receiveEntityAmmoChange(Packet packet, int connIndex) {
+        int entityId = packet.getIntValue(0);
+        int weaponId = packet.getIntValue(1);
+        int ammoId = packet.getIntValue(2);
+        int reason = packet.getIntValue(3);
         Entity e = game.getEntity(entityId);
 
         // Did we receive a request for a valid Entity?
         if (null == e) {
-            logger.error("Could not find entity# " + entityId);
+            LOGGER.error("Could not find entity# {}", entityId);
             return;
         }
         Player player = game.getPlayer(connIndex);
         if ((null != player) && (e.getOwner() != player)) {
-            logger.error("Player " + player.getName() + " does not own the entity " + e.getDisplayName());
+            LOGGER.error("Player {} does not own the entity {}", player.getName(), e.getDisplayName());
             return;
         }
 
         // Make sure that the entity has the given equipment.
-        WeaponMounted mWeap = (WeaponMounted) e.getEquipment(weaponId);
+        WeaponMounted weaponMounted = (WeaponMounted) e.getEquipment(weaponId);
         AmmoMounted mAmmo = (AmmoMounted) e.getEquipment(ammoId);
-        AmmoMounted oldAmmo = (mWeap == null) ? null : mWeap.getLinkedAmmo();
+        AmmoMounted oldAmmo = (weaponMounted == null) ? null : weaponMounted.getLinkedAmmo();
         if (null == mAmmo) {
-            logger.error("Entity " + e.getDisplayName() + " does not have ammo #" + ammoId);
+            LOGGER.error("Entity {} does not have ammo #{}", e.getDisplayName(), ammoId);
             return;
         }
-        if (null == mWeap) {
-            logger.error("Entity " + e.getDisplayName() + " does not have weapon #" + weaponId);
+        if (null == weaponMounted) {
+            LOGGER.error("Entity {} does not have weapon #{}", e.getDisplayName(), weaponId);
             return;
         }
-        if (mWeap.getType().getAmmoType() == AmmoType.AmmoTypeEnum.NA) {
-            logger.error("Item #" +
-                  weaponId +
-                  " of entity " +
-                  e.getDisplayName() +
-                  " is a " +
-                  mWeap.getName() +
-                  " and does not use ammo.");
+        if (weaponMounted.getType().getAmmoType() == AmmoType.AmmoTypeEnum.NA) {
+            LOGGER.error("Item #{} of entity {} is a {} and does not use ammo.",
+                  weaponId,
+                  e.getDisplayName(),
+                  weaponMounted.getName());
             return;
         }
-        if (mWeap.getType().hasFlag(WeaponType.F_ONE_SHOT) && !mWeap.getType().hasFlag(WeaponType.F_DOUBLE_ONE_SHOT)) {
-            logger.error("Item #" +
-                  weaponId +
-                  " of entity " +
-                  e.getDisplayName() +
-                  " is a " +
-                  mWeap.getName() +
-                  " and cannot use external ammo.");
+        if (weaponMounted.getType().hasFlag(WeaponType.F_ONE_SHOT) && !weaponMounted.getType()
+              .hasFlag(WeaponType.F_DOUBLE_ONE_SHOT)) {
+            LOGGER.error("Item #{} of entity {} is a {} and cannot use external ammo.",
+                  weaponId,
+                  e.getDisplayName(),
+                  weaponMounted.getName());
             return;
         }
 
         // Load the weapon.
-        e.loadWeapon(mWeap, mAmmo);
+        e.loadWeapon(weaponMounted, mAmmo);
 
         // Report the change, if reason is provided and it's not already being used.
         if (reason != 0 && oldAmmo != mAmmo) {
@@ -24814,8 +24769,8 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Deletes an entity owned by a certain player from the list
      */
-    private void receiveEntityDelete(Packet c, int connIndex) {
-        @SuppressWarnings("unchecked") List<Integer> ids = (List<Integer>) c.getObject(0);
+    private void receiveEntityDelete(Packet packet, int connIndex) {
+        List<Integer> ids = packet.getIntList(0);
 
         Set<Entity> delEntities = new HashSet<>();
         ids.stream().map(id -> game.getEntity(id)).forEach(delEntities::add);
@@ -24844,7 +24799,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (entity instanceof ProtoMek) {
 
                     // How many ProtoMeks does the player have (include this one)?
-                    int numPlayerProtos = game.getSelectedEntityCount(new EntitySelector() {
+                    int numPlayerProtoMeks = game.getSelectedEntityCount(new EntitySelector() {
                         private final int ownerId = entity.getOwnerId();
 
                         @Override
@@ -24856,8 +24811,8 @@ public class TWGameManager extends AbstractGameManager {
                     // According to page 54 of the BMRr, ProtoMeks must be
                     // deployed in full Points of five, unless "losses" have
                     // reduced the number to less than that.
-                    final char oldMax = (char) (Math.ceil(numPlayerProtos / 5.0) - 1);
-                    char newMax = (char) (Math.ceil((numPlayerProtos - 1) / 5.0) - 1);
+                    final char oldMax = (char) (Math.ceil(numPlayerProtoMeks / 5.0) - 1);
+                    char newMax = (char) (Math.ceil((numPlayerProtoMeks - 1) / 5.0) - 1);
                     short deletedUnitNum = entity.getUnitNumber();
 
                     // Do we have to update a ProtoMek from the last unit?
@@ -24913,7 +24868,7 @@ public class TWGameManager extends AbstractGameManager {
         }
     }
 
-    private void receiveInitiativeRerollRequest(Packet pkt, int connIndex) {
+    private void receiveInitiativeRerollRequest(Packet packet, int connIndex) {
         Player player = game.getPlayer(connIndex);
         if (!game.getPhase().isInitiativeReport()) {
             StringBuilder message = new StringBuilder();
@@ -24923,7 +24878,7 @@ public class TWGameManager extends AbstractGameManager {
                 message.append(player.getName());
             }
             message.append(" is not allowed to ask for a reroll at this time.");
-            logger.error(message.toString());
+            LOGGER.error(message.toString());
             sendServerChat(message.toString());
             return;
         }
@@ -24946,7 +24901,7 @@ public class TWGameManager extends AbstractGameManager {
         Player player = game.getPlayer(connId);
         // Check player
         if (null == player) {
-            logger.error("Server does not recognize player at connection " + connId);
+            LOGGER.error("Server does not recognize player at connection {}", connId);
             return false;
         }
 
@@ -24962,8 +24917,7 @@ public class TWGameManager extends AbstractGameManager {
 
         int changed = 0;
 
-        for (Enumeration<?> i = ((Vector<?>) packet.getObject(1)).elements(); i.hasMoreElements(); ) {
-            IBasicOption option = (IBasicOption) i.nextElement();
+        for (IBasicOption option : packet.getIBasicOptionVector(1)) {
             IOption originalOption = game.getOptions().getOption(option.getName());
 
             if (originalOption == null) {
@@ -25006,8 +24960,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     private void receiveGameOptionsAux(Packet packet, int connId) {
         MapSettings mapSettings = game.getMapSettings();
-        for (Enumeration<?> i = ((Vector<?>) packet.getObject(1)).elements(); i.hasMoreElements(); ) {
-            IBasicOption option = (IBasicOption) i.nextElement();
+        for (IBasicOption option : packet.getIBasicOptionVector(1)) {
             IOption originalOption = game.getOptions().getOption(option.getName());
             if (originalOption != null) {
                 if ("maps_include_subdir".equals(originalOption.getName())) {
@@ -25070,9 +25023,10 @@ public class TWGameManager extends AbstractGameManager {
      * Creates a packet containing a Vector of Reports that represent a Tactical Genius re-roll request which needs to
      * update a current phase's report.
      */
-    private Packet createTacticalGeniusReportPacket(Player p) {
+    private Packet createTacticalGeniusReportPacket(Player player) {
         return new Packet(PacketCommand.SENDING_REPORTS_TACTICAL_GENIUS,
-              (p == null) || !doBlind() ? mainPhaseReport.clone() : filterReportVector(mainPhaseReport, p));
+              (player == null) || !doBlind() ? mainPhaseReport.clone() :
+                    new Vector[] { filterReportVector(mainPhaseReport, player) });
     }
 
     /**
@@ -25128,10 +25082,10 @@ public class TWGameManager extends AbstractGameManager {
     Packet createAddEntityPacket(List<Integer> entityIds, List<Integer> forceIds) {
         final List<Entity> entities = entityIds.stream()
               .map(id -> getGame().getEntity(id))
-              .collect(Collectors.toList());
+              .toList();
         final List<Force> forceList = forceIds.stream()
               .map(id -> getGame().getForces().getForce(id))
-              .collect(Collectors.toList());
+              .toList();
         return new Packet(PacketCommand.ENTITY_ADD, entities, forceList);
     }
 
@@ -25222,7 +25176,7 @@ public class TWGameManager extends AbstractGameManager {
         if (game.hasBoardLocation(coords, boardId)) {
             send(createHexChangePacket(coords, boardId, game.getHex(coords, boardId)));
         } else {
-            LOGGER.error("Trying to send a hex update for a non-existent hex!");
+            IGame.LOGGER.error("Trying to send a hex update for a non-existent hex!");
         }
     }
 
@@ -25235,7 +25189,7 @@ public class TWGameManager extends AbstractGameManager {
             if (game.hasBoardLocation(location)) {
                 changedHexes.put(location, game.getHex(location));
             } else {
-                LOGGER.error("Tried to send terrain change for non-existent hex.");
+                IGame.LOGGER.error("Tried to send terrain change for non-existent hex.");
             }
         }
         send(new Packet(PacketCommand.CHANGE_HEXES, changedHexes));
@@ -25337,7 +25291,7 @@ public class TWGameManager extends AbstractGameManager {
                     var message = mailer.newReportMessage(game, reports, player);
                     mailer.send(message);
                 } catch (Exception ex) {
-                    logger.error("Error sending round report", ex);
+                    LOGGER.error("Error sending round report", ex);
                 }
             }
         }
@@ -25355,8 +25309,8 @@ public class TWGameManager extends AbstractGameManager {
     Vector<Report> explodeInfernoAmmoFromHeat(Entity entity) {
         int damage = 0;
         int rack = 0;
-        int boomloc = -1;
-        int boomslot = -1;
+        int boomLoc = -1;
+        int boomSlot = -1;
         Vector<Report> vDesc = new Vector<>();
         Report r;
 
@@ -25372,10 +25326,10 @@ public class TWGameManager extends AbstractGameManager {
                 Mounted<?> mounted = cs.getMount();
                 int newRack;
                 int newDamage;
-                if (mounted.getType() instanceof AmmoType atype) {
-                    if (!atype.isExplosive(mounted) ||
-                          (!(atype.getMunitionType().contains(Munitions.M_INFERNO)) &&
-                                !(atype.getMunitionType().contains(Munitions.M_IATM_IIW)))) {
+                if (mounted.getType() instanceof AmmoType ammoType) {
+                    if (!ammoType.isExplosive(mounted) ||
+                          (!(ammoType.getMunitionType().contains(Munitions.M_INFERNO)) &&
+                                !(ammoType.getMunitionType().contains(Munitions.M_IATM_IIW)))) {
                         continue;
                     }
                     // ignore empty, destroyed, or missing bins
@@ -25385,15 +25339,15 @@ public class TWGameManager extends AbstractGameManager {
                     // Find the most destructive undamaged ammo.
                     // TW page 160, compare one rack's
                     // damage. Ties go to most rounds.
-                    newRack = atype.getDamagePerShot() * atype.getRackSize();
+                    newRack = ammoType.getDamagePerShot() * ammoType.getRackSize();
                     newDamage = mounted.getExplosionDamage();
                     Mounted<?> mount2 = cs.getMount2();
                     if ((mount2 != null) &&
                           (mount2.getType() instanceof AmmoType) &&
                           (mount2.getHittableShotsLeft() > 0)) {
                         // must be for same weaponType, so rackSize stays
-                        atype = (AmmoType) mount2.getType();
-                        newRack += atype.getDamagePerShot() * atype.getRackSize();
+                        ammoType = (AmmoType) mount2.getType();
+                        newRack += ammoType.getDamagePerShot() * ammoType.getRackSize();
                         newDamage += mount2.getExplosionDamage();
                     }
                 } else if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_BOMB_BAY)) {
@@ -25412,14 +25366,14 @@ public class TWGameManager extends AbstractGameManager {
                 if (!mounted.isHit() && ((rack < newRack) || ((rack == newRack) && (damage < newDamage)))) {
                     rack = newRack;
                     damage = newDamage;
-                    boomloc = j;
-                    boomslot = k;
+                    boomLoc = j;
+                    boomSlot = k;
                 }
             }
         }
         // Did we find anything to explode?
-        if ((boomloc != -1) && (boomslot != -1)) {
-            CriticalSlot slot = entity.getCritical(boomloc, boomslot);
+        if ((boomLoc != -1) && (boomSlot != -1)) {
+            CriticalSlot slot = entity.getCritical(boomLoc, boomSlot);
             slot.setHit(true);
             Mounted<?> equip = slot.getMount();
             equip.setHit(true);
@@ -25431,7 +25385,7 @@ public class TWGameManager extends AbstractGameManager {
                         ((BombType) equip.getLinked().getType()).getBombType() == BombTypeEnum.INFERNO)) {
                 entity.heat += Math.min(equip.getExplosionDamage(), 30);
             }
-            vDesc.addAll(explodeEquipment(entity, boomloc, boomslot));
+            vDesc.addAll(explodeEquipment(entity, boomLoc, boomSlot));
             r = new Report(5155);
             r.indent();
             r.subject = entity.getId();
@@ -25447,9 +25401,9 @@ public class TWGameManager extends AbstractGameManager {
         return vDesc;
     }
 
-    public void checkExplodeIndustrialZone(Coords c, Vector<Report> vDesc) {
+    public void checkExplodeIndustrialZone(Coords coords, Vector<Report> vDesc) {
         // LEGACY use boardId
-        checkExplodeIndustrialZone(c, 0, vDesc);
+        checkExplodeIndustrialZone(coords, 0, vDesc);
     }
 
     /**
@@ -25539,7 +25493,7 @@ public class TWGameManager extends AbstractGameManager {
                         vDesc.addAll(damageEntity(en, hit, damage));
                     }
                     if (majorExp) {
-                        // lets pretend that the infernos came from the entity
+                        // let's pretend that the infernos came from the entity
                         // itself (should give us side_front)
                         vDesc.addAll(deliverInfernoMissiles(en, en, Compute.d6(2)));
                     }
@@ -25721,7 +25675,7 @@ public class TWGameManager extends AbstractGameManager {
 
             // If the entity is infantry in the affected hex?
             if ((entity instanceof Infantry) && bldg.isIn(coords) && coords.equals(hexCoords)) {
-                // Is the entity is inside of the building
+                // Is the entity is inside the building
                 // (instead of just on top of it)?
                 if (Compute.isInBuilding(game, entity, coords)) {
 
@@ -25778,8 +25732,8 @@ public class TWGameManager extends AbstractGameManager {
      * through its floor into its basement. Again, apply appropriate damage.
      *
      * @param bldg        the Building being checked. This value should not be null.
-     * @param positionMap a Hashtable that maps the Coords positions or each unit in the game to a Vector of Entitys at
-     *                    that position. This value should not be null.
+     * @param positionMap a Hashtable that maps the Coords positions or each unit in the game to a Vector of
+     *                    {@link Entity}'s at that position. This value should not be null.
      * @param coords      the Coords of the building hex to be checked
      *
      * @return true if the building collapsed.
@@ -26003,7 +25957,6 @@ public class TWGameManager extends AbstractGameManager {
                         r.indent(0);
                         vPhaseReport.add(r);
                         // ...But we ALSO need to blow up everything nearby.
-                        // Bwahahahahaha...
                         r = new Report(3560);
                         r.type = Report.PUBLIC;
                         r.newlines = 1;
@@ -26025,15 +25978,12 @@ public class TWGameManager extends AbstractGameManager {
                     }
                     if (bldg.getType() == BuildingType.WALL) {
                         r = new Report(3442);
-                        r.type = Report.PUBLIC;
-                        r.indent(0);
-                        vPhaseReport.add(r);
                     } else {
                         r = new Report(3440);
-                        r.type = Report.PUBLIC;
-                        r.indent(0);
-                        vPhaseReport.add(r);
                     }
+                    r.type = Report.PUBLIC;
+                    r.indent(0);
+                    vPhaseReport.add(r);
                 } else if ((curCF < startingCF) && (damage > damageThresh)) {
                     // need to check for crits
                     // don't bother unless we have some gun emplacements
@@ -26065,17 +26015,17 @@ public class TWGameManager extends AbstractGameManager {
         } else if (critRoll == 6) {
             // weapon malfunction
             // lets just randomly determine which weapon gets hit
-            Vector<Mounted<?>> wpns = new Vector<>();
+            Vector<Mounted<?>> weapons = new Vector<>();
             for (GunEmplacement gun : guns) {
-                for (Mounted<?> wpn : gun.getWeaponList()) {
-                    if (!wpn.isHit() && !wpn.isJammed() && !wpn.jammedThisPhase()) {
-                        wpns.add(wpn);
+                for (Mounted<?> weapon : gun.getWeaponList()) {
+                    if (!weapon.isHit() && !weapon.isJammed() && !weapon.jammedThisPhase()) {
+                        weapons.add(weapon);
                     }
                 }
             }
 
-            if (!wpns.isEmpty()) {
-                Mounted<?> weapon = wpns.elementAt(Compute.randomInt(wpns.size()));
+            if (!weapons.isEmpty()) {
+                Mounted<?> weapon = weapons.elementAt(Compute.randomInt(weapons.size()));
                 weapon.setJammed(true);
                 ((GunEmplacement) weapon.getEntity()).addJammedWeapon(weapon);
                 r = new Report(3845);
@@ -26100,17 +26050,17 @@ public class TWGameManager extends AbstractGameManager {
         } else if (critRoll == 8) {
             // weapon destroyed
             // lets just randomly determine which weapon gets hit
-            Vector<Mounted<?>> wpns = new Vector<>();
+            Vector<Mounted<?>> weapons = new Vector<>();
             for (GunEmplacement gun : guns) {
                 for (Mounted<?> wpn : gun.getWeaponList()) {
                     if (!wpn.isHit()) {
-                        wpns.add(wpn);
+                        weapons.add(wpn);
                     }
                 }
             }
 
-            if (!wpns.isEmpty()) {
-                Mounted<?> weapon = wpns.elementAt(Compute.randomInt(wpns.size()));
+            if (!weapons.isEmpty()) {
+                Mounted<?> weapon = weapons.elementAt(Compute.randomInt(weapons.size()));
                 weapon.setHit(true);
                 r = new Report(3840);
                 r.type = Report.PUBLIC;
@@ -26204,7 +26154,6 @@ public class TWGameManager extends AbstractGameManager {
                     r.indent(0);
                     vDesc.add(r);
                     // ...But we ALSO need to blow up everything nearby.
-                    // Bwahahahahaha...
                     r = new Report(3560);
                     r.type = Report.PUBLIC;
                     r.newlines = 1;
@@ -26267,7 +26216,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Receives an packet to unload entity is stranded on immobile transports, and queue all valid requests for
+     * Receives a packet to unload entity is stranded on immobile transports, and queue all valid requests for
      * execution. If all players that have stranded entities have answered, executes the pending requests and end the
      * current turn.
      */
@@ -26283,7 +26232,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // Is this the right phase?
         if (!getGame().getPhase().isMovement()) {
-            logger.error("Server got unload stranded packet in wrong phase");
+            LOGGER.error("Server got unload stranded packet in wrong phase");
             return;
         }
 
@@ -26291,14 +26240,14 @@ public class TWGameManager extends AbstractGameManager {
         if (getGame().getTurn() instanceof UnloadStrandedTurn) {
             turn = (UnloadStrandedTurn) getGame().getTurn();
         } else {
-            logger.error("Server got unload stranded packet out of sequence");
+            LOGGER.error("Server got unload stranded packet out of sequence");
             sendServerChat(player.getName() + " should not be sending 'unload stranded entity' packets at this time.");
             return;
         }
 
         // Can this player act right now?
         if (!turn.isValid(connId, getGame())) {
-            logger.error("Server got unload stranded packet from invalid player");
+            LOGGER.error("Server got unload stranded packet from invalid player");
             sendServerChat(player.getName() + " should not be sending 'unload stranded entity' packets.");
             return;
         }
@@ -26311,7 +26260,7 @@ public class TWGameManager extends AbstractGameManager {
         while (pending.hasMoreElements()) {
             action = (UnloadStrandedAction) pending.nextElement();
             if (action.getPlayerId() == connId) {
-                logger.error("Server got multiple unload stranded packets from player");
+                LOGGER.error("Server got multiple unload stranded packets from player");
                 sendServerChat(player.getName() + " should not send multiple 'unload stranded entity' packets.");
                 return;
             }
@@ -26333,7 +26282,7 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
             if (!currentTurn.isValid(connId, entity, game)) {
-                logger.error("Server got unload stranded packet for invalid entity");
+                LOGGER.error("Server got unload stranded packet for invalid entity");
                 StringBuilder message = new StringBuilder();
                 message.append(player.getName()).append(" can not unload stranded entity ");
                 if (null == entity) {
@@ -26384,7 +26333,7 @@ public class TWGameManager extends AbstractGameManager {
                 entity = game.getEntity(action.getEntityId());
                 if (null == entity) {
                     // After all this, we couldn't find the entity!!!
-                    logger.error("Server could not find stranded entity #" + action.getEntityId() + " to unload!!!");
+                    LOGGER.error("Server could not find stranded entity #{} to unload!!!", action.getEntityId());
                 } else {
                     // Unload the entity. Get the unit's transporter.
                     Entity transporter = game.getEntity(entity.getTransportId());
@@ -26461,7 +26410,7 @@ public class TWGameManager extends AbstractGameManager {
         final Entity ae = game.getEntity(aaa.getEntityId());
 
         if (ae == null) {
-            logger.error("Can't have damage to something that doesn't exist for physical attacks");
+            LOGGER.error("Can't have damage to something that doesn't exist for physical attacks");
             return null;
         }
 
@@ -26583,8 +26532,8 @@ public class TWGameManager extends AbstractGameManager {
             toHit = paa.toHit(game);
         } else if (aaa instanceof TripAttackAction paa) {
             toHit = paa.toHit(game);
-        } else if (aaa instanceof LayExplosivesAttackAction leaa) {
-            toHit = leaa.toHit(game);
+        } else if (aaa instanceof LayExplosivesAttackAction layExplosivesAttackAction) {
+            toHit = layExplosivesAttackAction.toHit(game);
             damage = LayExplosivesAttackAction.getDamageFor(ae);
         } else if (aaa instanceof ThrashAttackAction taa) {
             toHit = taa.toHit(game);
@@ -26611,8 +26560,8 @@ public class TWGameManager extends AbstractGameManager {
             taa.calcCounterAV(game, taa.getTarget(game));
             toHit = taa.toHit(game);
             damage = TeleMissileAttackAction.getDamageFor(ae);
-        } else if (aaa instanceof BAVibroClawAttackAction bvca) {
-            toHit = bvca.toHit(game);
+        } else if (aaa instanceof BAVibroClawAttackAction baVibroClawAttackAction) {
+            toHit = baVibroClawAttackAction.toHit(game);
             damage = BAVibroClawAttackAction.getDamageFor(ae);
         }
         pr.toHit = toHit;
@@ -26624,7 +26573,7 @@ public class TWGameManager extends AbstractGameManager {
      * Resolve a Physical Attack
      *
      * @param pr  The <code>PhysicalResult</code> of the physical attack
-     * @param cen The <code>int</code> Entity Id of the entity whose physical attack was last resolved
+     * @param cen The <code>int</code> Entity ID of the entity whose physical attack was last resolved
      */
     private void resolvePhysicalAttack(PhysicalResult pr, int cen) {
         AbstractAttackAction aaa = pr.aaa;
@@ -26703,7 +26652,7 @@ public class TWGameManager extends AbstractGameManager {
             resolveBAVibroClawAttack(pr, cen);
             cen = aaa.getEntityId();
         } else {
-            logger.error("Unknown attack action declared.");
+            LOGGER.error("Unknown attack action declared.");
         }
         // Not all targets are Entities.
         Targetable target = game.getTarget(aaa.getTargetType(), aaa.getTargetId());
@@ -26747,7 +26696,7 @@ public class TWGameManager extends AbstractGameManager {
                         game.addExtremeGravityPSR(entity.checkMovedTooFast(step, moveType));
                     }
                 } else if (moveType == EntityMovementType.MOVE_JUMP) {
-                    logger.debug("Gravity move check jump: " + step.getMpUsed() + "/" + cachedMaxMPExpenditure);
+                    LOGGER.debug("Gravity move check jump: {}/{}", step.getMpUsed(), cachedMaxMPExpenditure);
                     int origWalkMP = entity.getWalkMP(MPCalculationSetting.NO_GRAVITY);
                     int gravWalkMP = entity.getWalkMP();
                     if (step.getMpUsed() > cachedMaxMPExpenditure) {
@@ -26804,7 +26753,7 @@ public class TWGameManager extends AbstractGameManager {
      * Eject an Entity.
      *
      * @param entity    The <code>Entity</code> to eject.
-     * @param autoEject The <code>boolean</code> state of the entity's auto- ejection system
+     * @param autoEject The <code>boolean</code> state of the entity's auto-ejection system
      *
      * @return a <code>Vector</code> of report objects for the game log.
      */
@@ -26816,7 +26765,7 @@ public class TWGameManager extends AbstractGameManager {
      * Eject an Entity.
      *
      * @param entity            The <code>Entity</code> to eject.
-     * @param autoEject         The <code>boolean</code> state of the entity's auto- ejection system
+     * @param autoEject         The <code>boolean</code> state of the entity's auto-ejection system
      * @param skin_of_the_teeth Perform a skin of the teeth ejection
      *
      * @return a <code>Vector</code> of report objects for the game log.
@@ -26825,7 +26774,7 @@ public class TWGameManager extends AbstractGameManager {
         Vector<Report> vDesc = new Vector<>();
         Report r;
 
-        // An entity can only eject it's crew once.
+        // An entity can only eject its crew once.
         if (entity.getCrew().isEjected()) {
             return vDesc;
         }
@@ -26836,7 +26785,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Mek and fighter pilots may get hurt during ejection,
-        // and run around the board afterwards.
+        // and run around the board afterward.
         if (entity instanceof Mek || entity.isFighter()) {
             int facing = entity.getFacing();
             Coords targetCoords = (null != entity.getPosition()) ?
@@ -27030,7 +26979,7 @@ public class TWGameManager extends AbstractGameManager {
             }
             // Cannot abandon if there is no legal hex. This shouldn't have been allowed
             if (legalPosition == null) {
-                logger.error("Vehicle crews cannot abandon if there is no legal hex!");
+                LOGGER.error("Vehicle crews cannot abandon if there is no legal hex!");
                 return vDesc;
             }
             crew.setPosition(legalPosition);
@@ -27075,13 +27024,13 @@ public class TWGameManager extends AbstractGameManager {
      * @param airborne Is this ship in atmospheric flight?
      * @param pos      The coords of this ejection. Needed when abandoning a grounded ship
      *
-     * @return a <code>Vector</code> of report objects for the gamelog.
+     * @return a <code>Vector</code> of report objects for the game log.
      */
     public Vector<Report> ejectSpacecraft(Aero entity, boolean inSpace, boolean airborne, Coords pos) {
         Vector<Report> vDesc = new Vector<>();
         Report r;
 
-        // An entity can only eject it's crew once.
+        // An entity can only eject its crew once.
         if (entity.getCrew().isEjected()) {
             return vDesc;
         }
@@ -27289,7 +27238,7 @@ public class TWGameManager extends AbstractGameManager {
                 // Cannot abandon if there is no legal hex. This shouldn't have
                 // been allowed
                 if (legalPosition == null) {
-                    logger.error("Spacecraft crews cannot abandon if there is no legal hex!");
+                    LOGGER.error("Spacecraft crews cannot abandon if there is no legal hex!");
                     return vDesc;
                 }
                 crew.setPosition(legalPosition);
@@ -27454,7 +27403,7 @@ public class TWGameManager extends AbstractGameManager {
         for (Entity e : game.getEntitiesVector()) {
             if ((e instanceof Infantry) && ((Infantry) e).getIsCallingSupport()) {
 
-                // Now lets create a new foot platoon
+                // Now let's create a new foot platoon
                 Infantry guerrilla = new Infantry();
                 guerrilla.setChassis("Insurgents");
                 guerrilla.setModel("(Rifle)");
@@ -27467,7 +27416,7 @@ public class TWGameManager extends AbstractGameManager {
                           Infantry.LOC_INFANTRY);
                     guerrilla.setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
                 } catch (Exception ex) {
-                    logger.error("", ex);
+                    LOGGER.error("", ex);
                 }
                 guerrilla.setDeployed(true);
                 guerrilla.setDone(true);
@@ -27503,7 +27452,7 @@ public class TWGameManager extends AbstractGameManager {
         Vector<Report> vDesc = new Vector<>();
         Report r;
 
-        // An entity can only eject it's crew once.
+        // An entity can only eject its crew once.
         if (entity.getCrew().isEjected()) {
             return vDesc;
         }
@@ -27767,13 +27716,11 @@ public class TWGameManager extends AbstractGameManager {
             Entity entity = stuckEntities.next();
             if (entity.getPosition() == null) {
                 if (entity.isDeployed()) {
-                    logger.info("Entity #" + entity.getId() + " does not know its position.");
+                    LOGGER.info("Entity #{} does not know its position.", entity.getId());
                 } else { // If the Entity isn't deployed, then something goofy
-                    // happened. We'll just unstuck the Entity
+                    // happened. We'll just unstick the Entity
                     entity.setStuck(false);
-                    logger.info("Entity #" +
-                          entity.getId() +
-                          " was stuck in a swamp, but not deployed. Stuck state reset");
+                    LOGGER.info("Entity #{} was stuck in a swamp, but not deployed. Stuck state reset", entity.getId());
                 }
                 continue;
             }
@@ -27811,7 +27758,7 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Remove all iNarc pods from all vehicles that did not move and shoot this round NOTE: this is not quite what the
-     * rules say, the player should be able to choose whether or not to remove all iNarc Pods that are attached.
+     * rules say, the player should be able to choose whether to remove all iNarc Pods that are attached.
      */
     void resolveVeeINarcPodRemoval() {
         Iterator<Entity> vees = game.getSelectedEntities(entity -> (entity instanceof Tank) && (entity.mpUsed == 0));
@@ -28124,7 +28071,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * make sure all the new lines that were added to the old vPhaseReport get added to all of the players filters
+     * make sure all the new lines that were added to the old vPhaseReport get added to all the players filters
      */
     void addNewLines() {
         Report.addNewline(mainPhaseReport);
@@ -28286,9 +28233,6 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Airborne ground units aren't effected by dangerous terrain, unless it's an eruption
      *
-     * @param en
-     * @param eruption
-     *
      * @return true if the unit should be damaged by dangerous grund (magma, hazardous liquid pool)
      */
     private boolean isUnitEffectedByHazardousGround(Entity en, boolean eruption) {
@@ -28303,7 +28247,7 @@ public class TWGameManager extends AbstractGameManager {
      * do damage from magma
      *
      * @param en       the affected <code>Entity</code>
-     * @param eruption <code>boolean</code> indicating whether or not this is
+     * @param eruption <code>boolean</code> indicating whether this is
      *                 because of an eruption
      */
     public void doMagmaDamage(Entity en, boolean eruption) {
@@ -28339,7 +28283,7 @@ public class TWGameManager extends AbstractGameManager {
      * do damage from hazardous liquids
      *
      * @param en       the affected <code>Entity</code>
-     * @param eruption <code>boolean</code> indicating whether or not this is
+     * @param eruption <code>boolean</code> indicating whether this is
      *                 because of an eruption (geyser)
      * @param depth    How deep is the hazardous liquid?
      */
@@ -28373,7 +28317,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     public Vector<Report> doGreenSmokeDamage(Entity entity) {
         Vector<Report> reports = new Vector<>();
-        // ignore if we're flying over the smoke or we're already toast
+        // ignore if we're flying over the smoke, or we're already toast
         if ((entity.getElevation() >= 2) || entity.isDestroyed() || entity.isDoomed()) {
             return reports;
         }
@@ -28506,7 +28450,7 @@ public class TWGameManager extends AbstractGameManager {
                             vPhaseReport.addElement(r);
                         }
 
-                        // armored and "castle brian" buildings take .5 damage from fuel-air bombs
+                        // armored and "castle brian" buildings take .5 damage from fuel-air bombs,
                         // but I have no idea how to determine if a building is a castle or a brian
                         // note that being armored and being "light" are not mutually exclusive
                         if (bldg.getArmor(coords) > 0) {
@@ -28553,7 +28497,7 @@ public class TWGameManager extends AbstractGameManager {
                           entity.getElevation() +
                           "; current blast level: " +
                           altitude;
-                    logger.debug(msg);
+                    LOGGER.debug(msg);
                     continue;
                 } else {
                     alreadyHit.add(entity.getId());

@@ -30,7 +30,7 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.server.totalwarfare;
+package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

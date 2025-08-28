@@ -91,7 +91,7 @@ public class OptionalIntegerArgument extends Argument<Optional<Integer>> {
     }
 
     @Override
-    public String getRepr() {
+    public String getRepresentation() {
         return "[" + getName() + "]";
     }
 

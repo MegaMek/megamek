@@ -37,16 +37,16 @@ package megamek.server;
 
 import java.util.Vector;
 
+import megamek.common.Hex;
+import megamek.common.Report;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
-import megamek.common.Hex;
-import megamek.common.Report;
-import megamek.common.units.Terrain;
-import megamek.common.units.Terrains;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.Wind;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * Cycle through hexes on a map and make any necessary adjustments based on weather What will happen here: - add light

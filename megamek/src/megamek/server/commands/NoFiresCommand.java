@@ -36,11 +36,11 @@ package megamek.server.commands;
 import java.util.HashSet;
 
 import megamek.client.ui.Messages;
-import megamek.common.board.Coords;
 import megamek.common.Hex;
+import megamek.common.board.Coords;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Arguments;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * The Server Command "/nofires" removes all fires on the board.
@@ -55,8 +55,8 @@ public class NoFiresCommand extends GamemasterServerCommand {
         super(server,
               gameManager,
               "nofires",
-              Messages.getString("Gamemaster.cmd.nofire.help"),
-              Messages.getString("Gamemaster.cmd.nofire.longName"));
+              Messages.getString("Gamemaster.cmd.noFire.help"),
+              Messages.getString("Gamemaster.cmd.noFire.longName"));
         this.reason = Messages.getString("Gamemaster.cmd.firefight.reason");
     }
 

@@ -31,7 +31,7 @@
  * affiliated with Microsoft.
  */
 
-package megamek.server.totalwarfare;
+package megamek.server.totalWarfare;
 
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -95,7 +95,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
      * through its floor into its basement. Again, apply appropriate damage.
      *
      * @param bldg        the Building being checked.
-     * @param positionMap a Hashtable that maps the Coords positions or each unit in the game to a Vector of Entitys at
+     * @param positionMap a Hashtable that maps the Coords positions or each unit in the game to a Vector of Entity's at
      *                    that position.
      * @param coords      the Coords of the building hex to be checked
      *
@@ -138,7 +138,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                 numLoads++;
             }
             if (numLoads < 1) {
-                LOGGER.error("Check for collapse: hex " + coords + " has no bridge or building");
+                LOGGER.error("Check for collapse: hex {} has no bridge or building", coords);
                 return false;
             }
 
@@ -216,7 +216,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                         if (wigeLoad > currentCF * 4) {
                             topFloorCollapse = true;
                             // There are bridges with 0 elevation, so the numFloors is 0, meaning that
-                            // loads[numFloors-1] would cause an out of bounds exception.
+                            // loads[numFloors-1] would cause an out-of-bounds exception.
                             // which is why there are so many checks and safeguards in the next few lines.
                             if (numFloors < loads.length) {
                                 if (numFloors > 0) {
@@ -228,7 +228,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                     } else {
                         loads[floor] += load;
                         if (loads[floor] > currentCF) {
-                            // If the load on any floor but the ground floor
+                            // If the load on any floor but the first floor
                             // exceeds the building's current CF it collapses.
                             if (floor != 0) {
                                 collapse = true;
@@ -291,7 +291,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
      * Update all clients.
      *
      * @param bldg        the Building that has collapsed.
-     * @param positionMap a Hashtable that maps the Coords positions or each unit in the game to a Vector of Entitys at
+     * @param positionMap a Hashtable that maps the Coords positions or each unit in the game to a Vector of Entity's at
      *                    that position. This value should not be null.
      * @param coords      The Coords of the building basement hex that has collapsed
      */
@@ -339,11 +339,11 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                 switch (bldg.getBasement(coords)) {
                     case NONE:
                     case ONE_DEEP_NORMAL_INFANTRY_ONLY:
-                        LOGGER.error(entity.getDisplayName() + " is not falling into " + coords.toString());
+                        LOGGER.error("{} is not falling into {}", entity.getDisplayName(), coords.toString());
                         break;
                     case TWO_DEEP_HEAD:
                     case TWO_DEEP_FEET:
-                        LOGGER.info(entity.getDisplayName() + " is falling 2 floors into " + coords.toString());
+                        LOGGER.info("{} is falling 2 floors into {}", entity.getDisplayName(), coords.toString());
                         // Damage is determined by the depth of the basement, so a fall of 0
                         // elevation is correct in this case
                         vPhaseReport.addAll(gameManager.doEntityFall(entity, coords, 0, Compute.d6(), psr, true,
@@ -351,7 +351,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                         runningCFTotal -= cfDamage * 2;
                         break;
                     default:
-                        LOGGER.info(entity.getDisplayName() + " is falling 1 floor into " + coords.toString());
+                        LOGGER.info("{} is falling 1 floor into {}", entity.getDisplayName(), coords.toString());
                         // Damage is determined by the depth of the basement, so a fall of 0
                         // elevation is correct in this case
                         vPhaseReport.addAll(gameManager.doEntityFall(entity,
@@ -390,16 +390,16 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
      * clients.
      *
      * @param bldg        the Building that has collapsed.
-     * @param positionMap a Hashtable that maps the Coords positions or each unit in the game to a Vector of Entitys at
+     * @param positionMap a Hashtable that maps the Coords positions or each unit in the game to a Vector of Entity's at
      *                    that position. This value should not be null.
      * @param coords      The Coords of the building hex that has collapsed
-     * @param collapseAll A boolean indicating whether or not this collapse of a hex should be able to collapse the
-     *                    whole building
+     * @param collapseAll A boolean indicating whether this collapse of a hex should be able to collapse the whole
+     *                    building
      * @param topFloor    A boolean indicating that only the top floor collapses (from a WiGE flying over the top).
      */
     void collapseBuilding(Building bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
           boolean collapseAll, boolean topFloor, Vector<Report> vPhaseReport) {
-        // sometimes, buildings that reach CF 0 decide against collapsing
+        // sometimes, buildings that reach CF 0 decide against collapsing,
         // but we want them to go away anyway, as a building with CF 0 cannot stand
         final int phaseCF = bldg.hasCFIn(coords) ? bldg.getPhaseCF(coords) : 0;
 

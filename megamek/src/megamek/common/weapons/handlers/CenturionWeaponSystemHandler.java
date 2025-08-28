@@ -47,7 +47,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
 import megamek.common.units.Building;
 import megamek.common.units.Entity;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * WeaponHandler for the Centurion Weapon SystemFluff weapon, which is found in Jihad Conspiracies Interstellar Players

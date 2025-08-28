@@ -36,15 +36,15 @@ package megamek.server.sbf;
 import java.util.List;
 
 import megamek.codeUtilities.MathUtility;
-import megamek.common.compute.Compute;
 import megamek.common.Player;
-import megamek.common.rolls.Roll;
-import megamek.common.rolls.TargetRoll;
 import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.compute.Compute;
 import megamek.common.planetaryConditions.Fog;
 import megamek.common.planetaryConditions.Light;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.Weather;
+import megamek.common.rolls.Roll;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.strategicBattleSystems.SBFElementType;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFVisibilityStatus;
@@ -63,7 +63,7 @@ record SBFDetectionHelper(SBFGameManager gameManager) implements SBFGameManagerH
     void performSensorDetection() {
         if (game().usesDoubleBlind()) {
             for (Player player : game().getPlayersList()) {
-                logger.info("Detection for " + player.getName()); // TODO remove or move to protocol
+                logger.info("Detection for {}", player.getName()); // TODO remove or move to protocol
                 performSensorDetection(player);
             }
         }
@@ -93,8 +93,10 @@ record SBFDetectionHelper(SBFGameManager gameManager) implements SBFGameManagerH
                     int rollResult = diceRoll.getIntValue() + detectionModifiers.getValue();
                     SBFVisibilityStatus detectionResult = sensorDetectionResult(rollResult);
                     // TODO remove or move to protocol:
-                    logger.info("Detected from " + viewingFormation.getId() + " to "
-                          + hostileFormation.getId() + " result " + detectionResult);
+                    logger.info("Detected from {} to {} result {}",
+                          viewingFormation.getId(),
+                          hostileFormation.getId(),
+                          detectionResult);
                     visibilityStatus = visibilityStatus.bestOf(detectionResult);
                 }
             }
@@ -115,7 +117,7 @@ record SBFDetectionHelper(SBFGameManager gameManager) implements SBFGameManagerH
     /**
      * IO:BF p.197
      *
-     * @param rollWithModifiers The 2d6 roll inlcuding modifiers
+     * @param rollWithModifiers The 2d6 roll including modifiers
      *
      * @return The visibility status from sensor scan
      */

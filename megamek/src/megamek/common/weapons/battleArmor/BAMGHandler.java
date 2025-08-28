@@ -47,7 +47,7 @@ import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Infantry;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.handlers.WeaponHandler;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Sebastian Brockxs

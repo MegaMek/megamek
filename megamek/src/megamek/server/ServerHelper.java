@@ -57,7 +57,7 @@ import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * This class contains computations carried out by the Server class. Methods put in here should be static and

@@ -41,7 +41,7 @@ import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.BooleanArgument;
 import megamek.server.commands.arguments.PlayerArgument;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * The Server Command "/end" that will finish a game immediately declaring forced victory for a player or their team.

@@ -31,43 +31,27 @@
  * affiliated with Microsoft.
  */
 
+package megamek.server.scriptedEvent;
 
-package megamek.server.totalwarfare;
-
-import java.util.Vector;
-
-import megamek.common.game.Game;
-import megamek.common.Report;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import megamek.common.jacksonAdapters.MessageDeserializer;
+import megamek.server.IGameManager;
+import megamek.server.trigger.Trigger;
 
 /**
- * Classes working closely with TWGameManager can extend this class for less verbose access to report methods and the
- * Game instance.
+ * This interface is implemented by pre-determined events that may happen over the course of a game, such as story
+ * messages or board changes. Much like WeaponHandlers, ScriptedGameManagerEvents are part of the GameManager's code and
+ * must fully work out whatever the event brings, including sending the necessary packets. ScriptedEvents are based on a
+ * {@link Trigger} that defines when  (and how often) they happen. When they happen, the {@link #process(IGameManager)}
+ * method is called to determine the results. (Note: This has nothing to do with an event listener system.)
  */
-abstract class AbstractTWRuleHandler {
+@JsonDeserialize(using = MessageDeserializer.class)
+public interface TriggeredActiveEvent extends TriggeredEvent {
 
-    final TWGameManager gameManager;
-
-    AbstractTWRuleHandler(TWGameManager gameManager) {
-        this.gameManager = gameManager;
-    }
-
-    void addReport(Report report) {
-        gameManager.addReport(report);
-    }
-
-    void addReport(Vector<Report> reports) {
-        gameManager.addReport(reports);
-    }
-
-    void addReport(Vector<Report> reports, int indent) {
-        gameManager.addReport(reports, indent);
-    }
-
-    void addNewLines() {
-        gameManager.addNewLines();
-    }
-
-    Game getGame() {
-        return gameManager.getGame();
-    }
+    /**
+     * This method is called when the Trigger of this event is satisfied (returns true). This method must fully work out
+     * whatever the event brings, including sending the necessary packets. The code of this method is essentially part
+     * of the GameManager's code.
+     */
+    void process(IGameManager gameManager);
 }

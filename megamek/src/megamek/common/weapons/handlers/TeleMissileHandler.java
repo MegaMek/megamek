@@ -49,7 +49,7 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.capitalMissile.CapitalMissileBayHandler;
 import megamek.logging.MMLogger;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Jay Lawson

@@ -31,7 +31,7 @@
  * affiliated with Microsoft.
  */
 
-package megamek.server.totalwarfare;
+package megamek.server.totalWarfare;
 
 import java.util.List;
 import java.util.Vector;
@@ -145,9 +145,8 @@ public class TWDamageManager implements IDamageManager {
      * @return a <code>Vector</code> of <code>Report</code>s
      */
     public Vector<Report> damageEntity(Entity entity, HitData hit, int damage, boolean ammoExplosion,
-          DamageType damageType,
-          boolean damageIS, boolean areaSatArty, boolean throughFront, boolean underWater, boolean nukeS2S,
-          Vector<Report> reportVec) {
+          DamageType damageType, boolean damageIS, boolean areaSatArty, boolean throughFront, boolean underWater,
+          boolean nukeS2S, Vector<Report> reportVec) {
 
         Report report;
         int entityId = entity.getId();
@@ -210,8 +209,8 @@ public class TWDamageManager implements IDamageManager {
             return reportVec;
         }
 
-        // This is good for shields if a shield absorps the hit it shouldn't
-        // effect the pilot.
+        // This is good for shields if a shield absorbs the hit it shouldn't
+        // affect the pilot.
         // TC SRM's that hit the head do external and internal damage but its
         // one hit and shouldn't cause
         // 2 hits to the pilot.
@@ -226,7 +225,7 @@ public class TWDamageManager implements IDamageManager {
 
         // get the relevant damage for damage thresholding
         int threshDamage = damage;
-        // weapon groups only get the damage of one weapon
+        // weapon groups only get the damage to one weapon
         if ((hit.getSingleAV() > -1) && !game.getOptions()
               .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             threshDamage = hit.getSingleAV();
@@ -460,15 +459,12 @@ public class TWDamageManager implements IDamageManager {
                     damage = 0;
                     report = new Report(6050); // For some reason this report never
                     // actually shows up...
-                    report.subject = entityId;
-                    report.indent(2);
-                    reportVec.addElement(report);
                 } else {
                     report = new Report(6045); // ...but this one displays just fine.
-                    report.subject = entityId;
-                    report.indent(2);
-                    reportVec.addElement(report);
                 }
+                report.subject = entityId;
+                report.indent(2);
+                reportVec.addElement(report);
                 break;
             case NONPENETRATING:
                 if (!isPlatoon) {
@@ -480,20 +476,17 @@ public class TWDamageManager implements IDamageManager {
                 }
                 break;
             case FLECHETTE:
-                // Flechette ammo deals full damage to conventional infantry and
+                // Fléchette ammo deals full damage to conventional infantry and
                 // half damage to other targets (including battle armor).
                 if (!isPlatoon) {
                     damage /= 2;
                     report = new Report(6060);
-                    report.subject = entityId;
-                    report.indent(2);
-                    reportVec.addElement(report);
                 } else {
                     report = new Report(6055);
-                    report.subject = entityId;
-                    report.indent(2);
-                    reportVec.addElement(report);
                 }
+                report.subject = entityId;
+                report.indent(2);
+                reportVec.addElement(report);
                 break;
             case ACID:
                 if (isFerroFibrousTarget || reactiveArmor || reflectiveArmor || ferroLamellorArmor || bar5) {
@@ -554,7 +547,7 @@ public class TWDamageManager implements IDamageManager {
             damage += 1;
         }
 
-        // check for case on Aeros
+        // check for case on Aerospace
         if (entity instanceof Aero a) {
             if (ammoExplosion && a.hasCase()) {
                 // damage should be reduced by a factor of 2 for ammo explosions
@@ -619,7 +612,7 @@ public class TWDamageManager implements IDamageManager {
                 }
             }
 
-            // first check for ammo explosions on aeros separately, because it
+            // first check for ammo explosions on aerospace separately, because it
             // must be done before
             // standard to capital damage conversions
             if ((entity instanceof Aero) && (hit.getLocation() == Aero.LOC_AFT) && !damageIS) {
@@ -672,7 +665,7 @@ public class TWDamageManager implements IDamageManager {
                             reportVec.addAll(manager.ejectEntity(entity, true, false));
                         }
                     } else {
-                        // Aeros eject if the SI Destroyed switch is on
+                        // Aerospace eject if the SI Destroyed switch is on
                         Aero aero = (Aero) a;
                         if (aero.isAutoEject() &&
                               (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
@@ -780,36 +773,7 @@ public class TWDamageManager implements IDamageManager {
 
             // Destroy searchlights on 7+ (torso hits on meks)
             if (entity.hasSearchlight()) {
-                boolean spotlightHittable = true;
-                int loc = hit.getLocation();
-                if (entity instanceof Mek) {
-                    if ((loc != Mek.LOC_CENTER_TORSO) && (loc != Mek.LOC_LEFT_TORSO) && (loc != Mek.LOC_RIGHT_TORSO)) {
-                        spotlightHittable = false;
-                    }
-                } else if (entity instanceof Tank) {
-                    if (entity instanceof SuperHeavyTank) {
-                        if ((loc != Tank.LOC_FRONT) &&
-                              (loc != SuperHeavyTank.LOC_FRONT_RIGHT) &&
-                              (loc != SuperHeavyTank.LOC_FRONT_LEFT) &&
-                              (loc != SuperHeavyTank.LOC_REAR_RIGHT) &&
-                              (loc != SuperHeavyTank.LOC_REAR_LEFT)) {
-                            spotlightHittable = false;
-                        }
-                    } else if (entity instanceof LargeSupportTank) {
-                        if ((loc != Tank.LOC_FRONT) &&
-                              (loc != LargeSupportTank.LOC_FRONT_RIGHT) &&
-                              (loc != LargeSupportTank.LOC_FRONT_LEFT) &&
-                              (loc != LargeSupportTank.LOC_REAR_RIGHT) &&
-                              (loc != LargeSupportTank.LOC_REAR_LEFT)) {
-                            spotlightHittable = false;
-                        }
-                    } else {
-                        if ((loc != Tank.LOC_FRONT) && (loc != Tank.LOC_RIGHT) && (loc != Tank.LOC_LEFT)) {
-                            spotlightHittable = false;
-                        }
-                    }
-
-                }
+                boolean spotlightHittable = isSpotlightHittable(entity, hit);
                 if (spotlightHittable) {
                     Roll diceRoll = Compute.rollD6(2);
                     report = new Report(6072);
@@ -1035,7 +999,7 @@ public class TWDamageManager implements IDamageManager {
                     reportVec.addElement(report);
                 }
 
-                // If we're using optional tank damage thresholds, setup our hit
+                // If we're using optional tank damage thresholds, set up our hit
                 // effects now...
                 if ((entity instanceof Tank) &&
                       game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD) &&
@@ -1219,7 +1183,7 @@ public class TWDamageManager implements IDamageManager {
                 }
             }
 
-            // For optional tank damage thresholds, the overthresh flag won't
+            // For optional tank damage thresholds, the over thresh flag won't
             // be set if IS is damaged, so set it here.
             if ((entity instanceof Tank) &&
                   ((entity.getArmor(hit) < 1) || damageIS) &&
@@ -1536,7 +1500,7 @@ public class TWDamageManager implements IDamageManager {
                         report.indent(3);
                         reportVec.addElement(report);
 
-                        // If a sidetorso got destroyed, and the
+                        // If a side torso got destroyed, and the
                         // corresponding arm is not yet destroyed, add
                         // it as a club to that hex (p.35 BMRr)
                         if ((entity instanceof Mek) &&
@@ -1993,7 +1957,7 @@ public class TWDamageManager implements IDamageManager {
         }
 
         // TacOps p.78 Ammo booms can hurt other units in same and adjacent hexes
-        // But, this does not apply to CASE'd units and it only applies if the
+        // But, this does not apply to CASE'd units, and it only applies if the
         // ammo explosion
         // destroyed the unit
         if (ammoExplosion &&
@@ -2036,5 +2000,39 @@ public class TWDamageManager implements IDamageManager {
             Report.addNewline(reportVec);
         }
         return reportVec;
+    }
+
+    private static boolean isSpotlightHittable(Entity entity, HitData hit) {
+        boolean spotlightHittable = true;
+        int loc = hit.getLocation();
+        if (entity instanceof Mek) {
+            if ((loc != Mek.LOC_CENTER_TORSO) && (loc != Mek.LOC_LEFT_TORSO) && (loc != Mek.LOC_RIGHT_TORSO)) {
+                spotlightHittable = false;
+            }
+        } else if (entity instanceof Tank) {
+            if (entity instanceof SuperHeavyTank) {
+                if ((loc != Tank.LOC_FRONT) &&
+                      (loc != SuperHeavyTank.LOC_FRONT_RIGHT) &&
+                      (loc != SuperHeavyTank.LOC_FRONT_LEFT) &&
+                      (loc != SuperHeavyTank.LOC_REAR_RIGHT) &&
+                      (loc != SuperHeavyTank.LOC_REAR_LEFT)) {
+                    spotlightHittable = false;
+                }
+            } else if (entity instanceof LargeSupportTank) {
+                if ((loc != Tank.LOC_FRONT) &&
+                      (loc != LargeSupportTank.LOC_FRONT_RIGHT) &&
+                      (loc != LargeSupportTank.LOC_FRONT_LEFT) &&
+                      (loc != LargeSupportTank.LOC_REAR_RIGHT) &&
+                      (loc != LargeSupportTank.LOC_REAR_LEFT)) {
+                    spotlightHittable = false;
+                }
+            } else {
+                if ((loc != Tank.LOC_FRONT) && (loc != Tank.LOC_RIGHT) && (loc != Tank.LOC_LEFT)) {
+                    spotlightHittable = false;
+                }
+            }
+
+        }
+        return spotlightHittable;
     }
 }

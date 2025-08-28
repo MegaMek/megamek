@@ -36,9 +36,9 @@ package megamek.common.jacksonAdapters;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import megamek.server.scriptedevent.DrawTriggeredEvent;
-import megamek.server.scriptedevent.TriggeredEvent;
-import megamek.server.scriptedevent.VictoryTriggeredEvent;
+import megamek.server.scriptedEvent.DrawTriggeredEvent;
+import megamek.server.scriptedEvent.TriggeredEvent;
+import megamek.server.scriptedEvent.VictoryTriggeredEvent;
 import megamek.server.trigger.Trigger;
 
 public final class VictoryDeserializer {

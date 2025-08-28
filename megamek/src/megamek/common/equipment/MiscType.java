@@ -6741,7 +6741,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createRadicalHeatSinkSystem() {
         MiscType misc = new MiscType();
-        misc.name = "Radical Heat Sink SystemFluff";
+        misc.name = "Radical Heat Sink System";
         misc.setInternalName(misc.name);
         misc.tonnage = 4;
         misc.criticalSlots = 3;

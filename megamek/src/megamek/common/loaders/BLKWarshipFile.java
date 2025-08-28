@@ -116,7 +116,6 @@ public class BLKWarshipFile extends BLKFile implements IMekLoader {
 
         // Other Passengers
         if (!dataFile.exists("other_crew")) {
-            LOGGER.error("Could not find other crew block.");
             // throw new EntityLoadingException("Could not find other_crew block.");
         }
         a.setNOtherCrew(dataFile.getDataAsInt("other_crew")[0]);

@@ -4819,8 +4819,11 @@ public abstract class Entity extends TurnOrdered
      * @return true if at least one ready item.
      */
     public boolean hasWorkingMisc(EquipmentFlag flag, long secondary) {
-        for (MiscMounted m : miscList) {
-            if (m.isReady() && m.getType().hasFlag(flag) && ((secondary == -1) || m.getType().hasSubType(secondary))) {
+        for (MiscMounted miscMounted : miscList) {
+            if (miscMounted.isReady()
+                  && miscMounted.getType().hasFlag(flag)
+                  && ((secondary == -1)
+                  || miscMounted.getType().hasSubType(secondary))) {
                 return true;
             }
         }
@@ -5086,41 +5089,42 @@ public abstract class Entity extends TurnOrdered
         // This method might make sense as an abstract method with overrides in Mek and Aero,
         // But since the implementation would be the same in both classes, this way avoids code duplication.
         int sinks;
-        if (this instanceof Mek m) {
-            sinks = m.getActiveSinks();
-        } else if (this instanceof Aero a) {
-            sinks = a.getHeatSinks();
+
+        if (this instanceof Mek mek) {
+            sinks = mek.getActiveSinks();
+        } else if (this instanceof Aero aero) {
+            sinks = aero.getHeatSinks();
         } else {
             return "(none)";
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
         int capacity = getHeatCapacity(false);
-        sb.append(capacity);
+        stringBuilder.append(capacity);
 
         // Radical Heat Sinks
         if (hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
             capacity += sinks;
-            sb.append(", ").append(capacity).append(" with RHS");
+            stringBuilder.append(", ").append(capacity).append(" with RHS");
         }
 
         // Coolant Pod
-        for (AmmoMounted m : getAmmo()) {
-            if (m.getType().getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD) {
+        for (AmmoMounted ammoMounted : getAmmo()) {
+            if (ammoMounted.getType().getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD) {
                 capacity += sinks;
-                sb.append(", ").append(capacity).append(" with Coolant Pod");
+                stringBuilder.append(", ").append(capacity).append(" with Coolant Pod");
                 break;
             }
         }
 
         // RISC ECS
-        for (MiscMounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
-                sb.append(", ").append(capacity + 6).append("+MoS with RISC ECS");
+        for (MiscMounted miscMounted : getMisc()) {
+            if (miscMounted.getType().hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+                stringBuilder.append(", ").append(capacity + 6).append("+MoS with RISC ECS");
             }
         }
 
-        return sb.toString();
+        return stringBuilder.toString();
     }
 
     /**

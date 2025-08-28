@@ -42,52 +42,71 @@ import megamek.logging.MMLogger;
 public class SanityInputFilter implements ObjectInputFilter {
     protected static final Pattern[] filterList = new Pattern[] {
           // Arrays of Core Types
-          Pattern.compile("\\[C"), Pattern.compile("\\[I"), Pattern.compile("\\[Z"),
+          Pattern.compile("\\[C"),
+          Pattern.compile("\\[I"),
+          Pattern.compile("\\[Z"),
 
           // Arrays of java.lang items.
-          Pattern.compile("\\[Ljava\\.lang\\.Enum"), Pattern.compile("\\[Ljava\\.lang\\.Object"),
+          Pattern.compile("\\[Ljava\\.lang\\.Enum"),
+          Pattern.compile("\\[Ljava\\.lang\\.Object"),
 
           // File IO
           Pattern.compile("java\\.io\\.File"),
 
           // Java Lang
-          Pattern.compile("java\\.lang\\.Boolean"), Pattern.compile("java\\.lang\\.Enum"),
-          Pattern.compile("java\\.lang\\.Integer"), Pattern.compile("java\\.lang\\.Double"),
-          Pattern.compile("java\\.lang\\.Long"), Pattern.compile("java\\.lang\\.Number"),
-          Pattern.compile("java\\.lang\\.StringBuffer"), Pattern.compile("java\\.lang\\.\\[I"),
-          Pattern.compile("java\\.lang\\.Object"), Pattern.compile("java\\.lang\\.String"),
+          Pattern.compile("java\\.lang\\.Boolean"),
+          Pattern.compile("java\\.lang\\.Enum"),
+          Pattern.compile("java\\.lang\\.Integer"),
+          Pattern.compile("java\\.lang\\.Double"),
+          Pattern.compile("java\\.lang\\.Long"),
+          Pattern.compile("java\\.lang\\.Number"),
+          Pattern.compile("java\\.lang\\.StringBuffer"),
+          Pattern.compile("java\\.lang\\.\\[I"),
+          Pattern.compile("java\\.lang\\.Object"),
+          Pattern.compile("java\\.lang\\.String"),
 
           // Java Net
           Pattern.compile("java\\.net\\.URI"),
 
           // Java Util
-          Pattern.compile("java\\.util\\.AbstractMap"), Pattern.compile("java\\.util\\.ArrayList"),
+          Pattern.compile("java\\.util\\.AbstractMap"),
+          Pattern.compile("java\\.util\\.ArrayList"),
           Pattern.compile("java\\.util\\.Collections\\$SetFromMap"),
           Pattern.compile("java\\.util\\.Collections\\$UnmodifiableCollection"),
           Pattern.compile("java\\.util\\.Collections\\$UnmodifiableList"),
           Pattern.compile("java\\.util\\.Collections\\$UnmodifiableRandomAccessList"),
           Pattern.compile("java\\.util\\.concurrent\\.ConcurrentHashMap"),
-          Pattern.compile("java\\.util\\.concurrent\\.ConcurrentHashMap$Segment"),
+          Pattern.compile("java\\.util\\.concurrent\\.ConcurrentHashMap\\$Segment"),
           Pattern.compile("java\\.util\\.concurrent\\.CopyOnWriteArrayList"),
           Pattern.compile("java\\.util\\.concurrent\\.locks\\.AbstractOwnableSynchronizer"),
           Pattern.compile("java\\.util\\.concurrent\\.locks\\.AbstractQueuedSynchronizer"),
           Pattern.compile("java\\.util\\.concurrent\\.locks\\.ReentrantLock"),
           Pattern.compile("java\\.util\\.concurrent\\.locks\\.ReentrantLock\\$NonfairSync"),
           Pattern.compile("java\\.util\\.concurrent\\.locks\\.ReentrantLock\\$Sync"),
-          Pattern.compile("java\\.util\\.UUID"), Pattern.compile("java\\.util\\.EnumMap"),
-          Pattern.compile("java\\.util\\.EnumSet"), Pattern.compile("java\\.util\\.HashMap"),
-          Pattern.compile("java\\.util\\.HashSet"), Pattern.compile("java\\.util\\.Hashtable"),
-          Pattern.compile("java\\.util\\.LinkedHashMap"), Pattern.compile("java\\.util\\.LinkedHashSet"),
-          Pattern.compile("java\\.util\\.LinkedList"), Pattern.compile("java\\.util\\.RegularEnumSet"),
-          Pattern.compile("java\\.util\\.Set"), Pattern.compile("java\\.util\\.TreeMap"),
-          Pattern.compile("java\\.util\\.Map"), Pattern.compile("java\\.util\\.TreeSet"),
+          Pattern.compile("java\\.util\\.UUID"),
+          Pattern.compile("java\\.util\\.EnumMap"),
+          Pattern.compile("java\\.util\\.EnumSet"),
+          Pattern.compile("java\\.util\\.HashMap"),
+          Pattern.compile("java\\.util\\.HashSet"),
+          Pattern.compile("java\\.util\\.Hashtable"),
+          Pattern.compile("java\\.util\\.LinkedHashMap"),
+          Pattern.compile("java\\.util\\.LinkedHashSet"),
+          Pattern.compile("java\\.util\\.LinkedList"),
+          Pattern.compile("java\\.util\\.RegularEnumSet"),
+          Pattern.compile("java\\.util\\.Set"),
+          Pattern.compile("java\\.util\\.TreeMap"),
+          Pattern.compile("java\\.util\\.Map"),
+          Pattern.compile("java\\.util\\.TreeSet"),
           Pattern.compile("java\\.util\\.Vector"),
 
           // Fonts
           Pattern.compile("org\\.apache\\.fop\\.fonts\\.*"),
 
           // MegaMek Related
-          Pattern.compile("megamek.*"), Pattern.compile("mekhq.*"), Pattern.compile("megameklab.*"), };
+          Pattern.compile("megamek.*"),
+          Pattern.compile("mekhq.*"),
+          Pattern.compile("megameklab.*"),
+          };
 
     private static final MMLogger LOGGER = MMLogger.create(SanityInputFilter.class);
 

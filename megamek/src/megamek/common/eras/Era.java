@@ -36,7 +36,7 @@ package megamek.common.eras;
 import static megamek.common.eras.EraFlag.EARLY_REPUBLIC;
 import static megamek.common.eras.EraFlag.EARLY_SUCCESSION_WARS;
 import static megamek.common.eras.EraFlag.LATE_REPUBLIC;
-import static megamek.common.eras.EraFlag.LATE_SUCCESSION_WARS_LOS_TECH;
+import static megamek.common.eras.EraFlag.LATE_SUCCESSION_WARS_LOSTECH;
 import static megamek.common.eras.EraFlag.LATE_SUCCESSION_WARS_RENAISSANCE;
 
 import java.io.File;
@@ -122,7 +122,7 @@ public final class Era {
 
     /** @return True when this Era is part of the Succession Wars. */
     public boolean isSuccessionWars() {
-        return hasAnyFlagOf(EARLY_SUCCESSION_WARS, LATE_SUCCESSION_WARS_LOS_TECH, LATE_SUCCESSION_WARS_RENAISSANCE);
+        return hasAnyFlagOf(EARLY_SUCCESSION_WARS, LATE_SUCCESSION_WARS_LOSTECH, LATE_SUCCESSION_WARS_RENAISSANCE);
     }
 
     /** @return True when this Era is part of the Republic eras. */

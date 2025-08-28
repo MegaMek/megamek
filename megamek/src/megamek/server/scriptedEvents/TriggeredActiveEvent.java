@@ -31,48 +31,27 @@
  * affiliated with Microsoft.
  */
 
-package megamek.server.scriptedEvent;
+package megamek.server.scriptedEvents;
 
-import java.awt.Image;
-
-import megamek.client.ui.Base64Image;
-import megamek.common.annotations.Nullable;
-import megamek.common.net.enums.PacketCommand;
-import megamek.common.net.packets.Packet;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import megamek.common.jacksonAdapters.MessageDeserializer;
 import megamek.server.IGameManager;
 import megamek.server.trigger.Trigger;
 
-public class MessageTriggeredActiveEvent implements TriggeredActiveEvent {
+/**
+ * This interface is implemented by pre-determined events that may happen over the course of a game, such as story
+ * messages or board changes. Much like WeaponHandlers, ScriptedGameManagerEvents are part of the GameManager's code and
+ * must fully work out whatever the event brings, including sending the necessary packets. ScriptedEvents are based on a
+ * {@link Trigger} that defines when  (and how often) they happen. When they happen, the {@link #process(IGameManager)}
+ * method is called to determine the results. (Note: This has nothing to do with an event listener system.)
+ */
+@JsonDeserialize(using = MessageDeserializer.class)
+public interface TriggeredActiveEvent extends TriggeredEvent {
 
-    private final Trigger trigger;
-    private final String message;
-    private final String header;
-    private final Base64Image image;
-
-    public MessageTriggeredActiveEvent(Trigger trigger, String header, String message, @Nullable Image image) {
-        this.trigger = trigger;
-        this.message = message;
-        this.header = header;
-        this.image = new Base64Image(image);
-    }
-
-    public MessageTriggeredActiveEvent(Trigger trigger, String header, String message) {
-        this(trigger, header, message, null);
-    }
-
-    @Override
-    public Trigger trigger() {
-        return trigger;
-    }
-
-    @Override
-    public void process(IGameManager gameManager) {
-        gameManager.send(new Packet(PacketCommand.SCRIPTED_MESSAGE, header, message, image));
-    }
-
-    @Override
-    public String toString() {
-        return "Message: " + trigger + ", \"" + message.substring(0, Math.min(message.length(), 20)) + "...\"";
-    }
-
+    /**
+     * This method is called when the Trigger of this event is satisfied (returns true). This method must fully work out
+     * whatever the event brings, including sending the necessary packets. The code of this method is essentially part
+     * of the GameManager's code.
+     */
+    void process(IGameManager gameManager);
 }

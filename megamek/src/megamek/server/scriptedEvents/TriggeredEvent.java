@@ -31,38 +31,27 @@
  * affiliated with Microsoft.
  */
 
-package megamek.server.scriptedEvent;
+package megamek.server.scriptedEvents;
 
-import java.awt.Image;
-
-import megamek.common.annotations.Nullable;
+import megamek.server.trigger.AbstractOneTimeTrigger;
+import megamek.server.trigger.OnceTrigger;
+import megamek.server.trigger.Trigger;
 
 /**
- * This interface is implemented by scripted event objects that show a story or informative messages in a dialog. This
- * is meant to give a common interface to MHQ's story arc NarrativeStoryPoint as well as scripted event messages in MM
- * so that both can be displayed using a common dialog.
+ * This interface is implemented by pre-determined events that may happen over the course of a game, such as game end or
+ * victory that do not change the game status but only examine it. These events are based on a {@link Trigger} that
+ * defines when (and how often) they happen. (Note: This has nothing to do with an event listener system.)
  */
-public interface NarrativeDisplayProvider {
+public interface TriggeredEvent {
 
     /**
-     * @return A header text to show in the dialog. May be empty but not null.
+     * @return The Trigger that controls when this event happens. Note that it is up to the Trigger to control if this
+     *       event may happen multiple times. A subclass of {@link AbstractOneTimeTrigger} or a {@link OnceTrigger} can
+     *       be used to define a trigger that will never happen more than once.
      */
-    String header();
+    Trigger trigger();
 
-    /**
-     * @return The main narrative (story) text to show in the dialog. May be empty but not null.
-     */
-    String text();
-
-    /**
-     * @return A portrait or other image to show in the dialog
-     */
-    @Nullable
-    Image portrait();
-
-    /**
-     * @return A splash image to show as part of the story
-     */
-    @Nullable
-    Image splashImage();
+    default boolean isGameEnding() {
+        return false;
+    }
 }

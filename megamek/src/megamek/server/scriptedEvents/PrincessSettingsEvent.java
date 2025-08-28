@@ -31,7 +31,7 @@
  * affiliated with Microsoft.
  */
 
-package megamek.server.scriptedEvent;
+package megamek.server.scriptedEvents;
 
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.common.Player;

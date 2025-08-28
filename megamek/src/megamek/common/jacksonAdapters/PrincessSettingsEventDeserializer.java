@@ -42,7 +42,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import megamek.server.scriptedEvent.PrincessSettingsEvent;
+import megamek.server.scriptedEvents.PrincessSettingsEvent;
 import megamek.server.trigger.Trigger;
 
 public class PrincessSettingsEventDeserializer extends StdDeserializer<PrincessSettingsEvent> {

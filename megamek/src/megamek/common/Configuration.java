@@ -160,7 +160,7 @@ public final class Configuration {
      *
      * @return {@link File} containing the path to the userdata directory.
      */
-    public static File userdataDir() {
+    public static File userDataDir() {
         lock.readLock().lock();
         try {
             return userDataDir;
@@ -186,12 +186,11 @@ public final class Configuration {
     /**
      * Set the configuration directory.
      *
-     * @param config_dir_path The path to the config directory.
+     * @param configDirPath The path to the config directory.
      */
-    public static void setConfigDir(final File config_dir_path) {
+    public static void setConfigDir(final File configDirPath) {
         lock.writeLock().lock();
-        configDir = (config_dir_path == null) ? new File(
-              DEFAULT_DIR_NAME_CONFIG) : config_dir_path;
+        configDir = (configDirPath == null) ? new File(DEFAULT_DIR_NAME_CONFIG) : configDirPath;
         lock.writeLock().unlock();
     }
 
@@ -216,8 +215,7 @@ public final class Configuration {
      */
     public static void setDataDir(final File data_dir_path) {
         lock.writeLock().lock();
-        dataDir = (data_dir_path == null) ? new File(DEFAULT_DIR_NAME_DATA)
-              : data_dir_path;
+        dataDir = (data_dir_path == null) ? new File(DEFAULT_DIR_NAME_DATA) : data_dir_path;
         lock.writeLock().unlock();
     }
 
@@ -242,8 +240,7 @@ public final class Configuration {
      */
     public static void setDocsDir(final File docs_dir_path) {
         lock.writeLock().lock();
-        docsDir = (docs_dir_path == null) ? new File(DEFAULT_DIR_NAME_DOCS)
-              : docs_dir_path;
+        docsDir = (docs_dir_path == null) ? new File(DEFAULT_DIR_NAME_DOCS) : docs_dir_path;
         lock.writeLock().unlock();
     }
 
@@ -421,8 +418,9 @@ public final class Configuration {
     public static File imageFileAtlasMapFile() {
         lock.readLock().lock();
         try {
-            return (imgFileAtlasMapFile != null) ? imgFileAtlasMapFile
-                  : new File(dataDir(), DEFAULT_FILE_NAME_IMG_FILE_ATLAS_MAP);
+            return (imgFileAtlasMapFile != null) ?
+                  imgFileAtlasMapFile :
+                  new File(dataDir(), DEFAULT_FILE_NAME_IMG_FILE_ATLAS_MAP);
         } finally {
             lock.readLock().unlock();
         }

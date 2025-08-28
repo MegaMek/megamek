@@ -235,8 +235,7 @@ public class MekSummaryCache {
         loadReport.append("Reading unit files:\n");
 
         if (!ignoreUnofficial) {
-            File unit_cache_path = new MegaMekFile(getUnitCacheDir(),
-                  FILENAME_UNITS_CACHE).getFile();
+            File unit_cache_path = new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile();
             // check the cache
             try {
                 if (unit_cache_path.exists()) {
@@ -270,8 +269,7 @@ public class MekSummaryCache {
                     inputStream.close();
                 }
             } catch (Exception ex) {
-                loadReport.append("  Unable to load unit cache: ")
-                      .append(ex.getMessage()).append("\n");
+                loadReport.append("  Unable to load unit cache: ").append(ex.getMessage()).append("\n");
                 logger.error(loadReport.toString(), ex);
             }
         }
@@ -294,7 +292,7 @@ public class MekSummaryCache {
         // dir
         if (!ignoreUnofficial) {
             // load units from the MM internal user data dir
-            File userDataUnits = new File(Configuration.userdataDir(), Configuration.unitsDir().toString());
+            File userDataUnits = new File(Configuration.userDataDir(), Configuration.unitsDir().toString());
             if (userDataUnits.isDirectory()) {
                 bNeedsUpdate |= loadMeksFromDirectory(vMeks, sKnownFiles, lLastCheck, userDataUnits, false);
             }

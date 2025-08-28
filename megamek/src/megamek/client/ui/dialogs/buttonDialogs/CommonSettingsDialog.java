@@ -2320,7 +2320,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
                 xmlFiles.addAll(filteredFilesWithSubDirs(userDir, ".xml"));
             }
 
-            File internalUserDataDir = new File(Configuration.userdataDir(), Configuration.skinsDir().toString());
+            File internalUserDataDir = new File(Configuration.userDataDir(), Configuration.skinsDir().toString());
             xmlFiles.addAll(filteredFiles(internalUserDataDir, ".xml"));
             xmlFiles.removeIf(file -> !SkinXMLHandler.validSkinSpecFile(file));
             Collections.sort(xmlFiles);
@@ -3811,7 +3811,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
      */
     public static List<String> userDataFiles(File relativePath, String fileEnding) {
         List<String> result = new ArrayList<>();
-        File dir = new File(Configuration.userdataDir(), relativePath.toString());
+        File dir = new File(Configuration.userDataDir(), relativePath.toString());
         String[] userDataFiles = dir.list((directory, name) -> name.endsWith(fileEnding));
         if (userDataFiles != null) {
             result.addAll(Arrays.asList(userDataFiles));

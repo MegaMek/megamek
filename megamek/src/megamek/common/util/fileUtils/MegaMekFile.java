@@ -54,7 +54,7 @@ public class MegaMekFile {
     }
 
     public MegaMekFile(String pathname) {
-        File userdataVersion = new File(Configuration.userdataDir(), pathname);
+        File userdataVersion = new File(Configuration.userDataDir(), pathname);
         if (userdataVersion.exists()) {
             file = userdataVersion;
         } else {

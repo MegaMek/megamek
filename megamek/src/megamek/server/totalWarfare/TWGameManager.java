@@ -23451,7 +23451,7 @@ public class TWGameManager extends AbstractGameManager {
         if (boards_dir.isDirectory()) {
             getBoardSizesInDir(boards_dir, board_sizes);
         }
-        boards_dir = new File(Configuration.userdataDir(), Configuration.boardsDir().toString());
+        boards_dir = new File(Configuration.userDataDir(), Configuration.boardsDir().toString());
         if (boards_dir.isDirectory()) {
             getBoardSizesInDir(boards_dir, board_sizes);
         }

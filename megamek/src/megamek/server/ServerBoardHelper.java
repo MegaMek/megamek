@@ -67,7 +67,7 @@ public class ServerBoardHelper {
         scanForBoardsInDir(boardDir, "", boardSize, result);
 
         // Scan the userData directory
-        boardDir = new File(Configuration.userdataDir(), Configuration.boardsDir().toString());
+        boardDir = new File(Configuration.userDataDir(), Configuration.boardsDir().toString());
         if (boardDir.isDirectory()) {
             scanForBoardsInDir(boardDir, "", boardSize, result);
         }

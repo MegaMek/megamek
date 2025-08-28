@@ -37,12 +37,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.util.Map;
 
-import org.junit.jupiter.api.MethodOrderer;
+import megamek.common.Configuration;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CacheRebuildTest {
+
+    @BeforeEach
+    void setUp() {
+        Configuration.setDataDir(new File("testresources/data"));
+    }
 
     /**
      * Tests that every single unit can load successfully.

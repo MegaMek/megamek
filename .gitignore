@@ -61,32 +61,6 @@ megamek/userdata/**
 /megamek/docs/mml-revision.txt
 /megamek/docs/mhq-revision.txt
 
-#MegaMek/data Folders
-/megamek/data/misc/
-/megamek/data/recordsheets/
-/megamek/data/splash/
-
-# mekfiles
-/megamek/data/mekfiles/units.cache
-/megamek/data/mekfiles/IrTech/
-/megamek/data/mekfiles/Special/
-/megamek/data/mekfiles/customs/
-
-# Images
-/megamek/data/images/*_atlas.png
-/megamek/data/images/imgFileAtlasMap.xml
-#Portraits
-/megamek/data/images/portraits/*
-!/megamek/data/images/portraits/Female
-!/megamek/data/images/portraits/Male
-/megamek/data/images/temp/
-!/megamek/data/images/portraits/default.gif
-
-
-# Boards
-#End MegaMek/data Folders
-#End MegaMek data Folders
-
 #MegaMek Other Outputs
 /megamek/mechs.csv
 /megamek/*.pdf
@@ -113,3 +87,4 @@ equipment.txt
 
 # No need to re-commit this folder
 /megamek/data
+units.cache

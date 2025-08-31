@@ -116,9 +116,9 @@ public class MMXMLUtility {
         if (SAX_PARSER_FACTORY == null) {
             SAXParserFactory spf = SAXParserFactory.newInstance();
             try {
-                spf.setFeature("https://xml.org/sax/features/external-general-entities", false);
-                spf.setFeature("https://xml.org/sax/features/external-parameter-entities", false);
-                spf.setFeature("https://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+                spf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                spf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
             } catch (SAXNotRecognizedException | SAXNotSupportedException ex) {
                 throw new AssertionError(
                       "SAX implementation does not recognize or support the features we want to disable",

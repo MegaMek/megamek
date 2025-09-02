@@ -8015,7 +8015,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    // Centurion Weapon SystemFluff in Weapons Package.
+    // Centurion Weapon System in Weapons Package.
 
     public static MiscType createISChaffPod() {
         // TODO: add game rules for this

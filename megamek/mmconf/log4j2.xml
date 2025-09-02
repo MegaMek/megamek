@@ -9,18 +9,18 @@
         <RollingFile name="UnifiedLog" fileName="logs/unified_log.log" filePattern="logs/unified_log_%d{yyyyMMdd}_%i.log.gz" append="true" bufferedIO="false">
             <PatternLayout pattern="${layout}" />
             <Policies>
-                <OnStartupTriggeringPolicy minSize="1"/>
-                <SizeBasedTriggeringPolicy size="25MB"/>
+                <OnStartupTriggeringPolicy minSize="1" />
+                <SizeBasedTriggeringPolicy size="25MB" />
             </Policies>
-            <DefaultRolloverStrategy max="10"/>
+            <DefaultRolloverStrategy max="10" />
         </RollingFile>
         <RollingFile name="BotLog" fileName="logs/bot_path_ranker.log" filePattern="logs/bot_path_ranker_%d{yyyyMMdd}_%i.log.gz" append="true" bufferedIO="false">
             <PatternLayout pattern="${tsvLayout}" />
             <Policies>
-                <OnStartupTriggeringPolicy minSize="1"/>
-                <SizeBasedTriggeringPolicy size="50MB"/>
+                <OnStartupTriggeringPolicy minSize="1" />
+                <SizeBasedTriggeringPolicy size="50MB" />
             </Policies>
-            <DefaultRolloverStrategy max="10"/>
+            <DefaultRolloverStrategy max="10" />
         </RollingFile>
         <File name="MegaMekLog" fileName="logs/megamek.log" append="false">
             <PatternLayout pattern="${layout}" />
@@ -45,7 +45,7 @@
         <Logger name="BotLogger" level="info" additivity="false">
             <AppenderRef ref="BotLog" />
         </Logger>
-        <Logger name="megamek" level="info" additivity="false">
+        <Logger name="megamek" level="debug" additivity="false">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />
             <AppenderRef ref="MegaMekLog" />

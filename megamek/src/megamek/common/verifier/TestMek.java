@@ -74,61 +74,20 @@ import megamek.common.weapons.ppc.PPCWeapon;
  */
 public class TestMek extends TestEntity {
 
-    public enum MekJumpJets {
-        JJ_STANDARD(EquipmentTypeLookup.JUMP_JET, true, Mek.JUMP_STANDARD),
-        JJ_IMPROVED(EquipmentTypeLookup.IMPROVED_JUMP_JET, false, Mek.JUMP_IMPROVED),
-        JJ_PROTOTYPE(EquipmentTypeLookup.PROTOTYPE_JUMP_JET, true, Mek.JUMP_PROTOTYPE),
-        JJ_PROTOTYPE_IMPROVED(EquipmentTypeLookup.PROTOTYPE_IMPROVED_JJ, false, Mek.JUMP_PROTOTYPE_IMPROVED),
-        JJ_UMU(EquipmentTypeLookup.MEK_UMU, false, Mek.JUMP_NONE);
-
-        private final String internalName;
-        private final boolean industrial;
-        private final int jumpType;
-
-        MekJumpJets(String internalName, boolean industrial, int jumpType) {
-            this.internalName = internalName;
-            this.industrial = industrial;
-            this.jumpType = jumpType;
-        }
-
-        public String getName() {
-            return internalName;
-        }
-
-        public boolean canIndustrialUse() {
-            return industrial;
-        }
-
-        public int getJumpType() {
-            return jumpType;
-        }
-
-        public static List<EquipmentType> allJJs(boolean industrialOnly) {
-            List<EquipmentType> retVal = new ArrayList<>();
-            for (MekJumpJets jj : values()) {
-                if (jj.industrial || !industrialOnly) {
-                    retVal.add(EquipmentType.get(jj.internalName));
-                }
-            }
-            return retVal;
-        }
-
-    }
-
     /**
      * Filters all mek armor according to given tech constraints
      *
-     * @param etype       Entity type bitmap
+     * @param entityType  Entity type bitmap
      * @param industrial  Whether to include IndustrialMek armors
      * @param techManager The tech manager that determines legality
      *
      * @return A list of legal armors for the mek
      */
-    public static List<ArmorType> legalArmorsFor(long etype, boolean industrial, ITechManager techManager) {
+    public static List<ArmorType> legalArmorsFor(long entityType, boolean industrial, ITechManager techManager) {
         List<ArmorType> legalArmors = new ArrayList<>();
         boolean industrialOnly = industrial
               && (techManager.getTechLevel().ordinal() < SimpleTechLevel.EXPERIMENTAL.ordinal());
-        boolean isLam = (etype & Entity.ETYPE_LAND_AIR_MEK) != 0;
+        boolean isLam = (entityType & Entity.ETYPE_LAND_AIR_MEK) != 0;
         for (ArmorType armor : ArmorType.allArmorTypes()) {
             if ((armor.getArmorType() == EquipmentType.T_ARMOR_PATCHWORK)
                   || (isLam && (armor.getArmorType() == EquipmentType.T_ARMOR_HARDENED))) {
@@ -210,8 +169,7 @@ public class TestMek extends TestEntity {
 
     @Override
     public double getWeightMisc() {
-        // LAM/QuadVee equipment is 10% of mass, rounded up to whole number (15% for
-        // bimodal LAM).
+        // LAM/QuadVee equipment is 10% of mass, rounded up to whole number (15% for bimodal LAM).
         // IO p. 113 (LAM), 134 (QV)
         if (mek instanceof LandAirMek) {
             return Math.ceil(mek.getWeight() *
@@ -712,50 +670,51 @@ public class TestMek extends TestEntity {
     }
 
     @Override
-    public boolean correctEntity(StringBuffer buff, int ammoTechLvl) {
+    public boolean correctEntity(StringBuffer stringBuffer, int ammoTechLvl) {
         boolean correct = true;
         if (skip()) {
             return true;
         }
-        if (!allowOverweightConstruction() && !correctWeight(buff)) {
-            buff.insert(0, printTechLevel() + printShortMovement());
-            buff.append(printWeightCalculation());
+
+        if (!allowOverweightConstruction() && !correctWeight(stringBuffer)) {
+            stringBuffer.insert(0, printTechLevel() + printShortMovement());
+            stringBuffer.append(printWeightCalculation());
             correct = false;
         }
         if (!engine.engineValid) {
-            buff.append(engine.problem.toString()).append("\n\n");
+            stringBuffer.append(engine.problem.toString()).append("\n\n");
             correct = false;
         }
         if (getCountHeatSinks() < engine.getWeightFreeEngineHeatSinks()) {
-            buff.append("Heat Sinks:\n");
-            buff.append(" Engine    ").append(engine.integralHeatSinkCapacity(mek
+            stringBuffer.append("Heat Sinks:\n");
+            stringBuffer.append(" Engine    ").append(engine.integralHeatSinkCapacity(mek
                   .hasCompactHeatSinks())).append("\n");
-            buff.append(" Total     ").append(getCountHeatSinks()).append("\n");
-            buff.append(" Required  ").append(engine.getWeightFreeEngineHeatSinks()).append("\n");
+            stringBuffer.append(" Total     ").append(getCountHeatSinks()).append("\n");
+            stringBuffer.append(" Required  ").append(engine.getWeightFreeEngineHeatSinks()).append("\n");
             correct = false;
         }
-        if (showCorrectArmor() && !correctArmor(buff)) {
+        if (showCorrectArmor() && !correctArmor(stringBuffer)) {
             correct = false;
         }
-        if (showCorrectCritical() && !correctCriticalSlots(buff)) {
+        if (showCorrectCritical() && !correctCriticalSlots(stringBuffer)) {
             correct = false;
         }
-        if (showFailedEquip() && hasFailedEquipment(buff)) {
+        if (showFailedEquip() && hasFailedEquipment(stringBuffer)) {
             correct = false;
         }
-        if (hasIllegalTechLevels(buff, ammoTechLvl)) {
+        if (hasIllegalTechLevels(stringBuffer, ammoTechLvl)) {
             correct = false;
         }
-        if (showIncorrectIntroYear() && hasIncorrectIntroYear(buff)) {
+        if (showIncorrectIntroYear() && hasIncorrectIntroYear(stringBuffer)) {
             correct = false;
         }
-        if (hasIllegalEquipmentCombinations(buff)) {
+        if (hasIllegalEquipmentCombinations(stringBuffer)) {
             correct = false;
         }
         for (Mounted<?> misc : mek.getMisc()) {
-            correct = correct && checkMiscSpreadAllocation(mek, misc, buff);
+            correct = correct && checkMiscSpreadAllocation(mek, misc, stringBuffer);
         }
-        correct = correct && correctMovement(buff);
+        correct = correct && correctMovement(stringBuffer);
         if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)
               || getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
@@ -965,8 +924,7 @@ public class TestMek extends TestEntity {
                     }
                 }
             }
-            if (misc.hasFlag(MiscType.F_HEAD_TURRET)
-                  && isCockpitLocation(Mek.LOC_HEAD)) {
+            if (misc.hasFlag(MiscType.F_HEAD_TURRET) && isCockpitLocation(Mek.LOC_HEAD)) {
                 illegal = true;
                 buff.append("head turret requires torso mounted cockpit\n");
             }

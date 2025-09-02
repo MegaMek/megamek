@@ -71,6 +71,7 @@ public class SanityInputFilter implements ObjectInputFilter {
           // Java Util
           Pattern.compile("java\\.util\\.AbstractMap"),
           Pattern.compile("java\\.util\\.ArrayList"),
+          Pattern.compile("java\\.util\\.CollSer"),
           Pattern.compile("java\\.util\\.Collections\\$SetFromMap"),
           Pattern.compile("java\\.util\\.Collections\\$UnmodifiableCollection"),
           Pattern.compile("java\\.util\\.Collections\\$UnmodifiableList"),
@@ -89,6 +90,7 @@ public class SanityInputFilter implements ObjectInputFilter {
           Pattern.compile("java\\.util\\.HashMap"),
           Pattern.compile("java\\.util\\.HashSet"),
           Pattern.compile("java\\.util\\.Hashtable"),
+          Pattern.compile("java\\.util\\.ImmutableCollections\\$ListN"),
           Pattern.compile("java\\.util\\.LinkedHashMap"),
           Pattern.compile("java\\.util\\.LinkedHashSet"),
           Pattern.compile("java\\.util\\.LinkedList"),

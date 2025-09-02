@@ -63,7 +63,7 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
 
     public ISCenturionWeaponSystem() {
         super();
-        name = "Centurion Weapon SystemFluff";
+        name = "Centurion Weapon System";
         setInternalName(name);
         heat = 4;
         damage = 0;

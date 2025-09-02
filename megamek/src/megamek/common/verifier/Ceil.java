@@ -35,7 +35,11 @@
 package megamek.common.verifier;
 
 public enum Ceil {
-    TON(1.0), HALF_TON(2.0), QUARTER_TON(4.0), TENTH_TON(10.0), KILO(1000.0);
+    TON(1.0),
+    HALF_TON(2.0),
+    QUARTER_TON(4.0),
+    TENTH_TON(10.0),
+    KILO(1000.0);
 
     public final double multiplier;
 

@@ -60,6 +60,7 @@ import megamek.common.enums.MPBoosters;
 import megamek.common.enums.TechBase;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType;
+import megamek.common.exceptions.CeilNotProvidedForWeightException;
 import megamek.common.interfaces.ITechManager;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.units.*;
@@ -124,8 +125,9 @@ public abstract class TestEntity implements TestEntityOption {
      * @return a TestEntity instance for the supplied Entity.
      */
     public static TestEntity getEntityVerifier(Entity unit) {
-        EntityVerifier entityVerifier = EntityVerifier.getInstance(new File(
-              Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME));
+        EntityVerifier entityVerifier = EntityVerifier.getInstance(new File(Configuration.unitsDir(),
+              EntityVerifier.CONFIG_FILENAME));
+
         TestEntity testEntity = null;
 
         if (unit.hasETypeFlag(Entity.ETYPE_MEK)) {
@@ -183,6 +185,10 @@ public abstract class TestEntity implements TestEntityOption {
 
     @Override
     public Ceil getWeightCeilingStructure() {
+        if (options.getWeightCeilingEngine() == null) {
+            throw new CeilNotProvidedForWeightException();
+        }
+
         return options.getWeightCeilingStructure();
     }
 
@@ -383,13 +389,13 @@ public abstract class TestEntity implements TestEntityOption {
 
     public static List<EquipmentType> validJumpJets(long entityType, boolean industrial) {
         if ((entityType & Entity.ETYPE_MEK) != 0) {
-            return TestMek.MekJumpJets.allJJs(industrial);
+            return MekJumpJets.allJJs(industrial);
         } else if ((entityType & Entity.ETYPE_TANK) != 0) {
             return Collections.singletonList(EquipmentType.get(EquipmentTypeLookup.VEHICLE_JUMP_JET));
         } else if ((entityType & Entity.ETYPE_BATTLEARMOR) != 0) {
             return TestBattleArmor.BAMotiveSystems.allSystems();
         } else if ((entityType & Entity.ETYPE_PROTOMEK) != 0) {
-            // Until we have a TestProtomek
+            // Until we have a TestProtoMek
             return Arrays.asList(EquipmentType.get(EquipmentTypeLookup.PROTOMEK_JUMP_JET),
                   EquipmentType.get(EquipmentTypeLookup.EXTENDED_JUMP_JET_SYSTEM),
                   EquipmentType.get(EquipmentTypeLookup.PROTOMEK_UMU));
@@ -942,10 +948,8 @@ public abstract class TestEntity implements TestEntityOption {
      */
     public double calculateWeight() {
         double weight = calculateWeightExact();
-        // If the unit used kg standard, we just need to get rid of floating-point math
-        // anomalies.
-        // Otherwise, accumulated kg-scale equipment needs to be rounded up to the
-        // nearest half-ton.
+        // If the unit used kg standard, we just need to get rid of floating-point math anomalies. Otherwise,
+        // accumulated kg-scale equipment needs to be rounded up to the nearest half-ton.
         weight = round(weight, Ceil.KILO);
         if (usesKgStandard()) {
             return weight;

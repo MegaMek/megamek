@@ -2050,6 +2050,9 @@ public class AmmoType extends EquipmentType {
         ammoRatio = 0;
     }
 
+    @Override
+    public String getEquipmentType() { return "ammo"; }
+
     /**
      * Returns the base ammo type, if any.
      */

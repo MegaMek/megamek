@@ -802,6 +802,9 @@ public class WeaponType extends EquipmentType {
     }
 
     @Override
+    public String getEquipmentType() { return "weapon"; }
+
+    @Override
     public int getHeat() {
         return heat;
     }

@@ -47,7 +47,7 @@ import megamek.common.scenario.ScenarioLoaderException;
 import megamek.common.scenario.ScenarioV1;
 import megamek.logging.MMLogger;
 import megamek.server.Server;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 public class ScenarioLoaderTest {
     private final static MMLogger LOGGER = MMLogger.create(ScenarioLoaderTest.class);

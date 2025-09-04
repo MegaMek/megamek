@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -57,7 +57,7 @@ class BLKFileTest {
      *
      * @param bay The Bay being parsed
      *
-     * @return The part of the bay string containing the parameters (size, doors, num, etc)
+     * @return The part of the bay string containing the parameters (size, doors, num, etc.)
      */
     private String getBayNumbers(Bay bay) {
         String bayString = bay.toString();
@@ -65,7 +65,7 @@ class BLKFileTest {
     }
 
     @Test
-    void parseBayDataAssignsMissingBayNumber() {
+    void parseBayDataAssignsMissingBayNumber() throws BLKDecodingException {
         final double SIZE = 2.0;
         final int DOORS = 1;
         String bayString = SIZE + ":" + DOORS;
@@ -73,19 +73,14 @@ class BLKFileTest {
         bayNums.add(0);
         bayNums.add(1);
 
-        try {
-            ParsedBayInfo pbi = new ParsedBayInfo(bayString, bayNums);
-            assertEquals(pbi.getSize(), SIZE, 0.01);
-            assertEquals(pbi.getDoors(), DOORS);
-            assertEquals(2, pbi.getBayNumber());
-        } catch (BLKDecodingException e) {
-            fail("Unexpected exception!");
-        }
-
+        ParsedBayInfo pbi = new ParsedBayInfo(bayString, bayNums);
+        assertEquals(SIZE, pbi.getSize(), 0.01);
+        assertEquals(DOORS, pbi.getDoors());
+        assertEquals(2, pbi.getBayNumber());
     }
 
     @Test
-    void parseBayDataFixesDuplicateBayNumber() {
+    void parseBayDataFixesDuplicateBayNumber() throws BLKDecodingException {
         final double SIZE = 2.0;
         final int DOORS = 1;
         Bay bay = new MekBay(SIZE, DOORS, 1);
@@ -93,15 +88,11 @@ class BLKFileTest {
         bayNums.add(0);
         bayNums.add(1);
 
-        try {
-            ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), bayNums);
+        ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), bayNums);
 
-            assertEquals(pbi.getSize(), SIZE, 0.01);
-            assertEquals(pbi.getDoors(), DOORS);
-            assertEquals(2, pbi.getBayNumber());
-        } catch (BLKDecodingException e) {
-            fail("Unexpected exception!");
-        }
+        assertEquals(SIZE, pbi.getSize(), 0.01);
+        assertEquals(DOORS, pbi.getDoors());
+        assertEquals(2, pbi.getBayNumber());
     }
 
     @Test
@@ -189,42 +180,34 @@ class BLKFileTest {
     }
 
     @Test
-    void parseDropShuttleBay() {
+    void parseDropShuttleBay() throws BLKDecodingException {
         Bay bay = new DropShuttleBay(1, -1, Jumpship.LOC_AFT);
 
-        try {
-            ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
+        ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
 
-            assertEquals(pbi.getDoors(), 1);
-            assertEquals(pbi.getBayNumber(), 1);
-            assertEquals(Jumpship.LOC_AFT, pbi.getFacing());
-        } catch (BLKDecodingException e) {
-            fail(String.format("Unexpected exception (%s)!", e.toString()));
-        }
+        assertEquals(1, pbi.getDoors());
+        assertEquals(1, pbi.getBayNumber());
+        assertEquals(Jumpship.LOC_AFT, pbi.getFacing());
     }
 
     @Test
-    void parseNavalRepairFacility() {
+    void parseNavalRepairFacility() throws BLKDecodingException {
         final double SIZE = 5000.0;
         final int DOORS = 2;
         Bay bay = new NavalRepairFacility(SIZE, DOORS, -1, Jumpship.LOC_AFT, true);
 
-        try {
-            ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
+        ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
 
-            assertEquals(pbi.getSize(), SIZE, 0.01);
-            assertEquals(pbi.getDoors(), DOORS);
-            assertEquals(pbi.getBayNumber(), 1);
-            assertEquals(Jumpship.LOC_AFT, pbi.getFacing());
-        } catch (BLKDecodingException e) {
-            fail("Unexpected exception!");
-        }
+        assertEquals(SIZE, pbi.getSize(), 0.01);
+        assertEquals(DOORS, pbi.getDoors());
+        assertEquals(1, pbi.getBayNumber());
+        assertEquals(Jumpship.LOC_AFT, pbi.getFacing());
     }
 
     @Test
     void decodeValidPlatoonTypes() throws BLKDecodingException {
         final String[] types = { "foot", "jump", "mechanized", "motorized", "" };
-        final PlatoonType[] ptypes = {
+        final PlatoonType[] platoonTypes = {
               PlatoonType.FOOT,
               PlatoonType.JUMP,
               PlatoonType.MECHANIZED,
@@ -233,7 +216,7 @@ class BLKFileTest {
         };
 
         for (int i = 0; i < types.length; i++) {
-            assertEquals(ptypes[i], ParsedBayInfo.decodePlatoonType(types[i]));
+            assertEquals(platoonTypes[i], ParsedBayInfo.decodePlatoonType(types[i]));
         }
     }
 
@@ -241,9 +224,7 @@ class BLKFileTest {
     void decodeInvalidPlatoonTypeThrows() {
         assertThrows(
               BLKDecodingException.class,
-              () -> {
-                  ParsedBayInfo.decodePlatoonType("FEeeTS");
-              });
+              () -> ParsedBayInfo.decodePlatoonType("FEeeTS"));
     }
 
     @Test
@@ -251,9 +232,7 @@ class BLKFileTest {
         String invalidNumbers = "10.0:0:1:c*:extra:fields:throw";
         assertThrows(
               BLKDecodingException.class,
-              () -> {
-                  ParsedBayInfo.normalizeTransporterNumbers(invalidNumbers);
-              });
+              () -> ParsedBayInfo.normalizeTransporterNumbers(invalidNumbers));
     }
 
     private boolean confirmTransporterNumbers(String numbers, String[] expNumArray) {
@@ -316,7 +295,7 @@ class BLKFileTest {
               { "8.0", "0", "1", "Jump", "-1", "0" },
               { "9.0", "1", "2", "", "1", "0" }
         };
-        boolean matched = false;
+        boolean matched;
         for (int i = 0; i < numbersArray.length; i++) {
             matched = confirmTransporterNumbers(numbersArray[i], expNumbersArray[i]);
             assertTrue(matched);

@@ -134,7 +134,7 @@ class SearchableTable extends JTable {
     }
 
     public void keyTyped(KeyEvent ke) {
-        long curTime = System.currentTimeMillis();
+        long curTime = java.lang.System.currentTimeMillis();
         if ((curTime - lastSearch) > KEY_TIMEOUT) {
             searchBuffer = new StringBuffer();
         }

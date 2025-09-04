@@ -53,7 +53,7 @@ import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponDirectFireHan
 import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponDirectHomingHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponIndirectFireHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponIndirectHomingHandler;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Jay Lawson

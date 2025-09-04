@@ -52,7 +52,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.SmallPulseLaserPrototypeHandler;
 import megamek.common.weapons.lasers.PulseLaserWeapon;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter

@@ -42,11 +42,10 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import io.sentry.Sentry;
-import io.sentry.transport.ReusableCountLatch;
 import megamek.client.bot.princess.Princess;
-import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.event.GameListenerAdapter;
+import megamek.common.game.Game;
 import megamek.logging.MMLogger;
 import megamek.server.Server;
 
@@ -58,7 +57,6 @@ class GameThread extends Thread implements CloseClientListener {
     private final int timeout;
     private final File saveFile;
     private final CountDownLatch gameIsLive;
-    private final ReusableCountLatch reusableCountdownLatch = new ReusableCountLatch(0);
     private final Map<String, AbstractClient> localBots = new HashMap<>();
 
     /**

@@ -36,7 +36,7 @@ package megamek.server.commands;
 import megamek.client.ui.Messages;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Arguments;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Luana Coppio
@@ -45,13 +45,13 @@ public class RemoveSmokeCommand extends GamemasterServerCommand {
 
     /** Creates new KillCommand */
     public RemoveSmokeCommand(Server server, TWGameManager gameManager) {
-        super(server, gameManager, "nosmoke", Messages.getString("Gamemaster.cmd.removesmoke.help"),
-              Messages.getString("Gamemaster.cmd.removesmoke.longName"));
+        super(server, gameManager, "nosmoke", Messages.getString("Gamemaster.cmd.removeSmoke.help"),
+              Messages.getString("Gamemaster.cmd.removeSmoke.longName"));
     }
 
     @Override
     protected void runCommand(int connId, Arguments args) {
         gameManager.getSmokeCloudList().forEach(gameManager::removeSmokeTerrain);
-        server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.removesmoke.success"));
+        server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.removeSmoke.success"));
     }
 }

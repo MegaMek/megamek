@@ -60,7 +60,7 @@ import megamek.common.force.Forces;
 import megamek.common.hexArea.HexArea;
 import megamek.common.units.Deployable;
 import megamek.logging.MMLogger;
-import megamek.server.scriptedevent.TriggeredEvent;
+import megamek.server.scriptedEvents.TriggeredEvent;
 
 /**
  * This is a base class to derive all types of Game (TW, AS, BF, SBF...) from. Any such game will have players, units

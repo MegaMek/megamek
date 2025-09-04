@@ -160,7 +160,7 @@ public class MekFileParser {
      * @param dir      location where the canonUnitNames file should be
      * @param fileName String name of the file containing canon unit names
      */
-    protected static void initCanonUnitNames(File dir, String fileName) {
+    public static void initCanonUnitNames(File dir, String fileName) {
         Vector<String> unitNames = new Vector<>();
         try (FileReader fr = new FileReader(new MegaMekFile(dir, fileName).getFile());
               BufferedReader br = new BufferedReader(fr)) {
@@ -187,7 +187,7 @@ public class MekFileParser {
      *
      * @param unitNames List of unit names
      */
-    protected static void setCanonUnitNames(Vector<String> unitNames) {
+    public static void setCanonUnitNames(Vector<String> unitNames) {
         canonUnitNames = unitNames;
     }
 
@@ -428,7 +428,7 @@ public class MekFileParser {
                 if (m.getLinked() == null) {
                     // This mek has stealth armor but no ECM. Probably an improperly created custom.
                     LOGGER.error(
-                          "Unable to find an ECM Suite for {}. `Mek's with Stealth Armor or Void-Signature-SystemFluff "
+                          "Unable to find an ECM Suite for {}. `Mek's with Stealth Armor or Void-Signature-System "
                                 +
                                 "must also be equipped with an ECM Suite.",
                           ent.getShortName());
@@ -850,7 +850,7 @@ public class MekFileParser {
      *
      * @param entity {@link Entity} with a machine gun array.
      */
-    static void linkMGAs(Entity entity) {
+    public static void linkMGAs(Entity entity) {
         List<Integer> usedMG = new ArrayList<>();
         for (WeaponMounted mga : entity.getWeaponList()) {
             if (mga.getType().hasFlag(WeaponType.F_MGA)) {

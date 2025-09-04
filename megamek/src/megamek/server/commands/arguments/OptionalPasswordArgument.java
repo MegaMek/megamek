@@ -64,7 +64,7 @@ public class OptionalPasswordArgument extends Argument<Optional<String>> {
     }
 
     @Override
-    public String getRepr() {
+    public String getRepresentation() {
         return "[" + getName() + "]";
     }
 

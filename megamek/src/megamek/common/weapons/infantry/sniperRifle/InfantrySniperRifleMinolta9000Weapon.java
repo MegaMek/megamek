@@ -61,11 +61,11 @@ public class InfantrySniperRifleMinolta9000Weapon extends InfantryWeapon {
     public InfantrySniperRifleMinolta9000Weapon() {
         super();
 
-        name = "Sniper Rifle (Minolta 9000 Advanced Sniper SystemFluff)";
+        name = "Sniper Rifle (Minolta 9000 Advanced Sniper System)";
         setInternalName(name);
         addLookupName("InfantryMinolta9000");
-        addLookupName("Minolta 9000 Advanced Sniper SystemFluff");
-        addLookupName("Rifle (Minolta 9000 Advanced Sniper SystemFluff)");
+        addLookupName("Minolta 9000 Advanced Sniper System");
+        addLookupName("Rifle (Minolta 9000 Advanced Sniper System)");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1000;
         bv = 1.79;

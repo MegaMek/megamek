@@ -1,7 +1,6 @@
 /*
-
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,14 +36,14 @@ package megamek.server;
 
 import java.util.Vector;
 
+import megamek.common.Hex;
+import megamek.common.Report;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.units.Entity;
-import megamek.common.Hex;
-import megamek.common.Report;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 public class QuicksandProcessor extends DynamicTerrainProcessor {
 

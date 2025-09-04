@@ -37,13 +37,13 @@ import java.util.HashSet;
 import java.util.List;
 
 import megamek.client.ui.Messages;
-import megamek.common.board.Coords;
 import megamek.common.Hex;
+import megamek.common.board.Coords;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.IntegerArgument;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * The Server Command "/firestorm" that starts a blazing inferno on the board.

@@ -41,7 +41,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputFilter;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -56,7 +55,7 @@ import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.loaders.MekSummaryCache;
 import megamek.common.net.marshalling.SanityInputFilter;
 import megamek.server.Server;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 import megamek.utils.ServerFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -70,10 +69,9 @@ public class BasicGameTest {
     private TWGameManager gameManager;
     private Server server;
     private HeadlessClient client;
-    private Random random = new Random();
     private GameThread gameThread;
 
-    private static Map<String, File> testSaves = Map.of(
+    private static final Map<String, File> testSaves = Map.of(
           "one mek each", new File("testresources/data/scenarios/testbot/lounge_1x1_grasslands.sav.gz"));
 
     @BeforeAll

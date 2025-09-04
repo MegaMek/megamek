@@ -50,7 +50,7 @@ import megamek.common.units.Building;
 import megamek.common.units.Crew;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks

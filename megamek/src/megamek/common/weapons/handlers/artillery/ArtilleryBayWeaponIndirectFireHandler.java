@@ -69,7 +69,7 @@ import megamek.common.units.Targetable;
 import megamek.common.weapons.ArtilleryHandlerHelper;
 import megamek.common.weapons.handlers.AmmoBayWeaponHandler;
 import megamek.logging.MMLogger;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -542,11 +542,11 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_LASER_INHIB)) {
             if (!bMissed) {
                 // If we hit, only one effect will stack in the target hex
-                gameManager.deliverLIsmoke(targetPos, vPhaseReport);
+                gameManager.deliverLISmoke(targetPos, vPhaseReport);
             } else {
                 // Deliver a round to each target hex
                 for (Coords c : targets) {
-                    gameManager.deliverLIsmoke(c, vPhaseReport);
+                    gameManager.deliverLISmoke(c, vPhaseReport);
                 }
             }
             return false;

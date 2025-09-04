@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 - Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -64,7 +64,6 @@ import megamek.Version;
 import megamek.client.ui.util.PlayerColour;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Player;
-import megamek.common.rolls.Roll;
 import megamek.common.annotations.Nullable;
 import megamek.common.commandLine.AbstractCommandLineParser.ParseException;
 import megamek.common.game.Game;
@@ -79,6 +78,7 @@ import megamek.common.net.listeners.ConnectionListener;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.rolls.Roll;
 import megamek.common.util.EmailService;
 import megamek.common.util.SerializationHelper;
 import megamek.logging.MMLogger;
@@ -401,7 +401,7 @@ public class Server implements Runnable {
         // initialize server socket
         serverSocket = new ServerSocket(port);
 
-        messageOfTheDay = createMotd();
+        messageOfTheDay = createMOTD();
 
         // display server start text
         LOGGER.info("s: starting a new server...");
@@ -474,7 +474,7 @@ public class Server implements Runnable {
     /**
      * Make a default message o' the day containing the version string, and if it was found, the build timestamp
      */
-    private String createMotd() {
+    private String createMOTD() {
         return "Welcome to MegaMek. Server is running version " + SuiteConstants.VERSION;
     }
 
@@ -592,7 +592,12 @@ public class Server implements Runnable {
      * Allow the player to set whatever parameters he is able to
      */
     private void receivePlayerInfo(Packet packet, int connId) {
-        Player player = (Player) packet.getObject(0);
+        Player player = packet.getPlayer(0);
+
+        if (player == null) {
+            return;
+        }
+
         Player gamePlayer = getGame().getPlayer(connId);
         if (null != gamePlayer) {
             gamePlayer.setColour(player.getColour());
@@ -1285,11 +1290,11 @@ public class Server implements Runnable {
                 transmitPlayerUpdate(getPlayer(connId));
                 break;
             case CHAT:
-                String chat = (String) packet.getObject(0);
+                String chat = packet.getStringValue(0);
                 if (chat.startsWith("/")) {
                     processCommand(connId, chat);
                 } else if (packet.data().length > 1) {
-                    connId = (int) packet.getObject(1);
+                    connId = packet.getIntValue(1);
                     if (connId == Player.PLAYER_NONE) {
                         sendServerChat(chat);
                     } else {

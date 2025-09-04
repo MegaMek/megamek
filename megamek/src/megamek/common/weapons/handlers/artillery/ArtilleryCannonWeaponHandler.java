@@ -59,7 +59,7 @@ import megamek.common.units.Targetable;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.common.weapons.handlers.AreaEffectHelper;
 import megamek.logging.MMLogger;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Numien, based work by Sebastian Brocks

@@ -53,7 +53,7 @@ import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.units.Terrains;
 import megamek.common.weapons.handlers.ac.ACWeaponHandler;
 import megamek.server.SmokeCloud;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Jason Tighe

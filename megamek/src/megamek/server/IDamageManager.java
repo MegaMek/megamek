@@ -39,5 +39,5 @@ import megamek.common.DamageInfo;
 import megamek.common.Report;
 
 public interface IDamageManager {
-    public Vector<Report> damageEntity(DamageInfo damageInfo);
+    Vector<Report> damageEntity(DamageInfo damageInfo);
 }

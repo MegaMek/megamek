@@ -1,7 +1,6 @@
 /*
-
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -42,8 +41,8 @@ import megamek.logging.MMLogger;
 public class ConnectionWatchdog extends TimerTask {
     private static final MMLogger logger = MMLogger.create(ConnectionWatchdog.class);
 
-    private Server server;
-    private int id;
+    private final Server server;
+    private final int id;
     private int failCount;
 
     public ConnectionWatchdog(Server server, int id) {

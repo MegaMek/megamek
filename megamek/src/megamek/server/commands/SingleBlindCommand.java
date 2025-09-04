@@ -36,7 +36,7 @@ package megamek.server.commands;
 import megamek.common.Player;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * Allows a bot to see all units via /singleblind command. Toggle. Does not work on human players.
@@ -98,15 +98,9 @@ public class SingleBlindCommand extends ServerCommand {
                     giveTake = " has been granted";
                 }
 
-                if (playerId == connId) {
-                    server.sendServerChat(player.getName()
-                          + giveTake + " vision of the entire map with /singleblind, by "
-                          + server.getPlayer(connId).getName());
-                } else {
-                    server.sendServerChat(player.getName()
-                          + giveTake + " vision of the entire map with /singleblind, by "
-                          + server.getPlayer(connId).getName());
-                }
+                server.sendServerChat(player.getName()
+                      + giveTake + " vision of the entire map with /singleblind, by "
+                      + server.getPlayer(connId).getName());
 
                 gameManager.setSingleBlind(player, !hasSingleBlind);
                 gameManager.sendEntities(playerId);

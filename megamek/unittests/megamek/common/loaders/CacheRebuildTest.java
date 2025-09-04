@@ -37,19 +37,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.util.Map;
 
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.MethodOrderer;
+import megamek.common.Configuration;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CacheRebuildTest {
+
+    @BeforeEach
+    void setUp() {
+        Configuration.setDataDir(new File("testresources/data"));
+    }
 
     /**
      * Tests that every single unit can load successfully.
      */
     @Test
-    @Disabled("Invalidated by the data changes in 50.07")
     void testCacheRebuild() {
         File cacheFile = new File(MekSummaryCache.getUnitCacheDir(), MekSummaryCache.FILENAME_UNITS_CACHE);
         if (cacheFile.exists()) {

@@ -95,8 +95,7 @@ public class OrbitalBombardment {
         var offsetX = boardPosition.getX() - getXOffset();
         var offsetY = boardPosition.getY() - getYOffset();
         var modifier = offsetX % 2 == 0 ? "" : "_odd";
-        var imageSig = String.format("col_%d_row_%d%s.png", offsetX, offsetY, modifier);
-        return imageSig;
+        return String.format("col_%d_row_%d%s.png", offsetX, offsetY, modifier);
     }
 
     public List<Coords> getAllAffectedCoords() {

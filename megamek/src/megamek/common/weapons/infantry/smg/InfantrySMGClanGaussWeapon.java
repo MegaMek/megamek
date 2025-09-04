@@ -65,6 +65,7 @@ public class InfantrySMGClanGaussWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryGaussSMG");
         addLookupName("InfantryClanGaussSMG");
+        addLookupName("Gauss Submachinegun");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 2000;
         bv = 1.38;

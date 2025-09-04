@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -63,7 +63,7 @@ class TeamTest {
 
         // Sanity test
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
-        assertEquals(initBonus, 0);
+        assertEquals(0, initBonus);
 
         assertEquals(3, testTeam.size());
         assertEquals(3, testTeam.getNonObserverSize());

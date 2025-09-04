@@ -132,7 +132,7 @@ import megamek.logging.MMLogger;
 import megamek.server.IGameManager;
 import megamek.server.Server;
 import megamek.server.sbf.SBFGameManager;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

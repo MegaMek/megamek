@@ -52,7 +52,7 @@ import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.weapons.FlamerHandlerHelper;
 import megamek.common.weapons.Weapon;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks Created on Sep 23, 2004

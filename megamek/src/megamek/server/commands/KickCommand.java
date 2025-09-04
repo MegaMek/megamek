@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2002 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,7 +43,7 @@ import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.OptionalPasswordArgument;
 import megamek.server.commands.arguments.PlayerArgument;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * Kicks a player off the server.
@@ -110,7 +110,7 @@ public class KickCommand extends ClientServerCommand {
     }
 
     /**
-     * Checks the password argument given by the player, if the server is passworded and the check fails it returns
+     * Checks the password argument given by the player, if the server has a password and the check fails it returns
      * true
      *
      * @param connId         The connection ID of the player issuing the command

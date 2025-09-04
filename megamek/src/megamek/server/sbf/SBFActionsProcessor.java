@@ -49,7 +49,7 @@ public record SBFActionsProcessor(SBFGameManager gameManager) implements SBFGame
             if (action instanceof SBFAttackAction attack && attack.getHandler(gameManager) != null) {
                 game().addActionHandler(attack.getHandler(gameManager));
             }
-            // Actions that arent attacks are currently not processed through handlers but maybe in the future?
+            // Actions that aren't attacks are currently not processed through handlers but maybe in the future?
         }
     }
 

@@ -707,6 +707,14 @@ class TeamLoadOutGeneratorTest {
         // Game setup
         int year = 3075;
         when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(year);
+        BombLoadout generatedBombs = getBombLoadout(year);
+        // Should always get some regular rocket launchers
+        assertTrue(generatedBombs.getCount(BombTypeEnum.RL) > 0);
+        // Should not use RL-Ps when RLs are available
+        assertEquals(0, generatedBombs.getCount(BombTypeEnum.RLP));
+    }
+
+    private static BombLoadout getBombLoadout(int year) {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         // Bomber info
         int bombUnits = 20;
@@ -716,7 +724,7 @@ class TeamLoadOutGeneratorTest {
         String faction = "PIR";
         String techBase = "IS";
         boolean mixedTech = false;
-        BombLoadout generatedBombs = tlg.generateExternalOrdnance(bombUnits,
+        return tlg.generateExternalOrdnance(bombUnits,
               airOnly,
               isPirate,
               quality,
@@ -724,10 +732,6 @@ class TeamLoadOutGeneratorTest {
               faction,
               techBase,
               mixedTech);
-        // Should always get some regular rocket launchers
-        assertTrue(generatedBombs.getCount(BombTypeEnum.RL) > 0);
-        // Should not use RL-Ps when RLs are available
-        assertEquals(0, generatedBombs.getCount(BombTypeEnum.RLP));
     }
 
     /**

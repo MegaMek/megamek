@@ -104,13 +104,13 @@ class CoordsTest {
 
     @Test
     void testDistance() {
-        assertEquals(new Coords(13, 6).distance(new Coords(15, 1)), 6);
-        assertEquals(new Coords(12, 2).distance(new Coords(9, 2)), 3);
+        assertEquals(6, new Coords(13, 6).distance(new Coords(15, 1)));
+        assertEquals(3, new Coords(12, 2).distance(new Coords(9, 2)));
     }
 
     @Test
     void testAdjacent() {
-        assertEquals(new Coords(5, -5).allAtDistance(0).size(), 1);
+        assertEquals(1, new Coords(5, -5).allAtDistance(0).size());
 
         final List<Coords> expectedAdjacent = new ArrayList<>();
         expectedAdjacent.add(new Coords(0, -1));
@@ -119,7 +119,7 @@ class CoordsTest {
         expectedAdjacent.add(new Coords(0, 1));
         expectedAdjacent.add(new Coords(-1, 0));
         expectedAdjacent.add(new Coords(-1, -1));
-        assertEquals(new Coords(0, 0).allAdjacent().size(), 6);
+        assertEquals(6, new Coords(0, 0).allAdjacent().size());
         new Coords(0, 0).allAdjacent().forEach(coords -> assertTrue(expectedAdjacent.contains(coords)));
 
         // for a radius 2 donut we expect to see 12 hexes.
@@ -137,15 +137,15 @@ class CoordsTest {
         expectedAtDistance2.add(new Coords(-2, -1));
         expectedAtDistance2.add(new Coords(-1, -2));
 
-        assertEquals(new Coords(0, 0).allAtDistance(2).size(), 12);
+        assertEquals(12, new Coords(0, 0).allAtDistance(2).size());
         new Coords(0, 0).allAtDistance(2).forEach(coords -> assertTrue(expectedAtDistance2.contains(coords)));
     }
 
     @Test
     void testAllAtDistance() {
-        assertEquals(new Coords(10, 10).allAtDistanceOrLess(1).size(), 7);
-        assertEquals(new Coords(10, 10).allLessThanDistance(1).size(), 1);
-        assertEquals(new Coords(10, 10).allAtDistanceOrLess(0).size(), 1);
+        assertEquals(7, new Coords(10, 10).allAtDistanceOrLess(1).size());
+        assertEquals(1, new Coords(10, 10).allLessThanDistance(1).size());
+        assertEquals(1, new Coords(10, 10).allAtDistanceOrLess(0).size());
     }
 
     List<Coords> generateLevel2NeighborsEvenX(Coords centroid) {
@@ -223,7 +223,6 @@ class CoordsTest {
         assertTrue(allMatch, mismatchString);
 
         // All generated expectedNeighbors must be in neighbors
-        allMatch = true;
         mismatches = new ArrayList<>();
         for (Coords coords : expectedNeighbors) {
             if (neighbors.stream().anyMatch(coords::equals)) {

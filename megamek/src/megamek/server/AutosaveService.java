@@ -49,31 +49,25 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 
-public class AutosaveService {
-    private static final MMLogger logger = MMLogger.create(AutosaveService.class);
+public record AutosaveService(AbstractGameManager gameManager) {
+    private static final MMLogger LOGGER = MMLogger.create(AutosaveService.class);
 
     public static final String FILENAME_FORMAT = "Round-%d-autosave%s.sav.gz";
 
-    private final AbstractGameManager gameManager;
-
-    AutosaveService(AbstractGameManager gameManager) {
-        this.gameManager = gameManager;
-    }
-
     public void performRollingAutosave() {
-        final int maxNumberAutosaves = gameManager.getGame().getOptions()
+        final int maxNumberAutoSaves = gameManager.getGame().getOptions()
               .intOption(OptionsConstants.BASE_MAX_NUMBER_ROUND_SAVES);
-        if (maxNumberAutosaves > 0) {
+        if (maxNumberAutoSaves > 0) {
             try {
                 final String fileName = getAutosaveFilename();
                 if (!StringUtility.isNullOrBlank(fileName)) {
                     gameManager.saveGame(fileName,
                           gameManager.getGame().getOptions().booleanOption(OptionsConstants.BASE_AUTOSAVE_MSG));
                 } else {
-                    logger.error("Unable to perform an autosave because of a null or empty file name");
+                    LOGGER.error("Unable to perform an autosave because of a null or empty file name");
                 }
             } catch (Exception ex) {
-                logger.error("", ex);
+                LOGGER.error("", ex);
             }
         }
     }
@@ -90,15 +84,15 @@ public class AutosaveService {
                   .collect(Collectors.toList());
 
             // Delete older autosave files if needed
-            final int maxNumberAutosaves = gameManager.getGame().getOptions()
+            final int maxNumberAutoSaves = gameManager.getGame().getOptions()
                   .intOption(OptionsConstants.BASE_MAX_NUMBER_ROUND_SAVES);
 
             int index = 0;
-            while ((autosaveFiles.size() >= maxNumberAutosaves) && (autosaveFiles.size() > index)) {
+            while ((autosaveFiles.size() >= maxNumberAutoSaves) && (autosaveFiles.size() > index)) {
                 if (autosaveFiles.get(index).delete()) {
                     autosaveFiles.remove(index);
                 } else {
-                    logger.error("Unable to delete file {}", autosaveFiles.get(index).getName());
+                    LOGGER.error("Unable to delete file {}", autosaveFiles.get(index).getName());
                     index++;
                 }
             }

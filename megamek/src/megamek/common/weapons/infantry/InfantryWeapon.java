@@ -56,7 +56,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.AttackHandler;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks

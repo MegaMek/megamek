@@ -50,7 +50,7 @@ import org.junit.jupiter.api.Test;
 
 class WeaponTypeTest {
 
-    private Entity mockEntity = mock(Entity.class);
+    private final Entity mockEntity = mock(Entity.class);
 
     @BeforeAll
     static void before() {

@@ -49,7 +49,7 @@ import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.HVACWeaponHandler;
 import megamek.common.weapons.handlers.RapidFireHVACWeaponHandler;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Jason Tighe

@@ -55,7 +55,7 @@ import megamek.common.units.InfantryMount;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.handlers.WeaponHandler;
 import megamek.logging.MMLogger;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks

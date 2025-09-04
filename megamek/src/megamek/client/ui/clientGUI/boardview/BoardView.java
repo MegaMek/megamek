@@ -4723,11 +4723,11 @@ public final class BoardView extends AbstractBoardView
      */
     private class RedrawWorker implements Runnable {
 
-        private long lastTime = System.currentTimeMillis();
+        private long lastTime = java.lang.System.currentTimeMillis();
 
         @Override
         public void run() {
-            long currentTime = System.currentTimeMillis();
+            long currentTime = java.lang.System.currentTimeMillis();
 
             if (boardPanel.isShowing()) {
                 boolean redraw = false;

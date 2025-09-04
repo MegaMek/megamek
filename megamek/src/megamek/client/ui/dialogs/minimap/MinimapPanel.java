@@ -650,7 +650,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         public void run() {
             try {
                 int redrawDelay = 0;
-                if ((System.currentTimeMillis() - lastDrawMapReq) > redrawDelay) {
+                if ((java.lang.System.currentTimeMillis() - lastDrawMapReq) > redrawDelay) {
                     drawMap();
                 } else {
                     try {
@@ -694,7 +694,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
     /** Call this to schedule a minimap redraw. */
     public void refreshMap() {
-        lastDrawMapReq = System.currentTimeMillis();
+        lastDrawMapReq = java.lang.System.currentTimeMillis();
         SwingUtilities.invokeLater(drawMapable);
     }
 
@@ -715,7 +715,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         if ((lastDrawStarted > lastDrawMapReq) && !forceDraw) {
             return;
         }
-        lastDrawStarted = System.currentTimeMillis();
+        lastDrawStarted = java.lang.System.currentTimeMillis();
 
         if (!forceDraw && (dialog != null) && !dialog.isVisible()) {
             return;

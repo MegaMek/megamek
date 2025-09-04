@@ -154,7 +154,7 @@ class TargetRollTest {
         roll.addModifier(TargetRoll.AUTOMATIC_FAIL, "mod");
         roll.addModifier(TargetRoll.CHECK_FALSE, "mod");
         assertFalse(roll.needsRoll());
-        assertEquals(roll.getValue(), TargetRoll.CHECK_FALSE);
+        assertEquals(TargetRoll.CHECK_FALSE, roll.getValue());
 
         roll = basicTargetRoll();
         roll.addModifier(TargetRoll.CHECK_FALSE, "mod");
@@ -162,7 +162,7 @@ class TargetRollTest {
         roll.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "mod");
         roll.addModifier(TargetRoll.AUTOMATIC_FAIL, "mod");
         assertFalse(roll.needsRoll());
-        assertEquals(roll.getValue(), TargetRoll.CHECK_FALSE);
+        assertEquals(TargetRoll.CHECK_FALSE, roll.getValue());
     }
 
     @Test

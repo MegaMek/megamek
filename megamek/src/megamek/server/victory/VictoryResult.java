@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2007-2008 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,9 +40,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.Report;
+import megamek.common.game.Game;
 
 /**
  * A Victory Result stores information about the results of checking one or more victory conditions. It includes player
@@ -56,7 +56,6 @@ public final class VictoryResult {
     private final Map<Integer, Double> teamScores = new HashMap<>();
 
     private boolean isVictory;
-    private double hiScore = 0;
 
     public VictoryResult(boolean win) {
         this.isVictory = win;
@@ -224,7 +223,8 @@ public final class VictoryResult {
     }
 
     private void updateHiScore() {
-        hiScore = Double.MIN_VALUE;
+        double hiScore = Double.MIN_VALUE;
+        
         for (Double d : playerScores.values()) {
             hiScore = Math.max(hiScore, d);
         }

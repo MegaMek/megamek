@@ -121,7 +121,7 @@ public class UnitDisplayPanel extends JPanel {
     public static final String NON_TABBED_PILOT = "Pilot";
     public static final String NON_TABBED_ARMOR = "Armor";
     public static final String NON_TABBED_WEAPON = "Weapon";
-    public static final String NON_TABBED_SYSTEM = "SystemFluff";
+    public static final String NON_TABBED_SYSTEM = "System";
     public static final String NON_TABBED_EXTRA = "Extra";
 
     public static final String NON_TABBED_A1 = "NonTabbedA1";

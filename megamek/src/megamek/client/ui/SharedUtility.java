@@ -57,7 +57,7 @@ import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
 import megamek.common.weapons.TeleMissile;
 import megamek.logging.MMLogger;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 
 public class SharedUtility {

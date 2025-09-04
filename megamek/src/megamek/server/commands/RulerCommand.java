@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,13 +33,13 @@
 
 package megamek.server.commands;
 
-import megamek.common.board.Coords;
 import megamek.common.LosEffects;
 import megamek.common.LosEffects.AttackInfo;
-import megamek.common.rolls.TargetRoll;
 import megamek.common.ToHitData;
+import megamek.common.board.Coords;
+import megamek.common.rolls.TargetRoll;
 import megamek.server.Server;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * This is the ruler for LOS stuff implemented in command line.

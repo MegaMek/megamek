@@ -94,7 +94,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         final Entity attackingEntity = game.getEntity(attackerId);
 
         if (attackingEntity == null) {
-            return null;
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
         }
 
         ToHitData toHit = checkIllegal(game, attackingEntity, target, grappleSide);

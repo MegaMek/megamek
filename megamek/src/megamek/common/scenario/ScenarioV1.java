@@ -87,7 +87,7 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 import megamek.server.IGameManager;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * This class holds all scenario info loaded from a scenario (.mms) file. It is a map of constants given in

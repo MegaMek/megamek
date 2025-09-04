@@ -35,7 +35,7 @@ package megamek.server.commands;
 
 import megamek.common.Player;
 import megamek.server.Server;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * This command votes to allow another player to assume the elevated Game Master role
@@ -64,7 +64,7 @@ public class AllowGameMasterCommand extends ServerCommand {
         Player player = server.getPlayer(connId);
 
         if (!gameManager.isGameMasterRequestInProgress()) {
-            server.sendServerChat(connId, "No vote to for Game Master is progess!");
+            server.sendServerChat(connId, "No vote to for Game Master is process!");
             return;
         }
         voteYes(server, player);

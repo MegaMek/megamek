@@ -62,7 +62,7 @@ import megamek.common.weapons.handlers.ac.ACIncendiaryHandler;
 import megamek.common.weapons.handlers.ac.ACTracerHandler;
 import megamek.common.weapons.handlers.ac.ACWeaponHandler;
 import megamek.server.Server;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * N.B. This class is overridden for AC/2, AC/5, AC/10, AC/10, NOT ultras/LB/RAC. (No difference between ACWeapon and

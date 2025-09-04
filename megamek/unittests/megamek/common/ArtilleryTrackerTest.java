@@ -138,7 +138,6 @@ class ArtilleryTrackerTest {
     /**
      * This test shows that any automatic hit mods are removed from _all_ weapons at the same time.
      *
-     * @throws LocationFullException
      */
     @Test
     void test_clearHitHexMods_with_standard_and_autohit_mods_on_two_weapons() throws LocationFullException {

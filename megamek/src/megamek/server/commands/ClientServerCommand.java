@@ -43,7 +43,7 @@ import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * A ServerCommand that can only be used by Game Masters, This abstract class implements many features that are common
@@ -58,7 +58,7 @@ import megamek.server.totalwarfare.TWGameManager;
 public abstract class ClientServerCommand extends ServerCommand {
     private static final String NEWLINE = "\n";
     private static final String WHITESPACE = " ";
-    private static final String LONG_WHITESPACE = "   ";
+    private static final String LONG_WHITESPACE = " {3}";
     private static final String EMPTY_ARGUMENT = null;
     protected final TWGameManager gameManager;
     protected final static MMLogger logger = MMLogger.create(ClientServerCommand.class);
@@ -132,7 +132,7 @@ public abstract class ClientServerCommand extends ServerCommand {
         if (!gameManager.getGame()
               .getBoard()
               .contains(((int) args.get("x").getValue()) - 1, ((int) args.get("y").getValue()) - 1)) {
-            server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.error.outofbounds"));
+            server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.error.outOfBounds"));
             return true;
         }
         return false;
@@ -222,7 +222,7 @@ public abstract class ClientServerCommand extends ServerCommand {
 
         for (Argument<?> arg : defineArguments()) {
             help.append(WHITESPACE)
-                  .append(arg.getRepr());
+                  .append(arg.getRepresentation());
         }
 
         help.append(NEWLINE)

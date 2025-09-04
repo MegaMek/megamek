@@ -52,7 +52,7 @@ import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryWeaponIndirectFireHandler;
 import megamek.common.weapons.handlers.capitalMissile.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.handlers.capitalMissile.CapitalMissileHandler;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Jay Lawson

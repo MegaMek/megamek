@@ -42,7 +42,7 @@ import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.PlayerArgument;
 import megamek.server.commands.arguments.TeamArgument;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * The Server Command "/changeOwner" that will switch an entity's owner to another player.
@@ -58,15 +58,15 @@ public class ChangeTeamCommand extends GamemasterServerCommand {
         super(server,
               gameManager,
               "changeTeam",
-              Messages.getString("Gamemaster.cmd.changeteam.help"),
-              Messages.getString("Gamemaster.cmd.changeteam.longName"));
+              Messages.getString("Gamemaster.cmd.changeTeam.help"),
+              Messages.getString("Gamemaster.cmd.changeTeam.longName"));
     }
 
     @Override
     public List<Argument<?>> defineArguments() {
         return List.of(
-              new PlayerArgument(PLAYER_ID, Messages.getString("Gamemaster.cmd.changeteam.playerID")),
-              new TeamArgument(TEAM_ID, Messages.getString("Gamemaster.cmd.changeteam.teamID")));
+              new PlayerArgument(PLAYER_ID, Messages.getString("Gamemaster.cmd.changeTeam.playerID")),
+              new TeamArgument(TEAM_ID, Messages.getString("Gamemaster.cmd.changeTeam.teamID")));
     }
 
     @Override
@@ -76,13 +76,13 @@ public class ChangeTeamCommand extends GamemasterServerCommand {
 
         Player player = server.getGame().getPlayer(playerID);
         if (null == player) {
-            server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.changeteam.playerNotFound"));
+            server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.changeTeam.playerNotFound"));
             return;
         }
 
         int numEntities = server.getGame().getEntitiesOwnedBy(player);
         if ((Player.TEAM_UNASSIGNED == teamID) && (numEntities != 0)) {
-            server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.changeteam.playerCantJoinUnassigned"));
+            server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.changeTeam.playerCantJoinUnassigned"));
             return;
         }
 
@@ -90,6 +90,6 @@ public class ChangeTeamCommand extends GamemasterServerCommand {
         gameManager.allowTeamChange();
 
         server.sendServerChat(connId,
-              Messages.getString("Gamemaster.cmd.changeteam.success", player.getName(), teamID));
+              Messages.getString("Gamemaster.cmd.changeTeam.success", player.getName(), teamID));
     }
 }

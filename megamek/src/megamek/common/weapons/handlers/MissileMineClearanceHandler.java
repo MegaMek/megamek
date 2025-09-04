@@ -57,7 +57,7 @@ import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.weapons.lrms.LRMWeapon;
 import megamek.logging.MMLogger;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author arlith

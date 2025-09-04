@@ -49,7 +49,7 @@ import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.weapons.handlers.EnergyWeaponHandler;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
     @Serial

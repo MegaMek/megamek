@@ -51,7 +51,7 @@ import megamek.common.weapons.handlers.artillery.ArtilleryWeaponDirectFireHandle
 import megamek.common.weapons.handlers.artillery.ArtilleryWeaponDirectHomingHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryWeaponIndirectFireHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryWeaponIndirectHomingHandler;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks

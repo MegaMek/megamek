@@ -227,7 +227,7 @@ public class TestXMLOption implements TestEntityOption {
         return "Skip: " + skip() + "\n" + "Show Overweighted Entity: "
               + showOverweightedEntity() + "\n" + "Max Overweight: "
               + getMaxOverweight() + "\n"
-              + "Show Underweighted Entity: " + showUnderweightEntity()
+              + "Show Underweight Entity: " + showUnderweightEntity()
               + "\n" + "Min Underweight: "
               + getMinUnderweight() + "\n"
               + "Show bad Armor Placement: " + showCorrectArmor() + "\n"

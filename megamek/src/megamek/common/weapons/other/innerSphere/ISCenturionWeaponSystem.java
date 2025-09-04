@@ -51,7 +51,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.CenturionWeaponSystemHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -63,7 +63,7 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
 
     public ISCenturionWeaponSystem() {
         super();
-        name = "Centurion Weapon SystemFluff";
+        name = "Centurion Weapon System";
         setInternalName(name);
         heat = 4;
         damage = 0;

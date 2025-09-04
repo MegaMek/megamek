@@ -47,6 +47,7 @@ import megamek.common.TechConstants;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.battleArmor.BattleArmorHandles;
 import megamek.common.bays.*;
@@ -115,6 +116,7 @@ public class MekSummaryCache {
         if (instance == null) {
             instance = new MekSummaryCache();
         }
+
         if (!instance.initialized && !instance.initializing) {
             instance.initializing = true;
             interrupted = false;
@@ -138,8 +140,8 @@ public class MekSummaryCache {
         interrupted = false;
         disposeInstance = false;
 
-        File unit_cache_path = new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile();
-        long lastModified = unit_cache_path.exists() ? unit_cache_path.lastModified() : 0L;
+        File unitCachePath = new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile();
+        long lastModified = unitCachePath.exists() ? unitCachePath.lastModified() : 0L;
 
         instance.loader = new Thread(() -> instance.refreshCache(lastModified, ignoreUnofficial),
               "Mek Cache Loader");
@@ -206,11 +208,14 @@ public class MekSummaryCache {
         }
     }
 
+    @Nullable
     public MekSummary getMek(String sRef) {
         block();
+
         if (nameMap.containsKey(sRef)) {
             return nameMap.get(sRef);
         }
+
         return fileNameMap.get(sRef);
     }
 
@@ -235,8 +240,7 @@ public class MekSummaryCache {
         loadReport.append("Reading unit files:\n");
 
         if (!ignoreUnofficial) {
-            File unit_cache_path = new MegaMekFile(getUnitCacheDir(),
-                  FILENAME_UNITS_CACHE).getFile();
+            File unit_cache_path = new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile();
             // check the cache
             try {
                 if (unit_cache_path.exists()) {
@@ -270,8 +274,7 @@ public class MekSummaryCache {
                     inputStream.close();
                 }
             } catch (Exception ex) {
-                loadReport.append("  Unable to load unit cache: ")
-                      .append(ex.getMessage()).append("\n");
+                loadReport.append("  Unable to load unit cache: ").append(ex.getMessage()).append("\n");
                 logger.error(loadReport.toString(), ex);
             }
         }
@@ -294,7 +297,7 @@ public class MekSummaryCache {
         // dir
         if (!ignoreUnofficial) {
             // load units from the MM internal user data dir
-            File userDataUnits = new File(Configuration.userdataDir(), Configuration.unitsDir().toString());
+            File userDataUnits = new File(Configuration.userDataDir(), Configuration.unitsDir().toString());
             if (userDataUnits.isDirectory()) {
                 bNeedsUpdate |= loadMeksFromDirectory(vMeks, sKnownFiles, lLastCheck, userDataUnits, false);
             }
@@ -414,18 +417,18 @@ public class MekSummaryCache {
         Set<String> knownFiles = new HashSet<>();
         // Loop through current contents and make sure the file is still there.
         // Note which files are represented so we can skip them if they haven't changed
-        for (MekSummary ms : data) {
+        for (MekSummary mekSummary : data) {
             if (interrupted) {
                 done();
                 return;
             }
-            File source = ms.getSourceFile();
+            File source = mekSummary.getSourceFile();
             if (source.exists()) {
-                units.add(ms);
-                if (null == ms.getEntryName()) {
+                units.add(mekSummary);
+                if (null == mekSummary.getEntryName()) {
                     knownFiles.add(source.toString());
                 } else {
-                    knownFiles.add(ms.getEntryName());
+                    knownFiles.add(mekSummary.getEntryName());
                 }
             }
         }
@@ -542,9 +545,8 @@ public class MekSummaryCache {
         } else if ((e instanceof Aero)) {
             ms.setCockpitType(((Aero) e).getCockpitType());
         } else {
-            // TODO: There's currently no NO_COCKPIT type value, if this value
-            // existed, Entity could have a getCockpitType function and this
-            // logic could become unnecessary
+            // TODO: There's currently no NO_COCKPIT type value, if this value existed, Entity could have a
+            //  getCockpitType function and this logic could become unnecessary
             ms.setCockpitType(-2);
         }
 

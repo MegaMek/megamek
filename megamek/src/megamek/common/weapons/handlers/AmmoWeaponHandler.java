@@ -51,7 +51,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
 import megamek.common.units.IBomber;
 import megamek.logging.MMLogger;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter

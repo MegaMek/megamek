@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2007-2008 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,9 +38,9 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Map;
 
-import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.Report;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 
 /**

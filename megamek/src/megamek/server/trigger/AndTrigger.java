@@ -36,19 +36,14 @@ package megamek.server.trigger;
 import java.util.Arrays;
 import java.util.List;
 
+import jakarta.annotation.Nonnull;
 import megamek.common.game.IGame;
 
 /**
  * This Trigger implements a logic AND for all its subtriggers, i.e. it triggers only at a moment when all its
  * subtriggers trigger at the same time.
  */
-public class AndTrigger implements Trigger {
-
-    private final List<Trigger> triggers;
-
-    public AndTrigger(List<Trigger> triggers) {
-        this.triggers = triggers;
-    }
+public record AndTrigger(List<Trigger> triggers) implements Trigger {
 
     public AndTrigger(Trigger... triggers) {
         this(Arrays.asList(triggers));
@@ -60,6 +55,7 @@ public class AndTrigger implements Trigger {
     }
 
     @Override
+    @Nonnull
     public String toString() {
         List<String> triggerStrings = triggers.stream().map(Trigger::toString).toList();
         return "(" + String.join(" and ", triggerStrings) + ")";

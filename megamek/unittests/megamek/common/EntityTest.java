@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -93,8 +93,8 @@ class EntityTest {
 
     @Test
     void testFormatHeat() {
-        Entity e = EntityLoader.loadFromFile("Sagittaire SGT-14D.mtf");
-        assertEquals("28, 42 with RHS", e.formatHeat());
+        Entity entity = EntityLoader.loadFromFile("Sagittaire SGT-14D.mtf");
+        assertEquals("28, 42 with RHS", entity.formatHeat());
     }
 
     /**
@@ -123,10 +123,10 @@ class EntityTest {
     @Test
     void testCanonUnitInCanonUnitListFile() {
         MekFileParser.initCanonUnitNames(EntityLoader.RESOURCE_FOLDER, "mockOfficialUnitList.txt");
-        Entity e = EntityLoader.loadFromFile("Exterminator EXT-4A.mtf");
-        assertTrue(e.isCanon());
-        e = EntityLoader.loadFromFile("Kanga Medium Hovertank.blk");
-        assertTrue(e.isCanon());
+        Entity entity = EntityLoader.loadFromFile("Exterminator EXT-4A.mtf");
+        assertTrue(entity.isCanon());
+        entity = EntityLoader.loadFromFile("Kanga Medium Hovertank.blk");
+        assertTrue(entity.isCanon());
     }
 
     /**

@@ -65,137 +65,137 @@ public class BLKJumpshipFile extends BLKFile implements IMekLoader {
     @Override
     public Entity getEntity() throws EntityLoadingException {
 
-        Jumpship a = new Jumpship();
-        setBasicEntityData(a);
+        Jumpship jumpship = new Jumpship();
+        setBasicEntityData(jumpship);
 
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find weight block.");
         }
-        a.setWeight(dataFile.getDataAsDouble("tonnage")[0]);
+        jumpship.setWeight(dataFile.getDataAsDouble("tonnage")[0]);
 
         if (dataFile.exists("originalBuildYear")) {
-            a.setOriginalBuildYear(dataFile.getDataAsInt("originalBuildYear")[0]);
+            jumpship.setOriginalBuildYear(dataFile.getDataAsInt("originalBuildYear")[0]);
         }
 
         // Crew
         if (!dataFile.exists("crew")) {
             throw new EntityLoadingException("Could not find crew block.");
         }
-        a.setNCrew(dataFile.getDataAsInt("crew")[0]);
+        jumpship.setNCrew(dataFile.getDataAsInt("crew")[0]);
 
         // Marines
         if (!dataFile.exists("marines")) {
             LOGGER.error("Could not find marines block.");
             // throw new EntityLoadingException("Could not find marines block.");
         }
-        a.setNMarines(dataFile.getDataAsInt("marines")[0]);
+        jumpship.setNMarines(dataFile.getDataAsInt("marines")[0]);
 
         // Battle Armor
         if (!dataFile.exists("battlearmor")) {
             LOGGER.error("Could not find battlearmor block.");
             // throw new EntityLoadingException("Could not find battlearmor block.");
         }
-        a.setNBattleArmor(dataFile.getDataAsInt("battlearmor")[0]);
+        jumpship.setNBattleArmor(dataFile.getDataAsInt("battlearmor")[0]);
 
         // Passengers
         if (!dataFile.exists("passengers")) {
             throw new EntityLoadingException("Could not find passenger block.");
         }
-        a.setNPassenger(dataFile.getDataAsInt("passengers")[0]);
+        jumpship.setNPassenger(dataFile.getDataAsInt("passengers")[0]);
 
         if (dataFile.exists("officers")) {
-            a.setNOfficers(dataFile.getDataAsInt("officers")[0]);
+            jumpship.setNOfficers(dataFile.getDataAsInt("officers")[0]);
         }
 
         if (dataFile.exists("gunners")) {
-            a.setNGunners(dataFile.getDataAsInt("gunners")[0]);
+            jumpship.setNGunners(dataFile.getDataAsInt("gunners")[0]);
         }
 
         // Other Passengers
         if (!dataFile.exists("other_crew")) {
-            LOGGER.error("Could not find other crew block.");
             // throw new EntityLoadingException("Could not find other_crew block.");
         }
-        a.setNOtherCrew(dataFile.getDataAsInt("other_crew")[0]);
+
+        jumpship.setNOtherCrew(dataFile.getDataAsInt("other_crew")[0]);
 
         if (!dataFile.exists("life_boat")) {
             throw new EntityLoadingException("Could not find life boat block.");
         }
-        a.setLifeBoats(dataFile.getDataAsInt("life_boat")[0]);
+        jumpship.setLifeBoats(dataFile.getDataAsInt("life_boat")[0]);
 
         if (!dataFile.exists("escape_pod")) {
             throw new EntityLoadingException("Could not find escape pod block.");
         }
-        a.setEscapePods(dataFile.getDataAsInt("escape_pod")[0]);
+        jumpship.setEscapePods(dataFile.getDataAsInt("escape_pod")[0]);
 
-        // get a movement mode - lets try Aerodyne
+        // get jumpship movement mode - lets try Aerodyne
         EntityMovementMode nMotion = EntityMovementMode.AERODYNE;
-        a.setMovementMode(nMotion);
+        jumpship.setMovementMode(nMotion);
 
         // figure out structural integrity
         if (!dataFile.exists("structural_integrity")) {
             throw new EntityLoadingException("Could not find structural integrity block.");
         }
-        a.setOSI(dataFile.getDataAsInt("structural_integrity")[0]);
+        jumpship.setOSI(dataFile.getDataAsInt("structural_integrity")[0]);
 
         // figure out heat
         if (!dataFile.exists("heatsinks")) {
             throw new EntityLoadingException("Could not find heats inks block.");
         }
-        a.setHeatSinks(dataFile.getDataAsInt("heatsinks")[0]);
-        a.setOHeatSinks(dataFile.getDataAsInt("heatsinks")[0]);
+        jumpship.setHeatSinks(dataFile.getDataAsInt("heatsinks")[0]);
+        jumpship.setOHeatSinks(dataFile.getDataAsInt("heatsinks")[0]);
         if (!dataFile.exists("sink_type")) {
             throw new EntityLoadingException("Could not find sink_type block.");
         }
-        a.setHeatType(dataFile.getDataAsInt("sink_type")[0]);
+        jumpship.setHeatType(dataFile.getDataAsInt("sink_type")[0]);
 
         // figure out fuel
         if (!dataFile.exists("fuel")) {
             throw new EntityLoadingException("Could not find fuel block.");
         }
-        a.setFuel(dataFile.getDataAsInt("fuel")[0]);
+        jumpship.setFuel(dataFile.getDataAsInt("fuel")[0]);
 
-        a.setOriginalWalkMP(0);
+        jumpship.setOriginalWalkMP(0);
 
-        a.setEngine(new Engine(400, 0, 0));
+        jumpship.setEngine(new Engine(400, 0, 0));
 
         if (dataFile.exists("lithium-fusion")) {
-            a.setLF(true);
+            jumpship.setLF(true);
         }
 
         if (dataFile.exists("hpg")) {
-            a.setHPG(true);
+            jumpship.setHPG(true);
         }
 
         if (dataFile.exists("sail")) {
-            a.setSail(dataFile.getDataAsInt("sail")[0] != 0);
+            jumpship.setSail(dataFile.getDataAsInt("sail")[0] != 0);
         }
 
         // Grav Decks - two approaches
-        // First, the old method, where a number of grav decks for each category is
+        // First, the old method, where jumpship number of grav decks for each category is
         // specified
         // This doesn't allow us to specify precise size
         if (dataFile.exists("grav_deck")) {
-            a.setGravDeck(dataFile.getDataAsInt("grav_deck")[0]);
+            jumpship.setGravDeck(dataFile.getDataAsInt("grav_deck")[0]);
         }
         if (dataFile.exists("grav_deck_large")) {
-            a.setGravDeckLarge(dataFile.getDataAsInt("grav_deck_large")[0]);
+            jumpship.setGravDeckLarge(dataFile.getDataAsInt("grav_deck_large")[0]);
         }
         if (dataFile.exists("grav_deck_huge")) {
-            a.setGravDeckHuge(dataFile.getDataAsInt("grav_deck_huge")[0]);
+            jumpship.setGravDeckHuge(dataFile.getDataAsInt("grav_deck_huge")[0]);
         }
-        // Second, the new method, where a white space separated list of numbers is
+        // Second, the new method, where jumpship white space separated list of numbers is
         // given
-        // Each number represents a distinct grav deck, with the specified size
+        // Each number represents jumpship distinct grav deck, with the specified size
         if (dataFile.exists("grav_decks")) {
             String[] tokens = dataFile.getDataAsString("grav_decks");
             for (String token : tokens) {
-                a.addGravDeck(Integer.parseInt(token));
+                jumpship.addGravDeck(Integer.parseInt(token));
             }
         }
-        // Add a damage tracker value for each grav deck
-        for (int i = 0; i < a.getTotalGravDeck(); i++) {
-            a.initializeGravDeckDamage(i);
+        // Add jumpship damage tracker value for each grav deck
+        for (int i = 0; i < jumpship.getTotalGravDeck(); i++) {
+            jumpship.initializeGravDeckDamage(i);
         }
 
         // Switch older files with standard armor to aerospace
@@ -206,18 +206,18 @@ public class BLKJumpshipFile extends BLKFile implements IMekLoader {
                 at = EquipmentType.T_ARMOR_AEROSPACE;
             }
         }
-        a.setArmorType(at);
-        setArmorTechLevelFromDataFile(a);
+        jumpship.setArmorType(at);
+        setArmorTechLevelFromDataFile(jumpship);
         if (dataFile.exists("internal_type")) {
-            a.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
+            jumpship.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
         } else {
-            a.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
+            jumpship.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
         }
 
         if (dataFile.exists("designtype")) {
-            a.setDesignType(dataFile.getDataAsInt("designtype")[0]);
+            jumpship.setDesignType(dataFile.getDataAsInt("designtype")[0]);
         } else {
-            a.setDesignType(Aero.CIVILIAN);
+            jumpship.setDesignType(Aero.CIVILIAN);
         }
 
         if (!dataFile.exists("armor")) {
@@ -231,35 +231,35 @@ public class BLKJumpshipFile extends BLKFile implements IMekLoader {
         }
 
         for (int i = 0; i < armor.length; i++) {
-            a.initializeArmor(armor[i], i);
+            jumpship.initializeArmor(armor[i], i);
         }
-        a.initializeArmor(IArmorState.ARMOR_NA, Jumpship.LOC_HULL);
+        jumpship.initializeArmor(IArmorState.ARMOR_NA, Jumpship.LOC_HULL);
 
-        a.autoSetInternal();
-        a.autoSetThresh();
-        a.initializeKFIntegrity();
-        a.initializeSailIntegrity();
-        a.recalculateTechAdvancement();
+        jumpship.autoSetInternal();
+        jumpship.autoSetThresh();
+        jumpship.initializeKFIntegrity();
+        jumpship.initializeSailIntegrity();
+        jumpship.recalculateTechAdvancement();
 
-        for (int loc = 0; loc < a.locations(); loc++) {
-            loadEquipment(a, a.getLocationName(loc), loc);
+        for (int loc = 0; loc < jumpship.locations(); loc++) {
+            loadEquipment(jumpship, jumpship.getLocationName(loc), loc);
         }
 
         // legacy
-        loadEquipment(a, "Front Right Side", Jumpship.LOC_FRS);
-        loadEquipment(a, "Front Left Side", Jumpship.LOC_FLS);
+        loadEquipment(jumpship, "Front Right Side", Jumpship.LOC_FRS);
+        loadEquipment(jumpship, "Front Left Side", Jumpship.LOC_FLS);
 
-        addTransports(a);
+        addTransports(jumpship);
 
         // get docking collars (legacy BLK files)
         int docks = dataFile.getDataAsInt("docking_collar")[0];
         while (docks > 0) {
-            a.addTransporter(new DockingCollar(a.getTransports().size() + 1));
+            jumpship.addTransporter(new DockingCollar(jumpship.getTransports().size() + 1));
             docks--;
         }
-        a.setArmorTonnage(a.getArmorWeight());
-        loadQuirks(a);
-        return a;
+        jumpship.setArmorTonnage(jumpship.getArmorWeight());
+        loadQuirks(jumpship);
+        return jumpship;
     }
 
     protected void loadEquipment(Jumpship a, String sName, int nLoc) throws EntityLoadingException {

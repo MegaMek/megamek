@@ -39,7 +39,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
@@ -57,9 +58,6 @@ public class MockGenerators {
      * Generates a mock game object. Sets up some values for the passed-in entities as well (game IDs, and the game
      * object itself)
      *
-     * @param entities
-     *
-     * @return
      */
     public static Game generateMockGame(List<Entity> entities, Board mockBoard) {
 
@@ -82,7 +80,6 @@ public class MockGenerators {
     /**
      * Generates a MockBoard object.
      *
-     * @return
      */
     public static Board generateMockBoard() {
         // we'll be on a nice, empty, 20x20 board, not in space.
@@ -103,7 +100,6 @@ public class MockGenerators {
      * @param y          Y Coord on Board
      * @param mockEntity The Entity that we are mocking
      *
-     * @return
      */
 
     public static Entity generateMockEntity(int x, int y, Entity mockEntity) {
@@ -132,7 +128,6 @@ public class MockGenerators {
      * @param x X Coord on Board
      * @param y Y Coord on Board
      *
-     * @return
      */
 
     public static Entity generateMockBipedMek(int x, int y) {
@@ -147,7 +142,6 @@ public class MockGenerators {
      * @param x X Coord on Board
      * @param y Y Coord on Board
      *
-     * @return
      */
     public static Entity generateMockAerospace(int x, int y) {
         final Entity mockAero = mock(Aero.class);
@@ -159,13 +153,12 @@ public class MockGenerators {
     }
 
     /**
-     * Generates a {@link MockPath} object when passed a given entity and coords to move to.
+     * Generates a Mocked {@link MovePath} object when passed a given entity and coords to move to.
      *
-     * @param x          Where on the x axis to set the initial point.
-     * @param y          Where on the y axis to set the initial point.
+     * @param x          Where on the x-axis to set the initial point.
+     * @param y          Where on the y-axis to set the initial point.
      * @param mockEntity The {@link Entity} to start with
      *
-     * @return
      */
     public static MovePath generateMockPath(int x, int y, Entity mockEntity) {
         final MovePath mockPath = mock(MovePath.class);
@@ -180,12 +173,11 @@ public class MockGenerators {
     }
 
     /**
-     * Generates a {@link MockPath} object when passed a given entity and coords to move to.
+     * Generates a Mocked {@link MovePath} object when passed a given entity and coords to move to.
      *
      * @param coords     The defined {@see Coords} to set the entity to.
      * @param mockEntity A mocked {@see Entity} to set a path for.
      *
-     * @return
      */
     public static MovePath generateMockPath(Coords coords, Entity mockEntity) {
         final MovePath mockPath = mock(MovePath.class);

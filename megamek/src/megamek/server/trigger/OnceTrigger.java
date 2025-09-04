@@ -38,7 +38,7 @@ import megamek.common.game.IGame;
 /**
  * This Trigger can be used to turn a given sub-trigger into a one-time-only trigger. This is useful for scenarios or
  * creating triggers programmatically (e.g. in MHQ). Regardless of how often the given sub-trigger would react, this
- * trigger will remember if it ever returned true before. If it did, it will not return true a second time and it will
+ * trigger will remember if it ever returned true before. If it did, it will not return true a second time, and it will
  * not even call its sub-trigger again.
  */
 public final class OnceTrigger implements Trigger {

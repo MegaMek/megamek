@@ -5,16 +5,33 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   dependency-submission:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout project sources
+      - name: Checkout Data Repo
         uses: actions/checkout@v5
+        with:
+          repository: megamek/mm-data
+          path: mm-data
+
+      - name: "Check out MegaMek"
+        uses: actions/checkout@v5
+        with:
+          path: megamek
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
 
       - name: Generate and submit dependency graph
         uses: gradle/actions/dependency-submission@v4
         with:
+          build-root-directory: megamek
           build-scan-publish: true
           build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
           build-scan-terms-of-use-agree: "yes"

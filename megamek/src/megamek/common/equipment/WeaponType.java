@@ -754,8 +754,6 @@ public class WeaponType extends EquipmentType {
     protected int waterLongRange;
     protected int waterExtremeRange;
 
-    protected double bv;
-
     // the class of weapon for infantry damage
     public int infDamageClass = WEAPON_DIRECT_FIRE;
 

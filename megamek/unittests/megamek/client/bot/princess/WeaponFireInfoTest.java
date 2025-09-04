@@ -195,7 +195,7 @@ class WeaponFireInfoTest {
         when(mockWeaponType.getShortRange()).thenReturn(1);
         when(mockWeaponType.getMediumRange()).thenReturn(2);
         when(mockWeaponType.getLongRange()).thenReturn(8);
-        when(mockWeapon.getDesc()).thenReturn("IS Arrow IV Missile SystemFluff");
+        when(mockWeapon.getDesc()).thenReturn("IS Arrow IV Missile System");
     }
 
     private WeaponFireInfo setupWFI() {

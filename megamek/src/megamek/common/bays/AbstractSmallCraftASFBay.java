@@ -48,7 +48,7 @@ public abstract class AbstractSmallCraftASFBay extends UnitBay {
         hasArts = arts;
     }
 
-    /** @return True if this bay has ARTS (Advanced Robotic Transport SystemFluff, IO p.147). */
+    /** @return True if this bay has ARTS (Advanced Robotic Transport System, IO p.147). */
     public boolean hasARTS() {
         return hasArts;
     }

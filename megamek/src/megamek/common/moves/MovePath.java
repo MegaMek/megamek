@@ -1400,7 +1400,7 @@ public class MovePath implements Cloneable, Serializable {
     @SuppressWarnings("unused")
     private void notSoLazyPathfinder(final Coords dest, final MoveStepType type, final int timeLimit) {
         final int MAX_CANDIDATES = 100;
-        final long endTime = System.currentTimeMillis() + timeLimit;
+        final long endTime = java.lang.System.currentTimeMillis() + timeLimit;
 
         MoveStepType step = type;
         if (step != MoveStepType.BACKWARDS) {
@@ -1481,7 +1481,7 @@ public class MovePath implements Cloneable, Serializable {
                     bestPath = front;
                 }
 
-                if (System.currentTimeMillis() > endTime) {
+                if (java.lang.System.currentTimeMillis() > endTime) {
                     keepLooping = false;
                     LOGGER.warn("Time limit reached searching for path!");
                 }
@@ -1978,9 +1978,9 @@ public class MovePath implements Cloneable, Serializable {
         Princess princess = new Princess("test", "test", 2020);
         princess.startPrecognition();
 
-        long marker1 = System.currentTimeMillis();
+        long marker1 = java.lang.System.currentTimeMillis();
         MovePath finPath = dpf.findPathToCoords(entity, destinationSet, false, princess.getClusterTracker());
-        long marker2 = System.currentTimeMillis();
+        long marker2 = java.lang.System.currentTimeMillis();
         long marker3 = marker2 - marker1;
 
         return finPath;

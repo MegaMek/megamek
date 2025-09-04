@@ -85,7 +85,7 @@ public class WarShipCostCalculator {
         driveCost[driveIdx++] += 50000.0 * warShip.getKFIntegrity();
         // Sail
         driveCost[driveIdx++] += 50000.0 * (30 + (warShip.getWeight() / 20000.0));
-        // Charging SystemFluff
+        // Charging System
         driveCost[driveIdx++] += 500000.0 + (200000.0 * warShip.getDocks(true));
 
         for (int i = 0; i < driveIdx; i++) {
@@ -163,7 +163,7 @@ public class WarShipCostCalculator {
 
         String[] systemNames = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunnery Control Systems",
                                  "Structural Integrity", "Drive Unit", "Engine", "Engine Control Unit",
-                                 "KF Drive", "KF Drive Support SystemFluff", "Attitude Thrusters", "Docking Collars",
+                                 "KF Drive", "KF Drive Support System", "Attitude Thrusters", "Docking Collars",
                                  "Fuel Tanks", "Armor", "Heat Sinks", "Life Boats/Escape Pods", "Grav Decks",
                                  "Bays", "Quarters", "HPG", "Weapons/Equipment", "Weight Multiplier" };
         CostCalculator.fillInReport(costReport, warShip, ignoreAmmo, systemNames, 21, cost, costs);

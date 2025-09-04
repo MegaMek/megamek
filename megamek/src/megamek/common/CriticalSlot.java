@@ -247,9 +247,9 @@ public class CriticalSlot implements Serializable {
 
     @Override
     public String toString() {
-        String typeString = type == 0 ? "SystemFluff Slot" : "Equipment Slot";
+        String typeString = type == 0 ? "System Slot" : "Equipment Slot";
         List<String> state = new ArrayList<>();
-        if (type == 0) {state.add("SystemFluff No: " + index);}
+        if (type == 0) {state.add("System No: " + index);}
         if (mount != null) {
             state.add("[" + mount.equipmentIndex() + "] " + mount.getType().getInternalName()
                   + (mount.isWeaponGroup() ? " -Group-" : ""));

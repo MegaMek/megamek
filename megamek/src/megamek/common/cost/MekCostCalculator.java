@@ -182,8 +182,8 @@ public class MekCostCalculator {
         costs[i] = -weightMultiplier; // negative just marks it as multiplier
         cost = Math.round(cost * weightMultiplier);
         String[] systemNames = { "Cockpit", "Life Support", "Sensors", "Myomer", "Structure", "Actuators",
-                                 "Engine", "Gyro", "Jump Jets", "Heatsinks", "Full Head Ejection SystemFluff",
-                                 "Armored SystemFluff Components", "Armor", "Equipment",
+                                 "Engine", "Gyro", "Jump Jets", "Heatsinks", "Full Head Ejection System",
+                                 "Armored System Components", "Armor", "Equipment",
                                  "Conversion Equipment", "Quirk Multiplier", "Omni Multiplier", "Weight Multiplier" };
         CostCalculator.fillInReport(costReport, mek, ignoreAmmo, systemNames, 13, cost, costs);
         return cost;

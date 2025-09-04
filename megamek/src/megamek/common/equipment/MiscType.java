@@ -2093,7 +2093,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createExtendedJumpJet() {
         MiscType misc = new MiscType();
         // TODO Game Rules.
-        misc.name = "Extended Jump Jet SystemFluff";
+        misc.name = "Extended Jump Jet System";
         misc.setInternalName(EquipmentTypeLookup.EXTENDED_JUMP_JET_SYSTEM);
         misc.addLookupName("XJJ");
         misc.shortName = "Extended Jump Jet";
@@ -3641,7 +3641,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    // Two SystemFluff Sneak Suits
+    // Two System Sneak Suits
 
     public static MiscType createISSneakCamoIRInfArmor() {
         MiscType misc = new MiscType();
@@ -3712,7 +3712,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    // Three SystemFluff Sneak Suits
+    // Three System Sneak Suits
 
     public static MiscType createISSneakThreeSystemInfArmor() {
         MiscType misc = new MiscType();
@@ -3739,7 +3739,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISArmoredMotiveSystem() {
         MiscType misc = new MiscType();
-        misc.name = "Armored Motive SystemFluff";
+        misc.name = "Armored Motive System";
         misc.setInternalName("ISArmoredMotiveSystem");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 0;
@@ -3763,7 +3763,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createCLArmoredMotiveSystem() {
         MiscType misc = new MiscType();
-        misc.name = "Armored Motive SystemFluff";
+        misc.name = "Armored Motive System";
         misc.setInternalName("CLArmoredMotiveSystem");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 0;
@@ -4377,10 +4377,10 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createC3SBS() {
         MiscType misc = new MiscType();
-        misc.name = "C3 Boosted SystemFluff (Slave)";
+        misc.name = "C3 Boosted System (Slave)";
         misc.setInternalName("ISC3BoostedSystemSlaveUnit");
-        misc.addLookupName("IS C3 Boosted SystemFluff Slave");
-        misc.addLookupName("C3 Boosted SystemFluff (C3BS) [Slave]");
+        misc.addLookupName("IS C3 Boosted System Slave");
+        misc.addLookupName("C3 Boosted System (C3BS) [Slave]");
         misc.shortName = "C3 Boosted Slave";
         misc.tonnage = 3;
         misc.criticalSlots = 2;
@@ -4736,7 +4736,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISMASS() {
         MiscType misc = new MiscType();
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        misc.name = "MechWarrior Aquatic Survival SystemFluff (MASS)";
+        misc.name = "MechWarrior Aquatic Survival System (MASS)";
 
         misc.setInternalName("ISMASS");
         misc.addLookupName("IS Mass");
@@ -4802,7 +4802,7 @@ public class MiscType extends EquipmentType {
         // TODO: add game rules for this
 
         MiscType misc = new MiscType();
-        misc.name = "Drone (Remote) Carrier Control SystemFluff";
+        misc.name = "Drone (Remote) Carrier Control System";
         misc.setInternalName("ISDroneCarrierControlSystem");
         misc.addLookupName("CLDroneCarrierControlSystem");
         misc.tonnage = TONNAGE_VARIABLE;
@@ -4836,7 +4836,7 @@ public class MiscType extends EquipmentType {
         // TODO: add game rules for this
 
         MiscType misc = new MiscType();
-        misc.name = "Drone (Remote) Operating SystemFluff";
+        misc.name = "Drone (Remote) Operating System";
         misc.setInternalName("ISDroneOperatingSystem");
         misc.addLookupName("CLDroneOperatingSystem");
         misc.addLookupName("ISDroneControlConsole");
@@ -4899,7 +4899,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createSmartRoboticControlSystem() {
         // TODO Game Rules.
         MiscType misc = new MiscType();
-        misc.name = "Smart Robotic Control SystemFluff (SRCS)";
+        misc.name = "Smart Robotic Control System (SRCS)";
         misc.setInternalName("SmartRoboticControlSystem");
         misc.shortName = "SRCS";
         misc.tonnage = TONNAGE_VARIABLE;
@@ -4930,7 +4930,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createImprovedSmartRoboticControlSystem() {
         // TODO Game Rules.
         MiscType misc = new MiscType();
-        misc.name = "Smart Robotic Control SystemFluff (SRCS) (Improved)";
+        misc.name = "Smart Robotic Control System (SRCS) (Improved)";
         misc.setInternalName("ImprovedSmartRoboticControlSystem");
         misc.addLookupName("ImprovedSRCS");
         misc.shortName = "Improved SRCS";
@@ -4961,7 +4961,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createShieldedAeroSRCS() {
         // TODO Game Rules.
         MiscType misc = new MiscType();
-        misc.name = "Shielded Aerospace Smart Robotic Control SystemFluff";
+        misc.name = "Shielded Aerospace Smart Robotic Control System";
         misc.setInternalName("ShieldedAeroSRCS");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 0;
@@ -4987,7 +4987,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createImprovedShieldedAeroSRCS() {
         // TODO Game Rules.
         MiscType misc = new MiscType();
-        misc.name = "Shielded Aerospace Smart Robotic Control SystemFluff (Improved)";
+        misc.name = "Shielded Aerospace Smart Robotic Control System (Improved)";
         misc.setInternalName("ImprovedShieldedAeroSRCS");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 0;
@@ -5013,7 +5013,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createEliteShieldedAeroSRCS() {
         // TODO Game Rules.
         MiscType misc = new MiscType();
-        misc.name = "Shielded Aerospace Smart Robotic Control SystemFluff (Elite)";
+        misc.name = "Shielded Aerospace Smart Robotic Control System (Elite)";
         misc.setInternalName("EliteShieldedAeroSRCS");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 0;
@@ -5039,7 +5039,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCasparDroneControlSystem() {
         // TODO Game Rules.
         MiscType misc = new MiscType();
-        misc.name = "SDS (Caspar) Drone Control SystemFluff";
+        misc.name = "SDS (Caspar) Drone Control System";
         misc.setInternalName("CasparDroneControlSystem");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 0;
@@ -5065,7 +5065,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createImprovedCasparDroneControlSystem() {
         // TODO Game Rules.
         MiscType misc = new MiscType();
-        misc.name = "SDS (Caspar) Drone Control SystemFluff (Improved)";
+        misc.name = "SDS (Caspar) Drone Control System (Improved)";
         misc.setInternalName("ImprovedCasparDroneControlSystem");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 0;
@@ -5091,7 +5091,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCasparIIDroneControlSystem() {
         // TODO Game Rules.
         MiscType misc = new MiscType();
-        misc.name = "Caspar II Advanced Smart Robotic Control SystemFluff";
+        misc.name = "Caspar II Advanced Smart Robotic Control System";
         misc.setInternalName("CasparIIDroneControlSystem");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 0;
@@ -5117,7 +5117,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createImprovedCasparIIDroneControlSystem() {
         // TODO Game Rules.
         MiscType misc = new MiscType();
-        misc.name = "Caspar II Advanced Smart Robotic Control SystemFluff (Improved)";
+        misc.name = "Caspar II Advanced Smart Robotic Control System (Improved)";
         misc.setInternalName("ImprovedCasparIIDroneControlSystem");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 0;
@@ -5168,7 +5168,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createDirectTacticalAnalysisSystem() {
         // TODO Game Rules.
         MiscType misc = new MiscType();
-        misc.name = "Direct Tactical Analysis Control (DTAC) SystemFluff";
+        misc.name = "Direct Tactical Analysis Control (DTAC) System";
         misc.shortName = "DTAC";
         misc.setInternalName("DirectTacticalAnalysisSystem");
         misc.tonnage = TONNAGE_VARIABLE;
@@ -5192,7 +5192,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createSDSSelfDestructSystem() {
         // TODO Game Rules.
         MiscType misc = new MiscType();
-        misc.name = "SDS Self-Destruct SystemFluff";
+        misc.name = "SDS Self-Destruct System";
         misc.setInternalName("SDSSelfDestructSystem");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 0;
@@ -5220,7 +5220,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createSDSJammerSystem() {
         // TODO Game Rules.
         MiscType misc = new MiscType();
-        misc.name = "SLDF SDS Jammer SystemFluff";
+        misc.name = "SLDF SDS Jammer System";
         misc.setInternalName("SDSJammerSystem");
         misc.tonnage = 30000;
         misc.criticalSlots = 0;
@@ -5263,7 +5263,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    // TODO BattleMek Full-Head Ejection SystemFluff - IO pg 40 - This was at one
+    // TODO BattleMek Full-Head Ejection System - IO pg 40 - This was at one
     // point a quirk
 
     public static MiscType createIMEjectionSeat() {
@@ -5867,7 +5867,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createWatchdogECM() {
         MiscType misc = new MiscType();
 
-        misc.name = "Watchdog Composite Electronic Warfare SystemFluff (CEWS)";
+        misc.name = "Watchdog Composite Electronic Warfare System (CEWS)";
         misc.setInternalName(Sensor.WATCHDOG);
         misc.addLookupName("Watchdog ECM Suite");
         misc.addLookupName("WatchdogECM");
@@ -5909,7 +5909,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createNovaCEWS() {
         MiscType misc = new MiscType();
 
-        misc.name = "Nova Combined Electronic Warfare SystemFluff (CEWS)";
+        misc.name = "Nova Combined Electronic Warfare System (CEWS)";
         misc.setInternalName(Sensor.NOVA);
         misc.addLookupName("Nova CEWS");
         misc.addLookupName("NovaCEWS");
@@ -6387,7 +6387,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Apollo MRM FCS";
         misc.setInternalName("ISApollo");
-        misc.addLookupName("IS MRM Apollo Fire Control SystemFluff");
+        misc.addLookupName("IS MRM Apollo Fire Control System");
         misc.addLookupName("IS MRM Apollo FCS");
         misc.tonnage = 1.0f;
         misc.criticalSlots = 1;
@@ -7117,9 +7117,9 @@ public class MiscType extends EquipmentType {
     public static MiscType createLightFluidSuctionSystemMek() {
         MiscType misc = new MiscType();
         // CHECKSTYLE IGNORE ForbiddenWords FOR 3 LINES
-        misc.name = "Fluid Suction SystemFluff (Light - Mech)";
+        misc.name = "Fluid Suction System (Light - Mech)";
         misc.setInternalName(EquipmentTypeLookup.FLUID_SUCTION_LIGHT_MEK);
-        misc.addLookupName("Light Fluid Suction SystemFluff (Mech)");
+        misc.addLookupName("Light Fluid Suction System (Mech)");
 
         misc.criticalSlots = 1;
         misc.tonnage = .5;
@@ -7146,9 +7146,9 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createLightFluidSuctionSystem() {
         MiscType misc = new MiscType();
-        misc.name = "Fluid Suction SystemFluff (Light - Vehicle)";
+        misc.name = "Fluid Suction System (Light - Vehicle)";
         misc.setInternalName(EquipmentTypeLookup.FLUID_SUCTION_LIGHT_VEE);
-        misc.addLookupName("Light Fluid Suction SystemFluff (Vehicle)");
+        misc.addLookupName("Light Fluid Suction System (Vehicle)");
         misc.criticalSlots = 1;
         misc.tankSlots = 1;
         misc.tonnage = 0.015;
@@ -7176,10 +7176,10 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createFluidSuctionSystem() {
         MiscType misc = new MiscType();
-        misc.name = "Fluid Suction SystemFluff (Standard)";
+        misc.name = "Fluid Suction System (Standard)";
         misc.setInternalName(EquipmentTypeLookup.FLUID_SUCTION);
-        misc.addLookupName("Fluid Suction SystemFluff");
-        misc.addLookupName("Fluid Suction SystemFluff[Standard]");
+        misc.addLookupName("Fluid Suction System");
+        misc.addLookupName("Fluid Suction System[Standard]");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 1;
         misc.tankSlots = 1;
@@ -7495,10 +7495,10 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    // Large Craft SystemFluff (IO pg 42)
+    // Large Craft System (IO pg 42)
     /*
      * Docking Hardpoint Dropship KF Boom Space Station K-F Adaptor Jump Sails Word
-     * of Blacke Super-Jump Control SystemFluff Components, KF Drive Components, Drive
+     * of Blacke Super-Jump Control System Components, KF Drive Components, Drive
      * Components, The above items are equipment but not sure if they should be done
      * in MiscType or calculated elsewhere as structure.
      */
@@ -8260,7 +8260,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISHarJel() {
         MiscType misc = new MiscType();
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        misc.name = "BattleMech/Vehicle HarJel SystemFluff";
+        misc.name = "BattleMech/Vehicle HarJel System";
 
         misc.setInternalName("IS HarJel");
         misc.addLookupName("IS HarJel");
@@ -8293,7 +8293,7 @@ public class MiscType extends EquipmentType {
         misc.shortName = "HarJel II";
         misc.name = "HarJel Repair Systems (HarJel II)";
         misc.setInternalName(misc.name);
-        misc.addLookupName("HarJel II Self-Repair SystemFluff");
+        misc.addLookupName("HarJel II Self-Repair System");
         misc.shortName = "Harjel II";
         misc.tonnage = 2;
         misc.criticalSlots = 1;
@@ -8323,7 +8323,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.shortName = "HarJel III";
         misc.name = "HarJel Repair Systems (HarJel III)";
-        misc.addLookupName("HarJel III Self-Repair SystemFluff");
+        misc.addLookupName("HarJel III Self-Repair System");
         misc.setInternalName(misc.name);
         misc.shortName = "Harjel III";
         misc.tonnage = 3;
@@ -8414,9 +8414,9 @@ public class MiscType extends EquipmentType {
     public static MiscType createNullSignatureSystem() {
         MiscType misc = new MiscType();
 
-        misc.name = "Null Signature SystemFluff";
-        misc.setInternalName("Mek Null Signature SystemFluff");
-        misc.addLookupName("Null Signature SystemFluff");
+        misc.name = "Null Signature System";
+        misc.setInternalName("Mek Null Signature System");
+        misc.addLookupName("Null Signature System");
         misc.addLookupName("NullSignatureSystem");
         misc.tonnage = 0;
         misc.criticalSlots = 7;
@@ -8665,9 +8665,9 @@ public class MiscType extends EquipmentType {
     public static MiscType createVoidSignatureSystem() {
         MiscType misc = new MiscType();
 
-        misc.name = "Void Signature SystemFluff";
-        misc.setInternalName("Mek Void Signature SystemFluff");
-        misc.addLookupName("Void Signature SystemFluff");
+        misc.name = "Void Signature System";
+        misc.setInternalName("Mek Void Signature System");
+        misc.addLookupName("Void Signature System");
         misc.addLookupName("VoidSignatureSystem");
         misc.tonnage = 0;
         misc.criticalSlots = 7;
@@ -8718,7 +8718,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createProtoMagneticClamp() {
         MiscType misc = new MiscType();
         // TODO Game Rules
-        misc.name = "Magnetic Clamps SystemFluff";
+        misc.name = "Magnetic Clamps System";
         misc.setInternalName("ProtoMagneticClamp");
         misc.addLookupName("Proto Magnetic Clamp");
         misc.tonnage = TONNAGE_VARIABLE;
@@ -8777,10 +8777,10 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         // TODO Game Rules
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        misc.name = "ProtoMech Quad Melee SystemFluff";
+        misc.name = "ProtoMech Quad Melee System";
 
         misc.setInternalName(EquipmentTypeLookup.PROTOMEK_QUAD_MELEE);
-        misc.shortName = "Quad Melee SystemFluff";
+        misc.shortName = "Quad Melee System";
         misc.tonnage = 1;
         misc.criticalSlots = 1;
         misc.cost = 70000;
@@ -8879,15 +8879,15 @@ public class MiscType extends EquipmentType {
 
     // RISC Equipment
 
-    // RISC Advanced Point Defense SystemFluff (Standard) - In Weapons
-    // RISC Advanced Point Defense SystemFluff (Battle Armor) - In Weapons
+    // RISC Advanced Point Defense System (Standard) - In Weapons
+    // RISC Advanced Point Defense System (Battle Armor) - In Weapons
 
     public static MiscType createRISCEmergencyCoolantSystem() {
         MiscType misc = new MiscType();
         // TODO Game Rules
-        misc.name = "RISC Emergency Coolant SystemFluff";
+        misc.name = "RISC Emergency Coolant System";
         misc.setInternalName("ISRISCEmergencyCoolantSystem");
-        misc.shortName = "RISC Coolant SystemFluff";
+        misc.shortName = "RISC Coolant System";
         misc.tonnage = 2;
         misc.criticalSlots = 1;
         misc.cost = 460000;
@@ -9330,12 +9330,12 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISAES() {
         MiscType misc = new MiscType();
-        misc.name = "Actuator Enhancement SystemFluff (AES)";
+        misc.name = "Actuator Enhancement System (AES)";
         misc.setInternalName("ISAES");
-        misc.addLookupName("IS Actuator Enhancement SystemFluff");
+        misc.addLookupName("IS Actuator Enhancement System");
         misc.addLookupName("ISActuatorEnhancementSystem");
         misc.addLookupName("CLAES");
-        misc.addLookupName("CL Actuator Enhancement SystemFluff");
+        misc.addLookupName("CL Actuator Enhancement System");
         misc.addLookupName("CLActuatorEnhancementSystem");
         misc.shortName = "AES";
         misc.tonnage = TONNAGE_VARIABLE;

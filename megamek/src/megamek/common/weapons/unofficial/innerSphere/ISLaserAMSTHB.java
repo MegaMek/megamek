@@ -55,7 +55,7 @@ public class ISLaserAMSTHB extends LaserWeapon {
         super();
         name = "Laser AMS (THB)";
         setInternalName("ISLaserAntiMissileSystemTHB");
-        addLookupName("IS Laser Anti-Missile SystemFluff (THB)");
+        addLookupName("IS Laser Anti-Missile System (THB)");
         addLookupName("IS Laser AMS (THB)");
         heat = 3;
         rackSize = 2;

@@ -618,7 +618,7 @@ public class WeaponType extends EquipmentType {
     // TODO Add game rules IO pg 84
     public static final WeaponTypeFlag F_INF_CLIMBING_CLAWS = WeaponTypeFlag.F_INF_CLIMBING_CLAWS;
 
-    // C3 Master Booster SystemFluff
+    // C3 Master Booster System
     public static final WeaponTypeFlag F_C3MBS = WeaponTypeFlag.F_C3MBS;
 
     // Naval Mass Drivers

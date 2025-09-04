@@ -214,10 +214,10 @@ public class TipOfTheDay {
             fadeTimer.stop();
         }
 
-        final long startTime = System.currentTimeMillis();
+        final long startTime = java.lang.System.currentTimeMillis();
 
         fadeTimer = new Timer(ANIMATION_FRAME_DELAY, e -> {
-            long elapsed = System.currentTimeMillis() - startTime;
+            long elapsed = java.lang.System.currentTimeMillis() - startTime;
             float progress = Math.min(1.0f, (float) elapsed / FADE_ANIMATION_DURATION);
 
             if (progress < 0.5f) {

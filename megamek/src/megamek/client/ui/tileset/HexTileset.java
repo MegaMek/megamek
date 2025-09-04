@@ -292,7 +292,7 @@ public class HexTileset implements BoardListener {
     public int incDepth = 0;
 
     public void loadFromFile(String filename) throws IOException {
-        long startTime = System.currentTimeMillis();
+        long startTime = java.lang.System.currentTimeMillis();
         // make input stream for board
         Reader r = new BufferedReader(new FileReader(new MegaMekFile(Configuration.hexesDir(), filename).getFile()));
         // read board, looking for "size"
@@ -353,7 +353,7 @@ public class HexTileset implements BoardListener {
         }
         r.close();
         themes.add(TRANSPARENT_THEME);
-        long endTime = System.currentTimeMillis();
+        long endTime = java.lang.System.currentTimeMillis();
 
         String loadInfo = String.format("Loaded %o base images, %o super images and %o orthographic images",
               bases.size(), superimposed.size(), orthographic.size());

@@ -2360,7 +2360,7 @@ public class Princess extends BotClient {
                 sendChat(message);
             }
 
-            final long startTime = System.currentTimeMillis();
+            final long startTime = java.lang.System.currentTimeMillis();
             getPathRanker(entity).initUnitTurn(entity, getGame());
             // fall tolerance range between 0.50 and 1.0
             final double fallTolerance = getBehaviorSettings().getFallShameIndex() / 20d + 0.50d;
@@ -2372,7 +2372,7 @@ public class Princess extends BotClient {
                   getEnemyEntities(),
                   getBehaviorSettings().isExclusiveHerding() ? getEntitiesOwned() : getFriendEntities());
 
-            final long stop_time = System.currentTimeMillis();
+            final long stop_time = java.lang.System.currentTimeMillis();
 
             // update path evaluation time estimate
             final double updatedEstimate = ((double) (stop_time - startTime)) / ((double) paths.size());

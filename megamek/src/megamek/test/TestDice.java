@@ -43,11 +43,11 @@ public class TestDice {
 
         System.out.println("testing dice, " + rolls + " rolls...");
 
-        long start = System.currentTimeMillis();
+        long start = java.lang.System.currentTimeMillis();
         for (long i = 0; i < rolls; i++) {
             hits[Compute.d6(2) - 2]++;
         }
-        long end = System.currentTimeMillis();
+        long end = java.lang.System.currentTimeMillis();
 
         System.out.println("done testing dice in " + (end - start) + " ms.");
         for (int i = 0; i < hits.length; i++) {

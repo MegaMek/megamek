@@ -54,6 +54,7 @@ import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
 import megamek.common.units.*;
+import megamek.common.units.System;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.attacks.InfantryAttack;
 import megamek.common.weapons.bayWeapons.BayWeapon;
@@ -450,7 +451,7 @@ public class BLKFile {
         if (dataFile.exists("systemManufacturers")) {
             for (String line : dataFile.getDataAsString("systemManufacturers")) {
                 String[] fields = line.split(":");
-                SystemFluff comp = SystemFluff.parse(fields[0]);
+                System comp = System.parse(fields[0]);
                 if ((null != comp) && (fields.length > 1)) {
                     e.getFluff().setSystemManufacturer(comp, fields[1]);
                 }
@@ -460,7 +461,7 @@ public class BLKFile {
         if (dataFile.exists("systemModels")) {
             for (String line : dataFile.getDataAsString("systemModels")) {
                 String[] fields = line.split(":");
-                SystemFluff comp = SystemFluff.parse(fields[0]);
+                System comp = System.parse(fields[0]);
                 if ((null != comp) && (fields.length > 1)) {
                     e.getFluff().setSystemModel(comp, fields[1]);
                 }
@@ -1532,7 +1533,7 @@ public class BLKFile {
             // Expand old-format to new-format size; initialize new field.
             String[] temp = new String[TRANSPORTER_FIELDS];
             // Copy initial two fields; later fields get defaults or are set later
-            System.arraycopy(numbersArray, 0, temp, 0, 2);
+            java.lang.System.arraycopy(numbersArray, 0, temp, 0, 2);
             // Fill in other fields with default/unset values
             temp[2] = String.valueOf(-1);
             temp[3] = "";

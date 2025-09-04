@@ -1026,7 +1026,7 @@ public class UnitEditorDialog extends JDialog {
                 gridBagConstraints.weightx = 1.0;
                 panSystem.add(driveCoilCrit, gridBagConstraints);
 
-                // Charging SystemFluff
+                // Charging System
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy++;
                 gridBagConstraints.weightx = 0.0;

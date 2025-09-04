@@ -57,10 +57,10 @@ public class ISLaserAMS extends LaserWeapon {
         super();
         name = "Laser AMS";
         setInternalName("ISLaserAntiMissileSystem");
-        addLookupName("IS Laser Anti-Missile SystemFluff");
+        addLookupName("IS Laser Anti-Missile System");
         addLookupName("IS Laser AMS");
         addLookupName("ISLaserAMS");
-        sortingName = "Anti-Missile SystemFluff Laser";
+        sortingName = "Anti-Missile System Laser";
         heat = 7;
         rackSize = 2;
         damage = 3; // for manual operation

@@ -50,7 +50,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
-import megamek.common.units.SystemFluff;
+import megamek.common.units.System;
 import megamek.common.util.AeroAVModCalculator;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
@@ -138,7 +138,7 @@ public class AeroTROView extends TROView {
     private void addFluff() {
         addMekVeeAeroFluff(aero);
         setModelData("frameDesc",
-              formatSystemFluff(SystemFluff.CHASSIS,
+              formatSystemFluff(System.CHASSIS,
                     aero.getFluff(),
                     () -> Messages.getString("TROView.Unknown")));
     }

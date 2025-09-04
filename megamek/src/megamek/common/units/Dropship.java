@@ -717,7 +717,7 @@ public class Dropship extends SmallCraft {
     @Override
     public String getLocationAbbr(int loc) {
         if (loc == Entity.LOC_NONE) {
-            return "SystemFluff Wide";
+            return "System Wide";
         } else {
             return super.getLocationAbbr(loc);
         }

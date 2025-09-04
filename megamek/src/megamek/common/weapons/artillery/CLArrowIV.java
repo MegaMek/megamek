@@ -52,8 +52,8 @@ public class CLArrowIV extends ArrowIV {
 
         setInternalName("CLArrowIV");
         addLookupName("CLArrowIVSystem");
-        addLookupName("Clan Arrow IV SystemFluff");
-        addLookupName("Clan Arrow IV Missile SystemFluff");
+        addLookupName("Clan Arrow IV System");
+        addLookupName("Clan Arrow IV Missile System");
         heat = 10;
         rackSize = 20;
         ammoType = AmmoType.AmmoTypeEnum.ARROW_IV;

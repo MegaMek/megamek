@@ -508,7 +508,7 @@ public final class ImageUtil {
         FinishedLoadingObserver observer = new FinishedLoadingObserver(Thread.currentThread());
         // Check to see if the image is loaded
         if (!Toolkit.getDefaultToolkit().prepareImage(result, -1, -1, observer)) {
-            long startTime = System.currentTimeMillis();
+            long startTime = java.lang.System.currentTimeMillis();
             long maxRuntime = 10000;
             long runTime = 0;
             while (!observer.isLoaded() && runTime < maxRuntime) {
@@ -519,7 +519,7 @@ public final class ImageUtil {
                     // Do nothing
                 }
 
-                runTime = System.currentTimeMillis() - startTime;
+                runTime = java.lang.System.currentTimeMillis() - startTime;
             }
         }
         return observer.isAnimated();

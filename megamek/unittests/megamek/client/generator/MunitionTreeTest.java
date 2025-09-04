@@ -146,11 +146,11 @@ class MunitionTreeTest {
     void testOrderingOfImperatives() {
         MunitionTree mt = new MunitionTree();
         ltHash.put("Long Tom", "Standard:FAE:Flak:Thunder:Flare:Smoke");
-        mt.insertImperatives("Paladin Defense SystemFluff", "any", "any", ltHash);
+        mt.insertImperatives("Paladin Defense System", "any", "any", ltHash);
 
         // Expect Standard to be first; this will be used if all imperatives are
         // fulfilled and bins remain
-        List<String> ammoOrdering = mt.getPriorityList("Paladin Defense SystemFluff", "any", "any", "Long Tom");
+        List<String> ammoOrdering = mt.getPriorityList("Paladin Defense System", "any", "any", "Long Tom");
         assertEquals("Standard", ammoOrdering.get(0));
         assertEquals("Thunder", ammoOrdering.get(3));
         assertEquals("Smoke", ammoOrdering.get(ammoOrdering.size() - 1));

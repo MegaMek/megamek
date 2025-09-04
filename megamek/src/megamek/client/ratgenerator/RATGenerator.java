@@ -1365,8 +1365,8 @@ public class RATGenerator {
     private synchronized void initialize(File dir) {
         // Give the MSC some time to initialize
         MekSummaryCache msc = MekSummaryCache.getInstance();
-        long waitLimit = System.currentTimeMillis() + 3000; /* 3 seconds */
-        while (!interrupted && !msc.isInitialized() && waitLimit > System.currentTimeMillis()) {
+        long waitLimit = java.lang.System.currentTimeMillis() + 3000; /* 3 seconds */
+        while (!interrupted && !msc.isInitialized() && waitLimit > java.lang.System.currentTimeMillis()) {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {

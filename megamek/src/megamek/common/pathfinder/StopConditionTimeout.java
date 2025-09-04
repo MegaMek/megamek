@@ -59,7 +59,7 @@ public class StopConditionTimeout<E> implements StopCondition<E> {
     }
 
     public void restart() {
-        start = System.currentTimeMillis();
+        start = java.lang.System.currentTimeMillis();
         stop = start + timeout;
         lastEdge = null;
         timeoutEngaged = false;
@@ -67,7 +67,7 @@ public class StopConditionTimeout<E> implements StopCondition<E> {
 
     @Override
     public boolean shouldStop(E e) {
-        if (System.currentTimeMillis() > stop) {
+        if (java.lang.System.currentTimeMillis() > stop) {
             timeoutEngaged = true;
             lastEdge = e;
             return true;

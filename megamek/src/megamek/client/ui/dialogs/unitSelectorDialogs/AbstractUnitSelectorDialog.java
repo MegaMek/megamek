@@ -832,7 +832,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      */
     @Override
     public void keyPressed(KeyEvent ke) {
-        long curTime = System.currentTimeMillis();
+        long curTime = java.lang.System.currentTimeMillis();
         if ((curTime - lastSearch) > KEY_TIMEOUT) {
             searchBuffer = new StringBuffer();
         }

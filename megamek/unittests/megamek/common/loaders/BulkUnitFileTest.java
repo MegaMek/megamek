@@ -81,7 +81,7 @@ public class BulkUnitFileTest {
         BombType.initializeTypes();
     }
 
-    @Disabled("This was broken before this test was added, we hope to fix save/load eventually we're not there yet.")
+    @Disabled("This was broken before this test was added. We hope to fix save/load eventually, but we're not there yet.")
     @ParameterizedTest(name = "{0}")
     @MethodSource("allBlkFiles")
     void loadVerifySaveVerifyBLKFiles(File file) throws EntitySavingException, IOException {

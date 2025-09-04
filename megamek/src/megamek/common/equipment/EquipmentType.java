@@ -270,8 +270,6 @@ public class EquipmentType implements ITechnology {
         return internalName;
     }
 
-    public String getEquipmentType() { return "equipment"; }
-
     public String getRulesRefs() {
         return rulesRefs;
     }

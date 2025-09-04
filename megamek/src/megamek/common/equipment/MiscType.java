@@ -445,9 +445,6 @@ public class MiscType extends EquipmentType {
     }
 
     @Override
-    public String getEquipmentType() { return "misc"; }
-
-    @Override
     public boolean hasFlag(EquipmentFlag flag) {
         if (flag instanceof MiscTypeFlag) {
             return super.hasFlag(flag);

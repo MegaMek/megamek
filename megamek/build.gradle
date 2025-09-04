@@ -36,9 +36,9 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.19.2'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.19.2'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.2'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.20.0'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.20.0'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.0'
 
     implementation 'com.formdev:flatlaf:3.6.1'
     implementation 'com.formdev:flatlaf-extras:3.6.1'
@@ -74,7 +74,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.13.4'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.13.4'
-    testImplementation 'org.mockito:mockito-core:5.18.0'
+    testImplementation 'org.mockito:mockito-core:5.19.0'
 }
 
 application {
@@ -116,7 +116,7 @@ jar {
 }
 
 checkstyle {
-    toolVersion = '10.25.0'
+    toolVersion = '11.0.1'
     configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
     configProperties = [
             'suppressionFile': file("${rootDir}/config/checkstyle/checkstyle-suppressions.xml")

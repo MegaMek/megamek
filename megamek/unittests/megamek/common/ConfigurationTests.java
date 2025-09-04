@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 
+import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -75,7 +76,8 @@ class ConfigurationTests {
      */
     @Test
     final void testDataDir() {
-        assertEquals("testresources/data", Configuration.dataDir().toString());
+        assertEquals(FilenameUtils.normalize("testresources/data"),
+              FilenameUtils.normalize(Configuration.dataDir().toString()));
     }
 
     /**

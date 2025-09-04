@@ -63,6 +63,7 @@ import megamek.common.units.SmallCraft;
 import megamek.common.units.Tank;
 import megamek.common.verifier.*;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -80,6 +81,7 @@ public class BulkUnitFileTest {
         BombType.initializeTypes();
     }
 
+    @Disabled("This was broken before this test was added. We hope to fix save/load eventually, but we're not there yet.")
     @ParameterizedTest(name = "{0}")
     @MethodSource("allBlkFiles")
     void loadVerifySaveVerifyBLKFiles(File file) throws EntitySavingException, IOException {

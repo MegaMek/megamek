@@ -20,13 +20,13 @@
 <entityverifier>
     <mek>
         <ceilWeight>
-            <engine>HALFTON</engine>
-            <structure>HALFTON</structure>
-            <armor>HALFTON</armor>
-            <controls>HALFTON</controls>
+            <engine>HALF_TON</engine>
+            <structure>HALF_TON</structure>
+            <armor>HALF_TON</armor>
+            <controls>HALF_TON</controls>
             <weapons>TON</weapons>
             <targcomp>TON</targcomp>
-            <gyro>HALFTON</gyro>
+            <gyro>HALF_TON</gyro>
         </ceilWeight>
         <showOverweighted>
             true
@@ -119,15 +119,15 @@
     </protomek>
     <tank>
         <ceilWeight>
-            <engine>HALFTON</engine>
-            <structure>HALFTON</structure>
-            <armor>HALFTON</armor>
-            <controls>HALFTON</controls>
+            <engine>HALF_TON</engine>
+            <structure>HALF_TON</structure>
+            <armor>HALF_TON</armor>
+            <controls>HALF_TON</controls>
             <weapons>TON</weapons>
             <targcomp>TON</targcomp>
-            <turret>HALFTON</turret>
-            <lifting>HALFTON</lifting>
-            <poweramp>HALFTON</poweramp>
+            <turret>HALF_TON</turret>
+            <lifting>HALF_TON</lifting>
+            <poweramp>HALF_TON</poweramp>
         </ceilWeight>
         <showOverweighted>
             true

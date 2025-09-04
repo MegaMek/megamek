@@ -84,7 +84,6 @@ public class SanityInputFilter implements ObjectInputFilter {
           Pattern.compile("java\\.util\\.concurrent\\.locks\\.ReentrantLock"),
           Pattern.compile("java\\.util\\.concurrent\\.locks\\.ReentrantLock\\$NonfairSync"),
           Pattern.compile("java\\.util\\.concurrent\\.locks\\.ReentrantLock\\$Sync"),
-          Pattern.compile("java\\.util\\.UUID"),
           Pattern.compile("java\\.util\\.EnumMap"),
           Pattern.compile("java\\.util\\.EnumSet"),
           Pattern.compile("java\\.util\\.HashMap"),
@@ -94,11 +93,12 @@ public class SanityInputFilter implements ObjectInputFilter {
           Pattern.compile("java\\.util\\.LinkedHashMap"),
           Pattern.compile("java\\.util\\.LinkedHashSet"),
           Pattern.compile("java\\.util\\.LinkedList"),
+          Pattern.compile("java\\.util\\.Map"),
           Pattern.compile("java\\.util\\.RegularEnumSet"),
           Pattern.compile("java\\.util\\.Set"),
           Pattern.compile("java\\.util\\.TreeMap"),
-          Pattern.compile("java\\.util\\.Map"),
           Pattern.compile("java\\.util\\.TreeSet"),
+          Pattern.compile("java\\.util\\.UUID"),
           Pattern.compile("java\\.util\\.Vector"),
 
           // Fonts

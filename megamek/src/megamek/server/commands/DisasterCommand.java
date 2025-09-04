@@ -43,7 +43,7 @@ import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.EnumArgument;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Luana Coppio
@@ -133,7 +133,7 @@ public class DisasterCommand extends GamemasterServerCommand {
         switch (disaster) {
             case HURRICANE:
                 new ChangeWeatherCommand(server, gameManager).run(connId,
-                      new String[] { "weather", "wind=6", "winddir=6" });
+                      new String[] { "weather", "wind=6", "windDirection=6" });
                 server.sendServerChat("Hurricane incoming!");
                 break;
             case LIGHTNING_STORM:
@@ -152,19 +152,19 @@ public class DisasterCommand extends GamemasterServerCommand {
                 break;
             case SUPERNOVA:
                 new ChangeWeatherCommand(server, gameManager).run(connId,
-                      new String[] { "weather", "light=5", "emi=1", "atmo=2", "wind=0", "weather=0" });
+                      new String[] { "weather", "light=5", "emi=1", "atmosphere=2", "wind=0", "weather=0" });
                 new FirestormCommand(server, gameManager).run(connId, new String[] { "firestorm", "2", "75" });
                 server.sendServerChat("The star is going supernova!");
                 server.sendServerChat("Everything is on fire! We are doomed!");
                 break;
             case SANDSTORM:
                 new ChangeWeatherCommand(server, gameManager).run(connId,
-                      new String[] { "weather", "blowsand=1", "wind=4", "winddir=6" });
+                      new String[] { "weather", "blowSand=1", "wind=4", "windDirection=6" });
                 server.sendServerChat("A sandstorm is approaching!");
                 break;
             case ICE_STORM:
                 new ChangeWeatherCommand(server, gameManager).run(connId,
-                      new String[] { "weather", "fog=1", "weather=11", "wind=6", "winddir=6" });
+                      new String[] { "weather", "fog=1", "weather=11", "wind=6", "windDirection=6" });
                 server.sendServerChat("An ice storm is incoming!");
                 break;
             case FIRESTORM:
@@ -173,7 +173,7 @@ public class DisasterCommand extends GamemasterServerCommand {
                 break;
             case SMOG:
                 new ChangeWeatherCommand(server, gameManager).run(connId,
-                      new String[] { "weather", "atmo=5", "fog=2", "light=1" });
+                      new String[] { "weather", "atmosphere=5", "fog=2", "light=1" });
                 server.sendServerChat("A thick smog is covering the battlefield!");
                 break;
             case TRAITOR:

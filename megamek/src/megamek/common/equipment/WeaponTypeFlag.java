@@ -75,7 +75,7 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     // Special behaviors
     F_TAG,
     F_C3M, // C3 Master with Target Acquisition gear
-    F_C3MBS, // C3 Master Booster SystemFluff
+    F_C3MBS, // C3 Master Booster System
 
     // Weapon classes
     F_ANTI_SHIP, // Anti-ship missiles

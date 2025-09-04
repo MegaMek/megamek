@@ -98,7 +98,7 @@ public class MMXMLUtility {
 
             // "This is the PRIMARY defense. If DTDs (doctypes) are disallowed,
             // almost all XML entity attacks are prevented"
-            String FEATURE = "https://apache.org/xml/features/disallow-doctype-decl";
+            String FEATURE = "http://apache.org/xml/features/disallow-doctype-decl";
             dbf.setFeature(FEATURE, true);
 
             DOCUMENT_BUILDER_FACTORY = dbf;

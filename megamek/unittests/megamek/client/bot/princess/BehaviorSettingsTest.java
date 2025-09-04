@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2011 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -70,9 +70,8 @@ class BehaviorSettingsTest {
         assertTrue(true);
 
         // Test a null description.
-        description = null;
         try {
-            behaviorSettings.setDescription(description);
+            behaviorSettings.setDescription(null);
             fail("Should have thrown an error!");
         } catch (PrincessException e) {
             assertTrue(true);
@@ -316,7 +315,7 @@ class BehaviorSettingsTest {
         expectedUnits.add(BehaviorSettingsTestConstants.PRIORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
         behaviorSettings.fromXml(testBehaviorElement);
-        assertSame(behaviorSettings.getRetreatEdge(), CardinalEdge.NONE);
+        assertSame(CardinalEdge.NONE, behaviorSettings.getRetreatEdge());
 
         // Test loading behavior settings w/ a NULL forced withdrawal.
         reader = new CharArrayReader(

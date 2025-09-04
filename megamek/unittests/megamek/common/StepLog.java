@@ -32,11 +32,13 @@
  */
 package megamek.common;
 
+import jakarta.annotation.Nonnull;
 import megamek.common.moves.MoveStep;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public record StepLog(MoveStep step) {
     @Override
+    @Nonnull
     public String toString() {
         return new ToStringBuilder(this).append("step", step)
               .append("entity", step.getEntity())

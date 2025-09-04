@@ -37,7 +37,7 @@ import java.io.File;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import megamek.server.scriptedevent.TriggeredActiveEvent;
+import megamek.server.scriptedEvents.TriggeredActiveEvent;
 
 public class GeneralEventDeserializer {
 

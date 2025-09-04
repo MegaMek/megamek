@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2013 - Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -82,8 +82,8 @@ class BoardDimensionsTests {
     @Test
     final void testNotEqualsObject() {
         BoardDimensions b = new BoardDimensions(10, 10);
-        assertNotEquals(b, new BoardDimensions(10, 5));
-        assertNotEquals(b, new BoardDimensions(5, 10));
+        assertNotEquals(new BoardDimensions(10, 5), b);
+        assertNotEquals(new BoardDimensions(5, 10), b);
     }
 
     @Test
@@ -94,12 +94,10 @@ class BoardDimensionsTests {
 
     @Test
     final void testCompareTo() {
-        assertEquals(0,
-              new BoardDimensions(10, 10).compareTo(new BoardDimensions(10, 10)));
-        assertEquals(0, new BoardDimensions(Integer.MAX_VALUE,
-              Integer.MAX_VALUE).compareTo(
-              new BoardDimensions(
-                    Integer.MAX_VALUE, Integer.MAX_VALUE)));
+        assertEquals(0, new BoardDimensions(10, 10)
+              .compareTo(new BoardDimensions(10, 10)));
+        assertEquals(0, new BoardDimensions(Integer.MAX_VALUE, Integer.MAX_VALUE)
+              .compareTo(new BoardDimensions(Integer.MAX_VALUE, Integer.MAX_VALUE)));
 
         int result = MathUtility.clamp(new BoardDimensions(10, 10).compareTo(new BoardDimensions(
               Integer.MAX_VALUE, Integer.MAX_VALUE)), -1, 1);

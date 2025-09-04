@@ -52,7 +52,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.units.Terrains;
 import megamek.server.SmokeCloud;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 public class RapidFireHVACWeaponHandler extends RapidFireACWeaponHandler {
     @Serial

@@ -34,16 +34,10 @@
 package megamek.server;
 
 import megamek.common.game.IGame;
-import megamek.server.scriptedevent.TriggeredActiveEvent;
+import megamek.server.scriptedEvents.TriggeredActiveEvent;
 import megamek.server.trigger.TriggerSituation;
 
-public final class GameManagerScriptedEventHelper {
-
-    private final AbstractGameManager gameManager;
-
-    GameManagerScriptedEventHelper(AbstractGameManager gameManager) {
-        this.gameManager = gameManager;
-    }
+public record GameManagerScriptedEventHelper(AbstractGameManager gameManager) {
 
     void processScriptedEvents(TriggerSituation eventType) {
         IGame game = gameManager.getGame();

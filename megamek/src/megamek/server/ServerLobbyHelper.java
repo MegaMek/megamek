@@ -51,14 +51,14 @@ import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 public class ServerLobbyHelper {
-    private static final MMLogger logger = MMLogger.create(ServerLobbyHelper.class);
+    private static final MMLogger LOGGER = MMLogger.create(ServerLobbyHelper.class);
 
     /**
      * Returns true when the given new force (that is not part of the given game's forces) can be integrated into game's
-     * forces without error; i.e.: if the force's parent exists or it is top-level, if it has no entities and no
+     * forces without error; i.e.: if the force's parent exists, or it is top-level, if it has no entities and no
      * subForces, if the client sending it is the owner
      */
     static boolean isNewForceValid(Game game, Force force) {
@@ -220,10 +220,9 @@ public class ServerLobbyHelper {
      * Handles a force parent packet, attaching the sent forces to a new parent or making the sent forces top-level.
      * This method is intended for use in the lobby!
      */
-    public static void receiveForceParent(Packet c, int connId, Game game, TWGameManager gameManager) {
-        @SuppressWarnings("unchecked")
-        var forceList = (Collection<Force>) c.getObject(0);
-        int newParentId = (int) c.getObject(1);
+    public static void receiveForceParent(Packet packet, int connId, Game game, TWGameManager gameManager) {
+        var forceList = packet.getForceList(0);
+        int newParentId = packet.getIntValue(1);
 
         var forces = game.getForces();
         var changedForces = new HashSet<Force>();
@@ -232,7 +231,7 @@ public class ServerLobbyHelper {
             forceList.forEach(f -> changedForces.addAll(forces.promoteForce(forces.getForce(f.getId()))));
         } else {
             if (!forces.contains(newParentId)) {
-                logger.warn("Tried to attach forces to non-existing parent force ID " + newParentId);
+                LOGGER.warn("Tried to attach forces to non-existing parent force ID {}", newParentId);
                 return;
             }
             Force newParent = forces.getForce(newParentId);
@@ -248,10 +247,9 @@ public class ServerLobbyHelper {
      * Handles a force assign full packet, changing the owner of forces and everything in them. This method is intended
      * for use in the lobby!
      */
-    public static void receiveEntitiesAssign(Packet c, int connId, Game game, TWGameManager gameManager) {
-        @SuppressWarnings("unchecked")
-        var entityList = (Collection<Entity>) c.getObject(0);
-        int newOwnerId = (int) c.getObject(1);
+    public static void receiveEntitiesAssign(Packet packet, int connId, Game game, TWGameManager gameManager) {
+        var entityList = packet.getEntityList(0);
+        int newOwnerId = packet.getIntValue(1);
         Player newOwner = game.getPlayer(newOwnerId);
 
         if (entityList.isEmpty() || newOwner == null) {
@@ -274,10 +272,9 @@ public class ServerLobbyHelper {
      * Handles a force assign full packet, changing the owner of forces and everything in them. This method is intended
      * for use in the lobby!
      */
-    public static void receiveForceAssignFull(Packet c, int connId, Game game, TWGameManager gameManager) {
-        @SuppressWarnings("unchecked")
-        var forceList = (Collection<Force>) c.getObject(0);
-        int newOwnerId = (int) c.getObject(1);
+    public static void receiveForceAssignFull(Packet packet, int connId, Game game, TWGameManager gameManager) {
+        var forceList = packet.getForceList(0);
+        int newOwnerId = packet.getIntValue(1);
         Player newOwner = game.getPlayer(newOwnerId);
 
         if (forceList.isEmpty() || newOwner == null) {
@@ -311,9 +308,8 @@ public class ServerLobbyHelper {
      * move subforce/entity up/down (this does not change the entity, only the force) - owner change of only the force
      * (not the entities, only within a team) This method is intended for use in the lobby!
      */
-    public static void receiveForceUpdate(Packet c, int connId, Game game, TWGameManager gameManager) {
-        @SuppressWarnings("unchecked")
-        var forceList = (Collection<Force>) c.getObject(0);
+    public static void receiveForceUpdate(Packet packet, int connId, Game game, TWGameManager gameManager) {
+        var forceList = packet.getForceList(0);
 
         // Check if the updated Forces are valid
         Forces forcesClone = game.getForces().clone();
@@ -324,7 +320,7 @@ public class ServerLobbyHelper {
             game.setForces(forcesClone);
             gameManager.send(createForceUpdatePacket(forceList));
         } else {
-            logger.warn("Invalid forces update received.");
+            LOGGER.warn("Invalid forces update received.");
             gameManager.send(gameManager.createFullEntitiesPacket());
         }
     }
@@ -332,10 +328,9 @@ public class ServerLobbyHelper {
     /**
      * Handles a team change, updating units and forces as necessary. This method is intended for use in the lobby!
      */
-    public static void receiveLobbyTeamChange(Packet c, int connId, Game game, TWGameManager gameManager) {
-        @SuppressWarnings("unchecked")
-        var players = (Collection<Player>) c.getObject(0);
-        var newTeam = (int) c.getObject(1);
+    public static void receiveLobbyTeamChange(Packet packet, int connId, Game game, TWGameManager gameManager) {
+        var players = packet.getPlayerVector(0);
+        var newTeam = packet.getIntValue(1);
 
         // Collect server-side player objects
         Set<Player> serverPlayers = new HashSet<>();
@@ -406,22 +401,21 @@ public class ServerLobbyHelper {
      * Handles an add entity to force / remove from force packet, attaching the sent entities to a force or removing
      * them from any force. This method is intended for use in the lobby!
      */
-    public static void receiveAddEntititesToForce(Packet c, int connId, Game game, TWGameManager gameManager) {
-        @SuppressWarnings("unchecked")
-        var entityList = (Collection<Entity>) c.getObject(0);
-        var forceId = (int) c.getObject(1);
+    public static void receiveAddEntitiesToForce(Packet packet, int connId, Game game, TWGameManager gameManager) {
+        var entityList = packet.getEntityList(0);
+        var forceId = packet.getIntValue(1);
         // Get the local (server) entities
         List<Entity> entities = entityList.stream().map(e -> game.getEntity(e.getId())).collect(toList());
         var forces = game.getForces();
 
         var changedEntities = new HashSet<Entity>();
         var changedForces = new HashSet<Force>();
-        // Check if the entities are teammembers of the force, unless the entities are
+        // Check if the entities are team members of the force, unless the entities are
         // removed from forces
         if (forceId != Force.NO_FORCE) {
             var forceOwner = forces.getOwner(forceId);
             if (entities.stream().anyMatch(e -> e.getOwner().isEnemyOf(forceOwner))) {
-                logger.warn("Tried to add entities to an enemy force.");
+                LOGGER.warn("Tried to add entities to an enemy force.");
                 return;
             }
             for (Entity entity : entities) {
@@ -441,10 +435,13 @@ public class ServerLobbyHelper {
     /**
      * Adds a force with the info from the client. Only valid during the lobby phase.
      */
-    public static void receiveForceAdd(Packet c, int connId, Game game, TWGameManager gameManager) {
-        var force = (Force) c.getObject(0);
-        @SuppressWarnings("unchecked")
-        var entities = (Collection<Entity>) c.getObject(1);
+    public static void receiveForceAdd(Packet packet, int connId, Game game, TWGameManager gameManager) {
+        var force = packet.getForce(0);
+        var entities = packet.getEntityList(1);
+
+        if (force == null) {
+            return;
+        }
 
         int newId;
         if (force.isTopLevel()) {

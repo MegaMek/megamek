@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -62,13 +62,15 @@ public class ListSavesCommand extends ServerCommand {
         server.sendServerChat(connId, "Listing all saved games...");
         File[] saveGames = sDir.listFiles();
         boolean listedAFile = false;
-        for (int i = 0; i < saveGames.length; i++) {
-            if (saveGames[i].isFile()) {
-                File save = saveGames[i];
-                if (save.getName().endsWith(MMConstants.SAVE_FILE_EXT)
-                      || save.getName().endsWith(MMConstants.SAVE_FILE_GZ_EXT)) {
-                    server.sendServerChat("  " + save.getName());
-                    listedAFile = true;
+
+        if (saveGames != null) {
+            for (File saveGame : saveGames) {
+                if (saveGame.isFile()) {
+                    if (saveGame.getName().endsWith(MMConstants.SAVE_FILE_EXT)
+                          || saveGame.getName().endsWith(MMConstants.SAVE_FILE_GZ_EXT)) {
+                        server.sendServerChat("  " + saveGame.getName());
+                        listedAFile = true;
+                    }
                 }
             }
         }

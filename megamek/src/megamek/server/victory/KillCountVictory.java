@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2007-2008 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,11 +39,11 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.game.IGame;
 import megamek.common.Player;
 import megamek.common.Report;
+import megamek.common.game.Game;
+import megamek.common.game.IGame;
+import megamek.common.units.Entity;
 
 /**
  * Implements a kill count victory condition.  Victory is achieved if a team (or a player with no team) achieves more

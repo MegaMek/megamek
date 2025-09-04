@@ -35,13 +35,9 @@ package megamek.server.commands.arguments;
 
 import java.util.Map;
 
-public class Arguments {
+import jakarta.annotation.Nonnull;
 
-    private final Map<String, Argument<?>> arguments;
-
-    public Arguments(Map<String, Argument<?>> arguments) {
-        this.arguments = arguments;
-    }
+public record Arguments(Map<String, Argument<?>> arguments) {
 
     public Argument<?> get(String name) {
         return arguments.get(name);
@@ -104,9 +100,8 @@ public class Arguments {
     }
 
     @Override
+    @Nonnull
     public String toString() {
-        return "Arguments{" +
-              "arguments=" + arguments +
-              '}';
+        return "Arguments{" + "arguments=" + arguments + '}';
     }
 }

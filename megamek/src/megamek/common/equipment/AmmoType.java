@@ -81,7 +81,7 @@ public class AmmoType extends EquipmentType {
         SRM_STREAK(11, "Streak SRM", AmmoCategory.Missile),
         MRM(12, "Medium Range Missile", AmmoCategory.Missile),
         NARC(13, "NARC", AmmoCategory.Special),
-        AMS(14, "Anti-Missile SystemFluff", AmmoCategory.Special),
+        AMS(14, "Anti-Missile System", AmmoCategory.Special),
         ARROW_IV(15, "Arrow IV", AmmoCategory.Artillery),
         LONG_TOM(16, "Long Tom", AmmoCategory.Artillery),
         SNIPER(17, "Sniper", AmmoCategory.Artillery),
@@ -3612,7 +3612,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISAMSAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.name = "Anti-Missile SystemFluff Ammo [IS]";
+        ammo.name = "Anti-Missile System Ammo [IS]";
         ammo.shortName = "AMS Ammo";
         ammo.setInternalName("ISAMS Ammo");
         ammo.addLookupName("IS Ammo AMS");
@@ -3638,7 +3638,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLAMSAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.name = "Anti-Missile SystemFluff Ammo [Clan]";
+        ammo.name = "Anti-Missile System Ammo [Clan]";
         ammo.shortName = "AMS Ammo";
         ammo.setInternalName("CLAMS Ammo");
         ammo.addLookupName("Clan Ammo AMS");
@@ -11316,7 +11316,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISAPDSAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.name = "RISC Advanced Point Defense SystemFluff Ammo";
+        ammo.name = "RISC Advanced Point Defense System Ammo";
         ammo.shortName = "RISC APDS";
         ammo.setInternalName("ISAPDS Ammo");
         ammo.damagePerShot = 1; // only used for ammo criticalSlots

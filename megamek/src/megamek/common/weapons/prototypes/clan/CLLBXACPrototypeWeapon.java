@@ -49,7 +49,7 @@ import megamek.common.weapons.autoCannons.LBXACWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.CLLBXPrototypeHandler;
 import megamek.common.weapons.handlers.ac.ACWeaponHandler;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter

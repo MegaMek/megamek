@@ -68,15 +68,14 @@ class ObjectUtilityTest {
         final String second = "second";
         final String third = "third";
         final String fourth = "fourth";
-        final String nullString = null;
         assertEquals(first, ObjectUtility.nonNull(first, null, third, fourth));
         assertEquals(first, ObjectUtility.nonNull(first, second, third, fourth));
         assertEquals(second, ObjectUtility.nonNull(null, second, third, fourth));
         assertEquals(third, ObjectUtility.nonNull(null, null, third, null));
         assertEquals(third, ObjectUtility.nonNull(null, null, third, fourth));
         assertEquals(fourth, ObjectUtility.nonNull(null, null, null, fourth));
-        assertEquals(fourth, ObjectUtility.nonNull(null, null, nullString, fourth));
-        assertNull(ObjectUtility.nonNull(null, null, nullString));
+        assertEquals(fourth, ObjectUtility.nonNull(null, null, null, fourth));
+        assertNull(ObjectUtility.nonNull(null, null, (Object) null));
         assertNull(ObjectUtility.nonNull(null, null, null, null));
     }
 
@@ -95,8 +94,7 @@ class ObjectUtilityTest {
 
     @Test
     void testGetRandomItemFromCollection() {
-        final Collection<String> nullCollection = null;
-        assertNull(ObjectUtility.getRandomItem(nullCollection));
+        assertNull(ObjectUtility.getRandomItem((Collection<? extends String>) null));
         final Collection<String> collection = new HashSet<>();
         assertNull(ObjectUtility.getRandomItem(collection));
         collection.add("a");
@@ -114,8 +112,7 @@ class ObjectUtilityTest {
 
     @Test
     void testGetRandomItemFromList() {
-        final List<String> nullList = null;
-        assertNull(ObjectUtility.getRandomItem(nullList));
+        assertNull(ObjectUtility.getRandomItem(null));
         final List<String> list = new ArrayList<>();
         assertNull(ObjectUtility.getRandomItem(list));
         list.add("a");

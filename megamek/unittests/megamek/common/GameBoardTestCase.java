@@ -316,7 +316,7 @@ public abstract class GameBoardTestCase {
     }
 
     /**
-     * Generates the movepath for the test
+     * Generates the move path for the test
      *
      * @param path the game
      *

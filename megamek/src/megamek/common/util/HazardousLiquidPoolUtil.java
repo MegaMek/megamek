@@ -46,7 +46,7 @@ import megamek.common.rolls.Roll;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * Methods that implement the Hazardous Liquid Pool as described in TO:AR p. 47

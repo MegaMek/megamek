@@ -48,7 +48,7 @@ import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Building;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter

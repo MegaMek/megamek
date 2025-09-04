@@ -57,7 +57,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
 

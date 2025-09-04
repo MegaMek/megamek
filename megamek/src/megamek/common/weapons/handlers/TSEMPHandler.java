@@ -58,7 +58,7 @@ import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
 import megamek.common.units.SupportTank;
 import megamek.common.units.Tank;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * Weapon handler for the Tight-Stream Electro-Magnetic Pulse (TSEMP) weapon, which is found in FM:3145 pg 255.

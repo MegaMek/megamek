@@ -452,7 +452,6 @@ ij_editorconfig_space_before_comma = false
 ij_editorconfig_spaces_around_assignment_operators = true
 
 [{*.ant,*.fxml,*.jhm,*.jnlp,*.jrxml,*.pom,*.rng,*.tld,*.wadl,*.wsdl,*.xml,*.xsd,*.xsl,*.xslt,*.xul}]
-indent_size = 0
 ij_wrap_on_typing = false
 ij_xml_align_attributes = true
 ij_xml_align_text = false

@@ -51,7 +51,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
 import megamek.common.units.Tank;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 public class MekTaserHandler extends AmmoWeaponHandler {
     @Serial

@@ -45,11 +45,11 @@ import java.util.Vector;
 
 import megamek.client.ui.clientGUI.boardview.CollapseWarning;
 import megamek.common.board.Board;
-import megamek.common.units.Building;
 import megamek.common.board.Coords;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.enums.GamePhase;
+import megamek.common.game.Game;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
 import org.junit.jupiter.api.Test;
 
 class CollapseWarningTest {
@@ -121,7 +121,7 @@ class CollapseWarningTest {
 
         List<Coords> warnList = CollapseWarning.findCFWarningsMovement(g, e, b);
 
-        assertTrue(warnList.size() > 0);
+        assertFalse(warnList.isEmpty());
         assertEquals(buildingPosition, warnList.get(0));
     }
 
@@ -184,19 +184,15 @@ class CollapseWarningTest {
 
     @Test
     void testConstructionFactorWarningFindMovementWarningsExceptionPath() {
-        // Test an internal null condition that should be caught and return an empty
-        // list.
-        Game g = null;
-
         // Set entity to happy path.
-        Entity e = createMockEntityWith(new Coords(3, 5), 5, 3, 45.0, true, false);
+        Entity entity = createMockEntityWith(new Coords(3, 5), 5, 3, 45.0, true, false);
 
         Coords buildingPosition = new Coords(3, 5);
         Building bld = createMockBuildingWith(buildingPosition, 20);
 
-        Board b = createMockBoardWith(buildingPosition, bld);
+        Board board = createMockBoardWith(buildingPosition, bld);
 
-        List<Coords> warnList = CollapseWarning.findCFWarningsMovement(g, e, b);
+        List<Coords> warnList = CollapseWarning.findCFWarningsMovement(null, entity, board);
 
         assertNotNull(warnList);
         assertEquals(0, warnList.size());
@@ -204,10 +200,10 @@ class CollapseWarningTest {
 
     @Test
     void testConstructionFactorWarningFindDeploymentWarnings() {
-        // Test happy bath for handler when in deployment phase for a eligible
+        // Test happy bath for handler when in deployment phase for an eligible
         // deployment hex.
         Coords expectedHex = new Coords(3, 6);
-        Vector<Building> buildings = new Vector<Building>();
+        Vector<Building> buildings = new Vector<>();
         Building bld = createMockBuildingWith(expectedHex, 20);
         buildings.add(bld);
 
@@ -229,10 +225,10 @@ class CollapseWarningTest {
 
     @Test
     void testConstructionFactorWarningFindDeploymentWarningsNotLegalHex() {
-        // Test happy bath for handler when in deployment phase for a eligible
+        // Test happy bath for handler when in deployment phase for an eligible
         // deployment hex.
         Coords expectedHex = new Coords(3, 6);
-        Vector<Building> buildings = new Vector<Building>();
+        Vector<Building> buildings = new Vector<>();
         Building bld = createMockBuildingWith(expectedHex, 20);
         buildings.add(bld);
 
@@ -255,10 +251,10 @@ class CollapseWarningTest {
 
     @Test
     void testConstructionFactorWarningFindDeploymentWarningsNotGroundUnit() {
-        // Test happy bath for handler when in deployment phase for a eligible
+        // Test happy bath for handler when in deployment phase for an eligible
         // deployment hex.
         Coords expectedHex = new Coords(3, 6);
-        Vector<Building> buildings = new Vector<Building>();
+        Vector<Building> buildings = new Vector<>();
         Building bld = createMockBuildingWith(expectedHex, 20);
         buildings.add(bld);
 
@@ -282,10 +278,10 @@ class CollapseWarningTest {
 
     @Test
     void testConstructionFactorWarningFindDeploymentWarningsLightEntity() {
-        // Test happy bath for handler when in deployment phase for a eligible
+        // Test happy bath for handler when in deployment phase for an eligible
         // deployment hex.
         Coords expectedHex = new Coords(3, 6);
-        Vector<Building> buildings = new Vector<Building>();
+        Vector<Building> buildings = new Vector<>();
         Building bld = createMockBuildingWith(expectedHex, 90);
         buildings.add(bld);
 
@@ -314,7 +310,7 @@ class CollapseWarningTest {
         // and log an error.
         List<Coords> warnList = CollapseWarning.findCFWarningsDeployment(null, null, null);
 
-        // On exception return an non-null empty list so no warnings sprites are
+        // On exception return a non-null empty list so no warnings sprites are
         // displayed.
         assertNotNull(warnList);
         assertEquals(0, warnList.size());
@@ -347,7 +343,7 @@ class CollapseWarningTest {
 
         // Mock a 25 ton entity already on the building hex.
         Entity onBuilding = this.createMockEntityWith(new Coords(3, 7), 4, 6, onBuildingWeight, true, false);
-        List<Entity> entities = new ArrayList<Entity>();
+        List<Entity> entities = new ArrayList<>();
         entities.add(onBuilding);
 
         when(g.getEntitiesVector(new Coords(3, 7), true)).thenReturn(entities);
@@ -368,7 +364,7 @@ class CollapseWarningTest {
         Entity e = createMockEntityWith(new Coords(3, 3), 5, 3, entityWeight, true, false);
 
         // The selected entity will show up in the entities vector for the building.
-        List<Entity> entities = new ArrayList<Entity>();
+        List<Entity> entities = new ArrayList<>();
         entities.add(e);
 
         when(g.getEntitiesVector(new Coords(3, 3), true)).thenReturn(entities);
@@ -391,7 +387,7 @@ class CollapseWarningTest {
         // An airborne VTOL is in the entity vector over the building not contributing
         // to
         // the total weight.
-        List<Entity> entities = new ArrayList<Entity>();
+        List<Entity> entities = new ArrayList<>();
         entities.add(vtol);
 
         when(g.getEntitiesVector(new Coords(3, 7), true)).thenReturn(entities);
@@ -413,7 +409,7 @@ class CollapseWarningTest {
 
         // Mock an aerospace unit flying over the building not contributing to the total
         // weight.
-        List<Entity> entities = new ArrayList<Entity>();
+        List<Entity> entities = new ArrayList<>();
         entities.add(aero);
 
         when(g.getEntitiesVector(new Coords(3, 7), true)).thenReturn(entities);
@@ -423,7 +419,7 @@ class CollapseWarningTest {
         assertEquals(entityWeight, totalWeight);
     }
 
-    // Helper function to setup a mock entity with various attributes.
+    // Helper function to set up a mock entity with various attributes.
     private Entity createMockEntityWith(Coords pos, int run, int jump, double weight, boolean ground,
           boolean offBoard) {
         Entity e = mock(Entity.class);
@@ -437,9 +433,9 @@ class CollapseWarningTest {
         return e;
     }
 
-    // Helper function to setup mock building with position and construction factor.
+    // Helper function to set up mock building with position and construction factor.
     private Building createMockBuildingWith(Coords pos, int cf) {
-        List<Coords> hexes = new ArrayList<Coords>();
+        List<Coords> hexes = new ArrayList<>();
         Building building = mock(Building.class);
         hexes.add(pos);
         when(building.getCurrentCF(pos)).thenReturn(cf);

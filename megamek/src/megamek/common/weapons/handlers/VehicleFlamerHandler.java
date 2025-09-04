@@ -55,7 +55,7 @@ import megamek.common.weapons.FlamerHandlerHelper;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.flamers.clan.CLHeavyFlamer;
 import megamek.common.weapons.flamers.innerSphere.ISHeavyFlamer;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks

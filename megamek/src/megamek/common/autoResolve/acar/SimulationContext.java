@@ -79,7 +79,7 @@ import megamek.common.units.EntitySelector;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.logging.MMLogger;
-import megamek.server.scriptedevent.TriggeredEvent;
+import megamek.server.scriptedEvents.TriggeredEvent;
 import org.apache.commons.lang3.NotImplementedException;
 
 /**

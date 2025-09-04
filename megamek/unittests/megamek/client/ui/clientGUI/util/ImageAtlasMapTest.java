@@ -34,11 +34,14 @@
 package megamek.client.ui.clientGUI.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Path;
 
 import megamek.client.ui.util.ImageAtlasMap;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -82,7 +85,7 @@ class ImageAtlasMapTest {
         imageAtlasMap.put(originalFilePath, atlasFilePath);
 
         boolean result = imageAtlasMap.containsKey(originalFilePath);
-        assertEquals(true, result);
+        assertTrue(result);
     }
 
     @Test
@@ -92,7 +95,7 @@ class ImageAtlasMapTest {
         imageAtlasMap.put(atlasFilePath, originalFilePath);
 
         boolean result = imageAtlasMap.containsKey(originalFilePath);
-        assertEquals(false, result);
+        assertFalse(result);
     }
 
     @Test
@@ -102,13 +105,14 @@ class ImageAtlasMapTest {
         imageAtlasMap.put(originalFilePath, atlasFilePath);
 
         boolean contains = imageAtlasMap.containsKey(originalFilePath);
-        assertEquals(true, contains);
+        assertTrue(contains);
 
         File testFilePath = new File("testresources/tmp/atlas_test.yml");
 
         imageAtlasMap.writeToFile(testFilePath);
 
         ImageAtlasMap readImageAtlasMap = ImageAtlasMap.readFromFile(testFilePath);
+        Assertions.assertNotNull(readImageAtlasMap);
         String result = readImageAtlasMap.get(originalFilePath);
         assertEquals("data/images/atlas/foo.png", result);
     }

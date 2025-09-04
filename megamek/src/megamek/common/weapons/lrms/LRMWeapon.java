@@ -59,7 +59,7 @@ import megamek.common.weapons.handlers.lrm.LRMSmokeWarheadHandler;
 import megamek.common.weapons.handlers.lrm.LRMSwarmHandler;
 import megamek.common.weapons.handlers.lrm.LRMSwarmIHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks

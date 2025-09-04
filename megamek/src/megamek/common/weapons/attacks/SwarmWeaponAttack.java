@@ -51,7 +51,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Infantry;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.SwarmWeaponAttackHandler;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Jay Lawson

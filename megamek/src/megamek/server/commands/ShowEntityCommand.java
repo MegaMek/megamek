@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,10 +33,10 @@
 
 package megamek.server.commands;
 
-import megamek.common.units.Entity;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
 import megamek.server.Server;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * This command exists to print entity information to the chat window. It is primarily intended for visually impaired

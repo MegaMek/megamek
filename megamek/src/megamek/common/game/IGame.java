@@ -61,7 +61,7 @@ import megamek.common.options.IGameOptions;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
-import megamek.server.scriptedevent.TriggeredEvent;
+import megamek.server.scriptedEvents.TriggeredEvent;
 
 /**
  * Common interface for games with different rule sets, such as Total Warfare, BattleForce, or Alpha Strike.

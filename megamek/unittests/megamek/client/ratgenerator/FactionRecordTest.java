@@ -109,8 +109,8 @@ class FactionRecordTest {
               "    </units>",
               "</ratgen>");
 
-        ByteArrayInputStream bais = new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8));
-        Document xmlDoc = db.parse(bais);
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8));
+        Document xmlDoc = db.parse(byteArrayInputStream);
 
         Element element = xmlDoc.getDocumentElement();
         NodeList nl = element.getChildNodes();

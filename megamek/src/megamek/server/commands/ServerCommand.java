@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,8 +46,8 @@ public abstract class ServerCommand {
 
     protected Server server;
 
-    private String name;
-    private String helpText;
+    private final String name;
+    private final String helpText;
 
     /** Creates new ServerCommand */
     public ServerCommand(Server server, String name, String helpText) {

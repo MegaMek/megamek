@@ -34,16 +34,11 @@
 
 package megamek.server.trigger;
 
-import megamek.common.game.IGame;
+import jakarta.annotation.Nonnull;
 import megamek.common.enums.GamePhase;
+import megamek.common.game.IGame;
 
-public class PhaseStartTrigger implements Trigger {
-
-    private final GamePhase phase;
-
-    public PhaseStartTrigger(GamePhase phase) {
-        this.phase = phase;
-    }
+public record PhaseStartTrigger(GamePhase phase) implements Trigger {
 
     @Override
     public boolean isTriggered(IGame game, TriggerSituation event) {
@@ -51,6 +46,7 @@ public class PhaseStartTrigger implements Trigger {
     }
 
     @Override
+    @Nonnull
     public String toString() {
         return "Phase Start: " + phase;
     }

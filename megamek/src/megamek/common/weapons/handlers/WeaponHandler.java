@@ -81,7 +81,7 @@ import megamek.common.weapons.DamageType;
 import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * A basic, simple attack handler. May or may not work for any particular weapon; must be overloaded to support special

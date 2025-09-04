@@ -57,7 +57,7 @@ import megamek.common.units.Mek;
 import megamek.common.weapons.handlers.AmmoBayWeaponHandler;
 import megamek.common.weapons.ppc.clan.CLPlasmaCannon;
 import megamek.common.weapons.ppc.innerSphere.ISPlasmaRifle;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
     @Serial

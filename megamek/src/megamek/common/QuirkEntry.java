@@ -79,14 +79,13 @@ public record QuirkEntry(String code, String location, int slot, String weaponNa
     public QuirkEntry {
         if (StringUtility.isNullOrBlank(code)) {
             throw new IllegalArgumentException("Invalid quirk code!");
-        } else if (StringUtility.isNullOrBlank(location)) {
+        } else if (location == null) {
             throw new IllegalArgumentException("Invalid location!");
-        } else if (StringUtility.isNullOrBlank(weaponName)) {
+        } else if (weaponName == null) {
             throw new IllegalArgumentException("Invalid weapon name!");
-        } else if (slot < 0) {
+        } else if (slot < -1) {
             throw new IllegalArgumentException("Invalid slot index!");
         }
-
     }
 
     /**

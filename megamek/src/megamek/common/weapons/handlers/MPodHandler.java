@@ -44,7 +44,7 @@ import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.planetaryConditions.PlanetaryConditions;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks Created on Oct 15, 2004

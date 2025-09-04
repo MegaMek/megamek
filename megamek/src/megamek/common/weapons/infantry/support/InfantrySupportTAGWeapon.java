@@ -50,7 +50,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.TAGHandler;
 import megamek.common.weapons.infantry.InfantryWeapon;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * TAG for conventional infantry. Rules not found in TacOps 2nd printing are in this forum post:

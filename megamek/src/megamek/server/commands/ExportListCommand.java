@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -72,19 +72,18 @@ public class ExportListCommand extends ServerCommand {
 
     private void exportList(int connId, String path) {
         try {
-            PrintWriter pw1 = new PrintWriter(new FileWriter(path));
+            PrintWriter printWriter = new PrintWriter(new FileWriter(path));
 
-            MekSummary[] msums = MekSummaryCache.getInstance().getAllMeks();
+            MekSummary[] mekSummaries = MekSummaryCache.getInstance().getAllMeks();
 
-            for (MekSummary ms1 : msums) {
-                pw1.println(ms1.getChassis() + ", " + ms1.getModel() + ", "
-                      + ms1.getBV());
+            for (MekSummary mekSummary : mekSummaries) {
+                printWriter.println(mekSummary.getChassis() + ", " + mekSummary.getModel() + ", "
+                      + mekSummary.getBV());
             }
 
-            pw1.flush();
-            pw1.close();
-            server.sendServerChat(server.getPlayer(connId).getName()
-                  + " has exported a unit list.");
+            printWriter.flush();
+            printWriter.close();
+            server.sendServerChat(server.getPlayer(connId).getName() + " has exported a unit list.");
         } catch (Exception e) {
             server.sendServerChat(connId, "/exportlist: execution failed");
             server.sendServerChat(connId, e.toString());

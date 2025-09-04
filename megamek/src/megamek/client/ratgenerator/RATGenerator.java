@@ -1365,8 +1365,8 @@ public class RATGenerator {
     private synchronized void initialize(File dir) {
         // Give the MSC some time to initialize
         MekSummaryCache msc = MekSummaryCache.getInstance();
-        long waitLimit = System.currentTimeMillis() + 3000; /* 3 seconds */
-        while (!interrupted && !msc.isInitialized() && waitLimit > System.currentTimeMillis()) {
+        long waitLimit = java.lang.System.currentTimeMillis() + 3000; /* 3 seconds */
+        while (!interrupted && !msc.isInitialized() && waitLimit > java.lang.System.currentTimeMillis()) {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
@@ -1591,52 +1591,56 @@ public class RATGenerator {
         }
     }
 
-    private void parseModelNode(int era, ChassisRecord cr, Node wn) {
-        String modelKey = (cr.getChassis() + ' ' + wn.getAttributes().getNamedItem("name").getTextContent()).trim();
+    private void parseModelNode(int era, ChassisRecord chassisRecord, Node node) {
+        String modelKey = (chassisRecord.getChassis() + ' ' + node.getAttributes()
+              .getNamedItem("name")
+              .getTextContent()).trim();
         boolean newEntry = false;
-        ModelRecord mr = models.get(modelKey);
-        if (mr == null) {
+        ModelRecord modelRecord = models.get(modelKey);
+        if (modelRecord == null) {
             newEntry = true;
-            MekSummary ms = MekSummaryCache.getInstance().getMek(modelKey);
-            if (ms != null) {
-                mr = new ModelRecord(ms);
-                mr.setOmni(cr.isOmni());
-                models.put(modelKey, mr);
+            MekSummary mekSummary = MekSummaryCache.getInstance().getMek(modelKey);
+            if (mekSummary != null) {
+                modelRecord = new ModelRecord(mekSummary);
+                modelRecord.setOmni(chassisRecord.isOmni());
+                models.put(modelKey, modelRecord);
             }
 
-            if (mr == null) {
+            if (modelRecord == null) {
                 LOGGER.error("{} {} not found.",
-                      cr.getChassis(),
-                      wn.getAttributes().getNamedItem("name").getTextContent());
+                      chassisRecord.getChassis(),
+                      node.getAttributes().getNamedItem("name").getTextContent());
                 return;
             }
         }
-        cr.addModel(mr);
-        if (wn.getAttributes().getNamedItem("mechanized") != null) {
-            mr.setMechanizedBA(Boolean.parseBoolean(wn.getAttributes().getNamedItem("mechanized").getTextContent()));
+        chassisRecord.addModel(modelRecord);
+        if (node.getAttributes().getNamedItem("mechanized") != null) {
+            modelRecord.setMechanizedBA(Boolean.parseBoolean(node.getAttributes()
+                  .getNamedItem("mechanized")
+                  .getTextContent()));
         }
 
-        for (int k = 0; k < wn.getChildNodes().getLength(); k++) {
-            Node wn2 = wn.getChildNodes().item(k);
+        for (int k = 0; k < node.getChildNodes().getLength(); k++) {
+            Node wn2 = node.getChildNodes().item(k);
             if (wn2.getNodeName().equalsIgnoreCase("roles") && newEntry) {
-                mr.addRoles(wn2.getTextContent().trim());
+                modelRecord.addRoles(wn2.getTextContent().trim());
             } else if (wn2.getNodeName().equalsIgnoreCase("deployedWith") && newEntry) {
-                mr.setRequiredUnits(wn2.getTextContent().trim());
+                modelRecord.setRequiredUnits(wn2.getTextContent().trim());
             } else if (wn2.getNodeName().equalsIgnoreCase("availability")) {
-                modelIndex.get(era).put(mr.getKey(), new HashMap<>());
+                modelIndex.get(era).put(modelRecord.getKey(), new HashMap<>());
                 String[] codes = wn2.getTextContent().trim().split(",");
                 // Create a separate availability rating for each provided faction
                 for (String code : codes) {
 
-                    AvailabilityRating ar = new AvailabilityRating(mr.getKey(), era, code);
+                    AvailabilityRating ar = new AvailabilityRating(modelRecord.getKey(), era, code);
                     // If it provides availability values based on equipment ratings,
                     // generate index values in addition to letter values
                     if (ar.hasMultipleRatings()) {
                         ar.setRatingByNumericLevel(factions.get(ar.getFaction()));
                     }
 
-                    mr.getIncludedFactions().add(ar.getFaction());
-                    modelIndex.get(era).get(mr.getKey()).put(ar.getFactionCode(), ar);
+                    modelRecord.getIncludedFactions().add(ar.getFaction());
+                    modelIndex.get(era).get(modelRecord.getKey()).put(ar.getFactionCode(), ar);
 
                 }
             }

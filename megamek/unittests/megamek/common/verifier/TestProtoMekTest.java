@@ -190,7 +190,7 @@ public class TestProtoMekTest {
         // walking 6
         when(mockProtoMek.getOriginalWalkMP()).thenReturn(4);
 
-        assertEquals(TestProtoMek.calcEngineRating(mockProtoMek), 36);
+        assertEquals(36, TestProtoMek.calcEngineRating(mockProtoMek));
     }
 
     @Test
@@ -201,7 +201,7 @@ public class TestProtoMekTest {
         // running 6, engine rating calculated as running - 2
         when(mockProtoMek.getOriginalWalkMP()).thenReturn(4);
 
-        assertEquals(TestProtoMek.calcEngineRating(mockProtoMek), 24);
+        assertEquals(24, TestProtoMek.calcEngineRating(mockProtoMek));
     }
 
     @Test
@@ -212,7 +212,7 @@ public class TestProtoMekTest {
         // running 6, engine rating calculated as running - 2
         when(mockProtoMek.getOriginalWalkMP()).thenReturn(4);
 
-        assertEquals(TestProtoMek.calcEngineRating(mockProtoMek), 24);
+        assertEquals(24, TestProtoMek.calcEngineRating(mockProtoMek));
     }
 
     @Test
@@ -235,17 +235,17 @@ public class TestProtoMekTest {
     @Test
     public void testMaxArmorFactor() {
         // Beginning of non-ultra range
-        assertEquals(TestProtoMek.maxArmorFactor(2.0, false), 15);
-        assertEquals(TestProtoMek.maxArmorFactor(2.0, true), 18);
+        assertEquals(15, TestProtoMek.maxArmorFactor(2.0, false));
+        assertEquals(18, TestProtoMek.maxArmorFactor(2.0, true));
         // End of non-ultra range
-        assertEquals(TestProtoMek.maxArmorFactor(9.0, false), 42);
-        assertEquals(TestProtoMek.maxArmorFactor(9.0, true), 45);
+        assertEquals(42, TestProtoMek.maxArmorFactor(9.0, false));
+        assertEquals(45, TestProtoMek.maxArmorFactor(9.0, true));
         // Beginning of ultra range
-        assertEquals(TestProtoMek.maxArmorFactor(10.0, false), 51);
-        assertEquals(TestProtoMek.maxArmorFactor(10.0, true), 57);
+        assertEquals(51, TestProtoMek.maxArmorFactor(10.0, false));
+        assertEquals(57, TestProtoMek.maxArmorFactor(10.0, true));
         // End of ultra range
-        assertEquals(TestProtoMek.maxArmorFactor(15.0, false), 67);
-        assertEquals(TestProtoMek.maxArmorFactor(15.0, true), 73);
+        assertEquals(67, TestProtoMek.maxArmorFactor(15.0, false));
+        assertEquals(73, TestProtoMek.maxArmorFactor(15.0, true));
     }
 
     @Test

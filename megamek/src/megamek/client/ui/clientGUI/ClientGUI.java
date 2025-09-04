@@ -450,7 +450,7 @@ public class ClientGUI extends AbstractClientGUI
 
     /**
      * Construct a client which will display itself in a new frame. It will not try to connect to a server yet. When the
-     * frame closes, this client will clean up after itself as much as possible, but will not call SystemFluff.exit().
+     * frame closes, this client will clean up after itself as much as possible, but will not call System.exit().
      */
     public ClientGUI(Client client, MegaMekController c) {
         super(client);
@@ -756,7 +756,7 @@ public class ClientGUI extends AbstractClientGUI
         try {
             // Get the correct help file.
             StringBuilder helpPath = new StringBuilder(CG_FILE_URL_START);
-            helpPath.append(System.getProperty(CG_FILEPATH_USER_DIR));
+            helpPath.append(java.lang.System.getProperty(CG_FILEPATH_USER_DIR));
             if (!helpPath.toString().endsWith(File.separator)) {
                 helpPath.append(File.separator);
             }

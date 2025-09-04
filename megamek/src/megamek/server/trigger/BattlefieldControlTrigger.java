@@ -41,7 +41,7 @@ import megamek.common.weapons.TeleMissile;
 import megamek.logging.MMLogger;
 
 /**
- * This trigger reacts when only units of a single team remain alive and on board (this trigger disregards undeployed
+ * This trigger reacts when only units of a single team remain alive and on board (this trigger disregards non-deployed
  * units, offboard units, TeleMissiles, GunEmplacements and MekWarriors!).
  */
 public class BattlefieldControlTrigger implements Trigger {

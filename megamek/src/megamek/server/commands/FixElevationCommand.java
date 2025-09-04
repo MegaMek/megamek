@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,7 +37,7 @@ package megamek.server.commands;
 import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.server.Server;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Coelocanth
@@ -59,7 +59,7 @@ public class FixElevationCommand extends ServerCommand {
      */
     @Override
     public void run(int connId, String[] args) {
-        int countbad = 0;
+        int countBad = 0;
         for (Entity entity : gameManager.getGame().getEntitiesVector()) {
             if (entity.fixElevation()) {
                 Building bldg = gameManager.getGame().getBoard().getBuildingAt(entity.getPosition());
@@ -68,9 +68,9 @@ public class FixElevationCommand extends ServerCommand {
                 }
                 server.sendServerChat(entity.getDisplayName()
                       + " elevation fixed, see megamek.log for details & report a bug if you know how this happened");
-                countbad++;
+                countBad++;
             }
         }
-        server.sendServerChat(connId, countbad + " unit(s) had elevation problems");
+        server.sendServerChat(connId, countBad + " unit(s) had elevation problems");
     }
 }

@@ -1,7 +1,6 @@
 /*
-
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -55,7 +54,7 @@ public class CheckBVCommand extends ServerCommand {
 
         server.sendServerChat(connId, "Remaining BV:");
         for (Player player : server.getGame().getPlayersList()) {
-            StringBuffer cb = new StringBuffer();
+            StringBuilder cb = new StringBuilder();
             double percentage = 0;
             if (player.getInitialBV() != 0) {
                 percentage = ((player.getBV() + 0.0) / player.getInitialBV()) * 100;

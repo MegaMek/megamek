@@ -99,7 +99,7 @@ public class BoardsValidator {
 
     /**
      * Check whether the supplied file is a valid board file or not. Ignores files that don't end in .board. Any errors
-     * are logged to SystemFluff.out.
+     * are logged to System.out.
      *
      * @param boardFile the board file to check
      */
@@ -179,7 +179,7 @@ public class BoardsValidator {
                       > java -cp MegaMek.jar megamek.utilities.BoardsValidator SomeFiles
                   """;
             LOGGER.info(helpOutput);
-            System.exit(0);
+            java.lang.System.exit(0);
             return;
         }
 
@@ -198,10 +198,10 @@ public class BoardsValidator {
 
             String statusMessage = String.format("Found %d boards with errors.", validator.numBoardErrors);
             LOGGER.info(statusMessage);
-            System.exit(validator.numBoardErrors > 0 ? 1 : 0);
+            java.lang.System.exit(validator.numBoardErrors > 0 ? 1 : 0);
         } catch (IOException ioException) {
             LOGGER.error(ioException, "IO Exception Occurred {}", ioException.getMessage());
-            System.exit(64);
+            java.lang.System.exit(64);
         }
     }
 

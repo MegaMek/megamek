@@ -48,6 +48,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.Nonnull;
 import megamek.common.Configuration;
 import megamek.common.CriticalSlot;
 import megamek.common.SimpleTechLevel;
@@ -59,6 +60,7 @@ import megamek.common.enums.MPBoosters;
 import megamek.common.enums.TechBase;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType;
+import megamek.common.exceptions.CeilNotProvidedForWeightException;
 import megamek.common.interfaces.ITechManager;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.units.*;
@@ -123,8 +125,9 @@ public abstract class TestEntity implements TestEntityOption {
      * @return a TestEntity instance for the supplied Entity.
      */
     public static TestEntity getEntityVerifier(Entity unit) {
-        EntityVerifier entityVerifier = EntityVerifier.getInstance(new File(
-              Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME));
+        EntityVerifier entityVerifier = EntityVerifier.getInstance(new File(Configuration.unitsDir(),
+              EntityVerifier.CONFIG_FILENAME));
+
         TestEntity testEntity = null;
 
         if (unit.hasETypeFlag(Entity.ETYPE_MEK)) {
@@ -182,6 +185,10 @@ public abstract class TestEntity implements TestEntityOption {
 
     @Override
     public Ceil getWeightCeilingStructure() {
+        if (options.getWeightCeilingEngine() == null) {
+            throw new CeilNotProvidedForWeightException();
+        }
+
         return options.getWeightCeilingStructure();
     }
 
@@ -298,22 +305,23 @@ public abstract class TestEntity implements TestEntityOption {
      *
      * @return Rounded value
      */
-    public static double ceil(double f, Ceil type) {
+    public static double ceil(double f, @Nonnull Ceil type) {
         return Math.ceil(f * type.multiplier) / type.multiplier;
     }
 
-    public static double ceilMaxHalf(double f, Ceil type) {
+    public static double ceilMaxHalf(double f, @Nonnull Ceil type) {
         if (type == Ceil.TON) {
             return TestEntity.ceil(f, Ceil.HALF_TON);
         }
+
         return TestEntity.ceil(f, type);
     }
 
-    public static double floor(double f, Ceil type) {
+    public static double floor(double f, @Nonnull Ceil type) {
         return Math.floor(f * type.multiplier) / type.multiplier;
     }
 
-    public static double round(double f, Ceil type) {
+    public static double round(double f, @Nonnull Ceil type) {
         return Math.round(f * type.multiplier) / type.multiplier;
     }
 
@@ -381,13 +389,13 @@ public abstract class TestEntity implements TestEntityOption {
 
     public static List<EquipmentType> validJumpJets(long entityType, boolean industrial) {
         if ((entityType & Entity.ETYPE_MEK) != 0) {
-            return TestMek.MekJumpJets.allJJs(industrial);
+            return MekJumpJets.allJJs(industrial);
         } else if ((entityType & Entity.ETYPE_TANK) != 0) {
             return Collections.singletonList(EquipmentType.get(EquipmentTypeLookup.VEHICLE_JUMP_JET));
         } else if ((entityType & Entity.ETYPE_BATTLEARMOR) != 0) {
             return TestBattleArmor.BAMotiveSystems.allSystems();
         } else if ((entityType & Entity.ETYPE_PROTOMEK) != 0) {
-            // Until we have a TestProtomek
+            // Until we have a TestProtoMek
             return Arrays.asList(EquipmentType.get(EquipmentTypeLookup.PROTOMEK_JUMP_JET),
                   EquipmentType.get(EquipmentTypeLookup.EXTENDED_JUMP_JET_SYSTEM),
                   EquipmentType.get(EquipmentTypeLookup.PROTOMEK_UMU));
@@ -511,8 +519,7 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public double getWeightStructure() {
-        return structure.getWeightStructure(getWeight(),
-              getWeightCeilingStructure());
+        return structure.getWeightStructure(getWeight(), getWeightCeilingStructure());
     }
 
     public String printWeightArmor() {
@@ -941,10 +948,8 @@ public abstract class TestEntity implements TestEntityOption {
      */
     public double calculateWeight() {
         double weight = calculateWeightExact();
-        // If the unit used kg standard, we just need to get rid of floating-point math
-        // anomalies.
-        // Otherwise, accumulated kg-scale equipment needs to be rounded up to the
-        // nearest half-ton.
+        // If the unit used kg standard, we just need to get rid of floating-point math anomalies. Otherwise,
+        // accumulated kg-scale equipment needs to be rounded up to the nearest half-ton.
         weight = round(weight, Ceil.KILO);
         if (usesKgStandard()) {
             return weight;
@@ -1004,13 +1009,11 @@ public abstract class TestEntity implements TestEntityOption {
             buff.append("Weight: ").append(calculateWeight())
                   .append(" is greater than ").append(getWeight())
                   .append("\n");
-            // buff.append(printWeightCalculation()).append("\n");
             return false;
         }
         if (showU && ((weight - getMinUnderweight()) > weightSum)) {
             buff.append("Weight: ").append(calculateWeight())
                   .append(" is less than ").append(getWeight()).append("\n");
-            // buff.append(printWeightCalculation()).append("\n");
             return false;
         }
         return true;

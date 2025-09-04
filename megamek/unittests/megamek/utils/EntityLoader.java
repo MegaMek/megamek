@@ -36,9 +36,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 
-import megamek.common.units.Entity;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.loaders.MekFileParser;
+import megamek.common.units.Entity;
 
 public class EntityLoader {
 
@@ -59,6 +59,7 @@ public class EntityLoader {
      */
     public static Entity loadFromFile(String filename) {
         EquipmentType.initializeTypes();
+
         try {
             File file = new File(RESOURCE_PATH + filename);
             MekFileParser mfParser = new MekFileParser(file);
@@ -66,6 +67,7 @@ public class EntityLoader {
         } catch (Exception ex) {
             fail(ex.getMessage());
         }
+
         throw new RuntimeException();
     }
 

@@ -50,7 +50,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.logging.MMLogger;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author arlith

@@ -45,7 +45,7 @@ import javax.swing.border.EmptyBorder;
 import megamek.client.ui.util.FlatLafStyleBuilder;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.UIUtil;
-import megamek.server.scriptedevent.NarrativeDisplayProvider;
+import megamek.server.scriptedEvents.NarrativeDisplayProvider;
 
 public class MMNarrativeStoryDialog extends MMStoryDialog {
 

@@ -618,7 +618,7 @@ public class WeaponType extends EquipmentType {
     // TODO Add game rules IO pg 84
     public static final WeaponTypeFlag F_INF_CLIMBING_CLAWS = WeaponTypeFlag.F_INF_CLIMBING_CLAWS;
 
-    // C3 Master Booster SystemFluff
+    // C3 Master Booster System
     public static final WeaponTypeFlag F_C3MBS = WeaponTypeFlag.F_C3MBS;
 
     // Naval Mass Drivers
@@ -754,8 +754,6 @@ public class WeaponType extends EquipmentType {
     protected int waterLongRange;
     protected int waterExtremeRange;
 
-    protected double bv;
-
     // the class of weapon for infantry damage
     public int infDamageClass = WEAPON_DIRECT_FIRE;
 
@@ -788,6 +786,18 @@ public class WeaponType extends EquipmentType {
 
     public void setMinimumRange(int inMR) {
         minimumRange = inMR;
+    }
+
+    public void setShortRange(int inSM) {
+        shortRange = inSM;
+    }
+
+    public void setMediumRange(int inMR) {
+        mediumRange = inMR;
+    }
+
+    public void setLongRange(int inSM) {
+        longRange = inSM;
     }
 
     public void setAmmoType(AmmoTypeEnum inAT) {

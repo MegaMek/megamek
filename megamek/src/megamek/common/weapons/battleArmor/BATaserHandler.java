@@ -52,7 +52,7 @@ import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
 import megamek.common.units.Tank;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 public class BATaserHandler extends AmmoWeaponHandler {
     @Serial

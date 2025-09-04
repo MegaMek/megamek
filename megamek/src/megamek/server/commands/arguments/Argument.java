@@ -71,7 +71,7 @@ public abstract class Argument<T> {
     /**
      * @return the string representation of the argument
      */
-    public String getRepr() {
+    public String getRepresentation() {
         return "<" + getName() + "=#>";
     }
 

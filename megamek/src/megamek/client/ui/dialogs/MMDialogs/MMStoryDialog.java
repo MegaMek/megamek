@@ -49,7 +49,7 @@ import megamek.client.ui.buttons.DialogButton;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.util.ImageUtil;
-import megamek.server.scriptedevent.NarrativeDisplayProvider;
+import megamek.server.scriptedEvents.NarrativeDisplayProvider;
 
 /**
  * This is the base class for MM dialogs that have a similar look to Story Arc dialogs. Instead of the StoryArc object

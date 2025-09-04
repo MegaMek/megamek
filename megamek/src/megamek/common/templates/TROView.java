@@ -69,6 +69,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
 import megamek.common.units.*;
+import megamek.common.units.System;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.BayData;
 import megamek.common.verifier.EntityVerifier;
@@ -228,23 +229,23 @@ public class TROView {
     }
 
     /**
-     * Builds the fluff name for a systemFluff component.
+     * Builds the fluff name for a system component.
      *
-     * @param systemFluff The systemFluff component
-     * @param fluff       The {@link Entity}'s fluff object
-     * @param altText     Alternate text that will be used if neither fluff field is set.
+     * @param system  The system component
+     * @param fluff   The {@link Entity}'s fluff object
+     * @param altText Alternate text that will be used if neither fluff field is set.
      *
      * @return The fluff display name, which consists of the manufacturer and the model separated by a space. If either
      *       is missing it is left out.
      */
-    public static String formatSystemFluff(SystemFluff systemFluff, EntityFluff fluff, Supplier<String> altText) {
+    public static String formatSystemFluff(System system, EntityFluff fluff, Supplier<String> altText) {
         final StringJoiner sj = new StringJoiner(" ");
-        if (!fluff.getSystemManufacturer(systemFluff).isBlank()) {
-            sj.add(fluff.getSystemManufacturer(systemFluff));
+        if (!fluff.getSystemManufacturer(system).isBlank()) {
+            sj.add(fluff.getSystemManufacturer(system));
         }
 
-        if (!fluff.getSystemModel(systemFluff).isBlank()) {
-            sj.add(fluff.getSystemModel(systemFluff));
+        if (!fluff.getSystemModel(system).isBlank()) {
+            sj.add(fluff.getSystemModel(system));
         }
 
         return sj.toString().isBlank() ? altText.get() : sj.toString();
@@ -255,7 +256,7 @@ public class TROView {
         model.put("massDesc", NumberFormat.getInstance().format(entity.getWeight())
               + Messages.getString(entity.getWeight() == 1.0 ? "TROView.ton" : "TROView.tons"));
         if (entity.hasEngine()) {
-            model.put("engineDesc", formatSystemFluff(SystemFluff.ENGINE, entity.getFluff(),
+            model.put("engineDesc", formatSystemFluff(System.ENGINE, entity.getFluff(),
                   () -> stripNotes(entity.getEngine().getEngineName())));
         } else {
             model.put("engineDesc", "None");
@@ -265,11 +266,11 @@ public class TROView {
             model.put("maxSpeed", entity.getRunMP() * 10.8);
         }
         if (entity.isMek() || (entity.isProtoMek() && entity.getOriginalJumpMP() > 0)) {
-            model.put("jumpDesc", formatSystemFluff(SystemFluff.JUMP_JET, entity.getFluff(),
+            model.put("jumpDesc", formatSystemFluff(System.JUMP_JET, entity.getFluff(),
                   () -> Messages.getString("TROView.Unknown")));
         }
         model.put("armorDesc",
-              formatSystemFluff(SystemFluff.ARMOR, entity.getFluff(), () -> formatArmorType(entity, false)));
+              formatSystemFluff(System.ARMOR, entity.getFluff(), () -> formatArmorType(entity, false)));
         final Map<String, Integer> weaponCount = new HashMap<>();
         double podSpace = 0.0;
         for (final Mounted<?> m : entity.getEquipment()) {
@@ -287,9 +288,9 @@ public class TROView {
             armaments.add(String.format(Messages.getString("TROView.podspace.format"), podSpace));
         }
         model.put("armamentList", armaments);
-        model.put("communicationDesc", formatSystemFluff(SystemFluff.COMMUNICATIONS, entity.getFluff(),
+        model.put("communicationDesc", formatSystemFluff(System.COMMUNICATIONS, entity.getFluff(),
               () -> Messages.getString("TROView.Unknown")));
-        model.put("targetingDesc", formatSystemFluff(SystemFluff.TARGETING, entity.getFluff(),
+        model.put("targetingDesc", formatSystemFluff(System.TARGETING, entity.getFluff(),
               () -> Messages.getString("TROView.Unknown")));
     }
 
@@ -655,7 +656,7 @@ public class TROView {
 
     /**
      * Used to show the name of fixed system critical slots in an omni unit. This is only used for Meks, and returns a
-     * default value of "Unknown SystemFluff" for other units.
+     * default value of "Unknown System" for other units.
      *
      * @param entity The unit the TRO is for
      * @param index  The system index of the critical slot
@@ -663,7 +664,7 @@ public class TROView {
      * @return The name of the system to display in the fixed equipment table
      */
     protected String getSystemName(Entity entity, int index) {
-        return "Unknown SystemFluff";
+        return "Unknown System";
     }
 
     /**
@@ -765,7 +766,7 @@ public class TROView {
                     justification[i] = Justification.LEFT;
                 }
             }
-            System.arraycopy(widths, 0, colWidths, 0, widths.length);
+            java.lang.System.arraycopy(widths, 0, colWidths, 0, widths.length);
         }
 
         @Override

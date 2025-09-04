@@ -77,7 +77,7 @@ public class BotHelpCommand extends ServerCommand {
         StringBuilder commandList = new StringBuilder();
 
         for (ChatCommands cmdName : ChatCommands.values()) {
-            if (commandList.length() > 0) {
+            if (!commandList.isEmpty()) {
                 commandList.append(", ");
             }
             commandList.append(cmdName.getAbbreviation());

@@ -55,7 +55,7 @@ import megamek.common.weapons.handlers.mekMortar.MekMortarAntiPersonnelHandler;
 import megamek.common.weapons.handlers.mekMortar.MekMortarFlareHandler;
 import megamek.common.weapons.handlers.mekMortar.MekMortarHandler;
 import megamek.common.weapons.handlers.mekMortar.MekMortarSmokeHandler;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Jason Tighe

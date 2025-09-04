@@ -37,9 +37,9 @@ package megamek.server.victory;
 import java.util.HashSet;
 import java.util.Map;
 
-import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.Report;
+import megamek.common.game.Game;
 
 /**
  * This is a VictoryCondition that will match when friendly BV over enemy BV is at least a given ratio in percent. For
@@ -47,7 +47,7 @@ import megamek.common.Report;
  * is considered together, so a starting point of 1:1:1 BV for three teams would place the initial ratio at 1 / (1 + 1)
  * = 0.5.
  */
-public class BVRatioVictoryCondition implements BvVictoryCondition {
+public class BVRatioVictoryCondition implements BVVictoryCondition {
 
     protected int ratio;
 

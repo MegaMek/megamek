@@ -36,14 +36,14 @@ package megamek.server.commands;
 import java.util.List;
 
 import megamek.client.ui.Messages;
-import megamek.common.units.Entity;
 import megamek.common.Player;
+import megamek.common.units.Entity;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.PlayerArgument;
 import megamek.server.commands.arguments.UnitArgument;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * The Server Command "/changeOwner" that will switch an entity's owner to another player.
@@ -59,15 +59,15 @@ public class ChangeOwnershipCommand extends GamemasterServerCommand {
         super(server,
               gameManager,
               "changeOwner",
-              Messages.getString("Gamemaster.cmd.changeownership.help"),
-              Messages.getString("Gamemaster.cmd.changeownership.longName"));
+              Messages.getString("Gamemaster.cmd.changeOwnership.help"),
+              Messages.getString("Gamemaster.cmd.changeOwnership.longName"));
     }
 
     @Override
     public List<Argument<?>> defineArguments() {
         return List.of(
-              new UnitArgument(UNIT_ID, Messages.getString("Gamemaster.cmd.changeownership.unitID")),
-              new PlayerArgument(PLAYER_ID, Messages.getString("Gamemaster.cmd.changeownership.playerID")));
+              new UnitArgument(UNIT_ID, Messages.getString("Gamemaster.cmd.changeOwnership.unitID")),
+              new PlayerArgument(PLAYER_ID, Messages.getString("Gamemaster.cmd.changeOwnership.playerID")));
     }
 
     @Override
@@ -78,14 +78,14 @@ public class ChangeOwnershipCommand extends GamemasterServerCommand {
         Entity ent = gameManager.getGame().getEntity(unitID.getValue());
         Player player = server.getGame().getPlayer(playerID.getValue());
         if (null == ent) {
-            server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.changeownership.unitNotFound"));
+            server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.changeOwnership.unitNotFound"));
         } else if (null == player) {
-            server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.changeownership.playerNotFound"));
+            server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.changeOwnership.playerNotFound"));
         } else if (player.getTeam() == Player.TEAM_UNASSIGNED) {
-            server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.changeownership.playerUnassigned"));
+            server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.changeOwnership.playerUnassigned"));
         } else {
             server.sendServerChat(connId,
-                  Messages.getString("Gamemaster.cmd.changeownership.success", ent.getDisplayName(), player.getName()));
+                  Messages.getString("Gamemaster.cmd.changeOwnership.success", ent.getDisplayName(), player.getName()));
             ent.setTraitorId(player.getId());
         }
     }

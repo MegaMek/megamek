@@ -36,7 +36,7 @@ package megamek.server.commands;
 import static megamek.server.Server.SERVER_CONN;
 
 import megamek.server.Server;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * A ServerCommand that can only be used by Game Masters, This abstract class implements many features that are common

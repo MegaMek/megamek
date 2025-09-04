@@ -46,10 +46,10 @@ import java.util.List;
 
 import megamek.client.ui.panels.phaseDisplay.TowLinkWarning;
 import megamek.common.board.Board;
-import megamek.common.compute.Compute;
 import megamek.common.board.Coords;
-import megamek.common.units.Entity;
+import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.units.Entity;
 import megamek.common.units.LargeSupportTank;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -165,7 +165,7 @@ public class TowLinkWarningTest {
             when(mockTrailer.isDeployed()).thenReturn(true);
             when(mockTrailer.getPosition()).thenReturn(new Coords(3, 3));
 
-            List<Coords> testCoords = null;
+            List<Coords> testCoords;
 
             try (MockedStatic<Compute> compute = Mockito.mockStatic(Compute.class)) {
                 compute.when(() -> Compute.stackingViolation(any(Game.class),
@@ -249,7 +249,7 @@ public class TowLinkWarningTest {
             when(mockTractor.isDeployed()).thenReturn(true);
             when(mockTractor.getPosition()).thenReturn(new Coords(3, 3));
 
-            List<Coords> testCoords = null;
+            List<Coords> testCoords;
 
             try (MockedStatic<Compute> compute = Mockito.mockStatic(Compute.class)) {
                 compute.when(() -> Compute.stackingViolation(any(Game.class),
@@ -553,7 +553,7 @@ public class TowLinkWarningTest {
 
             // Act / Assert
             // This should throw a stack overflow error.
-            Throwable exception = assertThrows(StackOverflowError.class,
+            assertThrows(StackOverflowError.class,
                   () -> TowLinkWarning.findTowLinkIssues(mockGame, mockTrailer, mockBoard));
         }
     }

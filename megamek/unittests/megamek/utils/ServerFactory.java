@@ -47,7 +47,6 @@ public class ServerFactory {
      *
      * @return Server a valid server using an open port
      *
-     * @throws IOException
      */
     public static Server createServer(AbstractGameManager gameManager) throws IOException {
 

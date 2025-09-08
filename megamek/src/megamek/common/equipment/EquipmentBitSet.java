@@ -165,6 +165,10 @@ public class EquipmentBitSet {
     public <T extends Enum<T> & EquipmentFlag> List<String> getSetFlagNames(Class<T> flagEnum) {
         List<String> setFlags = new ArrayList<>();
         T[] enumConstants = flagEnum.getEnumConstants();
+        if (enumConstants == null) {
+            // The provided class is not an enum type; return empty list
+            return setFlags;
+        }
 
         // Only iterate through the bits that are actually set
         for (int i = bitSet.nextSetBit(0); i >= 0; i = bitSet.nextSetBit(i + 1)) {

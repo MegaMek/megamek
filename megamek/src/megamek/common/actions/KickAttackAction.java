@@ -185,8 +185,7 @@ public class KickAttackAction extends PhysicalAttackAction {
                   || (leg == KickAttackAction.RIGHT_MULE)) {
                 kickLegs[0] = Mek.LOC_RIGHT_LEG;
                 kickLegs[1] = Mek.LOC_LEFT_LEG;
-                // PLAYTEST no more mule modifier
-                mule = 0; // To-hit modifier
+                mule = 1; // To-hit modifier
             } else {
                 kickLegs[0] = Mek.LOC_RIGHT_ARM;
                 kickLegs[1] = Mek.LOC_LEFT_ARM;
@@ -298,7 +297,8 @@ public class KickAttackAction extends PhysicalAttackAction {
 
         // Mule kick?
         if (mule != 0) {
-            toHit.addModifier(mule, "Quad Mek making a mule kick");
+            // PLAYTEST no more mule modifier
+            // toHit.addModifier(mule, "Quad Mek making a mule kick");
         }
 
         // damaged or missing actuators

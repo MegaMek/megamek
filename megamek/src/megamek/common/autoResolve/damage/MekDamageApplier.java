@@ -414,7 +414,7 @@ public record MekDamageApplier(Mek entity, EntityFinalState entityFinalState) im
     private int ejectCrew(boolean ammoExplosion) {
         if (!entity.isEjectionPossible()) {
             if (ammoExplosion) {
-                return 2;
+                return 1;
             }
         }
         // PLAYTEST crew damage reduced to 1 for ammo exp

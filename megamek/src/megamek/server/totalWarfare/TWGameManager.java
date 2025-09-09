@@ -8182,9 +8182,7 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             // build up heat from movement
-            if (entity.isEvading() && !entity.isAero()) {
-                entity.heatBuildup += entity.getRunHeat() + 2;
-            } else if (entity.moved == EntityMovementType.MOVE_NONE) {
+            if (entity.moved == EntityMovementType.MOVE_NONE) {
                 entity.heatBuildup += entity.getStandingHeat();
             } else if ((entity.moved == EntityMovementType.MOVE_WALK) ||
                   (entity.moved == EntityMovementType.MOVE_VTOL_WALK) ||

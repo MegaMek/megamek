@@ -671,8 +671,8 @@ public class Engine implements Serializable, ITechnology {
     /**
      * @return the heat generated while the mek is standing still.
      */
-    public int getStandingHeat() {
-        return (engineType == XXL_ENGINE) ? 2 : 0;
+    public int getStandingHeat(Entity entity) {
+        return (engineType == XXL_ENGINE && !entity.hasWorkingSCM()) ? 2 : 0;
     }
 
     /**
@@ -682,7 +682,7 @@ public class Engine implements Serializable, ITechnology {
         boolean hasSCM = (entity instanceof Mek) && entity.hasWorkingSCM();
         return switch (engineType) {
             case COMBUSTION_ENGINE, FUEL_CELL -> 0;
-            case XXL_ENGINE -> hasSCM ? 3 : 4;
+            case XXL_ENGINE -> hasSCM ? 0 : 4;
             default -> hasSCM ? 0 : 1;
         };
     }
@@ -694,7 +694,7 @@ public class Engine implements Serializable, ITechnology {
         boolean hasSCM = (entity instanceof Mek) && entity.hasWorkingSCM();
         return switch (engineType) {
             case COMBUSTION_ENGINE, FUEL_CELL -> 0;
-            case XXL_ENGINE -> hasSCM ? 4 : 6;
+            case XXL_ENGINE -> hasSCM ? 0 : 6;
             default -> hasSCM ? 0 : 2;
         };
     }
@@ -706,7 +706,7 @@ public class Engine implements Serializable, ITechnology {
         boolean hasSCM = (e instanceof Mek) && e.hasWorkingSCM();
         return switch (engineType) {
             case COMBUSTION_ENGINE, FUEL_CELL -> 0;
-            case XXL_ENGINE -> hasSCM ? 6 : 9;
+            case XXL_ENGINE -> hasSCM ? 0 : 9;
             default -> hasSCM ? 0 : 3;
         };
     }

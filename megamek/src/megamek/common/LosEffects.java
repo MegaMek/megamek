@@ -1461,12 +1461,13 @@ public class LosEffects {
         // Partial Cover related code
         boolean potentialCover = false;
         // check for target partial cover
+        // PLAYTEST partial cover now works regardless of height
         if (targetAdjacent && ai.targetIsMek) {
             if (los.blocked && partialCover) {
                 los.targetCover = COVER_FULL;
                 potentialCover = true;
             } else if ((totalEl == ai.targetAbsHeight) &&
-                  (ai.attackAbsHeight <= ai.targetAbsHeight) &&
+                  // (ai.attackAbsHeight <= ai.targetAbsHeight) &&
                   (ai.targetHeight > 0)) {
                 los.targetCover |= COVER_HORIZONTAL;
                 potentialCover = true;
@@ -1478,7 +1479,7 @@ public class LosEffects {
                 los.attackerCover = COVER_FULL;
                 potentialCover = true;
             } else if ((totalEl == ai.attackAbsHeight) &&
-                  (ai.attackAbsHeight >= ai.targetAbsHeight) &&
+                  //(ai.attackAbsHeight >= ai.targetAbsHeight) &&
                   (ai.attackHeight > 0)) {
                 los.attackerCover |= COVER_HORIZONTAL;
                 potentialCover = true;

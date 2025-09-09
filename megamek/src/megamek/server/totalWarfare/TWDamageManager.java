@@ -1331,6 +1331,7 @@ public class TWDamageManager implements IDamageManager {
                 // damage. If arm/leg/head
                 // Then they lose all their armor if its less then the
                 // explosion damage.
+                // PLAYTEST major ammo explosion changes
                 if (ammoExplosion && entity.hasCASEII(hit.getLocation())) {
                     // 1 point of damage goes to IS
                     damage--;
@@ -1378,7 +1379,86 @@ public class TWDamageManager implements IDamageManager {
                     if (diceRoll.getIntValue() >= 8) {
                         hit.setEffect(HitData.EFFECT_NO_CRITICAL_SLOTS);
                     }
+                } else if (ammoExplosion && entity.locationHasCase(hit.getLocation())) {
+                    // PLAYTEST ammo exp with CASE
+                    if (damage > 10) {
+                        damage = 10;
+
+                        // CHANGE REPORT ID
+                        report = new Report(6126);
+                        report.subject = entityId;
+                        report.add(damage);
+                        report.indent(3);
+                        reportVec.addElement(report);
+                        int loc = hit.getLocation();
+                        if ((entity instanceof Mek) &&
+                              ((loc == Mek.LOC_HEAD) || ((Mek) entity).isArm(loc) || entity.locationIsLeg(loc))) {
+                            entity.setArmor(IArmorState.ARMOR_DESTROYED, loc, false);
+                        } else {
+                            entity.setArmor(IArmorState.ARMOR_DESTROYED, loc, true);
+                        }
+                    }    
+                    
+                    if (entity.getInternal(hit) > 0) {
+                        if (damage > 10) {
+                            damage = 10;
+                        }
+                    } else {
+                        damage = 0;
+                    }
+
+                    entity.damageThisPhase += damage;
+
+                        Roll diceRoll = Compute.rollD6(2);
+                        report = new Report(6127);
+                        report.subject = entity.getId();
+                        report.add(diceRoll);
+                        reportVec.add(report);
+
+                        if (diceRoll.getIntValue() >= 8) {
+                            hit.setEffect(HitData.EFFECT_NO_CRITICAL_SLOTS);
+                        }
+                } else if (ammoExplosion) {
+                    // PLAYTEST ammo exp no case
+                if (damage > 20) {
+                    damage = 20;
+
+                    // CHANGE REPORT ID
+                    report = new Report(6126);
+                    report.subject = entityId;
+                    report.add(damage);
+                    report.indent(3);
+                    reportVec.addElement(report);
+                    int loc = hit.getLocation();
+                    if ((entity instanceof Mek) &&
+                          ((loc == Mek.LOC_HEAD) || ((Mek) entity).isArm(loc) || entity.locationIsLeg(loc))) {
+                        entity.setArmor(IArmorState.ARMOR_DESTROYED, loc, false);
+                    } else {
+                        entity.setArmor(IArmorState.ARMOR_DESTROYED, loc, true);
+                    }
                 }
+
+                if (entity.getInternal(hit) > 0) {
+                    if (damage > 20) {
+                        damage = 20;
+                    }
+                }
+
+                entity.damageThisPhase += damage;
+
+                Roll diceRoll = Compute.rollD6(2);
+                report = new Report(6127);
+                report.subject = entity.getId();
+                report.add(diceRoll);
+                reportVec.add(report);
+
+                if (diceRoll.getIntValue() >= 8) {
+                    hit.setEffect(HitData.EFFECT_NO_CRITICAL_SLOTS);
+                }
+
+            }
+                
+                
                 // check for tank CASE here: damage to rear armor, excess
                 // dissipating, and a crew stunned crit
                 if (ammoExplosion && (entity instanceof Tank) && entity.locationHasCase(Tank.LOC_BODY)) {
@@ -1790,7 +1870,8 @@ public class TWDamageManager implements IDamageManager {
                     int critMod = entity.hasBARArmor(hit.getLocation()) ? 2 : 0;
                     critMod += (reflectiveArmor && !isBattleArmor) ? 2 : 0; // BA
                     // against impact armor, we get a +1 mod
-                    critMod += impactArmor ? 1 : 0;
+                    // PLAYTEST impactArmor no longer applies +1.
+                    // critMod += impactArmor ? 1 : 0;
                     // hardened armour has no crit penalty
                     if (!hardenedArmor) {
                         // non-hardened armor gets modifiers

@@ -119,6 +119,11 @@ public class ATMHandler extends MissileWeaponHandler {
         return hits;
     }
 
+    // PLAYTEST ATMs now cluster in 6s
+    @Override
+    protected int calculateNumCluster() {
+        return 6;
+    }
     /**
      * Calculate the attack value based on range
      *

@@ -185,7 +185,8 @@ public class KickAttackAction extends PhysicalAttackAction {
                   || (leg == KickAttackAction.RIGHT_MULE)) {
                 kickLegs[0] = Mek.LOC_RIGHT_LEG;
                 kickLegs[1] = Mek.LOC_LEFT_LEG;
-                mule = 1; // To-hit modifier
+                // PLAYTEST no more mule modifier
+                mule = 0; // To-hit modifier
             } else {
                 kickLegs[0] = Mek.LOC_RIGHT_ARM;
                 kickLegs[1] = Mek.LOC_LEFT_ARM;
@@ -284,7 +285,8 @@ public class KickAttackAction extends PhysicalAttackAction {
         // Start the To-Hit
         toHit = new ToHitData(base, "base");
 
-        toHit.addModifier(-2, "Kick");
+        // PLAYTEST new modifier
+        toHit.addModifier(-1, "Kick");
 
         PhysicalAttackAction.setCommonModifiers(toHit, game, ae, target);
 

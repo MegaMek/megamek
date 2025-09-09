@@ -200,6 +200,12 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
               && !mLinker.isDestroyed() && !mLinker.isMissing()
               && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_APOLLO))
               && (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MRM)) {
+            // PLAYTEST apollo is -2 now cumulative with MRM
+            nMissilesModifier -= 2;
+        } else if (((mLinker != null)
+              && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && !mLinker.getType().hasFlag(MiscType.F_APOLLO))
+              && (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MRM)) {
+            // PLAYTEST change modifier to -1 cluster hits with MRMs and no apollo
             nMissilesModifier -= 1;
         } else if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) {
             if (bECMAffected) {
@@ -505,6 +511,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 boolean isAPDS = counter.isAPDS();
 
                 // Only one AMS and one APDS can engage each missile attack
+                // PLAYTEST TODO may need more AMS stuff here
                 if (isAMS && amsEngaged) {
                     continue;
                 } else if (isAPDS && apdsEngaged) {

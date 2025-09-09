@@ -748,8 +748,9 @@ class HeatResolver extends AbstractTWRuleHandler {
             if (entity.hasQuirk(OptionsConstants.QUIRK_NEG_POOR_LIFE_SUPPORT)) {
                 damageHeat += 5;
             }
+            // PLAYTEST life support heat
             if ((lifeSupportCritCount > 0) &&
-                  ((damageHeat >= 15) || (torsoMountedCockpit && (damageHeat > 0))) &&
+                  ((damageHeat >= 10) || (torsoMountedCockpit && (damageHeat > 0))) &&
                   !entity.getCrew().isDead() &&
                   !entity.getCrew().isDoomed() &&
                   !entity.getCrew().isEjected()) {
@@ -769,11 +770,13 @@ class HeatResolver extends AbstractTWRuleHandler {
                     damageToCrew = 3;
                 } else if (damageHeat >= 25) {
                     // mekwarrior takes 2 damage
-                    heatLimitDesc = 25;
+                    // PLAYTEST now 20 from 25
+                    heatLimitDesc = 20;
                     damageToCrew = 2;
                 } else if (damageHeat >= 15) {
                     // mekwarrior takes 1 damage
-                    heatLimitDesc = 15;
+                    // PLAYTEST now 10 from 15.
+                    heatLimitDesc = 10;
                     damageToCrew = 1;
                 }
                 if ((mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) &&

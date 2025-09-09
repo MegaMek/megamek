@@ -62,7 +62,8 @@ public abstract class MRMWeapon extends MissileWeapon {
     public MRMWeapon() {
         super();
         ammoType = AmmoType.AmmoTypeEnum.MRM;
-        toHitModifier = 1;
+        // PLAYTEST no more +1 to hit
+        toHitModifier = 0;
         atClass = CLASS_MRM;
     }
 
@@ -85,10 +86,12 @@ public abstract class MRMWeapon extends MissileWeapon {
         }
         if (fcs != null && fcs.getType() instanceof MiscType
               && fcs.getType().hasFlag(MiscType.F_APOLLO)) {
-            damage = Compute.calculateClusterHitTableAmount(6, getRackSize());
+            damage = Compute.calculateClusterHitTableAmount(5, getRackSize());
+            damage *= 1.05; // -1 top hit
         } else {
-            damage = Compute.calculateClusterHitTableAmount(7, getRackSize());
-            damage *= 0.95; // +1 to hit
+            // PLAYTEST change MRMs to not have the +1 to hit, and reduce the cluster
+            damage = Compute.calculateClusterHitTableAmount(6, getRackSize());
+            damage *= 1; // +1 to hit
         }
         if (range == 0 && getMinimumRange() > 0) {
             damage = adjustBattleForceDamageForMinRange(damage);

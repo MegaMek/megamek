@@ -89,7 +89,8 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
                 extraHeat += Compute.d6();
             }
 
-            if (entityTarget.getArmor(hit) > 0 &&
+            // PLAYTEST no more reflective reduction
+            /* if (entityTarget.getArmor(hit) > 0 &&
                   (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE)) {
                 entityTarget.heatFromExternal += Math.max(1, extraHeat / 2);
                 report.add(Math.max(1, extraHeat / 2));
@@ -97,13 +98,14 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
                 report.messageId = 3406;
                 report.add(extraHeat);
                 report.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
-            } else if (entityTarget.getArmor(hit) > 0 &&
+            } else */
+            if (entityTarget.getArmor(hit) > 0 &&
                   (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
-                entityTarget.heatFromExternal += extraHeat / 2;
-                report.add(extraHeat / 2);
+                entityTarget.heatFromExternal += 0;
+                report.add(0);
                 report.choose(true);
                 report.messageId = 3406;
-                report.add(extraHeat);
+                report.add(0);
                 report.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
             } else {
                 entityTarget.heatFromExternal += extraHeat;
@@ -126,6 +128,15 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE) &&
                   (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
                 toReturn = (int) Math.floor(toReturn / 2.0);
+            }
+            // PLAYTEST half damage to heat dissipating
+            Entity te;
+            if (target instanceof Entity) {
+                te = (Entity) target;
+                if (te.getArmor(hit) > 0 &&
+                      (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
+                    toReturn = (int) Math.floor(toReturn / 2.0);
+                }
             }
             return toReturn;
         }

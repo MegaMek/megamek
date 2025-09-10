@@ -377,6 +377,8 @@ public class TripodMek extends MekWithArms {
             }
         }
 
+        boolean playtestLocations = gameOptions().booleanOption(OptionsConstants.PLAYTEST_1);
+
         if ((table == ToHitData.HIT_NORMAL) || (table == ToHitData.HIT_PARTIAL_COVER)) {
             roll = Compute.d6(2);
             try {
@@ -390,6 +392,22 @@ public class TripodMek extends MekWithArms {
                 }
             } catch (Throwable t) {
                 logger.error("", t);
+            }
+
+            if (playtestLocations
+                  && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)
+                  && roll != 2 // clarified on forum, TACs don't go to the CT in this case
+            ) {
+                var isLeft = side == ToHitData.SIDE_LEFT;
+
+                var hitData = rollHitLocation(table, ToHitData.SIDE_FRONT, LOC_NONE, AimingMode.NONE, cover);
+                hitData.setLocation(switch (hitData.getLocation()) {
+                    case LOC_LEFT_ARM, LOC_RIGHT_ARM -> isLeft ? LOC_LEFT_ARM : LOC_RIGHT_ARM;
+                    case LOC_LEFT_LEG, LOC_RIGHT_LEG -> isLeft ? LOC_LEFT_LEG : LOC_RIGHT_LEG;
+                    case LOC_LEFT_TORSO, LOC_RIGHT_TORSO -> isLeft ? LOC_LEFT_TORSO : LOC_RIGHT_TORSO;
+                    default -> hitData.getLocation();
+                });
+                return hitData;
             }
 
             if (side == ToHitData.SIDE_FRONT) {
@@ -745,6 +763,18 @@ public class TripodMek extends MekWithArms {
                 }
             } catch (Throwable t) {
                 logger.error("", t);
+            }
+
+            if (playtestLocations && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)) {
+                var isLeft = side == ToHitData.SIDE_LEFT;
+
+                var hitData = rollHitLocation(table, ToHitData.SIDE_FRONT, LOC_NONE, AimingMode.NONE, cover);
+                hitData.setLocation(switch (hitData.getLocation()) {
+                    case LOC_LEFT_ARM, LOC_RIGHT_ARM -> isLeft ? LOC_LEFT_ARM : LOC_RIGHT_ARM;
+                    case LOC_LEFT_LEG, LOC_RIGHT_LEG -> isLeft ? LOC_LEFT_LEG : LOC_RIGHT_LEG;
+                    case LOC_LEFT_TORSO, LOC_RIGHT_TORSO -> isLeft ? LOC_LEFT_TORSO : LOC_RIGHT_TORSO;
+                    default -> hitData.getLocation();
+                });
             }
 
             if ((side == ToHitData.SIDE_FRONT) || (side == ToHitData.SIDE_REAR)) {

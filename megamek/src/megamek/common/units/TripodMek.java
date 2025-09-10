@@ -775,6 +775,7 @@ public class TripodMek extends MekWithArms {
                     case LOC_LEFT_TORSO, LOC_RIGHT_TORSO -> isLeft ? LOC_LEFT_TORSO : LOC_RIGHT_TORSO;
                     default -> hitData.getLocation();
                 });
+                return hitData;
             }
 
             if ((side == ToHitData.SIDE_FRONT) || (side == ToHitData.SIDE_REAR)) {

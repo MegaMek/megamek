@@ -922,7 +922,7 @@ public abstract class Mek extends Entity {
      */
     @Override
     public int getStandingHeat() {
-        return hasEngine() ? getEngine().getStandingHeat() : 0;
+        return hasEngine() ? getEngine().getStandingHeat(this) : 0;
     }
 
     /**
@@ -1014,6 +1014,7 @@ public abstract class Mek extends Entity {
     @Override
     public int getRunHeat() {
         int extra = bDamagedCoolantSystem ? 1 : 0;
+        extra += isEvading() && !hasWorkingSCM() ? 2 : 0;
         return extra + (hasEngine() ? getEngine().getRunHeat(this) : 0);
     }
 

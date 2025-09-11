@@ -1926,17 +1926,7 @@ public abstract class Mek extends Entity {
                   && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)
                   && roll != 2 // clarified on forum, TACs don't go to the CT in this case
             ) {
-                var isLeft = side == ToHitData.SIDE_LEFT;
-
-                var hitData = rollHitLocation(table, ToHitData.SIDE_FRONT, LOC_NONE, AimingMode.NONE, cover);
-                hitData.setLocation(switch (hitData.getLocation()) {
-                    case LOC_LEFT_ARM, LOC_RIGHT_ARM -> isLeft ? LOC_LEFT_ARM : LOC_RIGHT_ARM;
-                    case LOC_LEFT_LEG, LOC_RIGHT_LEG -> isLeft ? LOC_LEFT_LEG : LOC_RIGHT_LEG;
-                    case LOC_LEFT_TORSO, LOC_RIGHT_TORSO -> isLeft ? LOC_LEFT_TORSO : LOC_RIGHT_TORSO;
-                    default -> hitData.getLocation();
-                });
-
-                return hitData;
+                return getPlaytestSideLocation(table, side, cover);
             }
 
             if (side == ToHitData.SIDE_FRONT) {
@@ -2440,6 +2430,20 @@ public abstract class Mek extends Entity {
             }
         }
         return null;
+    }
+
+    protected HitData getPlaytestSideLocation(int table, int side, int cover) {
+        var isLeft = side == ToHitData.SIDE_LEFT;
+
+        var hitData = rollHitLocation(table, ToHitData.SIDE_FRONT, LOC_NONE, AimingMode.NONE, cover);
+        hitData.setLocation(switch (hitData.getLocation()) {
+            case LOC_LEFT_ARM, LOC_RIGHT_ARM -> isLeft ? LOC_LEFT_ARM : LOC_RIGHT_ARM;
+            case LOC_LEFT_LEG, LOC_RIGHT_LEG -> isLeft ? LOC_LEFT_LEG : LOC_RIGHT_LEG;
+            case LOC_LEFT_TORSO, LOC_RIGHT_TORSO -> isLeft ? LOC_LEFT_TORSO : LOC_RIGHT_TORSO;
+            default -> hitData.getLocation();
+        });
+
+        return hitData;
     }
 
     /**

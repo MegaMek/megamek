@@ -1554,17 +1554,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         boolean playtestLocations = gameOptions().booleanOption(OptionsConstants.PLAYTEST_1);
 
         if (playtestLocations && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)) {
-            var isLeft = side == ToHitData.SIDE_LEFT;
-
-            var hitData = rollHitLocation(table, ToHitData.SIDE_FRONT, LOC_NONE, AimingMode.NONE, LosEffects.COVER_NONE);
-            hitData.setLocation(switch (hitData.getLocation()) {
-                case LOC_LEFT_ARM, LOC_RIGHT_ARM -> isLeft ? LOC_LEFT_ARM : LOC_RIGHT_ARM;
-                case LOC_LEFT_LEG, LOC_RIGHT_LEG -> isLeft ? LOC_LEFT_LEG : LOC_RIGHT_LEG;
-                case LOC_LEFT_TORSO, LOC_RIGHT_TORSO -> isLeft ? LOC_LEFT_TORSO : LOC_RIGHT_TORSO;
-                default -> hitData.getLocation();
-            });
-
-            return hitData;
+            return getPlaytestSideLocation(table, side, LosEffects.COVER_NONE);
         }
 
         if (side == ToHitData.SIDE_FRONT) {

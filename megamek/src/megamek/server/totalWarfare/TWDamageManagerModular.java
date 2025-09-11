@@ -732,7 +732,9 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             damage = applyEntityArmorDamage(mek, hit, damage, ammoExplosion, damageIS, areaSatArty, reportVec, mods);
 
             // Apply playtest ammo explosion cap
-            damage = applyPlaytestExplosionReduction(mek, hit, damage, ammoExplosion, reportVec);
+            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_1)) {
+                damage = applyPlaytestExplosionReduction(mek, hit, damage, ammoExplosion, reportVec);
+            }
 
             // Apply CASE II first
             damage = applyCASEIIDamageReduction(mek, hit, damage, ammoExplosion, reportVec);
@@ -2277,7 +2279,6 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
     public int applyPlaytestExplosionReduction(Entity entity, HitData hit, int damage, boolean ammoExplosion, Vector<Report> reportVec) {
         if (!ammoExplosion
               || !(entity instanceof Mek mek)
-              || !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_1)
               || mek.hasCASEII(hit.getLocation())
         ) {
             return damage;

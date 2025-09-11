@@ -2432,7 +2432,7 @@ public abstract class Mek extends Entity {
         return null;
     }
 
-    protected HitData getPlaytestSideLocation(int table, int side, int cover) {
+    public HitData getPlaytestSideLocation(int table, int side, int cover) {
         var isLeft = side == ToHitData.SIDE_LEFT;
 
         var hitData = rollHitLocation(table, ToHitData.SIDE_FRONT, LOC_NONE, AimingMode.NONE, cover);
@@ -2452,9 +2452,9 @@ public abstract class Mek extends Entity {
      */
     protected HitData tac(int table, int side, int location, int cover,
           boolean rear) {
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
+        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
             return new HitData(location, rear);
-        } else if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_FLOATING_CRITS)) {
+        } else if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_FLOATING_CRITS)) {
             HitData hd = rollHitLocation(table, side);
             // check for cover and keep rolling until you get something without
             // cover

@@ -1925,6 +1925,7 @@ public abstract class Mek extends Entity {
             if (playtestLocations
                   && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)
                   && roll != 2 // clarified on forum, TACs don't go to the CT in this case
+                  // https://battletech.com/playtest-battletech/feedback-discussion/topic/through-armor-critical-hits-on-side-arc/
             ) {
                 return getPlaytestSideLocation(table, side, cover);
             }

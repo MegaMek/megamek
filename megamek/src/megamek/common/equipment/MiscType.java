@@ -8051,6 +8051,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Chameleon Light Polarization Shield";
+        misc.shortName = "Chameleon LPS";
         misc.setInternalName("Chameleon Light Polarization Shield");
         misc.addLookupName("Chameleon Light Polarization Field");
         misc.addLookupName("ChameleonLightPolarizationShield");

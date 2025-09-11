@@ -1905,6 +1905,8 @@ public abstract class Mek extends Entity {
             }
         }
 
+        boolean playtestLocations = gameOptions().booleanOption(OptionsConstants.PLAYTEST_1);
+
         if ((table == ToHitData.HIT_NORMAL) || (table == ToHitData.HIT_PARTIAL_COVER)) {
             roll = Compute.d6(2);
             try {
@@ -1918,6 +1920,14 @@ public abstract class Mek extends Entity {
                 }
             } catch (Throwable t) {
                 LOGGER.error("", t);
+            }
+
+            if (playtestLocations
+                  && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)
+                  && roll != 2 // clarified on forum, TACs don't go to the CT in this case
+                  // https://battletech.com/playtest-battletech/feedback-discussion/topic/through-armor-critical-hits-on-side-arc/
+            ) {
+                return getPlaytestSideLocation(table, side, cover);
             }
 
             if (side == ToHitData.SIDE_FRONT) {
@@ -2423,15 +2433,29 @@ public abstract class Mek extends Entity {
         return null;
     }
 
+    public HitData getPlaytestSideLocation(int table, int side, int cover) {
+        var isLeft = side == ToHitData.SIDE_LEFT;
+
+        var hitData = rollHitLocation(table, ToHitData.SIDE_FRONT, LOC_NONE, AimingMode.NONE, cover);
+        hitData.setLocation(switch (hitData.getLocation()) {
+            case LOC_LEFT_ARM, LOC_RIGHT_ARM -> isLeft ? LOC_LEFT_ARM : LOC_RIGHT_ARM;
+            case LOC_LEFT_LEG, LOC_RIGHT_LEG -> isLeft ? LOC_LEFT_LEG : LOC_RIGHT_LEG;
+            case LOC_LEFT_TORSO, LOC_RIGHT_TORSO -> isLeft ? LOC_LEFT_TORSO : LOC_RIGHT_TORSO;
+            default -> hitData.getLocation();
+        });
+
+        return hitData;
+    }
+
     /**
      * Called when a thru-armor-crit is rolled. Checks the game options and either returns no critical hit, rolls a
      * floating crit, or returns a TAC in the specified location.
      */
     protected HitData tac(int table, int side, int location, int cover,
           boolean rear) {
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
+        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
             return new HitData(location, rear);
-        } else if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_FLOATING_CRITS)) {
+        } else if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_FLOATING_CRITS)) {
             HitData hd = rollHitLocation(table, side);
             // check for cover and keep rolling until you get something without
             // cover

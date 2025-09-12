@@ -731,6 +731,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             // Apply damage to armor
             damage = applyEntityArmorDamage(mek, hit, damage, ammoExplosion, damageIS, areaSatArty, reportVec, mods);
 
+            // PLAYTEST New Ammo Explosion stuff here
             // Apply playtest ammo explosion cap
             if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_1)) {
                 damage = applyPlaytestExplosionReduction(mek, hit, damage, ammoExplosion, reportVec);
@@ -738,7 +739,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
 
             // Apply CASE II first
             damage = applyCASEIIDamageReduction(mek, hit, damage, ammoExplosion, reportVec);
-
+            
             // if damage has not all been absorbed, continue dealing with damage internally
             if (damage > 0) {
                 // is there internal structure in the location hit?
@@ -2370,7 +2371,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         return damage;
     }
 
-    public void dealSpecialCritEffects(Entity entity, Vector<Report> reportVec, HitData hit, ModsInfo mods,
+   public void dealSpecialCritEffects(Entity entity, Vector<Report> reportVec, HitData hit, ModsInfo mods,
           boolean underWater, DamageType damageType) {
 
         int crits = mods.crits;
@@ -2669,9 +2670,10 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             int tmpDamageHold = -1;
             int origDamage = damage;
 
+            // PLAYTEST FL does not prevent AP ammo.
             if (ferroLamellorArmor &&
-                  (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
-                  (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE) &&
+                  /* (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
+                  (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE) && */
                   (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION) &&
                   (hit.getGeneralDamageType() != HitData.DAMAGE_AX)) {
                 tmpDamageHold = damage;
@@ -2750,8 +2752,9 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 reportVec.addElement(report);
             } else if (reactiveArmor &&
                   ((hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE) ||
-                        (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE) ||
+                        /* (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE) || */
                         areaSatArty)) {
+                // PLAYTEST Reactive not immune to AP damage
                 tmpDamageHold = damage;
                 damage = (int) Math.floor(((double) damage) / 2);
                 if (tmpDamageHold == 1) {

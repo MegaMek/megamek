@@ -159,6 +159,8 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             return true;
         }
 
+        // PLAYTEST Remove jamming on 2.
+        /* 
         if ((roll.getIntValue() == 2) && (howManyShots == 2) && !attackingEntity.isConventionalInfantry()) {
             Report r = new Report();
             r.subject = subjectId;
@@ -171,7 +173,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
                 r.messageId = 3170;
             }
             vPhaseReport.addElement(r);
-        }
+        }*/
         return false;
     }
 

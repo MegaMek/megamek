@@ -72,10 +72,10 @@ public abstract class MPodWeapon extends AmmoWeapon {
         tonnage = 1.0;
         criticalSlots = 1;
         flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_BALLISTIC).or(F_ONE_SHOT).or(F_M_POD);
-        explosive = true;
+        // PLAYTEST no longer explosive
+        explosive = false;
         bv = 5;
         cost = 6000;
-        explosionDamage = 5;
     }
 
     /*

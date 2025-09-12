@@ -284,7 +284,8 @@ public class KickAttackAction extends PhysicalAttackAction {
         // Start the To-Hit
         toHit = new ToHitData(base, "base");
 
-        toHit.addModifier(-2, "Kick");
+        // PLAYTEST new modifier
+        toHit.addModifier(-1, "Kick");
 
         PhysicalAttackAction.setCommonModifiers(toHit, game, ae, target);
 
@@ -296,7 +297,8 @@ public class KickAttackAction extends PhysicalAttackAction {
 
         // Mule kick?
         if (mule != 0) {
-            toHit.addModifier(mule, "Quad Mek making a mule kick");
+            // PLAYTEST no more mule modifier
+            // toHit.addModifier(mule, "Quad Mek making a mule kick");
         }
 
         // damaged or missing actuators

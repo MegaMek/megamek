@@ -68,14 +68,13 @@ public class FlamerHandlerHelper {
         // armor can't reduce damage if there isn't any
         if (entityTarget.getArmor(hit) > 0) {
             // heat dissipating armor divides heat damage by 2
+            // PLAYTEST 0 damage for heat dis
             if (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING) {
-                actualDamage = heatDamage / 2;
+                actualDamage = 0;
                 heatDamageReducedByArmor = true;
                 // reflective armor divides heat damage by 2, with a minimum of 1
-            } else if (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE) {
-                actualDamage = Math.max(1, heatDamage / 2);
-                heatDamageReducedByArmor = true;
-            }
+                // PLAYTEST reflective does nothing.
+            } 
 
         }
 

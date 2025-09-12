@@ -226,11 +226,13 @@ public class BipedMek extends MekWithArms {
         }
 
         for (int loc : List.of(Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_LEG)) {
+            // PLAYTEST TODO leg blown off vs destroyed
             if (isLocationBad(loc)) {
                 roll.addModifier(5, getLocationName(loc) + " destroyed");
             } else {
                 if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
-                    roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
+                    // PLAYTEST now +1
+                    roll.addModifier(1, getLocationName(loc) + " Hip Actuator destroyed");
                     if (!game.getOptions()
                           .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
                         continue;
@@ -242,9 +244,10 @@ public class BipedMek extends MekWithArms {
                 if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, loc) > 0) {
                     roll.addModifier(1, getLocationName(loc) + " Lower Leg Actuator destroyed");
                 }
-                if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc) > 0) {
-                    roll.addModifier(1, getLocationName(loc) + " Foot Actuator destroyed");
-                }
+                // PLAYTEST foot actuator no longer +1
+                /* if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc) > 0) {
+                      roll.addModifier(1, getLocationName(loc) + " Foot Actuator destroyed");
+                }*/
             }
         }
 

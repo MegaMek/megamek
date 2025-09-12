@@ -140,10 +140,11 @@ public record Sensor(int type) implements Serializable {
     public int getRangeByBracket() {
 
         return switch (type) {
-            case TYPE_BAP, TYPE_BAPP -> 12;
+            // PLAYTEST adding watchdog to be same as BAP
+            case TYPE_BAP, TYPE_BAPP, TYPE_WATCHDOG -> 12;
             case TYPE_BLOODHOUND -> 16;
             case TYPE_CLAN_AP -> 15;
-            case TYPE_WATCHDOG, TYPE_LIGHT_AP, TYPE_VEE_MAG_SCAN, TYPE_VEE_IR, TYPE_BA_HEAT -> 9;
+            case TYPE_LIGHT_AP, TYPE_VEE_MAG_SCAN, TYPE_VEE_IR, TYPE_BA_HEAT -> 9;
             case TYPE_NOVA ->
                 // I've not found a reference for sensor range of NovaCEWS.
                 // Assuming Watchdog range.
@@ -247,6 +248,7 @@ public record Sensor(int type) implements Serializable {
         switch (type) {
             case TYPE_BAP:
             case TYPE_BAPP:
+            case TYPE_WATCHDOG: // PLAYTEST making watchdog same as BAP
             case TYPE_EW_EQUIPMENT:
                 if (te.isVoidSigActive()) {
                     mod += 6;
@@ -268,7 +270,6 @@ public record Sensor(int type) implements Serializable {
                     mod += 2;
                 }
                 break;
-            case TYPE_WATCHDOG:
             case TYPE_NOVA:
                 // WOR : same as above. No data available, assuming Watchdog performance
                 if (te.isVoidSigActive()) {

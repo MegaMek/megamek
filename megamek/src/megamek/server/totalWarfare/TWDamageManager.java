@@ -1424,7 +1424,7 @@ public class TWDamageManager implements IDamageManager {
                     damage = 20;
 
                     // CHANGE REPORT ID
-                    report = new Report(6126);
+                    report = new Report(6129);
                     report.subject = entityId;
                     report.add(damage);
                     report.indent(3);

@@ -731,10 +731,16 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             // Apply damage to armor
             damage = applyEntityArmorDamage(mek, hit, damage, ammoExplosion, damageIS, areaSatArty, reportVec, mods);
 
-            // PLAYTEST TODO New Ammo Explosion stuff here
+            // PLAYTEST New Ammo Explosion stuff here
             // Apply CASE II first
             damage = applyCASEIIDamageReduction(mek, hit, damage, ammoExplosion, reportVec);
-
+            
+            // Apply CASE next
+            damage = applyCASEDamageReduction(mek, hit, damage, ammoExplosion, reportVec);
+            
+            // Deal with no case
+            damage = applyNoCASEDamageReduction(mek, hit, damage, ammoExplosion, reportVec);
+            
             // if damage has not all been absorbed, continue dealing with damage internally
             if (damage > 0) {
                 // is there internal structure in the location hit?
@@ -2332,6 +2338,91 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         return damage;
     }
 
+    // PLAYTEST CASE damage reduction
+    public int applyCASEDamageReduction(Entity entity, HitData hit, int damage, boolean ammoExplosion,
+          Vector<Report> reportVec) {
+        // Check for CASE. Reduce damage to max 10. If it hits max damage, all armor is removed.
+        int entityId = entity.getId();
+        Report report;
+        int originalDamage = damage;
+
+        if (ammoExplosion && entity.hasCase() && !entity.hasCASEII() && entity.locationHasCase(hit.getLocation())) {
+            // 10 points of damage goes to IS if it is over 10.
+            // Only report the remaining damage covered by CASE if it is over 10.
+            if (damage >= 10) {
+                originalDamage = originalDamage - 10;
+                damage = 10;
+
+                // Remaining damage prevented by CASE
+                report = new Report(6125);
+                report.subject = entityId;
+                report.add(damage);
+                report.indent(3);
+                reportVec.addElement(report);
+            };
+            
+            int loc = hit.getLocation();
+            // Destroy armor if it is max damage
+            if ((entity instanceof Mek) &&
+                  ((loc == Mek.LOC_HEAD) || ((Mek) entity).isArm(loc) || entity.locationIsLeg(loc)) && (damage == 10)) {
+                      entity.setArmor(IArmorState.ARMOR_DESTROYED, loc, false);
+                } else if ((entity instanceof Mek) && (damage == 10)) {
+                // Destroy rear armor during max damage
+                entity.setArmor(IArmorState.ARMOR_DESTROYED, loc, true);
+            }
+                
+            if (entity.getInternal(hit) > 0) {
+                // Mek takes 10 points of IS damage
+                damage = 10;
+            } else {
+                damage = 0;
+            }
+
+            entity.damageThisPhase += damage;
+        }
+
+        return damage;
+    }
+
+    // PLAYTEST CASE damage reduction
+    public int applyNoCASEDamageReduction(Entity entity, HitData hit, int damage, boolean ammoExplosion,
+      Vector<Report> reportVec) {
+        // No case, no case II, not good.
+        int entityId = entity.getId();
+        Report report;
+        int originalDamage = damage;
+    
+        if (ammoExplosion && !(entity.hasCase()) && !(entity.hasCASEII())) {
+            // 20 points of damage goes to IS, excess is vented and armor lost
+            
+            if (damage >= 20) {
+                originalDamage = originalDamage - 20;
+                damage = 20;
+    
+                // Remaining damage vented
+                report = new Report(6129);
+                report.subject = entityId;
+                report.add(damage);
+                report.indent(3);
+                reportVec.addElement(report);
+            };
+    
+            int loc = hit.getLocation();
+            // Destroy armor if it is max damage
+            if ((entity instanceof Mek) &&
+                  ((loc == Mek.LOC_HEAD) || ((Mek) entity).isArm(loc) || entity.locationIsLeg(loc)) && (damage == 10)) {
+                entity.setArmor(IArmorState.ARMOR_DESTROYED, loc, false);
+            } else if ((entity instanceof Mek) && (damage == 10)) {
+                // Destroy rear armor during max damage
+                entity.setArmor(IArmorState.ARMOR_DESTROYED, loc, true);
+            }
+        
+            entity.damageThisPhase += damage;
+        }
+
+        return damage;
+    }
+    
     public void dealSpecialCritEffects(Entity entity, Vector<Report> reportVec, HitData hit, ModsInfo mods,
           boolean underWater, DamageType damageType) {
 

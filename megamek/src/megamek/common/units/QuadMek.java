@@ -431,7 +431,7 @@ public class QuadMek extends Mek {
             }
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
             if ((table == ToHitData.HIT_NORMAL) || (table == ToHitData.HIT_PARTIAL_COVER)) {
                 roll = Compute.d6(2);
                 try {
@@ -596,6 +596,8 @@ public class QuadMek extends Mek {
             }
         }
 
+        boolean playtestLocations = gameOptions().booleanOption(OptionsConstants.PLAYTEST_1);
+
         if (table == ToHitData.HIT_PUNCH) {
             roll = Compute.d6();
             try {
@@ -609,6 +611,10 @@ public class QuadMek extends Mek {
                 }
             } catch (Throwable t) {
                 logger.error("", t);
+            }
+
+            if (playtestLocations && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)) {
+                return getPlaytestSideLocation(table, side, cover);
             }
 
             if (side == ToHitData.SIDE_FRONT) {
@@ -709,27 +715,19 @@ public class QuadMek extends Mek {
                 logger.error("", t);
             }
 
+            if (playtestLocations && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)) {
+                return getPlaytestSideLocation(table, side, cover);
+            }
+
             boolean left = (roll <= 3);
             if (side == ToHitData.SIDE_FRONT) {
-                if (left) {
-                    return new HitData(Mek.LOC_LEFT_ARM);
-                }
-                return new HitData(Mek.LOC_RIGHT_ARM);
+                return left ? new HitData(Mek.LOC_LEFT_ARM) : new HitData(Mek.LOC_RIGHT_ARM);
             } else if (side == ToHitData.SIDE_REAR) {
-                if (left) {
-                    return new HitData(Mek.LOC_LEFT_LEG);
-                }
-                return new HitData(Mek.LOC_RIGHT_LEG);
+                return left ? new HitData(Mek.LOC_LEFT_LEG) : new HitData(Mek.LOC_RIGHT_LEG);
             } else if (side == ToHitData.SIDE_LEFT) {
-                if (left) {
-                    return new HitData(Mek.LOC_LEFT_LEG);
-                }
-                return new HitData(Mek.LOC_LEFT_ARM);
+                return left ? new HitData(Mek.LOC_LEFT_LEG) : new HitData(Mek.LOC_LEFT_ARM);
             } else if (side == ToHitData.SIDE_RIGHT) {
-                if (left) {
-                    return new HitData(Mek.LOC_RIGHT_ARM);
-                }
-                return new HitData(Mek.LOC_RIGHT_LEG);
+                return left ? new HitData(Mek.LOC_RIGHT_ARM) : new HitData(Mek.LOC_RIGHT_LEG);
             }
         } else if ((table == ToHitData.HIT_SWARM) || (table == ToHitData.HIT_SWARM_CONVENTIONAL)) {
             int effects;

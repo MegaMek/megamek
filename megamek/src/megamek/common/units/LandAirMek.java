@@ -41,15 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import megamek.common.CriticalSlot;
-import megamek.common.Hex;
-import megamek.common.HitData;
-import megamek.common.MPCalculationSetting;
-import megamek.common.OffBoardDirection;
-import megamek.common.SimpleTechLevel;
-import megamek.common.TechAdvancement;
-import megamek.common.TechConstants;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.AimingMode;
@@ -1557,6 +1549,12 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                 case 12:
                     return new HitData(LOC_LEFT_TORSO, false, HitData.EFFECT_NONE);
             }
+        }
+
+        boolean playtestLocations = gameOptions().booleanOption(OptionsConstants.PLAYTEST_1);
+
+        if (playtestLocations && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)) {
+            return getPlaytestSideLocation(table, side, LosEffects.COVER_NONE);
         }
 
         if (side == ToHitData.SIDE_FRONT) {

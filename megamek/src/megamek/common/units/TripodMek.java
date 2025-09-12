@@ -377,6 +377,8 @@ public class TripodMek extends MekWithArms {
             }
         }
 
+        boolean playtestLocations = gameOptions().booleanOption(OptionsConstants.PLAYTEST_1);
+
         if ((table == ToHitData.HIT_NORMAL) || (table == ToHitData.HIT_PARTIAL_COVER)) {
             roll = Compute.d6(2);
             try {
@@ -390,6 +392,13 @@ public class TripodMek extends MekWithArms {
                 }
             } catch (Throwable t) {
                 logger.error("", t);
+            }
+
+            if (playtestLocations
+                  && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)
+                  && roll != 2 // clarified on forum, TACs don't go to the CT in this case
+            ) {
+                return getPlaytestSideLocation(table, side, cover);
             }
 
             if (side == ToHitData.SIDE_FRONT) {
@@ -745,6 +754,10 @@ public class TripodMek extends MekWithArms {
                 }
             } catch (Throwable t) {
                 logger.error("", t);
+            }
+
+            if (playtestLocations && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)) {
+                return getPlaytestSideLocation(table, side, cover);
             }
 
             if ((side == ToHitData.SIDE_FRONT) || (side == ToHitData.SIDE_REAR)) {

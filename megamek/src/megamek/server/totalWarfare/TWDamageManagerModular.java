@@ -2278,8 +2278,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
     }
 
     public int applyPlaytestExplosionReduction(Mek mek, HitData hit, int damage, boolean ammoExplosion, Vector<Report> reportVec) {
-        if (!ammoExplosion)
-        {
+        if (!ammoExplosion) {
             return damage;
         }
 

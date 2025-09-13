@@ -2366,6 +2366,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     damage = half;
                 }
                 if (damage >= entity.getArmor(loc, false)) {
+                    // Remember the exact amount of armor damage for PSR purposes
                     damage = entity.getArmor(loc, false);
                     entity.setArmor(IArmorState.ARMOR_DESTROYED, loc, false);
                 } else {
@@ -2373,6 +2374,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 }
             } else {
                 if (damage >= entity.getArmor(loc, true)) {
+                    // Remember the exact amount of armor damage for PSR purposes
                     damage = entity.getArmor(loc, true);
                     entity.setArmor(IArmorState.ARMOR_DESTROYED, loc, true);
                 } else {

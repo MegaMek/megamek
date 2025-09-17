@@ -42,6 +42,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import megamek.common.board.Coords;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.NarcPod;
+import megamek.common.equipment.Sensor;
 import megamek.common.equipment.Transporter;
 import megamek.common.game.GameTurn;
 import megamek.common.interfaces.ITechnology;
@@ -51,8 +52,12 @@ import megamek.common.rolls.Roll;
 import megamek.common.units.BTObject;
 import megamek.common.units.Building;
 import megamek.common.units.Crew;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.InfantryMount;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.victory.VictoryCondition;
+
+import java.io.Serializable;
 
 /**
  * Class that off-loads serialization related code from Server.java
@@ -164,6 +169,97 @@ public class SerializationHelper {
                     }
                 }
                 return ((team > -1) && (location > -1)) ? new NarcPod(team, location) : null;
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here
+            }
+        });
+
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class cls) {
+                return (cls == Sensor.class);
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                int type = -1;
+                while (reader.hasMoreChildren()) {
+                    reader.moveDown();
+                    try {
+                        switch (reader.getNodeName()) {
+                            case "type" -> type = Integer.parseInt(reader.getValue());
+                        }
+                        reader.moveUp();
+                    } catch (NumberFormatException e) {
+                        // Sensors
+                        return null;
+                    }
+                }
+                return (type > -1) ? new Sensor(type) : null;
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here
+            }
+        });
+
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class cls) {
+                return (cls == InfantryMount.class);
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                String name = null;
+                InfantryMount.BeastSize size = null;
+                double weight = -1.0;
+                int movementPoints = -1;
+                EntityMovementMode movementMode = null;
+                int burstDamage = -1;
+                int vehicleDamage = -1;
+                double damageDivisor = -1.0;
+                int maxWaterDepth = -1;
+                int secondaryGroundMP = -1;
+                int uwEndurance = -1;
+                boolean custom = false;
+
+                while (reader.hasMoreChildren()) {
+                    reader.moveDown();
+                    try {
+                        // 12 fields
+                        switch (reader.getNodeName()) {
+                            case "name" -> name = reader.getValue();
+                            case "size" -> size = InfantryMount.BeastSize.valueOf(reader.getValue());
+                            case "weight" -> weight = Double.parseDouble(reader.getValue());
+                            case "movementPoints" -> movementPoints = Integer.parseInt(reader.getValue());
+                            case "movementMode" -> movementMode = EntityMovementMode.valueOf(reader.getValue());
+                            case "burstDamage" -> burstDamage = Integer.parseInt(reader.getValue());
+                            case "vehicleDamage" -> vehicleDamage = Integer.parseInt(reader.getValue());
+                            case "damageDivisor" -> damageDivisor = Double.parseDouble(reader.getValue());
+                            case "maxWaterDepth" -> maxWaterDepth = Integer.parseInt(reader.getValue());
+                            case "secondaryGroundMP" -> secondaryGroundMP = Integer.parseInt(reader.getValue());
+                            case "uwEndurance" -> uwEndurance = Integer.parseInt(reader.getValue());
+                            case "custom" -> custom = Boolean.parseBoolean(reader.getValue());
+                        }
+                        reader.moveUp();
+                    } catch (NumberFormatException e) {
+                        // Sensors
+                        return null;
+                    }
+                }
+                boolean read = ((name != null) && (size != null) && (movementMode != null) &&
+                      (weight > -1.0) && (damageDivisor > -1.0) &&
+                      (movementPoints > -1) && (burstDamage > -1) && (vehicleDamage > -1) &&
+                      (maxWaterDepth > -1) && (secondaryGroundMP > -1) && (uwEndurance > -1));
+                return (read) ? new InfantryMount(
+                      name, size, weight, movementPoints, movementMode, burstDamage, vehicleDamage,
+                      damageDivisor, maxWaterDepth, secondaryGroundMP, uwEndurance, custom
+                ): null;
             }
 
             @Override

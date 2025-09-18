@@ -493,8 +493,8 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
 
         ArrayList<Entity> result = new ArrayList<>();
 
-        if (object instanceof List<?> list) {
-            for (Object entity : list) {
+        if (object instanceof Collection<?> collection) {
+            for (Object entity : collection) {
                 if (entity instanceof Entity verifiedEntity) {
                     result.add(verifiedEntity);
                 }

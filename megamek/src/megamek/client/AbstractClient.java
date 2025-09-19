@@ -63,11 +63,13 @@ import megamek.common.net.events.DisconnectedEvent;
 import megamek.common.net.events.PacketReceivedEvent;
 import megamek.common.net.factories.ConnectionFactory;
 import megamek.common.net.listeners.ConnectionListener;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.units.Entity;
 import megamek.common.units.UnitNameTracker;
 import megamek.logging.MMLogger;
+import megamek.server.ConnectionHandler;
 
 /**
  * AbstractClient that handles basic client features.
@@ -266,7 +268,7 @@ public abstract class AbstractClient implements IClient {
      *
      * @param packet The packet we received.
      */
-    protected void receivePlayerInfo(Packet packet) {
+    protected void receivePlayerInfo(Packet packet) throws InvalidPacketDataException {
         int packetIndex = packet.getIntValue(0);
 
         Player newPlayer = (Player) packet.getObject(1);
@@ -339,7 +341,7 @@ public abstract class AbstractClient implements IClient {
         return host;
     }
 
-    protected void correctName(Packet inP) {
+    protected void correctName(Packet inP) throws InvalidPacketDataException {
         setName((String) (inP.getObject(0)));
     }
 
@@ -359,7 +361,7 @@ public abstract class AbstractClient implements IClient {
         }
     }
 
-    protected void receiveUnitReplace(Packet packet) {
+    protected void receiveUnitReplace(Packet packet) throws InvalidPacketDataException {
         @SuppressWarnings(value = "unchecked") List<Force> forces = (List<Force>) packet.getObject(1);
         forces.forEach(force -> getGame().getForces().replace(force.getId(), force));
 
@@ -404,6 +406,8 @@ public abstract class AbstractClient implements IClient {
                     logger.error(message);
                 }
             }
+        } catch (InvalidPacketDataException e) {
+            logger.error("Invalid packet data:", e);
         } catch (Exception ex) {
             String message = String.format("Failed to parse Packet command of %s", packet.command());
             logger.error(ex, message);
@@ -435,74 +439,86 @@ public abstract class AbstractClient implements IClient {
      */
     @SuppressWarnings("unchecked")
     protected boolean handleGameIndependentPacket(Packet packet) {
-        switch (packet.command()) {
-            case SERVER_GREETING:
-                connected = true;
-                send(new Packet(PacketCommand.CLIENT_NAME, name, isBot()));
-                break;
-            case SERVER_CORRECT_NAME:
-                correctName(packet);
-                break;
-            case CLOSE_CONNECTION:
-                disconnected();
-                break;
-            case SERVER_VERSION_CHECK:
-                send(new Packet(PacketCommand.CLIENT_VERSIONS, SuiteConstants.VERSION));
-                break;
-            case ILLEGAL_CLIENT_VERSION:
-                final Version serverVersion = (Version) packet.getObject(0);
-                logger.errorDialog("Connection Failure: Version Difference",
-                      "Failed to connect to the server at {} because of version differences. " +
-                            "Cannot connect to a server running {} with a {} install.",
-                      getHost(),
-                      serverVersion,
-                      SuiteConstants.VERSION);
-                disconnected();
-                break;
-            case LOCAL_PN:
-                localPlayerNumber = packet.getIntValue(0);
-                break;
-            case PLAYER_UPDATE:
-            case PLAYER_ADD:
-                receivePlayerInfo(packet);
-                break;
-            case PLAYER_READY:
-                Player player = getPlayer(packet.getIntValue(0));
-                if (player != null) {
-                    player.setDone(packet.getBooleanValue(1));
-                    getGame().fireGameEvent(new GamePlayerChangeEvent(player, player));
-                }
-                break;
-            case PLAYER_REMOVE:
-                bots.values().removeIf(bot -> bot.localPlayerNumber == packet.getIntValue(0));
-                getGame().removePlayer(packet.getIntValue(0));
-                break;
-            case CHAT:
-                possiblyWriteToLog((String) packet.getObject(0));
-                getGame().fireGameEvent(new GamePlayerChatEvent(this, null, (String) packet.getObject(0)));
-                break;
-            case ENTITY_ADD:
-                receiveUnitReplace(packet);
-                break;
-            case SENDING_BOARD:
-                getGame().receiveBoards((Map<Integer, Board>) packet.getObject(0));
-                break;
-            case ROUND_UPDATE:
-                getGame().setCurrentRound(packet.getIntValue(0));
-                break;
-            case PHASE_CHANGE:
-                changePhase((GamePhase) packet.getObject(0));
-                break;
-            case SCRIPTED_MESSAGE:
-                getGame().fireGameEvent(new GameScriptedMessageEvent(this,
-                      (String) packet.getObject(0),
-                      (String) packet.getObject(1),
-                      (Base64Image) packet.getObject(2)));
-                break;
-            default:
-                return false;
+        try {
+            switch (packet.command()) {
+                case SERVER_GREETING:
+                    connected = true;
+                    send(new Packet(PacketCommand.CLIENT_NAME, name, isBot()));
+                    break;
+                case SERVER_CORRECT_NAME:
+                    correctName(packet);
+                    break;
+                case CLOSE_CONNECTION:
+                    disconnected();
+                    break;
+                case SERVER_VERSION_CHECK:
+                    send(new Packet(PacketCommand.CLIENT_VERSIONS, SuiteConstants.VERSION));
+                    break;
+                case ILLEGAL_CLIENT_VERSION:
+                    final Version serverVersion = (Version) packet.getObject(0);
+                    logger.errorDialog("Connection Failure: Version Difference",
+                          "Failed to connect to the server at {} because of version differences. " +
+                                "Cannot connect to a server running {} with a {} install.",
+                          getHost(),
+                          serverVersion,
+                          SuiteConstants.VERSION);
+                    disconnected();
+                    break;
+                case LOCAL_PN:
+                    localPlayerNumber = packet.getIntValue(0);
+                    break;
+                case PLAYER_UPDATE:
+                case PLAYER_ADD:
+                    receivePlayerInfo(packet);
+                    break;
+                case PLAYER_READY:
+                    Player player = getPlayer(packet.getIntValue(0));
+                    if (player != null) {
+                        player.setDone(packet.getBooleanValue(1));
+                        getGame().fireGameEvent(new GamePlayerChangeEvent(player, player));
+                    }
+                    break;
+                case PLAYER_REMOVE:
+                    bots.values()
+                          .removeIf(bot -> {
+                              try {
+                                  return bot.localPlayerNumber == packet.getIntValue(0);
+                              } catch (InvalidPacketDataException e) {
+                                  throw new RuntimeException(e);
+                              }
+                          });
+                    getGame().removePlayer(packet.getIntValue(0));
+                    break;
+                case CHAT:
+                    possiblyWriteToLog((String) packet.getObject(0));
+                    getGame().fireGameEvent(new GamePlayerChatEvent(this, null, (String) packet.getObject(0)));
+                    break;
+                case ENTITY_ADD:
+                    receiveUnitReplace(packet);
+                    break;
+                case SENDING_BOARD:
+                    getGame().receiveBoards((Map<Integer, Board>) packet.getObject(0));
+                    break;
+                case ROUND_UPDATE:
+                    getGame().setCurrentRound(packet.getIntValue(0));
+                    break;
+                case PHASE_CHANGE:
+                    changePhase((GamePhase) packet.getObject(0));
+                    break;
+                case SCRIPTED_MESSAGE:
+                    getGame().fireGameEvent(new GameScriptedMessageEvent(this,
+                          (String) packet.getObject(0),
+                          (String) packet.getObject(1),
+                          (Base64Image) packet.getObject(2)));
+                    break;
+                default:
+                    return false;
+            }
+            return true;
+        } catch (InvalidPacketDataException e) {
+            logger.error("Invalid packet data:", e);
+            return false;
         }
-        return true;
     }
 
     protected void possiblyWriteToLog(String message) {

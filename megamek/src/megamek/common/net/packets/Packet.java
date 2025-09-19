@@ -87,11 +87,14 @@ import megamek.server.SmokeCloud;
  * Application layer data packet used to exchange information between client and server.
  */
 public record Packet(PacketCommand command, Object... data) implements Serializable {
+
     /**
      * Creates a <code>Packet</code> with a command and an array of objects
      *
      */
-    public Packet {
+    public Packet(PacketCommand command, Object... data) {
+        this.command = command;
+        this.data = data;
     }
 
     /**
@@ -865,8 +868,8 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
 
         Vector<Player> result = new Vector<>();
 
-        if (object instanceof Vector<?> vector) {
-            for (Object player : vector) {
+        if (object instanceof Collection<?> collection) {
+            for (Object player : collection) {
                 if (player instanceof Player verifiedPlayer) {
                     result.add(verifiedPlayer);
                 }

@@ -40,6 +40,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.BuildingType;
 import megamek.common.game.GameTurn;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.Atmosphere;
@@ -66,7 +67,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
     /**
      * Receives a deployment packet from a Client connection. If valid, executes it and ends the current turn.
      */
-    void receiveDeployment(Packet packet, int connId) {
+    void receiveDeployment(Packet packet, int connId) throws InvalidPacketDataException {
         Entity entity = getGame().getEntity(packet.getIntValue(0));
 
         if (entity == null) {
@@ -144,7 +145,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
      * @param packet the packet to be processed
      * @param connId the id for connection that received the packet.
      */
-    void receiveDeploymentUnload(Packet packet, int connId) {
+    void receiveDeploymentUnload(Packet packet, int connId) throws InvalidPacketDataException {
         Entity loader = getGame().getEntity(packet.getIntValue(0));
         Entity loaded = getGame().getEntity(packet.getIntValue(1));
 

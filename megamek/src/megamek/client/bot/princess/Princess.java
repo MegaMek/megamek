@@ -94,6 +94,7 @@ import megamek.common.game.IGame;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
@@ -3795,7 +3796,7 @@ public class Princess extends BotClient {
      * Override for the 'receive entity update' handler Updates internal state in addition to base client functionality
      */
     @Override
-    public void receiveEntityUpdate(final Packet packet) {
+    public void receiveEntityUpdate(final Packet packet) throws InvalidPacketDataException {
         super.receiveEntityUpdate(packet);
         updateEntityState((Entity) packet.getObject(1));
     }

@@ -56,6 +56,7 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Aero;
@@ -539,7 +540,12 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 targetIds.add(target.getId());
                 toHitValues.add(toHit.getValue());
             }
-            int choice = gameManager.processTeleguidedMissileCFR(attackingEntity.getOwnerId(), targetIds, toHitValues);
+            int choice = 0;
+            try {
+                choice = gameManager.processTeleguidedMissileCFR(attackingEntity.getOwnerId(), targetIds, toHitValues);
+            } catch (InvalidPacketDataException e) {
+                LOGGER.error("Invalid packet data:", e);
+            }
             newTarget = targets.get(choice);
             target = newTarget;
             aaa.setTargetId(target.getId());

@@ -1131,7 +1131,8 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
         }
 
         throw new InvalidPacketDataException(
-              String.format("Value not Vector: %s (%s)", object, object.getClass()));
+              String.format("Value not Vector: %s (%s)", (object == null) ? "Null object at index " + index : object,
+                    (object == null) ? "Unknown" : object.getClass()));
 
     }
 

@@ -39,6 +39,7 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import megamek.common.TargetRollModifier;
 import megamek.common.board.Coords;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.NarcPod;
@@ -260,6 +261,41 @@ public class SerializationHelper {
                       name, size, weight, movementPoints, movementMode, burstDamage, vehicleDamage,
                       damageDivisor, maxWaterDepth, secondaryGroundMP, uwEndurance, custom
                 ): null;
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here
+            }
+        });
+
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class cls) {
+                return (cls == TargetRollModifier.class);
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                int value = Integer.MIN_VALUE;
+                String description = "";
+                boolean cumulative = false;
+
+                while (reader.hasMoreChildren()) {
+                    reader.moveDown();
+                    try {
+                        switch (reader.getNodeName()) {
+                            case "value" -> value = Integer.parseInt(reader.getValue());
+                            case "description" -> description = reader.getValue();
+                            case "cumulative" -> cumulative = Boolean.parseBoolean(reader.getValue());
+                        }
+                        reader.moveUp();
+                    } catch (NumberFormatException e) {
+                        // Narc Pods with malformed entries will be silently ignored
+                        return null;
+                    }
+                }
+                return (value > Integer.MIN_VALUE) ? new TargetRollModifier(value, description, cumulative) : null;
             }
 
             @Override

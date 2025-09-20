@@ -101,9 +101,10 @@ public class Faction2 {
     private final Set<String> fallBackFactions = new HashSet<>();
     private final HonorRating preInvasionHonorRating = HonorRating.NONE;
     private final HonorRating postInvasionHonorRating = HonorRating.NONE;
-    private final int formationBaseSize = UNKNOWN;
-    private final int formationGrouping = UNKNOWN;
-    private final String rankSystem = null;
+    // Do not final the variables
+    private int formationBaseSize = UNKNOWN;
+    private int formationGrouping = UNKNOWN;
+    private String rankSystem = null;
     private List<FactionLeaderData> factionLeaders = new ArrayList<>();
 
     public List<String> getRatingLevels() {

@@ -37,6 +37,7 @@ import megamek.common.game.IGame;
 import megamek.common.Player;
 import megamek.common.enums.GamePhase;
 import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
@@ -73,9 +74,13 @@ public abstract class AbstractGameManager implements IGameManager {
     @Override
     public void handlePacket(int connId, Packet packet) {
         if (packet.command() == PacketCommand.PLAYER_READY) {
-            receivePlayerDone(packet, connId);
-            send(packetHelper.createPlayerDonePacket(connId));
-            checkReady();
+            try {
+                receivePlayerDone(packet, connId);
+                send(packetHelper.createPlayerDonePacket(connId));
+                checkReady();
+            } catch (InvalidPacketDataException e) {
+                logger.error("Invalid packet data:", e);
+            }
         }
     }
 
@@ -175,7 +180,7 @@ public abstract class AbstractGameManager implements IGameManager {
     /**
      * Sets a player's ready status as received from the Client. This method does not perform any follow-up actions.
      */
-    private void receivePlayerDone(Packet packet, int connIndex) {
+    private void receivePlayerDone(Packet packet, int connIndex) throws InvalidPacketDataException {
         boolean ready = packet.getBooleanValue(0);
         Player player = getGame().getPlayer(connIndex);
         if (null != player) {

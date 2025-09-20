@@ -45,6 +45,7 @@ import megamek.common.game.IGame;
 import megamek.common.game.InGameObject;
 import megamek.common.interfaces.ReportEntry;
 import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.SBFRuleOptions;
@@ -88,15 +89,19 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
     public void handlePacket(int connId, Packet packet) {
         super.handlePacket(connId, packet);
 
-        switch (packet.command()) {
-            case ENTITY_MOVE:
-                receiveMovement(packet, connId);
-                break;
-            case ENTITY_ATTACK:
-                receiveAttack(packet, connId);
-                break;
-            default:
-                break;
+        try {
+            switch (packet.command()) {
+                case ENTITY_MOVE:
+                    receiveMovement(packet, connId);
+                    break;
+                case ENTITY_ATTACK:
+                    receiveAttack(packet, connId);
+                    break;
+                default:
+                    break;
+            }
+        } catch (InvalidPacketDataException e) {
+            logger.error("Invalid packet data:", e);
         }
 
         logger.info("Leaving handle packet: {}", packet.command());
@@ -422,7 +427,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
     /**
      * Receives an entity movement packet, and if valid, executes it and ends the current turn.
      */
-    private void receiveMovement(Packet packet, int connId) {
+    private void receiveMovement(Packet packet, int connId) throws InvalidPacketDataException {
         SBFMovePath movePath = packet.getSBFMovePath(0);
 
         if (movePath != null) {
@@ -516,7 +521,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
         send(connId, packetHelper.createTurnIndexPacket((turn == null) ? Player.PLAYER_NONE : turn.playerId()));
     }
 
-    void receiveAttack(Packet packet, int connId) {
+    void receiveAttack(Packet packet, int connId) throws InvalidPacketDataException {
         var attacks = packet.getEntityActionList(1);
         int formationId = packet.getIntValue(0);
         Optional<SBFFormation> formationInfo = game.getFormation(formationId);

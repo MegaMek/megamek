@@ -57,13 +57,17 @@ import megamek.common.containers.MunitionTree;
 import megamek.common.equipment.BombLoadout;
 import megamek.common.force.Force;
 import megamek.common.game.Game;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.IBomber;
 import megamek.common.util.StringUtil;
+import megamek.common.weapons.handlers.artillery.ArtilleryWeaponIndirectHomingHandler;
+import megamek.logging.MMLogger;
 
 /** The ActionListener for the lobby popup menu for both the MekTable and MekTrees. */
 public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
+    private static final MMLogger LOGGER = MMLogger.create(LobbyMekPopupActions.class);
 
     /** The ActionListener for the lobby popup menu for both the MekTable and MekTrees. */
     public LobbyMekPopupActions {
@@ -229,180 +233,190 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
         Set<Entity> updateCandidates;
         int master;
 
-        switch (command) {
-            case LMP_INDI_CAMO:
-                lobby.lobbyActions.individualCamo(entities);
-                break;
+        try {
+            switch (command) {
+                case LMP_INDI_CAMO:
+                    lobby.lobbyActions.individualCamo(entities);
+                    break;
 
-            case LMP_CONFIGURE_ALL:
-                lobby.lobbyActions.customizeMeks(entities);
-                break;
+                case LMP_CONFIGURE_ALL:
+                    lobby.lobbyActions.customizeMeks(entities);
+                    break;
 
-            case LMP_DELETE:
-                lobby.lobbyActions.delete(LobbyUtility.getForces(lobby.game(), info), entities, true);
-                break;
+                case LMP_DELETE:
+                    lobby.lobbyActions.delete(LobbyUtility.getForces(lobby.game(), info), entities, true);
+                    break;
 
-            case LMP_SKILLS:
-                lobby.lobbyActions.setRandomSkills(entities);
-                break;
+                case LMP_SKILLS:
+                    lobby.lobbyActions.setRandomSkills(entities);
+                    break;
 
-            case LMP_NAME:
-                lobby.lobbyActions.setRandomNames(entities);
-                break;
+                case LMP_NAME:
+                    lobby.lobbyActions.setRandomNames(entities);
+                    break;
 
-            case LMP_CALLSIGN:
-                lobby.lobbyActions.setRandomCallSigns(entities);
-                break;
+                case LMP_CALLSIGN:
+                    lobby.lobbyActions.setRandomCallSigns(entities);
+                    break;
 
-            case LMP_RAPID_FIRE_MG_ON:
-            case LMP_RAPID_FIRE_MG_OFF:
-                lobby.lobbyActions.toggleBurstMg(entities, command.equals(LMP_RAPID_FIRE_MG_ON));
-                break;
+                case LMP_RAPID_FIRE_MG_ON:
+                case LMP_RAPID_FIRE_MG_OFF:
+                    lobby.lobbyActions.toggleBurstMg(entities, command.equals(LMP_RAPID_FIRE_MG_ON));
+                    break;
 
-            case LMP_HOT_LOAD_ON:
-            case LMP_HOT_LOAD_OFF:
-                lobby.lobbyActions.toggleHotLoad(entities, command.equals(LMP_HOT_LOAD_ON));
-                break;
+                case LMP_HOT_LOAD_ON:
+                case LMP_HOT_LOAD_OFF:
+                    lobby.lobbyActions.toggleHotLoad(entities, command.equals(LMP_HOT_LOAD_ON));
+                    break;
 
-            case LMP_SQUADRON:
-                lobby.lobbyActions.createSquadron(entities);
-                break;
+                case LMP_SQUADRON:
+                    lobby.lobbyActions.createSquadron(entities);
+                    break;
 
-            case LMP_LOAD:
-                lobby.lobbyActions.load(entities, info);
-                break;
+                case LMP_LOAD:
+                    lobby.lobbyActions.load(entities, info);
+                    break;
 
-            case LMP_UNLOAD:
-                updateCandidates = new HashSet<>();
-                lobby.disembarkAll(entities);
-                break;
+                case LMP_UNLOAD:
+                    updateCandidates = new HashSet<>();
+                    lobby.disembarkAll(entities);
+                    break;
 
-            case LMP_UNLOAD_ALL:
-                updateCandidates = new HashSet<>();
-                lobby.offloadAll(entities, updateCandidates);
-                lobby.sendUpdate(updateCandidates);
-                break;
+                case LMP_UNLOAD_ALL:
+                    updateCandidates = new HashSet<>();
+                    lobby.offloadAll(entities, updateCandidates);
+                    lobby.sendUpdate(updateCandidates);
+                    break;
 
-            case LMP_ASSIGN:
-                StringTokenizer st = new StringTokenizer(info, ":");
-                int newOwnerId = Integer.parseInt(st.nextToken());
-                lobby.lobbyActions.changeOwner(entities,
-                      LobbyUtility.getForces(lobby.game(), st.nextToken()),
-                      newOwnerId);
-                break;
+                case LMP_ASSIGN:
+                    StringTokenizer st = new StringTokenizer(info, ":");
+                    int newOwnerId = Integer.parseInt(st.nextToken());
+                    lobby.lobbyActions.changeOwner(entities,
+                          LobbyUtility.getForces(lobby.game(), st.nextToken()),
+                          newOwnerId);
+                    break;
 
-            case LMP_DETACH_TRAILER:
-                updateCandidates = new HashSet<>();
-                lobby.detachTrailers(entities, updateCandidates);
-                lobby.sendUpdate(updateCandidates);
-                break;
+                case LMP_DETACH_TRAILER:
+                    updateCandidates = new HashSet<>();
+                    lobby.detachTrailers(entities, updateCandidates);
+                    lobby.sendUpdate(updateCandidates);
+                    break;
 
-            case LMP_DETACH_FROM_TRACTOR:
-                updateCandidates = new HashSet<>();
-                lobby.detachFromTractors(entities, updateCandidates);
-                lobby.sendUpdate(updateCandidates);
-                break;
+                case LMP_DETACH_FROM_TRACTOR:
+                    updateCandidates = new HashSet<>();
+                    lobby.detachFromTractors(entities, updateCandidates);
+                    lobby.sendUpdate(updateCandidates);
+                    break;
 
-            case LMP_DEPLOY:
-                int round = Integer.parseInt(info);
-                lobby.lobbyActions.applyDeployment(entities, round);
-                break;
+                case LMP_DEPLOY:
+                    int round = Integer.parseInt(info);
+                    lobby.lobbyActions.applyDeployment(entities, round);
+                    break;
 
-            case LMP_HEAT:
-                int heat = Integer.parseInt(info);
-                lobby.lobbyActions.applyHeat(entities, heat);
-                break;
+                case LMP_HEAT:
+                    int heat = Integer.parseInt(info);
+                    lobby.lobbyActions.applyHeat(entities, heat);
+                    break;
 
-            case LMP_HIDDEN:
-                lobby.lobbyActions.applyHidden(entities, info.equals(LMP_HIDE));
-                break;
+                case LMP_HIDDEN:
+                    lobby.lobbyActions.applyHidden(entities, info.equals(LMP_HIDE));
+                    break;
 
-            case LMP_STAND:
-                lobby.lobbyActions.applyProne(entities, info);
-                break;
+                case LMP_STAND:
+                    lobby.lobbyActions.applyProne(entities, info);
+                    break;
 
-            case LMP_VIEW:
-                List<Integer> entityIds = entities.stream().map(Entity::getId).toList();
-                LobbyUtility.liveEntityReadoutAction(entityIds, lobby.canSeeAll(entities),
-                      lobby.getClientGUI().getFrame(), lobby.game());
-                break;
+                case LMP_VIEW:
+                    List<Integer> entityIds = entities.stream().map(Entity::getId).toList();
+                    LobbyUtility.liveEntityReadoutAction(entityIds, lobby.canSeeAll(entities),
+                          lobby.getClientGUI().getFrame(), lobby.game());
+                    break;
 
-            case LMP_BV:
-                LobbyUtility.mekBVAction(entities, lobby.canSeeAll(entities), false, lobby.getClientGUI().getFrame());
-                break;
+                case LMP_BV:
+                    LobbyUtility.mekBVAction(entities,
+                          lobby.canSeeAll(entities),
+                          false,
+                          lobby.getClientGUI().getFrame());
+                    break;
 
-            case LMP_COST:
-                LobbyUtility.mekCostAction(entities, lobby.canSeeAll(entities), false, lobby.getClientGUI().getFrame());
-                break;
+                case LMP_COST:
+                    LobbyUtility.mekCostAction(entities,
+                          lobby.canSeeAll(entities),
+                          false,
+                          lobby.getClientGUI().getFrame());
+                    break;
 
-            case LMP_DAMAGE:
-                lobby.lobbyActions.configureDamage(entities);
-                break;
+                case LMP_DAMAGE:
+                    lobby.lobbyActions.configureDamage(entities);
+                    break;
 
-            case LMP_SWAP:
-                int id = Integer.parseInt(info);
-                lobby.lobbyActions.swapPilots(entities, id);
-                break;
+                case LMP_SWAP:
+                    int id = Integer.parseInt(info);
+                    lobby.lobbyActions.swapPilots(entities, id);
+                    break;
 
-            case LMP_C3DISCONNECT:
-                lobby.lobbyActions.c3DisconnectFromNetwork(entities);
-                break;
+                case LMP_C3DISCONNECT:
+                    lobby.lobbyActions.c3DisconnectFromNetwork(entities);
+                    break;
 
-            case LMP_C3CM:
-                lobby.lobbyActions.c3SetCompanyMaster(entities);
-                break;
+                case LMP_C3CM:
+                    lobby.lobbyActions.c3SetCompanyMaster(entities);
+                    break;
 
-            case LMP_C3LM:
-                lobby.lobbyActions.c3SetLanceMaster(entities);
-                break;
+                case LMP_C3LM:
+                    lobby.lobbyActions.c3SetLanceMaster(entities);
+                    break;
 
-            case LMP_C3JOIN:
-                master = Integer.parseInt(info);
-                lobby.lobbyActions.c3JoinNh(entities, master, false);
-                break;
+                case LMP_C3JOIN:
+                    master = Integer.parseInt(info);
+                    lobby.lobbyActions.c3JoinNh(entities, master, false);
+                    break;
 
-            case LMP_C3CONNECT:
-                master = Integer.parseInt(info);
-                lobby.lobbyActions.c3Connect(entities, master, false);
-                break;
+                case LMP_C3CONNECT:
+                    master = Integer.parseInt(info);
+                    lobby.lobbyActions.c3Connect(entities, master, false);
+                    break;
 
-            case LMP_C3_FORM_C3:
-                master = Integer.parseInt(info);
-                lobby.lobbyActions.c3Connect(entities, master, true);
-                break;
+                case LMP_C3_FORM_C3:
+                    master = Integer.parseInt(info);
+                    lobby.lobbyActions.c3Connect(entities, master, true);
+                    break;
 
-            case LMP_C3_FORM_NHC3:
-                master = Integer.parseInt(info);
-                lobby.lobbyActions.c3JoinNh(entities, master, true);
-                break;
+                case LMP_C3_FORM_NHC3:
+                    master = Integer.parseInt(info);
+                    lobby.lobbyActions.c3JoinNh(entities, master, true);
+                    break;
 
-            case LMP_UNLOAD_ALL_FROM_BAY:
-                int bay = Integer.parseInt(info);
-                lobby.lobbyActions.unloadFromBay(entities, bay);
-                break;
+                case LMP_UNLOAD_ALL_FROM_BAY:
+                    int bay = Integer.parseInt(info);
+                    lobby.lobbyActions.unloadFromBay(entities, bay);
+                    break;
 
-            case LMP_MOVE_DOWN:
-                lobby.lobbyActions.forceMove(LobbyUtility.getForces(lobby.game(), info), entities, false);
-                break;
+                case LMP_MOVE_DOWN:
+                    lobby.lobbyActions.forceMove(LobbyUtility.getForces(lobby.game(), info), entities, false);
+                    break;
 
-            case LMP_MOVE_UP:
-                lobby.lobbyActions.forceMove(LobbyUtility.getForces(lobby.game(), info), entities, true);
-                break;
+                case LMP_MOVE_UP:
+                    lobby.lobbyActions.forceMove(LobbyUtility.getForces(lobby.game(), info), entities, true);
+                    break;
 
-            case LMP_PRIORITY_TARGET:
-                lobby.lobbyActions.setPriorityTarget(info, entities);
-                break;
+                case LMP_PRIORITY_TARGET:
+                    lobby.lobbyActions.setPriorityTarget(info, entities);
+                    break;
 
-            case LMP_ALPHA_STRIKE:
-                lobby.lobbyActions.showAlphaStrikeView(entities);
-                break;
+                case LMP_ALPHA_STRIKE:
+                    lobby.lobbyActions.showAlphaStrikeView(entities);
+                    break;
 
-            case LMP_AUTOCONFIG:
-            case LMP_RANDOM_CONFIG:
-            case LMP_SAVE_CONFIG:
-            case LMP_APPLY_CONFIG:
-                runMunitionConfigCMD(entities, command);
-                break;
+                case LMP_AUTOCONFIG:
+                case LMP_RANDOM_CONFIG:
+                case LMP_SAVE_CONFIG:
+                case LMP_APPLY_CONFIG:
+                    runMunitionConfigCMD(entities, command);
+                    break;
+            }
+        } catch (InvalidPacketDataException e) {
+            LOGGER.error("Invalid packet data:", e);
         }
     }
 

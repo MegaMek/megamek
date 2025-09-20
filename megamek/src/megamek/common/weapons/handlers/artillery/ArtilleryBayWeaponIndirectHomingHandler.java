@@ -56,6 +56,7 @@ import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
@@ -64,9 +65,11 @@ import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.DamageType;
+import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
 public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponIndirectFireHandler {
+    private static final MMLogger LOGGER = MMLogger.create(ArtilleryBayWeaponIndirectHomingHandler.class);
     @Serial
     private static final long serialVersionUID = -7243477723032010917L;
     boolean advancedPD;
@@ -111,7 +114,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                 handledAmmoAndReport = true;
             }
 
-            // if this is the last targeting phase before we hit, make it so the firing entity is announced in the 
+            // if this is the last targeting phase before we hit, make it so the firing entity is announced in the
             // off-board attack phase that follows.
             if (artilleryAttackAction.getTurnsTilHit() == 0) {
                 setAnnouncedEntityFiring(false);
@@ -123,10 +126,16 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
             return true;
         }
 
-        convertHomingShotToEntityTarget();
-        Entity entityTarget = (artilleryAttackAction.getTargetType() == Targetable.TYPE_ENTITY) ?
-              (Entity) artilleryAttackAction.getTarget(game) :
-              null;
+        Entity entityTarget;
+        try {
+            convertHomingShotToEntityTarget();
+            entityTarget = (artilleryAttackAction.getTargetType() == Targetable.TYPE_ENTITY) ?
+                  (Entity) artilleryAttackAction.getTarget(game) :
+                  null;
+        } catch (InvalidPacketDataException e) {
+            LOGGER.error("Invalid packet data:", e);
+            return true;
+        }
 
         final boolean targetInBuilding = Compute.isInBuilding(game, entityTarget);
         final boolean bldgDamagedOnMiss = targetInBuilding
@@ -365,7 +374,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
     /**
      * Find the tagged entity for this attack Uses a CFR to let the player choose from eligible TAGs
      */
-    public void convertHomingShotToEntityTarget() {
+    public void convertHomingShotToEntityTarget() throws InvalidPacketDataException {
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) weaponAttackAction;
 
         final Coords tc = target.getPosition();

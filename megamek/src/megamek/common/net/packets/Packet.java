@@ -358,8 +358,8 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
 
         ArrayList<Building> result = new ArrayList<>();
 
-        if (object instanceof Collection<?> collection) {
-            for (Object building : collection) {
+        if (object instanceof Vector<?> vector) {
+            for (Object building : vector) {
                 if (building instanceof Building verifiedBuilding) {
                     result.add(verifiedBuilding);
                 }
@@ -368,7 +368,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
         }
 
         throw new InvalidPacketDataException(
-              String.format("Value not List: %s (%s)", object, object.getClass()));
+              String.format("Value not Vector: %s (%s)", object, object.getClass()));
     }
 
     /**
@@ -420,8 +420,8 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
 
         Vector<Coords> result = new Vector<>();
 
-        if (object instanceof Collection<?> collection) {
-            for (Object coord : collection) {
+        if (object instanceof Vector<?> vector) {
+            for (Object coord : vector) {
                 if (coord instanceof Coords verifiedCoord) {
                     result.add(verifiedCoord);
                 }
@@ -430,7 +430,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
         }
 
         throw new InvalidPacketDataException(
-              String.format("Value not Collection: %s (%s)", object, object.getClass()));
+              String.format("Value not Vector: %s (%s)", object, object.getClass()));
     }
 
     /**
@@ -525,8 +525,8 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
 
         ArrayList<Entity> result = new ArrayList<>();
 
-        if (object instanceof Collection<?> collection) {
-            for (Object entity : collection) {
+        if (object instanceof List<?> list) {
+            for (Object entity : list) {
                 if (entity instanceof Entity verifiedEntity) {
                     result.add(verifiedEntity);
                 }
@@ -535,7 +535,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
         }
 
         throw new InvalidPacketDataException(
-              String.format("Value not Collection<?>: %s (%s)", object, object.getClass()));
+              String.format("Value not List<?>: %s (%s)", object, object.getClass()));
     }
 
     /**
@@ -548,8 +548,9 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
 
         ArrayList<EntityAction> result = new ArrayList<>();
 
-        if (object instanceof Collection<?> collection) {
-            for (Object entityAction : collection) {
+        // Found users are List<> and Vector<> so this works.
+        if (object instanceof List<?> list) {
+            for (Object entityAction : list) {
                 if (entityAction instanceof EntityAction verifiedEntityAction) {
                     result.add(verifiedEntityAction);
                 }
@@ -558,7 +559,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
         }
 
         throw new InvalidPacketDataException(
-              String.format("Value not Collection<?>: %s (%s)", object, object.getClass()));
+              String.format("Value not List<?>: %s (%s)", object, object.getClass()));
     }
 
     /**
@@ -643,8 +644,9 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
 
         ArrayList<Force> result = new ArrayList<>();
 
-        if (object instanceof Collection<?> collection) {
-            for (Object forces : collection) {
+        // Users should now only use HashSet.
+        if (object instanceof HashSet<?> set) {
+            for (Object forces : set) {
                 if (forces instanceof Force verifiedForce) {
                     result.add(verifiedForce);
                 }
@@ -653,7 +655,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
         }
 
         throw new InvalidPacketDataException(
-              String.format("Value not Collection: %s (%s)", object, object.getClass()));
+              String.format("Value not HashSet: %s (%s)", object, object.getClass()));
     }
 
     /**
@@ -682,8 +684,8 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
 
         ArrayList<GameTurn> result = new ArrayList<>();
 
-        if (object instanceof Collection<?> collection) {
-            for (Object gameTurns : collection) {
+        if (object instanceof List<?> list) {
+            for (Object gameTurns : list) {
                 if (gameTurns instanceof GameTurn verifiedGameTurn) {
                     result.add(verifiedGameTurn);
                 }
@@ -692,7 +694,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
         }
 
         throw new InvalidPacketDataException(
-              String.format("Value not Collection<?>: %s (%s)", object, object.getClass()));
+              String.format("Value not List: %s (%s)", object, object.getClass()));
     }
 
     /**
@@ -760,8 +762,8 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
 
         ArrayList<InGameObject> result = new ArrayList<>();
 
-        if (object instanceof Collection<?> collection) {
-            for (Object report : collection) {
+        if (object instanceof List<?> list) {
+            for (Object report : list) {
                 if (report instanceof InGameObject value) {
                     result.add(value);
                 }
@@ -770,7 +772,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
         }
 
         throw new InvalidPacketDataException(
-              String.format("Value not Collection<?>: %s (%s)", object, object.getClass()));
+              String.format("Value not List: %s (%s)", object, object.getClass()));
     }
 
     /**
@@ -926,8 +928,8 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
 
         Vector<Player> result = new Vector<>();
 
-        if (object instanceof Collection<?> collection) {
-            for (Object player : collection) {
+        if (object instanceof HashSet<?> set) {
+            for (Object player : set) {
                 if (player instanceof Player verifiedPlayer) {
                     result.add(verifiedPlayer);
                 }
@@ -936,7 +938,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
         }
 
         throw new InvalidPacketDataException(
-              String.format("Value not Vector: %s (%s)", object, object.getClass()));
+              String.format("Value not HashSet: %s (%s)", object, object.getClass()));
     }
 
     /**
@@ -949,8 +951,8 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
 
         ArrayList<Report> result = new ArrayList<>();
 
-        if (object instanceof Collection<?> collection) {
-            for (Object report : collection) {
+        if (object instanceof Vector<?> vector) {
+            for (Object report : vector) {
                 if (report instanceof Report verifiedReport) {
                     result.add(verifiedReport);
                 }
@@ -959,7 +961,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
         }
 
         throw new InvalidPacketDataException(
-              String.format("Value not Collection<?>: %s (%s)", object, object.getClass()));
+              String.format("Value not Vector: %s (%s)", object, object.getClass()));
     }
 
     /**
@@ -972,6 +974,9 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
 
         ArrayList<List<Report>> result = new ArrayList<>();
 
+        // TODO: refactor SBFFullGameReport.java:createFilteredReport to _not_ return a HashMap
+        // but instead a list of lists, or refactor all other creators of data objects for this
+        // method to also create HashMaps (this may reduce bandwidth usage slightly).
         if (object instanceof Collection<?> collection) {
             for (Object reportList : collection) {
                 if (reportList instanceof List<?> verifiedReportList) {
@@ -1042,8 +1047,8 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
 
         ArrayList<SBFTurn> result = new ArrayList<>();
 
-        if (object instanceof Collection<?> collection) {
-            for (Object report : collection) {
+        if (object instanceof List<?> list) {
+            for (Object report : list) {
                 if (report instanceof SBFTurn value) {
                     result.add(value);
                 }
@@ -1052,7 +1057,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
         }
 
         throw new InvalidPacketDataException(
-              String.format("Value not Collection<?>: %s (%s)", object, object.getClass()));
+              String.format("Value not List: %s (%s)", object, object.getClass()));
     }
 
     /**
@@ -1146,8 +1151,8 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
 
         ArrayList<WeaponAttackAction> result = new ArrayList<>();
 
-        if (object instanceof Collection<?> collection) {
-            for (Object value : collection) {
+        if (object instanceof List<?> list) {
+            for (Object value : list) {
                 if (value instanceof WeaponAttackAction verifiedValue) {
                     result.add(verifiedValue);
                 }
@@ -1156,7 +1161,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
         }
 
         throw new InvalidPacketDataException(
-              String.format("Value not Collection<?>: %s (%s)", object, object.getClass()));
+              String.format("Value not List: %s (%s)", object, object.getClass()));
     }
 
     /**

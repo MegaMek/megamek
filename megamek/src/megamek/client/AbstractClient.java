@@ -362,10 +362,10 @@ public abstract class AbstractClient implements IClient {
     }
 
     protected void receiveUnitReplace(Packet packet) throws InvalidPacketDataException {
-        @SuppressWarnings(value = "unchecked") List<Force> forces = (List<Force>) packet.getObject(1);
+        List<Force> forces = packet.getForceList(1);
         forces.forEach(force -> getGame().getForces().replace(force.getId(), force));
 
-        @SuppressWarnings(value = "unchecked") List<InGameObject> units = (List<InGameObject>) packet.getObject(0);
+        List<InGameObject> units = packet.getInGameObjectList(0);
         getGame().replaceUnits(units);
     }
 

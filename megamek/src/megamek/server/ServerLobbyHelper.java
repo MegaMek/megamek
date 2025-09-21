@@ -476,7 +476,7 @@ public class ServerLobbyHelper {
      * entities.
      */
     static Packet createForceUpdatePacket(Collection<Force> changedForces) {
-        return createForceUpdatePacket(changedForces, new ArrayList<>());
+        return createForceUpdatePacket(changedForces, new HashSet<>());
     }
 
     /**

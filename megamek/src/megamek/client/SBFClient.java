@@ -45,6 +45,7 @@ import megamek.common.Report;
 import megamek.common.actions.EntityAction;
 import megamek.common.force.Forces;
 import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.strategicBattleSystems.SBFGame;
@@ -90,56 +91,62 @@ public class SBFClient extends AbstractClient {
 
     @Override
     protected boolean handleGameSpecificPacket(Packet packet) {
-        switch (packet.command()) {
-            case SENDING_ENTITIES:
-                receiveEntities(packet);
-                break;
-            case SENDING_REPORTS_ALL:
-                var receivedReports = packet.getIntegerWithSBFReportEntryList(0);
-                game.replaceAllReports(receivedReports);
-                if (keepGameLog()) {
-                    // Re-write the gamelog from scratch
-                    initGameLog();
-                    for (int round : receivedReports.keySet().stream().sorted().toList()) {
-                        possiblyWriteToLog(assembleAndAddImages(receivedReports.get(round)));
-                    }
-                }
-                roundReport = assembleAndAddImages(receivedReports.get(game.getCurrentRound()));
-                // We don't really have a copy of the phase report at this point, so I guess
-                // we'll just use the
-                // round report until the next phase actually completes.
-                phaseReport = roundReport;
-                break;
-            case SENDING_REPORTS:
-                phaseReport = assembleAndAddImages(packet.getSBFReportEntryList(0));
-                if (keepGameLog()) {
-                    if ((log == null) && (game.getCurrentRound() == 1)) {
+        try {
+            switch (packet.command()) {
+                case SENDING_ENTITIES:
+                    receiveEntities(packet);
+                    break;
+                case SENDING_REPORTS_ALL:
+                    var receivedReports = packet.getIntegerWithSBFReportEntryList(0);
+                    game.replaceAllReports(receivedReports);
+                    if (keepGameLog()) {
+                        // Re-write the gamelog from scratch
                         initGameLog();
+                        for (int round : receivedReports.keySet().stream().sorted().toList()) {
+                            possiblyWriteToLog(assembleAndAddImages(receivedReports.get(round)));
+                        }
                     }
-                }
-                game.addReports(packet.getSBFReportEntryList(0));
-                roundReport = assembleAndAddImages(game.getGameReport().get(game.getCurrentRound()));
-                break;
-            case SENDING_TURNS:
-                game.setTurns(packet.getSBFTurnList(0));
-                break;
-            case TURN:
-                game.setTurnIndex(packet.getIntValue(0), packet.getIntValue(1));
-                break;
-            case ENTITY_UPDATE:
-                getGame().receiveUnit(packet.getInGameObject(0));
-                break;
-            case UNIT_INVISIBLE:
-                getGame().forget(packet.getIntValue(0));
-            case ACTIONS:
-                getGame().clearActions();
-                for (EntityAction action : packet.getEntityActionList(0)) {
-                    getGame().addAction(action);
-                }
-            default:
-                return false;
+                    roundReport = assembleAndAddImages(receivedReports.get(game.getCurrentRound()));
+                    // We don't really have a copy of the phase report at this point, so I guess
+                    // we'll just use the
+                    // round report until the next phase actually completes.
+                    phaseReport = roundReport;
+                    break;
+                case SENDING_REPORTS:
+                    phaseReport = assembleAndAddImages(packet.getSBFReportEntryList(0));
+                    if (keepGameLog()) {
+                        if ((log == null) && (game.getCurrentRound() == 1)) {
+                            initGameLog();
+                        }
+                    }
+                    game.addReports(packet.getSBFReportEntryList(0));
+                    roundReport = assembleAndAddImages(game.getGameReport().get(game.getCurrentRound()));
+                    break;
+                case SENDING_TURNS:
+                    game.setTurns(packet.getSBFTurnList(0));
+                    break;
+                case TURN:
+                    game.setTurnIndex(packet.getIntValue(0), packet.getIntValue(1));
+                    break;
+                case ENTITY_UPDATE:
+                    getGame().receiveUnit(packet.getInGameObject(0));
+                    break;
+                case UNIT_INVISIBLE:
+                    getGame().forget(packet.getIntValue(0));
+                case ACTIONS:
+                    getGame().clearActions();
+                    for (EntityAction action : packet.getEntityActionList(0)) {
+                        getGame().addAction(action);
+                    }
+                default:
+                    return false;
+            }
+            return true;
+
+        } catch (InvalidPacketDataException e) {
+            logger.error("Invalid packet data:", e);
+            return false;
         }
-        return true;
     }
 
     private String assembleAndAddImages(List<SBFReportEntry> reports) {
@@ -161,7 +168,7 @@ public class SBFClient extends AbstractClient {
     /**
      * Loads the entities from the data in the net command.
      */
-    protected void receiveEntities(Packet packet) {
+    protected void receiveEntities(Packet packet) throws InvalidPacketDataException {
         List<InGameObject> newActiveUnits = packet.getInGameObjectList(0);
         List<InGameObject> newGraveyard = packet.getInGameObjectList(1);
         Forces newForces = packet.getForces(2);

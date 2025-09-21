@@ -54,6 +54,7 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Building;
@@ -65,7 +66,7 @@ import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
 public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirectFireHandler {
-    private static final MMLogger LOGGER = MMLogger.create(ArtilleryBayWeaponIndirectHomingHandler.class);
+    private static final MMLogger LOGGER = MMLogger.create(ArtilleryWeaponIndirectHomingHandler.class);
 
     @Serial
     private static final long serialVersionUID = -7243477723032010917L;
@@ -120,10 +121,16 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             aaa.decrementTurnsTilHit();
             return true;
         }
+        Entity entityTarget;
+        try {
+            convertHomingShotToEntityTarget();
+            entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
+                  .getTarget(game) : null;
+        } catch (InvalidPacketDataException e) {
+            LOGGER.error("Invalid packet data:", e);
+            return false;
+        }
 
-        convertHomingShotToEntityTarget();
-        Entity entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
-              .getTarget(game) : null;
         final boolean targetInBuilding = Compute.isInBuilding(game,
               entityTarget);
         final boolean bldgDamagedOnMiss = targetInBuilding
@@ -342,7 +349,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
     /**
      * Find the tagged entity for this attack Uses a CFR to let the player choose from eligible TAG
      */
-    public void convertHomingShotToEntityTarget() {
+    public void convertHomingShotToEntityTarget() throws InvalidPacketDataException {
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) weaponAttackAction;
 
         final Coords tc = target.getPosition();

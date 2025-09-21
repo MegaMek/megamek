@@ -142,9 +142,9 @@ import org.w3c.dom.NodeList;
 public class MegaMekGUI implements IPreferenceChangeListener {
     private static final MMLogger LOGGER = MMLogger.create(MegaMekGUI.class);
 
-    private static final String FILENAME_MEGAMEK_SPLASH = "../misc/background.jpg";
-    private static final String FILENAME_MEDAL = "../misc/medal.png";
-    private static final String FILENAME_LOGO = "../misc/logo.png";
+    private static final String FILENAME_MEGAMEK_SPLASH = "../misc/mm-background.jpg";
+    private static final String FILENAME_MEDAL = "../misc/mm-medal.png";
+    private static final String FILENAME_LOGO = "../misc/mm-logo.png";
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png";

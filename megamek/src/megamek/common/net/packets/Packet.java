@@ -134,8 +134,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return integer;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not integer: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("int", object, index);
     }
 
     /**
@@ -157,8 +156,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not List: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("List", object, index);
     }
 
     /**
@@ -182,8 +180,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Map<Integer, Integer>: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Map<Integer, Integer>", object, index);
     }
 
 
@@ -216,8 +213,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Map<Integer, List>: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Map<Integer, List>", object, index);
     }
 
     /**
@@ -232,8 +228,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return bool;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Boolean: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Boolean", object, index);
     }
 
     /**
@@ -248,8 +243,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return value;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not String: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("String", object, index);
     }
 
     /**
@@ -273,8 +267,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Map<String, BehaviorSettings>: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Map<String, BehaviorSettings>", object, index);
     }
 
     /**
@@ -296,8 +289,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Vector: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Vector", object, index);
     }
 
     /**
@@ -319,8 +311,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Set: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Set", object, index);
     }
 
     /**
@@ -344,8 +335,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Map<Location, Hex>: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Map<Location, Hex>", object, index);
     }
 
     /**
@@ -367,8 +357,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Vector: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Vector", object, index);
     }
 
     /**
@@ -383,8 +372,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return coords;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Coords: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Coords", object, index);
     }
 
     /**
@@ -406,8 +394,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not HashSet: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("HashSet", object, index);
     }
 
     /**
@@ -429,8 +416,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Vector: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Vector", object, index);
     }
 
     /**
@@ -462,8 +448,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Map<Coords, List>: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Map<Coords, List>", object, index);
     }
 
     /**
@@ -495,8 +480,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Map<Coords, Collection>: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Map<Coords, Collection>", object, index);
     }
 
     /**
@@ -511,8 +495,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return entity;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Entity: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Entity", object, index);
     }
 
     /**
@@ -534,8 +517,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not List<?>: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("List<?>", object, index);
     }
 
     /**
@@ -558,8 +540,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not List<?>: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("List<?>", object, index);
     }
 
     /**
@@ -574,8 +555,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return value;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not FighterSquadron: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("FighterSquadron", object, index);
     }
 
     /**
@@ -597,8 +577,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Vector<?>: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Vector", object, index);
     }
 
     /**
@@ -613,8 +592,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return value;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Force: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Force", object, index);
     }
 
 
@@ -630,8 +608,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return force;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Forces: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Forces", object, index);
     }
 
     /**
@@ -654,8 +631,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not HashSet: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("HashSet", object, index);
     }
 
     /**
@@ -670,8 +646,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return gameOptions;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not GameOptions: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("GameOptions", object, index);
     }
 
     /**
@@ -693,8 +668,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not List: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("List", object, index);
     }
 
     /**
@@ -709,8 +683,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return hex;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Hex: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Hex", object, index);
     }
 
     /**
@@ -732,8 +705,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Vector: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Vector", object, index);
     }
 
     /**
@@ -748,8 +720,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return value;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not InGameObject: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("InGameObject", object, index);
     }
 
     /**
@@ -771,8 +742,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not List: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("List", object, index);
     }
 
     /**
@@ -787,8 +757,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return mapSettings;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not MapSettings: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("MapSettings", object, index);
     }
 
     /**
@@ -803,8 +772,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return minefield;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Minefield: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Minefield", object, index);
     }
 
     /**
@@ -826,8 +794,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Vector: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Vector", object, index);
     }
 
     /**
@@ -842,8 +809,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return movePath;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not MovePath: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("MovePath", object, index);
     }
 
     /**
@@ -873,8 +839,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return planetaryConditions;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not PlanetaryConditions: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("PlanetaryConditions", object, index);
     }
 
     /**
@@ -889,8 +854,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return value;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Player: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Player", object, index);
     }
 
     /**
@@ -914,8 +878,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not PlayerIDAndList: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("PlayerIDAndList", object, index);
     }
 
     /**
@@ -937,8 +900,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not HashSet: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("HashSet", object, index);
     }
 
     /**
@@ -960,8 +922,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Vector: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Vector", object, index);
     }
 
     /**
@@ -994,8 +955,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Collection<?>: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Collection<?>", object, index);
     }
 
     /**
@@ -1010,8 +970,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return sbfMovePath;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not SBFMovePath: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("SBFMovePath", object, index);
     }
 
     /**
@@ -1033,8 +992,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Collection<?>: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("Collection<?>", object, index);
     }
 
     /**
@@ -1056,8 +1014,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not List: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("List", object, index);
     }
 
     /**
@@ -1072,8 +1029,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return smokeCloud;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not SmokeCloud: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("SmokeCloud", object, index);
     }
 
     /**
@@ -1088,8 +1044,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return value;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not SpecialHexDisplay: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("SpecialHexDisplay", object, index);
     }
 
 
@@ -1112,10 +1067,8 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not List: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("List", object, index);
     }
-
     /**
      * @param index the index of the desired object
      *
@@ -1135,9 +1088,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not Vector: %s (%s)", (object == null) ? "Null object at index " + index : object,
-                    (object == null) ? "Unknown" : object.getClass()));
+        throw new InvalidPacketDataException("Vector", object, index);
 
     }
 
@@ -1160,8 +1111,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not List: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("List", object, index);
     }
 
     /**
@@ -1176,8 +1126,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return value;
         }
 
-        throw new InvalidPacketDataException(
-              String.format("Value not WeaponSortOrder: %s (%s)", object, object.getClass()));
+        throw new InvalidPacketDataException("WeaponSortOrder", object, index);
     }
 
     @Override

@@ -67,4 +67,40 @@ public class InvalidPacketDataException extends Exception {
     public InvalidPacketDataException(final String message, final Throwable cause) {
         super(message, cause);
     }
+
+    /**
+     * Construct a new exception with desired object type, the object in question, and its specified index
+     * @param desiredType String naming the type that was expected but not found.
+     * @param objectionable Object we didn't like.
+     * @param index int containing the object's position within the packet's data.
+     */
+    public InvalidPacketDataException(String desiredType, Object objectionable, int index) {
+        this(buildMessage(desiredType, objectionable, index));
+    }
+
+    /**
+     * Construct a new exception with desired object type, the object in question, and its specified index
+     * @param desiredType String naming the type that was expected but not found.
+     * @param objectionable Object we didn't like.
+     * @param index int containing the object's position within the packet's data.
+     * @param cause Throwable that initiated the exception
+     */
+    public InvalidPacketDataException(String desiredType, Object objectionable, int index, final Throwable cause) {
+        this(buildMessage(desiredType, objectionable, index), cause);
+    }
+
+    /**
+     * Construct a new message with desired object type, the object in question, and its specified index
+     * @param desiredType String naming the type that was expected but not found.
+     * @param objectionable Object we didn't like.
+     * @param index int containing the object's position within the packet's data.
+     */
+    private static String buildMessage(String desiredType, Object objectionable, int index) {
+        return String.format(
+              "Value not %s: %s (%s)",
+              desiredType,
+              (objectionable == null) ? "Null object at index " + index : objectionable,
+              (objectionable == null) ? "Unknown" : objectionable.getClass()
+        );
+    }
 }

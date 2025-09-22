@@ -503,7 +503,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
      *
      * @return a List of {@link Entity}'s value of the object at the specified index
      */
-    public @Nullable List<Entity> getEntityList(int index) throws InvalidPacketDataException {
+    public List<Entity> getEntityList(int index) throws InvalidPacketDataException {
         Object object = getObject(index);
 
         ArrayList<Entity> result = new ArrayList<>();

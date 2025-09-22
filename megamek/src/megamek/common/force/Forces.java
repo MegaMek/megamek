@@ -221,8 +221,8 @@ public final class Forces implements Serializable {
      * (forceId == Force.NO_FORCE). Returns a list of all changed forces, i.e. the former force, if any. The list will
      * be empty if no actual change occurred.
      */
-    public synchronized ArrayList<Force> removeEntityFromForces(int entityId) {
-        ArrayList<Force> result = new ArrayList<>();
+    public synchronized HashSet<Force> removeEntityFromForces(int entityId) {
+        HashSet<Force> result = new HashSet<>();
         int formerForce = getForceId(entityId);
         if ((formerForce == NO_FORCE) || game.getInGameObject(entityId).isEmpty()
               || !(game.getInGameObject(entityId).get() instanceof ForceAssignable unit)) {

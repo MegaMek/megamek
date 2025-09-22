@@ -851,7 +851,7 @@ public class TWGameManager extends AbstractGameManager {
                     resetPlayersDone();
                     break;
                 case ENTITY_WORDER_UPDATE:
-                    Entity entity = packet.getEntity(0);
+                    Entity entity = game.getEntity(packet.getIntValue(0));
                     if (entity != null) {
                         WeaponSortOrder order = packet.getWeaponSortOrder(1);
 
@@ -24797,7 +24797,7 @@ public class TWGameManager extends AbstractGameManager {
             send(ServerLobbyHelper.createMultiEntityPacket(updateCandidates));
         }
 
-        ArrayList<Force> affectedForces = new ArrayList<>();
+        HashSet<Force> affectedForces = new HashSet<>();
         for (Integer entityId : ids) {
             final Entity entity = game.getEntity(entityId);
 
@@ -25140,7 +25140,7 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @return A <code>Packet</code> to be sent to clients.
      */
-    private Packet createRemoveEntityPacket(List<Integer> entityIds, List<Force> affectedForces, int condition) {
+    private Packet createRemoveEntityPacket(List<Integer> entityIds, HashSet<Force> affectedForces, int condition) {
         if ((condition != IEntityRemovalConditions.REMOVE_UNKNOWN) &&
               (condition != IEntityRemovalConditions.REMOVE_IN_RETREAT) &&
               (condition != IEntityRemovalConditions.REMOVE_PUSHED) &&

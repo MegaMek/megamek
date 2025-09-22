@@ -25094,9 +25094,9 @@ public class TWGameManager extends AbstractGameManager {
         final List<Entity> entities = entityIds.stream()
               .map(id -> getGame().getEntity(id))
               .toList();
-        final List<Force> forceList = forceIds.stream()
+        final HashSet<Force> forceList = new HashSet<Force>(forceIds.stream()
               .map(id -> getGame().getForces().getForce(id))
-              .toList();
+              .toList());
         return new Packet(PacketCommand.ENTITY_ADD, entities, forceList);
     }
 

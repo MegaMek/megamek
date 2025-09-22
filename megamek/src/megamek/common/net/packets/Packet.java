@@ -503,11 +503,15 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
      *
      * @return a List of {@link Entity}'s value of the object at the specified index
      */
-    public List<Entity> getEntityList(int index) throws InvalidPacketDataException {
+    public @Nullable List<Entity> getEntityList(int index) throws InvalidPacketDataException {
         Object object = getObject(index);
 
         ArrayList<Entity> result = new ArrayList<>();
 
+        // Some consumers require empty ArrayLists on null
+        if (object == null) {
+            return result;
+        }
         if (object instanceof List<?> list) {
             for (Object entity : list) {
                 if (entity instanceof Entity verifiedEntity) {
@@ -604,6 +608,10 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     public @Nullable Forces getForces(int index) throws InvalidPacketDataException {
         Object object = getObject(index);
 
+        // Some consumers allow or require null return when Forces not found.
+        if (object == null) {
+            return null;
+        }
         if (object instanceof Forces force) {
             return force;
         }
@@ -891,8 +899,8 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
 
         Vector<Player> result = new Vector<>();
 
-        if (object instanceof HashSet<?> set) {
-            for (Object player : set) {
+        if (object instanceof Vector<?> vector) {
+            for (Object player : vector) {
                 if (player instanceof Player verifiedPlayer) {
                     result.add(verifiedPlayer);
                 }
@@ -900,7 +908,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException("HashSet", object, index);
+        throw new InvalidPacketDataException("Vector", object, index);
     }
 
     /**

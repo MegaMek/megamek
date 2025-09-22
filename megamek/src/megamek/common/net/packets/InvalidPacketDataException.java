@@ -97,9 +97,10 @@ public class InvalidPacketDataException extends Exception {
      */
     private static String buildMessage(String desiredType, Object objectionable, int index) {
         return String.format(
-              "Value not %s: %s (%s)",
+              "Value at index %s not %s: %s (%s)",
+              index,
               desiredType,
-              (objectionable == null) ? "Null object at index " + index : objectionable,
+              (objectionable == null) ? "Null object" : objectionable,
               (objectionable == null) ? "Unknown" : objectionable.getClass()
         );
     }

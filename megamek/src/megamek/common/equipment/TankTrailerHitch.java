@@ -248,16 +248,12 @@ public class TankTrailerHitch implements Transporter {
      */
     @Override
     public final Entity getExteriorUnitAt(int loc, boolean isRear) {
-        return game.getEntity(towed);
+        return null;
     }
 
     @Override
     public final List<Entity> getExternalUnits() {
-        ArrayList<Entity> rv = new ArrayList<>(1);
-        if (towed != Entity.NONE) {
-            rv.add(game.getEntity(towed));
-        }
-        return Collections.unmodifiableList(rv);
+        return Collections.emptyList();
     }
 
     @Override

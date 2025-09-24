@@ -2989,7 +2989,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     loaded = entities.next();
 
                     // This should never ever happen, but just in case...
-                    if (loaded.equals(null)) {
+                    if (loaded == null) {
                         continue;
                     }
 

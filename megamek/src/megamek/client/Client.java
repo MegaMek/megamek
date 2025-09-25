@@ -471,7 +471,7 @@ public class Client extends AbstractClient {
      * Sends a packet containing multiple entity updates. Should only be used in the lobby phase.
      */
     public void sendChangeOwner(Collection<Entity> entities, int newOwnerId) throws InvalidPacketDataException {
-        send(new Packet(PacketCommand.ENTITY_ASSIGN, entities, newOwnerId));
+        send(new Packet(PacketCommand.ENTITY_ASSIGN, List.of(entities), newOwnerId));
     }
 
     /**

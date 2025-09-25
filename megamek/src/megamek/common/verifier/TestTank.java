@@ -946,8 +946,7 @@ public class TestTank extends TestEntity {
                 buffer.append(eq.getName()).append(" cannot be mounted in the body.\n");
                 return false;
             }
-            if ((tank instanceof VTOL) && (location == VTOL.LOC_ROTOR)
-                  && !eq.hasFlag(WeaponType.F_TAG)) {
+            if ((tank instanceof VTOL) && (location == VTOL.LOC_ROTOR)) {
                 buffer.append(eq.getName()).append(" cannot be mounted in the rotor.\n");
                 return false;
             }

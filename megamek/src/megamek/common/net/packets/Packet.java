@@ -512,8 +512,10 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
         if (object == null) {
             return result;
         }
-        if (object instanceof List<?> list) {
-            for (Object entity : list) {
+
+        // Must accept Collections, at least until other changes are made
+        if (object instanceof Collection<?> collection) {
+            for (Object entity : collection) {
                 if (entity instanceof Entity verifiedEntity) {
                     result.add(verifiedEntity);
                 }
@@ -521,7 +523,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
             return result;
         }
 
-        throw new InvalidPacketDataException("List<?>", object, index);
+        throw new InvalidPacketDataException("Collection<?>", object, index);
     }
 
     /**

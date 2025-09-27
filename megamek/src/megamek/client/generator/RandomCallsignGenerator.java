@@ -49,23 +49,53 @@ import megamek.logging.MMLogger;
  * that is used during generation
  */
 public class RandomCallsignGenerator {
-    private final static RandomCallsignGenerator INSTANCE = new RandomCallsignGenerator();
     private final static MMLogger logger = MMLogger.create(RandomCallsignGenerator.class);
+
+    private final static String TEST_DIR = "testresources/data/names/callsigns_test.csv";
+
+    private final static RandomCallsignGenerator INSTANCE = new RandomCallsignGenerator(false);
+    private final static RandomCallsignGenerator TEST_INSTANCE = new RandomCallsignGenerator(true);
+
 
     private final WeightedIntMap<String> weightedCallsigns = new WeightedIntMap<>();
 
-    RandomCallsignGenerator() {
+    RandomCallsignGenerator(boolean useTestDirectory) {
         final Map<String, Integer> callsigns = new HashMap<>();
-        loadCallsignsFromFile(new File(MMConstants.CALLSIGN_FILE_PATH), callsigns);
-        loadCallsignsFromFile(new File(MMConstants.USER_CALLSIGN_FILE_PATH), callsigns);
+
+        if (useTestDirectory) {
+            loadCallsignsFromFile(new File(TEST_DIR), callsigns);
+        } else {
+            loadCallsignsFromFile(new File(MMConstants.CALLSIGN_FILE_PATH), callsigns);
+            loadCallsignsFromFile(new File(MMConstants.USER_CALLSIGN_FILE_PATH), callsigns);
+        }
 
         for (final Map.Entry<String, Integer> entry : callsigns.entrySet()) {
             getWeightedCallsigns().add(entry.getValue(), entry.getKey());
         }
     }
 
+    /**
+     * Retrieves a singleton instance of the {@link RandomCallsignGenerator}.
+     *
+     * @return the singleton instance of {@link RandomCallsignGenerator}
+     */
     public static RandomCallsignGenerator getInstance() {
-        return INSTANCE;
+        return getInstance(false);
+    }
+
+    /**
+     * Returns an instance of the {@link RandomCallsignGenerator} class. The instance retrieved depends on whether the
+     * test directory is being used or not.
+     *
+     * @param useTestDirectory a boolean indicating whether to use the test directory. If {@code true}, the instance
+     *                         specific to the test directory will be returned. If {@code false}, the default instance
+     *                         will be returned.
+     *
+     * @return an instance of {@link RandomCallsignGenerator}, either for the test directory or the default instance,
+     *       based on the parameter value.
+     */
+    public static RandomCallsignGenerator getInstance(boolean useTestDirectory) {
+        return useTestDirectory ? TEST_INSTANCE : INSTANCE;
     }
 
     // region Getters/Setters

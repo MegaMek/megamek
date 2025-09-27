@@ -364,7 +364,7 @@ public class OptionsConstants {
     public static final String ADVANCED_TAC_OPS_SELF_DESTRUCT = "tacops_self_destruct";
     public static final String ADVANCED_TAC_OPS_TANK_CREWS = "tacops_tank_crews";
     public static final String ADVANCED_STRATOPS_QUIRKS = "stratops_quirks";
-    public static final String ADVANCED_STRATOPS_PARTIAL_REPAIRS = "stratops_partial repairs";
+    public static final String ADVANCED_STRATOPS_PARTIAL_REPAIRS = "stratops_partial_repairs";
     public static final String ADVANCED_ASSAULT_DROP = "assault_drop";
     public static final String ADVANCED_PARATROOPERS = "paratroopers";
     public static final String ADVANCED_INCLUSIVE_SENSOR_RANGE = "inclusive_sensor_range";

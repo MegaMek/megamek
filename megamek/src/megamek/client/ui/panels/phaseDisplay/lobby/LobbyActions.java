@@ -928,7 +928,7 @@ public class LobbyActions {
      * Change the team of a controlled player (the local player or one of his bots).
      */
     void changeTeam(Collection<Player> players, int team) {
-        var toSend = new HashSet<Player>();
+        var toSend = new Vector<Player>();
         players.stream()
               .filter(this::isSelfOrLocalBot)
               .filter(p -> p.getTeam() != team)

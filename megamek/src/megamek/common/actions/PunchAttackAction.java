@@ -244,8 +244,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
 
         toHit = new ToHitData(base, "base");
 
-        // PLAYTEST punch now has -1 mod
-        toHit.addModifier(-1, "Punch");
+        toHit.addModifier(0, "Punch");
 
         PhysicalAttackAction.setCommonModifiers(toHit, game, ae, target);
 
@@ -322,8 +321,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
               !ae.hasWorkingSystem(Mek.ACTUATOR_HAND, armLoc)) {
             toHit.addModifier(1, "Hand actuator destroyed");
         } else if (hasClaws) {
-            // PLAYTEST claw modifier removed
-            toHit.addModifier(0, "Using Claws");
+            toHit.addModifier(1, "Using Claws");
         }
 
         if (hasHandActuator

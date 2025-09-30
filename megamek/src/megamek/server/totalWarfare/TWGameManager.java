@@ -36,7 +36,6 @@ import static megamek.common.game.Game.TEAM_HAS_COMBAT_PARALYSIS;
 import static megamek.common.game.Game.TEAM_HAS_COMBAT_SENSE;
 import static megamek.common.game.Game.TEAM_HAS_NO_INITIATIVE_APTITUDE;
 import static megamek.common.options.OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION;
-import static megamek.common.options.OptionsConstants.PLAYTEST_2;
 import static megamek.common.options.OptionsConstants.RPG_INDIVIDUAL_INITIATIVE;
 import static megamek.common.weapons.handlers.AreaEffectHelper.calculateDamageFallOff;
 
@@ -10041,25 +10040,10 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
 
-            // PLAYTEST Allow AMS to target 2 attacks.
             WeaponAttackAction targetedWAA = null;
-            WeaponAttackAction secondWAA = null;
 
             if (ams.curMode().equals("Automatic")) {
                 targetedWAA = Compute.getHighestExpectedDamage(game, vAttacksInArc, true);
-                // If there is more than one attack, lets find it
-                if (vAttacksInArc.size()>1) {
-                    int countWaa = 0;
-                    for (WeaponAttackAction waa : vAttacksInArc) {
-                        // Remove the existing targeted attack once found
-                        if (waa == targetedWAA) {
-                            vAttacksInArc.remove(countWaa);
-                        }
-                        countWaa++;
-                    }
-                    // Get the highest expected damage of the remaining attacks
-                    secondWAA = Compute.getHighestExpectedDamage(game, vAttacksInArc, true);
-                }
             } else {
                 // Send a client feedback request
                 sendAMSAssignCFR(e, ams, vAttacksInArc);
@@ -10089,11 +10073,6 @@ public class TWGameManager extends AbstractGameManager {
             if (targetedWAA != null) {
                 targetedWAA.addCounterEquipment(ams);
                 amsTargets.add(targetedWAA);
-            }
-            // If we have a second attack, lets do this.
-            if (secondWAA != null) {
-                secondWAA.addCounterEquipment(ams);
-                amsTargets.add(secondWAA);
             }
         }
     }
@@ -10738,13 +10717,13 @@ public class TWGameManager extends AbstractGameManager {
             target.applyDamage();
         } else if (target instanceof BattleArmor) {
             // 20 damage in 5 point clusters
-            // PLAYTEST 30 damage now in 5 point clusters
             final int damage = 5;
 
-            // Damage the squad. Loop for 6 times (5*6 = 30 damage.
-            for (int clusters=0; clusters<6; clusters++){
-                addReport(damageEntity(target, target.rollHitLocation(0, 0), damage));
-            }
+            // Damage the squad.
+            addReport(damageEntity(target, target.rollHitLocation(0, 0), damage));
+            addReport(damageEntity(target, target.rollHitLocation(0, 0), damage));
+            addReport(damageEntity(target, target.rollHitLocation(0, 0), damage));
+            addReport(damageEntity(target, target.rollHitLocation(0, 0), damage));
 
             // Damage from B Pods is applied immediately.
             target.applyDamage();
@@ -11623,8 +11602,7 @@ public class TWGameManager extends AbstractGameManager {
                     // blade retracts to its original mode
                     // attackingEntity.extendBlade(paa.getArm());
                     // check for breaking a nail
-                    // PLAYTEST No longer can break nails (extendable blade)
-                    /* if (Compute.d6(2) > 9) {
+                    if (Compute.d6(2) > 9) {
                         addNewLines();
                         r = new Report(4456);
                         r.indent(2);
@@ -11633,8 +11611,6 @@ public class TWGameManager extends AbstractGameManager {
                         addReport(r);
                         ae.destroyRetractableBlade(armLoc);
                     }
-                    
-                     */
                 }
             }
         }
@@ -12962,15 +12938,13 @@ public class TWGameManager extends AbstractGameManager {
             r.subject = ae.getId();
             r.add(toHit.getDesc());
             addReport(r);
-            // PLAYTEST no more PSR for missed mace attacks.
-            /*
             if (caa.getClub().getType().hasSubType(MiscType.S_MACE)) {
                 if (ae instanceof LandAirMek && ae.isAirborneVTOLorWIGE()) {
                     game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed a mace attack"));
                 } else {
                     game.addPSR(new PilotingRollData(ae.getId(), 0, "missed a mace attack"));
                 }
-            } */
+            }
 
             if (caa.isZweihandering()) {
                 if (caa.getClub().getType().hasSubType(MiscType.S_CLUB)) {
@@ -21712,15 +21686,13 @@ public class TWGameManager extends AbstractGameManager {
                     target -= 2;
                 }
                 // Impact-resistant armor easier to breach
-                // PLAYTEST no longer easier
-                /* if ((entity.getArmorType(loc) == EquipmentType.T_ARMOR_IMPACT_RESISTANT)) {
+                if ((entity.getArmorType(loc) == EquipmentType.T_ARMOR_IMPACT_RESISTANT)) {
                     r = new Report(6344);
                     r.subject = entity.getId();
                     r.indent(3);
                     vDesc.addElement(r);
                     target += 1;
-                }    
-                 */
+                }
                 Roll diceRoll = Compute.rollD6(2);
                 breachRoll = diceRoll.getIntValue();
                 r = new Report(6345);
@@ -22740,9 +22712,17 @@ public class TWGameManager extends AbstractGameManager {
         // facing after fall
         String side;
         int table = switch (facing) {
-            case 1 -> {
+            case 1, 2 -> {
+                side = "right side";
+                yield ToHitData.SIDE_RIGHT;
+            }
+            case 3 -> {
                 side = "rear";
                 yield ToHitData.SIDE_REAR;
+            }
+            case 4, 5 -> {
+                side = "left side";
+                yield ToHitData.SIDE_LEFT;
             }
             default -> {
                 side = "front";
@@ -22889,7 +22869,6 @@ public class TWGameManager extends AbstractGameManager {
         // calculate damage for hitting the ground, but only if we actually fell
         // into water
         // if we fell onto the water surface, that damage is halved.
-        // PLAYTEST TODO Water fall damage
         int waterDamage = 0;
         if (waterDepth > 0) {
             damage /= 2;
@@ -22945,8 +22924,7 @@ public class TWGameManager extends AbstractGameManager {
         entity.setElevation(newElevation);
         // Only 'meks change facing when they fall
         if (entity instanceof Mek) {
-            // PLAYTEST Always fall on the front
-            entity.setFacing(entity.getFacing());
+            entity.setFacing((entity.getFacing() + (facing)) % 6);
             entity.setSecondaryFacing(entity.getFacing());
         }
 
@@ -23157,8 +23135,7 @@ public class TWGameManager extends AbstractGameManager {
      * The mek falls into an unoccupied hex from the given height above
      */
     private Vector<Report> doEntityFall(Entity entity, Coords fallPos, int height, PilotingRollData roll) {
-        // PLAYTEST change compute.d6 -1 to remove the -1.
-        return doEntityFall(entity, fallPos, height, Compute.d6(1) , roll, false, false);
+        return doEntityFall(entity, fallPos, height, Compute.d6(1) - 1, roll, false, false);
     }
 
     /**

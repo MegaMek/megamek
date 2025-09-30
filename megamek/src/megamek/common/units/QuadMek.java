@@ -112,6 +112,28 @@ public class QuadMek extends Mek {
         return i >= 3;
     }
 
+    // PLAYTEST2 New Method for immobile due to no legs.
+    public boolean isImmobile() {
+        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+            int legsDestroyed = 0;
+            int hipHits = 0;
+            for (int i = 0; i < locations(); i++) {
+                if (locationIsLeg(i)) {
+                    if (isLocationBad(i)) {
+                        legsDestroyed++;
+                    } else if (legHasHipCrit(i)) {
+                        hipHits++;
+                    }
+                }
+            }
+            if (legsDestroyed == 4 || hipHits == 4) {
+                return true;
+            }
+        }
+        return super.isImmobile();
+    }
+
+
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         int mp = getOriginalWalkMP();
@@ -119,6 +141,18 @@ public class QuadMek extends Mek {
         int legsDestroyed = 0;
         int hipHits = 0;
         int actuatorHits = 0;
+        int flHip = 0;
+        int frHip = 0;
+        int rlHip = 0;
+        int rrHip = 0;
+        int flActuators = 0;
+        int frActuators = 0;
+        int rlActuators = 0;
+        int rrActuators = 0;
+        int flLeg = 0;
+        int frLeg = 0;
+        int rlLeg = 0;
+        int rrLeg = 0;
 
         // A Mek using tracks has its movement reduced by 25% per leg or track
         // destroyed.
@@ -133,6 +167,61 @@ public class QuadMek extends Mek {
             mp = (mp * (4 - legsDestroyed)) / 4;
         } else {
             for (int i = 0; i < locations(); i++) {
+                // PLAYTEST2 leg crits and MP
+                if (!(game == null) && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                    if (locationIsLeg(i)) {
+                        if (!isLocationBad(i)) {
+                            if (legHasHipCrit(i)) {
+                                if (i == LOC_LEFT_ARM) {
+                                    flHip++;
+                                }
+                                if (i == LOC_RIGHT_ARM) {
+                                    frHip++;
+                                }
+                                if (i == LOC_LEFT_LEG) {
+                                    rlHip++;
+                                }
+                                if (i == LOC_RIGHT_LEG) {
+                                    rrHip++;
+                                }
+                                hipHits++;
+                                if ((game == null) ||
+                                      !game.getOptions()
+                                            .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
+                                    continue;
+                                }
+                            }
+                            if (i == LOC_LEFT_ARM) {
+                                flActuators += countLegActuatorCrits(i);
+                            }
+                            if (i == LOC_RIGHT_ARM) {
+                                frActuators += countLegActuatorCrits(i);
+                            }
+                            if (i == LOC_LEFT_LEG) {
+                                rlActuators += countLegActuatorCrits(i);
+                            }
+                            if (i == LOC_RIGHT_LEG) {
+                                rrActuators += countLegActuatorCrits(i);
+                            }
+                            actuatorHits += countLegActuatorCrits(i);
+                        } else {
+                            legsDestroyed++;
+                            if (i == LOC_LEFT_ARM) {
+                                flLeg = 1;
+                            }
+                            if (i == LOC_RIGHT_ARM) {
+                                frLeg = 1;
+                            }
+                            if (i == LOC_LEFT_LEG) {
+                                rlLeg = 1;
+                            }
+                            if (i == LOC_RIGHT_LEG) {
+                                rrLeg = 1;
+                            }
+                        }
+                    }
+                }
+            } else{
                 if (locationIsLeg(i)) {
                     if (!isLocationBad(i)) {
                         if (legHasHipCrit(i)) {
@@ -149,16 +238,85 @@ public class QuadMek extends Mek {
                     }
                 }
             }
-            // leg damage effects
-            if (legsDestroyed > 0) {
-                if (legsDestroyed == 1) {
-                    mp--;
-                } else if (legsDestroyed == 2) {
-                    mp = 1;
+        }
+
+        // leg damage effects
+        // PLAYTEST2 adjust for legs 2 and 3.
+        if (legsDestroyed > 0) {
+            if (legsDestroyed == 1) {
+                mp--;
+            } else if (game != null && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                if (legsDestroyed == 4) {mp = 0;}
+            } else if (legsDestroyed == 2) {
+                mp = 1;
+            } else {
+                mp = 0;
+            }
+        }
+        // PLAYTEST2 set reductison for hips and legs 2 and 3
+        if ((game != null) && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2) && (mp > 0)) {
+            if (hipHits == 4) {
+                mp = 0;
+            } else {
+                if (hipHits > 0 || (legsDestroyed > 1 && legsDestroyed < 4)) {
+                    int minReduction;
+                    int midReduction;
+                    int maxReduction;
+                    minReduction = (int) Math.ceil(mp / 2.0);
+                    midReduction = (int) Math.ceil(minReduction / 2.0);
+                    maxReduction = (int) Math.ceil(midReduction / 2.0);
+
+                    if (minReduction < 2) {minReduction = 2;}
+                    if (maxReduction < 2) {maxReduction = 2;}
+                    if (midReduction < 2) {midReduction = 2;}
+                    if (hipHits == 1 || legsDestroyed == 2) {
+                        if (hipHits == 0) {
+                            // two legs destroyed, no hip hits
+                            mp = mp - minReduction;
+                        }
+                        if (legsDestroyed < 2) {
+                            // 1 or no legs destroyed, just a single hip
+                            mp = mp - minReduction;
+                        }
+                        if (legsDestroyed == 2 && hipHits == 1) {
+                            // Two legs and a hip
+                            mp = mp - minReduction - midReduction;
+                        }
+                    } else if (hipHits == 2 || legsDestroyed == 3) {
+                        if (hipHits == 0) {
+                            // three legs destroyed, no hip hits
+                            mp = mp - minReduction - midReduction;
+                        }
+                        if (legsDestroyed < 2) {
+                            // 1 or no legs destroyed, just two hips
+                            mp = mp - minReduction - midReduction;
+                        }
+                        if (legsDestroyed == 2 && hipHits == 2) {
+                            // Two legs and two hips
+                            mp = mp - minReduction - midReduction - maxReduction;
+                        }
+                    } else if (hipHits == 3) {
+                        // Not possible to have 2 legs destroyed and 3 hips out
+                        mp = mp - minReduction - midReduction - maxReduction;
+                    }
+
                 } else {
-                    mp = 0;
+                    mp -= actuatorHits;
+                }
+                if (flHip == 0) {
+                    mp -= flActuators;
+                }
+                if (frHip == 0) {
+                    mp -= frActuators;
+                }
+                if (rlHip == 1) {
+                    mp -= rlActuators;
+                }
+                if (rrHip == 1) {
+                    mp -= rrActuators;
                 }
             }
+        } else {
             if (mp > 0) {
                 if (hipHits > 0) {
                     if ((game != null) &&
@@ -174,6 +332,7 @@ public class QuadMek extends Mek {
                 mp -= actuatorHits;
             }
         }
+    
 
         if (!mpCalculationSetting.ignoreModularArmor() && hasModularArmor()) {
             mp--;
@@ -346,19 +505,30 @@ public class QuadMek extends Mek {
 
         boolean destroyedLegCounted = false;
         for (int loc : locsToCheck) {
+            // PLAYTEST2 destroyed leg
             if (isLocationBad(loc)) {
                 // a quad with 2 destroyed legs acts like a biped with one leg
                 // destroyed, so add the +5 only once
                 // 3 or more destroyed legs are being taken care in
                 // getBasePiloting
                 if ((destroyedLegs == 2) && !destroyedLegCounted) {
-                    roll.addModifier(5, "2 legs destroyed");
+                    // PLAYTEST2 pilot is +4 now
+                    if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                        roll.addModifier(4, "2 legs destroyed");
+                    } else {
+                        roll.addModifier(5, "2 legs destroyed");
+                    }
                     destroyedLegCounted = true;
                 }
             } else {
                 // check for damaged hip actuators
                 if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
-                    roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
+                    // PLAYTEST2 now a +1 not +2
+                    if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                        roll.addModifier(1, getLocationName(loc) + " Hip Actuator destroyed");
+                    } else {
+                        roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
+                    }
                     if (!game.getOptions()
                           .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
                         continue;
@@ -373,7 +543,7 @@ public class QuadMek extends Mek {
                     roll.addModifier(1, getLocationName(loc) + " Lower Leg Actuator destroyed");
                 }
                 // foot actuators?
-                // PLAYTEST5 no more +1 for foot actuators
+                // PLAYTEST2 no more +1 for foot actuators
                 if (!(gameOptions().booleanOption(OptionsConstants.PLAYTEST_2))) {
                     if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc) > 0) {
                         roll.addModifier(1, getLocationName(loc) + " Foot Actuator destroyed");

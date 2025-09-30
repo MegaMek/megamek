@@ -504,10 +504,9 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             if (hexesMoved == 0) {
                 hexesMoved = 1;
             }
-            // PLAYTEST no longer -1 on hexes moved.
             return (int) Math
                   .ceil((entity.getWeight() / 10.0)
-                        * (hexesMoved)
+                        * (hexesMoved - 1)
                         * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5
                         : 1));
         }

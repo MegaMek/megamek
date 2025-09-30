@@ -223,8 +223,7 @@ public class PPCHandler extends EnergyWeaponHandler {
         }
         // resolve roll for charged capacitor
         if (chargedCapacitor != 0) {
-            // PLAYTEST no more failure on 2.
-            /* if (roll.getIntValue() == 2) {
+            if (roll.getIntValue() == 2) {
                 Report r = new Report(3178);
                 r.subject = attackingEntity.getId();
                 r.indent();
@@ -244,8 +243,8 @@ public class PPCHandler extends EnergyWeaponHandler {
                         slot.setDestroyed(true);
                         break;
                     }
-                } 
-            }*/
+                }
+            }
         }
         return false;
     }

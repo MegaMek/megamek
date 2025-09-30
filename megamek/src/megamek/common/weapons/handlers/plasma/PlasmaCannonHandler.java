@@ -238,8 +238,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             r.indent(2);
             int extraHeat = Compute.d6(2);
-            // PLAYTEST no more reflective reduction
-            /* if (entityTarget.getArmor(hit) > 0 &&
+            if (entityTarget.getArmor(hit) > 0 &&
                   (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE)) {
                 entityTarget.heatFromExternal += Math.max(1, extraHeat / 2);
                 r.add(Math.max(1, extraHeat / 2));
@@ -247,15 +246,13 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
                 r.messageId = 3406;
                 r.add(extraHeat);
                 r.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
-            } else */
-            if (entityTarget.getArmor(hit) > 0 &&
+            } else if (entityTarget.getArmor(hit) > 0 &&
                   (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
-                // PLAYTEST no heat from heat dissipating.
-                entityTarget.heatFromExternal += 0;
-                r.add(0);
+                entityTarget.heatFromExternal += extraHeat / 2;
+                r.add(extraHeat / 2);
                 r.choose(true);
                 r.messageId = 3406;
-                r.add(0);
+                r.add(extraHeat);
                 r.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
             } else {
                 entityTarget.heatFromExternal += extraHeat;

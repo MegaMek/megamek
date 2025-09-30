@@ -182,12 +182,16 @@ public class BipedMek extends MekWithArms {
             // leg damage effects
             
             if (legsDestroyed > 0) {
+                if (game!=null && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                    if (legsDestroyed == 2) { mp = 0;}
+                } else {
                     mp = (legsDestroyed == 1) ? 1 : 0;
+                }
             }
             
             // PLAYTEST 2 Set leg to half MP, ignore crits to the leg.
             if ((game != null) &&
-                  game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2) && (mp != 0)) {
+                  game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2) && (mp > 0)) {
                     if (hipHits > 0 || legsDestroyed == 1) {
                         int minReduction;
                         int maxReduction;
@@ -197,18 +201,24 @@ public class BipedMek extends MekWithArms {
                         if (minReduction < 2) {minReduction = 2;}
                         if (maxReduction < 2) {maxReduction = 2;}
                         if (hipHits == 1 || legsDestroyed == 1) {
-                            mp = mp - minReduction;
+                            // Both a hip and a leg
+                            if (hipHits == 1 && legsDestroyed == 1) {
+                                mp = mp - minReduction - maxReduction;
+                            } else {
+                                // Only a single hip or leg
+                                mp = mp - minReduction;
+                            }
                         } else if (hipHits == 2) {
+                            // Can only happen if both legs exist
                             mp = mp - minReduction - maxReduction;
                         }
-                        // mp = (int) Math.ceil(mp / (2.0 * hipHits));
                     } else {
                         mp -= actuatorHits;
                     }
-                    if (leftHip > 0 || leftLeg > 0) {
+                    if (leftHip > 0) {
                         mp -= rightLegActuators;
                     }
-                    if (rightHip > 0 || rightLeg > 0) {
+                    if (rightHip > 0) {
                         mp -= leftLegActuators;
                     }
             } else {

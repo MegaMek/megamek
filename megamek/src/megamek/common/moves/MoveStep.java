@@ -687,7 +687,6 @@ public class MoveStep implements Serializable {
         }
 
         // Check for fire or magma crust in the new hex.
-        // PLAYTEST3 TODO magma and heat dissipating armor
         if (destHex.containsTerrain(Terrains.FIRE) || (magmaLevel == 1)) {
             heat = 2;
             totalHeat += 2;

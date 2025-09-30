@@ -2223,12 +2223,9 @@ public class Compute {
                     if (attacker.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_ARM, location) > 0) {
                         actuatorHits++;
                     }
-                    // PLAYTEST No more lower arm actuator issues
-                    /* if (attacker.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM, location) > 
-                    0) {
-                     
+                    if (attacker.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM, location) > 0) {
                         actuatorHits++;
-                    } */
+                    }
                     if (actuatorHits > 0) {
                         mods.addModifier(actuatorHits, actuatorHits + " destroyed arm actuators");
                     }
@@ -2391,11 +2388,11 @@ public class Compute {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                   "Can't target unit with active stealth armor as a secondary target");
         }
-        // PLAYTEST reduce all secondary target modifiers to +1.
-        int mod = 1;
-        /* if (curInFrontArc || (attacker instanceof BattleArmor)) {
+
+        int mod = 2;
+        if (curInFrontArc || (attacker instanceof BattleArmor)) {
             mod--;
-        }*/
+        }
 
         if (attacker.hasAbility(OptionsConstants.GUNNERY_MULTI_TASKER)) {
             mod--;

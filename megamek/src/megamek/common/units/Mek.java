@@ -1970,33 +1970,41 @@ public abstract class Mek extends Entity {
                 }
             } else if (side == ToHitData.SIDE_LEFT) {
                 // normal left side hits
-                // PLAYTEST SIDE LOCATION Changes
                 switch (roll) {
                     case 2:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
                               && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
-                            result.setUndoneLocation(tac(table, side, Mek.LOC_CENTER_TORSO, cover, false));
+                            HitData result = rollHitLocation(table, side,
+                                  aimedLocation, aimingMode, cover);
+                            result.setUndoneLocation(tac(table, side,
+                                  Mek.LOC_LEFT_TORSO, cover, false));
                             return result;
-                        }
-                        return tac(table, side, Mek.LOC_CENTER_TORSO, cover, false);
-                    case 3:
+                        } // if
+                        return tac(table, side, Mek.LOC_LEFT_TORSO, cover, false);
+                    case 3, 6:
+                        return new HitData(Mek.LOC_LEFT_LEG);
                     case 4:
-                        return new HitData(Mek.LOC_LEFT_ARM);
                     case 5:
-                        return new HitData(Mek.LOC_LEFT_LEG);
-                    case 6:
-                        return new HitData(Mek.LOC_LEFT_TORSO);
-                    case 7:
-                        return new HitData(Mek.LOC_CENTER_TORSO);
-                    case 8:
-                        return new HitData(Mek.LOC_LEFT_TORSO);
-                    case 9:
-                        return new HitData(Mek.LOC_LEFT_LEG);
-                    case 10:
-                    case 11:
                         return new HitData(Mek.LOC_LEFT_ARM);
+                    case 7:
+                        return new HitData(Mek.LOC_LEFT_TORSO);
+                    case 8:
+                        if (game.getOptions().booleanOption(
+                              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                            return new HitData(Mek.LOC_CENTER_TORSO, true);
+                        }
+                        return new HitData(Mek.LOC_CENTER_TORSO);
+                    case 9:
+                        if (game.getOptions().booleanOption(
+                              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                            return new HitData(Mek.LOC_RIGHT_TORSO, true);
+                        }
+                        return new HitData(Mek.LOC_RIGHT_TORSO);
+                    case 10:
+                        return new HitData(Mek.LOC_RIGHT_ARM);
+                    case 11:
+                        return new HitData(Mek.LOC_RIGHT_LEG);
                     case 12:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                             getCrew().decreaseEdge();
@@ -2009,33 +2017,41 @@ public abstract class Mek extends Entity {
                 }
             } else if (side == ToHitData.SIDE_RIGHT) {
                 // normal right side hits
-                // PLAYTEST side location changes
                 switch (roll) {
                     case 2:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
                               && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
-                            result.setUndoneLocation(tac(table, side, Mek.LOC_CENTER_TORSO, cover, false));
+                            HitData result = rollHitLocation(table, side,
+                                  aimedLocation, aimingMode, cover);
+                            result.setUndoneLocation(tac(table, side,
+                                  Mek.LOC_RIGHT_TORSO, cover, false));
                             return result;
-                        }
-                        return tac(table, side, Mek.LOC_CENTER_TORSO, cover, false);
-                    case 3:
+                        } // if
+                        return tac(table, side, Mek.LOC_RIGHT_TORSO, cover, false);
+                    case 3, 6:
+                        return new HitData(Mek.LOC_RIGHT_LEG);
                     case 4:
-                        return new HitData(Mek.LOC_RIGHT_ARM);
                     case 5:
-                        return new HitData(Mek.LOC_RIGHT_LEG);
-                    case 6:
-                        return new HitData(Mek.LOC_RIGHT_TORSO);
-                    case 7:
-                        return new HitData(Mek.LOC_CENTER_TORSO);
-                    case 8:
-                        return new HitData(Mek.LOC_RIGHT_TORSO);
-                    case 9:
-                        return new HitData(Mek.LOC_RIGHT_LEG);
-                    case 10:
-                    case 11:
                         return new HitData(Mek.LOC_RIGHT_ARM);
+                    case 7:
+                        return new HitData(Mek.LOC_RIGHT_TORSO);
+                    case 8:
+                        if (game.getOptions().booleanOption(
+                              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                            return new HitData(Mek.LOC_CENTER_TORSO, true);
+                        }
+                        return new HitData(Mek.LOC_CENTER_TORSO);
+                    case 9:
+                        if (game.getOptions().booleanOption(
+                              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                            return new HitData(Mek.LOC_LEFT_TORSO, true);
+                        }
+                        return new HitData(Mek.LOC_LEFT_TORSO);
+                    case 10:
+                        return new HitData(Mek.LOC_LEFT_ARM);
+                    case 11:
+                        return new HitData(Mek.LOC_LEFT_LEG);
                     case 12:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                             getCrew().decreaseEdge();
@@ -2153,18 +2169,17 @@ public abstract class Mek extends Entity {
 
             if (side == ToHitData.SIDE_FRONT) {
                 // front punch hits
-                // PLAYTEST flip order (no real change)
                 switch (roll) {
                     case 1:
-                        return new HitData(Mek.LOC_RIGHT_ARM);
+                        return new HitData(Mek.LOC_LEFT_ARM);
                     case 2:
-                        return new HitData(Mek.LOC_RIGHT_TORSO);
+                        return new HitData(Mek.LOC_LEFT_TORSO);
                     case 3:
                         return new HitData(Mek.LOC_CENTER_TORSO);
                     case 4:
-                        return new HitData(Mek.LOC_LEFT_TORSO);
+                        return new HitData(Mek.LOC_RIGHT_TORSO);
                     case 5:
-                        return new HitData(Mek.LOC_LEFT_ARM);
+                        return new HitData(Mek.LOC_RIGHT_ARM);
                     case 6:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                             getCrew().decreaseEdge();
@@ -2178,16 +2193,13 @@ public abstract class Mek extends Entity {
             }
             if (side == ToHitData.SIDE_LEFT) {
                 // left side punch hits
-                // PLAYTEST left side
                 switch (roll) {
                     case 1:
-                        return new HitData(Mek.LOC_LEFT_ARM);
                     case 2:
                         return new HitData(Mek.LOC_LEFT_TORSO);
                     case 3:
                         return new HitData(Mek.LOC_CENTER_TORSO);
                     case 4:
-                        return new HitData(Mek.LOC_LEFT_TORSO);
                     case 5:
                         return new HitData(Mek.LOC_LEFT_ARM);
                     case 6:
@@ -2203,16 +2215,13 @@ public abstract class Mek extends Entity {
             }
             if (side == ToHitData.SIDE_RIGHT) {
                 // right side punch hits
-                // PLAYTEST all right
                 switch (roll) {
                     case 1:
-                        return new HitData(Mek.LOC_RIGHT_ARM);
                     case 2:
                         return new HitData(Mek.LOC_RIGHT_TORSO);
                     case 3:
                         return new HitData(Mek.LOC_CENTER_TORSO);
                     case 4:
-                        return new HitData(Mek.LOC_RIGHT_TORSO);
                     case 5:
                         return new HitData(Mek.LOC_RIGHT_ARM);
                     case 6:
@@ -5296,12 +5305,10 @@ public abstract class Mek extends Entity {
         if (game != null && locationIsLeg(loc) && canFall() && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
             game.addPSR(new PilotingRollData(getId(),
                   TargetRoll.AUTOMATIC_FAIL, 5, "leg destroyed"));
-        } else {
-            if (game != null && locationIsLeg(loc) && canFall() && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                game.addPSR(new PilotingRollData(getId(),
-                      TargetRoll.AUTOMATIC_FAIL, 4, "leg destroyed"));
-            }
+        } else if (game !=null && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+            game.addPSR(new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL, 4, "leg destroyed"));
         }
+        
     }
 
     @Override
@@ -5985,8 +5992,7 @@ public abstract class Mek extends Entity {
         // Gyro destroyed? TW p. 258 at least heavily implies that that counts
         // as being immobilized as well, which makes sense because the 'Mek
         // certainly isn't leaving that hex under its own power anymore.
-        // PLAYTEST new HD Gyro changes
-        int hitsToDestroyGyro = (gyroType == GYRO_HEAVY_DUTY) ? 4 : 2;
+        int hitsToDestroyGyro = (gyroType == GYRO_HEAVY_DUTY) ? 3 : 2;
         return getGyroHits() >= hitsToDestroyGyro;
     }
 

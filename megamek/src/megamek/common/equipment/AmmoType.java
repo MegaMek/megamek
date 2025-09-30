@@ -1010,9 +1010,8 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "131, IO");
 
-    // PLAYTEST ammo amounts
     private static final MunitionMutator ARMOR_PIERCING_MUNITION_MUTATOR = new MunitionMutator("Armor-Piercing",
-          1.25,
+          2,
           Munitions.M_ARMOR_PIERCING,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
@@ -1069,9 +1068,8 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "208, TM");
 
-    // PLAYTEST ammo amounts
     private static final MunitionMutator PRECISION_MUNITION_MUTATOR = new MunitionMutator("Precision",
-          1.25,
+          2,
           Munitions.M_PRECISION,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
@@ -1097,10 +1095,9 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "353, TO");
 
-    // PLAYTEST ammo amounts
     private static final MunitionMutator CLAN_IMPROVED_ARMOR_PIERCING_MUNITION_MUTATOR = new MunitionMutator(
           "Armor-Piercing",
-          1.25,
+          2,
           Munitions.M_ARMOR_PIERCING,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
@@ -15485,7 +15482,7 @@ public class AmmoType extends EquipmentType {
         /**
          * The weight ratio of a round of this munition to a standard round.
          */
-        private final double weight;
+        private final int weight;
 
         /**
          * The munition flag(s) for this type.
@@ -15496,7 +15493,7 @@ public class AmmoType extends EquipmentType {
 
         private final TechAdvancement techAdvancement;
 
-        public MunitionMutator(String munitionName, double weightRatio, Munitions munitionType,
+        public MunitionMutator(String munitionName, int weightRatio, Munitions munitionType,
               TechAdvancement techAdvancement, String rulesRefs) {
             name = munitionName;
             weight = weightRatio;
@@ -15695,8 +15692,7 @@ public class AmmoType extends EquipmentType {
                 munition.shots = Math.max(1, base.shots * 2);
                 munition.kgPerShot = base.kgPerShot * (weight / 2.0);
             } else {
-                // PLAYTEST conversion for weight being double
-                munition.shots = Math.max(1, (int) (base.shots / weight));
+                munition.shots = Math.max(1, base.shots / weight);
                 munition.kgPerShot = base.kgPerShot * weight;
             }
 

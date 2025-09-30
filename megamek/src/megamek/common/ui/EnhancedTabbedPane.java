@@ -992,6 +992,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
         }
 
         targetPane.setSelectedIndex(targetIndex);
+        fireTabReattached(targetIndex, component);
     }
 
     /**

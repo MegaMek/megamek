@@ -253,24 +253,26 @@ public class RandomNameGenerator implements Serializable {
     public String[] generateGivenNameSurnameSplit(Gender gender, boolean clanPilot, String faction) {
         String[] name = { UNNAMED, UNNAMED_SURNAME };
         if (initialized) {
-            // This checks to see if we've got a name map for the faction. If we do not,
-            // then we
-            // go to check if the person is a clanPilot. If they are, then they default to
-            // the default
-            // clan key provided that exists.
-            // If the key isn't set by either case above, then the name is generated based
-            // on the
-            // default faction key
-            faction = factionEthnicCodes.containsKey(faction) ? faction
-                  : ((clanPilot && (factionEthnicCodes.containsKey(KEY_DEFAULT_CLAN)))
-                  ? KEY_DEFAULT_CLAN
-                  : KEY_DEFAULT_FACTION);
-            final int ethnicCode = factionEthnicCodes.get(faction).randomItem();
-            final int givenNameEthnicCode = factionGivenNames.get(faction).get(ethnicCode).randomItem();
+            int ethnicCode = 0;
+            try {
+                // This checks to see if we've got a name map for the faction. If we do not, then we go to check if the
+                // person is a clanPilot. If they are, then they default to the default clan key provided that exists. If
+                // the key isn't set by either case above, then the name is generated based on the default faction key
+                faction = factionEthnicCodes.containsKey(faction) ? faction
+                      : ((clanPilot && (factionEthnicCodes.containsKey(KEY_DEFAULT_CLAN)))
+                      ? KEY_DEFAULT_CLAN
+                      : KEY_DEFAULT_FACTION);
+                ethnicCode = factionEthnicCodes.get(faction).randomItem();
+                final int givenNameEthnicCode = factionGivenNames.get(faction).get(ethnicCode).randomItem();
 
-            name[0] = (gender.isFemale() ? femaleGivenNames : maleGivenNames).get(givenNameEthnicCode).randomItem();
-
-            name[1] = clanPilot ? "" : surnames.get(ethnicCode).randomItem();
+                name[0] = (gender.isFemale() ? femaleGivenNames : maleGivenNames).get(givenNameEthnicCode).randomItem();
+                name[1] = clanPilot ? "" : surnames.get(ethnicCode).randomItem();
+            } catch (Exception e) {
+                // This should only fail when we have no name data passed in. For example, if we're running in a
+                // dataless environment such as the GitHub test environment.
+                LOGGER.error(e, "Error generating name for faction: {} and ethnic code: {}", faction, ethnicCode);
+                return name;
+            }
         }
         return name;
     }

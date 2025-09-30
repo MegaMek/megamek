@@ -72,6 +72,7 @@ import megamek.common.force.Forces;
 import megamek.common.game.Game;
 import megamek.common.icons.Camouflage;
 import megamek.common.interfaces.ForceAssignable;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.strategicBattleSystems.SBFFormationConverter;
 import megamek.common.units.Crew;
@@ -908,7 +909,9 @@ public class LobbyActions {
      * Change the given entities' controller to the player with ID newOwnerId. If the given forceList is not empty, an
      * error message will be shown.
      */
-    void changeOwner(Collection<Entity> entities, Collection<Force> forceList, int newOwnerId) {
+    void changeOwner(
+          Collection<Entity> entities, Collection<Force> forceList, int newOwnerId
+    ) throws InvalidPacketDataException {
         if (entities.isEmpty() || game().getPlayer(newOwnerId) == null) {
             return;
         } else if (!forceList.isEmpty()) {
@@ -925,7 +928,7 @@ public class LobbyActions {
      * Change the team of a controlled player (the local player or one of his bots).
      */
     void changeTeam(Collection<Player> players, int team) {
-        var toSend = new HashSet<Player>();
+        var toSend = new Vector<Player>();
         players.stream()
               .filter(this::isSelfOrLocalBot)
               .filter(p -> p.getTeam() != team)

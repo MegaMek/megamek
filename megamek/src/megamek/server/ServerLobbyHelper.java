@@ -47,6 +47,7 @@ import megamek.common.force.Forces;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ForceAssignable;
 import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
@@ -220,7 +221,9 @@ public class ServerLobbyHelper {
      * Handles a force parent packet, attaching the sent forces to a new parent or making the sent forces top-level.
      * This method is intended for use in the lobby!
      */
-    public static void receiveForceParent(Packet packet, int connId, Game game, TWGameManager gameManager) {
+    public static void receiveForceParent(
+          Packet packet, int connId, Game game, TWGameManager gameManager
+    ) throws InvalidPacketDataException {
         var forceList = packet.getForceList(0);
         int newParentId = packet.getIntValue(1);
 
@@ -247,7 +250,9 @@ public class ServerLobbyHelper {
      * Handles a force assign full packet, changing the owner of forces and everything in them. This method is intended
      * for use in the lobby!
      */
-    public static void receiveEntitiesAssign(Packet packet, int connId, Game game, TWGameManager gameManager) {
+    public static void receiveEntitiesAssign(
+          Packet packet, int connId, Game game, TWGameManager gameManager
+    ) throws InvalidPacketDataException  {
         var entityList = packet.getEntityList(0);
         int newOwnerId = packet.getIntValue(1);
         Player newOwner = game.getPlayer(newOwnerId);
@@ -272,7 +277,9 @@ public class ServerLobbyHelper {
      * Handles a force assign full packet, changing the owner of forces and everything in them. This method is intended
      * for use in the lobby!
      */
-    public static void receiveForceAssignFull(Packet packet, int connId, Game game, TWGameManager gameManager) {
+    public static void receiveForceAssignFull(
+          Packet packet, int connId, Game game, TWGameManager gameManager
+    ) throws InvalidPacketDataException {
         var forceList = packet.getForceList(0);
         int newOwnerId = packet.getIntValue(1);
         Player newOwner = game.getPlayer(newOwnerId);
@@ -308,7 +315,9 @@ public class ServerLobbyHelper {
      * move subforce/entity up/down (this does not change the entity, only the force) - owner change of only the force
      * (not the entities, only within a team) This method is intended for use in the lobby!
      */
-    public static void receiveForceUpdate(Packet packet, int connId, Game game, TWGameManager gameManager) {
+    public static void receiveForceUpdate(
+          Packet packet, int connId, Game game, TWGameManager gameManager
+    ) throws InvalidPacketDataException {
         var forceList = packet.getForceList(0);
 
         // Check if the updated Forces are valid
@@ -328,7 +337,9 @@ public class ServerLobbyHelper {
     /**
      * Handles a team change, updating units and forces as necessary. This method is intended for use in the lobby!
      */
-    public static void receiveLobbyTeamChange(Packet packet, int connId, Game game, TWGameManager gameManager) {
+    public static void receiveLobbyTeamChange(
+          Packet packet, int connId, Game game, TWGameManager gameManager
+    ) throws InvalidPacketDataException {
         var players = packet.getPlayerVector(0);
         var newTeam = packet.getIntValue(1);
 
@@ -401,7 +412,9 @@ public class ServerLobbyHelper {
      * Handles an add entity to force / remove from force packet, attaching the sent entities to a force or removing
      * them from any force. This method is intended for use in the lobby!
      */
-    public static void receiveAddEntitiesToForce(Packet packet, int connId, Game game, TWGameManager gameManager) {
+    public static void receiveAddEntitiesToForce(
+          Packet packet, int connId, Game game, TWGameManager gameManager
+    ) throws InvalidPacketDataException {
         var entityList = packet.getEntityList(0);
         var forceId = packet.getIntValue(1);
         // Get the local (server) entities
@@ -435,7 +448,9 @@ public class ServerLobbyHelper {
     /**
      * Adds a force with the info from the client. Only valid during the lobby phase.
      */
-    public static void receiveForceAdd(Packet packet, int connId, Game game, TWGameManager gameManager) {
+    public static void receiveForceAdd(
+          Packet packet, int connId, Game game, TWGameManager gameManager
+    ) throws InvalidPacketDataException {
         var force = packet.getForce(0);
         var entities = packet.getEntityList(1);
 
@@ -461,7 +476,7 @@ public class ServerLobbyHelper {
      * entities.
      */
     static Packet createForceUpdatePacket(Collection<Force> changedForces) {
-        return createForceUpdatePacket(changedForces, new ArrayList<>());
+        return createForceUpdatePacket(changedForces, new HashSet<>());
     }
 
     /**

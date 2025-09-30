@@ -731,15 +731,15 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             // Apply damage to armor
             damage = applyEntityArmorDamage(mek, hit, damage, ammoExplosion, damageIS, areaSatArty, reportVec, mods);
 
-            // PLAYTEST New Ammo Explosion stuff here
-            // Apply playtest ammo explosion cap
+
             if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_1)) {
+                // Apply playtest ammo explosion cap
                 damage = applyPlaytestExplosionReduction(mek, hit, damage, ammoExplosion, reportVec);
+            } else {
+                // Apply CASE II
+                damage = applyCASEIIDamageReduction(mek, hit, damage, ammoExplosion, reportVec);
             }
 
-            // Apply CASE II first
-            damage = applyCASEIIDamageReduction(mek, hit, damage, ammoExplosion, reportVec);
-            
             // if damage has not all been absorbed, continue dealing with damage internally
             if (damage > 0) {
                 // is there internal structure in the location hit?
@@ -2277,35 +2277,65 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         return damage;
     }
 
-    public int applyPlaytestExplosionReduction(Entity entity, HitData hit, int damage, boolean ammoExplosion, Vector<Report> reportVec) {
-        if (!ammoExplosion
-              || !(entity instanceof Mek mek)
-              || mek.hasCASEII(hit.getLocation())
-        ) {
+    public int applyPlaytestExplosionReduction(Mek mek, HitData hit, int damage, boolean ammoExplosion, Vector<Report> reportVec) {
+        if (!ammoExplosion) {
             return damage;
         }
 
-        int entityId = mek.getId();
-        Report report;
+        int loc = hit.getLocation();
 
         boolean cased = mek.locationHasCase(hit.getLocation());
-        int cap = cased ? 10 : 20;
+        boolean caseIId = mek.hasCASEII(hit.getLocation());
+
+        Report report;
+
+        if (caseIId) {
+            Roll diceRoll = Compute.rollD6(2);
+            report = new Report(6127);
+            report.subject = mek.getId();
+            report.add(diceRoll);
+            reportVec.add(report);
+
+            if (diceRoll.getIntValue() >= 8) {
+                hit.setEffect(HitData.EFFECT_NO_CRITICAL_SLOTS);
+            }
+        }
+
+        int cap = caseIId ? 1 : cased ? 10 : 20;
         if (damage < cap) {
             return damage;
         }
 
-        report = new Report(cased ? 6133 : 6132);
-        report.subject = entityId;
+        report = new Report(caseIId ? 6134 : cased ? 6133 : 6132);
+        report.subject = mek.getId();
         report.indent(3);
         report.add(damage);
         reportVec.addElement(report);
 
-        int loc = hit.getLocation();
         // Torso locations blow out the rear armor
-        boolean rear = mek.locationIsTorso(loc);
+        boolean torso = mek.locationIsTorso(loc);
+
+        // For Case II
+        int half = (int) Math.ceil(mek.getOArmor(loc) / 2.0);
 
         if (mek.getInternal(loc) > cap) { // Location survives, blow out armor
-            mek.setArmor(IArmorState.ARMOR_DESTROYED, loc, rear);
+            int armorDamage;
+            if (caseIId && !torso && mek.getArmor(loc) > half) {
+                // case II only blows out half of limb/head armor
+                armorDamage = half;
+                mek.setArmor(mek.getArmor(loc) - half, loc);
+            } else {
+                armorDamage = mek.getArmor(loc, torso);
+                mek.setArmor(IArmorState.ARMOR_DESTROYED, loc, torso);
+            }
+
+            mek.damageThisPhase += armorDamage;
+            report = new Report(6131);
+            report.subject = mek.getId();
+            report.indent(3);
+            report.add((torso ? "Rear " : "") + mek.getLocationAbbr(loc));
+            report.add(armorDamage);
+            reportVec.addElement(report);
         }
 
         return cap;
@@ -2336,17 +2366,24 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     damage = half;
                 }
                 if (damage >= entity.getArmor(loc, false)) {
+                    // Remember the exact amount of armor damage for PSR purposes
+                    damage = entity.getArmor(loc, false);
                     entity.setArmor(IArmorState.ARMOR_DESTROYED, loc, false);
                 } else {
                     entity.setArmor(entity.getArmor(loc, false) - damage, loc, false);
                 }
             } else {
                 if (damage >= entity.getArmor(loc, true)) {
+                    // Remember the exact amount of armor damage for PSR purposes
+                    damage = entity.getArmor(loc, true);
                     entity.setArmor(IArmorState.ARMOR_DESTROYED, loc, true);
                 } else {
                     entity.setArmor(entity.getArmor(loc, true) - damage, loc, true);
                 }
             }
+
+            // The armor blown out contributes towards the 20+ PSR
+            entity.damageThisPhase += damage;
 
             if (entity.getInternal(hit) > 0) {
                 // Mek takes 1 point of IS damage
@@ -2354,8 +2391,6 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             } else {
                 damage = 0;
             }
-
-            entity.damageThisPhase += damage;
 
             Roll diceRoll = Compute.rollD6(2);
             report = new Report(6127);
@@ -2371,7 +2406,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         return damage;
     }
 
-   public void dealSpecialCritEffects(Entity entity, Vector<Report> reportVec, HitData hit, ModsInfo mods,
+    public void dealSpecialCritEffects(Entity entity, Vector<Report> reportVec, HitData hit, ModsInfo mods,
           boolean underWater, DamageType damageType) {
 
         int crits = mods.crits;
@@ -2670,10 +2705,9 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             int tmpDamageHold = -1;
             int origDamage = damage;
 
-            // PLAYTEST FL does not prevent AP ammo.
             if (ferroLamellorArmor &&
-                  /* (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
-                  (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE) && */
+                  (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
+                  (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE) &&
                   (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION) &&
                   (hit.getGeneralDamageType() != HitData.DAMAGE_AX)) {
                 tmpDamageHold = damage;
@@ -2752,9 +2786,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 reportVec.addElement(report);
             } else if (reactiveArmor &&
                   ((hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE) ||
-                        /* (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE) || */
+                        (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE) ||
                         areaSatArty)) {
-                // PLAYTEST Reactive not immune to AP damage
                 tmpDamageHold = damage;
                 damage = (int) Math.floor(((double) damage) / 2);
                 if (tmpDamageHold == 1) {

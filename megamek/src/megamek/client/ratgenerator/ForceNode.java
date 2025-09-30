@@ -408,7 +408,7 @@ public class ForceNode extends RulesetNode {
                         }
                     }
                     break;
-                case "subForces":
+                case "subforces":
                     subForces.add(SubForcesNode.createFromXml(wn));
                     break;
                 case "attachedForces":

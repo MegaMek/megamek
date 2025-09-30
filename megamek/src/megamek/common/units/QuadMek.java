@@ -715,10 +715,6 @@ public class QuadMek extends Mek {
                 logger.error("", t);
             }
 
-            if (playtestLocations && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)) {
-                return getPlaytestSideLocation(table, side, cover);
-            }
-
             boolean left = (roll <= 3);
             if (side == ToHitData.SIDE_FRONT) {
                 return left ? new HitData(Mek.LOC_LEFT_ARM) : new HitData(Mek.LOC_RIGHT_ARM);

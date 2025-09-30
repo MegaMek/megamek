@@ -74,6 +74,7 @@ import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.PilotingRollData;
@@ -1126,6 +1127,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         if (targetDest != null) {
                             addReport(gameManager.doEntityDisplacement(violation,
                                   entity.getPosition(), targetDest, prd));
+
                             // Update the violating entity's position on the
                             // client.
                             gameManager.entityUpdate(violation.getId());
@@ -1395,7 +1397,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         // Update entity position on client
                         gameManager.send(entity.getOwnerId(),
                               gameManager.createEntityPacket(this.entity.getId(), null));
-                        boolean tookPBS = gameManager.processPointblankShotCFR(entity, this.entity);
+                        // Allow for packet data read failure
+                        boolean tookPBS = false;
+                        try {
+                            tookPBS = gameManager.processPointblankShotCFR(entity, this.entity);
+                        } catch (InvalidPacketDataException e) {
+                            logger.error("Invalid packet data:", e);
+                        }
                         // Movement should be interrupted
                         if (tookPBS) {
                             // Attacking reveals hidden unit
@@ -2982,7 +2990,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     loaded = entities.next();
 
                     // This should never ever happen, but just in case...
-                    if (loaded.equals(null)) {
+                    if (loaded == null) {
                         continue;
                     }
 

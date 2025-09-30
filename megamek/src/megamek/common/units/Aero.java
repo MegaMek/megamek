@@ -1870,6 +1870,11 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             if (i == LOC_WINGS) {
                 continue;
             }
+            // Skip location if it already contains CASE
+            if (locationHasCase(i) || hasCASEII(i)) {
+                continue;
+            }
+
             explosiveFound = false;
             for (Mounted<?> m : getEquipment()) {
                 if (m.getType().isExplosive(m, true) && (m.getLocation() == i)) {

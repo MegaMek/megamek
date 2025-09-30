@@ -2648,6 +2648,11 @@ public abstract class Mek extends Entity {
         boolean explosiveFound;
         EquipmentType clCase = EquipmentType.get(EquipmentTypeLookup.CLAN_CASE);
         for (int i = 0; i < locations(); i++) {
+            // Skip location if it already contains CASE
+            if (locationHasCase(i) || hasCASEII(i)) {
+                continue;
+            }
+
             explosiveFound = false;
             for (Mounted<?> m : getEquipment()) {
                 if (m.getType().isExplosive(m, true)

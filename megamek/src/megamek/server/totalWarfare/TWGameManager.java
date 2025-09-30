@@ -36,6 +36,7 @@ import static megamek.common.game.Game.TEAM_HAS_COMBAT_PARALYSIS;
 import static megamek.common.game.Game.TEAM_HAS_COMBAT_SENSE;
 import static megamek.common.game.Game.TEAM_HAS_NO_INITIATIVE_APTITUDE;
 import static megamek.common.options.OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION;
+import static megamek.common.options.OptionsConstants.PLAYTEST_2;
 import static megamek.common.options.OptionsConstants.RPG_INDIVIDUAL_INITIATIVE;
 import static megamek.common.weapons.handlers.AreaEffectHelper.calculateDamageFallOff;
 
@@ -19067,20 +19068,51 @@ public class TWGameManager extends AbstractGameManager {
                 if (!en.canFall(true)) {
                     break;
                 }
+                // PLAYTEST2 for gyro hits.
                 switch (gyroHits) {
+                    case 4:
+                        // HD 4 hits
+                        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                            game.addPSR(new PilotingRollData(en.getId(),
+                                  TargetRoll.AUTOMATIC_FAIL,
+                                  1,
+                                  "gyro destroyed"));
+                            // Gyro destroyed entities may not be hull down
+                            en.setHullDown(false);
+                        }
                     case 3:
                         // HD 3 hits, standard 2 hits
-                        game.addPSR(new PilotingRollData(en.getId(), TargetRoll.AUTOMATIC_FAIL, 1, "gyro destroyed"));
-                        // Gyro destroyed entities may not be hull down
-                        en.setHullDown(false);
+                        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                            if (en.getGyroType() != Mek.GYRO_HEAVY_DUTY) {
+                                game.addPSR(new PilotingRollData(en.getId(), 3, "gyro hit"));
+                            }
+                        } else {
+                            game.addPSR(new PilotingRollData(en.getId(),
+                                  TargetRoll.AUTOMATIC_FAIL,
+                                  1,
+                                  "gyro destroyed"));
+                            // Gyro destroyed entities may not be hull down
+                            en.setHullDown(false);
+                        }
                         break;
                     case 2:
                         // HD 2 hits, standard 1 hit
-                        game.addPSR(new PilotingRollData(en.getId(), 3, "gyro hit"));
+                        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                            if (en.getGyroType() != Mek.GYRO_HEAVY_DUTY) {
+                                game.addPSR(new PilotingRollData(en.getId(), 2, "gyro hit"));
+                            }
+                        } else {
+                            game.addPSR(new PilotingRollData(en.getId(), 3, "gyro hit"));
+                        }
                         break;
                     case 1:
                         // HD 1 hit
-                        game.addPSR(new PilotingRollData(en.getId(), 2, "gyro hit"));
+                        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                            // No PSR for HD Gyro hits.
+                        } else {
+                            game.addPSR(new PilotingRollData(en.getId(), 2, "gyro hit"));
+                        }
+                                
                         break;
                     default:
                         // ignore if >4 hits (don't over do it, the auto fail
@@ -19089,10 +19121,21 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             case Mek.ACTUATOR_UPPER_LEG:
             case Mek.ACTUATOR_LOWER_LEG:
+                // PLAYTEST2 only leg actuators trigger this
+                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                    if (en.canFall(true)) {
+                        // leg/foot actuator piloting roll
+                        game.addPSR(new PilotingRollData(en.getId(), 1, "leg actuator hit"));
+                    }
+                    break;
+                }
             case Mek.ACTUATOR_FOOT:
-                if (en.canFall(true)) {
-                    // leg/foot actuator piloting roll
-                    game.addPSR(new PilotingRollData(en.getId(), 1, "leg/foot actuator hit"));
+                // PLAYTEST2 No PSR for a foot crit
+                if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                    if (en.canFall(true)) {
+                        // leg/foot actuator piloting roll
+                        game.addPSR(new PilotingRollData(en.getId(), 1, "leg/foot actuator hit"));
+                    }
                 }
                 break;
             case Mek.ACTUATOR_HIP:

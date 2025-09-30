@@ -373,10 +373,12 @@ public class QuadMek extends Mek {
                     roll.addModifier(1, getLocationName(loc) + " Lower Leg Actuator destroyed");
                 }
                 // foot actuators?
-                // PLAYTEST no more +1 for foot actuators
-                /* if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc) > 0) {
-                    roll.addModifier(1, getLocationName(loc) + " Foot Actuator destroyed");
-                } */
+                // PLAYTEST5 no more +1 for foot actuators
+                if (!(gameOptions().booleanOption(OptionsConstants.PLAYTEST_2))) {
+                    if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc) > 0) {
+                        roll.addModifier(1, getLocationName(loc) + " Foot Actuator destroyed");
+                    }
+                }
             }
         }
 

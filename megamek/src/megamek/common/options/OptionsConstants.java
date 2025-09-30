@@ -537,6 +537,7 @@ public class OptionsConstants {
     public static final String RPG_BEGIN_SHUTDOWN = "begin_shutdown";
 
     public static final String PLAYTEST_1 = "playtest_1";
+    public static final String PLAYTEST_2 = "playtest_2";
 
     private OptionsConstants() {
     }

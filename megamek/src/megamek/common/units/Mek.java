@@ -3352,22 +3352,22 @@ public abstract class Mek extends Entity {
         if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
               Mek.LOC_CENTER_TORSO) > 0) {
 
-            // PLAYTEST HD Gyro changes
-            if (getGyroType() == Mek.GYRO_HEAVY_DUTY) {
-                if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-                      Mek.LOC_CENTER_TORSO) == 1) {
-                    roll.addModifier(1, "HD Gyro damaged once");
-                } else if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-                      Mek.LOC_CENTER_TORSO) == 2){
-                    roll.addModifier(2, "HD Gyro damaged twice");
-                }else if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-                      Mek.LOC_CENTER_TORSO) == 3){
-                    roll.addModifier(3, "HD Gyro damaged thrice");
+
+                if (getGyroType() == Mek.GYRO_HEAVY_DUTY) {
+                   if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
+                          Mek.LOC_CENTER_TORSO) == 1) {
+                        roll.addModifier(1, "HD Gyro damaged once");
+                    } else {
+                        roll.addModifier(3, "HD Gyro damaged twice");
+                    }
+                } else {
+                    if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                        roll.addModifier(2, "Gyro damaged");
+                    } else {
+                        roll.addModifier(3, "Gyro damaged");
+                    }
                 }
-            } else {
-                // PLAYTEST gyro only a 2 modifier now
-                roll.addModifier(2, "Gyro damaged");
-            }
+            
         }
 
         // EI bonus?
@@ -5293,9 +5293,14 @@ public abstract class Mek extends Entity {
         }
         super.destroyLocation(loc, blownOff);
         // if it's a leg, the entity falls
-        if (game != null && locationIsLeg(loc) && canFall()) {
+        if (game != null && locationIsLeg(loc) && canFall() && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
             game.addPSR(new PilotingRollData(getId(),
                   TargetRoll.AUTOMATIC_FAIL, 5, "leg destroyed"));
+        } else {
+            if (game != null && locationIsLeg(loc) && canFall() && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                game.addPSR(new PilotingRollData(getId(),
+                      TargetRoll.AUTOMATIC_FAIL, 4, "leg destroyed"));
+            }
         }
     }
 

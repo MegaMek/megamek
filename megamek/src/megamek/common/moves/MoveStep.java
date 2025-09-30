@@ -641,19 +641,40 @@ public class MoveStep implements Serializable {
             calcMovementCostFor(game, prev, cachedEntityState);
         }
         // check for water
-        if (!isPavementStep() &&
-              (destHex.terrainLevel(Terrains.WATER) > 0) &&
-              !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0)) &&
-              !(destHex.terrainLevel(Terrains.BRIDGE_ELEV) == elevation) &&
-              (entity.getMovementMode() != EntityMovementMode.HOVER) &&
-              (entity.getMovementMode() != EntityMovementMode.NAVAL) &&
-              (entity.getMovementMode() != EntityMovementMode.HYDROFOIL) &&
-              (entity.getMovementMode() != EntityMovementMode.INF_UMU) &&
-              (entity.getMovementMode() != EntityMovementMode.SUBMARINE) &&
-              (entity.getMovementMode() != EntityMovementMode.VTOL) &&
-              (entity.getMovementMode() != EntityMovementMode.WIGE) &&
-              !cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
-            setRunProhibited(true);
+        // PLAYTEST2 water changes
+        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+            if (!isPavementStep() &&
+                  (destHex.terrainLevel(Terrains.WATER) > 0) &&
+                  !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0)) &&
+                  !(destHex.terrainLevel(Terrains.BRIDGE_ELEV) == elevation) &&
+                  (entity.getMovementMode() != EntityMovementMode.HOVER) &&
+                  (entity.getMovementMode() != EntityMovementMode.NAVAL) &&
+                  (entity.getMovementMode() != EntityMovementMode.HYDROFOIL) &&
+                  (entity.getMovementMode() != EntityMovementMode.INF_UMU) &&
+                  (entity.getMovementMode() != EntityMovementMode.SUBMARINE) &&
+                  (entity.getMovementMode() != EntityMovementMode.VTOL) &&
+                  (entity.getMovementMode() != EntityMovementMode.WIGE) &&
+                  (entity.getMovementMode() != EntityMovementMode.BIPED) &&
+                  (entity.getMovementMode() != EntityMovementMode.QUAD) &&
+                  (entity.getMovementMode() != EntityMovementMode.TRIPOD) &&
+                  !cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
+                setRunProhibited(true);
+            }
+        } else {
+            if (!isPavementStep() &&
+                  (destHex.terrainLevel(Terrains.WATER) > 0) &&
+                  !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0)) &&
+                  !(destHex.terrainLevel(Terrains.BRIDGE_ELEV) == elevation) &&
+                  (entity.getMovementMode() != EntityMovementMode.HOVER) &&
+                  (entity.getMovementMode() != EntityMovementMode.NAVAL) &&
+                  (entity.getMovementMode() != EntityMovementMode.HYDROFOIL) &&
+                  (entity.getMovementMode() != EntityMovementMode.INF_UMU) &&
+                  (entity.getMovementMode() != EntityMovementMode.SUBMARINE) &&
+                  (entity.getMovementMode() != EntityMovementMode.VTOL) &&
+                  (entity.getMovementMode() != EntityMovementMode.WIGE) &&
+                  !cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
+                setRunProhibited(true);
+            }
         }
 
         if (entity.getMovedBackwards() && !entity.hasQuirk(OptionsConstants.QUIRK_POS_POWER_REVERSE)) {
@@ -666,7 +687,7 @@ public class MoveStep implements Serializable {
         }
 
         // Check for fire or magma crust in the new hex.
-        // PLAYTEST TODO magma and heat dissipating armor
+        // PLAYTEST3 TODO magma and heat dissipating armor
         if (destHex.containsTerrain(Terrains.FIRE) || (magmaLevel == 1)) {
             heat = 2;
             totalHeat += 2;
@@ -973,7 +994,15 @@ public class MoveStep implements Serializable {
                   (nMove != EntityMovementMode.HYDROFOIL) &&
                   (nMove != EntityMovementMode.SUBMARINE) &&
                   (nMove != EntityMovementMode.INF_UMU)) {
-                isRunProhibited = true;
+                // PLAYTEST2 Water changes
+                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                    if (nMove != EntityMovementMode.BIPED && nMove != EntityMovementMode.QUAD || nMove !=
+                          EntityMovementMode.TRIPOD) {
+                        isRunProhibited = true;
+                    }
+                } else {
+                    isRunProhibited = true;
+                }
             }
         }
     }
@@ -2730,7 +2759,12 @@ public class MoveStep implements Serializable {
                               ((entity instanceof Mek) || (entity instanceof ProtoMek))) {
                             mp += 2;
                         } else {
-                            mp += 3;
+                            // PLAYTEST2 Water changes - MP values
+                            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                                mp += 2;
+                            } else {
+                                mp += 3;
+                            }
                         }
                     }
                 }
@@ -2964,13 +2998,14 @@ public class MoveStep implements Serializable {
         }
 
         // Can't back up across an elevation change.
+        // PLAYTEST2 Enabling backwards up elevation changes
         if (!(entity instanceof VTOL) &&
               isThisStepBackwards() &&
               !(isJumping() && isUsingMekJumpBooster) &&
               (((destAlt != srcAlt) &&
-                    !game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS))
+                    !game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS) && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2))
                     ||
-                    (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS)
+                    ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS) || game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2))
                           &&
                           (Math.abs(destAlt - srcAlt) > 1)))) {
             return false;
@@ -3124,7 +3159,8 @@ public class MoveStep implements Serializable {
               !(entity instanceof VTOL) &&
               !(isJumping() && isUsingMekJumpBooster)) {
             // Generally forbidden without TacOps Expanded Backward Movement p.22
-            if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS)) {
+            // PLAYTEST2 allow backwards up elevation changes
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS) && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
                 return false;
             }
             // Even with Expanded Backward Movement, ...
@@ -3155,24 +3191,50 @@ public class MoveStep implements Serializable {
 
         // Can't run into water unless hovering, naval, first step, using a
         // bridge, or fly.
-        if (((movementType == EntityMovementType.MOVE_RUN) ||
-              (movementType == EntityMovementType.MOVE_SPRINT) ||
-              (movementType == EntityMovementType.MOVE_VTOL_RUN) ||
-              (movementType == EntityMovementType.MOVE_VTOL_SPRINT)) &&
-              (nMove != EntityMovementMode.HOVER) &&
-              (nMove != EntityMovementMode.NAVAL) &&
-              (nMove != EntityMovementMode.HYDROFOIL) &&
-              (nMove != EntityMovementMode.SUBMARINE) &&
-              (nMove != EntityMovementMode.INF_UMU) &&
-              (nMove != EntityMovementMode.VTOL) &&
-              (nMove != EntityMovementMode.WIGE) &&
-              !cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) &&
-              (destHex.terrainLevel(Terrains.WATER) > 0) &&
-              !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0)) &&
-              !dest.equals(entity.getPosition()) &&
-              !isFirstStep() &&
-              !isPavementStep()) {
-            return false;
+        // PLAYTEST2 water changes
+        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+            if (((movementType == EntityMovementType.MOVE_RUN) ||
+                  (movementType == EntityMovementType.MOVE_SPRINT) ||
+                  (movementType == EntityMovementType.MOVE_VTOL_RUN) ||
+                  (movementType == EntityMovementType.MOVE_VTOL_SPRINT)) &&
+                  (nMove != EntityMovementMode.HOVER) &&
+                  (nMove != EntityMovementMode.NAVAL) &&
+                  (nMove != EntityMovementMode.HYDROFOIL) &&
+                  (nMove != EntityMovementMode.SUBMARINE) &&
+                  (nMove != EntityMovementMode.INF_UMU) &&
+                  (nMove != EntityMovementMode.VTOL) &&
+                  (nMove != EntityMovementMode.WIGE) &&
+                  (nMove != EntityMovementMode.BIPED) &&
+                  (nMove != EntityMovementMode.QUAD) &&
+                  (nMove != EntityMovementMode.TRIPOD) &&
+                  !cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) &&
+                  (destHex.terrainLevel(Terrains.WATER) > 0) &&
+                  !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0)) &&
+                  !dest.equals(entity.getPosition()) &&
+                  !isFirstStep() &&
+                  !isPavementStep()) {
+                return false;
+            }
+        } else {
+            if (((movementType == EntityMovementType.MOVE_RUN) ||
+                  (movementType == EntityMovementType.MOVE_SPRINT) ||
+                  (movementType == EntityMovementType.MOVE_VTOL_RUN) ||
+                  (movementType == EntityMovementType.MOVE_VTOL_SPRINT)) &&
+                  (nMove != EntityMovementMode.HOVER) &&
+                  (nMove != EntityMovementMode.NAVAL) &&
+                  (nMove != EntityMovementMode.HYDROFOIL) &&
+                  (nMove != EntityMovementMode.SUBMARINE) &&
+                  (nMove != EntityMovementMode.INF_UMU) &&
+                  (nMove != EntityMovementMode.VTOL) &&
+                  (nMove != EntityMovementMode.WIGE) &&
+                  !cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) &&
+                  (destHex.terrainLevel(Terrains.WATER) > 0) &&
+                  !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0)) &&
+                  !dest.equals(entity.getPosition()) &&
+                  !isFirstStep() &&
+                  !isPavementStep()) {
+                return false;
+            }
         }
 
         // ugh, stacking checks. well, maybe we're immune!

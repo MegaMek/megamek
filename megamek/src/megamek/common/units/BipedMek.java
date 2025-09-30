@@ -81,14 +81,38 @@ public class BipedMek extends MekWithArms {
         setCritical(LOC_LEFT_ARM, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_ARM));
         setCritical(LOC_LEFT_ARM, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HAND));
     }
-
+    
+    // PLAYTEST2 New Method for immobile due to no legs.
+    public boolean isImmobile() {
+        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+            int legsDestroyed = 0;
+            for (int i = 0; i < locations(); i++) {
+                if (locationIsLeg(i)) {
+                    if (isLocationBad(i)) {
+                        legsDestroyed++;
+                    }
+                }
+            } 
+            if (legsDestroyed == 2) {
+                return true;
+            }
+        }
+        return super.isImmobile();
+    }
+    
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         int mp = getOriginalWalkMP();
         int legsDestroyed = 0;
         int hipHits = 0;
         int actuatorHits = 0;
-
+        int leftHip = 0;
+        int rightHip = 0;
+        int leftLegActuators = 0;
+        int rightLegActuators = 0;
+        int rightLeg = 0;
+        int leftLeg = 0;
+        
         //A Mek using tracks has its movement reduced by 50% per leg or track destroyed;
         if (getMovementMode().isTracked()) {
             for (Mounted<?> m : getMisc()) {
@@ -101,26 +125,92 @@ public class BipedMek extends MekWithArms {
             mp = (mp * (2 - legsDestroyed)) / 2;
         } else {
             for (int i = 0; i < locations(); i++) {
-                if (locationIsLeg(i)) {
-                    if (!isLocationBad(i)) {
-                        if (legHasHipCrit(i)) {
-                            hipHits++;
-                            if ((game == null) ||
-                                  !game.getOptions()
-                                        .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
-                                continue;
+                // PLAYTEST2 leg crits and MP
+                if (!(game==null) && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                    if (locationIsLeg(i)) {
+                        if (!isLocationBad(i)) {
+                            if (legHasHipCrit(i)) {
+                                if (i == LOC_LEFT_LEG) {
+                                    leftHip++;
+                                }
+                                if (i == LOC_RIGHT_LEG) {
+                                    rightHip++;
+                                }
+                                hipHits++;
+                                if ((game == null) ||
+                                      !game.getOptions()
+                                            .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
+                                    continue;
+                                }
+                            }
+                            if (i == LOC_LEFT_LEG) {
+                                leftLegActuators += countLegActuatorCrits(i);
+                            }
+                            if (i == LOC_RIGHT_LEG) {
+                                leftLegActuators += countLegActuatorCrits(i);
+                            }
+                            actuatorHits += countLegActuatorCrits(i);
+                        } else {
+                            legsDestroyed++;
+                            if (i == Mek.LOC_LEFT_LEG) {
+                                leftLeg = 1;
+                            }
+                            if (i == Mek.LOC_RIGHT_LEG) {
+                                rightLeg = 1;
                             }
                         }
-                        actuatorHits += countLegActuatorCrits(i);
-                    } else {
-                        legsDestroyed++;
+                    }
+                } else {
+                    if (locationIsLeg(i)) {
+                        if (!isLocationBad(i)) {
+                            if (legHasHipCrit(i)) {
+                                hipHits++;
+                                if ((game == null) ||
+                                      !game.getOptions()
+                                            .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
+                                    continue;
+                                }
+                            }
+                            actuatorHits += countLegActuatorCrits(i);
+                        } else {
+                            legsDestroyed++;
+                        }
                     }
                 }
             }
 
             // leg damage effects
+            
             if (legsDestroyed > 0) {
-                mp = (legsDestroyed == 1) ? 1 : 0;
+                    mp = (legsDestroyed == 1) ? 1 : 0;
+            }
+            
+            // PLAYTEST 2 Set leg to half MP, ignore crits to the leg.
+            if ((game != null) &&
+                  game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2) && (mp != 0)) {
+                    if (hipHits > 0 || legsDestroyed == 1) {
+                        int minReduction;
+                        int maxReduction;
+                        minReduction = (int) Math.ceil(mp / 2.0);
+                        maxReduction = (int) Math.ceil(minReduction / 2.0);
+
+                        if (minReduction < 2) {minReduction = 2;}
+                        if (maxReduction < 2) {maxReduction = 2;}
+                        if (hipHits == 1 || legsDestroyed == 1) {
+                            mp = mp - minReduction;
+                        } else if (hipHits == 2) {
+                            mp = mp - minReduction - maxReduction;
+                        }
+                        // mp = (int) Math.ceil(mp / (2.0 * hipHits));
+                    } else {
+                        mp -= actuatorHits;
+                    }
+                    if (leftHip > 0 || leftLeg > 0) {
+                        mp -= rightLegActuators;
+                    }
+                    if (rightHip > 0 || rightLeg > 0) {
+                        mp -= leftLegActuators;
+                    }
             } else {
                 if (hipHits > 0) {
                     if ((game != null) &&
@@ -226,13 +316,21 @@ public class BipedMek extends MekWithArms {
         }
 
         for (int loc : List.of(Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_LEG)) {
-            // PLAYTEST TODO leg blown off vs destroyed
+            // PLAYTEST2 destroyed leg
             if (isLocationBad(loc)) {
-                roll.addModifier(5, getLocationName(loc) + " destroyed");
+                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                    roll.addModifier(4, getLocationName(loc) + " destroyed");
+                } else {
+                    roll.addModifier(5, getLocationName(loc) + " destroyed");
+                }
             } else {
                 if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
-                    // PLAYTEST now +1
-                    roll.addModifier(1, getLocationName(loc) + " Hip Actuator destroyed");
+                    // PLAYTEST2 now +1
+                    if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                        roll.addModifier(1, getLocationName(loc) + " Hip Actuator destroyed");
+                    } else {
+                        roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
+                    }
                     if (!game.getOptions()
                           .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
                         continue;
@@ -244,10 +342,12 @@ public class BipedMek extends MekWithArms {
                 if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, loc) > 0) {
                     roll.addModifier(1, getLocationName(loc) + " Lower Leg Actuator destroyed");
                 }
-                // PLAYTEST foot actuator no longer +1
-                /* if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc) > 0) {
-                      roll.addModifier(1, getLocationName(loc) + " Foot Actuator destroyed");
-                }*/
+                // PLAYTEST2 foot actuator no longer +1
+                if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                    if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc) > 0) {
+                          roll.addModifier(1, getLocationName(loc) + " Foot Actuator destroyed");
+                    }
+                }
             }
         }
 

@@ -220,26 +220,25 @@ public class QuadMek extends Mek {
                             }
                         }
                     }
-                }
-            } else{
-                if (locationIsLeg(i)) {
-                    if (!isLocationBad(i)) {
-                        if (legHasHipCrit(i)) {
-                            hipHits++;
-                            if ((game == null) ||
-                                  !game.getOptions()
-                                        .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
-                                continue;
+                } else {
+                    if (locationIsLeg(i)) {
+                        if (!isLocationBad(i)) {
+                            if (legHasHipCrit(i)) {
+                                hipHits++;
+                                if ((game == null) ||
+                                      !game.getOptions()
+                                            .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
+                                    continue;
+                                }
                             }
+                            actuatorHits += countLegActuatorCrits(i);
+                        } else {
+                            legsDestroyed++;
                         }
-                        actuatorHits += countLegActuatorCrits(i);
-                    } else {
-                        legsDestroyed++;
                     }
                 }
             }
         }
-
         // leg damage effects
         // PLAYTEST2 adjust for legs 2 and 3.
         if (legsDestroyed > 0) {

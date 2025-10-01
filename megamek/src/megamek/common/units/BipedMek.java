@@ -110,8 +110,6 @@ public class BipedMek extends MekWithArms {
         int rightHip = 0;
         int leftLegActuators = 0;
         int rightLegActuators = 0;
-        int rightLeg = 0;
-        int leftLeg = 0;
         
         //A Mek using tracks has its movement reduced by 50% per leg or track destroyed;
         if (getMovementMode().isTracked()) {
@@ -147,17 +145,11 @@ public class BipedMek extends MekWithArms {
                                 leftLegActuators += countLegActuatorCrits(i);
                             }
                             if (i == LOC_RIGHT_LEG) {
-                                leftLegActuators += countLegActuatorCrits(i);
+                                rightLegActuators += countLegActuatorCrits(i);
                             }
                             actuatorHits += countLegActuatorCrits(i);
                         } else {
                             legsDestroyed++;
-                            if (i == Mek.LOC_LEFT_LEG) {
-                                leftLeg = 1;
-                            }
-                            if (i == Mek.LOC_RIGHT_LEG) {
-                                rightLeg = 1;
-                            }
                         }
                     }
                 } else {
@@ -212,15 +204,16 @@ public class BipedMek extends MekWithArms {
                             // Can only happen if both legs exist
                             mp = mp - minReduction - maxReduction;
                         }
+                        if (leftHip > 0) {
+                            mp -= rightLegActuators;
+                        }
+                        if (rightHip > 0) {
+                            mp -= leftLegActuators;
+                        }
                     } else {
                         mp -= actuatorHits;
                     }
-                    if (leftHip > 0) {
-                        mp -= rightLegActuators;
-                    }
-                    if (rightHip > 0) {
-                        mp -= leftLegActuators;
-                    }
+                    
             } else {
                 if (hipHits > 0) {
                     if ((game != null) &&

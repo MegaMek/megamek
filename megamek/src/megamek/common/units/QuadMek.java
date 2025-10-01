@@ -149,10 +149,6 @@ public class QuadMek extends Mek {
         int frActuators = 0;
         int rlActuators = 0;
         int rrActuators = 0;
-        int flLeg = 0;
-        int frLeg = 0;
-        int rlLeg = 0;
-        int rrLeg = 0;
 
         // A Mek using tracks has its movement reduced by 25% per leg or track
         // destroyed.
@@ -206,18 +202,6 @@ public class QuadMek extends Mek {
                             actuatorHits += countLegActuatorCrits(i);
                         } else {
                             legsDestroyed++;
-                            if (i == LOC_LEFT_ARM) {
-                                flLeg = 1;
-                            }
-                            if (i == LOC_RIGHT_ARM) {
-                                frLeg = 1;
-                            }
-                            if (i == LOC_LEFT_LEG) {
-                                rlLeg = 1;
-                            }
-                            if (i == LOC_RIGHT_LEG) {
-                                rrLeg = 1;
-                            }
                         }
                     }
                 } else {
@@ -298,21 +282,20 @@ public class QuadMek extends Mek {
                         // Not possible to have 2 legs destroyed and 3 hips out
                         mp = mp - minReduction - midReduction - maxReduction;
                     }
-
+                    if (flHip == 0) {
+                        mp -= flActuators;
+                    }
+                    if (frHip == 0) {
+                        mp -= frActuators;
+                    }
+                    if (rlHip == 0) {
+                        mp -= rlActuators;
+                    }
+                    if (rrHip == 0) {
+                        mp -= rrActuators;
+                    }
                 } else {
                     mp -= actuatorHits;
-                }
-                if (flHip == 0) {
-                    mp -= flActuators;
-                }
-                if (frHip == 0) {
-                    mp -= frActuators;
-                }
-                if (rlHip == 1) {
-                    mp -= rlActuators;
-                }
-                if (rrHip == 1) {
-                    mp -= rrActuators;
                 }
             }
         } else {

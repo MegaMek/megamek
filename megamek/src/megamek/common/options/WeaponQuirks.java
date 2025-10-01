@@ -216,17 +216,9 @@ public class WeaponQuirks extends AbstractOptions {
     }
 
     private static class WeaponQuirksInfo extends AbstractOptionsInfo {
-        private static volatile WeaponQuirksInfo instance;
-        private static final Object lock = new Object();
+        private static final AbstractOptionsInfo instance = new WeaponQuirksInfo();
 
-        public static WeaponQuirksInfo getInstance() {
-            if (instance == null) {
-                synchronized (lock) {
-                    if (instance == null) {
-                        instance = new WeaponQuirksInfo();
-                    }
-                }
-            }
+        public static AbstractOptionsInfo getInstance() {
             return instance;
         }
 

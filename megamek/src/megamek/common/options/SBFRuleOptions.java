@@ -117,23 +117,15 @@ public class SBFRuleOptions extends BasicGameOptions {
     }
 
     private static class SBFRuleOptionsInfo extends AbstractOptionsInfo {
-        private static volatile SBFRuleOptionsInfo instance;
-        private static final Object lock = new Object();
-
-        public static SBFRuleOptionsInfo getInstance() {
-            if (instance == null) {
-                synchronized (lock) {
-                    if (instance == null) {
-                        instance = new SBFRuleOptionsInfo();
-                    }
-                }
-            }
-            return instance;
-        }
+        private static final AbstractOptionsInfo instance = new SBFRuleOptionsInfo();
 
         protected SBFRuleOptionsInfo() {
             super("SBFRuleOptionsInfo");
         }
 
+        public static AbstractOptionsInfo getInstance() {
+            return instance;
+        }
     }
+}
 }

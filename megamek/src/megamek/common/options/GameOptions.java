@@ -445,22 +445,14 @@ public class GameOptions extends BasicGameOptions {
     }
 
     private static class GameOptionsInfo extends AbstractOptionsInfo {
-        private static volatile GameOptionsInfo instance;
-        private static final Object lock = new Object();
-
-        public static GameOptionsInfo getInstance() {
-            if (instance == null) {
-                synchronized (lock) {
-                    if (instance == null) {
-                        instance = new GameOptionsInfo();
-                    }
-                }
-            }
-            return instance;
-        }
+        private static final AbstractOptionsInfo instance = new GameOptionsInfo();
 
         protected GameOptionsInfo() {
             super("GameOptionsInfo");
+        }
+
+        public static AbstractOptionsInfo getInstance() {
+            return instance;
         }
     }
 

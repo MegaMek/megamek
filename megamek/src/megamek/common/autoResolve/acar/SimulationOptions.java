@@ -65,19 +65,7 @@ public class SimulationOptions extends AbstractOptions {
     }
 
     private static class SimulationOptionsInfo extends AbstractOptionsInfo {
-        private static volatile SimulationOptionsInfo instance;
-        private static final Object lock = new Object();
-
-        public static SimulationOptionsInfo getInstance() {
-            if (instance == null) {
-                synchronized (lock) {
-                    if (instance == null) {
-                        instance = new SimulationOptionsInfo();
-                    }
-                }
-            }
-            return instance;
-        }
+        private static final SimulationOptionsInfo instance = new SimulationOptionsInfo();
 
         protected SimulationOptionsInfo() {
             super("SimulationOptions");

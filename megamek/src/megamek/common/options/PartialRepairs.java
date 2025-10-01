@@ -157,17 +157,9 @@ public class PartialRepairs extends AbstractOptions {
     }
 
     private static class PartialRepairInfo extends AbstractOptionsInfo {
-        private static volatile PartialRepairInfo instance;
-        private static final Object lock = new Object();
+        private static final AbstractOptionsInfo instance = new PartialRepairInfo();
 
-        public static PartialRepairInfo getInstance() {
-            if (instance == null) {
-                synchronized (lock) {
-                    if (instance == null) {
-                        instance = new PartialRepairInfo();
-                    }
-                }
-            }
+        public static AbstractOptionsInfo getInstance() {
             return instance;
         }
 

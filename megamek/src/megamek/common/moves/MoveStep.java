@@ -995,7 +995,7 @@ public class MoveStep implements Serializable {
                   (nMove != EntityMovementMode.INF_UMU)) {
                 // PLAYTEST2 Water changes
                 if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                    if (nMove != EntityMovementMode.BIPED && nMove != EntityMovementMode.QUAD || nMove !=
+                    if (nMove != EntityMovementMode.BIPED && nMove != EntityMovementMode.QUAD && nMove !=
                           EntityMovementMode.TRIPOD) {
                         isRunProhibited = true;
                     }

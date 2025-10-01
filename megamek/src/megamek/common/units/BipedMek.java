@@ -124,7 +124,7 @@ public class BipedMek extends MekWithArms {
         } else {
             for (int i = 0; i < locations(); i++) {
                 // PLAYTEST2 leg crits and MP
-                if (!(game==null) && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                if (!(game == null) && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
                     if (locationIsLeg(i)) {
                         if (!isLocationBad(i)) {
                             if (legHasHipCrit(i)) {

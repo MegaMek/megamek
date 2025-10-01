@@ -128,4 +128,3 @@ public class SBFRuleOptions extends BasicGameOptions {
         }
     }
 }
-}

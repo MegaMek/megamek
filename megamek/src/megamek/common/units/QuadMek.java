@@ -236,7 +236,7 @@ public class QuadMek extends Mek {
                 mp = 0;
             }
         }
-        // PLAYTEST2 set reductison for hips and legs 2 and 3
+        // PLAYTEST2 set reduction for hips and legs 2 and 3
         if ((game != null) && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2) && (mp > 0)) {
             if (hipHits == 4) {
                 mp = 0;

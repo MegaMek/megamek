@@ -147,7 +147,7 @@ public class BipedMek extends MekWithArms {
                                 leftLegActuators += countLegActuatorCrits(i);
                             }
                             if (i == LOC_RIGHT_LEG) {
-                                leftLegActuators += countLegActuatorCrits(i);
+                                rightLegActuators += countLegActuatorCrits(i);
                             }
                             actuatorHits += countLegActuatorCrits(i);
                         } else {

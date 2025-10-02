@@ -176,7 +176,7 @@ public class BipedMek extends MekWithArms {
 
             if (legsDestroyed > 0) {
                 if (game != null && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                    if (legsDestroyed == 2) {mp = 0;}
+                    if (legsDestroyed == 2) { mp = 0; }
                 } else {
                     mp = (legsDestroyed == 1) ? 1 : 0;
                 }

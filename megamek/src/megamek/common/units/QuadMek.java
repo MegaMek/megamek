@@ -113,6 +113,7 @@ public class QuadMek extends Mek {
     }
 
     // PLAYTEST2 New Method for immobile due to no legs.
+    @Override
     public boolean isImmobile() {
         if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
             int legsDestroyed = 0;
@@ -314,7 +315,7 @@ public class QuadMek extends Mek {
                 mp -= actuatorHits;
             }
         }
-    
+
 
         if (!mpCalculationSetting.ignoreModularArmor() && hasModularArmor()) {
             mp--;

@@ -81,8 +81,9 @@ public class BipedMek extends MekWithArms {
         setCritical(LOC_LEFT_ARM, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_ARM));
         setCritical(LOC_LEFT_ARM, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HAND));
     }
-    
+
     // PLAYTEST2 New Method for immobile due to no legs.
+    @Override
     public boolean isImmobile() {
         if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
             int legsDestroyed = 0;
@@ -92,14 +93,14 @@ public class BipedMek extends MekWithArms {
                         legsDestroyed++;
                     }
                 }
-            } 
+            }
             if (legsDestroyed == 2) {
                 return true;
             }
         }
         return super.isImmobile();
     }
-    
+
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         int mp = getOriginalWalkMP();
@@ -110,7 +111,7 @@ public class BipedMek extends MekWithArms {
         int rightHip = 0;
         int leftLegActuators = 0;
         int rightLegActuators = 0;
-        
+
         //A Mek using tracks has its movement reduced by 50% per leg or track destroyed;
         if (getMovementMode().isTracked()) {
             for (Mounted<?> m : getMisc()) {
@@ -124,7 +125,7 @@ public class BipedMek extends MekWithArms {
         } else {
             for (int i = 0; i < locations(); i++) {
                 // PLAYTEST2 leg crits and MP
-                if (!(game==null) && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                if (!(game == null) && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
                     if (locationIsLeg(i)) {
                         if (!isLocationBad(i)) {
                             if (legHasHipCrit(i)) {
@@ -172,50 +173,50 @@ public class BipedMek extends MekWithArms {
             }
 
             // leg damage effects
-            
+
             if (legsDestroyed > 0) {
-                if (game!=null && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                    if (legsDestroyed == 2) { mp = 0;}
+                if (game != null && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                    if (legsDestroyed == 2) {mp = 0;}
                 } else {
                     mp = (legsDestroyed == 1) ? 1 : 0;
                 }
             }
-            
+
             // PLAYTEST 2 Set leg to half MP, ignore crits to the leg.
             if ((game != null) &&
                   game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2) && (mp > 0)) {
-                    if (hipHits > 0 || legsDestroyed == 1) {
-                        int minReduction;
-                        int maxReduction;
-                        minReduction = (int) Math.ceil(mp / 2.0);
-                        maxReduction = (int) Math.ceil(minReduction / 2.0);
+                if (hipHits > 0 || legsDestroyed == 1) {
+                    int minReduction;
+                    int maxReduction;
+                    minReduction = (int) Math.ceil(mp / 2.0);
+                    maxReduction = (int) Math.ceil(minReduction / 2.0);
 
-                        if (minReduction < 2) {minReduction = 2;}
-                        if (maxReduction < 2) {maxReduction = 2;}
-                        if (hipHits == 1 || legsDestroyed == 1) {
-                            // Both a hip and a leg
-                            if (hipHits == 1 && legsDestroyed == 1) {
-                                mp = mp - minReduction - maxReduction;
-                            } else {
-                                // Only a single hip or leg
-                                mp = mp - minReduction;
-                            }
-                        } else if (hipHits == 2) {
-                            // Can only happen if both legs exist
+                    if (minReduction < 2) {minReduction = 2;}
+                    if (maxReduction < 2) {maxReduction = 2;}
+                    if (hipHits == 1 || legsDestroyed == 1) {
+                        // Both a hip and a leg
+                        if (hipHits == 1 && legsDestroyed == 1) {
                             mp = mp - minReduction - maxReduction;
+                        } else {
+                            // Only a single hip or leg
+                            mp = mp - minReduction;
                         }
-                        if (leftHip > 0) {
-                            mp -= rightLegActuators;
-                        }
-                        if (rightHip > 0) {
-                            mp -= leftLegActuators;
-                        }
-                    } else {
-                        mp -= actuatorHits;
+                    } else if (hipHits == 2) {
+                        // Can only happen if both legs exist
+                        mp = mp - minReduction - maxReduction;
                     }
-                    
+                    if (leftHip == 0) {
+                        mp -= leftLegActuators;
+                    }
+                    if (rightHip == 0) {
+                        mp -= rightLegActuators;
+                    }
+                } else {
+                    mp -= actuatorHits;
+                }
+
             } else {
-                if (hipHits > 0) {
+                if (hipHits > 0 && legsDestroyed == 0) {
                     if ((game != null) &&
                           game.getOptions()
                                 .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
@@ -348,7 +349,7 @@ public class BipedMek extends MekWithArms {
                 // PLAYTEST2 foot actuator no longer +1
                 if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
                     if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc) > 0) {
-                          roll.addModifier(1, getLocationName(loc) + " Foot Actuator destroyed");
+                        roll.addModifier(1, getLocationName(loc) + " Foot Actuator destroyed");
                     }
                 }
             }

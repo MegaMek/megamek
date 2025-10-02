@@ -127,7 +127,7 @@ public class QuadMek extends Mek {
                     }
                 }
             }
-            if (legsDestroyed == 4 || hipHits == 4) {
+            if (legsDestroyed == 4 || ((hipHits == 4) && (getJumpMP() == 0))) {
                 return true;
             }
         }

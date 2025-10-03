@@ -116,11 +116,35 @@ public class TripodMek extends MekWithArms {
     }
 
     @Override
+    public boolean isImmobile() {
+        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+            int legsDestroyed = 0;
+            for (int i = 0; i < locations(); i++) {
+                if (locationIsLeg(i)) {
+                    if (isLocationBad(i)) {
+                        legsDestroyed++;
+                    }
+                }
+            }
+            if (legsDestroyed == 2) {
+                return true;
+            }
+        }
+        return super.isImmobile();
+    }
+
+    @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         int mp = getOriginalWalkMP();
         int legsDestroyed = 0;
         int hipHits = 0;
         int actuatorHits = 0;
+        int leftHip = 0;
+        int rightHip = 0;
+        int centerHip = 0;
+        int leftLegActuators = 0;
+        int rightLegActuators = 0;
+        int centerLegActuators = 0;
 
         // A Mek using tracks has its movement reduced by 1/3 per leg or track destroyed, based
         // on analogy with biped and quad Meks.
@@ -135,28 +159,111 @@ public class TripodMek extends MekWithArms {
             mp = (mp * (3 - legsDestroyed)) / 3;
         } else {
             for (int i = 0; i < locations(); i++) {
-                if (locationIsLeg(i)) {
-                    if (!isLocationBad(i)) {
-                        if (legHasHipCrit(i)) {
-                            hipHits++;
-                            if ((game == null) ||
-                                  !game.getOptions()
-                                        .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
-                                continue;
+                // PLAYTEST2 leg crits and MP
+                if (!(game == null) && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                    if (locationIsLeg(i)) {
+                        if (!isLocationBad(i)) {
+                            if (legHasHipCrit(i)) {
+                                if (i == LOC_LEFT_LEG) {
+                                    leftHip++;
+                                }
+                                if (i == LOC_RIGHT_LEG) {
+                                    rightHip++;
+                                }
+                                if (i == LOC_CENTER_LEG) {
+                                    centerHip++;
+                                }
+                                hipHits++;
+                                if ((game == null) ||
+                                      !game.getOptions()
+                                            .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
+                                    continue;
+                                }
                             }
+                            if (i == LOC_LEFT_LEG) {
+                                leftLegActuators += countLegActuatorCrits(i);
+                            }
+                            if (i == LOC_RIGHT_LEG) {
+                                rightLegActuators += countLegActuatorCrits(i);
+                            }
+                            if (i == LOC_CENTER_LEG) {
+                                centerLegActuators += countLegActuatorCrits(i);
+                            }
+                            actuatorHits += countLegActuatorCrits(i);
+                        } else {
+                            legsDestroyed++;
                         }
-                        actuatorHits += countLegActuatorCrits(i);
-                    } else {
-                        legsDestroyed++;
+                    }
+                } else {
+                    if (locationIsLeg(i)) {
+                        if (!isLocationBad(i)) {
+                            if (legHasHipCrit(i)) {
+                                hipHits++;
+                                if ((game == null) ||
+                                      !game.getOptions()
+                                            .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
+                                    continue;
+                                }
+                            }
+                            actuatorHits += countLegActuatorCrits(i);
+                        } else {
+                            legsDestroyed++;
+                        }
                     }
                 }
             }
 
             // leg damage effects
+
             if (legsDestroyed > 0) {
-                mp = (legsDestroyed == 1) ? 1 : 0;
+                if (game != null && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                    if (legsDestroyed == 2) {mp = 0;}
+                } else {
+                    mp = (legsDestroyed == 1) ? 1 : 0;
+                }
+            }
+
+            // PLAYTEST 2 Set leg to half MP, ignore crits to the leg.
+            if ((game != null) &&
+                  game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2) && (mp > 0)) {
+                if (hipHits > 0 || legsDestroyed == 1) {
+                    int minReduction;
+                    int midReduction;
+                    int maxReduction;
+                    minReduction = (int) Math.ceil(mp / 2.0);
+                    midReduction = (int) Math.ceil(minReduction / 2.0);
+                    maxReduction = (int) Math.ceil(midReduction / 2.0);
+
+
+                    if (minReduction < 2) {minReduction = 2;}
+                    if (midReduction < 2) {midReduction = 2;}
+                    if (maxReduction < 2) {maxReduction = 2;}
+                    if ((hipHits == 1 && legsDestroyed == 0) || (hipHits == 0 && legsDestroyed == 1)) {
+                        // Only a single hip or leg
+                        mp = mp - minReduction;
+
+                    } else if ((hipHits == 2 && legsDestroyed == 0) || (hipHits == 1 && legsDestroyed == 1)) {
+                        // Can only happen if 2 hips are hit and no legs are destroyed
+                        mp = mp - minReduction - midReduction;
+                    } else if ((hipHits == 3) || (hipHits == 2 && legsDestroyed == 1)) {
+                        // Can only happen if all 3 hips are hit and no legs are destroyed
+                        // or 2 hips and 1 leg destroyed
+                        mp = mp - minReduction - midReduction - maxReduction;
+                    }
+                    if (leftHip == 0) {
+                        mp -= leftLegActuators;
+                    }
+                    if (rightHip == 0) {
+                        mp -= rightLegActuators;
+                    }
+                    if (centerHip == 0) {
+                        mp -= centerLegActuators;
+                    }
+                } else {
+                    mp -= actuatorHits;
+                }
             } else {
-                if (hipHits > 0) {
+                if (hipHits > 0 && legsDestroyed == 0) {
                     if ((game != null) &&
                           game.getOptions()
                                 .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {

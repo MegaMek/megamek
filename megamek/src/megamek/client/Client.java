@@ -1271,7 +1271,7 @@ public class Client extends AbstractClient {
     /**
      * Sends a packet containing multiple entity updates. Should only be used in the lobby phase.
      */
-    public void sendChangeTeam(Collection<Player> players, int newTeamId) {
+    public void sendChangeTeam(Vector<Player> players, int newTeamId) {
         send(new Packet(PacketCommand.PLAYER_TEAM_CHANGE, players, newTeamId));
     }
 

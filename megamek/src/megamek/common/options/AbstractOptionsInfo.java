@@ -79,7 +79,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      * @see #addGroup
      * @see #addOptionInfo
      */
-    private boolean finished;
+    private boolean finished = false;
 
     /**
      * The <code>HashSet</code> used to check if the options info is already registered
@@ -179,6 +179,10 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      */
     void finish() {
         finished = true;
+    }
+
+    boolean finished() {
+        return finished;
     }
 
     private void setOptionInfo(String name, OptionInfo info) {

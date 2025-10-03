@@ -390,11 +390,13 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_FERRO_FIBROUS).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         armor.bv = 0;
         armor.rulesRefs = "205, TM";
-        armor.techAdvancement.setTechBase(TechBase.IS)
+        armor.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2557, 2571, 3055, 2810, 3040)
               .setISApproximate(false, false, false, true, false)
+//              .setClanAdvancement(DATE_NONE, DATE_NONE, 2820, DATE_NONE, DATE_NONE)
+//              .setClanApproximate(false, false, true, false, false)
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH)
               .setReintroductionFactions(Faction.DC);

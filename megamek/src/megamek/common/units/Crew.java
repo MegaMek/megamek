@@ -324,7 +324,8 @@ public class Crew implements Serializable {
     }
 
     public String getNickname(final int pos) {
-        return getNicknames()[pos];
+        String nickname = getNicknames()[pos];
+        return nickname == null ? "" : nickname;
     }
 
     public void setNickname(final String nickname, final int pos) {

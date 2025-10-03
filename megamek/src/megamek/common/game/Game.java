@@ -2558,6 +2558,71 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
     }
 
+    // PLAYTEST2 single PSR roll for actuators/hips
+    public void reducePSRforActuatorCrits(Entity entity) {
+        PilotingRollData roll;
+        Vector<Integer> rollsToRemove = new Vector<>();
+        Vector<Integer> rollTarget = new Vector<>();
+        Vector<Integer> rollLocation = new Vector<>();
+        Vector<Integer> saveRolls = new Vector<>();
+
+        // first, find all the rolls belonging to the target entity
+        // Locations are: 1 = left leg, 2 = right leg, 3 = front left leg, 4 = front right leg, 5 = center leg
+        for (int i = 0; i < pilotRolls.size(); i++) {
+            roll = pilotRolls.elementAt(i);
+            if (roll.getEntityId() == entity.getId()) {
+                // This is the critical part.
+                if ((roll.getDesc() == "left leg actuator hit" || roll.getDesc() == "left hip actuator hit")) {
+                    rollTarget.addElement(roll.getValue());
+                    rollLocation.addElement(1);
+                    rollsToRemove.addElement(i);
+                } else if ((roll.getDesc() == "right leg actuator hit" || roll.getDesc() == "right hip actuator hit")){
+                    rollTarget.addElement(roll.getValue());
+                    rollLocation.addElement(2);
+                    rollsToRemove.addElement(i);
+                }else if ((roll.getDesc() == "front left leg actuator hit" || roll.getDesc() == "front left hip " 
+                      + "actuator hit")){
+                    rollTarget.addElement(roll.getValue());
+                    rollLocation.addElement(3);
+                    rollsToRemove.addElement(i);
+                }else if ((roll.getDesc() == "front right leg actuator hit" || roll.getDesc() == "front right hip " 
+                      + "actuator hit")){
+                    rollTarget.addElement(roll.getValue());
+                    rollLocation.addElement(4);
+                    rollsToRemove.addElement(i);
+                }else if ((roll.getDesc() == "center leg actuator hit" || roll.getDesc() == "center hip actuator hit")){
+                    rollTarget.addElement(roll.getValue());
+                    rollLocation.addElement(5);
+                    rollsToRemove.addElement(i);
+                }
+            }
+        }
+        
+        if (rollsToRemove.size() > 1) {
+            int saveEntry = 0;
+            int highTarget = 0;
+            // check which roll target is highest
+            for (int location = 1; location < 6; location++) {
+                highTarget = 0;
+                for (int i = 0; i < rollTarget.size(); i++) {
+                    if ((rollTarget.elementAt(i) > highTarget) && (rollLocation.elementAt(i)==location)) {
+                        saveRolls.addElement(rollsToRemove.elementAt(i));
+                        highTarget = rollTarget.elementAt(i);
+                    }
+                }
+            }
+            // Remove the saved element from our removal list
+            for (int i = saveRolls.size()-1; i > -1; i--) {
+                rollsToRemove.removeElementAt(saveRolls.elementAt(i));
+            }
+
+            // now, clear out remaining rolls from the PSRs
+            for (int i = rollsToRemove.size() - 1; i > -1; i--) {
+                pilotRolls.removeElementAt(rollsToRemove.elementAt(i));
+            }
+        }
+    }
+    
     /**
      * Resets the extreme Gravity PSR list.
      */

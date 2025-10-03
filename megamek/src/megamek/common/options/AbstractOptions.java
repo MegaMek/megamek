@@ -54,10 +54,17 @@ public abstract class AbstractOptions implements Serializable, IGameOptions {
     @Serial
     private static final long serialVersionUID = 6406883135074654379L;
     protected final Hashtable<String, IOption> optionsHash = new Hashtable<>();
+    private static final Object lock = new Object();
 
     protected AbstractOptions() {
-        initialize();
-        getOptionsInfoImp().finish();
+        if (!getOptionsInfoImp().finished()) {
+            synchronized (lock) {
+                initialize();
+                getOptionsInfoImp().finish();
+            }
+        } else {
+            initialize();
+        }
     }
 
     protected abstract void initialize();

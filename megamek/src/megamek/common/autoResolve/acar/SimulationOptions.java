@@ -65,7 +65,7 @@ public class SimulationOptions extends AbstractOptions {
     }
 
     private static class SimulationOptionsInfo extends AbstractOptionsInfo {
-        private static final AbstractOptionsInfo instance = new SimulationOptionsInfo();
+        private static final SimulationOptionsInfo instance = new SimulationOptionsInfo();
 
         protected SimulationOptionsInfo() {
             super("SimulationOptions");

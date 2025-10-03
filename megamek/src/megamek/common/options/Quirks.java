@@ -324,15 +324,17 @@ public class Quirks extends AbstractOptions {
     }
 
     private static class QuirksInfo extends AbstractOptionsInfo {
-        private static boolean initialized = false;
-        private static final AbstractOptionsInfo instance = new QuirksInfo();
+        private static volatile QuirksInfo instance;
+        private static final Object lock = new Object();
 
-        public static AbstractOptionsInfo getInstance() {
-            if (!initialized) {
-                initialized = true;
-                // Create a new dummy Quirks; ensures values initialized
-                // Otherwise, could have issues when loading saved games
-                new Quirks();
+        public static QuirksInfo getInstance() {
+            if (instance == null) {
+                synchronized (lock) {
+                    if (instance == null) {
+                        instance = new QuirksInfo();
+                        new Quirks();
+                    }
+                }
             }
             return instance;
         }

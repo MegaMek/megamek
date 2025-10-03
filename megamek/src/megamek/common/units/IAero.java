@@ -315,12 +315,33 @@ public interface IAero {
         return roll;
     }
 
+    /**
+     * Checks if the specified thrust value exceeds the current structural integrity (SI) of the entity and computes any
+     * necessary modifiers or notes for the resulting piloting roll.
+     *
+     * <p>If the entity has the "G Tolerance" ability, a bonus modifier is applied.</p>
+     * <ul>
+     *   <li>If the thrust used is greater than the entity's SI, a modifier indicating "Thrust spent this turn
+     *   exceeds current SI" is appended to the result.</li>
+     *   <li>Otherwise, an indicator is added to show the SI was not exceeded.</li>
+     * </ul>
+     *
+     * @param thrust          the thrust value used this turn
+     * @param overallMoveType the overall movement type for this piloting check
+     *
+     * @return a {@link PilotingRollData} object with all appropriate modifiers and notes
+     */
     default PilotingRollData checkThrustSITotal(int thrust, EntityMovementType overallMoveType) {
         PilotingRollData roll = ((Entity) this).getBasePilotingRoll(overallMoveType);
 
         if (thrust > getSI()) {
             // append the reason modifier
             roll.append(new PilotingRollData(((Entity) this).getId(), 0, "Thrust spent this turn exceeds current SI"));
+
+            boolean hasGTolerance = ((Entity) this).hasAbility(OptionsConstants.PILOT_ATOW_G_TOLERANCE);
+            if (hasGTolerance) {
+                roll.addModifier(-1, "G-Tolerance");
+            }
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not exceeding SI");
         }

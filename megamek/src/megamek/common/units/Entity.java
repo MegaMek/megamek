@@ -1961,7 +1961,11 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Is this entity shut down or is the crew unconscious?
+     * Returns true if the target is considered immobile (-4 to hit) as a target and also if it is considered immobile
+     * or temporarily or permanently immbolized for active movement. Overriding methods should check the status of the
+     * unit (shutdown, damage) and also the status of the crew (unconscious).
+     *
+     * @return True if the target is considered immobile as a target and unable to move actively.
      */
     @Override
     public boolean isImmobile() {
@@ -1973,9 +1977,13 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Is this entity shut down, or if applicable is the crew unconscious?
+     * Returns true if the target is considered immobile (-4 to hit) as a target and also if it is considered immobile
+     * or temporarily or permanently immbolized for active movement. Overriding methods should check the status of the
+     * unit (shutdown, damage) and - only if checkCrew is true - also the status of the crew (unconscious).
      *
-     * @param checkCrew If true, consider the fitness of the crew when determining if the entity is immobile.
+     * @param checkCrew If false, ignore the fitness of the crew when determining if the entity is immobile.
+     *
+     * @return True if the target is considered immobile as a target and unable to move actively.
      */
     public boolean isImmobile(boolean checkCrew) {
         return isShutDown() || (checkCrew && (crew != null) && crew.isUnconscious());

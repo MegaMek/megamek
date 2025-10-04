@@ -51,18 +51,18 @@ class HyperLinkLine extends LabeledLine {
     @Override
     public String toPlainText() {
         String result = label.isBlank() ? "" : label + ": ";
-        return result + value + "\n";
+        return result + value.toPlainText() + "\n";
     }
 
     @Override
     public String toHTML() {
-        String result = label.isBlank() ? "" : "<B>" + label + "</B>: ";
-        return result + "<A HREF=" + address + ">" + value + "</A><BR>";
+        String result = label.isBlank() ? "" : label + ": ";
+        return result + "<B><A HREF=" + address + ">" + value.toHTML() + "</A></B><BR>";
     }
 
     @Override
     public String toDiscord() {
         String result = label.isBlank() ? "" : DiscordFormat.BOLD + label + ": " + DiscordFormat.RESET;
-        return result + value + "\n";
+        return result + value.toDiscord() + "\n";
     }
 }

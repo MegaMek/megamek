@@ -44,12 +44,14 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.ViewFormatting;
+import megamek.common.SourceBooks;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.TechBase;
 import megamek.common.equipment.AmmoMounted;
@@ -322,6 +324,15 @@ class GeneralEntityReadout implements EntityReadout {
     protected ViewElement createSourceElement() {
         String source = entity.getSource();
         String sourceLabel = Messages.getString("MekView.Source");
+        var sourcebooks = new SourceBooks();
+        var book = sourcebooks.loadSourceBook(source);
+        if (book.isPresent()) {
+            if (book.get().getMul_url() != null) {
+                return new HyperLinkLine(sourceLabel, book.get().getMul_url(), book.get().getTitle());
+            } else if (book.get().getTitle() != null) {
+                source = Objects.requireNonNullElse(book.get().getTitle(), "");
+            }
+        }
 
         if (source.isBlank()) {
             return new LabeledLine(sourceLabel, Messages.getString("MekView.Unknown"));

@@ -46,6 +46,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.baseComponents.BooksIcon;
+import megamek.client.ui.dialogs.SourceChooserDialog;
 import megamek.common.equipment.Engine;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
@@ -121,6 +123,15 @@ class MiscSearchTab extends JPanel {
         tSource.setToolTipText(Messages.getString("MekSelectorDialog.Search.Source.TT"));
         sPanel.add(sourceLabel, BorderLayout.WEST);
         sPanel.add(tSource, BorderLayout.CENTER);
+        JButton chooseSourceButton = new JButton(new BooksIcon());
+        chooseSourceButton.setToolTipText(Messages.getString("MekSelectorDialog.Search.Source.selectSource"));
+        chooseSourceButton.addActionListener(e -> {
+            String result = SourceChooserDialog.showChoiceDialog(this, false);
+            if (result != null) {
+                tSource.setText(result);
+            }
+        });
+        sPanel.add(chooseSourceButton, BorderLayout.EAST);
         baseAttributesPanel.add(sPanel, c);
         JPanel mPanel = new JPanel(new BorderLayout());
         mPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.MULId")), BorderLayout.WEST);

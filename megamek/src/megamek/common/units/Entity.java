@@ -1961,7 +1961,11 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Is this entity shut down or is the crew unconscious?
+     * Returns true if the target is considered immobile (-4 to hit) as a target and also if it is considered immobile
+     * or temporarily or permanently immbolized for active movement. Overriding methods should check the status of the
+     * unit (shutdown, damage) and also the status of the crew (unconscious).
+     *
+     * @return True if the target is considered immobile as a target and unable to move actively.
      */
     @Override
     public boolean isImmobile() {
@@ -1973,9 +1977,13 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Is this entity shut down, or if applicable is the crew unconscious?
+     * Returns true if the target is considered immobile (-4 to hit) as a target and also if it is considered immobile
+     * or temporarily or permanently immbolized for active movement. Overriding methods should check the status of the
+     * unit (shutdown, damage) and - only if checkCrew is true - also the status of the crew (unconscious).
      *
-     * @param checkCrew If true, consider the fitness of the crew when determining if the entity is immobile.
+     * @param checkCrew If false, ignore the fitness of the crew when determining if the entity is immobile.
+     *
+     * @return True if the target is considered immobile as a target and unable to move actively.
      */
     public boolean isImmobile(boolean checkCrew) {
         return isShutDown() || (checkCrew && (crew != null) && crew.isUnconscious());
@@ -7306,14 +7314,22 @@ public abstract class Entity extends TurnOrdered
         }
         // gyro operational? does not apply if using tracked/quadvee vehicle/lam fighter
         // movement
+        // PLAYTEST2 Gyro destroyed no longer adds +6
         if (isGyroDestroyed() &&
               canFall() &&
               moveType != EntityMovementType.MOVE_VTOL_WALK &&
               moveType != EntityMovementType.MOVE_VTOL_RUN) {
-            return new PilotingRollData(entityId,
-                  TargetRoll.AUTOMATIC_FAIL,
-                  getCrew().getPiloting() + 6,
-                  "Gyro destroyed");
+            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                return new PilotingRollData(entityId,
+                      TargetRoll.AUTOMATIC_FAIL,
+                      getCrew().getPiloting(),
+                      "Gyro destroyed");
+            } else {
+                return new PilotingRollData(entityId,
+                      TargetRoll.AUTOMATIC_FAIL,
+                      getCrew().getPiloting() + 6,
+                      "Gyro destroyed");
+            }
         }
 
         // both legs present?
@@ -7321,16 +7337,30 @@ public abstract class Entity extends TurnOrdered
               (((BipedMek) this).countBadLegs() == 2) &&
               (moveType != EntityMovementType.MOVE_VTOL_WALK) &&
               (moveType != EntityMovementType.MOVE_VTOL_RUN)) {
+            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                return new PilotingRollData(entityId,
+                      TargetRoll.AUTOMATIC_FAIL,
+                      getCrew().getPiloting() + 8,
+                      "Both legs destroyed");  
+            } else {
             return new PilotingRollData(entityId,
                   TargetRoll.AUTOMATIC_FAIL,
                   getCrew().getPiloting() + 10,
                   "Both legs destroyed");
+            }
         } else if (this instanceof QuadMek) {
             if (((QuadMek) this).countBadLegs() >= 3) {
-                return new PilotingRollData(entityId,
-                      TargetRoll.AUTOMATIC_FAIL,
-                      getCrew().getPiloting() + (((Mek) this).countBadLegs() * 5),
-                      ((Mek) this).countBadLegs() + " legs destroyed");
+              if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                  return new PilotingRollData(entityId,
+                        TargetRoll.AUTOMATIC_FAIL,
+                        getCrew().getPiloting() + (((Mek) this).countBadLegs() * 4),
+                        ((Mek) this).countBadLegs() + " legs destroyed");
+              } else {
+                  return new PilotingRollData(entityId,
+                        TargetRoll.AUTOMATIC_FAIL,
+                        getCrew().getPiloting() + (((Mek) this).countBadLegs() * 5),
+                        ((Mek) this).countBadLegs() + " legs destroyed");
+              }
             }
         }
         // entity shut down?
@@ -7986,7 +8016,16 @@ public abstract class Entity extends TurnOrdered
         } else {
             mod = 1;
         }
-
+        // PLAYTEST2 water PSR changes
+        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+            if (waterLevel >= 1 && overallMoveType == EntityMovementType.MOVE_RUN) {
+                roll.append(new PilotingRollData(getId(), 0, "entering Depth " + waterLevel + " Water"));
+            } else {
+                roll.addModifier(TargetRoll.CHECK_FALSE, "No need for roll");
+            }
+            return roll;
+        }
+        
         if ((waterLevel > 1) &&
               hasAbility(OptionsConstants.PILOT_TM_FROGMAN) &&
               ((this instanceof Mek) || (this instanceof ProtoMek))) {

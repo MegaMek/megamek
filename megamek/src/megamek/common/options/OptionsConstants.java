@@ -470,7 +470,7 @@ public class OptionsConstants {
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES = "tacops_ziplines";
     public static final String ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT = "mek_lance_movement";
     public static final String ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT_NUMBER = "mek_lance_movement_number";
-    public static final String ADVANCED_GROUND_MOVEMENT_NO_IMMOBILE_VEHICLES = "no_immobile_vehicles";
+    public static final String ADVANCED_GROUND_MOVEMENT_UNOFF_NO_IMMOBILE_VEHICLES = "no_immobile_vehicles";
     public static final String ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT = "vehicles_can_eject";
     public static final String ADVANCED_GROUND_MOVEMENT_EJECTED_PILOTS_FLEE = "ejected_pilots_flee";
     public static final String ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT = "auto_abandon_unit";
@@ -537,6 +537,7 @@ public class OptionsConstants {
     public static final String RPG_BEGIN_SHUTDOWN = "begin_shutdown";
 
     public static final String PLAYTEST_1 = "playtest_1";
+    public static final String PLAYTEST_2 = "playtest_2";
 
     private OptionsConstants() {
     }

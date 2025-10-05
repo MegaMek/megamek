@@ -36,10 +36,10 @@ package megamek.common.universe;
  * Represents the honor of a Clan
  */
 public enum HonorRating {
-    NONE(0.0, Integer.MAX_VALUE),
-    LIBERAL(1.25, Integer.MAX_VALUE),
-    OPPORTUNISTIC(1.0, 5),
-    STRICT(0.75, 0);
+    NONE(1.0, Integer.MAX_VALUE),
+    LIBERAL(1.5, Integer.MAX_VALUE),
+    OPPORTUNISTIC(1.25, 5),
+    STRICT(1.0, 0);
 
     private final double bvMultiplier;
     private final int bondsmanTargetNumber;

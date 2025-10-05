@@ -115,4 +115,9 @@ class MekReadout extends GeneralEntityReadout {
         }
         return result;
     }
+
+    @Override
+    protected List<ViewElement> createSpecialMiscElements() {
+        return ReadoutUtils.createChassisModList(mek);
+    }
 }

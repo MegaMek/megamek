@@ -5305,7 +5305,7 @@ public abstract class Mek extends Entity {
         if (game != null && locationIsLeg(loc) && canFall() && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
             game.addPSR(new PilotingRollData(getId(),
                   TargetRoll.AUTOMATIC_FAIL, 5, "leg destroyed"));
-        } else if (game !=null && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+        } else if (game !=null && locationIsLeg(loc) && canFall() && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
             game.addPSR(new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL, 4, "leg destroyed"));
         }
         

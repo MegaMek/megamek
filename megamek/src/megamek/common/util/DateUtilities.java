@@ -50,6 +50,10 @@ public class DateUtilities {
      * @throws IllegalArgumentException if {@code start} is after {@code end}
      */
     public static LocalDate getRandomDateBetween(LocalDate start, LocalDate end) {
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("Start date must be before end date");
+        }
+
         long startEpochDay = start.toEpochDay();
         long endEpochDay = end.toEpochDay();
         long randomDay = ThreadLocalRandom.current().nextLong(startEpochDay, endEpochDay + 1);

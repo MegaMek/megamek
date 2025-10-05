@@ -250,11 +250,6 @@ public class QuadMek extends Mek {
                     midReduction = (int) Math.ceil(minReduction / 2.0);
                     maxReduction = (int) Math.ceil(midReduction / 2.0);
 
-                    // Mobility Playtest update 
-                    /* if (minReduction < 2) {minReduction = 2;}
-                    if (maxReduction < 2) {maxReduction = 2;}
-                    if (midReduction < 2) {midReduction = 2;}
-                    */
                     if (hipHits == 1 || legsDestroyed == 2) {
                         if (hipHits == 0) {
                             // two legs destroyed, no hip hits

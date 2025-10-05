@@ -191,11 +191,6 @@ public class BipedMek extends MekWithArms {
                     minReduction = (int) Math.ceil(mp / 2.0);
                     maxReduction = (int) Math.ceil(minReduction / 2.0);
 
-                    // playtest 2 update
-                    /*
-                    if (minReduction < 2) {minReduction = 2;}
-                    if (maxReduction < 2) {maxReduction = 2;}              
-                     */
                     if (hipHits == 1 || legsDestroyed == 1) {
                         // Both a hip and a leg
                         if (hipHits == 1 && legsDestroyed == 1) {

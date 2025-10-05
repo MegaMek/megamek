@@ -234,10 +234,13 @@ public class TripodMek extends MekWithArms {
                     midReduction = (int) Math.ceil(minReduction / 2.0);
                     maxReduction = (int) Math.ceil(midReduction / 2.0);
 
-
+                    // playtest 2 update
+                    /*
                     if (minReduction < 2) {minReduction = 2;}
                     if (midReduction < 2) {midReduction = 2;}
                     if (maxReduction < 2) {maxReduction = 2;}
+                    
+                     */
                     if ((hipHits == 1 && legsDestroyed == 0) || (hipHits == 0 && legsDestroyed == 1)) {
                         // Only a single hip or leg
                         mp = mp - minReduction;

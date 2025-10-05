@@ -80,6 +80,7 @@ public class GameOptions extends BasicGameOptions {
         IBasicOptionGroup base = addGroup("basic");
         // Change this to false for normal release
         addOption(base, OptionsConstants.PLAYTEST_1, false);
+        addOption(base, OptionsConstants.PLAYTEST_2, false);
         addOption(base, OptionsConstants.BASE_PUSH_OFF_BOARD, true);
         addOption(base, OptionsConstants.BASE_DUMPING_FROM_ROUND, 1);
         addOption(base, OptionsConstants.BASE_LOBBY_AMMO_DUMP, false);
@@ -253,7 +254,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES, false);
         addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT, false);
         addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT_NUMBER, 4);
-        addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_NO_IMMOBILE_VEHICLES, false);
+        addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_UNOFF_NO_IMMOBILE_VEHICLES, false);
         addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT, false);
         addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_EJECTED_PILOTS_FLEE, false);
         addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT, false);

@@ -3644,13 +3644,18 @@ public final class BoardView extends AbstractBoardView
      *                  The method will clip both values to this range.
      */
     public void centerOnPointRel(double xRelative, double yRelative) {
+        // safety check to ensure we avoid NPEs when scrollpane doesn't exist for whatever reason.
+        if (scrollPane == null) {
+            return;
+        }
+        
         // restrict both values to between 0 and 1
         xRelative = Math.max(0, xRelative);
         xRelative = Math.min(1, xRelative);
         yRelative = Math.max(0, yRelative);
         yRelative = Math.min(1, yRelative);
         Point point = new Point((int) (boardSize.getWidth() * xRelative) + HEX_W,
-              (int) (boardSize.getHeight() * yRelative) + HEX_H);
+              (int) (boardSize.getHeight() * yRelative) + HEX_H);        
         JScrollBar verticalScroll = scrollPane.getVerticalScrollBar();
         verticalScroll.setValue(point.y - (verticalScroll.getVisibleAmount() / 2));
         JScrollBar horizontalScroll = scrollPane.getHorizontalScrollBar();

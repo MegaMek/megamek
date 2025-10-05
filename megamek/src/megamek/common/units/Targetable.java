@@ -113,7 +113,12 @@ public interface Targetable extends InGameObject, Serializable {
      */
     int getAltitude();
 
-    /** @return true if the target is immobile (-4 to hit) */
+    /**
+     * Returns true if the target is considered immobile (-4 to hit). If this is a game unit, implementations should
+     * check the status of the unit (shutdown, damage) and also the status of the crew (unconscious) if any.
+     *
+     * @return True if the target is considered immobile
+     */
     boolean isImmobile();
 
     /** @return name of the target for ui purposes */

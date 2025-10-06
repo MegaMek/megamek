@@ -435,7 +435,6 @@ public abstract class Mek extends Entity {
 
     /**
      * find the least restrictive location of the two locations passed in
-     *
      */
     public static int leastRestrictiveLoc(int location1, int location2) {
         if (location1 == location2) {
@@ -731,7 +730,6 @@ public abstract class Mek extends Entity {
 
     /**
      * does this Mek have composite internal structure?
-     *
      */
     public boolean hasCompositeStructure() {
         return (getStructureType() == EquipmentType.T_STRUCTURE_COMPOSITE);
@@ -739,7 +737,6 @@ public abstract class Mek extends Entity {
 
     /**
      * does this Mek have reinforced internal structure?
-     *
      */
     public boolean hasReinforcedStructure() {
         return (getStructureType() == EquipmentType.T_STRUCTURE_REINFORCED);
@@ -747,7 +744,6 @@ public abstract class Mek extends Entity {
 
     /**
      * does this Mek have working jump boosters?
-     *
      */
     public boolean hasJumpBoosters() {
         boolean jumpBoosters = false;
@@ -843,7 +839,6 @@ public abstract class Mek extends Entity {
 
     /**
      * does this Mek have industrial TSM=
-     *
      */
     public boolean hasIndustrialTSM() {
         for (Mounted<?> m : getEquipment()) {
@@ -857,7 +852,6 @@ public abstract class Mek extends Entity {
 
     /**
      * does this Mek have a null-sig-system?
-     *
      */
     public boolean hasNullSig() {
         for (Mounted<?> mEquip : getMisc()) {
@@ -872,7 +866,6 @@ public abstract class Mek extends Entity {
 
     /**
      * does this Mek have a void-sig-system?
-     *
      */
     public boolean hasVoidSig() {
         for (Mounted<?> mEquip : getMisc()) {
@@ -887,7 +880,6 @@ public abstract class Mek extends Entity {
 
     /**
      * Does this Mek have tracks? Used for tracks as industrial equipment; QuadVees return false.
-     *
      */
     public boolean hasTracks() {
         for (Mounted<?> mEquip : getMisc()) {
@@ -902,7 +894,6 @@ public abstract class Mek extends Entity {
 
     /**
      * does this Mek have a chameleon light polarization shield?
-     *
      */
     public boolean hasChameleonShield() {
         for (Mounted<?> mEquip : getMisc()) {
@@ -1507,7 +1498,6 @@ public abstract class Mek extends Entity {
 
     /**
      * Returns the name of the heat sinks mounted on this 'Mek.
-     *
      */
     public String getHeatSinkTypeName() {
         for (Mounted<?> m : getMisc()) {
@@ -1925,7 +1915,7 @@ public abstract class Mek extends Entity {
             if (playtestLocations
                   && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)
                   && roll != 2 // clarified on forum, TACs don't go to the CT in this case
-                  // https://battletech.com/playtest-battletech/feedback-discussion/topic/through-armor-critical-hits-on-side-arc/
+                // https://battletech.com/playtest-battletech/feedback-discussion/topic/through-armor-critical-hits-on-side-arc/
             ) {
                 return getPlaytestSideLocation(table, side, cover);
             }
@@ -3237,7 +3227,6 @@ public abstract class Mek extends Entity {
      *
      * @param loc          The location on the unit to check slots on
      * @param startingSlot The critical slot to start at
-     *
      */
     private int getContiguousNumberOfCrits(int loc, int startingSlot) {
 
@@ -3362,21 +3351,21 @@ public abstract class Mek extends Entity {
               Mek.LOC_CENTER_TORSO) > 0) {
 
 
-                if (getGyroType() == Mek.GYRO_HEAVY_DUTY) {
-                   if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-                          Mek.LOC_CENTER_TORSO) == 1) {
-                        roll.addModifier(1, "HD Gyro damaged once");
-                    } else {
-                        roll.addModifier(3, "HD Gyro damaged twice");
-                    }
+            if (getGyroType() == Mek.GYRO_HEAVY_DUTY) {
+                if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
+                      Mek.LOC_CENTER_TORSO) == 1) {
+                    roll.addModifier(1, "HD Gyro damaged once");
                 } else {
-                    if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                        roll.addModifier(2, "Gyro damaged");
-                    } else {
-                        roll.addModifier(3, "Gyro damaged");
-                    }
+                    roll.addModifier(3, "HD Gyro damaged twice");
                 }
-            
+            } else {
+                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                    roll.addModifier(2, "Gyro damaged");
+                } else {
+                    roll.addModifier(3, "Gyro damaged");
+                }
+            }
+
         }
 
         // EI bonus?
@@ -4882,7 +4871,6 @@ public abstract class Mek extends Entity {
 
     /**
      * Convenience function that returns the critical slot containing the cockpit
-     *
      */
     public List<CriticalSlot> getCockpit() {
         List<CriticalSlot> retVal = new ArrayList<>();
@@ -5302,13 +5290,14 @@ public abstract class Mek extends Entity {
         }
         super.destroyLocation(loc, blownOff);
         // if it's a leg, the entity falls
-        if (game != null && locationIsLeg(loc) && canFall() && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-            game.addPSR(new PilotingRollData(getId(),
-                  TargetRoll.AUTOMATIC_FAIL, 5, "leg destroyed"));
-        } else if (game !=null && locationIsLeg(loc) && canFall() && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-            game.addPSR(new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL, 4, "leg destroyed"));
+        if (game != null && locationIsLeg(loc) && canFall()) {
+            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)){
+                game.addPSR(new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL, 4, "leg destroyed"));
+            } else{
+                game.addPSR(new PilotingRollData(getId(),
+                      TargetRoll.AUTOMATIC_FAIL, 5, "leg destroyed"));
+            }
         }
-        
     }
 
     @Override
@@ -5378,7 +5367,6 @@ public abstract class Mek extends Entity {
 
     /**
      * set if this Mek just moved into water that would kill it because of the lack of environmental sealing
-     *
      */
     public void setJustMovedIntoIndustrialKillingWater(boolean moved) {
         justMovedIntoIndustrialKillingWater = moved;
@@ -5386,7 +5374,6 @@ public abstract class Mek extends Entity {
 
     /**
      * did this Mek just moved into water that would kill it because we lack environmental sealing?
-     *
      */
     public boolean isJustMovedIntoIndustrialKillingWater() {
         return justMovedIntoIndustrialKillingWater;
@@ -5395,7 +5382,6 @@ public abstract class Mek extends Entity {
     /**
      * should this Mek die at the end of turn because it's an IndustrialMek without environmental sealing that moved
      * into water last round and stayed there?
-     *
      */
     public boolean shouldDieAtEndOfTurnBecauseOfWater() {
         return shouldDieAtEndOfTurnBecauseOfWater;
@@ -5404,7 +5390,6 @@ public abstract class Mek extends Entity {
     /**
      * set if this Mek should die at the end of turn because it's an IndustrialMek without environmental sealing that
      * moved into water last round and stayed there?
-     *
      */
     public void setShouldDieAtEndOfTurnBecauseOfWater(boolean moved) {
         shouldDieAtEndOfTurnBecauseOfWater = moved;
@@ -5412,7 +5397,6 @@ public abstract class Mek extends Entity {
 
     /**
      * Set if this Mek's ICE Engine is stalled or not should only be used for industrial Meks carrying an ICE engine
-     *
      */
     public void setStalled(boolean stalled) {
         this.stalled = stalled;
@@ -5554,7 +5538,6 @@ public abstract class Mek extends Entity {
 
     /**
      * how many levels did this Mek fall this turn?
-     *
      */
     public int getLevelsFallen() {
         return levelsFallen;
@@ -5570,7 +5553,6 @@ public abstract class Mek extends Entity {
 
     /**
      * Is the passed in location an arm?
-     *
      */
     public boolean isArm(int loc) {
         return (loc == Mek.LOC_LEFT_ARM) || (loc == Mek.LOC_RIGHT_ARM);
@@ -6215,7 +6197,6 @@ public abstract class Mek extends Entity {
 
     /**
      * return if a RISC emergency coolant failed its roll
-     *
      */
     public boolean doRISCEmergencyCoolantCheckFor(Vector<Report> vDesc,
           HashMap<Integer, List<CriticalSlot>> vCriticalSlots) {

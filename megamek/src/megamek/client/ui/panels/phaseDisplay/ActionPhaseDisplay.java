@@ -308,7 +308,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
      *
      * @see ClientGUI#getDisplayedUnit()
      */
-    public final Entity ce() {
+    public final Entity currentEntity() {
         return game.getEntity(currentEntity);
     }
 

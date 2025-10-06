@@ -100,7 +100,7 @@ public class AimedShotHandler implements ActionListener, ItemListener {
                     aimingAt = Mek.LOC_CENTER_TORSO;
                 }
             } else if (this.firingDisplay.getTarget() instanceof Tank) {
-                int side = ComputeSideTable.sideTable(this.firingDisplay.ce(), this.firingDisplay.getTarget());
+                int side = ComputeSideTable.sideTable(this.firingDisplay.currentEntity(), this.firingDisplay.getTarget());
                 if (this.firingDisplay.getTarget() instanceof LargeSupportTank) {
                     if (side == ToHitData.SIDE_FRONT_LEFT) {
                         aimingAt = LargeSupportTank.LOC_FRONT_LEFT;
@@ -153,7 +153,7 @@ public class AimedShotHandler implements ActionListener, ItemListener {
 
         Arrays.fill(mask, true);
 
-        int side = ComputeSideTable.sideTable(firingDisplay.ce(), firingDisplay.getTarget());
+        int side = ComputeSideTable.sideTable(firingDisplay.currentEntity(), firingDisplay.getTarget());
 
         // on a tank, remove turret if its missing
         // also, remove body
@@ -368,8 +368,8 @@ public class AimedShotHandler implements ActionListener, ItemListener {
         boolean allowAim;
 
         // TC against a mek
-        allowAim = ((this.firingDisplay.getTarget() != null) && (this.firingDisplay.ce() != null)
-              && this.firingDisplay.ce().hasAimModeTargComp() && ((this.firingDisplay.getTarget() instanceof Mek)
+        allowAim = ((this.firingDisplay.getTarget() != null) && (this.firingDisplay.currentEntity() != null)
+              && this.firingDisplay.currentEntity().hasAimModeTargComp() && ((this.firingDisplay.getTarget() instanceof Mek)
               || (this.firingDisplay.getTarget() instanceof Tank)
               || (this.firingDisplay.getTarget() instanceof BattleArmor)
               || (this.firingDisplay.getTarget() instanceof ProtoMek)));

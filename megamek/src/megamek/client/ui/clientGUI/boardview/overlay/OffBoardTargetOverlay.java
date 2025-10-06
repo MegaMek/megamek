@@ -159,8 +159,8 @@ public class OffBoardTargetOverlay implements IDisplayable {
         for (Entity entity : game().getAllOffboardEnemyEntities(getCurrentPlayer())) {
             if (entity.isOffBoardObserved(getCurrentPlayer().getTeam()) &&
                   (entity.getOffBoardDirection() == direction) &&
-                  (targetingPhaseDisplay.ce() != null &&
-                        targetingPhaseDisplay.ce().isOffBoard() ||
+                  (targetingPhaseDisplay.currentEntity() != null &&
+                        targetingPhaseDisplay.currentEntity().isOffBoard() ||
                         weaponFacingInDirection(selectedArtilleryWeapon, direction))) {
                 return true;
             }
@@ -396,10 +396,10 @@ public class OffBoardTargetOverlay implements IDisplayable {
         if (choice != null) {
             // display dropdown containing all observed offboard enemy entities in given direction upon selection,
             // generate an ArtilleryAttackAction vs selected entity as per TargetingPhaseDisplay, like so:
-            WeaponAttackAction weaponAttackAction = new ArtilleryAttackAction(targetingPhaseDisplay.ce().getId(),
+            WeaponAttackAction weaponAttackAction = new ArtilleryAttackAction(targetingPhaseDisplay.currentEntity().getId(),
                   choice.getTargetType(),
                   choice.getId(),
-                  targetingPhaseDisplay.ce().getEquipmentNum(clientGUI.getBoardView().getSelectedArtilleryWeapon()),
+                  targetingPhaseDisplay.currentEntity().getEquipmentNum(clientGUI.getBoardView().getSelectedArtilleryWeapon()),
                   clientGUI.getClient().getGame());
 
             // Only add if chance of success.

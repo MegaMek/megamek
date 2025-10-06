@@ -2572,25 +2572,26 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             roll = pilotRolls.elementAt(i);
             if (roll.getEntityId() == entity.getId()) {
                 // This is the critical part.
-                if ((roll.getDesc() == "left leg actuator hit" || roll.getDesc() == "left hip actuator hit")) {
+                if (roll.getDesc().equals("left leg actuator hit") || roll.getDesc().equals("left hip actuator hit")) {
                     rollTarget.addElement(roll.getValue());
                     rollLocation.addElement(1);
                     rollsToRemove.addElement(i);
-                } else if ((roll.getDesc() == "right leg actuator hit" || roll.getDesc() == "right hip actuator hit")){
+                } else if (roll.getDesc().equals("right leg actuator hit") || roll.getDesc().equals("right hip actuator hit")) {
                     rollTarget.addElement(roll.getValue());
                     rollLocation.addElement(2);
                     rollsToRemove.addElement(i);
-                }else if ((roll.getDesc() == "front left leg actuator hit" || roll.getDesc() == "front left hip " 
-                      + "actuator hit")){
+                }else if (roll.getDesc().equals("front left leg actuator hit") || roll.getDesc().equals("front left " 
+                      + "hip actuator hit")) {
                     rollTarget.addElement(roll.getValue());
                     rollLocation.addElement(3);
                     rollsToRemove.addElement(i);
-                }else if ((roll.getDesc() == "front right leg actuator hit" || roll.getDesc() == "front right hip " 
-                      + "actuator hit")){
+                }else if (roll.getDesc().equals("front right leg actuator hit") || roll.getDesc().equals("front right hip " 
+                      + "actuator hit")) {
                     rollTarget.addElement(roll.getValue());
                     rollLocation.addElement(4);
                     rollsToRemove.addElement(i);
-                }else if ((roll.getDesc() == "center leg actuator hit" || roll.getDesc() == "center hip actuator hit")){
+                }else if (roll.getDesc().equals("center leg actuator hit") || roll.getDesc().equals("center hip actuator " 
+                      + "hit")) {
                     rollTarget.addElement(roll.getValue());
                     rollLocation.addElement(5);
                     rollsToRemove.addElement(i);

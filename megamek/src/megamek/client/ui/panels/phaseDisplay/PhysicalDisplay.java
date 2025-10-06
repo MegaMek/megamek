@@ -816,7 +816,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
 
         // and add it into the game, temporarily
         game.addAction(saa);
-        clientgui.getBoardView(currentEntity).addAttack(saa);
+        clientgui.getBoardView(ce()).addAttack(saa);
 
         // and prevent duplicates
         setSearchlightEnabled(false);

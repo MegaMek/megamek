@@ -2611,15 +2611,21 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                     }
                 }
             }
+            logger.debug("Playtest: Removing PSR rolls for " + entity.getDisplayName());
             // Remove the saved element from our removal list
             for (int i = saveRolls.size()-1; i > -1; i--) {
+                roll = pilotRolls.elementAt(saveRolls.elementAt(i));
+                logger.debug("Saving PSR roll: " + roll.getDesc());
                 rollsToRemove.removeElementAt(saveRolls.elementAt(i));
             }
 
             // now, clear out remaining rolls from the PSRs
             for (int i = rollsToRemove.size() - 1; i > -1; i--) {
+                roll = pilotRolls.elementAt(rollsToRemove.elementAt(i));
+                logger.debug("Removing PSR roll: " + roll.getDesc());
                 pilotRolls.removeElementAt(rollsToRemove.elementAt(i));
             }
+            logger.debug("Done removing PSR rolls");
         }
     }
     

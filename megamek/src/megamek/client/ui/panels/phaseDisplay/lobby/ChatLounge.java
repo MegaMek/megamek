@@ -1076,16 +1076,32 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
     }
 
-    /** Updates the list of available map sizes. */
+    /**
+     * Refreshes the map size selection combo box with all available map sizes, sorted by width and then by height.
+     *
+     * <p>This method obtains the set of available map sizes from the client, sorts them first by width (ascending)
+     * and then by height (ascending), and populates the combo box with these sorted sizes. An additional "Custom Map
+     * Size" entry is added at the end of the list. The previously selected index is preserved if possible.</p>
+     *
+     * <p>The combo box's action listener is temporarily removed during the update to prevent unwanted event
+     * firing.</p>
+     */
     private void refreshMapSizes() {
         int oldSelection = comMapSizes.getSelectedIndex();
         Set<BoardDimensions> mapSizes = clientgui.getClient().getAvailableMapSizes();
+
+        // Sort the map sizes by width (w()) and then by height (h())
+        List<BoardDimensions> sortedSizes = new ArrayList<>(mapSizes);
+        sortedSizes.sort(Comparator.comparingInt(BoardDimensions::w)
+              .thenComparingInt(BoardDimensions::h));
+
         comMapSizes.removeActionListener(lobbyListener);
         comMapSizes.removeAllItems();
-        for (BoardDimensions size : mapSizes) {
+
+        for (BoardDimensions size : sortedSizes) {
             comMapSizes.addItem(size);
         }
-        comMapSizes.addItem(Messages.getString("ChatLounge.CustomMapSize"));
+
         comMapSizes.setSelectedIndex(oldSelection != -1 ? oldSelection : 0);
         comMapSizes.addActionListener(lobbyListener);
     }

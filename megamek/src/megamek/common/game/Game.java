@@ -2605,11 +2605,15 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             // check which roll target is highest
             for (int location = 1; location < 6; location++) {
                 highTarget = 0;
+                saveEntry = 0;
                 for (int i = 0; i < rollTarget.size(); i++) {
                     if ((rollTarget.elementAt(i) > highTarget) && (rollLocation.elementAt(i)==location)) {
-                        saveRolls.addElement(rollsToRemove.elementAt(i));
+                        saveEntry = i;
                         highTarget = rollTarget.elementAt(i);
                     }
+                }
+                if (saveEntry != 0) {
+                    saveRolls.addElement(rollsToRemove.elementAt(saveEntry));
                 }
             }
             logger.debug("Playtest: Removing PSR rolls for " + entity.getDisplayName());

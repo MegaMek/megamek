@@ -87,7 +87,7 @@ public class FireCommand extends ClientCommand {
                     clearAttacks();
                     cen = Integer.parseInt(args[2]);
 
-                    return "Entity " + ce().toString() + " selected for firing.";
+                    return "Entity " + currentEntity().toString() + " selected for firing.";
                 } catch (Exception e) {
                     return "Not an entity ID or valid number." + e;
                 }
@@ -106,7 +106,7 @@ public class FireCommand extends ClientCommand {
                        target. Any number of weapons may be specified.
                       #fire TARGET unitID ALL = fires all remaining weapons at the specified target.
                       """;
-            } else if (ce() != null) {
+            } else if (currentEntity() != null) {
                 if (args[1].equalsIgnoreCase("COMMIT")) {
                     commit();
                     return "Attacks send to the server";
@@ -116,9 +116,9 @@ public class FireCommand extends ClientCommand {
                         try {
                             Targetable target = getClient().getEntity(Integer.parseInt(args[2]));
                             if ((args.length == 4) && args[3].equalsIgnoreCase("ALL")) {
-                                for (Mounted<?> weapon : ce().getWeaponList()) {
+                                for (Mounted<?> weapon : currentEntity().getWeaponList()) {
                                     if (weapon.canFire() && !weapon.isFired()) {
-                                        fire(ce().getEquipmentNum(weapon), target);
+                                        fire(currentEntity().getEquipmentNum(weapon), target);
                                     }
                                 }
                                 return "Firing all remaining weapons at " + target.toString() + ".";
@@ -141,15 +141,15 @@ public class FireCommand extends ClientCommand {
                         try {
                             Targetable target = getClient().getEntity(Integer.parseInt(args[2]));
                             if (target != null) {
-                                StringBuilder str = new StringBuilder(" Weapons for " + ce() + " at " + target + ":\n");
+                                StringBuilder str = new StringBuilder(" Weapons for " + currentEntity() + " at " + target + ":\n");
 
-                                for (Mounted<?> weapon : ce().getWeaponList()) {
+                                for (Mounted<?> weapon : currentEntity().getWeaponList()) {
                                     str.append("(")
-                                          .append(ce().getEquipmentNum(weapon))
+                                          .append(currentEntity().getEquipmentNum(weapon))
                                           .append(") ")
                                           .append(weapon.getName())
                                           .append(" = ")
-                                          .append(calculateToHit(ce().getEquipmentNum(weapon), target))
+                                          .append(calculateToHit(currentEntity().getEquipmentNum(weapon), target))
                                           .append("\n");
                                 }
 
@@ -177,14 +177,14 @@ public class FireCommand extends ClientCommand {
      * Removes all current fire
      */
     private void clearAttacks() {
-        // We may not have an ce() selected yet
-        if (ce() == null) {
+        // We may not have an currentEntity() selected yet
+        if (currentEntity() == null) {
             return;
         }
 
         for (AbstractEntityAction abstractEntityAction : attacks) {
             if (abstractEntityAction instanceof WeaponAttackAction weaponAttackAction) {
-                ce().getEquipment(weaponAttackAction.getWeaponId()).setUsedThisRound(false);
+                currentEntity().getEquipment(weaponAttackAction.getWeaponId()).setUsedThisRound(false);
             }
         }
 
@@ -194,15 +194,15 @@ public class FireCommand extends ClientCommand {
         getClient().getGame().removeActionsFor(cen);
 
         // restore any other movement to default
-        ce().setSecondaryFacing(ce().getFacing());
-        ce().setArmsFlipped(false);
+        currentEntity().setSecondaryFacing(currentEntity().getFacing());
+        currentEntity().setArmsFlipped(false);
         cen = Entity.NONE;
     }
 
     private void torsoTwist(int target) {
         for (AbstractEntityAction abstractEntityAction : attacks) {
             if (abstractEntityAction instanceof WeaponAttackAction weaponAttackAction) {
-                ce().getEquipment(weaponAttackAction.getWeaponId()).setUsedThisRound(false);
+                currentEntity().getEquipment(weaponAttackAction.getWeaponId()).setUsedThisRound(false);
             }
         }
 
@@ -212,22 +212,22 @@ public class FireCommand extends ClientCommand {
         getClient().getGame().removeActionsFor(cen);
 
         // restore any other movement to default
-        if (!ce().getAlreadyTwisted()) {
-            ce().setSecondaryFacing(ce().getFacing());
-            ce().setArmsFlipped(false);
+        if (!currentEntity().getAlreadyTwisted()) {
+            currentEntity().setSecondaryFacing(currentEntity().getFacing());
+            currentEntity().setArmsFlipped(false);
 
-            int direction = ce().clipSecondaryFacing(target);
+            int direction = currentEntity().clipSecondaryFacing(target);
             attacks.addElement(new TorsoTwistAction(cen, direction));
-            ce().setSecondaryFacing(direction);
+            currentEntity().setSecondaryFacing(direction);
         }
     }
 
     private void fire(int weaponNum, Targetable target) {
         // get the selected weaponNumber
-        Mounted<?> mounted = ce().getEquipment(weaponNum);
+        Mounted<?> mounted = currentEntity().getEquipment(weaponNum);
 
         // validate
-        if (ce() == null || target == null || mounted == null
+        if (currentEntity() == null || target == null || mounted == null
               || !(mounted.getType() instanceof WeaponType)) {
             throw new IllegalArgumentException("current fire parameters are invalid");
         }
@@ -272,7 +272,7 @@ public class FireCommand extends ClientCommand {
 
     private void doSearchlight(Targetable target) {
         // validate
-        if (ce() == null || target == null) {
+        if (currentEntity() == null || target == null) {
             throw new IllegalArgumentException("current searchlight parameters are invalid");
         }
 
@@ -291,14 +291,14 @@ public class FireCommand extends ClientCommand {
     private String calculateToHit(int weaponId, Targetable target) {
         ToHitData toHit;
         String str = "No Data";
-        if (target != null && weaponId != -1 && ce() != null) {
+        if (target != null && weaponId != -1 && currentEntity() != null) {
             str = "";
             toHit = WeaponAttackAction.toHit(getClient().getGame(), cen, target, weaponId,
                   Entity.LOC_NONE, AimingMode.NONE, false);
 
-            str += " Range: " + ce().getPosition().distance(target.getPosition());
+            str += " Range: " + currentEntity().getPosition().distance(target.getPosition());
 
-            Mounted<?> m = ce().getEquipment(weaponId);
+            Mounted<?> m = currentEntity().getEquipment(weaponId);
             if (m.isUsedThisRound()) {
                 str += " Can't shoot: "
                       + Messages.getString("FiringDisplay.alreadyFired");
@@ -316,7 +316,7 @@ public class FireCommand extends ClientCommand {
             } else {
                 str += " To hit: " + toHit.getValueAsString() + " ("
                       + Compute.oddsAbove(toHit.getValue(),
-                      ce().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY)) + "%)";
+                      currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY)) + "%)";
             }
             str += " To Hit modifiers: " + toHit.getDesc();
         }
@@ -324,7 +324,7 @@ public class FireCommand extends ClientCommand {
     }
 
     /**
-     * Called when the current ce() is done firing. Send out our attack queue to the server.
+     * Called when the current currentEntity() is done firing. Send out our attack queue to the server.
      */
     private void commit() {
         // For bug 1002223
@@ -380,7 +380,7 @@ public class FireCommand extends ClientCommand {
     /**
      * Returns the current Entity.
      */
-    public Entity ce() {
+    public Entity currentEntity() {
         return getClient().getGame().getEntity(cen);
     }
 }

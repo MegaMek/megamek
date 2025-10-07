@@ -5303,9 +5303,9 @@ public abstract class Mek extends Entity {
         super.destroyLocation(loc, blownOff);
         // if it's a leg, the entity falls
         if (game != null && locationIsLeg(loc) && canFall()) {
-            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)){
+            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
                 game.addPSR(new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL, 4, "leg destroyed"));
-            } else{
+            } else {
                 game.addPSR(new PilotingRollData(getId(),
                       TargetRoll.AUTOMATIC_FAIL, 5, "leg destroyed"));
             }

@@ -2580,18 +2580,18 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                     rollTarget.addElement(roll.getValue());
                     rollLocation.addElement(2);
                     rollsToRemove.addElement(i);
-                }else if (roll.getDesc().equals("front left leg actuator hit") || roll.getDesc().equals("front left " 
+                } else if (roll.getDesc().equals("front left leg actuator hit") || roll.getDesc().equals("front left " 
                       + "hip actuator hit")) {
                     rollTarget.addElement(roll.getValue());
                     rollLocation.addElement(3);
                     rollsToRemove.addElement(i);
-                }else if (roll.getDesc().equals("front right leg actuator hit") || roll.getDesc().equals("front right hip " 
-                      + "actuator hit")) {
+                } else if (roll.getDesc().equals("front right leg actuator hit") || roll.getDesc().equals("front " 
+                      + "right hip actuator hit")) {
                     rollTarget.addElement(roll.getValue());
                     rollLocation.addElement(4);
                     rollsToRemove.addElement(i);
-                }else if (roll.getDesc().equals("center leg actuator hit") || roll.getDesc().equals("center hip actuator " 
-                      + "hit")) {
+                } else if (roll.getDesc().equals("center leg actuator hit") || roll.getDesc().equals("center hip " 
+                      + "actuator hit")) {
                     rollTarget.addElement(roll.getValue());
                     rollLocation.addElement(5);
                     rollsToRemove.addElement(i);
@@ -2602,17 +2602,20 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         if (rollsToRemove.size() > 1) {
             int saveEntry = 0;
             int highTarget = 0;
+            boolean entrySaved = false;
             // check which roll target is highest
             for (int location = 1; location < 6; location++) {
                 highTarget = 0;
                 saveEntry = 0;
+                entrySaved = false;
                 for (int i = 0; i < rollTarget.size(); i++) {
                     if ((rollTarget.elementAt(i) > highTarget) && (rollLocation.elementAt(i)==location)) {
                         saveEntry = i;
+                        entrySaved = true;
                         highTarget = rollTarget.elementAt(i);
                     }
                 }
-                if (saveEntry != 0) {
+                if (entrySaved == true) {
                     saveRolls.addElement(rollsToRemove.elementAt(saveEntry));
                 }
             }

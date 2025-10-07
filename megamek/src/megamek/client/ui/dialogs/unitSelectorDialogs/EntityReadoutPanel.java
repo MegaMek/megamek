@@ -33,9 +33,6 @@
  */
 package megamek.client.ui.dialogs.unitSelectorDialogs;
 
-import static megamek.MMConstants.BT_URL_SHRAPNEL;
-import static megamek.MMConstants.MUL_URL_PREFIX;
-
 import java.awt.BorderLayout;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
@@ -98,9 +95,8 @@ public class EntityReadoutPanel extends JPanel {
         readoutTextComponent.addHyperlinkListener(pe -> {
             if (HyperlinkEvent.EventType.ACTIVATED == pe.getEventType()) {
 
-                boolean isMulAddress = pe.getURL().toString().startsWith(MUL_URL_PREFIX);
-                boolean isShrapnelAddress = pe.getURL().toString().startsWith(BT_URL_SHRAPNEL);
-                if (isMulAddress || isShrapnelAddress) {
+                boolean isHttpAddress = pe.getURL().toString().startsWith("http");
+                if (isHttpAddress) {
                     UIUtil.browse(pe.getURL().toString(), this);
                 } else {
                     String reference = pe.getDescription();

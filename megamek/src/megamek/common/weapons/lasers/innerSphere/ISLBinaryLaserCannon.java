@@ -68,18 +68,18 @@ public class ISLBinaryLaserCannon extends LaserWeapon {
         waterExtremeRange = 8;
         tonnage = 1.5;
         criticalSlots = 2;
-        bv = 148;
+        bv = 65;
         cost = 15000;
         shortAV = 7;
         maxRange = RANGE_SHORT;
         flags = flags.andNot(F_PROTO_WEAPON);
         // Nothing to see here, move along
-        rulesRefs = "Unofficial";
+        rulesRefs = "Gothic";
         techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2852, DATE_NONE, 3077)
               .setPrototypeFactions(Faction.FW)
-              .setProductionFactions(Faction.WB).setStaticTechLevel(SimpleTechLevel.UNOFFICIAL);
+              .setProductionFactions(Faction.WB).setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

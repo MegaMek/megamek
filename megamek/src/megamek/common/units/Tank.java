@@ -91,8 +91,8 @@ public class Tank extends Entity {
     private int m_nTurretOffset = 0;
     private int m_nDualTurretOffset = 0;
     private int m_nStunnedTurns = 0;
-    private boolean m_bImmobile = false;
-    private boolean m_bImmobileHit = false;
+    private boolean immobilized = false;
+    private boolean markForImmobilize = false;
     private int burningLocations = 0;
     private boolean m_bBackedIntoHullDown = false;
     protected int motivePenalty = 0;
@@ -627,11 +627,11 @@ public class Tank extends Entity {
             }
         }
 
-        return (m_bImmobile || (motiveDamage >= originalWalkMP));
+        return (immobilized || (motiveDamage >= originalWalkMP));
     }
 
     public boolean isMovementHitPending() {
-        return m_bImmobileHit;
+        return markForImmobilize;
     }
 
     /**
@@ -641,27 +641,33 @@ public class Tank extends Entity {
      * tank is technically not immobile just <em>yet</em> until damage is actually resolved).
      */
     public void immobilize() {
-        m_bImmobileHit = true;
+        markForImmobilize = true;
     }
 
     @Override
     public boolean isImmobile(boolean checkCrew) {
-        if ((game != null) && game.getOptions()
-              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_NO_IMMOBILE_VEHICLES)) {
+        if (isActiveOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_UNOFF_NO_IMMOBILE_VEHICLES)) {
             return super.isImmobile(checkCrew);
         }
-        // Towed trailers need to reference the tractor, or they return Immobile due to
-        // 0 MP...
-        // We do run into some double-blind entityList differences though, so include a
-        // null check
-        if (isTrailer() && (getTractor() != Entity.NONE)) {
-            Entity tractor = game.getEntity(getTractor());
 
-            return (tractor != null ? tractor.isImmobile(checkCrew) :
-                  super.isImmobile(checkCrew) || m_bImmobile);
+        if (isTrailer()) {
+            if (getTractor() != Entity.NONE) {
+                Entity tractor = game.getEntity(getTractor());
+                // safety null check; the tractor may be destroyed or hidden from view. When destroyed, getTractor()
+                // should not return a unit. When hidden, the trailer should still be able to find out its mobility.
+                // So, finding a null tractor here is a bug, but we know it'll happen
+                if (tractor != null) {
+                    return tractor.isImmobile(checkCrew);
+                } else {
+                    logger.error("Invalid tractor unit id " + getTractor());
+                }
+            }
+            // Without a tractor or when the tractor can't be found, a trailer is immobile, TW p.205
+            return true;
         }
 
-        return m_bImmobile || super.isImmobile(checkCrew);
+        // motive damage sets immobilized
+        return immobilized || super.isImmobile(checkCrew);
     }
 
     /**
@@ -931,7 +937,7 @@ public class Tank extends Entity {
      * Applies movement damage to the Tank.
      */
     public void applyMovementDamage() {
-        m_bImmobile |= m_bImmobileHit;
+        immobilized |= markForImmobilize;
 
         // Towed trailers need to use the values of the tractor, or they return Immobile due to 0 MP...
         Entity tractor = game.getEntity(getTractor());
@@ -939,8 +945,8 @@ public class Tank extends Entity {
               && (getTractor() != Entity.NONE)
               && tractor instanceof Tank tankTractor
               && tractor.hasETypeFlag(Entity.ETYPE_TANK)) {
-            m_bImmobile = tankTractor.m_bImmobile;
-            m_bImmobileHit = tankTractor.m_bImmobileHit;
+            immobilized = tankTractor.immobilized;
+            markForImmobilize = tankTractor.markForImmobilize;
         }
     }
 
@@ -2312,8 +2318,8 @@ public class Tank extends Entity {
         minorMovementDamage = false;
         moderateMovementDamage = false;
         heavyMovementDamage = false;
-        m_bImmobileHit = false;
-        m_bImmobile = false;
+        markForImmobilize = false;
+        immobilized = false;
     }
 
     public void unlockTurret() {

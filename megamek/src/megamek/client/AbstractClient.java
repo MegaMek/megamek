@@ -233,7 +233,7 @@ public abstract class AbstractClient implements IClient {
     /**
      * Sends the info associated with a player, usually the local game's local player but sometimes the modified version
      * of that player.
-     * @param player
+     * @param player Player instance regarding which to send the update.
      */
     public void sendPlayerInfo(Player player) {
         send(new Packet(PacketCommand.PLAYER_UPDATE, player));

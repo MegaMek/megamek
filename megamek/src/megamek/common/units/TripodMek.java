@@ -158,57 +158,53 @@ public class TripodMek extends MekWithArms {
             }
             mp = (mp * (3 - legsDestroyed)) / 3;
         } else {
-            for (int i = 0; i < locations(); i++) {
+            for (int i : List.of(Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_LEG, Mek.LOC_CENTER_LEG)) {
                 // PLAYTEST2 leg crits and MP
                 if (!(game == null) && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                    if (locationIsLeg(i)) {
-                        if (!isLocationBad(i)) {
-                            if (legHasHipCrit(i)) {
-                                if (i == LOC_LEFT_LEG) {
-                                    leftHip++;
-                                }
-                                if (i == LOC_RIGHT_LEG) {
-                                    rightHip++;
-                                }
-                                if (i == LOC_CENTER_LEG) {
-                                    centerHip++;
-                                }
-                                hipHits++;
-                                if ((game == null) ||
-                                      !game.getOptions()
-                                            .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
-                                    continue;
-                                }
+                    if (!isLocationBad(i)) {
+                        if (legHasHipCrit(i)) {
+                            if (i == Mek.LOC_LEFT_LEG) {
+                                leftHip++;
                             }
-                            if (i == LOC_LEFT_LEG) {
-                                leftLegActuators += countLegActuatorCrits(i);
+                            if (i == Mek.LOC_RIGHT_LEG) {
+                                rightHip++;
                             }
-                            if (i == LOC_RIGHT_LEG) {
-                                rightLegActuators += countLegActuatorCrits(i);
+                            if (i == Mek.LOC_CENTER_LEG) {
+                                centerHip++;
                             }
-                            if (i == LOC_CENTER_LEG) {
-                                centerLegActuators += countLegActuatorCrits(i);
+                            hipHits++;
+                            if ((game == null) ||
+                                  !game.getOptions()
+                                        .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
+                                continue;
                             }
-                            actuatorHits += countLegActuatorCrits(i);
-                        } else {
-                            legsDestroyed++;
                         }
+                        if (i == Mek.LOC_LEFT_LEG) {
+                            leftLegActuators += countLegActuatorCrits(i);
+                        }
+                        if (i == Mek.LOC_RIGHT_LEG) {
+                            rightLegActuators += countLegActuatorCrits(i);
+                        }
+                        if (i == Mek.LOC_CENTER_LEG) {
+                            centerLegActuators += countLegActuatorCrits(i);
+                        }
+                        actuatorHits += countLegActuatorCrits(i);
+                    } else {
+                        legsDestroyed++;
                     }
                 } else {
-                    if (locationIsLeg(i)) {
-                        if (!isLocationBad(i)) {
-                            if (legHasHipCrit(i)) {
-                                hipHits++;
-                                if ((game == null) ||
-                                      !game.getOptions()
-                                            .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
-                                    continue;
-                                }
+                    if (!isLocationBad(i)) {
+                        if (legHasHipCrit(i)) {
+                            hipHits++;
+                            if ((game == null) ||
+                                  !game.getOptions()
+                                        .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
+                                continue;
                             }
-                            actuatorHits += countLegActuatorCrits(i);
-                        } else {
-                            legsDestroyed++;
                         }
+                        actuatorHits += countLegActuatorCrits(i);
+                    } else {
+                        legsDestroyed++;
                     }
                 }
             }
@@ -363,7 +359,7 @@ public class TripodMek extends MekWithArms {
             roll.addModifier(-1, "tripod bonus");
         }
 
-        for (int loc : List.of(Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_LEG, Mek.LOC_CENTER_LEG)) {
+        for (int loc : List.of(LOC_LEFT_LEG, LOC_RIGHT_LEG, LOC_CENTER_LEG)) {
             if (isLocationBad(loc)) {
                 roll.addModifier(5, getLocationName(loc) + " destroyed");
             } else {

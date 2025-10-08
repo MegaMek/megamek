@@ -58,7 +58,7 @@ public class MoveCommand extends ClientCommand {
 
     // considering movement data
     private MovePath cmd;
-    // considered ce()
+    // considered currentEntity()
     private int cen = Entity.NONE;
     int gear;
 
@@ -94,19 +94,19 @@ public class MoveCommand extends ClientCommand {
                 try {
                     clearAllMoves();
                     cen = Integer.parseInt(args[2]);
-                    if (ce() == null) {
+                    if (currentEntity() == null) {
                         cen = Entity.NONE;
                         return "Not an entity ID or valid number.";
                     }
-                    cmd = new MovePath(getClient().getGame(), ce());
+                    cmd = new MovePath(getClient().getGame(), currentEntity());
 
-                    getClientGUI().setCurrentHex(ce().getPosition());
-                    return "Entity " + ce().toString()
+                    getClientGUI().setCurrentHex(currentEntity().getPosition());
+                    return "Entity " + currentEntity().toString()
                           + " selected for movement.";
                 } catch (Exception e) {
                     return "Not an entity ID or valid number." + e;
                 }
-            } else if (ce() != null) {
+            } else if (currentEntity() != null) {
                 if (args[1].equalsIgnoreCase("JUMP")) {
 
                     clearAllMoves();
@@ -115,7 +115,7 @@ public class MoveCommand extends ClientCommand {
                     }
                     gear = GEAR_JUMP;
 
-                    return "Entity " + ce().toString() + " is going to jump.";
+                    return "Entity " + currentEntity().toString() + " is going to jump.";
                 } else if (args[1].equalsIgnoreCase("COMMIT")) {
                     moveTo(cmd);
                     return "Move sent.";
@@ -134,7 +134,7 @@ public class MoveCommand extends ClientCommand {
                 } else if (args[1].equalsIgnoreCase("CLIP")) {
                     cmd.clipToPossible();
                     return "Path clipped to whats actually possible. "
-                          + ce().toString() + " is now in gear "
+                          + currentEntity().toString() + " is now in gear "
                           + gearName(gear) + " heading towards "
                           + cmd.getFinalCoords().toFriendlyString()
                           + " with a final facing of "
@@ -166,7 +166,7 @@ public class MoveCommand extends ClientCommand {
 
                 currentMove(target);
 
-                return "Commands accepted " + ce().toString()
+                return "Commands accepted " + currentEntity().toString()
                       + " is now in gear " + gearName(gear)
                       + " heading towards "
                       + cmd.getFinalCoords().toFriendlyString()
@@ -224,14 +224,14 @@ public class MoveCommand extends ClientCommand {
      */
     private void clearAllMoves() {
         // switch back from swimming to normal mode.
-        if (ce() != null) {
-            if (ce().getMovementMode().isBipedSwim()) {
-                ce().setMovementMode(EntityMovementMode.BIPED);
-            } else if (ce().getMovementMode().isQuadSwim()) {
-                ce().setMovementMode(EntityMovementMode.QUAD);
+        if (currentEntity() != null) {
+            if (currentEntity().getMovementMode().isBipedSwim()) {
+                currentEntity().setMovementMode(EntityMovementMode.BIPED);
+            } else if (currentEntity().getMovementMode().isQuadSwim()) {
+                currentEntity().setMovementMode(EntityMovementMode.QUAD);
             }
 
-            cmd = new MovePath(getClient().getGame(), ce());
+            cmd = new MovePath(getClient().getGame(), currentEntity());
         } else {
             cmd = null;
         }
@@ -245,8 +245,8 @@ public class MoveCommand extends ClientCommand {
     private synchronized void moveTo(MovePath md) {
         md.clipToPossible();
 
-        if (ce().hasUMU()) {
-            getClient().sendUpdateEntity(ce());
+        if (currentEntity().hasUMU()) {
+            getClient().sendUpdateEntity(currentEntity());
         }
         getClient().moveEntity(cen, md);
     }
@@ -254,7 +254,7 @@ public class MoveCommand extends ClientCommand {
     /**
      * Returns the current Entity.
      */
-    public Entity ce() {
+    public Entity currentEntity() {
         return getClient().getGame().getEntity(cen);
     }
 }

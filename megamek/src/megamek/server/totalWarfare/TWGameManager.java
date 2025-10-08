@@ -19099,8 +19099,24 @@ public class TWGameManager extends AbstractGameManager {
                 if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
                     if (en.canFall(true)) {
                         // leg/foot actuator piloting roll
-                        game.addPSR(new PilotingRollData(en.getId(), 1, "leg actuator hit"));
-                    }
+                        switch (loc) {
+                            case Mek.LOC_LEFT_LEG:
+                                game.addPSR(new PilotingRollData(en.getId(), 1, "left leg actuator hit"));
+                                break;
+                            case Mek.LOC_RIGHT_LEG:
+                                game.addPSR(new PilotingRollData(en.getId(), 1, "right leg actuator hit"));
+                                break;
+                            case Mek.LOC_CENTER_LEG:
+                                game.addPSR(new PilotingRollData(en.getId(), 1, "center leg actuator hit"));
+                                break;
+                            case Mek.LOC_LEFT_ARM:
+                                game.addPSR(new PilotingRollData(en.getId(), 1, "front left leg actuator hit"));
+                                break;
+                            case Mek.LOC_RIGHT_ARM:
+                                game.addPSR(new PilotingRollData(en.getId(), 1, "front right leg actuator hit"));
+                                break;
+                        }
+                        }
                     break;
                 }
             case Mek.ACTUATOR_FOOT:
@@ -19114,8 +19130,31 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             case Mek.ACTUATOR_HIP:
                 if (en.canFall(true)) {
-                    // hip piloting roll
-                    game.addPSR(new PilotingRollData(en.getId(), 2, "hip actuator hit"));
+                    // PLAYTEST2 only leg actuators trigger this
+                    if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                            // leg/foot actuator piloting roll
+                            switch (loc) {
+                                case Mek.LOC_LEFT_LEG:
+                                    game.addPSR(new PilotingRollData(en.getId(), 1, "left hip actuator hit"));
+                                    break;
+                                case Mek.LOC_RIGHT_LEG:
+                                    game.addPSR(new PilotingRollData(en.getId(), 1, "right hip actuator hit"));
+                                    break;
+                                case Mek.LOC_CENTER_LEG:
+                                    game.addPSR(new PilotingRollData(en.getId(), 1, "center hip actuator hit"));
+                                    break;
+                                case Mek.LOC_LEFT_ARM:
+                                    game.addPSR(new PilotingRollData(en.getId(), 1, "front left hip actuator hit"));
+                                    break;
+                                case Mek.LOC_RIGHT_ARM:
+                                    game.addPSR(new PilotingRollData(en.getId(), 1, "front right hip actuator hit"));
+                                    break;
+                        }
+                        break;
+                    } else {
+                        // hip piloting roll
+                        game.addPSR(new PilotingRollData(en.getId(), 2, "hip actuator hit"));
+                    }
                 }
                 break;
             case LandAirMek.LAM_AVIONICS:
@@ -19129,6 +19168,10 @@ public class TWGameManager extends AbstractGameManager {
                     }
                 }
                 break;
+        }
+        // PLAYTEST2 Now we remove any stacked PSR rolls for actuators
+        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+            game.reducePSRforActuatorCrits(en);
         }
         return reports;
     }

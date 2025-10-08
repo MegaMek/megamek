@@ -163,63 +163,59 @@ public class QuadMek extends Mek {
             }
             mp = (mp * (4 - legsDestroyed)) / 4;
         } else {
-            for (int i = 0; i < locations(); i++) {
+            for (int i : List.of(Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM)) {
                 // PLAYTEST2 leg crits and MP
                 if (!(game == null) && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                    if (locationIsLeg(i)) {
-                        if (!isLocationBad(i)) {
-                            if (legHasHipCrit(i)) {
-                                if (i == LOC_LEFT_ARM) {
-                                    flHip++;
-                                }
-                                if (i == LOC_RIGHT_ARM) {
-                                    frHip++;
-                                }
-                                if (i == LOC_LEFT_LEG) {
-                                    rlHip++;
-                                }
-                                if (i == LOC_RIGHT_LEG) {
-                                    rrHip++;
-                                }
-                                hipHits++;
-                                if ((game == null) ||
-                                      !game.getOptions()
-                                            .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
-                                    continue;
-                                }
+                    if (!isLocationBad(i)) {
+                        if (legHasHipCrit(i)) {
+                            if (i == Mek.LOC_LEFT_ARM) {
+                                flHip++;
                             }
-                            if (i == LOC_LEFT_ARM) {
-                                flActuators += countLegActuatorCrits(i);
+                            if (i == Mek.LOC_RIGHT_ARM) {
+                                frHip++;
                             }
-                            if (i == LOC_RIGHT_ARM) {
-                                frActuators += countLegActuatorCrits(i);
+                            if (i == Mek.LOC_LEFT_LEG) {
+                                rlHip++;
                             }
-                            if (i == LOC_LEFT_LEG) {
-                                rlActuators += countLegActuatorCrits(i);
+                            if (i == Mek.LOC_RIGHT_LEG) {
+                                rrHip++;
                             }
-                            if (i == LOC_RIGHT_LEG) {
-                                rrActuators += countLegActuatorCrits(i);
+                            hipHits++;
+                            if ((game == null) ||
+                                  !game.getOptions()
+                                        .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
+                                continue;
                             }
-                            actuatorHits += countLegActuatorCrits(i);
-                        } else {
-                            legsDestroyed++;
                         }
+                        if (i == Mek.LOC_LEFT_ARM) {
+                            flActuators += countLegActuatorCrits(i);
+                        }
+                        if (i == Mek.LOC_RIGHT_ARM) {
+                            frActuators += countLegActuatorCrits(i);
+                        }
+                        if (i == Mek.LOC_LEFT_LEG) {
+                            rlActuators += countLegActuatorCrits(i);
+                        }
+                        if (i == Mek.LOC_RIGHT_LEG) {
+                            rrActuators += countLegActuatorCrits(i);
+                        }
+                        actuatorHits += countLegActuatorCrits(i);
+                    } else {
+                        legsDestroyed++;
                     }
                 } else {
-                    if (locationIsLeg(i)) {
-                        if (!isLocationBad(i)) {
-                            if (legHasHipCrit(i)) {
-                                hipHits++;
-                                if ((game == null) ||
-                                      !game.getOptions()
-                                            .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
-                                    continue;
-                                }
+                    if (!isLocationBad(i)) {
+                        if (legHasHipCrit(i)) {
+                            hipHits++;
+                            if ((game == null) ||
+                                  !game.getOptions()
+                                        .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
+                                continue;
                             }
-                            actuatorHits += countLegActuatorCrits(i);
-                        } else {
-                            legsDestroyed++;
                         }
+                        actuatorHits += countLegActuatorCrits(i);
+                    } else {
+                        legsDestroyed++;
                     }
                 }
             }
@@ -459,15 +455,8 @@ public class QuadMek extends Mek {
 
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
-        int[] locsToCheck;
         int destroyedLegs;
-
-        locsToCheck = new int[4];
-        locsToCheck[0] = Mek.LOC_RIGHT_LEG;
-        locsToCheck[1] = Mek.LOC_LEFT_LEG;
-        locsToCheck[2] = Mek.LOC_RIGHT_ARM;
-        locsToCheck[3] = Mek.LOC_LEFT_ARM;
-
+        
         destroyedLegs = countBadLegs();
 
         // QuadVees lose the bonus when converting.
@@ -484,7 +473,7 @@ public class QuadMek extends Mek {
         }
 
         boolean destroyedLegCounted = false;
-        for (int loc : locsToCheck) {
+        for (int loc : List.of(Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM)) {
             // PLAYTEST2 destroyed leg
             if (isLocationBad(loc)) {
                 // a quad with 2 destroyed legs acts like a biped with one leg

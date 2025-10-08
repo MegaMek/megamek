@@ -181,7 +181,7 @@ public class OptionsConstants {
     public static final String PILOT_TM_NIGHTWALKER = "tm_nightwalker";
     public static final String PILOT_TM_SWAMP_BEAST = "tm_swamp_beast";
     public static final String PILOT_ZWEIHANDER = "zweihander";
-
+    public static final String PILOT_ATOW_G_TOLERANCE = "atow_g_tolerance";
 
     // GUNNERY SKILLS
     public static final String GUNNERY_BLOOD_STALKER = "blood_stalker";

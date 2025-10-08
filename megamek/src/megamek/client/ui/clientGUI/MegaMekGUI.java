@@ -1255,7 +1255,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 host();
                 break;
             case ClientGUI.FILE_GAME_SCENARIO:
-                if ((ev.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0) {
+                if ((ev.getModifiers() & Event.CTRL_MASK) != 0) {
                     // As a dev convenience, start the last scenario again when clicked with CTRL
                     scenario(PreferenceManager.getClientPreferences().getLastScenario());
                 } else {

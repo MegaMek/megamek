@@ -248,7 +248,7 @@ tasks.register('stageFiles') {
     dependsOn deleteAtlasedImages
 
     doLast {
-        mkdir "${fileStagingDir}/log"
+        mkdir "${fileStagingDir}/logs"
     }
 }
 

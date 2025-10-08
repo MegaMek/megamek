@@ -53,7 +53,7 @@ class EntityTechTest {
     @BeforeAll
     public static void setupClass() {
         EquipmentType.initializeTypes();
-        MekSummaryCache.getInstance();
+        MekSummaryCache.getInstance(true);
         Eras.getInstance();
     }
 

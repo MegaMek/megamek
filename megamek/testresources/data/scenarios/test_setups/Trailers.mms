@@ -17,7 +17,7 @@
 MMSVersion: 2
 name: Test Setup for Trailers
 planet: None
-description: A J-27 with trailer to hitch up and a Galleon to shoot at it
+description: Some small and large tractors and trailers to pick up and a Galleon to shoot at them
 map: buildingsnobasement/dropport2.board
 
 options:
@@ -29,11 +29,34 @@ factions:
 
   units:
   - fullname: J-27 Ordnance Transport
-    at: [ 9, 10 ]
+    at: [ 9, 11 ]
+
 
   - fullname: J-27 Ordnance Transport (Trailer)
-    at: [ 10, 10 ]
+    at: [ 9, 8 ]
 
-  - fullname: Galleon Light Tank GAL-100
-    at: [ 11, 10 ]
+  - fullname: J-27 Ordnance Transport (Trailer)
+    at: [ 9, 8 ]
 
+  - fullname: J-27 Ordnance Transport (Trailer)
+    at: [ 9, 8 ]
+
+
+  - fullname: J-27 Ordnance Transport (Trailer)
+    at: [ 9, 9 ]
+
+  - fullname: J-27 Ordnance Transport (Trailer)
+    at: [ 9, 9 ]
+
+  - fullname: J-27 Ordnance Transport (Trailer)
+    at: [ 9, 10 ]
+
+  - fullname: Assassin ASN-21
+    at: [ 13, 6 ]
+    facing: 4
+
+#  - fullname: Galaport Ground Tug
+#    at: [ 11, 11 ]
+#
+#  - fullname: Galaport Ground Trailer
+#    at: [ 11, 12 ]

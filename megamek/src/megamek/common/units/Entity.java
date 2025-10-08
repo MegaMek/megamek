@@ -1638,8 +1638,9 @@ public abstract class Entity extends TurnOrdered
         return EntityWeightClass.getClassName(getWeightClass(), this);
     }
 
-    // Since this varies by unit type, it will be defined as overrides in each
-    // relevant class
+    /**
+     * @return True if this unit counts as superheavy (Combat Vehicles and Meks) or as a Large Support Vehicle.
+     */
     public boolean isSuperHeavy() {
         return false;
     }

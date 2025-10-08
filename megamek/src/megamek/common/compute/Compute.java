@@ -506,6 +506,30 @@ public class Compute {
                 thisHighStackingLevel += entering.height();
             }
 
+            // remember a single small/medium trailer that may be ignored, TW p.57; this is also true when it is a
+            // trailer or tractor that enters the hex
+            boolean trailerToIgnore = (entering.isTrailer() || entering.isTractor()) && !entering.isSuperHeavy();
+
+            // A train of small/medium units may take the room of more than one unit and must be considered together
+            // *if* it is not yet in that hex
+            List<Integer> towedUnits = entering.getAllTowedUnits();
+            boolean isEnteringTrain = !entering.isSuperHeavy()
+                  && !towedUnits.isEmpty()
+                  && (coords != null)
+                  && !coords.equals(origPosition);
+
+            if (isEnteringTrain) {
+                // a single or three trailers (in the hex with their tractor) take up the "ignore spots" of their
+                // respective towing unit
+                if ((towedUnits.size() == 1) || (towedUnits.size() >= 3)) {
+                    trailerToIgnore = false;
+                }
+                // a train of three or more units takes up the room of two units when entering a hex
+                if (towedUnits.size() > 1) {
+                    totalUnits++;
+                }
+            }
+
             // Walk through the entities in the given hex.
             for (Entity inHex : game.getEntitiesVector(coords, destBoardId)) {
 
@@ -535,11 +559,21 @@ public class Compute {
                     }
 
                     // ignore the first trailer behind a non-superheavy tractor which can be in the same hex
-                    if (isTrain && !entering.isSuperHeavy()) {
-                        Entity firstTrailer = game.getEntity(entering.getAllTowedUnits().get(0));
-                        if (inHex.equals(firstTrailer)) {
-                            continue;
-                        }
+//                    if (isTrain && !entering.isSuperHeavy()) {
+//                        Entity firstTrailer = game.getEntity(entering.getAllTowedUnits().get(0));
+//                        if (inHex.equals(firstTrailer)) {
+//                            continue;
+//                        }
+//                    }
+
+                    // One small/medium tractor and trailer or two such trailers are counted as a single unit. I'm
+                    // making the assumption that it is not required that one is towing the other to allow forming
+                    // and dissolving trains in a graceful way. TW, p.57
+                    if (!inHex.isSuperHeavy() && !trailerToIgnore && (inHex.isTrailer() || inHex.isTractor())) {
+                        trailerToIgnore = true;
+                    } else if (inHex.isTrailer() && !inHex.isSuperHeavy() && trailerToIgnore) {
+                        trailerToIgnore = false;
+                        continue;
                     }
 
                     // DFA-ing units don't count towards stacking

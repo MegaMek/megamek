@@ -1714,6 +1714,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 wDamR.setText(Integer.toString(Compute.dialDownDamage(
                       mounted, weaponType)));
             }
+        } else if (mounted.curMode().getName().contains("Dazzle")) {
+            // Gothic Dazzle Mode: half damage (rounded down, min 1)
+            int baseDamage = weaponType.getDamage();
+            int dazzleDamage = Math.max(1, baseDamage / 2);
+            wDamR.setText(Integer.toString(dazzleDamage));
         } else {
             wDamR.setText(Integer.toString(weaponType.getDamage()));
         }

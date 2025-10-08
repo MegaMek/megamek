@@ -180,7 +180,7 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
         butQuickFilter = new JButton(Messages.getString("MiniReportDisplay.KeywordFilter"));
         butQuickFilter.addActionListener(this);
         butQuickFilter.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-              .put(KeyCommandBind.keyStroke(KeyCommandBind.REPORT_FILTER), "MiniReportDisplay.KeywordFilter");
+              .put(KeyCommandBind.keyStroke(KeyCommandBind.REPORT_KEY_FILTER), "MiniReportDisplay.KeywordFilter");
         butQuickFilter.getActionMap().put("MiniReportDisplay.KeywordFilter", new AbstractAction() {
 
             @Override
@@ -190,7 +190,7 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
         });
         butQuickFilter.setToolTipText(Messages.getString("MiniReportDisplay.tooltip.KeywordFilter")
               + ": "
-              + KeyCommandBind.getDesc(KeyCommandBind.REPORT_FILTER));
+              + KeyCommandBind.getDesc(KeyCommandBind.REPORT_KEY_FILTER));
 
         comboQuick.addActionListener(this);
         comboQuick.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
@@ -233,7 +233,7 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
 
         comboFilter.addActionListener(this);
         comboFilter.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-              .put(KeyCommandBind.keyStroke(KeyCommandBind.REPORT_FILTER_KEY_SELNEXT),
+              .put(KeyCommandBind.keyStroke(KeyCommandBind.REPORT_FILTER_KEY_SELECT_NEXT),
                     "MiniReportDisplay" + ".comboFilterNext");
         comboFilter.getActionMap().put("MiniReportDisplay.comboFilterNext", new AbstractAction() {
 
@@ -247,7 +247,7 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
         comboFilter.setToolTipText("<html>"
               + Messages.getString("MiniReportDisplay.tooltip.ComboFilterNext")
               + ": "
-              + KeyCommandBind.getDesc(KeyCommandBind.REPORT_FILTER_KEY_SELNEXT)
+              + KeyCommandBind.getDesc(KeyCommandBind.REPORT_FILTER_KEY_SELECT_NEXT)
               + "<br>"
               + Messages.getString("MiniReportDisplay.tooltip.ComboFilterInfo")
               + "</html>");

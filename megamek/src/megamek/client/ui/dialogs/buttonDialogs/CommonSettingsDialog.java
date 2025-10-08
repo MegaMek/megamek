@@ -2969,42 +2969,42 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
             if ((s > UnitDisplayPanel.NON_TABBED_ZERO_INDEX)
                   && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_ZERO_INDEX)
-                      .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A1)))) {
+                  .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A1)))) {
                 unitDisplayNonTabbedChanged = true;
                 UNIT_DISPLAY_ORDER_PREFERENCES.setValue(UnitDisplayPanel.NON_TABBED_A1,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_ZERO_INDEX));
             }
             if ((s > UnitDisplayPanel.NON_TABBED_ONE_INDEX)
                   && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_ONE_INDEX)
-                      .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B1)))) {
+                  .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B1)))) {
                 unitDisplayNonTabbedChanged = true;
                 UNIT_DISPLAY_ORDER_PREFERENCES.setValue(UnitDisplayPanel.NON_TABBED_B1,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_ONE_INDEX));
             }
             if ((s > UnitDisplayPanel.NON_TABBED_TWO_INDEX)
                   && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_TWO_INDEX)
-                      .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C1)))) {
+                  .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C1)))) {
                 unitDisplayNonTabbedChanged = true;
                 UNIT_DISPLAY_ORDER_PREFERENCES.setValue(UnitDisplayPanel.NON_TABBED_C1,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_TWO_INDEX));
             }
             if ((s > UnitDisplayPanel.NON_TABBED_THREE_INDEX)
                   && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_THREE_INDEX)
-                      .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A2)))) {
+                  .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A2)))) {
                 unitDisplayNonTabbedChanged = true;
                 UNIT_DISPLAY_ORDER_PREFERENCES.setValue(UnitDisplayPanel.NON_TABBED_A2,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_THREE_INDEX));
             }
             if ((s > UnitDisplayPanel.NON_TABBED_FOUR_INDEX)
                   && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_FOUR_INDEX)
-                      .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B2)))) {
+                  .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B2)))) {
                 unitDisplayNonTabbedChanged = true;
                 UNIT_DISPLAY_ORDER_PREFERENCES.setValue(UnitDisplayPanel.NON_TABBED_B2,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_FOUR_INDEX));
             }
             if ((s > UnitDisplayPanel.NON_TABBED_FIVE_INDEX)
                   && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_FIVE_INDEX)
-                      .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C2)))) {
+                  .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C2)))) {
                 unitDisplayNonTabbedChanged = true;
                 UNIT_DISPLAY_ORDER_PREFERENCES.setValue(UnitDisplayPanel.NON_TABBED_C2,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_FIVE_INDEX));
@@ -3119,49 +3119,50 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         if (unitToolTipFontSize instanceof String fontSize) {
             GUIP.setUnitToolTipFontSize(fontSize);
 
-        GUIP.setReportLinkColor(csbReportLinkColor.getColour());
-        GUIP.setReportSuccessColor(csbReportSuccessColor.getColour());
-        GUIP.setReportMissColor(csbReportMissColor.getColour());
-        GUIP.setReportInfoColo(csbReportInfoColor.getColour());
+            GUIP.setReportLinkColor(csbReportLinkColor.getColour());
+            GUIP.setReportSuccessColor(csbReportSuccessColor.getColour());
+            GUIP.setReportMissColor(csbReportMissColor.getColour());
+            GUIP.setReportInfoColo(csbReportInfoColor.getColour());
 
-        Object fontTypeChooserReport = fontTypeChooserReportFont.getSelectedItem();
-        if (fontTypeChooserReport instanceof String fontTypeChosen) {
-            GUIP.setReportFontType(fontTypeChosen);
+            Object fontTypeChooserReport = fontTypeChooserReportFont.getSelectedItem();
+            if (fontTypeChooserReport instanceof String fontTypeChosen) {
+                GUIP.setReportFontType(fontTypeChosen);
+            }
+
+            GUIP.setMiniReportShowSprites(showReportSprites.isSelected());
+            GUIP.setMiniReportShowPlayers(chkReportShowPlayers.isSelected());
+            GUIP.setMiniReportShowUnits(chkReportShowUnits.isSelected());
+            GUIP.setMiniReportShowKeywords(chkReportShowKeywords.isSelected());
+            GUIP.setMiniReportShowFilter(chkReportShowFilter.isSelected());
+            if ((clientgui != null) && (clientgui.getMiniReportDisplay() != null)) {
+                clientgui.getMiniReportDisplay().refreshSearchPanel();
+            }
+
+            GUIP.setUnitOverviewTextShadowColor(csbUnitOverviewTextShadowColor.getColour());
+            GUIP.setUnitOverviewConditionShadowColor(csbUnitOverviewConditionShadowColor.getColour());
+
+            GUIP.setPlanetaryConditionsColorTitle(csbPlanetaryConditionsColorTitle.getColour());
+            GUIP.setPlanetaryConditionsColorText(csbPlanetaryConditionsColorText.getColour());
+            GUIP.setPlanetaryConditionsColorBackground(csbPlanetaryConditionsColorBackground.getColour());
+            GUIP.setPlanetaryConditionsColorCold(csbPlanetaryConditionsColorCold.getColour());
+            GUIP.setPlanetaryConditionsColorHot(csbPlanetaryConditionsColorHot.getColour());
+
+            GUIP.setPlanetaryConditionsShowDefaults(planetaryConditionsShowDefaults.isSelected());
+            GUIP.setPlanetaryConditionsShowHeader(planetaryConditionsShowHeader.isSelected());
+            GUIP.setPlanetaryConditionsShowLabels(planetaryConditionsShowLabels.isSelected());
+            GUIP.setPlanetaryConditionsShowValues(planetaryConditionsShowValues.isSelected());
+            GUIP.setPlanetaryConditionsShowIndicators(planetaryConditionsShowIndicators.isSelected());
+            GUIP.setPlanetaryConditionsBackgroundTransparency(
+                  (Integer) planetaryConditionsBackgroundTransparency.getValue());
+
+            GUIP.setTraceOverlayTransparency(traceOverlayTransparencySlider.getValue());
+            GUIP.setTraceOverlayScale(traceOverlayScaleSlider.getValue());
+            GUIP.setTraceOverlayOriginX(traceOverlayOriginXSlider.getValue());
+            GUIP.setTraceOverlayOriginY(traceOverlayOriginYSlider.getValue());
+            GUIP.setTraceOverlayImageFile(traceOverlayImageFile.getText());
+
+            setVisible(false);
         }
-
-        GUIP.setMiniReportShowSprites(showReportSprites.isSelected());
-        GUIP.setMiniReportShowPlayers(chkReportShowPlayers.isSelected());
-        GUIP.setMiniReportShowUnits(chkReportShowUnits.isSelected());
-        GUIP.setMiniReportShowKeywords(chkReportShowKeywords.isSelected());
-        GUIP.setMiniReportShowFilter(chkReportShowFilter.isSelected());
-        if ((clientgui != null) && (clientgui.getMiniReportDisplay() != null)) {
-            clientgui.getMiniReportDisplay().refreshSearchPanel();
-        }
-
-        GUIP.setUnitOverviewTextShadowColor(csbUnitOverviewTextShadowColor.getColour());
-        GUIP.setUnitOverviewConditionShadowColor(csbUnitOverviewConditionShadowColor.getColour());
-
-        GUIP.setPlanetaryConditionsColorTitle(csbPlanetaryConditionsColorTitle.getColour());
-        GUIP.setPlanetaryConditionsColorText(csbPlanetaryConditionsColorText.getColour());
-        GUIP.setPlanetaryConditionsColorBackground(csbPlanetaryConditionsColorBackground.getColour());
-        GUIP.setPlanetaryConditionsColorCold(csbPlanetaryConditionsColorCold.getColour());
-        GUIP.setPlanetaryConditionsColorHot(csbPlanetaryConditionsColorHot.getColour());
-
-        GUIP.setPlanetaryConditionsShowDefaults(planetaryConditionsShowDefaults.isSelected());
-        GUIP.setPlanetaryConditionsShowHeader(planetaryConditionsShowHeader.isSelected());
-        GUIP.setPlanetaryConditionsShowLabels(planetaryConditionsShowLabels.isSelected());
-        GUIP.setPlanetaryConditionsShowValues(planetaryConditionsShowValues.isSelected());
-        GUIP.setPlanetaryConditionsShowIndicators(planetaryConditionsShowIndicators.isSelected());
-        GUIP.setPlanetaryConditionsBackgroundTransparency(
-              (Integer) planetaryConditionsBackgroundTransparency.getValue());
-
-        GUIP.setTraceOverlayTransparency(traceOverlayTransparencySlider.getValue());
-        GUIP.setTraceOverlayScale(traceOverlayScaleSlider.getValue());
-        GUIP.setTraceOverlayOriginX(traceOverlayOriginXSlider.getValue());
-        GUIP.setTraceOverlayOriginY(traceOverlayOriginYSlider.getValue());
-        GUIP.setTraceOverlayImageFile(traceOverlayImageFile.getText());
-
-        setVisible(false);
     }
 
     /** Handle some setting changes that directly update e.g. the board. */
@@ -3232,6 +3233,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
     @Override
     public void focusGained(FocusEvent e) {
+
     }
 
     @Override

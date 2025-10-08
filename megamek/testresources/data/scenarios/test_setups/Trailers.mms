@@ -55,8 +55,8 @@ factions:
     at: [ 13, 6 ]
     facing: 4
 
-#  - fullname: Galaport Ground Tug
-#    at: [ 11, 11 ]
-#
-#  - fullname: Galaport Ground Trailer
-#    at: [ 11, 12 ]
+  - fullname: Galaport Ground Tug
+    at: [ 11, 11 ]
+
+  - fullname: Galaport Ground Trailer
+    at: [ 11, 12 ]

@@ -1084,7 +1084,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
      *
      * @return a Vector of {@link UnitLocation}'s value of the object at the specified index
      */
-    public Vector<UnitLocation> getUnitLocationVector(int index) throws InvalidPacketDataException {
+    public @Nullable Vector<UnitLocation> getUnitLocationVector(int index) throws InvalidPacketDataException {
         Object object = getObject(index);
 
         Vector<UnitLocation> result = new Vector<>();

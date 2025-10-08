@@ -558,14 +558,6 @@ public class Compute {
                         continue;
                     }
 
-                    // ignore the first trailer behind a non-superheavy tractor which can be in the same hex
-//                    if (isTrain && !entering.isSuperHeavy()) {
-//                        Entity firstTrailer = game.getEntity(entering.getAllTowedUnits().get(0));
-//                        if (inHex.equals(firstTrailer)) {
-//                            continue;
-//                        }
-//                    }
-
                     // One small/medium tractor and trailer or two such trailers are counted as a single unit. I'm
                     // making the assumption that it is not required that one is towing the other to allow forming
                     // and dissolving trains in a graceful way. TW, p.57

@@ -1089,6 +1089,10 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
 
         Vector<UnitLocation> result = new Vector<>();
 
+        // In some instances we may get a null entry; this is valid and handled in Game
+        if (object == null) {
+            return null;
+        }
         if (object instanceof Vector<?> vector) {
             for (Object unitLocation : vector) {
                 if (unitLocation instanceof UnitLocation verifiedLocation) {

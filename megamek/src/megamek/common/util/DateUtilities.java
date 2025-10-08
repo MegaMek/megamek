@@ -30,39 +30,33 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.ui.entityreadout;
+package megamek.common.util;
 
-import java.util.Objects;
+import java.time.LocalDate;
+import java.util.concurrent.ThreadLocalRandom;
 
-import megamek.client.ui.util.DiscordFormat;
+public class DateUtilities {
+    /**
+     * Returns a random {@link LocalDate} between the given start (inclusive) and end (inclusive) dates.
+     *
+     * <p>This method converts both start and end dates to their epoch day representations, selects a random day
+     * within that range, and constructs a {@code LocalDate} from the random epoch day.</p>
+     *
+     * @param start the earliest date to select (inclusive)
+     * @param end   the latest date to select (inclusive)
+     *
+     * @return a randomly selected {@link LocalDate} between {@code start} and {@code end}, inclusive
+     *
+     * @throws IllegalArgumentException if {@code start} is after {@code end}
+     */
+    public static LocalDate getRandomDateBetween(LocalDate start, LocalDate end) {
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("Start date must be before end date");
+        }
 
-/**
- * Displays a hyperlink.
- */
-class HyperLinkLine extends LabeledLine {
-
-    private final String address;
-
-    HyperLinkLine(String label, String address, String displayText) {
-        super(Objects.requireNonNullElse(label, ""), displayText);
-        this.address = address;
-    }
-
-    @Override
-    public String toPlainText() {
-        String result = label.isBlank() ? "" : label + ": ";
-        return result + value.toPlainText() + "\n";
-    }
-
-    @Override
-    public String toHTML() {
-        String result = label.isBlank() ? "" : label + ": ";
-        return result + "<B><A HREF=" + address + ">" + value.toHTML() + "</A></B><BR>";
-    }
-
-    @Override
-    public String toDiscord() {
-        String result = label.isBlank() ? "" : DiscordFormat.BOLD + label + ": " + DiscordFormat.RESET;
-        return result + value.toDiscord() + "\n";
+        long startEpochDay = start.toEpochDay();
+        long endEpochDay = end.toEpochDay();
+        long randomDay = ThreadLocalRandom.current().nextLong(startEpochDay, endEpochDay + 1);
+        return LocalDate.ofEpochDay(randomDay);
     }
 }

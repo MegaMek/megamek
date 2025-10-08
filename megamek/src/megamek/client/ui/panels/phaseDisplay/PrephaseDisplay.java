@@ -221,7 +221,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
 
             // If the selected entity is not on the board, use the next one.
             // ASSUMPTION: there will always be *at least one* entity on map.
-            if (null == ce().getPosition()) {
+            if (null == currentEntity().getPosition()) {
 
                 // Walk through the list of entities for this player.
                 for (int nextId = client.getNextEntityNum(en); nextId != en; nextId = client.getNextEntityNum(nextId)) {
@@ -236,19 +236,19 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
                 } // Check the player's next entity.
 
                 // We were *supposed* to have found an on-board entity.
-                if (null == ce().getPosition()) {
+                if (null == currentEntity().getPosition()) {
                     logger.error("Could not find an on-board entity: {}", en);
                     return;
                 }
             }
 
             clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
-            clientgui.getBoardView(ce()).highlight(ce().getPosition());
+            clientgui.getBoardView(currentEntity()).highlight(currentEntity().getPosition());
 
             refreshAll();
 
-            if (!clientgui.isCurrentBoardViewShowingAnimation() && !ce().isOffBoard()) {
-                clientgui.centerOnUnit(ce());
+            if (!clientgui.isCurrentBoardViewShowingAnimation() && !currentEntity().isOffBoard()) {
+                clientgui.centerOnUnit(currentEntity());
             }
         } else {
             logger.error("Tried to select non-existent entity: {}", en);
@@ -256,7 +256,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
     }
 
     private void refreshButtons() {
-        final Entity ce = ce();
+        final Entity ce = currentEntity();
 
         if (ce == null || ce.isDone()) {
             // how get here?
@@ -345,11 +345,11 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
     private void refreshAll() {
         refreshButtons();
 
-        if (ce() == null) {
+        if (currentEntity() == null) {
             return;
         }
-        clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(ce()));
-        clientgui.getUnitDisplay().displayEntity(ce());
+        clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentEntity()));
+        clientgui.getUnitDisplay().displayEntity(currentEntity());
         if (GUIP.getFireDisplayTabDuringFiringPhases()) {
             clientgui.getUnitDisplay().showPanel(MekPanelTabStrip.WEAPONS);
         }
@@ -359,7 +359,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
     /**
      * Returns the current entity.
      */
-    Entity ce() {
+    Entity currentEntity() {
         return game().getEntity(cen);
     }
 
@@ -452,13 +452,13 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
     // GameListener
     @Override
     public void gameEntityChange(GameEntityChangeEvent event) {
-        if (!event.getEntity().equals(ce())) {
+        if (!event.getEntity().equals(currentEntity())) {
             return;
         }
 
         // Reviewers: Is this the right place to catch the change applied by a server packet
         // that changes an entity from done to not-done?
-        if (ce().isDone()) {
+        if (currentEntity().isDone()) {
             selectEntity(clientgui.getClient().getNextEntityNum(cen));
         }
 
@@ -510,9 +510,9 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
             return;
         }
 
-        if (clientgui.getClient().isMyTurn() && (ce() != null)) {
+        if (clientgui.getClient().isMyTurn() && (currentEntity() != null)) {
             clientgui.maybeShowUnitDisplay();
-            clientgui.centerOnUnit(ce());
+            clientgui.centerOnUnit(currentEntity());
         }
     }
 

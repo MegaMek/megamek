@@ -3049,33 +3049,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         GUIP.setUnitDisplayMekArmorLargeFontSize(MathUtility.parseInt(unitDisplayMekArmorLargeFontSizeText.getText()));
         GUIP.setUnitDisplayMekArmorMediumFontSize(MathUtility.parseInt(unitDisplayMekArmorMediumFontSizeText.getText()));
-
-        try {
-            GUIP.setUnitDisplayMekArmorLargeFontSize(Integer.parseInt(unitDisplayMekArmorLargeFontSizeText.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "");
-        }
-        try {
-            GUIP.setUnitDisplayMekArmorMediumFontSize(
-                  Integer.parseInt(unitDisplayMekArmorMediumFontSizeText.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "");
-        }
-        try {
-            GUIP.setUnitDisplayMekArmorSmallFontSize(Integer.parseInt(unitDisplayMekArmorSmallFontSizeText.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "");
-        }
-        try {
-            GUIP.setUnitDisplayMekLargeFontSize(Integer.parseInt(unitDisplayMekLargeFontSizeText.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "");
-        }
-        try {
-            GUIP.setUnitDisplayMekMediumFontSize(Integer.parseInt(unitDisplayMekMediumFontSizeText.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "");
-        }
+        GUIP.setUnitDisplayMekArmorSmallFontSize(MathUtility.parseInt(unitDisplayMekArmorSmallFontSizeText.getText()));
+        GUIP.setUnitDisplayMekLargeFontSize(MathUtility.parseInt(unitDisplayMekLargeFontSizeText.getText()));
+        GUIP.setUnitDisplayMekMediumFontSize(MathUtility.parseInt(unitDisplayMekMediumFontSizeText.getText()));
 
         GUIP.setUnitToolTipFGColor(csbUnitTooltipFGColor.getColour());
         GUIP.setUnitTooltipLightFGColor(csbUnitTooltipLightFGColor.getColour());
@@ -3102,67 +3078,59 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setUnitTooltipArmorMiniDestroyedChar(unitTooltipArmorMiniDestroyedCharText.getText());
         GUIP.setUnitTooltipArmorMiniCapArmorChar(unitTooltipArmorMiniCapArmorCharText.getText());
 
-        try {
-            GUIP.setUnitTooltipArmorMiniUnitsPerBlock(
-                  Integer.parseInt(unitTooltipArmorMiniUnitsPerBlockText.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "");
-        }
-        try {
-            GUIP.setUnitToolTipFontSize((String) unitTooltipFontSizeModCbo.getSelectedItem());
-        } catch (Exception ex) {
-            logger.error(ex, "");
-        }
+        GUIP.setUnitTooltipArmorMiniUnitsPerBlock
+              (MathUtility.parseInt(unitTooltipArmorMiniUnitsPerBlockText.getText()));
+        GUIP.setUnitToolTipFontSize((String) unitTooltipFontSizeModCbo.getSelectedItem());
 
         Object unitToolTipFontSize = unitTooltipFontSizeModCbo.getSelectedItem();
 
         if (unitToolTipFontSize instanceof String fontSize) {
             GUIP.setUnitToolTipFontSize(fontSize);
-
-            GUIP.setReportLinkColor(csbReportLinkColor.getColour());
-            GUIP.setReportSuccessColor(csbReportSuccessColor.getColour());
-            GUIP.setReportMissColor(csbReportMissColor.getColour());
-            GUIP.setReportInfoColo(csbReportInfoColor.getColour());
-
-            Object fontTypeChooserReport = fontTypeChooserReportFont.getSelectedItem();
-            if (fontTypeChooserReport instanceof String fontTypeChosen) {
-                GUIP.setReportFontType(fontTypeChosen);
-            }
-
-            GUIP.setMiniReportShowSprites(showReportSprites.isSelected());
-            GUIP.setMiniReportShowPlayers(chkReportShowPlayers.isSelected());
-            GUIP.setMiniReportShowUnits(chkReportShowUnits.isSelected());
-            GUIP.setMiniReportShowKeywords(chkReportShowKeywords.isSelected());
-            GUIP.setMiniReportShowFilter(chkReportShowFilter.isSelected());
-            if ((clientgui != null) && (clientgui.getMiniReportDisplay() != null)) {
-                clientgui.getMiniReportDisplay().refreshSearchPanel();
-            }
-
-            GUIP.setUnitOverviewTextShadowColor(csbUnitOverviewTextShadowColor.getColour());
-            GUIP.setUnitOverviewConditionShadowColor(csbUnitOverviewConditionShadowColor.getColour());
-
-            GUIP.setPlanetaryConditionsColorTitle(csbPlanetaryConditionsColorTitle.getColour());
-            GUIP.setPlanetaryConditionsColorText(csbPlanetaryConditionsColorText.getColour());
-            GUIP.setPlanetaryConditionsColorBackground(csbPlanetaryConditionsColorBackground.getColour());
-            GUIP.setPlanetaryConditionsColorCold(csbPlanetaryConditionsColorCold.getColour());
-            GUIP.setPlanetaryConditionsColorHot(csbPlanetaryConditionsColorHot.getColour());
-
-            GUIP.setPlanetaryConditionsShowDefaults(planetaryConditionsShowDefaults.isSelected());
-            GUIP.setPlanetaryConditionsShowHeader(planetaryConditionsShowHeader.isSelected());
-            GUIP.setPlanetaryConditionsShowLabels(planetaryConditionsShowLabels.isSelected());
-            GUIP.setPlanetaryConditionsShowValues(planetaryConditionsShowValues.isSelected());
-            GUIP.setPlanetaryConditionsShowIndicators(planetaryConditionsShowIndicators.isSelected());
-            GUIP.setPlanetaryConditionsBackgroundTransparency(
-                  (Integer) planetaryConditionsBackgroundTransparency.getValue());
-
-            GUIP.setTraceOverlayTransparency(traceOverlayTransparencySlider.getValue());
-            GUIP.setTraceOverlayScale(traceOverlayScaleSlider.getValue());
-            GUIP.setTraceOverlayOriginX(traceOverlayOriginXSlider.getValue());
-            GUIP.setTraceOverlayOriginY(traceOverlayOriginYSlider.getValue());
-            GUIP.setTraceOverlayImageFile(traceOverlayImageFile.getText());
-
-            setVisible(false);
         }
+
+        GUIP.setReportLinkColor(csbReportLinkColor.getColour());
+        GUIP.setReportSuccessColor(csbReportSuccessColor.getColour());
+        GUIP.setReportMissColor(csbReportMissColor.getColour());
+        GUIP.setReportInfoColo(csbReportInfoColor.getColour());
+
+        Object fontTypeChooserReport = fontTypeChooserReportFont.getSelectedItem();
+        if (fontTypeChooserReport instanceof String fontTypeChosen) {
+            GUIP.setReportFontType(fontTypeChosen);
+        }
+
+        GUIP.setMiniReportShowSprites(showReportSprites.isSelected());
+        GUIP.setMiniReportShowPlayers(chkReportShowPlayers.isSelected());
+        GUIP.setMiniReportShowUnits(chkReportShowUnits.isSelected());
+        GUIP.setMiniReportShowKeywords(chkReportShowKeywords.isSelected());
+        GUIP.setMiniReportShowFilter(chkReportShowFilter.isSelected());
+        if ((clientgui != null) && (clientgui.getMiniReportDisplay() != null)) {
+            clientgui.getMiniReportDisplay().refreshSearchPanel();
+        }
+
+        GUIP.setUnitOverviewTextShadowColor(csbUnitOverviewTextShadowColor.getColour());
+        GUIP.setUnitOverviewConditionShadowColor(csbUnitOverviewConditionShadowColor.getColour());
+
+        GUIP.setPlanetaryConditionsColorTitle(csbPlanetaryConditionsColorTitle.getColour());
+        GUIP.setPlanetaryConditionsColorText(csbPlanetaryConditionsColorText.getColour());
+        GUIP.setPlanetaryConditionsColorBackground(csbPlanetaryConditionsColorBackground.getColour());
+        GUIP.setPlanetaryConditionsColorCold(csbPlanetaryConditionsColorCold.getColour());
+        GUIP.setPlanetaryConditionsColorHot(csbPlanetaryConditionsColorHot.getColour());
+
+        GUIP.setPlanetaryConditionsShowDefaults(planetaryConditionsShowDefaults.isSelected());
+        GUIP.setPlanetaryConditionsShowHeader(planetaryConditionsShowHeader.isSelected());
+        GUIP.setPlanetaryConditionsShowLabels(planetaryConditionsShowLabels.isSelected());
+        GUIP.setPlanetaryConditionsShowValues(planetaryConditionsShowValues.isSelected());
+        GUIP.setPlanetaryConditionsShowIndicators(planetaryConditionsShowIndicators.isSelected());
+        GUIP.setPlanetaryConditionsBackgroundTransparency(
+              (Integer) planetaryConditionsBackgroundTransparency.getValue());
+
+        GUIP.setTraceOverlayTransparency(traceOverlayTransparencySlider.getValue());
+        GUIP.setTraceOverlayScale(traceOverlayScaleSlider.getValue());
+        GUIP.setTraceOverlayOriginX(traceOverlayOriginXSlider.getValue());
+        GUIP.setTraceOverlayOriginY(traceOverlayOriginYSlider.getValue());
+        GUIP.setTraceOverlayImageFile(traceOverlayImageFile.getText());
+
+        setVisible(false);
     }
 
     /** Handle some setting changes that directly update e.g. the board. */

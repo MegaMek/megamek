@@ -84,7 +84,7 @@ public class EnergyWeaponHandler extends WeaponHandler {
 
             if (!isAbomination) {
                 // Half damage vs BattleMechs (rounded down, min 1)
-                toReturn = Math.max(1, Math.floor(toReturn / 2.0));
+                toReturn = Math.max(1, toReturn / 2);
             }
             // Full damage vs Abominations (no change to toReturn)
         }

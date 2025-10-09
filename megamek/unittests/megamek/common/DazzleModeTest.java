@@ -42,12 +42,19 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.lasers.LaserWeapon;
 import megamek.common.weapons.lasers.innerSphere.large.ISERLaserLarge;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for Gothic rules Dazzle Mode
  */
 class DazzleModeTest {
+
+    @BeforeAll
+    static void setUpAll() {
+        // Initialize equipment database before creating weapons
+        EquipmentType.initializeTypes();
+    }
 
     @Test
     void testDazzleModeAddedWhenGothicOptionEnabled() {
@@ -135,22 +142,22 @@ class DazzleModeTest {
 
         // Verify mode order: Dazzle should come before Pulse
         int dazzleIndex = -1;
-        int pulseIndex = -1;
+        int firstPulseIndex = -1;
         int index = 0;
 
         for (var mode : java.util.Collections.list(weapon.getModes())) {
             if (mode.getName().equals("Dazzle")) {
                 dazzleIndex = index;
             }
-            if (mode.getName().equals("Pulse")) {
-                pulseIndex = index;
+            if (mode.getName().contains("Pulse") && firstPulseIndex == -1) {
+                firstPulseIndex = index;
             }
             index++;
         }
 
         assertTrue(dazzleIndex >= 0, "Dazzle mode should exist");
-        assertTrue(pulseIndex >= 0, "Pulse mode should exist");
-        assertTrue(dazzleIndex < pulseIndex, "Dazzle mode should come before Pulse mode for proper filtering");
+        assertTrue(firstPulseIndex >= 0, "Pulse mode should exist");
+        assertTrue(dazzleIndex < firstPulseIndex, "Dazzle mode should come before Pulse mode for proper filtering");
     }
 
     @Test

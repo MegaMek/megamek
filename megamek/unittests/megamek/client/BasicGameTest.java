@@ -76,7 +76,7 @@ public class BasicGameTest {
 
     @BeforeAll
     public static void setUpClass() {
-        MekSummaryCache.getInstance();
+        MekSummaryCache.getInstance(true);
         ObjectInputFilter.Config.setSerialFilter(new SanityInputFilter());
     }
 

@@ -1086,6 +1086,21 @@ public class TestMek extends TestEntity {
             illegal = true;
         }
 
+        if (mek.getCockpitType() == Mek.COCKPIT_INTERFACE) {
+            // Check if any cockpit slots are armored
+            for (int location = 0; location < mek.locations(); location++) {
+                for (int slot = 0; slot < mek.getNumberOfCriticalSlots(location); slot++) {
+                    CriticalSlot cs = mek.getCritical(location, slot);
+                    if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_SYSTEM)
+                          && (cs.getIndex() == Mek.SYSTEM_COCKPIT) && cs.isArmored()) {
+                        buff.append("Interface Cockpit cannot be protected with component armor\n");
+                        illegal = true;
+                        break;
+                    }
+                }
+            }
+        }
+
         if (mek.isIndustrial()) {
             if ((mek.getCockpitType() == Mek.COCKPIT_INDUSTRIAL
                   || mek.getCockpitType() == Mek.COCKPIT_PRIMITIVE_INDUSTRIAL) && hasC3) {

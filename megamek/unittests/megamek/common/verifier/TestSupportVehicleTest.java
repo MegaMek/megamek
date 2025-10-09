@@ -34,19 +34,35 @@ package megamek.common.verifier;
 
 import static megamek.common.equipment.EquipmentType.T_ARMOR_FERRO_FIBROUS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.units.SupportTank;
 import megamek.common.verifier.TestSupportVehicle.ChassisModification;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 class TestSupportVehicleTest {
+
+    private static ArrayList<EntityMovementMode> svMovementModes = new ArrayList<>(List.of(EntityMovementMode.TRACKED,
+          EntityMovementMode.HOVER, EntityMovementMode.WHEELED, EntityMovementMode.WIGE));
 
     @BeforeAll
     static void initialize() {
@@ -77,5 +93,228 @@ class TestSupportVehicleTest {
         assertEquals(
               1,
               ArmorType.of(T_ARMOR_FERRO_FIBROUS, true).getSupportVeeSlots(st));
+    }
+
+    private static SupportTank createValidSupportTank(EntityMovementMode mode, double weight, String armor,
+          TechRating techRating, double armorWeight, int engineRating, boolean armoredMod) throws
+          LocationFullException {
+        SupportTank st = new SupportTank();
+        st.setMovementMode(mode);
+        st.setWeight(weight);
+
+        ArmorType armorType = (ArmorType) EquipmentType.get(armor);
+        st.setArmorType(armorType.getArmorType());
+        st.setBARRating(armorType.getBAR());
+        st.setArmorTechRating(techRating);
+        st.setArmorTonnage(armorWeight);
+
+        int engineFlags = Engine.TANK_ENGINE | Engine.SUPPORT_VEE_ENGINE;
+        st.setEngine(new Engine(engineRating, Engine.NORMAL_ENGINE, engineFlags));
+
+        if (armoredMod) {
+            st.addEquipment((MiscType) EquipmentType.get("Armored Chassis"), SupportTank.LOC_BODY);
+            for (int location : List.of(1, 2, 3, 4, 5, 6)) {
+                st.initializeArmor(1, location);
+            }
+        }
+
+        return st;
+    }
+
+    private static List<SupportTank> createValidSupportTanks() throws LocationFullException {
+        ArrayList<SupportTank> tanks = new ArrayList<>();
+
+        for (EntityMovementMode mode : svMovementModes) {
+            // All tech ratings support BAR 2
+            for (TechRating rating : TechRating.values()) {
+                tanks.add(
+                      createValidSupportTank(
+                            mode, 50.0, "BAR 2 Armor", rating, 5.0, 250, false
+                      )
+                );
+            }
+            // A* - F support BAR 3 (*Armored Chassis only)
+            for (TechRating rating : TechRating.values()) {
+                tanks.add(
+                      createValidSupportTank(
+                            mode, 50.0, "BAR 3 Armor", rating, 5.0, 250, rating.equals(TechRating.A)
+                      )
+                );
+            }
+            // B - F support BAR 4
+            for (TechRating rating : List.of(TechRating.B, TechRating.C, TechRating.D, TechRating.E, TechRating.F)) {
+                tanks.add(
+                      createValidSupportTank(
+                            mode, 50.0, "BAR 4 Armor", rating, 5.0, 250, false
+                      )
+                );
+            }
+            // B* - F support BAR 5
+            for (TechRating rating : List.of(TechRating.B, TechRating.C, TechRating.D, TechRating.E, TechRating.F)) {
+                tanks.add(
+                      createValidSupportTank(
+                            mode, 50.0, "BAR 5 Armor", rating, 5.0, 250, rating.equals(TechRating.B)
+                      )
+                );
+            }
+            // C - F support BAR 6
+            for (TechRating rating : List.of(TechRating.C, TechRating.D, TechRating.E, TechRating.F)) {
+                tanks.add(
+                      createValidSupportTank(
+                            mode, 50.0, "BAR 6 Armor", rating, 5.0, 250, false
+                      )
+                );
+            }
+            // C* - F support BAR 7
+            for (TechRating rating : List.of(TechRating.C, TechRating.D, TechRating.E, TechRating.F)) {
+                tanks.add(
+                      createValidSupportTank(
+                            mode, 50.0, "BAR 7 Armor", rating, 5.0, 250, rating.equals(TechRating.C)
+                      )
+                );
+            }
+            // D* - F support BAR 8
+            for (TechRating rating : List.of(TechRating.D, TechRating.E, TechRating.F)) {
+                tanks.add(
+                      createValidSupportTank(
+                            mode, 50.0, "BAR 8 Armor", rating, 5.0, 250, rating.equals(TechRating.D)
+                      )
+                );
+            }
+            // D*, E*, F support BAR 9
+            for (TechRating rating : List.of(TechRating.D, TechRating.E, TechRating.F)) {
+                tanks.add(
+                      createValidSupportTank(
+                            mode, 50.0, "BAR 9 Armor", rating, 5.0, 250, rating.equals(TechRating.D) || rating.equals(TechRating.E)
+                      )
+                );
+            }
+            // D*, E*, F* support BAR 10
+            for (TechRating rating : List.of(TechRating.D, TechRating.E, TechRating.F)) {
+                tanks.add(
+                      createValidSupportTank(
+                            mode, 50.0, "BAR 10 Armor", rating, 5.0, 250, true
+                      )
+                );
+            }
+        }
+
+        return tanks;
+    }
+
+    private static List<SupportTank> createInvalidSupportTanks() throws LocationFullException {
+        ArrayList<SupportTank> tanks = new ArrayList<>();
+
+        for (EntityMovementMode mode : svMovementModes) {
+            for (boolean bool : List.of(true, false)) {
+                // TL A Bar 4 is invalid with or without Armoured Chassis
+                tanks.add(
+                      createValidSupportTank(
+                            mode, 50.0, "BAR 4 Armor", TechRating.A, 5.0, 250, bool
+                      )
+                );
+                // TL B Bar 6 is invalid with or without Armoured Chassis
+                tanks.add(
+                      createValidSupportTank(
+                            mode, 50.0, "BAR 6 Armor", TechRating.B, 5.0, 250, bool
+                      )
+                );
+                // TL C Bar 8-10 is invalid with or without Armoured Chassis
+                tanks.add(
+                      createValidSupportTank(
+                            mode, 50.0, "BAR 8 Armor", TechRating.C, 5.0, 250, bool
+                      )
+                );
+                tanks.add(
+                      createValidSupportTank(
+                            mode, 50.0, "BAR 9 Armor", TechRating.C, 5.0, 250, bool
+                      )
+                );
+                tanks.add(
+                      createValidSupportTank(
+                            mode, 50.0, "BAR 10 Armor", TechRating.C, 5.0, 250, bool
+                      )
+                );
+            }
+            // TL D BAR 8 without A.C. is invalid
+            tanks.add(
+                  createValidSupportTank(
+                        mode, 50.0, "BAR 8 Armor", TechRating.D, 5.0, 250, false
+                  )
+            );
+            // TL D, E BAR 9 without A.C. is invalid
+            tanks.add(
+                  createValidSupportTank(
+                        mode, 50.0, "BAR 9 Armor", TechRating.D, 5.0, 250, false
+                  )
+            );
+            tanks.add(
+                  createValidSupportTank(
+                        mode, 50.0, "BAR 9 Armor", TechRating.E, 5.0, 250, false
+                  )
+            );
+            // TL D, E, F BAR 10 without A.C. is invalid
+            tanks.add(
+                  createValidSupportTank(
+                        mode, 50.0, "BAR 10 Armor", TechRating.D, 5.0, 250, false
+                  )
+            );
+            tanks.add(
+                  createValidSupportTank(
+                        mode, 50.0, "BAR 10 Armor", TechRating.E, 5.0, 250, false
+                  )
+            );
+            tanks.add(
+                  createValidSupportTank(
+                        mode, 50.0, "BAR 10 Armor", TechRating.F, 5.0, 250, false
+                  )
+            );
+        }
+
+        return tanks;
+    }
+
+    private static Stream<Arguments> createValidSupportTanksStream() throws LocationFullException {
+        List<SupportTank> list = createValidSupportTanks();
+        return list.stream().map(t -> Arguments.of(Named.of(
+              String.format("%.1f ton %s vee with TL %s BAR %s (%sA.C.)", t.getWeight(),
+                    t.getMovementModeAsString(), t.getArmorTechRating().toString(),
+                    t.getBARRating(0), (t.hasArmoredChassis() ? "*": "no ")), t))
+        );
+    }
+
+    private static Stream<Arguments> createInvalidSupportTanksStream() throws LocationFullException {
+        List<SupportTank> list = createInvalidSupportTanks();
+        return list.stream().map(t -> Arguments.of(Named.of(
+              String.format("%.1f ton %s vee with TL %s BAR %s (%sA.C.)", t.getWeight(),
+                    t.getMovementModeAsString(), t.getArmorTechRating().toString(),
+                    t.getBARRating(0), (t.hasArmoredChassis() ? "*": "no ")), t))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource(value = "createValidSupportTanksStream")
+    void test_valid_support_tank_armor(SupportTank supportTank) {
+        StringBuffer sb = new StringBuffer();
+        EntityVerifier entityVerifier = EntityVerifier.getInstance(new File(
+              "testresources/data/mekfiles/UnitVerifierOptions.xml"));
+        TestEntity testEntity = new TestSupportVehicle(supportTank, entityVerifier.tankOption, null);
+
+        boolean result = testEntity.correctEntity(sb, supportTank.getTechLevel());
+        assertTrue(sb.toString().isEmpty());
+        assertTrue(result);
+    }
+
+    @ParameterizedTest
+    @MethodSource(value = "createInvalidSupportTanksStream")
+    void test_invalid_support_tank_armor(SupportTank supportTank) {
+        StringBuffer sb = new StringBuffer();
+        EntityVerifier entityVerifier = EntityVerifier.getInstance(new File(
+              "testresources/data/mekfiles/UnitVerifierOptions.xml"));
+        TestEntity testEntity = new TestSupportVehicle(supportTank, entityVerifier.tankOption, null);
+
+        boolean result = testEntity.correctEntity(sb, supportTank.getTechLevel());
+        assertFalse(sb.toString().isEmpty());
+        assertFalse(result);
     }
 }

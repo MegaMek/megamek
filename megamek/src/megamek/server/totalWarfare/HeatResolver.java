@@ -1242,14 +1242,12 @@ class HeatResolver extends AbstractTWRuleHandler {
         Report report;
         int tempDiff = getGame().getPlanetaryConditions().getTemperatureDifference(50, -30);
         boolean heatArmor = false;
-        boolean laserHS = false;
 
         if (entity instanceof Mek) {
-            laserHS = ((Mek) entity).hasLaserHeatSinks();
             heatArmor = ((Mek) entity).hasIntactHeatDissipatingArmor();
         }
 
-        if (entity.isSpaceborne() || (tempDiff == 0) || laserHS) {
+        if (entity.isSpaceborne() || (tempDiff == 0)) {
             return;
         } else {
             if (getGame().getPlanetaryConditions().getTemperature() > 50) {

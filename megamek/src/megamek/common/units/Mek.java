@@ -1586,9 +1586,6 @@ public abstract class Mek extends Entity {
 
     @Override
     public int getHeatCapacityWithWater() {
-        if (hasLaserHeatSinks()) {
-            return getHeatCapacity(true, false);
-        }
         return getHeatCapacity(true, false) + Math.min(sinksUnderwater(), 6);
     }
 

@@ -228,8 +228,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         setBoard(0, board);
     }
 
-    public boolean containsMinefield(Coords coords) {
-        return minefields.containsKey(coords);
+    public boolean containsMinefield(@Nullable Coords coords) {
+        return (coords != null) && minefields.containsKey(coords);
     }
 
     public Vector<Minefield> getMinefields(Coords coords) {

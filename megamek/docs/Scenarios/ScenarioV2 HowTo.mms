@@ -344,6 +344,9 @@ factions:
           RT: [ 1, 3 ]
           CT: 1
           # non-location crits (TODO)
+          # Tanks
+          # Engine hits (TW p.194); the number is ignored (more than one hit has no further effect) and can be omitted
+          engine: 1
           # motive: 1
           # firecontrol: 1
 
@@ -497,6 +500,13 @@ c3:
   - c3m: 301
     connected: [ 302, 208 ]
   # atm, double master units are not supported
+
+# ###############################################
+# Transporting units:
+transports:
+  # the carrier and the carried unit ids
+  102: [ 104, 105 ]
+  202: [ 205 ]
 
 
 # ###############################################

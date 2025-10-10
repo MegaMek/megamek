@@ -807,9 +807,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         GameTurn turn = getTurn();
 
         if (turn != null) {
-            Player player = getPlayer(getTurn().playerId());
+            int playerID = getTurn().playerId();
+            Player player = getPlayer(playerID);
 
-            if (player != null) {
+            // -1 indicates a turn constructed with Player ID == PLAYER_NONE, such as stranded units.
+            if ((playerID == Player.PLAYER_NONE) || (player != null)) {
                 processGameEvent(new GameTurnChangeEvent(this, player, prevPlayerId));
             }
         }
@@ -2580,17 +2582,17 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                     rollTarget.addElement(roll.getValue());
                     rollLocation.addElement(2);
                     rollsToRemove.addElement(i);
-                } else if (roll.getDesc().equals("front left leg actuator hit") || roll.getDesc().equals("front left " 
+                } else if (roll.getDesc().equals("front left leg actuator hit") || roll.getDesc().equals("front left "
                       + "hip actuator hit")) {
                     rollTarget.addElement(roll.getValue());
                     rollLocation.addElement(3);
                     rollsToRemove.addElement(i);
-                } else if (roll.getDesc().equals("front right leg actuator hit") || roll.getDesc().equals("front " 
+                } else if (roll.getDesc().equals("front right leg actuator hit") || roll.getDesc().equals("front "
                       + "right hip actuator hit")) {
                     rollTarget.addElement(roll.getValue());
                     rollLocation.addElement(4);
                     rollsToRemove.addElement(i);
-                } else if (roll.getDesc().equals("center leg actuator hit") || roll.getDesc().equals("center hip " 
+                } else if (roll.getDesc().equals("center leg actuator hit") || roll.getDesc().equals("center hip "
                       + "actuator hit")) {
                     rollTarget.addElement(roll.getValue());
                     rollLocation.addElement(5);
@@ -2598,7 +2600,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 }
             }
         }
-        
+
         if (rollsToRemove.size() > 1) {
             int saveEntry = 0;
             int highTarget = 0;
@@ -2636,7 +2638,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             logger.debug("Done removing PSR rolls");
         }
     }
-    
+
     /**
      * Resets the extreme Gravity PSR list.
      */

@@ -811,7 +811,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             Player player = getPlayer(playerID);
 
             // -1 indicates a turn constructed with Player ID == PLAYER_NONE, such as stranded units.
-            if ((playerID == -1) || (player != null)) {
+            if ((playerID == Player.PLAYER_NONE) || (player != null)) {
                 processGameEvent(new GameTurnChangeEvent(this, player, prevPlayerId));
             }
         }

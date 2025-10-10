@@ -803,11 +803,15 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     public void setTurnIndex(int turnIndex, int prevPlayerId) {
         this.turnIndex = turnIndex;
-        GameTurn turn = getTurn();
-        if (turn != null) {
-            Player player = getPlayer(getTurn().playerId());
 
-            if ((getTurn().playerId() == Player.PLAYER_NONE) || (player != null)) {
+        GameTurn turn = getTurn();
+
+        if (turn != null) {
+            int playerID = getTurn().playerId();
+            Player player = getPlayer(playerID);
+
+            // -1 indicates a turn constructed with Player ID == PLAYER_NONE, such as stranded units.
+            if ((playerID == Player.PLAYER_NONE) || (player != null)) {
                 processGameEvent(new GameTurnChangeEvent(this, player, prevPlayerId));
             }
         }

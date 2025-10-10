@@ -44,8 +44,8 @@ import megamek.common.jacksonAdapters.MMUReader;
 import megamek.common.units.Entity;
 
 /**
- * This class is used for parsing C3 network information from MM V2 scenarios (.mms) into an intermediate ParsedC3Info
- * object.
+ * This class is used for parsing transports information from MM V2 scenarios (.mms) into an intermediate
+ * ParsedTransportsInfo object.
  *
  * @see ScenarioV2
  */
@@ -68,12 +68,12 @@ class TransportsScenarioParser {
     }
 
     /**
-     * Parses C3 network info from an MM V2 scenarios (.mms) file. The info is only read, but not checked for any
+     * Parses transport info from an MM V2 scenarios (.mms) file. The info is only read, but not checked for any
      * inconsistency.
      *
-     * @param node The scenario node; C3 info is top level
+     * @param node The scenario node; transports info is top level
      *
-     * @return all parsed C3 type networks of all players
+     * @return all parsed transports of all players
      *
      * @throws JsonProcessingException When malformed info is present (no game rule checks are made)
      */

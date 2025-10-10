@@ -40,21 +40,21 @@ import com.formdev.flatlaf.icons.FlatAbstractIcon;
 import megamek.client.ui.clientGUI.GUIPreferences;
 
 /**
- * An icon showing an x in the GUIPreferences warning color for a "delete" button
+ * An icon showing an x in the GUIPreferences warning color for a "delete" or "clear" button
  */
 public class DeleteIcon extends FlatAbstractIcon {
     private final int size;
 
     /**
-     * Creates a delete icon at the standard size (16) suitable to place it in line with, e.g. a JTextfield and with a
-     * GUIPreferences warning color.
+     * Creates a delete/clear icon at the standard size (16) suitable to place it in line with, e.g. a JTextfield and
+     * with a GUIPreferences warning color.
      */
     public DeleteIcon() {
         this(16);
     }
 
     /**
-     * Creates a books icon of the given size and with the GUIPreferences warning color.
+     * Creates a delete/clear icon of the given size and with the GUIPreferences warning color.
      */
     public DeleteIcon(int size) {
         super(size, size, GUIPreferences.getInstance().getWarningColor());

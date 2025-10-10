@@ -17,7 +17,7 @@
 MMSVersion: 2
 name: Infantry Carrier
 planet: None
-description: A scenario with infantry carried in a unit
+description: A scenario with infantry carried in an immobile unit (will trigger unloading a stranded unit)
 map: testiceonwater.board
 options:
   off: check_victory
@@ -32,7 +32,6 @@ factions:
         id: 100
         crits:
           engine:
-
 
 transports:
   100: 105

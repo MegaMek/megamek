@@ -40,11 +40,10 @@ import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import megamek.common.jacksonAdapters.MMUReader;
 import megamek.common.units.Entity;
 
 /**
- * This class is used for parsing transports information from MM V2 scenarios (.mms) into an intermediate
+ * This class is used for parsing transported units information from MM V2 scenarios (.mms) into an intermediate
  * ParsedTransportsInfo object.
  *
  * @see ScenarioV2
@@ -55,23 +54,23 @@ class TransportsScenarioParser {
 
     static class ParsedTransportsInfo {
 
-        /** The master in standard C3, Entity.NONE in other C3 networks */
+        /** The carrying unit */
         int carrierId = Entity.NONE;
 
-        /** All units except the master in standard C3, all units in other C3 networks */
-        Set<Integer> participants = new HashSet<>();
+        /** The carried unit(s) */
+        Set<Integer> carriedUnits = new HashSet<>();
 
         @Override
         public String toString() {
-            return "TransportsInfo: C = " + carrierId + ", P = " + participants;
+            return "TransportsInfo: C = " + carrierId + ", P = " + carriedUnits;
         }
     }
 
     /**
-     * Parses transport info from an MM V2 scenarios (.mms) file. The info is only read, but not checked for any
-     * inconsistency.
+     * Parses transported units  info from an MM V2 scenarios (.mms) file. The info is only read, but not checked for
+     * any inconsistency.
      *
-     * @param node The scenario node; transports info is top level
+     * @param node The scenario node; transports info is at top level (not under any other node)
      *
      * @return all parsed transports of all players
      *
@@ -93,10 +92,10 @@ class TransportsScenarioParser {
         transport.carrierId = Integer.parseInt(carrierId);
         if (transportsNode.isArray()) {
             // multiple carried units (or single as array)
-            transportsNode.get(carrierId).forEach(element -> transport.participants.add(element.asInt()));
+            transportsNode.get(carrierId).forEach(element -> transport.carriedUnits.add(element.asInt()));
         } else {
             // single carried unit
-            transport.participants.add(transportsNode.get(carrierId).asInt());
+            transport.carriedUnits.add(transportsNode.get(carrierId).asInt());
         }
         return transport;
     }

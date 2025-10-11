@@ -237,7 +237,7 @@ public class ScenarioV2 implements Scenario {
             for (TransportsScenarioParser.ParsedTransportsInfo transport : transportsInfos) {
                 try {
                     Entity carrier = twGame.getEntity(transport.carrierId);
-                    List<Entity> units = transport.participants.stream().map(twGame::getEntity).toList();
+                    List<Entity> units = transport.carriedUnits.stream().map(twGame::getEntity).toList();
                     for (Entity unit : units) {
                         carrier.load(unit);
                         unit.setTransportId(transport.carrierId);

@@ -1798,7 +1798,6 @@ public class ArmorType extends MiscType {
         armor.bar = 4;
 
         armor.armorType = T_ARMOR_SV_BAR_4;
-        armor.weightPerPointSV.put(TechRating.A, 0.080);
         armor.weightPerPointSV.put(TechRating.B, 0.050);
         armor.weightPerPointSV.put(TechRating.C, 0.032);
         armor.weightPerPointSV.put(TechRating.D, 0.026);
@@ -1824,7 +1823,6 @@ public class ArmorType extends MiscType {
         armor.bar = 5;
 
         armor.armorType = T_ARMOR_SV_BAR_5;
-        armor.weightPerPointSV.put(TechRating.A, 0.100);
         armor.weightPerPointSV.put(TechRating.B, 0.063);
         armor.weightPerPointSV.put(TechRating.C, 0.040);
         armor.weightPerPointSV.put(TechRating.D, 0.032);
@@ -1850,8 +1848,6 @@ public class ArmorType extends MiscType {
         armor.bar = 6;
 
         armor.armorType = T_ARMOR_SV_BAR_6;
-        armor.weightPerPointSV.put(TechRating.A, 0.130);
-        armor.weightPerPointSV.put(TechRating.B, 0.075);
         armor.weightPerPointSV.put(TechRating.C, 0.048);
         armor.weightPerPointSV.put(TechRating.D, 0.038);
         armor.weightPerPointSV.put(TechRating.E, 0.034);
@@ -1879,8 +1875,6 @@ public class ArmorType extends MiscType {
         armor.bar = 7;
 
         armor.armorType = T_ARMOR_SV_BAR_7;
-        armor.weightPerPointSV.put(TechRating.A, 0.180);
-        armor.weightPerPointSV.put(TechRating.B, 0.088);
         armor.weightPerPointSV.put(TechRating.C, 0.056);
         armor.weightPerPointSV.put(TechRating.D, 0.045);
         armor.weightPerPointSV.put(TechRating.E, 0.040);
@@ -1908,9 +1902,6 @@ public class ArmorType extends MiscType {
         armor.bar = 8;
 
         armor.armorType = T_ARMOR_SV_BAR_8;
-        armor.weightPerPointSV.put(TechRating.A, 0.230);
-        armor.weightPerPointSV.put(TechRating.B, 0.120);
-        armor.weightPerPointSV.put(TechRating.C, 0.064);
         armor.weightPerPointSV.put(TechRating.D, 0.051);
         armor.weightPerPointSV.put(TechRating.E, 0.045);
         armor.weightPerPointSV.put(TechRating.F, 0.042);
@@ -1937,9 +1928,6 @@ public class ArmorType extends MiscType {
         armor.bar = 9;
 
         armor.armorType = T_ARMOR_SV_BAR_9;
-        armor.weightPerPointSV.put(TechRating.A, 0.0);
-        armor.weightPerPointSV.put(TechRating.B, 0.180);
-        armor.weightPerPointSV.put(TechRating.C, 0.100);
         armor.weightPerPointSV.put(TechRating.D, 0.057);
         armor.weightPerPointSV.put(TechRating.E, 0.051);
         armor.weightPerPointSV.put(TechRating.F, 0.047);
@@ -1964,9 +1952,6 @@ public class ArmorType extends MiscType {
         armor.bar = 10;
 
         armor.armorType = T_ARMOR_SV_BAR_10;
-        armor.weightPerPointSV.put(TechRating.A, 0.0);
-        armor.weightPerPointSV.put(TechRating.B, 0.250);
-        armor.weightPerPointSV.put(TechRating.C, 0.150);
         armor.weightPerPointSV.put(TechRating.D, 0.063);
         armor.weightPerPointSV.put(TechRating.E, 0.056);
         armor.weightPerPointSV.put(TechRating.F, 0.052);

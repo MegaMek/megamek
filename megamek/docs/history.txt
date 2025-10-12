@@ -1,6 +1,8 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.50.07
+0.50.08
+
+0.50.07 (2025-10- 2130 UTC)
 * fix: adds padding in between maps if they are of odd width size, making it possible to tile those. Small performance improvements. by @Scoppio in https://github.com/MegaMek/megamek/pull/6971
 * Updated Gradle to 8.14. by @rjhancock in https://github.com/MegaMek/megamek/pull/7007
 * Quad vee fix by @DM0000 in https://github.com/MegaMek/megamek/pull/7097

@@ -42,9 +42,21 @@ import megamek.common.rolls.TargetRoll;
  * This class represents individual modifiers for a {@link TargetRoll}. Each modifier has a value, the actual modifier
  * like +1 or -2 or one of the finalizers like {@link TargetRoll#AUTOMATIC_FAIL}, a description (attacker jumped) and
  * indicates if it is cumulative. Note: This class is immutable.
+ *
+ * <p><b>WARNING:</b> it is important to note that this is a modifier to the <b>Target Number</b> and <i>not</i>
+ * the roll. That means that a {@code positive number} is bad and a {@code negative number} is good.</p>
  */
 public record TargetRollModifier(int value, String description, boolean cumulative) implements Serializable {
 
+    /**
+     * Constructs a {@link TargetRollModifier} with the specified value and description.
+     *
+     * <p><b>WARNING:</b> it is important to note that this is a modifier to the <b>Target Number</b> and <i>not</i>
+     * the roll. That means that a {@code positive number} is bad and a {@code negative number} is good.</p>
+     *
+     * @param value       the numeric value of the modifier
+     * @param description a description of the modifier's purpose or source
+     */
     public TargetRollModifier(int value, String description) {
         this(value, description, true);
     }

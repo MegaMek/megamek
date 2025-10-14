@@ -4459,7 +4459,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "LB 2-X Cluster Ammo";
-        ammo.shortName = "LB-2X Cluster";
+        ammo.shortName = "LB 2-X Cluster";
         ammo.setInternalName("Clan LB 2-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 2-X (CL)");
         // this isn't a true mtf code
@@ -4489,7 +4489,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "LB 5-X Cluster Ammo";
-        ammo.shortName = "LB-5X Cluster";
+        ammo.shortName = "LB 5-X Cluster";
         ammo.setInternalName("Clan LB 5-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 5-X (CL)");
         // this isn't a true mtf code
@@ -4519,7 +4519,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "LB 10-X Cluster Ammo";
-        ammo.shortName = "LB-10X Cluster";
+        ammo.shortName = "LB 10-X Cluster";
         ammo.setInternalName("Clan LB 10-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 10-X (CL)");
         // this isn't a true mtf code
@@ -4550,7 +4550,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "LB 20-X Cluster Ammo";
-        ammo.shortName = "LB-20X Cluster";
+        ammo.shortName = "LB 20-X Cluster";
         ammo.setInternalName("Clan LB 20-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 20-X (CL)");
         // this isn't a true mtf code
@@ -4705,7 +4705,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "LB 2-X AC Ammo";
-        ammo.shortName = "LB-2X";
+        ammo.shortName = "LB 2-X";
         ammo.setInternalName("Clan LB 2-X AC Ammo");
         ammo.addLookupName("Clan Ammo 2-X");
         ammo.addLookupName("CLLBXAC2 Ammo");
@@ -4733,7 +4733,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "LB 5-X AC Ammo";
-        ammo.shortName = "LB-5X";
+        ammo.shortName = "LB 5-X";
         ammo.setInternalName("Clan LB 5-X AC Ammo");
         ammo.addLookupName("Clan Ammo 5-X");
         ammo.addLookupName("CLLBXAC5 Ammo");
@@ -4761,7 +4761,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "LB 10-X AC Ammo";
-        ammo.shortName = "LB-10X";
+        ammo.shortName = "LB 10-X";
         ammo.setInternalName("Clan LB 10-X AC Ammo");
         ammo.addLookupName("Clan Ammo 10-X");
         ammo.addLookupName("CLLBXAC10 Ammo");
@@ -4789,7 +4789,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "LB 20-X AC Ammo";
-        ammo.shortName = "LB-20X";
+        ammo.shortName = "LB 20-X";
         ammo.setInternalName("Clan LB 20-X AC Ammo");
         ammo.addLookupName("Clan Ammo 20-X");
         ammo.addLookupName("CLLBXAC20 Ammo");

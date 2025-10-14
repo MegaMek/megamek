@@ -3236,7 +3236,8 @@ public class MoveStep implements Serializable {
             }
         }
 
-        // ugh, stacking checks. well, maybe we're immune!
+        // ugh, stacking checks. well, maybe we're immune! Also, note that these stacking checks are for moving
+        // through a hex
         if (!isJumping() && (type != MoveStepType.CHARGE) && (type != MoveStepType.DFA)) {
             // can't move a mek into a hex with an enemy mek
             if ((entity instanceof Mek) && Compute.isEnemyIn(game, entity, dest, true, true, getElevation())) {
@@ -3255,31 +3256,26 @@ public class MoveStep implements Serializable {
                 return false;
             }
 
-            // Can't move through a hex with a LargeSupportTank or a grounded DropShip
-            // unless
-            // infantry or a VTOL at high enough elevation
+            // Can't move through a hex with a LargeSupportTank or a grounded DropShip unless infantry or a VTOL at
+            // high enough elevation
             if (!(entity instanceof Infantry)) {
-                boolean validRoadTrain = false;
                 for (Entity inHex : game.getEntitiesVector(src)) {
                     if (inHex.equals(entity)) {
                         continue;
                     }
 
-                    // Ignore the first trailer behind a non-super heavy tractor which can be in the same hex
-                    if (!entity.getAllTowedUnits().isEmpty() && !entity.isSuperHeavy()) {
-                        Entity firstTrailer = game.getEntity(entity.getAllTowedUnits().get(0));
-                        if (inHex.equals(firstTrailer)) {
-                            validRoadTrain = true;
-                        }
-                    }
-
-                    if ((inHex instanceof LargeSupportTank) ||
-                          (!entity.getAllTowedUnits().isEmpty() && !validRoadTrain) ||
-                          (!inHex.getAllTowedUnits().isEmpty()) ||
-                          ((inHex instanceof Dropship) && !inHex.isAirborne() && !inHex.isSpaceborne())) {
+                    // TW p.57
+                    if ((inHex instanceof LargeSupportTank)
+                          || ((inHex instanceof Dropship dropship) && dropship.isAeroLandedOnGroundMap())) {
                         if (getElevation() <= inHex.height()) {
                             return false;
                         }
+                    }
+
+                    // TW p.57. The rules aren't entirely clear but this assumes that Large SV stacking is
+                    // symmetrical - they themselves cannot move through a hex with another unit unless it's infantry
+                    if ((entity instanceof LargeSupportTank) && !(inHex instanceof Infantry)) {
+                        return false;
                     }
                 }
             }

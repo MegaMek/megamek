@@ -60,6 +60,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.IBomber;
 import megamek.common.units.Mek;
+import megamek.common.units.Tank;
 
 public class EntityDeserializer extends StdDeserializer<Entity> {
 
@@ -92,6 +93,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     public static final String FLEE_AREA = "fleefrom";
     private static final String AREA = "area";
     private static final String BOMBS = "bombs";
+    private static final String ENGINE = "engine";
 
     public EntityDeserializer() {
         this(null);
@@ -303,26 +305,33 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     }
 
     private void assignCrits(Entity entity, JsonNode node) {
-        if (!(entity instanceof Mek) || !node.has(CRITS)) {
-            // Implementation very different for different entities; for now: Meks
+        if (!node.has(CRITS)) {
             return;
         }
         JsonNode critsNode = node.get(CRITS);
-        for (int location = 0; location < entity.locations(); location++) {
-            String locationAbbr = entity.getLocationAbbr(location);
-            if (critsNode.has(locationAbbr)) {
-                for (int slot : parseArrayOrSingleNode(critsNode.get(locationAbbr))) {
-                    int zeroBasedSlot = slot - 1;
-                    CriticalSlot cs = entity.getCritical(location, zeroBasedSlot);
-                    if ((cs == null) || !cs.isHittable()) {
-                        throw new IllegalArgumentException("Invalid slot " + location + ":" + slot + " on " + entity);
-                    } else {
-                        cs.setHit(true);
-                        if ((cs.getType() == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == Mek.SYSTEM_ENGINE)) {
-                            entity.engineHitsThisPhase++;
+        if (entity instanceof Tank tank) {
+            if (critsNode.has(ENGINE)) {
+                tank.engineHit();
+            }
+
+        } else if (entity instanceof Mek) {
+
+            for (int location = 0; location < entity.locations(); location++) {
+                String locationAbbr = entity.getLocationAbbr(location);
+                if (critsNode.has(locationAbbr)) {
+                    for (int slot : parseArrayOrSingleNode(critsNode.get(locationAbbr))) {
+                        int zeroBasedSlot = slot - 1;
+                        CriticalSlot cs = entity.getCritical(location, zeroBasedSlot);
+                        if ((cs == null) || !cs.isHittable()) {
+                            throw new IllegalArgumentException("Invalid slot " + location + ":" + slot + " on " + entity);
                         } else {
-                            Mounted<?> mounted = cs.getMount();
-                            mounted.setDestroyed(true);
+                            cs.setHit(true);
+                            if ((cs.getType() == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == Mek.SYSTEM_ENGINE)) {
+                                entity.engineHitsThisPhase++;
+                            } else {
+                                Mounted<?> mounted = cs.getMount();
+                                mounted.setDestroyed(true);
+                            }
                         }
                     }
                 }

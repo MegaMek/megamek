@@ -233,6 +233,20 @@ public class ScenarioV2 implements Scenario {
                 }
             }
 
+            List<TransportsScenarioParser.ParsedTransportsInfo> transportsInfos = TransportsScenarioParser.parse(node);
+            for (TransportsScenarioParser.ParsedTransportsInfo transport : transportsInfos) {
+                try {
+                    Entity carrier = twGame.getEntity(transport.carrierId);
+                    List<Entity> units = transport.carriedUnits.stream().map(twGame::getEntity).toList();
+                    for (Entity unit : units) {
+                        carrier.load(unit);
+                        unit.setTransportId(transport.carrierId);
+                    }
+                } catch (Exception e) {
+                    throw new ScenarioLoaderException("Faulty transports definition: " + transport);
+                }
+            }
+
             twGame.setupDeployment();
             if (node.has(PARAM_GAME_EXTERNAL_ID)) {
                 twGame.setExternalGameId(node.get(PARAM_GAME_EXTERNAL_ID).intValue());

@@ -1084,11 +1084,15 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
      *
      * @return a Vector of {@link UnitLocation}'s value of the object at the specified index
      */
-    public Vector<UnitLocation> getUnitLocationVector(int index) throws InvalidPacketDataException {
+    public @Nullable Vector<UnitLocation> getUnitLocationVector(int index) throws InvalidPacketDataException {
         Object object = getObject(index);
 
         Vector<UnitLocation> result = new Vector<>();
 
+        // In some instances we may get a null entry; this is valid and handled in Game
+        if (object == null) {
+            return null;
+        }
         if (object instanceof Vector<?> vector) {
             for (Object unitLocation : vector) {
                 if (unitLocation instanceof UnitLocation verifiedLocation) {

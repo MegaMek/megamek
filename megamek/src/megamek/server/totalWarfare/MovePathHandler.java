@@ -355,6 +355,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
         overallMoveType = md.getLastStepMovementType();
 
         Hex startingHex = getGame().getHex(entity.getBoardLocation());
+        if (startingHex == null) {
+            logger.warn(String.format("Attempted to skip turn for %s (%s) which is not on the board!", entity,
+                  entity.getOwner().getName()));
+            return;
+        }
+
         // check for starting in liquid magma
         if ((startingHex.terrainLevel(Terrains.MAGMA) == 2) && (entity.getElevation() == 0)) {
             gameManager.doMagmaDamage(entity, false);

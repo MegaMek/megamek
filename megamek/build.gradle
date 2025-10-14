@@ -248,7 +248,7 @@ tasks.register('stageFiles') {
     dependsOn deleteAtlasedImages
 
     doLast {
-        mkdir "${fileStagingDir}/log"
+        mkdir "${fileStagingDir}/logs"
     }
 }
 
@@ -532,7 +532,7 @@ tasks.register('ratGeneratorEditor', JavaExec) {
     description = 'RAT Editor.'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'megamek.utilities.RATGeneratorEditor'
+    mainClass = 'megamek.common.ui.RATGeneratorEditor'
 }
 
 tasks.register('techLevelCompareTool', JavaExec) {

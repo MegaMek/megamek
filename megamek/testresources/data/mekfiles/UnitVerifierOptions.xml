@@ -1,0 +1,156 @@
+<!-- Sample Entity Test options file -->
+<!--
+# MegaMek Data (C) 2025 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+-->
+<entityverifier>
+    <mek>
+        <ceilWeight>
+            <engine>HALF_TON</engine>
+            <structure>HALF_TON</structure>
+            <armor>HALF_TON</armor>
+            <controls>HALF_TON</controls>
+            <weapons>TON</weapons>
+            <targcomp>TON</targcomp>
+            <gyro>HALF_TON</gyro>
+        </ceilWeight>
+        <showOverweighted>
+            true
+        </showOverweighted>
+        <maxOverweight>
+            0
+        </maxOverweight>
+        <showUnderweighted>
+            false
+        </showUnderweighted>
+        <minUnderweight>
+            1.0
+        </minUnderweight>
+        <ignoreFailedEquipment>
+            Claw (THB), CC Sensors, Command Console, Dual Cockpit
+        </ignoreFailedEquipment>
+        <skip>
+            false
+        </skip>
+        <targCompCrits>
+            0
+        </targCompCrits>
+        <printSize>
+            70
+        </printSize>
+        <showCorrectArmorPlacement>
+            true
+        </showCorrectArmorPlacement>
+        <showCorrectCriticalAllocation>
+            true
+        </showCorrectCriticalAllocation>
+        <showFailedEquip>
+            true
+        </showFailedEquip>
+        <showIncorrectIntroYear>
+            true
+        </showIncorrectIntroYear>
+        <introYearMargin>
+            5
+        </introYearMargin>
+    </mek>
+    <protomek>
+        <ceilWeight>
+            <engine>KILO</engine>
+            <structure>KILO</structure>
+            <armor>KILO</armor>
+            <controls>KILO</controls>
+            <weapons>KILO</weapons>
+            <targcomp>KILO</targcomp>
+            <gyro>KILO</gyro>
+        </ceilWeight>
+        <showOverweighted>
+            true
+        </showOverweighted>
+        <maxOverweight>
+            0
+        </maxOverweight>
+        <showUnderweighted>
+            false
+        </showUnderweighted>
+        <minUnderweight>
+            0
+        </minUnderweight>
+        <ignoreFailedEquipment>
+        </ignoreFailedEquipment>
+        <skip>
+            false
+        </skip>
+        <targCompCrits>
+            0
+        </targCompCrits>
+        <printSize>
+            70
+        </printSize>
+        <showCorrectArmorPlacement>
+            true
+        </showCorrectArmorPlacement>
+        <showCorrectCriticalAllocation>
+            true
+        </showCorrectCriticalAllocation>
+        <showFailedEquip>
+            true
+        </showFailedEquip>
+        <showIncorrectIntroYear>
+            true
+        </showIncorrectIntroYear>
+        <introYearMargin>
+            5
+        </introYearMargin>
+    </protomek>
+    <tank>
+        <ceilWeight>
+            <engine>HALF_TON</engine>
+            <structure>HALF_TON</structure>
+            <armor>HALF_TON</armor>
+            <controls>HALF_TON</controls>
+            <weapons>TON</weapons>
+            <targcomp>TON</targcomp>
+            <turret>HALF_TON</turret>
+            <lifting>HALF_TON</lifting>
+            <poweramp>HALF_TON</poweramp>
+        </ceilWeight>
+        <showOverweighted>
+            true
+        </showOverweighted>
+        <maxOverweight>
+            0
+        </maxOverweight>
+        <showUnderweighted>
+            false
+        </showUnderweighted>
+        <minUnderweight>
+            1.0
+        </minUnderweight>
+        <ignoreFailedEquipment>
+        </ignoreFailedEquipment>
+        <skip>
+            false
+        </skip>
+        <showIncorrectIntroYear>
+            true
+        </showIncorrectIntroYear>
+        <introYearMargin>
+            5
+        </introYearMargin>
+    </tank>
+</entityverifier>

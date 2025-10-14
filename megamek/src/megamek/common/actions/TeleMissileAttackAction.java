@@ -1,33 +1,58 @@
 /*
  * Copyright (c) 2000-2004 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.actions;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import megamek.common.*;
+import megamek.common.Player;
+import megamek.common.ToHitData;
+import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.AttackHandler;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
+import megamek.common.weapons.TeleMissile;
+import megamek.common.weapons.handlers.AttackHandler;
 
 /**
  * Represents one tele-controlled missile attack
@@ -35,15 +60,17 @@ import megamek.common.weapons.AttackHandler;
  * @author Ben Mazur
  */
 public class TeleMissileAttackAction extends AbstractAttackAction {
+    @Serial
     private static final long serialVersionUID = -1054613811287285482L;
     // only used server-side for manually guided Telemissile attacks
     private transient List<WeaponMounted> vCounterEquipment;
 
     // Large Craft Point Defense/AMS Bay Stuff
     public int CounterAVInt = 0;
-    private boolean pdOverheated = false; // true if counterfire + offensive weapon attacks made this round cause the
-                                          // defending unit to overheat. Used for reporting.
-    private boolean advancedPD = false; // true if advanced StratOps game rule is on
+
+    // true if counter fire + offensive weapon attacks made this round cause the defending unit to overheat. Used for
+    // reporting.
+    private boolean pdOverheated = false;
 
     public TeleMissileAttackAction(Entity attacker, Targetable target) {
         super(attacker.getId(), target.getTargetType(), target.getId());
@@ -61,8 +88,8 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
     }
 
     /**
-     * Returns the list of Counter Equipment used against this physical attack
-     * This is for AMS assignment to manual tele-operated missiles
+     * Returns the list of Counter Equipment used against this physical attack This is for AMS assignment to manual
+     * teleoperated missiles
      */
     public List<WeaponMounted> getCounterEquipment() {
         if (vCounterEquipment == null) {
@@ -72,8 +99,8 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
     }
 
     /**
-     * Adds 'm' to the list of Counter Equipment used against this physical attack
-     * This is for AMS assignment to manual tele-operated missiles
+     * Adds 'm' to the list of Counter Equipment used against this physical attack This is for AMS assignment to manual
+     * teleoperated missiles
      */
     public void addCounterEquipment(WeaponMounted m) {
         if (vCounterEquipment == null) {
@@ -83,81 +110,70 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
     }
 
     /**
-     * Checks to see if the basic conditions needed for point defenses to work are
-     * in place
-     * Since this normally only applies to weaponhandlers, we must recreate it to
-     * deal with telemissile
-     * entities
+     * Checks to see if the basic conditions needed for point defenses to work are in place Since this normally only
+     * applies to weapon handlers, we must recreate it to deal with telemissile entities
      */
     private boolean checkPDConditions(Game game, Targetable target) {
-        advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
-        if ((target == null)
-                || (target.getTargetType() != Targetable.TYPE_ENTITY)
-                || !advancedPD) {
-            return false;
-        }
-        return true;
+        // true if advanced StratOps game rule is on
+        boolean advancedPD = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);
+        return (target != null) && (target.getTargetType() == Targetable.TYPE_ENTITY) && advancedPD;
     }
 
     /**
-     * Returns the heat generated by a large craft's weapons fire declarations
-     * during the round
-     * Used to determine whether point defenses can engage.
-     * 
-     * @param e the entity you wish to get heat data from
-     *          Since this normally only applies to weaponhandlers, we must recreate
-     *          it to deal with telemissile
-     *          entities
+     * Returns the heat generated by a large craft's weapons fire declarations during the round Used to determine
+     * whether point defenses can engage.
+     *
+     * @param e the entity you wish to get heat data from Since this normally only applies to weapon handlers, we must
+     *          recreate it to deal with telemissile entities
      */
     protected int getLargeCraftHeat(Entity e) {
-        int totalheat = 0;
+        int totalHeat = 0;
         if (e.hasETypeFlag(Entity.ETYPE_DROPSHIP) || e.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
             if (e.usesWeaponBays()) {
-                for (Enumeration<AttackHandler> i = e.getGame().getAttacks(); i.hasMoreElements();) {
+                for (Enumeration<AttackHandler> i = e.getGame().getAttacks(); i.hasMoreElements(); ) {
                     AttackHandler ah = i.nextElement();
-                    WeaponAttackAction prevAttack = ah.getWaa();
+                    WeaponAttackAction prevAttack = ah.getWeaponAttackAction();
                     if (prevAttack.getEntityId() == e.getId()) {
                         WeaponMounted prevWeapon = (WeaponMounted) e.getEquipment(prevAttack.getWeaponId());
                         for (WeaponMounted bayW : prevWeapon.getBayWeapons()) {
-                            totalheat += bayW.getCurrentHeat();
+                            totalHeat += bayW.getCurrentHeat();
                         }
                     }
                 }
             } else {
-                for (Enumeration<AttackHandler> i = e.getGame().getAttacks(); i.hasMoreElements();) {
+                for (Enumeration<AttackHandler> i = e.getGame().getAttacks(); i.hasMoreElements(); ) {
                     AttackHandler ah = i.nextElement();
-                    WeaponAttackAction prevAttack = ah.getWaa();
+                    WeaponAttackAction prevAttack = ah.getWeaponAttackAction();
                     if (prevAttack.getEntityId() == e.getId()) {
                         Mounted<?> prevWeapon = e.getEquipment(prevAttack.getWeaponId());
-                        totalheat += prevWeapon.getCurrentHeat();
+                        totalHeat += prevWeapon.getCurrentHeat();
                     }
                 }
             }
         }
-        return totalheat;
+        return totalHeat;
     }
 
     /**
-     * Checks to see if this point defense/AMS bay can engage a capital missile
-     * This should return true. Only when handling capital missile attacks can this
-     * be false.
+     * Checks to see if this point defense/AMS bay can engage a capital missile This should return true. Only when
+     * handling capital missile attacks can this be false.
      */
     protected boolean canEngageCapitalMissile(WeaponMounted counter) {
         return counter.getBayWeapons().size() >= 2;
     }
 
     /**
-     * Calculates the attack value of point defense weapons used against a missile
-     * bay attack
-     * This is the main large craft point defense method
+     * Calculates the attack value of point defense weapons used against a missile bay attack This is the main large
+     * craft point defense method
      */
     public int calcCounterAV(Game game, Targetable target) {
         if (!checkPDConditions(game, target)) {
             return 0;
         }
         int counterAV = 0;
-        int amsAV = 0;
-        double pdAV = 0;
+        int amsAV;
+        double pdAV;
         Entity entityTarget = (Entity) target;
         // any AMS bay attacks by the target?
         List<WeaponMounted> lCounters = getCounterEquipment();
@@ -171,13 +187,12 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
 
                 // We already checked arc when AMS was assigned. No need to worry about fleet
                 // missile defense here:
-                // Telemissiles are entities. Other craft can just shoot at them.
+                // Tele-missiles are entities. Other craft can just shoot at them.
 
                 // Point defenses can't fire if they're not ready for any other reason
-                if (counter.getType() == null
-                        || !counter.isReady() || counter.isMissing()
-                        // shutdown means no Point defenses
-                        || pdEnt.isShutDown()) {
+                if (counter.getType() == null || !counter.isReady() || counter.isMissing()
+                      // shutdown means no Point defenses
+                      || pdEnt.isShutDown()) {
                     continue;
                 }
 
@@ -188,8 +203,8 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                 }
 
                 // Set up differences between point defense and AMS bays
-                boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMSBAY);
-                boolean isPDBay = counter.getType().hasFlag(WeaponType.F_PDBAY);
+                boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMS_BAY);
+                boolean isPDBay = counter.getType().hasFlag(WeaponType.F_PD_BAY);
 
                 // Point defense bays can only fire at one attack per round
                 if (isPDBay) {
@@ -209,7 +224,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                 pdAV = 0;
                 for (WeaponMounted bayW : counter.getBayWeapons()) {
                     AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
-                    WeaponType bayWType = ((WeaponType) bayW.getType());
+                    WeaponType bayWType = bayW.getType();
 
                     // build up some heat
                     // First Check to see if we have enough heat capacity to fire
@@ -217,9 +232,8 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                         pdOverheated = true;
                         break;
                     }
-                    if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
-                        int heatDice = Compute.d6(bayW
-                                .getCurrentHeat());
+                    if (counter.getType().hasFlag(WeaponType.F_HEAT_AS_DICE)) {
+                        int heatDice = Compute.d6(bayW.getCurrentHeat());
                         pdEnt.heatBuildup += heatDice;
                         weaponHeat += heatDice;
                     } else {
@@ -233,18 +247,17 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                             continue;
                         }
                         // decrement the ammo
-                        bayWAmmo.setShotsLeft(Math.max(0,
-                                bayWAmmo.getBaseShotsLeft() - 1));
+                        bayWAmmo.setShotsLeft(Math.max(0, bayWAmmo.getBaseShotsLeft() - 1));
                     }
                     if (isAMSBay) {
                         // get the attack value
-                        amsAV += bayWType.getShortAV();
+                        amsAV += (int) bayWType.getShortAV();
                         // set the ams as having fired, if it did
                     }
                     if (isPDBay) {
                         // get the attack value
                         pdAV += bayWType.getShortAV();
-                        // set the pdbay as having fired, if it was able to
+                        // set the pdBay as having fired, if it was able to
                         counter.setUsedThisRound(true);
                     }
                 }
@@ -281,13 +294,13 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
 
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
-            if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                    && ((((Entity) target).getOwnerId() == ae.getOwnerId())
-                            || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
-                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
-                                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
+            if ((target.getTargetType() == Targetable.TYPE_ENTITY) &&
+                  ((target.getOwnerId() == ae.getOwnerId()) ||
+                        ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE) &&
+                              (ae.getOwner().getTeam() != Player.TEAM_NONE) &&
+                              (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "A friendly unit can never be the target of a direct attack.");
+                      "A friendly unit can never be the target of a direct attack.");
             }
         }
 

@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2020-2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.common.loaders;
 
@@ -26,18 +40,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import megamek.common.CriticalSlot;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.TripodMek;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import megamek.common.BipedMek;
-import megamek.common.CriticalSlot;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.EquipmentTypeLookup;
-import megamek.common.Mek;
-import megamek.common.Mounted;
-import megamek.common.TripodMek;
 
 class MtfFileTest {
     @BeforeAll
@@ -52,8 +65,8 @@ class MtfFileTest {
         }
         String mtf = mek.getMtf();
         byte[] bytes = mtf.getBytes();
-        InputStream istream = new ByteArrayInputStream(bytes);
-        return new MtfFile(istream);
+        InputStream inputStream = new ByteArrayInputStream(bytes);
+        return new MtfFile(inputStream);
     }
 
     @Test
@@ -63,10 +76,10 @@ class MtfFileTest {
         mount.setOmniPodMounted(true);
         mount.setMekTurretMounted(true);
         mount.setArmored(true);
-        mek.addEquipment(mount, Mek.LOC_LT, true);
+        mek.addEquipment(mount, Mek.LOC_LEFT_TORSO, true);
 
         MtfFile loader = toMtfFile(mek);
-        Mounted<?> found = loader.getEntity().getCritical(Mek.LOC_LT, 0).getMount();
+        Mounted<?> found = loader.getEntity().getCritical(Mek.LOC_LEFT_TORSO, 0).getMount();
 
         assertEquals(mount.getType(), found.getType());
         assertTrue(found.isRearMounted());
@@ -78,22 +91,22 @@ class MtfFileTest {
     void setVGLFacing() throws Exception {
         Mek mek = new BipedMek();
         EquipmentType vgl = EquipmentType.get("ISVehicularGrenadeLauncher");
-        mek.addEquipment(vgl, Mek.LOC_LT).setFacing(0);
-        mek.addEquipment(vgl, Mek.LOC_LT).setFacing(1);
-        mek.addEquipment(vgl, Mek.LOC_LT).setFacing(2);
-        mek.addEquipment(vgl, Mek.LOC_LT, true).setFacing(3);
-        mek.addEquipment(vgl, Mek.LOC_LT).setFacing(4);
-        mek.addEquipment(vgl, Mek.LOC_LT).setFacing(5);
+        mek.addEquipment(vgl, Mek.LOC_LEFT_TORSO).setFacing(0);
+        mek.addEquipment(vgl, Mek.LOC_LEFT_TORSO).setFacing(1);
+        mek.addEquipment(vgl, Mek.LOC_LEFT_TORSO).setFacing(2);
+        mek.addEquipment(vgl, Mek.LOC_LEFT_TORSO, true).setFacing(3);
+        mek.addEquipment(vgl, Mek.LOC_LEFT_TORSO).setFacing(4);
+        mek.addEquipment(vgl, Mek.LOC_LEFT_TORSO).setFacing(5);
 
         MtfFile loader = toMtfFile(mek);
         Entity loaded = loader.getEntity();
 
-        assertEquals(0, loaded.getCritical(Mek.LOC_LT, 0).getMount().getFacing());
-        assertEquals(1, loaded.getCritical(Mek.LOC_LT, 1).getMount().getFacing());
-        assertEquals(2, loaded.getCritical(Mek.LOC_LT, 2).getMount().getFacing());
-        assertEquals(3, loaded.getCritical(Mek.LOC_LT, 3).getMount().getFacing());
-        assertEquals(4, loaded.getCritical(Mek.LOC_LT, 4).getMount().getFacing());
-        assertEquals(5, loaded.getCritical(Mek.LOC_LT, 5).getMount().getFacing());
+        assertEquals(0, loaded.getCritical(Mek.LOC_LEFT_TORSO, 0).getMount().getFacing());
+        assertEquals(1, loaded.getCritical(Mek.LOC_LEFT_TORSO, 1).getMount().getFacing());
+        assertEquals(2, loaded.getCritical(Mek.LOC_LEFT_TORSO, 2).getMount().getFacing());
+        assertEquals(3, loaded.getCritical(Mek.LOC_LEFT_TORSO, 3).getMount().getFacing());
+        assertEquals(4, loaded.getCritical(Mek.LOC_LEFT_TORSO, 4).getMount().getFacing());
+        assertEquals(5, loaded.getCritical(Mek.LOC_LEFT_TORSO, 5).getMount().getFacing());
     }
 
     @Test
@@ -102,10 +115,10 @@ class MtfFileTest {
         mek.setWeight(120.0);
         mek.setEngine(new Engine(360, Engine.NORMAL_ENGINE, 0));
         EquipmentType hs = EquipmentType.get(EquipmentTypeLookup.SINGLE_HS);
-        mek.addEquipment(hs, hs, Mek.LOC_LT, true, true);
+        mek.addEquipment(hs, hs, Mek.LOC_LEFT_TORSO, true, true);
 
         MtfFile loader = toMtfFile(mek);
-        CriticalSlot slot = loader.getEntity().getCritical(Mek.LOC_LT, 0);
+        CriticalSlot slot = loader.getEntity().getCritical(Mek.LOC_LEFT_TORSO, 0);
 
         assertEquals(hs, slot.getMount().getType());
         assertEquals(hs, slot.getMount2().getType());
@@ -125,11 +138,11 @@ class MtfFileTest {
         mek.setWeight(150.0);
         mek.setEngine(new Engine(300, Engine.NORMAL_ENGINE, 0));
         EquipmentType commsGear = EquipmentType.get("CommsGear");
-        Mounted<?> mount = mek.addEquipment(commsGear, Mek.LOC_LT, false);
+        Mounted<?> mount = mek.addEquipment(commsGear, Mek.LOC_LEFT_TORSO, false);
         mount.setSize(varSize);
 
         MtfFile loader = toMtfFile(mek);
-        CriticalSlot slot = loader.getEntity().getCritical(Mek.LOC_LT, 0);
+        CriticalSlot slot = loader.getEntity().getCritical(Mek.LOC_LEFT_TORSO, 0);
 
         assertEquals(commsGear, slot.getMount().getType());
         assertEquals(varSize, slot.getMount().getSize());
@@ -145,17 +158,17 @@ class MtfFileTest {
         double varSize = 25.0;
         mek.setWeight(150.0);
         mek.setEngine(new Engine(300, Engine.NORMAL_ENGINE, 0));
-        EquipmentType commo = EquipmentType.get("CommsGear");
-        Mounted<?> mount = mek.addEquipment(commo, Mek.LOC_LT, false);
+        EquipmentType commsGear = EquipmentType.get("CommsGear");
+        Mounted<?> mount = mek.addEquipment(commsGear, Mek.LOC_LEFT_TORSO, false);
         mount.setSize(varSize);
         MtfFile loader = toMtfFile(mek);
 
         Exception e = assertThrowsExactly(
-                Exception.class,
-                () -> loader.getEntity().getCritical(Mek.LOC_LT, 0));
+              Exception.class,
+              () -> loader.getEntity().getCritical(Mek.LOC_LEFT_TORSO, 0));
         assertEquals(
-                "java.lang.ArrayIndexOutOfBoundsException: Index 12 out of bounds for length 12",
-                e.getMessage());
+              "java.lang.ArrayIndexOutOfBoundsException: Index 12 out of bounds for length 12",
+              e.getMessage());
 
     }
 }

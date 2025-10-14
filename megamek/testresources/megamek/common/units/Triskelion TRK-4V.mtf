@@ -1,0 +1,195 @@
+# MegaMek Data (C) 2025 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+chassis:Triskelion
+model:TRK-4V
+mul id:7384
+
+Config:Tripod
+TechBase:Mixed (IS Chassis)
+Era:3146
+Source:XTR: Republic III
+Rules Level:3
+role:Brawler
+
+
+
+
+quirk:distracting
+quirk:difficult_eject
+quirk:prototype
+
+
+Mass:75
+Engine:375 XL (Clan) Engine
+Structure:IS Endo-Composite
+Myomer:Standard
+Cockpit:Tripod Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:15 Double
+Walk MP:5
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:24
+RA Armor:24
+LT Armor:24
+RT Armor:24
+CT Armor:35
+HD Armor:9
+LL Armor:31
+RL Armor:31
+CL Armor:31
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:6
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+LRM 15, Left Torso
+LRM 15, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERMediumLaser
+CLERMediumLaser
+Endo-Composite
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERMediumLaser
+CLERMediumLaser
+Endo-Composite
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLLRM15
+CLLRM15
+CLArtemisV
+CLArtemisV
+Clan Ammo LRM-15 (Clan) Artemis V-capable
+Clan Ammo LRM-15 (Clan) Artemis V-capable
+ISCASEII
+Endo-Composite
+Clan Ferro-Fibrous
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLLRM15
+CLLRM15
+CLArtemisV
+CLArtemisV
+Clan Ammo LRM-15 (Clan) Artemis V-capable
+Clan Ammo LRM-15 (Clan) Artemis V-capable
+ISCASEII
+Endo-Composite
+Clan Ferro-Fibrous
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISGuardianECMSuite
+ISGuardianECMSuite
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISTargeting Computer
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Composite
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Composite
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Composite
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

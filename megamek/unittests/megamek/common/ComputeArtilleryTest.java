@@ -1,29 +1,50 @@
 /*
  * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -45,22 +66,22 @@ class ComputeArtilleryTest {
 
         // Immobile target
         Coords leadPos = Compute.calculateArtilleryLead(targetPos, 0, 0);
-        assertTrue(leadPos.equals(targetPos));
+        assertEquals(leadPos, targetPos);
 
         // MP 1 target
         leadPos = Compute.calculateArtilleryLead(targetPos, 0, 1);
-        assertTrue(leadPos.getX() == targetPos.getX());
-        assertTrue(leadPos.getY() == targetPos.getY() - 1);
+        assertEquals(leadPos.getX(), targetPos.getX());
+        assertEquals(leadPos.getY(), targetPos.getY() - 1);
 
         // MP 4 target with flight time == 1
         leadPos = Compute.calculateArtilleryLead(targetPos, 0, 8);
-        assertTrue(leadPos.getX() == targetPos.getX());
-        assertTrue(leadPos.getY() == targetPos.getY() - 8);
+        assertEquals(leadPos.getX(), targetPos.getX());
+        assertEquals(leadPos.getY(), targetPos.getY() - 8);
 
         // MP 8 target moving away
         leadPos = Compute.calculateArtilleryLead(targetPos, 3, 16);
-        assertTrue(leadPos.getX() == targetPos.getX());
-        assertTrue(leadPos.getY() == targetPos.getY() + 16);
+        assertEquals(leadPos.getX(), targetPos.getX());
+        assertEquals(leadPos.getY(), targetPos.getY() + 16);
 
         // MP 5 target moving NW; x <- 10, y ^ (10/2 + 1)
         leadPos = Compute.calculateArtilleryLead(targetPos, 5, 10);
@@ -85,6 +106,8 @@ class ComputeArtilleryTest {
         Board mockBoard = mock(Board.class);
         Game mockGame = mock(Game.class);
         when(mockGame.getBoard()).thenReturn(mockBoard);
+        when(mockGame.onConnectedBoards(any(Targetable.class), any(Targetable.class))).thenReturn(true);
+        when(mockGame.getBoard(any(Targetable.class))).thenReturn(mockBoard);
 
         Entity shooter = mock(Entity.class);
         Entity target = mock(Entity.class);

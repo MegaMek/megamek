@@ -1,31 +1,58 @@
 /*
- * MegaMek - Copyright (C) 2018 - The MegaMek Team
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.templates;
 
 import java.text.NumberFormat;
 import java.util.StringJoiner;
 
-import megamek.common.*;
+import megamek.common.Messages;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.Entity;
+import megamek.common.units.LandAirMek;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadVee;
+import megamek.common.units.System;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestMek;
 
 /**
- * Creates a TRO template model for BattleMeks, OmniMeks, and IndustrialMeks
- * of all leg configurations.
+ * Creates a TRO template model for BattleMeks, OmniMeks, and IndustrialMeks of all leg configurations.
  *
  * @author Neoancient
- *
  */
 public class MekTROView extends TROView {
 
@@ -46,14 +73,14 @@ public class MekTROView extends TROView {
     @Override
     protected void initModel(EntityVerifier verifier) {
         setModelData("formatArmorRow", new FormatTableRowMethod(new int[] { 20, 10, 10 },
-                new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER }));
+              new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER }));
         addBasicData(mek);
         addArmorAndStructure();
         final int nameWidth = addEquipment(mek);
         setModelData("formatEquipmentRow",
-                new FormatTableRowMethod(new int[] { nameWidth, 12, 8, 10, 8 },
-                        new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
-                                Justification.CENTER, Justification.CENTER }));
+              new FormatTableRowMethod(new int[] { nameWidth, 12, 8, 10, 8 },
+                    new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
+                                          Justification.CENTER, Justification.CENTER }));
         addFluff();
         mek.setConversionMode(0);
         setModelData("isOmni", mek.isOmni());
@@ -61,16 +88,17 @@ public class MekTROView extends TROView {
         setModelData("isTripod", mek.hasETypeFlag(Entity.ETYPE_TRIPOD_MEK));
         final TestMek testMek = new TestMek(mek, verifier.mekOption, null);
         setModelData("structureName", mek.getStructureType() == EquipmentType.T_STRUCTURE_STANDARD ? ""
-                : EquipmentType.getStructureTypeName(mek.getStructureType()));
+              : EquipmentType.getStructureTypeName(mek.getStructureType()));
         setModelData("isMass", NumberFormat.getInstance().format(testMek.getWeightStructure()));
         setModelData("engineName", stripNotes(mek.getEngine().getEngineName()));
         setModelData("engineMass", NumberFormat.getInstance().format(testMek.getWeightEngine()));
         setModelData("walkMP", mek.getWalkMP());
         setModelData("runMP", mek.getRunMPasString());
         setModelData("jumpMP", mek.getJumpMP());
+        setModelData("jumpBoosterMP", mek.getMechanicalJumpBoosterMP());
         setModelData("hsType", mek.getHeatSinkTypeName());
         setModelData("hsCount",
-                mek.hasDoubleHeatSinks() ? mek.heatSinks() + " [" + (mek.heatSinks() * 2) + "]" : mek.heatSinks());
+              mek.hasDoubleHeatSinks() ? mek.heatSinks() + " [" + (mek.heatSinks() * 2) + "]" : mek.heatSinks());
         if (mek.hasRiscHeatSinkOverrideKit()) {
             setModelData("riscKit", true);
         }
@@ -123,8 +151,8 @@ public class MekTROView extends TROView {
             setModelData("qvFlank", qv.getRunMPasString());
             qv.setConversionMode(mode);
         }
-        setModelData("rightArmActuators", countArmActuators(Mek.LOC_RARM));
-        setModelData("leftArmActuators", countArmActuators(Mek.LOC_LARM));
+        setModelData("rightArmActuators", countArmActuators(Mek.LOC_RIGHT_ARM));
+        setModelData("leftArmActuators", countArmActuators(Mek.LOC_LEFT_ARM));
     }
 
     private String countArmActuators(int location) {
@@ -140,22 +168,26 @@ public class MekTROView extends TROView {
     protected void addFluff() {
         addMekVeeAeroFluff(mek);
         setModelData("chassisDesc",
-                formatSystemFluff(EntityFluff.System.CHASSIS, mek.getFluff(), this::formatChassisDesc));
-        setModelData("jjDesc", formatSystemFluff(EntityFluff.System.JUMPJET, mek.getFluff(), this::formatJJDesc));
+              formatSystemFluff(System.CHASSIS, mek.getFluff(), this::formatChassisDesc));
+        setModelData("jjDesc", formatSystemFluff(System.JUMP_JET, mek.getFluff(), this::formatJJDesc));
         setModelData("jumpCapacity", mek.getJumpMP() * 30);
+        setModelData("jumpBoosterCapacity", mek.getMechanicalJumpBoosterMP() * 30);
     }
 
-    private static final int[][] MEK_ARMOR_LOCS = { { Mek.LOC_HEAD }, { Mek.LOC_CT }, { Mek.LOC_RT, Mek.LOC_LT },
-            { Mek.LOC_RARM, Mek.LOC_LARM }, { Mek.LOC_RLEG, Mek.LOC_CLEG, Mek.LOC_LLEG } };
+    private static final int[][] MEK_ARMOR_LOCS = { { Mek.LOC_HEAD }, { Mek.LOC_CENTER_TORSO },
+                                                    { Mek.LOC_RIGHT_TORSO, Mek.LOC_LEFT_TORSO },
+                                                    { Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM },
+                                                    { Mek.LOC_RIGHT_LEG, Mek.LOC_CENTER_LEG, Mek.LOC_LEFT_LEG } };
 
-    private static final int[][] MEK_ARMOR_LOCS_REAR = { { Mek.LOC_CT }, { Mek.LOC_RT, Mek.LOC_LT } };
+    private static final int[][] MEK_ARMOR_LOCS_REAR = { { Mek.LOC_CENTER_TORSO },
+                                                         { Mek.LOC_RIGHT_TORSO, Mek.LOC_LEFT_TORSO } };
 
     private void addArmorAndStructure() {
         setModelData("structureValues",
-                addArmorStructureEntries(mek, Entity::getOInternal, MEK_ARMOR_LOCS));
+              addArmorStructureEntries(mek, Entity::getOInternal, MEK_ARMOR_LOCS));
         setModelData("armorValues", addArmorStructureEntries(mek, Entity::getOArmor, MEK_ARMOR_LOCS));
         setModelData("rearArmorValues",
-                addArmorStructureEntries(mek, (en, loc) -> en.getOArmor(loc, true), MEK_ARMOR_LOCS_REAR));
+              addArmorStructureEntries(mek, (en, loc) -> en.getOArmor(loc, true), MEK_ARMOR_LOCS_REAR));
         if (mek.hasPatchworkArmor()) {
             setModelData("patchworkByLoc", addPatchworkATs(mek, MEK_ARMOR_LOCS));
         }
@@ -184,32 +216,25 @@ public class MekTROView extends TROView {
     }
 
     private String formatJJDesc() {
-        switch (mek.getJumpType()) {
-            case Mek.JUMP_STANDARD:
-                return Messages.getString("TROView.jjStandard");
-            case Mek.JUMP_IMPROVED:
-                return Messages.getString("TROView.jjImproved");
-            case Mek.JUMP_PROTOTYPE:
-                return Messages.getString("TROView.jjPrototype");
-            case Mek.JUMP_PROTOTYPE_IMPROVED:
-                return Messages.getString("TROView.jjImpPrototype");
-            case Mek.JUMP_BOOSTER:
-                return Messages.getString("TROView.jjBooster");
-            default:
-                return Messages.getString("TROView.jjNone");
-        }
+        return switch (mek.getJumpType()) {
+            case Mek.JUMP_STANDARD -> Messages.getString("TROView.jjStandard");
+            case Mek.JUMP_IMPROVED -> Messages.getString("TROView.jjImproved");
+            case Mek.JUMP_PROTOTYPE -> Messages.getString("TROView.jjPrototype");
+            case Mek.JUMP_PROTOTYPE_IMPROVED -> Messages.getString("TROView.jjImpPrototype");
+            default -> Messages.getString("TROView.jjNone");
+        };
     }
 
     @Override
     protected boolean showFixedSystem(Entity entity, int index, int loc) {
         return ((index != Mek.SYSTEM_COCKPIT) || (loc != Mek.LOC_HEAD))
-                && ((index != Mek.SYSTEM_SENSORS) || (loc != Mek.LOC_HEAD))
-                && ((index != Mek.SYSTEM_LIFE_SUPPORT) || (loc != Mek.LOC_HEAD))
-                && ((index != Mek.SYSTEM_ENGINE) || (loc != Mek.LOC_CT)) && (index != Mek.SYSTEM_GYRO)
-                && (index != Mek.ACTUATOR_SHOULDER) && (index != Mek.ACTUATOR_UPPER_ARM)
-                && (index != Mek.ACTUATOR_LOWER_ARM) && (index != Mek.ACTUATOR_HAND) && (index != Mek.ACTUATOR_HIP)
-                && (index != Mek.ACTUATOR_UPPER_LEG) && (index != Mek.ACTUATOR_LOWER_LEG)
-                && (index != Mek.ACTUATOR_FOOT);
+              && ((index != Mek.SYSTEM_SENSORS) || (loc != Mek.LOC_HEAD))
+              && ((index != Mek.SYSTEM_LIFE_SUPPORT) || (loc != Mek.LOC_HEAD))
+              && ((index != Mek.SYSTEM_ENGINE) || (loc != Mek.LOC_CENTER_TORSO)) && (index != Mek.SYSTEM_GYRO)
+              && (index != Mek.ACTUATOR_SHOULDER) && (index != Mek.ACTUATOR_UPPER_ARM)
+              && (index != Mek.ACTUATOR_LOWER_ARM) && (index != Mek.ACTUATOR_HAND) && (index != Mek.ACTUATOR_HIP)
+              && (index != Mek.ACTUATOR_UPPER_LEG) && (index != Mek.ACTUATOR_LOWER_LEG)
+              && (index != Mek.ACTUATOR_FOOT);
     }
 
     @Override
@@ -253,10 +278,10 @@ public class MekTROView extends TROView {
         if (mount.getLocation() == Entity.LOC_NONE) {
             // Skip heat sinks, Clan CASE, armor, and structure. We do want to show things
             // like robotic control systems.
-            return (mount.getCriticals() > 0)
-                    || mount.getType().hasFlag(MiscType.F_CASE)
-                    || EquipmentType.isArmorType(mount.getType())
-                    || EquipmentType.isStructureType(mount.getType());
+            return (mount.getNumCriticalSlots() > 0)
+                  || mount.getType().hasFlag(MiscType.F_CASE)
+                  || EquipmentType.isArmorType(mount.getType())
+                  || EquipmentType.isStructureType(mount.getType());
         }
         return super.skipMount(mount, includeAmmo);
     }

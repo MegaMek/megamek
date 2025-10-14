@@ -1,103 +1,136 @@
 /*
- * MegaMek -
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.verifier;
 
-import megamek.common.Entity;
-import megamek.common.MiscType;
+import java.util.EnumMap;
+
+import jakarta.annotation.Nonnull;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.MiscType;
+import megamek.common.units.Entity;
 
 public class SupportVeeStructure extends Structure {
 
-    static final double[] SV_TECH_RATING_STRUCTURE_MULTIPLIER = 
-        { 1.60, 1.30, 1.15, 1.00, 0.85, 0.66 };
-    
+    static final EnumMap<TechRating, Double> SV_TECH_RATING_STRUCTURE_MULTIPLIER = new EnumMap<>(TechRating.class);
+
+    static {
+        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(TechRating.A, 1.60);
+        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(TechRating.B, 1.30);
+        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(TechRating.C, 1.15);
+        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(TechRating.D, 1.00);
+        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(TechRating.E, 0.85);
+        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(TechRating.F, 0.66);
+    }
+
     Entity sv;
-    
+
     public SupportVeeStructure(Entity supportVee) {
         this.sv = supportVee;
     }
-    
+
     public static double getWeightStructure(Entity sv) {
         double baseChassisVal = sv.getBaseChassisValue();
-        double trMult = SV_TECH_RATING_STRUCTURE_MULTIPLIER[sv.getStructuralTechRating()];
-        double chassisModMult = 1;
+        double techRatingMultiplier = SV_TECH_RATING_STRUCTURE_MULTIPLIER.getOrDefault(sv.getStructuralTechRating(),
+              1.0);
+        double chassisModMultiplier = 1;
         if (sv.hasMisc(MiscType.F_AMPHIBIOUS)) {
-            chassisModMult *= 1.75;
+            chassisModMultiplier *= 1.75;
         }
         if (sv.hasMisc(MiscType.F_ARMORED_CHASSIS)) {
-            chassisModMult *= 1.5;
+            chassisModMultiplier *= 1.5;
         }
         if (sv.hasMisc(MiscType.F_BICYCLE)) {
-            chassisModMult *= 0.75;
+            chassisModMultiplier *= 0.75;
         }
         if (sv.hasMisc(MiscType.F_CONVERTIBLE)) {
-            chassisModMult *= 1.1;
+            chassisModMultiplier *= 1.1;
         }
         if (sv.hasMisc(MiscType.F_DUNE_BUGGY)) {
-            chassisModMult *= 1.5;
+            chassisModMultiplier *= 1.5;
         }
         if (sv.hasMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
-            chassisModMult *= 2;
+            chassisModMultiplier *= 2;
         }
         if (sv.hasMisc(MiscType.F_EXTERNAL_POWER_PICKUP)) {
-            chassisModMult *= 1.1;
+            chassisModMultiplier *= 1.1;
         }
         if (sv.hasMisc(MiscType.F_HYDROFOIL)) {
-            chassisModMult *= 1.7;
+            chassisModMultiplier *= 1.7;
         }
         if (sv.hasMisc(MiscType.F_MONOCYCLE)) {
-            chassisModMult *= 0.5;
+            chassisModMultiplier *= 0.5;
         }
         if (sv.hasMisc(MiscType.F_OFF_ROAD)) {
-            chassisModMult *= 1.5;
+            chassisModMultiplier *= 1.5;
         }
         if (sv.hasMisc(MiscType.F_PROP)) {
-            chassisModMult *= 1.2;
+            chassisModMultiplier *= 1.2;
         }
         if (sv.hasMisc(MiscType.F_SNOWMOBILE)) {
-            chassisModMult *= 1.75;
+            chassisModMultiplier *= 1.75;
         }
         if (sv.hasMisc(MiscType.F_STOL_CHASSIS)) {
-            chassisModMult *= 1.5;
+            chassisModMultiplier *= 1.5;
         }
         if (sv.hasMisc(MiscType.F_SUBMERSIBLE)) {
-            chassisModMult *= 1.8;
+            chassisModMultiplier *= 1.8;
         }
         if (sv.hasMisc(MiscType.F_TRACTOR_MODIFICATION)) {
-            chassisModMult *= 1.2;
+            chassisModMultiplier *= 1.2;
         }
         if (sv.hasMisc(MiscType.F_TRAILER_MODIFICATION)) {
-            chassisModMult *= 0.8;
+            chassisModMultiplier *= 0.8;
         }
         if (sv.hasMisc(MiscType.F_ULTRA_LIGHT)) {
-            chassisModMult *= 0.5;
+            chassisModMultiplier *= 0.5;
         }
         if (sv.hasMisc(MiscType.F_VSTOL_CHASSIS)) {
-            chassisModMult *= 2;
+            chassisModMultiplier *= 2;
         }
-        
-        double weight = baseChassisVal * trMult * chassisModMult * sv.getWeight();
-        TestEntity.Ceil roundWeight = TestEntity.Ceil.HALFTON;
+
+        double weight = baseChassisVal * techRatingMultiplier * chassisModMultiplier * sv.getWeight();
+        Ceil roundWeight = Ceil.HALF_TON;
         if (sv.getWeight() < 5) {
-            roundWeight = TestEntity.Ceil.KILO;
+            roundWeight = Ceil.KILO;
         }
         return TestEntity.floor(weight, roundWeight);
     }
-    
+
     @Override
-    public double getWeightStructure(double weight, TestEntity.Ceil roundWeight) {
+    public double getWeightStructure(double weight, @Nonnull Ceil roundWeight) {
         return getWeightStructure(sv);
     }
-    
+
 }

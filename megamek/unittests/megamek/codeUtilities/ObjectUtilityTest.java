@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2023-2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.codeUtilities;
 
@@ -30,12 +44,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+import megamek.common.compute.Compute;
+import megamek.common.util.sorter.NaturalOrderComparator;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-
-import megamek.common.Compute;
-import megamek.common.util.sorter.NaturalOrderComparator;
 
 class ObjectUtilityTest {
 
@@ -55,15 +68,14 @@ class ObjectUtilityTest {
         final String second = "second";
         final String third = "third";
         final String fourth = "fourth";
-        final String nullString = null;
         assertEquals(first, ObjectUtility.nonNull(first, null, third, fourth));
         assertEquals(first, ObjectUtility.nonNull(first, second, third, fourth));
         assertEquals(second, ObjectUtility.nonNull(null, second, third, fourth));
         assertEquals(third, ObjectUtility.nonNull(null, null, third, null));
         assertEquals(third, ObjectUtility.nonNull(null, null, third, fourth));
         assertEquals(fourth, ObjectUtility.nonNull(null, null, null, fourth));
-        assertEquals(fourth, ObjectUtility.nonNull(null, null, nullString, fourth));
-        assertNull(ObjectUtility.nonNull(null, null, nullString));
+        assertEquals(fourth, ObjectUtility.nonNull(null, null, null, fourth));
+        assertNull(ObjectUtility.nonNull(null, null, (Object) null));
         assertNull(ObjectUtility.nonNull(null, null, null, null));
     }
 
@@ -82,8 +94,7 @@ class ObjectUtilityTest {
 
     @Test
     void testGetRandomItemFromCollection() {
-        final Collection<String> nullCollection = null;
-        assertNull(ObjectUtility.getRandomItem(nullCollection));
+        assertNull(ObjectUtility.getRandomItem((Collection<? extends String>) null));
         final Collection<String> collection = new HashSet<>();
         assertNull(ObjectUtility.getRandomItem(collection));
         collection.add("a");
@@ -101,8 +112,7 @@ class ObjectUtilityTest {
 
     @Test
     void testGetRandomItemFromList() {
-        final List<String> nullList = null;
-        assertNull(ObjectUtility.getRandomItem(nullList));
+        assertNull(ObjectUtility.getRandomItem(null));
         final List<String> list = new ArrayList<>();
         assertNull(ObjectUtility.getRandomItem(list));
         list.add("a");

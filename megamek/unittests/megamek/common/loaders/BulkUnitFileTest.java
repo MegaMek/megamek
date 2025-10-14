@@ -1,28 +1,40 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.common.loaders;
 
-import megamek.common.*;
-import megamek.common.equipment.ArmorType;
-import megamek.common.verifier.*;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -32,13 +44,30 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.BombType;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Jumpship;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.SmallCraft;
+import megamek.common.units.Tank;
+import megamek.common.verifier.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@Disabled
 public class BulkUnitFileTest {
 
     @BeforeAll
@@ -52,15 +81,16 @@ public class BulkUnitFileTest {
         BombType.initializeTypes();
     }
 
+    @Disabled("This was broken before this test was added. We hope to fix save/load eventually, but we're not there yet.")
     @ParameterizedTest(name = "{0}")
     @MethodSource("allBlkFiles")
-    void loadVerifySaveVerifyBlks(File file) throws EntitySavingException, IOException {
+    void loadVerifySaveVerifyBLKFiles(File file) throws EntitySavingException, IOException {
         checkEntityFile(file);
     }
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("allMtfFiles")
-    void loadVerifySaveVerifyMtfs(File file) throws EntitySavingException, IOException {
+    void loadVerifySaveVerifyMTFFiles(File file) throws EntitySavingException, IOException {
         checkEntityFile(file);
     }
 
@@ -70,7 +100,7 @@ public class BulkUnitFileTest {
         // This print is to make sure you are looking at the file you expected to be looking at
         System.out.println(file.getAbsoluteFile());
         assertEquals(UnitValidation.VALID, validation.state(),
-            "The unit is invalid:\n\t" + entity.getDisplayName() + "\n" + validation.report());
+              "The unit is invalid:\n\t" + entity.getDisplayName() + "\n" + validation.report());
 
         var suffix = entity instanceof Mek ? ".mtf" : ".blk";
         var tmpFile = File.createTempFile(file.getName(), suffix);
@@ -80,24 +110,29 @@ public class BulkUnitFileTest {
             Entity repersistedEntity = loadUnit(tmpFile);
             var reValidation = verify(repersistedEntity);
             assertEquals(UnitValidation.VALID, reValidation.state(),
-                "The unit is invalid after repersisting:\n\t" + tmpFile + "\n\t" + entity.getDisplayName() + "\n" + reValidation.report());
+                  "The unit is invalid after re-persisting:\n\t"
+                        + tmpFile
+                        + "\n\t"
+                        + entity.getDisplayName()
+                        + "\n"
+                        + reValidation.report());
             assertEquals(reValidation.state(), validation.state());
         }
     }
 
     @Test
     void loadVerifySaveVerifySpecificFile() throws EntitySavingException, IOException {
-        var file = new File("data/mekfiles/vehicles/3085u/Cutting Edge/Zugvogel Omni Support Aircraft D.blk");
+        var file = new File("testresources/data/mekfiles/Aegis Heavy Cruiser (2372).blk");
         checkEntityFile(file);
     }
 
     public static List<File> allMtfFiles() {
-        try (Stream<Path> paths = Files.walk(Paths.get("data/mekfiles"))) {
+        try (Stream<Path> paths = Files.walk(Paths.get("testresources/data/mekfiles"))) {
             return paths
-                .filter(Files::isRegularFile)
-                .filter(path -> path.toString().endsWith(".mtf"))
-                .map(Path::toFile)
-                .toList();
+                  .filter(Files::isRegularFile)
+                  .filter(path -> path.toString().endsWith(".mtf"))
+                  .map(Path::toFile)
+                  .toList();
         } catch (IOException e) {
             // do nothing
         }
@@ -105,12 +140,12 @@ public class BulkUnitFileTest {
     }
 
     public static List<File> allBlkFiles() {
-        try (Stream<Path> paths = Files.walk(Paths.get("data/mekfiles"))) {
+        try (Stream<Path> paths = Files.walk(Paths.get("testresources/data/mekfiles"))) {
             return paths
-                .filter(Files::isRegularFile)
-                .filter(path -> path.toString().endsWith(".blk"))
-                .map(Path::toFile)
-                .toList();
+                  .filter(Files::isRegularFile)
+                  .filter(path -> path.toString().endsWith(".blk"))
+                  .map(Path::toFile)
+                  .toList();
         } catch (IOException e) {
             // do nothing
         }
@@ -129,7 +164,7 @@ public class BulkUnitFileTest {
 
     public static TestEntity getEntityVerifier(Entity unit) {
         EntityVerifier entityVerifier = EntityVerifier.getInstance(new File(
-            "data/mekfiles/UnitVerifierOptions.xml"));
+              "testresources/data/mekfiles/UnitVerifierOptions.xml"));
         TestEntity testEntity = null;
 
         if (unit.hasETypeFlag(Entity.ETYPE_MEK)) {
@@ -157,12 +192,13 @@ public class BulkUnitFileTest {
     private enum UnitValidation {
         VALID,
         INVALID;
+
         public static UnitValidation of(boolean valid) {
             return valid ? VALID : INVALID;
         }
     }
 
-    private record Validation(UnitValidation state, String report) { }
+    private record Validation(UnitValidation state, String report) {}
 
     private static Validation verify(Entity unit) {
         var sb = new StringBuffer();
@@ -170,9 +206,7 @@ public class BulkUnitFileTest {
 
         var succeeded = testEntity.correctEntity(sb, unit.getTechLevel());
 
-        var validation = new Validation(UnitValidation.of(succeeded), sb.toString());
-
-        return validation;
+        return new Validation(UnitValidation.of(succeeded), sb.toString());
     }
 
     public static boolean persistUnit(File outFile, Entity entity) throws EntitySavingException {

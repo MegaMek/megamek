@@ -1,16 +1,36 @@
 /*
- * Copyright (C) 2018 - The MegaMek Team
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.templates;
 
 import java.text.NumberFormat;
@@ -20,14 +40,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.EntityFluff;
-import megamek.common.EquipmentType;
 import megamek.common.Messages;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.ProtoMek;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.Entity;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.System;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestProtoMek;
 
@@ -35,7 +55,6 @@ import megamek.common.verifier.TestProtoMek;
  * Creates a TRO template model for Protomeks.
  *
  * @author Neoancient
- *
  */
 public class ProtoMekTROView extends TROView {
 
@@ -56,36 +75,36 @@ public class ProtoMekTROView extends TROView {
     @Override
     protected void initModel(EntityVerifier verifier) {
         setModelData("formatArmorRow", new FormatTableRowMethod(new int[] { 20, 10, 10 },
-                new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER }));
+              new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER }));
         addBasicData(proto);
         addArmorAndStructure();
         final int nameWidth = addEquipment(proto);
         setModelData("formatEquipmentRow", new FormatTableRowMethod(new int[] { nameWidth, 12, 10 },
-                new Justification[] { Justification.LEFT, Justification.CENTER, Justification.RIGHT }));
+              new Justification[] { Justification.LEFT, Justification.CENTER, Justification.RIGHT }));
         addFluff();
         setModelData("isGlider", proto.isGlider());
         setModelData("isQuad", proto.isQuad());
-        final TestProtoMek testproto = new TestProtoMek(proto, verifier.protomekOption, null);
-        setModelData("isMass", NumberFormat.getInstance().format(testproto.getWeightStructure() * 1000));
+        final TestProtoMek testProtoMek = new TestProtoMek(proto, verifier.protomekOption, null);
+        setModelData("isMass", NumberFormat.getInstance().format(testProtoMek.getWeightStructure() * 1000));
         setModelData("engineRating", proto.getEngine().getRating());
-        setModelData("engineMass", NumberFormat.getInstance().format(testproto.getWeightEngine() * 1000));
+        setModelData("engineMass", NumberFormat.getInstance().format(testProtoMek.getWeightEngine() * 1000));
         setModelData("walkMP", proto.getWalkMP());
         setModelData("runMP", proto.getRunMPasString());
         final List<Mounted<?>> umu = proto.getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_UMU))
-                .collect(Collectors.toList());
+              .collect(Collectors.toList());
         if (umu.isEmpty()) {
             setModelData("jumpMP", proto.getOriginalJumpMP());
             setModelData("jumpMass",
-                    Math.round(1000 * proto.getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET))
-                            .mapToDouble(Mounted::getTonnage).sum()));
+                  Math.round(1000 * proto.getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET))
+                        .mapToDouble(Mounted::getTonnage).sum()));
         } else {
             setModelData("umuMP", umu.size());
             setModelData("umuMass",
-                    Math.round(1000 * umu.stream().mapToDouble(Mounted::getTonnage).sum()));
+                  Math.round(1000 * umu.stream().mapToDouble(Mounted::getTonnage).sum()));
         }
-        setModelData("hsCount", testproto.getCountHeatSinks());
-        setModelData("hsMass", NumberFormat.getInstance().format(testproto.getWeightHeatSinks() * 1000));
-        setModelData("cockpitMass", NumberFormat.getInstance().format(testproto.getWeightControls() * 1000));
+        setModelData("hsCount", testProtoMek.getCountHeatSinks());
+        setModelData("hsMass", NumberFormat.getInstance().format(testProtoMek.getWeightHeatSinks() * 1000));
+        setModelData("cockpitMass", NumberFormat.getInstance().format(testProtoMek.getWeightControls() * 1000));
         final String atName = formatArmorType(proto, true);
         if (!atName.isBlank()) {
             setModelData("armorType", " (" + atName + ")");
@@ -93,16 +112,16 @@ public class ProtoMekTROView extends TROView {
             setModelData("armorType", "");
         }
         setModelData("armorFactor", proto.getTotalOArmor());
-        setModelData("armorMass", NumberFormat.getInstance().format(testproto.getWeightArmor() * 1000));
+        setModelData("armorMass", NumberFormat.getInstance().format(testProtoMek.getWeightArmor() * 1000));
     }
 
     private void addFluff() {
         addMekVeeAeroFluff(proto);
         if (proto.getOriginalJumpMP() > 0) {
-            setModelData("chassisDesc", formatSystemFluff(EntityFluff.System.CHASSIS, proto.getFluff(), () -> ""));
+            setModelData("chassisDesc", formatSystemFluff(System.CHASSIS, proto.getFluff(), () -> ""));
         }
         if (!proto.isGlider()) {
-            setModelData("jjDesc", formatSystemFluff(EntityFluff.System.JUMPJET, proto.getFluff(), () -> ""));
+            setModelData("jjDesc", formatSystemFluff(System.JUMP_JET, proto.getFluff(), () -> ""));
             setModelData("jumpCapacity", proto.getJumpMP() * 30);
         }
         if (proto.isGlider()) {
@@ -113,11 +132,13 @@ public class ProtoMekTROView extends TROView {
     }
 
     private static final int[][] PROTO_ARMOR_LOCS = { { ProtoMek.LOC_HEAD }, { ProtoMek.LOC_TORSO },
-            { ProtoMek.LOC_RARM, ProtoMek.LOC_LARM }, { ProtoMek.LOC_LEG }, { ProtoMek.LOC_MAINGUN } };
+                                                      { ProtoMek.LOC_RIGHT_ARM, ProtoMek.LOC_LEFT_ARM },
+                                                      { ProtoMek.LOC_LEG },
+                                                      { ProtoMek.LOC_MAIN_GUN } };
 
     private void addArmorAndStructure() {
         setModelData("structureValues",
-                addArmorStructureEntries(proto, Entity::getOInternal, PROTO_ARMOR_LOCS));
+              addArmorStructureEntries(proto, Entity::getOInternal, PROTO_ARMOR_LOCS));
         setModelData("armorValues", addArmorStructureEntries(proto, Entity::getOArmor, PROTO_ARMOR_LOCS));
     }
 
@@ -130,14 +151,14 @@ public class ProtoMekTROView extends TROView {
                 continue;
             }
             if ((m.getType() instanceof MiscType)
-                    && (m.getType().hasFlag(MiscType.F_JUMP_JET) || m.getType().hasFlag(MiscType.F_UMU))) {
+                  && (m.getType().hasFlag(MiscType.F_JUMP_JET) || m.getType().hasFlag(MiscType.F_UMU))) {
                 continue;
             }
             final String loc = formatLocationTableEntry(entity, m);
             equipment.putIfAbsent(loc, new HashMap<>());
             if (m.getType() instanceof AmmoType) {
                 equipment.get(loc).merge(new EquipmentKey(m.getType(), m.getSize()), m.getBaseShotsLeft(),
-                        Integer::sum);
+                      Integer::sum);
             } else {
                 equipment.get(loc).merge(new EquipmentKey(m.getType(), m.getSize()), 1, Integer::sum);
             }
@@ -161,7 +182,7 @@ public class ProtoMekTROView extends TROView {
                 if (eq instanceof AmmoType) {
                     fields.put("mass", Math.round((((AmmoType) eq).getKgPerShot()) * count));
                 } else {
-                    fields.put("mass", Math.round(eq.getTonnage(entity, entry.getKey().getSize()) * 1000 * count));
+                    fields.put("mass", Math.round(eq.getTonnage(entity, entry.getKey().size()) * 1000 * count));
                 }
                 fields.put("location", loc);
                 eqList.add(fields);

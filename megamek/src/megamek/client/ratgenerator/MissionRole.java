@@ -1,24 +1,44 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ratgenerator;
 
 import java.util.Collection;
 import java.util.HashSet;
 
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityWeightClass;
-import megamek.common.UnitType;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.UnitType;
 
 /**
  * Used to adjust availability to conform to a particular mission role.
@@ -49,50 +69,44 @@ public enum MissionRole {
     MIXED_ARTILLERY;
 
     public boolean fitsUnitType(int unitType) {
-        switch (this) {
+        return switch (this) {
 
             // RECON applies to all unit types except gun emplacements, JumpShips,
             // space stations, and some specialized aerospace
-            case RECON:
-                return unitType != UnitType.GUN_EMPLACEMENT &&
-                        unitType != UnitType.JUMPSHIP &&
-                        unitType != UnitType.SPACE_STATION &&
-                        unitType != UnitType.AERO;
+            case RECON -> unitType != UnitType.GUN_EMPLACEMENT &&
+                  unitType != UnitType.JUMPSHIP &&
+                  unitType != UnitType.SPACE_STATION &&
+                  unitType != UnitType.AERO;
 
             // EW_SUPPORT role applies to all ground units, VTOL, blue water naval, gun
             // emplacement,
             // and small craft. Infantry and large spacecraft are excluded.
-            case EW_SUPPORT:
-                return unitType == UnitType.MEK ||
-                        unitType == UnitType.TANK ||
-                        unitType == UnitType.PROTOMEK ||
-                        unitType == UnitType.VTOL ||
-                        unitType == UnitType.NAVAL ||
-                        unitType == UnitType.GUN_EMPLACEMENT ||
-                        unitType == UnitType.SMALL_CRAFT;
+            case EW_SUPPORT -> unitType == UnitType.MEK ||
+                  unitType == UnitType.TANK ||
+                  unitType == UnitType.PROTOMEK ||
+                  unitType == UnitType.VTOL ||
+                  unitType == UnitType.NAVAL ||
+                  unitType == UnitType.GUN_EMPLACEMENT ||
+                  unitType == UnitType.SMALL_CRAFT;
 
             // SPOTTER role applies to all ground units plus VTOL, blue water naval, gun
             // emplacements, and fixed wing aircraft.
-            case SPOTTER:
-                return unitType <= UnitType.AEROSPACEFIGHTER;
+            case SPOTTER -> unitType <= UnitType.AEROSPACE_FIGHTER;
 
             // COMMAND role applies to all ground units, VTOLs, blue water naval,
             // conventional
             // fixed wing aircraft, and small craft. Conventional infantry, battle armor,
             // ProtoMeks, gun emplacements, and large space vessels are excluded.
-            case COMMAND:
-                return unitType == UnitType.MEK ||
-                        unitType == UnitType.TANK ||
-                        unitType == UnitType.VTOL ||
-                        unitType == UnitType.NAVAL ||
-                        unitType == UnitType.CONV_FIGHTER ||
-                        unitType == UnitType.SMALL_CRAFT;
+            case COMMAND -> unitType == UnitType.MEK ||
+                  unitType == UnitType.TANK ||
+                  unitType == UnitType.VTOL ||
+                  unitType == UnitType.NAVAL ||
+                  unitType == UnitType.CONV_FIGHTER ||
+                  unitType == UnitType.SMALL_CRAFT;
 
             // Fire support roles apply to most types except fixed wing aircraft and
             // spacecraft
-            case FIRE_SUPPORT:
-            case SR_FIRE_SUPPORT:
-                return unitType <= UnitType.GUN_EMPLACEMENT;
+            case FIRE_SUPPORT, SR_FIRE_SUPPORT -> unitType <= UnitType.GUN_EMPLACEMENT;
 
             // Artillery roles apply to all ground units, VTOL, blue water naval, gun
             // emplacements,
@@ -101,190 +115,139 @@ public enum MissionRole {
             // artillery type weapons, are included. ProtoMeks cannot carry any existing
             // artillery
             // weapons so are excluded.
-            case ARTILLERY:
-            case MISSILE_ARTILLERY:
-            case MIXED_ARTILLERY:
-                return unitType <= UnitType.INFANTRY ||
-                        unitType == UnitType.VTOL ||
-                        unitType == UnitType.NAVAL ||
-                        unitType == UnitType.GUN_EMPLACEMENT ||
-                        unitType == UnitType.CONV_FIGHTER ||
-                        unitType == UnitType.SMALL_CRAFT ||
-                        unitType == UnitType.DROPSHIP;
+            case ARTILLERY, MISSILE_ARTILLERY, MIXED_ARTILLERY -> unitType <= UnitType.INFANTRY ||
+                  unitType == UnitType.VTOL ||
+                  unitType == UnitType.NAVAL ||
+                  unitType == UnitType.GUN_EMPLACEMENT ||
+                  unitType == UnitType.CONV_FIGHTER ||
+                  unitType == UnitType.SMALL_CRAFT ||
+                  unitType == UnitType.DROPSHIP;
 
             // URBAN role applies to all ground units. Although infantry are inherently
             // urban-oriented this role should be reserved for mechanized (wheeled) and
             // others which
             // are not optimized for non-urban terrain.
-            case URBAN:
-                return unitType <= UnitType.PROTOMEK;
+            case URBAN -> unitType <= UnitType.PROTOMEK;
 
             // Infantry support roles are limited to ground units and VTOLs. This includes
             // infantry
             // and battle armor that are armed primarily with anti-infantry weapons.
-            case ANTI_INFANTRY:
-            case INF_SUPPORT:
-                return unitType <= UnitType.PROTOMEK ||
-                        unitType == UnitType.VTOL;
+            case ANTI_INFANTRY, INF_SUPPORT -> unitType <= UnitType.PROTOMEK ||
+                  unitType == UnitType.VTOL;
 
             // APC role is limited to units which can carry conventional infantry. Although
             // blue
             // water naval units can carry infantry they have limited use so are excluded.
-            case APC:
-                return unitType == UnitType.TANK ||
-                        unitType == UnitType.VTOL;
+            case APC -> unitType == UnitType.TANK ||
+                  unitType == UnitType.VTOL;
 
             // Naturally limited to battle armor
-            case MECHANIZED_BA:
-                return unitType == UnitType.BATTLE_ARMOR;
+            case MECHANIZED_BA -> unitType == UnitType.BATTLE_ARMOR;
 
             // Both battle armor and ProtoMeks can make use of mag clamps
-            case MAG_CLAMP:
-                return unitType == UnitType.BATTLE_ARMOR ||
-                        unitType == UnitType.PROTOMEK;
+            case MAG_CLAMP -> unitType == UnitType.BATTLE_ARMOR ||
+                  unitType == UnitType.PROTOMEK;
 
             // MARINE role applies to select battle armor and conventional infantry units
             // equipped
             // for space combat
-            case MARINE:
-                return unitType == UnitType.BATTLE_ARMOR ||
-                        unitType == UnitType.INFANTRY;
+            case MARINE -> unitType == UnitType.BATTLE_ARMOR ||
+                  unitType == UnitType.INFANTRY;
 
             // Conventional infantry roles:
             // PARATROOPER may be added on non-foot infantry to designate 'airmobile'
-            case MOUNTAINEER:
-            case PARATROOPER:
-            case ANTI_MEK:
-            case FIELD_GUN:
-            case XCT:
-                return unitType == UnitType.INFANTRY;
+            case MOUNTAINEER, PARATROOPER, ANTI_MEK, FIELD_GUN, XCT -> unitType == UnitType.INFANTRY;
 
             // CAVALRY applies to Meks, ground vehicles, and ProtoMeks
-            case CAVALRY:
-                return unitType == UnitType.MEK ||
-                        unitType == UnitType.TANK ||
-                        unitType == UnitType.PROTOMEK;
+            case CAVALRY -> unitType == UnitType.MEK ||
+                  unitType == UnitType.TANK ||
+                  unitType == UnitType.PROTOMEK;
 
             // RAIDER can be applied to Meks, ground vehicles, ProtoMeks, and VTOLs
-            case RAIDER:
-                return unitType == UnitType.MEK ||
-                        unitType == UnitType.TANK ||
-                        unitType == UnitType.PROTOMEK ||
-                        unitType == UnitType.VTOL;
+            case RAIDER -> unitType == UnitType.MEK ||
+                  unitType == UnitType.TANK ||
+                  unitType == UnitType.PROTOMEK ||
+                  unitType == UnitType.VTOL;
 
             // ANTI_AIRCRAFT role applies to all ground units, plus blue water naval and
             // gun emplacements. Conventional infantry are included (field guns/artillery)
             // but
             // not battle armor or ProtoMeks.
-            case ANTI_AIRCRAFT:
-                return unitType == UnitType.MEK ||
-                        unitType == UnitType.TANK ||
-                        unitType == UnitType.INFANTRY ||
-                        unitType == UnitType.NAVAL ||
-                        unitType == UnitType.GUN_EMPLACEMENT;
+            case ANTI_AIRCRAFT -> unitType == UnitType.MEK ||
+                  unitType == UnitType.TANK ||
+                  unitType == UnitType.INFANTRY ||
+                  unitType == UnitType.NAVAL ||
+                  unitType == UnitType.GUN_EMPLACEMENT;
 
             // INCENDIARY applies to all ground units. This excludes VTOL, blue water naval,
             // and gun emplacements.
-            case INCENDIARY:
-                return unitType <= UnitType.PROTOMEK;
+            case INCENDIARY -> unitType <= UnitType.PROTOMEK;
 
             // SPECOPS role applies to Meks, ground vehicles, VTOLs, conventional infantry,
             // and
             // battle armor.
-            case SPECOPS:
-                return unitType == UnitType.MEK ||
-                        unitType == UnitType.TANK ||
-                        unitType == UnitType.INFANTRY ||
-                        unitType == UnitType.BATTLE_ARMOR ||
-                        unitType == UnitType.VTOL;
+            case SPECOPS -> unitType == UnitType.MEK ||
+                  unitType == UnitType.TANK ||
+                  unitType == UnitType.INFANTRY ||
+                  unitType == UnitType.BATTLE_ARMOR ||
+                  unitType == UnitType.VTOL;
 
             // OMNI applies to all units which are capable of being built to make use of
             // pod-mounted
             // equipment. This is primarily used to determine suitability for mechanized
             // battle
             // armor but other uses may be added later.
-            case OMNI:
-                return unitType == UnitType.MEK ||
-                        unitType == UnitType.TANK ||
-                        unitType == UnitType.AEROSPACEFIGHTER;
+            case OMNI -> unitType == UnitType.MEK ||
+                  unitType == UnitType.TANK ||
+                  unitType == UnitType.AEROSPACE_FIGHTER;
 
             // Roles for conventional and aerospace fighters
-            case BOMBER:
-            case INTERCEPTOR:
-                return unitType == UnitType.CONV_FIGHTER ||
-                        unitType == UnitType.AEROSPACEFIGHTER;
-
-            case GROUND_SUPPORT:
-                return unitType == UnitType.CONV_FIGHTER ||
-                        unitType == UnitType.AEROSPACEFIGHTER ||
-                        unitType == UnitType.SMALL_CRAFT;
-
-            case ESCORT:
-                return unitType == UnitType.CONV_FIGHTER ||
-                        unitType == UnitType.AEROSPACEFIGHTER ||
-                        unitType == UnitType.SMALL_CRAFT;
+            case BOMBER, INTERCEPTOR -> unitType == UnitType.CONV_FIGHTER ||
+                  unitType == UnitType.AEROSPACE_FIGHTER;
+            case GROUND_SUPPORT, ESCORT -> unitType == UnitType.CONV_FIGHTER ||
+                  unitType == UnitType.AEROSPACE_FIGHTER ||
+                  unitType == UnitType.SMALL_CRAFT;
 
             // Roles for DropShips
-            case ASSAULT:
-            case INFANTRY_CARRIER:
-            case BA_CARRIER:
-                return unitType == UnitType.DROPSHIP ||
-                        unitType == UnitType.SMALL_CRAFT;
-
-            case VEE_CARRIER:
-            case MEK_CARRIER:
-            case TUG:
-            case POCKET_WARSHIP:
-            case PROTOMEK_CARRIER:
-                return unitType == UnitType.DROPSHIP;
+            case ASSAULT, INFANTRY_CARRIER, BA_CARRIER -> unitType == UnitType.DROPSHIP ||
+                  unitType == UnitType.SMALL_CRAFT;
+            case VEE_CARRIER, MEK_CARRIER, TUG, POCKET_WARSHIP, PROTOMEK_CARRIER -> unitType == UnitType.DROPSHIP;
 
             // Mixed units carrier and aerospace carrier roles apply to DropShips and
             // WarShips
-            case TROOP_CARRIER:
-            case ASF_CARRIER:
-                return unitType == UnitType.DROPSHIP || unitType == UnitType.WARSHIP;
+            case TROOP_CARRIER, ASF_CARRIER -> unitType == UnitType.DROPSHIP || unitType == UnitType.WARSHIP;
 
             // Roles for WarShips are primarily 'class' designations.
-            case CORVETTE:
-            case DESTROYER:
-            case FRIGATE:
-            case CRUISER:
-            case BATTLESHIP:
-                return unitType == UnitType.WARSHIP;
+            case CORVETTE, DESTROYER, FRIGATE, CRUISER, BATTLESHIP -> unitType == UnitType.WARSHIP;
 
             // TRAINING applies to Meks, ground vehicles, VTOLs, blue water naval, and
             // conventional
             // fighters. Infantry, battle armor, ProtoMeks, and gun emplacements are
             // excluded.
-            case TRAINING:
-                return unitType == UnitType.MEK ||
-                        unitType == UnitType.TANK ||
-                        unitType == UnitType.VTOL ||
-                        unitType == UnitType.NAVAL ||
-                        unitType == UnitType.CONV_FIGHTER;
+            case TRAINING -> unitType == UnitType.MEK ||
+                  unitType == UnitType.TANK ||
+                  unitType == UnitType.VTOL ||
+                  unitType == UnitType.NAVAL ||
+                  unitType == UnitType.CONV_FIGHTER;
 
             // ENGINEER applies to Meks, ground vehicles, and conventional infantry
-            case ENGINEER:
-                return unitType == UnitType.MEK ||
-                        unitType == UnitType.TANK ||
-                        unitType == UnitType.INFANTRY;
+            case ENGINEER -> unitType == UnitType.MEK ||
+                  unitType == UnitType.TANK ||
+                  unitType == UnitType.INFANTRY;
 
             // MINESWEEPER and MINELAYER roles apply to ground vehicles, battle armor, and
             // conventional infantry
-            case MINESWEEPER:
-            case MINELAYER:
-                return unitType == UnitType.TANK ||
-                        unitType == UnitType.BATTLE_ARMOR ||
-                        unitType == UnitType.INFANTRY;
+            case MINESWEEPER, MINELAYER -> unitType == UnitType.TANK ||
+                  unitType == UnitType.BATTLE_ARMOR ||
+                  unitType == UnitType.INFANTRY;
 
             // SUPPORT applies to all non-combat ground units, VTOLs, blue water naval,
             // conventional
             // fighters, small craft, and some specialized aerospace. ProtoMeks, gun
             // emplacements, and WarShips are excluded as these are strictly combat units.
-            case SUPPORT:
-                return unitType != UnitType.PROTOMEK &&
-                        unitType != UnitType.GUN_EMPLACEMENT &&
-                        unitType != UnitType.WARSHIP;
+            case SUPPORT -> unitType != UnitType.PROTOMEK &&
+                  unitType != UnitType.GUN_EMPLACEMENT &&
+                  unitType != UnitType.WARSHIP;
 
             // CIVILIAN applies to all non-combat vehicles in civilian service, which
             // includes
@@ -295,46 +258,38 @@ public enum MissionRole {
             // gun emplacements, aerospace fighters, and WarShips are excluded as they are
             // strictly
             // combat units.
-            case CIVILIAN:
-                return unitType != UnitType.PROTOMEK &&
-                        unitType != UnitType.GUN_EMPLACEMENT &&
-                        unitType != UnitType.AEROSPACEFIGHTER &&
-                        unitType != UnitType.WARSHIP;
+            case CIVILIAN -> unitType != UnitType.PROTOMEK &&
+                  unitType != UnitType.GUN_EMPLACEMENT &&
+                  unitType != UnitType.AEROSPACE_FIGHTER &&
+                  unitType != UnitType.WARSHIP;
 
             // CARGO applies to ground vehicles, VTOLs, blue water naval, conventional
             // fighters,
             // small craft, and all large space vessels.
-            case CARGO:
-                return unitType == UnitType.TANK ||
-                        unitType == UnitType.VTOL ||
-                        unitType == UnitType.NAVAL ||
-                        unitType == UnitType.CONV_FIGHTER ||
-                        (unitType >= UnitType.SMALL_CRAFT && unitType <= UnitType.SPACE_STATION);
-
-            default:
-                return false;
-        }
+            case CARGO -> unitType == UnitType.TANK ||
+                  unitType == UnitType.VTOL ||
+                  unitType == UnitType.NAVAL ||
+                  unitType == UnitType.CONV_FIGHTER ||
+                  (unitType >= UnitType.SMALL_CRAFT && unitType <= UnitType.SPACE_STATION);
+        };
     }
 
     /**
-     * Adjusts the provided availability rating based on desired roles, the roles
-     * the provided
-     * unit has, and other factors such as unit type, movement speed, and weapon
-     * types.
-     * 
+     * Adjusts the provided availability rating based on desired roles, the roles the provided unit has, and other
+     * factors such as unit type, movement speed, and weapon types.
+     *
      * @param avRating     Availability rating as positive number, typically 0-10
-     * @param desiredRoles Roles that are desired or mandatory, use null for general
-     *                     use
+     * @param desiredRoles Roles that are desired or mandatory, use null for general use
      * @param mRec         ModelRecord of specific unit to check
      * @param year         Year to test in
      * @param strictness   Zero or higher, larger values are more restrictive
-     * @return Modified avRating, higher if better suited for a specific role, lower
-     *         if
-     *         less suited, or null if unit is not compatible
+     *
+     * @return Modified avRating, higher if better suited for a specific role, lower if less suited, or null if unit is
+     *       not compatible
      */
     public static Double adjustAvailabilityByRole(double avRating,
-            Collection<MissionRole> desiredRoles,
-            ModelRecord mRec, int year, int strictness) {
+          Collection<MissionRole> desiredRoles,
+          ModelRecord mRec, int year, int strictness) {
         boolean roleApplied = false;
         if (desiredRoles == null) {
             desiredRoles = new HashSet<>();
@@ -371,19 +326,19 @@ public enum MissionRole {
                         if (mRec.getRoles().contains(RECON)) {
                             avRating += medium_adjust;
                         } else if (mRec.getRoles().contains(EW_SUPPORT) ||
-                                mRec.getRoles().contains(SPECOPS)) {
+                              mRec.getRoles().contains(SPECOPS)) {
                             avRating += light_adjust;
                         } else if (mRec.getRoles().contains(SPOTTER)) {
                             avRating += min_adjust;
                         } else if ((mRec.getUnitType() == UnitType.MEK ||
-                                mRec.getUnitType() == UnitType.PROTOMEK) &&
-                                (mRec.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT ||
-                                        mRec.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM)
-                                &&
-                                (mRec.getSpeed() >= 6)) {
+                              mRec.getUnitType() == UnitType.PROTOMEK) &&
+                              (mRec.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT ||
+                                    mRec.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM)
+                              &&
+                              (mRec.getSpeed() >= 6)) {
                             avRating = Math.max(avRating - strong_adjust, 1.0);
                         } else if (mRec.getUnitType() == UnitType.VTOL ||
-                                mRec.getMovementMode() == EntityMovementMode.HOVER) {
+                              mRec.getMovementMode() == EntityMovementMode.HOVER) {
                             avRating = Math.max(avRating - strong_adjust, 1.0);
                         } else {
                             return null;
@@ -394,7 +349,7 @@ public enum MissionRole {
                     // which include the role
                     case EW_SUPPORT:
                         if (!mRec.getRoles().contains(EW_SUPPORT) ||
-                                isSpecialized(desiredRoles, mRec)) {
+                              isSpecialized(desiredRoles, mRec)) {
                             return null;
                         }
                         break;
@@ -410,7 +365,7 @@ public enum MissionRole {
                         if (mRec.getRoles().contains(SPOTTER)) {
                             avRating += strong_adjust;
                         } else if (mRec.getUnitType() == UnitType.INFANTRY ||
-                                mRec.getUnitType() == UnitType.BATTLE_ARMOR) {
+                              mRec.getUnitType() == UnitType.BATTLE_ARMOR) {
                             avRating -= medium_adjust;
                         } else if (mRec.getRoles().contains(RECON)) {
                             avRating -= medium_adjust;
@@ -424,7 +379,7 @@ public enum MissionRole {
                     // reduced in priority.
                     case COMMAND:
                         if (mRec.getRoles().contains(CIVILIAN) &&
-                                !desiredRoles.contains(CIVILIAN)) {
+                              !desiredRoles.contains(CIVILIAN)) {
                             return null;
                         }
                         if (mRec.getRoles().contains(COMMAND)) {
@@ -444,7 +399,7 @@ public enum MissionRole {
                     // do not meet these requirements are excluded.
                     case FIRE_SUPPORT:
                         if (mRec.getRoles().contains(SUPPORT) ||
-                                mRec.getRoles().contains(CIVILIAN)) {
+                              mRec.getRoles().contains(CIVILIAN)) {
                             return null;
                         }
                         if (mRec.getRoles().contains(FIRE_SUPPORT) || mRec.getLongRange() > 0.75) {
@@ -454,8 +409,8 @@ public enum MissionRole {
                         } else if (mRec.getLongRange() > 0.2) {
                             avRating += min_adjust;
                         } else if (mRec.getRoles().contains(ARTILLERY) ||
-                                mRec.getRoles().contains(MISSILE_ARTILLERY) ||
-                                mRec.getRoles().contains(MIXED_ARTILLERY)) {
+                              mRec.getRoles().contains(MISSILE_ARTILLERY) ||
+                              mRec.getRoles().contains(MIXED_ARTILLERY)) {
                             avRating += min_adjust;
                         } else {
                             return null;
@@ -471,7 +426,7 @@ public enum MissionRole {
                         if (mRec.getRoles().contains(SR_FIRE_SUPPORT)) {
                             avRating += medium_adjust;
                         } else if (!mRec.getRoles().contains(FIRE_SUPPORT) &&
-                                mRec.getLongRange() <= 0.2) {
+                              mRec.getLongRange() <= 0.2) {
                             avRating += light_adjust;
                         } else if (mRec.getLongRange() >= 0.5) {
                             return null;
@@ -482,12 +437,12 @@ public enum MissionRole {
                     // artillery. Units without artillery are excluded.
                     case ARTILLERY:
                         if (mRec.getRoles().contains(CIVILIAN) &&
-                                !desiredRoles.contains(CIVILIAN)) {
+                              !desiredRoles.contains(CIVILIAN)) {
                             return null;
                         }
                         if (!mRec.getRoles().contains(ARTILLERY) &&
-                                !mRec.getRoles().contains(MISSILE_ARTILLERY) &&
-                                !mRec.getRoles().contains(MIXED_ARTILLERY)) {
+                              !mRec.getRoles().contains(MISSILE_ARTILLERY) &&
+                              !mRec.getRoles().contains(MIXED_ARTILLERY)) {
                             return null;
                         }
                         break;
@@ -497,7 +452,7 @@ public enum MissionRole {
                     // 'mixed use' i.e. both combat and artillery.
                     case MIXED_ARTILLERY:
                         if (mRec.getRoles().contains(CIVILIAN) &&
-                                !desiredRoles.contains(CIVILIAN)) {
+                              !desiredRoles.contains(CIVILIAN)) {
                             return null;
                         }
                         if (!mRec.getRoles().contains(MIXED_ARTILLERY)) {
@@ -524,14 +479,14 @@ public enum MissionRole {
                         if (mRec.getRoles().contains(URBAN)) {
                             avRating += strong_adjust;
                         } else if (mRec.getRoles().contains(ANTI_INFANTRY) ||
-                                mRec.getRoles().contains(SR_FIRE_SUPPORT) ||
-                                mRec.getLongRange() <= 0.2) {
+                              mRec.getRoles().contains(SR_FIRE_SUPPORT) ||
+                              mRec.getLongRange() <= 0.2) {
                             avRating += light_adjust;
                         } else if (mRec.getRoles().contains(INF_SUPPORT)) {
                             avRating += min_adjust;
                         } else {
                             if (mRec.getRoles().contains(FIRE_SUPPORT) ||
-                                    mRec.getLongRange() >= 0.5) {
+                                  mRec.getLongRange() >= 0.5) {
                                 avRating -= min_adjust;
                             } else {
                                 avRating -= medium_adjust;
@@ -540,7 +495,7 @@ public enum MissionRole {
                         if (mRec.getMovementMode() == EntityMovementMode.WHEELED) {
                             avRating += medium_adjust;
                         } else if (mRec.getMovementMode() == EntityMovementMode.TRACKED ||
-                                mRec.getMovementMode() == EntityMovementMode.HOVER) {
+                              mRec.getMovementMode() == EntityMovementMode.HOVER) {
                             avRating -= medium_adjust;
                         }
                         break;
@@ -565,17 +520,17 @@ public enum MissionRole {
                     // included at lower priority.
                     case INF_SUPPORT:
                         if (mRec.getRoles().contains(SUPPORT) ||
-                                mRec.getRoles().contains(CIVILIAN)) {
+                              mRec.getRoles().contains(CIVILIAN)) {
                             return null;
                         } else if (mRec.getRoles().contains(INF_SUPPORT)) {
                             avRating += medium_adjust;
                         } else if (mRec.getRoles().contains(FIRE_SUPPORT) ||
-                                mRec.getRoles().contains(ANTI_AIRCRAFT) ||
-                                mRec.getRoles().contains(MIXED_ARTILLERY)) {
+                              mRec.getRoles().contains(ANTI_AIRCRAFT) ||
+                              mRec.getRoles().contains(MIXED_ARTILLERY)) {
                             avRating -= min_adjust;
                         } else if (mRec.getRoles().contains(APC) ||
-                                mRec.getRoles().contains(ANTI_AIRCRAFT) ||
-                                mRec.getRoles().contains(ARTILLERY)) {
+                              mRec.getRoles().contains(ANTI_AIRCRAFT) ||
+                              mRec.getRoles().contains(ARTILLERY)) {
                             avRating -= light_adjust;
                         } else {
                             avRating -= max_adjust;
@@ -586,11 +541,11 @@ public enum MissionRole {
                     // that role
                     case APC:
                         if (mRec.getRoles().contains(SUPPORT) &&
-                                !desiredRoles.contains(SUPPORT)) {
+                              !desiredRoles.contains(SUPPORT)) {
                             return null;
                         }
                         if (mRec.getRoles().contains(CIVILIAN) &&
-                                !desiredRoles.contains(CIVILIAN)) {
+                              !desiredRoles.contains(CIVILIAN)) {
                             return null;
                         }
                         if (!mRec.getRoles().contains(APC)) {
@@ -602,15 +557,15 @@ public enum MissionRole {
                     // omni-based transport or use mag-clamps
                     case MECHANIZED_BA:
                         if (mRec.getRoles().contains(SUPPORT) &&
-                                !desiredRoles.contains(SUPPORT)) {
+                              !desiredRoles.contains(SUPPORT)) {
                             return null;
                         }
                         if (mRec.getRoles().contains(CIVILIAN) &&
-                                !desiredRoles.contains(CIVILIAN)) {
+                              !desiredRoles.contains(CIVILIAN)) {
                             return null;
                         }
                         if (!mRec.canDoMechanizedBA() &&
-                                !mRec.getRoles().contains(MAG_CLAMP)) {
+                              !mRec.getRoles().contains(MAG_CLAMP)) {
                             return null;
                         }
                         break;
@@ -619,7 +574,7 @@ public enum MissionRole {
                     // mag-clamp equipment, which includes ProtoMeks
                     case MAG_CLAMP:
                         if (mRec.getRoles().contains(CIVILIAN) &&
-                                !desiredRoles.contains(CIVILIAN)) {
+                              !desiredRoles.contains(CIVILIAN)) {
                             return null;
                         }
                         if (!mRec.hasMagClamp() && !mRec.getRoles().contains(MAG_CLAMP)) {
@@ -679,8 +634,8 @@ public enum MissionRole {
                         if (mRec.getRoles().contains(ANTI_MEK)) {
                             avRating += strong_adjust;
                         } else if (mRec.getMovementMode() == EntityMovementMode.INF_LEG ||
-                                mRec.getMovementMode() == EntityMovementMode.INF_JUMP ||
-                                mRec.getMovementMode() == EntityMovementMode.INF_MOTORIZED) {
+                              mRec.getMovementMode() == EntityMovementMode.INF_JUMP ||
+                              mRec.getMovementMode() == EntityMovementMode.INF_MOTORIZED) {
                             avRating -= medium_adjust;
                         } else {
                             return null;
@@ -722,26 +677,26 @@ public enum MissionRole {
                         if (mRec.getRoles().contains(CAVALRY)) {
                             avRating += medium_adjust;
                         } else if ((mRec.getUnitType() == UnitType.MEK ||
-                                mRec.getUnitType() == UnitType.PROTOMEK)) {
+                              mRec.getUnitType() == UnitType.PROTOMEK)) {
                             if (mRec.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM &&
-                                    mRec.getSpeed() >= 6) {
+                                  mRec.getSpeed() >= 6) {
                                 avRating -= Math.max(avRating - strong_adjust, 1.0);
                             } else if (mRec.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY &&
-                                    mRec.getSpeed() >= 5) {
+                                  mRec.getSpeed() >= 5) {
                                 avRating = Math.max(avRating - strong_adjust, 1.0);
                             } else if (mRec.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT &&
-                                    mRec.getSpeed() >= 5 && mRec.getSpeed() <= 7) {
+                                  mRec.getSpeed() >= 5 && mRec.getSpeed() <= 7) {
                                 avRating = Math.max(avRating - strong_adjust, 1.0);
                             } else {
                                 return null;
                             }
                         } else if (mRec.getMovementMode() == EntityMovementMode.HOVER &&
-                                mRec.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
+                              mRec.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
                             avRating = Math.max(avRating - strong_adjust, 1.0);
                         } else if (mRec.getMovementMode() == EntityMovementMode.TRACKED &&
-                                mRec.getSpeed() >= 5) {
+                              mRec.getSpeed() >= 5) {
                             if (mRec.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT &&
-                                    mRec.getSpeed() <= 6) {
+                                  mRec.getSpeed() <= 6) {
                                 avRating = Math.max(avRating - strong_adjust, 1.0);
                             } else if (mRec.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
                                 avRating = Math.max(avRating - strong_adjust, 1.0);
@@ -763,14 +718,14 @@ public enum MissionRole {
                             avRating += medium_adjust;
                         } else {
                             if (mRec.getUnitType() == UnitType.MEK ||
-                                    mRec.getUnitType() == UnitType.PROTOMEK) {
+                                  mRec.getUnitType() == UnitType.PROTOMEK) {
                                 if ((mRec.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT &&
-                                        mRec.getSpeed() >= 5) ||
-                                        (mRec.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM &&
-                                                mRec.getSpeed() >= 5)
-                                        ||
-                                        (mRec.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY &&
-                                                mRec.getSpeed() >= 4)) {
+                                      mRec.getSpeed() >= 5) ||
+                                      (mRec.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM &&
+                                            mRec.getSpeed() >= 5)
+                                      ||
+                                      (mRec.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY &&
+                                            mRec.getSpeed() >= 4)) {
                                     if (mRec.getAmmoRequirement() < 0.2) {
                                         avRating = Math.max(avRating - medium_adjust, 1.0);
                                     } else if (mRec.getAmmoRequirement() < 0.5) {
@@ -790,21 +745,21 @@ public enum MissionRole {
                     // included at a lower priority. Other units are excluded.
                     case ANTI_AIRCRAFT:
                         if (mRec.getRoles().contains(SUPPORT) ||
-                                mRec.getRoles().contains(CIVILIAN)) {
+                              mRec.getRoles().contains(CIVILIAN)) {
                             return null;
                         }
                         if (mRec.getRoles().contains(ANTI_AIRCRAFT) ||
-                                mRec.getFlak() > 0.75) {
+                              mRec.getFlak() > 0.75) {
                             avRating += medium_adjust;
                         } else if (mRec.getFlak() > 0.5) {
                             avRating += light_adjust;
                         } else if (mRec.getFlak() > 0.2) {
                             avRating += min_adjust;
                         } else if (mRec.getRoles().contains(ARTILLERY) ||
-                                mRec.getRoles().contains(MISSILE_ARTILLERY)) {
+                              mRec.getRoles().contains(MISSILE_ARTILLERY)) {
                             avRating = Math.max(avRating - medium_adjust, 1.0);
                         } else if (mRec.getUnitType() != UnitType.INFANTRY &&
-                                mRec.getRoles().contains(FIRE_SUPPORT)) {
+                              mRec.getRoles().contains(FIRE_SUPPORT)) {
                             avRating = Math.max(avRating - strong_adjust, 1.0);
                         } else {
                             return null;
@@ -837,7 +792,7 @@ public enum MissionRole {
                         if (mRec.getRoles().contains(SPECOPS)) {
                             avRating += strong_adjust;
                         } else if (mRec.getRoles().contains(RECON) ||
-                                mRec.getRoles().contains(RAIDER)) {
+                              mRec.getRoles().contains(RAIDER)) {
                             avRating -= light_adjust;
                         } else if (mRec.getUnitType() != UnitType.INFANTRY) {
                             avRating -= medium_adjust;
@@ -850,11 +805,11 @@ public enum MissionRole {
                     // other roles, this is pulled from the unit data rather than a role tag.
                     case OMNI:
                         if (mRec.getRoles().contains(SUPPORT) &&
-                                !desiredRoles.contains(SUPPORT)) {
+                              !desiredRoles.contains(SUPPORT)) {
                             return null;
                         }
                         if (mRec.getRoles().contains(CIVILIAN) &&
-                                !desiredRoles.contains(CIVILIAN)) {
+                              !desiredRoles.contains(CIVILIAN)) {
                             return null;
                         }
                         if (isSpecialized(desiredRoles, mRec) || !mRec.isOmni()) {
@@ -866,11 +821,11 @@ public enum MissionRole {
                     // priority
                     case TRAINING:
                         if (mRec.getRoles().contains(SUPPORT) &&
-                                !desiredRoles.contains(SUPPORT)) {
+                              !desiredRoles.contains(SUPPORT)) {
                             return null;
                         }
                         if (mRec.getRoles().contains(CIVILIAN) &&
-                                !desiredRoles.contains(CIVILIAN)) {
+                              !desiredRoles.contains(CIVILIAN)) {
                             return null;
                         }
                         if (mRec.getRoles().contains(TRAINING)) {
@@ -1094,29 +1049,29 @@ public enum MissionRole {
                         if (mRec.getRoles().contains(ENGINEER)) {
                             avRating += medium_adjust;
                             if ((desiredRoles.contains(CARGO) &&
-                                    mRec.getRoles().contains(CARGO)) ||
-                                    (desiredRoles.contains(MINESWEEPER) &&
-                                            mRec.getRoles().contains(MINESWEEPER))
-                                    ||
-                                    (desiredRoles.contains(MINELAYER) &&
-                                            mRec.getRoles().contains(MINELAYER))) {
+                                  mRec.getRoles().contains(CARGO)) ||
+                                  (desiredRoles.contains(MINESWEEPER) &&
+                                        mRec.getRoles().contains(MINESWEEPER))
+                                  ||
+                                  (desiredRoles.contains(MINELAYER) &&
+                                        mRec.getRoles().contains(MINELAYER))) {
                                 avRating += light_adjust;
                             }
                         } else {
                             if (mRec.getRoles().contains(APC) &&
-                                    (mRec.getMovementMode() == EntityMovementMode.WHEELED) ||
-                                    mRec.getMovementMode() == EntityMovementMode.TRACKED) {
+                                  (mRec.getMovementMode() == EntityMovementMode.WHEELED) ||
+                                  mRec.getMovementMode() == EntityMovementMode.TRACKED) {
                                 avRating -= light_adjust;
                             } else if ((mRec.getRoles().contains(MINESWEEPER) &&
-                                    !desiredRoles.contains(MINESWEEPER)) ||
-                                    (mRec.getRoles().contains(MINELAYER)) &&
-                                            !desiredRoles.contains(MINELAYER)) {
+                                  !desiredRoles.contains(MINESWEEPER)) ||
+                                  (mRec.getRoles().contains(MINELAYER)) &&
+                                        !desiredRoles.contains(MINELAYER)) {
                                 avRating -= min_adjust;
                             } else if (mRec.getRoles().contains(SUPPORT)) {
                                 if (mRec.getRoles().contains(CARGO) &&
-                                        (mRec.getMovementMode() == EntityMovementMode.WHEELED ||
-                                                mRec.getMovementMode() == EntityMovementMode.TRACKED ||
-                                                mRec.getMovementMode() == EntityMovementMode.VTOL)) {
+                                      (mRec.getMovementMode() == EntityMovementMode.WHEELED ||
+                                            mRec.getMovementMode() == EntityMovementMode.TRACKED ||
+                                            mRec.getMovementMode() == EntityMovementMode.VTOL)) {
                                     avRating -= min_adjust;
                                 } else if (!desiredRoles.contains(SUPPORT)) {
                                     avRating -= light_adjust;
@@ -1132,7 +1087,7 @@ public enum MissionRole {
                     // Calling for MINESWEEPER only returns units with that role
                     case MINESWEEPER:
                         if (mRec.getRoles().contains(CIVILIAN) &&
-                                !desiredRoles.contains(CIVILIAN)) {
+                              !desiredRoles.contains(CIVILIAN)) {
                             return null;
                         }
                         if (!mRec.getRoles().contains(MINESWEEPER)) {
@@ -1143,7 +1098,7 @@ public enum MissionRole {
                     // Calling for MINELAYER only returns units with that role
                     case MINELAYER:
                         if (mRec.getRoles().contains(CIVILIAN) &&
-                                !desiredRoles.contains(CIVILIAN)) {
+                              !desiredRoles.contains(CIVILIAN)) {
                             return null;
                         }
                         if (!mRec.getRoles().contains(MINELAYER)) {
@@ -1159,24 +1114,24 @@ public enum MissionRole {
                         if (mRec.getRoles().contains(SUPPORT)) {
                             avRating += medium_adjust;
                             if (mRec.getRoles().contains(ENGINEER) ||
-                                    mRec.getRoles().contains(CARGO)) {
+                                  mRec.getRoles().contains(CARGO)) {
                                 avRating += min_adjust;
                             }
                         } else {
                             if (mRec.getRoles().contains(APC) &&
-                                    (mRec.getMovementMode() == EntityMovementMode.WHEELED ||
-                                            mRec.getMovementMode() == EntityMovementMode.TRACKED ||
-                                            mRec.getMovementMode() == EntityMovementMode.VTOL)) {
+                                  (mRec.getMovementMode() == EntityMovementMode.WHEELED ||
+                                        mRec.getMovementMode() == EntityMovementMode.TRACKED ||
+                                        mRec.getMovementMode() == EntityMovementMode.VTOL)) {
                                 avRating -= light_adjust;
                             } else if (mRec.getRoles().contains(ENGINEER) ||
-                                    (mRec.getRoles().contains(CARGO) &&
-                                            !mRec.getRoles().contains(CIVILIAN) &&
-                                            (mRec.getMovementMode() == EntityMovementMode.WHEELED ||
-                                                    mRec.getMovementMode() == EntityMovementMode.TRACKED ||
-                                                    mRec.getMovementMode() == EntityMovementMode.VTOL))) {
+                                  (mRec.getRoles().contains(CARGO) &&
+                                        !mRec.getRoles().contains(CIVILIAN) &&
+                                        (mRec.getMovementMode() == EntityMovementMode.WHEELED ||
+                                              mRec.getMovementMode() == EntityMovementMode.TRACKED ||
+                                              mRec.getMovementMode() == EntityMovementMode.VTOL))) {
                                 avRating -= min_adjust;
                             } else if (mRec.getRoles().contains(CIVILIAN) &&
-                                    mRec.getRoles().contains(CARGO)) {
+                                  mRec.getRoles().contains(CARGO)) {
                                 avRating -= light_adjust;
                             } else {
                                 return null;
@@ -1189,7 +1144,7 @@ public enum MissionRole {
                     // specific roles.
                     case CARGO:
                         if (mRec.getRoles().contains(CIVILIAN) &&
-                                !desiredRoles.contains(CIVILIAN)) {
+                              !desiredRoles.contains(CIVILIAN)) {
                             return null;
                         }
                         if (!mRec.getRoles().contains(CARGO)) {
@@ -1201,8 +1156,8 @@ public enum MissionRole {
                     // SUPPORT (military non-combat) units.
                     case CIVILIAN:
                         if (!mRec.getRoles().contains(CIVILIAN) ||
-                                (mRec.getRoles().contains(CIVILIAN) &&
-                                        mRec.getRoles().contains(SUPPORT))) {
+                              (mRec.getRoles().contains(CIVILIAN) &&
+                                    mRec.getRoles().contains(SUPPORT))) {
                             return null;
                         }
                         break;
@@ -1224,7 +1179,7 @@ public enum MissionRole {
             // DropShips and JumpShips are excluded from non-combat and civilian role
             // checks
             if (mRec.getUnitType() != UnitType.DROPSHIP &&
-                    mRec.getUnitType() != UnitType.JUMPSHIP) {
+                  mRec.getUnitType() != UnitType.JUMPSHIP) {
 
                 // Units with the non-combat SUPPORT or CIVILIAN roles should not be used in
                 // a general context
@@ -1235,8 +1190,8 @@ public enum MissionRole {
                 // Units with only the artillery or missile artillery role should not be used in
                 // a general context
                 if (mRec.getRoles().size() == 1 &&
-                        (mRec.getRoles().contains(ARTILLERY) ||
-                                mRec.getRoles().contains(MISSILE_ARTILLERY))) {
+                      (mRec.getRoles().contains(ARTILLERY) ||
+                            mRec.getRoles().contains(MISSILE_ARTILLERY))) {
                     return null;
                 }
 
@@ -1247,18 +1202,16 @@ public enum MissionRole {
     }
 
     /**
-     * Specialized units are those which are not intended to see direct combat. This
-     * includes
-     * non-combat military units, civilian units, and units only intended to provide
-     * long distance
-     * artillery fire.
-     * 
+     * Specialized units are those which are not intended to see direct combat. This includes non-combat military units,
+     * civilian units, and units only intended to provide long distance artillery fire.
+     *
      * @param desiredRoles Roles which this unit should support
      * @param mRec         Unit to check
+     *
      * @return true, if unit is non-combat and desired roles are combat
      */
     private static boolean isSpecialized(Collection<MissionRole> desiredRoles,
-            ModelRecord mRec) {
+          ModelRecord mRec) {
 
         // Only units with role tags can be specialized
         if (mRec.getRoles().isEmpty()) {
@@ -1283,123 +1236,67 @@ public enum MissionRole {
         // even if they
         // mount artillery.
         return (mRec.getUnitType() != UnitType.DROPSHIP) &&
-                (mRec.getRoles().size() == 1) &&
-                (mRec.getRoles().contains(ARTILLERY) || mRec.getRoles().contains(MISSILE_ARTILLERY));
+              (mRec.getRoles().size() == 1) &&
+              (mRec.getRoles().contains(ARTILLERY) || mRec.getRoles().contains(MISSILE_ARTILLERY));
     }
 
     public static MissionRole parseRole(String role) {
-        switch (role.toLowerCase().replace("_", " ")) {
-            case "recon":
-                return RECON;
-            case "fire support":
-                return FIRE_SUPPORT;
-            case "command":
-                return COMMAND;
-            case "sr fire support":
-                return SR_FIRE_SUPPORT;
-            case "spotter":
-                return SPOTTER;
-            case "urban":
-                return URBAN;
-            case "infantry support":
-            case "inf support":
-                return INF_SUPPORT;
-            case "cavalry":
-                return CAVALRY;
-            case "raider":
-                return RAIDER;
-            case "incendiary":
-            case "incindiary":
-                return INCENDIARY;
-            case "ew support":
-                return EW_SUPPORT;
-            case "artillery":
-                return ARTILLERY;
-            case "missile artillery":
-                return MISSILE_ARTILLERY;
-            case "mixed artillery":
-                return MIXED_ARTILLERY;
-            case "anti aircraft":
-                return ANTI_AIRCRAFT;
-            case "anti infantry":
-                return ANTI_INFANTRY;
-            case "apc":
-                return APC;
-            case "specops":
-                return SPECOPS;
-            case "cargo":
-                return CARGO;
-            case "support":
-                return SUPPORT;
-            case "bomber":
-                return BOMBER;
-            case "escort":
-                return ESCORT;
-            case "interceptor":
-                return INTERCEPTOR;
-            case "ground support":
-                return GROUND_SUPPORT;
-            case "training":
-                return TRAINING;
-            case "assault":
-                return ASSAULT;
-            case "mek carrier":
-                return MEK_CARRIER;
-            case "asf carrier":
-                return ASF_CARRIER;
-            case "vee carrier":
-                return VEE_CARRIER;
-            case "infantry carrier":
-                return INFANTRY_CARRIER;
-            case "ba carrier":
-                return BA_CARRIER;
-            case "protomek carrier":
-                return PROTOMEK_CARRIER;
-            case "tug":
-                return TUG;
-            case "troop carrier":
-                return TROOP_CARRIER;
-            case "pocket warship":
-                return POCKET_WARSHIP;
-            case "corvette":
-                return CORVETTE;
-            case "destroyer":
-                return DESTROYER;
-            case "frigate":
-                return FRIGATE;
-            case "cruiser":
-                return CRUISER;
-            case "battleship":
-                return BATTLESHIP;
-            case "engineer":
-                return ENGINEER;
-            case "marine":
-                return MARINE;
-            case "mountaineer":
-                return MOUNTAINEER;
-            case "xct":
-                return XCT;
-            case "paratrooper":
-                return PARATROOPER;
-            case "anti mek":
-                return ANTI_MEK;
-            case "omni":
-                return OMNI;
-            case "mechanized ba":
-                return MECHANIZED_BA;
-            case "mag clamp":
-                return MAG_CLAMP;
-            case "field gun":
-                return FIELD_GUN;
-            case "civilian":
-                return CIVILIAN;
-            case "minesweeper":
-                return MINESWEEPER;
-            case "minelayer":
-                return MINELAYER;
-            default:
-                return null;
-        }
+        return switch (role.toLowerCase().replace("_", " ")) {
+            case "recon" -> RECON;
+            case "fire support" -> FIRE_SUPPORT;
+            case "command" -> COMMAND;
+            case "sr fire support" -> SR_FIRE_SUPPORT;
+            case "spotter" -> SPOTTER;
+            case "urban" -> URBAN;
+            case "infantry support", "inf support" -> INF_SUPPORT;
+            case "cavalry" -> CAVALRY;
+            case "raider" -> RAIDER;
+            case "incendiary", "incindiary" -> INCENDIARY;
+            case "ew support" -> EW_SUPPORT;
+            case "artillery" -> ARTILLERY;
+            case "missile artillery" -> MISSILE_ARTILLERY;
+            case "mixed artillery" -> MIXED_ARTILLERY;
+            case "anti aircraft" -> ANTI_AIRCRAFT;
+            case "anti infantry" -> ANTI_INFANTRY;
+            case "apc" -> APC;
+            case "specops" -> SPECOPS;
+            case "cargo" -> CARGO;
+            case "support" -> SUPPORT;
+            case "bomber" -> BOMBER;
+            case "escort" -> ESCORT;
+            case "interceptor" -> INTERCEPTOR;
+            case "ground support" -> GROUND_SUPPORT;
+            case "training" -> TRAINING;
+            case "assault" -> ASSAULT;
+            case "mek carrier" -> MEK_CARRIER;
+            case "asf carrier" -> ASF_CARRIER;
+            case "vee carrier" -> VEE_CARRIER;
+            case "infantry carrier" -> INFANTRY_CARRIER;
+            case "ba carrier" -> BA_CARRIER;
+            case "protomek carrier" -> PROTOMEK_CARRIER;
+            case "tug" -> TUG;
+            case "troop carrier" -> TROOP_CARRIER;
+            case "pocket warship" -> POCKET_WARSHIP;
+            case "corvette" -> CORVETTE;
+            case "destroyer" -> DESTROYER;
+            case "frigate" -> FRIGATE;
+            case "cruiser" -> CRUISER;
+            case "battleship" -> BATTLESHIP;
+            case "engineer" -> ENGINEER;
+            case "marine" -> MARINE;
+            case "mountaineer" -> MOUNTAINEER;
+            case "xct" -> XCT;
+            case "paratrooper" -> PARATROOPER;
+            case "anti mek" -> ANTI_MEK;
+            case "omni" -> OMNI;
+            case "mechanized ba" -> MECHANIZED_BA;
+            case "mag clamp" -> MAG_CLAMP;
+            case "field gun" -> FIELD_GUN;
+            case "civilian" -> CIVILIAN;
+            case "minesweeper" -> MINESWEEPER;
+            case "minelayer" -> MINELAYER;
+            default -> null;
+        };
     }
 
     @Override

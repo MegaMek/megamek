@@ -1,24 +1,39 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.bot.princess;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -28,14 +43,24 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import megamek.client.bot.princess.FireControl.FireControlType;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentMode;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import megamek.client.bot.princess.FireControl.FireControlType;
-import megamek.common.*;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.WeaponMounted;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -63,9 +88,7 @@ class WeaponFireInfoTest {
     private static WeaponMounted mockWeapon;
     private static WeaponType mockWeaponType;
     private static WeaponAttackAction mockWeaponAttackAction;
-    private static EquipmentMode mockEquipmentMode;
     private static Princess mockPrincess;
-    private static FireControl mockFireControl;
 
     static AmmoType mockArrowIVAmmoType = (AmmoType) EquipmentType.get("ISArrowIV Ammo");
     static AmmoType mockArrowIVHomingAmmoType = (AmmoType) EquipmentType.get("ISArrowIV Homing Ammo");
@@ -83,11 +106,11 @@ class WeaponFireInfoTest {
         mockToHitThirteen = mock(ToHitData.class);
         when(mockToHitThirteen.getValue()).thenReturn(ToHitData.AUTOMATIC_FAIL);
 
-        mockFireControl = mock(FireControl.class);
+        FireControl mockFireControl = mock(FireControl.class);
         when(mockFireControl.guessToHitModifierForWeapon(any(Entity.class), any(EntityState.class),
-                any(Targetable.class), any(EntityState.class), any(WeaponMounted.class), any(AmmoMounted.class),
-                any(Game.class)))
-                .thenReturn(mockToHitEight);
+              any(Targetable.class), any(EntityState.class), any(WeaponMounted.class), any(AmmoMounted.class),
+              any(Game.class)))
+              .thenReturn(mockToHitEight);
 
         mockPrincess = mock(Princess.class);
         when(mockPrincess.getFireControl(FireControlType.Basic)).thenReturn(mockFireControl);
@@ -116,7 +139,7 @@ class WeaponFireInfoTest {
 
         mockWeaponType = mock(WeaponType.class);
         mockWeapon = mock(WeaponMounted.class);
-        mockEquipmentMode = mock(EquipmentMode.class);
+        EquipmentMode mockEquipmentMode = mock(EquipmentMode.class);
         when(mockWeapon.getType()).thenReturn(mockWeaponType);
         when(mockEquipmentMode.getName()).thenReturn("");
         when(mockWeapon.curMode()).thenReturn(mockEquipmentMode);
@@ -199,18 +222,18 @@ class WeaponFireInfoTest {
         setupLightTarget();
         double expectedMaxDamage = mockWeaponType.getDamage();
         double expectedProbabilityToHit = Compute.oddsAbove(mockToHitSix.getValue()) / 100;
-        double expectedCriticals = ROLL_TWO * CRIT_COUNT * expectedProbabilityToHit;
+        double expectedCriticalSlots = ROLL_TWO * CRIT_COUNT * expectedProbabilityToHit;
         double expectedKill = 0;
         doReturn(mockToHitSix).when(testWeaponFireInfo).calcToHit();
         doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
-        doReturn(new double [] {expectedMaxDamage, 0D, 0D}).when(testWeaponFireInfo).computeExpectedDamage();
+        doReturn(new double[] { expectedMaxDamage, 0D, 0D }).when(testWeaponFireInfo).computeExpectedDamage();
         when(mockShooter.getEquipment(anyInt())).thenReturn((Mounted) mockWeapon);
         testWeaponFireInfo.initDamage(null, false, true, null);
         assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
         assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
         assertEquals(expectedMaxDamage * expectedProbabilityToHit,
-                testWeaponFireInfo.getExpectedDamage());
-        assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
+              testWeaponFireInfo.getExpectedDamage());
+        assertEquals(expectedCriticalSlots, testWeaponFireInfo.getExpectedCriticals(), DELTA);
         assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
 
         // Test a PPC vs light target with a to hit roll of 8.
@@ -219,17 +242,17 @@ class WeaponFireInfoTest {
         setupLightTarget();
         expectedMaxDamage = mockWeaponType.getDamage();
         expectedProbabilityToHit = Compute.oddsAbove(mockToHitEight.getValue()) / 100;
-        expectedCriticals = 0.0141773; // differs following first setup due to location destruction potential
+        expectedCriticalSlots = 0.0141773; // differs following first setup due to location destruction potential
         expectedKill = 0.0;
         doReturn(mockToHitEight).when(testWeaponFireInfo).calcToHit();
         doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
-        doReturn(new double [] {expectedMaxDamage, 0D, 0D}).when(testWeaponFireInfo).computeExpectedDamage();
+        doReturn(new double[] { expectedMaxDamage, 0D, 0D }).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false, true, null);
         assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
         assertEquals(expectedMaxDamage * testWeaponFireInfo.getProbabilityToHit(),
-                testWeaponFireInfo.getExpectedDamage());
+              testWeaponFireInfo.getExpectedDamage());
         assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
-        assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
+        assertEquals(expectedCriticalSlots, testWeaponFireInfo.getExpectedCriticals(), DELTA);
         assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
 
         // Test a Gauss Rifle vs a light target with a to hit roll of 6.
@@ -238,17 +261,17 @@ class WeaponFireInfoTest {
         setupLightTarget();
         expectedMaxDamage = mockWeaponType.getDamage();
         expectedProbabilityToHit = Compute.oddsAbove(mockToHitSix.getValue()) / 100;
-        expectedCriticals = 0.0324; // differs following first setup due to location destruction potential
+        expectedCriticalSlots = 0.0324; // differs following first setup due to location destruction potential
         expectedKill = 0.02005;
         doReturn(mockToHitSix).when(testWeaponFireInfo).calcToHit();
         doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
-        doReturn(new double [] {expectedMaxDamage, 0D, 0D}).when(testWeaponFireInfo).computeExpectedDamage();
+        doReturn(new double[] { expectedMaxDamage, 0D, 0D }).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false, true, null);
         assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
         assertEquals(expectedMaxDamage * testWeaponFireInfo.getProbabilityToHit(),
-                testWeaponFireInfo.getExpectedDamage());
+              testWeaponFireInfo.getExpectedDamage());
         assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
-        assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
+        assertEquals(expectedCriticalSlots, testWeaponFireInfo.getExpectedCriticals(), DELTA);
         assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
 
         // Test a Gauss Rifle vs. a medium target with a to hit roll of 8.
@@ -257,17 +280,17 @@ class WeaponFireInfoTest {
         setupMediumTarget();
         expectedMaxDamage = mockWeaponType.getDamage();
         expectedProbabilityToHit = Compute.oddsAbove(mockToHitEight.getValue()) / 100;
-        expectedCriticals = ROLL_TWO * CRIT_COUNT * expectedProbabilityToHit;
+        expectedCriticalSlots = ROLL_TWO * CRIT_COUNT * expectedProbabilityToHit;
         expectedKill = 0.0;
         doReturn(mockToHitEight).when(testWeaponFireInfo).calcToHit();
         doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
-        doReturn(new double [] {expectedMaxDamage, 0D, 0D}).when(testWeaponFireInfo).computeExpectedDamage();
+        doReturn(new double[] { expectedMaxDamage, 0D, 0D }).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false, true, null);
         assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
         assertEquals(expectedMaxDamage * testWeaponFireInfo.getProbabilityToHit(),
-                testWeaponFireInfo.getExpectedDamage());
+              testWeaponFireInfo.getExpectedDamage());
         assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
-        assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
+        assertEquals(expectedCriticalSlots, testWeaponFireInfo.getExpectedCriticals(), DELTA);
         assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
 
         // Test a medium laser vs. a medium target with no chance to hit.
@@ -276,16 +299,16 @@ class WeaponFireInfoTest {
         setupMediumTarget();
         expectedMaxDamage = 0;
         expectedProbabilityToHit = Compute.oddsAbove(mockToHitThirteen.getValue()) / 100;
-        expectedCriticals = ROLL_TWO * CRIT_COUNT * expectedProbabilityToHit;
+        expectedCriticalSlots = ROLL_TWO * CRIT_COUNT * expectedProbabilityToHit;
         expectedKill = 0;
         doReturn(mockToHitThirteen).when(testWeaponFireInfo).calcToHit();
         doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
-        doReturn(new double [] {expectedMaxDamage, 0D, 0D}).when(testWeaponFireInfo).computeExpectedDamage();
+        doReturn(new double[] { expectedMaxDamage, 0D, 0D }).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false, true, null);
         assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
         assertEquals(expectedMaxDamage, testWeaponFireInfo.getDamageOnHit());
         assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
-        assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
+        assertEquals(expectedCriticalSlots, testWeaponFireInfo.getExpectedCriticals(), DELTA);
         assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
 
         // todo build tests for AeroSpace attacks.

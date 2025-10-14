@@ -1,29 +1,56 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.alphaStrike.conversion;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.alphaStrike.*;
-
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
-import static megamek.common.alphaStrike.ASUnitType.*;
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
+import static megamek.common.alphaStrike.ASUnitType.DS;
+import static megamek.common.alphaStrike.ASUnitType.JS;
+import static megamek.common.alphaStrike.ASUnitType.SC;
+import static megamek.common.alphaStrike.ASUnitType.SS;
+import static megamek.common.alphaStrike.ASUnitType.SV;
+import static megamek.common.alphaStrike.ASUnitType.WS;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
+
+import java.util.function.BiFunction;
+
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.alphaStrike.ASArcs;
+import megamek.common.alphaStrike.ASDamageVector;
+import megamek.common.alphaStrike.ASSpecialAbilityCollection;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.AlphaStrikeHelper;
+import megamek.common.alphaStrike.BattleForceSUA;
 
 public class ASLargeAeroPointValueConverter extends ASAeroPointValueConverter {
 
@@ -49,105 +76,221 @@ public class ASLargeAeroPointValueConverter extends ASAeroPointValueConverter {
         ASDamageVector ltSCP = element.getLeftArc().getSCAP();
         ASDamageVector rtSCP = element.getRightArc().getSCAP();
         ASDamageVector rrSCP = element.getRearArc().getSCAP();
-        double stdAndMslDamage = ftStd.S.damage + ftStd.M.damage + ftStd.L.damage;
+        double stdAndMslDamage = ftStd.S().damage + ftStd.M().damage + ftStd.L().damage;
         report.addLine("STD Damage Front",
-                formatForReport(ftStd.S.damage) + " + " + formatForReport(ftStd.M.damage) + " + " + formatForReport(ftStd.L.damage),
-                "= " + formatForReport(stdAndMslDamage));
-        stdAndMslDamage += ltStd.S.damage + ltStd.M.damage + ltStd.L.damage;
+              formatForReport(ftStd.S().damage)
+                    + " + "
+                    + formatForReport(ftStd.M().damage)
+                    + " + "
+                    + formatForReport(ftStd.L().damage),
+              "= " + formatForReport(stdAndMslDamage));
+        stdAndMslDamage += ltStd.S().damage + ltStd.M().damage + ltStd.L().damage;
         report.addLine("STD Damage Left",
-                "+ " + formatForReport(ltStd.S.damage) + " + " + formatForReport(ltStd.M.damage) + " + " + formatForReport(ltStd.L.damage),
-                "= " + formatForReport(stdAndMslDamage));
-        stdAndMslDamage += rtStd.S.damage + rtStd.M.damage + rtStd.L.damage;
+              "+ "
+                    + formatForReport(ltStd.S().damage)
+                    + " + "
+                    + formatForReport(ltStd.M().damage)
+                    + " + "
+                    + formatForReport(ltStd.L().damage),
+              "= " + formatForReport(stdAndMslDamage));
+        stdAndMslDamage += rtStd.S().damage + rtStd.M().damage + rtStd.L().damage;
         report.addLine("STD Damage Right",
-                "+ " + formatForReport(rtStd.S.damage) + " + " + formatForReport(rtStd.M.damage) + " + " + formatForReport(rtStd.L.damage),
-                "= " + formatForReport(stdAndMslDamage));
-        stdAndMslDamage += ftMSL.S.damage + ftMSL.M.damage + ftMSL.L.damage;
+              "+ "
+                    + formatForReport(rtStd.S().damage)
+                    + " + "
+                    + formatForReport(rtStd.M().damage)
+                    + " + "
+                    + formatForReport(rtStd.L().damage),
+              "= " + formatForReport(stdAndMslDamage));
+        stdAndMslDamage += ftMSL.S().damage + ftMSL.M().damage + ftMSL.L().damage;
         report.addLine("MSL Damage Front",
-                "+ " + formatForReport(ftMSL.S.damage) + " + " + formatForReport(ftMSL.M.damage) + " + " + formatForReport(ftMSL.L.damage),
-                "= " + formatForReport(stdAndMslDamage));
-        stdAndMslDamage += ltMSL.S.damage + ltMSL.M.damage + ltMSL.L.damage;
+              "+ "
+                    + formatForReport(ftMSL.S().damage)
+                    + " + "
+                    + formatForReport(ftMSL.M().damage)
+                    + " + "
+                    + formatForReport(ftMSL.L().damage),
+              "= " + formatForReport(stdAndMslDamage));
+        stdAndMslDamage += ltMSL.S().damage + ltMSL.M().damage + ltMSL.L().damage;
         report.addLine("MSL Damage Left",
-                "+ " + formatForReport(ltMSL.S.damage) + " + " + formatForReport(ltMSL.M.damage) + " + " + formatForReport(ltMSL.L.damage),
-                "= " + formatForReport(stdAndMslDamage));
-        stdAndMslDamage += rtMSL.S.damage + rtMSL.M.damage + rtMSL.L.damage;
+              "+ "
+                    + formatForReport(ltMSL.S().damage)
+                    + " + "
+                    + formatForReport(ltMSL.M().damage)
+                    + " + "
+                    + formatForReport(ltMSL.L().damage),
+              "= " + formatForReport(stdAndMslDamage));
+        stdAndMslDamage += rtMSL.S().damage + rtMSL.M().damage + rtMSL.L().damage;
         report.addLine("MSL Damage Right",
-                "+ " + formatForReport(rtMSL.S.damage) + " + " + formatForReport(rtMSL.M.damage) + " + " + formatForReport(rtMSL.L.damage),
-                "= " + formatForReport(stdAndMslDamage));
+              "+ "
+                    + formatForReport(rtMSL.S().damage)
+                    + " + "
+                    + formatForReport(rtMSL.M().damage)
+                    + " + "
+                    + formatForReport(rtMSL.L().damage),
+              "= " + formatForReport(stdAndMslDamage));
 
         report.addEmptyLine();
-        double capAndScapDmg = ftCAP.S.damage + ftCAP.M.damage + ftCAP.L.damage;
+        double capAndScapDmg = ftCAP.S().damage + ftCAP.M().damage + ftCAP.L().damage;
         report.addLine("CAP Damage Front",
-                formatForReport(ftCAP.S.damage) + " + " + formatForReport(ftCAP.M.damage) + " + " + formatForReport(ftCAP.L.damage),
-                "= " + formatForReport(capAndScapDmg));
-        capAndScapDmg += ltCAP.S.damage + ltCAP.M.damage + ltCAP.L.damage;
+              formatForReport(ftCAP.S().damage)
+                    + " + "
+                    + formatForReport(ftCAP.M().damage)
+                    + " + "
+                    + formatForReport(ftCAP.L().damage),
+              "= " + formatForReport(capAndScapDmg));
+        capAndScapDmg += ltCAP.S().damage + ltCAP.M().damage + ltCAP.L().damage;
         report.addLine("CAP Damage Left",
-                "+ " + formatForReport(ltCAP.S.damage) + " + " + formatForReport(ltCAP.M.damage) + " + " + formatForReport(ltCAP.L.damage),
-                "= " + formatForReport(capAndScapDmg));
-        capAndScapDmg += rtCAP.S.damage + rtCAP.M.damage + rtCAP.L.damage;
+              "+ "
+                    + formatForReport(ltCAP.S().damage)
+                    + " + "
+                    + formatForReport(ltCAP.M().damage)
+                    + " + "
+                    + formatForReport(ltCAP.L().damage),
+              "= " + formatForReport(capAndScapDmg));
+        capAndScapDmg += rtCAP.S().damage + rtCAP.M().damage + rtCAP.L().damage;
         report.addLine("CAP Damage Right",
-                "+ " + formatForReport(rtCAP.S.damage) + " + " + formatForReport(rtCAP.M.damage) + " + " + formatForReport(rtCAP.L.damage),
-                "= " + formatForReport(capAndScapDmg));
-        capAndScapDmg += ftSCP.S.damage + ftSCP.M.damage + ftSCP.L.damage;
+              "+ "
+                    + formatForReport(rtCAP.S().damage)
+                    + " + "
+                    + formatForReport(rtCAP.M().damage)
+                    + " + "
+                    + formatForReport(rtCAP.L().damage),
+              "= " + formatForReport(capAndScapDmg));
+        capAndScapDmg += ftSCP.S().damage + ftSCP.M().damage + ftSCP.L().damage;
         report.addLine("SCAP Damage Front",
-                "+ " + formatForReport(ftSCP.S.damage) + " + " + formatForReport(ftSCP.M.damage) + " + " + formatForReport(ftSCP.L.damage),
-                "= " + formatForReport(capAndScapDmg));
-        capAndScapDmg += ltSCP.S.damage + ltSCP.M.damage + ltSCP.L.damage;
+              "+ "
+                    + formatForReport(ftSCP.S().damage)
+                    + " + "
+                    + formatForReport(ftSCP.M().damage)
+                    + " + "
+                    + formatForReport(ftSCP.L().damage),
+              "= " + formatForReport(capAndScapDmg));
+        capAndScapDmg += ltSCP.S().damage + ltSCP.M().damage + ltSCP.L().damage;
         report.addLine("SCAP Damage Left",
-                "+ " + formatForReport(ltSCP.S.damage) + " + " + formatForReport(ltSCP.M.damage) + " + " + formatForReport(ltSCP.L.damage),
-                "= " + formatForReport(capAndScapDmg));
-        capAndScapDmg += rtSCP.S.damage + rtSCP.M.damage + rtSCP.L.damage;
+              "+ "
+                    + formatForReport(ltSCP.S().damage)
+                    + " + "
+                    + formatForReport(ltSCP.M().damage)
+                    + " + "
+                    + formatForReport(ltSCP.L().damage),
+              "= " + formatForReport(capAndScapDmg));
+        capAndScapDmg += rtSCP.S().damage + rtSCP.M().damage + rtSCP.L().damage;
         report.addLine("SCAP Damage Right",
-                "+ " + formatForReport(rtSCP.S.damage) + " + " + formatForReport(rtSCP.M.damage) + " + " + formatForReport(rtSCP.L.damage),
-                "= " + formatForReport(capAndScapDmg));
+              "+ "
+                    + formatForReport(rtSCP.S().damage)
+                    + " + "
+                    + formatForReport(rtSCP.M().damage)
+                    + " + "
+                    + formatForReport(rtSCP.L().damage),
+              "= " + formatForReport(capAndScapDmg));
         if (element.hasMovementMode("a")) {
             offensiveValue = stdAndMslDamage + capAndScapDmg / 4;
-            report.addLine("Aerodyne", formatForReport(stdAndMslDamage) + " + " + formatForReport(capAndScapDmg) + " / 4", formatForReport(offensiveValue));
+            report.addLine("Aerodyne",
+                  formatForReport(stdAndMslDamage) + " + " + formatForReport(capAndScapDmg) + " / 4",
+                  formatForReport(offensiveValue));
         } else {
             report.addEmptyLine();
             report.addLine("Non-Aerodyne:", "");
             report.addLine("STD Damage Rear",
-                    formatForReport(stdAndMslDamage) + " + " + formatForReport(rrStd.S.damage) + " + " + formatForReport(rrStd.M.damage) + " + " + formatForReport(rrStd.L.damage),
-                    "= " + formatForReport(stdAndMslDamage + rrStd.S.damage + rrStd.M.damage + rrStd.L.damage));
-            stdAndMslDamage += rrStd.S.damage + rrStd.M.damage + rrStd.L.damage;
-            stdAndMslDamage += rrMSL.S.damage + rrMSL.M.damage + rrMSL.L.damage;
+                  formatForReport(stdAndMslDamage)
+                        + " + "
+                        + formatForReport(rrStd.S().damage)
+                        + " + "
+                        + formatForReport(
+                        rrStd.M().damage)
+                        + " + "
+                        + formatForReport(rrStd.L().damage),
+                  "= " + formatForReport(stdAndMslDamage + rrStd.S().damage + rrStd.M().damage + rrStd.L().damage));
+            stdAndMslDamage += rrStd.S().damage + rrStd.M().damage + rrStd.L().damage;
+            stdAndMslDamage += rrMSL.S().damage + rrMSL.M().damage + rrMSL.L().damage;
             report.addLine("MSL Damage Rear",
-                    "+ " + formatForReport(rrMSL.S.damage) + " + " + formatForReport(rrMSL.M.damage) + " + " + formatForReport(rrMSL.L.damage),
-                    "= " + formatForReport(stdAndMslDamage));
+                  "+ "
+                        + formatForReport(rrMSL.S().damage)
+                        + " + "
+                        + formatForReport(rrMSL.M().damage)
+                        + " + "
+                        + formatForReport(rrMSL.L().damage),
+                  "= " + formatForReport(stdAndMslDamage));
 
             report.addLine("CAP Damage Rear",
-                    formatForReport(capAndScapDmg) + " + " + formatForReport(rrCAP.S.damage) + " + " + formatForReport(rrCAP.M.damage) + " + " + formatForReport(rrCAP.L.damage),
-                    "= " + formatForReport(capAndScapDmg + rrCAP.S.damage + rrCAP.M.damage + rrCAP.L.damage));
-            capAndScapDmg += rrCAP.S.damage + rrCAP.M.damage + rrCAP.L.damage;
-            capAndScapDmg += rrSCP.S.damage + rrSCP.M.damage + rrSCP.L.damage;
+                  formatForReport(capAndScapDmg) + " + " + formatForReport(rrCAP.S().damage) + " + " + formatForReport(
+                        rrCAP.M().damage) + " + " + formatForReport(rrCAP.L().damage),
+                  "= " + formatForReport(capAndScapDmg + rrCAP.S().damage + rrCAP.M().damage + rrCAP.L().damage));
+            capAndScapDmg += rrCAP.S().damage + rrCAP.M().damage + rrCAP.L().damage;
+            capAndScapDmg += rrSCP.S().damage + rrSCP.M().damage + rrSCP.L().damage;
             report.addLine("SCAP Damage Rear",
-                    "+ " + formatForReport(rrSCP.S.damage) + " + " + formatForReport(rrSCP.M.damage) + " + " + formatForReport(rrSCP.L.damage),
-                    "= " + formatForReport(capAndScapDmg));
+                  "+ "
+                        + formatForReport(rrSCP.S().damage)
+                        + " + "
+                        + formatForReport(rrSCP.M().damage)
+                        + " + "
+                        + formatForReport(rrSCP.L().damage),
+                  "= " + formatForReport(capAndScapDmg));
             offensiveValue = stdAndMslDamage + capAndScapDmg / 5;
-            report.addLine("Damage Sum", formatForReport(stdAndMslDamage) + " + " + formatForReport(capAndScapDmg) + " / 5", formatForReport(offensiveValue));
-
-            if (element.isType(WS, DS, SC)) {
-                report.addLine("WS/DS/SC", formatForReport(offensiveValue) + " / 4", formatForReport(offensiveValue / 4));
-                offensiveValue /= 4;
-            }
-            if (element.isType(SS, JS, SV)) {
-                report.addLine("JS/SS/SV", formatForReport(offensiveValue) + " / 3", formatForReport(offensiveValue / 3));
-                offensiveValue /= 3;
-            }
+            report.addLine("Damage Sum",
+                  formatForReport(stdAndMslDamage) + " + " + formatForReport(capAndScapDmg) + " / 5",
+                  formatForReport(offensiveValue));
         }
     }
 
     @Override
-    protected void processSize() { }
+    protected void processUnitTypeDamageDivisors() {
+        if (element.isType(WS, DS, SC)) {
+            report.addLine("WS/DS/SC", formatForReport(offensiveValue) + " / 4", formatForReport(offensiveValue / 4));
+            offensiveValue /= 4;
+        }
+        if (element.isType(SS, JS, SV)) {
+            report.addLine("JS/SS/SV", formatForReport(offensiveValue) + " / 3", formatForReport(offensiveValue / 3));
+            offensiveValue /= 3;
+        }
+    }
 
     @Override
-    protected void processOffensiveSUAMods() { }
+    protected void processSize() {}
 
     @Override
-    protected void processForceBonus() { }
+    protected void processOffensiveSUAMods() {
+        // According to https://bg.battletech.com/forums/index.php?topic=84862.msg2007447#msg2007447,
+        // offensive SUA mods, blanket mods and force bonus are also used on large craft contrary to how it
+        // seems in ASC
+        super.processOffensiveSUAMods();
+        // On large craft, the only relevant offensive SUAs in arcs are artillery and Narc
+        processOffensiveSUAModsPerArc();
+    }
 
-    @Override
-    protected void processOffensiveBlanketMod() {
-        report.addLine("Offensive Value:", "", "= " + formatForReport(offensiveValue));
+    protected void processOffensiveSUAModsPerArc() {
+        processOffensiveSUAModInArc(ARTAIS, (e, a) -> 12.0 * (int) e.getArc(a).getSUA(ARTAIS));
+        processOffensiveSUAModInArc(ARTAC, (e, a) -> 12.0 * (int) e.getArc(a).getSUA(ARTAC));
+        processOffensiveSUAModInArc(ARTT, (e, a) -> 6.0 * (int) e.getArc(a).getSUA(ARTT));
+        processOffensiveSUAModInArc(ARTS, (e, a) -> 12.0 * (int) e.getArc(a).getSUA(ARTS));
+        processOffensiveSUAModInArc(ARTBA, (e, a) -> 6.0 * (int) e.getArc(a).getSUA(ARTBA));
+        processOffensiveSUAModInArc(ARTLTC, (e, a) -> 12.0 * (int) e.getArc(a).getSUA(ARTLTC));
+        processOffensiveSUAModInArc(ARTSC, (e, a) -> 6.0 * (int) e.getArc(a).getSUA(ARTSC));
+        processOffensiveSUAModInArc(ARTCM5, (e, a) -> 30.0 * (int) e.getArc(a).getSUA(ARTCM5));
+        processOffensiveSUAModInArc(ARTCM7, (e, a) -> 54.0 * (int) e.getArc(a).getSUA(ARTCM7));
+        processOffensiveSUAModInArc(ARTCM9, (e, a) -> 72.0 * (int) e.getArc(a).getSUA(ARTCM9));
+        processOffensiveSUAModInArc(ARTCM12, (e, a) -> 93.0 * (int) e.getArc(a).getSUA(ARTCM12));
+        processOffensiveSUAModInArc(ARTLT, (e, a) -> 27.0 * (int) e.getArc(a).getSUA(ARTLT));
+        processOffensiveSUAModInArc(ARTTC, (e, a) -> 3.0 * (int) e.getArc(a).getSUA(ARTTC));
+
+        processOffensiveSUAModInArc(SNARC, (e, a) -> (double) (int) e.getArc(a).getSUA(SNARC));
+        processOffensiveSUAModInArc(INARC, (e, a) -> (double) (int) e.getArc(a).getSUA(INARC));
+        processOffensiveSUAModInArc(CNARC, (e, a) -> 0.5 * (int) e.getArc(a).getSUA(CNARC));
+    }
+
+    protected void processOffensiveSUAModInArc(BattleForceSUA sua,
+          BiFunction<AlphaStrikeElement, ASArcs, Double> suaMod) {
+        for (ASArcs arc : ASArcs.values()) {
+            if (element.getArc(arc).hasSUA(sua)) {
+                double modifier = suaMod.apply(element, arc);
+                String suaString = AlphaStrikeHelper.formatAbility(sua, element.getArc(arc), element, ", ");
+                offensiveValue += modifier;
+                report.addLine("Offensive SUA",
+                      "+ " + formatForReport(modifier) + " (" + suaString + ")",
+                      "= " + formatForReport(offensiveValue));
+            }
+        }
     }
 
     @Override
@@ -158,13 +301,13 @@ public class ASLargeAeroPointValueConverter extends ASAeroPointValueConverter {
                 int pntValue = (int) arcSummary.getSUA(PNT);
                 defensiveValue += pntValue;
                 report.addLine("Defensive SPA",
-                        "+ " + pntValue + " (PNT, " + arc + ")",
-                        "= " + formatForReport(defensiveValue));
+                      "+ " + pntValue + " (PNT, " + arc + ")",
+                      "= " + formatForReport(defensiveValue));
             }
         }
         processDefensiveSUAMod(STL, e -> 2.0);
         processDefensiveSUAMod(RCA, e -> {
-            double armorThird = Math.floor((double)element.getFullArmor() / 3);
+            double armorThird = Math.floor((double) element.getFullArmor() / 3);
             double barFactor = element.hasSUA(BAR) ? 0.5 : 1;
             return armorThird * barFactor;
         });
@@ -184,7 +327,7 @@ public class ASLargeAeroPointValueConverter extends ASAeroPointValueConverter {
         report.addLine("- Structure", "+ " + element.getFullStructure(), "= " + formatForReport(dir));
         dir += 0.5 * element.getThreshold() * element.getSize();
         report.addLine("- Threshold",
-                "+ 0.5 x " + element.getThreshold() + " x " + element.getSize(),
-                "= " + formatForReport(dir));
+              "+ 0.5 x " + element.getThreshold() + " x " + element.getSize(),
+              "= " + formatForReport(dir));
     }
 }

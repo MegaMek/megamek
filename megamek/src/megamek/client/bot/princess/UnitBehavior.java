@@ -1,32 +1,52 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.bot.princess;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Mek;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 import megamek.logging.MMLogger;
 
 public class UnitBehavior {
-    private final static MMLogger logger = MMLogger.create(UnitBehavior.class);
+    private final static MMLogger LOGGER = MMLogger.create(UnitBehavior.class);
 
     public enum BehaviorType {
         // this unit is under 'forced withdrawal' due to being crippled
@@ -51,9 +71,6 @@ public class UnitBehavior {
     /**
      * Worker function that calculates a unit's desired behavior
      */
-    /**
-     * Worker function that calculates a unit's desired behavior
-     */
     private BehaviorType calculateUnitBehavior(Entity entity, Princess owner) {
         BehaviorSettings botSettings = owner.getBehaviorSettings();
 
@@ -71,7 +88,9 @@ public class UnitBehavior {
             return BehaviorType.MoveToDestination;
         } else if (entityWaypoints.containsKey(entity.getId()) && getWaypointForEntity(entity).isPresent()) {
             while (getWaypointForEntity(entity).isPresent() &&
-                owner.getClusterTracker().getDestinationCoords(entity, getWaypointForEntity(entity).get(), true).isEmpty()) {
+                  owner.getClusterTracker()
+                        .getDestinationCoords(entity, getWaypointForEntity(entity).get(), true)
+                        .isEmpty()) {
                 removeHeadWaypoint(entity);
             }
             if (getWaypointForEntity(entity).isPresent()) {
@@ -116,7 +135,7 @@ public class UnitBehavior {
 
     public boolean isDestinationValidForEntity(Entity entity, Coords destination, Princess owner) {
         var value = owner.getClusterTracker().getDestinationCoords(entity, destination, true).isEmpty();
-        logger.debug("Checking if destination is valid for entity " + entity.getId() + ": " + destination + " -> " + value);
+        LOGGER.debug("Checking if destination is valid for entity {}: {} -> {}", entity.getId(), destination, value);
         return value;
     }
 
@@ -125,13 +144,15 @@ public class UnitBehavior {
         for (var waypoint : waypoints) {
             if (isDestinationValidForEntity(entity, waypoint, owner)) {
                 // just discard any invalid waypoint
-                logger.info("Discarding invalid waypoint for entity " + entity.getId() + ": " + waypoint);
+                LOGGER.info("addEntityWaypoint - Discarding invalid waypoint for entity {}: {}",
+                      entity.getId(),
+                      waypoint);
                 continue;
             }
             coords.add(waypoint);
         }
         entityWaypoints.computeIfAbsent(entity.getId(), k -> new ArrayDeque<>()).addAll(coords);
-        logger.info("Adding waypoints for entity " + entity.getId() + ": " + coords);
+        LOGGER.info("Adding waypoints for entity {}: {}", entity.getId(), coords);
         return true;
     }
 
@@ -140,56 +161,54 @@ public class UnitBehavior {
     }
 
     /**
-     * Removes the head waypoint from the entity's waypoint queue
-     * If waypoints were added (1,1) then (2,2), then (3,3), this would remove (1,1)
+     * Removes the head waypoint from the entity's waypoint queue If waypoints were added (1,1) then (2,2), then (3,3),
+     * this would remove (1,1)
+     *
      * @param entity the entity to remove the waypoint from
      */
-    public Optional<Coords> removeHeadWaypoint(Entity entity) {
-        logger.info("Removing head waypoint for entity " + entity.getId());
-        return Optional.ofNullable(entityWaypoints.computeIfAbsent(entity.getId(), k -> new ArrayDeque<>()).pollFirst());
+    public void removeHeadWaypoint(Entity entity) {
+        LOGGER.info("Removing head waypoint for entity {}", entity.getId());
+        entityWaypoints.computeIfAbsent(entity.getId(), k -> new ArrayDeque<>())
+              .pollFirst();
     }
 
     /**
-     * Removes the tail waypoint from the entity's waypoint queue
-     * If waypoints were added (1,1) then (2,2) then (3,3), this would remove (3,3), good for an "undo" behavior.
+     * Removes the tail waypoint from the entity's waypoint queue If waypoints were added (1,1) then (2,2) then (3,3),
+     * this would remove (3,3), good for an "undo" behavior.
+     *
      * @param entity the entity to remove the waypoint from
      */
-    public Optional<Coords> removeTailWaypoint(Entity entity) {
-        logger.info("Removing tail waypoint for entity " + entity.getId());
-        return Optional.ofNullable(entityWaypoints.computeIfAbsent(entity.getId(), k -> new ArrayDeque<>()).pollLast());
+    public void removeTailWaypoint(Entity entity) {
+        LOGGER.info("Removing tail waypoint for entity {}", entity.getId());
+        entityWaypoints.computeIfAbsent(entity.getId(), k -> new ArrayDeque<>()).pollLast();
     }
 
     /**
      * Sets the entity's waypoints to the given destination
-     * @param entity
-     * @param waypoints
-     * @param owner
-     * @return
+     *
      */
-    public boolean setEntityWaypoints(Entity entity, List<Coords> waypoints, Princess owner) {
+    public void setEntityWaypoints(Entity entity, List<Coords> waypoints, Princess owner) {
         var deque = new ArrayDeque<Coords>();
         for (var waypoint : waypoints) {
             if (isDestinationValidForEntity(entity, waypoint, owner)) {
                 // just discard any invalid waypoint
-                logger.info("Discarding invalid waypoint for entity " + entity.getId() + ": " + waypoint);
+                LOGGER.info("Discarding invalid waypoint for entity {}: {}", entity.getId(), waypoint);
                 continue;
             }
             deque.add(waypoint);
         }
-        logger.debug("Setting waypoints for entity " + entity.getId() + ": " + deque);
+        LOGGER.debug("Setting waypoints for entity {}: {}", entity.getId(), deque);
         entityWaypoints.put(entity.getId(), deque);
-        return true;
     }
 
 
-    public boolean clearWaypoints(Entity entity) {
-        logger.debug("Clearing all waypoints for entity {}", entity.getDisplayName());
+    public void clearWaypoints(Entity entity) {
+        LOGGER.debug("Clearing all waypoints for entity {}", entity.getDisplayName());
         entityWaypoints.put(entity.getId(), new ArrayDeque<>());
-        return true;
     }
 
     public void clearWaypoints() {
-        logger.debug("Clearing all waypoints");
+        LOGGER.debug("Clearing all waypoints");
         entityWaypoints.clear();
     }
 

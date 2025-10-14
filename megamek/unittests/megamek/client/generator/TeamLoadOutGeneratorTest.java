@@ -1,50 +1,81 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.generator;
 
-import megamek.client.Client;
-import megamek.client.ratgenerator.ForceDescriptor;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.common.*;
-import megamek.common.AmmoType.Munitions;
-import megamek.common.containers.MunitionTree;
-import megamek.common.options.GameOptions;
-import megamek.common.options.Option;
-import megamek.common.options.OptionsConstants;
-import megamek.common.options.PilotOptions;
-import org.apache.commons.collections4.IteratorUtils;
-import org.junit.jupiter.api.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import megamek.client.Client;
+import megamek.client.ratgenerator.ForceDescriptor;
+import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.common.Player;
+import megamek.common.Team;
+import megamek.common.containers.MunitionTree;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.AmmoType.Munitions;
+import megamek.common.equipment.BombLoadout;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
+import megamek.common.options.GameOptions;
+import megamek.common.options.Option;
+import megamek.common.options.OptionsConstants;
+import megamek.common.options.PilotOptions;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Crew;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class TeamLoadOutGeneratorTest {
 
@@ -75,7 +106,7 @@ class TeamLoadOutGeneratorTest {
         game.setOptions(mockGameOptions);
 
         when(mockGameOptions.booleanOption(eq(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL))).thenReturn(false);
-        when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)).thenReturn("Experimental");
+        when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECH_LEVEL)).thenReturn("Experimental");
         when(mockGameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED)).thenReturn(true);
         when(mockGameOptions.booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT)).thenReturn(false);
         Option mockTrueBoolOpt = mock(Option.class);
@@ -124,10 +155,10 @@ class TeamLoadOutGeneratorTest {
     void testReconfigureEntityFallbackAmmoType() throws LocationFullException {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         Mek mockMek = createMek("Mauler", "MAL-1K", "Tyson");
-        Mounted<?> bin1 = mockMek.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
-        Mounted<?> bin2 = mockMek.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
-        Mounted<?> bin3 = mockMek.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
-        Mounted<?> bin4 = mockMek.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
+        Mounted<?> bin1 = mockMek.addEquipment(mockAC5AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin2 = mockMek.addEquipment(mockAC5AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin3 = mockMek.addEquipment(mockAC5AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin4 = mockMek.addEquipment(mockAC5AmmoType, Mek.LOC_LEFT_TORSO);
 
         // Create a set of imperatives, some of which won't work
         MunitionTree mt = new MunitionTree();
@@ -150,8 +181,8 @@ class TeamLoadOutGeneratorTest {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMek = createMek("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
-        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RIGHT_TORSO);
         MunitionTree mt = new MunitionTree();
 
         // We expect to see no change in loadouts
@@ -165,8 +196,8 @@ class TeamLoadOutGeneratorTest {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMek = createMek("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
-        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RIGHT_TORSO);
 
         MunitionTree mt = new MunitionTree();
         mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Dead-Fire");
@@ -193,10 +224,10 @@ class TeamLoadOutGeneratorTest {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMek = createMek("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
-        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted<?> bin3 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
-        Mounted<?> bin4 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin3 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RIGHT_TORSO);
+        Mounted<?> bin4 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RIGHT_TORSO);
 
         MunitionTree mt = new MunitionTree();
         // First, set all bins to Smoke
@@ -225,20 +256,26 @@ class TeamLoadOutGeneratorTest {
 
         Mek mockMek = createMek("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
         Mek mockMek2 = createMek("Catapult", "CPLT-C1", "John Q. Public");
-        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted<?> bin3 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
-        Mounted<?> bin4 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
-        Mounted<?> bin5 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
-        Mounted<?> bin6 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
-        Mounted<?> bin7 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
-        Mounted<?> bin8 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin3 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RIGHT_TORSO);
+        Mounted<?> bin4 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RIGHT_TORSO);
+        Mounted<?> bin5 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RIGHT_TORSO);
+        Mounted<?> bin6 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RIGHT_TORSO);
+        Mounted<?> bin7 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RIGHT_TORSO);
+        Mounted<?> bin8 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RIGHT_TORSO);
 
         // Set up two loadouts: one for a named pilot, and one for all LRMs on any
         // Catapults
         MunitionTree mt = new MunitionTree();
-        mt.insertImperative("Catapult", "CPLT-C1", "J. Robert Hoppenheimer", "LRM-15", "Standard", "Dead-Fire",
-                "Heat-Seeking", "Smoke");
+        mt.insertImperative("Catapult",
+              "CPLT-C1",
+              "J. Robert Hoppenheimer",
+              "LRM-15",
+              "Standard",
+              "Dead-Fire",
+              "Heat-Seeking",
+              "Smoke");
         mt.insertImperative("Catapult", "any", "any", "LRM", "Standard", "Swarm", "Semi-guided");
 
         // J. Robert H. should get the first load out
@@ -271,14 +308,14 @@ class TeamLoadOutGeneratorTest {
         game.setEntity(1, mockMek2);
         game.setEntity(2, mockMek3);
 
-        // Load ammo in 'meks; locations are for fun
-        Mounted<?> bin1 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
-        Mounted<?> bin2 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
-        Mounted<?> bin3 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted<?> bin4 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
-        Mounted<?> bin5 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_LT);
-        Mounted<?> bin6 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_RT);
-        Mounted<?> bin7 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_CT);
+        // Load ammo in `Meks; locations are for fun
+        Mounted<?> bin1 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CENTER_TORSO);
+        Mounted<?> bin2 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CENTER_TORSO);
+        Mounted<?> bin3 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin4 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RIGHT_TORSO);
+        Mounted<?> bin5 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin6 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_RIGHT_TORSO);
+        Mounted<?> bin7 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_CENTER_TORSO);
 
         MunitionTree mt = new MunitionTree();
         HashMap<String, String> imperatives = new HashMap<>();
@@ -321,14 +358,14 @@ class TeamLoadOutGeneratorTest {
         game.setEntity(1, mockMek2);
         game.setEntity(2, mockMek3);
 
-        // Load ammo in 'meks; locations are for fun
-        Mounted<?> bin1 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
-        Mounted<?> bin2 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
-        Mounted<?> bin3 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted<?> bin4 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
-        Mounted<?> bin5 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_LT);
-        Mounted<?> bin6 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_RT);
-        Mounted<?> bin7 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_CT);
+        // Load ammo in `Meks; locations are for fun
+        Mounted<?> bin1 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CENTER_TORSO);
+        Mounted<?> bin2 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CENTER_TORSO);
+        Mounted<?> bin3 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin4 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RIGHT_TORSO);
+        Mounted<?> bin5 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin6 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_RIGHT_TORSO);
+        Mounted<?> bin7 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_CENTER_TORSO);
 
         // Just check that the bins are populated still
         tlg.randomizeBotTeamConfiguration(team, "FWL");
@@ -339,7 +376,7 @@ class TeamLoadOutGeneratorTest {
     }
 
     @Test
-    void testLoadEntityListTwoEntities() throws LocationFullException {
+    void testLoadEntityListTwoEntities() {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         Mek mockMek = createMek("Hunchback", "HBK-4G", "Boomstick");
         Mek mockMek2 = createMek("Hunchback", "HBK-4J", "The Shade");
@@ -369,14 +406,14 @@ class TeamLoadOutGeneratorTest {
         game.setEntity(1, mockMek2);
         game.setEntity(2, mockMek3);
 
-        // Load ammo in 'meks; locations are for fun
-        Mounted<?> bin1 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
-        Mounted<?> bin2 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
-        Mounted<?> bin3 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted<?> bin4 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
-        Mounted<?> bin5 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_LT);
-        Mounted<?> bin6 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_RT);
-        Mounted<?> bin7 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_CT);
+        // Load ammo in `Meks; locations are for fun
+        Mounted<?> bin1 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CENTER_TORSO);
+        Mounted<?> bin2 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CENTER_TORSO);
+        Mounted<?> bin3 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin4 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_RIGHT_TORSO);
+        Mounted<?> bin5 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin6 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_RIGHT_TORSO);
+        Mounted<?> bin7 = mockMek3.addEquipment(mockSRM6AmmoType, Mek.LOC_CENTER_TORSO);
 
         // Just check that the bins are populated still
         tlg.reconfigureTeam(team, "CL", "");
@@ -390,11 +427,11 @@ class TeamLoadOutGeneratorTest {
     void testReconfigureBotTeamAllArtemis() throws LocationFullException {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         Mek mockMek = createMek("Warhammer", "WHM-6Rb", "Asgard");
-        mockMek.addEquipment(EquipmentType.get("IS Artemis IV FCS"), Mek.LOC_RT);
+        mockMek.addEquipment(EquipmentType.get("IS Artemis IV FCS"), Mek.LOC_RIGHT_TORSO);
         Mek mockMek2 = createMek("Valkyrie", "VLK-QW5", "Wobbles");
-        mockMek2.addEquipment(EquipmentType.get("Clan Artemis IV FCS"), Mek.LOC_RT);
+        mockMek2.addEquipment(EquipmentType.get("Clan Artemis IV FCS"), Mek.LOC_RIGHT_TORSO);
         Mek mockMek3 = createMek("Cougar", "XR", "Sarandon");
-        mockMek3.addEquipment(EquipmentType.get("Clan Artemis V"), Mek.LOC_RT);
+        mockMek3.addEquipment(EquipmentType.get("Clan Artemis V"), Mek.LOC_RIGHT_TORSO);
         mockMek.setOwner(player);
         mockMek2.setOwner(player);
         mockMek3.setOwner(player);
@@ -402,12 +439,12 @@ class TeamLoadOutGeneratorTest {
         game.setEntity(1, mockMek2);
         game.setEntity(2, mockMek3);
 
-        // Load ammo in 'meks; locations are for fun
-        Mounted<?> bin1 = mockMek.addEquipment(mockSRM6AmmoType, Mek.LOC_CT);
-        Mounted<?> bin2 = mockMek2.addEquipment(mockMML7LRMAmmoType, Mek.LOC_LT);
-        Mounted<?> bin3 = mockMek2.addEquipment(mockMML7SRMAmmoType, Mek.LOC_LT);
-        Mounted<?> bin4 = mockMek3.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted<?> bin5 = mockMek3.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
+        // Load ammo in `Meks; locations are for fun
+        Mounted<?> bin1 = mockMek.addEquipment(mockSRM6AmmoType, Mek.LOC_CENTER_TORSO);
+        Mounted<?> bin2 = mockMek2.addEquipment(mockMML7LRMAmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin3 = mockMek2.addEquipment(mockMML7SRMAmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin4 = mockMek3.addEquipment(mockLRM15AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin5 = mockMek3.addEquipment(mockLRM15AmmoType, Mek.LOC_LEFT_TORSO);
 
         // Just check that the bins are populated still
         tlg.reconfigureTeam(team, "IS", "");
@@ -423,10 +460,13 @@ class TeamLoadOutGeneratorTest {
     void testAmmoTypeIllegalByTechLevel() {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         AmmoType aType = (AmmoType) EquipmentType.get("IS Arrow IV Ammo");
-        AmmoType mType = AmmoType.getMunitionsFor(aType.getAmmoType()).stream()
-                .filter(m -> m.getSubMunitionName().contains("ADA")).findFirst().orElse(null);
+        AmmoType mType = AmmoType.getMunitionsFor(aType.getAmmoType())
+              .stream()
+              .filter(m -> m.getSubMunitionName().contains("ADA"))
+              .findFirst()
+              .orElse(null);
         // Set game tech level to Standard and update generator
-        when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)).thenReturn("Standard");
+        when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECH_LEVEL)).thenReturn("Standard");
         tlg.updateOptionValues();
 
         // Should not be available to anyone
@@ -437,7 +477,7 @@ class TeamLoadOutGeneratorTest {
         Assertions.assertFalse(tlg.checkLegality(mType, "CLAN", "CL", true));
 
         // Should be available to everyone
-        when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)).thenReturn("Advanced");
+        when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECH_LEVEL)).thenReturn("Advanced");
         tlg.updateOptionValues();
         Assertions.assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
         Assertions.assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
@@ -450,8 +490,11 @@ class TeamLoadOutGeneratorTest {
     void testAmmoTypeIllegalBeforeCreation() {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         AmmoType aType = (AmmoType) EquipmentType.get("IS Arrow IV Ammo");
-        AmmoType mType = AmmoType.getMunitionsFor(aType.getAmmoType()).stream()
-                .filter(m -> m.getSubMunitionName().contains("ADA")).findFirst().orElse(null);
+        AmmoType mType = AmmoType.getMunitionsFor(aType.getAmmoType())
+              .stream()
+              .filter(m -> m.getSubMunitionName().contains("ADA"))
+              .findFirst()
+              .orElse(null);
         // Should be available by default in 3151, including to Clans (using MixTech)
         Assertions.assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
         Assertions.assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
@@ -474,9 +517,9 @@ class TeamLoadOutGeneratorTest {
         when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3070);
         tlg.updateOptionValues();
         Assertions.assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
-        Assertions.assertFalse(tlg.checkLegality(mType, "FS", "IS", false));
-        Assertions.assertFalse(tlg.checkLegality(mType, "IS", "IS", false));
-        Assertions.assertFalse(tlg.checkLegality(mType, "CLAN", "CL", true));
+        Assertions.assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
+        Assertions.assertTrue(tlg.checkLegality(mType, "IS", "IS", false));
+        Assertions.assertTrue(tlg.checkLegality(mType, "CLAN", "CL", true));
     }
 
     @Test
@@ -533,7 +576,9 @@ class TeamLoadOutGeneratorTest {
         // Have the Munition Tree generator use our pre-made mwc so we can see its
         // changes
 
-        ArrayList<Entity> ownTeamEntities = (ArrayList<Entity>) IteratorUtils.toList(game.getTeamEntities(team));
+        Iterator<Entity> entityIterator = game.getTeamEntities(team);
+        ArrayList<Entity> ownTeamEntities = new ArrayList<>();
+        entityIterator.forEachRemaining(ownTeamEntities::add);
         TeamLoadOutGenerator.generateMunitionTree(rp, ownTeamEntities, "", mwc);
 
         assertEquals(0.0, mwc.getArtyWeights().get("Davy Crockett-M"));
@@ -545,8 +590,8 @@ class TeamLoadOutGeneratorTest {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMek = createMek("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
-        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RIGHT_TORSO);
 
         tlg.clampAmmoShots(mockMek, 0.0f);
         assertEquals(0, bin1.getUsableShotsLeft());
@@ -560,8 +605,8 @@ class TeamLoadOutGeneratorTest {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMek = createMek("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
-        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RIGHT_TORSO);
 
         tlg.clampAmmoShots(mockMek, 0.1f);
         assertEquals(1, bin1.getUsableShotsLeft());
@@ -575,8 +620,8 @@ class TeamLoadOutGeneratorTest {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMek = createMek("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
-        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RIGHT_TORSO);
 
         tlg.clampAmmoShots(mockMek, 0.5f);
         assertEquals(4, bin1.getUsableShotsLeft());
@@ -589,8 +634,8 @@ class TeamLoadOutGeneratorTest {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 
         Mek mockMek = createMek("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
-        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
-        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RT);
+        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RIGHT_TORSO);
 
         tlg.clampAmmoShots(mockMek, 1.5f);
         assertEquals(8, bin1.getUsableShotsLeft());
@@ -614,20 +659,45 @@ class TeamLoadOutGeneratorTest {
         String faction = "PIR";
         String techBase = "IS";
         boolean mixedTech = false;
-        int[] generatedBombs = tlg.generateExternalOrdnance(
-            bombUnits,
-            airOnly,
-            isPirate,
-            quality,
-            year,
-            faction,
-            techBase,
-            mixedTech
-        );
-        int[] expected = new int[BombType.B_NUM];
-        expected[BombType.B_RLP] = bombUnits;
-        assertArrayEquals(expected, generatedBombs);
+        BombLoadout generatedBombs = tlg.generateExternalOrdnance(bombUnits,
+              airOnly,
+              isPirate,
+              quality,
+              year,
+              faction,
+              techBase,
+              mixedTech);
+        BombLoadout expected = new BombLoadout();
+        expected.put(BombTypeEnum.RLP, bombUnits);
+        assertBombLoadoutEquals(expected, generatedBombs);
+        if (!expected.equals(generatedBombs)) {
+            fail(String.format("Expected %s, but got %s", expected, generatedBombs));
+        }
     }
+
+    private void assertBombLoadoutEquals(BombLoadout expected, BombLoadout actual) {
+        assertEquals(expected.size(), actual.size(), "BombLoadout sizes don't match");
+
+        for (Map.Entry<BombTypeEnum, Integer> entry : expected.entrySet()) {
+            BombTypeEnum bombType = entry.getKey();
+            int expectedCount = entry.getValue();
+            int actualCount = actual.getCount(bombType);
+
+            assertEquals(expectedCount, actualCount,
+                  String.format("Bomb count mismatch for %s: expected %d, got %d",
+                        bombType.getDisplayName(), expectedCount, actualCount));
+        }
+
+        // Check for unexpected bomb types in actual
+        for (BombTypeEnum bombType : actual.keySet()) {
+            if (!expected.containsKey(bombType)) {
+                assertEquals(0, actual.getCount(bombType),
+                      String.format("Unexpected bomb type %s with count %d",
+                            bombType.getDisplayName(), actual.getCount(bombType)));
+            }
+        }
+    }
+
 
     /**
      * We expect CAP Pirate flights in the 3SW era to mount ordnance only RL-P pods.
@@ -637,6 +707,14 @@ class TeamLoadOutGeneratorTest {
         // Game setup
         int year = 3075;
         when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(year);
+        BombLoadout generatedBombs = getBombLoadout(year);
+        // Should always get some regular rocket launchers
+        assertTrue(generatedBombs.getCount(BombTypeEnum.RL) > 0);
+        // Should not use RL-Ps when RLs are available
+        assertEquals(0, generatedBombs.getCount(BombTypeEnum.RLP));
+    }
+
+    private static BombLoadout getBombLoadout(int year) {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         // Bomber info
         int bombUnits = 20;
@@ -646,20 +724,14 @@ class TeamLoadOutGeneratorTest {
         String faction = "PIR";
         String techBase = "IS";
         boolean mixedTech = false;
-        int[] generatedBombs = tlg.generateExternalOrdnance(
-            bombUnits,
-            airOnly,
-            isPirate,
-            quality,
-            year,
-            faction,
-            techBase,
-            mixedTech
-        );
-        // Should always get some regular rocket launchers
-        assertTrue(generatedBombs[BombType.B_RL] > 0);
-        // Should not use RL-Ps when RLs are available
-        assertEquals(0, generatedBombs[BombType.B_RLP]);
+        return tlg.generateExternalOrdnance(bombUnits,
+              airOnly,
+              isPirate,
+              quality,
+              year,
+              faction,
+              techBase,
+              mixedTech);
     }
 
     /**
@@ -679,17 +751,15 @@ class TeamLoadOutGeneratorTest {
         String faction = "CSJ";
         String techBase = "CL";
         boolean mixedTech = false;
-        int[] generatedBombs = tlg.generateExternalOrdnance(
-            bombUnits,
-            airOnly,
-            isPirate,
-            quality,
-            year,
-            faction,
-            techBase,
-            mixedTech
-        );
+        BombLoadout generatedBombs = tlg.generateExternalOrdnance(bombUnits,
+              airOnly,
+              isPirate,
+              quality,
+              year,
+              faction,
+              techBase,
+              mixedTech);
         // Pre-2823, Clan units can take RL-P bombs
-        assertTrue(generatedBombs[BombType.B_RLP] > 0);
+        assertTrue(generatedBombs.getCount(BombTypeEnum.RLP) > 0);
     }
 }

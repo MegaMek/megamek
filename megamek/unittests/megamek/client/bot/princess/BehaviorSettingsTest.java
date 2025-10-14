@@ -1,21 +1,35 @@
 /*
  * Copyright (c) 2000-2011 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.bot.princess;
 
@@ -30,17 +44,15 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
+import megamek.utilities.xml.MMXMLUtility;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import megamek.utilities.xml.MMXMLUtility;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -58,9 +70,8 @@ class BehaviorSettingsTest {
         assertTrue(true);
 
         // Test a null description.
-        description = null;
         try {
-            behaviorSettings.setDescription(description);
+            behaviorSettings.setDescription(null);
             fail("Should have thrown an error!");
         } catch (PrincessException e) {
             assertTrue(true);
@@ -206,17 +217,17 @@ class BehaviorSettingsTest {
         assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE,
-                behaviorSettings.getDestinationEdge());
+              behaviorSettings.getDestinationEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FORCED_WITHDRAWAL,
-                behaviorSettings.isForcedWithdrawal());
+              behaviorSettings.isForcedWithdrawal());
         assertEquals(BehaviorSettingsTestConstants.GOOD_AUTO_FLEE, behaviorSettings.shouldAutoFlee());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FALL_SHAME_INDEX, behaviorSettings.getFallShameIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HYPER_AGGRESSION_INDEX,
-                behaviorSettings.getHyperAggressionIndex());
+              behaviorSettings.getHyperAggressionIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_SELF_PRESERVATION_INDEX,
-                behaviorSettings.getSelfPreservationIndex());
+              behaviorSettings.getSelfPreservationIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HERD_MENTALITY_INDEX,
-                behaviorSettings.getHerdMentalityIndex());
+              behaviorSettings.getHerdMentalityIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_BRAVERY_INDEX, behaviorSettings.getBraveryIndex());
         assertEquals(expectedTargets, behaviorSettings.getStrategicBuildingTargets());
         assertEquals(expectedUnits, behaviorSettings.getPriorityUnitTargets());
@@ -232,17 +243,17 @@ class BehaviorSettingsTest {
         assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE,
-                behaviorSettings.getDestinationEdge());
+              behaviorSettings.getDestinationEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FORCED_WITHDRAWAL,
-                behaviorSettings.isForcedWithdrawal());
+              behaviorSettings.isForcedWithdrawal());
         assertEquals(BehaviorSettingsTestConstants.GOOD_AUTO_FLEE, behaviorSettings.shouldAutoFlee());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FALL_SHAME_INDEX, behaviorSettings.getFallShameIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HYPER_AGGRESSION_INDEX,
-                behaviorSettings.getHyperAggressionIndex());
+              behaviorSettings.getHyperAggressionIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_SELF_PRESERVATION_INDEX,
-                behaviorSettings.getSelfPreservationIndex());
+              behaviorSettings.getSelfPreservationIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HERD_MENTALITY_INDEX,
-                behaviorSettings.getHerdMentalityIndex());
+              behaviorSettings.getHerdMentalityIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_BRAVERY_INDEX, behaviorSettings.getBraveryIndex());
         assertEquals(expectedTargets, behaviorSettings.getStrategicBuildingTargets());
         assertEquals(expectedUnits, behaviorSettings.getPriorityUnitTargets());
@@ -261,17 +272,17 @@ class BehaviorSettingsTest {
         assertEquals("null", behaviorSettings.getDescription());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE,
-                behaviorSettings.getDestinationEdge());
+              behaviorSettings.getDestinationEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FORCED_WITHDRAWAL,
-                behaviorSettings.isForcedWithdrawal());
+              behaviorSettings.isForcedWithdrawal());
         assertEquals(BehaviorSettingsTestConstants.GOOD_AUTO_FLEE, behaviorSettings.shouldAutoFlee());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FALL_SHAME_INDEX, behaviorSettings.getFallShameIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HYPER_AGGRESSION_INDEX,
-                behaviorSettings.getHyperAggressionIndex());
+              behaviorSettings.getHyperAggressionIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_SELF_PRESERVATION_INDEX,
-                behaviorSettings.getSelfPreservationIndex());
+              behaviorSettings.getSelfPreservationIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HERD_MENTALITY_INDEX,
-                behaviorSettings.getHerdMentalityIndex());
+              behaviorSettings.getHerdMentalityIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_BRAVERY_INDEX, behaviorSettings.getBraveryIndex());
         assertEquals(expectedTargets, behaviorSettings.getStrategicBuildingTargets());
         assertEquals(expectedUnits, behaviorSettings.getPriorityUnitTargets());
@@ -304,11 +315,11 @@ class BehaviorSettingsTest {
         expectedUnits.add(BehaviorSettingsTestConstants.PRIORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
         behaviorSettings.fromXml(testBehaviorElement);
-        assertSame(behaviorSettings.getRetreatEdge(), CardinalEdge.NONE);
+        assertSame(CardinalEdge.NONE, behaviorSettings.getRetreatEdge());
 
         // Test loading behavior settings w/ a NULL forced withdrawal.
         reader = new CharArrayReader(
-                BehaviorSettingsTestConstants.BEHAVIOR_XML_NULL_FORCED_WITHDRAWAL.toCharArray());
+              BehaviorSettingsTestConstants.BEHAVIOR_XML_NULL_FORCED_WITHDRAWAL.toCharArray());
         testDocument = documentBuilder.parse(new InputSource(reader));
         testBehaviorElement = testDocument.getDocumentElement();
         expectedTargets = new HashSet<>(2);
@@ -321,16 +332,16 @@ class BehaviorSettingsTest {
         assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE,
-                behaviorSettings.getDestinationEdge());
+              behaviorSettings.getDestinationEdge());
         assertFalse(behaviorSettings.isForcedWithdrawal());
         assertEquals(BehaviorSettingsTestConstants.GOOD_AUTO_FLEE, behaviorSettings.shouldAutoFlee());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FALL_SHAME_INDEX, behaviorSettings.getFallShameIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HYPER_AGGRESSION_INDEX,
-                behaviorSettings.getHyperAggressionIndex());
+              behaviorSettings.getHyperAggressionIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_SELF_PRESERVATION_INDEX,
-                behaviorSettings.getSelfPreservationIndex());
+              behaviorSettings.getSelfPreservationIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HERD_MENTALITY_INDEX,
-                behaviorSettings.getHerdMentalityIndex());
+              behaviorSettings.getHerdMentalityIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_BRAVERY_INDEX, behaviorSettings.getBraveryIndex());
         assertEquals(expectedTargets, behaviorSettings.getStrategicBuildingTargets());
         assertEquals(expectedUnits, behaviorSettings.getPriorityUnitTargets());
@@ -349,17 +360,17 @@ class BehaviorSettingsTest {
         assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE,
-                behaviorSettings.getDestinationEdge());
+              behaviorSettings.getDestinationEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FORCED_WITHDRAWAL,
-                behaviorSettings.isForcedWithdrawal());
+              behaviorSettings.isForcedWithdrawal());
         assertFalse(behaviorSettings.shouldAutoFlee());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FALL_SHAME_INDEX, behaviorSettings.getFallShameIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HYPER_AGGRESSION_INDEX,
-                behaviorSettings.getHyperAggressionIndex());
+              behaviorSettings.getHyperAggressionIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_SELF_PRESERVATION_INDEX,
-                behaviorSettings.getSelfPreservationIndex());
+              behaviorSettings.getSelfPreservationIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HERD_MENTALITY_INDEX,
-                behaviorSettings.getHerdMentalityIndex());
+              behaviorSettings.getHerdMentalityIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_BRAVERY_INDEX, behaviorSettings.getBraveryIndex());
         assertEquals(expectedTargets, behaviorSettings.getStrategicBuildingTargets());
         assertEquals(expectedUnits, behaviorSettings.getPriorityUnitTargets());
@@ -367,7 +378,7 @@ class BehaviorSettingsTest {
         // Test loading behavior settings w/ a Fall Shame > 10.
         // All other indexes use the same method for validation.
         reader = new CharArrayReader(
-                BehaviorSettingsTestConstants.BEHAVIOR_XML_TOO_BIG_FALL_SHAME.toCharArray());
+              BehaviorSettingsTestConstants.BEHAVIOR_XML_TOO_BIG_FALL_SHAME.toCharArray());
         testDocument = documentBuilder.parse(new InputSource(reader));
         testBehaviorElement = testDocument.getDocumentElement();
         expectedTargets = new HashSet<>(2);
@@ -380,17 +391,17 @@ class BehaviorSettingsTest {
         assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE,
-                behaviorSettings.getDestinationEdge());
+              behaviorSettings.getDestinationEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FORCED_WITHDRAWAL,
-                behaviorSettings.isForcedWithdrawal());
+              behaviorSettings.isForcedWithdrawal());
         assertEquals(BehaviorSettingsTestConstants.GOOD_AUTO_FLEE, behaviorSettings.shouldAutoFlee());
         assertEquals(10, behaviorSettings.getFallShameIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HYPER_AGGRESSION_INDEX,
-                behaviorSettings.getHyperAggressionIndex());
+              behaviorSettings.getHyperAggressionIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_SELF_PRESERVATION_INDEX,
-                behaviorSettings.getSelfPreservationIndex());
+              behaviorSettings.getSelfPreservationIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HERD_MENTALITY_INDEX,
-                behaviorSettings.getHerdMentalityIndex());
+              behaviorSettings.getHerdMentalityIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_BRAVERY_INDEX, behaviorSettings.getBraveryIndex());
         assertEquals(expectedTargets, behaviorSettings.getStrategicBuildingTargets());
         assertEquals(expectedUnits, behaviorSettings.getPriorityUnitTargets());
@@ -398,7 +409,7 @@ class BehaviorSettingsTest {
         // Test loading behavior settings w/ a Fall Shame < 0.
         // All other indexes use the same method for validation.
         reader = new CharArrayReader(
-                BehaviorSettingsTestConstants.BEHAVIOR_XML_TOO_SMALL_FALL_SHAME.toCharArray());
+              BehaviorSettingsTestConstants.BEHAVIOR_XML_TOO_SMALL_FALL_SHAME.toCharArray());
         testDocument = documentBuilder.parse(new InputSource(reader));
         testBehaviorElement = testDocument.getDocumentElement();
         expectedTargets = new HashSet<>(2);
@@ -411,24 +422,24 @@ class BehaviorSettingsTest {
         assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE,
-                behaviorSettings.getDestinationEdge());
+              behaviorSettings.getDestinationEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FORCED_WITHDRAWAL,
-                behaviorSettings.isForcedWithdrawal());
+              behaviorSettings.isForcedWithdrawal());
         assertEquals(BehaviorSettingsTestConstants.GOOD_AUTO_FLEE, behaviorSettings.shouldAutoFlee());
         assertEquals(0, behaviorSettings.getFallShameIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HYPER_AGGRESSION_INDEX,
-                behaviorSettings.getHyperAggressionIndex());
+              behaviorSettings.getHyperAggressionIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_SELF_PRESERVATION_INDEX,
-                behaviorSettings.getSelfPreservationIndex());
+              behaviorSettings.getSelfPreservationIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HERD_MENTALITY_INDEX,
-                behaviorSettings.getHerdMentalityIndex());
+              behaviorSettings.getHerdMentalityIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_BRAVERY_INDEX, behaviorSettings.getBraveryIndex());
         assertEquals(expectedTargets, behaviorSettings.getStrategicBuildingTargets());
         assertEquals(expectedUnits, behaviorSettings.getPriorityUnitTargets());
 
         // Test loading behavior settings w/ a NULL strategic target.
         reader = new CharArrayReader(
-                BehaviorSettingsTestConstants.BEHAVIOR_XML_NULL_STRATEGIC_TARGET.toCharArray());
+              BehaviorSettingsTestConstants.BEHAVIOR_XML_NULL_STRATEGIC_TARGET.toCharArray());
         testDocument = documentBuilder.parse(new InputSource(reader));
         testBehaviorElement = testDocument.getDocumentElement();
         expectedTargets = new HashSet<>(1);
@@ -439,24 +450,24 @@ class BehaviorSettingsTest {
         assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE,
-                behaviorSettings.getDestinationEdge());
+              behaviorSettings.getDestinationEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FORCED_WITHDRAWAL,
-                behaviorSettings.isForcedWithdrawal());
+              behaviorSettings.isForcedWithdrawal());
         assertEquals(BehaviorSettingsTestConstants.GOOD_AUTO_FLEE, behaviorSettings.shouldAutoFlee());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FALL_SHAME_INDEX, behaviorSettings.getFallShameIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HYPER_AGGRESSION_INDEX,
-                behaviorSettings.getHyperAggressionIndex());
+              behaviorSettings.getHyperAggressionIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_SELF_PRESERVATION_INDEX,
-                behaviorSettings.getSelfPreservationIndex());
+              behaviorSettings.getSelfPreservationIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HERD_MENTALITY_INDEX,
-                behaviorSettings.getHerdMentalityIndex());
+              behaviorSettings.getHerdMentalityIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_BRAVERY_INDEX, behaviorSettings.getBraveryIndex());
         assertEquals(expectedTargets, behaviorSettings.getStrategicBuildingTargets());
         assertEquals(expectedUnits, behaviorSettings.getPriorityUnitTargets());
 
         // Test loading behavior settings w/ an Empty strategic target.
         reader = new CharArrayReader(
-                BehaviorSettingsTestConstants.BEHAVIOR_XML_EMPTY_STRATEGIC_TARGET.toCharArray());
+              BehaviorSettingsTestConstants.BEHAVIOR_XML_EMPTY_STRATEGIC_TARGET.toCharArray());
         testDocument = documentBuilder.parse(new InputSource(reader));
         testBehaviorElement = testDocument.getDocumentElement();
         expectedTargets = new HashSet<>(0);
@@ -466,17 +477,17 @@ class BehaviorSettingsTest {
         assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE,
-                behaviorSettings.getDestinationEdge());
+              behaviorSettings.getDestinationEdge());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FORCED_WITHDRAWAL,
-                behaviorSettings.isForcedWithdrawal());
+              behaviorSettings.isForcedWithdrawal());
         assertEquals(BehaviorSettingsTestConstants.GOOD_AUTO_FLEE, behaviorSettings.shouldAutoFlee());
         assertEquals(BehaviorSettingsTestConstants.GOOD_FALL_SHAME_INDEX, behaviorSettings.getFallShameIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HYPER_AGGRESSION_INDEX,
-                behaviorSettings.getHyperAggressionIndex());
+              behaviorSettings.getHyperAggressionIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_SELF_PRESERVATION_INDEX,
-                behaviorSettings.getSelfPreservationIndex());
+              behaviorSettings.getSelfPreservationIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_HERD_MENTALITY_INDEX,
-                behaviorSettings.getHerdMentalityIndex());
+              behaviorSettings.getHerdMentalityIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_BRAVERY_INDEX, behaviorSettings.getBraveryIndex());
         assertEquals(expectedTargets, behaviorSettings.getStrategicBuildingTargets());
         assertEquals(expectedUnits, behaviorSettings.getPriorityUnitTargets());

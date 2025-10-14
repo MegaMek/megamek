@@ -1,24 +1,43 @@
 /*
- * MegaMek - Copyright (C) 2016 The MegaMek Team
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ratgenerator;
 
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
-import megamek.common.Compute;
-import megamek.common.Crew;
-import megamek.common.CrewType;
-import megamek.common.UnitType;
+import megamek.common.compute.Compute;
+import megamek.common.units.Crew;
+import megamek.common.units.CrewType;
+import megamek.common.units.UnitType;
 import megamek.common.enums.Gender;
 
 /**
@@ -75,9 +94,8 @@ public class CrewDescriptor {
     }
 
     /**
-     * Assigns skills based on the tables in TW, p. 271-3, with supplemental mods
-     * based on the
-     * BattleForce rules, StratOps, p. 320-1
+     * Assigns skills based on the tables in TW, p. 271-3, with supplemental mods based on the BattleForce rules,
+     * StratOps, p. 320-1
      */
     private void setSkills() {
         boolean clan = RATGenerator.getInstance().getFaction(assignment.getFaction()).isClan();
@@ -140,7 +158,7 @@ public class CrewDescriptor {
 
         gunnery = randomSkillRating(GUNNERY_SKILL_TABLE, experience, bonus);
         if (assignment.getUnitType() != null && assignment.getUnitType().equals(UnitType.INFANTRY)
-                && !assignment.getRoles().contains(MissionRole.ANTI_MEK)) {
+              && !assignment.getRoles().contains(MissionRole.ANTI_MEK)) {
             piloting = 8;
         } else {
             piloting = randomSkillRating(PILOTING_SKILL_TABLE, experience, bonus);
@@ -166,29 +184,28 @@ public class CrewDescriptor {
     }
 
     private static final int[][] PILOTING_SKILL_TABLE = {
-            { 7, 7, 6, 6, 6, 6, 5, 5, 4 },
-            { 6, 6, 6, 5, 5, 4, 4, 3, 3 },
-            { 6, 5, 5, 4, 4, 3, 3, 2, 2 },
-            { 5, 4, 4, 3, 3, 2, 2, 1, 1 }
+          { 7, 7, 6, 6, 6, 6, 5, 5, 4 },
+          { 6, 6, 6, 5, 5, 4, 4, 3, 3 },
+          { 6, 5, 5, 4, 4, 3, 3, 2, 2 },
+          { 5, 4, 4, 3, 3, 2, 2, 1, 1 }
 
     };
 
     private static final int[][] GUNNERY_SKILL_TABLE = {
-            { 7, 6, 5, 5, 4, 4, 4, 4, 3 },
-            { 5, 4, 4, 4, 4, 3, 3, 2, 2 },
-            { 4, 4, 4, 3, 3, 2, 2, 1, 1 },
-            { 4, 3, 3, 2, 2, 1, 1, 0, 0 }
+          { 7, 6, 5, 5, 4, 4, 4, 4, 3 },
+          { 5, 4, 4, 4, 4, 3, 3, 2, 2 },
+          { 4, 4, 4, 3, 3, 2, 2, 1, 1 },
+          { 4, 3, 3, 2, 2, 1, 1, 0, 0 }
 
     };
 
     /**
-     * Selects the piloting or gunnery skill rating based on overall unit experience
-     * level and
-     * modifiers.
+     * Selects the piloting or gunnery skill rating based on overall unit experience level and modifiers.
      *
      * @param table      Either the piloting or the gunnery skill table
      * @param experience The overall experience rating of the force
      * @param mod        Situational modifiers to the skill roll
+     *
      * @return The skill rating
      */
     private int randomSkillRating(int[][] table, int experience, int mod) {
@@ -269,7 +286,7 @@ public class CrewDescriptor {
 
     public Crew createCrew(CrewType crewType) {
         Crew crew = new Crew(crewType, name, crewType.getCrewSlots(), gunnery, piloting, gender,
-                assignment.getFactionRec().isClan(), null);
+              assignment.getFactionRec().isClan(), null);
         // Randomize names and skills of crew, then assign the piloting and
         // gunnery skills generated for the unit to the correct slot.
         if (crewType.getCrewSlots() > 1) {

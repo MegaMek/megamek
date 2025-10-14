@@ -1,45 +1,74 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.alphaStrike.conversion;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.*;
-import megamek.common.alphaStrike.ASArcs;
-import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.equipment.WeaponMounted;
-import megamek.common.weapons.bayweapons.BayWeapon;
+import static megamek.common.alphaStrike.ASUnitType.DA;
+import static megamek.common.alphaStrike.ASUnitType.DS;
+import static megamek.common.alphaStrike.ASUnitType.SC;
+import static megamek.common.alphaStrike.BattleForceSUA.CRW;
+import static megamek.common.alphaStrike.BattleForceSUA.ENE;
+import static megamek.common.alphaStrike.BattleForceSUA.KF;
+import static megamek.common.alphaStrike.BattleForceSUA.LF;
+import static megamek.common.alphaStrike.BattleForceSUA.LG;
+import static megamek.common.alphaStrike.BattleForceSUA.SLG;
+import static megamek.common.alphaStrike.BattleForceSUA.SPC;
+import static megamek.common.alphaStrike.BattleForceSUA.VLG;
+import static megamek.common.alphaStrike.BattleForceSUA.VSTOL;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static megamek.common.alphaStrike.ASUnitType.*;
-import static megamek.common.alphaStrike.BattleForceSUA.*;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.alphaStrike.ASArcs;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.units.Aero;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.units.Jumpship;
+import megamek.common.units.SmallCraft;
+import megamek.common.weapons.bayWeapons.BayWeapon;
 
 public class ASLargeAeroSpecialAbilityConverter extends ASSpecialAbilityConverter {
 
     private final boolean[] hasExplosiveArcComponent = new boolean[4];
 
     /**
-     * Do not call this directly. Use ASSpecialAbilityConverter.getConverter
-     * instead.
-     * Constructs a special ability converter for large aerospace units.
+     * Do not call this directly. Use ASSpecialAbilityConverter.getConverter instead. Constructs a special ability
+     * converter for large aerospace units.
      *
      * @param entity  The entity to convert damage for
      * @param element The partially-converted element corresponding to the entity

@@ -1,22 +1,37 @@
 /*
  * Copyright (c) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022-2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.loaders;
 
 import java.io.BufferedReader;
@@ -32,13 +47,33 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import megamek.codeUtilities.StringUtility;
-import megamek.common.*;
+import megamek.common.CriticalSlot;
+import megamek.common.QuirkEntry;
+import megamek.common.TechConstants;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.enums.TechBase;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
+import megamek.common.units.LandAirMek;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadMek;
+import megamek.common.units.QuadVee;
+import megamek.common.units.System;
+import megamek.common.units.TripodMek;
+import megamek.common.units.UnitRole;
 import megamek.logging.MMLogger;
 
 /**
- * This class represents mtf files which are used to store Meks. The class
- * contains the file reader while the
- * mtf file generation is currently located in {@link Mek#getMtf()}.
+ * This class represents mtf files which are used to store Meks. The class contains the file reader while the mtf file
+ * generation is currently located in {@link Mek#getMtf()}.
  *
  * @author Ben
  * @author Simon (Juliez)
@@ -83,8 +118,8 @@ public class MtfFile implements IMekLoader {
     private String history = "";
     private String manufacturer = "";
     private String primaryFactory = "";
-    private final Map<EntityFluff.System, String> systemManufacturers = new EnumMap<>(EntityFluff.System.class);
-    private final Map<EntityFluff.System, String> systemModels = new EnumMap<>(EntityFluff.System.class);
+    private final Map<System, String> systemManufacturers = new EnumMap<>(System.class);
+    private final Map<System, String> systemModels = new EnumMap<>(System.class);
     private String notes = "";
 
     private String fluffImageEncoded = "";
@@ -98,9 +133,10 @@ public class MtfFile implements IMekLoader {
 
     private final List<String> quirkLines = new ArrayList<>();
 
-    public static final int[] locationOrder = { Mek.LOC_LARM, Mek.LOC_RARM, Mek.LOC_LT, Mek.LOC_RT, Mek.LOC_CT,
-            Mek.LOC_HEAD, Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_CLEG };
-    public static final int[] rearLocationOrder = { Mek.LOC_LT, Mek.LOC_RT, Mek.LOC_CT };
+    public static final int[] locationOrder = { Mek.LOC_LEFT_ARM, Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_TORSO,
+                                                Mek.LOC_RIGHT_TORSO, Mek.LOC_CENTER_TORSO,
+                                                Mek.LOC_HEAD, Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_LEG, Mek.LOC_CENTER_LEG };
+    public static final int[] rearLocationOrder = { Mek.LOC_LEFT_TORSO, Mek.LOC_RIGHT_TORSO, Mek.LOC_CENTER_TORSO };
 
     public static final String COMMENT = "#";
     public static final String MTF_VERSION = "version:";
@@ -147,7 +183,7 @@ public class MtfFile implements IMekLoader {
     public static final String WEAPONS = "weapons:";
     public static final String EMPTY = "-Empty-";
     public static final String ARMORED = "(ARMORED)";
-    public static final String OMNIPOD = "(OMNIPOD)";
+    public static final String OMNI_POD = "(OMNIPOD)";
     public static final String NO_CRIT = "nocrit:";
     public static final String SIZE = ":SIZE:";
     public static final String MUL_ID = "mul id:";
@@ -157,13 +193,15 @@ public class MtfFile implements IMekLoader {
     public static final String FLUFF_IMAGE = "fluffimage:";
     public static final String ICON = "icon:";
 
-    private static final Pattern LEGACY_SIZE_PATTERN = Pattern.compile("\\((\\d+(?:\\.\\d+)?)\\s*(?:ton|tons|m|kg)\\)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern LEGACY_SIZE_PATTERN = Pattern.compile("\\((\\d+(?:\\.\\d+)?)\\s*(?:ton|tons|m|kg)\\)",
+          Pattern.CASE_INSENSITIVE);
 
     /**
-     * Modern unit files store resizable equipment like Cargo:SIZE:4.0
-     * Old equipment stores it like Cargo (4 tons)
-     * This is a helper method to parse old-style resizable equipment
+     * Modern unit files store resizable equipment like Cargo:SIZE:4.0 Old equipment stores it like Cargo (4 tons) This
+     * is a helper method to parse old-style resizable equipment
+     *
      * @param eqName The name of the equipment (including the size designator)
+     *
      * @return The parsed size of the equipment
      */
     public static double extractLegacySize(String eqName) {
@@ -177,7 +215,7 @@ public class MtfFile implements IMekLoader {
 
     public MtfFile(InputStream is) throws EntityLoadingException {
         try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-                BufferedReader r = new BufferedReader(isr)) {
+              BufferedReader r = new BufferedReader(isr)) {
             critData = new String[9][12];
             readLines(r);
         } catch (IOException ex) {
@@ -279,8 +317,8 @@ public class MtfFile implements IMekLoader {
 
             int engineFlags = 0;
             if ((mek.isClan() && !mek.isMixedTech())
-                    || (mek.isMixedTech() && mek.isClan() && !mek.itemOppositeTech(engine))
-                    || (mek.isMixedTech() && !mek.isClan() && mek.itemOppositeTech(engine))) {
+                  || (mek.isMixedTech() && mek.isClan() && !mek.itemOppositeTech(engine))
+                  || (mek.isMixedTech() && !mek.isClan() && mek.itemOppositeTech(engine))) {
                 engineFlags = Engine.CLAN_ENGINE;
             }
             if (mek.isSuperHeavy()) {
@@ -297,7 +335,7 @@ public class MtfFile implements IMekLoader {
             boolean compactSinks = heatSinks.contains(HS_COMPACT);
             int expectedSinks = Integer.parseInt(heatSinks.substring(11, 13).trim());
             int baseHeatSinks = Integer
-                    .parseInt(baseChassisHeatSinks.substring("base chassis heat sinks:".length()).trim());
+                  .parseInt(baseChassisHeatSinks.substring("base chassis heat sinks:".length()).trim());
 
             String thisStructureType = internalType.substring(internalType.indexOf(':') + 1);
             if (!thisStructureType.isBlank()) {
@@ -326,12 +364,12 @@ public class MtfFile implements IMekLoader {
                             break;
                         default:
                             throw new EntityLoadingException(
-                                    "Unsupported tech level: " + rulesLevel.substring(12).trim());
+                                  "Unsupported tech level: " + rulesLevel.substring(12).trim());
                     }
                 } else {
                     switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
                         case 1:
-                            mek.setArmorTechLevel(TechConstants.T_INTRO_BOXSET);
+                            mek.setArmorTechLevel(TechConstants.T_INTRO_BOX_SET);
                             break;
                         case 2:
                             mek.setArmorTechLevel(TechConstants.T_IS_TW_NON_BOX);
@@ -347,7 +385,7 @@ public class MtfFile implements IMekLoader {
                             break;
                         default:
                             throw new EntityLoadingException(
-                                    "Unsupported tech level: " + rulesLevel.substring(12).trim());
+                                  "Unsupported tech level: " + rulesLevel.substring(12).trim());
                     }
                 }
                 thisArmorType = thisArmorType.substring(0, thisArmorType.indexOf('(')).trim();
@@ -363,22 +401,13 @@ public class MtfFile implements IMekLoader {
             mek.recalculateTechAdvancement();
 
             for (int x = 0; x < locationOrder.length; x++) {
-                if ((locationOrder[x] == Mek.LOC_CLEG) && !(mek instanceof TripodMek)) {
+                if ((locationOrder[x] == Mek.LOC_CENTER_LEG) && !(mek instanceof TripodMek)) {
                     continue;
                 }
                 mek.initializeArmor(Integer.parseInt(armorValues[x].substring(armorValues[x].lastIndexOf(':') + 1)),
-                        locationOrder[x]);
+                      locationOrder[x]);
                 if (thisArmorType.equals(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK))) {
-                    boolean clan = armorValues[x].contains("Clan");
-                    String armorName = armorValues[x].substring(armorValues[x].indexOf(':') + 1,
-                            armorValues[x].indexOf('('));
-                    if (!armorName.contains("Clan") && !armorName.contains("IS")) {
-                        if (clan) {
-                            armorName = "Clan " + armorName;
-                        } else {
-                            armorName = "IS " + armorName;
-                        }
-                    }
+                    String armorName = isClan(x);
                     mek.setArmorType(EquipmentType.getArmorType(EquipmentType.get(armorName)), locationOrder[x]);
 
                     String armorValue = armorValues[x].toLowerCase();
@@ -398,12 +427,12 @@ public class MtfFile implements IMekLoader {
                                 break;
                             default:
                                 throw new EntityLoadingException(
-                                        "Unsupported tech level: " + rulesLevel.substring(12).trim());
+                                      "Unsupported tech level: " + rulesLevel.substring(12).trim());
                         }
                     } else if (armorValue.contains("inner sphere")) {
                         switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
                             case 1:
-                                mek.setArmorTechLevel(TechConstants.T_INTRO_BOXSET, locationOrder[x]);
+                                mek.setArmorTechLevel(TechConstants.T_INTRO_BOX_SET, locationOrder[x]);
                                 break;
                             case 2:
                                 mek.setArmorTechLevel(TechConstants.T_IS_TW_NON_BOX, locationOrder[x]);
@@ -419,7 +448,7 @@ public class MtfFile implements IMekLoader {
                                 break;
                             default:
                                 throw new EntityLoadingException(
-                                        "Unsupported tech level: " + rulesLevel.substring(12).trim());
+                                      "Unsupported tech level: " + rulesLevel.substring(12).trim());
                         }
                     }
                 }
@@ -427,11 +456,11 @@ public class MtfFile implements IMekLoader {
 
             for (int x = 0; x < rearLocationOrder.length; x++) {
                 mek.initializeRearArmor(Integer.parseInt(armorValues[x + locationOrder.length].substring(10)),
-                        rearLocationOrder[x]);
+                      rearLocationOrder[x]);
             }
 
             // oog, crits.
-            compactCriticals(mek);
+            compactCriticalSlots(mek);
             // we do these in reverse order to get the outermost
             // locations first, which is necessary for split crits to work
             for (int i = mek.locations() - 1; i >= 0; i--) {
@@ -447,7 +476,7 @@ public class MtfFile implements IMekLoader {
                 ((LandAirMek) mek).autoSetCapArmor();
                 ((LandAirMek) mek).autoSetFatalThresh();
                 int fuelTankCount = (int) mek.getEquipment().stream()
-                        .filter(e -> e.is(EquipmentTypeLookup.LAM_FUEL_TANK)).count();
+                      .filter(e -> e.is(EquipmentTypeLookup.LAM_FUEL_TANK)).count();
                 ((LandAirMek) mek).setFuel(80 * (1 + fuelTankCount));
             }
 
@@ -460,24 +489,19 @@ public class MtfFile implements IMekLoader {
                 // the unit.
                 boolean clan;
 
-                int heatSinkBase = ITechnology.TECH_BASE_ALL;
+                TechBase heatSinkBase = TechBase.ALL;
 
                 if (heatSinks.contains(TECH_BASE_CLAN)) {
-                    heatSinkBase = ITechnology.TECH_BASE_CLAN;
+                    heatSinkBase = TechBase.CLAN;
                 } else if (heatSinks.contains(TECH_BASE_IS)) {
-                    heatSinkBase = ITechnology.TECH_BASE_IS;
+                    heatSinkBase = TechBase.IS;
                 }
 
-                switch (heatSinkBase) {
-                    case ITechnology.TECH_BASE_IS:
-                        clan = false;
-                        break;
-                    case ITechnology.TECH_BASE_CLAN:
-                        clan = true;
-                        break;
-                    default:
-                        clan = mek.isClan();
-                }
+                clan = switch (heatSinkBase) {
+                    case IS -> false;
+                    case CLAN -> true;
+                    default -> mek.isClan();
+                };
 
                 mek.addEngineSinks(expectedSinks - mek.heatSinks(), MiscType.F_DOUBLE_HEAT_SINK, clan);
             } else if (compactSinks) {
@@ -513,18 +537,7 @@ public class MtfFile implements IMekLoader {
                 mek.setManualBV(bv);
             }
 
-            List<QuirkEntry> quirks = new ArrayList<>();
-            for (String quirkLine : quirkLines) {
-                if (quirkLine.startsWith(QUIRK)) {
-                    QuirkEntry quirkEntry = new QuirkEntry(quirkLine.substring(QUIRK.length()));
-                    quirks.add(quirkEntry);
-                } else if (quirkLine.startsWith(WEAPON_QUIRK)) {
-                    String[] fields = quirkLine.substring(WEAPON_QUIRK.length()).split(":");
-                    int slot = Integer.parseInt(fields[2]);
-                    QuirkEntry quirkEntry = new QuirkEntry(fields[0], fields[1], slot, fields[3]);
-                    quirks.add(quirkEntry);
-                }
-            }
+            List<QuirkEntry> quirks = getQuirkEntries();
             mek.loadQuirks(quirks);
 
             return mek;
@@ -532,6 +545,36 @@ public class MtfFile implements IMekLoader {
             logger.error("", ex);
             throw new Exception(ex);
         }
+    }
+
+    private List<QuirkEntry> getQuirkEntries() {
+        List<QuirkEntry> quirks = new ArrayList<>();
+        for (String quirkLine : quirkLines) {
+            if (quirkLine.startsWith(QUIRK)) {
+                QuirkEntry quirkEntry = new QuirkEntry(quirkLine.substring(QUIRK.length()));
+                quirks.add(quirkEntry);
+            } else if (quirkLine.startsWith(WEAPON_QUIRK)) {
+                String[] fields = quirkLine.substring(WEAPON_QUIRK.length()).split(":");
+                int slot = Integer.parseInt(fields[2]);
+                QuirkEntry quirkEntry = new QuirkEntry(fields[0], fields[1], slot, fields[3]);
+                quirks.add(quirkEntry);
+            }
+        }
+        return quirks;
+    }
+
+    private String isClan(int x) {
+        boolean clan = armorValues[x].contains("Clan");
+        String armorName = armorValues[x].substring(armorValues[x].indexOf(':') + 1,
+              armorValues[x].indexOf('('));
+        if (!armorName.contains("Clan") && !armorName.contains("IS")) {
+            if (clan) {
+                armorName = "Clan " + armorName;
+            } else {
+                armorName = "IS " + armorName;
+            }
+        }
+        return armorName;
     }
 
     private String readLineIgnoringComments(BufferedReader reader) throws IOException {
@@ -560,7 +603,7 @@ public class MtfFile implements IMekLoader {
             if (line.toLowerCase().startsWith(MTF_VERSION)) {
                 // Reading the version, chassis and model as the first three lines without
                 // header is kept
-                // for backward compatibility for user-generated units. However the version is
+                // for backward compatibility for user-generated units. However, the version is
                 // no longer checked
                 // for correct values as that makes no difference so long as the unit can be
                 // loaded
@@ -624,7 +667,7 @@ public class MtfFile implements IMekLoader {
         if (techBase.equalsIgnoreCase("Inner Sphere")) {
             switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
                 case 1:
-                    mek.setTechLevel(TechConstants.T_INTRO_BOXSET);
+                    mek.setTechLevel(TechConstants.T_INTRO_BOX_SET);
                     break;
                 case 2:
                     mek.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
@@ -696,7 +739,7 @@ public class MtfFile implements IMekLoader {
             mek.setMixedTech(true);
         } else if (techBase.equalsIgnoreCase("Mixed")) {
             throw new EntityLoadingException(
-                    "Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
+                  "Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
         } else {
             throw new EntityLoadingException("Unsupported tech base: " + techBase);
         }
@@ -705,7 +748,7 @@ public class MtfFile implements IMekLoader {
     private void parseCrits(Mek mek, int loc) throws EntityLoadingException {
         // check for removed arm actuators
         if (!(mek instanceof QuadMek)) {
-            if ((loc == Mek.LOC_LARM) || (loc == Mek.LOC_RARM)) {
+            if ((loc == Mek.LOC_LEFT_ARM) || (loc == Mek.LOC_RIGHT_ARM)) {
                 String toCheck = critData[loc][3].toUpperCase().trim();
                 if (toCheck.endsWith(ARMORED)) {
                     toCheck = toCheck.substring(0, toCheck.length() - ARMORED.length()).trim();
@@ -723,8 +766,8 @@ public class MtfFile implements IMekLoader {
             }
         }
 
-        // go thru file, add weapons
-        for (int i = 0; i < mek.getNumberOfCriticals(loc); i++) {
+        // go through file, add weapons
+        for (int i = 0; i < mek.getNumberOfCriticalSlots(loc); i++) {
 
             // parse out and add the critical
             String critName = critData[loc][i];
@@ -746,34 +789,34 @@ public class MtfFile implements IMekLoader {
 
             if (critName.equalsIgnoreCase("Fusion Engine") || critName.equalsIgnoreCase("Engine")) {
                 mek.setCritical(loc, i,
-                        new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, true, isArmored));
+                      new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Life Support")) {
                 mek.setCritical(loc, i,
-                        new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, true, isArmored));
+                      new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Sensors")) {
                 mek.setCritical(loc, i,
-                        new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, true, isArmored));
+                      new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Cockpit")) {
                 mek.setCritical(loc, i,
-                        new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_COCKPIT, true, isArmored));
+                      new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_COCKPIT, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Gyro")) {
                 mek.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, true, isArmored));
                 continue;
             } else if ((critName.contains("Actuator")) || critName.equalsIgnoreCase("Shoulder")
-                    || critName.equalsIgnoreCase("Hip")) {
+                  || critName.equalsIgnoreCase("Hip")) {
                 mek.getCritical(loc, i).setArmored(isArmored);
                 continue;
             } else if (critName.equalsIgnoreCase("Landing Gear")) {
                 mek.setCritical(loc, i,
-                        new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_LANDING_GEAR, true, isArmored));
+                      new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_LANDING_GEAR, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Avionics")) {
                 mek.setCritical(loc, i,
-                        new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_AVIONICS, true, isArmored));
+                      new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_AVIONICS, true, isArmored));
                 continue;
             }
             // if the slot's full already, skip it.
@@ -786,8 +829,8 @@ public class MtfFile implements IMekLoader {
                 size = Double.parseDouble(critName.substring(sizeIndex + SIZE.length()));
                 critNameUpper = critNameUpper.substring(0, sizeIndex);
             }
-            if (critNameUpper.endsWith(OMNIPOD)) {
-                critNameUpper = critNameUpper.substring(0, critNameUpper.length() - OMNIPOD.length()).trim();
+            if (critNameUpper.endsWith(OMNI_POD)) {
+                critNameUpper = critNameUpper.substring(0, critNameUpper.length() - OMNI_POD.length()).trim();
                 isOmniPod = true;
             }
             if (critNameUpper.endsWith("(T)")) {
@@ -845,11 +888,20 @@ public class MtfFile implements IMekLoader {
                             continue;
                         }
                         m = mek.addEquipment(etype, loc, rearMounted,
-                                BattleArmor.MOUNT_LOC_NONE, isArmored,
-                                isTurreted);
+                              BattleArmor.MOUNT_LOC_NONE, isArmored,
+                              isTurreted);
                         m.setOmniPodMounted(isOmniPod);
                         hSharedEquip.put(etype, m);
-                    } else if (etype instanceof MiscType && etype.hasFlag(MiscType.F_TARGCOMP)) {
+                        if (etype.is(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER)) {
+                            if (size == 0) {
+                                // legacy MTF loading: MJB gave their MP as the jump MP
+                                size = mek.getOriginalJumpMP(true);
+                                mek.setOriginalJumpMP(0);
+                            }
+
+                            m.setSize(size);
+                        }
+                    } else if (etype instanceof MiscType && etype.hasFlag(MiscType.F_TARGETING_COMPUTER)) {
                         // Targeting computers are special, they need to be loaded like spreadable
                         // equipment, but they aren't spreadable
                         Mounted<?> m = hSharedEquip.get(etype);
@@ -859,8 +911,8 @@ public class MtfFile implements IMekLoader {
                         }
                         mek.addCritical(loc, new CriticalSlot(m));
 
-                    } else if (((etype instanceof WeaponType) && ((WeaponType) etype).isSplitable())
-                            || ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_SPLITABLE))) {
+                    } else if (((etype instanceof WeaponType) && ((WeaponType) etype).isSplittableOverCriticalSlots())
+                          || ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_SPLITABLE))) {
                         // do we already have this one in this or an outer location?
                         Mounted<?> m = null;
                         boolean bFound = false;
@@ -868,15 +920,15 @@ public class MtfFile implements IMekLoader {
                             m = vSplitWeapon;
                             int nLoc = m.getLocation();
                             if ((((nLoc == loc) || (loc == Mek.getInnerLocation(nLoc)))
-                                    || ((nLoc == Mek.LOC_CT) && (loc == Mek.LOC_HEAD)))
-                                    && (m.getType() == etype)) {
+                                  || ((nLoc == Mek.LOC_CENTER_TORSO) && (loc == Mek.LOC_HEAD)))
+                                  && (m.getType() == etype)) {
                                 bFound = true;
                                 break;
                             }
                         }
                         if (bFound) {
                             m.setFoundCrits(m.getFoundCrits() + (mek.isSuperHeavy() ? 2 : 1));
-                            if (m.getFoundCrits() >= m.getCriticals()) {
+                            if (m.getFoundCrits() >= m.getNumCriticalSlots()) {
                                 vSplitWeapons.remove(m);
                             }
                             // if we're in a new location, set the weapon as
@@ -906,20 +958,20 @@ public class MtfFile implements IMekLoader {
                         Mounted<?> mount;
                         if (etype2 == null) {
                             mount = mek.addEquipment(etype, loc, rearMounted,
-                                    BattleArmor.MOUNT_LOC_NONE, isArmored,
-                                    isTurreted, false, false, isOmniPod);
+                                  BattleArmor.MOUNT_LOC_NONE, isArmored,
+                                  isTurreted, false, false, isOmniPod);
                         } else {
                             if (etype instanceof AmmoType) {
                                 if (!(etype2 instanceof AmmoType)
-                                        || (((AmmoType) etype).getAmmoType() != ((AmmoType) etype2).getAmmoType())) {
+                                      || (((AmmoType) etype).getAmmoType() != ((AmmoType) etype2).getAmmoType())) {
                                     throw new EntityLoadingException(
-                                            "Can't combine ammo for different weapons in one slot");
+                                          "Can't combine ammo for different weapons in one slot");
                                 }
                             } else {
                                 if (!(etype.equals(etype2))
-                                        || ((etype instanceof MiscType) && (!etype.hasFlag(MiscType.F_HEAT_SINK)
-                                                && !etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)))) {
-                                    throw new EntityLoadingException("must combine ammo or heatsinks in one slot");
+                                      || ((etype instanceof MiscType) && (!etype.hasFlag(MiscType.F_HEAT_SINK)
+                                      && !etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)))) {
+                                    throw new EntityLoadingException("must combine ammo or heat sinks in one slot");
                                 }
                             }
                             mount = mek.addEquipment(etype, etype2, loc, isOmniPod, isArmored);
@@ -932,7 +984,7 @@ public class MtfFile implements IMekLoader {
                             mount.setSize(size);
                             // The size may require additional critical slots
                             // Account for loading Superheavy oversized Variable Size components
-                            int critCount = mount.getCriticals();
+                            int critCount = mount.getNumCriticalSlots();
                             if (mek.isSuperHeavy()) {
                                 critCount = (int) Math.ceil(critCount / 2.0);
                             }
@@ -965,9 +1017,9 @@ public class MtfFile implements IMekLoader {
                         mek.addFailedEquipment(critName);
                         // Make the failed equipment an empty slot
                         critData[loc][i] = MtfFile.EMPTY;
-                        // Compact criticals again
-                        compactCriticals(mek, loc);
-                        // Re-parse the same slot, since the compacting
+                        // Compact criticalSlots again
+                        compactCriticalSlots(mek, loc);
+                        // Reparse the same slot, since the compacting
                         // could have moved new equipment to this slot
                         i--;
                     }
@@ -999,26 +1051,24 @@ public class MtfFile implements IMekLoader {
     }
 
     /**
-     * This function moves all "empty" slots to the end of a location's critical
-     * list. MegaMek adds equipment to the first empty slot available in a
-     * location. This means that any "holes" (empty slots not at the end of a
-     * location), will cause the file crits and MegaMek's crits to become out of
-     * sync.
+     * This function moves all "empty" slots to the end of a location's critical list. MegaMek adds equipment to the
+     * first empty slot available in a location. This means that any "holes" (empty slots not at the end of a location),
+     * will cause the file crits and MegaMek's crits to become out of sync.
      */
-    private void compactCriticals(Mek mek) {
+    private void compactCriticalSlots(Mek mek) {
         for (int loc = 0; loc < mek.locations(); loc++) {
-            compactCriticals(mek, loc);
+            compactCriticalSlots(mek, loc);
         }
     }
 
-    private void compactCriticals(Mek mek, int loc) {
+    private void compactCriticalSlots(Mek mek, int loc) {
         if (loc == Mek.LOC_HEAD) {
             // This location has an empty slot in between systems crits
             // which will mess up parsing if compacted.
             return;
         }
         int firstEmpty = -1;
-        for (int slot = 0; slot < mek.getNumberOfCriticals(loc); slot++) {
+        for (int slot = 0; slot < mek.getNumberOfCriticalSlots(loc); slot++) {
             if (critData[loc][slot] == null) {
                 critData[loc][slot] = MtfFile.EMPTY;
             }
@@ -1040,35 +1090,35 @@ public class MtfFile implements IMekLoader {
 
     private int getLocation(String location) {
         if (location.equalsIgnoreCase("Left Arm:") || location.equalsIgnoreCase("Front Left Leg:")) {
-            return Mek.LOC_LARM;
+            return Mek.LOC_LEFT_ARM;
         }
 
         if (location.equalsIgnoreCase("Right Arm:") || location.equalsIgnoreCase("Front Right Leg:")) {
-            return Mek.LOC_RARM;
+            return Mek.LOC_RIGHT_ARM;
         }
 
         if (location.equalsIgnoreCase("Left Leg:") || location.equalsIgnoreCase("Rear Left Leg:")) {
-            return Mek.LOC_LLEG;
+            return Mek.LOC_LEFT_LEG;
         }
 
         if (location.equalsIgnoreCase("Right Leg:") || location.equalsIgnoreCase("Rear Right Leg:")) {
-            return Mek.LOC_RLEG;
+            return Mek.LOC_RIGHT_LEG;
         }
 
         if (location.equalsIgnoreCase("Center Leg:")) {
-            return Mek.LOC_CLEG;
+            return Mek.LOC_CENTER_LEG;
         }
 
         if (location.equalsIgnoreCase("Left Torso:")) {
-            return Mek.LOC_LT;
+            return Mek.LOC_LEFT_TORSO;
         }
 
         if (location.equalsIgnoreCase("Right Torso:")) {
-            return Mek.LOC_RT;
+            return Mek.LOC_RIGHT_TORSO;
         }
 
         if (location.equalsIgnoreCase("Center Torso:")) {
-            return Mek.LOC_CT;
+            return Mek.LOC_CENTER_TORSO;
         }
 
         // else
@@ -1081,32 +1131,32 @@ public class MtfFile implements IMekLoader {
         boolean rear = false;
         String locationName = location.toLowerCase();
         if (locationName.startsWith("la armor:") || locationName.startsWith("fll armor:")) {
-            loc = Mek.LOC_LARM;
+            loc = Mek.LOC_LEFT_ARM;
         } else if (locationName.startsWith("ra armor:") || locationName.startsWith("frl armor:")) {
-            loc = Mek.LOC_RARM;
+            loc = Mek.LOC_RIGHT_ARM;
         } else if (locationName.startsWith("lt armor:")) {
-            loc = Mek.LOC_LT;
+            loc = Mek.LOC_LEFT_TORSO;
         } else if (locationName.startsWith("rt armor:")) {
-            loc = Mek.LOC_RT;
+            loc = Mek.LOC_RIGHT_TORSO;
         } else if (locationName.startsWith("ct armor:")) {
-            loc = Mek.LOC_CT;
+            loc = Mek.LOC_CENTER_TORSO;
         } else if (locationName.startsWith("hd armor:")) {
             loc = Mek.LOC_HEAD;
         } else if (locationName.startsWith("ll armor:") || locationName.startsWith("rll armor:")) {
-            loc = Mek.LOC_LLEG;
+            loc = Mek.LOC_LEFT_LEG;
         } else if (locationName.startsWith("rl armor:") || locationName.startsWith("rrl armor:")) {
-            loc = Mek.LOC_RLEG;
+            loc = Mek.LOC_RIGHT_LEG;
         } else if (locationName.startsWith("rtl armor:")) {
-            loc = Mek.LOC_LT;
+            loc = Mek.LOC_LEFT_TORSO;
             rear = true;
         } else if (locationName.startsWith("rtr armor:")) {
-            loc = Mek.LOC_RT;
+            loc = Mek.LOC_RIGHT_TORSO;
             rear = true;
         } else if (locationName.startsWith("rtc armor:")) {
-            loc = Mek.LOC_CT;
+            loc = Mek.LOC_CENTER_TORSO;
             rear = true;
         } else if (locationName.startsWith("cl armor:")) {
-            loc = Mek.LOC_CLEG;
+            loc = Mek.LOC_CENTER_LEG;
         }
 
         if (!rear) {
@@ -1129,18 +1179,18 @@ public class MtfFile implements IMekLoader {
 
     private boolean isValidLocation(String location) {
         return location.equalsIgnoreCase("Left Arm:")
-                || location.equalsIgnoreCase("Right Arm:")
-                || location.equalsIgnoreCase("Left Leg:")
-                || location.equalsIgnoreCase("Right Leg:")
-                || location.equalsIgnoreCase("Center Leg:")
-                || location.equalsIgnoreCase("Front Left Leg:")
-                || location.equalsIgnoreCase("Front Right Leg:")
-                || location.equalsIgnoreCase("Rear Left Leg:")
-                || location.equalsIgnoreCase("Rear Right Leg:")
-                || location.equalsIgnoreCase("Left Torso:")
-                || location.equalsIgnoreCase("Right Torso:")
-                || location.equalsIgnoreCase("Center Torso:")
-                || location.equalsIgnoreCase("Head:");
+              || location.equalsIgnoreCase("Right Arm:")
+              || location.equalsIgnoreCase("Left Leg:")
+              || location.equalsIgnoreCase("Right Leg:")
+              || location.equalsIgnoreCase("Center Leg:")
+              || location.equalsIgnoreCase("Front Left Leg:")
+              || location.equalsIgnoreCase("Front Right Leg:")
+              || location.equalsIgnoreCase("Rear Left Leg:")
+              || location.equalsIgnoreCase("Rear Right Leg:")
+              || location.equalsIgnoreCase("Left Torso:")
+              || location.equalsIgnoreCase("Right Torso:")
+              || location.equalsIgnoreCase("Center Torso:")
+              || location.equalsIgnoreCase("Head:");
     }
 
     private boolean isProcessedComponent(String line) {
@@ -1285,7 +1335,7 @@ public class MtfFile implements IMekLoader {
         if (lineLower.startsWith(SYSTEM_MANUFACTURER)) {
             String[] fields = line.split(":");
             if (fields.length > 2) {
-                EntityFluff.System system = EntityFluff.System.parse(fields[1]);
+                System system = System.parse(fields[1]);
                 if (null != system) {
                     systemManufacturers.put(system, fields[2].trim());
                 }
@@ -1296,7 +1346,7 @@ public class MtfFile implements IMekLoader {
         if (lineLower.startsWith(SYSTEM_MODEL)) {
             String[] fields = line.split(":");
             if (fields.length > 2) {
-                EntityFluff.System system = EntityFluff.System.parse(fields[1]);
+                System system = System.parse(fields[1]);
                 if (null != system) {
                     systemModels.put(system, fields[2].trim());
                 }

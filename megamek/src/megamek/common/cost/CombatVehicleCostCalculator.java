@@ -1,30 +1,50 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.cost;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.*;
+import java.util.ArrayList;
+
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Tank;
+import megamek.common.util.RoundWeight;
 import megamek.common.verifier.SupportVeeStructure;
 import megamek.common.verifier.TestEntity;
-
-import java.util.ArrayList;
 
 public class CombatVehicleCostCalculator {
 
@@ -96,10 +116,10 @@ public class CombatVehicleCostCalculator {
         if (tank.hasEngine()) {
             if (tank.isSupportVehicle()) {
                 engineCost = 5000 * tank.getEngine().getWeightEngine(tank)
-                        * Engine.getSVCostMultiplier(tank.getEngine().getEngineType());
+                      * Engine.getSVCostMultiplier(tank.getEngine().getEngineType());
             } else {
                 engineCost = (tank.getEngine().getBaseCost() *
-                        tank.getEngine().getRating() * tank.getWeight()) / 75.0;
+                      tank.getEngine().getRating() * tank.getWeight()) / 75.0;
             }
         }
         costs[i++] = engineCost;
@@ -126,19 +146,21 @@ public class CombatVehicleCostCalculator {
             for (int c = 0; c < structCostIdx; c++) {
                 costs[structCostIdx] += costs[c];
             }
-            double techRatingMultiplier = 0.5 + (tank.getStructuralTechRating() * 0.25);
+            double techRatingMultiplier = 0.5 + (tank.getStructuralTechRating().getIndex() * 0.25);
             costs[structCostIdx] *= techRatingMultiplier;
         } else {
             // IS has no variations, no Endo etc., but non-naval superheavies have heavier
             // structure
             if (!tank.isSuperHeavy() || tank.getMovementMode().equals(EntityMovementMode.NAVAL)
-                    || tank.getMovementMode().equals(EntityMovementMode.SUBMARINE)) { // There are no superheavy
-                                                                                      // hydrofoils
+                  || tank.getMovementMode().equals(EntityMovementMode.SUBMARINE)) { // There are no superheavy
+                // hydrofoils
                 costs[i++] = RoundWeight.nextHalfTon(tank.getWeight() / 10.0) * 10000;
             } else {
                 costs[i++] = RoundWeight.nextHalfTon(tank.getWeight() / 5.0) * 10000;
             }
-            double controlWeight = tank.hasNoControlSystems() ? 0.0 : RoundWeight.nextHalfTon(tank.getWeight() * 0.05); // ?
+            double controlWeight = tank.hasNoControlSystems() ?
+                  0.0 :
+                  RoundWeight.nextHalfTon(tank.getWeight() * 0.05); // ?
             // should be rounded up to nearest half-ton
             costs[i++] = 10000 * controlWeight;
         }
@@ -151,7 +173,7 @@ public class CombatVehicleCostCalculator {
             if ((m.getLocation() == tank.getLocTurret()) || (m.getLocation() == tank.getLocTurret2())) {
                 turretWeight += m.getTonnage() / 10.0;
                 if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof MiscType)
-                        && m.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                      && m.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
                     turretWeight += m.getLinkedBy().getTonnage() / 10.0;
                 }
             }
@@ -164,19 +186,10 @@ public class CombatVehicleCostCalculator {
         costs[i++] = CostCalculator.getWeaponsAndEquipmentCost(tank, ignoreAmmo) + tank.getExtraCrewSeats() * 100L;
 
         if (!tank.isSupportVehicle()) {
-            double diveTonnage;
-            switch (tank.getMovementMode()) {
-                case HOVER:
-                case HYDROFOIL:
-                case VTOL:
-                case SUBMARINE:
-                case WIGE:
-                    diveTonnage = Math.ceil(tank.getWeight() / 5.0) / 2.0;
-                    break;
-                default:
-                    diveTonnage = 0.0;
-                    break;
-            }
+            double diveTonnage = switch (tank.getMovementMode()) {
+                case HOVER, HYDROFOIL, VTOL, SUBMARINE, WIGE -> Math.ceil(tank.getWeight() / 5.0) / 2.0;
+                default -> 0.0;
+            };
             if (tank.getMovementMode() != EntityMovementMode.VTOL) {
                 costs[i++] = diveTonnage * 20000;
             } else {
@@ -200,9 +213,9 @@ public class CombatVehicleCostCalculator {
 
         double multiplier = 1.0;
         if (tank.isSupportVehicle()
-                && (tank.getMovementMode().equals(EntityMovementMode.NAVAL)
-                        || tank.getMovementMode().equals(EntityMovementMode.HYDROFOIL)
-                        || tank.getMovementMode().equals(EntityMovementMode.SUBMARINE))) {
+              && (tank.getMovementMode().equals(EntityMovementMode.NAVAL)
+              || tank.getMovementMode().equals(EntityMovementMode.HYDROFOIL)
+              || tank.getMovementMode().equals(EntityMovementMode.SUBMARINE))) {
             multiplier += tank.getWeight() / 100000.0;
         } else {
             switch (tank.getMovementMode()) {
@@ -239,7 +252,7 @@ public class CombatVehicleCostCalculator {
 
         if (!tank.isSupportVehicle()) {
             if (tank.hasWorkingMisc(MiscType.F_FLOTATION_HULL)
-                    || tank.hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
+                  || tank.hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
                 cost *= 1.25;
                 costs[i++] = -1.25;
 
@@ -250,6 +263,13 @@ public class CombatVehicleCostCalculator {
             }
         }
 
+        ArrayList<String> left = getLeft(tank);
+        String[] systemNames = left.toArray(new String[0]);
+        CostCalculator.fillInReport(costReport, tank, ignoreAmmo, systemNames, 7, cost, costs);
+        return Math.round(cost);
+    }
+
+    private static ArrayList<String> getLeft(Tank tank) {
         ArrayList<String> left = new ArrayList<>();
         if (tank.isSupportVehicle()) {
             left.add("Chassis");
@@ -276,8 +296,6 @@ public class CombatVehicleCostCalculator {
             left.add("Flotation Hull/Environmental Sealing multiplier");
             left.add("Off-Road Multiplier");
         }
-        String[] systemNames = left.toArray(new String[0]);
-        CostCalculator.fillInReport(costReport, tank, ignoreAmmo, systemNames, 7, cost, costs);
-        return Math.round(cost);
+        return left;
     }
 }

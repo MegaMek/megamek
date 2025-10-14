@@ -1,21 +1,37 @@
 /*
- * Copyright (c) 2020-2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
-package megamek.common.templates;
 
-import megamek.common.*;
-import megamek.common.verifier.EntityVerifier;
-import megamek.common.verifier.TestAdvancedAerospace;
+package megamek.common.templates;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,9 +39,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import megamek.common.Messages;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.Jumpship;
+import megamek.common.units.Warship;
+import megamek.common.verifier.EntityVerifier;
+import megamek.common.verifier.TestAdvancedAerospace;
+
 /**
- * Creates a TRO template model for advanced aerospace units (JumpShips,
- * warships, space stations)
+ * Creates a TRO template model for advanced aerospace units (JumpShips, warships, space stations)
  *
  * @author Neoancient
  */
@@ -33,10 +57,10 @@ public class CapitalShipTROView extends AeroTROView {
     private final Jumpship aero;
 
     private static final String[][] ARCS = { { "Nose" }, { "FRS", "FLS" }, { "RBS", "LBS" }, { "ARS", "ALS" },
-            { "Aft" } };
+                                             { "Aft" } };
 
     private static final int[][] ARMOR_LOCS = { { Jumpship.LOC_NOSE }, { Jumpship.LOC_FRS, Jumpship.LOC_FLS },
-            { Jumpship.LOC_ARS, Jumpship.LOC_ALS }, { Jumpship.LOC_AFT } };
+                                                { Jumpship.LOC_ARS, Jumpship.LOC_ALS }, { Jumpship.LOC_AFT } };
 
     public CapitalShipTROView(Jumpship aero) {
         super(aero);
@@ -53,14 +77,14 @@ public class CapitalShipTROView extends AeroTROView {
         addBasicData(aero);
         addArmor();
         setModelData("formatBayRow", new FormatTableRowMethod(new int[] { 8, 24, 10 },
-                new Justification[] { Justification.LEFT, Justification.LEFT, Justification.LEFT }));
+              new Justification[] { Justification.LEFT, Justification.LEFT, Justification.LEFT }));
         setModelData("usesWeaponBays", aero.usesWeaponBays());
         final int nameWidth = addWeaponBays(ARCS);
         setModelData("formatWeaponBayRow",
-                new FormatTableRowMethod(new int[] { nameWidth, 5, 8, 8, 8, 10, 12 },
-                        new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
-                                Justification.CENTER, Justification.CENTER, Justification.CENTER,
-                                Justification.LEFT }));
+              new FormatTableRowMethod(new int[] { nameWidth, 5, 8, 8, 8, 10, 12 },
+                    new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
+                                          Justification.CENTER, Justification.CENTER, Justification.CENTER,
+                                          Justification.LEFT }));
         addFluff();
         final TestAdvancedAerospace testAero = new TestAdvancedAerospace(aero, verifier.aeroOption, null);
 
@@ -70,9 +94,9 @@ public class CapitalShipTROView extends AeroTROView {
         setModelData("safeThrust", aero.getWalkMP());
         setModelData("maxThrust", aero.getRunMP());
         setModelData("hsCount",
-                aero.getHeatType() == Aero.HEAT_DOUBLE ? aero.getOHeatSinks() + " (" + (aero.getOHeatSinks() * 2) + ")"
-                        : aero.getOHeatSinks());
-        setModelData("si", aero.get0SI());
+              aero.getHeatType() == Aero.HEAT_DOUBLE ? aero.getOHeatSinks() + " (" + (aero.getOHeatSinks() * 2) + ")"
+                    : aero.getOHeatSinks());
+        setModelData("si", aero.getOSI());
         setModelData("armorType", formatArmorType(aero, false).toLowerCase());
         setModelData("armorMass", testAero.getWeightArmor());
         setModelData("dropshipCapacity", aero.getDockingCollars().size());
@@ -91,8 +115,8 @@ public class CapitalShipTROView extends AeroTROView {
             misc.add(Messages.getString("TROView.lfbattery"));
         }
         final Map<String, Integer> miscCount = aero.getMisc().stream()
-                .filter(m -> (m.getLinked() == null) && (m.getLinkedBy() == null))
-                .collect(Collectors.groupingBy(Mounted::getName, Collectors.summingInt(m -> 1)));
+              .filter(m -> (m.getLinked() == null) && (m.getLinkedBy() == null))
+              .collect(Collectors.groupingBy(Mounted::getName, Collectors.summingInt(m -> 1)));
         miscCount.forEach((k, v) -> misc.add(String.format("%d %s", v, k)));
         setModelData("miscEquipment", misc);
         setModelData("lfBattery", aero.hasLF());
@@ -128,26 +152,17 @@ public class CapitalShipTROView extends AeroTROView {
 
     @Override
     protected String getArcAbbr(Mounted<?> m) {
-        switch (m.getLocation()) {
-            case Aero.LOC_NOSE:
-                return ARCS[0][0];
-            case Jumpship.LOC_FRS:
-                return ARCS[1][0];
-            case Jumpship.LOC_FLS:
-                return ARCS[1][1];
-            case Jumpship.LOC_ARS:
-                return ARCS[3][0];
-            case Jumpship.LOC_ALS:
-                return ARCS[3][1];
-            case Aero.LOC_AFT:
-                return ARCS[4][0];
-            case Warship.LOC_RBS:
-                return ARCS[2][0];
-            case Warship.LOC_LBS:
-                return ARCS[2][1];
-            default:
-                return super.getArcAbbr(m);
-        }
+        return switch (m.getLocation()) {
+            case Aero.LOC_NOSE -> ARCS[0][0];
+            case Jumpship.LOC_FRS -> ARCS[1][0];
+            case Jumpship.LOC_FLS -> ARCS[1][1];
+            case Jumpship.LOC_ARS -> ARCS[3][0];
+            case Jumpship.LOC_ALS -> ARCS[3][1];
+            case Aero.LOC_AFT -> ARCS[4][0];
+            case Warship.LOC_RBS -> ARCS[2][0];
+            case Warship.LOC_LBS -> ARCS[2][1];
+            default -> super.getArcAbbr(m);
+        };
     }
 
     private void addArmor() {

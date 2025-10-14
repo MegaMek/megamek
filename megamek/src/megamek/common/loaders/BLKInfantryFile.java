@@ -1,19 +1,50 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.loaders;
 
-import megamek.common.*;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.InfantryWeaponMounted;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Infantry;
+import megamek.common.units.InfantryMount;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -47,7 +78,7 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
         infantry.autoSetInternal();
 
         if (dataFile.exists("InfantryArmor")) {
-            infantry.setArmorDamageDivisor(dataFile.getDataAsInt("InfantryArmor")[0]);
+            infantry.setCustomArmorDamageDivisor(dataFile.getDataAsInt("InfantryArmor")[0]);
         }
 
         if (!dataFile.exists("motion_type")) {
@@ -63,7 +94,7 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
                 throw new EntityLoadingException("Invalid movement type: " + sMotion);
             }
             if (nMotion == EntityMovementMode.INF_UMU
-                    && sMotion.toLowerCase().contains("motorized")) {
+                  && sMotion.toLowerCase().contains("motorized")) {
                 infantry.setMotorizedScuba();
             } else {
                 infantry.setMovementMode(nMotion);
@@ -80,20 +111,20 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
             throw new EntityLoadingException("Could not find primary weapon.");
         }
         String primaryName = dataFile.getDataAsString("Primary")[0];
-        EquipmentType ptype = EquipmentType.get(primaryName);
-        if (!(ptype instanceof InfantryWeapon)) {
+        EquipmentType primaryWeaponType = EquipmentType.get(primaryName);
+        if (!(primaryWeaponType instanceof InfantryWeapon)) {
             throw new EntityLoadingException("primary weapon is not an infantry weapon");
         }
-        infantry.setPrimaryWeapon((InfantryWeapon) ptype);
+        infantry.setPrimaryWeapon((InfantryWeapon) primaryWeaponType);
 
-        EquipmentType stype = null;
+        EquipmentType secondaryWeaponType = null;
         if (dataFile.exists("Secondary")) {
             String secondName = dataFile.getDataAsString("Secondary")[0];
-            stype = EquipmentType.get(secondName);
-            if (!(stype instanceof InfantryWeapon)) {
+            secondaryWeaponType = EquipmentType.get(secondName);
+            if (!(secondaryWeaponType instanceof InfantryWeapon)) {
                 throw new EntityLoadingException("secondary weapon " + secondName + " is not an infantry weapon");
             }
-            infantry.setSecondaryWeapon((InfantryWeapon) stype);
+            infantry.setSecondaryWeapon((InfantryWeapon) secondaryWeaponType);
         }
 
         // if there is more than one secondary weapon per squad, then add that to the
@@ -102,11 +133,15 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
         Mounted<?> m;
         try {
             if ((infantry.getSecondaryWeaponsPerSquad() > 1)) {
-                m = new InfantryWeaponMounted(infantry, (InfantryWeapon) stype, (InfantryWeapon) ptype);
-            } else if (stype != null) {
-                m = new InfantryWeaponMounted(infantry, (InfantryWeapon) ptype, (InfantryWeapon) stype);
+                m = new InfantryWeaponMounted(infantry,
+                      (InfantryWeapon) secondaryWeaponType,
+                      (InfantryWeapon) primaryWeaponType);
+            } else if (secondaryWeaponType != null) {
+                m = new InfantryWeaponMounted(infantry,
+                      (InfantryWeapon) primaryWeaponType,
+                      (InfantryWeapon) secondaryWeaponType);
             } else {
-                m = Mounted.createMounted(infantry, ptype);
+                m = Mounted.createMounted(infantry, primaryWeaponType);
             }
         } catch (ClassCastException ex) {
             throw new EntityLoadingException(ex.getMessage());
@@ -118,10 +153,10 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
         }
 
         // TAG infantry have separate attacks for primary and secondary weapons.
-        if (null != stype && stype.hasFlag(WeaponType.F_TAG)) {
+        if (null != secondaryWeaponType && secondaryWeaponType.hasFlag(WeaponType.F_TAG)) {
             infantry.setSpecializations(infantry.getSpecializations() | Infantry.TAG_TROOPS);
             try {
-                infantry.addEquipment(ptype, Infantry.LOC_INFANTRY);
+                infantry.addEquipment(primaryWeaponType, Infantry.LOC_INFANTRY);
             } catch (LocationFullException ex) {
                 throw new EntityLoadingException(ex.getMessage());
             }
@@ -172,7 +207,7 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
 
         if (dataFile.exists("armordivisor")) {
             try {
-                infantry.setArmorDamageDivisor(Double.parseDouble(dataFile.getDataAsString("armordivisor")[0]));
+                infantry.setCustomArmorDamageDivisor(Double.parseDouble(dataFile.getDataAsString("armordivisor")[0]));
             } catch (NumberFormatException ex) {
                 throw new EntityLoadingException("Could not read armor divisor");
             }
@@ -183,11 +218,11 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
 
         // Update some internals if there's an armor kit
         infantry.getMisc().stream()
-                .filter(misc -> misc.getType().hasFlag(MiscType.F_ARMOR_KIT))
-                .findFirst()
-                .ifPresent(mounted -> infantry.setArmorKit(mounted.getType()));
+              .filter(misc -> misc.getType().hasFlag(MiscType.F_ARMOR_KIT))
+              .findFirst()
+              .ifPresent(mounted -> infantry.setArmorKit(mounted.getType()));
 
-        // backward compatibility: if an antimek better than 8 entry exists, assume
+        // backward compatibility: if an anti mek better than 8 entry exists, assume
         // anti-mek gear
         if (dataFile.exists("antimek")) {
             int[] amSkill = dataFile.getDataAsInt("antimek");

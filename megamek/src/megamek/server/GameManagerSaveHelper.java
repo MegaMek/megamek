@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.server;
 
 import java.io.BufferedInputStream;
@@ -37,23 +52,16 @@ import megamek.common.net.packets.Packet;
 import megamek.common.util.SerializationHelper;
 import megamek.logging.MMLogger;
 
-public class GameManagerSaveHelper {
-    private static final MMLogger logger = MMLogger.create(GameManagerSaveHelper.class);
-
-    private final AbstractGameManager gameManager;
-
-    GameManagerSaveHelper(AbstractGameManager gameManager) {
-        this.gameManager = gameManager;
-    }
+public record GameManagerSaveHelper(AbstractGameManager gameManager) {
+    private static final MMLogger LOGGER = MMLogger.create(GameManagerSaveHelper.class);
 
     /**
-     * Saves the game server-side. Will announce the save (or error) in chat if the
-     * given sendChat is true.
+     * Saves the game server-side. Will announce the save (or error) in chat if the given sendChat is true.
      *
      * @param fileName The filename to use
      * @param sendChat When true, the saving (or error) is announced in chat
      */
-    protected void saveGame(String fileName, boolean sendChat) {
+    void saveGame(String fileName, boolean sendChat) {
         // We need to strip the .gz if it exists, otherwise we'll double up on it.
         if (fileName.endsWith(".gz")) {
             fileName = fileName.replace(".gz", "");
@@ -72,12 +80,12 @@ public class GameManagerSaveHelper {
         finalFileName = saveGameDir + File.separator + finalFileName;
 
         try (OutputStream os = new FileOutputStream(finalFileName + ".gz");
-                OutputStream gzo = new GZIPOutputStream(os);
-                Writer writer = new OutputStreamWriter(gzo, StandardCharsets.UTF_8)) {
+              OutputStream gzo = new GZIPOutputStream(os);
+              Writer writer = new OutputStreamWriter(gzo, StandardCharsets.UTF_8)) {
             SerializationHelper.getSaveGameXStream().toXML(gameManager.getGame(), writer);
         } catch (Exception e) {
             String message = String.format("Unable to save file: %s", finalFileName);
-            logger.error(e, message);
+            LOGGER.error(e, message);
 
             if (sendChat) {
                 gameManager.sendChat("MegaMek", "Could not save the game to " + finalFileName);
@@ -94,8 +102,7 @@ public class GameManagerSaveHelper {
      *
      * @param connId    The <code>int</code> connection id to send to
      * @param fileName  The <code>String</code> filename to use
-     * @param localPath The <code>String</code> path to the file to be used on the
-     *                  client
+     * @param localPath The <code>String</code> path to the file to be used on the client
      */
     public void sendSaveGame(int connId, String fileName, String localPath) {
         saveGame(fileName, false);
@@ -122,7 +129,7 @@ public class GameManagerSaveHelper {
             gameManager.sendChat(connId, "***Server", "Save game has been sent to you.");
         } catch (Exception ex) {
             String message = String.format("Unable to load file: %s", localFile);
-            logger.error(ex, message);
+            LOGGER.error(ex, message);
         }
     }
 }

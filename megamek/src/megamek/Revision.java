@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek;
 
 import java.io.File;
@@ -25,40 +40,33 @@ import java.nio.file.Files;
 import megamek.common.Configuration;
 
 /**
- * This class contains static methods to obtain the current code revision
- * hashCode of all three programs.
- *
- * The code revision can be used to check out the precise point in the code when
- * available from a log file.
- *
- * In the IDE, revisions may not be fully available. E.g. when working in MML,
- * the MM directories are not
- * used.
+ * This class contains static methods to obtain the current code revision hashCode of all three programs.
+ * <p>
+ * The code revision can be used to check out the precise point in the code when available from a log file.
+ * <p>
+ * In the IDE, revisions may not be fully available. E.g. when working in MML, the MM directories are not used.
  */
 public final class Revision {
 
     /**
-     * @return The current MM code revision (e.g.
-     *         "eba3a49e1006e51b16db12446caf5e43f57a18a7"), or "Unknown"
-     *         if not available.
+     * @return The current MM code revision (e.g. "eba3a49e1006e51b16db12446caf5e43f57a18a7"), or "Unknown" if not
+     *       available.
      */
     public static String mmRevision() {
         return instance.mmRevision;
     }
 
     /**
-     * @return The current MML code revision (e.g.
-     *         "eba3a49e1006e51b16db12446caf5e43f57a18a7"), or "Unknown"
-     *         if not available.
+     * @return The current MML code revision (e.g. "eba3a49e1006e51b16db12446caf5e43f57a18a7"), or "Unknown" if not
+     *       available.
      */
     public static String mmlRevision() {
         return instance.mmlRevision;
     }
 
     /**
-     * @return The current MHQ code revision (e.g.
-     *         "eba3a49e1006e51b16db12446caf5e43f57a18a7"), or "Unknown"
-     *         if not available.
+     * @return The current MHQ code revision (e.g. "eba3a49e1006e51b16db12446caf5e43f57a18a7"), or "Unknown" if not
+     *       available.
      */
     public static String mhqRevision() {
         return instance.mhqRevision;

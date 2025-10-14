@@ -1,19 +1,38 @@
 /*
- * MegaMek -
  * Copyright (c) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.client;
 
 import java.awt.Image;
@@ -26,22 +45,33 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
 import megamek.MMConstants;
-import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
 import megamek.client.generator.skillGenerators.ModifiedTotalWarfareSkillGenerator;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.tileset.TilesetManager;
-import megamek.client.ui.swing.tooltip.PilotToolTip;
-import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
+import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
+import megamek.client.ui.tileset.TilesetManager;
+import megamek.client.ui.util.UIUtil;
+import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.Report;
+import megamek.common.SpecialHexDisplay;
+import megamek.common.TagInfo;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -49,23 +79,46 @@ import megamek.common.actions.DodgeAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.BoardDimensions;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
-import megamek.common.event.GameBoardChangeEvent;
+import megamek.common.equipment.Flare;
+import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.Minefield;
+import megamek.common.equipment.Mounted;
 import megamek.common.event.GameCFREvent;
-import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameVictoryEvent;
+import megamek.common.event.board.GameBoardChangeEvent;
+import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.game.Game;
+import megamek.common.game.GameTurn;
+import megamek.common.game.IGame;
+import megamek.common.interfaces.IEntityRemovalConditions;
+import megamek.common.loaders.MapSettings;
+import megamek.common.moves.MovePath;
 import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.turns.UnloadStrandedTurn;
+import megamek.common.units.Building;
+import megamek.common.units.Crew;
+import megamek.common.units.DemolitionCharge;
+import megamek.common.units.Entity;
+import megamek.common.units.EntitySelector;
+import megamek.common.units.FighterSquadron;
+import megamek.common.units.UnitLocation;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
@@ -73,25 +126,22 @@ import megamek.logging.MMLogger;
 import megamek.server.SmokeCloud;
 
 /**
- * This class is instantiated for each client and for each bot running on that
- * client. non-local clients are not also instantiated on the local server.
+ * This class is instantiated for each client and for each bot running on that client. non-local clients are not also
+ * instantiated on the local server.
  */
 public class Client extends AbstractClient {
-    private final static MMLogger logger = MMLogger.create(Client.class);
+    private final static MMLogger LOGGER = MMLogger.create(Client.class);
 
     /**
-     * The game state object: this object is not ever replaced during a game, only
-     * updated. A
-     * reference can therefore be cached by other objects.
+     * The game state object: this object is not ever replaced during a game, only updated. A reference can therefore be
+     * cached by other objects.
      */
     protected final Game game = new Game();
 
     private Set<BoardDimensions> availableSizes = new TreeSet<>();
-    private Vector<Coords> artilleryAutoHitHexes = null;
     private AbstractSkillGenerator skillGenerator;
 
-    // FIXME: Should ideally be located elsewhere; the client should handle data,
-    // not gfx or UI-related stuff:
+    // FIXME: Should ideally be located elsewhere; the client should handle data, not gfx or UI-related stuff:
     private TilesetManager tilesetManager;
 
     public Client(String name, String host, int port) {
@@ -100,7 +150,7 @@ public class Client extends AbstractClient {
         try {
             tilesetManager = new TilesetManager(game);
         } catch (IOException e) {
-            logger.error(e, "Unknown Exception");
+            LOGGER.error(e, "Unknown Exception");
         }
     }
 
@@ -108,20 +158,12 @@ public class Client extends AbstractClient {
         return game;
     }
 
-    /**
-     * Get hexes designated for automatic artillery hits.
-     */
-    public Vector<Coords> getArtilleryAutoHit() {
-        return artilleryAutoHitHexes;
-    }
-
     public Entity getEntity(int id) {
         return game.getEntity(id);
     }
 
     /**
-     * Returns an Enumeration of the entities that match the
-     * selection criteria.
+     * Returns an Enumeration of the entities that match the selection criteria.
      */
     public Iterator<Entity> getSelectedEntities(EntitySelector selector) {
         return game.getSelectedEntities(selector);
@@ -170,6 +212,21 @@ public class Client extends AbstractClient {
     }
 
     /**
+     * Returns the board with the given boardId or null if the game does not have a board of that boardId. Shortcut to
+     * game.getBoard(int).
+     *
+     * @param boardId The board's ID
+     *
+     * @return The board with the given ID
+     *
+     * @see IGame#getBoard(int)
+     */
+    @Nullable
+    public Board getBoard(int boardId) {
+        return game.getBoard(boardId);
+    }
+
+    /**
      * Returns an enumeration of the entities in game.entities
      */
     public List<Entity> getEntitiesVector() {
@@ -194,7 +251,7 @@ public class Client extends AbstractClient {
             case MOVEMENT:
             case PREMOVEMENT:
             case OFFBOARD:
-            case PREFIRING:
+            case PRE_FIRING:
             case FIRING:
             case PHYSICAL:
                 memDump("entering phase " + phase);
@@ -222,9 +279,8 @@ public class Client extends AbstractClient {
     /**
      * Loads the turn list from the data in the packet
      */
-    @SuppressWarnings("unchecked")
-    protected void receiveTurns(Packet packet) {
-        game.setTurnVector((List<GameTurn>) packet.getObject(0));
+    protected void receiveTurns(Packet packet) throws InvalidPacketDataException {
+        game.setTurnVector(packet.getGameTurnList(0));
     }
 
     /**
@@ -232,46 +288,27 @@ public class Client extends AbstractClient {
      */
     public boolean canUnloadStranded() {
         return (game.getTurn() instanceof UnloadStrandedTurn)
-                && game.getTurn().isValid(localPlayerNumber, game);
+              && game.getTurn().isValid(localPlayerNumber, game);
     }
 
     /**
-     * Maintain backwards compatibility.
+     * Deploy an entity at the given coordinates, with the given facing, and starting with the given units already
+     * loaded.
      *
-     * @param id
-     *                - the <code>int</code> ID of the deployed entity
-     * @param c
-     *                - the <code>Coords</code> where the entity should be deployed
-     * @param nFacing
-     *                - the <code>int</code> direction the entity should face
+     * @param id          the ID of the deployed entity
+     * @param coords      the Coords where the entity should be deployed
+     * @param nFacing     the direction the entity should face
+     * @param loadedUnits a List of units that start the game being transported by the deployed entity.
+     * @param assaultDrop true if deployment is an assault drop
      */
-    public void deploy(int id, Coords c, int nFacing, int elevation) {
-        this.deploy(id, c, nFacing, elevation, new Vector<>(), false);
-    }
-
-    /**
-     * Deploy an entity at the given coordinates, with the given facing, and
-     * starting with the given units already loaded.
-     *
-     * @param id
-     *                    - the <code>int</code> ID of the deployed entity
-     * @param c
-     *                    - the <code>Coords</code> where the entity should be
-     *                    deployed
-     * @param nFacing
-     *                    - the <code>int</code> direction the entity should face
-     * @param loadedUnits
-     *                    - a <code>List</code> of units that start the game being
-     *                    transported byt the deployed entity.
-     * @param assaultDrop
-     *                    - true if deployment is an assault drop
-     */
-    public void deploy(int id, Coords c, int nFacing, int elevation, List<Entity> loadedUnits, boolean assaultDrop) {
-        int packetCount = 6 + loadedUnits.size();
+    public void deploy(int id, Coords coords, int boardId, int nFacing, int elevation, List<Entity> loadedUnits,
+          boolean assaultDrop) {
+        int packetCount = 7 + loadedUnits.size();
         int index = 0;
         Object[] data = new Object[packetCount];
         data[index++] = id;
-        data[index++] = c;
+        data[index++] = coords;
+        data[index++] = boardId;
         data[index++] = nFacing;
         data[index++] = elevation;
         data[index++] = loadedUnits.size();
@@ -286,10 +323,8 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * For ground to air attacks, the ground unit targets the closest hex in the
-     * air units flight path. In the case of several equidistant hexes, the
-     * attacker gets to choose. This method updates the server with the users
-     * choice.
+     * For ground to air attacks, the ground unit targets the closest hex in the air units flight path. In the case of
+     * several equidistant hexes, the attacker gets to choose. This method updates the server with the users choice.
      *
      * @param targetId   The target ID
      * @param attackerId The attacker Entity ID
@@ -359,47 +394,42 @@ public class Client extends AbstractClient {
 
     public void sendEntityWeaponOrderUpdate(Entity entity) {
         if (entity.getWeaponSortOrder().isCustom()) {
-            send(new Packet(PacketCommand.ENTITY_WORDER_UPDATE, entity.getId(),
-                    entity.getWeaponSortOrder(), entity.getCustomWeaponOrder()));
+            send(new Packet(PacketCommand.ENTITY_WORDER_UPDATE,
+                  entity.getId(),
+                  entity.getWeaponSortOrder(),
+                  entity.getCustomWeaponOrder()));
         } else {
-            send(new Packet(PacketCommand.ENTITY_WORDER_UPDATE, entity.getId(),
-                    entity.getWeaponSortOrder()));
+            send(new Packet(PacketCommand.ENTITY_WORDER_UPDATE, entity.getId(), entity.getWeaponSortOrder()));
         }
-        entity.setWeapOrderChanged(false);
+        entity.setWeaponOrderChanged(false);
     }
 
     /**
-     * Sends an "add entity" packet with only one Entity.
+     * Sends an "add entity" packet that contains a collection of Entity objects.
      *
-     * @param entity
-     *               The Entity to add.
-     */
-    public void sendAddEntity(Entity entity) {
-        ArrayList<Entity> entities = new ArrayList<>(1);
-        entities.add(entity);
-        sendAddEntity(entities);
-    }
-
-    /**
-     * Sends an "add entity" packet that contains a collection of Entity
-     * objects.
+     * @param entities The collection of Entity objects to add. This should ideally be an {@link ArrayList<Entity>}, but
+     *                 other kinds of {@link List} will be converted to an {@link ArrayList}.
      *
-     * @param entities
-     *                 The collection of Entity objects to add.
      */
     public void sendAddEntity(List<Entity> entities) {
+        // Trying to pass a non-ArrayList jams the receiving client and prevents it from ever receiving more packets.
+        if (!(entities instanceof ArrayList<Entity>)) {
+            entities = new ArrayList<>(entities);
+        }
+
         for (Entity entity : entities) {
             checkDuplicateNamesDuringAdd(entity);
         }
+
         send(new Packet(PacketCommand.ENTITY_ADD, entities));
     }
 
     /**
      * Sends an "add squadron" packet
      */
-    public void sendAddSquadron(FighterSquadron fs, Collection<Integer> fighterIds) {
-        checkDuplicateNamesDuringAdd(fs);
-        send(new Packet(PacketCommand.SQUADRON_ADD, fs, fighterIds));
+    public void sendAddSquadron(FighterSquadron fighterSquadron, Collection<Integer> fighterIds) {
+        checkDuplicateNamesDuringAdd(fighterSquadron);
+        send(new Packet(PacketCommand.SQUADRON_ADD, fighterSquadron, fighterIds));
     }
 
     /**
@@ -410,18 +440,17 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Sends an updated state of ground objects (i.e. cargo etc)
+     * Sends an updated state of ground objects (i.e. cargo etc.)
      */
     public void sendDeployGroundObjects(Map<Coords, List<ICarryable>> groundObjects) {
         send(new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, groundObjects));
     }
 
     /**
-     * Sends a "set Artillery Autohit Hexes" packet
+     * Sends a "set Artillery AutoHit Hexes" packet
      */
-    public void sendArtyAutoHitHexes(Vector<Coords> hexes) {
-        artilleryAutoHitHexes = hexes; // save for minimap use
-        send(new Packet(PacketCommand.SET_ARTILLERY_AUTOHIT_HEXES, hexes));
+    public void sendArtyAutoHitHexes(List<BoardLocation> hexes) {
+        send(new Packet(PacketCommand.SET_ARTILLERY_AUTO_HIT_HEXES, hexes));
     }
 
     /**
@@ -432,18 +461,16 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Sends a packet containing multiple entity updates. Should only be used
-     * in the lobby phase.
+     * Sends a packet containing multiple entity updates. Should only be used in the lobby phase.
      */
     public void sendUpdateEntity(Collection<Entity> entities) {
-        send(new Packet(PacketCommand.ENTITY_MULTIUPDATE, entities));
+        send(new Packet(PacketCommand.ENTITY_MULTI_UPDATE, entities));
     }
 
     /**
-     * Sends a packet containing multiple entity updates. Should only be used
-     * in the lobby phase.
+     * Sends a packet containing multiple entity updates. Should only be used in the lobby phase.
      */
-    public void sendChangeOwner(Collection<Entity> entities, int newOwnerId) {
+    public void sendChangeOwner(Collection<Entity> entities, int newOwnerId) throws InvalidPacketDataException {
         send(new Packet(PacketCommand.ENTITY_ASSIGN, entities, newOwnerId));
     }
 
@@ -483,50 +510,49 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.ENTITY_TOW, id, tractorId));
     }
 
-    public void sendExplodeBuilding(Building.DemolitionCharge charge) {
+    public void sendExplodeBuilding(DemolitionCharge charge) {
         send(new Packet(PacketCommand.BLDG_EXPLODE, charge));
     }
 
     /**
      * Loads the entities from the data in the net command.
      */
-    @SuppressWarnings("unchecked")
-    protected void receiveEntities(Packet c) {
-        List<Entity> newEntities = (List<Entity>) c.getObject(0);
-        List<Entity> newOutOfGame = (List<Entity>) c.getObject(1);
-        Forces forces = (Forces) c.getObject(2);
+    protected void receiveEntities(Packet packet) throws InvalidPacketDataException {
+        List<Entity> newEntities = packet.getEntityList(0);
+        List<Entity> newOutOfGame = packet.getEntityList(1);
+        Forces forces = packet.getForces(2);
+
         // Replace the entities in the game.
         if (forces != null) {
             game.setForces(forces);
         }
+
         game.setEntitiesVector(newEntities);
-        if (newOutOfGame != null) {
-            game.setOutOfGameEntitiesVector(newOutOfGame);
-            for (Entity e : newOutOfGame) {
-                cacheImgTag(e);
-            }
+        game.setOutOfGameEntitiesVector(newOutOfGame);
+        for (Entity entity : newOutOfGame) {
+            cacheImgTag(entity);
         }
+
         // cache the image data for the entities and set force for entities
-        for (Entity e : newEntities) {
-            cacheImgTag(e);
-            e.setForceId(game.getForces().getForceId(e));
+        for (Entity entity : newEntities) {
+            cacheImgTag(entity);
+            entity.setForceId(game.getForces().getForceId(entity));
         }
 
         if (GUIPreferences.getInstance().getMiniReportShowSprites() &&
-                game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
-                iconCache != null && !iconCache.containsKey(Report.HIDDEN_ENTITY_NUM)) {
+              game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
+              iconCache != null && !iconCache.containsKey(Report.HIDDEN_ENTITY_NUM)) {
             ImageUtil.createDoubleBlindHiddenImage(iconCache);
         }
     }
 
     /**
-     * Receives a force-related update containing affected forces and affected
-     * entities
+     * Receives a force-related update containing affected forces and affected entities
      */
-    @SuppressWarnings("unchecked")
-    protected void receiveForceUpdate(Packet c) {
-        Collection<Force> forces = (Collection<Force>) c.getObject(0);
-        Collection<Entity> entities = (Collection<Entity>) c.getObject(1);
+    protected void receiveForceUpdate(Packet packet) throws InvalidPacketDataException {
+        Collection<Force> forces = packet.getForceList(0);
+        Collection<Entity> entities = packet.getEntityList(1);
+
         for (Force force : forces) {
             getGame().getForces().replace(force.getId(), force);
         }
@@ -537,12 +563,10 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Receives a server packet commanding deletion of forces. Only valid in the
-     * lobby phase.
+     * Receives a server packet commanding deletion of forces. Only valid in the lobby phase.
      */
-    protected void receiveForcesDelete(Packet c) {
-        @SuppressWarnings("unchecked")
-        Collection<Integer> forceIds = (Collection<Integer>) c.getObject(0);
+    protected void receiveForcesDelete(Packet packet) throws InvalidPacketDataException {
+        Collection<Integer> forceIds = packet.getIntList(0);
         Forces forces = game.getForces();
 
         // Gather the forces and entities to be deleted
@@ -551,9 +575,9 @@ public class Client extends AbstractClient {
         forceIds.stream().map(forces::getForce).forEach(delForces::add);
         for (Force delForce : delForces) {
             forces.getFullEntities(delForce).stream()
-                    .filter(e -> e instanceof Entity)
-                    .map(e -> (Entity) e)
-                    .forEach(delEntities::add);
+                  .filter(e -> e instanceof Entity)
+                  .map(e -> (Entity) e)
+                  .forEach(delEntities::add);
         }
 
         forces.deleteForces(delForces);
@@ -566,92 +590,97 @@ public class Client extends AbstractClient {
     /**
      * Loads entity update data from the data in the net command.
      */
-    @SuppressWarnings("unchecked")
-    protected void receiveEntityUpdate(Packet c) {
-        int eindex = c.getIntValue(0);
-        Entity entity = (Entity) c.getObject(1);
-        Vector<UnitLocation> movePath = (Vector<UnitLocation>) c.getObject(2);
-        // Replace this entity in the game.
-        getGame().setEntity(eindex, entity, movePath);
+    protected void receiveEntityUpdate(Packet packet) throws InvalidPacketDataException {
+        int entityIndex = packet.getIntValue(0);
+        Entity entity = packet.getEntity(1);
+
+        if (entity != null) {
+            Vector<UnitLocation> movePath = packet.getUnitLocationVector(2);
+            // Replace this entity in the game.
+            getGame().setEntity(entityIndex, entity, movePath);
+        }
     }
 
     /**
      * Update multiple entities from the server. Used only in the lobby phase.
      */
-    @SuppressWarnings("unchecked")
-    protected void receiveEntitiesUpdate(Packet c) {
-        Collection<Entity> entities = (Collection<Entity>) c.getObject(0);
+    protected void receiveEntitiesUpdate(Packet packet) throws InvalidPacketDataException {
+        Collection<Entity> entities = packet.getEntityList(0);
         for (Entity entity : entities) {
             getGame().setEntity(entity.getId(), entity);
         }
     }
 
-    protected void receiveEntityRemove(Packet packet) {
-        @SuppressWarnings("unchecked")
-        List<Integer> entityIds = (List<Integer>) packet.getObject(0);
+    protected void receiveEntityRemove(Packet packet) throws InvalidPacketDataException {
+        List<Integer> entityIds = packet.getIntList(0);
         int condition = packet.getIntValue(1);
-        @SuppressWarnings("unchecked")
-        List<Force> forces = (List<Force>) packet.getObject(2);
+        List<Force> forces = packet.getForceList(2);
         // create a final image for the entity
+
         for (int id : entityIds) {
             cacheImgTag(game.getEntity(id));
         }
+
         for (Force force : forces) {
             game.getForces().replace(force.getId(), force);
         }
+
         // Move the unit to its final resting place.
         game.removeEntities(entityIds, condition);
     }
 
-    @SuppressWarnings("unchecked")
-    protected void receiveEntityVisibilityIndicator(Packet packet) {
-        Entity e = game.getEntity(packet.getIntValue(0));
-        if (e != null) { // we may not have this entity due to double blind
-            e.setEverSeenByEnemy(packet.getBooleanValue(1));
-            e.setVisibleToEnemy(packet.getBooleanValue(2));
-            e.setDetectedByEnemy(packet.getBooleanValue(3));
-            e.setWhoCanSee((Vector<Player>) packet.getObject(4));
-            e.setWhoCanDetect((Vector<Player>) packet.getObject(5));
-            // this next call is only needed sometimes, but we'll just
-            // call it everytime
-            game.processGameEvent(new GameEntityChangeEvent(this, e));
+    protected void receiveEntityVisibilityIndicator(Packet packet) throws InvalidPacketDataException {
+        Entity entity = game.getEntity(packet.getIntValue(0));
+
+        if (entity != null) { // we may not have this entity due to double-blind
+            entity.setEverSeenByEnemy(packet.getBooleanValue(1));
+            entity.setVisibleToEnemy(packet.getBooleanValue(2));
+            entity.setDetectedByEnemy(packet.getBooleanValue(3));
+            entity.setWhoCanSee(packet.getPlayerVector(4));
+            entity.setWhoCanDetect(packet.getPlayerVector(5));
+
+            // this next call is only needed sometimes, but we'll just call it everytime
+            game.processGameEvent(new GameEntityChangeEvent(this, entity));
         }
     }
 
-    @SuppressWarnings("unchecked")
-    protected void receiveUpdateGroundObjects(Packet packet) {
-        game.setGroundObjects((Map<Coords, List<ICarryable>>) packet.getObject(0));
+    protected void receiveUpdateGroundObjects(Packet packet) throws InvalidPacketDataException {
+        game.setGroundObjects(packet.getCoordsWithICarryableListMap(0));
         game.processGameEvent(new GameBoardChangeEvent(this));
     }
 
-    @SuppressWarnings("unchecked")
-    protected void receiveDeployMinefields(Packet packet) {
-        game.addMinefields((Vector<Minefield>) packet.getObject(0));
+    protected void receiveDeployMinefields(Packet packet) throws InvalidPacketDataException {
+        game.addMinefields(packet.getMinefieldVector(0));
     }
 
-    @SuppressWarnings("unchecked")
-    protected void receiveSendingMinefields(Packet packet) {
-        game.setMinefields((Vector<Minefield>) packet.getObject(0));
+    protected void receiveSendingMinefields(Packet packet) throws InvalidPacketDataException {
+        game.setMinefields(packet.getMinefieldVector(0));
     }
 
-    @SuppressWarnings("unchecked")
-    protected void receiveIlluminatedHexes(Packet p) {
-        game.setIlluminatedPositions((HashSet<Coords>) p.getObject(0));
+    protected void receiveIlluminatedHexes(Packet packet) throws InvalidPacketDataException {
+        game.setIlluminatedPositions(packet.getCoordsHashSet(0));
     }
 
-    protected void receiveRevealMinefield(Packet packet) {
-        game.addMinefield((Minefield) packet.getObject(0));
+    protected void receiveRevealMinefield(Packet packet) throws InvalidPacketDataException {
+        Minefield minefield = packet.getMinefield(0);
+
+        if (minefield != null) {
+            game.addMinefield(minefield);
+        }
     }
 
-    protected void receiveRemoveMinefield(Packet packet) {
-        game.removeMinefield((Minefield) packet.getObject(0));
+    protected void receiveRemoveMinefield(Packet packet) throws InvalidPacketDataException {
+        Minefield minefield = packet.getMinefield(0);
+
+        if (minefield != null) {
+            game.removeMinefield(minefield);
+        }
     }
 
-    @SuppressWarnings("unchecked")
-    protected void receiveUpdateMinefields(Packet packet) {
+    protected void receiveUpdateMinefields(Packet packet) throws InvalidPacketDataException {
         // only update information if you know about the minefield
         Vector<Minefield> newMines = new Vector<>();
-        for (Minefield mf : (Vector<Minefield>) packet.getObject(0)) {
+        for (Minefield mf : packet.getMinefieldVector(0)) {
             if (getLocalPlayer().containsMinefield(mf)) {
                 newMines.add(mf);
             }
@@ -662,39 +691,43 @@ public class Client extends AbstractClient {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    protected void receiveBuildingUpdate(Packet packet) {
-        game.getBoard().updateBuildings((Vector<Building>) packet.getObject(0));
+    protected void receiveBuildingUpdate(Packet packet) throws InvalidPacketDataException {
+        for (Building building : packet.getBuildingList(0)) {
+            game.getBoard(building.getBoardId()).updateBuilding(building);
+        }
     }
 
-    @SuppressWarnings("unchecked")
-    protected void receiveBuildingCollapse(Packet packet) {
-        game.getBoard().collapseBuilding((Vector<Coords>) packet.getObject(0));
+    protected void receiveBuildingCollapse(Packet packet) throws InvalidPacketDataException {
+        int boardId = packet.getIntValue(1);
+        game.getBoard(boardId).collapseBuilding(packet.getCoordsVector(0));
     }
 
     /**
      * Loads entity firing data from the data in the net command
      */
-    @SuppressWarnings("unchecked")
-    protected void receiveAttack(Packet c) {
-        List<EntityAction> vector = (List<EntityAction>) c.getObject(0);
-        boolean isCharge = c.getBooleanValue(1);
+    protected void receiveAttack(Packet packet) throws InvalidPacketDataException {
+        List<EntityAction> vector = packet.getEntityActionList(0);
+        boolean isCharge = packet.getBooleanValue(1);
         boolean addAction = true;
-        for (EntityAction ea : vector) {
-            int entityId = ea.getEntityId();
-            if ((ea instanceof TorsoTwistAction) && game.hasEntity(entityId)) {
-                TorsoTwistAction tta = (TorsoTwistAction) ea;
+        for (EntityAction entityAction : vector) {
+            int entityId = entityAction.getEntityId();
+            if ((entityAction instanceof TorsoTwistAction torsoTwistAction) && game.hasEntity(entityId)) {
                 Entity entity = game.getEntity(entityId);
-                entity.setSecondaryFacing(tta.getFacing());
-            } else if ((ea instanceof FlipArmsAction) && game.hasEntity(entityId)) {
-                FlipArmsAction faa = (FlipArmsAction) ea;
+                if (entity != null) {
+                    entity.setSecondaryFacing(torsoTwistAction.getFacing());
+                }
+            } else if ((entityAction instanceof FlipArmsAction flipArmsAction) && game.hasEntity(entityId)) {
                 Entity entity = game.getEntity(entityId);
-                entity.setArmsFlipped(faa.getIsFlipped());
-            } else if ((ea instanceof DodgeAction) && game.hasEntity(entityId)) {
+                if (entity != null) {
+                    entity.setArmsFlipped(flipArmsAction.getIsFlipped());
+                }
+            } else if ((entityAction instanceof DodgeAction) && game.hasEntity(entityId)) {
                 Entity entity = game.getEntity(entityId);
-                entity.dodging = true;
-                addAction = false;
-            } else if (ea instanceof ClubAttackAction clubAttackAction) {
+                if (entity != null) {
+                    entity.dodging = true;
+                    addAction = false;
+                }
+            } else if (entityAction instanceof ClubAttackAction clubAttackAction) {
                 Mounted<?> club = clubAttackAction.getClub();
                 club.restore();
             }
@@ -702,9 +735,9 @@ public class Client extends AbstractClient {
             if (addAction) {
                 // track in the appropriate list
                 if (!isCharge) {
-                    game.addAction(ea);
+                    game.addAction(entityAction);
                 } else {
-                    game.addCharge((AttackAction) ea);
+                    game.addCharge((AttackAction) entityAction);
                 }
             }
         }
@@ -716,7 +749,7 @@ public class Client extends AbstractClient {
             return "[null report vector]";
         }
 
-        StringBuffer report = new StringBuffer();
+        StringBuilder report = new StringBuilder();
         for (Report r : reports) {
             report.append(r.text());
         }
@@ -740,8 +773,9 @@ public class Client extends AbstractClient {
         String updatedReport = report.toString();
         // loop through the hashset of unique ids and replace the ids with img tags
         for (int i : setEntity) {
-            if (getCachedImgTag(i) != null) {
-                updatedReport = updatedReport.replace("<span id='" + i + "'></span>", getCachedImgTag(i));
+            String cachedImageTag = getCachedImgTag(i);
+            if (cachedImageTag != null) {
+                updatedReport = updatedReport.replace("<span id='" + i + "'></span>", cachedImageTag);
             }
         }
 
@@ -778,18 +812,18 @@ public class Client extends AbstractClient {
 
                     if (crew != null) {
                         // Adjust the portrait size to the GUI scale and number of pilots
-                        float imgSize = UIUtil.scaleForGUI(PilotToolTip.PORTRAIT_BASESIZE);
+                        float imgSize = UIUtil.scaleForGUI(PilotToolTip.PORTRAIT_BASE_SIZE);
                         imgSize /= 0.2f * (crew.getSlotCount() - 1) + 1;
                         Image portrait = crew.getPortrait(crewID).getBaseImage().getScaledInstance(-1, (int) imgSize,
-                                Image.SCALE_SMOOTH);
+                              Image.SCALE_SMOOTH);
                         // convert image to base64, add to the <img> tag and store in cache
                         BufferedImage bufferedImage = new BufferedImage(portrait.getWidth(null),
-                                portrait.getHeight(null), BufferedImage.TYPE_INT_RGB);
+                              portrait.getHeight(null), BufferedImage.TYPE_INT_RGB);
                         bufferedImage.getGraphics().drawImage(portrait, 0, 0, null);
                         String base64Text = ImageUtil.base64TextEncodeImage(bufferedImage);
                         String img = "<img src='data:image/png;base64," + base64Text + "'>";
                         updatedReport = updatedReport.replace("<span crew='" + entityID + ":" + crewID + "'></span>",
-                                img);
+                              img);
                     }
                 }
             }
@@ -803,7 +837,7 @@ public class Client extends AbstractClient {
      */
     private String getCachedImgTag(int id) {
         if (!GUIPreferences.getInstance().getMiniReportShowSprites()
-                || (iconCache == null) || !iconCache.containsKey(id)) {
+              || (iconCache == null) || !iconCache.containsKey(id)) {
             return null;
         }
         return iconCache.get(id);
@@ -860,7 +894,7 @@ public class Client extends AbstractClient {
             fw.flush();
             fw.close();
         } catch (Exception ex) {
-            logger.error(ex, "saveEntityStatus");
+            LOGGER.error(ex, "saveEntityStatus");
         }
     }
 
@@ -871,282 +905,309 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.ENTITY_NOVA_NETWORK_CHANGE, id, net));
     }
 
-    public void sendSpecialHexDisplayAppend(Coords c, SpecialHexDisplay shd) {
-        send(new Packet(PacketCommand.SPECIAL_HEX_DISPLAY_APPEND, c, shd));
+    public void sendSpecialHexDisplayAppend(Coords c, int boardId, SpecialHexDisplay shd) {
+        send(new Packet(PacketCommand.SPECIAL_HEX_DISPLAY_APPEND, c, boardId, shd));
     }
 
-    public void sendSpecialHexDisplayDelete(Coords c, SpecialHexDisplay shd) {
-        send(new Packet(PacketCommand.SPECIAL_HEX_DISPLAY_DELETE, c, shd));
+    public void sendSpecialHexDisplayDelete(Coords c, int boardId, SpecialHexDisplay shd) {
+        send(new Packet(PacketCommand.SPECIAL_HEX_DISPLAY_DELETE, c, boardId, shd));
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected boolean handleGameSpecificPacket(Packet packet) {
-        switch (packet.getCommand()) {
-            case SERVER_GREETING:
-                if (this instanceof Princess) {
-                    ((Princess) this).sendPrincessSettings();
-                }
-                break;
-            case PRINCESS_SETTINGS:
-                game.setBotSettings((Map<String, BehaviorSettings>) packet.getObject(0));
-                break;
-            case ENTITY_UPDATE:
-                receiveEntityUpdate(packet);
-                break;
-            case ENTITY_MULTIUPDATE:
-                receiveEntitiesUpdate(packet);
-                break;
-            case ENTITY_REMOVE:
-                receiveEntityRemove(packet);
-                break;
-            case ENTITY_VISIBILITY_INDICATOR:
-                receiveEntityVisibilityIndicator(packet);
-                break;
-            case FORCE_UPDATE:
-                receiveForceUpdate(packet);
-                break;
-            case FORCE_DELETE:
-                receiveForcesDelete(packet);
-                break;
-            case SENDING_MINEFIELDS:
-                receiveSendingMinefields(packet);
-                break;
-            case SENDING_ILLUM_HEXES:
-                receiveIlluminatedHexes(packet);
-                break;
-            case CLEAR_ILLUM_HEXES:
-                game.clearIlluminatedPositions();
-                break;
-            case UPDATE_MINEFIELDS:
-                receiveUpdateMinefields(packet);
-                break;
-            case DEPLOY_MINEFIELDS:
-                receiveDeployMinefields(packet);
-                break;
-            case REVEAL_MINEFIELD:
-                receiveRevealMinefield(packet);
-                break;
-            case REMOVE_MINEFIELD:
-                receiveRemoveMinefield(packet);
-                break;
-            case UPDATE_GROUND_OBJECTS:
-                receiveUpdateGroundObjects(packet);
-                break;
-            case ADD_SMOKE_CLOUD:
-                SmokeCloud cloud = (SmokeCloud) packet.getObject(0);
-                game.addSmokeCloud(cloud);
-                break;
-            case CHANGE_HEX:
-                game.getBoard().setHex((Coords) packet.getObject(0), (Hex) packet.getObject(1));
-                break;
-            case CHANGE_HEXES:
-                List<Coords> coords = new ArrayList<>((Set<Coords>) packet.getObject(0));
-                List<Hex> hexes = new ArrayList<>((Set<Hex>) packet.getObject(1));
-                game.getBoard().setHexes(coords, hexes);
-                break;
-            case BLDG_UPDATE:
-                receiveBuildingUpdate(packet);
-                break;
-            case BLDG_COLLAPSE:
-                receiveBuildingCollapse(packet);
-                break;
-            case SENDING_TURNS:
-                receiveTurns(packet);
-                break;
-            case SENDING_ENTITIES:
-                receiveEntities(packet);
-                break;
-            case SENDING_REPORTS:
-            case SENDING_REPORTS_TACTICAL_GENIUS:
-                phaseReport = receiveReport((List<Report>) packet.getObject(0));
-                if (keepGameLog()) {
-                    if ((log == null) && (game.getRoundCount() == 1)) {
-                        initGameLog();
+        try {
+            switch (packet.command()) {
+                case SERVER_GREETING:
+                    if (this instanceof Princess) {
+                        ((Princess) this).sendPrincessSettings();
                     }
-                    if (log != null) {
-                        log.append(phaseReport);
-                    }
-                }
-                game.addReports((List<Report>) packet.getObject(0));
-                roundReport = receiveReport(game.getReports(game.getRoundCount()));
-                if (packet.getCommand().isSendingReportsTacticalGenius()) {
-                    game.processGameEvent(new GameReportEvent(this, roundReport));
-                }
-                break;
-            case SENDING_REPORTS_SPECIAL:
-                game.processGameEvent(new GameReportEvent(this,
-                        receiveReport((List<Report>) packet.getObject(0))));
-                break;
-            case SENDING_REPORTS_ALL:
-                var allReports = (List<List<Report>>) packet.getObject(0);
-                game.setAllReports(allReports);
-                if (keepGameLog()) {
-                    // Re-write gamelog.txt from scratch
-                    initGameLog();
-                    if (log != null) {
-                        for (int i = 0; i < allReports.size(); i++) {
-                            log.append(receiveReport(allReports.get(i)));
-                        }
-                    }
-                }
-                roundReport = receiveReport(game.getReports(game.getRoundCount()));
-                // We don't really have a copy of the phase report at
-                // this point, so I guess we'll just use the round report
-                // until the next phase actually completes.
-                phaseReport = roundReport;
-                break;
-            case ENTITY_ATTACK:
-                receiveAttack(packet);
-                break;
-            case TURN:
-                changeTurnIndex(packet.getIntValue(0), packet.getIntValue(1));
-                break;
-            case SENDING_GAME_SETTINGS:
-                game.setOptions((GameOptions) packet.getObject(0));
-                break;
-            case SENDING_MAP_SETTINGS:
-                MapSettings mapSettings = (MapSettings) packet.getObject(0);
-                game.setMapSettings(mapSettings);
-                GameSettingsChangeEvent evt = new GameSettingsChangeEvent(this);
-                evt.setMapSettingsOnlyChange(true);
-                game.processGameEvent(evt);
-                break;
-            case SENDING_PLANETARY_CONDITIONS:
-                game.setPlanetaryConditions((PlanetaryConditions) packet.getObject(0));
-                game.processGameEvent(new GameSettingsChangeEvent(this));
-                break;
-            case SENDING_TAG_INFO:
-                Vector<TagInfo> vti = (Vector<TagInfo>) packet.getObject(0);
-                for (TagInfo ti : vti) {
-                    game.addTagInfo(ti);
-                }
-                break;
-            case RESET_TAG_INFO:
-                game.resetTagInfo();
-                break;
-            case END_OF_GAME:
-                String sEntityStatus = (String) packet.getObject(0);
-                game.end(packet.getIntValue(1), packet.getIntValue(2));
-                // save victory report
-                saveEntityStatus(sEntityStatus);
-                break;
-            case SENDING_ARTILLERY_ATTACKS:
-                Vector<ArtilleryAttackAction> v = (Vector<ArtilleryAttackAction>) packet.getObject(0);
-                game.setArtilleryVector(v);
-                break;
-            case SENDING_FLARES:
-                Vector<Flare> v2 = (Vector<Flare>) packet.getObject(0);
-                game.setFlares(v2);
-                break;
-            case SEND_SAVEGAME:
-                String sFinalFile = (String) packet.getObject(0);
-                String sLocalPath = (String) packet.getObject(2);
-                String localFile = sLocalPath + File.separator + sFinalFile;
-                File sDir = new File(sLocalPath);
-                if (!sDir.exists()) {
-                    try {
-                        if (!sDir.mkdir()) {
-                            logger.error("Failed to create savegames directory.");
-                            return true;
-                        }
-                    } catch (Exception ex) {
-                        logger.error(ex, "Unable to create savegames directory.");
-                    }
-                }
+                    break;
+                case PRINCESS_SETTINGS:
+                    game.setBotSettings(packet.getStringWIthBehaviorSettingsMap(0));
+                    break;
+                case ENTITY_UPDATE:
+                    receiveEntityUpdate(packet);
+                    break;
+                case ENTITY_MULTI_UPDATE:
+                    receiveEntitiesUpdate(packet);
+                    break;
+                case ENTITY_REMOVE:
+                    receiveEntityRemove(packet);
+                    break;
+                case ENTITY_VISIBILITY_INDICATOR:
+                    receiveEntityVisibilityIndicator(packet);
+                    break;
+                case FORCE_UPDATE:
+                    receiveForceUpdate(packet);
+                    break;
+                case FORCE_DELETE:
+                    receiveForcesDelete(packet);
+                    break;
+                case SENDING_MINEFIELDS:
+                    receiveSendingMinefields(packet);
+                    break;
+                case SENDING_ILLUMINATED_HEXES:
+                    receiveIlluminatedHexes(packet);
+                    break;
+                case CLEAR_ILLUMINATED_HEXES:
+                    game.clearIlluminatedPositions();
+                    break;
+                case UPDATE_MINEFIELDS:
+                    receiveUpdateMinefields(packet);
+                    break;
+                case DEPLOY_MINEFIELDS:
+                    receiveDeployMinefields(packet);
+                    break;
+                case REVEAL_MINEFIELD:
+                    receiveRevealMinefield(packet);
+                    break;
+                case REMOVE_MINEFIELD:
+                    receiveRemoveMinefield(packet);
+                    break;
+                case UPDATE_GROUND_OBJECTS:
+                    receiveUpdateGroundObjects(packet);
+                    break;
+                case ADD_SMOKE_CLOUD:
+                    SmokeCloud cloud = packet.getSmokeCloud(0);
 
-                try (OutputStream os = new FileOutputStream(localFile);
-                        BufferedOutputStream bos = new BufferedOutputStream(os)) {
-                    List<Integer> data = (List<Integer>) packet.getObject(1);
-                    for (Integer d : data) {
-                        bos.write(d);
+                    if (cloud != null) {
+                        game.addSmokeCloud(cloud);
                     }
-                    bos.flush();
-                } catch (Exception ex) {
-                    String message = String.format("Unable to save file %s", sFinalFile);
-                    logger.error(ex, message);
-                }
-                break;
-            case LOAD_SAVEGAME:
-                String loadFile = (String) packet.getObject(0);
-                try {
-                    sendLoadGame(new File(MMConstants.SAVEGAME_DIR, loadFile));
-                } catch (Exception ex) {
-                    String message = String.format("Unable to load savegame file: %s", loadFile);
-                    logger.error(ex, message);
-                }
-                break;
-            case SENDING_SPECIAL_HEX_DISPLAY:
-                game.getBoard().setSpecialHexDisplayTable(
-                        (Hashtable<Coords, Collection<SpecialHexDisplay>>) packet.getObject(0));
-                game.processGameEvent(new GameBoardChangeEvent(this));
-                break;
-            case SENDING_AVAILABLE_MAP_SIZES:
-                availableSizes = (Set<BoardDimensions>) packet.getObject(0);
-                game.processGameEvent(new GameSettingsChangeEvent(this));
-                break;
-            case ENTITY_NOVA_NETWORK_CHANGE:
-                receiveEntityNovaNetworkModeChange(packet);
-                break;
-            case CLIENT_FEEDBACK_REQUEST:
-                final PacketCommand cfrType = (PacketCommand) packet.getData()[0];
-                GameCFREvent cfrEvt = new GameCFREvent(this, cfrType);
-                switch (cfrType) {
-                    case CFR_DOMINO_EFFECT:
-                        cfrEvt.setEntityId((int) packet.getData()[1]);
-                        break;
-                    case CFR_AMS_ASSIGN:
-                        cfrEvt.setEntityId((int) packet.getData()[1]);
-                        cfrEvt.setAmsEquipNum((int) packet.getData()[2]);
-                        cfrEvt.setWAAs((List<WeaponAttackAction>) packet.getData()[3]);
-                        break;
-                    case CFR_APDS_ASSIGN:
-                        cfrEvt.setEntityId((int) packet.getData()[1]);
-                        cfrEvt.setApdsDists((List<Integer>) packet.getData()[2]);
-                        cfrEvt.setWAAs((List<WeaponAttackAction>) packet.getData()[3]);
-                        break;
-                    case CFR_HIDDEN_PBS:
-                        cfrEvt.setEntityId((int) packet.getObject(1));
-                        cfrEvt.setTargetId((int) packet.getObject(2));
-                        break;
-                    case CFR_TELEGUIDED_TARGET:
-                        cfrEvt.setTeleguidedMissileTargets((List<Integer>) packet.getObject(1));
-                        cfrEvt.setTmToHitValues((List<Integer>) packet.getObject(2));
-                        break;
-                    case CFR_TAG_TARGET:
-                        cfrEvt.setTAGTargets((List<Integer>) packet.getObject(1));
-                        cfrEvt.setTAGTargetTypes((List<Integer>) packet.getObject(2));
-                        break;
-                    default:
-                        break;
-                }
-                game.processGameEvent(cfrEvt);
-                break;
-            case GAME_VICTORY_EVENT:
-                GameVictoryEvent gve = new GameVictoryEvent(this, game);
-                game.processGameEvent(gve);
-                break;
-            default:
-                return false;
+
+                    break;
+                case CHANGE_HEX:
+                    Coords hexCoords = packet.getCoords(0);
+                    int boardID = packet.getIntValue(1);
+                    Hex targetHex = packet.getHex(2);
+
+                    if (hexCoords != null) {
+                        game.getBoard(boardID).setHex(hexCoords, targetHex);
+                    }
+
+                    break;
+                case CHANGE_HEXES:
+                    var changedHexes = packet.getBoardLocationHexMap(0);
+                    game.getBoards().values().forEach(board -> board.setHexes(changedHexes));
+                    break;
+                case BLDG_UPDATE:
+                    receiveBuildingUpdate(packet);
+                    break;
+                case BLDG_COLLAPSE:
+                    receiveBuildingCollapse(packet);
+                    break;
+                case SENDING_TURNS:
+                    receiveTurns(packet);
+                    break;
+                case SENDING_ENTITIES:
+                    receiveEntities(packet);
+                    break;
+                case SENDING_REPORTS:
+                case SENDING_REPORTS_TACTICAL_GENIUS:
+                    phaseReport = receiveReport(packet.getReportList(0));
+                    if (keepGameLog()) {
+                        if ((log == null) && (game.getRoundCount() == 1)) {
+                            initGameLog();
+                        }
+                        if (log != null) {
+                            log.append(phaseReport);
+                        }
+                    }
+                    game.addReports(packet.getReportList(0));
+                    roundReport = receiveReport(game.getReports(game.getRoundCount()));
+                    if (packet.command().isSendingReportsTacticalGenius()) {
+                        game.processGameEvent(new GameReportEvent(this, roundReport));
+                    }
+                    break;
+                case SENDING_REPORTS_SPECIAL:
+                    game.processGameEvent(new GameReportEvent(this, receiveReport(packet.getReportList(0))));
+                    break;
+                case SENDING_REPORTS_ALL:
+                    var allReports = packet.getReportListOfList(0);
+                    game.setAllReports(allReports);
+                    if (keepGameLog()) {
+                        // Re-write gamelog.txt from scratch
+                        initGameLog();
+                        if (log != null) {
+                            for (List<Report> allReport : allReports) {
+                                log.append(receiveReport(allReport));
+                            }
+                        }
+                    }
+                    roundReport = receiveReport(game.getReports(game.getRoundCount()));
+                    // We don't really have a copy of the phase report at
+                    // this point, so I guess we'll just use the round report
+                    // until the next phase actually completes.
+                    phaseReport = roundReport;
+                    break;
+                case ENTITY_ATTACK:
+                    receiveAttack(packet);
+                    break;
+                case TURN:
+                    changeTurnIndex(packet.getIntValue(0), packet.getIntValue(1));
+                    break;
+                case SENDING_GAME_SETTINGS:
+                    GameOptions options = packet.getGameOptions(0);
+
+                    if (options != null) {
+                        game.setOptions(options);
+                    }
+
+                    break;
+                case SENDING_MAP_SETTINGS:
+                    MapSettings mapSettings = packet.getMapSettings(0);
+
+                    if (mapSettings != null) {
+                        game.setMapSettings(mapSettings);
+                        GameSettingsChangeEvent gameSettingsChangeEvent = new GameSettingsChangeEvent(this);
+                        gameSettingsChangeEvent.setMapSettingsOnlyChange(true);
+                        game.processGameEvent(gameSettingsChangeEvent);
+                    }
+                    break;
+                case SENDING_PLANETARY_CONDITIONS:
+                    PlanetaryConditions planetaryConditions = packet.getPlanetaryConditions(0);
+
+                    if (planetaryConditions != null) {
+                        game.setPlanetaryConditions(planetaryConditions);
+                        game.processGameEvent(new GameSettingsChangeEvent(this));
+                    }
+                    break;
+                case SENDING_TAG_INFO:
+                    Vector<TagInfo> tagInfoVector = packet.getTagInfoVector(0);
+                    for (TagInfo tagInfo : tagInfoVector) {
+                        game.addTagInfo(tagInfo);
+                    }
+                    break;
+                case RESET_TAG_INFO:
+                    game.resetTagInfo();
+                    break;
+                case END_OF_GAME:
+                    String sEntityStatus = packet.getStringValue(0);
+                    game.end(packet.getIntValue(1), packet.getIntValue(2));
+                    // save victory report
+                    saveEntityStatus(sEntityStatus);
+                    break;
+                case SENDING_ARTILLERY_ATTACKS:
+                    Vector<ArtilleryAttackAction> artilleryAttackActions = packet.getArtilleryAttackAction(0);
+                    game.setArtilleryVector(artilleryAttackActions);
+                    break;
+                case SENDING_FLARES:
+                    Vector<Flare> flareVector = packet.getFlareVector(0);
+                    game.setFlares(flareVector);
+                    break;
+                case SEND_SAVEGAME:
+                    String sFinalFile = packet.getStringValue(0);
+                    String sLocalPath = packet.getStringValue(2);
+                    String localFile = sLocalPath + File.separator + sFinalFile;
+                    File sDir = new File(sLocalPath);
+                    if (!sDir.exists()) {
+                        try {
+                            if (!sDir.mkdir()) {
+                                LOGGER.error("Failed to create savegames directory.");
+                                return true;
+                            }
+                        } catch (Exception ex) {
+                            LOGGER.error(ex, "Unable to create savegames directory.");
+                        }
+                    }
+
+                    try (OutputStream os = new FileOutputStream(localFile);
+                          BufferedOutputStream bos = new BufferedOutputStream(os)) {
+                        List<Integer> data = packet.getIntList(1);
+                        for (Integer integer : data) {
+                            bos.write(integer);
+                        }
+                        bos.flush();
+                    } catch (Exception ex) {
+                        LOGGER.error(ex, "Unable to save file {}", sFinalFile);
+                    }
+                    break;
+                case LOAD_SAVEGAME:
+                    String loadFile = packet.getStringValue(0);
+                    try {
+                        sendLoadGame(new File(MMConstants.SAVEGAME_DIR, loadFile));
+                    } catch (Exception ex) {
+                        LOGGER.error(ex, "Unable to load savegame file: {}", loadFile);
+                    }
+                    break;
+                case SENDING_SPECIAL_HEX_DISPLAY:
+                    var shdTable = packet.getCoordsWithSpecialHexDisplayCollectionMap(0);
+                    var boardId = packet.getIntValue(1);
+                    game.getBoard(boardId).setSpecialHexDisplayTable(shdTable);
+                    game.processGameEvent(new GameBoardChangeEvent(this));
+                    break;
+                case SENDING_AVAILABLE_MAP_SIZES:
+                    availableSizes = packet.getBoardDimensionsSet(0);
+                    game.processGameEvent(new GameSettingsChangeEvent(this));
+                    break;
+                case ENTITY_NOVA_NETWORK_CHANGE:
+                    receiveEntityNovaNetworkModeChange(packet);
+                    break;
+                case CLIENT_FEEDBACK_REQUEST:
+                    final PacketCommand cfrType = packet.getPacketCommand(0);
+                    if (cfrType != null) {
+                        GameCFREvent cfrEvt = new GameCFREvent(this, cfrType);
+                        switch (cfrType) {
+                            case CFR_DOMINO_EFFECT:
+                                cfrEvt.setEntityId(packet.getIntValue(1));
+                                break;
+                            case CFR_AMS_ASSIGN:
+                                cfrEvt.setEntityId(packet.getIntValue(1));
+                                cfrEvt.setAmsEquipNum(packet.getIntValue(2));
+                                cfrEvt.setWAAs(packet.getWeaponAttackActionList(3));
+                                break;
+                            case CFR_APDS_ASSIGN:
+                                cfrEvt.setEntityId(packet.getIntValue(1));
+                                cfrEvt.setApdsDistances(packet.getIntList(2));
+                                cfrEvt.setWAAs(packet.getWeaponAttackActionList(3));
+                                break;
+                            case CFR_HIDDEN_PBS:
+                                cfrEvt.setEntityId(packet.getIntValue(1));
+                                cfrEvt.setTargetId(packet.getIntValue(2));
+                                break;
+                            case CFR_TELEGUIDED_TARGET:
+                                cfrEvt.setTeleguidedMissileTargets(packet.getIntList(1));
+                                cfrEvt.setTmToHitValues(packet.getIntList(2));
+                                break;
+                            case CFR_TAG_TARGET:
+                                cfrEvt.setTAGTargets(packet.getIntList(1));
+                                cfrEvt.setTAGTargetTypes(packet.getIntList(2));
+                                break;
+                            default:
+                                break;
+                        }
+                        game.processGameEvent(cfrEvt);
+                    }
+                    break;
+                case GAME_VICTORY_EVENT:
+                    GameVictoryEvent gve = new GameVictoryEvent(this, game);
+                    game.processGameEvent(gve);
+                    break;
+                default:
+                    return false;
+            }
+            return true;
+
+        } catch (InvalidPacketDataException e) {
+            LOGGER.error("Invalid packet data:", e);
+            return false;
         }
-        return true;
     }
 
     /**
      * receive and process an entity nova network mode change packet
      *
-     * @param c The received packet
+     * @param packet The received packet
      */
-    private void receiveEntityNovaNetworkModeChange(Packet c) {
+    private void receiveEntityNovaNetworkModeChange(Packet packet) {
         try {
-            int entityId = c.getIntValue(0);
-            String networkID = c.getObject(1).toString();
-            Entity e = game.getEntity(entityId);
-            if (e != null) {
-                e.setNewRoundNovaNetworkString(networkID);
+            int entityId = packet.getIntValue(0);
+            String networkID = packet.getStringValue(1);
+            Entity entity = game.getEntity(entityId);
+            if (entity != null) {
+                entity.setNewRoundNovaNetworkString(networkID);
             }
         } catch (Exception ex) {
-            logger.error(ex, "Failed to process Entity Nova Network mode change");
+            LOGGER.error(ex, "Failed to process Entity Nova Network mode change");
         }
     }
 
@@ -1208,10 +1269,9 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Sends a packet containing multiple entity updates. Should only be used
-     * in the lobby phase.
+     * Sends a packet containing multiple entity updates. Should only be used in the lobby phase.
      */
-    public void sendChangeTeam(Collection<Player> players, int newTeamId) {
+    public void sendChangeTeam(Vector<Player> players, int newTeamId) {
         send(new Packet(PacketCommand.PLAYER_TEAM_CHANGE, players, newTeamId));
     }
 
@@ -1230,20 +1290,16 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Sends a packet instructing the server to add the given entities to the given
-     * force.
-     * The server will handle this; the client does not have to implement the
-     * change.
+     * Sends a packet instructing the server to add the given entities to the given force. The server will handle this;
+     * the client does not have to implement the change.
      */
     public void sendAddEntitiesToForce(Collection<Entity> entities, int forceId) {
         send(new Packet(PacketCommand.FORCE_ADD_ENTITY, entities, forceId));
     }
 
     /**
-     * Sends a packet instructing the server to add the given entities to the given
-     * force.
-     * The server will handle this; the client does not have to implement the
-     * change.
+     * Sends a packet instructing the server to add the given entities to the given force. The server will handle this;
+     * the client does not have to implement the change.
      */
     public void sendAssignForceFull(Collection<Force> forceList, int newOwnerId) {
         send(new Packet(PacketCommand.FORCE_ASSIGN_FULL, forceList, newOwnerId));
@@ -1254,9 +1310,9 @@ public class Client extends AbstractClient {
      */
     public void sendDeleteForces(List<Force> toDelete) {
         send(new Packet(PacketCommand.FORCE_DELETE, toDelete.stream()
-                .mapToInt(Force::getId)
-                .boxed()
-                .collect(Collectors.toList())));
+              .mapToInt(Force::getId)
+              .boxed()
+              .collect(Collectors.toList())));
     }
 
     /**
@@ -1299,7 +1355,7 @@ public class Client extends AbstractClient {
      * Send mode-change data to the server
      */
     public void sendModeChange(int nEntity, int nEquip, int nMode) {
-        send(new Packet(PacketCommand.ENTITY_MODECHANGE, nEntity, nEquip, nMode));
+        send(new Packet(PacketCommand.ENTITY_MODE_CHANGE, nEntity, nEquip, nMode));
     }
 
     /**
@@ -1313,35 +1369,35 @@ public class Client extends AbstractClient {
      * Send called shot change data to the server
      */
     public void sendCalledShotChange(int nEntity, int nEquip) {
-        send(new Packet(PacketCommand.ENTITY_CALLEDSHOTCHANGE, nEntity, nEquip));
+        send(new Packet(PacketCommand.ENTITY_CALLED_SHOT_CHANGE, nEntity, nEquip));
     }
 
     /**
      * Send system mode-change data to the server
      */
     public void sendSystemModeChange(int nEntity, int nSystem, int nMode) {
-        send(new Packet(PacketCommand.ENTITY_SYSTEMMODECHANGE, nEntity, nSystem, nMode));
+        send(new Packet(PacketCommand.ENTITY_SYSTEM_MODE_CHANGE, nEntity, nSystem, nMode));
     }
 
     /**
      * Send mode-change data to the server
      */
     public void sendAmmoChange(int nEntity, int nWeapon, int nAmmo, int reason) {
-        send(new Packet(PacketCommand.ENTITY_AMMOCHANGE, nEntity, nWeapon, nAmmo, reason));
+        send(new Packet(PacketCommand.ENTITY_AMMO_CHANGE, nEntity, nWeapon, nAmmo, reason));
     }
 
     /**
      * Send sensor-change data to the server
      */
     public void sendSensorChange(int nEntity, int nSensor) {
-        send(new Packet(PacketCommand.ENTITY_SENSORCHANGE, nEntity, nSensor));
+        send(new Packet(PacketCommand.ENTITY_SENSOR_CHANGE, nEntity, nSensor));
     }
 
     /**
      * Send sinks-change data to the server
      */
     public void sendSinksChange(int nEntity, int activeSinks) {
-        send(new Packet(PacketCommand.ENTITY_SINKSCHANGE, nEntity, activeSinks));
+        send(new Packet(PacketCommand.ENTITY_SINKS_CHANGE, nEntity, activeSinks));
     }
 
     /**
@@ -1375,7 +1431,7 @@ public class Client extends AbstractClient {
             send(new Packet(PacketCommand.LOAD_GAME, SerializationHelper.getLoadSaveGameXStream().fromXML(gzi)));
         } catch (Exception ex) {
             String message = String.format("Can't find the local savegame %s", f);
-            logger.error(ex, message);
+            LOGGER.error(ex, message);
         }
     }
 }

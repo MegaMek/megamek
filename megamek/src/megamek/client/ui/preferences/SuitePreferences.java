@@ -1,23 +1,38 @@
 /*
- * Copyright (c) 2019-2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.preferences;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -31,10 +46,10 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonGenerator.Feature;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-
 import megamek.logging.MMLogger;
 
 public class SuitePreferences {
+
     private static final MMLogger logger = MMLogger.create(SuitePreferences.class);
 
     // region Variable Declarations
@@ -60,15 +75,15 @@ public class SuitePreferences {
 
     public PreferencesNode forClass(final Class<?> classToManage) {
         return getNameToPreferencesMap().computeIfAbsent(classToManage.getName(),
-                c -> new PreferencesNode(classToManage));
+              c -> new PreferencesNode(classToManage));
     }
 
     // region Write To File
     public void saveToFile(final String filePath) {
-        logger.debug("Saving nameToPreferencesMap to: " + filePath);
+        logger.debug("Saving nameToPreferencesMap to: {}", filePath);
         final JsonFactory factory = new JsonFactory();
         try (FileOutputStream output = new FileOutputStream(filePath);
-                JsonGenerator writer = factory.createGenerator(output).useDefaultPrettyPrinter()) {
+              JsonGenerator writer = factory.createGenerator(output).useDefaultPrettyPrinter()) {
             writer.enable(Feature.STRICT_DUPLICATE_DETECTION);
 
             writer.writeStartObject();
@@ -94,8 +109,8 @@ public class SuitePreferences {
     }
 
     private static void writePreferencesNode(final JsonGenerator writer,
-            final Entry<String, PreferencesNode> nodeInfo)
-            throws Exception {
+          final Entry<String, PreferencesNode> nodeInfo)
+          throws Exception {
         writer.writeStartObject();
         writer.writeStringField(CLASS_TOKEN, nodeInfo.getKey());
         writer.writeFieldName(ELEMENTS_TOKEN);
@@ -111,7 +126,7 @@ public class SuitePreferences {
     }
 
     private static void writePreferenceElement(final JsonGenerator writer,
-            final Map.Entry<String, String> element) throws IOException {
+          final Map.Entry<String, String> element) throws IOException {
         writer.writeStartObject();
         writer.writeStringField(NAME_TOKEN, element.getKey());
         writer.writeStringField(VALUE_TOKEN, element.getValue());
@@ -120,20 +135,31 @@ public class SuitePreferences {
     // endregion Write To File
 
     // region Load From File
+
+    /**
+     * Loads the preferences from a passed in file string. If the file doesn't exist, just exit and move on.
+     *
+     * @param filePath path to the file, relative or absolute.
+     */
     public void loadFromFile(final String filePath) {
-        String message = String.format("Loading user preferences from: %s", filePath);
-        logger.info(message);
+        logger.info("Loading user preferences from: {}", filePath);
+
+        File preferencesFile = new File(filePath);
+        if (!preferencesFile.exists() && !preferencesFile.isDirectory()) {
+            logger.info("File {} doesn't exist. Doing nothing...", filePath);
+            return;
+        }
 
         final JsonFactory factory = new JsonFactory();
-        try (FileInputStream input = new FileInputStream(filePath);
-                JsonParser parser = factory.createParser(input)) {
+        try (FileInputStream input = new FileInputStream(preferencesFile);
+              JsonParser parser = factory.createParser(input)) {
 
             if (parser.nextToken() != JsonToken.START_OBJECT) {
                 throw new IOException("Expected an object start ({)" + getParserInformation(parser));
             } else if ((parser.nextToken() != JsonToken.FIELD_NAME)
-                    && !parser.currentName().equals(PREFERENCES_TOKEN)) {
+                  && !parser.currentName().equals(PREFERENCES_TOKEN)) {
                 throw new IOException(
-                        "Expected a field called (" + PREFERENCES_TOKEN + ')' + getParserInformation(parser));
+                      "Expected a field called (" + PREFERENCES_TOKEN + ')' + getParserInformation(parser));
             } else if (parser.nextToken() != JsonToken.START_ARRAY) {
                 throw new IOException("Expected an array start ([)" + getParserInformation(parser));
             }
@@ -143,27 +169,24 @@ public class SuitePreferences {
                 try {
                     readPreferencesNode(parser, getNameToPreferencesMap());
                 } catch (IOException ex) {
-                    message = String.format("Error reading node. %s", getParserInformation(parser));
-                    logger.error(ex, message);
+                    logger.error(ex, "Error reading node {} from file {}", getParserInformation(parser),
+                          preferencesFile);
                 }
             }
-        } catch (FileNotFoundException ignored) {
-            logger.error(ignored, "loadFromFile - Ignored");
         } catch (Exception ex) {
-            message = String.format("Error reading from the user preferences file: %s", filePath);
-            logger.error(ex, message);
+            logger.error(ex, "Error reading from the user preferences file: {}", preferencesFile);
         }
     }
 
     private static String getParserInformation(final JsonParser parser) throws IOException {
         return (parser == null) ? ""
-                : ". Current token: " + parser.currentName() +
-                        ". Line number: " + parser.currentLocation().getLineNr() +
-                        ". Column number: " + parser.currentLocation().getColumnNr();
+              : ". Current token: " + parser.currentName() +
+              ". Line number: " + parser.currentLocation().getLineNr() +
+              ". Column number: " + parser.currentLocation().getColumnNr();
     }
 
     private static void readPreferencesNode(final JsonParser parser,
-            final Map<String, PreferencesNode> nodes) throws IOException {
+          final Map<String, PreferencesNode> nodes) throws IOException {
         if (parser.currentToken() != JsonToken.START_OBJECT) {
             return;
         } else if ((parser.nextToken() != JsonToken.FIELD_NAME) && !parser.currentName().equals(CLASS_TOKEN)) {
@@ -185,7 +208,7 @@ public class SuitePreferences {
             try {
                 readPreferenceElement(parser, elements);
             } catch (IOException ex) {
-                logger.warn(ex, "Error reading elements for node: %s.", className);
+                logger.warn(ex, "Error reading elements for node: {}.", className);
             }
         }
 
@@ -202,7 +225,7 @@ public class SuitePreferences {
     }
 
     private static void readPreferenceElement(final JsonParser parser, final Map<String, String> elements)
-            throws IOException {
+          throws IOException {
         if (parser.currentToken() != JsonToken.START_OBJECT) {
             return;
         } else if ((parser.nextToken() != JsonToken.FIELD_NAME) && !parser.currentName().equals(NAME_TOKEN)) {

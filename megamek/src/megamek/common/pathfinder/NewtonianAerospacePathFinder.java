@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.pathfinder;
 
 import java.util.ArrayList;
@@ -24,24 +39,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.Game;
-import megamek.common.IAero;
-import megamek.common.MovePath;
-import megamek.common.MovePath.MoveStepType;
-import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
+import megamek.common.enums.MoveStepType;
+import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
+import megamek.common.units.IAero;
 import megamek.logging.MMLogger;
 
 /**
- * This set of classes is intended to be used by AI players to generate paths
- * for infantry units.
- * This includes both foot and jump paths.
+ * This set of classes is intended to be used by AI players to generate paths for infantry units. This includes both
+ * foot and jump paths.
  *
  * @author NickAragua
  */
 public class NewtonianAerospacePathFinder {
     private static final MMLogger logger = MMLogger.create(NewtonianAerospacePathFinder.class);
 
-    private Game game;
+    private final Game game;
     protected List<MovePath> aerospacePaths;
     protected MovePath offBoardPath;
 
@@ -106,8 +119,8 @@ public class NewtonianAerospacePathFinder {
              */
 
             final String memoryMessage = "Not enough memory to analyse all options."
-                    + " Try setting time limit to lower value, or "
-                    + "increase java memory limit.";
+                  + " Try setting time limit to lower value, or "
+                  + "increase java memory limit.";
 
             logger.error(memoryMessage, e);
         } catch (Exception e) {
@@ -120,10 +133,8 @@ public class NewtonianAerospacePathFinder {
     }
 
     /**
-     * Generates a list of possible step combinations that should be done at the
-     * beginning of a path
-     * Has side effect of updating the visited coordinates map and adding it to the
-     * list of generated paths
+     * Generates a list of possible step combinations that should be done at the beginning of a path Has side effect of
+     * updating the visited coordinates map and adding it to the list of generated paths
      *
      * @return List of all possible "starting" paths
      */
@@ -145,34 +156,30 @@ public class NewtonianAerospacePathFinder {
     }
 
     /**
-     * Recursive method that generates the possible child paths from the given path.
-     * Eliminates paths to hexes we've already visited.
-     * Generates *shortest* paths to destination hexes, because, look, infantry
-     * isn't going to get beyond a move 1 mod anyway.
+     * Recursive method that generates the possible child paths from the given path. Eliminates paths to hexes we've
+     * already visited. Generates *shortest* paths to destination hexes, because, look, infantry isn't going to get
+     * beyond a move 1 mod anyway.
      *
-     * @param startingPath
-     * @return
      */
     private List<MovePath> generateChildren(MovePath startingPath) {
-        List<MovePath> retval = new ArrayList<>();
+        List<MovePath> retVal = new ArrayList<>();
 
         // generate all possible children, add them to list
         // for aerospace units, these are:
         // turn left
         // turn right
         // thrust
-        for (int moveType = 0; moveType < moves.size(); moveType++) {
+        for (MoveStepType move : moves) {
             MovePath childPath = startingPath.clone();
 
             // two things we want to avoid:
             // 1: turning back and forth
             // 2: turning more than 2 hexes in a row
-            MoveStepType nextStepType = moves.get(moveType);
-            if (tooMuchTurning(childPath, nextStepType)) {
+            if (tooMuchTurning(childPath, move)) {
                 continue;
             }
 
-            childPath.addStep(nextStepType);
+            childPath.addStep(move);
 
             CoordsWithFacing pathDestination = new CoordsWithFacing(childPath);
             if (discardPath(childPath, pathDestination)) {
@@ -181,32 +188,30 @@ public class NewtonianAerospacePathFinder {
 
             // keep track of a single path that takes us off board, if there is such a thing
             // this should always be the shortest one.
-            if (game.getBoard().getHex(pathDestination.getCoords()) == null &&
-                    (offBoardPath == null || childPath.getMpUsed() < offBoardPath.getMpUsed())) {
+            if (game.getBoard().getHex(pathDestination.coords()) == null &&
+                  (offBoardPath == null || childPath.getMpUsed() < offBoardPath.getMpUsed())) {
                 offBoardPath = childPath;
             }
 
             if (!isIntermediatePath(childPath)) {
                 visitedCoords.put(pathDestination, childPath.getMpUsed());
 
-                retval.add(childPath.clone());
+                retVal.add(childPath.clone());
             }
 
-            retval.addAll(generateChildren(childPath));
+            retVal.addAll(generateChildren(childPath));
         }
 
-        return retval;
+        return retVal;
     }
 
     /**
-     * "Worker" function to determine whether the path being examined is an
-     * intermediate path.
-     * This means that the path, as is, is not a valid path, but its children may
-     * be.
-     * This mainly applies to aero paths that have not used all their velocity.
-     * For newtonian space flight, it is never an intermediate path.
+     * "Worker" function to determine whether the path being examined is an intermediate path. This means that the path,
+     * as is, is not a valid path, but its children may be. This mainly applies to aero paths that have not used all
+     * their velocity. For newtonian space flight, it is never an intermediate path.
      *
      * @param path The move path to consider.
+     *
      * @return Whether it is an intermediate path or not.
      */
     protected boolean isIntermediatePath(MovePath path) {
@@ -214,11 +219,12 @@ public class NewtonianAerospacePathFinder {
     }
 
     /**
-     * Worker function to determine whether we should discard the current path
-     * (due to it being illegal or redundant) or keep generating child nodes
+     * Worker function to determine whether we should discard the current path (due to it being illegal or redundant) or
+     * keep generating child nodes
      *
      * @param path The move path to consider
-     * @return Whether to keep or dicsard.
+     *
+     * @return Whether to keep or discard.
      */
     protected boolean discardPath(MovePath path, CoordsWithFacing pathDestination) {
         boolean maxMPExceeded = path.getMpUsed() > path.getEntity().getRunMP();
@@ -234,17 +240,16 @@ public class NewtonianAerospacePathFinder {
         // we've visited this hex already and the path we are considering is longer than
         // the previous path that visited this hex
         return visitedCoords.containsKey(pathDestination)
-                && (visitedCoords.get(pathDestination) < path.getMpUsed());
+              && (visitedCoords.get(pathDestination) < path.getMpUsed());
     }
 
     /**
-     * Worker function to calculate whether, if the given move step is added to the
-     * given move path, there will be
-     * "too much turning", where a turn of 180 degrees or more is considered too
-     * much (we can yaw instead)
+     * Worker function to calculate whether, if the given move step is added to the given move path, there will be "too
+     * much turning", where a turn of 180 degrees or more is considered too much (we can yaw instead)
      *
      * @param path     The move path to consider
      * @param stepType The step type to consider
+     *
      * @return Whether we're turning too much
      */
     private boolean tooMuchTurning(MovePath path, MoveStepType stepType) {
@@ -254,17 +259,13 @@ public class NewtonianAerospacePathFinder {
 
         // more than two turns in a row is no good
         if ((stepType == MoveStepType.TURN_LEFT || stepType == MoveStepType.TURN_RIGHT)
-                && (path.getSecondLastStep().getType() == path.getLastStep().getType())
-                && (path.getLastStep().getType() == stepType)) {
+              && (path.getSecondLastStep().getType() == path.getLastStep().getType())
+              && (path.getLastStep().getType() == stepType)) {
             return true;
         }
 
         // turning back and forth in place is no good
-        if ((stepType == MoveStepType.TURN_LEFT && path.getLastStep().getType() == MoveStepType.TURN_RIGHT) ||
-                (stepType == MoveStepType.TURN_RIGHT && path.getLastStep().getType() == MoveStepType.TURN_LEFT)) {
-            return true;
-        }
-
-        return false;
+        return (stepType == MoveStepType.TURN_LEFT && path.getLastStep().getType() == MoveStepType.TURN_RIGHT) ||
+              (stepType == MoveStepType.TURN_RIGHT && path.getLastStep().getType() == MoveStepType.TURN_LEFT);
     }
 }

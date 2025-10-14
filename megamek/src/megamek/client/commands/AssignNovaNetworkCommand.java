@@ -1,57 +1,74 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.commands;
-
-import megamek.client.ui.swing.ClientGUI;
-import megamek.common.Entity;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.common.units.Entity;
+
 /**
- * This command exists to print entity information to the chat window, it's primarily intended for
- * visually impaired users.
- * This command will change the nova net at end of turn.
- * /nova print
- * will print info about your current nova links
- * /nova print ID
- * will print the network for ID
- * /nova link ID ID
- * will link the two IDs into their own network. Unlinks from all other networks
- * /nova link ID ID ID
- * will link the 3 IDs in their own network. Unlinks from all other networks
- * /nova unlink
- * will unlink all
- * /nova unlink ID
- * will unlink ID
+ * This command exists to print entity information to the chat window, it's primarily intended for visually impaired
+ * users. This command will change the nova net at end of turn.
+ * <p>
+ * /nova print will print info about your current nova links
+ * <p>
+ * /nova print ID will print the network for ID
+ * <p>
+ * /nova link ID ID will link the two IDs into their own network. Unlinks from all other networks
+ * <p>
+ * /nova link ID ID ID will link the 3 IDs in their own network. Unlinks from all other networks
+ * <p>
+ * /nova unlink will unlink all
+ * <p>
+ * /nova unlink ID will unlink ID
+ *
  * @author dirk
  */
 public class AssignNovaNetworkCommand extends ClientCommand {
 
     public AssignNovaNetworkCommand(ClientGUI clientGUI) {
         super(
-                clientGUI,
-                "nova",
-                "This command allows you to link NovaCEWS units." +
-                "\nDo not use this command unless you can link something." +
-                "\nCall #nova for detailed help.");
+              clientGUI,
+              "nova",
+              """
+                    This command allows you to link NovaCEWS units.\
+                    
+                    Do not use this command unless you can link something.\
+                    
+                    Call #nova for detailed help.""");
     }
 
     /**
@@ -62,13 +79,7 @@ public class AssignNovaNetworkCommand extends ClientCommand {
     @Override
     public String run(String[] args) {
         if (args.length <= 1) {
-            String help = "#nova print : will print all of your current nova networks and unlinked units.\n";
-            help += "#nova print 5 : will print the network status for the Unit with ID 5.\n";
-            help += "#nova link 5 6 : will link the units with ID 5 and 6.\n+++Will Disconnect them from all prior nets.\n";
-            help += "#nova link 5 6 7 : will link the three units with ID 5 6 and 7.\n+++Will Disconnect them from all prior nets.\n";
-            help += "#nova unlink : will unlink all your novaCEWS units.\n";
-            help += "#nova unlink 5 : will unlink unit with ID 5 from all nova networks.\n";
-            return help;
+            return getString();
         }
 
         try {
@@ -113,6 +124,16 @@ public class AssignNovaNetworkCommand extends ClientCommand {
         }
 
         return "Error parsing the command.";
+    }
+
+    private static String getString() {
+        String help = "#nova print : will print all of your current nova networks and unlinked units.\n";
+        help += "#nova print 5 : will print the network status for the Unit with ID 5.\n";
+        help += "#nova link 5 6 : will link the units with ID 5 and 6.\n+++Will Disconnect them from all prior nets.\n";
+        help += "#nova link 5 6 7 : will link the three units with ID 5 6 and 7.\n+++Will Disconnect them from all prior nets.\n";
+        help += "#nova unlink : will unlink all your novaCEWS units.\n";
+        help += "#nova unlink 5 : will unlink unit with ID 5 from all nova networks.\n";
+        return help;
     }
 
     private void setNewNetworkID(Entity ent, String net) {
@@ -174,13 +195,14 @@ public class AssignNovaNetworkCommand extends ClientCommand {
         network.removeIf(e -> e.getId() == id);
 
         // now set the network ID of the remaining units to something different.
-        String newID = network.get(0).getOriginalNovaC3NetId(); // this resets the C3i network name to the default 'Nova.ID'
+        String newID = network.get(0)
+              .getOriginalNovaC3NetId(); // this resets the C3i network name to the default 'Nova.ID'
         for (Entity e : network) {
             setNewNetworkID(e, newID);
         }
         // finally set the unlinked units network ID to default value.
         setNewNetworkID(ent, ent.getOriginalNovaC3NetId());
-        return "Unit "+id+" unlinked\n";
+        return "Unit " + id + " unlinked\n";
     }
 
     private String strUnlinkAll() {
@@ -204,9 +226,12 @@ public class AssignNovaNetworkCommand extends ClientCommand {
                 network = listNetwork(ent, planned);
                 if (network.size() > 1) {// we actually have more than one member in this network
                     returnValue.append("Network ID '").append(ent.getC3NetId()).append("' contains:\n");
-                    for (Entity re : network)
-                    {
-                        returnValue.append("+ ").append(re.getId()).append(" ").append(re.getDisplayName()).append("\n");
+                    for (Entity re : network) {
+                        returnValue.append("+ ")
+                              .append(re.getId())
+                              .append(" ")
+                              .append(re.getDisplayName())
+                              .append("\n");
                         allReadyReported.add(re.getId());
                     }
                     returnValue.append("+-----\n");
@@ -249,9 +274,10 @@ public class AssignNovaNetworkCommand extends ClientCommand {
 
     /**
      * Returns a list with all members of e 's nova network, including e.
-     * @param e the entity.
+     *
+     * @param e       the entity.
      * @param planned set this to true if you want to calculate based on next turns net.
-     * @return
+     *
      */
     private List<Entity> listNetwork(Entity e, boolean planned) {
         List<Entity> novaNetworkMembers = new LinkedList<>();
@@ -291,9 +317,9 @@ public class AssignNovaNetworkCommand extends ClientCommand {
         List<Entity> novaUnits = new LinkedList<>();
         for (Entity ent : getClient().getEntitiesVector()) {
             if (ent.hasNovaCEWS()
-                && ((ent.getOwnerId() == getClient().getLocalPlayer().getId())
-                    || (getClient().getLocalPlayer() != null
-                        && !getClient().getLocalPlayer().isEnemyOf(ent.getOwner())))){
+                  && ((ent.getOwnerId() == getClient().getLocalPlayer().getId())
+                  || (getClient().getLocalPlayer() != null
+                  && !getClient().getLocalPlayer().isEnemyOf(ent.getOwner())))) {
                 novaUnits.add(ent);
             }
         }

@@ -1,98 +1,141 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.server.sbf;
 
-import megamek.common.*;
-import megamek.common.enums.GamePhase;
-import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.common.strategicBattleSystems.*;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import megamek.common.game.AbstractGame;
+import megamek.common.units.Deployable;
+import megamek.common.game.InGameObject;
+import megamek.common.Player;
+import megamek.common.Team;
+import megamek.common.enums.GamePhase;
+import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.strategicBattleSystems.SBFFormation;
+import megamek.common.strategicBattleSystems.SBFFormationTurn;
+import megamek.common.strategicBattleSystems.SBFInitiativeRollReportEntry;
+import megamek.common.strategicBattleSystems.SBFPlayerNameReportEntry;
+import megamek.common.strategicBattleSystems.SBFPlayerTurn;
+import megamek.common.strategicBattleSystems.SBFPublicReportEntry;
+import megamek.common.strategicBattleSystems.SBFReportEntry;
+import megamek.common.strategicBattleSystems.SBFReportHeader;
+import megamek.common.strategicBattleSystems.SBFTurn;
 
 public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGameManagerHelper {
 
     /**
-     * Determines the turn order for a given phase, setting the game's turn list and sending it to the
-     * Clients. Also resets the turn index.
+     * Determines the turn order for a given phase, setting the game's turn list and sending it to the Clients. Also
+     * resets the turn index.
      *
      * @param phase The phase to find the turns for
+     *
      * @see AbstractGame#resetTurnIndex()
      */
     void determineTurnOrder(GamePhase phase) {
         final List<SBFTurn> turns;
         if (phase.isDeployMinefields()) {
-            turns = game().getPlayersList().stream()
-                    .filter(Player::hasMinefields)
-                    .map(p -> new SBFPlayerTurn(p.getId()))
-                    .collect(Collectors.toList());
+            turns = game().getPlayersList()
+                  .stream()
+                  .filter(Player::hasMinefields)
+                  .map(p -> new SBFPlayerTurn(p.getId()))
+                  .collect(Collectors.toList());
 
         } else if (phase.isFiring()) {
-            turns = game().getInGameObjects().stream()
-                    .filter(unit -> unit instanceof SBFFormation)
-                    .filter(unit -> ((SBFFormation) unit).isDeployed()) //TODO roll into eligible!!! may be offboard
-                    .filter(unit -> ((SBFFormation) unit).isEligibleForPhase(phase))
-                    .map(InGameObject::getOwnerId)
-                    .map(SBFFormationTurn::new)
-                    .collect(Collectors.toList());
+            turns = game().getInGameObjects()
+                  .stream()
+                  .filter(unit -> unit instanceof SBFFormation)
+                  .filter(unit -> ((SBFFormation) unit).isDeployed()) //TODO roll into eligible!!! may be off board
+                  .filter(unit -> ((SBFFormation) unit).isEligibleForPhase(phase))
+                  .map(InGameObject::getOwnerId)
+                  .map(SBFFormationTurn::new)
+                  .collect(Collectors.toList());
 
             turns.sort(Comparator.comparing(t -> game().getPlayer(t.playerId()).getInitiative()));
 
         } else {
             // As a fallback, provide unsorted turns
-            turns = game().getInGameObjects().stream()
-                    .filter(unit -> unit instanceof SBFFormation)
-                    .filter(unit -> ((SBFFormation) unit).isDeployed())
-                    .filter(unit -> ((SBFFormation) unit).isEligibleForPhase(phase))
-                    .map(InGameObject::getOwnerId)
-                    .map(SBFFormationTurn::new)
-                    .collect(Collectors.toList());
+            turns = game().getInGameObjects()
+                  .stream()
+                  .filter(unit -> unit instanceof SBFFormation)
+                  .filter(unit -> ((SBFFormation) unit).isDeployed())
+                  .filter(unit -> ((SBFFormation) unit).isEligibleForPhase(phase))
+                  .map(InGameObject::getOwnerId)
+                  .map(SBFFormationTurn::new)
+                  .collect(Collectors.toList());
 
             // Now, assemble formations and sort by initiative and relative formation count
-            Map<Integer, Long> unitCountsByPlayer = game().getInGameObjects().stream()
-                    .filter(unit -> unit instanceof SBFFormation)
-                    .filter(unit -> ((SBFFormation) unit).isDeployed())
-                    .filter(unit -> ((SBFFormation) unit).isEligibleForPhase(phase))
-                    .collect(Collectors.groupingBy(InGameObject::getOwnerId, Collectors.counting()));
+            Map<Integer, Long> unitCountsByPlayer = game().getInGameObjects()
+                  .stream()
+                  .filter(unit -> unit instanceof SBFFormation)
+                  .filter(unit -> ((SBFFormation) unit).isDeployed())
+                  .filter(unit -> ((SBFFormation) unit).isEligibleForPhase(phase))
+                  .collect(Collectors.groupingBy(InGameObject::getOwnerId,
+                        Collectors.counting()));
 
             if (!unitCountsByPlayer.isEmpty()) {
                 final long lowestUnitCount = Collections.min(unitCountsByPlayer.values());
 
-                int playerWithLowestUnitCount = unitCountsByPlayer.entrySet().stream()
-                        .filter(e -> e.getValue() == lowestUnitCount)
-                        .map(Map.Entry::getKey)
-                        .findAny().orElse(Player.PLAYER_NONE);
+                int playerWithLowestUnitCount = unitCountsByPlayer.entrySet()
+                      .stream()
+                      .filter(e -> e.getValue() == lowestUnitCount)
+                      .map(Map.Entry::getKey)
+                      .findAny()
+                      .orElse(Player.PLAYER_NONE);
 
                 List<Integer> playersByInitiative = new ArrayList<>(unitCountsByPlayer.keySet());
                 playersByInitiative.sort(Comparator.comparing(id -> game().getPlayer(id).getInitiative()));
 
                 if ((playerWithLowestUnitCount != Player.PLAYER_NONE) && (lowestUnitCount > 0)) {
                     List<SBFTurn> sortedTurns = new ArrayList<>();
-                    for (int initCycle = 0; initCycle < lowestUnitCount; initCycle++) {
+
+                    for (long initCycle = 0; initCycle < lowestUnitCount; initCycle++) {
                         long currentLowestUnitCount = Collections.min(unitCountsByPlayer.values());
+
                         for (int playerId : playersByInitiative) {
                             long unitsToMove = unitCountsByPlayer.get(playerId) / currentLowestUnitCount;
                             long remainingUnits = unitCountsByPlayer.get(playerId);
                             unitsToMove = Math.min(unitsToMove, remainingUnits);
-                            for (int i = 0; i < unitsToMove; i++) {
+
+                            for (long i = 0; i < unitsToMove; i++) {
                                 sortedTurns.add(new SBFFormationTurn(playerId));
                             }
+
                             unitCountsByPlayer.put(playerId, remainingUnits - unitsToMove);
                         }
                     }
@@ -101,14 +144,6 @@ public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGame
                     turns.addAll(sortedTurns);
                 }
             }
-        }
-
-        if (gameManager.usesAdvancedInitiative()) {
-            //TODO ...
-        }
-
-        if (game().usesBattlefieldInt()) {
-            //TODO ...
         }
 
         game().setTurns(turns);
@@ -138,15 +173,13 @@ public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGame
     private void writeFutureDeployment() {
         // remaining deployments
         Comparator<Deployable> comp = Comparator.comparingInt(Deployable::getDeployRound);
-//        comp = comp.thenComparingInt(InGameObject::getOwnerId);
-//        comp = comp.thenComparingInt(Entity::getStartingPos);
-//        List<Entity> ue = game().getEntitiesVector().stream().filter(e -> e.getDeployRound() > game().getCurrentRound()).sorted(comp).collect(Collectors.toList());
-        List<Deployable> futureDeployments = game().getInGameObjects().stream()
-                .filter(unit -> unit instanceof Deployable)
-                .map(unit -> (Deployable) unit)
-                .filter(unit -> !unit.isDeployed())
-                .sorted(comp)
-                .collect(Collectors.toList());
+        List<Deployable> futureDeployments = game().getInGameObjects()
+              .stream()
+              .filter(unit -> unit instanceof Deployable)
+              .map(unit -> (Deployable) unit)
+              .filter(unit -> !unit.isDeployed())
+              .sorted(comp)
+              .toList();
 
         if (!futureDeployments.isEmpty()) {
             addReport(new SBFPublicReportEntry(1060));
@@ -162,10 +195,6 @@ public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGame
                 r.add(((InGameObject) deployable).generalName());
                 r.add("1");
                 r.add("2");
-                //TODO
-//                r.addDesc(entity);
-//                String s = IStartingPositions.START_LOCATION_NAMES[entity.getStartingPos()];
-//                r.add(s);
                 addReport(r);
             }
             addReport(new SBFPublicReportEntry(1210).newLines(2));
@@ -200,15 +229,16 @@ public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGame
                 r.add(team.getInitiative().toString());
                 addReport(r);
                 for (Player player : team.nonObserverPlayers()) {
-                    addReport(new SBFPublicReportEntry(1015).indent().add(player.getName()).add(player.getInitiative().toString()));
+                    addReport(new SBFPublicReportEntry(1015).indent()
+                          .add(player.getName())
+                          .add(player.getInitiative().toString()));
                 }
             }
         }
     }
 
     private void writeHeader() {
-        if (game().getLastPhase().isDeployment() || game().isDeploymentComplete()
-                || !game().shouldDeployThisRound()) {
+        if (game().getLastPhase().isDeployment() || game().isDeploymentComplete() || !game().shouldDeployThisRound()) {
             addReport(new SBFReportHeader(1000).add(game().getCurrentRound()));
         } else {
             if (game().getCurrentRound() == 0) {

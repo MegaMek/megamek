@@ -3,8 +3,9 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 allprojects {
@@ -14,8 +15,16 @@ allprojects {
 }
 
 subprojects {
+    Properties versionProperties = new Properties()
+    versionProperties.load(rootProject.file("megamek/resources/Version.properties").newDataInputStream())
+    def processedVersion = String.format("%d.%02d.%02d", Integer.parseInt(versionProperties.getProperty("major")), Integer.parseInt(versionProperties.getProperty("minor")), Integer.parseInt(versionProperties.getProperty("patch")))
+
+    if (project.hasProperty("extraVersion")) {
+        processedVersion = String.format("%s-%s", processedVersion, project.getProperty('extraVersion'))
+    }
+
     group = 'org.megamek'
-    version = '0.50.04-SNAPSHOT'
+    version = processedVersion
 }
 
 

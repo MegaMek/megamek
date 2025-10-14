@@ -1,15 +1,34 @@
 /*
- * MegaMek - Copyright (C) 2016 The MegaMek Team
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ratgenerator;
 
@@ -19,20 +38,19 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Contains details about which units and eschelon levels are available to this unit in given eras.
- * 
- * @author Neoancient
+ * Contains details about which units and echelon levels are available to this unit in given eras.
  *
+ * @author Neoancient
  */
 public class TOCNode extends RulesetNode {
     protected ArrayList<ValueNode> unitTypeNodes;
-    protected ArrayList<ValueNode> eschelonNodes;
+    protected ArrayList<ValueNode> echelonNodes;
     protected ArrayList<ValueNode> ratingNodes;
     protected ArrayList<ValueNode> flagNodes;
 
     protected TOCNode() {
         unitTypeNodes = new ArrayList<>();
-        eschelonNodes = new ArrayList<>();
+        echelonNodes = new ArrayList<>();
         ratingNodes = new ArrayList<>();
         flagNodes = new ArrayList<>();
     }
@@ -46,8 +64,8 @@ public class TOCNode extends RulesetNode {
         return null;
     }
 
-    public ValueNode findEschelons(ForceDescriptor fd) {
-        for (ValueNode n : eschelonNodes) {
+    public ValueNode findEchelons(ForceDescriptor fd) {
+        for (ValueNode n : echelonNodes) {
             if (n.matches(fd)) {
                 return n;
             }
@@ -96,11 +114,11 @@ public class TOCNode extends RulesetNode {
                         }
                     }
                     break;
-                case "eschelon":
+                case "echelon":
                     for (int y = 0; y < wn.getChildNodes().getLength(); y++) {
                         Node wn2 = wn.getChildNodes().item(y);
                         if (wn2.getNodeName().equals("option")) {
-                            eschelonNodes.add(ValueNode.createFromXml(wn2));
+                            echelonNodes.add(ValueNode.createFromXml(wn2));
                         }
                     }
                     break;

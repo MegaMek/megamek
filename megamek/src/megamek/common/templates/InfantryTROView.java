@@ -1,16 +1,36 @@
 /*
- * MegaMek - Copyright (C) 2018 - The MegaMek Team
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.templates;
 
 import java.util.ArrayList;
@@ -19,15 +39,15 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
-import megamek.common.Compute;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.Infantry;
 import megamek.common.Messages;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.WeaponType;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.options.IOption;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Infantry;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -35,7 +55,6 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  * Creates a TRO template model for conventional infantry.
  *
  * @author Neoancient
- *
  */
 public class InfantryTROView extends TROView {
 
@@ -56,10 +75,15 @@ public class InfantryTROView extends TROView {
         addEntityFluff(inf);
         setModelData("transportWeight", inf.getWeight());
         setModelData("weaponPrimary", String.format("%d %s",
-                (inf.getSquadSize() - inf.getSecondaryWeaponsPerSquad()) * inf.getSquadCount(), inf.getPrimaryWeapon().getName()));
+              (inf.getSquadSize() - inf.getSecondaryWeaponsPerSquad()) * inf.getSquadCount(),
+              inf.getPrimaryWeapon().getName()));
         setModelData("weaponSecondary", (inf.getSecondaryWeapon() == null)
-                ? Messages.getString("TROView.None")
-                : String.format("%d %s", inf.getSecondaryWeaponsPerSquad() * inf.getSquadCount(), inf.getSecondaryWeapon().getName()));
+              ?
+              Messages.getString("TROView.None")
+              :
+              String.format("%d %s",
+                    inf.getSecondaryWeaponsPerSquad() * inf.getSquadCount(),
+                    inf.getSecondaryWeapon().getName()));
         final EquipmentType armorKit = inf.getArmorKit();
         if (null != armorKit) {
             setModelData("armorKit", armorKit.getName());
@@ -78,7 +102,7 @@ public class InfantryTROView extends TROView {
         }
 
         if (inf.getMount() != null) {
-            setModelData("motiveType", Messages.getString("TROView.BeastMounted") + ", " + inf.getMount().getName());
+            setModelData("motiveType", Messages.getString("TROView.BeastMounted") + ", " + inf.getMount().name());
         } else {
             switch (inf.getMovementMode()) {
                 case INF_LEG:
@@ -88,7 +112,7 @@ public class InfantryTROView extends TROView {
                 case HOVER:
                 case WHEELED:
                     setModelData("motiveType",
-                            Messages.getString("TROView.Mechanized") + "/" + inf.getMovementModeAsString());
+                          Messages.getString("TROView.Mechanized") + "/" + inf.getMovementModeAsString());
                     break;
                 case SUBMARINE:
                     setModelData("motiveType", Messages.getString("TROView.MechanizedSCUBA"));
@@ -117,7 +141,7 @@ public class InfantryTROView extends TROView {
         } else if (inf.getMovementMode() == EntityMovementMode.VTOL) {
             setModelData("vtolMP", inf.getOriginalJumpMP());
         } else if ((inf.getMovementMode() == EntityMovementMode.INF_UMU)
-                || (inf.getMovementMode() == EntityMovementMode.SUBMARINE)) {
+              || (inf.getMovementMode() == EntityMovementMode.SUBMARINE)) {
             setModelData("umuMP", inf.getOriginalJumpMP());
         }
         setModelData("squadSize", inf.getSquadSize());
@@ -134,7 +158,7 @@ public class InfantryTROView extends TROView {
         int hex = 0;
         for (int range = 1; range <= (maxRange + 1); range++) {
             final int mod = Compute.getInfantryRangeMods(range, rangeWeapon, inf.getSecondaryWeapon(), false)
-                    .getValue();
+                  .getValue();
             if (mod != lastMod) {
                 if ((range - hex) > 1) {
                     sj.add(String.format("%+d (%d-%d Hexes)", lastMod, hex, range - 1));
@@ -168,20 +192,20 @@ public class InfantryTROView extends TROView {
 
     private void addWeaponNotes(List<String> notes) {
         if ((inf.getMovementMode() == EntityMovementMode.INF_UMU)
-                || (inf.getMovementMode() == EntityMovementMode.SUBMARINE)) {
+              || (inf.getMovementMode() == EntityMovementMode.SUBMARINE)) {
             notes.add(Messages.getString("TROView.InfantryNote.SCUBA"));
         }
         final List<EquipmentType> fieldGuns = inf.getWeaponList().stream()
-                .filter(m -> m.getLocation() == Infantry.LOC_FIELD_GUNS).map(Mounted::getType)
-                .collect(Collectors.toList());
+              .filter(m -> m.getLocation() == Infantry.LOC_FIELD_GUNS).map(Mounted::getType)
+              .collect(Collectors.toList());
         final int shots = inf.getAmmo().stream().filter(m -> m.getLocation() == Infantry.LOC_FIELD_GUNS)
-                .mapToInt(Mounted::getBaseShotsLeft).sum();
+              .mapToInt(Mounted::getBaseShotsLeft).sum();
         if (fieldGuns.size() > 1) {
             notes.add(String.format(Messages.getString("TROView.InfantryNote.FieldGuns"), fieldGuns.size(),
-                    fieldGuns.get(0).getName(), shots / fieldGuns.size(), (int) fieldGuns.get(0).getTonnage(inf)));
+                  fieldGuns.get(0).getName(), shots / fieldGuns.size(), (int) fieldGuns.get(0).getTonnage(inf)));
         } else if (!fieldGuns.isEmpty()) {
             notes.add(String.format(Messages.getString("TROView.InfantryNote.SingleFieldGun"),
-                    fieldGuns.get(0).getName(), shots, (int) fieldGuns.get(0).getTonnage(inf)));
+                  fieldGuns.get(0).getName(), shots, (int) fieldGuns.get(0).getTonnage(inf)));
         }
         if ((inf.getSecondaryWeaponsPerSquad() > 1) && (inf.getSecondaryWeapon() != null)) {
             if (inf.getSecondaryWeapon().hasFlag(WeaponType.F_INF_BURST)) {
@@ -200,15 +224,15 @@ public class InfantryTROView extends TROView {
         if (inf.getMount() != null) {
             if (inf.getMount().getBurstDamageDice() > 0) {
                 notes.add(String.format(Messages.getString("TROView.InfantryNote.MountInfantryDamage.format"),
-                        inf.getMount().getBurstDamageDice()));
+                      inf.getMount().getBurstDamageDice()));
             }
-            if (inf.getMount().getVehicleDamage() > 0) {
+            if (inf.getMount().vehicleDamage() > 0) {
                 notes.add(String.format(Messages.getString("TROView.InfantryNote.MountVehicleDamage.format"),
-                        inf.getMount().getVehicleDamage()));
+                      inf.getMount().vehicleDamage()));
             }
-            if (inf.getMount().getSize().toHitMod != 0) {
+            if (inf.getMount().size().toHitMod != 0) {
                 notes.add(String.format(Messages.getString("TROView.InfantryNote.MountSizeMod.format"),
-                        inf.getMount().getSize().toHitMod));
+                      inf.getMount().size().toHitMod));
             }
         }
     }
@@ -230,7 +254,7 @@ public class InfantryTROView extends TROView {
 
     private void addAugmentationNotes(List<String> notes) {
         final List<IOption> options = new ArrayList<>();
-        for (final Enumeration<IOption> e = inf.getCrew().getOptions().getOptions(); e.hasMoreElements();) {
+        for (final Enumeration<IOption> e = inf.getCrew().getOptions().getOptions(); e.hasMoreElements(); ) {
             final IOption option = e.nextElement();
             if (option.booleanValue()) {
                 options.add(option);
@@ -239,7 +263,7 @@ public class InfantryTROView extends TROView {
         if (!options.isEmpty()) {
             notes.add(Messages.getString("TROView.InfantryNote.Augmented"));
             options.forEach(o -> notes.add(o.getDisplayableName().replaceAll("\\s+\\(Not Implemented\\)", "") + ": "
-                    + o.getDescription().replaceAll("See IO.*", "")));
+                  + o.getDescription().replaceAll("See IO.*", "")));
         }
     }
 }

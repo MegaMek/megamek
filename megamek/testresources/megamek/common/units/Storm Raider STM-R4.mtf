@@ -1,0 +1,171 @@
+# MegaMek Data (C) 2025 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+chassis:Storm Raider
+model:STM-R4
+mul id:6617
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3108
+Source:TRO: 3145 Lyran Commonwealth
+Rules Level:3
+role:Scout
+
+
+
+weaponquirk:jettison_capable:RA:4:Mace
+weaponquirk:jettison_capable:LA:4:ISRotaryAC2
+
+
+Mass:35
+Engine:210 XL Engine(IS)
+Structure:IS Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Single
+Walk MP:6
+Jump MP:0
+
+Armor:Impact-Resistant(Inner Sphere)
+LA Armor:12
+RA Armor:12
+LT Armor:12
+RT Armor:12
+CT Armor:17
+HD Armor:9
+LL Armor:16
+RL Armor:16
+RTL Armor:4
+RTR Armor:4
+RTC Armor:5
+
+Weapons:1
+Rotary AC/2, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISRotaryAC2
+ISRotaryAC2
+ISRotaryAC2
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Mace
+Mace
+Mace
+Mace
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Heat Sink
+Heat Sink
+ISRotaryAC2 Ammo
+ISCASEII
+IS Endo Steel
+IS Endo Steel
+IS Impact-Resistant
+IS Impact-Resistant
+IS Impact-Resistant
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Endo Steel
+IS Endo Steel
+IS Impact-Resistant
+IS Impact-Resistant
+IS Impact-Resistant
+IS Impact-Resistant
+IS Impact-Resistant
+IS Impact-Resistant
+IS Impact-Resistant
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

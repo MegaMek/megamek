@@ -1,23 +1,46 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.preference;
 
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Vector;
 
-class PreferenceStore implements IPreferenceStore {
+import megamek.codeUtilities.MathUtility;
+
+public class PreferenceStore implements IPreferenceStore {
     protected boolean dirty = false;
 
     protected Properties properties;
@@ -75,18 +98,9 @@ class PreferenceStore implements IPreferenceStore {
         return getDouble(properties, name);
     }
 
-    private double getDouble(Properties p, String name) {
-        String value = p != null ? p.getProperty(name) : null;
-        if (value == null) {
-            return DOUBLE_DEFAULT;
-        }
-        double ival = DOUBLE_DEFAULT;
-        try {
-            ival = Double.parseDouble(value);
-        } catch (Exception ignored) {
-
-        }
-        return ival;
+    private double getDouble(Properties properties, String name) {
+        String value = properties != null ? properties.getProperty(name) : null;
+        return MathUtility.parseDouble(value, DOUBLE_DEFAULT);
     }
 
     @Override
@@ -96,16 +110,7 @@ class PreferenceStore implements IPreferenceStore {
 
     private float getFloat(Properties p, String name) {
         final String value = (p != null) ? p.getProperty(name) : null;
-        if (value == null) {
-            return FLOAT_DEFAULT;
-        }
-        float ival = FLOAT_DEFAULT;
-        try {
-            ival = Float.parseFloat(value);
-        } catch (Exception ignored) {
-
-        }
-        return ival;
+        return MathUtility.parseFloat(value, FLOAT_DEFAULT);
     }
 
     @Override
@@ -115,16 +120,7 @@ class PreferenceStore implements IPreferenceStore {
 
     private int getInt(Properties p, String name) {
         String value = p != null ? p.getProperty(name) : null;
-        if (value == null) {
-            return INT_DEFAULT;
-        }
-        int ival = 0;
-        try {
-            ival = Integer.parseInt(value);
-        } catch (Exception ignored) {
-
-        }
-        return ival;
+        return MathUtility.parseInt(value, INT_DEFAULT);
     }
 
     @Override
@@ -132,18 +128,14 @@ class PreferenceStore implements IPreferenceStore {
         return getLong(properties, name);
     }
 
-    private long getLong(Properties p, String name) {
-        String value = (p != null) ? p.getProperty(name) : null;
-        if (value == null) {
-            return LONG_DEFAULT;
-        }
-        long ival = LONG_DEFAULT;
-        try {
-            ival = Long.parseLong(value);
-        } catch (Exception ignored) {
+    private long getLong(Properties properties, String name) {
+        String value = (properties != null) ? properties.getProperty(name) : null;
+        return MathUtility.parseLong(value, LONG_DEFAULT);
+    }
 
-        }
-        return ival;
+    @Override
+    public boolean hasProperty(String name) {
+        return properties.containsKey(name);
     }
 
     @Override
@@ -297,9 +289,9 @@ class PreferenceStore implements IPreferenceStore {
 
     protected void firePropertyChangeEvent(String name, Object oldValue, Object newValue) {
         if (!listeners.isEmpty()
-                && (oldValue == null || !oldValue.equals(newValue))) {
+              && (oldValue == null || !oldValue.equals(newValue))) {
             final PreferenceChangeEvent pe = new PreferenceChangeEvent(this,
-                    name, oldValue, newValue);
+                  name, oldValue, newValue);
             for (int i = 0; i < listeners.size(); ++i) {
                 IPreferenceChangeListener l = listeners.elementAt(i);
                 l.preferenceChange(pe);
@@ -311,7 +303,7 @@ class PreferenceStore implements IPreferenceStore {
     public String[] getAdvancedProperties() {
         Vector<String> v = new Vector<>();
         String s;
-        for (Enumeration<?> e = properties.propertyNames(); e.hasMoreElements();) {
+        for (Enumeration<?> e = properties.propertyNames(); e.hasMoreElements(); ) {
             s = (String) e.nextElement();
             if (s.startsWith("Advanced")) {
                 v.addElement(s);

@@ -1,34 +1,62 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2019 The MegaMek Team
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.common.loaders;
 
-import megamek.common.*;
+import megamek.common.TechConstants;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.units.Aero;
+import megamek.common.units.ConvFighter;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.util.BuildingBlock;
 import megamek.common.verifier.TestEntity;
 
 /**
  * BLkFile.java
- *
+ * <p>
  * Created on April 6, 2002, 2:06 AM
  *
  * @author taharqa
  */
 public class BLKConvFighterFile extends BLKFile implements IMekLoader {
 
-    // armor locatioms
+    // armor locations
     public static final int NOSE = 0;
     public static final int RW = 1;
     public static final int LW = 2;
@@ -94,9 +122,7 @@ public class BLKConvFighterFile extends BLKFile implements IMekLoader {
         } else {
             a.setArmorType(EquipmentType.T_ARMOR_STANDARD);
         }
-        if (dataFile.exists("armor_tech")) {
-            a.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
-        }
+        setArmorTechLevelFromDataFile(a);
         if (dataFile.exists("internal_type")) {
             a.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
         } else {
@@ -114,8 +140,8 @@ public class BLKConvFighterFile extends BLKFile implements IMekLoader {
         }
 
         a.initializeArmor(armor[BLKAeroSpaceFighterFile.NOSE], Aero.LOC_NOSE);
-        a.initializeArmor(armor[BLKAeroSpaceFighterFile.RW], Aero.LOC_RWING);
-        a.initializeArmor(armor[BLKAeroSpaceFighterFile.LW], Aero.LOC_LWING);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.RW], Aero.LOC_RIGHT_WING);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.LW], Aero.LOC_LEFT_WING);
         a.initializeArmor(armor[BLKAeroSpaceFighterFile.AFT], Aero.LOC_AFT);
 
         a.autoSetInternal();
@@ -161,7 +187,7 @@ public class BLKConvFighterFile extends BLKFile implements IMekLoader {
             prefix = "IS ";
         }
 
-        boolean rearMount = false;
+        boolean rearMount;
 
         if (saEquip[0] != null) {
             for (String element : saEquip) {
@@ -182,22 +208,22 @@ public class BLKConvFighterFile extends BLKFile implements IMekLoader {
                 if (equipName.toUpperCase().endsWith("(FL)")) {
                     facing = 5;
                     equipName = equipName.substring(0, equipName.length() - 4)
-                            .trim();
+                          .trim();
                 }
                 if (equipName.toUpperCase().endsWith("(FR)")) {
                     facing = 1;
                     equipName = equipName.substring(0, equipName.length() - 4)
-                            .trim();
+                          .trim();
                 }
                 if (equipName.toUpperCase().endsWith("(RL)")) {
                     facing = 4;
                     equipName = equipName.substring(0, equipName.length() - 4)
-                            .trim();
+                          .trim();
                 }
                 if (equipName.toUpperCase().endsWith("(RR)")) {
                     facing = 2;
                     equipName = equipName.substring(0, equipName.length() - 4)
-                            .trim();
+                          .trim();
                 }
 
                 EquipmentType etype = EquipmentType.get(equipName);
@@ -213,7 +239,7 @@ public class BLKConvFighterFile extends BLKFile implements IMekLoader {
                         Mounted<?> mount = t.addEquipment(etype, useLoc, rearMount);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType)
-                                && etype.hasFlag(WeaponType.F_VGL)) {
+                              && etype.hasFlag(WeaponType.F_VGL)) {
                             // If no facing specified, assume front
                             if (facing == -1) {
                                 mount.setFacing(defaultAeroVGLFacing(useLoc, rearMount));

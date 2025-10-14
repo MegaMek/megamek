@@ -1,4 +1,0 @@
-Turrets 3050 F
-@DirectFire Turrets 3039, 40
-@InDirectFire Turrets 3050, 30
-@AntiAir Turrets 3050, 30

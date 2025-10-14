@@ -1,40 +1,54 @@
 /*
- * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.bot.princess;
-
-import megamek.common.MovePath;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
+
+import megamek.common.moves.MovePath;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 12/5/13 10:19 AM
  */
 public class RankedPath implements Comparable<RankedPath> {
-    private MovePath path;
-    private double rank;
-    private String reason;
+    private final MovePath path;
+    private final double rank;
+    private final String reason;
     private final transient Map<String, Double> scores = new HashMap<>();
 
     // the expected damage resulting from the calculation of this ranked path
@@ -62,9 +76,6 @@ public class RankedPath implements Comparable<RankedPath> {
 
     public Map<String, Double> getScores() {
         return scores;
-    }
-
-    public RankedPath() {
     }
 
     public RankedPath(double r, MovePath p, String reason) {
@@ -98,26 +109,26 @@ public class RankedPath implements Comparable<RankedPath> {
 
     @Override
     public boolean equals(Object object) {
-        if (this == object) return true;
+        if (this == object) {return true;}
 
-        if (!(object instanceof RankedPath that)) return false;
+        if (!(object instanceof RankedPath that)) {return false;}
 
         return new EqualsBuilder()
-            .append(getRank(), that.getRank())
-            .append(getExpectedDamage(), that.getExpectedDamage())
-            .append(getPath(), that.getPath())
-            .append(getReason(), that.getReason())
-            .isEquals();
+              .append(getRank(), that.getRank())
+              .append(getExpectedDamage(), that.getExpectedDamage())
+              .append(getPath(), that.getPath())
+              .append(getReason(), that.getReason())
+              .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
-            .append(getPath())
-            .append(getRank())
-            .append(getReason())
-            .append(getExpectedDamage())
-            .toHashCode();
+              .append(getPath())
+              .append(getRank())
+              .append(getReason())
+              .append(getExpectedDamage())
+              .toHashCode();
     }
 
     @Override

@@ -1,0 +1,96 @@
+/*
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
+package megamek.common.weapons.lasers.innerSphere.small;
+
+import java.io.Serial;
+
+import megamek.common.SimpleTechLevel;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.WeaponType;
+import megamek.common.weapons.lasers.PulseLaserWeapon;
+
+/**
+ * @author Sebastian Brocks
+ * @since Sep 8, 2005
+ */
+public class ISXPulseLaserSmall extends PulseLaserWeapon {
+    @Serial
+    private static final long serialVersionUID = 5322977585378755226L;
+
+    public ISXPulseLaserSmall() {
+        super();
+        name = "Small X-Pulse Laser";
+        setInternalName("ISSmallXPulseLaser");
+        addLookupName("IS X-Pulse Small Laser");
+        addLookupName("IS Small X-Pulse Laser");
+        sortingName = "Laser XPULSE B";
+        heat = 3;
+        damage = 3;
+        infDamageClass = WeaponType.WEAPON_BURST_2D6;
+        toHitModifier = -2;
+        shortRange = 2;
+        mediumRange = 4;
+        longRange = 5;
+        extremeRange = 7;
+        waterShortRange = 1;
+        waterMediumRange = 2;
+        waterLongRange = 3;
+        waterExtremeRange = 4;
+        tonnage = 1.0;
+        criticalSlots = 1;
+        bv = 21;
+        maxRange = RANGE_SHORT;
+        shortAV = 3;
+        cost = 31000;
+        flags = flags.or(F_BURST_FIRE).andNot(F_PROTO_WEAPON);
+        rulesRefs = "321, TO";
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
+        techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
+              .setISAdvancement(DATE_NONE, 3057, 3078, DATE_NONE, DATE_NONE)
+              .setPrototypeFactions(Faction.LC, Faction.FS)
+              .setProductionFactions(Faction.LC)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
+    }
+}

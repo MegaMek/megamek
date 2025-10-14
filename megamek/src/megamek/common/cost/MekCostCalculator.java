@@ -1,27 +1,46 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.cost;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.*;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.CriticalSlot;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.LandAirMek;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadVee;
 
 public class MekCostCalculator {
 
@@ -34,11 +53,11 @@ public class MekCostCalculator {
             case Mek.COCKPIT_DUAL ->
                 // Solaris VII - The Game World (German) This is not actually canonical as it
                 // has never been repeated in any English language source including Tech Manual
-                40000;
+                  40000;
             case Mek.COCKPIT_COMMAND_CONSOLE ->
                 // Command Consoles are listed as a cost of 500,000.
                 // That appears to be in addition to the primary cockpit.
-                700000;
+                  700000;
             case Mek.COCKPIT_SMALL -> 175000;
             case Mek.COCKPIT_VRRP -> 1250000;
             case Mek.COCKPIT_INDUSTRIAL, Mek.COCKPIT_PRIMITIVE_INDUSTRIAL -> 100000;
@@ -47,23 +66,23 @@ public class MekCostCalculator {
             case Mek.COCKPIT_QUADVEE -> 375000;
             case Mek.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE ->
                 // The cost is the sum of both superheavy cockpit and command console
-                800000;
+                  800000;
             case Mek.COCKPIT_SUPERHEAVY_TRIPOD -> 500000;
             case Mek.COCKPIT_SMALL_COMMAND_CONSOLE ->
                 // The cost is the sum of both small and command console
-                675000;
+                  675000;
             default -> 200000;
         };
         if (mek.hasEiCockpit()
-                && ((null != mek.getCrew()) && mek.hasAbility(OptionsConstants.UNOFF_EI_IMPLANT))) {
+              && ((null != mek.getCrew()) && mek.hasAbility(OptionsConstants.UNOFFICIAL_EI_IMPLANT))) {
             cockpitCost = 400000;
         }
         costs[i++] = cockpitCost;
         costs[i++] = 50000;// life support
         costs[i++] = mek.getWeight() * 2000;// sensors
-        int muscCost = mek.hasSCM() ? 10000 : mek.hasTSM(false) ? 16000 :
-            mek.hasTSM(true) ? 32000 : mek.hasIndustrialTSM() ? 12000 : mek.isSuperHeavy() ? 12000 : 2000;
-        costs[i++] = muscCost * mek.getWeight();// musculature
+        int musculatureCost = mek.hasSCM() ? 10000 : mek.hasTSM(false) ? 16000 :
+              mek.hasTSM(true) ? 32000 : mek.hasIndustrialTSM() ? 12000 : mek.isSuperHeavy() ? 12000 : 2000;
+        costs[i++] = musculatureCost * mek.getWeight();// musculature
         double structureCost = getStructureCost(mek) * mek.getWeight() * (mek.isTripodMek() ? 1.2 : 1);// IS
         costs[i++] = structureCost;
         costs[i++] = mek.getActuatorCost() * (mek.isSuperHeavy() ? 2 : 1);// arm and/or leg actuators
@@ -80,22 +99,20 @@ public class MekCostCalculator {
             costs[i++] = 300000 * (int) Math.ceil((mek.getOriginalWalkMP() * mek.getWeight()) / 100f);
         }
         double jumpBaseCost = 200;
-        // You cannot have JJ's and UMU's on the same unit.
+        double jumpCost;
+        // Cannot have JJs and UMUs on the same unit.
         if (mek.hasUMU()) {
-            costs[i++] = Math.pow(mek.getAllUMUCount(), 2.0) * mek.getWeight() * jumpBaseCost;
-            // We could have Jump boosters
-            if (mek.getJumpType() == Mek.JUMP_BOOSTER) {
-                jumpBaseCost = 150;
-                costs[i++] = Math.pow(mek.getOriginalJumpMP(), 2.0) * mek.getWeight() * jumpBaseCost;
-            }
+            jumpCost = Math.pow(mek.getAllUMUCount(), 2.0) * mek.getWeight() * jumpBaseCost;
         } else {
-            if (mek.getJumpType() == Mek.JUMP_BOOSTER) {
-                jumpBaseCost = 150;
-            } else if (mek.getJumpType() == Mek.JUMP_IMPROVED) {
+            if (mek.getJumpType() == Mek.JUMP_IMPROVED) {
                 jumpBaseCost = 500;
             }
-            costs[i++] = Math.pow(mek.getOriginalJumpMP(), 2.0) * mek.getWeight() * jumpBaseCost;
+            jumpCost = Math.pow(mek.getOriginalJumpMP(), 2.0) * mek.getWeight() * jumpBaseCost;
         }
+        if (mek.getOriginalMechanicalJumpBoosterMP() > 0) {
+            jumpCost += Math.pow(mek.getOriginalMechanicalJumpBoosterMP(), 2.0) * mek.getWeight() * 150;
+        }
+        costs[i++] = jumpCost;
         // num of sinks we don't pay for
         int freeSinks = mek.hasDoubleHeatSinks() ? 0 : 10;
         int sinkCost = mek.hasDoubleHeatSinks() ? 6000 : 2000;
@@ -105,7 +122,7 @@ public class MekCostCalculator {
         // armored components
         int armoredCrits = 0;
         for (int j = 0; j < mek.locations(); j++) {
-            int numCrits = mek.getNumberOfCriticals(j);
+            int numCrits = mek.getNumberOfCriticalSlots(j);
             for (int k = 0; k < numCrits; k++) {
                 CriticalSlot ccs = mek.getCritical(j, k);
                 if ((ccs != null) && ccs.isArmored() && (ccs.getType() == CriticalSlot.TYPE_SYSTEM)) {
@@ -129,7 +146,7 @@ public class MekCostCalculator {
 
         if (mek instanceof LandAirMek) {
             costs[i++] = (structureCost + weaponCost)
-                    * (((LandAirMek) mek).getLAMType() == LandAirMek.LAM_BIMODAL ? 0.65 : 0.75);
+                  * (((LandAirMek) mek).getLAMType() == LandAirMek.LAM_BIMODAL ? 0.65 : 0.75);
         } else if (mek instanceof QuadVee) {
             costs[i++] = (structureCost + weaponCost) * 0.5;
         } else {
@@ -165,9 +182,9 @@ public class MekCostCalculator {
         costs[i] = -weightMultiplier; // negative just marks it as multiplier
         cost = Math.round(cost * weightMultiplier);
         String[] systemNames = { "Cockpit", "Life Support", "Sensors", "Myomer", "Structure", "Actuators",
-                "Engine", "Gyro", "Jump Jets", "Heatsinks", "Full Head Ejection System",
-                "Armored System Components", "Armor", "Equipment",
-                "Conversion Equipment", "Quirk Multiplier", "Omni Multiplier", "Weight Multiplier" };
+                                 "Engine", "Gyro", "Jump Jets", "Heatsinks", "Full Head Ejection System",
+                                 "Armored System Components", "Armor", "Equipment",
+                                 "Conversion Equipment", "Quirk Multiplier", "Omni Multiplier", "Weight Multiplier" };
         CostCalculator.fillInReport(costReport, mek, ignoreAmmo, systemNames, 13, cost, costs);
         return cost;
     }

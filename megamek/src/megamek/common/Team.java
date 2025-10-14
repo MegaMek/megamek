@@ -1,39 +1,59 @@
 /*
  * Copyright (c) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
-
-import megamek.client.ratgenerator.FactionRecord;
-import megamek.common.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import megamek.client.ratgenerator.FactionRecord;
+import megamek.common.annotations.Nullable;
+import megamek.common.game.Game;
+import megamek.common.game.IGame;
+import megamek.common.turns.TurnOrdered;
+import megamek.common.turns.TurnVectors;
+
 /**
- * The Team class holds information about a team. It holds the initiative for the team, and contains a
- * list of players on that team.
- *
- * Note that Team should be usable for any type of game (TW, AS, BF, SBF) and therefore should not
- * make any direct use of Game, Entity, AlphaStrikeElement etc., instead using IGame and InGameObject if necessary.
+ * The Team class holds information about a team. It holds the initiative for the team, and contains a list of players
+ * on that team.
+ * <p>
+ * Note that Team should be usable for any type of game (TW, AS, BF, SBF) and therefore should not make any direct use
+ * of Game, Entity, AlphaStrikeElement etc., instead using IGame and InGameObject if necessary.
  */
 public final class Team extends TurnOrdered {
 
@@ -105,9 +125,9 @@ public final class Team extends TurnOrdered {
     }
 
     @Override
-    public void clearInitiative(boolean bUseInitComp) {
+    public void clearInitiative(boolean bUseInitComp, Map<Team, Integer> initiativeAptitude) {
         getInitiative().clear();
-        TurnOrdered.rollInitiative(players, bUseInitComp);
+        TurnOrdered.rollInitiative(players, bUseInitComp, initiativeAptitude);
     }
 
     public TurnVectors determineTeamOrder(Game game) {
@@ -125,13 +145,11 @@ public final class Team extends TurnOrdered {
     }
 
     /**
-     * Return the number of "normal" turns that this item requires. This is
-     * normally the sum of multi-unit turns and the other turns. A team without
-     * any "normal" turns must return it's number of even turns to produce a
-     * fair distribution of moves.
+     * Return the number of "normal" turns that this item requires. This is normally the sum of multi-unit turns and the
+     * other turns. A team without any "normal" turns must return its number of even turns to produce a fair
+     * distribution of moves.
      *
-     * @return the <code>int</code> number of "normal" turns this item should
-     *         take in a phase.
+     * @return the <code>int</code> number of "normal" turns this item should take in a phase.
      */
     @Override
     public int getNormalTurns(IGame game) {
@@ -219,7 +237,7 @@ public final class Team extends TurnOrdered {
 
         for (Player player : players) {
             dynamicBonus = Math.max(dynamicBonus, player.getTurnInitBonus());
-            dynamicBonus = Math.max(dynamicBonus, player.getCommandBonus());
+            dynamicBonus = Math.max(dynamicBonus, player.getOverallCommandBonus());
 
             // this is a special case: it's an arbitrary bonus associated with a player
             constantBonus = Math.max(constantBonus, player.getConstantInitBonus());
@@ -256,8 +274,8 @@ public final class Team extends TurnOrdered {
 
     /**
      * Determine if another team is an enemy of this team
-     * @param t
-     * @return
+     *
+     *
      */
     public boolean isEnemyOf(Team t) {
         boolean enemy = true;

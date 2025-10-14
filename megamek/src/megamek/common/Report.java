@@ -1,76 +1,99 @@
 /*
- * MegaMek - Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
-import static megamek.client.ui.swing.util.UIUtil.uiGray;
+import static megamek.client.ui.util.UIUtil.uiGray;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.io.Serial;
 import java.util.Hashtable;
 import java.util.Vector;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JTextPane;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.annotations.Nullable;
+import megamek.common.interfaces.ReportEntry;
+import megamek.common.rolls.Roll;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**
- * This class defines a single server report. It holds information such as the
- * report ID, who the report is about, who should see the report, and some
- * formatting information.
+ * Report encapsulates a single game event report in MegaMek.
  * <p>
- * Typically, the report will be created by the relevant section in the
- * <code>Server</code>, and added to the phase {@link Report}
- * <code>Vector</code>. The actual text
- * of the report must also be added to the <i>report-messages.properties</i>
- * file.
+ * Each Report contains message text, formatting information, visibility settings, and the data needed to display the
+ * report to players. Reports are typically created by the server, then transmitted to clients for display.
  * <p>
- * Example:
+ * The actual text of reports comes from the {@code report-messages.properties} resource file. Each report is identified
+ * by a numeric ID that corresponds to a message template in this file. The template can contain tags that will be
+ * replaced with data provided by the Report object:
+ * <ul>
+ *   <li>{@code <data>} - Replaced with values added via {@link #add(String)} or similar methods</li>
+ *   <li>{@code <msg:id1,id2>} - Conditionally shows one of two messages based on a boolean value</li>
+ *   <li>{@code <list>} - Lists all remaining data values, comma-separated</li>
+ *   <li>{@code <newline>} - Inserts a line break</li>
+ * </ul>
  * <p>
- * <code>Report r = new Report(3455);\n
- * r.subject = entity.getId();\n
- * r.indent();\n
- * r.addDesc(entity);\n
- * r.add(6);\n
- * r.choose(true);\n
- * vPhaseReport.addElement(r);</code>
+ * Example usage:
+ * <pre>
+ * // Create a report with ID 3455
+ * Report r = Report.subjectReport(3455, entity.getId());
+ * r.indent()
+ *  .addDesc(entity)
+ *  .add(6)
+ *  .choose(true);
+ * vPhaseReport.addElement(r);
+ * </pre>
  * <p>
- * Then the following line would be added to <i>report-messages.properties</i>:
- * <p>
- * 3455::&lt;data&gt; (&lt;data&gt;) does &lt;data&gt; damage to the
- * &lt;msg:3456,3457&gt;.\n
- * 3456::tank\n
+ * The corresponding entry in report-messages.properties might be:
+ * <pre>
+ * 3455::&lt;data&gt; (&lt;data&gt;) does &lt;data&gt; damage to the &lt;msg:3456,3457&gt;.
+ * 3456::tank
  * 3457::building
+ * </pre>
  * <p>
- * When the client parses the report, it will fill in the &lt;data&gt; tags with
- * the values that were given to the <code>add</code> methods called on the
- * report object.
+ * This would produce output like: "Crusader (Bob) does 6 damage to the tank."
  * <p>
- * The example above might produce a report such as this when the
- * <code>getText</code> method was called:
- * <p>
- * " Crusader (Bob) does 6 damage to the tank."
+ * Reports can be public (visible to all) or hidden based on subject entity or player.
+ * They support HTML formatting, entity links, tooltips, and other rich text features.
  *
  * @author Ryan McConnell (oscarmm)
  */
@@ -83,6 +106,7 @@ public class Report implements ReportEntry {
      * helping the dial-up people :)
      */
 
+    @Serial
     private static final long serialVersionUID = -5586008091586682078L;
 
     private static final int MESSAGE_NONE = -1;
@@ -93,16 +117,15 @@ public class Report implements ReportEntry {
     public static final int PUBLIC = 0;
 
     /**
-     * Report Type: visible to all players, but all data marked for obscuration
-     * remains hidden. Note: Not used at this time, since all reports are
-     * considered <code>obscured</code> unless explicitly marked
+     * Report Type: visible to all players, but all data marked for obscuration remains hidden. Note: Not used at this
+     * time, since all reports are considered <code>obscured</code> unless explicitly marked
      * <code>public</code>.
      */
     public static final int OBSCURED = 1;
 
     /**
-     * Report is only visible to those players who can see the subject. Note:
-     * Not used at this time, since all reports are considered
+     * Report is only visible to those players who can see the subject. Note: Not used at this time, since all reports
+     * are considered
      * <code>obscured</code> unless explicitly marked <code>public</code>.
      */
     public static final int HIDDEN = 2;
@@ -125,7 +148,13 @@ public class Report implements ReportEntry {
     /**
      * Number of spaces to use per indentation level.
      */
-    public static final int DEFAULT_INDENTATION = 4;
+    public static final int DEFAULT_INDENTATION = 8; // was 4 previously
+
+    /**
+     * Number of indentation levels allowed. Currently, the same as the DEFAULT_INDENTATION value, to limit indentations
+     * to one level for a cleaner look of the report.
+     */
+    public static final int MAX_INDENTATION = 8;
 
     /**
      * Prefix for entity hyperlinks
@@ -162,37 +191,33 @@ public class Report implements ReportEntry {
     private String tagTranslate = null;
 
     /**
-     * How this report is handled when double-blind play is in effect. See
-     * constants below for more details.
+     * How this report is handled when double-blind play is in effect. See constants below for more details.
      */
     public transient int type = Report.HIDDEN;
 
     /**
-     * The entity this report concerns, if applicable. If this is left blank,
-     * then the report will be considered <code>public</code>.
+     * The entity this report concerns, if applicable. If this is left blank, then the report will be considered
+     * <code>public</code>.
      */
     public transient int subject = Entity.NONE;
 
     /**
-     * The player this report concerns, if applicable. This should be filled in
-     * if this report is not public and still does not belong to a specific
-     * visible entity
+     * The player this report concerns, if applicable. This should be filled in if this report is not public and still
+     * does not belong to a specific visible entity
      */
     public transient int player = Player.PLAYER_NONE;
 
     public static int HIDDEN_ENTITY_NUM = -1;
 
     /**
-     * This hash table will store the tagData Vector indexes that are supposed
-     * to be obscured before sending to clients. This only applies when the
-     * report type is "obscured".
+     * This hash table will store the tagData Vector indexes that are supposed to be obscured before sending to clients.
+     * This only applies when the report type is "obscured".
      */
     private Hashtable<Integer, Boolean> obscuredIndexes = new Hashtable<>();
 
     /**
-     * Vector to store the player names of those who received an obscured
-     * version of this report. Used to reconstruct individual client's reports
-     * from the master copy stored by the server.
+     * Vector to store the player names of those who received an obscured version of this report. Used to reconstruct
+     * individual client's reports from the master copy stored by the server.
      */
     private Vector<String> obscuredRecipients = new Vector<>();
 
@@ -229,12 +254,10 @@ public class Report implements ReportEntry {
     }
 
     /**
-     * Create a new report associated with the given report text and having the
-     * given type.
+     * Create a new report associated with the given report text and having the given type.
      *
      * @param id   the int value of the report from report-messages.properties
-     * @param type the constant specifying the visibility of the report (PUBLIC,
-     *             OBSCURED, or HIDDEN)
+     * @param type the constant specifying the visibility of the report (PUBLIC, OBSCURED, or HIDDEN)
      */
     public Report(int id, int type) {
         messageId = id;
@@ -262,11 +285,10 @@ public class Report implements ReportEntry {
     }
 
     /**
-     * Returns a new report associated with the given report text (ID) and having
-     * the
-     * type Report.PUBLIC.
+     * Returns a new report associated with the given report text (ID) and having the type Report.PUBLIC.
      *
      * @param id the int value of the report from report-messages.properties
+     *
      * @return A new Report
      */
     public static Report publicReport(int id) {
@@ -274,12 +296,12 @@ public class Report implements ReportEntry {
     }
 
     /**
-     * Returns a new report associated with the given report text (ID) and having
-     * the
-     * given subject (Entity ID). The Report will be the default type Report.HIDDEN.
+     * Returns a new report associated with the given report text (ID) and having the given subject (Entity ID). The
+     * Report will be the default type Report.HIDDEN.
      *
      * @param id        the int value of the report from report-messages.properties
      * @param subjectId The Entity ID of the subject entity
+     *
      * @return A new Report
      */
     public static Report subjectReport(int id, int subjectId) {
@@ -307,9 +329,8 @@ public class Report implements ReportEntry {
     }
 
     /**
-     * Set the report to not add a newline at the end, so that the current line of
-     * text can be continued
-     * with another report.
+     * Set the report to not add a newline at the end, so that the current line of text can be continued with another
+     * report.
      *
      * @return This Report to allow chaining
      */
@@ -328,11 +349,27 @@ public class Report implements ReportEntry {
     }
 
     /**
-     * Add the given int to the list of data that will be substituted for the
-     * &lt;data&gt; tags in the report. The order in which items are added must
-     * match the order of the tags in the report text.
+     * Set the report's subject and add its description. This is equivalent to calling
+     * <pre>{@code
+     * report.subject(entity.getId());
+     * report.addDesc(entity);
+     * }</pre>
+     * Typically used in reports that start with {@literal "<data> (<data>) ..."}
+     *
+     * @return This Report to allow chaining
+     */
+    public Report with(Entity entity) {
+        subject(entity.getId());
+        addDesc(entity);
+        return this;
+    }
+
+    /**
+     * Add the given int to the list of data that will be substituted for the &lt;data&gt; tags in the report. The order
+     * in which items are added must match the order of the tags in the report text.
      *
      * @param data the int to be substituted
+     *
      * @return This Report to allow chaining
      */
     public Report add(int data) {
@@ -340,14 +377,13 @@ public class Report implements ReportEntry {
     }
 
     /**
-     * Add the given int to the list of data that will be substituted for the
-     * &lt;data&gt; tags in the report, and mark it as double-blind sensitive
-     * information if <code>obscure</code> is true. The order in which items
-     * are added must match the order of the tags in the report text.
+     * Add the given int to the list of data that will be substituted for the &lt;data&gt; tags in the report, and mark
+     * it as double-blind sensitive information if <code>obscure</code> is true. The order in which items are added must
+     * match the order of the tags in the report text.
      *
      * @param data    the int to be substituted
-     * @param obscure boolean indicating whether the data is double-blind
-     *                sensitive
+     * @param obscure boolean indicating whether the data is double-blind sensitive
+     *
      * @return This Report to allow chaining
      */
     public Report add(int data, boolean obscure) {
@@ -359,11 +395,11 @@ public class Report implements ReportEntry {
     }
 
     /**
-     * Add the given String to the list of data that will be substituted for the
-     * &lt;data&gt; tags in the report. The order in which items are added must
-     * match the order of the tags in the report text.
+     * Add the given String to the list of data that will be substituted for the &lt;data&gt; tags in the report. The
+     * order in which items are added must match the order of the tags in the report text.
      *
      * @param data the String to be substituted
+     *
      * @return This Report to allow chaining
      */
     public Report add(String data) {
@@ -373,13 +409,13 @@ public class Report implements ReportEntry {
     }
 
     /**
-     * Add the given string to the list of data that will be substituted for the
-     * &lt;data&gt; tags in the report. The order in which items are added must
-     * match the order of the tags in the report text. The second string
-     * argument sets the translation flag to the string value.
+     * Add the given string to the list of data that will be substituted for the &lt;data&gt; tags in the report. The
+     * order in which items are added must match the order of the tags in the report text. The second string argument
+     * sets the translation flag to the string value.
      *
      * @param data      the String to be substituted
      * @param translate the common Resource Bundle to be used for translation
+     *
      * @return This Report to allow chaining
      */
     public Report add(String data, String translate) {
@@ -389,14 +425,13 @@ public class Report implements ReportEntry {
     }
 
     /**
-     * Add the given String to the list of data that will be substituted for the
-     * &lt;data&gt; tags in the report, and mark it as double-blind sensitive
-     * information if <code>obscure</code> is true. The order in which items
-     * are added must match the order of the tags in the report text.
+     * Add the given String to the list of data that will be substituted for the &lt;data&gt; tags in the report, and
+     * mark it as double-blind sensitive information if <code>obscure</code> is true. The order in which items are added
+     * must match the order of the tags in the report text.
      *
      * @param data    the String to be substituted
-     * @param obscure boolean indicating whether the data is double-blind
-     *                sensitive
+     * @param obscure boolean indicating whether the data is double-blind sensitive
+     *
      * @return This Report to allow chaining
      */
     public Report add(String data, boolean obscure) {
@@ -411,6 +446,7 @@ public class Report implements ReportEntry {
      * Adds target roll to report with details available as a tooltip
      *
      * @param targetRoll the target roll
+     *
      * @return This Report to allow chaining
      */
     public Report add(TargetRoll targetRoll) {
@@ -431,6 +467,7 @@ public class Report implements ReportEntry {
      *
      * @param data    the data for the report field
      * @param tooltip the tooltip text
+     *
      * @return This Report to allow chaining
      */
     public Report addDataWithTooltip(String data, String tooltip) {
@@ -443,11 +480,11 @@ public class Report implements ReportEntry {
      * Indicate which of two possible messages should be substituted for the
      * <code>&lt;msg:<i>n</i>,<i>m</i>&gt;</code> tag. An argument of
      * <code>true</code> would select message <i>n</i> while an
-     * argument of <code>false</code> would select <i>m</i>. In the
-     * future, this capability may be expanded to support more than
-     * two choices.
+     * argument of <code>false</code> would select <i>m</i>. In the future, this capability may be expanded to support
+     * more than two choices.
      *
      * @param choice boolean indicating which message to substitute
+     *
      * @return This Report to allow chaining
      */
     public Report choose(boolean choice) {
@@ -456,11 +493,11 @@ public class Report implements ReportEntry {
     }
 
     /**
-     * Shortcut method for adding entity name and owner data at the same time.
-     * Assumes that the entity name should be obscured, but the owner should
-     * not.
+     * Shortcut method for adding entity name and owner data at the same time. Assumes that the entity name should be
+     * obscured, but the owner should not.
      *
      * @param entity the entity you wish to add
+     *
      * @return This Report to allow chaining
      */
     public Report addDesc(Entity entity) {
@@ -492,18 +529,17 @@ public class Report implements ReportEntry {
         this.showImage = showImage;
     }
 
-    public void obsureImg() {
+    public void obscureImg() {
         imageCode = "<span id='" + HIDDEN_ENTITY_NUM + "'></span>";
     }
 
     /**
      * Internal method. Not for typical use.
      * <p>
-     * Tests wheter the data value at the given index has been marked as
-     * obscured.
+     * Tests whether the data value at the given index has been marked as obscured.
      *
-     * @param index position of data value (indexes are chronological and start
-     *              at zero)
+     * @param index position of data value (indexes are chronological and start at zero)
+     *
      * @return true if the data value was marked obscured
      */
     public boolean isValueObscured(int index) {
@@ -515,16 +551,14 @@ public class Report implements ReportEntry {
      * <p>
      * Remove the data value from the report. This operation is irreversible.
      *
-     * @param index position of data value (indexes are chronological and start
-     *              at zero
+     * @param index position of data value (indexes are chronological and start at zero
      */
     public void hideData(int index) {
         tagData.setElementAt(null, index);
     }
 
     /**
-     * Indent the report. Equivalent to calling {@link #indent(int)} with a
-     * parameter of 1.
+     * Indent the report. Equivalent to calling {@link #indent(int)} with a parameter of 1.
      *
      * @return This Report to allow chaining
      */
@@ -536,6 +570,7 @@ public class Report implements ReportEntry {
      * Indent the report n times.
      *
      * @param n the number of times to indent the report
+     *
      * @return This Report to allow chaining
      */
     public Report indent(int n) {
@@ -546,9 +581,8 @@ public class Report implements ReportEntry {
     /**
      * Internal method. Not for typical use.
      * <p>
-     * Get the total number of data values associated with this report. Note
-     * that this includes the <code>true/false</code> values added for
-     * &lt;msg&gt; tags as well.
+     * Get the total number of data values associated with this report. Note that this includes the
+     * <code>true/false</code> values added for &lt;msg&gt; tags as well.
      *
      * @return the number of data values
      */
@@ -574,16 +608,16 @@ public class Report implements ReportEntry {
             }
             return value;
         } catch (ArrayIndexOutOfBoundsException e) {
-            logger.error("Error: Report#getText --> Array Index out of Bounds Exception (index: "
-                    + index + ") for a report with ID " + messageId
-                    + ". Maybe Report#add wasn't called enough times for the amount of tags in the message?");
+            logger.error(
+                  "Error: Report#getText --> Array Index out of Bounds Exception (index: {}) for a report with ID {}. Maybe Report#add wasn't called enough times for the amount of tags in the message?",
+                  index,
+                  messageId);
             return "[Reporting Error: see megamek.log for details]";
         }
     }
 
     /**
-     * Get the report in its final form, with all the necessary substitutions
-     * made.
+     * Get the report in its final form, with all the necessary substitutions made.
      *
      * @return a String with the final report
      */
@@ -596,7 +630,7 @@ public class Report implements ReportEntry {
 
         if (raw == null) {
             // Should we handle this better? Check alternate language files?
-            logger.error("No message found for ID " + messageId);
+            logger.error("No message found for ID {}", messageId);
             text.append("[Reporting Error for message ID ").append(messageId).append("]");
         } else {
             int i = 0;
@@ -605,8 +639,7 @@ public class Report implements ReportEntry {
                 if (raw.charAt(i) == '<') {
                     // find end of tag
                     int endTagIdx = raw.indexOf('>', i);
-                    if ((raw.indexOf('<', i + 1) != -1)
-                            && (raw.indexOf('<', i + 1) < endTagIdx)) {
+                    if ((raw.indexOf('<', i + 1) != -1) && (raw.indexOf('<', i + 1) < endTagIdx)) {
                         // hmm...this must be a literal '<' character
                         i++;
                         continue;
@@ -630,7 +663,7 @@ public class Report implements ReportEntry {
                         }
                         tagCounter++;
                     } else if (raw.substring(i + 1, endTagIdx).equals("newline")) {
-                        text.append("\n");
+                        text.append("<br>");
                     } else {
                         // not a special tag, so treat as literal text
                         text.append(raw, i, endTagIdx + 1);
@@ -640,12 +673,18 @@ public class Report implements ReportEntry {
                 }
                 i++;
             }
+
+            if (indentation > MAX_INDENTATION) { // limit indentation for a cleaner look of the report
+                indentation = MAX_INDENTATION;
+            }
+
             // add the sprite code at the beginning of the line
             if (imageCode != null && !imageCode.isEmpty()) {
-                if (text.toString().startsWith("\n")) {
-                    text.insert(1, imageCode);
+                if (text.toString().startsWith("<br>")) {
+                    text.insert(4, imageCode + "<br>" + getSpaces());
+                    // put text in a new line after the sprite image and add the current indentation level to it
                 } else {
-                    text.insert(0, imageCode);
+                    text.insert(0, imageCode + "<br>" + getSpaces());
                 }
             }
             text.append(raw.substring(mark));
@@ -657,7 +696,32 @@ public class Report implements ReportEntry {
         if (type == Report.TESTING) {
             Report.mark(text);
         }
-        return text.toString();
+
+        if (messageId == 3100 || messageId == 3101 || messageId == 3102 || messageId == 4005) { // if new attack
+            Color clr = new Color(0, 0, 0);
+
+            // get attacker color
+            Pattern clrRegex = Pattern.compile("#([A-Fa-f0-9]{6})");
+            Matcher matcher = clrRegex.matcher(getTag(1));
+            if (matcher.find()) {
+                clr = Color.decode(matcher.group());
+            }
+
+            return "<div style='padding: 2px; background-color: rgba("
+                  + clr.getRed()
+                  + ","
+                  + clr.getGreen()
+                  + ","
+                  + clr.getBlue()
+                  + ","
+                  + "0.15)'>"
+                  + text
+                  + "</div>";
+            //shade lines of each attacker in its player color
+        } else {
+            return text.toString();
+        }
+
     }
 
     @Override
@@ -667,15 +731,12 @@ public class Report implements ReportEntry {
     }
 
     private void handleIndentation(StringBuffer sb) {
-        if ((indentation == 0) || (sb.length() == 0)) {
+        if ((indentation == 0) || (sb.isEmpty())) {
             return;
         }
         int i = 0;
-        while (sb.substring(i, i + 4).equals("\n")) {
+        while (sb.substring(i, i + 4).equals("<br>")) {
             i += 4;
-            if (i == sb.length()) {
-                continue;
-            }
         }
         sb.insert(i, getSpaces());
     }
@@ -685,7 +746,7 @@ public class Report implements ReportEntry {
     }
 
     private String getNewlines() {
-        return "\n".repeat(Math.max(0, newlines));
+        return "<br>".repeat(Math.max(0, newlines));
     }
 
     /**
@@ -717,8 +778,12 @@ public class Report implements ReportEntry {
         Font font = new Font(GUIP.getReportFontType(), Font.PLAIN, UIUtil.FONT_SCALE1);
         int size = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
 
-        styleSheet
-                .addRule("pre { font-family: " + font.getFamily() + "; font-size: " + size + "pt; font-style:normal;}");
+        // styleSheet.addRule("html { text-align: left; }");
+        styleSheet.addRule("div.report { font-family: "
+              + font.getFamily()
+              + "; font-size: "
+              + size
+              + "pt; font-style:normal;}");
         styleSheet.addRule("a { color: " + hexColor(GUIP.getReportLinkColor()) + " }");
         styleSheet.addRule("span.warning { color: " + hexColor(GUIP.getWarningColor()) + " }");
         styleSheet.addRule("span.success { color: " + hexColor(GUIP.getReportSuccessColor()) + " }");
@@ -740,7 +805,7 @@ public class Report implements ReportEntry {
     }
 
     private static String hexColor(Color color) {
-        return String.format("#%06x", Integer.valueOf(color.getRGB() & 0x00FFFFFF));
+        return String.format("#%06x", color.getRGB() & 0x00FFFFFF);
     }
 
     public String fgColor(Color color, String str) {
@@ -770,9 +835,8 @@ public class Report implements ReportEntry {
     /**
      * Internal method. Not for typical use.
      * <p>
-     * Adds the given player name to the report's list of players who received
-     * an obscured version of this report from the server at some time in the
-     * past.
+     * Adds the given player name to the report's list of players who received an obscured version of this report from
+     * the server at some time in the past.
      *
      * @param playerName the String containing the player's name
      */
@@ -783,11 +847,11 @@ public class Report implements ReportEntry {
     /**
      * Internal method. Not for typical use.
      * <p>
-     * Tests whether the given player name is on the report's list of players
-     * who received an obscured version of this report from the server at some
-     * time in the past.
+     * Tests whether the given player name is on the report's list of players who received an obscured version of this
+     * report from the server at some time in the past.
      *
      * @param playerName the String containing the player's name
+     *
      * @return true if the player was sent an obscured version of this report
      */
     public boolean isObscuredRecipient(String playerName) {
@@ -813,21 +877,13 @@ public class Report implements ReportEntry {
     // debugReport method
     private static StringBuffer mark(StringBuffer sb) {
         sb.insert(0, "<hidden>");
-        int i = sb.length() - 1;
-        while (sb.charAt(i) == '\n') {
-            i--;
-            if (i == 0) {
-                continue;
-            }
-        }
-        sb.insert(i + 1, "</hidden>");
+        sb.insert(sb.indexOf("<br>") + 4, "</hidden>");
         return sb;
     }
 
     /**
-     * Sets the indentation for all reports of the given reports list to the given
-     * amount
-     * by calling {@link #indent(int)}
+     * Sets the indentation for all reports of the given reports list to the given amount by calling
+     * {@link #indent(int)}
      *
      * @param reports A list of reports to be affected
      * @param amount  The amount of indentation to give each report in the list

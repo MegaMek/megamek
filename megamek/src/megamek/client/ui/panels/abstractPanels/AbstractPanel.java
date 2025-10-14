@@ -1,0 +1,155 @@
+/*
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+package megamek.client.ui.panels.abstractPanels;
+
+import java.awt.FlowLayout;
+import java.awt.LayoutManager;
+import java.util.ResourceBundle;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import megamek.MegaMek;
+import megamek.client.ui.preferences.PreferencesNode;
+
+/**
+ * This is the default Panel. It handles preferences, resources, and the frame.
+ * <p>
+ * Inheriting classes must call initialize() in their constructor and override initialize().
+ * <p>
+ * This is directly tied to MekHQ's AbstractMHQPanel, and any changes here MUST be verified there.
+ */
+public abstract class AbstractPanel extends JPanel {
+    //region Variable Declarations
+    private final JFrame frame;
+
+    protected final ResourceBundle resources;
+    //endregion Variable Declarations
+
+    //region Constructors
+
+    /**
+     * This creates an AbstractPanel using the default resource bundle.
+     */
+    protected AbstractPanel(final JFrame frame, final String name) {
+        this(frame, name, true);
+    }
+
+    /**
+     * This creates an AbstractPanel using the default resource bundle and specified double buffered boolean.
+     */
+    protected AbstractPanel(final JFrame frame, final String name, final boolean isDoubleBuffered) {
+        this(frame, ResourceBundle.getBundle("megamek.client.messages",
+                    MegaMek.getMMOptions().getLocale()),
+              name, new FlowLayout(), isDoubleBuffered);
+    }
+
+    /**
+     * This creates an AbstractPanel using the default resource bundle and specified layout manager.
+     */
+    protected AbstractPanel(final JFrame frame, final String name, final LayoutManager layoutManager) {
+        this(frame, name, layoutManager, true);
+    }
+
+    /**
+     * This creates an AbstractPanel using the default resource bundle and specified layout manager and double buffered
+     * boolean.
+     */
+    protected AbstractPanel(final JFrame frame, final String name,
+          final LayoutManager layoutManager, final boolean isDoubleBuffered) {
+        this(frame, ResourceBundle.getBundle("megamek.client.messages",
+                    MegaMek.getMMOptions().getLocale()),
+              name, layoutManager, isDoubleBuffered);
+    }
+
+    /**
+     * This creates an AbstractPanel using the specified resource bundle, layout manager, and double buffered boolean.
+     * This is not recommended by default.
+     */
+    protected AbstractPanel(final JFrame frame, final ResourceBundle resources, final String name,
+          final LayoutManager layoutManager, final boolean isDoubleBuffered) {
+        super(layoutManager, isDoubleBuffered);
+        setName(name);
+        this.frame = frame;
+        this.resources = resources;
+    }
+    //endregion Constructors
+
+    //region Getters
+    public JFrame getFrame() {
+        return frame;
+    }
+    //endregion Getters
+
+    //region Initialization
+
+    /**
+     * This initializes the panel, and must be called by inheriting constructors. This MUST end with a call to
+     * setPreferences() for this class to work properly.
+     */
+    protected abstract void initialize();
+
+    /**
+     * This is used to set preferences based on the preference node for this class. It is overridden for MekHQ usage
+     *
+     * @throws Exception if there's an issue initializing the preferences. Normally this means a component has
+     *                   <strong>not</strong> had its name value set.
+     */
+    protected void setPreferences() throws Exception {
+        setPreferences(MegaMek.getMMPreferences().forClass(getClass()));
+    }
+
+    /**
+     * This sets the base preferences for this class, and calls the custom preferences method
+     *
+     * @throws Exception if there's an issue initializing the preferences. Normally this means a component has
+     *                   <strong>not</strong> had its name value set.
+     */
+    protected void setPreferences(final PreferencesNode preferences) throws Exception {
+        setCustomPreferences(preferences);
+    }
+
+    /**
+     * Adds custom preferences to the child panel.
+     * <p>
+     * By default, this panel will track no preferences Other preferences can be added by overriding this method.
+     *
+     * @param preferences the preference node for this panel
+     *
+     * @throws Exception if there's an issue initializing the preferences. Normally this means a component has
+     *                   <strong>not</strong> had its name value set.
+     */
+    protected void setCustomPreferences(final PreferencesNode preferences) throws Exception {
+
+    }
+    //endregion Initialization
+}

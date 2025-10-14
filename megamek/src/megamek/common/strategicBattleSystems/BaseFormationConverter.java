@@ -1,45 +1,64 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
- *  This file is part of MekHQ.
+ * This file is part of MegaMek.
  *
- *  MekHQ is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
- *  MekHQ is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with MekHQ. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
-
 package megamek.common.strategicBattleSystems;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
-import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
-import megamek.common.Entity;
-import megamek.common.ForceAssignable;
-import megamek.common.Game;
-import megamek.common.IGame;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.joining;
+import static megamek.common.alphaStrike.BattleForceSUA.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.game.IGame;
+import megamek.common.interfaces.ForceAssignable;
+import megamek.common.units.Entity;
 
-import java.util.*;
-import java.util.function.Function;
-
-import static java.util.stream.Collectors.*;
-import static megamek.common.alphaStrike.BattleForceSUA.*;
-
-public abstract class BaseFormationConverter <T extends SBFFormation> {
+public abstract class BaseFormationConverter<T extends SBFFormation> {
     protected final Force force;
     protected final IGame game;
     protected final CalculationReport report;
@@ -64,41 +83,47 @@ public abstract class BaseFormationConverter <T extends SBFFormation> {
      */
     public static boolean canConvertToSbfFormation(Force force, IGame game) {
         if ((force == null) || (game == null) || force.isEmpty()
-            || (game.getForces().getForce(force.getId()) != force)) {
+              || (game.getForces().getForce(force.getId()) != force)) {
             return false;
         }
         Forces forces = game.getForces();
         // The force must not have direct subordinate entities
         boolean invalid = !force.getEntities().isEmpty();
         List<ForceAssignable> entities = forces.getFullEntities(force);
-        List<Force> subforces = forces.getFullSubForces(force);
+        List<Force> subForces = forces.getFullSubForces(force);
         invalid |= entities.size() > 20;
-        invalid |= (subforces.size() > 4) || subforces.isEmpty();
-        invalid |= subforces.stream().anyMatch(f -> f.getEntities().isEmpty());
-        invalid |= subforces.stream().anyMatch(f -> f.getEntities().size() > 6);
-        invalid |= subforces.stream().anyMatch(f -> !f.getSubForces().isEmpty());
+        invalid |= (subForces.size() > 4) || subForces.isEmpty();
+        invalid |= subForces.stream().anyMatch(f -> f.getEntities().isEmpty());
+        invalid |= subForces.stream().anyMatch(f -> f.getEntities().size() > 6);
+        invalid |= subForces.stream().anyMatch(f -> !f.getSubForces().isEmpty());
         invalid |= entities.stream().anyMatch(e -> !ASConverter.canConvert((Entity) e));
         // Avoid some checks in the code below
         if (invalid) {
             return false;
         }
-        for (Force subforce : subforces) {
+        for (Force subforce : subForces) {
             var elementsList = new ArrayList<AlphaStrikeElement>();
-            forces.getFullEntities(subforce).stream().map(e -> ASConverter.convert((Entity) e)).forEach(elementsList::add);
+            forces.getFullEntities(subforce)
+                  .stream()
+                  .map(e -> ASConverter.convert((Entity) e))
+                  .forEach(elementsList::add);
             invalid |= elementsList.stream().anyMatch(a -> a.hasSUA(LG)) && elementsList.size() > 2;
             invalid |= elementsList.stream().anyMatch(a -> a.hasAnySUAOf(VLG, SLG)) && elementsList.size() > 1;
-            SBFUnit unit = new SBFUnitConverter(elementsList, "temporary", new DummyCalculationReport()).createSbfUnit();
+            SBFUnit unit = new SBFUnitConverter(elementsList,
+                  "temporary",
+                  new DummyCalculationReport()).createSbfUnit();
             invalid |= unit.isGround() && elementsList.stream().anyMatch(AlphaStrikeElement::isAerospace);
-            invalid |= unit.isAerospace() && elementsList.stream().filter(AlphaStrikeElement::isGround).anyMatch(a -> !a.hasAnySUAOf(SOA, LAM, BIM));
+            invalid |= unit.isAerospace() && elementsList.stream()
+                  .filter(AlphaStrikeElement::isGround)
+                  .anyMatch(a -> !a.hasAnySUAOf(SOA, LAM, BIM));
         }
         return !invalid;
     }
 
     /**
-     * Returns an SBF Formation formed from the given force. When the force cannot be converted
-     * to an SBF Formation according to the rules, returns null. The given force must be
-     * approximately company-shaped to work, i.e. it has to contain some subforces with some entities
-     * in each subforce but no further subforces.
+     * Returns an SBF Formation formed from the given force. When the force cannot be converted to an SBF Formation
+     * according to the rules, returns null. The given force must be approximately company-shaped to work, i.e. it has
+     * to contain some subForces with some entities in each sub force but no further subForces.
      */
     public abstract T convert();
 
@@ -114,8 +139,8 @@ public abstract class BaseFormationConverter <T extends SBFFormation> {
 
         int formationSize = (int) Math.round(units.stream().mapToDouble(SBFUnit::getSize).average().orElse(0));
         report.addLine("Size:",
-            "Average of " + units.stream().map(u -> u.getSize() + "").collect(joining(", ")),
-            "= " + formationSize);
+              "Average of " + units.stream().map(u -> u.getSize() + "").collect(joining(", ")),
+              "= " + formationSize);
         formation.setSize(formationSize);
 
         int formationMove = (int) Math.round(units.stream().mapToDouble(SBFUnit::getMovement).average().orElse(0));
@@ -123,34 +148,34 @@ public abstract class BaseFormationConverter <T extends SBFFormation> {
             formationMove = (int) Math.round(units.stream().mapToDouble(SBFUnit::getMovement).min().orElse(0));
         }
         report.addLine("Movement:",
-            "Average of " + units.stream().map(u -> u.getMovement() + "").collect(joining(", ")),
-            "= " + formationMove);
+              "Average of " + units.stream().map(u -> u.getMovement() + "").collect(joining(", ")),
+              "= " + formationMove);
         formation.setMovement(formationMove);
         setMovementMode();
 
         int trspMove = (int) Math.round(units.stream().mapToDouble(SBFUnit::getTrspMovement).average().orElse(0));
         report.addLine("Transport Movement:",
-            "Average of " + units.stream().map(u -> u.getTrspMovement() + "").collect(joining(", ")),
-            "= " + trspMove);
+              "Average of " + units.stream().map(u -> u.getTrspMovement() + "").collect(joining(", ")),
+              "= " + trspMove);
         formation.setTrspMovement(trspMove);
         setTrspMovementMode();
 
         int jumpMove = (int) Math.round(units.stream().mapToDouble(SBFUnit::getJumpMove).average().orElse(0));
         report.addLine("Jump:",
-            "Average of " + units.stream().map(u -> u.getJumpMove() + "").collect(joining(", ")),
-            "= " + jumpMove);
+              "Average of " + units.stream().map(u -> u.getJumpMove() + "").collect(joining(", ")),
+              "= " + jumpMove);
         formation.setJumpMove(jumpMove);
 
         int tmm = (int) Math.round(units.stream().mapToDouble(SBFUnit::getTmm).average().orElse(0));
         report.addLine("TMM:",
-            "Average of " + units.stream().map(u -> u.getTmm() + "").collect(joining(", ")),
-            "= " + tmm);
+              "Average of " + units.stream().map(u -> u.getTmm() + "").collect(joining(", ")),
+              "= " + tmm);
         formation.setTmm(tmm);
 
         int skill = (int) Math.round(units.stream().mapToDouble(SBFUnit::getSkill).average().orElse(0));
         report.addLine("Skill:",
-            "Average of " + units.stream().map(u -> u.getSkill() + "").collect(joining(", ")),
-            "= " + skill);
+              "Average of " + units.stream().map(u -> u.getSkill() + "").collect(joining(", ")),
+              "= " + skill);
         formation.setSkill(skill);
         formation.setMorale(3 + formation.getSkill());
         report.addLine("Morale:", "3 + " + formation.getSkill(), "= " + formation.getMorale());
@@ -160,19 +185,19 @@ public abstract class BaseFormationConverter <T extends SBFFormation> {
 
         int pv = units.stream().mapToInt(SBFUnit::getPointValue).sum();
         report.addLine("Point Value:",
-            units.stream().map(u -> u.getPointValue() + "").collect(joining(" + ")),
-            "= " + pv);
+              units.stream().map(u -> u.getPointValue() + "").collect(joining(" + ")),
+              "= " + pv);
         formation.setPointValue(pv);
     }
 
     void calcFormationSpecialAbilities() {
-        report.addLine("Special Abilites:", "");
+        report.addLine("Special Abilities:", "");
         addFormationSpasIfAny(formation, DN, XMEC, COM, HPG, MCS, UCS, MEC, MAS, LMAS,
-            MSW, MFB, SAW, SDS, TRN, FD, HELI, SDCS);
+              MSW, MFB, SAW, SDS, TRN, FD, HELI, SDCS);
         addFormationSpasIf2Thirds(formation, AC3, PRB, AECM, ECM, ENG, LPRB, LECM, ORO, RCN, SRCH, SHLD, TAG, WAT);
         addFormationSpasIfAll(formation, AMP, BH, EE, FC, SEAL, MAG, PAR, RAIL, RBT, UMU);
         sumFormationSpas(SBF_OMNI, CAR, CK, CT, IT, CRW, DCC, MDS, MASH, RSD, VTM, VTH,
-            VTS, AT, BOMB, DT, MT, PT, ST, SCR, PNT, IF, MHQ);
+              VTS, AT, BOMB, DT, MT, PT, ST, SCR, PNT, IF, MHQ);
 
         var fuel = formation.getUnits().stream().filter(SBFUnit::isAerospace).mapToInt(SBFUnit::getFUEL).min();
         if (fuel.isPresent()) {
@@ -198,8 +223,7 @@ public abstract class BaseFormationConverter <T extends SBFFormation> {
     }
 
     /**
-     * Returns the number of the given SBFUnits that have the given spa (regardless of its
-     * associated objects)
+     * Returns the number of the given SBFUnits that have the given spa (regardless of its associated objects)
      */
     private int spaCount(SBFFormation formation, BattleForceSUA spa) {
         return (int) formation.getUnits().stream().filter(e -> e.hasSUA(spa)).count();
@@ -223,13 +247,13 @@ public abstract class BaseFormationConverter <T extends SBFFormation> {
             int count = spaCount(formation, spa);
             if (count >= minimumCount) {
                 report.addLine("",
-                    spa + ": " + count + " of " + formation.getUnits().size() + ", minimum " + minimumCount,
-                    spa.toString());
+                      spa + ": " + count + " of " + formation.getUnits().size() + ", minimum " + minimumCount,
+                      spa.toString());
                 formation.getSpecialAbilities().setSUA(spa);
             } else if (count > 0) {
                 report.addLine("",
-                    spa + ": " + count + " of " + formation.getUnits().size() + ", minimum " + minimumCount,
-                    "--");
+                      spa + ": " + count + " of " + formation.getUnits().size() + ", minimum " + minimumCount,
+                      "--");
             }
         }
     }
@@ -276,8 +300,8 @@ public abstract class BaseFormationConverter <T extends SBFFormation> {
         Map<SBFElementType, Long> occurrenceCount = types.stream().collect(groupingBy(Function.identity(), counting()));
         long highestCount = occurrenceCount.values().stream().max(Long::compare).orElse(0L);
         SBFElementType highestType = types.stream()
-            .filter(e -> Collections.frequency(types, e) == highestCount)
-            .findFirst().orElse(SBFElementType.UNKNOWN);
+              .filter(e -> Collections.frequency(types, e) == highestCount)
+              .findFirst().orElse(SBFElementType.UNKNOWN);
 
         if (highestCount < majorityCount) {
             formation.setType(SBFElementType.MX);
@@ -285,8 +309,8 @@ public abstract class BaseFormationConverter <T extends SBFFormation> {
             formation.setType(highestType);
         }
         report.addLine("Type:",
-            "Most frequent: " + highestType + ", " + highestCount + " of " + units.size(),
-            formation.getType().toString());
+              "Most frequent: " + highestType + ", " + highestCount + " of " + units.size(),
+              formation.getType().toString());
     }
 
     private void setMovementMode() {
@@ -300,7 +324,7 @@ public abstract class BaseFormationConverter <T extends SBFFormation> {
             }
         }
         report.addLine("Movement Mode:",
-            "Most restrictive of: " + String.join(", ", unitModes), currentMode.code);
+              "Most restrictive of: " + String.join(", ", unitModes), currentMode.code);
         formation.setMovementMode(currentMode);
     }
 
@@ -315,7 +339,7 @@ public abstract class BaseFormationConverter <T extends SBFFormation> {
             }
         }
         report.addLine("Movement Mode:",
-            "Most restrictive of: " + String.join(", ", unitModes), currentMode.code);
+              "Most restrictive of: " + String.join(", ", unitModes), currentMode.code);
         formation.setTrspMovementMode(currentMode);
     }
 }

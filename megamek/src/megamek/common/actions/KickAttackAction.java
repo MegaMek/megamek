@@ -1,31 +1,71 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.actions;
 
+import java.io.Serial;
+
 import megamek.client.ui.Messages;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.ToHitData;
+import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeArc;
+import megamek.common.compute.ComputeSideTable;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ILocationExposureStatus;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.Tank;
+import megamek.common.units.Targetable;
 
 /**
  * The attacker kicks the target.
  */
 public class KickAttackAction extends PhysicalAttackAction {
+    @Serial
     private static final long serialVersionUID = 1697321306815235635L;
     public static final int BOTH = 0;
     public static final int LEFT = 1;
     public static final int RIGHT = 2;
-    public static final int LEFTMULE = 3;
-    public static final int RIGHTMULE = 4;
+    public static final int LEFT_MULE = 3;
+    public static final int RIGHT_MULE = 4;
 
     private int leg;
 
@@ -53,21 +93,21 @@ public class KickAttackAction extends PhysicalAttackAction {
      * @return The kick damage for the 'Mek, or 0 for non-'Mek entities.
      */
     public static int getDamageFor(Entity entity, int leg,
-            boolean targetInfantry) {
+          boolean targetInfantry) {
         if (!(entity instanceof Mek)) {
             return 0; // Non-'Meks can't kick, so can't deal damage this way.
         }
         int[] kickLegs = new int[2];
-        if (entity.entityIsQuad() && (leg != LEFTMULE) && (leg != RIGHTMULE)) {
-            kickLegs[0] = Mek.LOC_RARM;
-            kickLegs[1] = Mek.LOC_LARM;
+        if (entity.entityIsQuad() && (leg != LEFT_MULE) && (leg != RIGHT_MULE)) {
+            kickLegs[0] = Mek.LOC_RIGHT_ARM;
+            kickLegs[1] = Mek.LOC_LEFT_ARM;
         } else {
-            kickLegs[0] = Mek.LOC_RLEG;
-            kickLegs[1] = Mek.LOC_LLEG;
+            kickLegs[0] = Mek.LOC_RIGHT_LEG;
+            kickLegs[1] = Mek.LOC_LEFT_LEG;
         }
 
-        final int legLoc = ((leg == RIGHT) || (leg == RIGHTMULE)) ? kickLegs[0]
-                : kickLegs[1];
+        final int legLoc = ((leg == RIGHT) || (leg == RIGHT_MULE)) ? kickLegs[0]
+              : kickLegs[1];
         int damage = (int) Math.floor(entity.getWeight() / 5.0);
         float multiplier = 1.0f;
 
@@ -104,18 +144,18 @@ public class KickAttackAction extends PhysicalAttackAction {
 
     public ToHitData toHit(Game game) {
         return KickAttackAction.toHit(game, getEntityId(), game.getTarget(getTargetType(),
-                getTargetId()), getLeg());
+              getTargetId()), getLeg());
     }
 
     /**
      * To-hit number for the specified leg to kick
      */
     public static ToHitData toHit(Game game, int attackerId,
-            Targetable target, int leg) {
+          Targetable target, int leg) {
         final Entity ae = game.getEntity(attackerId);
         if (ae == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "You can't attack from a null entity!");
+                  "You can't attack from a null entity!");
         }
 
         if (!(ae instanceof Mek)) {
@@ -131,69 +171,64 @@ public class KickAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
-        Hex attHex = game.getBoard().getHex(ae.getPosition());
-        Hex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getHexOf(ae);
+        Hex targHex = game.getHexOf(target);
         final int attackerElevation = ae.getElevation() + attHex.getLevel();
         final int targetElevation = target.getElevation()
-                + targHex.getLevel();
+              + targHex.getLevel();
         final int targetHeight = targetElevation + target.getHeight();
 
         int mule = 0;
         int[] kickLegs = new int[2];
         if (ae.entityIsQuad()) {
-            if ((leg == KickAttackAction.LEFTMULE)
-                    || (leg == KickAttackAction.RIGHTMULE)) {
-                kickLegs[0] = Mek.LOC_RLEG;
-                kickLegs[1] = Mek.LOC_LLEG;
+            if ((leg == KickAttackAction.LEFT_MULE)
+                  || (leg == KickAttackAction.RIGHT_MULE)) {
+                kickLegs[0] = Mek.LOC_RIGHT_LEG;
+                kickLegs[1] = Mek.LOC_LEFT_LEG;
                 mule = 1; // To-hit modifier
             } else {
-                kickLegs[0] = Mek.LOC_RARM;
-                kickLegs[1] = Mek.LOC_LARM;
+                kickLegs[0] = Mek.LOC_RIGHT_ARM;
+                kickLegs[1] = Mek.LOC_LEFT_ARM;
             }
         } else {
-            kickLegs[0] = Mek.LOC_RLEG;
-            kickLegs[1] = Mek.LOC_LLEG;
+            kickLegs[0] = Mek.LOC_RIGHT_LEG;
+            kickLegs[1] = Mek.LOC_LEFT_LEG;
         }
-        final int legLoc = ((leg == KickAttackAction.RIGHTMULE) || (leg == KickAttackAction.RIGHT)) ? kickLegs[0]
-                : kickLegs[1];
+        final int legLoc = ((leg == KickAttackAction.RIGHT_MULE) || (leg == KickAttackAction.RIGHT)) ? kickLegs[0]
+              : kickLegs[1];
 
         ToHitData toHit;
 
         // arguments legal?
-        // By allowing mulekicks, this gets a little more complicated :(
+        // By allowing mule kicks, this gets a little more complicated :(
         if ((leg != KickAttackAction.RIGHT) && (leg != KickAttackAction.LEFT)
-                && (leg != KickAttackAction.RIGHTMULE)
-                && (leg != KickAttackAction.LEFTMULE)) {
+              && (leg != KickAttackAction.RIGHT_MULE)
+              && (leg != KickAttackAction.LEFT_MULE)) {
             throw new IllegalArgumentException(
-                    "Leg must be one of LEFT, RIGHT, LEFTMULE, or RIGHTMULE");
-        }
-
-        // non-meks can't kick
-        if (!(ae instanceof Mek)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-meks can't kick");
+                  "Leg must be one of LEFT, RIGHT, LEFT_MULE, or RIGHT_MULE");
         }
 
         // check if all legs are present & working
-        if (ae.isLocationBad(Mek.LOC_LLEG) || ae.isLocationBad(Mek.LOC_RLEG)
-                || (ae.entityIsQuad()
-                        && (ae.isLocationBad(Mek.LOC_LARM)
-                                || ae.isLocationBad(Mek.LOC_RARM)))) {
+        if (ae.isLocationBad(Mek.LOC_LEFT_LEG) || ae.isLocationBad(Mek.LOC_RIGHT_LEG)
+              || (ae.entityIsQuad()
+              && (ae.isLocationBad(Mek.LOC_LEFT_ARM)
+              || ae.isLocationBad(Mek.LOC_RIGHT_ARM)))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Leg missing");
         }
 
         // check if all hips are operational
-        if (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LLEG)
-                || !ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RLEG)
-                || (ae.entityIsQuad()
-                        && (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LARM)
-                                || !ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RARM)))) {
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_LEG)
+              || !ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_LEG)
+              || (ae.entityIsQuad()
+              && (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_ARM)
+              || !ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_ARM)))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Hip destroyed");
         }
         // check if attacker has fired leg-mounted weapons
         for (Mounted<?> mounted : ae.getWeaponList()) {
             if (mounted.isUsedThisRound() && (mounted.getLocation() == legLoc)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "Weapons fired from leg this turn");
+                      "Weapons fired from leg this turn");
             }
         }
 
@@ -206,23 +241,23 @@ public class KickAttackAction extends PhysicalAttackAction {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Target elevation not in range");
             }
         } else if ((attackerElevation < targetElevation)
-                || (attackerElevation > targetHeight)) {
+              || (attackerElevation > targetHeight)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target elevation not in range");
+                  "Target elevation not in range");
         }
 
         // check facing
         // Don't check arc for stomping infantry or tanks.
         if ((0 != range)
-                && (mule != 1)
-                && !Compute.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_FORWARD)) {
+              && (mule != 1)
+              && !ComputeArc.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_FORWARD)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 
         // check facing, part 2: Mule kick
         if ((0 != range)
-                && (mule == 1)
-                && !Compute.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_REAR)) {
+              && (mule == 1)
+              && !ComputeArc.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_REAR)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 
@@ -237,10 +272,10 @@ public class KickAttackAction extends PhysicalAttackAction {
 
         // Attacks against adjacent buildings automatically hit.
         if ((target.getTargetType() == Targetable.TYPE_BUILDING)
-                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
-                || (target instanceof GunEmplacement)) {
+              || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
+              || (target instanceof GunEmplacement)) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-                    "Targeting adjacent building.");
+                  "Targeting adjacent building.");
         }
 
         // Set the base BTH
@@ -259,7 +294,7 @@ public class KickAttackAction extends PhysicalAttackAction {
             toHit.addModifier(3, "Stomping Infantry");
         }
 
-        // Mulekick?
+        // Mule kick?
         if (mule != 0) {
             toHit.addModifier(mule, "Quad Mek making a mule kick");
         }
@@ -280,12 +315,16 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         // elevation
-        if (attackerElevation < targetHeight) {
-            toHit.setHitTable(ToHitData.HIT_KICK);
-        } else if (target.getHeight() > 0) {
+        if (isConvertedQuadVee(target, game)) {
             toHit.setHitTable(ToHitData.HIT_PUNCH);
         } else {
-            toHit.setHitTable(ToHitData.HIT_NORMAL);
+            if (attackerElevation < targetHeight) {
+                toHit.setHitTable(ToHitData.HIT_KICK);
+            } else if (target.getHeight() > 0) {
+                toHit.setHitTable(ToHitData.HIT_PUNCH);
+            } else {
+                toHit.setHitTable(ToHitData.HIT_NORMAL);
+            }
         }
 
         // What to do with grounded dropships? Awaiting rules clarification, but
@@ -301,7 +340,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         // factor in target side
-        toHit.setSideTable(Compute.targetSideTable(ae, target));
+        toHit.setSideTable(ComputeSideTable.sideTable(ae, target));
 
         // BMRr pg. 42, "The side on which a vehicle takes damage is determined
         // randomly if the BattleMek is attacking from the same hex."
@@ -322,23 +361,23 @@ public class KickAttackAction extends PhysicalAttackAction {
         switch (leg) {
             case KickAttackAction.BOTH:
                 rollLeft = KickAttackAction.toHit(game, this.getEntityId(),
-                        game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.LEFT)
-                        .getValueAsString();
+                            game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.LEFT)
+                      .getValueAsString();
                 rollRight = KickAttackAction.toHit(game, this.getEntityId(),
-                        game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.RIGHT)
-                        .getValueAsString();
+                            game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.RIGHT)
+                      .getValueAsString();
                 buffer = Messages.getString("BoardView1.kickBoth", rollLeft, rollRight);
                 break;
             case KickAttackAction.LEFT:
                 rollLeft = KickAttackAction.toHit(game, this.getEntityId(),
-                        game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.LEFT)
-                        .getValueAsString();
+                            game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.LEFT)
+                      .getValueAsString();
                 buffer = Messages.getString("BoardView1.kickLeft", rollLeft);
                 break;
             case KickAttackAction.RIGHT:
                 rollRight = KickAttackAction.toHit(game, this.getEntityId(),
-                        game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.RIGHT)
-                        .getValueAsString();
+                            game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.RIGHT)
+                      .getValueAsString();
                 buffer = Messages.getString("BoardView1.kickRight", rollRight);
                 break;
             default:

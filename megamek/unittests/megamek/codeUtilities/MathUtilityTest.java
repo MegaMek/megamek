@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2023-2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.codeUtilities;
 
@@ -106,4 +120,31 @@ class MathUtilityTest {
         assertEquals(5L, MathUtility.clamp(6L, 1L, 5L));
     }
     // endregion Clamp
+
+    @Test
+    void testStringToInt() {
+        assertEquals(1, MathUtility.parseInt("1", 0));
+        assertEquals(0, MathUtility.parseInt("A", 0));
+        assertEquals(0, MathUtility.parseInt(null, 0));
+        assertEquals(0, MathUtility.parseInt("", 0));
+    }
+
+    @Test
+    void testStringToFloat() {
+        assertEquals(1.0f, MathUtility.parseFloat("1", 0f));
+        assertEquals(0.5f, MathUtility.parseFloat("0.5", 0f));
+        assertEquals(0f, MathUtility.parseFloat("A", 0f));
+        assertEquals(0f, MathUtility.parseFloat(null, 0f));
+        assertEquals(0f, MathUtility.parseFloat("", 0f));
+    }
+
+    @Test
+    void testStringToDouble() {
+        assertEquals(1.0, MathUtility.parseDouble("1", 0.0));
+        assertEquals(0.5, MathUtility.parseDouble("0.5", 0.0));
+        assertEquals(0.0, MathUtility.parseDouble("A", 0.0));
+        assertEquals(0.0, MathUtility.parseDouble(null, 0.0));
+        assertEquals(0.0, MathUtility.parseDouble("", 0.0));
+    }
+
 }

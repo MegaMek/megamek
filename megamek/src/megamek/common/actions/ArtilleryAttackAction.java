@@ -1,56 +1,98 @@
 /*
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.actions;
 
-import megamek.common.*;
-import megamek.common.equipment.WeaponMounted;
-import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
-import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
-
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Vector;
 
+import megamek.common.RangeType;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
+import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
+import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
+
 /**
- * ArtilleryAttackAction Holds the data needed for an artillery attack in
- * flight.
+ * ArtilleryAttackAction Holds the data needed for an artillery attack in flight.
  */
 public class ArtilleryAttackAction extends WeaponAttackAction implements Serializable {
+    @Serial
     private static final long serialVersionUID = -3893844894076028005L;
-    private int turnsTilHit;
+    protected int turnsTilHit;
     private Vector<Integer> spotterIds = new Vector<>(); // IDs of possible spotters, won't know
     // until it lands.
     protected int playerId;
     private Coords firingCoords;
     private Coords oldTargetCoords;
 
-    public ArtilleryAttackAction(int entityId, int targetType, int targetId,
-                                 int weaponId, Game game) {
+    public ArtilleryAttackAction(int entityId, int targetType, int targetId, int weaponId, Game game) {
         super(entityId, targetType, targetId, weaponId);
-        this.playerId = game.getEntity(entityId).getOwnerId();
-        this.firingCoords = game.getEntity(entityId).getPosition();
-        int distance = Compute.effectiveDistance(game, getEntity(game), getTarget(game));
-        // adjust distance for gravity
-        distance = (int) Math.floor((double) distance / game.getPlanetaryConditions().getGravity());
+
+        Entity playerEntity = game.getEntity(entityId);
+
+        if (playerEntity != null) {
+            playerId = playerEntity.getOwnerId();
+            firingCoords = playerEntity.getPosition();
+        }
+
+        Targetable target = getTarget(game);
         EquipmentType eType = getEntity(game).getEquipment(weaponId).getType();
         WeaponType wType = (WeaponType) eType;
         WeaponMounted mounted = (WeaponMounted) getEntity(game).getEquipment(weaponId);
+        // Remove altitude from Artillery Flak and ADA distance calculations
+        if ((target != null) && target.isAirborne() && (mounted.getLinkedAmmo() != null)
+              && mounted.getLinkedAmmo().getType().countsAsFlak()) {
+            turnsTilHit = 0;
+            return;
+        }
+
+        int distance = Compute.effectiveDistance(game, getEntity(game), target);
+
         if (getEntity(game).usesWeaponBays() && wType.getAtClass() == WeaponType.CLASS_ARTILLERY) {
             for (WeaponMounted bayW : mounted.getBayWeapons()) {
+                // TO:AR p.149
                 WeaponType bayWType = bayW.getType();
                 if (bayWType.hasFlag(WeaponType.F_CRUISE_MISSILE)) {
-                    // See TO p181. Cruise missile flight time is (1 + (Mapsheets / 5, round down)
                     turnsTilHit = 1 + (distance / Board.DEFAULT_BOARD_HEIGHT / 5);
                     break;
                 } else if (getEntity(game).isAirborne() && !getEntity(game).isSpaceborne()) {
@@ -68,12 +110,13 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
         // Capital missiles fired at bearings-only ranges will act like artillery and use this aaa.
         // An aaa will only be returned if the weapon is set to the correct mode
         if (mounted.isInBearingsOnlyMode()
-                && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
-            this.launchVelocity = game.getOptions().intOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY);
+              && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
+            this.launchVelocity = game.getOptions()
+                  .intOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_BEARINGS_ONLY_VELOCITY);
             turnsTilHit = distance / launchVelocity;
             return;
         }
-        // Capital missiles fired surface to surface as artillery have a flight time of their capital hex range / 6
+        // Capital missiles fired surface-to-surface as artillery have a flight time of their capital hex range / 6
         if (wType instanceof CapitalMissileWeapon || wType instanceof CapitalMissileBayWeapon) {
             turnsTilHit = (distance / Board.DEFAULT_BOARD_HEIGHT);
             return;
@@ -87,7 +130,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
                 turnsTilHit = 2;
             }
         } else if (eType.hasFlag(WeaponType.F_CRUISE_MISSILE)) {
-            // See TO p181. Cruise missile flight time is (1 + (Mapsheets / 5, round down)
+            // See TO p181. Cruise missile flight time is (1 + (Map sheets / 5, round down)
             turnsTilHit = 1 + (distance / Board.DEFAULT_BOARD_HEIGHT / 5);
         } else {
             turnsTilHit = Compute.turnsTilHit(distance);
@@ -146,6 +189,6 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
     }
 
     public void decrementTurnsTilHit(int numTurns) {
-        this.turnsTilHit-=numTurns;
+        this.turnsTilHit -= numTurns;
     }
 }

@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2019-2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.preferences;
 
@@ -25,9 +39,8 @@ import java.util.Objects;
 import megamek.logging.MMLogger;
 
 /**
- * Represents a group of {@link PreferenceElement}s that are part of the same
- * Class.
- *
+ * Represents a group of {@link PreferenceElement}s that are part of the same Class.
+ * <p>
  * This class is not thread-safe.
  */
 public class PreferencesNode {
@@ -86,10 +99,8 @@ public class PreferencesNode {
     // endregion Getters/Setters
 
     /**
-     * Adds new elements to be managed by this node.
-     * If there are initial values set for this node, we will try to set an initial
-     * value
-     * for each element.
+     * Adds new elements to be managed by this node. If there are initial values set for this node, we will try to set
+     * an initial value for each element.
      *
      * @param elements the elements to manage.
      */
@@ -107,17 +118,17 @@ public class PreferencesNode {
                 try {
                     element.initialize(getInitialValues().get(element.getName()));
                 } catch (Exception ex) {
-                    logger.error(ex, "Failed initializing element " + element.getName());
+                    logger.error(ex, "Failed initializing element {}", element.getName());
                 }
             }
         }
     }
 
     /**
-     * Sets the initial values for elements managed for this node.
-     * This method should only be called once.
+     * Sets the initial values for elements managed for this node. This method should only be called once.
      *
      * @param initialValues the initial values for the elements.
+     *
      * @throws Exception if initialization has already occurred
      */
     public void initialize(final Map<String, String> initialValues) throws Exception {
@@ -132,6 +143,7 @@ public class PreferencesNode {
      * This method should only be called once.
      *
      * @return the final values of all the elements managed by this node.
+     *
      * @throws Exception if this method is called a second time
      */
     public Map<String, String> getFinalValues() throws Exception {

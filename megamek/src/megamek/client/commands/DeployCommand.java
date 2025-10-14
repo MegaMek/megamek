@@ -1,27 +1,42 @@
 /*
- * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2018-2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
-*/
-
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
 package megamek.client.commands;
 
-import megamek.client.ui.swing.ClientGUI;
-import megamek.common.Coords;
+import java.util.Vector;
+
+import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.common.board.Coords;
 
 /**
  * @author dirk
@@ -30,9 +45,9 @@ public class DeployCommand extends ClientCommand {
 
     public DeployCommand(ClientGUI clientGUI) {
         super(
-                clientGUI,
-                "deploy",
-                "This command deploys a given unit to the specified hex. Usage: '#deploy unit x y facing' where unit is the unit id number and x and y are the coordinates of the hex, and facing is the direction it's looking in. #deploy without any options will provide legal deployment zones.");
+              clientGUI,
+              "deploy",
+              "This command deploys a given unit to the specified hex. Usage: '#deploy unit x y facing' where unit is the unit id number and x and y are the coordinates of the hex, and facing is the direction it's looking in. #deploy without any options will provide legal deployment zones.");
     }
 
     /*
@@ -44,17 +59,16 @@ public class DeployCommand extends ClientCommand {
     @Override
     public String run(String[] args) {
         if (args.length == 1) {
-            getClient().getBoard();
             return "The legal deployment zone is: " + legalDeploymentZone();
         } else if (args.length == 5) {
             int id = Integer.parseInt(args[1]);
             Coords coord = new Coords(Integer.parseInt(args[2]) - 1, Integer
-                    .parseInt(args[3]) - 1);
+                  .parseInt(args[3]) - 1);
             int nFacing = getDirection(args[4]);
 
-            getClient().deploy(id, coord, nFacing, 0);
+            getClient().deploy(id, coord, 0, nFacing, 0, new Vector<>(), false);
             return "Unit " + id + " deployed to " + coord.toFriendlyString()
-                    + ". (this is assuming it worked. No error checking done.)";
+                  + ". (this is assuming it worked. No error checking done.)";
         }
 
         return "Wrong number of arguments supplied. No deployment done.";
@@ -78,37 +92,36 @@ public class DeployCommand extends ClientCommand {
             minVertical = height / 5;
             maxVertical -= height / 5;
         }
-        switch (nDir) {
-            case 0: // Any
-                return deep + "Deploy nearly anywhere. MinX: " + (minHorizontal + 1)
+        return switch (nDir) {
+            case 0 -> // Any
+                  deep + "Deploy nearly anywhere. MinX: " + (minHorizontal + 1)
                         + " MinY: " + (minVertical + 1) + " MaxX: " + (maxHorizontal + 1)
                         + " MaxY: " + (maxVertical + 1);
-            case 1: // NW
-                return deep + "Deploy NW.";
-            case 2: // N
-                return deep + "Deploy N.";
-            case 3: // NE
-                return deep + "Deploy NE.";
-            case 4: // E
-                return deep + "Deploy E.";
-            case 5: // SE
-                return deep + "Deploy SE.";
-            case 6: // S
-                return deep + "Deploy S.";
-            case 7: // SW
-                return deep + "Deploy SW.";
-            case 8: // W
-                return deep + "Deploy W.";
-            case 9: // Edge
-                return deep + "Deploy at any edge.";
-            case 10: // Centre
-                return deep + "Deploy in the center. MinX: "
+            case 1 -> // NW
+                  deep + "Deploy NW.";
+            case 2 -> // N
+                  deep + "Deploy N.";
+            case 3 -> // NE
+                  deep + "Deploy NE.";
+            case 4 -> // E
+                  deep + "Deploy E.";
+            case 5 -> // SE
+                  deep + "Deploy SE.";
+            case 6 -> // S
+                  deep + "Deploy S.";
+            case 7 -> // SW
+                  deep + "Deploy SW.";
+            case 8 -> // W
+                  deep + "Deploy W.";
+            case 9 -> // Edge
+                  deep + "Deploy at any edge.";
+            case 10 -> // Centre
+                  deep + "Deploy in the center. MinX: "
                         + (Math.max(minHorizontal, width / 3) + 1) + " MinY: "
                         + (Math.max(minVertical, height / 3) + 1) + " MaxX: "
                         + (Math.min(maxHorizontal, 2 * width / 3) + 1) + " MaxY: "
                         + (Math.min(maxVertical, 2 * height / 3) + 1);
-            default:
-                return "Something went wrong, unknown deployment schema.";
-        }
+            default -> "Something went wrong, unknown deployment schema.";
+        };
     }
 }

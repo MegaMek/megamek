@@ -1,27 +1,62 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.loaders;
 
-import megamek.common.*;
+import megamek.common.TechConstants;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.DockingCollar;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.IArmorState;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Jumpship;
 import megamek.common.util.BuildingBlock;
+import megamek.logging.MMLogger;
 
 /**
  * @author taharqa
  * @since April 6, 2002, 2:06 AM
  */
 public class BLKJumpshipFile extends BLKFile implements IMekLoader {
+    private final static MMLogger LOGGER = MMLogger.create(BLKJumpshipFile.class);
 
     public BLKJumpshipFile(BuildingBlock bb) {
         dataFile = bb;
@@ -30,134 +65,137 @@ public class BLKJumpshipFile extends BLKFile implements IMekLoader {
     @Override
     public Entity getEntity() throws EntityLoadingException {
 
-        Jumpship a = new Jumpship();
-        setBasicEntityData(a);
+        Jumpship jumpship = new Jumpship();
+        setBasicEntityData(jumpship);
 
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find weight block.");
         }
-        a.setWeight(dataFile.getDataAsDouble("tonnage")[0]);
+        jumpship.setWeight(dataFile.getDataAsDouble("tonnage")[0]);
 
         if (dataFile.exists("originalBuildYear")) {
-            a.setOriginalBuildYear(dataFile.getDataAsInt("originalBuildYear")[0]);
+            jumpship.setOriginalBuildYear(dataFile.getDataAsInt("originalBuildYear")[0]);
         }
 
         // Crew
         if (!dataFile.exists("crew")) {
             throw new EntityLoadingException("Could not find crew block.");
         }
-        a.setNCrew(dataFile.getDataAsInt("crew")[0]);
+        jumpship.setNCrew(dataFile.getDataAsInt("crew")[0]);
 
         // Marines
         if (!dataFile.exists("marines")) {
+            LOGGER.error("Could not find marines block.");
             // throw new EntityLoadingException("Could not find marines block.");
         }
-        a.setNMarines(dataFile.getDataAsInt("marines")[0]);
+        jumpship.setNMarines(dataFile.getDataAsInt("marines")[0]);
 
         // Battle Armor
         if (!dataFile.exists("battlearmor")) {
+            LOGGER.error("Could not find battlearmor block.");
             // throw new EntityLoadingException("Could not find battlearmor block.");
         }
-        a.setNBattleArmor(dataFile.getDataAsInt("battlearmor")[0]);
+        jumpship.setNBattleArmor(dataFile.getDataAsInt("battlearmor")[0]);
 
         // Passengers
         if (!dataFile.exists("passengers")) {
             throw new EntityLoadingException("Could not find passenger block.");
         }
-        a.setNPassenger(dataFile.getDataAsInt("passengers")[0]);
+        jumpship.setNPassenger(dataFile.getDataAsInt("passengers")[0]);
 
         if (dataFile.exists("officers")) {
-            a.setNOfficers(dataFile.getDataAsInt("officers")[0]);
+            jumpship.setNOfficers(dataFile.getDataAsInt("officers")[0]);
         }
 
         if (dataFile.exists("gunners")) {
-            a.setNGunners(dataFile.getDataAsInt("gunners")[0]);
+            jumpship.setNGunners(dataFile.getDataAsInt("gunners")[0]);
         }
 
         // Other Passengers
         if (!dataFile.exists("other_crew")) {
             // throw new EntityLoadingException("Could not find other_crew block.");
         }
-        a.setNOtherCrew(dataFile.getDataAsInt("other_crew")[0]);
+
+        jumpship.setNOtherCrew(dataFile.getDataAsInt("other_crew")[0]);
 
         if (!dataFile.exists("life_boat")) {
             throw new EntityLoadingException("Could not find life boat block.");
         }
-        a.setLifeBoats(dataFile.getDataAsInt("life_boat")[0]);
+        jumpship.setLifeBoats(dataFile.getDataAsInt("life_boat")[0]);
 
         if (!dataFile.exists("escape_pod")) {
             throw new EntityLoadingException("Could not find escape pod block.");
         }
-        a.setEscapePods(dataFile.getDataAsInt("escape_pod")[0]);
+        jumpship.setEscapePods(dataFile.getDataAsInt("escape_pod")[0]);
 
-        // get a movement mode - lets try Aerodyne
+        // get jumpship movement mode - lets try Aerodyne
         EntityMovementMode nMotion = EntityMovementMode.AERODYNE;
-        a.setMovementMode(nMotion);
+        jumpship.setMovementMode(nMotion);
 
         // figure out structural integrity
         if (!dataFile.exists("structural_integrity")) {
-            throw new EntityLoadingException("Could not find structual integrity block.");
+            throw new EntityLoadingException("Could not find structural integrity block.");
         }
-        a.set0SI(dataFile.getDataAsInt("structural_integrity")[0]);
+        jumpship.setOSI(dataFile.getDataAsInt("structural_integrity")[0]);
 
         // figure out heat
         if (!dataFile.exists("heatsinks")) {
-            throw new EntityLoadingException("Could not find heatsinks block.");
+            throw new EntityLoadingException("Could not find heats inks block.");
         }
-        a.setHeatSinks(dataFile.getDataAsInt("heatsinks")[0]);
-        a.setOHeatSinks(dataFile.getDataAsInt("heatsinks")[0]);
+        jumpship.setHeatSinks(dataFile.getDataAsInt("heatsinks")[0]);
+        jumpship.setOHeatSinks(dataFile.getDataAsInt("heatsinks")[0]);
         if (!dataFile.exists("sink_type")) {
             throw new EntityLoadingException("Could not find sink_type block.");
         }
-        a.setHeatType(dataFile.getDataAsInt("sink_type")[0]);
+        jumpship.setHeatType(dataFile.getDataAsInt("sink_type")[0]);
 
         // figure out fuel
         if (!dataFile.exists("fuel")) {
             throw new EntityLoadingException("Could not find fuel block.");
         }
-        a.setFuel(dataFile.getDataAsInt("fuel")[0]);
+        jumpship.setFuel(dataFile.getDataAsInt("fuel")[0]);
 
-        a.setOriginalWalkMP(0);
+        jumpship.setOriginalWalkMP(0);
 
-        a.setEngine(new Engine(400, 0, 0));
+        jumpship.setEngine(new Engine(400, 0, 0));
 
         if (dataFile.exists("lithium-fusion")) {
-            a.setLF(true);
+            jumpship.setLF(true);
         }
 
         if (dataFile.exists("hpg")) {
-            a.setHPG(true);
+            jumpship.setHPG(true);
         }
 
         if (dataFile.exists("sail")) {
-            a.setSail(dataFile.getDataAsInt("sail")[0] != 0);
+            jumpship.setSail(dataFile.getDataAsInt("sail")[0] != 0);
         }
 
         // Grav Decks - two approaches
-        // First, the old method, where a number of grav decks for each category is
+        // First, the old method, where jumpship number of grav decks for each category is
         // specified
         // This doesn't allow us to specify precise size
         if (dataFile.exists("grav_deck")) {
-            a.setGravDeck(dataFile.getDataAsInt("grav_deck")[0]);
+            jumpship.setGravDeck(dataFile.getDataAsInt("grav_deck")[0]);
         }
         if (dataFile.exists("grav_deck_large")) {
-            a.setGravDeckLarge(dataFile.getDataAsInt("grav_deck_large")[0]);
+            jumpship.setGravDeckLarge(dataFile.getDataAsInt("grav_deck_large")[0]);
         }
         if (dataFile.exists("grav_deck_huge")) {
-            a.setGravDeckHuge(dataFile.getDataAsInt("grav_deck_huge")[0]);
+            jumpship.setGravDeckHuge(dataFile.getDataAsInt("grav_deck_huge")[0]);
         }
-        // Second, the new method, where a white space separated list of numbers is
+        // Second, the new method, where jumpship white space separated list of numbers is
         // given
-        // Each number represents a distinct grav deck, with the specified size
+        // Each number represents jumpship distinct grav deck, with the specified size
         if (dataFile.exists("grav_decks")) {
-            String[] toks = dataFile.getDataAsString("grav_decks");
-            for (String t : toks) {
-                a.addGravDeck(Integer.parseInt(t));
+            String[] tokens = dataFile.getDataAsString("grav_decks");
+            for (String token : tokens) {
+                jumpship.addGravDeck(Integer.parseInt(token));
             }
         }
-        // Add a damage tracker value for each grav deck
-        for (int i = 0; i < a.getTotalGravDeck(); i++) {
-            a.initializeGravDeckDamage(i);
+        // Add jumpship damage tracker value for each grav deck
+        for (int i = 0; i < jumpship.getTotalGravDeck(); i++) {
+            jumpship.initializeGravDeckDamage(i);
         }
 
         // Switch older files with standard armor to aerospace
@@ -168,20 +206,18 @@ public class BLKJumpshipFile extends BLKFile implements IMekLoader {
                 at = EquipmentType.T_ARMOR_AEROSPACE;
             }
         }
-        a.setArmorType(at);
-        if (dataFile.exists("armor_tech")) {
-            a.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
-        }
+        jumpship.setArmorType(at);
+        setArmorTechLevelFromDataFile(jumpship);
         if (dataFile.exists("internal_type")) {
-            a.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
+            jumpship.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
         } else {
-            a.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
+            jumpship.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
         }
 
         if (dataFile.exists("designtype")) {
-            a.setDesignType(dataFile.getDataAsInt("designtype")[0]);
+            jumpship.setDesignType(dataFile.getDataAsInt("designtype")[0]);
         } else {
-            a.setDesignType(Aero.CIVILIAN);
+            jumpship.setDesignType(Aero.CIVILIAN);
         }
 
         if (!dataFile.exists("armor")) {
@@ -195,35 +231,35 @@ public class BLKJumpshipFile extends BLKFile implements IMekLoader {
         }
 
         for (int i = 0; i < armor.length; i++) {
-            a.initializeArmor(armor[i], i);
+            jumpship.initializeArmor(armor[i], i);
         }
-        a.initializeArmor(IArmorState.ARMOR_NA, Jumpship.LOC_HULL);
+        jumpship.initializeArmor(IArmorState.ARMOR_NA, Jumpship.LOC_HULL);
 
-        a.autoSetInternal();
-        a.autoSetThresh();
-        a.initializeKFIntegrity();
-        a.initializeSailIntegrity();
-        a.recalculateTechAdvancement();
+        jumpship.autoSetInternal();
+        jumpship.autoSetThresh();
+        jumpship.initializeKFIntegrity();
+        jumpship.initializeSailIntegrity();
+        jumpship.recalculateTechAdvancement();
 
-        for (int loc = 0; loc < a.locations(); loc++) {
-            loadEquipment(a, a.getLocationName(loc), loc);
+        for (int loc = 0; loc < jumpship.locations(); loc++) {
+            loadEquipment(jumpship, jumpship.getLocationName(loc), loc);
         }
 
         // legacy
-        loadEquipment(a, "Front Right Side", Jumpship.LOC_FRS);
-        loadEquipment(a, "Front Left Side", Jumpship.LOC_FLS);
+        loadEquipment(jumpship, "Front Right Side", Jumpship.LOC_FRS);
+        loadEquipment(jumpship, "Front Left Side", Jumpship.LOC_FLS);
 
-        addTransports(a);
+        addTransports(jumpship);
 
         // get docking collars (legacy BLK files)
         int docks = dataFile.getDataAsInt("docking_collar")[0];
         while (docks > 0) {
-            a.addTransporter(new DockingCollar(a.getTransports().size() + 1));
+            jumpship.addTransporter(new DockingCollar(jumpship.getTransports().size() + 1));
             docks--;
         }
-        a.setArmorTonnage(a.getArmorWeight());
-        loadQuirks(a);
-        return a;
+        jumpship.setArmorTonnage(jumpship.getArmorWeight());
+        loadQuirks(jumpship);
+        return jumpship;
     }
 
     protected void loadEquipment(Jumpship a, String sName, int nLoc) throws EntityLoadingException {
@@ -240,7 +276,6 @@ public class BLKJumpshipFile extends BLKFile implements IMekLoader {
             prefix = "IS ";
         }
 
-        boolean rearMount;
         int nAmmo;
         // set up a new weapons bay mount
         WeaponMounted bayMount = null;
@@ -249,7 +284,6 @@ public class BLKJumpshipFile extends BLKFile implements IMekLoader {
         double bayDamage = 0;
         if (saEquip[0] != null) {
             for (String element : saEquip) {
-                rearMount = false;
                 nAmmo = 1;
                 newBay = false;
                 String equipName = element.trim();
@@ -285,12 +319,12 @@ public class BLKJumpshipFile extends BLKFile implements IMekLoader {
 
                 if (etype != null) {
                     // first load the equipment
-                    Mounted<?> newmount;
+                    Mounted<?> newMount;
                     try {
                         if (nAmmo == 1) {
-                            newmount = a.addEquipment(etype, nLoc, rearMount);
+                            newMount = a.addEquipment(etype, nLoc, false);
                         } else {
-                            newmount = a.addEquipment(etype, nLoc, rearMount, nAmmo);
+                            newMount = a.addEquipment(etype, nLoc, false, nAmmo);
                         }
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
@@ -298,47 +332,50 @@ public class BLKJumpshipFile extends BLKFile implements IMekLoader {
 
                     // this is where weapon bays go
                     // first, lets see if it is a weapon
-                    if (newmount.getType() instanceof WeaponType) {
+                    if (newMount.getType() instanceof WeaponType weaponType) {
                         // if so then I need to find out if it is the same class
                         // as the current weapon bay
                         // If the current bay is null, then it needs to be
                         // initialized
-                        WeaponType weap = (WeaponType) newmount.getType();
                         if (bayMount == null) {
                             try {
-                                bayMount = (WeaponMounted) a.addEquipment(weap.getBayType(), nLoc, rearMount);
+                                bayMount = (WeaponMounted) a.addEquipment(weaponType.getBayType(), nLoc, false);
                                 newBay = false;
                             } catch (LocationFullException ex) {
                                 throw new EntityLoadingException(ex.getMessage());
                             }
                         }
 
-                        double damage = weap.getShortAV();
-                        if (weap.isCapital()) {
+                        double damage = weaponType.getShortAV();
+                        if (weaponType.isCapital()) {
                             damage *= 10;
                         }
-                        if (!newBay && ((bayDamage + damage) <= 700) && (bayMount.isRearMounted() == rearMount)
-                                && (weap.getAtClass() == ((WeaponType) bayMount.getType()).getAtClass())
-                                && !(((WeaponType) bayMount.getType()).isSubCapital() && !weap.isSubCapital())) {
+                        if (!newBay
+                              && bayDamage + damage <= 700
+                              && !bayMount.isRearMounted()
+                              && weaponType.getAtClass() == bayMount.getType().getAtClass()
+                              && !(bayMount.getType().isSubCapital() && !weaponType.isSubCapital())) {
                             // then we should add this weapon to the current bay
-                            bayMount.addWeaponToBay(a.getEquipmentNum(newmount));
+                            bayMount.addWeaponToBay(a.getEquipmentNum(newMount));
                             bayDamage += damage;
                         } else {
                             try {
-                                bayMount = (WeaponMounted) a.addEquipment(weap.getBayType(), nLoc, rearMount);
+                                bayMount = (WeaponMounted) a.addEquipment(weaponType.getBayType(), nLoc, false);
                             } catch (LocationFullException ex) {
                                 throw new EntityLoadingException(ex.getMessage());
                             }
-                            bayMount.addWeaponToBay(a.getEquipmentNum(newmount));
+                            bayMount.addWeaponToBay(a.getEquipmentNum(newMount));
                             // reset bay damage
                             bayDamage = damage;
                         }
                     }
                     if (etype.isVariableSize()) {
-                        newmount.setSize(size);
-                    } else if (newmount.getType() instanceof AmmoType) {
+                        newMount.setSize(size);
+                    } else if (newMount.getType() instanceof AmmoType) {
                         // ammo should also get loaded into the bay
-                        bayMount.addAmmoToBay(a.getEquipmentNum(newmount));
+                        if (bayMount != null) {
+                            bayMount.addAmmoToBay(a.getEquipmentNum(newMount));
+                        }
                     }
                 } else if (!equipName.isBlank()) {
                     a.addFailedEquipment(equipName);

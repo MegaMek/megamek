@@ -1,6 +1,409 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.50.04-SNAPSHOT
+0.50.08
+
+0.50.07 (2025-10- 2130 UTC)
+* fix: adds padding in between maps if they are of odd width size, making it possible to tile those. Small performance improvements. by @Scoppio in https://github.com/MegaMek/megamek/pull/6971
+* Updated Gradle to 8.14. by @rjhancock in https://github.com/MegaMek/megamek/pull/7007
+* Quad vee fix by @DM0000 in https://github.com/MegaMek/megamek/pull/7097
+* Feature: Added Tracking of Heroic and Legendary Skill Levels by @IllianiBird in https://github.com/MegaMek/megamek/pull/6996
+* Fix Gradle warning due to a deprecation by @rjhancock in https://github.com/MegaMek/megamek/pull/7100
+* Now saved mechs wont default to autoEject by @DM0000 in https://github.com/MegaMek/megamek/pull/7099
+* refactor: moves to a specialized factory the process of compiling movestep by @Scoppio in https://github.com/MegaMek/megamek/pull/7084
+* Feat: Ground Combat Implementation of Booby Trap by @Scoppio in https://github.com/MegaMek/megamek/pull/7072
+* feat: adds CONVOY behavior setting preset and flag to ignore damage output on pathing by @Scoppio in https://github.com/MegaMek/megamek/pull/6944
+* Fix: Updated Last Milestone Constant to Reflect 50.06's Milestone Status by @IllianiBird in https://github.com/MegaMek/megamek/pull/7101
+* Fix: fixed a couple more problems with jumping in and out of buildings with BA/Infantry and Nags for jumping into buildings by @Scoppio in https://github.com/MegaMek/megamek/pull/7057
+* Fix: BA SRM and LRM ammo fixes and stop Clan and IS from sharing ammo unless option is enabled. by @Scoppio in https://github.com/MegaMek/megamek/pull/7094
+* board editor - trace overlay by @kuronekochomusuke in https://github.com/MegaMek/megamek/pull/6935
+* Feat: add new tags to board tagger by @kuronekochomusuke in https://github.com/MegaMek/megamek/pull/7113
+* Deprecation Removal from 0.50.05 and before, and legacy code. by @rjhancock in https://github.com/MegaMek/megamek/pull/7115
+* tip of the day by @exeea in https://github.com/MegaMek/megamek/pull/6841
+* ENUMs by @exeea in https://github.com/MegaMek/megamek/pull/7086
+* Fix: Ensured all properties files are UTF-8. by @rjhancock in https://github.com/MegaMek/megamek/pull/7117
+* quick tips: corner positioning and background by @exeea in https://github.com/MegaMek/megamek/pull/7118
+* PR: Added Keybinds to some Game Commands by @GamesByFelix in https://github.com/MegaMek/megamek/pull/7116
+* Fix advanced armors handling PSRs, Piloting Rolls, damage reduction incorrectly by @Sleet01 in https://github.com/MegaMek/megamek/pull/7108
+* Fix: Deployment Phase keyboard shortcuts didn't work. by @GamesByFelix in https://github.com/MegaMek/megamek/pull/7119
+* custom rendering panel + splash composition by @exeea in https://github.com/MegaMek/megamek/pull/7121
+* check actuator before add damage to shield + fixed shields rules ref by @exeea in https://github.com/MegaMek/megamek/pull/7122
+* Improvement: Added UI Gray Utility Method by @IllianiBird in https://github.com/MegaMek/megamek/pull/7124
+* Fix: CodeQL Useless comparison test. by @rjhancock in https://github.com/MegaMek/megamek/pull/7125
+* Fix: Mech to mek by @rjhancock in https://github.com/MegaMek/megamek/pull/7127
+* Refactor: move megamek only dialogs into swing/dialog/ by @kuronekochomusuke in https://github.com/MegaMek/megamek/pull/7128
+* fix: issue #7123, now show possible moves and show best modifiers don't count illegal moves by @Scoppio in https://github.com/MegaMek/megamek/pull/7130
+* Refactor: move megamek only panels into swing/panels/ by @kuronekochomusuke in https://github.com/MegaMek/megamek/pull/7132
+* Chore: check-style looks for uncompliant words by @Scoppio in https://github.com/MegaMek/megamek/pull/7131
+* Feat: Automatic BLURB generation for ACAR report by @Scoppio in https://github.com/MegaMek/megamek/pull/7010
+* Fix: regex for words of interest by @Scoppio in https://github.com/MegaMek/megamek/pull/7133
+* fix: makes aerodyne stop thinking it will overlap itself while taxing after deployment by @Scoppio in https://github.com/MegaMek/megamek/pull/7135
+* Legal: License update by @rjhancock in https://github.com/MegaMek/megamek/pull/7137
+* splash screen ultrawide monitor support by @exeea in https://github.com/MegaMek/megamek/pull/7139
+* Refactor: group classes together in ui/dialog by @kuronekochomusuke in https://github.com/MegaMek/megamek/pull/7138
+* Multiple maps by @SJuliez in https://github.com/MegaMek/megamek/pull/7136
+* Refactor: split dialog and panel for minimap and botcommands by @kuronekochomusuke in https://github.com/MegaMek/megamek/pull/7143
+* Refactor: rename MiniReportDisplayPanel and UnitDisplayPanel by @kuronekochomusuke in https://github.com/MegaMek/megamek/pull/7144
+* Restore previous i18n functionality by @SJuliez in https://github.com/MegaMek/megamek/pull/7145
+* added html support for tips by @exeea in https://github.com/MegaMek/megamek/pull/7141
+* Feat: Favorite Bot Behavior Setting by @Scoppio in https://github.com/MegaMek/megamek/pull/7140
+* Feat: Allows it to provide multiple names to a client setting allowing seamless migration by @Scoppio in https://github.com/MegaMek/megamek/pull/7147
+* FIX: Documentation by @rjhancock in https://github.com/MegaMek/megamek/pull/7146
+* fixed shared stylesheet by @exeea in https://github.com/MegaMek/megamek/pull/7148
+* VerticalGridLayout by @exeea in https://github.com/MegaMek/megamek/pull/7149
+* unshared HTMLEditorKit stylesheets by @exeea in https://github.com/MegaMek/megamek/pull/7150
+* optimizations for RawImagePanel by @exeea in https://github.com/MegaMek/megamek/pull/7151
+* Add GT and GTE comparisons to SkillLevel (Required for MHQ RFE 7116) by @Sleet01 in https://github.com/MegaMek/megamek/pull/7153
+* Yaml export by @exeea in https://github.com/MegaMek/megamek/pull/7152
+* ManagedVolatileImage for splash screens by @exeea in https://github.com/MegaMek/megamek/pull/7154
+* Fix: Battle Armor unit does not die with all members dead by @Sleet01 in https://github.com/MegaMek/megamek/pull/7169
+* Fix clientgui boardview calls by @SJuliez in https://github.com/MegaMek/megamek/pull/7173
+* Fix: Turning left also moves forward by @GamesByFelix in https://github.com/MegaMek/megamek/pull/7174
+* fix: stop npe whe a board is missing to generate board for acar by @Scoppio in https://github.com/MegaMek/megamek/pull/7167
+* removed a deprecation and some javadoc fixes by @exeea in https://github.com/MegaMek/megamek/pull/7156
+* (Multimap) Key dispatcher adaptations, remove unit load failure dlg by @SJuliez in https://github.com/MegaMek/megamek/pull/7170
+* (Multimap) Princess by @SJuliez in https://github.com/MegaMek/megamek/pull/7171
+* PR: Added phase report keyword filtering, keyboard shortcuts for the drop-down box and arrow buttons. by @GamesByFelix in https://github.com/MegaMek/megamek/pull/7120
+* Fix: Rewording of Tech Rating Summary, tooltips and introdates by @Scoppio in https://github.com/MegaMek/megamek/pull/7164
+* feat: added mm.profile=dev so tests write the logs to console by @Scoppio in https://github.com/MegaMek/megamek/pull/7177
+* Fix Panther icons by @SJuliez in https://github.com/MegaMek/megamek/pull/7180
+* Fix Atlas icons by @SJuliez in https://github.com/MegaMek/megamek/pull/7181
+* (Multimap) Sensor ranges and Physical Attack adaptations by @SJuliez in https://github.com/MegaMek/megamek/pull/7178
+* Fix crits improperly transferring from/too destroyed sections by @Sleet01 in https://github.com/MegaMek/megamek/pull/7185
+* PR: Slightly new Default Report Colors for better Readbility by @GamesByFelix in https://github.com/MegaMek/megamek/pull/7187
+* fix: fix the error where tooltip would show on discord and text copy/paste by @Scoppio in https://github.com/MegaMek/megamek/pull/7184
+* feat: adds unified rolling logs by @Scoppio in https://github.com/MegaMek/megamek/pull/7198
+* chore: added some more logs for fig writter and gif writer thread by @Scoppio in https://github.com/MegaMek/megamek/pull/7197
+* fix: stop erroneously testing MiscType flag on non misc type things. by @Scoppio in https://github.com/MegaMek/megamek/pull/7196
+* Issue MegaMek/mekhq#7132: Include field kitchens etc. when calculating dropship/jumpship crew requirements by @psikomonkie in https://github.com/MegaMek/megamek/pull/7193
+* Structured Hazardous Liquids by @stonewall072 in https://github.com/MegaMek/megamek/pull/7201
+* PR: Improved the Phase Report layout by @GamesByFelix in https://github.com/MegaMek/megamek/pull/7189
+* Show unit type in the unit readout (MekView) by @SJuliez in https://github.com/MegaMek/megamek/pull/7202
+* Issue #7155 AS Card Fluff Images by @SJuliez in https://github.com/MegaMek/megamek/pull/7186
+* Feat: initial setup for CASPAR prototype by @Scoppio in https://github.com/MegaMek/megamek/pull/7176
+* Issue: Adv board search no tag by @kuronekochomusuke in https://github.com/MegaMek/megamek/pull/7209
+* Issue 7192: Prevent dig in for Mech. Inf.  by @SJuliez in https://github.com/MegaMek/megamek/pull/7208
+* Issue 7200: Fix loading generated map settings by @SJuliez in https://github.com/MegaMek/megamek/pull/7205
+* Fix: Updated EditorConfig File by @rjhancock in https://github.com/MegaMek/megamek/pull/7218
+* PR: Keyboard Zoom towards Mouse Cursor or View Center + Toggle between two Zoom Levels. by @GamesByFelix in https://github.com/MegaMek/megamek/pull/7204
+* Entity and overrides (refactor) by @SJuliez in https://github.com/MegaMek/megamek/pull/7211
+* Issue 7179: Fix NPE when cycling targets with no selected weapon by @SJuliez in https://github.com/MegaMek/megamek/pull/7212
+* AmmoTypeEnum and BombTypeEnum by @exeea in https://github.com/MegaMek/megamek/pull/7190
+* Fix: Issue with License Copy Command by @rjhancock in https://github.com/MegaMek/megamek/pull/7225
+* Issue: correct issues with the unittooltip not displaying correctly in the report by @kuronekochomusuke in https://github.com/MegaMek/megamek/pull/7222
+* GunEmplacement code adaptations for MML construction by @SJuliez in https://github.com/MegaMek/megamek/pull/7223
+* Issue #7083: Restrict C3 network effect based on map by @SJuliez in https://github.com/MegaMek/megamek/pull/7213
+* Issue 7220 - sub capital weapon BV errata by @SJuliez in https://github.com/MegaMek/megamek/pull/7229
+* PR: Added functionality to remove specific keybinds by pressing Esc by @GamesByFelix in https://github.com/MegaMek/megamek/pull/7224
+* Issue 7221 Fix lobby chatbox NPE by @SJuliez in https://github.com/MegaMek/megamek/pull/7228
+* Remove aero category from Unit selector by @SJuliez in https://github.com/MegaMek/megamek/pull/7230
+* Infantry Field Gun validity tests by @SJuliez in https://github.com/MegaMek/megamek/pull/7231
+* Issue 7157: make jungle convert to rough also when tf is exactly 0 by @SJuliez in https://github.com/MegaMek/megamek/pull/7232
+* fix: now the rolling logs are even better, with automatic compression… by @Scoppio in https://github.com/MegaMek/megamek/pull/7233
+* Fix: Adjusted to sync then copy the license files. by @rjhancock in https://github.com/MegaMek/megamek/pull/7236
+* RFE: Incorporate SJuliez - UnitAvailablity branch from 2+ years ago by @rjhancock in https://github.com/MegaMek/megamek/pull/7235
+* loading eras during initialization by @exeea in https://github.com/MegaMek/megamek/pull/7240
+* Restore cb2 init to `initialize()` function by @Sleet01 in https://github.com/MegaMek/megamek/pull/7239
+* Fix: Centering on unit was broken (#7237) by @GamesByFelix in https://github.com/MegaMek/megamek/pull/7238
+* PR: Client Setting to increase Pip size by @GamesByFelix in https://github.com/MegaMek/megamek/pull/7203
+* Issue #6380: Fix airmek icon lookup by @SJuliez in https://github.com/MegaMek/megamek/pull/7243
+* Faction Availability by @exeea in https://github.com/MegaMek/megamek/pull/7242
+* Fixes: Minor tweaks and updates to CI by @rjhancock in https://github.com/MegaMek/megamek/pull/7244
+* Mek Validation by @SJuliez in https://github.com/MegaMek/megamek/pull/7245
+* minor graphical fixes for Faction Availability by @exeea in https://github.com/MegaMek/megamek/pull/7249
+* Restrict CASE-P locations by @SJuliez in https://github.com/MegaMek/megamek/pull/7258
+* Improvement: Moved Copy of ScrollPaneWithSpeed to MegaMek for Ease of Access; Renamed to FastJScrollPane by @IllianiBird in https://github.com/MegaMek/megamek/pull/7255
+* SV validation updates by @SJuliez in https://github.com/MegaMek/megamek/pull/7252
+* Feature: Added PDFReaderPanel – Embedded Swing PDF Viewer by @IllianiBird in https://github.com/MegaMek/megamek/pull/7254
+* Fix Bind errors in Damage Manager tests: make server port selection more resilient with retry on BindException by @Sleet01 in https://github.com/MegaMek/megamek/pull/7250
+* Faction data as yml by @SJuliez in https://github.com/MegaMek/megamek/pull/7246
+* Faction data as yml (data) by @SJuliez in https://github.com/MegaMek/megamek/pull/7247
+* PR: Force Display Improvements by @GamesByFelix in https://github.com/MegaMek/megamek/pull/7253
+* Improvement: Added 'setTags' Method to New Faction Class by @IllianiBird in https://github.com/MegaMek/megamek/pull/7259
+* Factions fixes by @SJuliez in https://github.com/MegaMek/megamek/pull/7260
+* Editorconfig update for MM scenario files by @SJuliez in https://github.com/MegaMek/megamek/pull/7262
+* Fix: Fixed Camo Directory for Clan Sea Fox Camo by @IllianiBird in https://github.com/MegaMek/megamek/pull/7263
+* Improvement: Added Aggregate Faction Tag by @IllianiBird in https://github.com/MegaMek/megamek/pull/7265
+* Fix FactionRecord lookup (MM) by @SJuliez in https://github.com/MegaMek/megamek/pull/7264
+* Improvement: Added Rank System Code to Faction Data by @IllianiBird in https://github.com/MegaMek/megamek/pull/7266
+* Bombing from an atmospheric map by @SJuliez in https://github.com/MegaMek/megamek/pull/7270
+* correct BLORD faction data by @SJuliez in https://github.com/MegaMek/megamek/pull/7272
+* type name for HHW and proper internals for Infantry by @exeea in https://github.com/MegaMek/megamek/pull/7271
+* Fix cluster artillery munitions radius being too large and damage too high by @Sleet01 in https://github.com/MegaMek/megamek/pull/7268
+* Replace existing randomized server approach with systematic port finder by @Sleet01 in https://github.com/MegaMek/megamek/pull/7267
+* Refactor WeaponAttackAction into smaller classes by @SJuliez in https://github.com/MegaMek/megamek/pull/7273
+* Fix ASF SI damage being applied until dead by @Sleet01 in https://github.com/MegaMek/megamek/pull/7277
+* Improvement: Added The MG, MRB, MRBC, and MBA Factions for Use in Faction Standing by @IllianiBird in https://github.com/MegaMek/megamek/pull/7275
+* Improvement: Added Faction Leadership Tracking to Faction Overhaul by @IllianiBird in https://github.com/MegaMek/megamek/pull/7279
+* editorconfig: use absolute indent and left-align operators by @SJuliez in https://github.com/MegaMek/megamek/pull/7282
+* correct issue with using search light in heavy rain or snow flurries by @kuronekochomusuke in https://github.com/MegaMek/megamek/pull/7285
+* WAA refactor after move by @SJuliez in https://github.com/MegaMek/megamek/pull/7283
+* Fix: Fixed Start Year of the Mercenary's Guild by @IllianiBird in https://github.com/MegaMek/megamek/pull/7287
+* Added FWL RATs from FM:U by @Bronzite in https://github.com/MegaMek/megamek/pull/7291
+* CSV export now uses the full chassis name (clan name included) by @exeea in https://github.com/MegaMek/megamek/pull/7293
+* Force hull-mounted equipment to be forward-facing by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/7297
+* Improvement: Faction Leader Data Update by @IllianiBird in https://github.com/MegaMek/megamek/pull/7294
+* Enforce correct maximum number of CI squads by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/7298
+* Mml inf constuction update by @SJuliez in https://github.com/MegaMek/megamek/pull/7301
+* Make fluff image look up resistant to empty models by @SJuliez in https://github.com/MegaMek/megamek/pull/7303
+* Don't double-count beast damage divisor by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/7299
+* Fix ProtoMek bays for construction by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/7300
+* [Internal] Move RS fluff folder up to images/ by @SJuliez in https://github.com/MegaMek/megamek/pull/7304
+* Remove alwaysOnTop by @SJuliez in https://github.com/MegaMek/megamek/pull/7302
+* command mech, compact mech by @exeea in https://github.com/MegaMek/megamek/pull/7307
+* Issue MML#1895: Make sure every SC and DS has a placeholder engine by @SJuliez in https://github.com/MegaMek/megamek/pull/7305
+* unbreak build by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/7310
+* Correct BV values for some BA LRM launchers by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/7309
+* Add BA Modular Weapon Mount by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/7312
+* Fix #7315: Fixed Error When Removing Column in Availability Panel if Total Columns Equaled 1 by @IllianiBird in https://github.com/MegaMek/megamek/pull/7316
+* Deployment Zone painting in the Board Editor by @SJuliez in https://github.com/MegaMek/megamek/pull/7311
+* Issue #7313: Fix listeners by @SJuliez in https://github.com/MegaMek/megamek/pull/7318
+* Mekview updates for infantry by @SJuliez in https://github.com/MegaMek/megamek/pull/7314
+* Chatbox and key issues by @SJuliez in https://github.com/MegaMek/megamek/pull/7319
+* Improvement: Faction Data Update by @IllianiBird in https://github.com/MegaMek/megamek/pull/7327
+* Bump org.apache.commons:commons-lang3 from 3.17.0 to 3.18.0 in the gradle group across 1 directory by @dependabot[bot] in https://github.com/MegaMek/megamek/pull/7308
+* Improvements to unit selection: Coolant Pods and HHWs by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/7328
+* Improvement: Updated `parseDouble` Math Utility to Include Lazy Calling by @IllianiBird in https://github.com/MegaMek/megamek/pull/7330
+* Add toHitModifier data for physical weapons by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/7329
+* Improvement: Added Milestone Version Tracking by @IllianiBird in https://github.com/MegaMek/megamek/pull/7331
+* getter for the icon filename by @exeea in https://github.com/MegaMek/megamek/pull/7332
+* Fix: #7296 Fixed Weapon Panel Jumping to the Bottom Right During Firing Phase by @IllianiBird in https://github.com/MegaMek/megamek/pull/7336
+* Entity Readout aka MekView by @SJuliez in https://github.com/MegaMek/megamek/pull/7342
+* Fix: Fixed Clans Incorrectly Being Considered Honor:None by Default by @IllianiBird in https://github.com/MegaMek/megamek/pull/7340
+* PR: Data updates - early Clan Mek availability (all weight classes) 2807-2900 by @SuperStucco in https://github.com/MegaMek/megamek/pull/7344
+* Improvement: MHQ->MM Data Update by @IllianiBird in https://github.com/MegaMek/megamek/pull/7343
+* Data Removal. by @rjhancock in https://github.com/MegaMek/megamek/pull/7352
+* Updated Copyright Headers - MM Source by @rjhancock in https://github.com/MegaMek/megamek/pull/7353
+* Updated Actions for master -> main by @rjhancock in https://github.com/MegaMek/megamek/pull/7355
+* Gradle and Dependency Updates by @rjhancock in https://github.com/MegaMek/megamek/pull/7356
+* Integrate mm data with repos by @rjhancock in https://github.com/MegaMek/megamek/pull/7364
+* Fixes for Build. by @rjhancock in https://github.com/MegaMek/megamek/pull/7366
+* Class rename codeql copyrights Pass 1 by @rjhancock in https://github.com/MegaMek/megamek/pull/7369
+* Data Overhaul: Fixed Failing MegaMek Tests by @IllianiBird in https://github.com/MegaMek/megamek/pull/7368
+* Improvement: Changed 'Show damage to units on the unit label' to Default to On not Off by @IllianiBird in https://github.com/MegaMek/megamek/pull/7365
+* Class rename codeql copyrights by @rjhancock in https://github.com/MegaMek/megamek/pull/7373
+* Class rename codeql copyrights by @rjhancock in https://github.com/MegaMek/megamek/pull/7378
+* MM Root, Moved Events to Common Event by @rjhancock in https://github.com/MegaMek/megamek/pull/7387
+* [No hurry] Allow subs to deploy to the water surface by @SJuliez in https://github.com/MegaMek/megamek/pull/7383
+* [No hurry] Issue 7357: Prevent submerged units from firing arty other than CM by @SJuliez in https://github.com/MegaMek/megamek/pull/7385
+* class import fix by @SJuliez in https://github.com/MegaMek/megamek/pull/7388
+* MM Utils Updates by @rjhancock in https://github.com/MegaMek/megamek/pull/7389
+* Copyright and codeql updates by @rjhancock in https://github.com/MegaMek/megamek/pull/7390
+* Fix BV calculation and broken unit tests by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/7391
+* Possible fix for Action issues by @rjhancock in https://github.com/MegaMek/megamek/pull/7392
+* Updated Dependencies to remove security issue. by @rjhancock in https://github.com/MegaMek/megamek/pull/7393
+* Fix typo in names of settings by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/7402
+* Fix SCM effect for XXL engines by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/7403
+* Retrieve list of flags from an equipment by @exeea in https://github.com/MegaMek/megamek/pull/7394
+* A fix for a missing rename for messages. by @rjhancock in https://github.com/MegaMek/megamek/pull/7405
+* Add option for Playtest 1 rules by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/7404
+* Add shortname for Chameleon LPS by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/7406
+* Playtest errata by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/7407
+* Fixes game loading failures due to XStream / Records incompatibility by @Sleet01 in https://github.com/MegaMek/megamek/pull/7411
+* Fix 7398: Cannot change ownership of units in the lobby by @Sleet01 in https://github.com/MegaMek/megamek/pull/7414
+* Fix 7408: Force Generator tab only creates one unit by @Sleet01 in https://github.com/MegaMek/megamek/pull/7413
+* Fix 7397: cannot change teams in the lobby by @Sleet01 in https://github.com/MegaMek/megamek/pull/7415
+* Add unmarshal handler for TargetRollModifier by @Sleet01 in https://github.com/MegaMek/megamek/pull/7416
+* Remove incorrect final from class variables by @Sleet01 in https://github.com/MegaMek/megamek/pull/7418
+* Implement packet type check exceptions by @Sleet01 in https://github.com/MegaMek/megamek/pull/7420
+* Fix MML splash by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/7423
+* Prevent multiple clan CASE per location by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/7422
+* fixed tab reattachment event trigger on tab transfer by @exeea in https://github.com/MegaMek/megamek/pull/7424
+* Convert Forces list to HashSet when TWGameManager resends entity updates by @Sleet01 in https://github.com/MegaMek/megamek/pull/7425
+* Finalize cleanup of invalid packet data exceptions from MHQ testing by @Sleet01 in https://github.com/MegaMek/megamek/pull/7426
+* Prevent Trailer Hitch Damage Transfer by @SJuliez in https://github.com/MegaMek/megamek/pull/7431
+* TAG cannot into rotor by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/7433
+* Fix 7434: wrong data type for entity transfer packet by @Sleet01 in https://github.com/MegaMek/megamek/pull/7437
+* Fix: Fixed Failing Tests Following Data Overhaul (MegaMek Edition) by @IllianiBird in https://github.com/MegaMek/megamek/pull/7435
+* fix: direct equality checks for null are preferred over .equals() by @firefly2442 in https://github.com/MegaMek/megamek/pull/7430
+* Fix #7438: Corrected Missing Option Text by @IllianiBird in https://github.com/MegaMek/megamek/pull/7439
+* Fix #7441: Restrict player "list" to Vector by @Sleet01 in https://github.com/MegaMek/megamek/pull/7442
+* fix: NPE on kick (MM#7317) by @NickAragua in https://github.com/MegaMek/megamek/pull/7448
+* Bump gradle/actions from 4 to 5 by @dependabot[bot] in https://github.com/MegaMek/megamek/pull/7445
+* Public Playtest 2 Changes by @TenkawaBC in https://github.com/MegaMek/megamek/pull/7446
+* multithread fix by @exeea in https://github.com/MegaMek/megamek/pull/7447
+* Issue #7436, trailers immobile by @SJuliez in https://github.com/MegaMek/megamek/pull/7454
+* Fix #7427: Fixed Board Size Display in Lobby by @IllianiBird in https://github.com/MegaMek/megamek/pull/7458
+* Small Entity Readout Fixes by @SJuliez in https://github.com/MegaMek/megamek/pull/7461
+* Improvement: Bolstered Clan Forces by @IllianiBird in https://github.com/MegaMek/megamek/pull/7460
+* Sourcebooks Data by @SJuliez in https://github.com/MegaMek/megamek/pull/7455
+* Fix 7449: Replace entity ID with actual entity to avoid NPEs by @Sleet01 in https://github.com/MegaMek/megamek/pull/7466
+* Improvement: Added Date Utilities Class by @IllianiBird in https://github.com/MegaMek/megamek/pull/7459
+* Help content fix #6673 by @HoneySkull in https://github.com/MegaMek/megamek/pull/7469
+* Fix: Added Missing 's' to /logs in Build Directory Construction by @IllianiBird in https://github.com/MegaMek/megamek/pull/7468
+* Fix leg destruction psr when torso destroyed in playtest 2 by @TenkawaBC in https://github.com/MegaMek/megamek/pull/7462
+* Optimize leg location searches by @TenkawaBC in https://github.com/MegaMek/megamek/pull/7450
+* Bump github/codeql-action from 3 to 4 by @dependabot[bot] in https://github.com/MegaMek/megamek/pull/7472
+* Fix for 7465: Allow null movePath objects in entity updates by @Sleet01 in https://github.com/MegaMek/megamek/pull/7470
+* Fix 7409: starting location only updating once via apply button by @Sleet01 in https://github.com/MegaMek/megamek/pull/7471
+* Issue #7371 Trailers and movement by @SJuliez in https://github.com/MegaMek/megamek/pull/7473
+* Playtest 2 mobility - Single PSR roll for all hip/leg actuator destroyed in a limb in a single phase by @TenkawaBC in https://github.com/MegaMek/megamek/pull/7467
+* Feature: Implemented 'G-Tolerance' A Time of War SPA by @IllianiBird in https://github.com/MegaMek/megamek/pull/7440
+* Updated playtest2 - removed hip loss minimums by @TenkawaBC in https://github.com/MegaMek/megamek/pull/7463
+* Cleanup from review comments by @Sleet01 in https://github.com/MegaMek/megamek/pull/7474
+* Fix for mekSummaryCache sometimes storing user data info and causing failures by @Sleet01 in https://github.com/MegaMek/megamek/pull/7475
+* Re-submit of merged "pr-report-filter-combobox" from @GamesByFelix by @Sleet01 in https://github.com/MegaMek/megamek/pull/7477
+* Fixes for errors and freeze in #7479 by @Sleet01 in https://github.com/MegaMek/megamek/pull/7485
+* Clear/Delete Icon by @SJuliez in https://github.com/MegaMek/megamek/pull/7484
+* Mark armored interface cockpit as invalid by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/7482
+* MM side of fix for MML #2002: remove extraneous low-BAR weight values by @Sleet01 in https://github.com/MegaMek/megamek/pull/7478
+* MM Scenario language improvements by @SJuliez in https://github.com/MegaMek/megamek/pull/7486
+
+## New Contributors
+* @GamesByFelix made their first contribution in https://github.com/MegaMek/megamek/pull/7116
+
+**Full Changelog**: https://github.com/MegaMek/megamek/compare/v0.50.06...v0.50.07
+
+0.50.06 (2025-05-19 1830 UTC) (MILESTONE RELEASE) - DEV NOTE - Starting with this release the History file is built on release rather than on going.
+DEV NOTE - Starting with this release the History file is built on release rather than on going.
+* Move sprite, spriteHandler, overlay, and phaseDisplay classes into … by @kuronekochomusuke in https://github.com/MegaMek/megamek/pull/6901
+* Added Heroic and Legendary Skill Levels by @IllianiBird in https://github.com/MegaMek/megamek/pull/6864
+* Fix #6915: Fixed Status of Uncrewed Vehicles by @IllianiBird in https://github.com/MegaMek/megamek/pull/6916
+* Fix: fixes duplicated score key for score logging on basic path ranker by @Scoppio in https://github.com/MegaMek/megamek/pull/6931
+* Generalized pilot dialog and C3 linking class by @exeea in https://github.com/MegaMek/megamek/pull/6878
+* Restore Periphery general faction to Rifleman -3N model by @SuperStucco in https://github.com/MegaMek/megamek/pull/6938
+* Calculate heat for vibroblades by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/6937
+* Create CODEOWNERS by @rjhancock in https://github.com/MegaMek/megamek/pull/6940
+* Update CODEOWNERS by @rjhancock in https://github.com/MegaMek/megamek/pull/6941
+* Update CODEOWNERS by @rjhancock in https://github.com/MegaMek/megamek/pull/6942
+* Fix: Fixes the Damage Status box on Label no appearing correctly. by @rjhancock in https://github.com/MegaMek/megamek/pull/6946
+* Revert "Added Heroic and Legendary Skill Levels" by @IllianiBird in https://github.com/MegaMek/megamek/pull/6949
+* Fix: uses bot skill generator when creating armies by @Scoppio in https://github.com/MegaMek/megamek/pull/6945
+* fix for null clientGUI and memory leaks by @exeea in https://github.com/MegaMek/megamek/pull/6954
+* Use proper default fluff art for HHWs by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/6956
+* Dereference NPE Removals in MovementDisplay by @rjhancock in https://github.com/MegaMek/megamek/pull/6934
+* Update Orion ON1-Kb.mtf by @HammerGS in https://github.com/MegaMek/megamek/pull/6963
+* Fix 6955: fuel tanks take zero damage from AE by @Sleet01 in https://github.com/MegaMek/megamek/pull/6962
+* Fix 6957 ba artillery no damage to onboard targets by @Sleet01 in https://github.com/MegaMek/megamek/pull/6961
+* Fix: Added Missing Nullable Tag to getExtraDataValue by @IllianiBird in https://github.com/MegaMek/megamek/pull/6936
+* Fix: Fixed Quad-Vees Taking PSRs and Falling While in Vehicle Mode by @IllianiBird in https://github.com/MegaMek/megamek/pull/6953
+* Fix: Added Missing Machine Gun Burst Fire Toggle Label in Edit Unit Dialog by @IllianiBird in https://github.com/MegaMek/megamek/pull/6964
+* Validate that SV with no engine has no MP by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/6966
+* Add SI for Aerodynes to movement tooltip by @savanik in https://github.com/MegaMek/megamek/pull/6968
+* Fix: Add scroll on unit display dialog (tabbed view) by @Scoppio in https://github.com/MegaMek/megamek/pull/6958
+* Fix for LBX/IATM weapon damage and Cargo Bombs on Aero by @exeea in https://github.com/MegaMek/megamek/pull/6972
+* Fix: #6976 Prevent performance issues caused by the unit display's weapon panel from freezing the game by @psikomonkie in https://github.com/MegaMek/megamek/pull/6977
+* Fix for Unit Sale Costs being generally incorrect - Megamek part by @savanik in https://github.com/MegaMek/megamek/pull/6975
+* Fix: #6967 Battlemech Shields are non-functional by @psikomonkie in https://github.com/MegaMek/megamek/pull/6979
+* NPE fix on Aero BV Calculation by @exeea in https://github.com/MegaMek/megamek/pull/6982
+* Update BM/IM intro year to earliest construcatble date by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/6983
+* Add reintro date for insulators by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/6986
+* Fix: moves minefield marker to its appropriate hex (issue #1783) and … by @Scoppio in https://github.com/MegaMek/megamek/pull/6985
+* Fix: c3 at extreme ranges now responds with the correct range bracket… by @Scoppio in https://github.com/MegaMek/megamek/pull/6987
+* Fix: makes sure Mast Mount and its equipments aren't destroyed if the rotor takes 0 damage by @Scoppio in https://github.com/MegaMek/megamek/pull/6984
+* Fix: i18n support for sorters, reduced a bit the code duplication, prevents NPE if player is null by @Scoppio in https://github.com/MegaMek/megamek/pull/6973
+* Fix: add an info nag that informs the user about the danger of tiling odd width size maps by @Scoppio in https://github.com/MegaMek/megamek/pull/6969
+* Fix: MacOS and Linux users can now open the right-click popup contextual menu on force view by @Scoppio in https://github.com/MegaMek/megamek/pull/6978
+* Fix: stop meks making DFA into water from walking above water, add small quality of life for physical attack reports by @Scoppio in https://github.com/MegaMek/megamek/pull/6981
+* Fix: Mark hexes less than _or equal to_ max distance as visible under Double Blind and adverse conditions by @Sleet01 in https://github.com/MegaMek/megamek/pull/6988
+* Allow formatting run MP without the current game state by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/6993
+* fix NPE in report display when getSelectedItem is null by @kuronekochomusuke in https://github.com/MegaMek/megamek/pull/6992
+* Fix: fixed error with armor calculation which would not lower-cap the value at zero. by @Scoppio in https://github.com/MegaMek/megamek/pull/6991
+* Fix Artillery units not losing autohit mod after spending mp by @Sleet01 in https://github.com/MegaMek/megamek/pull/6994
+* Fix: makes BV Calculator be less prone for concurrent modification exceptions by @Scoppio in https://github.com/MegaMek/megamek/pull/6989
+* TRO fixes for Aero by @exeea in https://github.com/MegaMek/megamek/pull/6997
+* Added dispose() on some dialogs (fix memory leaks) by @exeea in https://github.com/MegaMek/megamek/pull/6959
+* Update CODEOWNERS by @rjhancock in https://github.com/MegaMek/megamek/pull/7004
+* Update CODEOWNERS by @rjhancock in https://github.com/MegaMek/megamek/pull/7005
+* [ACAR] Fix: formation convertion now checks if there are units forceless and handles it by @Scoppio in https://github.com/MegaMek/megamek/pull/7012
+* Undeprecate methods for HHW by @psikomonkie in https://github.com/MegaMek/megamek/pull/7009
+* [ACAR] Fix OutOfBounds exception when resolving ammo explosion by @Scoppio in https://github.com/MegaMek/megamek/pull/7011
+* chat retain focus, blinking cursor by @exeea in https://github.com/MegaMek/megamek/pull/6999
+* Fix: fixes the final facing facing modifier for princess, adds a few special case handlings and tests by @Scoppio in https://github.com/MegaMek/megamek/pull/7016
+* Enhancedtabs moved to common by @exeea in https://github.com/MegaMek/megamek/pull/6960
+* PR: Data updates - Early Mek availability (2398-2571) by @SuperStucco in https://github.com/MegaMek/megamek/pull/7022
+* Stack trace in logs for invalid types by @exeea in https://github.com/MegaMek/megamek/pull/7029
+* Chore: updated conditional request focus to take a boolean by @Scoppio in https://github.com/MegaMek/megamek/pull/7025
+* Fix: Restore firing solution displaying after a torso twist by @Scoppio in https://github.com/MegaMek/megamek/pull/7024
+* Fix: stops an NPE on PhysicalDisplay when it tries to set a value on entity dodging by @Scoppio in https://github.com/MegaMek/megamek/pull/7013
+* Fix: fixing messages for princess when responding requests by @Scoppio in https://github.com/MegaMek/megamek/pull/7017
+* Feat: expose Princess new external levers to allow players to spice things up by @Scoppio in https://github.com/MegaMek/megamek/pull/7019
+* Fix: #7020 Hide Sprites for Units that mount into bays by @psikomonkie in https://github.com/MegaMek/megamek/pull/7026
+* Feat: you can setup so princess herd only with her own units by @Scoppio in https://github.com/MegaMek/megamek/pull/7021
+* Fix: Log Rolls now properly logs the roll as public so it stops complaining that there is no subject by @Scoppio in https://github.com/MegaMek/megamek/pull/7028
+* Issue 7035: fix to-hit mod for strong gale by @kuronekochomusuke in https://github.com/MegaMek/megamek/pull/7036
+* Issue 7034: remove random null check that prevented fire spread by @kuronekochomusuke in https://github.com/MegaMek/megamek/pull/7037
+* fixed MiscType check by @exeea in https://github.com/MegaMek/megamek/pull/7033
+* Fix: fixes the BV cost and CBills cost for some missile munition types by @Scoppio in https://github.com/MegaMek/megamek/pull/7042
+* Fix: stops jumping hovers from reaching orbit by @Scoppio in https://github.com/MegaMek/megamek/pull/7031
+* Removed shortName from AmmoType by @exeea in https://github.com/MegaMek/megamek/pull/7043
+* Chore: Moved multiple docs to archive, improved a couple of help file and added template doc html by @Scoppio in https://github.com/MegaMek/megamek/pull/7047
+* Fix: Fixed Naming of MekTech Portrait Folders by @IllianiBird in https://github.com/MegaMek/megamek/pull/7045
+* Fix for save games containing attached Narc pods (of any kind) failing to load by @Sleet01 in https://github.com/MegaMek/megamek/pull/7049
+* PR: Data updates - Oktoberfest comes early (Lyran advanced infantry) by @SuperStucco in https://github.com/MegaMek/megamek/pull/7053
+* Fix: stops jumps from being made into buildings through roofs by @Scoppio in https://github.com/MegaMek/megamek/pull/7050
+* Fix: #7052 Prevent Princess from freezing if theres a stacking violation while trying to abandon a unit by @psikomonkie in https://github.com/MegaMek/megamek/pull/7056
+* Fix: prevent NPE when incorrectly attempting to assign Blowing Sand damage to Land-Air Meks in AirMek Mode by @Sleet01 in https://github.com/MegaMek/megamek/pull/7069
+* Fix for Command Init applying to entire team when Individual Init is also enabled by @Sleet01 in https://github.com/MegaMek/megamek/pull/7060
+* Adjusted build scripts for default JVM Args by @rjhancock in https://github.com/MegaMek/megamek/pull/7081
+* Fix: minimap and unit display and mini report dialog priority against other windows by @Scoppio in https://github.com/MegaMek/megamek/pull/7080
+* Fix: AmmoBin selection switching back to the first AmmoBin in the weapons display by @Scoppio in https://github.com/MegaMek/megamek/pull/7078
+* Fix: ammobin selector not staying in the selected ammo by @Scoppio in https://github.com/MegaMek/megamek/pull/7085
+* Fix: issues involving ASF flying off the ground map by @Sleet01 in https://github.com/MegaMek/megamek/pull/7087
+* Fix: accidental fall damage doing insufficient damage to victims under falling unit by @Sleet01 in https://github.com/MegaMek/megamek/pull/7088
+* Fix: issue 7090 NPE when attempting to unjam conventional vehicle weapon by @kuronekochomusuke in https://github.com/MegaMek/megamek/pull/7091
+* Fix: Multi-purpose missile is supposed to be BA LRM only by @Scoppio in https://github.com/MegaMek/megamek/pull/7093
+* Fix: unit tooltip fixed for aero, also fixed one mistake with html tags for pilot tooltip by @Scoppio in https://github.com/MegaMek/megamek/pull/7092
+
+0.50.05 (2025-04-25 1800 UTC)
++ Fix #6652: ProtoMek BV fixed for melee weapons and LRM-1
++ PR #6752: Mek jump boosters and jump jets
++ PR #6758: Removed Deprecated methods from MMLogger and updated impacted calls
++ PR #6764: GitHub CodeQL Error Fixes
++ PR #6763: MM-side fix for MHQ 6373: Prevent impossible Counter-Battery Fire shots from being taken
++ PR #6779: Fixed Missing Prone Modifier in Weapon Attack Calculation
++ PR #6777: Added Missing Handheld Weapon Unit Type to Messages Properties
++ PR #6776: Corrected Spelling of 'Land Air' Unit Type
++ PR #6774: Removed 3 Duplicate Callsigns
++ PR #6771: Add missing type check for MiscType
++ PR #6770: Fixed ConcurrentModification Exceptions In BV Calculation Methods
++ PR #6768: Fixed issues with Implicit narrowing conversion in compound assignment.
++ PR #6782: add Save As to the board preview in the lobby
++ PR #6795: Fixes for various Artillery and Artillery Flak issues
++ PR #6796: feat: add a callsign to princess instead of numbers
++ PR #6806: Added Method for Variable Cost Check in MiscType
++ Fix #6807: Auto-set SI in ASFs
++ PR #6816 parse mek/blk from string
++ PR #6824: Don't fail loading unit with MASS in wrong location
++ PR #6823: Added Combat Sense and Combat Paralysis SPAs
++ PR #6790: Data updates - Throw the freebirths a bone, quiaff? Clan conventional infantry
++ PR #6762: Update Stalker STK-8S.mtf
++ PR #6761: Stalker Jamison TechBase Fix: Mixed >>> Clan
++ PR #6760: Update Tomahawk II (Prime).mtf
++ PR #6759: Update Mackie MSK-6S introduction date
++ Fix #6751: Princess will now deploy mines on her turn instead of at the start of the phase.
++ PR #6829: Expanded MathUtility Integer Parsing
++ PR #6832: Corrects custom armor calculation required for megameklab#1820 that fixes megameklab#1808: Conventional infantry custom armor not appearring on record sheet
++ PR #6835: Fixed issue with Ammo Counts showing 0 when configuring from Lobby
++ PR #6837: Removes broken event from server
++ PR #6856: Updated Logging, Clone Handling, and Added toString Methods
++ PR #6840: fix: changed Internationalization to i18n
++ Fix #6860: Fixed Princess Not Acting During Their Rounds
++ Fix #6845: moved the acar hide to a better spot
++ PR #6865: data logging turned on by default
++ PR #6859: Fix MML #1818: Correct "armor_tech" to "armor_tech_level" when applicable
++ PR #6869: Added @Nullable to getEngine
++ PR #6877: Added Missing Camo for MekHQ New Player Quickstart
++ PR #6834: Slightly better serializer for unit actions and state, added attack action too
++ PR #6873: Data updates - IS faction Medium Mek review 2900-3049
++ Fix #6547: Fixed Extended Range Distances
++ Fix #6633: fixed the file entity conversion for ACAR by adding move by copy
++ Fix #6880: correct issue with show possible moves and show coords
++ PR #6891: Fix version comparisons now that isExtra is never null
++ PR #6898: Reset the dataset game action logger opt-out value so dedicated servers upgrading from 0.50.04 can log game actions with no-setup needed.
++ Fix #6904: Flak attacks must target entities
++ PR #6906: fix: properly handles exception for weapon data serialization
++ PR #6903: Require engine rating of at least 10
++ PR #6902: Correct MRM-4 OS BV
++ PR #6892: Allow laser insulators to attach to chem lasers
++ PR #6890: corrected destroyed heatsinks count
++ PR #6893: Properly calculate armor crit slot count for superheavy meks
++ PR #6907: fix: removed code duplication
++ PR #6908: Homing Artillery should work direct fire when targeting a hex
++ PR #6909: Fix for ASF Flak shots missing due to erroneous elevation check (ASF Flak uses Altitude)
++ PR #6910: Fix Counter-Battery Fire Class Cast Exception
++ Fix #6918: Fix Splash damage hitting other offboard units
+
+0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width
 + PR #6489: PPC Capacitors must all be linked to a PPC
 + PR #6500: Issue 6499: Better nudging for aeros that fail maneuvers and scatter off board
@@ -31,7 +434,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6535: Fixed so correctDupeName() used to change name on initial connection
 + Fix #6544: Arrow IV Laser Inhibiting Smoke Fix
 + Fix #6553: Prevent NPE when opening Map Editor
-+ Fix #6546: AS conversion updates (MFB, CT, ATAC, SASRCS)
++ Fix #6546: AS conversion updates (MFB, CT, ATAC, SASRCS); the PV calculation now longer shows up twice; offensive PV modifiers now also used for large craft
 + PR #6556: Allow units with unlinked weapon enhancements to load as invalid instead of failing to load
 + PR #6557: Fix Megameklab #1523
 + Fix #6146: Interim fix for Princess bombing airborne units
@@ -65,10 +468,74 @@ MEGAMEK VERSION HISTORY:
 + PR #6606: Improve Deployment-Phase Towing Logic
 + PR #6611: Add VTOL/WiGE exemption for AAA and LAA missiles
 + PR #6505: Remove XStream from Image Atlas Generation
-+ PR #6626: Fix: ejected crew, ignored targets and broken enemies wont be target of physical attacks anymore
++ PR #6617: Preliminary handheld weapon support
++ Fix #6604: Fuel Air Explosives do no damage to off-board units
++ PR #6615: Feat: More princess commands - ignore player/turret, order offboard artillery
++ Fix #6622: Putting multiple shields on a mek's arm is not flagged as invalid.
++ Fix #6641: Validate that HHWs can't have multiple different ammo bins for a single weapon kind.
++ Fix #6048: All short range artillery fire now happens in the weapon attack phase and uses attacker movement modifiers
++ Fix #6147: Infantry can now be carried in both infantry and cargo bays on vehicles
++ Fix #3425: Swarm Missiles have wrong mods for secondary targets
++ PR #6643: Fix MekHQ Issue 3655 - vehicle crew requirements for trailers
++ PR #6645: Support multiselect in the Add Unit dialog
++ PR #6647: Allow pasting units into selected player list (if selected)
++ PR #6667: feat: allow princess to deploy mines in random clear hexes on the map
++ PR #6653: Fixes MekHQ Issue 6026 - Prevents overkilling Aero when they should survive (ACAR)
++ Fix #6654: Prevents crashing when selected skin file is missing
++ Fix #6665: Wind strength adheres to wind min and max settings
++ PR #6669: Replace Java accent normalization wtih ICU4J, a capable unicode library to normalize text in more scenarios
++ PR #6661: Weapon Panel null check and logging
++ Fix #6630: Attempts to fix saving GIFs and improves error messages
++ Fix #6670: Makes gif writer finish the gif at victory phase
++ PR #6674: Added Check for Gender Neutral Pronouns
++ PR #6684: Add isOnBoard flag to Hex
++ PR #6688: Simplify Hex class to handle on board check
++ PR #6690: Revert PR #6688
++ PR #6691: Revert PR #6684
++ Fix #6679: Cube coordinates now convert correctly to offset coordinates
++ Fix #6673: Restore missing help text from help content menu
++ PR #6677: Improved visibility of RISC ECM effects on record sheet
++ Fix #2459, #6620, #6666: Aero and Dropship crash landing fixes: last chance, carried units, UI crashes
++ Fix #6678: Only show artillery auto hits when on the board
++ Fix #6585: WiGE allowed to enter planted field hexes
++ Fix #6694: Gracefully close GIF Writter, and gracefully initialize it on a second run (MHQ #6259)
++ PR #6687: Updated Deprecated Tags with Version, fixed formating with new editorconfig file
++ Fix #6696: Save gif dialog had its message and title reversed
++ Fix #6699: return missing immobile mod (#6701)
++ Fix #6700, #6575, #6574, #6573: Prevent GUI error when changing attributes in the lobby while in ForceView
++ PR #6697: Correct license header text for AI module
++ Fix #6650: Correct weight calculation for support vehicles with Fire Control Systems; correct armor type for SOAR VTOL
++ Fix #6301: Corrected phases not skipped when using /victory with phase skipping enabled (#6705)
++ PR #6704: Add Tactics Command bonus to deployment initiative
++ PR #6703: Fortify internal SkillLevel enumeration to support MekHQ skill overrides
++ PR #6695: Improvement for experimental AI for Princess; path ranking
++ PR #6710: Removed suboptimal tuning for Princess and fixed an issue with writing duplicate chassis names
++ Fix #6682, #6683: Fixes FAE with improved blast shaping code; underlying hex, FAE cannon damage, target display, over-damage
++ Fix #6711: Makes VTOL and WiGE airborne destruction un-survivable
++ Fix #6539: Remove limits for IP port connection ranges
++ PR #6718: Added over 2k new callsigns
++ PR #6719: Corrected capitalization in surnames data
++ Fix #6365: Fortifying code for loading preference files
++ Fix #6712: Fix NPE for multiplayer hosting custom boards in game lobby
++ PR #6692: cleaned up the mp candidate evaluation on longest path finder
++ PR #6722: Safeties the post-destruction Squadron weapon inventory to avoid NPEs
++ PR #6724: Added 694 Brand New Callsigns
++ Fix #6403: Avoid mp null Exception, add warning logging
++ Fix #6671: Correct unit valuation with negative part costs
++ Fix #6716: Prevent selecting the incorrect ammo index when switching between ammo-fed weapons (#6739)
++ Fix #6740: Fixed Window Resizing Error
++ PR #6729: Removed deprecated logger method.
++ PR #6745: Remove reference to frame, which was extraneous, but keep pack(), which cleans up dialog display
++ PR #6744: Cache results from text normalization
++ Fix #6857: Fixed Port Validation (Sentry)
++ Fix MekHQ#6619: Move RestoreUnitAction::copyC3Networks from MekHQ to MegaMek's C3Utils
++ Fix #6867: Excluded Infantry Attack From Edit Unit Damage Dialog
++ PR #6885: fix: wrong access for weapon arc
++ PR #6886: Change getWeaponArc signature and add JavaDocs
++ Fix #6899: fix can not load save in same version
 
 0.50.03 (2025-02-02 2030 UTC)
-+ PR #6335: default the directory filter to Select All in Advanced Board Search 
++ PR #6335: default the directory filter to Select All in Advanced Board Search
 + PR #6335: cleanup duplicate boards
 + PR #6328: Building type enum
 + PR #6340: MML tabbed UI docs update
@@ -95,9 +562,9 @@ MEGAMEK VERSION HISTORY:
 + PR #6409: Campaign Options IIC - MegaMek Portion
 + PR #6415: fixes an error where force consolidation would not set the correct owner of the force
 + PR #6411: Don't load mml scratch files into unit cache
-+ PR #6414: Warnings on Campaign Load - MegaMek Portion 
++ PR #6414: Warnings on Campaign Load - MegaMek Portion
 + Fix #6412: Fix TacOps "Standing Still" modifier description
-+ Fix 6373: Fixed "unit that starts and ends a Movement Phase in liquid magma takes an additional damage" so it doesn't apply to units above the magma
++ Fix #6373: Fixed "unit that starts and ends a Movement Phase in liquid magma takes an additional damage" so it doesn't apply to units above the magma
 + PR #6427 & #6428: Fix for Princess not ignoring Hidden and Ignored units. - Scoppio
 + PR #6431: Fix Artemis derivatives getting bonus on indirect fire
 + PR #6430: Renamed Directory ProtomMek Pilots to ProtoMek Pilots in MegaMek to match MekHQ
@@ -422,6 +889,7 @@ MEGAMEK VERSION HISTORY:
 + FIX #5930: Fix selected unit label and fov lagging behind
 + PR #5939: Edited Display Name for Transported Personnel Edge Use Option
 + PR #5959: MM side of fix for MHQ 4755: NPE when opfor has no faction code
++ PR #6913: Fix C-Bill Sorting
 
 0.49.20 (2024-06-28 2100 UTC) (THIS IS THE LAST VERSION TO SUPPORT JAVA 11)
 + PR #5281, #5327, #5308, #5336, #5318, #5383, #5369, #5384, #5455, #5505, #5541: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView,
@@ -2963,7 +3431,7 @@ v0.41.14 (2016-02-02 13:10 UTC)
 + Errata: Turret Tech Level Changes
 + Data: New Sprites
 + Bug [#4679]: Entity deploymentZone won't save as -1 in MUL
-+ Bug: It was possible to select mult/even init options with individual init on
++ Bug: It was possible to select multiplier/even init options with individual init on
 + Bug #4: Disallow simultaneous enabling of Lance Movement and Individual Init
 + Bug [#4577]: ECCM effective beyond its nominal range
 + Bug: Sprinting with low gravity could cause MASC failure checks
@@ -5369,7 +5837,7 @@ v0.37.0 (2013-12-21, 13:13 UTC1+)
 + Updated TestAero: made the isClan state variable of AeroArmor public.
 + Updated MiscType Data for Aeros and some unit fixes.
 + Unit Fixes
-+ made it possible to use MechDisplay with a null clientgui, for use in MekWars
++ made it possible to use MechDisplay with a null clientGUI, for use in MekWars
 + Bug [#3943]: Firing Heavy SRM Infantry causes fire phase to hang
 + Updated EntityVerifier: -v flag now only prints reports for failed units,
     use -valid along with -v to print reports for all units, updated usage msg.
@@ -6684,7 +7152,7 @@ v0.35.29 (2012-04-02)
 v0.35.28 (2012-22-02, 23:07 UTC+1)
 + Added bridgelayer construction data
 + Separated handheld searchlight from mounted searchlight
-+ pass frame rather than clientgui to AdvancedSearchDialog so other programs can
++ pass frame rather than clientGUI to AdvancedSearchDialog so other programs can
     use
 + Bug: Princess bot NPE with aeros that fly off the map
 + Bug 3474185: Princess bot NPE with ejected MekWarriors

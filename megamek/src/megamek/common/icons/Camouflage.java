@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2020-2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.icons;
 
 import java.awt.Color;
@@ -24,27 +39,26 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.PrintWriter;
+import java.io.Serial;
 import java.util.Objects;
 
-import org.w3c.dom.Node;
-
-import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
-import megamek.client.ui.swing.util.PlayerColour;
+import megamek.client.ui.tileset.MMStaticDirectoryManager;
+import megamek.client.ui.util.PlayerColour;
 import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
+import org.w3c.dom.Node;
 
 /**
- * Camouflage is an implementation of AbstractIcon that contains and displays a
- * Camouflage, which
- * may either be a base Camouflage from the Camouflage directory or a Colour
- * camouflage, which is
- * based on the specified PlayerColour and then parsed as an AWT Color.
+ * Camouflage is an implementation of AbstractIcon that contains and displays a Camouflage, which may either be a base
+ * Camouflage from the Camouflage directory or a Colour camouflage, which is based on the specified PlayerColour and
+ * then parsed as an AWT Color.
  *
  * @see AbstractIcon
  */
 public class Camouflage extends AbstractIcon {
-    private static final MMLogger logger = MMLogger.create(Camouflage.class);
+    private static final MMLogger LOGGER = MMLogger.create(Camouflage.class);
 
+    @Serial
     private static final long serialVersionUID = 1093277025745250375L;
 
     public static final String NO_CAMOUFLAGE = "-- No Camo --";
@@ -59,8 +73,7 @@ public class Camouflage extends AbstractIcon {
      */
     protected int rotationAngle = 0;
     /**
-     * The scale times 10 (10 = no scaling) to apply to this camo when applying it
-     * to units.
+     * The scale times 10 (10 = no scaling) to apply to this camo when applying it to units.
      */
     protected int scale = 10;
 
@@ -70,11 +83,9 @@ public class Camouflage extends AbstractIcon {
     }
 
     /**
-     * Constructs a new camo of the "category" (directory, ending with "/") and
-     * filename. Can only be used
-     * for camos of the directories that are parsed automatically, i.e. the
-     * MM-internal camo dir, the user dir
-     * and the story arcs directory.
+     * Constructs a new camo of the "category" (directory, ending with "/") and filename. Can only be used for camos of
+     * the directories that are parsed automatically, i.e. the MM-internal camo dir, the user dir and the story arcs
+     * directory.
      *
      * @param category the directory, e.g. "Clans/Wolf/Alpha Galaxy/"
      * @param filename the filename, e.g. "Alpha Galaxy.jpg"
@@ -84,18 +95,13 @@ public class Camouflage extends AbstractIcon {
     }
 
     /**
-     * Constructs a new camo with the given file. Even though a file is accepted,
-     * this can only be used
-     * for camos of the directories that are parsed automatically, i.e. the
-     * MM-internal camo dir, the user dir
-     * and the story arcs directory! This method tries to parse the filename to find
-     * the camo. This requires
-     * replacing Windows backslashes with normal slashes in order to find the file
-     * in the way camos are
-     * stored (see {@link megamek.common.util.fileUtils.AbstractDirectory})
+     * Constructs a new camo with the given file. Even though a file is accepted, this can only be used for camos of the
+     * directories that are parsed automatically, i.e. the MM-internal camo dir, the user dir and the story arcs
+     * directory! This method tries to parse the filename to find the camo. This requires replacing Windows backslashes
+     * with normal slashes in order to find the file in the way camos are stored (see
+     * {@link megamek.common.util.fileUtils.AbstractDirectory})
      *
-     * @param file The File, such as a file of "Clans/Wolf/Alpha Galaxy/Alpha
-     *             Galaxy.jpg"
+     * @param file The File, such as a file of "Clans/Wolf/Alpha Galaxy/Alpha Galaxy.jpg"
      */
     public Camouflage(File file) {
         this(getDirectory(file), file.getName());
@@ -105,6 +111,7 @@ public class Camouflage extends AbstractIcon {
      * Returns a new camo of the given PlayerColour.
      *
      * @param color A PlayerColour
+     *
      * @return A camo of the given PlayerColour color
      */
     public static Camouflage of(PlayerColour color) {
@@ -135,20 +142,20 @@ public class Camouflage extends AbstractIcon {
         try {
             return (Image) MMStaticDirectoryManager.getCamouflage().getItem(category, getFilename());
         } catch (Exception ex) {
-            logger.error("", ex);
+            LOGGER.error("", ex);
         }
 
         return null;
     }
 
     /**
-     * @param colour the colour of the camouflage. This shouldn't be null, but null
-     *               values are handled.
+     * @param colour the colour of the camouflage. This shouldn't be null, but null values are handled.
+     *
      * @return the created colour camouflage, or null if a null colour is provided
      */
     private @Nullable Image getColourCamouflageImage(final @Nullable Color colour) {
         if (colour == null) {
-            logger.error("A null colour was passed.");
+            LOGGER.error("A null colour was passed.");
             return null;
         }
         BufferedImage result = new BufferedImage(84, 72, BufferedImage.TYPE_INT_RGB);
@@ -169,7 +176,7 @@ public class Camouflage extends AbstractIcon {
         try {
             icon.parseNodes(wn.getChildNodes());
         } catch (Exception ex) {
-            logger.error("", ex);
+            LOGGER.error("", ex);
             return new Camouflage();
         }
         return icon;
@@ -207,11 +214,9 @@ public class Camouflage extends AbstractIcon {
     }
 
     /**
-     * @return The camo scaling; this value is 10 times the scaling that is used, so
-     *         a return value of 10
-     *         means no scaling is applied. Use for serialization etc. Use
-     *         {@link #getScaleFactor()} to get the
-     *         value by which to actually scale the camo.
+     * @return The camo scaling; this value is 10 times the scaling that is used, so a return value of 10 means no
+     *       scaling is applied. Use for serialization etc. Use {@link #getScaleFactor()} to get the value by which to
+     *       actually scale the camo.
      */
     public int getScale() {
         return scale;
@@ -229,8 +234,7 @@ public class Camouflage extends AbstractIcon {
 
     @Override
     public boolean equals(Object other) {
-        if (super.equals(other) && other instanceof Camouflage) {
-            Camouflage otherCamo = (Camouflage) other;
+        if (super.equals(other) && other instanceof Camouflage otherCamo) {
             return (otherCamo.rotationAngle == rotationAngle) && (otherCamo.scale == scale);
         } else {
             return false;

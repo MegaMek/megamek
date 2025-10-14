@@ -1,27 +1,47 @@
 /*
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2019 The MegaMek Team
+ * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.loaders;
 
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.FuelType;
-import megamek.common.SupportVTOL;
-import megamek.common.Tank;
-import megamek.common.VTOL;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.enums.FuelType;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.SupportVTOL;
+import megamek.common.units.Tank;
+import megamek.common.units.VTOL;
 import megamek.common.util.BuildingBlock;
 import megamek.logging.MMLogger;
 
@@ -38,18 +58,12 @@ public class BLKSupportVTOLFile extends BLKFile implements IMekLoader {
 
     @Override
     protected int defaultVGLFacing(int location, boolean rearFacing) {
-        switch (location) {
-            case SupportVTOL.LOC_RIGHT:
-                return rearFacing ? 2 : 1;
-            case SupportVTOL.LOC_REAR:
-                return 3;
-            case SupportVTOL.LOC_LEFT:
-                return rearFacing ? 4 : 5;
-            case SupportVTOL.LOC_FRONT:
-            case SupportVTOL.LOC_TURRET:
-            default:
-                return 0;
-        }
+        return switch (location) {
+            case SupportVTOL.LOC_RIGHT -> rearFacing ? 2 : 1;
+            case SupportVTOL.LOC_REAR -> 3;
+            case SupportVTOL.LOC_LEFT -> rearFacing ? 4 : 5;
+            default -> 0;
+        };
     }
 
     @Override
@@ -123,19 +137,19 @@ public class BLKSupportVTOLFile extends BLKFile implements IMekLoader {
         // Set the structural tech rating
         if (!dataFile.exists("structural_tech_rating")) {
             throw new EntityLoadingException("Could not find " +
-                    "structural_tech_rating block!");
+                  "structural_tech_rating block!");
         }
         t.setStructuralTechRating(dataFile
-                .getDataAsInt("structural_tech_rating")[0]);
+              .getDataAsInt("structural_tech_rating")[0]);
         // Set armor tech rating, if it exists (defaults to structural tr)
         if (dataFile.exists("armor_tech_rating")) {
             t.setArmorTechRating(dataFile
-                    .getDataAsInt("armor_tech_rating")[0]);
+                  .getDataAsInt("armor_tech_rating")[0]);
         }
         // Set engine tech rating, if it exists (defaults to structural tr)
         if (dataFile.exists("engine_tech_rating")) {
             t.setEngineTechRating(dataFile
-                    .getDataAsInt("engine_tech_rating")[0]);
+                  .getDataAsInt("engine_tech_rating")[0]);
         }
 
         t.autoSetInternal();
@@ -168,9 +182,9 @@ public class BLKSupportVTOLFile extends BLKFile implements IMekLoader {
             try {
                 t.setICEFuelType(FuelType.valueOf(dataFile.getDataAsString("fuelType")[0]));
             } catch (IllegalArgumentException ex) {
-                logger.error("While loading " + t.getShortNameRaw()
-                        + ": Could not parse ICE fuel type "
-                        + dataFile.getDataAsString("fuelType")[0]);
+                logger.error("While loading {}: Could not parse ICE fuel type {}",
+                      t.getShortNameRaw(),
+                      dataFile.getDataAsString("fuelType")[0]);
                 t.setICEFuelType(FuelType.PETROCHEMICALS);
             }
         }

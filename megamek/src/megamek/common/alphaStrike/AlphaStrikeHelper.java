@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.alphaStrike;
 
 import static java.util.stream.Collectors.joining;
@@ -43,32 +58,32 @@ public class AlphaStrikeHelper {
 
     /**
      * Returns a formatted String for the standard movement capability of the given AS element, e.g. 4"/6"j. This
-     * includes all movement modes of the element that are typically printed as MV on an AS card.
-     * As the only exception, this does not include the a and g movement modes of LandAirMeks, which are
-     * printed as special unit abilities.
+     * includes all movement modes of the element that are typically printed as MV on an AS card. As the only exception,
+     * this does not include the a and g movement modes of LandAirMeks, which are printed as special unit abilities.
      *
      * @return A formatted standard movement string, e.g. 4"/6"j.
      */
     public static String getMovementAsString(ASCardDisplayable element) {
         if (element.getASUnitType().isBattleMek()) {
             return element.getMovement().entrySet().stream()
-                    .filter(e -> !e.getKey().equals("a") && !e.getKey().equals("g"))
-                    .map(entry -> moveString(entry.getKey(), entry.getValue(), element))
-                    .collect(joining("/"));
+                  .filter(e -> !e.getKey().equals("a") && !e.getKey().equals("g"))
+                  .map(entry -> moveString(entry.getKey(), entry.getValue(), element))
+                  .collect(joining("/"));
         } else {
             return element.getMovement().entrySet().stream()
-                    .map(entry -> moveString(entry.getKey(), entry.getValue(), element))
-                    .collect(joining("/"));
+                  .map(entry -> moveString(entry.getKey(), entry.getValue(), element))
+                  .collect(joining("/"));
         }
     }
 
     /**
-     * Returns the formatted String for a single movement mode of the given AS element. E.g., for the movemode
-     * "j" and the moveValue 8, returns 8"j.
+     * Returns the formatted String for a single movement mode of the given AS element. E.g., for the move mode "j" and
+     * the moveValue 8, returns 8"j.
      *
-     * @param element The AS element (or MekSummary) having the movement mode
-     * @param moveMode The movement mode string, such as "" or "j" or "a"
+     * @param element   The AS element (or MekSummary) having the movement mode
+     * @param moveMode  The movement mode string, such as "" or "j" or "a"
      * @param moveValue The movement value, e.g. in inches for ground movement
+     *
      * @return The formatted String for a single movement mode entry, e.g. 4a or 12"j.
      */
     public static String moveString(String moveMode, int moveValue, ASCardDisplayable element) {
@@ -86,18 +101,19 @@ public class AlphaStrikeHelper {
     }
 
     /**
-     * Creates the formatted SPA string for the given spa. For turrets this includes everything in that
-     * turret. The given collection can be the specials of the AlphaStrikeElement itself, a turret or
-     * an arc of a large aerospace unit.
+     * Creates the formatted SPA string for the given spa. For turrets this includes everything in that turret. The
+     * given collection can be the specials of the AlphaStrikeElement itself, a turret or an arc of a large aerospace
+     * unit.
      *
-     * @param sua The Special Unit Ability to process
+     * @param sua        The Special Unit Ability to process
      * @param collection The SUA collection that the SUA is part of
-     * @param element The AlphaStrikeElement that the collection is part of
-     * @param delimiter The delimiter to insert between entries (only relevant for TUR)
+     * @param element    The AlphaStrikeElement that the collection is part of
+     * @param delimiter  The delimiter to insert between entries (only relevant for TUR)
+     *
      * @return The complete formatted Special Unit Ability string such as "LRM1/1/-" or "CK15D2".
      */
     public static String formatAbility(BattleForceSUA sua, ASSpecialAbilityCollector collection,
-                                       @Nullable ASCardDisplayable element, String delimiter) {
+          @Nullable ASCardDisplayable element, String delimiter) {
         Object suaObject = collection.getSUA(sua);
         if (!sua.isValidAbilityObject(suaObject)) {
             return "ERROR - wrong ability object (" + sua + ")";
@@ -116,7 +132,7 @@ public class AlphaStrikeHelper {
             String result = sua.toString() + suaObject;
             BattleForceSUA door = sua.getDoor();
             if ((element == null || element.isLargeAerospace())
-                    && collection.hasSUA(door) && ((int) collection.getSUA(door) > 0)) {
+                  && collection.hasSUA(door) && ((int) collection.getSUA(door) > 0)) {
                 result += door.toString() + collection.getSUA(door);
             }
             return result;
@@ -136,27 +152,27 @@ public class AlphaStrikeHelper {
     }
 
     /**
-     * Returns true if the given Special Unit Ability should be shown on this AS element's card or summary.
-     * This is usually true but false for some, e.g. BM automatically have SOA and do not need to
-     * show this on the unit card.
+     * Returns true if the given Special Unit Ability should be shown on this AS element's card or summary. This is
+     * usually true but false for some, e.g. BM automatically have SOA and do not need to show this on the unit card.
      *
      * @param sua The Special Unit Ability to check
+     *
      * @return True when the given Special Unit Ability should be listed on the element's card
      */
     public static boolean hideSpecial(BattleForceSUA sua, ASCardDisplayable element) {
         return sua.isDoor() || sua.isAnyOf(TRI, QUAD, AERODYNESC)
-                || (element.isLargeAerospace() && (sua == STD))
-                || (element.usesCapitalWeapons() && sua.isAnyOf(MSL, SCAP, CAP))
-                || (element.isType(BM, PM) && (sua == SOA))
-                || (element.isBattleMek() && (sua == SRCH))
-                || (!element.isLargeAerospace() && sua.isDoor())
-                || (hasAutoSeal(element) && (sua == SEAL));
+              || (element.isLargeAerospace() && (sua == STD))
+              || (element.usesCapitalWeapons() && sua.isAnyOf(MSL, SCAP, CAP))
+              || (element.isType(BM, PM) && (sua == SOA))
+              || (element.isBattleMek() && (sua == SRCH))
+              || (!element.isLargeAerospace() && sua.isDoor())
+              || (hasAutoSeal(element) && (sua == SEAL));
     }
 
     /** @return True when this AS element automatically gets the SEAL Special Unit Ability. */
     public static boolean hasAutoSeal(ASCardDisplayable element) {
         return element.isSubmarine()
-                || element.isType(BM, AF, SC, DS, JS, WS, SS, DA);
+              || element.isType(BM, AF, SC, DS, JS, WS, SS, DA);
         // TODO               || isType(BA) Exoskeleton??
     }
 
@@ -164,11 +180,23 @@ public class AlphaStrikeHelper {
     public static String getSpecialsExportString(String delimiter, ASCardDisplayable element) {
         StringBuilder dataLine = new StringBuilder();
         if (element.usesArcs()) {
-            dataLine.append(element.getSpecialAbilities().getSpecialsDisplayString(delimiter, element)).append(delimiter);
-            dataLine.append("FRONT(").append(element.getFrontArc().getSpecialsExportString(delimiter, element)).append(")").append(delimiter);
-            dataLine.append("LEFT(").append(element.getLeftArc().getSpecialsExportString(delimiter, element)).append(")").append(delimiter);
-            dataLine.append("RIGHT(").append(element.getRightArc().getSpecialsExportString(delimiter, element)).append(")").append(delimiter);
-            dataLine.append("REAR(").append(element.getRearArc().getSpecialsExportString(delimiter, element)).append(")");
+            dataLine.append(element.getSpecialAbilities().getSpecialsDisplayString(delimiter, element))
+                  .append(delimiter);
+            dataLine.append("FRONT(")
+                  .append(element.getFrontArc().getSpecialsExportString(delimiter, element))
+                  .append(")")
+                  .append(delimiter);
+            dataLine.append("LEFT(")
+                  .append(element.getLeftArc().getSpecialsExportString(delimiter, element))
+                  .append(")")
+                  .append(delimiter);
+            dataLine.append("RIGHT(")
+                  .append(element.getRightArc().getSpecialsExportString(delimiter, element))
+                  .append(")")
+                  .append(delimiter);
+            dataLine.append("REAR(")
+                  .append(element.getRearArc().getSpecialsExportString(delimiter, element))
+                  .append(")");
         } else {
             dataLine.append(element.getSpecialAbilities().getSpecialsDisplayString(delimiter, element));
         }
@@ -176,5 +204,5 @@ public class AlphaStrikeHelper {
     }
 
     // Do not instantiate
-    private AlphaStrikeHelper() { }
+    private AlphaStrikeHelper() {}
 }

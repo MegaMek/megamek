@@ -1,0 +1,177 @@
+# MegaMek Data (C) 2025 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+chassis:Great Turtle
+model:GTR-1
+mul id:1281
+
+Config:Quad
+TechBase:Inner Sphere
+Era:3067
+Source:TRO: 3055
+Rules Level:4
+role:Juggernaut
+
+
+
+
+quirk:imp_target_short
+quirk:poor_performance
+
+
+Mass:100
+Engine:300 Fusion Engine
+Structure:Endo Steel
+Myomer:Standard
+Cockpit:Torso-Mounted Cockpit
+Gyro:Compact Gyro
+
+Heat Sinks:14 Double
+Walk MP:3
+Jump MP:3
+
+Armor:Hardened(Inner Sphere)
+FLL Armor:42
+FRL Armor:42
+LT Armor:32
+RT Armor:32
+CT Armor:46
+HD Armor:9
+RLL Armor:42
+RRL Armor:42
+RTL Armor:10
+RTR Armor:10
+RTC Armor:16
+
+Weapons:4
+Medium X-Pulse Laser, Left Torso
+Medium X-Pulse Laser, Left Torso
+Large X-Pulse Laser, Right Torso
+Medium X-Pulse Laser, Head
+
+Front Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Front Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Life Support
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Jump Jet
+ISMediumXPulseLaser
+ISMediumXPulseLaser
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+
+Right Torso:
+Life Support
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Jump Jet
+ISLargeXPulseLaser
+ISLargeXPulseLaser
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Cockpit
+Sensors
+Jump Jet
+-Empty-
+
+Head:
+Sensors
+Sensors
+ISMediumXPulseLaser
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

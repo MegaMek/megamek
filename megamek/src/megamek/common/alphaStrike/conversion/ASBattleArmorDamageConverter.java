@@ -1,40 +1,68 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.alphaStrike.conversion;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.*;
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
+import static megamek.common.alphaStrike.AlphaStrikeElement.LONG_RANGE;
+import static megamek.common.alphaStrike.AlphaStrikeElement.MEDIUM_RANGE;
+import static megamek.common.alphaStrike.AlphaStrikeElement.SHORT_RANGE;
+import static megamek.common.alphaStrike.BattleForceSUA.AM;
+import static megamek.common.alphaStrike.BattleForceSUA.BOMB;
+import static megamek.common.alphaStrike.BattleForceSUA.BTAS;
+import static megamek.common.alphaStrike.BattleForceSUA.CNARC;
+import static megamek.common.alphaStrike.BattleForceSUA.FLK;
+import static megamek.common.alphaStrike.BattleForceSUA.HT;
+import static megamek.common.alphaStrike.BattleForceSUA.IF;
+
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSUA;
-import megamek.common.weapons.InfantryAttack;
-
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
-import static megamek.common.alphaStrike.AlphaStrikeElement.*;
-import static megamek.common.alphaStrike.BattleForceSUA.*;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.units.Entity;
+import megamek.common.weapons.attacks.InfantryAttack;
 
 public class ASBattleArmorDamageConverter extends ASDamageConverter {
 
     private static final double AP_MOUNT_DAMAGE = 0.05;
     private static final double ARMORED_GLOVE_DAMAGE = 0.1;
 
-    private final double troopFactor = TROOP_FACTOR[Math.min(((BattleArmor) entity).getShootingStrength(), 30)] + 0.5;
+    private final double troopFactor = TROOP_FACTOR[Math.min(((BattleArmor) entity).getShootingStrength(), 30)] + 0.5f;
     private int bombRacks = 0;
 
     protected ASBattleArmorDamageConverter(Entity entity, AlphaStrikeElement element, CalculationReport report) {
@@ -52,11 +80,11 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
     }
 
     /**
-     * Specialized method to sum up the squad support weapon damage for the given
-     * range.
-     * This should always stay similar to the assembleFrontDamage() methods.
+     * Specialized method to sum up the squad support weapon damage for the given range. This should always stay similar
+     * to the assembleFrontDamage() methods.
      *
      * @param range The range, e.g. AlphaStrikeElement.MEDIUM_RANGE
+     *
      * @return The raw damage sum
      */
     protected double assembleSquadSupportDamage(int range) {
@@ -71,8 +99,13 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
                 double damageMultiplier = getDamageMultiplier(weapon, weaponType);
                 double modifiedDamage = baseDamage * damageMultiplier;
                 String calculation = "+ " + formatForReport(modifiedDamage);
-                calculation += (damageMultiplier != 1) ? " (" + formatForReport(baseDamage) + " x " +
-                        formatForReport(damageMultiplier) + ")" : "";
+                calculation += (damageMultiplier != 1) ?
+                      " (" +
+                            formatForReport(baseDamage) +
+                            " x " +
+                            formatForReport(damageMultiplier) +
+                            ")" :
+                      "";
                 rawDamage += modifiedDamage;
                 report.addLine(getWeaponDesc(weapon), calculation, "= " + formatForReport(rawDamage));
             }
@@ -93,8 +126,7 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
         damage[1] *= troopFactor;
         damage[2] *= troopFactor;
         String multipliedValues = formatAsVector(damage[0], damage[1], damage[2], 0, dmgType);
-        report.addLine("Troop Factor", rawValues + " x " + formatForReport(troopFactor),
-                "= " + multipliedValues);
+        report.addLine("Troop Factor", rawValues + " x " + formatForReport(troopFactor), "= " + multipliedValues);
         return damage;
     }
 
@@ -102,12 +134,11 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
     protected int[] assembleHeatDamage(int location) {
         int[] heatDmg = super.assembleHeatDamage(location);
         String rawValues = formatAsVector(heatDmg[0], heatDmg[1], heatDmg[2], 0, HT);
-        heatDmg[0] *= troopFactor;
-        heatDmg[1] *= troopFactor;
-        heatDmg[2] *= troopFactor;
+        heatDmg[0] = (int) Math.floor(heatDmg[0] * troopFactor);
+        heatDmg[1] = (int) Math.floor(heatDmg[1] * troopFactor);
+        heatDmg[2] = (int) Math.floor(heatDmg[2] * troopFactor);
         String multipliedValues = formatAsVector(heatDmg[0], heatDmg[1], heatDmg[2], 0, HT);
-        report.addLine("Troop Factor", rawValues + " x " + formatForReport(troopFactor),
-                "= " + multipliedValues);
+        report.addLine("Troop Factor", rawValues + " x " + formatForReport(troopFactor), "= " + multipliedValues);
         return heatDmg;
     }
 
@@ -119,16 +150,17 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
         if (entity.hasMisc(MiscType.F_ARMORED_GLOVE)) {
             sDamage += ARMORED_GLOVE_DAMAGE;
             report.addLine("Armored Glove(s)",
-                    "+ " + formatForReport(ARMORED_GLOVE_DAMAGE), "= " + formatForReport(sDamage));
+                  "+ " + formatForReport(ARMORED_GLOVE_DAMAGE),
+                  "= " + formatForReport(sDamage));
         } else if (entity.hasMisc(MiscType.F_AP_MOUNT)) {
             sDamage += AP_MOUNT_DAMAGE;
-            report.addLine("APM",
-                    "+ " + formatForReport(AP_MOUNT_DAMAGE), "= " + formatForReport(sDamage));
+            report.addLine("APM", "+ " + formatForReport(AP_MOUNT_DAMAGE), "= " + formatForReport(sDamage));
         }
 
         if (sDamage > 0) {
-            report.addLine("Troop Factor", formatForReport(sDamage) + " x " + formatForReport(troopFactor),
-                    "= " + formatForReport(sDamage * troopFactor));
+            report.addLine("Troop Factor",
+                  formatForReport(sDamage) + " x " + formatForReport(troopFactor),
+                  "= " + formatForReport(sDamage * troopFactor));
             sDamage *= troopFactor;
         }
 
@@ -143,7 +175,8 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
         if (sDamage > 0) {
             finalSDamage = ASDamage.createDualRoundedUp(sDamage);
             report.addLine("Final S damage:",
-                    formatForReport(sDamage) + ", dual rounded", "= " + finalSDamage.toStringWithZero());
+                  formatForReport(sDamage) + ", dual rounded",
+                  "= " + finalSDamage.toStringWithZero());
         } else {
             report.addLine("None.", "");
         }
@@ -155,8 +188,9 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
         report.addLine("--- Medium Range Damage:", "");
         double mDamage = assembleFrontDamage(MEDIUM_RANGE);
         if (mDamage > 0) {
-            report.addLine("Troop Factor", formatForReport(mDamage) + " x " + formatForReport(troopFactor),
-                    "= " + formatForReport(mDamage * troopFactor));
+            report.addLine("Troop Factor",
+                  formatForReport(mDamage) + " x " + formatForReport(troopFactor),
+                  "= " + formatForReport(mDamage * troopFactor));
             mDamage *= troopFactor;
         }
 
@@ -165,7 +199,8 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
         if (mDamage > 0) {
             finalMDamage = ASDamage.createDualRoundedUp(mDamage);
             report.addLine("Final M damage:",
-                    formatForReport(mDamage) + ", dual rounded", "= " + finalMDamage.toStringWithZero());
+                  formatForReport(mDamage) + ", dual rounded",
+                  "= " + finalMDamage.toStringWithZero());
         } else {
             report.addLine("None.", "");
         }
@@ -177,8 +212,9 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
         report.addLine("--- Long Range Damage:", "");
         double lDamage = assembleFrontDamage(LONG_RANGE);
         if (lDamage > 0) {
-            report.addLine("Troop Factor", formatForReport(lDamage) + " x " + formatForReport(troopFactor),
-                    "= " + formatForReport(lDamage * troopFactor));
+            report.addLine("Troop Factor",
+                  formatForReport(lDamage) + " x " + formatForReport(troopFactor),
+                  "= " + formatForReport(lDamage * troopFactor));
             lDamage *= troopFactor;
         }
 
@@ -187,7 +223,8 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
         if (lDamage > 0) {
             finalLDamage = ASDamage.createDualRoundedUp(lDamage);
             report.addLine("Final L damage:",
-                    formatForReport(lDamage) + ", dual rounded", "= " + finalLDamage.toStringWithZero());
+                  formatForReport(lDamage) + ", dual rounded",
+                  "= " + finalLDamage.toStringWithZero());
         } else {
             report.addLine("None.", "");
         }
@@ -197,7 +234,7 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
     protected void assignSpecialAbilities(Mounted<?> weapon, WeaponType weaponType) {
         super.assignSpecialAbilities(weapon, weaponType);
 
-        if (weaponType.getAmmoType() == AmmoType.T_BA_MICRO_BOMB) {
+        if (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.BA_MICRO_BOMB) {
             bombRacks++;
         }
 
@@ -208,14 +245,14 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
 
     @Override
     protected void processTaser(Mounted<?> weapon, WeaponType weaponType) {
-        if (weaponType.getAmmoType() == AmmoType.T_TASER) {
+        if (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.TASER) {
             assignToLocations(weapon, BTAS, 1);
         }
     }
 
     @Override
     protected void processNarc(Mounted<?> weapon, WeaponType weaponType) {
-        if (weaponType.getAmmoType() == AmmoType.T_NARC) {
+        if (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.NARC) {
             assignToLocations(weapon, CNARC, 1);
         }
     }

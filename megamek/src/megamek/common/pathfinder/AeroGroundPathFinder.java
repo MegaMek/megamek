@@ -1,31 +1,58 @@
 /*
-* MegaMek -
-* Copyright (C) 2017 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
 package megamek.common.pathfinder;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.common.*;
-import megamek.common.MovePath.MoveStepType;
-import megamek.common.pathfinder.AbstractPathFinder.Filter;
+import megamek.common.board.Coords;
+import megamek.common.enums.MoveStepType;
+import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
+import megamek.common.pathfinder.filters.Filter;
+import megamek.common.units.Entity;
+import megamek.common.units.IAero;
 import megamek.logging.MMLogger;
 
-import java.util.*;
-
 /**
- * This set of classes is intended for use for pathfinding by aerodyne units on
- * ground maps with an atmosphere
- * Usage anywhere else may result in "unpredictable" behavior
+ * This set of classes is intended for use for pathfinding by aerodyne units on ground maps with an atmosphere Usage
+ * anywhere else may result in "unpredictable" behavior
  *
  * @author NickAragua
  */
@@ -83,7 +110,7 @@ public class AeroGroundPathFinder {
             int maxVelocity = Math.min(getMaximumVelocity(aero), aero.getCurrentVelocity() + maxThrust);
             int minVelocity = Math.max(getMinimumVelocity(aero), aero.getCurrentVelocity() - maxThrust);
             Collection<MovePath> validAccelerations = AeroPathUtil.generateValidAccelerations(startingEdge, minVelocity,
-                    maxVelocity);
+                  maxVelocity);
 
             for (MovePath acceleratedPath : validAccelerations) {
                 aeroGroundPaths.addAll(getAltitudeAdjustedPaths(GenerateAllPaths(acceleratedPath)));
@@ -96,8 +123,8 @@ public class AeroGroundPathFinder {
              */
 
             final String memoryMessage = "Not enough memory to analyse all options."
-                    + " Try setting time limit to lower value, or "
-                    + "increase java memory limit.";
+                  + " Try setting time limit to lower value, or "
+                  + "increase java memory limit.";
 
             logger.error(memoryMessage, e);
         } catch (Exception e) {
@@ -110,8 +137,7 @@ public class AeroGroundPathFinder {
     }
 
     /**
-     * This class removes all off-board paths, but keeps track of the shortest of
-     * all the paths removed
+     * This class removes all off-board paths, but keeps track of the shortest of all the paths removed
      *
      * @author NickAragua
      */
@@ -124,10 +150,10 @@ public class AeroGroundPathFinder {
         }
 
         /**
-         * Returns filtered collection by removing those objects that fail
-         * {@link #shouldStay(MovePath)} test.
+         * Returns filtered collection by removing those objects that fail {@link #shouldStay(MovePath)} test.
          *
          * @param collection collection to be filtered
+         *
          * @return filtered collection
          */
         @Override
@@ -144,8 +170,8 @@ public class AeroGroundPathFinder {
                     // at the end of the process, we will add the shortest path off board to the
                     // list of moves
                     if (shortestPath == null ||
-                            (shortestPath.length() > e.length()) &&
-                                    AeroPathUtil.isSafePathOffBoard(e)) {
+                          (shortestPath.length() > e.length()) &&
+                                AeroPathUtil.isSafePathOffBoard(e)) {
                         shortestPath = e;
                     }
                 }
@@ -158,6 +184,7 @@ public class AeroGroundPathFinder {
          * Tests if the object should stay in the collection.
          *
          * @param path Path object is taking
+         *
          * @return true if the object should stay in the collection
          */
         @Override
@@ -172,10 +199,10 @@ public class AeroGroundPathFinder {
     Map<Coords, MovePath> visitedHexes;
 
     /**
-     * Given a list of MovePaths, applies adjustTowardsDesiredAltitude to each of
-     * them.
+     * Given a list of MovePaths, applies adjustTowardsDesiredAltitude to each of them.
      *
      * @param startingPaths The collection of paths to process
+     *
      * @return The new collection of resulting paths.
      */
     protected List<MovePath> getAltitudeAdjustedPaths(List<MovePath> startingPaths) {
@@ -209,7 +236,8 @@ public class AeroGroundPathFinder {
      *
      * @param startingPath    The path to adjust
      * @param desiredAltitude The desired altitude
-     * @return New instance of movepath with as much altitude adjustment as possible
+     *
+     * @return New instance of move path with as much altitude adjustment as possible
      */
     private MovePath adjustTowardsDesiredAltitude(MovePath startingPath, int desiredAltitude) {
         MovePath altitudePath = startingPath.clone();
@@ -219,10 +247,10 @@ public class AeroGroundPathFinder {
         while (altitudePath.getFinalAltitude() != desiredAltitude) {
             // up steps use thrust. Two points, to be exact
             if (altitudePath.getFinalAltitude() < desiredAltitude &&
-                    altitudePath.getMpUsed() < maxThrust - 1) {
+                  altitudePath.getMpUsed() < maxThrust - 1) {
                 altitudePath.addStep(MoveStepType.UP);
             } else if ((altitudePath.getFinalAltitude() > desiredAltitude) &&
-                    (altitudePath.getFinalAltitude() >= startingPath.getFinalAltitude() - 1)) {
+                  (altitudePath.getFinalAltitude() >= startingPath.getFinalAltitude() - 1)) {
                 // down steps don't use thrust, but if we take more than one, it changes the
                 // velocity,
                 // so just do one for now
@@ -261,36 +289,36 @@ public class AeroGroundPathFinder {
     // if a hex has already been visited by another branch, then we set the current
     // one as the visitor only if it's shorter
     protected List<MovePath> GenerateAllPaths(MovePath mp) {
-        List<MovePath> retval = new ArrayList<>();
+        List<MovePath> retVal = new ArrayList<>();
 
         for (MovePath path : generateSidePaths(mp, MoveStepType.TURN_RIGHT)) {
             // we want to avoid adding paths that don't visit new hexes
             // off-board paths will get thrown out later
-            if (path.fliesOffBoard() || pathIsntRedundant(path)) {
-                retval.add(path);
+            if (path.fliesOffBoard() || pathIsNotRedundant(path)) {
+                retVal.add(path);
             }
         }
 
         for (MovePath path : generateSidePaths(mp, MoveStepType.TURN_LEFT)) {
             // we want to avoid adding paths that don't visit new hexes
             // off-board paths will get thrown out later
-            if (path.fliesOffBoard() || pathIsntRedundant(path)) {
-                retval.add(path);
+            if (path.fliesOffBoard() || pathIsNotRedundant(path)) {
+                retVal.add(path);
             }
         }
 
         ForwardToTheEnd(mp);
-        if (mp.fliesOffBoard() || pathIsntRedundant(mp)) {
-            retval.add(mp);
+        if (mp.fliesOffBoard() || pathIsNotRedundant(mp)) {
+            retVal.add(mp);
         }
 
-        return retval;
+        return retVal;
     }
 
     // generates and returns all paths that stick straight lines out of the current
     // path to the right or left
     protected List<MovePath> generateSidePaths(MovePath mp, MoveStepType stepType) {
-        List<MovePath> retval = new ArrayList<>();
+        List<MovePath> retVal = new ArrayList<>();
         MovePath straightLine = mp.clone();
 
         if (STACK_DEPTH - mp.length() < 10) {
@@ -299,7 +327,7 @@ public class AeroGroundPathFinder {
 
         boolean firstTurn = true;
         while (mp.length() < STACK_DEPTH && straightLine.getFinalVelocityLeft() > 0 &&
-                game.getBoard().contains(straightLine.getFinalCoords())) {
+              game.getBoard(mp.getFinalBoardId()).contains(straightLine.getFinalCoords())) {
 
             // little dirty hack to get around the problem where if this is the first step
             // of a path
@@ -317,7 +345,7 @@ public class AeroGroundPathFinder {
             // thrust, it's an illegal move
             // and thus not worth evaluating further)
             if (currentStep.canAeroTurn(game) &&
-                    currentStep.getMpUsed() <= mp.getEntity().getRunMP() - turnCost) {
+                  currentStep.getMpUsed() <= mp.getEntity().getRunMP() - turnCost) {
                 MovePath tiltedPath = straightLine.clone();
                 tiltedPath.addStep(stepType);
 
@@ -328,11 +356,11 @@ public class AeroGroundPathFinder {
                     // the opposite direction of stepType
                     // This *may* result in a drastic increase in generated paths, so maybe hold off
                     // on it for now.
-                    retval.addAll(generateSidePaths(tiltedPath, stepType));
+                    retVal.addAll(generateSidePaths(tiltedPath, stepType));
                 }
 
                 ForwardToTheEnd(tiltedPath);
-                retval.add(tiltedPath);
+                retVal.add(tiltedPath);
                 firstTurn = false;
             }
 
@@ -343,7 +371,7 @@ public class AeroGroundPathFinder {
             }
         }
 
-        return retval;
+        return retVal;
     }
 
     // helper function to move the path forward until we run out of velocity or off
@@ -356,13 +384,13 @@ public class AeroGroundPathFinder {
                 mp.addStep(MoveStepType.FORWARDS);
             }
 
-            // if we have arrived on the edge, and we can turn, then attempt to "bounce off"
+            // if we have arrived at the edge, and we can turn, then attempt to "bounce off"
             // or "ride" the edge.
             // as long as we're not trying to go off board, then forget about it
             // this slightly increases the area covered by the aero in cases where the path
             // takes it near the edge
             if (mp.nextForwardStepOffBoard()
-                    && (mp.getEntity().getDamageLevel() != Entity.DMG_CRIPPLED)) {
+                  && (mp.getEntity().getDamageLevel() != Entity.DMG_CRIPPLED)) {
                 final MoveStep lastStep = mp.getLastStep(); // using to prevent unnecessary computation
                 if ((lastStep != null) && lastStep.canAeroTurn(game)) {
                     // we want to generate a path that looks like this:
@@ -377,7 +405,7 @@ public class AeroGroundPathFinder {
                     // you can approach the top and bottom edges of the board in such a way that
                     // neither left
                     // nor right produces an off-board path
-                    // there's probably a better mathematical way to formulate this but I'm not
+                    // there's probably a better mathematical way to formulate this, but I'm not
                     // really a math guy.
                     mp.addStep(MoveStepType.TURN_RIGHT);
                     if (mp.nextForwardStepOffBoard()) {
@@ -406,16 +434,17 @@ public class AeroGroundPathFinder {
 
     private final Map<Coords, MovePath> visitedCoords = new HashMap<>();
 
-    protected boolean pathIsntRedundant(MovePath mp) {
+    protected boolean pathIsNotRedundant(MovePath mp) {
         return !pathIsRedundant(mp);
     }
 
     /**
-     * Determines if the given move path is "redundant".
-     * In this case, it means that the path has not visited any new hexes.
+     * Determines if the given move path is "redundant". In this case, it means that the path has not visited any new
+     * hexes.
      *
      * @param mp The move path to examine.
-     * @return Whether or not the move path is redundant.
+     *
+     * @return Whether the move path is redundant.
      */
     // goes through a path.
     // if it does not take us off-board, records the coordinates it visits

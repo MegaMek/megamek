@@ -1,26 +1,44 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.cost;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.*;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.bays.BattleArmorBay;
+import megamek.common.bays.Bay;
+import megamek.common.bays.InfantryBay;
 import megamek.common.equipment.ArmorType;
+import megamek.common.units.Warship;
 
 public class WarShipCostCalculator {
 
@@ -41,7 +59,7 @@ public class WarShipCostCalculator {
         // Fire Control Computer
         costs[costIdx++] += 100000;
         // Gunnery Control Systems
-        costs[costIdx++] += 10000 * warShip.getArcswGuns();
+        costs[costIdx++] += 10000 * warShip.getArcsWithGuns();
         // Structural Integrity
         costs[costIdx++] += 100000 * warShip.getSI();
 
@@ -110,19 +128,19 @@ public class WarShipCostCalculator {
         costs[costIdx++] += deckCost;
 
         // Transport Bays
-        int baydoors = 0;
+        int bayDoors = 0;
         long bayCost = 0;
         long quartersCost = 0;
         // Passenger and crew quarters and infantry bays are considered part of the structure
         // and don't add to the cost
         for (Bay next : warShip.getTransportBays()) {
-            baydoors += next.getDoors();
+            bayDoors += next.getDoors();
             if (!next.isQuarters() && !(next instanceof InfantryBay) && !(next instanceof BattleArmorBay)) {
                 bayCost += next.getCost();
             }
         }
 
-        costs[costIdx++] += bayCost + (baydoors * 1000L);
+        costs[costIdx++] += bayCost + (bayDoors * 1000L);
         costs[costIdx++] = quartersCost;
 
         // Weapons and Equipment
@@ -144,10 +162,10 @@ public class WarShipCostCalculator {
         cost = Math.round(cost * warShip.getPriceMultiplier());
 
         String[] systemNames = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunnery Control Systems",
-                "Structural Integrity", "Drive Unit", "Engine", "Engine Control Unit",
-                "KF Drive", "KF Drive Support System", "Attitude Thrusters", "Docking Collars",
-                "Fuel Tanks", "Armor", "Heat Sinks", "Life Boats/Escape Pods", "Grav Decks",
-                "Bays", "Quarters", "HPG", "Weapons/Equipment", "Weight Multiplier" };
+                                 "Structural Integrity", "Drive Unit", "Engine", "Engine Control Unit",
+                                 "KF Drive", "KF Drive Support System", "Attitude Thrusters", "Docking Collars",
+                                 "Fuel Tanks", "Armor", "Heat Sinks", "Life Boats/Escape Pods", "Grav Decks",
+                                 "Bays", "Quarters", "HPG", "Weapons/Equipment", "Weight Multiplier" };
         CostCalculator.fillInReport(costReport, warShip, ignoreAmmo, systemNames, 21, cost, costs);
         return cost;
     }

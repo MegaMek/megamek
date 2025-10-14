@@ -25,13 +25,13 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
 /**
- * Denotes a method created purely for the purposes of wrapping a static method call in a non-static
- * method so that a mock can be created.
+ * Denotes a method created purely for the purposes of wrapping a static method call in a non-static method so that a
+ * mock can be created.
  *
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 2/20/14 7:51 AM
  */
-@Target({ElementType.METHOD})
+@Target({ ElementType.METHOD })
 @Documented
 public @interface StaticWrapper {
 

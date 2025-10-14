@@ -1,41 +1,80 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.common.actions;
 
-import megamek.common.*;
-import megamek.common.enums.GamePhase;
-import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.BombMounted;
-import megamek.common.equipment.WeaponMounted;
-import megamek.common.options.GameOptions;
-import megamek.common.options.OptionsConstants;
-import megamek.common.options.PilotOptions;
-import megamek.common.planetaryconditions.Light;
-import megamek.common.planetaryconditions.PlanetaryConditions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import megamek.common.CalledShot;
+import megamek.common.Hex;
+import megamek.common.LosEffects;
+import megamek.common.Player;
+import megamek.common.ToHitData;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.BombMounted;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
+import megamek.common.options.PilotOptions;
+import megamek.common.planetaryConditions.Light;
+import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.units.Aero;
+import megamek.common.units.Crew;
+import megamek.common.units.CrewType;
+import megamek.common.units.Entity;
+import megamek.common.units.Tank;
+import megamek.common.units.Targetable;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 /**
  * @see WeaponAttackAction#toHit(Game, int, Targetable, int, boolean)
@@ -75,7 +114,9 @@ public class WeaponAttackActionToHitTest {
 
         // Mock the board
         mockBoard = mock(Board.class);
-        when(mockBoard.inSpace()).thenReturn(false);
+        when(mockBoard.isSpace()).thenReturn(false);
+        when(mockBoard.contains(any(Coords.class))).thenReturn(true);
+        when(mockBoard.getHex(any(Coords.class))).thenReturn(new Hex());
 
         // Mock Options
         mockOptions = mock(GameOptions.class);
@@ -89,11 +130,18 @@ public class WeaponAttackActionToHitTest {
         when(mockGame.getOptions()).thenReturn(mockOptions);
         when(mockGame.getActions()).thenReturn(Collections.enumeration(Collections.emptyList()));
         when(mockGame.getPhase()).thenReturn(GamePhase.FIRING);
-
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
+        when(mockGame.getBoard(any(Targetable.class))).thenReturn(mockBoard);
+        when(mockGame.hasBoard(0)).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(Coords.class), anyInt())).thenReturn(true);
+        when(mockGame.getHex(any(Coords.class), anyInt())).thenCallRealMethod();
+        when(mockGame.onConnectedBoards(any(Targetable.class), any(Targetable.class))).thenReturn(true);
+        when(mockGame.onTheSameBoard(any(Targetable.class), any(Targetable.class))).thenReturn(true);
 
         // Mock LosEffects
         mockLos = mock(LosEffects.class);
         when(mockGame.getBoard()).thenReturn(mockBoard);
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
         when(mockGame.getPlayer(anyInt())).thenReturn(mockPlayer);
         when(mockGame.getFlares()).thenReturn(new Vector<>());
         when(mockGame.getPlanetaryConditions()).thenReturn(mockPlanetaryConditions);
@@ -110,13 +158,13 @@ public class WeaponAttackActionToHitTest {
         when(mockWeaponType.getName()).thenReturn("Mock Weapon Type");
         when(mockWeaponType.getInternalName()).thenReturn("Mock Internal Weapon Type");
         when(mockWeaponType.getDamage()).thenReturn(5);
-        mockWeaponType.shortRange = 3;
-        mockWeaponType.mediumRange = 10;
-        mockWeaponType.longRange = 20;
+        mockWeaponType.setShortRange(3);
+        mockWeaponType.setMediumRange(10);
+        mockWeaponType.setLongRange(20);
         when(mockWeaponType.getMaxRange()).thenReturn(20);
         when(mockWeaponType.getMaxRange(any(), any())).thenReturn(20);
-        when(mockWeaponType.getRanges(any(), any())).thenReturn(new int[]{ 0, 3, 10, 20, 20 });
-        when(mockWeaponType.getWRanges()).thenReturn(new int[]{ 0, 3, 10, 20, 20});
+        when(mockWeaponType.getRanges(any(), any())).thenReturn(new int[] { 0, 3, 10, 20, 20 });
+        when(mockWeaponType.getWRanges()).thenReturn(new int[] { 0, 3, 10, 20, 20 });
 
         // Mock Weapon
         mockWeapon = mock(WeaponMounted.class);
@@ -141,7 +189,6 @@ public class WeaponAttackActionToHitTest {
         when(mockCrew.getCrewType()).thenReturn(mockCrewType);
         when(mockCrew.getOptions()).thenReturn(mockPilotOptions);
     }
-
 
 
     @Test
@@ -169,11 +216,44 @@ public class WeaponAttackActionToHitTest {
 
         try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class, invocationOnMock -> mockLos)) {
             mockedLosEffects.when(() -> LosEffects.calculateLOS(any(), any(), any(), anyBoolean()))
-                .thenReturn(mockLos);
+                  .thenReturn(mockLos);
 
 
             ToHitData toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
             assertEquals(-5, toHit.getValue());
+        }
+    }
+
+    @Test
+    void immobileTargetTest() {
+        Tank mockAttackingEntity = mock(Tank.class);
+        when(mockAttackingEntity.getOwner()).thenReturn(mockPlayer);
+        when(mockAttackingEntity.getPosition()).thenReturn(new Coords(0, 0));
+        when(mockAttackingEntity.getWeapon(anyInt())).thenReturn(mockWeapon);
+        when(mockAttackingEntity.getEquipment(anyInt())).thenReturn(mockWeaponEquipment);
+        when(mockAttackingEntity.getCrew()).thenReturn(mockCrew);
+        when(mockAttackingEntity.getSwarmTargetId()).thenReturn(Entity.NONE);
+
+        Tank mockTarget = mock(Tank.class);
+        when(mockTarget.getOwner()).thenReturn(mockEnemy);
+        when(mockTarget.getPosition()).thenReturn(new Coords(0, 1));
+        when(mockTarget.isIlluminated()).thenReturn(true);
+        when(mockTarget.getSwarmTargetId()).thenReturn(Entity.NONE);
+        when(mockTarget.isImmobile()).thenReturn(true);
+
+        when(mockGame.getEntity(0)).thenReturn(mockAttackingEntity);
+        when(mockGame.getEntity(1)).thenReturn(mockTarget);
+
+        when(mockTarget.getGame()).thenReturn(mockGame);
+        when(mockAttackingEntity.getGame()).thenReturn(mockGame);
+
+        try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class, invocationOnMock -> mockLos)) {
+            mockedLosEffects.when(() -> LosEffects.calculateLOS(any(), any(), any(), anyBoolean()))
+                  .thenReturn(mockLos);
+
+
+            ToHitData toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
+            assertEquals(-9, toHit.getValue());
         }
     }
 
@@ -206,7 +286,7 @@ public class WeaponAttackActionToHitTest {
 
         try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class, invocationOnMock -> mockLos)) {
             mockedLosEffects.when(() -> LosEffects.calculateLOS(any(), any(), any(), anyBoolean()))
-                .thenReturn(mockLos);
+                  .thenReturn(mockLos);
 
 
             ToHitData toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
@@ -252,7 +332,7 @@ public class WeaponAttackActionToHitTest {
         when(mockAttackingEntity.getGame()).thenReturn(mockGame);
         try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class, invocationOnMock -> mockLos)) {
             mockedLosEffects.when(() -> LosEffects.calculateLOS(any(), any(), any(), anyBoolean()))
-                .thenReturn(mockLos);
+                  .thenReturn(mockLos);
 
 
             ToHitData toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
@@ -263,7 +343,7 @@ public class WeaponAttackActionToHitTest {
             toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
             assertEquals(4, toHit.getValue());
 
-            // And now with double blind:
+            // And now with double-blind:
             when(mockOptions.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)).thenReturn(true);
             toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
             assertEquals(ToHitData.IMPOSSIBLE, toHit.getValue());
@@ -285,7 +365,7 @@ public class WeaponAttackActionToHitTest {
         when(mockAttackingEntity.getEquipment(anyInt())).thenReturn(mockWeaponEquipment);
         when(mockAttackingEntity.getCrew()).thenReturn(mockCrew);
         when(mockAttackingEntity.getSwarmTargetId()).thenReturn(Entity.NONE);
-        when(mockAttackingEntity.getBombs(any())).thenReturn(List.of(new BombMounted[]{mockBomb}));
+        when(mockAttackingEntity.getBombs(any())).thenReturn(List.of(new BombMounted[] { mockBomb }));
         when(mockAttackingEntity.isAirborne()).thenReturn(true);
         when(mockAttackingEntity.passedOver(any())).thenReturn(true);
 
@@ -301,7 +381,7 @@ public class WeaponAttackActionToHitTest {
 
         try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class, invocationOnMock -> mockLos)) {
             mockedLosEffects.when(() -> LosEffects.calculateLOS(any(), any(), any(), anyBoolean()))
-                .thenReturn(mockLos);
+                  .thenReturn(mockLos);
 
 
             // Can we strike the ground?
@@ -331,7 +411,7 @@ public class WeaponAttackActionToHitTest {
             when(mockAttackingEntity.getAltitude()).thenReturn(2);
             try (MockedStatic<Compute> mockedCompute = mockStatic(Compute.class)) {
                 mockedCompute.when(() -> Compute.isAirToGround(any(), any()))
-                    .thenReturn(true);
+                      .thenReturn(true);
                 toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
                 assertEquals(ToHitData.IMPOSSIBLE, toHit.getValue());
             }

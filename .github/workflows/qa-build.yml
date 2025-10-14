@@ -1,0 +1,65 @@
+name: QA Test Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to build (leave empty for current branch)'
+        required: false
+        type: string
+      build_description:
+        description: 'Description of this QA build (e.g., "Fix for issue #1234")'
+        required: true
+        type: string
+
+env:
+  GRADLE_OPTS: "-Dscan.link.VCS=https://github.com/MegaMek/megamek/commit/${{ github.sha }}"
+  mm.profile: "dev"
+
+jobs:
+  qa_build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Data Repo
+        uses: actions/checkout@v5
+        with:
+          repository: megamek/mm-data
+          path: mm-data
+
+      - name: "Check out MegaMek"
+        uses: actions/checkout@v5
+        with:
+          path: megamek
+
+      - name: Set short git commit SHA
+        id: vars
+        run: |
+          cd megamek
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
+
+      - name: "Output branch information to Version file"
+        run: |
+          echo "branch=QA-${{ github.event.inputs.pr_number || github.ref_name }}" >> megamek/megamek/resources/extraVersion.properties
+          echo "gitHash=${{ env.COMMIT_SHORT_SHA }}" >> megamek/megamek/resources/extraVersion.properties
+
+      - name: Set up Temurin JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Build with Gradle
+        working-directory: megamek
+        run: ./gradlew build -x test -PextraVersion="QA-${{ github.event.inputs.pr_number || github.ref_name }}-${{ env.COMMIT_SHORT_SHA }}"
+
+      - name: Upload QA Test Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: megamek-qa-build-${{ github.event.inputs.pr_number || github.ref_name }}-${{ env.COMMIT_SHORT_SHA }}
+          path: ./megamek/megamek/build/distributions/*.tar.gz
+          retention-days: 30

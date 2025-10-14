@@ -549,7 +549,9 @@ public class ModelRecord extends AbstractUnitRecord {
                 if (unitType <= UnitType.AEROSPACE_FIGHTER && eq.hasFlag(WeaponType.F_TAG)) {
                     roles.add(MissionRole.SPOTTER);
                     losTech = true;
-                    continue;
+                    if (!eq.hasFlag(WeaponType.F_C3M) && !eq.hasFlag(WeaponType.F_C3MBS)) {
+                        continue;
+                    }
                 }
 
                 totalWeaponBV += eq.getBV(null) * unitData.getEquipmentQuantities().get(i);

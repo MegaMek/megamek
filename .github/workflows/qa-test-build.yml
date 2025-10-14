@@ -1,0 +1,103 @@
+name: QA Test Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_description:
+        description: 'Build description (e.g., "Fix for weapon heat calculation issue #5678")'
+        required: true
+        type: string
+      pr_number:
+        description: 'PR number being tested (optional)'
+        required: false
+        type: string
+
+env:
+  GRADLE_OPTS: "-Dscan.link.VCS=https://github.com/MegaMek/megamek/commit/${{ github.sha }}"
+
+jobs:
+  qa_build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        java-distribution: [ temurin ]
+        java-version: [ 17 ]
+      fail-fast: false
+
+    name: QA Test Build on ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
+
+    steps:
+      - name: Checkout Data Repo
+        uses: actions/checkout@v5
+        with:
+          repository: megamek/mm-data
+          path: mm-data
+
+      - uses: actions/checkout@v5
+        with:
+          path: megamek
+
+      - name: Set short git commit SHA
+        id: vars
+        run: |
+          cd megamek
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
+
+      - name: "Output branch information to Version file"
+        run: |
+          if [ -n "${{ inputs.pr_number }}" ]; then
+            echo "branch=QA-PR-${{ inputs.pr_number }}" >> megamek/megamek/resources/extraVersion.properties
+          else
+            echo "branch=QA-Build" >> megamek/megamek/resources/extraVersion.properties
+          fi
+          echo "gitHash=${{ env.COMMIT_SHORT_SHA }}" >> megamek/megamek/resources/extraVersion.properties
+
+      - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v5
+        with:
+          distribution: ${{ matrix.java-distribution }}
+          java-version: ${{ matrix.java-version }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          build-scan-publish: true
+          build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
+          build-scan-terms-of-use-agree: "yes"
+
+      - name: Build with Gradle
+        working-directory: megamek
+        run: |
+          if [ -n "${{ inputs.pr_number }}" ]; then
+            ./gradlew build -x test -PextraVersion="QA-PR-${{ inputs.pr_number }}-${{ env.COMMIT_SHORT_SHA }}"
+          else
+            ./gradlew build -x test -PextraVersion="QA-Build-${{ env.COMMIT_SHORT_SHA }}"
+          fi
+
+      - name: Upload TarGZ Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: mm-qa-test-build-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
+          path: ./megamek/megamek/build/distributions/*.tar.gz
+          retention-days: 30
+
+      - name: Generate Build Summary
+        run: |
+          echo "# QA Test Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Build Information" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Description:** ${{ inputs.build_description }}" >> $GITHUB_STEP_SUMMARY
+          if [ -n "${{ inputs.pr_number }}" ]; then
+            echo "- **PR Number:** #${{ inputs.pr_number }}" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "- **Commit:** ${{ env.COMMIT_SHORT_SHA }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Java Version:** ${{ matrix.java-version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Date:** $(date +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "The build artifacts are available for download from the workflow run artifacts section." >> $GITHUB_STEP_SUMMARY
+          echo "Artifacts will be retained for 30 days." >> $GITHUB_STEP_SUMMARY

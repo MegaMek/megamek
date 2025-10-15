@@ -341,6 +341,7 @@ public final class FluffImageHelper {
 
     private static List<String> nameCandidates(BTObject unit) {
         List<String> candidates = new ArrayList<>();
+        String sanitizedChassis = sanitize(unit.generalName());
         String sanitizedModel = sanitize(unit.specificName());
         // Check for an empty model so the order more specific -> less specific name candidate is always kept
         if (!sanitizedModel.isBlank()) {

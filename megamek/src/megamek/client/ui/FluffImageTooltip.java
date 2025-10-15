@@ -16,13 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing;
+package megamek.client.ui;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import megamek.client.ui.swing.util.FluffImageHelper;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.util.FluffImageHelper;
+import megamek.client.ui.util.UIUtil;
 import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;

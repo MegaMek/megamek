@@ -6786,7 +6786,7 @@ public class Compute {
             return nCapitalW + (int) Math.ceil(nStandardW / 6.0);
         } else if (entity.isSupportVehicle()) {
             return getSupportVehicleGunnerNeeds(entity);
-        } else if (entity instanceof Tank tank) {
+        } else if (entity instanceof Tank) {
             return (getFullCrewSize(entity)
                   - getTotalDriverNeeds(entity)
                   - getAdditionalNonGunner(entity));

@@ -75,6 +75,20 @@ public class EnergyWeaponHandler extends WeaponHandler {
               && weapon.hasModes()) || weaponType.hasFlag(WeaponType.F_BOMBAST_LASER)) {
             toReturn = Compute.dialDownDamage(weapon, weaponType, nRange);
         }
+
+        // Apply Gothic Dazzle Mode damage reduction
+        if (weapon.curMode().getName().contains("Dazzle")) {
+            // TODO: Check if target is Abomination when that system is implemented
+            // For now, assume all targets are BattleMechs (not Abominations)
+            boolean isAbomination = false; // Stub for future implementation
+
+            if (!isAbomination) {
+                // Half damage vs BattleMechs (rounded down, min 1)
+                toReturn = Math.max(1, toReturn / 2);
+            }
+            // Full damage vs Abominations (no change to toReturn)
+        }
+
         // during a swarm, all damage gets applied as one block to one location
         if ((attackingEntity instanceof BattleArmor)
               && (weapon.getLocation() == BattleArmor.LOC_SQUAD)

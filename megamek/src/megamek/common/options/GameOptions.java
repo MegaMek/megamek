@@ -195,6 +195,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_JUMP_JET_ATTACK, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_TRIP_ATTACK, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ENERGY_WEAPONS, false);
+        addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_GOTHIC_DAZZLE_MODE, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GAUSS_WEAPONS, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMMUNITION, false);

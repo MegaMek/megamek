@@ -122,6 +122,13 @@ public class WeaponMounted extends Mounted<WeaponType> {
         if (getType().hasFlag(WeaponType.F_ENERGY) && getType().hasModes()) {
             heat = Compute.dialDownHeat(this, getType());
         }
+
+        // Apply Gothic Dazzle Mode heat reduction
+        if (curMode().getName().contains("Dazzle")) {
+            // Half heat (rounded down, min 0)
+            heat = Math.max(0, heat / 2);
+        }
+
         // multiply by number of shots and number of weapons
         heat = heat * getCurrentShots() * getNWeapons();
         if (hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_IMP_COOLING)) {

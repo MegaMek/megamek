@@ -6786,8 +6786,10 @@ public class Compute {
             return nCapitalW + (int) Math.ceil(nStandardW / 6.0);
         } else if (entity.isSupportVehicle()) {
             return getSupportVehicleGunnerNeeds(entity);
-        } else if (entity instanceof Tank) {
-            return (getFullCrewSize(entity) - getTotalDriverNeeds(entity) - getAdditionalNonGunner(entity));
+        } else if (entity instanceof Tank tank) {
+            return (getFullCrewSize(entity)
+                  - getTotalDriverNeeds(entity)
+                  - getAdditionalNonGunner(entity));
         } else if (entity instanceof Infantry) {
             return getFullCrewSize(entity);
         } else if (entity.getCrew().getCrewType().getGunnerPos() > 0) {
@@ -6945,6 +6947,11 @@ public class Compute {
                 crew += 5 * (int) m.getSize();
             }
         }
+
+        if (entity instanceof Tank tank) {
+            crew += tank.getExtraCrewSeats();
+        }
+
         if (entity instanceof Mek && entity.isSuperHeavy()) {
             // Tactical Officer
             return 1;
@@ -6968,8 +6975,7 @@ public class Compute {
             }
             return crew + (int) Math.ceil(crew / 6.0);
         } else if (entity instanceof Tank) {
-            return (int) Math.ceil(entity.getWeight() / 15.0) + ((Tank) entity).getExtraCrewSeats()
-                  + getAdditionalNonGunner(entity);
+            return (int) Math.ceil(entity.getWeight() / 15.0) + getAdditionalNonGunner(entity);
         } else if (entity instanceof BattleArmor) {
             int numTroopers = 0;
             for (int trooper = 1; trooper < entity.locations(); trooper++) {

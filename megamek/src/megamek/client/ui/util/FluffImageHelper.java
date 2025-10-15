@@ -93,6 +93,18 @@ public final class FluffImageHelper {
         return getFluffImage(unit, false);
     }
 
+    public static @Nullable String getFluffImagePath(@Nullable BTObject unit) {
+        if (unit == null) {
+            return null;
+        }
+        File fluffImageFile = findFluffFile(unit, true);
+        if (fluffImageFile != null) {
+            return fluffImageFile.toString();
+        } else {
+            return null;
+        }
+    }
+
     /**
      * Returns a fluff image for the given unit for the record sheet, with a fallback file named "hud.png" if that is
      * present in the right fluff directory, or null if nothing can be found. See {@link #getFluffImage(BTObject)} for
@@ -140,35 +152,69 @@ public final class FluffImageHelper {
             var rsFluffUserDir = new File(userDir, rsFluffDir.toString());
 
             if (recordSheet) {
-                for (String nameCandidate : nameCandidates) {
-                    for (String ext : EXTENSIONS_FLUFF_IMAGE_FORMATS) {
-                        fileCandidates.add(new File(rsFluffUserDir, nameCandidate + ext));
-                    }
-                }
+                fileCandidates.addAll(findMatchingFiles(rsFluffUserDir, nameCandidates));
             }
-            for (String nameCandidate : nameCandidates) {
-                for (String ext : EXTENSIONS_FLUFF_IMAGE_FORMATS) {
-                    fileCandidates.add(new File(fluffUserDir, nameCandidate + ext));
-                }
-            }
+            fileCandidates.addAll(findMatchingFiles(fluffUserDir, nameCandidates));
         }
 
         // Internal fluff path matches
-        for (String nameCandidate : nameCandidates) {
-            for (String ext : EXTENSIONS_FLUFF_IMAGE_FORMATS) {
-                fileCandidates.add(new File(fluffDir, nameCandidate + ext));
-            }
-        }
+        fileCandidates.addAll(findMatchingFiles(fluffDir, nameCandidates));
 
         // Fallback for units other than HHWs.
         // The HHW fallback image is embedded into the RS template.
         if (recordSheet && !unit.isHandheldWeapon()) {
-            fileCandidates.add(new File(fluffDir, "hud.png"));
+            File hudFile = findMatchingFile(fluffDir, "hud.png");
+            if (hudFile != null) {
+                fileCandidates.add(hudFile);
+            }
         }
 
         for (File possibleFile : fileCandidates) {
             if (possibleFile.exists() && !possibleFile.isDirectory()) {
                 return possibleFile;
+            }
+        }
+        return null;
+    }
+
+    private static List<File> findMatchingFiles(File directory, List<String> nameCandidates) {
+        List<File> matches = new ArrayList<>();
+        if (!directory.exists() || !directory.isDirectory()) {
+            return matches;
+        }
+
+        File[] files = directory.listFiles();
+        if (files == null) {
+            return matches;
+        }
+
+        for (String nameCandidate : nameCandidates) {
+            for (String ext : EXTENSIONS_FLUFF_IMAGE_FORMATS) {
+                String searchName = nameCandidate + ext;
+                for (File file : files) {
+                    if (file.getName().equalsIgnoreCase(searchName)) {
+                        matches.add(file);
+                        break;
+                    }
+                }
+            }
+        }
+        return matches;
+    }
+
+    private static @Nullable File findMatchingFile(File directory, String fileName) {
+        if (!directory.exists() || !directory.isDirectory()) {
+            return null;
+        }
+
+        File[] files = directory.listFiles();
+        if (files == null) {
+            return null;
+        }
+
+        for (File file : files) {
+            if (file.getName().equalsIgnoreCase(fileName)) {
+                return file;
             }
         }
         return null;

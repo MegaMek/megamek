@@ -6787,7 +6787,7 @@ public class Compute {
         } else if (entity.isSupportVehicle()) {
             return getSupportVehicleGunnerNeeds(entity);
         } else if (entity instanceof Tank) {
-            return (getFullCrewSize(entity) - 1);
+            return (getFullCrewSize(entity) - getTotalDriverNeeds(entity) - getAdditionalNonGunner(entity));
         } else if (entity instanceof Infantry) {
             return getFullCrewSize(entity);
         } else if (entity.getCrew().getCrewType().getGunnerPos() > 0) {
@@ -6922,8 +6922,7 @@ public class Compute {
     }
 
     /**
-     * Calculates additional crew required by support vehicles and advanced aerospace vessels for certain misc
-     * equipment.
+     * Calculates additional crew required by vehicles and advanced aerospace vessels for certain misc equipment.
      *
      * @param entity The unit
      *
@@ -6969,7 +6968,8 @@ public class Compute {
             }
             return crew + (int) Math.ceil(crew / 6.0);
         } else if (entity instanceof Tank) {
-            return (int) Math.ceil(entity.getWeight() / 15.0) + ((Tank) entity).getExtraCrewSeats();
+            return (int) Math.ceil(entity.getWeight() / 15.0) + ((Tank) entity).getExtraCrewSeats()
+                  + getAdditionalNonGunner(entity);
         } else if (entity instanceof BattleArmor) {
             int numTroopers = 0;
             for (int trooper = 1; trooper < entity.locations(); trooper++) {

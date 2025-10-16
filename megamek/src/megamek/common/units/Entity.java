@@ -14176,7 +14176,7 @@ public abstract class Entity extends TurnOrdered
             return false;
         }
         Hex occupiedHex = getOccupiedHex();
-        return occupiedHex.containsTerrain(Terrains.WATER) && (relHeight() < 0); //THIS
+        return occupiedHex.containsTerrain(Terrains.WATER) && (relHeight() < 0);
     }
 
     public Hex getOccupiedHex() {

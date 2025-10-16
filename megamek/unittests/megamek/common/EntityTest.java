@@ -252,7 +252,7 @@ class EntityTest {
 
             @BeforeEach
             public void beforeEach() {
-                mek.setElevation(-2);
+                mek.setElevation(-2); //Underwater!
             }
 
             @Test
@@ -277,7 +277,6 @@ class EntityTest {
 
                 // Assert
                 assertTrue(isUnderwater);
-                ;
             }
 
             @Test
@@ -293,50 +292,50 @@ class EntityTest {
             }
         }
 
-    @Nested
-    class isUnderwaterEntityAbovewaterTests {
+        @Nested
+        class isUnderwaterEntityAbovewaterTests {
 
             @BeforeEach
             public void beforeEach() {
                 mek.setElevation(0); // On surface!
             }
 
-        @Test
-        public void testNotUnderwater() {
-            // Arrange
-            doReturn(createWaterHexWithDepth(2)).when(mek).getOccupiedHex();
+            @Test
+            public void testNotUnderwater() {
+                // Arrange
+                doReturn(createWaterHexWithDepth(2)).when(mek).getOccupiedHex();
 
-            // Act
-            boolean isUnderwater = mek.isUnderwater();
+                // Act
+                boolean isUnderwater = mek.isUnderwater();
 
-            // Assert
-            assertFalse(isUnderwater);
+                // Assert
+                assertFalse(isUnderwater);
+            }
+
+            @Test
+            public void testNotUnderwaterDeeper() {
+                // Arrange
+                doReturn(createWaterHexWithDepth(2, -2)).when(mek).getOccupiedHex();
+
+                // Act
+                boolean isUnderwater = mek.isUnderwater();
+
+                // Assert
+                assertFalse(isUnderwater);
+                ;
+            }
+
+            @Test
+            public void testNotUnderwaterHigher() {
+                // Arrange
+                doReturn(createWaterHexWithDepth(2, 2)).when(mek).getOccupiedHex();
+
+                // Act
+                boolean isUnderwater = mek.isUnderwater();
+
+                // Assert
+                assertFalse(isUnderwater);
+            }
         }
-
-        @Test
-        public void testNotUnderwaterDeeper() {
-            // Arrange
-            doReturn(createWaterHexWithDepth(2, -2)).when(mek).getOccupiedHex();
-
-            // Act
-            boolean isUnderwater = mek.isUnderwater();
-
-            // Assert
-            assertFalse(isUnderwater);
-            ;
-        }
-
-        @Test
-        public void testNotUnderwaterHigher() {
-            // Arrange
-            doReturn(createWaterHexWithDepth(2, 2)).when(mek).getOccupiedHex();
-
-            // Act
-            boolean isUnderwater = mek.isUnderwater();
-
-            // Assert
-            assertFalse(isUnderwater);
-        }
-    }
     }
 }

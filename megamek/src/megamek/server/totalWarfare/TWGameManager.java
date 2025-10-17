@@ -704,7 +704,7 @@ public class TWGameManager extends AbstractGameManager {
         if (doBlind()) {
             send(connId, createFilteredFullEntitiesPacket(game.getPlayer(connId), null));
         } else {
-            send(connId, createEntitiesPacket());
+            send(connId, createFullEntitiesPacket());
         }
     }
 
@@ -23840,7 +23840,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Otherwise, send the full list.
-        send(createEntitiesPacket());
+        send(createFullEntitiesPacket());
     }
 
     /**

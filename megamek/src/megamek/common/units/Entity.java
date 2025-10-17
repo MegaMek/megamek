@@ -13637,7 +13637,7 @@ public abstract class Entity extends TurnOrdered
     public int getBoobyTrapDamage() {
         int damage = 0;
         if (hasBoobyTrap()) {
-            if (getEngine() != null) {
+            if ((getEngine() != null) && !(getEngine().hasFlag(Engine.SUPPORT_VEE_ENGINE))) {
                 damage = getEngine().getRating();
             } else {
                 damage = (int) getWeight() * getOriginalWalkMP();

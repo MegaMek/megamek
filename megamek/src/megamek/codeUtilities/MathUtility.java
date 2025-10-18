@@ -33,9 +33,6 @@
 
 package megamek.codeUtilities;
 
-import static java.lang.Math.ceil;
-import static java.lang.Math.floor;
-
 import megamek.logging.MMLogger;
 
 public class MathUtility {
@@ -52,6 +49,15 @@ public class MathUtility {
      * values, it returns the greatest integer less than or equal to the value (i.e., rounds further away from
      * zero).</p>
      *
+     * <p><b>Special cases:</b></p>
+     * <ul>
+     *   <li>If the input is {@code NaN}, returns {@code 0} and logs a warning.</li>
+     *   <li>If the rounded value is out of {@code int} range, returns {@link Integer#MAX_VALUE} or
+     *   {@link Integer#MIN_VALUE} as appropriate and logs a warning.</li>
+     *   <li>If the input is positive or negative infinity, returns {@link Integer#MAX_VALUE} or
+     *   {@link Integer#MIN_VALUE} and logs a warning.</li>
+     * </ul>
+     *
      * @param value The double value to round.
      *
      * @return The rounded integer value, away from zero.
@@ -60,7 +66,28 @@ public class MathUtility {
      * @since 0.50.10
      */
     public static int roundAwayFromZero(double value) {
-        return value > 0 ? (int) ceil(value) : (int) floor(value);
+        if (Double.isNaN(value)) {
+            LOGGER.warn("roundAwayFromZero: Cannot round NaN value. Returning 0.");
+            return 0;
+        }
+        if (value == Double.POSITIVE_INFINITY) {
+            LOGGER.warn("roundAwayFromZero: Value is positive infinity. Returning Integer.MAX_VALUE.");
+            return Integer.MAX_VALUE;
+        }
+        if (value == Double.NEGATIVE_INFINITY) {
+            LOGGER.warn("roundAwayFromZero: Value is negative infinity. Returning Integer.MIN_VALUE.");
+            return Integer.MIN_VALUE;
+        }
+
+        double roundedValue = value > 0 ? Math.ceil(value) : Math.floor(value);
+
+        try {
+            return Math.toIntExact((long) roundedValue);
+        } catch (ArithmeticException e) {
+            int extreme = value > 0 ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+            LOGGER.warn("Can't round '{}' away from zero due to {}. Returning {}.", value, e.getMessage(), extreme);
+            return extreme;
+        }
     }
 
     /**
@@ -68,6 +95,15 @@ public class MathUtility {
      *
      * <p>For positive values, this method returns the greatest integer less than or equal to the value. For negative
      * values, it returns the least integer greater than or equal to the value (i.e., rounds closer to zero).</p>
+     *
+     * <p><b>Special cases:</b></p>
+     * <ul>
+     *   <li>If the input is {@code NaN}, returns {@code 0} and logs a warning.</li>
+     *   <li>If the rounded value is out of {@code int} range, returns {@link Integer#MAX_VALUE} or
+     *   {@link Integer#MIN_VALUE} as appropriate and logs a warning.</li>
+     *   <li>If the input is positive or negative infinity, returns {@link Integer#MAX_VALUE} or
+     *   {@link Integer#MIN_VALUE} and logs a warning.</li>
+     * </ul>
      *
      * @param value The double value to round.
      *
@@ -77,7 +113,28 @@ public class MathUtility {
      * @since 0.50.10
      */
     public static int roundTowardsZero(double value) {
-        return value > 0 ? (int) floor(value) : (int) ceil(value);
+        if (Double.isNaN(value)) {
+            LOGGER.warn("roundTowardsZero: Cannot round NaN value. Returning 0.");
+            return 0;
+        }
+        if (value == Double.POSITIVE_INFINITY) {
+            LOGGER.warn("roundTowardsZero: Value is positive infinity. Returning Integer.MAX_VALUE.");
+            return Integer.MAX_VALUE;
+        }
+        if (value == Double.NEGATIVE_INFINITY) {
+            LOGGER.warn("roundTowardsZero: Value is negative infinity. Returning Integer.MIN_VALUE.");
+            return Integer.MIN_VALUE;
+        }
+
+        double roundedValue = value > 0 ? Math.floor(value) : Math.ceil(value);
+
+        try {
+            return Math.toIntExact((long) roundedValue);
+        } catch (ArithmeticException e) {
+            int extreme = value > 0 ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+            LOGGER.warn("Can't round '{}' towards zero due to {}. Returning {}.", value, e.getMessage(), extreme);
+            return extreme;
+        }
     }
 
     // region Linear Interpolation

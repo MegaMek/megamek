@@ -206,14 +206,6 @@ tasks.register('copyFiles', Copy) {
     include "userdata/"
 
     into fileStagingDir
-
-    doLast {
-        fileTree(destinationDir).forEach { File f ->
-            if (f.isFile()) {
-                f.setLastModified(System.currentTimeMillis())
-            }
-        }
-    }
 }
 
 tasks.register('createImageAtlases', JavaExec) {
@@ -329,6 +321,16 @@ tasks.register("packagePrepWork") {
     dependsOn copyFiles
     dependsOn createImageAtlases
     dependsOn createAllExecutables
+
+    doLast {
+        fileTree(fileStagingDir).matching {
+            include '**/*'
+        }.files.each { File f ->
+            if (f.isFile()) {
+                f.setLastModified(System.currentTimeMillis())
+            }
+        }
+    }
 }
 
 distZip {

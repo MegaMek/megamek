@@ -206,6 +206,14 @@ tasks.register('copyFiles', Copy) {
     include "userdata/"
 
     into fileStagingDir
+
+    doLast {
+        fileTree(destinationDir).forEach { File f ->
+            if (f.isFile()) {
+                f.setLastModified(System.currentTimeMillis())
+            }
+        }
+    }
 }
 
 tasks.register('createImageAtlases', JavaExec) {

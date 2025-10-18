@@ -33,6 +33,9 @@
 
 package megamek.codeUtilities;
 
+import static java.lang.Math.ceil;
+import static java.lang.Math.floor;
+
 import megamek.logging.MMLogger;
 
 public class MathUtility {
@@ -40,6 +43,41 @@ public class MathUtility {
 
     private MathUtility() {
         // Do nothing Private Constructor
+    }
+
+    /**
+     * Rounds a double value away from zero ("up" for both positive and negative values).
+     *
+     * <p>For positive values, this method returns the least integer greater than or equal to the value. For negative
+     * values, it returns the greatest integer less than or equal to the value (i.e., rounds further away from
+     * zero).</p>
+     *
+     * @param value The double value to round.
+     *
+     * @return The rounded integer value, away from zero.
+     *
+     * @author Illiani
+     * @since 0.50.10
+     */
+    public static int roundAwayFromZero(double value) {
+        return value > 0 ? (int) ceil(value) : (int) floor(value);
+    }
+
+    /**
+     * Rounds a double value toward zero ("down" for both positive and negative values).
+     *
+     * <p>For positive values, this method returns the greatest integer less than or equal to the value. For negative
+     * values, it returns the least integer greater than or equal to the value (i.e., rounds closer to zero).</p>
+     *
+     * @param value The double value to round.
+     *
+     * @return The rounded integer value, toward zero.
+     *
+     * @author Illiani
+     * @since 0.50.10
+     */
+    public static int roundTowardsZero(double value) {
+        return value > 0 ? (int) floor(value) : (int) ceil(value);
     }
 
     // region Linear Interpolation

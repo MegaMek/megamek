@@ -323,9 +323,7 @@ tasks.register("packagePrepWork") {
     dependsOn createAllExecutables
 
     doLast {
-        fileTree(fileStagingDir).matching {
-            include '**/*'
-        }.files.each { File f ->
+        fileTree(destinationDir).forEach { File f ->
             if (f.isFile()) {
                 f.setLastModified(System.currentTimeMillis())
             }

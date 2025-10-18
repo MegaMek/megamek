@@ -14175,8 +14175,12 @@ public abstract class Entity extends TurnOrdered
         if (!hasOccupiedHex()) {
             return false;
         }
-        Hex occupiedHex = game.getBoard().getHex(getPosition());
-        return occupiedHex.containsTerrain(Terrains.WATER) && (relHeight() < occupiedHex.getLevel());
+        Hex occupiedHex = getOccupiedHex();
+        return occupiedHex.containsTerrain(Terrains.WATER) && (relHeight() < 0);
+    }
+
+    public Hex getOccupiedHex() {
+         return game.getBoard().getHex(getPosition());
     }
 
     /**

@@ -325,6 +325,7 @@ tasks.register("packagePrepWork") {
     dependsOn createStartScripts
     dependsOn copyFiles
     dependsOn createImageAtlases
+    dependsOn createAllExecutables
 }
 
 distZip {

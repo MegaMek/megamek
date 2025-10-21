@@ -210,6 +210,8 @@ tasks.register('copyFiles', Copy) {
 
     include "userdata/"
 
+    exclude("data/**/*.cache")
+
     into fileStagingDir
 }
 

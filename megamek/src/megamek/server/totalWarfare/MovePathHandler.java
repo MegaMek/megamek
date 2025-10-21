@@ -62,6 +62,7 @@ import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
+import megamek.common.equipment.Briefcase;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EscapePods;
@@ -3088,12 +3089,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
             } // End STEP_MOUNT
 
             if (step.getType() == MoveStepType.PICKUP_CARGO) {
-                var groundObjects = getGame().getGroundObjects(step.getPosition());
+                var carryableObjects = getGame().getGroundObjects(step.getPosition());
+                carryableObjects.addAll(getGame().getEntitiesVector(step.getPosition()));
                 Integer cargoPickupIndex;
 
                 // if there's only one object on the ground, let's just get that one and ignore
                 // any parameters
-                if (groundObjects.size() == 1) {
+                if (carryableObjects.size() == 1) {
                     cargoPickupIndex = 0;
                 } else {
                     cargoPickupIndex = step.getAdditionalData(MoveStep.CARGO_PICKUP_KEY);
@@ -3102,26 +3104,51 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 Integer cargoPickupLocation = step.getAdditionalData(MoveStep.CARGO_LOCATION_KEY);
 
                 // there have to be objects on the ground, and we have to be trying to pick up one of them
-                if ((!groundObjects.isEmpty()) &&
+                if ((!carryableObjects.isEmpty()) &&
                       (cargoPickupIndex != null) && (cargoPickupIndex >= 0)
-                      && (cargoPickupIndex < groundObjects.size())) {
+                      && (cargoPickupIndex < carryableObjects.size())) {
 
-                    ICarryable pickupTarget = groundObjects.get(cargoPickupIndex);
+                    ICarryable pickupTarget = carryableObjects.get(cargoPickupIndex);
                     if (entity.maxGroundObjectTonnage() >= pickupTarget.getTonnage()) {
-                        getGame().removeGroundObject(step.getPosition(), pickupTarget);
-                        entity.pickupGroundObject(pickupTarget, cargoPickupLocation);
+                        if (pickupTarget instanceof Briefcase) {
+                            getGame().removeGroundObject(step.getPosition(), pickupTarget);
+                            entity.pickupCarryableObject(pickupTarget, cargoPickupLocation);
 
-                        report = new Report(2513);
-                        report.subject = entity.getId();
-                        report.add(entity.getDisplayName());
-                        report.add(pickupTarget.specificName());
-                        report.add(step.getPosition().toFriendlyString());
-                        addReport(report);
+                            report = new Report(2513);
+                            report.subject = entity.getId();
+                            report.add(entity.getDisplayName());
+                            report.add(pickupTarget.specificName());
+                            report.add(step.getPosition().toFriendlyString());
+                            addReport(report);
 
-                        // a pickup should be the last step. Send an update for the overall ground
-                        // object list.
-                        gameManager.sendGroundObjectUpdate();
-                        break;
+                            // a pickup should be the last step. Send an update for the overall ground
+                            // object list.
+                            gameManager.sendGroundObjectUpdate();
+                            break;
+                        } else if (pickupTarget instanceof Entity carryableEntity) {
+                            //ICarryable pickupTarget = (Entity) getGame().getEntity(cargoPickupIndex);
+                            if (entity.maxGroundObjectTonnage() >= pickupTarget.getTonnage()) {
+                                //getGame().removeGroundObject(step.getPosition(), pickupTarget);
+                                entity.pickupCarryableObject(pickupTarget, cargoPickupLocation);
+                                //TODO load HHW
+                                gameManager.loadUnit(entity, carryableEntity, -1);
+                                //entity.load(carryableEntity);
+                                //carryableEntity.setTransportId(entity.getId()); //TODO this is a hack
+
+
+                                report = new Report(2513);
+                                report.subject = entity.getId();
+                                report.add(entity.getDisplayName());
+                                report.add(carryableEntity.getDisplayName());
+                                report.add(step.getPosition().toFriendlyString());
+                                addReport(report);
+
+                                // a pickup should be the last step. Send an update for the overall ground
+                                // object list.
+                                gameManager.sendGroundObjectUpdate();
+                                break;
+                            }
+                        }
                     } else {
                         logger.warn(
                               "{} attempted to pick up object but it is too heavy. Carry capacity: {}, object weight: {}",
@@ -3149,7 +3176,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     cargo = entity.getCarriedObject(cargoLocation);
                 }
 
-                entity.dropGroundObject(cargo, isLastStep);
+                entity.dropCarriedObject(cargo, isLastStep);
+                if (cargo instanceof Entity carriedEntity) {
+                    gameManager.unloadUnit(entity, carriedEntity, step.getPosition(), step.getFacing(),
+                          step.getElevation());
+                }
+
+
                 boolean cargoDestroyed = false;
 
                 if (!isLastStep) {
@@ -3159,7 +3192,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // note that this should not be moved into the "!isLastStep" block above as cargo may be either
                 // unloaded peacefully or dumped on the move
                 if (!cargoDestroyed) {
-                    getGame().placeGroundObject(step.getPosition(), cargo);
+                    if (cargo instanceof Briefcase) {
+                        getGame().placeGroundObject(step.getPosition(), cargo);
+                    }
 
                     report = new Report(2514);
                     report.subject = entity.getId();
@@ -3170,7 +3205,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                     // a drop changes board state. Send an update for the overall ground object
                     // list.
-                    gameManager.sendGroundObjectUpdate();
+                    if (cargo instanceof Briefcase) {
+                        gameManager.sendGroundObjectUpdate();
+                    } else if (cargo instanceof Entity carriedEntity) {
+                        gameManager.send(gameManager.getPacketHelper().createTurnListPacket());
+                    }
                 }
             }
 

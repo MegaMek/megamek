@@ -584,7 +584,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     // if we have destroyed the cargo, remove it, add a report
                     // and move on to the next piece of cargo
                     if (cargoDestroyed) {
-                        mek.dropGroundObject(cargo, false);
+                        mek.dropCarriedObject(cargo, false);
 
                         report = new Report(6721);
                         report.subject = entityId;

@@ -2977,7 +2977,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // there has to be an entity, objects are on the ground,
         // the entity can pick them up
         if ((ce == null) ||
-              (game.getGroundObjects(finalPosition(), ce).isEmpty()) ||
+              ((game.getGroundObjects(finalPosition(), ce).isEmpty())
+              && game.getEntitiesVector(finalPosition()).isEmpty()) ||
               ((cmd.getLastStep() != null) && (cmd.getLastStep().getType() == MoveStepType.PICKUP_CARGO))) {
             setPickupCargoEnabled(false);
             return;
@@ -5577,7 +5578,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private void processPickupCargoCommand() {
         var options = game.getGroundObjects(finalPosition());
-        var displayedOptions = game.getGroundObjects(finalPosition(), currentEntity());
+        options.addAll(game.getEntitiesVector(finalPosition()));
+        var displayedOptions =
+              options.stream().filter(o -> o.getTonnage() <= currentEntity().maxGroundObjectTonnage()).toList();
+        //game
+        // .getGroundObjects(finalPosition
+        // (),
+        // currentEntity());
+
 
         // if there's only one thing to pick up, pick it up. regardless of how many objects we are picking up, we may
         // have to choose the location with which to pick it up

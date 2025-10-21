@@ -499,6 +499,13 @@ public abstract class Mek extends Entity {
         }
     }
 
+    /**
+     * Add transporter for mek's arms for externally carried cargo
+     */
+    public void setMekArms() {
+        addTransporter(new ExternalCargo(maxGroundObjectTonnage()));
+    }
+
     public void setProtoMekClampMounts() {
         boolean front = false;
         boolean rear = false;

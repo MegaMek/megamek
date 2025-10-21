@@ -553,7 +553,6 @@ public class AvailabilityPanel {
     }
 
     public void setUnit(String model, String chassis) {
-        //record = RAT_GENERATOR.getModelRecord(chassis + " " + model);
         record = RAT_GENERATOR.getModelRecord((chassis + " " + model).trim());
         initializePanel();
     }

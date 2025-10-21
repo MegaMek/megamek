@@ -4336,7 +4336,7 @@ public abstract class Mek extends Entity {
         if (hasEngine()) {
             sb.append(getEngine().getEngineName())
                   .append(" Engine")
-                  .append(!(getEngine().hasFlag(Engine.CLAN_ENGINE) && isMixedTech()) ? ("(IS)")
+                  .append((!getEngine().hasFlag(Engine.CLAN_ENGINE) || isMixedTech()) ? ("(IS)")
                         : "");
         } else {
             sb.append("(none)");
@@ -5291,7 +5291,7 @@ public abstract class Mek extends Entity {
         super.destroyLocation(loc, blownOff);
         // if it's a leg, the entity falls
         if (game != null && locationIsLeg(loc) && canFall()) {
-            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)){
+            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
                 game.addPSR(new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL, 4, "leg destroyed"));
             } else {
                 game.addPSR(new PilotingRollData(getId(),

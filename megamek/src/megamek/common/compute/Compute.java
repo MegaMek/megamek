@@ -6787,7 +6787,9 @@ public class Compute {
         } else if (entity.isSupportVehicle()) {
             return getSupportVehicleGunnerNeeds(entity);
         } else if (entity instanceof Tank) {
-            return (getFullCrewSize(entity) - 1);
+            return (getFullCrewSize(entity)
+                  - getTotalDriverNeeds(entity)
+                  - getAdditionalNonGunner(entity));
         } else if (entity instanceof Infantry) {
             return getFullCrewSize(entity);
         } else if (entity.getCrew().getCrewType().getGunnerPos() > 0) {
@@ -6922,12 +6924,26 @@ public class Compute {
     }
 
     /**
-     * Calculates additional crew required by support vehicles and advanced aerospace vessels for certain misc
-     * equipment.
+     * Calculates the number of additional non-gunner crew members required by vehicles and advanced aerospace vessels
+     * due to specific miscellaneous equipment mounts or special unit features.
      *
-     * @param entity The unit
+     * <p>Crew additions are based on the tonnage or equipment size of certain mounted systems, such as:</p>
      *
-     * @return The number of additional crew required
+     * <ul>
+     *   <li>Communications equipment ({@code F_COMMUNICATIONS}): +1 crew per ton of equipment</li>
+     *   <li>Field Kitchens ({@code F_FIELD_KITCHEN}): +3 crew per mount</li>
+     *   <li>Mobile Field Bases ({@code F_MOBILE_FIELD_BASE}): +5 crew per mount</li>
+     *   <li>MASH units ({@code F_MASH}): +5 crew per size unit</li>
+     * </ul>
+     *
+     * <p>For tanks, any additional crew seats (via {@code getExtraCrewSeats()}) are added.</p>
+     *
+     * <p>If the unit has a drone operating system it requires 0 additional crew. For super-heavy meks, this always
+     * returns {@code 1} (to represent the Tactical Officer).</p>
+     *
+     * @param entity The unit for which to calculate the additional crew requirements
+     *
+     * @return The number of additional non-gunner crew required for the given unit
      */
     public static int getAdditionalNonGunner(Entity entity) {
         if (entity.hasDroneOs()) {
@@ -6946,6 +6962,11 @@ public class Compute {
                 crew += 5 * (int) m.getSize();
             }
         }
+
+        if (entity instanceof Tank tank) {
+            crew += tank.getExtraCrewSeats();
+        }
+
         if (entity instanceof Mek && entity.isSuperHeavy()) {
             // Tactical Officer
             return 1;
@@ -6969,7 +6990,7 @@ public class Compute {
             }
             return crew + (int) Math.ceil(crew / 6.0);
         } else if (entity instanceof Tank) {
-            return (int) Math.ceil(entity.getWeight() / 15.0) + ((Tank) entity).getExtraCrewSeats();
+            return (int) Math.ceil(entity.getWeight() / 15.0) + getAdditionalNonGunner(entity);
         } else if (entity instanceof BattleArmor) {
             int numTroopers = 0;
             for (int trooper = 1; trooper < entity.locations(); trooper++) {

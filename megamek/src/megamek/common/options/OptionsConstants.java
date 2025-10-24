@@ -412,6 +412,7 @@ public class OptionsConstants {
     public static final String ADVANCED_COMBAT_TAC_OPS_JUMP_JET_ATTACK = "tacops_jump_jet_attack";
     public static final String ADVANCED_COMBAT_TAC_OPS_TRIP_ATTACK = "tacops_trip_attack";
     public static final String ADVANCED_COMBAT_TAC_OPS_ENERGY_WEAPONS = "tacops_energy_weapons";
+    public static final String ADVANCED_COMBAT_GOTHIC_DAZZLE_MODE = "gothic_dazzle_mode";
     public static final String ADVANCED_COMBAT_TAC_OPS_GAUSS_WEAPONS = "tacops_gauss_weapons";
     public static final String ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES = "tacops_retractable_blades";
     public static final String ADVANCED_COMBAT_TAC_OPS_AMMUNITION = "tacops_ammunition";

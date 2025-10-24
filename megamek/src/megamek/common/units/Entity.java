@@ -13637,7 +13637,7 @@ public abstract class Entity extends TurnOrdered
     public int getBoobyTrapDamage() {
         int damage = 0;
         if (hasBoobyTrap()) {
-            if (getEngine() != null) {
+            if ((getEngine() != null) && !(getEngine().hasFlag(Engine.SUPPORT_VEE_ENGINE))) {
                 damage = getEngine().getRating();
             } else {
                 damage = (int) getWeight() * getOriginalWalkMP();
@@ -14175,8 +14175,12 @@ public abstract class Entity extends TurnOrdered
         if (!hasOccupiedHex()) {
             return false;
         }
-        Hex occupiedHex = game.getBoard().getHex(getPosition());
-        return occupiedHex.containsTerrain(Terrains.WATER) && (relHeight() < occupiedHex.getLevel());
+        Hex occupiedHex = getOccupiedHex();
+        return occupiedHex.containsTerrain(Terrains.WATER) && (relHeight() < 0);
+    }
+
+    public Hex getOccupiedHex() {
+         return game.getBoard().getHex(getPosition());
     }
 
     /**

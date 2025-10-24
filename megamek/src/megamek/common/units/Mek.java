@@ -4336,7 +4336,7 @@ public abstract class Mek extends Entity {
         if (hasEngine()) {
             sb.append(getEngine().getEngineName())
                   .append(" Engine")
-                  .append(!(getEngine().hasFlag(Engine.CLAN_ENGINE) && isMixedTech()) ? ("(IS)")
+                  .append((!getEngine().hasFlag(Engine.CLAN_ENGINE) || isMixedTech()) ? ("(IS)")
                         : "");
         } else {
             sb.append("(none)");

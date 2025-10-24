@@ -161,6 +161,9 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
             }
         }
 
+        // add Transporters prior to equipment to simplify F_CARGO bay assignment
+        addTransports(a);
+
         if (dataFile.exists("internal_type")) {
             a.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
         } else {

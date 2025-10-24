@@ -704,7 +704,7 @@ public class TWGameManager extends AbstractGameManager {
         if (doBlind()) {
             send(connId, createFilteredFullEntitiesPacket(game.getPlayer(connId), null));
         } else {
-            send(connId, createEntitiesPacket());
+            send(connId, createFullEntitiesPacket());
         }
     }
 
@@ -9821,7 +9821,7 @@ public class TWGameManager extends AbstractGameManager {
             WeaponHandler wh = (WeaponHandler) ah;
             WeaponAttackAction waa = wh.weaponAttackAction;
 
-            Entity artilleryFirer = game.getEntity(waa.getEntityId());
+            Entity artilleryFirer = game.getEntityFromAllSources(waa.getEntityId());
 
             // for artillery attacks, the attacking entity might no longer be in the game.
             // TODO : Yeah, I know there's an exploit here, but better able to shoot some ArrowIVs than none, right?
@@ -23840,7 +23840,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Otherwise, send the full list.
-        send(createEntitiesPacket());
+        send(createFullEntitiesPacket());
     }
 
     /**

@@ -63,9 +63,10 @@ import megamek.client.ui.util.FluffImageHelper;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedXPanel;
 import megamek.client.ui.util.ViewFormatting;
-import megamek.common.units.Entity;
 import megamek.common.Report;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.templates.TROView;
+import megamek.common.units.Entity;
 
 /**
  * @author Jay Lawson
@@ -209,7 +210,8 @@ public class EntityReadoutPanel extends JPanel {
     }
 
     private void setFluffImage(Entity entity) {
-        Image image = FluffImageHelper.getFluffImage(entity);
+        boolean isSpritesOnly = PreferenceManager.getClientPreferences().getSpritesOnly();
+        Image image = isSpritesOnly ? null : FluffImageHelper.getFluffImage(entity);
         // Scale down to the default width if the image is wider than that
         if (null != image) {
             if (image.getWidth(this) > DEFAULT_WIDTH) {

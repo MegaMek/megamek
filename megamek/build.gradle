@@ -10,6 +10,11 @@ plugins {
     id 'checkstyle'
 }
 
+tasks.withType(AbstractArchiveTask).configureEach {
+    preserveFileTimestamps = true
+    reproducibleFileOrder = true
+}
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
@@ -204,6 +209,8 @@ tasks.register('copyFiles', Copy) {
     exclude "mmconf/mml.preferences"
 
     include "userdata/"
+
+    exclude("data/**/*.cache")
 
     into fileStagingDir
 }

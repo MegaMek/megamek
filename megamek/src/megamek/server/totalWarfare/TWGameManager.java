@@ -11602,14 +11602,17 @@ public class TWGameManager extends AbstractGameManager {
                     // blade retracts to its original mode
                     // attackingEntity.extendBlade(paa.getArm());
                     // check for breaking a nail
-                    if (Compute.d6(2) > 9) {
-                        addNewLines();
-                        r = new Report(4456);
-                        r.indent(2);
-                        r.subject = ae.getId();
-                        r.newlines = 0;
-                        addReport(r);
-                        ae.destroyRetractableBlade(armLoc);
+                    // PLAYTEST3 no longer breaks nail
+                    if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                        if (Compute.d6(2) > 9) {
+                            addNewLines();
+                            r = new Report(4456);
+                            r.indent(2);
+                            r.subject = ae.getId();
+                            r.newlines = 0;
+                            addReport(r);
+                            ae.destroyRetractableBlade(armLoc);
+                        }
                     }
                 }
             }
@@ -12991,11 +12994,14 @@ public class TWGameManager extends AbstractGameManager {
             r.subject = ae.getId();
             addReport(r);
 
-            if (caa.getClub().getType().hasSubType(MiscType.S_MACE)) {
-                if (ae instanceof LandAirMek && ae.isAirborneVTOLorWIGE()) {
-                    game.addControlRoll(new PilotingRollData(ae.getId(), 2, "missed a mace attack"));
-                } else {
-                    game.addPSR(new PilotingRollData(ae.getId(), 2, "missed a mace attack"));
+            // PLAYTEST3 no more missed maces
+            if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                if (caa.getClub().getType().hasSubType(MiscType.S_MACE)) {
+                    if (ae instanceof LandAirMek && ae.isAirborneVTOLorWIGE()) {
+                        game.addControlRoll(new PilotingRollData(ae.getId(), 2, "missed a mace attack"));
+                    } else {
+                        game.addPSR(new PilotingRollData(ae.getId(), 2, "missed a mace attack"));
+                    }
                 }
             }
 
@@ -13140,10 +13146,18 @@ public class TWGameManager extends AbstractGameManager {
                 r.add(te.getLocationAbbr(hit));
                 r.add(diceRoll2);
                 addReport(r);
-
-                if (diceRoll2.getIntValue() >= 10) {
-                    hit.makeGlancingBlow();
-                    addReport(damageEntity(te, hit, 1, false, DamageType.NONE, true, false, throughFront));
+                
+                // PLAYTEST3 this is now 9, not 10.
+                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                    if (diceRoll2.getIntValue() >= 9) {
+                        hit.makeGlancingBlow();
+                        addReport(damageEntity(te, hit, 1, false, DamageType.NONE, true, false, throughFront));
+                    }
+                } else {
+                    if (diceRoll2.getIntValue() >= 10) {
+                        hit.makeGlancingBlow();
+                        addReport(damageEntity(te, hit, 1, false, DamageType.NONE, true, false, throughFront));
+                    }
                 }
             }
 
@@ -21729,12 +21743,15 @@ public class TWGameManager extends AbstractGameManager {
                     target -= 2;
                 }
                 // Impact-resistant armor easier to breach
-                if ((entity.getArmorType(loc) == EquipmentType.T_ARMOR_IMPACT_RESISTANT)) {
-                    r = new Report(6344);
-                    r.subject = entity.getId();
-                    r.indent(3);
-                    vDesc.addElement(r);
-                    target += 1;
+                // PLAYTEST3 no longer easier
+                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                    if ((entity.getArmorType(loc) == EquipmentType.T_ARMOR_IMPACT_RESISTANT)) {
+                        r = new Report(6344);
+                        r.subject = entity.getId();
+                        r.indent(3);
+                        vDesc.addElement(r);
+                        target += 1;
+                    }
                 }
                 Roll diceRoll = Compute.rollD6(2);
                 breachRoll = diceRoll.getIntValue();

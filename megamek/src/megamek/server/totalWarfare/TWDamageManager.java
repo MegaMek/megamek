@@ -321,6 +321,8 @@ public class TWDamageManager implements IDamageManager {
         boolean bar5 = entity.getBARRating(hit.getLocation()) <= 5;
         boolean heatArmor =
               (entity instanceof Mek) && (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING);
+        boolean abaArmor = (entity instanceof Mek) && (entity.getArmorType(hit.getLocation()) ==
+              EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION);
 
         // TACs from the hit location table
         int crits;
@@ -1770,8 +1772,15 @@ public class TWDamageManager implements IDamageManager {
                 // ok, we dealt damage but didn't go on to internal
                 // we get a chance of a crit, using Armor Piercing.
                 // but only if we don't have hardened, Ferro-Lamellor, or reactive armor
-                if (!hardenedArmor && !ferroLamellorArmor && !reactiveArmor) {
-                    specCrits++;
+                // PLAYTEST3 no penetrating crits with ABA, ferroLam doesn't prevent them
+                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                    if (!hardenedArmor && !abaArmor) {
+                        specCrits++;
+                    }
+                } else {
+                    if (!hardenedArmor && !ferroLamellorArmor && !reactiveArmor) {
+                        specCrits++;
+                    }
                 }
             }
             // check for breaching
@@ -1806,7 +1815,10 @@ public class TWDamageManager implements IDamageManager {
                     int critMod = entity.hasBARArmor(hit.getLocation()) ? 2 : 0;
                     critMod += (reflectiveArmor && !isBattleArmor) ? 2 : 0; // BA
                     // against impact armor, we get a +1 mod
-                    critMod += impactArmor ? 1 : 0;
+                    // PLAYTEST3 no longer has penalty for impact.
+                    if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                        critMod += impactArmor ? 1 : 0;
+                    }
                     // hardened armour has no crit penalty
                     if (!hardenedArmor) {
                         // non-hardened armor gets modifiers

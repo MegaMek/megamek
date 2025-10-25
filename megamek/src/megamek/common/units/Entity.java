@@ -152,7 +152,7 @@ import megamek.utilities.xml.MMXMLUtility;
 @JsonDeserialize(using = EntityDeserializer.class)
 public abstract class Entity extends TurnOrdered
       implements Transporter, Targetable, RoundUpdated, PhaseUpdated, ITechnology, ForceAssignable, CombatRole,
-                 Deployable {
+                 Deployable, ICarryable {
 
     private static final MMLogger LOGGER = MMLogger.create(Entity.class);
 
@@ -2990,7 +2990,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Put a ground object into the given location
      */
-    public void pickupGroundObject(ICarryable carryable, Integer location) {
+    public void pickupCarryableObject(ICarryable carryable, Integer location) {
         if (carriedObjects == null) {
             carriedObjects = new HashMap<>();
         }
@@ -3011,7 +3011,7 @@ public abstract class Entity extends TurnOrdered
      * Remove a specific carried object - useful for when you have the object but not its location, or when an object is
      * being carried in multiple locations.
      */
-    public void dropGroundObject(ICarryable carryable, boolean isUnload) {
+    public void dropCarriedObject(ICarryable carryable, boolean isUnload) {
         // build list of locations to clear out
         List<Integer> locationsToClear = new ArrayList<>();
 
@@ -3035,7 +3035,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Remove a ground object (cargo) from the given location
      */
-    public void dropGroundObject(int location) {
+    public void dropCarriedObject(int location) {
         carriedObjects.remove(location);
     }
 
@@ -15842,5 +15842,39 @@ public abstract class Entity extends TurnOrdered
      */
     protected boolean isActiveOption(String optionName) {
         return (game != null) && game.getOptions().booleanOption(optionName);
+    }
+
+    /**
+     * Damages this carryable object by the given amount of damage. Returns true if the cargo is considered destroyed by
+     * applying the damage. Note: This method does *not* check if the object is invulnerable; it is up to the caller to
+     * do that. Calling this method on an invulnerable carryable object behaves exactly like calling it on a vulnerable
+     * one.
+     *
+     * @param amount The damage
+     * @return True if the cargo is destroyed by the damage, false otherwise
+     * @see #getTonnage()
+     */
+    @Override
+    public boolean damage(double amount) {
+        return false;
+    }
+
+    /**
+     * @return The weight of the carryable object in units of tons.
+     */
+    @Override
+    public double getTonnage() {
+        return getWeight();
+    }
+
+    /**
+     * Returns true if this carryable object should never take damage nor be destroyed, false otherwise. Note that the
+     * carryable object does *not* itself enforce this; it is up to the caller of {@link #damage(double)} to test it.
+     *
+     * @return True if this carryable object cannot be damaged
+     */
+    @Override
+    public boolean isInvulnerable() {
+        return false;
     }
 }

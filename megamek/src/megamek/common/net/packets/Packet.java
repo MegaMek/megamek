@@ -61,6 +61,7 @@ import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.containers.PlayerIDAndList;
 import megamek.common.enums.WeaponSortOrder;
+import megamek.common.equipment.Briefcase;
 import megamek.common.equipment.Flare;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
@@ -422,10 +423,11 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return a Map of {@link Coords} key's with a List of {@link ICarryable} value's of the object at the specified
+     * @return a Map of {@link Coords} key's with a List of {@link ICarryable}
+     * {@link Briefcase} value's of the object at the specified
      *       index
      */
-    public Map<Coords, List<ICarryable>> getCoordsWithICarryableListMap(int index) throws InvalidPacketDataException {
+    public Map<Coords, List<ICarryable>> getCoordsWithBriefcaseICarryableListMap(int index) throws InvalidPacketDataException {
         Object object = getObject(index);
 
         Map<Coords, List<ICarryable>> result = new HashMap<>();
@@ -436,7 +438,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
                     if (value instanceof List<?> valueList) {
                         List<ICarryable> verifiedList = new ArrayList<>();
                         for (Object listValue : valueList) {
-                            if (listValue instanceof ICarryable verifiedCarryable) {
+                            if (listValue instanceof Briefcase verifiedCarryable) {
                                 verifiedList.add(verifiedCarryable);
                             }
                         }

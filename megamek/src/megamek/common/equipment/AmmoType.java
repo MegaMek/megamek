@@ -1024,6 +1024,22 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "208, TM");
 
+    // PLAYTEST3
+    private static final MunitionMutator ARMOR_PIERCING_PLAYTEST_MUNITION_MUTATOR = new MunitionMutator("Armor" 
+          + "-Piercing",
+          1.25,
+          Munitions.M_ARMOR_PIERCING_PLAYTEST,
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
+                .setISAdvancement(3055, 3059, 3063, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setPrototypeFactions(Faction.FS, Faction.LC)
+                .setProductionFactions(Faction.FS)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),
+          "208, TM");
+    
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
     private static final MunitionMutator CASELESS_MUNITION_MUTATOR = new MunitionMutator("Caseless",
           1,
@@ -1071,6 +1087,21 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator PRECISION_MUNITION_MUTATOR = new MunitionMutator("Precision",
           2,
           Munitions.M_PRECISION,
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
+                .setISAdvancement(3058, 3062, 3066, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),
+          "208, TM");
+
+    // PLAYTEST3
+    private static final MunitionMutator PRECISION_PLAYTEST_MUNITION_MUTATOR = new MunitionMutator("Precision",
+          (5/3),
+          Munitions.M_PRECISION_PLAYTEST,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
@@ -1884,9 +1915,11 @@ public class AmmoType extends EquipmentType {
         // AC Munition Types
         M_CLUSTER,
         M_ARMOR_PIERCING,
+        M_ARMOR_PIERCING_PLAYTEST,
         M_FLECHETTE,
         M_INCENDIARY_AC,
         M_PRECISION,
+        M_PRECISION_PLAYTEST,
         M_TRACER,
         M_FLAK,
         M_CASELESS,
@@ -15493,7 +15526,8 @@ public class AmmoType extends EquipmentType {
 
         private final TechAdvancement techAdvancement;
 
-        public MunitionMutator(String munitionName, int weightRatio, Munitions munitionType,
+        // PLATEST3 changed to float for weightRatio
+        public MunitionMutator(String munitionName, float weightRatio, Munitions munitionType,
               TechAdvancement techAdvancement, String rulesRefs) {
             name = munitionName;
             weight = weightRatio;
@@ -15692,7 +15726,8 @@ public class AmmoType extends EquipmentType {
                 munition.shots = Math.max(1, base.shots * 2);
                 munition.kgPerShot = base.kgPerShot * (weight / 2.0);
             } else {
-                munition.shots = Math.max(1, base.shots / weight);
+                // PLAYTEST3 Changed weight to be float from int, so casting it back.
+                munition.shots = Math.max(1, (int) (base.shots / weight));
                 munition.kgPerShot = base.kgPerShot * weight;
             }
 
@@ -15715,7 +15750,8 @@ public class AmmoType extends EquipmentType {
             if ((munition.getAmmoType() == AmmoTypeEnum.AC) ||
                   (munition.getAmmoType() == AmmoTypeEnum.LAC) ||
                   (munition.getAmmoType() == AmmoTypeEnum.PAC)) {
-                if (munition.getMunitionType().contains(Munitions.M_ARMOR_PIERCING)) {
+                // PLAYTEST3 ammo changes
+                if (munition.getMunitionType().contains(Munitions.M_ARMOR_PIERCING) || munition.getMunitionType().contains(Munitions.M_ARMOR_PIERCING_PLAYTEST)) {
                     cost *= 4;
                 } else if ((munition.getMunitionType().contains(Munitions.M_FLECHETTE)) ||
                       (munition.getMunitionType().contains(Munitions.M_FLAK))) {
@@ -15725,7 +15761,7 @@ public class AmmoType extends EquipmentType {
                     bv *= 1.25;
                 } else if (munition.getMunitionType().contains(Munitions.M_INCENDIARY_AC)) {
                     cost *= 2;
-                } else if (munition.getMunitionType().contains(Munitions.M_PRECISION)) {
+                } else if (munition.getMunitionType().contains(Munitions.M_PRECISION) || munition.getMunitionType().contains(Munitions.M_PRECISION_PLAYTEST)) {
                     cost *= 6;
                 } else if (munition.getMunitionType().contains(Munitions.M_CASELESS)) {
                     cost *= 1.5;

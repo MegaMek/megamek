@@ -321,7 +321,10 @@ public class PunchAttackAction extends PhysicalAttackAction {
               !ae.hasWorkingSystem(Mek.ACTUATOR_HAND, armLoc)) {
             toHit.addModifier(1, "Hand actuator destroyed");
         } else if (hasClaws) {
-            toHit.addModifier(1, "Using Claws");
+            // PLAYTEST3 claw modifier removed
+            if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                toHit.addModifier(1, "Using Claws");
+            }
         }
 
         if (hasHandActuator

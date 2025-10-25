@@ -73,6 +73,7 @@ import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.lasers.innerSphere.ISBombastLaser;
 import megamek.common.weapons.lrms.LRTWeapon;
 import megamek.common.weapons.srms.SRTWeapon;
+import megamek.common.weapons.missiles.MRMWeapon;
 import megamek.logging.MMLogger;
 
 public class ComputeToHit {
@@ -815,11 +816,12 @@ public class ComputeToHit {
         // Autocannon Munitions
 
         // Armor Piercing ammo is a flat +1
+        // PLAYTEST3 added here too
         if (((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AC) ||
               (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LAC) ||
               (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP) ||
               (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.PAC)) &&
-              (munition.contains(AmmoType.Munitions.M_ARMOR_PIERCING))) {
+              (munition.contains(AmmoType.Munitions.M_ARMOR_PIERCING) || munition.contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST))) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.ApAmmo"));
         }
 
@@ -1453,6 +1455,10 @@ public class ComputeToHit {
                 }
             }
             toHit.addModifier(modifier, Messages.getString("WeaponAttackAction.WeaponMod"));
+            // PLAYTEST3 No more modifier for MRMs
+            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && weaponType instanceof MRMWeapon) {
+                modifier--;
+            }
         }
 
         // Indirect fire (LRMs, mortars and the like) has a +1 mod
@@ -1514,6 +1520,11 @@ public class ComputeToHit {
 
         // VSP Lasers
         // Quirks and SPAs now handled in toHit
+        
+        // PLAYTEST3 MRMs no longer have +1 to hit
+        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MRM) {
+            toHit.addModifier(-1, "Playtest 3, MRM no longer has +1");
+        }
 
         return toHit;
     }

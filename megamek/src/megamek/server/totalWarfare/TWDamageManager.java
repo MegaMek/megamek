@@ -65,6 +65,7 @@ import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.TeleMissile;
+import megamek.common.weapons.handlers.plasma.PlasmaRifleHandler;
 import megamek.server.IDamageManager;
 import megamek.server.ServerHelper;
 
@@ -318,6 +319,8 @@ public class TWDamageManager implements IDamageManager {
         boolean impactArmor = (entity instanceof Mek) &&
               (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_IMPACT_RESISTANT);
         boolean bar5 = entity.getBARRating(hit.getLocation()) <= 5;
+        boolean heatArmor =
+              (entity instanceof Mek) && (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING);
 
         // TACs from the hit location table
         int crits;
@@ -993,6 +996,19 @@ public class TWDamageManager implements IDamageManager {
                         damage = 1;
                     }
                     report = new Report(6068);
+                    report.subject = entityId;
+                    report.indent(3);
+                    report.add(damage);
+                    reportVec.addElement(report);
+                } else if (heatArmor && hit.getHeatWeapon()) {
+                    // PLAYTEST3 only applies if heat_weapon is true in hitdata, which can only occur when playtest 
+                    // is on.
+                    tmpDamageHold = damage;
+                    damage = (int) Math.ceil((((double) damage) / 2));
+                    if (tmpDamageHold == 1) {
+                        damage = 1;
+                    }
+                    report = new Report(6093);
                     report.subject = entityId;
                     report.indent(3);
                     report.add(damage);

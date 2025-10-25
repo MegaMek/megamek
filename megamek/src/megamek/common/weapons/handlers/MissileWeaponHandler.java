@@ -200,6 +200,15 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
               && !mLinker.isDestroyed() && !mLinker.isMissing()
               && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_APOLLO))
               && (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MRM)) {
+            // PLAYTEST3 MRM + apollo
+            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                nMissilesModifier -= 2;
+            } else {
+                nMissilesModifier -= 1;
+            }
+        } else if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MRM && game.getOptions()
+              .booleanOption(OptionsConstants.PLAYTEST_3)) {
+            // PLAYTEST3 MRMs
             nMissilesModifier -= 1;
         } else if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) {
             if (bECMAffected) {

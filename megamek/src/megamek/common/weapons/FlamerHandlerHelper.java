@@ -50,8 +50,16 @@ public class FlamerHandlerHelper {
     /**
      * Handles flamer heat damage.
      */
+    // PLAYTEST3 call without playtest if it is not passed.
     public static void doHeatDamage(Entity entityTarget, Vector<Report> vPhaseReport, WeaponType weaponType,
           int subjectId, HitData hit) {
+        doHeatDamage(entityTarget, vPhaseReport, weaponType, subjectId, hit, false);
+    }
+
+
+    // PLAYTEST3 included. 
+    public static void doHeatDamage(Entity entityTarget, Vector<Report> vPhaseReport, WeaponType weaponType,
+          int subjectId, HitData hit, boolean playtestThree) {
         Report report = new Report(3400);
         report.subject = subjectId;
         report.indent(2);
@@ -68,13 +76,21 @@ public class FlamerHandlerHelper {
         // armor can't reduce damage if there isn't any
         if (entityTarget.getArmor(hit) > 0) {
             // heat dissipating armor divides heat damage by 2
-            if (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING) {
-                actualDamage = heatDamage / 2;
-                heatDamageReducedByArmor = true;
-                // reflective armor divides heat damage by 2, with a minimum of 1
-            } else if (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE) {
-                actualDamage = Math.max(1, heatDamage / 2);
-                heatDamageReducedByArmor = true;
+            // PLAYTEST3 reduce heat
+            if (playtestThree) {
+                if (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING) {
+                    actualDamage = 0;
+                    heatDamageReducedByArmor = true;
+                }
+            } else {
+                if (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING) {
+                    actualDamage = heatDamage / 2;
+                    heatDamageReducedByArmor = true;
+                    // reflective armor divides heat damage by 2, with a minimum of 1
+                } else if (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE) {
+                    actualDamage = Math.max(1, heatDamage / 2);
+                    heatDamageReducedByArmor = true;
+                }
             }
 
         }

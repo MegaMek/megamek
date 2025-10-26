@@ -3007,7 +3007,7 @@ public abstract class Entity extends TurnOrdered
             }
         }
 
-        return carryable.getTonnage() < maxGroundObjectTonnage();
+        return carryable.getTonnage() <= maxGroundObjectTonnage();
     }
 
     /**

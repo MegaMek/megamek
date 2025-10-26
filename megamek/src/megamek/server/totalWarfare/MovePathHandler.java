@@ -3130,41 +3130,57 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             gameManager.sendGroundObjectUpdate();
                             break;
                         } else if (pickupTarget instanceof Entity carryableEntity) {
-                            //ICarryable pickupTarget = (Entity) getGame().getEntity(cargoPickupIndex);
                             if (entity.maxGroundObjectTonnage() >= pickupTarget.getTonnage()) {
                                 // PSR
                                 PilotingRollData roll = entity.getBasePilotingRoll(overallMoveType);
-                                gameManager.doSkillCheckInPlace(entity, roll);
+                                // roll
+                                final Roll diceRoll = entity.getCrew().rollPilotingSkill();
+                                Report psrToPickupReport = new Report(2185);
+                                psrToPickupReport.subject = entity.getId();
+                                psrToPickupReport.add(roll.getValueAsString());
+                                psrToPickupReport.add(roll.getDesc());
+                                psrToPickupReport.add(diceRoll);
+                                if (diceRoll.getIntValue() < roll.getValue()) {
+                                    psrToPickupReport.choose(false);
+                                    addReport(psrToPickupReport);
 
-                                //getGame().removeGroundObject(step.getPosition(), pickupTarget);
-                                entity.pickupCarryableObject(pickupTarget, cargoPickupLocation);
-                                //TODO load HHW
-                                gameManager.loadUnit(entity, carryableEntity, -1);
-                                //entity.load(carryableEntity);
-                                //carryableEntity.setTransportId(entity.getId()); //TODO this is a hack
+                                    report = new Report(2519);
+                                    report.subject = entity.getId();
+                                    report.add(entity.getDisplayName());
+                                    report.add(carryableEntity.getDisplayName());
+                                    report.add(step.getPosition().toFriendlyString());
+                                    addReport(report);
+                                } else {
+                                    psrToPickupReport.choose(true);
+                                    addReport(psrToPickupReport);
 
+                                    //getGame().removeGroundObject(step.getPosition(), pickupTarget);
+                                    entity.pickupCarryableObject(pickupTarget, cargoPickupLocation);
+                                    //TODO load HHW
+                                    gameManager.loadUnit(entity, carryableEntity, -1);
 
-                                report = new Report(2513);
-                                report.subject = entity.getId();
-                                report.add(entity.getDisplayName());
-                                report.add(carryableEntity.getDisplayName());
-                                report.add(step.getPosition().toFriendlyString());
-                                addReport(report);
+                                    report = new Report(2513);
+                                    report.subject = entity.getId();
+                                    report.add(entity.getDisplayName());
+                                    report.add(carryableEntity.getDisplayName());
+                                    report.add(step.getPosition().toFriendlyString());
+                                    addReport(report);
 
-                                if (carryableEntity instanceof VTOL) {
-                                    // destroy rotor
-                                    addReport(gameManager.applyCriticalHit(carryableEntity,
-                                          VTOL.LOC_ROTOR,
-                                          new CriticalSlot(CriticalSlot.TYPE_SYSTEM, VTOL.CRIT_ROTOR_DESTROYED),
-                                          false,
-                                          0,
-                                          false));
+                                    if (carryableEntity instanceof VTOL) {
+                                        // destroy rotor
+                                        addReport(gameManager.applyCriticalHit(carryableEntity,
+                                              VTOL.LOC_ROTOR,
+                                              new CriticalSlot(CriticalSlot.TYPE_SYSTEM, VTOL.CRIT_ROTOR_DESTROYED),
+                                              false,
+                                              0,
+                                              false));
+                                    }
+
+                                    // a pickup should be the last step. Send an update for the overall ground
+                                    // object list.
+                                    gameManager.sendGroundObjectUpdate();
+                                    break;
                                 }
-
-                                // a pickup should be the last step. Send an update for the overall ground
-                                // object list.
-                                gameManager.sendGroundObjectUpdate();
-                                break;
                             }
                         }
                     } else {

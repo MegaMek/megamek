@@ -2979,7 +2979,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // the entity can pick them up
         if ((ce == null) ||
               ((game.getGroundObjects(finalPosition(), ce).isEmpty())
-                    && (game.getEntitiesVector(finalPosition()).isEmpty()) || !(game.getOptions()
+                    && (game.getEntitiesVector(finalPosition()).stream().filter(ce::canPickupCarryableObject).toList().isEmpty()) || !(game.getOptions()
                     .booleanOption(OptionsConstants.ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS))) ||
               ((cmd.getLastStep() != null) && (cmd.getLastStep().getType() == MoveStepType.PICKUP_CARGO))) {
             setPickupCargoEnabled(false);

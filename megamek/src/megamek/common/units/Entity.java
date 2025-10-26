@@ -2999,6 +2999,11 @@ public abstract class Entity extends TurnOrdered
                 if ((carryableEntity.height() < 1) && !isHullDown()) {
                     return false;
                 }
+
+                // Can't grab a flying aero!
+                if (carryableEntity.isAirborneAeroOnGroundMap()) {
+                    return false;
+                }
             }
         }
 

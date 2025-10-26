@@ -132,4 +132,9 @@ public class AeroSpaceFighter extends Aero {
         super.setWeight(weight);
         autoSetMaxBombPoints();
     }
+
+    @Override
+    public boolean isCarryableObject() {
+        return true;
+    }
 }

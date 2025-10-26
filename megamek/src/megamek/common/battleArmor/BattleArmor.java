@@ -1935,4 +1935,9 @@ public class BattleArmor extends Infantry {
     public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(3.157 + 1.514 * Math.log(getWeight())));
     }
+
+    @Override
+    public boolean isCarryableObject() {
+        return true;
+    }
 }

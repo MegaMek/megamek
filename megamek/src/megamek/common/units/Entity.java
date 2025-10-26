@@ -2988,7 +2988,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     public boolean canPickupCarryableObject(ICarryable carryable) {
-        if (carryable == null || !canPickupGroundObject()) {
+        if (carryable == null || !canPickupGroundObject() || !carryable.isCarryableObject()) {
             return false;
         }
 
@@ -7572,10 +7572,40 @@ public abstract class Entity extends TurnOrdered
             return roll;
         }
 
+        if (!getCarriedObjects().isEmpty()) {
+            int carriedBA = 0;
+            for (ICarryable carryable : getCarriedObjects().values()) {
+                if (carryable instanceof AeroSpaceFighter || carryable instanceof Tank) {
+                    roll.addModifier(1, "carrying vehicle");
+                } else if (carryable instanceof BattleArmor) {
+                    carriedBA--;
+                }
+            }
+            if (carriedBA >= maxAdditionalCarryableBAByWeightClass()) {
+                roll.addModifier(1, "carrying maximum additional Battle Armor");
+            }
+        }
+
         // append the reason modifier
         roll.append(new PilotingRollData(getId(), 0, "getting up"));
         addPilotingModifierForTerrain(roll, step);
         return roll;
+    }
+
+    private int maxAdditionalCarryableBAByWeightClass() {
+        switch (getWeightClass()) {
+            case EntityWeightClass.WEIGHT_LIGHT:
+                return 2;
+            case EntityWeightClass.WEIGHT_MEDIUM:
+                return 3;
+            case EntityWeightClass.WEIGHT_HEAVY:
+                return 4;
+            case EntityWeightClass.WEIGHT_ASSAULT:
+                return 6;
+            default:
+                return 0;
+
+        }
     }
 
     /**
@@ -15899,5 +15929,10 @@ public abstract class Entity extends TurnOrdered
     @Override
     public boolean isInvulnerable() {
         return false;
+    }
+
+    @Override
+    public boolean isCarryableObject() {
+        return false; // Not all entities are carryable.
     }
 }

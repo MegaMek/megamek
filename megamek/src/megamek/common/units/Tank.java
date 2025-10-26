@@ -3076,4 +3076,9 @@ public class Tank extends Entity {
     public boolean isSideLocation(int location) {
         return (location == Tank.LOC_LEFT) || (location == Tank.LOC_RIGHT);
     }
+
+    @Override
+    public boolean isCarryableObject() {
+        return true;
+    }
 }

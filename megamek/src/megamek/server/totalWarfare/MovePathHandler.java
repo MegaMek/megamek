@@ -3132,6 +3132,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         } else if (pickupTarget instanceof Entity carryableEntity) {
                             //ICarryable pickupTarget = (Entity) getGame().getEntity(cargoPickupIndex);
                             if (entity.maxGroundObjectTonnage() >= pickupTarget.getTonnage()) {
+                                // PSR
+                                PilotingRollData roll = entity.getBasePilotingRoll(overallMoveType);
+                                gameManager.doSkillCheckInPlace(entity, roll);
+
                                 //getGame().removeGroundObject(step.getPosition(), pickupTarget);
                                 entity.pickupCarryableObject(pickupTarget, cargoPickupLocation);
                                 //TODO load HHW

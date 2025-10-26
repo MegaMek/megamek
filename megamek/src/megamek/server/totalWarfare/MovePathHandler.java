@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
+import megamek.common.CriticalSlot;
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.LosEffects;
@@ -3145,6 +3146,16 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                 report.add(carryableEntity.getDisplayName());
                                 report.add(step.getPosition().toFriendlyString());
                                 addReport(report);
+
+                                if (carryableEntity instanceof VTOL) {
+                                    // destroy rotor
+                                    addReport(gameManager.applyCriticalHit(carryableEntity,
+                                          VTOL.LOC_ROTOR,
+                                          new CriticalSlot(CriticalSlot.TYPE_SYSTEM, VTOL.CRIT_ROTOR_DESTROYED),
+                                          false,
+                                          0,
+                                          false));
+                                }
 
                                 // a pickup should be the last step. Send an update for the overall ground
                                 // object list.

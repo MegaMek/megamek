@@ -104,7 +104,7 @@ class LiveEntityViewPane extends EnhancedTabbedPane {
             alphaStrikeCardPanel.setASElement(null);
         } else {
             troPanel.showEntity(entity, TROView.createView(entity, ViewFormatting.HTML));
-            factionPanel.setUnit(entity.getModel(), entity.getChassis());
+            factionPanel.setUnit(entity.getModel(), entity.getFullChassis());
             if (ASConverter.canConvert(entity)) {
                 alphaStrikeCardPanel.setASElement(ASConverter.convert(entity, new FlexibleCalculationReport()));
             }

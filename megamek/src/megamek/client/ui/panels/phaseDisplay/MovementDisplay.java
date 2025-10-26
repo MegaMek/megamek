@@ -5584,7 +5584,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             options.addAll(game.getEntitiesVector(finalPosition()));
         }
         var displayedOptions =
-              options.stream().filter(o -> o.getTonnage() <= currentEntity().maxGroundObjectTonnage()).toList();
+              options.stream().filter(o -> currentEntity().canPickupCarryableObject(o)).toList();
         //game
         // .getGroundObjects(finalPosition
         // (),

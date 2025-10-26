@@ -2987,6 +2987,24 @@ public abstract class Entity extends TurnOrdered
         return 0.0;
     }
 
+    public boolean canPickupCarryableObject(ICarryable carryable) {
+        if (carryable == null || !canPickupGroundObject()) {
+            return false;
+        }
+
+        // TO:AR 90: Units must be hull down to pick up objects. Briefcases, the dedicated objective object
+        // in MegaMek should be exempt from this rule.
+        if (!(carryable instanceof Briefcase)) {
+            if (carryable instanceof Entity carryableEntity) {
+                if ((carryableEntity.height() < 1) && !isHullDown()) {
+                    return false;
+                }
+            }
+        }
+
+        return carryable.getTonnage() < maxGroundObjectTonnage();
+    }
+
     /**
      * Put a ground object into the given location
      */

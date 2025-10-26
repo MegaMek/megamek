@@ -3090,7 +3090,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             if (step.getType() == MoveStepType.PICKUP_CARGO) {
                 var carryableObjects = getGame().getGroundObjects(step.getPosition());
-                carryableObjects.addAll(getGame().getEntitiesVector(step.getPosition()));
+                if (getGame().getOptions()
+                      .booleanOption(OptionsConstants.ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS)) {
+                    carryableObjects.addAll(getGame().getEntitiesVector(step.getPosition()));
+                }
                 Integer cargoPickupIndex;
 
                 // if there's only one object on the ground, let's just get that one and ignore

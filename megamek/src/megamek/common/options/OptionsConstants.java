@@ -446,6 +446,7 @@ public class OptionsConstants {
     public static final String ADVANCED_COMBAT_FOREST_FIRES_NO_SMOKE = "forest_fires_no_smoke";
     public static final String ADVANCED_COMBAT_HOT_LOAD_IN_GAME = "hotload_in_game";
     public static final String ADVANCED_COMBAT_MULTI_USE_AMS = "multiuse_ams";
+    public static final String ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS = "picking_up_units";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_SPRINT = "tacops_sprint";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_STANDING_STILL = "tacops_standing_still";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_EVADE = "tacops_evade";

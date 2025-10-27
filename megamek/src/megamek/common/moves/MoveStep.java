@@ -1194,6 +1194,7 @@ public class MoveStep implements Serializable {
               (type != MoveStepType.UNDOCK) &&
               (type != MoveStepType.DISCONNECT) &&
               (type != MoveStepType.CHAFF) &&
+              (type != MoveStepType.DROP_CARGO) &&
               (getAltitude() == 0)) {
             // Can't be after unloading BA/inf
             legal = false;
@@ -2016,6 +2017,7 @@ public class MoveStep implements Serializable {
                   (stepType != MoveStepType.CAREFUL_STAND) &&
                   (stepType != MoveStepType.HULL_DOWN) &&
                   (stepType != MoveStepType.GO_PRONE) &&
+                  (stepType != MoveStepType.DROP_CARGO) &&
                   !(entity instanceof Tank)
                   // Tanks can drive out of hull-down
                   &&

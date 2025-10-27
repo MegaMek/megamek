@@ -1940,4 +1940,9 @@ public class BattleArmor extends Infantry {
     public boolean isCarryableObject() {
         return true;
     }
+
+    @Override
+    public CarriedObjectDamageAllocation getCarriedObjectDamageAllocation() {
+        return CarriedObjectDamageAllocation.ARM_HIT;
+    }
 }

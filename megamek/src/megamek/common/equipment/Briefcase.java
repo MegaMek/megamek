@@ -116,4 +116,9 @@ public class Briefcase implements ICarryable, Serializable {
     public int getStrength() {
         return 0;
     }
+
+    @Override
+    public CarriedObjectDamageAllocation getCarriedObjectDamageAllocation() {
+        return CarriedObjectDamageAllocation.ANY_HIT;
+    }
 }

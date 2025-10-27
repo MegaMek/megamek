@@ -367,4 +367,8 @@ public class EquipmentTypeLookup {
 
     @EquipmentName
     public static final String SV_EXTERNAL_HARDPOINT = "External Stores Hardpoint";
+    
+    // PLAYTEST3 add an equipment type for the autocannon
+    @EquipmentName
+    public static final String AUTOCANNON = "Autocannon";
 }

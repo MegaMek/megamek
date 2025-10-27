@@ -121,6 +121,7 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.TeleMissile;
 import megamek.common.weapons.Weapon;
+import megamek.common.weapons.autoCannons.ACWeapon;
 import megamek.common.weapons.handlers.AreaEffectHelper;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.DamageFalloff;
@@ -18899,7 +18900,24 @@ public class TWGameManager extends AbstractGameManager {
         } else {
             mounted.setHit(true);
         }
+        
+        // PLAYTEST3 ignore first AC crit hit
+        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && eqType instanceof WeaponType) {
+            if (((WeaponType) eqType).getAtClass() == WeaponType.CLASS_AC) {
+                    if (!mounted.isAutocannonHit()) {
+                        cs.setHit(false);
+                        mounted.setHit(false);
+                        mounted.setAutocannonHit(true);
 
+                        r = new Report(6256);
+                        r.subject = en.getId();
+                        r.indent(2);
+                        r.add(mounted.getName());
+                        reports.addElement(r);
+                    }
+            }
+        }
+        
         if ((eqType instanceof MiscType) && eqType.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
             ((Mek) en).setHasDamagedCoolantSystem(true);
         }

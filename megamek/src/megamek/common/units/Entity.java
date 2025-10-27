@@ -5075,7 +5075,7 @@ public abstract class Entity extends TurnOrdered
         }
         return stateAppliesCount;
     }
-
+    
     /**
      * Returns the amount of heat that the entity can sink each turn.
      */

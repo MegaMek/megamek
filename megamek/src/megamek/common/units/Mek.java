@@ -5985,11 +5985,12 @@ public abstract class Mek extends Entity {
         // Gyro destroyed? TW p. 258 at least heavily implies that that counts
         // as being immobilized as well, which makes sense because the 'Mek
         // certainly isn't leaving that hex under its own power anymore.
+
+        int hitsToDestroyGyro = (gyroType == GYRO_HEAVY_DUTY) ? 3 : 2;
+        
         // PLAYTEST3 heavy duty gyro is now 4
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            int hitsToDestroyGyro = (gyroType == GYRO_HEAVY_DUTY) ? 4 : 2;
-        } else {
-            int hitsToDestroyGyro = (gyroType == GYRO_HEAVY_DUTY) ? 3 : 2;
+        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && gyroType == GYRO_HEAVY_DUTY) {
+            hitsToDestroyGyro = 4;
         }
         return getGyroHits() >= hitsToDestroyGyro;
     }

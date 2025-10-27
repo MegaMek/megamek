@@ -85,6 +85,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private boolean hotLoaded = false; // Hot loading for ammoType
     private boolean repairable = true; // can the equipment mounted here be
     // repaired
+    private boolean autocannonHit = false;
     private boolean mekTurretMounted = false; // is this mounted in a mek turret
     private boolean sponsonTurretMounted = false; // is this mounted in a sponson turret
     private boolean pintleTurretMounted = false; // is this mounted in a pintle turret
@@ -1409,6 +1410,15 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     public boolean isRepairable() {
         return repairable;
+    }
+    
+    // PLAYTEST3 set and get autocannon hit
+    public void setAutocannonHit(boolean acHit) {
+        this.autocannonHit = acHit;
+    }
+    
+    public boolean isAutocannonHit() {
+        return autocannonHit;
     }
 
     public Entity getEntity() {

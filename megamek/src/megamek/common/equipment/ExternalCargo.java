@@ -129,7 +129,7 @@ public class ExternalCargo implements Transporter {
      */
     @Override
     public double getUnused() {
-        return totalSpace - currentSpace;
+        return currentSpace;
     }
 
     /**

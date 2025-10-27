@@ -5585,11 +5585,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         var displayedOptions =
               options.stream().filter(o -> currentEntity().canPickupCarryableObject(o)).toList();
-        //game
-        // .getGroundObjects(finalPosition
-        // (),
-        // currentEntity());
-
 
         // if there's only one thing to pick up, pick it up. regardless of how many objects we are picking up, we may
         // have to choose the location with which to pick it up

@@ -3154,9 +3154,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                     psrToPickupReport.choose(true);
                                     addReport(psrToPickupReport);
 
-                                    //getGame().removeGroundObject(step.getPosition(), pickupTarget);
                                     entity.pickupCarryableObject(pickupTarget, cargoPickupLocation);
-                                    //TODO load HHW
                                     gameManager.loadUnit(entity, carryableEntity, -1);
 
                                     report = new Report(2513);

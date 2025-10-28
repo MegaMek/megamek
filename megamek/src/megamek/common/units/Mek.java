@@ -5989,7 +5989,7 @@ public abstract class Mek extends Entity {
         int hitsToDestroyGyro = (gyroType == GYRO_HEAVY_DUTY) ? 3 : 2;
         
         // PLAYTEST3 heavy duty gyro is now 4
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && gyroType == GYRO_HEAVY_DUTY) {
+        if (game != null && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && gyroType == GYRO_HEAVY_DUTY) {
             hitsToDestroyGyro = 4;
         }
         return getGyroHits() >= hitsToDestroyGyro;

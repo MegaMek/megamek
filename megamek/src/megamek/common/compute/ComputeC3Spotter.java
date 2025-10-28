@@ -38,6 +38,7 @@ import java.util.List;
 
 import megamek.common.ECMInfo;
 import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
 
@@ -92,6 +93,34 @@ public class ComputeC3Spotter {
         return attacker;
     }
 
+    // PLAYTEST3 return spotter even with ECM
+    static Entity playtestFindC3Spotter(Game game, Entity attacker, Targetable target) {
+        if (!attackerCanUseC3(attacker, game)) {
+            return attacker;
+        }
+
+        List<SpotterInfo> spotters = new ArrayList<>();
+
+        for (Entity other : game.getEntitiesVector()) {
+            if (isValidC3Spotter(other, attacker, game)) {
+                int spotterRange = Compute.effectiveDistance(game, other, target, false);
+                spotters.add(new SpotterInfo(other, spotterRange));
+            }
+        }
+
+        if (!spotters.isEmpty()) {
+            // ensure network connectivity
+            List<ECMInfo> allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game.getEntitiesVector());
+            spotters.sort(Comparator.comparingInt(SpotterInfo::rangeToTarget));
+
+            Entity spotter = spotters.get(0).spotter;
+            spotter.setC3ecmAffected(!canCompleteNodePath(spotter,attacker, spotters, 1, allECMInfo));
+            return spotter;
+        }
+
+        return attacker;
+    }
+    
     /**
      * Returns false if the attacker does not have a functional C3 system or is prevented from using it at this time,
      * true otherwise. When this returns true, a spotter should be searched, otherwise this can be omitted.
@@ -147,7 +176,7 @@ public class ComputeC3Spotter {
      * @param startPosition The spotter's index in the network list
      *
      * @return True when the given Entity is connected to the network
-     */
+     */    
     private static boolean canCompleteNodePath(Entity start, Entity end, List<SpotterInfo> network, int startPosition,
           List<ECMInfo> allECMInfo) {
 

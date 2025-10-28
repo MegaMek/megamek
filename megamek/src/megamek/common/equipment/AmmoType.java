@@ -15515,7 +15515,7 @@ public class AmmoType extends EquipmentType {
         /**
          * The weight ratio of a round of this munition to a standard round.
          */
-        private final int weight;
+        private final double weight;
 
         /**
          * The munition flag(s) for this type.
@@ -15527,7 +15527,7 @@ public class AmmoType extends EquipmentType {
         private final TechAdvancement techAdvancement;
 
         // PLATEST3 changed to float for weightRatio
-        public MunitionMutator(String munitionName, float weightRatio, Munitions munitionType,
+        public MunitionMutator(String munitionName, double weightRatio, Munitions munitionType,
               TechAdvancement techAdvancement, String rulesRefs) {
             name = munitionName;
             weight = weightRatio;
@@ -15726,7 +15726,7 @@ public class AmmoType extends EquipmentType {
                 munition.shots = Math.max(1, base.shots * 2);
                 munition.kgPerShot = base.kgPerShot * (weight / 2.0);
             } else {
-                // PLAYTEST3 Changed weight to be float from int, so casting it back.
+                // PLAYTEST3 Changed weight to be double from int, so casting it back.
                 munition.shots = Math.max(1, (int) (base.shots / weight));
                 munition.kgPerShot = base.kgPerShot * weight;
             }

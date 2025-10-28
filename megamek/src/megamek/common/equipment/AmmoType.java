@@ -1026,7 +1026,7 @@ public class AmmoType extends EquipmentType {
 
     // PLAYTEST3
     private static final MunitionMutator ARMOR_PIERCING_PLAYTEST_MUNITION_MUTATOR = new MunitionMutator("Armor" 
-          + "-Piercing",
+          + "-Piercing Playtest",
           1.25,
           Munitions.M_ARMOR_PIERCING_PLAYTEST,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
@@ -1099,7 +1099,7 @@ public class AmmoType extends EquipmentType {
           "208, TM");
 
     // PLAYTEST3
-    private static final MunitionMutator PRECISION_PLAYTEST_MUNITION_MUTATOR = new MunitionMutator("Precision",
+    private static final MunitionMutator PRECISION_PLAYTEST_MUNITION_MUTATOR = new MunitionMutator("Precision Playtest",
           (5/3),
           Munitions.M_PRECISION_PLAYTEST,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)

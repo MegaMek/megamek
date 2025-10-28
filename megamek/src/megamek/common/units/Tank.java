@@ -3076,4 +3076,9 @@ public class Tank extends Entity {
     public boolean isSideLocation(int location) {
         return (location == Tank.LOC_LEFT) || (location == Tank.LOC_RIGHT);
     }
+
+    @Override
+    public boolean isCarryableObject() {
+        return false; // TODO: Make true once we implement TO:AR 88 Grappling's missed attack consequences
+    }
 }

@@ -1523,16 +1523,17 @@ public class ComputeToHit {
 
         // VSP Lasers
         // Quirks and SPAs now handled in toHit
-        
+
         // PLAYTEST3 narc gets -1 to hit
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && ammoType != null) {
             Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target : null;
             boolean isTargetECMAffected = ComputeECM.isAffectedByECM(ae,
                   target.getPosition(),
                   target.getPosition());
-            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE) && (entityTarget.isNarcedBy(ae.getOwner().getTeam()) || entityTarget
+            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE) && (entityTarget.isNarcedBy(
+                  ae.getOwner().getTeam()) || entityTarget
                   .isINarcedBy(ae.getOwner().getTeam())) && !isTargetECMAffected) {
-                toHit.addModifier( -1, "Playtest 3, Narc gets -1 to hit");
+                toHit.addModifier(-1, "Playtest 3, Narc gets -1 to hit");
             }
         }
 

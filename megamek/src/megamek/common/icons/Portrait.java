@@ -55,7 +55,9 @@ public class Portrait extends AbstractIcon {
     @Serial
     private static final long serialVersionUID = -7562297705213174435L;
     public static final String DEFAULT_PORTRAIT_FILENAME = "default.gif";
+    public static final String NO_PORTRAIT_NAME = "None";
     public static final String XML_TAG = "portrait";
+    public static final int DEFAULT_IMAGE_WIDTH = 72;
     // endregion Variable Declarations
 
     // region Constructors
@@ -100,7 +102,7 @@ public class Portrait extends AbstractIcon {
      */
     @Override
     public Image getImage() {
-        return getImage(72);
+        return getImage(DEFAULT_IMAGE_WIDTH);
     }
 
     @Override

@@ -147,7 +147,7 @@ public class LRMHandler extends MissileWeaponHandler {
         // is any hex in the flight path of the missile ECM affected?
         // if the attacker is affected by ECM or the target is protected by ECM
         // then act as if affected.
-        // PLAYTEST3 todo ECM is not LOS anymore
+
         boolean bECMAffected = ComputeECM.isAffectedByECM(attackingEntity,
               attackingEntity.getPosition(),
               target.getPosition());

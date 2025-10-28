@@ -14710,6 +14710,10 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // track any additional damage to the attacker due to the target having spikes
+        
+        // PLAYTEST3 lance only on first cluster
+        boolean firstCluster = true; 
+        
         while (damage > 0) {
             int cluster = Math.min(5, damage);
             // AirMek ramming attacks do all damage to a single location
@@ -14746,6 +14750,26 @@ public class TWGameManager extends AbstractGameManager {
                     hit.makeDirectBlow(directBlowCritMod);
                 }
                 cluster = checkForSpikes(te, hit.getLocation(), cluster, ae, Mek.LOC_CENTER_TORSO);
+                
+                // PLAYTEST3 make lance deal 1 point internal to the first cluster if armor remained.
+                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && firstCluster) {
+                    boolean hasLance = false;
+                    for (MiscMounted getClub : ae.getClubs()) {
+                        if (getClub.getType().hasSubType(MiscType.S_LANCE) &&
+                              (te.getArmor(hit) > 0) &&
+                              (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_HARDENED) &&
+                              (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_FERRO_LAMELLOR))) {
+                            hasLance = true;
+                        }
+                    }
+                    if (hasLance) {
+                        Roll diceRoll2 = Compute.rollD6(2);
+                        firstCluster = false;
+                        if (diceRoll2.getIntValue() >= 5) {
+                            addReport(damageEntity(te, hit, 1, false, DamageType.NONE, true, false, throughFront));
+                        }
+                    }
+                }
                 addReport(damageEntity(te, hit, cluster, false, DamageType.NONE, false, false, throughFront));
             }
         }

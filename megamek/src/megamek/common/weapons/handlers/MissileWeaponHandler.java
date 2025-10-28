@@ -596,9 +596,24 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     }
 
                     // Optional rule to allow multiple AMS shots per round
-                    if (!multiAMS) {
+                    // PLAYTEST3 make sure we don't do this when using playtest 3
+                    if (!multiAMS && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
                         // set the ams as having fired
                         counter.setUsedThisRound(true);
+                    }
+                    
+                    // PLAYTEST3 AMS can engage twice now.
+                    if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                        if (!multiAMS && !isAMS) {
+                            counter.setUsedThisRound(true);
+                        }
+                        if (isAMS && counter.isAMSused()) {
+                            // Second AMS shot
+                            counter.setUsedThisRound(true);
+                        } else if (isAMS && !counter.isAMSused()) {
+                            // First AMS shot, set it to used.
+                            counter.setAMSused(true);
+                        }
                     }
 
                     if (isAMS) {

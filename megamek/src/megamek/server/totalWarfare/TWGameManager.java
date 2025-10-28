@@ -13138,10 +13138,11 @@ public class TWGameManager extends AbstractGameManager {
 
             // On a roll of 10+ a lance hitting a mek/Vehicle can cause 1 point of
             // internal damage
+            // PLAYTEST3 Ferro-lam is no longer immune to AP. ABA/APA is.
             if (caa.getClub().getType().hasSubType(MiscType.S_LANCE) &&
                   (te.getArmor(hit) > 0) &&
                   (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_HARDENED) &&
-                  (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_FERRO_LAMELLOR)) {
+                  ((!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_FERRO_LAMELLOR) || game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION)) {
                 Roll diceRoll2 = Compute.rollD6(2);
                 // Pierce checking report
                 r = new Report(4021);
@@ -14661,6 +14662,38 @@ public class TWGameManager extends AbstractGameManager {
             damageTaken -= cluster;
             hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
             cluster = checkForSpikes(ae, hit.getLocation(), cluster, te, Mek.LOC_CENTER_TORSO);
+            
+            // PLAYTEST3 raised shield takes all the charge damage
+            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && ae.hasShield()) {
+                int[] armLocations = {Mek.LOC_LEFT_ARM, Mek.LOC_RIGHT_ARM};
+                boolean foundShield = false;
+                
+                for (int armLoc : armLocations) {
+                    for (int slot = 0; slot < ae.getNumberOfCriticalSlots(Mek.LOC_LEFT_ARM); slot++) {
+                        CriticalSlot cs = ae.getCritical(armLoc, slot);
+                        if (cs == null) {
+                            continue;
+                        }
+                        if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
+                            continue;
+                        }
+                        Mounted<?> m = cs.getMount();
+                        EquipmentType type = m.getType();
+                        if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
+                            if ((((MiscMounted) m).getDamageAbsorption(ae, armLoc) > 0)
+                                  && (((MiscMounted) m).getCurrentDamageCapacity(ae, armLoc) > 0) && ((MiscMounted) m).equals(MiscType.S_ACTIVE_SHIELD)) {
+                                hit = new HitData(armLoc);
+                                foundShield = true;
+                                break;
+                            } 
+                        }
+                    }
+                    if (foundShield) {
+                        break;
+                    }
+                }
+            }
+            
             addReport(damageEntity(ae, hit, cluster, false, DamageType.NONE, false, false, throughFront));
         }
 
@@ -14751,14 +14784,15 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 cluster = checkForSpikes(te, hit.getLocation(), cluster, ae, Mek.LOC_CENTER_TORSO);
                 
-                // PLAYTEST3 make lance deal 1 point internal to the first cluster if armor remained.
+                // PLAYTEST3 make lance deal 1 point internal to the first cluster if armor remained. ABA and 
+                // hardened block this
                 if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && firstCluster) {
                     boolean hasLance = false;
                     for (MiscMounted getClub : ae.getClubs()) {
                         if (getClub.getType().hasSubType(MiscType.S_LANCE) &&
                               (te.getArmor(hit) > 0) &&
                               (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_HARDENED) &&
-                              (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_FERRO_LAMELLOR))) {
+                              (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION)) {
                             hasLance = true;
                         }
                     }
@@ -18941,6 +18975,7 @@ public class TWGameManager extends AbstractGameManager {
                 reports.addElement(r);
             }
         }
+        
 
         if ((eqType instanceof MiscType) && eqType.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
             ((Mek) en).setHasDamagedCoolantSystem(true);

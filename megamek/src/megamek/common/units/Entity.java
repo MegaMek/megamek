@@ -2987,24 +2987,26 @@ public abstract class Entity extends TurnOrdered
         return 0.0;
     }
 
-    public boolean canPickupCarryableObject(ICarryable carryable) {
-        if (carryable == null || !canPickupGroundObject() || !carryable.isCarryableObject()) {
-            return false;
+    /**
+     * Returns true if the carryable object is able to be picked up. Units must be hull down to pick up other units,
+     * unless the unit is tall. Airborne aeros cannot be grabbed either.
+     *
+     * @param isCarrierHullDown is the unit that's picking this up hull down, or otherwise able to pick up
+     *                          ground-level objects
+     * @return true if the object can be picked up, false if it cannot
+     */
+    @Override
+    public boolean canBePickedUp(boolean isCarrierHullDown) {
+        if (height() >= 1 || isCarrierHullDown) {
+            return !isAirborneAeroOnGroundMap();
         }
+        return false;
+    }
 
-        // TO:AR 90: Units must be hull down to pick up objects. Briefcases, the dedicated objective object
-        // in MegaMek should be exempt from this rule.
-        if (!(carryable instanceof Briefcase)) {
-            if (carryable instanceof Entity carryableEntity) {
-                if ((carryableEntity.height() < 1) && !isHullDown()) {
-                    return false;
-                }
-
-                // Can't grab a flying aero!
-                if (carryableEntity.isAirborneAeroOnGroundMap()) {
-                    return false;
-                }
-            }
+    public boolean canPickupCarryableObject(ICarryable carryable) {
+        if (carryable == null || !canPickupGroundObject() || !carryable.isCarryableObject() || carryable.canBePickedUp(
+              isHullDown())) {
+            return false;
         }
 
         return carryable.getTonnage() <= maxGroundObjectTonnage();

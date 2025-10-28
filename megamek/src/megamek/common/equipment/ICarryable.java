@@ -76,6 +76,14 @@ public interface ICarryable extends InGameObject {
         return true;
     }
 
+    /**
+     * Returns true if the carryable object is able to be picked up.
+     * @param isCarrierHullDown is the unit that's picking this up hull down, or otherwise able to pick up
+     *                          ground-level objects
+     * @return true if the object can be picked up, false if it cannot
+     */
+    boolean canBePickedUp(boolean isCarrierHullDown);
+
     default CarriedObjectDamageAllocation getCarriedObjectDamageAllocation() {
         return CarriedObjectDamageAllocation.NEVER;
     }

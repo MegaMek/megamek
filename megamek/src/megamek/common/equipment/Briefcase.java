@@ -117,6 +117,18 @@ public class Briefcase implements ICarryable, Serializable {
         return 0;
     }
 
+    /**
+     * Returns true if the carryable object is able to be picked up. Briefcases can always be picked up.
+     *
+     * @param isCarrierHullDown is the unit that's picking this up hull down, or otherwise able to pick up
+     *                          ground-level objects
+     * @return true if the object can be picked up, false if it cannot
+     */
+    @Override
+    public boolean canBePickedUp(boolean isCarrierHullDown) {
+        return true; // Briefcases can always be picked up.
+    }
+
     @Override
     public CarriedObjectDamageAllocation getCarriedObjectDamageAllocation() {
         return CarriedObjectDamageAllocation.ANY_HIT;

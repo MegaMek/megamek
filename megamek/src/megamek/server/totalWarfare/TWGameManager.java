@@ -341,6 +341,7 @@ public class TWGameManager extends AbstractGameManager {
             if (entity instanceof Mek mek) {
                 mek.setBAGrabBars();
                 mek.setProtoMekClampMounts();
+                mek.setMekArms();
             }
             if (entity instanceof Tank tank) {
                 tank.setBAGrabBars();
@@ -9408,8 +9409,8 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Receives an updated data structure containing carryable objects on the ground
      */
-    private void receiveGroundObjectUpdate(Packet packet, int connId) throws InvalidPacketDataException {
-        Map<Coords, List<ICarryable>> groundObjects = packet.getCoordsWithICarryableListMap(0);
+    private void receiveGroundObjectUpdate(Packet packet, int connId)  throws InvalidPacketDataException {
+        Map<Coords, List<ICarryable>> groundObjects = packet.getCoordsWithBriefcaseICarryableListMap(0);
         getGame().setGroundObjects(groundObjects);
 
         // make sure to update the other clients with the new ground objects data structure
@@ -22494,7 +22495,7 @@ public class TWGameManager extends AbstractGameManager {
         boolean cargoDropped = false;
 
         for (ICarryable cargo : entity.getDistinctCarriedObjects()) {
-            entity.dropGroundObject(cargo, false);
+            entity.dropCarriedObject(cargo, false);
             // if the cargo was dropped but not destroyed.
             if (!damageCargo(false, entity, cargo)) {
                 Report r = new Report(6722);

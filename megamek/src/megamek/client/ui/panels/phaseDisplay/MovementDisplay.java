@@ -36,6 +36,7 @@ package megamek.client.ui.panels.phaseDisplay;
 import static megamek.common.LandingDirection.HORIZONTAL;
 import static megamek.common.LandingDirection.VERTICAL;
 import static megamek.common.equipment.MiscType.F_CHAFF_POD;
+import static megamek.common.options.OptionsConstants.ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS;
 import static megamek.common.options.OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES;
 
 import java.awt.Color;
@@ -2977,7 +2978,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // there has to be an entity, objects are on the ground,
         // the entity can pick them up
         if ((ce == null) ||
-              (game.getGroundObjects(finalPosition(), ce).isEmpty()) ||
+              ((game.getGroundObjects(finalPosition(), ce).isEmpty())
+                    && (game.getEntitiesVector(finalPosition()).stream().filter(ce::canPickupCarryableObject).toList().isEmpty()) || !(game.getOptions()
+                    .booleanOption(OptionsConstants.ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS))) ||
               ((cmd.getLastStep() != null) && (cmd.getLastStep().getType() == MoveStepType.PICKUP_CARGO))) {
             setPickupCargoEnabled(false);
             return;
@@ -5577,7 +5580,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private void processPickupCargoCommand() {
         var options = game.getGroundObjects(finalPosition());
-        var displayedOptions = game.getGroundObjects(finalPosition(), currentEntity());
+        if (game.getOptions().booleanOption(ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS)) {
+            options.addAll(game.getEntitiesVector(finalPosition()));
+        }
+        var displayedOptions =
+              options.stream().filter(o -> currentEntity().canPickupCarryableObject(o)).toList();
 
         // if there's only one thing to pick up, pick it up. regardless of how many objects we are picking up, we may
         // have to choose the location with which to pick it up

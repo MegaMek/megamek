@@ -645,7 +645,7 @@ public class Client extends AbstractClient {
     }
 
     protected void receiveUpdateGroundObjects(Packet packet) throws InvalidPacketDataException {
-        game.setGroundObjects(packet.getCoordsWithICarryableListMap(0));
+        game.setGroundObjects(packet.getCoordsWithBriefcaseICarryableListMap(0));
         game.processGameEvent(new GameBoardChangeEvent(this));
     }
 

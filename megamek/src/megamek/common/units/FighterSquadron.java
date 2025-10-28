@@ -914,4 +914,8 @@ public class FighterSquadron extends AeroSpaceFighter {
         }
     }
 
+    @Override
+    public boolean isCarryableObject() {
+        return false;
+    }
 }

@@ -87,7 +87,7 @@ public class GifWriter {
      */
     public GifWriter(String gameSummary) {
         folder = new File(gameSummaryImagesMMDir(), gameSummary);
-        outputFile = new File(gameSummaryImagesMMDir(), gameSummary + ".gif");
+        outputFile = new File(folder, gameSummary + ".gif");
     }
 
     private OutputStream outputStream = null;

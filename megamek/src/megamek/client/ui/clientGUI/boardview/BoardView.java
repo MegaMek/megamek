@@ -580,7 +580,7 @@ public final class BoardView extends AbstractBoardView
                       || gamePhaseChangeEvent.getOldPhase().isPhysical())) {
                     File dir = new File(Configuration.gameSummaryImagesBVDir(), game.getUUIDString());
 
-                    if (!dir.exists() || dir.mkdirs()) {
+                    if (dir.exists() || dir.mkdirs()) {
                         String fileName = String.format("round_%03d_%03d_%s.png",
                               game.getRoundCount(),
                               gamePhaseChangeEvent.getOldPhase().ordinal(),

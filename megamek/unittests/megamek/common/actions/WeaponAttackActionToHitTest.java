@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.common.CalledShot;
+import megamek.common.Facing;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
 import megamek.common.Player;
@@ -57,10 +58,16 @@ import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.BombMounted;
+import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.force.Force;
+import megamek.common.force.Forces;
 import megamek.common.game.Game;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -70,9 +77,15 @@ import megamek.common.units.Aero;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
+import megamek.common.weapons.autoCannons.ACWeapon;
+import megamek.common.weapons.autoCannons.innerSphere.ISAC10;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
@@ -200,6 +213,9 @@ public class WeaponAttackActionToHitTest {
         when(mockAttackingEntity.getEquipment(anyInt())).thenReturn(mockWeaponEquipment);
         when(mockAttackingEntity.getCrew()).thenReturn(mockCrew);
         when(mockAttackingEntity.getSwarmTargetId()).thenReturn(Entity.NONE);
+        when(mockAttackingEntity.getAttackingEntity()).thenReturn(mockAttackingEntity);
+
+        when(mockWeapon.getEntity()).thenReturn(mockAttackingEntity);
 
         Tank mockTarget = mock(Tank.class);
         when(mockTarget.getOwner()).thenReturn(mockEnemy);
@@ -233,6 +249,9 @@ public class WeaponAttackActionToHitTest {
         when(mockAttackingEntity.getEquipment(anyInt())).thenReturn(mockWeaponEquipment);
         when(mockAttackingEntity.getCrew()).thenReturn(mockCrew);
         when(mockAttackingEntity.getSwarmTargetId()).thenReturn(Entity.NONE);
+        when(mockAttackingEntity.getAttackingEntity()).thenReturn(mockAttackingEntity);
+
+        when(mockWeapon.getEntity()).thenReturn(mockAttackingEntity);
 
         Tank mockTarget = mock(Tank.class);
         when(mockTarget.getOwner()).thenReturn(mockEnemy);
@@ -270,6 +289,9 @@ public class WeaponAttackActionToHitTest {
         when(mockAttackingEntity.getEquipment(anyInt())).thenReturn(mockWeaponEquipment);
         when(mockAttackingEntity.getCrew()).thenReturn(mockCrew);
         when(mockAttackingEntity.getSwarmTargetId()).thenReturn(Entity.NONE);
+        when(mockAttackingEntity.getAttackingEntity()).thenReturn(mockAttackingEntity);
+
+        when(mockWeapon.getEntity()).thenReturn(mockAttackingEntity);
 
         Tank mockTarget = mock(Tank.class);
         when(mockTarget.getOwner()).thenReturn(mockEnemy);
@@ -316,6 +338,9 @@ public class WeaponAttackActionToHitTest {
         when(mockAttackingEntity.getSwarmTargetId()).thenReturn(Entity.NONE);
         when(mockAttackingEntity.isAirborne()).thenReturn(true);
         when(mockAttackingEntity.passedOver(any())).thenReturn(true);
+        when(mockAttackingEntity.getAttackingEntity()).thenReturn(mockAttackingEntity);
+
+        when(mockWeapon.getEntity()).thenReturn(mockAttackingEntity);
 
 
         Tank mockTarget = mock(Tank.class);
@@ -368,6 +393,9 @@ public class WeaponAttackActionToHitTest {
         when(mockAttackingEntity.getBombs(any())).thenReturn(List.of(new BombMounted[] { mockBomb }));
         when(mockAttackingEntity.isAirborne()).thenReturn(true);
         when(mockAttackingEntity.passedOver(any())).thenReturn(true);
+        when(mockAttackingEntity.getAttackingEntity()).thenReturn(mockAttackingEntity);
+
+        when(mockWeapon.getEntity()).thenReturn(mockAttackingEntity);
 
 
         Targetable mockTarget = mock(Targetable.class);
@@ -421,6 +449,98 @@ public class WeaponAttackActionToHitTest {
             when(mockWeaponType.hasFlag(WeaponType.F_ALT_BOMB)).thenReturn(true);
             toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
             assertEquals(11, toHit.getValue());
+        }
+    }
+
+    @Nested
+    class WeaponAttackActionToHitForHandheldWeaponsTests {
+
+        @Test
+        void basicTest() {
+            MekSummary mekSummary = MekSummaryCache.getInstance().getMek("Light Anti-Infantry Weapon");
+            MekSummary otherMekSummary = MekSummaryCache.getInstance().getMek("Atlas AS7-D");
+
+            MekFileParser mekFileParser;
+            HandheldWeapon handheldWeapon;
+            Mek mek;
+
+            try {
+                mekFileParser = new MekFileParser(mekSummary.getSourceFile(), mekSummary.getEntryName());
+                handheldWeapon = (HandheldWeapon) mekFileParser.getEntity();
+
+                mekFileParser = new MekFileParser(otherMekSummary.getSourceFile(), otherMekSummary.getEntryName());
+                mek = (Mek) mekFileParser.getEntity();
+
+            } catch (Exception ex) {
+                return;
+            }
+
+            handheldWeapon.setGame(mockGame);
+            handheldWeapon.setPosition(new Coords(0, 0), false);
+            handheldWeapon.setId(0);
+
+            AttackHandler mockAttackHandler = mock(AttackHandler.class);
+            Vector<AttackHandler> vectorAttackHandler = new Vector<>();
+            vectorAttackHandler.add(mockAttackHandler);
+
+            when(mockGame.getAttacksVector()).thenReturn(vectorAttackHandler);
+
+            Forces mockForces = mock(Forces.class);
+            when(mockGame.getForces()).thenReturn(mockForces);
+
+            GamePhase mockGamePhase = mock(GamePhase.class);
+            when(mockGame.getPhase()).thenReturn(mockGamePhase);
+            when(mockGamePhase.isLounge()).thenReturn(true);
+
+            TWGameManager gameManager = new TWGameManager();
+            gameManager.setGame(mockGame);
+            mek.setMekArms();
+            mek.setFacing(3);
+            mek.setId(2);
+            gameManager.loadUnit(mek, handheldWeapon, -1);
+            handheldWeapon.setTransportId(2);
+
+            Mek mockAttackingEntity = mock(Mek.class);
+            when(mockAttackingEntity.getOwner()).thenReturn(mockPlayer);
+            when(mockAttackingEntity.getPosition()).thenReturn(new Coords(0, 0));
+            when(mockAttackingEntity.getWeapon(anyInt())).thenReturn(mockWeapon);
+            when(mockAttackingEntity.getEquipment(anyInt())).thenReturn(mockWeaponEquipment);
+            when(mockAttackingEntity.getCrew()).thenReturn(mockCrew);
+            when(mockAttackingEntity.getSwarmTargetId()).thenReturn(Entity.NONE);
+            when(mockAttackingEntity.getGame()).thenReturn(mockGame);
+            when(mockAttackingEntity.getAttackingEntity()).thenReturn(mockAttackingEntity);
+
+            when(mockWeapon.getEntity()).thenReturn(mockAttackingEntity);
+
+            Tank mockTarget = mock(Tank.class);
+            when(mockTarget.getOwner()).thenReturn(mockEnemy);
+            when(mockTarget.getPosition()).thenReturn(new Coords(0, 1));
+            when(mockTarget.isIlluminated()).thenReturn(true);
+            when(mockTarget.getSwarmTargetId()).thenReturn(Entity.NONE);
+            when(mockTarget.isImmobile()).thenReturn(true);
+            when(mockTarget.getGame()).thenReturn(mockGame);
+            when(mockTarget.getId()).thenReturn(1);
+            when(mockTarget.isImmobile()).thenReturn(false);
+            when(mockTarget.getGrappled()).thenReturn(Entity.NONE);
+
+            when(mockGame.getEntity(0)).thenReturn(handheldWeapon);
+            when(mockGame.getEntity(1)).thenReturn(mockTarget);
+            when(mockGame.getEntity(2)).thenReturn(mek);
+
+            when(mockTarget.getGame()).thenReturn(mockGame);
+            when(mockAttackingEntity.getGame()).thenReturn(mockGame);
+
+            mek.setPosition(new Coords(0, 0), false);
+            mek.setGame(mockGame);
+
+            try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class, invocationOnMock -> mockLos)) {
+                mockedLosEffects.when(() -> LosEffects.calculateLOS(any(), any(), any(), anyBoolean()))
+                      .thenReturn(mockLos);
+
+
+                ToHitData toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
+                assertEquals(4, toHit.getValue());
+            }
         }
     }
 }

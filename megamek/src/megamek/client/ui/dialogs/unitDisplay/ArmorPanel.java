@@ -139,7 +139,7 @@ class ArmorPanel extends PicMap {
         if (en == null) {
             return;
         }
-        DisplayMapSet ams = mek;
+        DisplayMapSet ams = null;
         removeAll();
         if (en instanceof QuadMek) {
             ams = quad;

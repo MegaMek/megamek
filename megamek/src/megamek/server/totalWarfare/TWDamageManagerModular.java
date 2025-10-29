@@ -119,7 +119,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     .anyMatch(o -> o.getCarriedObjectDamageAllocation().isCarryableDamageOnArmHit())) {
             Roll doesAttackHitCarriedUnitInstead = Compute.rollD6(1);
 
-            int TARGET = 5; // TODO: This'll need updated once we support HHW
+            int TARGET = entity.targetForArmHitToHitCarriedObject();
 
             boolean hitsOtherUnit = doesAttackHitCarriedUnitInstead.isTargetRollSuccess(TARGET);
             Report chanceToHitCarriedUnit = new Report(2600);

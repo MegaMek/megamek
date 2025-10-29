@@ -9589,7 +9589,9 @@ public class TWGameManager extends AbstractGameManager {
               (game.getTurn() instanceof TriggerBPodTurn));
         for (EntityAction ea : entityActions) {
             // is this the right entity?
-            if (ea.getEntityId() != entity.getId()) {
+            Entity weaponEntity = game.getEntity(ea.getEntityId());
+            Entity attacker = weaponEntity.getAttackingEntity();
+            if (attacker.getId() != entity.getId()) {
                 LOGGER.error("Attack packet has wrong attacker");
                 continue;
             }

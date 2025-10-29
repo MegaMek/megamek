@@ -840,52 +840,56 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
         // update target panel
         final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
-        Entity attacker = currentEntity();
-        if ((attacker != null) && attacker.equals(clientgui.getUnitDisplay().getCurrentEntity())
-              && (target != null) && (weaponId != -1) && (attacker.getPosition() != null)) {
-            clientgui.getUnitDisplay().wPan.setTarget(target, null);
+        final WeaponMounted selectedWeapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        if (selectedWeapon != null) {
+            Entity weaponEntity = selectedWeapon.getEntity();
+            Entity attacker = weaponEntity.getAttackingEntity();
+            if ((attacker != null) && attacker.equals(clientgui.getUnitDisplay().getCurrentEntity())
+                  && (target != null) && (weaponId != -1) && (attacker.getPosition() != null)) {
+                clientgui.getUnitDisplay().wPan.setTarget(target, null);
 
-            Mounted<?> weapon = attacker.getEquipment(weaponId);
-            int effectiveDistance = Compute.effectiveDistance(game, attacker, target);
-            String distanceText = Integer.toString(effectiveDistance);
-            if (!game.onConnectedBoards(attacker, target)) {
-                distanceText = "Unreachable";
-            } else if (showDistanceAsMapSheets(attacker, target, weapon)) {
-                distanceText = effectiveDistance / Board.DEFAULT_BOARD_HEIGHT + " Map sheets";
-                if (isArtilleryAttack(weapon)) {
-                    ArtilleryAttackAction aaa = new ArtilleryAttackAction(attacker.getId(), target.getTargetType(),
-                          target.getId(), weaponId, game);
-                    distanceText += String.format(" (%d turns)", aaa.getTurnsTilHit());
+                Mounted<?> weapon = attacker.getEquipment(weaponId);
+                int effectiveDistance = Compute.effectiveDistance(game, attacker, target);
+                String distanceText = Integer.toString(effectiveDistance);
+                if (!game.onConnectedBoards(attacker, target)) {
+                    distanceText = "Unreachable";
+                } else if (showDistanceAsMapSheets(attacker, target, weapon)) {
+                    distanceText = effectiveDistance / Board.DEFAULT_BOARD_HEIGHT + " Map sheets";
+                    if (isArtilleryAttack(weapon)) {
+                        ArtilleryAttackAction aaa = new ArtilleryAttackAction(attacker.getId(), target.getTargetType(),
+                              target.getId(), weaponId, game);
+                        distanceText += String.format(" (%d turns)", aaa.getTurnsTilHit());
+                    }
                 }
-            }
-            clientgui.getUnitDisplay().wPan.wRangeR.setText(distanceText);
+                clientgui.getUnitDisplay().wPan.wRangeR.setText(distanceText);
 
-            ToHitData toHit = WeaponAttackAction.toHit(game,
-                  currentEntity, target, weaponId, Entity.LOC_NONE, AimingMode.NONE, false);
+                ToHitData toHit = WeaponAttackAction.toHit(game,
+                      currentEntity, target, weaponId, Entity.LOC_NONE, AimingMode.NONE, false);
 
-            if (weapon.isUsedThisRound()) {
-                clientgui.getUnitDisplay().wPan.setToHit(
-                      Messages.getString("TargetingPhaseDisplay.alreadyFired"));
-                setFireEnabled(false);
-            } else if (weapon.isInBearingsOnlyMode() && effectiveDistance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
-                clientgui.getUnitDisplay().wPan.setToHit(
-                      Messages.getString("TargetingPhaseDisplay.bearingsOnlyMinRange"));
-                setFireEnabled(false);
-            } else if ((weapon.getType().hasFlag(WeaponType.F_AUTO_TARGET)
-                  && !weapon.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
-                clientgui.getUnitDisplay().wPan.setToHit(
-                      Messages.getString("TargetingPhaseDisplay.autoFiringWeapon"));
-                setFireEnabled(false);
-            } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-                clientgui.getUnitDisplay().wPan.setToHit(toHit);
-                setFireEnabled(false);
-            } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
-                clientgui.getUnitDisplay().wPan.setToHit(toHit);
-                setFireEnabled(true);
-            } else {
-                clientgui.getUnitDisplay().wPan.setToHit(toHit,
-                      attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY));
-                setFireEnabled(true);
+                if (weapon.isUsedThisRound()) {
+                    clientgui.getUnitDisplay().wPan.setToHit(
+                          Messages.getString("TargetingPhaseDisplay.alreadyFired"));
+                    setFireEnabled(false);
+                } else if (weapon.isInBearingsOnlyMode() && effectiveDistance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
+                    clientgui.getUnitDisplay().wPan.setToHit(
+                          Messages.getString("TargetingPhaseDisplay.bearingsOnlyMinRange"));
+                    setFireEnabled(false);
+                } else if ((weapon.getType().hasFlag(WeaponType.F_AUTO_TARGET)
+                      && !weapon.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
+                    clientgui.getUnitDisplay().wPan.setToHit(
+                          Messages.getString("TargetingPhaseDisplay.autoFiringWeapon"));
+                    setFireEnabled(false);
+                } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
+                    clientgui.getUnitDisplay().wPan.setToHit(toHit);
+                    setFireEnabled(false);
+                } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
+                    clientgui.getUnitDisplay().wPan.setToHit(toHit);
+                    setFireEnabled(true);
+                } else {
+                    clientgui.getUnitDisplay().wPan.setToHit(toHit,
+                          attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY));
+                    setFireEnabled(true);
+                }
             }
             setSkipEnabled(true);
         } else {

@@ -3986,7 +3986,8 @@ public final class BoardView extends AbstractBoardView
         // Don't make sprites for unknown entities and sensor returns
         // cross-board attacks don't get attack arrows (for now, must possibly allow some A2G, O2G, A2A attacks later
         // when target/attacker hexes are not really but effectively on the same board)
-        Entity attacker = game.getEntity(attackAction.getEntityId());
+        Entity weaponEntity = game.getEntity(attackAction.getEntityId());
+        Entity attacker = weaponEntity.getAttackingEntity();
         Targetable target = game.getTarget(attackAction.getTargetType(), attackAction.getTargetId());
         if ((attacker == null)
               || (target == null)

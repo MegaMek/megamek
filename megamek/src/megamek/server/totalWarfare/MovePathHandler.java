@@ -3091,10 +3091,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             if (step.getType() == MoveStepType.PICKUP_CARGO) {
                 var carryableObjects = getGame().getGroundObjects(step.getPosition());
-                if (getGame().getOptions()
-                      .booleanOption(OptionsConstants.ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS)) {
-                    carryableObjects.addAll(getGame().getEntitiesVector(step.getPosition()));
-                }
+                carryableObjects.addAll(getGame().getEntitiesVector(step.getPosition()).stream().filter(entity::canPickupCarryableObject).toList());
                 Integer cargoPickupIndex;
 
                 // if there's only one object on the ground, let's just get that one and ignore
@@ -3114,73 +3111,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                     ICarryable pickupTarget = carryableObjects.get(cargoPickupIndex);
                     if (entity.maxGroundObjectTonnage() >= pickupTarget.getTonnage()) {
-                        if (pickupTarget instanceof Briefcase) {
-                            getGame().removeGroundObject(step.getPosition(), pickupTarget);
-                            entity.pickupCarryableObject(pickupTarget, cargoPickupLocation);
-
-                            report = new Report(2513);
-                            report.subject = entity.getId();
-                            report.add(entity.getDisplayName());
-                            report.add(pickupTarget.specificName());
-                            report.add(step.getPosition().toFriendlyString());
-                            addReport(report);
-
-                            // a pickup should be the last step. Send an update for the overall ground
-                            // object list.
-                            gameManager.sendGroundObjectUpdate();
-                            break;
-                        } else if (pickupTarget instanceof Entity carryableEntity) {
-                            if (entity.maxGroundObjectTonnage() >= pickupTarget.getTonnage()) {
-                                // PSR
-                                PilotingRollData roll = entity.getBasePilotingRoll(overallMoveType);
-                                // roll
-                                final Roll diceRoll = entity.getCrew().rollPilotingSkill();
-                                Report psrToPickupReport = new Report(2185);
-                                psrToPickupReport.subject = entity.getId();
-                                psrToPickupReport.add(roll.getValueAsString());
-                                psrToPickupReport.add(roll.getDesc());
-                                psrToPickupReport.add(diceRoll);
-                                if (diceRoll.getIntValue() < roll.getValue()) {
-                                    psrToPickupReport.choose(false);
-                                    addReport(psrToPickupReport);
-
-                                    report = new Report(2519);
-                                    report.subject = entity.getId();
-                                    report.add(entity.getDisplayName());
-                                    report.add(carryableEntity.getDisplayName());
-                                    report.add(step.getPosition().toFriendlyString());
-                                    addReport(report);
-                                } else {
-                                    psrToPickupReport.choose(true);
-                                    addReport(psrToPickupReport);
-
-                                    entity.pickupCarryableObject(pickupTarget, cargoPickupLocation);
-                                    gameManager.loadUnit(entity, carryableEntity, -1);
-
-                                    report = new Report(2513);
-                                    report.subject = entity.getId();
-                                    report.add(entity.getDisplayName());
-                                    report.add(carryableEntity.getDisplayName());
-                                    report.add(step.getPosition().toFriendlyString());
-                                    addReport(report);
-
-                                    if (carryableEntity instanceof VTOL) {
-                                        // destroy rotor
-                                        addReport(gameManager.applyCriticalHit(carryableEntity,
-                                              VTOL.LOC_ROTOR,
-                                              new CriticalSlot(CriticalSlot.TYPE_SYSTEM, VTOL.CRIT_ROTOR_DESTROYED),
-                                              false,
-                                              0,
-                                              false));
-                                    }
-
-                                    // a pickup should be the last step. Send an update for the overall ground
-                                    // object list.
-                                    gameManager.sendGroundObjectUpdate();
-                                    break;
-                                }
-                            }
-                        }
+                        pickupTarget.processPickupStep(step, cargoPickupLocation, gameManager, entity,
+                              overallMoveType);
                     } else {
                         logger.warn(
                               "{} attempted to pick up object but it is too heavy. Carry capacity: {}, object weight: {}",

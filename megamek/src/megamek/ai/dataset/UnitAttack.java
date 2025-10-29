@@ -104,7 +104,8 @@ public class UnitAttack extends EntityDataMap<UnitAttack.Field> {
         map.put(Field.ROUND, game.getCurrentRound());
 
         // Attacker information
-        Entity attacker = attackAction.getEntity(game);
+        Entity weaponEntity = attackAction.getEntity(game);
+        Entity attacker = weaponEntity.getAttackingEntity();
         if (attacker != null) {
             map.put(Field.ENTITY_ID, attacker.getId())
                   .put(Field.PLAYER_ID, attacker.getOwnerId())

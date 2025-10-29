@@ -1055,7 +1055,8 @@ public abstract class BotClient extends Client {
      * generated
      */
     private static float getDeployDamage(Game game, WeaponAttackAction weaponAttackAction, List<ECMInfo> allECMInfo) {
-        Entity attacker = game.getEntity(weaponAttackAction.getEntityId());
+        Entity weaponEntity = weaponAttackAction.getEntity(game);
+        Entity attacker = weaponEntity.getAttackingEntity();
         if (attacker == null) {
             return 0.0f;
         }

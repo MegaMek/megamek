@@ -1938,11 +1938,16 @@ public class BattleArmor extends Infantry {
 
     @Override
     public boolean isCarryableObject() {
-        return true;
+        return (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS));
     }
 
     @Override
     public CarriedObjectDamageAllocation getCarriedObjectDamageAllocation() {
         return CarriedObjectDamageAllocation.ARM_HIT;
+    }
+
+    @Override
+    public int targetForArmHitToHitCarriedObject() {
+        return 5;
     }
 }

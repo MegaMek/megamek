@@ -80,6 +80,7 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.AmmoType.Munitions;
+import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
@@ -1042,7 +1043,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                         }
                     }
                 } else {
-                    if (!mounted.isBombMounted()) {
+                    if (!mounted.isBombMounted() && entity.equals(mounted.getEntity())) {
                         currentHeatBuildup += mounted.getHeatByBay();
                     }
                 }
@@ -1177,6 +1178,22 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         weaponList.repaint();
     }
 
+    public void selectWeapon(WeaponMounted weapon) {
+        if (weapon == null) {
+            weaponList.setSelectedIndex(-1);
+            return;
+        }
+        int index = ((WeaponListModel) weaponList.getModel()).getIndex(weapon);
+        if (index == -1) {
+            weaponList.setSelectedIndex(-1);
+            return;
+        }
+        weaponList.setSelectedIndex(index);
+        weaponList.ensureIndexIsVisible(index);
+        displaySelected();
+        weaponList.repaint();
+    }
+
     /**
      * @return the Mounted for the selected weapon in the weapon list.
      */
@@ -1209,7 +1226,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         if (selected == -1) {
             return -1;
         }
-        return entity.getEquipmentNum(((WeaponListModel) weaponList.getModel()).getWeaponAt(selected));
+        Entity weaponEntity = getSelectedWeapon().getEntity();
+        return weaponEntity.getEquipmentNum(((WeaponListModel) weaponList.getModel()).getWeaponAt(selected));
     }
 
     /**
@@ -1305,10 +1323,22 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     public int getNextWeaponNum() {
         int selected = getNextWeaponListIdx();
         if ((selected >= 0) && (selected < entity.getWeaponList().size())) {
-            return entity.getEquipmentNum(((WeaponListModel) weaponList
-                  .getModel()).getWeaponAt(selected));
+            WeaponMounted weapon = ((WeaponListModel) weaponList
+                  .getModel()).getWeaponAt(selected);
+            Entity weaponEntity = weapon.getEntity();
+            return weaponEntity.getEquipmentNum(weapon);
         } else {
             return -1;
+        }
+    }
+
+    public WeaponMounted getNextWeapon() {
+        int selected = getNextWeaponListIdx();
+        if ((selected >= 0) && (selected < entity.getWeaponList().size())) {
+            return ((WeaponListModel) weaponList
+                  .getModel()).getWeaponAt(selected);
+        } else {
+            return null;
         }
     }
 
@@ -1955,7 +1985,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         StringBuilder sb = new StringBuilder(64);
         int ammoIndex = m.getDesc().indexOf(Messages.getString("MekDisplay.0"));
         int loc = m.getLocation();
-        if (!m.getEntity().equals(entity)) {
+        if (!m.getEntity().equals(entity) && !(m.getEntity() instanceof HandheldWeapon)) {
             sb.append("[TR] ");
         } else if (loc != Entity.LOC_NONE) {
             sb.append('[').append(entity.getLocationAbbr(loc)).append("] ");

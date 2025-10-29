@@ -33,6 +33,12 @@
 
 package megamek.common.equipment;
 
+import megamek.common.Report;
+import megamek.common.moves.MoveStep;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
+import megamek.server.totalWarfare.TWGameManager;
+
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -132,5 +138,23 @@ public class Briefcase implements ICarryable, Serializable {
     @Override
     public CarriedObjectDamageAllocation getCarriedObjectDamageAllocation() {
         return CarriedObjectDamageAllocation.ANY_HIT;
+    }
+
+    @Override
+    public void processPickupStep(MoveStep step, Integer cargoPickupLocation,
+          TWGameManager gameManager, Entity entityPickingUpTarget, EntityMovementType overallMoveType) {
+        gameManager.getGame().removeGroundObject(step.getPosition(), this);
+        entityPickingUpTarget.pickupCarryableObject(this, cargoPickupLocation);
+
+        Report report = new Report(2513);
+        report.subject = entityPickingUpTarget.getId();
+        report.add(entityPickingUpTarget.getDisplayName());
+        report.add(this.specificName());
+        report.add(step.getPosition().toFriendlyString());
+        gameManager.addReport(report);
+
+        // a pickup should be the last step. Send an update for the overall ground
+        // object list.
+        gameManager.sendGroundObjectUpdate();
     }
 }

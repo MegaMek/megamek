@@ -2969,7 +2969,7 @@ public class TWGameManager extends AbstractGameManager {
                     report = new Report(1066);
                     report.subject = entity.getId();
                     report.addDesc(entity);
-                    String s = IStartingPositions.START_LOCATION_NAMES[entity.getStartingPos()];
+                    String s = IStartingPositions.getDisplayName(entity.getStartingPos());
                     report.add(s);
                     addReport(report);
                 }

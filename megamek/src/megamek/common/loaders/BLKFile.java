@@ -487,10 +487,6 @@ public class BLKFile {
         if (dataFile.exists("height")) {
             e.getFluff().setHeight(dataFile.getDataAsString("height")[0]);
         }
-
-        if (dataFile.exists("source")) {
-            e.setSource(dataFile.getDataAsString("source")[0]);
-        }
     }
 
     public void checkManualBV(Entity e) {

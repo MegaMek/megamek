@@ -344,16 +344,16 @@
     </KeyBind>
 
     <KeyBind>
-        <command>prevMode</command> <!-- Down -->
-        <keyCode>225</keyCode>
-        <modifier>0</modifier>
+        <command>prevMode</command> <!-- Ctrl+Down -->
+        <keyCode>40</keyCode>
+        <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>nextMode</command> <!-- Up -->
-        <keyCode>224</keyCode>
-        <modifier>0</modifier>
+        <command>nextMode</command> <!-- Ctrl+Up -->
+        <keyCode>38</keyCode>
+        <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 

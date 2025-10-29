@@ -332,8 +332,9 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
                     if (!dir.exists()) {
                         dir.mkdirs();
                     }
-                    File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
-                          + e.getOldPhase() + ".png");
+                    String filenameTemplate = "round_%d_%d_%s.png";
+                    File imgFile = new File(dir,
+                          filenameTemplate.formatted(game.getRoundCount(), e.getOldPhase().ordinal(), e.getOldPhase()));
 
                     try {
                         BufferedImage image = getMinimapImage(game, bv, GAME_SUMMARY_ZOOM, clientGui, null,

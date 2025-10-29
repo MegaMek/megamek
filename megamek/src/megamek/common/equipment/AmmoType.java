@@ -1100,7 +1100,7 @@ public class AmmoType extends EquipmentType {
 
     // PLAYTEST3
     private static final MunitionMutator PRECISION_PLAYTEST_MUNITION_MUTATOR = new MunitionMutator("Precision Playtest",
-          (5/3),
+          (5.0/3),
           Munitions.M_PRECISION_PLAYTEST,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
@@ -15526,7 +15526,7 @@ public class AmmoType extends EquipmentType {
 
         private final TechAdvancement techAdvancement;
 
-        // PLATEST3 changed to float for weightRatio
+        // PLAyTEST3 changed to float for weightRatio
         public MunitionMutator(String munitionName, double weightRatio, Munitions munitionType,
               TechAdvancement techAdvancement, String rulesRefs) {
             name = munitionName;

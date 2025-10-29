@@ -1524,7 +1524,7 @@ public class ComputeToHit {
         // VSP Lasers
         // Quirks and SPAs now handled in toHit
 
-        // PLAYTEST3 narc gets -1 to hit
+        // PLAYTEST3 narc gets -1 to hit to units with a homing narc pod attached and not under ECM
         if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && ammoType != null) {
             Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target : null;
             boolean isTargetECMAffected = ComputeECM.isAffectedByECM(ae,

@@ -1490,15 +1490,16 @@ public class Compute {
         // determine which range we're using
         int usingRange = range;
         
-        // PLAYTEST3 check ecm vs non ecm affected C3
-        if (c3range > c3ecmRange) {
-            usingRange = c3ecmRange;
-        } else if (range > c3range) {
-            usingRange = c3range;
+        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            // PLAYTEST3 check ecm vs non ecm affected C3
+            if (c3range > c3ecmRange) {
+                usingRange = c3ecmRange;
+            } else if (range > c3range) {
+                usingRange = c3range;
+            }
+        } else {
+            usingRange = Math.min(range, c3range);
         }
-
-
-       // int usingRange = Math.min(range, c3range);
 
         // add range modifier, C3 can't be used with LOS Range
         if ((usingRange == range) || (range == RangeType.RANGE_LOS) || (attackingEntity.hasNavalC3()

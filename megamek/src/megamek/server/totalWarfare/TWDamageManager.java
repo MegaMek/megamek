@@ -1002,7 +1002,7 @@ public class TWDamageManager implements IDamageManager {
                     report.indent(3);
                     report.add(damage);
                     reportVec.addElement(report);
-                } else if (heatArmor && hit.getHeatWeapon()) {
+                } else if (heatArmor && hit.getHeatWeapon() && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
                     // PLAYTEST3 only applies if heat_weapon is true in hitdata, which can only occur when playtest 
                     // is on.
                     tmpDamageHold = damage;

@@ -323,6 +323,11 @@ public class HandheldWeapon extends Entity {
     }
 
     @Override
+    public CarriedObjectDamageAllocation getCarriedObjectDamageAllocation() {
+        return CarriedObjectDamageAllocation.ARM_HIT;
+    }
+
+    @Override
     public int targetForArmHitToHitCarriedObject() {
         return 6;
     }

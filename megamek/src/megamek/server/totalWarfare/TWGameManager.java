@@ -28993,6 +28993,12 @@ public class TWGameManager extends AbstractGameManager {
                     ah.setAnnouncedEntityFiring(true);
                     lastAttackerId = aId;
                 }
+                if (ah.getAttacker() != ah.getWeaponAttackAction().getEntity(game)) {
+                    Report hhwUsedReport = new Report(3112);
+                    hhwUsedReport.subject = ah.getWeaponAttackAction().getEntityId();
+                    hhwUsedReport.addDesc(ah.getWeaponAttackAction().getEntity(game));
+                    handleAttackReports.addElement(hhwUsedReport);
+                }
                 boolean keep = ah.handle(game.getPhase(), handleAttackReports);
                 if (keep) {
                     keptAttacks.add(ah);

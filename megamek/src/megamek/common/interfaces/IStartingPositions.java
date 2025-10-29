@@ -39,4 +39,21 @@ public interface IStartingPositions {
                                       "NE", "E", "SE", "S", "SW", "W", "EDG", "CTR", "NW (deep)",
                                       "N (deep)", "NE (deep)", "E (deep)", "SE (deep)", "S (deep)",
                                       "SW (deep)", "W (deep)", "EDG (deep)" };
+
+
+    /**
+     * Returns a display name for the given starting position index. "Custom" is returned for any value of index outside
+     * the standard starting positions (the method is safe to call for all values of index).
+     *
+     * @param index the starting position index
+     *
+     * @return A name, e.g. "Any" for index 0
+     */
+    static String getDisplayName(int index) {
+        if ((index >= 0) && (index < START_LOCATION_NAMES.length)) {
+            return START_LOCATION_NAMES[index];
+        } else {
+            return "Custom";
+        }
+    }
 }

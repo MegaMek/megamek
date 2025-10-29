@@ -187,7 +187,6 @@ public class KeyBindParser {
                     if (kcb.modifiers != 0) {
                         keyTxt = KeyEvent.getModifiersExText(kcb.modifiers) + "+" + keyTxt;
                     }
-//                    keyTxt += KeyEvent.getKeyText(kcb.key);
                 }
                 output.write("    <KeyBind>\n");
                 output.write("        <command>" + kcb.cmd + "</command> <!-- " + keyTxt + " -->\n");

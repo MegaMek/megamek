@@ -181,19 +181,15 @@ public class KeyBindParser {
                   + " xsi:noNamespaceSchemaLocation=\"keyBindingSchema.xsd\">\n");
 
             for (KeyCommandBind kcb : KeyCommandBind.values()) {
+                String keyTxt = "Unbound";
+                if (kcb.key != 0) {
+                    keyTxt = KeyEvent.getKeyText(kcb.key);
+                    if (kcb.modifiers != 0) {
+                        keyTxt = KeyEvent.getModifiersExText(kcb.modifiers) + "+" + keyTxt;
+                    }
+                }
                 output.write("    <KeyBind>\n");
-                output.write("         <command>" + kcb.cmd + "</command> ");
-                String keyTxt = "";
-                if (kcb.modifiers != 0) {
-                    keyTxt = KeyEvent.getModifiersExText(kcb.modifiers);
-                    keyTxt += "-";
-                }
-                keyTxt += KeyEvent.getKeyText(kcb.key);
-                if (kcb.key == 0) {
-                    output.write("<!-- " + "Unbound" + " -->\n");
-                } else {
-                    output.write("<!-- " + keyTxt + " -->\n");
-                }
+                output.write("        <command>" + kcb.cmd + "</command> <!-- " + keyTxt + " -->\n");
                 output.write("        <keyCode>" + kcb.key + "</keyCode>\n");
                 output.write("        <modifier>" + kcb.modifiers + "</modifier>\n");
                 output.write("        <isRepeatable>" + kcb.isRepeatable + "</isRepeatable>\n");

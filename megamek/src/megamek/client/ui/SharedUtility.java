@@ -562,10 +562,10 @@ public class SharedUtility {
                       && (((Entity) targ).getJumpMP() < 1)
                       && !((Infantry) targ).isMechanized()) {
                     rollTarget = TWGameManager.getEjectModifiers(game, (Entity) targ, 0,
-                          false, entity.getPosition(), "zip lining");
+                          false, md.getFinalCoords(), "zip lining");
                     // Factor in Elevation
-                    if (entity.getElevation() > 0) {
-                        rollTarget.addModifier(entity.getElevation(), "elevation");
+                    if (md.getFinalElevation() > 0) {
+                        rollTarget.addModifier(md.getFinalElevation(), "elevation");
                     }
                     checkNag(rollTarget, nagReport, psrList);
                 }

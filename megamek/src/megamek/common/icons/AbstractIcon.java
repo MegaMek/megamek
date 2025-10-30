@@ -249,6 +249,8 @@ public abstract class AbstractIcon implements Serializable {
 
                 // <50.07 compatibility handlers
                 category = category.replaceAll("Mek Tech", "MekTech");
+                // <50.10 compatibility handlers
+                category = category.replace("Vehicle Gunner", "Vehicle Crew Ground");
 
                 setCategory(category);
                 break;

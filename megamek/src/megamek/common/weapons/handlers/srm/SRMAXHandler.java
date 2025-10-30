@@ -41,6 +41,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.DamageType;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -54,7 +55,12 @@ public class SRMAXHandler extends SRMHandler {
     public SRMAXHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
         sSalvoType = " acid-head missile(s) ";
-        nSalvoBonus = -2;
+        // PLAYTEST3, -1 not -2
+        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            nSalvoBonus = -1;
+        } else {
+            nSalvoBonus = -2;
+        }
         damageType = DamageType.ACID;
         generalDamageType = HitData.DAMAGE_AX;
     }

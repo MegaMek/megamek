@@ -37,12 +37,17 @@ package megamek.common.actions;
 import java.io.Serial;
 
 import megamek.client.ui.Messages;
+import megamek.common.CriticalSlot;
 import megamek.common.Hex;
 import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeSideTable;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
@@ -321,7 +326,12 @@ public class PunchAttackAction extends PhysicalAttackAction {
               !ae.hasWorkingSystem(Mek.ACTUATOR_HAND, armLoc)) {
             toHit.addModifier(1, "Hand actuator destroyed");
         } else if (hasClaws) {
-            toHit.addModifier(1, "Using Claws");
+            // PLAYTEST3 claw modifier removed
+            if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                toHit.addModifier(1, "Using Claws");
+            } else {
+                toHit.addModifier(0, "Using Claws");
+            }
         }
 
         if (hasHandActuator
@@ -388,6 +398,41 @@ public class PunchAttackAction extends PhysicalAttackAction {
             damage = (int) Math.ceil(entity.getWeight() / 7.0);
         }
 
+        // PLAYTEST3 shields boost punching power. We only need to find the first shield entry to figure it out.
+        if (entity.hasShield() && entity.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            for (int slot = 0; slot < entity.getNumberOfCriticalSlots(armLoc); slot++) {
+                CriticalSlot cs = entity.getCritical(armLoc, slot);
+
+                if (cs == null) {
+                    continue;
+                }
+
+                if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
+                    continue;
+                }
+
+                Mounted<?> m = cs.getMount();
+                EquipmentType type = m.getType();
+                if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
+                    if ((((MiscMounted) m).getDamageAbsorption(entity, armLoc) > 0) && (((MiscMounted) m).getCurrentDamageCapacity(entity, armLoc) > 0)) {
+                        if (type.hasSubType(MiscType.S_SHIELD_LARGE)) {
+                            damage += 3;
+                            break;
+                        } else if (type.hasSubType(MiscType.S_SHIELD_MEDIUM)) {
+                            damage += 2;
+                            break;
+                        } else if (type.hasSubType(MiscType.S_SHIELD_SMALL)) {
+                            damage += 1;
+                            break;
+                        }
+                    } else {
+                        // Shield DA or DC is 0, so no bonus
+                        break;
+                    }
+                }
+            }
+        }
+        
         // CamOps, pg. 82
         if (zweihandering) {
             damage += (int) Math.floor(entity.getWeight() / 10.0);

@@ -681,10 +681,9 @@ public class Report implements ReportEntry {
             // add the sprite code at the beginning of the line
             if (imageCode != null && !imageCode.isEmpty()) {
                 if (text.toString().startsWith("<br>")) {
-                    text.insert(4, imageCode + "<br>" + getSpaces());
-                    // put text in a new line after the sprite image and add the current indentation level to it
+                    text.insert(4, imageCode);
                 } else {
-                    text.insert(0, imageCode + "<br>" + getSpaces());
+                    text.insert(0, imageCode);
                 }
             }
             text.append(raw.substring(mark));

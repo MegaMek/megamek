@@ -85,6 +85,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private boolean hotLoaded = false; // Hot loading for ammoType
     private boolean repairable = true; // can the equipment mounted here be
     // repaired
+    // PLAYTEST3 entries
+    private boolean autocannonHit = false;
+    private boolean AMSused = false;
     private boolean mekTurretMounted = false; // is this mounted in a mek turret
     private boolean sponsonTurretMounted = false; // is this mounted in a sponson turret
     private boolean pintleTurretMounted = false; // is this mounted in a pintle turret
@@ -401,6 +404,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     @Override
     public void newRound(int roundNumber) {
         setUsedThisRound(false);
+        
+        // PLAYTEST3 reset AMS usage value
+        setAMSused(false);
 
         if ((type != null) && (type.hasModes() && (pendingMode != -1))) {
             mode = pendingMode;
@@ -411,7 +417,15 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     @Override
     public void newPhase(GamePhase phase) {
+        
         jammed = jammedThisPhase;
+        
+        // PLAYTEST3 reset shield mode at the beginning of the phase
+        if (entity.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
+                this.setMode(MiscType.S_NO_SHIELD);
+            }
+        }
     }
 
     /**
@@ -597,6 +611,11 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
     }
 
+    public boolean isAMSused() {return AMSused; }
+    
+    public void setAMSused(boolean usedAMS) {
+        this.AMSused = usedAMS;
+    }
     public GamePhase usedInPhase() {
         if (usedThisRound) {
             return phase;
@@ -1409,6 +1428,15 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     public boolean isRepairable() {
         return repairable;
+    }
+    
+    // PLAYTEST3 set and get autocannon hit
+    public void setAutocannonHit(boolean acHit) {
+        this.autocannonHit = acHit;
+    }
+    
+    public boolean isAutocannonHit() {
+        return autocannonHit;
     }
 
     public Entity getEntity() {

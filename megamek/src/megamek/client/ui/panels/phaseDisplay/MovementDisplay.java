@@ -1692,49 +1692,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 return;
             }
             // Jumps with mechanical jump boosters are special
-            Coords src;
-
-            if (cmd.getLastStep() != null) {
-                src = cmd.getLastStep().getPosition();
-            } else {
-                src = currentEntity().getPosition();
-            }
-
+            Coords src = (cmd.getLastStep() != null) ? cmd.getLastStep().getPosition() : currentEntity().getPosition();
             int direction = src.direction(dest);
-            int facing = currentEntity().getFacing();
-            // Adjust direction based upon facing
-            // Java does Remainder, not Modulo, so need the Absolute value as it can go negative.
-            direction = Math.abs((direction - facing) % 6);
-            switch (direction) {
-                case 0:
-                    cmd.findSimplePathTo(dest, MoveStepType.FORWARDS, src.direction(dest), currentEntity().getFacing());
-                    break;
-                case 1:
-                    cmd.findSimplePathTo(dest, MoveStepType.LATERAL_RIGHT, src.direction(dest), currentEntity().getFacing());
-                    break;
-                case 2:
-                    // TODO: backwards lateral shifts are switched:
-                    // LATERAL_LEFT_BACKWARDS moves back+right and vice-versa
-                    cmd.findSimplePathTo(dest,
-                          MoveStepType.LATERAL_LEFT_BACKWARDS,
-                          src.direction(dest),
-                          currentEntity().getFacing());
-                    break;
-                case 3:
-                    cmd.findSimplePathTo(dest, MoveStepType.BACKWARDS, src.direction(dest), currentEntity().getFacing());
-                    break;
-                case 4:
-                    // TODO: backwards lateral shifts are switched:
-                    // LATERAL_RIGHT_BACKWARDS moves back+left and vice-versa
-                    cmd.findSimplePathTo(dest,
-                          MoveStepType.LATERAL_RIGHT_BACKWARDS,
-                          src.direction(dest),
-                          currentEntity().getFacing());
-                    break;
-                case 5:
-                    cmd.findSimplePathTo(dest, MoveStepType.LATERAL_LEFT, src.direction(dest), currentEntity().getFacing());
-                    break;
-            }
+            MoveStepType moveStepType = MoveStepType.stepTypeForRelativeDirection(direction, currentEntity().getFacing());
+            cmd.findSimplePathTo(dest, moveStepType, src.direction(dest), currentEntity().getFacing());
+
         } else if (gear == GEAR_STRAFE) {
             // Only set the steps that enter new hexes.
             int start = cmd.length();
@@ -4876,16 +4838,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
             gear = MovementDisplay.GEAR_JUMP;
             jumpSubGear = GEAR_SUB_STANDARD;
             if (mustChooseJumpType(entity)) {
-                Object jumpChoice = JOptionPane.showInputDialog(JOptionPane.getFrameForComponent(this),
-                      "Choose jump type:",
-                      "Choose Jump Type",
-                      JOptionPane.QUESTION_MESSAGE,
-                      null,
-                      new String[] { "Mechanical Jump Boosters", "Jump Jets" },
-                      "Jump Jets");
-                if (jumpChoice instanceof String string && "Mechanical Jump Boosters".equals(string)) {
+                String[] choices = { "Mechanical Jump Boosters", "Jump Jets" };
+
+                int jumpChoice = JOptionPane.showOptionDialog(JOptionPane.getFrameForComponent(this),
+                      "Choose jump type:", "Choose Jump Type",
+                      JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+                      null, choices, choices[1]);
+
+                if (jumpChoice == 0) {
                     jumpSubGear = GEAR_SUB_MEK_BOOSTERS;
                 }
+
             } else {
                 if ((entity instanceof Mek mek) && (mek.getMechanicalJumpBoosterMP() > 0) && (mek.getJumpMP() == 0)) {
                     jumpSubGear = GEAR_SUB_MEK_BOOSTERS;

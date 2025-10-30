@@ -159,4 +159,29 @@ public enum MoveStepType {
         }
         return type;
     }
+
+    /**
+     * Returns a step type to use for simple path finding, given the direction to the destination (0 to 5) and the
+     * facing of the unit (0 to 5). The step type can be used to get closer to the destination. Used only for Mek
+     * Mechanical Jump Booster path finding.
+     *
+     * @param direction The direction to the destination, 0 = N, 4 = SW etc
+     * @param facing    The facing of the unit
+     *
+     * @return A step type to use to get closer to the destination
+     */
+    public static MoveStepType stepTypeForRelativeDirection(int direction, int facing) {
+        return switch ((6 + direction - facing) % 6) {
+            case 1 -> MoveStepType.LATERAL_RIGHT;
+            // TODO: backwards lateral shifts are switched:
+            // LATERAL_LEFT_BACKWARDS moves back+right and vice-versa
+            case 2 -> MoveStepType.LATERAL_LEFT_BACKWARDS;
+            case 3 -> MoveStepType.BACKWARDS;
+            // TODO: backwards lateral shifts are switched:
+            // LATERAL_RIGHT_BACKWARDS moves back+left and vice-versa
+            case 4 -> MoveStepType.LATERAL_RIGHT_BACKWARDS;
+            case 5 -> MoveStepType.LATERAL_LEFT;
+            default -> MoveStepType.FORWARDS;
+        };
+    }
 }

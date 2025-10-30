@@ -305,49 +305,75 @@ public class WeaponAttackActionToHitTest {
         }
     }
 
-    @Test
-    void aeroToGround() {
-        Aero mockAttackingEntity = mock(Aero.class);
-        when(mockAttackingEntity.getOwner()).thenReturn(mockPlayer);
-        when(mockAttackingEntity.getPosition()).thenReturn(new Coords(0, 0));
-        when(mockAttackingEntity.getAltitude()).thenReturn(6);
-        when(mockAttackingEntity.getWeapon(anyInt())).thenReturn(mockWeapon);
-        when(mockAttackingEntity.getEquipment(anyInt())).thenReturn(mockWeaponEquipment);
-        when(mockAttackingEntity.getCrew()).thenReturn(mockCrew);
-        when(mockAttackingEntity.getSwarmTargetId()).thenReturn(Entity.NONE);
-        when(mockAttackingEntity.isAirborne()).thenReturn(true);
-        when(mockAttackingEntity.passedOver(any())).thenReturn(true);
+    @Nested
+    class BasicAeroToGroundTests {
 
+        Aero mockAttackingEntity;
+        Tank mockTarget;
 
-        Tank mockTarget = mock(Tank.class);
-        when(mockTarget.getOwner()).thenReturn(mockEnemy);
-        when(mockTarget.getPosition()).thenReturn(new Coords(0, 1));
-        when(mockTarget.isIlluminated()).thenReturn(false);
-        when(mockTarget.getSwarmTargetId()).thenReturn(Entity.NONE);
+        @BeforeEach
+        void beforeEach() {
+            mockAttackingEntity = mock(Aero.class);
+            when(mockAttackingEntity.getOwner()).thenReturn(mockPlayer);
+            when(mockAttackingEntity.getPosition()).thenReturn(new Coords(0, 0));
+            when(mockAttackingEntity.getAltitude()).thenReturn(6);
+            when(mockAttackingEntity.getWeapon(anyInt())).thenReturn(mockWeapon);
+            when(mockAttackingEntity.getEquipment(anyInt())).thenReturn(mockWeaponEquipment);
+            when(mockAttackingEntity.getCrew()).thenReturn(mockCrew);
+            when(mockAttackingEntity.getSwarmTargetId()).thenReturn(Entity.NONE);
+            when(mockAttackingEntity.isAirborne()).thenReturn(true);
+            when(mockAttackingEntity.passedOver(any())).thenReturn(true);
 
-        when(mockGame.getEntity(0)).thenReturn(mockAttackingEntity);
-        when(mockGame.getEntity(1)).thenReturn(mockTarget);
+            mockTarget = mock(Tank.class);
+            when(mockTarget.getOwner()).thenReturn(mockEnemy);
+            when(mockTarget.getPosition()).thenReturn(new Coords(0, 1));
+            when(mockTarget.isIlluminated()).thenReturn(false);
+            when(mockTarget.getSwarmTargetId()).thenReturn(Entity.NONE);
 
+            when(mockGame.getEntity(0)).thenReturn(mockAttackingEntity);
+            when(mockGame.getEntity(1)).thenReturn(mockTarget);
 
-        when(mockTarget.getGame()).thenReturn(mockGame);
-        when(mockAttackingEntity.getGame()).thenReturn(mockGame);
-        try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class, invocationOnMock -> mockLos)) {
-            mockedLosEffects.when(() -> LosEffects.calculateLOS(any(), any(), any(), anyBoolean()))
-                  .thenReturn(mockLos);
+            when(mockTarget.getGame()).thenReturn(mockGame);
+            when(mockAttackingEntity.getGame()).thenReturn(mockGame);
+        }
 
+        @Test
+        void defaultTest() {
+            try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class,
+                  invocationOnMock -> mockLos)) {
+                mockedLosEffects.when(() -> LosEffects.calculateLOS(any(), any(), any(), anyBoolean()))
+                      .thenReturn(mockLos);
 
-            ToHitData toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
-            assertEquals(0, toHit.getValue());
+                ToHitData toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
+                assertEquals(0, toHit.getValue());
+            }
+        }
 
-            // In pitch black?
-            mockPlanetaryConditions.setLight(Light.PITCH_BLACK);
-            toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
-            assertEquals(4, toHit.getValue());
+        @Test
+        void inPitchBlackTest() {
+            try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class,
+                  invocationOnMock -> mockLos)) {
+                mockedLosEffects.when(() -> LosEffects.calculateLOS(any(), any(), any(), anyBoolean()))
+                      .thenReturn(mockLos);
 
-            // And now with double-blind:
-            when(mockOptions.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)).thenReturn(true);
-            toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
-            assertEquals(ToHitData.IMPOSSIBLE, toHit.getValue());
+                mockPlanetaryConditions.setLight(Light.PITCH_BLACK);
+                ToHitData toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
+                assertEquals(4, toHit.getValue());
+            }
+        }
+
+        @Test
+        void withDoubleBlindTest() {
+            try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class,
+                  invocationOnMock -> mockLos)) {
+                mockedLosEffects.when(() -> LosEffects.calculateLOS(any(), any(), any(), anyBoolean()))
+                      .thenReturn(mockLos);
+
+                mockPlanetaryConditions.setLight(Light.PITCH_BLACK);
+                when(mockOptions.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)).thenReturn(true);
+                ToHitData toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
+                assertEquals(ToHitData.IMPOSSIBLE, toHit.getValue());
+            }
         }
     }
 

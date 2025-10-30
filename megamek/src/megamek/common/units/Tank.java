@@ -3098,7 +3098,7 @@ public class Tank extends Entity {
     }
 
     @Override
-    public boolean canPerformSalvageOperations() {
+    public boolean canPerformGroundSalvageOperations() {
         return true;
     }
 }

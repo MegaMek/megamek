@@ -821,7 +821,12 @@ public class Dropship extends SmallCraft {
     }
 
     @Override
-    public boolean canPerformSalvageOperations() {
+    public boolean canPerformGroundSalvageOperations() {
+        return true;
+    }
+
+    @Override
+    public boolean canPerformSpaceSalvageOperations() {
         return true;
     }
 }

@@ -7625,7 +7625,7 @@ public abstract class Entity extends TurnOrdered
         if (getGyroType() == Mek.GYRO_HEAVY_DUTY) {
             // PLAYTEST3 No rolls for running with HD Gyro
             if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                gyroDamage  = 0;
+                gyroDamage = 0;
             } else {
                 gyroDamage--; // HD gyro ignores 1st damage
             }
@@ -10043,7 +10043,12 @@ public abstract class Entity extends TurnOrdered
         }
         // if you're charging or finding a club, it's already declared
         // PLAYTEST3 unjamming RAC no longer prevents weapon attacks
-        if ((isUnjammingRAC() && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) || isCharging() || isMakingDfa() || isRamming() || isFindingClub() || isOffBoard()) {
+        if ((isUnjammingRAC() && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3))
+              || isCharging()
+              || isMakingDfa()
+              || isRamming()
+              || isFindingClub()
+              || isOffBoard()) {
             return false;
         }
         // must be active
@@ -10061,7 +10066,10 @@ public abstract class Entity extends TurnOrdered
     public boolean isEligibleForFiring() {
         // if you're charging, no shooting
         // PLAYTEST3 unjamming RAC you can still shoot
-        if ((isUnjammingRAC() && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) || isCharging() || isMakingDfa() || isRamming()) {
+        if ((isUnjammingRAC() && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3))
+              || isCharging()
+              || isMakingDfa()
+              || isRamming()) {
             return false;
         }
 
@@ -10123,7 +10131,9 @@ public abstract class Entity extends TurnOrdered
 
         // if you're charging, no shooting
         // PLAYTEST3 Unjamming RAC no longer prevents this
-        if ((isUnjammingRAC()  && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) || isCharging() || isMakingDfa()) {
+        if ((isUnjammingRAC() && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3))
+              || isCharging()
+              || isMakingDfa()) {
             return false;
         }
 
@@ -10178,7 +10188,7 @@ public abstract class Entity extends TurnOrdered
 
         // if you're charging or finding a club, it's already declared
         // PLAYTEST3 unjamming no longer prevents this
-        if ((isUnjammingRAC()  && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3))||
+        if ((isUnjammingRAC() && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) ||
               isCharging() ||
               isMakingDfa() ||
               isRamming() ||
@@ -13192,18 +13202,18 @@ public abstract class Entity extends TurnOrdered
                   (hasC3M() && (calculateFreeC3Nodes() < 3)) ||
                   (hasC3S() && (c3Master > NONE)) ||
                   ((hasC3i() || hasNavalC3()) && (calculateFreeC3Nodes() < 5))) {
-                    totalForceBV += baseBV;
-                    // Ignore all other network members for playtest3
-                    if (!playtestThree) {
-                        for (Entity entity : game.getC3NetworkMembers(this)) {
-                            if (!equals(entity) && onSameC3NetworkAs(entity)) {
-                                totalForceBV += entity.calculateBattleValue(true, true);
-                            }
+                totalForceBV += baseBV;
+                // Ignore all other network members for playtest3
+                if (!playtestThree) {
+                    for (Entity entity : game.getC3NetworkMembers(this)) {
+                        if (!equals(entity) && onSameC3NetworkAs(entity)) {
+                            totalForceBV += entity.calculateBattleValue(true, true);
                         }
                     }
-                    if (hasBoostedC3()) {
-                        multiplier = 0.07;
-                    }
+                }
+                if (hasBoostedC3()) {
+                    multiplier = 0.07;
+                }
             } else if (hasNovaCEWS()) { //Nova CEWS applies 5% to every mek with Nova on the team {
                 for (Entity entity : game.getEntitiesVector()) {
                     if (!equals(entity) && entity.hasNovaCEWS() && !(entity.owner.isEnemyOf(this.owner))) {
@@ -15994,9 +16004,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Determines whether salvage operations can be performed.
-     *
-     * <p>This method indicates whether the entity can perform salvage operations.
+     * Determines whether salvage operations can be performed on the ground.
      *
      * <p>The default implementation returns {@code false}, indicating that salvage operations are not permitted.
      * Subclasses should override this method to provide specific logic for determining salvage eligibility based on
@@ -16008,7 +16016,25 @@ public abstract class Entity extends TurnOrdered
      * @author Illiani
      * @since 0.50.10
      */
-    public boolean canPerformSalvageOperations() {
+    public boolean canPerformGroundSalvageOperations() {
+        return false;
+    }
+
+
+    /**
+     * Determines whether salvage operations can be performed in space scenarios.
+     *
+     * <p>The default implementation returns {@code false}, indicating that salvage operations are not permitted.
+     * Subclasses should override this method to provide specific logic for determining salvage eligibility based on
+     * scenario conditions, campaign settings, or other relevant factors.</p>
+     *
+     * @return {@code true} if salvage operations can be performed, {@code false} otherwise. The default implementation
+     *       always returns {@code false}.
+     *
+     * @author Illiani
+     * @since 0.50.10
+     */
+    public boolean canPerformSpaceSalvageOperations() {
         return false;
     }
 }

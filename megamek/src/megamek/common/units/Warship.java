@@ -252,7 +252,7 @@ public class Warship extends Jumpship {
     }
 
     @Override
-    public boolean canPerformSalvageOperations() {
+    public boolean canPerformSpaceSalvageOperations() {
         return true;
     }
 }

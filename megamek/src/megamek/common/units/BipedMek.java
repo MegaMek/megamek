@@ -126,45 +126,45 @@ public class BipedMek extends MekWithArms {
             for (int i : List.of(Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_LEG)) {
                 // PLAYTEST2 leg crits and MP
                 if (!(game == null) && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                        if (!isLocationBad(i)) {
-                            if (legHasHipCrit(i)) {
-                                if (i == Mek.LOC_LEFT_LEG) {
-                                    leftHip++;
-                                }
-                                if (i == Mek.LOC_RIGHT_LEG) {
-                                    rightHip++;
-                                }
-                                hipHits++;
-                                if ((game == null) ||
-                                      !game.getOptions()
-                                            .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
-                                    continue;
-                                }
-                            }
+                    if (!isLocationBad(i)) {
+                        if (legHasHipCrit(i)) {
                             if (i == Mek.LOC_LEFT_LEG) {
-                                leftLegActuators += countLegActuatorCrits(i);
+                                leftHip++;
                             }
                             if (i == Mek.LOC_RIGHT_LEG) {
-                                rightLegActuators += countLegActuatorCrits(i);
+                                rightHip++;
                             }
-                            actuatorHits += countLegActuatorCrits(i);
-                        } else {
-                            legsDestroyed++;
+                            hipHits++;
+                            if ((game == null) ||
+                                  !game.getOptions()
+                                        .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
+                                continue;
+                            }
                         }
+                        if (i == Mek.LOC_LEFT_LEG) {
+                            leftLegActuators += countLegActuatorCrits(i);
+                        }
+                        if (i == Mek.LOC_RIGHT_LEG) {
+                            rightLegActuators += countLegActuatorCrits(i);
+                        }
+                        actuatorHits += countLegActuatorCrits(i);
+                    } else {
+                        legsDestroyed++;
+                    }
                 } else {
-                        if (!isLocationBad(i)) {
-                            if (legHasHipCrit(i)) {
-                                hipHits++;
-                                if ((game == null) ||
-                                      !game.getOptions()
-                                            .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
-                                    continue;
-                                }
+                    if (!isLocationBad(i)) {
+                        if (legHasHipCrit(i)) {
+                            hipHits++;
+                            if ((game == null) ||
+                                  !game.getOptions()
+                                        .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
+                                continue;
                             }
-                            actuatorHits += countLegActuatorCrits(i);
-                        } else {
-                            legsDestroyed++;
                         }
+                        actuatorHits += countLegActuatorCrits(i);
+                    } else {
+                        legsDestroyed++;
+                    }
                 }
             }
 
@@ -172,7 +172,7 @@ public class BipedMek extends MekWithArms {
 
             if (legsDestroyed > 0) {
                 if (game != null && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                    if (legsDestroyed == 2) { mp = 0; }
+                    if (legsDestroyed == 2) {mp = 0;}
                 } else {
                     mp = (legsDestroyed == 1) ? 1 : 0;
                 }
@@ -429,5 +429,11 @@ public class BipedMek extends MekWithArms {
               !weaponFiredFrom(Mek.LOC_LEFT_ARM) &&
               !weaponFiredFrom(Mek.LOC_RIGHT_ARM) &&
               !isProne();
+    }
+
+    @Override
+    public boolean canPerformGroundSalvageOperations() {
+        return hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM) &&
+              hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM);
     }
 }

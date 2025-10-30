@@ -238,6 +238,9 @@ public abstract class Entity extends TurnOrdered
 
     public static final int MAX_C3_NODES = 12;
     public static final int MAX_C3i_NODES = 6;
+    
+    // PLAYTEST3
+    protected boolean isC3ecmAffected = false;
 
     public static final int GRAPPLE_BOTH = 0;
     public static final int GRAPPLE_RIGHT = 1;
@@ -5103,7 +5106,7 @@ public abstract class Entity extends TurnOrdered
         }
         return stateAppliesCount;
     }
-
+    
     /**
      * Returns the amount of heat that the entity can sink each turn.
      */
@@ -7622,7 +7625,12 @@ public abstract class Entity extends TurnOrdered
 
         int gyroDamage = getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CENTER_TORSO);
         if (getGyroType() == Mek.GYRO_HEAVY_DUTY) {
-            gyroDamage--; // HD gyro ignores 1st damage
+            // PLAYTEST3 No rolls for running with HD Gyro
+            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                gyroDamage  = 0; 
+            } else {
+                gyroDamage--; // HD gyro ignores 1st damage
+            }
         }
         if (((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT)) &&
               canFall() &&
@@ -10036,7 +10044,8 @@ public abstract class Entity extends TurnOrdered
             return false;
         }
         // if you're charging or finding a club, it's already declared
-        if (isUnjammingRAC() || isCharging() || isMakingDfa() || isRamming() || isFindingClub() || isOffBoard()) {
+        // PLAYTEST3 unjamming RAC no longer prevents weapon attacks
+        if ((isUnjammingRAC() && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) || isCharging() || isMakingDfa() || isRamming() || isFindingClub() || isOffBoard()) {
             return false;
         }
         // must be active
@@ -10053,7 +10062,8 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean isEligibleForFiring() {
         // if you're charging, no shooting
-        if (isUnjammingRAC() || isCharging() || isMakingDfa() || isRamming()) {
+        // PLAYTEST3 unjamming RAC you can still shoot
+        if ((isUnjammingRAC() && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) || isCharging() || isMakingDfa() || isRamming()) {
             return false;
         }
 
@@ -10114,7 +10124,8 @@ public abstract class Entity extends TurnOrdered
     public boolean isEligibleForOffboard() {
 
         // if you're charging, no shooting
-        if (isUnjammingRAC() || isCharging() || isMakingDfa()) {
+        // PLAYTEST3 Unjamming RAC no longer prevents this
+        if ((isUnjammingRAC()  && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) || isCharging() || isMakingDfa()) {
             return false;
         }
 
@@ -10168,7 +10179,8 @@ public abstract class Entity extends TurnOrdered
         }
 
         // if you're charging or finding a club, it's already declared
-        if (isUnjammingRAC() ||
+        // PLAYTEST3 unjamming no longer prevents this
+        if ((isUnjammingRAC()  && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3))||
               isCharging() ||
               isMakingDfa() ||
               isRamming() ||
@@ -13175,20 +13187,25 @@ public abstract class Entity extends TurnOrdered
         if (game != null) {
             int totalForceBV = 0;
             double multiplier = 0.05;
+            // PLAYTEST3 C3 BV changes. each unit is +30% BV, +35% for boosted
+            boolean playtestThree = game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3);
+
             if ((hasC3MM() && (calculateFreeC3MNodes() < 2)) ||
                   (hasC3M() && (calculateFreeC3Nodes() < 3)) ||
                   (hasC3S() && (c3Master > NONE)) ||
                   ((hasC3i() || hasNavalC3()) && (calculateFreeC3Nodes() < 5))) {
-                totalForceBV += baseBV;
-                for (Entity entity : game.getC3NetworkMembers(this)) {
-                    if (!equals(entity) && onSameC3NetworkAs(entity)) {
-                        totalForceBV += entity.calculateBattleValue(true, true);
+                    totalForceBV += baseBV;
+                    // Ignore all other network members for playtest3
+                    if (!playtestThree) {
+                        for (Entity entity : game.getC3NetworkMembers(this)) {
+                            if (!equals(entity) && onSameC3NetworkAs(entity)) {
+                                totalForceBV += entity.calculateBattleValue(true, true);
+                            }
+                        }
                     }
-                }
-                if (hasBoostedC3()) {
-                    multiplier = 0.07;
-                }
-
+                    if (hasBoostedC3()) {
+                        multiplier = 0.07;
+                    }
             } else if (hasNovaCEWS()) { //Nova CEWS applies 5% to every mek with Nova on the team {
                 for (Entity entity : game.getEntitiesVector()) {
                     if (!equals(entity) && entity.hasNovaCEWS() && !(entity.owner.isEnemyOf(this.owner))) {
@@ -13199,6 +13216,14 @@ public abstract class Entity extends TurnOrdered
                     totalForceBV += baseBV;
                 }
             }
+            // PLAYTEST3 set the modifier. Since it is only a single unit, we are good.
+            if (playtestThree && !hasNovaCEWS()) {
+                if (hasBoostedC3()) {
+                    multiplier = 0.35;
+                } else {
+                    multiplier = 0.3;
+                }
+            } 
             extraBV += (int) Math.round(totalForceBV * multiplier);
         }
         return extraBV;
@@ -15995,5 +16020,14 @@ public abstract class Entity extends TurnOrdered
         // a pickup should be the last step. Send an update for the overall ground
         // object list.
         gameManager.sendGroundObjectUpdate();
+    }
+
+    
+    public void setC3ecmAffected(boolean ecmAffect) {
+        this.isC3ecmAffected = ecmAffect;
+    }
+    
+    public boolean getC3ecmAffected() {
+        return isC3ecmAffected;
     }
 }

@@ -3374,14 +3374,25 @@ public abstract class Mek extends Entity {
         // gyro hit?
         if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
               Mek.LOC_CENTER_TORSO) > 0) {
-
-
             if (getGyroType() == Mek.GYRO_HEAVY_DUTY) {
-                if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-                      Mek.LOC_CENTER_TORSO) == 1) {
-                    roll.addModifier(1, "HD Gyro damaged once");
+                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                    if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
+                          Mek.LOC_CENTER_TORSO) == 1) {
+                        roll.addModifier(1, "HD Gyro damaged once");
+                    } else if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
+                          Mek.LOC_CENTER_TORSO) == 2) {
+                        roll.addModifier(2, "HD Gyro damaged twice");
+                    } else if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
+                          Mek.LOC_CENTER_TORSO) == 3) {
+                        roll.addModifier(3, "HD Gyro damaged thrice");
+                    }
                 } else {
-                    roll.addModifier(3, "HD Gyro damaged twice");
+                    if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
+                          Mek.LOC_CENTER_TORSO) == 1) {
+                        roll.addModifier(1, "HD Gyro damaged once");
+                    } else {
+                        roll.addModifier(3, "HD Gyro damaged twice");
+                    }
                 }
             } else {
                 if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
@@ -5999,7 +6010,13 @@ public abstract class Mek extends Entity {
         // Gyro destroyed? TW p. 258 at least heavily implies that that counts
         // as being immobilized as well, which makes sense because the 'Mek
         // certainly isn't leaving that hex under its own power anymore.
+
         int hitsToDestroyGyro = (gyroType == GYRO_HEAVY_DUTY) ? 3 : 2;
+        
+        // PLAYTEST3 heavy duty gyro is now 4
+        if (game != null && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && gyroType == GYRO_HEAVY_DUTY) {
+            hitsToDestroyGyro = 4;
+        }
         return getGyroHits() >= hitsToDestroyGyro;
     }
 

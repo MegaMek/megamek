@@ -6369,4 +6369,14 @@ public abstract class Mek extends Entity {
     protected int legCount() {
         return 2;
     }
+
+    @Override
+    public int getRecoveryTime() {
+        return 60;
+    }
+
+    @Override
+    public boolean canPerformSalvageOperations() {
+        return true;
+    }
 }

@@ -15962,4 +15962,23 @@ public abstract class Entity extends TurnOrdered
         // to medium combat vehicles)
         return 40;
     }
+
+    /**
+     * Determines whether salvage operations can be performed.
+     *
+     * <p>This method indicates whether the entity can perform salvage operations.
+     *
+     * <p>The default implementation returns {@code false}, indicating that salvage operations are not permitted.
+     * Subclasses should override this method to provide specific logic for determining salvage eligibility based on
+     * scenario conditions, campaign settings, or other relevant factors.</p>
+     *
+     * @return {@code true} if salvage operations can be performed, {@code false} otherwise. The default implementation
+     *       always returns {@code false}.
+     *
+     * @author Illiani
+     * @since 0.50.10
+     */
+    public boolean canPerformSalvageOperations() {
+        return false;
+    }
 }

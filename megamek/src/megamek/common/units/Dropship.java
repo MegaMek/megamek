@@ -819,4 +819,9 @@ public class Dropship extends SmallCraft {
     public int getRecoveryTime() {
         return 180;
     }
+
+    @Override
+    public boolean canPerformSalvageOperations() {
+        return true;
+    }
 }

@@ -3096,4 +3096,9 @@ public class Tank extends Entity {
             return 80;
         }
     }
+
+    @Override
+    public boolean canPerformSalvageOperations() {
+        return true;
+    }
 }

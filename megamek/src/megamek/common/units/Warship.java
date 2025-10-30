@@ -250,4 +250,9 @@ public class Warship extends Jumpship {
     public int getRecoveryTime() {
         return 480;
     }
+
+    @Override
+    public boolean canPerformSalvageOperations() {
+        return true;
+    }
 }

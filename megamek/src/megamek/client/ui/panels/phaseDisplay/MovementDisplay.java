@@ -631,10 +631,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         boolean isTank = (selectedUnit instanceof Tank);
         boolean isAero = selectedUnit.isAero();
 
-        if (numButtonGroups > 1) {
-            getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
-        }
-
         setWalkEnabled(!selectedUnit.isImmobile() &&
               ((selectedUnit.getWalkMP() > 0) || (selectedUnit.getRunMP() > 0)) &&
               !selectedUnit.isStuck());
@@ -799,6 +795,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         setupButtonPanel();
         updateDonePanel();
+        updateMoreButton(); // Update more needs to go last!
     }
 
     private void addStepToMovePath(MoveStepType moveStep) {
@@ -1062,9 +1059,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         setForwardIniEnabled(true);
         clientgui.clearFieldOfFire();
         clientgui.clearTemporarySprites();
-        if (numButtonGroups > 1) {
-            getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
-        }
+        updateMoreButton();
 
         if (!clientgui.isCurrentBoardViewShowingAnimation()) {
             clientgui.maybeShowUnitDisplay();
@@ -4279,9 +4274,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (a.isOutControlTotal() && a.isAirborne()) {
             disableButtons();
             butDone.setEnabled(true);
-            if (numButtonGroups > 1) {
-                getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
-            }
+            updateMoreButton();
             getBtn(MoveCommand.MOVE_NEXT).setEnabled(true);
             setForwardIniEnabled(true);
             if (ce instanceof Aero) {
@@ -4289,6 +4282,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       !ce.getLaunchableSmallCraft().isEmpty() ||
                       !ce.getLaunchableDropships().isEmpty());
             }
+        }
+    }
+
+    /**
+     * Displays the More button if there is a second page of buttons
+     */
+    private void updateMoreButton() {
+        if (numButtonGroups > 1) {
+            getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
         }
     }
 

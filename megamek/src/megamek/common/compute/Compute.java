@@ -1457,6 +1457,8 @@ public class Compute {
 
         // find any c3 spotters that could help
         Entity c3spotter = ComputeC3Spotter.findC3Spotter(game, attackingEntity, target);
+        Entity c3spotterWithECM = ComputeC3Spotter.playtestFindC3Spotter(game, attackingEntity, target);
+        
         if (isIndirect) {
             c3spotter = attackingEntity; // no c3 when using indirect fire
         }
@@ -1466,21 +1468,38 @@ public class Compute {
         }
 
         int c3dist = Compute.effectiveDistance(game, c3spotter, target, false);
-
+        // PLAYTEST3 if there is a member that is ECM blocked
+        int c3ecmDist = Compute.effectiveDistance(game, c3spotterWithECM, target, false);
+        
         // C3 can't benefit from LOS range.
         int c3range = RangeType.rangeBracketC3(c3dist, distance, weaponRanges, useExtremeRange, false);
-
+        // PLAYTEST3 checking for ECM ranged member
+        int c3ecmRange = RangeType.rangeBracketC3(c3ecmDist, distance, weaponRanges, useExtremeRange, false);
+        
+       
         /*
          * Tac Ops Extreme Range Rule p. 85 if the weapons normal range is
          * Extreme then C3 uses the next highest range bracket, i.e. medium
          * instead of short.
          */
-        if ((range == RangeType.RANGE_EXTREME) && (c3range < range)) {
+        if ((range == RangeType.RANGE_EXTREME) && (c3range < range || c3ecmRange < range)) {
             c3range++;
+            c3ecmRange++;
         }
 
         // determine which range we're using
-        int usingRange = Math.min(range, c3range);
+        int usingRange = range;
+        
+        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            // PLAYTEST3 check ecm vs non ecm affected C3
+            if (c3range > c3ecmRange) {
+                usingRange = c3ecmRange;
+            } else if (range > c3range) {
+                usingRange = c3range;
+            }
+        } else {
+            usingRange = Math.min(range, c3range);
+        }
 
         // add range modifier, C3 can't be used with LOS Range
         if ((usingRange == range) || (range == RangeType.RANGE_LOS) || (attackingEntity.hasNavalC3()
@@ -1537,12 +1556,36 @@ public class Compute {
             }
         } else {
             // report c3 adjustment
-            if ((c3range == RangeType.RANGE_SHORT) || (c3range == RangeType.RANGE_MINIMUM)) {
-                mods.addModifier(attackingEntity.getShortRangeModifier(), "short range due to C3 spotter");
-            } else if (c3range == RangeType.RANGE_MEDIUM) {
-                mods.addModifier(attackingEntity.getMediumRangeModifier(), "medium range due to C3 spotter");
-            } else if (c3range == RangeType.RANGE_LONG) {
-                mods.addModifier(attackingEntity.getLongRangeModifier(), "long range due to C3 spotter");
+            // PLAYTEST3 C3 ECM halving
+            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && usingRange == c3ecmRange && usingRange != c3range && c3spotterWithECM.getC3ecmAffected()) {
+                // Halve the bonus, so we need to know what the original range was too.
+                int rangeModifier = 0;
+                if (range == RangeType.RANGE_LONG) {
+                    rangeModifier = attackingEntity.getLongRangeModifier();
+                } else if (range == RangeType.RANGE_MEDIUM) {
+                    rangeModifier = attackingEntity.getMediumRangeModifier();
+                } else if (range == RangeType.RANGE_EXTREME) {
+                    rangeModifier = attackingEntity.getExtremeRangeModifier();
+                }
+                if ((c3ecmRange == RangeType.RANGE_SHORT) || (c3ecmRange == RangeType.RANGE_MINIMUM)) {
+                    rangeModifier = (int) (rangeModifier + attackingEntity.getShortRangeModifier())/2;
+                    mods.addModifier(rangeModifier, "short range due to C3 spotter under ECM");
+                } else if (c3ecmRange == RangeType.RANGE_MEDIUM) {
+                    rangeModifier = (int) (rangeModifier + attackingEntity.getMediumRangeModifier())/2;
+                    mods.addModifier(rangeModifier, "medium range due to C3 spotter under ECM");
+                } else if (c3ecmRange == RangeType.RANGE_LONG) {
+                    rangeModifier = (int) (rangeModifier + attackingEntity.getLongRangeModifier())/2;
+                    mods.addModifier(rangeModifier, "long range due to C3 spotter under ECM");
+                }
+            } else {
+                // Normal C3 operation, no ECM
+                if ((c3range == RangeType.RANGE_SHORT) || (c3range == RangeType.RANGE_MINIMUM)) {
+                    mods.addModifier(attackingEntity.getShortRangeModifier(), "short range due to C3 spotter");
+                } else if (c3range == RangeType.RANGE_MEDIUM) {
+                    mods.addModifier(attackingEntity.getMediumRangeModifier(), "medium range due to C3 spotter");
+                } else if (c3range == RangeType.RANGE_LONG) {
+                    mods.addModifier(attackingEntity.getLongRangeModifier(), "long range due to C3 spotter");
+                }
             }
         }
 
@@ -3672,11 +3715,13 @@ public class Compute {
                             // to reflect scaled crit chance
                             // Other armor-penetrating ammo types should be
                             // tested here, such as Tandem-charge SRMs
+                            
+                            // PLAYTEST added
                             if (((ammoBinType.getAmmoType() == AmmoTypeEnum.AC)
                                   || (ammoBinType.getAmmoType() == AmmoTypeEnum.LAC)
                                   || (ammoBinType.getAmmoType() == AmmoTypeEnum.AC_IMP)
                                   || (ammoBinType.getAmmoType() == AmmoTypeEnum.PAC))
-                                  && (ammoBinType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING))) {
+                                  && (ammoBinType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING) || ammoBinType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST))) {
                                 if ((target instanceof Mek) || (target instanceof Tank)) {
                                     ammoMultiple = 1.0 + (weaponType.getRackSize() / 10.0);
                                 }

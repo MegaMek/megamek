@@ -44,6 +44,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.equipment.EquipmentMode;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
@@ -84,12 +85,17 @@ public class FlamerHandler extends WeaponHandler {
         boolean flamerDoesOnlyDamage = currentWeaponMode != null && currentWeaponMode.equals(Weapon.MODE_FLAMER_DAMAGE);
 
         if (bmmFlamerDamage || flamerDoesOnlyDamage || (flamerDoesHeatOnlyDamage && !entityTarget.tracksHeat())) {
+            // PLAYTEST3 Heat-dissipating armor reduces damage
+            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                hit.setHeatWeapon(true);
+            }
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
 
             if (bmmFlamerDamage && entityTarget.tracksHeat() &&
                   !entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
                         ComputeSideTable.sideTable(attackingEntity, entityTarget, weapon.getCalledShot().getCall()))) {
-                FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, weaponType, subjectId, hit);
+                FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, weaponType, subjectId, hit,
+                      game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3));
             }
         } else if (flamerDoesHeatOnlyDamage) {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
@@ -109,7 +115,8 @@ public class FlamerHandler extends WeaponHandler {
             report.add(entityTarget.getLocationAbbr(hit));
             vPhaseReport.addElement(report);
 
-            FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, weaponType, subjectId, hit);
+            FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, weaponType, subjectId, hit,
+                  game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3));
         }
     }
 

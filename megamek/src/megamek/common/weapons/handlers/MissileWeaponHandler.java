@@ -82,7 +82,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
           throws EntityLoadingException {
         super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_MISSILE;
-        advancedAMS = g.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS);
+        // PLAYTEST3 also enabled advanced AMS
+        advancedAMS =
+              g.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS) || g.getOptions().booleanOption(OptionsConstants.PLAYTEST_3);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);
         multiAMS = g.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_MULTI_USE_AMS);
         sSalvoType = " missile(s) ";
@@ -200,6 +202,15 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
               && !mLinker.isDestroyed() && !mLinker.isMissing()
               && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_APOLLO))
               && (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MRM)) {
+            // PLAYTEST3 MRM + apollo
+            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                nMissilesModifier -= 2;
+            } else {
+                nMissilesModifier -= 1;
+            }
+        } else if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MRM && game.getOptions()
+              .booleanOption(OptionsConstants.PLAYTEST_3)) {
+            // PLAYTEST3 MRMs
             nMissilesModifier -= 1;
         } else if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) {
             if (bECMAffected) {
@@ -585,9 +596,24 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     }
 
                     // Optional rule to allow multiple AMS shots per round
-                    if (!multiAMS) {
+                    // PLAYTEST3 make sure we don't do this when using playtest 3
+                    if (!multiAMS && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
                         // set the ams as having fired
                         counter.setUsedThisRound(true);
+                    }
+                    
+                    // PLAYTEST3 AMS can engage twice now.
+                    if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                        if (!multiAMS && !isAMS) {
+                            counter.setUsedThisRound(true);
+                        }
+                        if (isAMS && counter.isAMSused()) {
+                            // Second AMS shot
+                            counter.setUsedThisRound(true);
+                        } else if (isAMS && !counter.isAMSused()) {
+                            // First AMS shot, set it to used.
+                            counter.setAMSused(true);
+                        }
                     }
 
                     if (isAMS) {

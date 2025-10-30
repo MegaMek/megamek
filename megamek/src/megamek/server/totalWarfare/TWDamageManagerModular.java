@@ -531,7 +531,11 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 // ok, we dealt damage but didn't go on to internal
                 // we get a chance of a crit, using Armor Piercing.
                 // but only if we don't have hardened, Ferro-Lamellor, or reactive armor
-                if (!(mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor)) {
+                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                    if (!(mods.hardenedArmor || mods.abaArmor)) {
+                        mods.specCrits = mods.specCrits + 1;
+                    }
+                } else if (!(mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor)) {
                     mods.specCrits = mods.specCrits + 1;
                 }
             }
@@ -2472,7 +2476,10 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 int critMod = entity.hasBARArmor(hit.getLocation()) ? 2 : 0;
                 critMod += ((mods.reflectiveArmor) && !(mods.isBattleArmor)) ? 2 : 0; // BA
                 // against impact armor, we get a +1 mod
-                critMod += (mods.impactArmor) ? 1 : 0;
+                // PLAYTEST3 no longer gets the +1 mod with impact.
+                if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                    critMod += (mods.impactArmor) ? 1 : 0;
+                }
                 // hardened armour has no crit penalty
                 if (!mods.hardenedArmor) {
                     // non-hardened armor gets modifiers
@@ -2532,6 +2539,11 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
               isBattleArmor &&
                     (entity.getArmorType(hit.getLocation()) ==
                           EquipmentType.T_ARMOR_BA_REFLECTIVE);
+        // PLAYTEST3 add notes for ABA and heat
+        mods.heatArmor = (entity instanceof Mek) &&
+              (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING);
+        mods.abaArmor = (entity instanceof Mek) &&
+              (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION);
     }
 
     public int manageDamageTypeReports(Entity entity, Vector<Report> reportVec, int damage, DamageType damageType,
@@ -2726,6 +2738,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         boolean reflectiveArmor = mods.reflectiveArmor;
         boolean reactiveArmor = mods.reactiveArmor;
         boolean isBattleArmor = (entity instanceof BattleArmor);
+        boolean heatArmor = mods.heatArmor;
+        boolean abaArmor = mods.abaArmor;
         int damageOriginal = mods.damageOriginal;
         int critBonus = mods.critBonus;
 
@@ -2826,6 +2840,19 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     damage = 1;
                 }
                 report = new Report(6068);
+                report.subject = entityId;
+                report.indent(3);
+                report.add(damage);
+                reportVec.addElement(report);
+            } else if (heatArmor && hit.getHeatWeapon() && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                // PLAYTEST3 only applies if heat_weapon is true in hitdata, which can only occur when playtest 
+                // is on.
+                tmpDamageHold = damage;
+                damage = (int) Math.ceil((((double) damage) / 2));
+                if (tmpDamageHold == 1) {
+                    damage = 1;
+                }
+                report = new Report(6093);
                 report.subject = entityId;
                 report.indent(3);
                 report.add(damage);
@@ -3032,5 +3059,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         public int crits = 0;
         public int specCrits = 0;
         public int damageOriginal = 0;
+        // PLAYTEST3 add armor types
+        public boolean heatArmor = false;
+        public boolean abaArmor = false;
     }
 }

@@ -815,4 +815,8 @@ public class Dropship extends SmallCraft {
         return (int) Math.round(Math.exp(6.5266 + 0.2497 * Math.log(getWeight())));
     }
 
+    @Override
+    public int getRecoveryTime() {
+        return 180;
+    }
 }

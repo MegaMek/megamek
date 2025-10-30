@@ -1267,4 +1267,9 @@ public class Jumpship extends Aero {
     public boolean hasPatchworkArmor() {
         return false;
     }
+
+    @Override
+    public int getRecoveryTime() {
+        return 360;
+    }
 }

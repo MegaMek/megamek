@@ -245,4 +245,9 @@ public class Warship extends Jumpship {
     public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(-1.3484 + 0.9382 * Math.log(getWeight())));
     }
+
+    @Override
+    public int getRecoveryTime() {
+        return 480;
+    }
 }

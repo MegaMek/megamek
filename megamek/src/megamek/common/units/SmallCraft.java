@@ -933,4 +933,9 @@ public class SmallCraft extends Aero {
     public boolean hasPatchworkArmor() {
         return false;
     }
+
+    @Override
+    public int getRecoveryTime() {
+        return 120;
+    }
 }

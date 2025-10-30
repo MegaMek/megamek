@@ -2026,4 +2026,10 @@ public class Infantry extends Entity {
           boolean isInfantry, int distance) {
         return new PilotingRollData(id, TargetRoll.CHECK_FALSE, "Infantry can't skid");
     }
+
+    @Override
+    public int getRecoveryTime() {
+        // Conventional infantry units have no listed recovery time in CamOps, so we're copying from Battle Armor
+        return 10;
+    }
 }

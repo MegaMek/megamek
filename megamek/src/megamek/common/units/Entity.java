@@ -2991,8 +2991,9 @@ public abstract class Entity extends TurnOrdered
      * Returns true if the carryable object is able to be picked up. Units must be hull down to pick up other units,
      * unless the unit is tall. Airborne aeros cannot be grabbed either.
      *
-     * @param isCarrierHullDown is the unit that's picking this up hull down, or otherwise able to pick up
-     *                          ground-level objects
+     * @param isCarrierHullDown is the unit that's picking this up hull down, or otherwise able to pick up ground-level
+     *                          objects
+     *
      * @return true if the object can be picked up, false if it cannot
      */
     @Override
@@ -7367,26 +7368,26 @@ public abstract class Entity extends TurnOrdered
                 return new PilotingRollData(entityId,
                       TargetRoll.AUTOMATIC_FAIL,
                       getCrew().getPiloting() + 8,
-                      "Both legs destroyed");  
+                      "Both legs destroyed");
             } else {
-            return new PilotingRollData(entityId,
-                  TargetRoll.AUTOMATIC_FAIL,
-                  getCrew().getPiloting() + 10,
-                  "Both legs destroyed");
+                return new PilotingRollData(entityId,
+                      TargetRoll.AUTOMATIC_FAIL,
+                      getCrew().getPiloting() + 10,
+                      "Both legs destroyed");
             }
         } else if (this instanceof QuadMek) {
             if (((QuadMek) this).countBadLegs() >= 3) {
-              if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                  return new PilotingRollData(entityId,
-                        TargetRoll.AUTOMATIC_FAIL,
-                        getCrew().getPiloting() + (((Mek) this).countBadLegs() * 4),
-                        ((Mek) this).countBadLegs() + " legs destroyed");
-              } else {
-                  return new PilotingRollData(entityId,
-                        TargetRoll.AUTOMATIC_FAIL,
-                        getCrew().getPiloting() + (((Mek) this).countBadLegs() * 5),
-                        ((Mek) this).countBadLegs() + " legs destroyed");
-              }
+                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                    return new PilotingRollData(entityId,
+                          TargetRoll.AUTOMATIC_FAIL,
+                          getCrew().getPiloting() + (((Mek) this).countBadLegs() * 4),
+                          ((Mek) this).countBadLegs() + " legs destroyed");
+                } else {
+                    return new PilotingRollData(entityId,
+                          TargetRoll.AUTOMATIC_FAIL,
+                          getCrew().getPiloting() + (((Mek) this).countBadLegs() * 5),
+                          ((Mek) this).countBadLegs() + " legs destroyed");
+                }
             }
         }
         // entity shut down?
@@ -8081,7 +8082,7 @@ public abstract class Entity extends TurnOrdered
             }
             return roll;
         }
-        
+
         if ((waterLevel > 1) &&
               hasAbility(OptionsConstants.PILOT_TM_FROGMAN) &&
               ((this instanceof Mek) || (this instanceof ProtoMek))) {
@@ -14235,7 +14236,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     public Hex getOccupiedHex() {
-         return game.getBoard().getHex(getPosition());
+        return game.getBoard().getHex(getPosition());
     }
 
     /**
@@ -15906,7 +15907,9 @@ public abstract class Entity extends TurnOrdered
      * one.
      *
      * @param amount The damage
+     *
      * @return True if the cargo is destroyed by the damage, false otherwise
+     *
      * @see #getTonnage()
      */
     @Override
@@ -15936,5 +15939,27 @@ public abstract class Entity extends TurnOrdered
     @Override
     public boolean isCarryableObject() {
         return false; // Not all entities are carryable.
+    }
+
+    /**
+     * Returns the recovery time for this entity in minutes.
+     *
+     * <p>This method provides the base recovery time required for this entity type. The recovery time represents the
+     * duration needed to recover, repair, or prepare the entity after deployment or damage.</p>
+     *
+     * <p>Subclasses should override this method to provide entity-specific recovery times based on their type,
+     * weight class, or other relevant characteristics.</p>
+     *
+     * <p><b>Manual Reference:</b> CamOps pg 214</p>
+     *
+     * @return The recovery time in minutes. The default implementation returns 60 minutes.
+     *
+     * @author Illiani
+     * @since 0.50.10
+     */
+    public int getRecoveryTime() {
+        // We don't have a default recovery time for misc units in CamOps, so we're going with 40 minutes (identical
+        // to medium combat vehicles)
+        return 40;
     }
 }

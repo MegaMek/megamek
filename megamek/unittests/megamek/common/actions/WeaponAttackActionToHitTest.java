@@ -73,6 +73,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
@@ -350,77 +351,137 @@ public class WeaponAttackActionToHitTest {
         }
     }
 
-    @Test
-    void aeroToGroundHexInDark() {
-        mockPlanetaryConditions.setLight(Light.PITCH_BLACK);
-        when(mockOptions.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)).thenReturn(true);
+    @Nested
+    class aeroToGroundHexInDark {
+        BombMounted mockBomb;
+        Aero mockAttackingEntity;
+        Targetable mockTarget;
 
-        BombMounted mockBomb = mock(BombMounted.class);
+        @BeforeEach
+        void beforeEach() {
+            mockPlanetaryConditions.setLight(Light.PITCH_BLACK);
+            when(mockOptions.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)).thenReturn(true);
 
-        Aero mockAttackingEntity = mock(Aero.class);
-        when(mockAttackingEntity.getOwner()).thenReturn(mockPlayer);
-        when(mockAttackingEntity.getPosition()).thenReturn(new Coords(0, 0));
-        when(mockAttackingEntity.getAltitude()).thenReturn(5);
-        when(mockAttackingEntity.getWeapon(anyInt())).thenReturn(mockWeapon);
-        when(mockAttackingEntity.getEquipment(anyInt())).thenReturn(mockWeaponEquipment);
-        when(mockAttackingEntity.getCrew()).thenReturn(mockCrew);
-        when(mockAttackingEntity.getSwarmTargetId()).thenReturn(Entity.NONE);
-        when(mockAttackingEntity.getBombs(any())).thenReturn(List.of(new BombMounted[] { mockBomb }));
-        when(mockAttackingEntity.isAirborne()).thenReturn(true);
-        when(mockAttackingEntity.passedOver(any())).thenReturn(true);
+            mockBomb = mock(BombMounted.class);
 
-
-        Targetable mockTarget = mock(Targetable.class);
-        when(mockTarget.getPosition()).thenReturn(new Coords(0, 1));
-        when(mockTarget.getTargetType()).thenReturn(Targetable.TYPE_HEX_CLEAR);
-
-
-        when(mockGame.getEntity(0)).thenReturn(mockAttackingEntity);
-
-        when(mockAttackingEntity.getGame()).thenReturn(mockGame);
-
-        try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class, invocationOnMock -> mockLos)) {
-            mockedLosEffects.when(() -> LosEffects.calculateLOS(any(), any(), any(), anyBoolean()))
-                  .thenReturn(mockLos);
+            mockAttackingEntity = mock(Aero.class);
+            when(mockAttackingEntity.getOwner()).thenReturn(mockPlayer);
+            when(mockAttackingEntity.getPosition()).thenReturn(new Coords(0, 0));
+            when(mockAttackingEntity.getAltitude()).thenReturn(5);
+            when(mockAttackingEntity.getWeapon(anyInt())).thenReturn(mockWeapon);
+            when(mockAttackingEntity.getEquipment(anyInt())).thenReturn(mockWeaponEquipment);
+            when(mockAttackingEntity.getCrew()).thenReturn(mockCrew);
+            when(mockAttackingEntity.getSwarmTargetId()).thenReturn(Entity.NONE);
+            when(mockAttackingEntity.getBombs(any())).thenReturn(List.of(new BombMounted[] { mockBomb }));
+            when(mockAttackingEntity.isAirborne()).thenReturn(true);
+            when(mockAttackingEntity.passedOver(any())).thenReturn(true);
 
 
-            // Can we strike the ground?
-            ToHitData toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
-            assertEquals(ToHitData.IMPOSSIBLE, toHit.getValue());
+            mockTarget = mock(Targetable.class);
+            when(mockTarget.getPosition()).thenReturn(new Coords(0, 1));
+            when(mockTarget.getTargetType()).thenReturn(Targetable.TYPE_HEX_CLEAR);
 
-            // What if we're strafing?
-            toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, true);
-            assertEquals(11, toHit.getValue());
 
-            // Let's test some common bombing scenarios
-            when(mockWeaponType.hasFlag(WeaponType.F_DIVE_BOMB)).thenReturn(true);
-            when(mockWeaponType.hasFlag(WeaponType.F_ALT_BOMB)).thenReturn(false);
-            when(mockTarget.isHexBeingBombed()).thenReturn(true);
-            when(mockTarget.getTargetType()).thenReturn(Targetable.TYPE_HEX_AERO_BOMB);
+            when(mockGame.getEntity(0)).thenReturn(mockAttackingEntity);
 
-            toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
-            assertEquals(11, toHit.getValue());
+            when(mockAttackingEntity.getGame()).thenReturn(mockGame);
+        }
 
-            // If we get too high we can't dive bomb
-            when(mockAttackingEntity.getAltitude()).thenReturn(6);
-
-            toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
-            assertEquals(ToHitData.IMPOSSIBLE, toHit.getValue());
-
-            // We can't dive bomb if we're too low either
-            when(mockAttackingEntity.getAltitude()).thenReturn(2);
-            try (MockedStatic<Compute> mockedCompute = mockStatic(Compute.class)) {
-                mockedCompute.when(() -> Compute.isAirToGround(any(), any()))
-                      .thenReturn(true);
-                toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
+        @Test
+        void cannotStrikeGroundWithoutStrafing() {
+            try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class,
+                  invocationOnMock -> mockLos)) {
+                mockedLosEffects.when(() -> LosEffects.calculateLOS(any(), any(), any(), anyBoolean()))
+                      .thenReturn(mockLos);
+                ToHitData toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
                 assertEquals(ToHitData.IMPOSSIBLE, toHit.getValue());
             }
+        }
 
-            // Altitude Bombing should still work at low altitude
-            when(mockWeaponType.hasFlag(WeaponType.F_DIVE_BOMB)).thenReturn(false);
-            when(mockWeaponType.hasFlag(WeaponType.F_ALT_BOMB)).thenReturn(true);
-            toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
-            assertEquals(11, toHit.getValue());
+        @Test
+        void canStrikeGroundWithStrafing() {
+            try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class,
+                  invocationOnMock -> mockLos)) {
+                mockedLosEffects.when(() -> LosEffects.calculateLOS(any(), any(), any(), anyBoolean()))
+                      .thenReturn(mockLos);
+                ToHitData toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, true);
+                assertEquals(11, toHit.getValue());
+            }
+        }
+
+
+        @Test
+        void diveBombingCommonScenarios() {
+            try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class,
+                  invocationOnMock -> mockLos)) {
+                mockedLosEffects.when(() -> LosEffects.calculateLOS(any(), any(), any(), anyBoolean()))
+                      .thenReturn(mockLos);
+
+                when(mockWeaponType.hasFlag(WeaponType.F_DIVE_BOMB)).thenReturn(true);
+                when(mockWeaponType.hasFlag(WeaponType.F_ALT_BOMB)).thenReturn(false);
+                when(mockTarget.isHexBeingBombed()).thenReturn(true);
+                when(mockTarget.getTargetType()).thenReturn(Targetable.TYPE_HEX_AERO_BOMB);
+
+                ToHitData toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
+                assertEquals(11, toHit.getValue());
+            }
+        }
+
+        @Test
+        void cannotDiveBombAtHighAltitude() {
+            try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class,
+                  invocationOnMock -> mockLos)) {
+                mockedLosEffects.when(() -> LosEffects.calculateLOS(any(), any(), any(), anyBoolean()))
+                      .thenReturn(mockLos);
+
+                when(mockWeaponType.hasFlag(WeaponType.F_DIVE_BOMB)).thenReturn(true);
+                when(mockWeaponType.hasFlag(WeaponType.F_ALT_BOMB)).thenReturn(false);
+                when(mockTarget.isHexBeingBombed()).thenReturn(true);
+                when(mockTarget.getTargetType()).thenReturn(Targetable.TYPE_HEX_AERO_BOMB);
+
+                when(mockAttackingEntity.getAltitude()).thenReturn(6);
+                ToHitData toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
+                assertEquals(ToHitData.IMPOSSIBLE, toHit.getValue());
+            }
+        }
+
+        @Test
+        void cannotDiveBombAtLowAltitude() {
+            try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class,
+                  invocationOnMock -> mockLos)) {
+                mockedLosEffects.when(() -> LosEffects.calculateLOS(any(), any(), any(), anyBoolean()))
+                      .thenReturn(mockLos);
+                when(mockWeaponType.hasFlag(WeaponType.F_DIVE_BOMB)).thenReturn(true);
+                when(mockWeaponType.hasFlag(WeaponType.F_ALT_BOMB)).thenReturn(false);
+                when(mockTarget.isHexBeingBombed()).thenReturn(true);
+                when(mockTarget.getTargetType()).thenReturn(Targetable.TYPE_HEX_AERO_BOMB);
+
+                when(mockAttackingEntity.getAltitude()).thenReturn(2);
+                try (MockedStatic<Compute> mockedCompute = mockStatic(Compute.class)) {
+                    mockedCompute.when(() -> Compute.isAirToGround(any(), any()))
+                          .thenReturn(true);
+                    ToHitData toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
+                    assertEquals(ToHitData.IMPOSSIBLE, toHit.getValue());
+                }
+            }
+        }
+
+        @Test
+        void altitudeBombingAtLowAltitude() {
+            try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class,
+                  invocationOnMock -> mockLos)) {
+                mockedLosEffects.when(() -> LosEffects.calculateLOS(any(), any(), any(), anyBoolean()))
+                      .thenReturn(mockLos);
+
+                when(mockAttackingEntity.getAltitude()).thenReturn(2);
+                when(mockWeaponType.hasFlag(WeaponType.F_DIVE_BOMB)).thenReturn(false);
+                when(mockWeaponType.hasFlag(WeaponType.F_ALT_BOMB)).thenReturn(true);
+                when(mockTarget.isHexBeingBombed()).thenReturn(true);
+                when(mockTarget.getTargetType()).thenReturn(Targetable.TYPE_HEX_AERO_BOMB);
+
+                ToHitData toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
+                assertEquals(11, toHit.getValue());
+            }
         }
     }
 }

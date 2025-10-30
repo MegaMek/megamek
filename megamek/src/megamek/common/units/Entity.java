@@ -12819,10 +12819,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     public String getSource() {
-        if (source == null) {
-            return "";
-        }
-        return source;
+        return (source != null) ? source : "";
     }
 
     public synchronized void setQuirks(Quirks quirks) {

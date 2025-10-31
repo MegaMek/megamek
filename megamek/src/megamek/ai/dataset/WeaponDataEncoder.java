@@ -64,14 +64,15 @@ public class WeaponDataEncoder {
 
     private static void serializeWeaponData(WeaponMounted weapon, Entity entity, List<Integer> weaponData) {
         try {
+            Entity weaponEntity = weapon.getEntity();
             int equipmentId = entity.getEquipmentNum(weapon);
-            var mounted = entity.getEquipment(equipmentId);
+            var mounted = weaponEntity.getEquipment(equipmentId);
             if (mounted == null) {
                 logger.warn("No such equipment {} [{}] for {}", weapon, equipmentId, entity);
                 return;
             }
 
-            int arc = entity.getWeaponArc(equipmentId);
+            int arc = weaponEntity.getWeaponArc(equipmentId);
             int shortRange = weapon.getType().getShortRange();
             int mediumRange = weapon.getType().getMediumRange();
             int longRange = weapon.getType().getLongRange();

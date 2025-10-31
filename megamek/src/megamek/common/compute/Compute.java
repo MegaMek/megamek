@@ -2024,11 +2024,11 @@ public class Compute {
         if (finalPos != null) {
             distance = flyerPosition.distance(finalPos);
         }
-        for (Coords c : flyingEntity.getPassedThrough()) {
-            if ((c != null)
-                  && ((c.distance(targetPosition) < distance) || (distance == 0))) {
-                finalPos = c;
-                distance = c.distance(targetPosition);
+        for (Coords coord : flyingEntity.getPassedThrough()) {
+            if ((coord != null)
+                  && ((coord.distance(targetPosition) < distance) || (distance == 0))) {
+                finalPos = coord;
+                distance = coord.distance(targetPosition);
             }
         }
         return finalPos;

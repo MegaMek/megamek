@@ -86,6 +86,7 @@ public class SanityInputFilter implements ObjectInputFilter {
           Pattern.compile("java\\.util\\.concurrent\\.locks\\.ReentrantLock\\$Sync"),
           Pattern.compile("java\\.util\\.EnumMap"),
           Pattern.compile("java\\.util\\.EnumSet"),
+          Pattern.compile("java\\.util\\.JumboEnumSet"),
           Pattern.compile("java\\.util\\.HashMap"),
           Pattern.compile("java\\.util\\.HashSet"),
           Pattern.compile("java\\.util\\.Hashtable"),

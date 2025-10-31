@@ -1981,6 +1981,31 @@ public class Compute {
         return finalPos;
     }
 
+    /**
+     * @param aPos         the attacker's position
+     * @param targetEntity the target entity
+     *
+     * @return the closest position along <code>targetEntity</code>'s flight path to <code>aPos</code>. In the case of
+     *       multiple equidistance positions, the first one is picked unless <code>targetEntity</code>'s
+     *       playerPickedPassThrough position is non-null.
+     */
+    public static @Nullable Coords getClosestToFlightPath(Entity flyingEntity, Coords targetPosition) {
+        Coords flyerPosition = flyingEntity.getPosition();
+        Coords finalPos = flyerPosition;
+        int distance = Integer.MAX_VALUE;
+        if (finalPos != null) {
+            distance = flyerPosition.distance(finalPos);
+        }
+        for (Coords c : flyingEntity.getPassedThrough()) {
+            if ((c != null)
+                  && ((c.distance(targetPosition) < distance) || (distance == 0))) {
+                finalPos = c;
+                distance = c.distance(targetPosition);
+            }
+        }
+        return finalPos;
+    }
+
     public static int getClosestFlightPathFacing(int attackerId, Coords aPos, Entity targetEntity) {
 
         Coords finalPos = targetEntity.getPosition();
@@ -4031,26 +4056,30 @@ public class Compute {
                 targetPos = Compute.getClosestFlightPath(attackingEntity.getId(),
                       attackingEntity.getPosition(), targetedEntity);
             }
-
-            // Airborne units targeting ground have special rules
-            if (isAirToGround(attackingEntity, target)) {
-                // In Low Altitude, Airborne aerosphere can only see ground targets
-                // they overfly, and only at Alt <=8. It should also spot units
-                // next to this; Low-atmo board with ground units isn't implemented
-                if (game.isOnAtmosphericMap(attackingEntity)) {
-                    if (attackingEntity.getAltitude() > 8) {
-                        return false;
-                    }
-                    return attackingEntity.passedOver(target);
-                }
-            }
         }
 
+        // Airborne units targeting ground have special rules
+        Coords attackingPos = attackingEntity.getPosition();
+        if (isAirToGround(attackingEntity, target)) {
+            // In Low Altitude, Airborne aerosphere can only see ground targets
+            // they overfly, and only at Alt <=8. It should also spot units
+            // next to this; Low-atmo board with ground units isn't implemented
+            if (game.isOnAtmosphericMap(attackingEntity)) {
+                if (attackingEntity.getAltitude() > 8) {
+                    return false;
+                }
+                return attackingEntity.passedOver(target);
+            }
+            // On ground maps, we should consider the aircraft to be attacking from
+            // the closest point on the flight path
+            if (attackingEntity.isAirborneAeroOnGroundMap()) {
+                attackingPos = Compute.getClosestToFlightPath(attackingEntity, targetPos);
+            }
+        }
         // Undoes any negative visual ranges
         visualRange = Math.max(visualRange, 1);
-        int distance;
         // Ground distance
-        distance = attackingEntity.getPosition().distance(targetPos);
+        int distance = attackingPos.distance(targetPos);
         // Need to track difference in altitude, not just add altitude to the range
         distance += Math.abs(2 * target.getAltitude() - 2 * attackingEntity.getAltitude());
         return distance <= visualRange;
@@ -6557,7 +6586,7 @@ public class Compute {
               && (target.getTargetType() != Targetable.TYPE_HEX_ARTILLERY)
               && !attacker.isSpaceborne()
               && attacker.isAirborne()
-              && target.isGround()
+              && !target.isAirborne()
               && attacker.isAero();
     }
 

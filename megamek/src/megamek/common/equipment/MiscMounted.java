@@ -130,8 +130,6 @@ public class MiscMounted extends Mounted<MiscType> {
             }
         }
         
-        // PLAYTEST3 actuator hits no longer reduce DA.
-        if (!(entity.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3))) {
             if (entity.hasSystem(Mek.ACTUATOR_SHOULDER, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER,
                   location)) {
                 base -= 2;
@@ -149,7 +147,6 @@ public class MiscMounted extends Mounted<MiscType> {
                   location)) {
                 base--;
             }
-        }
 
         return Math.max(0, base);
     }
@@ -193,8 +190,6 @@ public class MiscMounted extends Mounted<MiscType> {
                 }
             }
         }
-        // PLAYTEST3 missing actuators no longer apply changes
-        if (!entity.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
             if (entity.hasSystem(Mek.ACTUATOR_SHOULDER, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER,
                   location)) {
                 base -= 2;
@@ -212,7 +207,6 @@ public class MiscMounted extends Mounted<MiscType> {
                   location)) {
                 base--;
             }
-        }
 
         return Math.max(0, base - damageTaken);
     }

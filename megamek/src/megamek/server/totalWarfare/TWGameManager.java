@@ -14792,11 +14792,16 @@ public class TWGameManager extends AbstractGameManager {
                 // hardened block this
                 if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && firstCluster) {
                     boolean hasLance = false;
+                    boolean secondLance = false;
                     for (MiscMounted getClub : ae.getClubs()) {
                         if (getClub.getType().hasSubType(MiscType.S_LANCE) &&
                               (te.getArmor(hit) > 0) &&
                               (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_HARDENED) &&
                               (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION)) {
+                            if (hasLance) {
+                                // PLAYTEST3 the mech has 2 lances
+                                secondLance = true;
+                            }
                             hasLance = true;
                         }
                     }
@@ -14805,6 +14810,14 @@ public class TWGameManager extends AbstractGameManager {
                         firstCluster = false;
                         if (diceRoll2.getIntValue() >= 5) {
                             addReport(damageEntity(te, hit, 1, false, DamageType.NONE, true, false, throughFront));
+                        }
+                        if (secondLance) {
+                            Roll diceRoll3 = Compute.rollD6(2);
+                            if (diceRoll3.getIntValue() >= 5) {
+                                // PLAYTEST3 another potential crit from the 2nd lance
+                                hit.setEffect(HitData.EFFECT_CRITICAL);
+                                addReport(damageEntity(te, hit, 0, false, DamageType.NONE, true, false, throughFront));
+                            }
                         }
                     }
                 }

@@ -128,13 +128,15 @@ public class ComputeC3Spotter {
 
             LosEffects c3LOS;
 
+            int position = 0;
             for (SpotterInfo spotterInfo : spotters) {
                 Entity spotter = spotterInfo.spotter;
                 c3LOS = LosEffects.calculateLOS(game, spotter, target);
                 if (!c3LOS.isBlocked()) {
-                    spotter.setC3ecmAffected(!canCompleteNodePath(spotter, attacker, spotters, 1, allECMInfo));
+                    spotter.setC3ecmAffected(!canCompleteNodePath(spotter, attacker, spotters, position, allECMInfo));
                     return spotter;
                 }
+                position++;
             }
         }
 
@@ -153,6 +155,13 @@ public class ComputeC3Spotter {
         if (attacker.isOffBoard() || attacker.isShutDown()
               || !attacker.hasC3() && !attacker.hasC3i() && !attacker.hasActiveNovaCEWS() && !attacker.hasNavalC3()) {
             return false;
+        }
+        
+        // PLAYTEST3 Stealth kills C3. Now that ECM halves bonuses, we need to exit early.
+        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            if (attacker.isStealthActive()) {
+                return false;
+            }
         }
 
         if (attacker.isLargeCraft() && !attacker.isSpaceborne()) {

@@ -1981,31 +1981,6 @@ public class Compute {
         return finalPos;
     }
 
-    /**
-     * @param aPos         the attacker's position
-     * @param targetEntity the target entity
-     *
-     * @return the closest position along <code>targetEntity</code>'s flight path to <code>aPos</code>. In the case of
-     *       multiple equidistance positions, the first one is picked unless <code>targetEntity</code>'s
-     *       playerPickedPassThrough position is non-null.
-     */
-    public static @Nullable Coords getClosestToFlightPath(Entity flyingEntity, Coords targetPosition) {
-        Coords flyerPosition = flyingEntity.getPosition();
-        Coords finalPos = flyerPosition;
-        int distance = Integer.MAX_VALUE;
-        if (finalPos != null) {
-            distance = flyerPosition.distance(finalPos);
-        }
-        for (Coords c : flyingEntity.getPassedThrough()) {
-            if ((c != null)
-                  && ((c.distance(targetPosition) < distance) || (distance == 0))) {
-                finalPos = c;
-                distance = c.distance(targetPosition);
-            }
-        }
-        return finalPos;
-    }
-
     public static int getClosestFlightPathFacing(int attackerId, Coords aPos, Entity targetEntity) {
 
         Coords finalPos = targetEntity.getPosition();
@@ -2033,6 +2008,30 @@ public class Compute {
             }
         }
         return finalFacing;
+    }
+
+    /**
+     * @param flyingEntity         the flyer
+     * @param targetPosition       target
+     *
+     * @return the closest position along <code>flyingEntity</code>'s flight path to <code>targetPosition</code>. In the case of
+     *       multiple equidistance positions, the first one is picked.
+     */
+    public static @Nullable Coords getClosestToFlightPath(Entity flyingEntity, Coords targetPosition) {
+        Coords flyerPosition = flyingEntity.getPosition();
+        Coords finalPos = flyerPosition;
+        int distance = Integer.MAX_VALUE;
+        if (finalPos != null) {
+            distance = flyerPosition.distance(finalPos);
+        }
+        for (Coords c : flyingEntity.getPassedThrough()) {
+            if ((c != null)
+                  && ((c.distance(targetPosition) < distance) || (distance == 0))) {
+                finalPos = c;
+                distance = c.distance(targetPosition);
+            }
+        }
+        return finalPos;
     }
 
     /**

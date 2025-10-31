@@ -1322,7 +1322,6 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         mounted.setUsedThisRound(true);
 
         // find the next available weapon
-        //int nextWeapon = clientgui.getUnitDisplay().wPan.getNextWeaponNum();
         WeaponMounted nextWeapon = clientgui.getUnitDisplay().wPan.getNextWeapon();
 
         // we fired a weapon, can't clear turret jams or weapon jams anymore
@@ -1657,7 +1656,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             int effectiveDistance = Compute.effectiveDistance(game, attacker, target);
             clientgui.getUnitDisplay().wPan.wRangeR.setText("" + effectiveDistance);
 
-            Mounted<?> m = attacker.getEquipment(weaponId); // TODO: Can we use getSelectedWeapon() here?
+            Mounted<?> m = attacker.getEquipment(weaponId); // Psi - Can we use getSelectedWeapon() here?
             if (m != null) {
                 // If we have a Centurion Weapon System selected, we may need to
                 // update ranges.

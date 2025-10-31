@@ -3420,7 +3420,8 @@ public class ClientGUI extends AbstractClientGUI
         Mounted<?> weaponOnUnit = getDisplayedUnit().getEquipment(unitDisplayPanel.wPan.getSelectedWeaponNum());
         if (weaponOnUnit == weapon) {
             return Optional.of(weapon);
-        } else if (weapon.getEntity() instanceof HandheldWeapon hhw && hhw.getAttackingEntity().equals(getDisplayedUnit())) {
+        } else if (weapon.getEntity() instanceof HandheldWeapon hhw && hhw.getAttackingEntity()
+              .equals(getDisplayedUnit())) {
             return Optional.of(weapon);
         } else {
             logger.error("Unsafe selected weapon. Returning null instead. Equipment ID {} on unit {}",

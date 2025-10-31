@@ -225,7 +225,6 @@ public class EntityActionLog implements Collection<EntityAction> {
         tableDesc = !tableDesc.isEmpty() ? ' ' + tableDesc : "";
         final String toHitDesc = toHit.getValueAsString() + tableDesc;
         final Entity weaponEntity = game.getEntity(attack.getEntityId());
-        final Entity entity = weaponEntity.getAttackingEntity();
 
         if (weaponEntity != null) {
             final String weaponName = (weaponEntity.getEquipment(attack.getWeaponId()).getType()).getName();

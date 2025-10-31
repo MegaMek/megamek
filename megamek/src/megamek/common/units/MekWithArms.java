@@ -105,7 +105,8 @@ public abstract class MekWithArms extends Mek {
         }
 
         double heavyLifterMultiplier = hasAbility(OptionsConstants.PILOT_HVY_LIFTER) ? 1.5 : 1.0;
-        return getWeight() * percentage * heavyLifterMultiplier;
+        double tsmModifier = hasActiveTSM(true) ? 2.0 : 1.0;
+        return getWeight() * percentage * heavyLifterMultiplier * tsmModifier;
     }
 
     @Override

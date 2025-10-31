@@ -8571,6 +8571,9 @@ public abstract class Entity extends TurnOrdered
                         ((next instanceof DockingCollar) &&
                               (((DockingCollar) next).getCollarNumber() == bayNumber)))) {
                 next.load(unit);
+                if (next instanceof ExternalCargo) {
+                    pickupCarryableObject(unit, Entity.LOC_NONE);
+                }
                 unit.setTargetBay(-1); // Reset the target bay for later.
                 return;
             }
@@ -16007,8 +16010,12 @@ public abstract class Entity extends TurnOrdered
 
     protected void processPickupStepEntity(MoveStep step, Integer cargoPickupLocation, TWGameManager gameManager,
           Entity entityPickingUpTarget) {
-        entityPickingUpTarget.pickupCarryableObject(this, cargoPickupLocation);
+
         gameManager.loadUnit(entityPickingUpTarget, this, -1);
+
+        // Normal loading won't always get the location right, let's fix that
+        entityPickingUpTarget.dropCarriedObject(this, false);
+        entityPickingUpTarget.pickupCarryableObject(this, cargoPickupLocation);
 
         Report report = new Report(2513);
         report.subject = entityPickingUpTarget.getId();

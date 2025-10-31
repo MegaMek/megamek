@@ -440,6 +440,7 @@ public class WeaponAttackActionToHitTest {
             when(mockAttackingEntity.getPassedThrough()).thenReturn(flightPath);
             when(mockAttackingEntity.passedOver(any())).thenReturn(true);
             when(mockAttackingEntity.getGame()).thenReturn(mockGame);
+            when(mockAttackingEntity.getAttackingEntity()).thenReturn(mockAttackingEntity);
 
             when(mockWeapon.getEntity()).thenReturn(mockAttackingEntity);
 
@@ -684,18 +685,6 @@ public class WeaponAttackActionToHitTest {
             gameManager.loadUnit(mek, handheldWeapon, -1);
             handheldWeapon.setTransportId(2);
 
-            Mek mockAttackingEntity = mock(Mek.class);
-            when(mockAttackingEntity.getOwner()).thenReturn(mockPlayer);
-            when(mockAttackingEntity.getPosition()).thenReturn(new Coords(0, 0));
-            when(mockAttackingEntity.getWeapon(anyInt())).thenReturn(mockWeapon);
-            when(mockAttackingEntity.getEquipment(anyInt())).thenReturn(mockWeaponEquipment);
-            when(mockAttackingEntity.getCrew()).thenReturn(mockCrew);
-            when(mockAttackingEntity.getSwarmTargetId()).thenReturn(Entity.NONE);
-            when(mockAttackingEntity.getGame()).thenReturn(mockGame);
-            when(mockAttackingEntity.getAttackingEntity()).thenReturn(mockAttackingEntity);
-
-            when(mockWeapon.getEntity()).thenReturn(mockAttackingEntity);
-
             Tank mockTarget = mock(Tank.class);
             when(mockTarget.getOwner()).thenReturn(mockEnemy);
             when(mockTarget.getPosition()).thenReturn(new Coords(0, 1));
@@ -712,10 +701,10 @@ public class WeaponAttackActionToHitTest {
             when(mockGame.getEntity(2)).thenReturn(mek);
 
             when(mockTarget.getGame()).thenReturn(mockGame);
-            when(mockAttackingEntity.getGame()).thenReturn(mockGame);
 
             mek.setPosition(new Coords(0, 0), false);
             mek.setGame(mockGame);
+            mek.newRound(1);
 
             try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class, invocationOnMock -> mockLos)) {
                 mockedLosEffects.when(() -> LosEffects.calculateLOS(any(), any(), any(), anyBoolean()))

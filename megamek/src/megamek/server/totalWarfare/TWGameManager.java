@@ -14799,7 +14799,7 @@ public class TWGameManager extends AbstractGameManager {
                               (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_HARDENED) &&
                               (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION)) {
                             if (hasLance) {
-                                // PLAYTEST3 the mech has 2 lances
+                                // PLAYTEST3 the mek has 2 lances
                                 secondLance = true;
                             }
                             hasLance = true;

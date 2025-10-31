@@ -430,10 +430,4 @@ public class BipedMek extends MekWithArms {
               !weaponFiredFrom(Mek.LOC_RIGHT_ARM) &&
               !isProne();
     }
-
-    @Override
-    public boolean canPerformGroundSalvageOperations() {
-        return hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM) &&
-              hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM);
-    }
 }

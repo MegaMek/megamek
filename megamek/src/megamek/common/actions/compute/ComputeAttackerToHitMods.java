@@ -253,7 +253,7 @@ public class ComputeAttackerToHitMods {
                     toHit.addModifier(+2, Messages.getString("WeaponAttackAction.PassiveShield"));
                 }
             } else if (attacker.hasNoDefenseShield(weapon.getLocation())) {
-                // PLAYTEST3 shield modifier no longer apply
+                // PLAYTEST3 shield modifiers no longer apply
                 if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
                     toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Shield"));
                 }

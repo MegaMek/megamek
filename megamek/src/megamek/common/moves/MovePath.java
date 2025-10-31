@@ -1260,50 +1260,48 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Extend the current path to the destination <code>Coords</code>, moving only in one direction. This method works
      * by applying the supplied move step as long as it moves closer to the destination. If the destination cannot be
-     * reached solely by the provided move step, the pathfinder will quit once it gets as closer as it can.
+     * reached solely by the provided move step, the pathfinder will quit once it gets as closer as it can. Only used
+     * for Mek Mechanical Jump Boosters.
      *
      * @param dest      the destination <code>Coords</code> of the move.
      * @param type      the type of movement step required.
      * @param direction the direction of movement.
      */
-    public void findSimplePathTo(final Coords dest, final MoveStepType type, int direction, int facing) {
+    public void findSimplePathTo(Coords dest, MoveStepType type, int direction, int facing) {
         Coords currStep = getFinalCoords();
         Coords nextStep = currStep.translated(direction);
         while (dest.distance(nextStep) < dest.distance(currStep)) {
-            addStep(type);
+            MoveStepType finalType = type;
+            if (!game.hasBoardLocation(nextStep, getFinalBoardId())) {
+                // When the path hits a hex outside the board, currStep is on a north or south board edge and the
+                // current direction cannot be used for the next hex. Use any of the two adjacent directions instead
+                // that stays on the board
+                // FIXME: Unfortunately this problem at board edges makes the "simple" path finder rather complicated
+                //  It would probably be better to search Mek Mechanical Jump Booster paths with the standard path
+                //  finder. Normally units can use turns but must move forward into other hexes. For MMJB, the Mek
+                //  cannot turn but enter hexes in any direction. isMovementPossible() in MoveStep would have to reflect
+                //  that in order for the path finder to find suitable paths.
+                int adjacentDirection = (direction + 1) % 6;
+                nextStep = currStep.translated(adjacentDirection);
+                if (game.hasBoardLocation(nextStep, getFinalBoardId())) {
+                    finalType = MoveStepType.stepTypeForRelativeDirection(adjacentDirection, facing);
+                } else {
+                    adjacentDirection = (direction + 5) % 6;
+                    nextStep = currStep.translated(adjacentDirection);
+                    if (game.hasBoardLocation(nextStep, getFinalBoardId())) {
+                        finalType = MoveStepType.stepTypeForRelativeDirection(adjacentDirection, facing);
+                    }
+                }
+            }
+            addStep(finalType);
             currStep = nextStep;
             nextStep = currStep.translated(direction);
         }
 
         // Did we reach the destination? If not, try another direction
         if (!currStep.equals(dest)) {
-            int dir = currStep.direction(dest);
-            // Java does mod different from how we want...
-            dir = (((dir - facing) % 6) + 6) % 6;
-            switch (dir) {
-                case 0:
-                    findSimplePathTo(dest, MoveStepType.FORWARDS, currStep.direction(dest), facing);
-                    break;
-                case 1:
-                    findSimplePathTo(dest, MoveStepType.LATERAL_RIGHT, currStep.direction(dest), facing);
-                    break;
-                case 2:
-                    // TODO: backwards lateral shifts are switched:
-                    // LATERAL_LEFT_BACKWARDS moves back+right and vice-versa
-                    findSimplePathTo(dest, MoveStepType.LATERAL_LEFT_BACKWARDS, currStep.direction(dest), facing);
-                    break;
-                case 3:
-                    findSimplePathTo(dest, MoveStepType.BACKWARDS, currStep.direction(dest), facing);
-                    break;
-                case 4:
-                    // TODO: backwards lateral shifts are switched:
-                    // LATERAL_LEFT_BACKWARDS moves back+right and vice-versa
-                    findSimplePathTo(dest, MoveStepType.LATERAL_RIGHT_BACKWARDS, currStep.direction(dest), facing);
-                    break;
-                case 5:
-                    findSimplePathTo(dest, MoveStepType.LATERAL_LEFT, currStep.direction(dest), facing);
-                    break;
-            }
+            MoveStepType moveStepType = MoveStepType.stepTypeForRelativeDirection(currStep.direction(dest), facing);
+            findSimplePathTo(dest, moveStepType, currStep.direction(dest), facing);
         }
     }
 

@@ -33,14 +33,14 @@
 
 package megamek.common.equipment;
 
-import megamek.common.game.Game;
-import megamek.common.units.Entity;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-public class ExternalCargo implements Transporter {
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
+
+public abstract class ExternalCargo implements Transporter {
 
     protected transient Game game;
 
@@ -58,40 +58,37 @@ public class ExternalCargo implements Transporter {
     }
 
     /**
-     * Determines if this object can accept the given unit. The unit may not be
-     * of the appropriate type or there may be no room for the unit.
+     * Determines if this object can accept the given unit. The unit may not be of the appropriate type or there may be
+     * no room for the unit.
      *
      * @param unit - the <code>Entity</code> to be loaded.
+     *
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
-     * otherwise.
+     *       otherwise.
      */
     @Override
     public boolean canLoad(Entity unit) {
-        //return unit instanceof HandheldWeapon;
-        return unit.getTonnage() <= currentSpace;
+        return false; //TODO: Support loading cargo in game
     }
 
     /**
      * Load the given unit.
      *
      * @param unit the <code>Entity</code> to be loaded.
+     *
      * @throws IllegalArgumentException If the unit can't be loaded
      */
     @Override
     public void load(Entity unit) throws IllegalArgumentException {
-        carriedObjects.add(unit);
-        currentSpace -= unit.getTonnage();
+        throw (IllegalArgumentException) new IllegalArgumentException("Non-Functional Feature");
     }
 
     /**
-     * Get a <code>Vector</code> of the units currently loaded into this
-     * payload.
+     * Get a <code>Vector</code> of the units currently loaded into this payload.
      *
-     * @return A <code>List</code> of loaded <code>Entity</code> units.
-     * This list will never be <code>null</code>, but it may be
-     * empty. The returned <code>List</code> is independent from the
-     * underlying data structure; modifying one does not affect the
-     * other.
+     * @return A <code>List</code> of loaded <code>Entity</code> units. This list will never be <code>null</code>, but
+     *       it may be empty. The returned <code>List</code> is independent from the underlying data structure;
+     *       modifying one does not affect the other.
      */
     @Override
     public List<Entity> getLoadedUnits() {
@@ -99,7 +96,7 @@ public class ExternalCargo implements Transporter {
             return List.of();
         }
         List<Entity> retList = new ArrayList<Entity>();
-        for(ICarryable carriedObject : carriedObjects ) {
+        for (ICarryable carriedObject : carriedObjects) {
             if (carriedObject instanceof Entity) {
                 retList.add((Entity) carriedObject);
             }
@@ -112,8 +109,9 @@ public class ExternalCargo implements Transporter {
      * Unload the given unit.
      *
      * @param unit - the <code>Entity</code> to be unloaded.
+     *
      * @return <code>true</code> if the unit was contained in this space,
-     * <code>false</code> otherwise.
+     *       <code>false</code> otherwise.
      */
     @Override
     public boolean unload(Entity unit) {
@@ -147,6 +145,7 @@ public class ExternalCargo implements Transporter {
      *
      * @param loc    the location attempting to fire.
      * @param isRear true if the weapon is rear-facing
+     *
      * @return True if a transported unit is in the way, false if the weapon can fire.
      */
     @Override
@@ -155,18 +154,16 @@ public class ExternalCargo implements Transporter {
     }
 
     /**
-     * If a unit is being transported on the outside of the transporter, it can
-     * suffer damage when the transporter is hit by an attack. Currently, no
-     * more than one unit can be at any single location; that same unit can be
-     * "spread" over multiple locations.
+     * If a unit is being transported on the outside of the transporter, it can suffer damage when the transporter is
+     * hit by an attack. Currently, no more than one unit can be at any single location; that same unit can be "spread"
+     * over multiple locations.
      *
      * @param loc    - the <code>int</code> location hit by attack.
-     * @param isRear - a <code>boolean</code> value stating if the given
-     *               location is rear facing; if <code>false</code>, the
-     *               location is front facing.
-     * @return The <code>Entity</code> being transported on the outside at
-     * that location. This value will be <code>null</code> if no unit
-     * is transported on the outside at that location.
+     * @param isRear - a <code>boolean</code> value stating if the given location is rear facing; if <code>false</code>,
+     *               the location is front facing.
+     *
+     * @return The <code>Entity</code> being transported on the outside at that location. This value will be
+     *       <code>null</code> if no unit is transported on the outside at that location.
      */
     @Override
     public Entity getExteriorUnitAt(int loc, boolean isRear) {
@@ -183,6 +180,7 @@ public class ExternalCargo implements Transporter {
 
     /**
      * @param carrier
+     *
      * @return the MP reduction due to cargo carried by this transporter
      */
     @Override

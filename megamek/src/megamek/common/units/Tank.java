@@ -2174,6 +2174,19 @@ public class Tank extends Entity {
     }
 
     /**
+     * Some entities will always have certain transporters. This method is overloaded to support that.
+     */
+    @Override
+    public void addIntrinsicTransporters() {
+        setBAGrabBars();
+        setTrailerHitches();
+        addRoofRack();
+        if (isOmni() && hasBattleArmorHandles()) {
+            addTransporter(new ClampMountTank());
+        }
+    }
+
+    /**
      * Tanks can't spot when stunned.
      */
     @Override
@@ -2379,7 +2392,6 @@ public class Tank extends Entity {
 
     /**
      * get the total amount of item slots available for this tank
-     *
      */
     public int getTotalSlots() {
         return 5 + (int) Math.floor(getWeight() / 5);
@@ -2387,7 +2399,6 @@ public class Tank extends Entity {
 
     /**
      * get the free item slots for this tank
-     *
      */
     public int getFreeSlots() {
         int availableSlots = getTotalSlots();
@@ -2920,7 +2931,6 @@ public class Tank extends Entity {
 
     /**
      * Returns True if this tank moved backwards before going Hull Down
-     *
      */
     public boolean isBackedIntoHullDown() {
         return m_bBackedIntoHullDown;
@@ -3007,7 +3017,6 @@ public class Tank extends Entity {
     /**
      * Used to determine the draw priority of different Entity subclasses. This allows different unit types to always be
      * draw above/below other types.
-     *
      */
     @Override
     public int getSpriteDrawPriority() {
@@ -3038,7 +3047,6 @@ public class Tank extends Entity {
 
     /**
      * Used to determine if this vehicle can be the engine/tractor for a bunch of trailers
-     *
      */
     @Override
     public boolean isTractor() {

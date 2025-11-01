@@ -338,14 +338,7 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
 
-            if (entity instanceof Mek mek) {
-                mek.setBAGrabBars();
-                mek.setProtoMekClampMounts();
-                mek.setMekArms();
-            }
-            if (entity instanceof Tank tank) {
-                tank.setBAGrabBars();
-            }
+            entity.addIntrinsicTransporters();
         }
 
         this.game.removeEntities(orphanEntities, IEntityRemovalConditions.REMOVE_UNKNOWN);

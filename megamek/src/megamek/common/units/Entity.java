@@ -144,6 +144,7 @@ import megamek.common.weapons.handlers.WeaponOrderHandler;
 import megamek.common.weapons.handlers.capitalMissile.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
+import megamek.server.totalWarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
 
 /**
@@ -3001,14 +3002,16 @@ public abstract class Entity extends TurnOrdered
      */
     @Override
     public boolean canBePickedUp(boolean isCarrierHullDown) {
-        if (height() >= 1 || isCarrierHullDown) {
-            return !isAirborneAeroOnGroundMap();
+        if (isCarryableObject()) {
+            if (height() >= 1 || isCarrierHullDown) {
+                return !isAirborneAeroOnGroundMap();
+            }
         }
         return false;
     }
 
     public boolean canPickupCarryableObject(ICarryable carryable) {
-        if (carryable == null || !canPickupGroundObject() || !carryable.isCarryableObject() || carryable.canBePickedUp(
+        if (carryable == null || !canPickupGroundObject() || !carryable.canBePickedUp(
               isHullDown())) {
             return false;
         }
@@ -4423,6 +4426,13 @@ public abstract class Entity extends TurnOrdered
 
     public List<WeaponMounted> getIndividualWeaponList() {
         return weaponList;
+    }
+
+    /**
+     * Returns the values of {@link Entity#getWeaponList()} plus any weapons added by handheld weapons.
+     */
+    public List<WeaponMounted> getWeaponListWithHHW() {
+        return getWeaponList();
     }
 
     public List<WeaponMounted> getWeaponList() {
@@ -8578,6 +8588,9 @@ public abstract class Entity extends TurnOrdered
                         ((next instanceof DockingCollar) &&
                               (((DockingCollar) next).getCollarNumber() == bayNumber)))) {
                 next.load(unit);
+                if (next instanceof ExternalCargo) {
+                    pickupCarryableObject(unit, Entity.LOC_NONE);
+                }
                 unit.setTargetBay(-1); // Reset the target bay for later.
                 return;
             }
@@ -15980,6 +15993,70 @@ public abstract class Entity extends TurnOrdered
     public boolean isCarryableObject() {
         return false; // Not all entities are carryable.
     }
+
+    /**
+     * What entity is using this weapon to attack?
+     * @return entity carrying this weapon, or the entity itself
+     */
+    public Entity getAttackingEntity() {
+        return this;
+    }
+
+    @Override
+    public void processPickupStep(MoveStep step, Integer cargoPickupLocation,
+          TWGameManager gameManager, Entity entityPickingUpTarget, EntityMovementType overallMoveType) {
+        if (entityPickingUpTarget.maxGroundObjectTonnage() >= getTonnage()) {
+            // PSR
+            PilotingRollData roll = entityPickingUpTarget.getBasePilotingRoll(overallMoveType);
+            // roll
+            final Roll diceRoll = entityPickingUpTarget.getCrew().rollPilotingSkill();
+            Report psrToPickupReport = new Report(2185);
+            psrToPickupReport.subject = entityPickingUpTarget.getId();
+            psrToPickupReport.add(roll.getValueAsString());
+            psrToPickupReport.add(roll.getDesc());
+            psrToPickupReport.add(diceRoll);
+            Report report;
+
+            if (diceRoll.getIntValue() < roll.getValue()) {
+                psrToPickupReport.choose(false);
+                gameManager.addReport(psrToPickupReport);
+
+                report = new Report(2519);
+                report.subject = entityPickingUpTarget.getId();
+                report.add(entityPickingUpTarget.getDisplayName());
+                report.add(getDisplayName());
+                report.add(step.getPosition().toFriendlyString());
+                gameManager.addReport(report);
+            } else {
+                psrToPickupReport.choose(true);
+                gameManager.addReport(psrToPickupReport);
+
+                processPickupStepEntity(step, cargoPickupLocation, gameManager, entityPickingUpTarget);
+            }
+        }
+    }
+
+    protected void processPickupStepEntity(MoveStep step, Integer cargoPickupLocation, TWGameManager gameManager,
+          Entity entityPickingUpTarget) {
+
+        gameManager.loadUnit(entityPickingUpTarget, this, -1);
+
+        // Normal loading won't always get the location right, let's fix that
+        entityPickingUpTarget.dropCarriedObject(this, false);
+        entityPickingUpTarget.pickupCarryableObject(this, cargoPickupLocation);
+
+        Report report = new Report(2513);
+        report.subject = entityPickingUpTarget.getId();
+        report.add(entityPickingUpTarget.getDisplayName());
+        report.add(this.getDisplayName());
+        report.add(step.getPosition().toFriendlyString());
+        gameManager.addReport(report);
+
+        // a pickup should be the last step. Send an update for the overall ground
+        // object list.
+        gameManager.sendGroundObjectUpdate();
+    }
+
 
     public void setC3ecmAffected(boolean ecmAffect) {
         this.isC3ecmAffected = ecmAffect;

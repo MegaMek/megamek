@@ -224,14 +224,14 @@ public class EntityActionLog implements Collection<EntityAction> {
         String tableDesc = toHit.getTableDesc();
         tableDesc = !tableDesc.isEmpty() ? ' ' + tableDesc : "";
         final String toHitDesc = toHit.getValueAsString() + tableDesc;
-        final Entity entity = game.getEntity(attack.getEntityId());
+        final Entity weaponEntity = game.getEntity(attack.getEntityId());
 
-        if (entity != null) {
-            final String weaponName = (entity.getEquipment(attack.getWeaponId()).getType()).getName();
+        if (weaponEntity != null) {
+            final String weaponName = (weaponEntity.getEquipment(attack.getWeaponId()).getType()).getName();
             
             Entity ammoCarrier = game.getEntity(attack.getAmmoCarrier());
             if (ammoCarrier == null) {
-                ammoCarrier = entity;
+                ammoCarrier = weaponEntity;
             }
             final AmmoMounted ammo = ammoCarrier.getAmmo(attack.getAmmoId());
             final String ammoName = (ammo == null) ? "" : " [" + ammo.getType().getShortName() + "] ";

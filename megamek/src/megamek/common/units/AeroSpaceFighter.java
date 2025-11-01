@@ -135,7 +135,9 @@ public class AeroSpaceFighter extends Aero {
 
     @Override
     public boolean isCarryableObject() {
-        return false; // TODO: Make true once we implement TO:AR 88 Grappling's missed attack consequences
+        return false;
+        // TODO: Make (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS))
+        //  once we implement TO:AR 88 Grappling's missed attack consequences
     }
 
     @Override

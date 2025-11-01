@@ -1810,13 +1810,14 @@ public class WeaponHandler implements AttackHandler, Serializable {
         toHit = toHitData;
         this.weaponAttackAction = weaponAttackAction;
         this.game = game;
-        attackingEntity = this.game.getEntity(this.weaponAttackAction.getEntityId());
+        Entity weaponEntity = this.game.getEntity(this.weaponAttackAction.getEntityId());
+        attackingEntity = weaponEntity.getAttackingEntity();
 
         if (attackingEntity == null) {
             throw new EntityLoadingException("Attacking Entity is NULL");
         }
 
-        weapon = (WeaponMounted) attackingEntity.getEquipment(this.weaponAttackAction.getWeaponId());
+        weapon = (WeaponMounted) weaponEntity.getEquipment(this.weaponAttackAction.getWeaponId());
         weaponType = weapon.getType();
         ammoType = (weapon.getLinked() != null && weapon.getLinked().getType() instanceof AmmoType)
               ? (AmmoType) weapon.getLinked().getType()
@@ -2013,7 +2014,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             return nDamage;
         }
 
-        weapon = attackingEntity.getWeapon(weaponAttackAction.getWeaponId());
+        weapon = weaponAttackAction.getEntity(game).getWeapon(weaponAttackAction.getWeaponId());
         weaponType = weapon.getType();
 
         if (!weaponType.hasFlag(WeaponType.F_LASER)) {

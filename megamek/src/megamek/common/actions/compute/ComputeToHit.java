@@ -47,6 +47,7 @@ import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
@@ -87,8 +88,10 @@ public class ComputeToHit {
           AimingMode aimingMode, boolean isNemesisConfused, boolean exchangeSwarmTarget, Targetable oldTarget,
           Targetable originalTarget, boolean isStrafing, boolean isPointblankShot, List<ECMInfo> allECMInfo,
           boolean evenIfAlreadyFired, int ammoId, int ammoCarrier) {
-        final Entity ae = game.getEntity(attackerId);
-        final WeaponMounted weapon = (WeaponMounted) ae.getEquipment(weaponId);
+
+        final Entity weaponEntity = game.getEntity(attackerId);
+        final Entity ae = weaponEntity.getAttackingEntity();
+        final WeaponMounted weapon = (WeaponMounted) weaponEntity.getEquipment(weaponId);
         if (weapon == null) {
             logger.error("Attempted toHit calculation with a null weapon!");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "No weapon");
@@ -97,7 +100,7 @@ public class ComputeToHit {
         if (ammoId == WeaponAttackAction.UNASSIGNED) {
             linkedAmmo = weapon.getLinkedAmmo();
         } else {
-            Entity carrier = (ammoCarrier == WeaponAttackAction.UNASSIGNED) ? ae : game.getEntity(ammoCarrier);
+            Entity carrier = (ammoCarrier == WeaponAttackAction.UNASSIGNED) ? weaponEntity : game.getEntity(ammoCarrier);
             linkedAmmo = (carrier == null) ? null : carrier.getAmmo(ammoId);
         }
 
@@ -398,7 +401,7 @@ public class ComputeToHit {
             losMods = new ToHitData();
         } else if (!isIndirect || (spotter == null)) {
             if (!exchangeSwarmTarget) {
-                los = LosEffects.calculateLOS(game, game.getEntity(attackerId), target);
+                los = LosEffects.calculateLOS(game, game.getEntity(ae.getId()), target);
             } else {
                 // Swarm should draw LoS between targets, not attacker, since we don't want LoS to be blocked
                 if (oldTarget.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -466,7 +469,7 @@ public class ComputeToHit {
 
         // Check to see if this attack is impossible and return the reason code
         String reasonImpossible = ComputeToHitIsImpossible.toHitIsImpossible(game,
-              ae,
+              weaponEntity,
               attackerId,
               target,
               targetType,
@@ -504,7 +507,7 @@ public class ComputeToHit {
 
         // Check to see if this attack is automatically successful and return the reason code
         String reasonAutoHit = toHitIsAutomatic(game,
-              ae,
+              weaponEntity,
               target,
               targetType,
               los,
@@ -938,9 +941,12 @@ public class ComputeToHit {
      * @param weapon                The Mounted weapon being used
      * @param isBearingsOnlyMissile flag that indicates whether this is a bearings-only capital missile attack
      */
-    private static String toHitIsAutomatic(Game game, Entity ae, Targetable target, int targetType, LosEffects los,
+    private static String toHitIsAutomatic(Game game, Entity weaponEntity, Targetable target, int targetType,
+          LosEffects los,
           int distance, WeaponType weaponType, Mounted<?> weapon, boolean isBearingsOnlyMissile) {
 
+        Entity ae = weaponEntity instanceof HandheldWeapon hhw ? hhw.getAttackingEntity() :
+              weaponEntity;
         // Buildings
 
         // Attacks against adjacent buildings automatically hit.
@@ -987,7 +993,7 @@ public class ComputeToHit {
         // Vehicular grenade launchers
         if (weapon != null && weapon.getType().hasFlag(WeaponType.F_VGL)) {
             int facing = weapon.getFacing();
-            if (ae.isSecondaryArcWeapon(ae.getEquipmentNum(weapon))) {
+            if (weaponEntity.isSecondaryArcWeapon(weaponEntity.getEquipmentNum(weapon))) {
                 facing = (facing + ae.getSecondaryFacing()) % 6;
             }
             Coords c = ae.getPosition().translated(facing);

@@ -33,11 +33,11 @@
 
 package megamek.common.equipment;
 
-import megamek.common.battleArmor.BattleArmor;
 import megamek.common.game.InGameObject;
-import megamek.common.units.Tank;
-
-import java.util.List;
+import megamek.common.moves.MoveStep;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * An interface defining all the required properties of a carryable object.
@@ -88,6 +88,9 @@ public interface ICarryable extends InGameObject {
         return CarriedObjectDamageAllocation.NEVER;
     }
 
+    void processPickupStep(MoveStep step, Integer cargoPickupLocation,
+          TWGameManager gameManager, Entity entityPickingUpTarget, EntityMovementType overallMoveType);
+
     /**
      * Despite being carried by a unit in the same manner, the type of object impacts when it should be damaged if a
      * carried object's carrier is attacked.
@@ -115,5 +118,9 @@ public interface ICarryable extends InGameObject {
             return this == ON_MISS;
         }
 
+    }
+
+    default int targetForArmHitToHitCarriedObject() {
+        return 0;
     }
 }

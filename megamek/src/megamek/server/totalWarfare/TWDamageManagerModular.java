@@ -113,30 +113,34 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
 
         // If this unit is hit in the arm, and it's carrying something that should be damaged on arm hits, let's roll
         // and determine if the unit being carried is hit instead
-        if ((hit.getLocation() == Mek.LOC_LEFT_ARM || hit.getLocation() == Mek.LOC_RIGHT_ARM) &&
-              entity.getDistinctCarriedObjects()
-                    .stream()
-                    .anyMatch(o -> o.getCarriedObjectDamageAllocation().isCarryableDamageOnArmHit())) {
-            Roll doesAttackHitCarriedUnitInstead = Compute.rollD6(1);
+        if ((hit.getLocation() == Mek.LOC_LEFT_ARM || hit.getLocation() == Mek.LOC_RIGHT_ARM)) {
+            ICarryable carryable = entity.getDistinctCarriedObjects()
+                  .stream()
+                  .filter(o -> o.getCarriedObjectDamageAllocation().isCarryableDamageOnArmHit())
+                  .findFirst()
+                  .orElse(null);
+            if (carryable != null) {
+                Roll doesAttackHitCarriedUnitInstead = Compute.rollD6(1);
 
-            int TARGET = 5; // TODO: This'll need updated once we support HHW
+                int TARGET = carryable.targetForArmHitToHitCarriedObject();
 
-            boolean hitsOtherUnit = doesAttackHitCarriedUnitInstead.isTargetRollSuccess(TARGET);
-            Report chanceToHitCarriedUnit = new Report(2600);
-            chanceToHitCarriedUnit.subject(entityId);
-            chanceToHitCarriedUnit.add(entity.getDisplayName());
-            chanceToHitCarriedUnit.add(TARGET);
-            chanceToHitCarriedUnit.add(doesAttackHitCarriedUnitInstead.getIntValue());
-            chanceToHitCarriedUnit.choose(hitsOtherUnit);
-            reportVec.addElement(chanceToHitCarriedUnit);
-            if (hitsOtherUnit) {
-                ICarryable otherUnit =
-                      entity.getDistinctCarriedObjects().stream().filter(o -> o.getCarriedObjectDamageAllocation()
-                            .isCarryableDamageOnArmHit()).findFirst().orElse(null);
-                if (otherUnit instanceof Entity otherEntity) {
-                    return damageEntity(otherEntity, otherEntity.rollHitLocation(0, 0), damage, ammoExplosion,
-                          damageType, damageIS, areaSatArty, throughFront, underWater,
-                          nukeS2S, reportVec);
+                boolean hitsOtherUnit = doesAttackHitCarriedUnitInstead.isTargetRollSuccess(TARGET);
+                Report chanceToHitCarriedUnit = new Report(2600);
+                chanceToHitCarriedUnit.subject(entityId);
+                chanceToHitCarriedUnit.add(entity.getDisplayName());
+                chanceToHitCarriedUnit.add(TARGET);
+                chanceToHitCarriedUnit.add(doesAttackHitCarriedUnitInstead.getIntValue());
+                chanceToHitCarriedUnit.choose(hitsOtherUnit);
+                reportVec.addElement(chanceToHitCarriedUnit);
+                if (hitsOtherUnit) {
+                    if (carryable instanceof Entity otherEntity) {
+                        return damageEntity(otherEntity, otherEntity.rollHitLocation(0, 0), damage, ammoExplosion,
+                              damageType, damageIS, areaSatArty, throughFront, underWater,
+                              nukeS2S, reportVec);
+                    } else {
+                        logger.error("Entity " + entityId + " is carrying something that is not an Entity but should "
+                              + "be damaged on arm hits. This should not happen!");
+                    }
                 }
             }
         }

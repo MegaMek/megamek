@@ -129,24 +129,23 @@ public class MiscMounted extends Mounted<MiscType> {
                 }
             }
         }
-        
-            if (entity.hasSystem(Mek.ACTUATOR_SHOULDER, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER,
-                  location)) {
-                base -= 2;
-            }
+        if (entity.hasSystem(Mek.ACTUATOR_SHOULDER, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER,
+              location)) {
+            base -= 2;
+        }
 
-            if (entity.hasSystem(Mek.ACTUATOR_LOWER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM,
-                  location)) {
-                base--;
-            }
-            if (entity.hasSystem(Mek.ACTUATOR_UPPER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM,
-                  location)) {
-                base--;
-            }
-            if (entity.hasSystem(Mek.ACTUATOR_HAND, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_HAND,
-                  location)) {
-                base--;
-            }
+        if (entity.hasSystem(Mek.ACTUATOR_LOWER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM,
+              location)) {
+            base--;
+        }
+        if (entity.hasSystem(Mek.ACTUATOR_UPPER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM,
+              location)) {
+            base--;
+        }
+        if (entity.hasSystem(Mek.ACTUATOR_HAND, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_HAND,
+              location)) {
+            base--;
+        }
 
         return Math.max(0, base);
     }
@@ -190,23 +189,23 @@ public class MiscMounted extends Mounted<MiscType> {
                 }
             }
         }
-            if (entity.hasSystem(Mek.ACTUATOR_SHOULDER, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER,
-                  location)) {
-                base -= 2;
-            }
+        if (entity.hasSystem(Mek.ACTUATOR_SHOULDER, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER,
+              location)) {
+            base -= 2;
+        }
 
-            if (entity.hasSystem(Mek.ACTUATOR_LOWER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM,
-                  location)) {
-                base--;
-            }
-            if (entity.hasSystem(Mek.ACTUATOR_UPPER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM,
-                  location)) {
-                base--;
-            }
-            if (entity.hasSystem(Mek.ACTUATOR_HAND, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_HAND,
-                  location)) {
-                base--;
-            }
+        if (entity.hasSystem(Mek.ACTUATOR_LOWER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM,
+              location)) {
+            base--;
+        }
+        if (entity.hasSystem(Mek.ACTUATOR_UPPER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM,
+              location)) {
+            base--;
+        }
+        if (entity.hasSystem(Mek.ACTUATOR_HAND, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_HAND,
+              location)) {
+            base--;
+        }
 
         return Math.max(0, base - damageTaken);
     }

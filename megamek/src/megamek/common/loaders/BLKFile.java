@@ -307,7 +307,9 @@ public class BLKFile {
                             mount.setShotsLeft(shots);
                             mount.setSize(shots);
                         }
-                        if (mount.getType().hasFlag(MiscType.F_LIFT_HOIST)) { // Cargo Container too?
+                        if (etype instanceof MiscType && mount.getType().hasFlag(MiscType.F_LIFT_HOIST)) { //
+                            // Cargo
+                            // Container too?
                             t.addTransporter(new LiftHoist(mount, t.getWeight() / 2), isOmniMounted);
                         }
                         if (etype.isVariableSize()) {

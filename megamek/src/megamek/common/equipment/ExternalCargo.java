@@ -52,7 +52,7 @@ public abstract class ExternalCargo implements Transporter {
 
     protected Vector<ICarryable> carriedObjects = new Vector<>();
 
-    public ExternalCargo(double tonnage) {
+    protected ExternalCargo(double tonnage) {
         totalSpace = tonnage;
         currentSpace = totalSpace;
     }

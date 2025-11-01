@@ -37,11 +37,15 @@ import megamek.common.units.Entity;
 
 public class LiftHoist extends ExternalCargo {
 
-    transient private Mounted<?> mounted;
+    //transient private Mounted<?> mounted;
+    private int entityId;
+    private int mountedId;
+
 
     public LiftHoist(Mounted<?> mounted, double tonnage) {
         super(tonnage);
-        this.mounted = mounted;
+        entityId = mounted.getEntity().getId();
+        mountedId = mounted.getEquipmentNum();
     }
 
     @Override
@@ -58,6 +62,15 @@ public class LiftHoist extends ExternalCargo {
     }
 
     private boolean isOperable() {
-        return !mounted.getEntity().isLocationBad(mounted.getLocation()) && mounted.isOperable();
+        Mounted<?> mounted = getMounted();
+        return mounted != null && !mounted.getEntity().isLocationBad(mounted.getLocation()) && mounted.isOperable();
+    }
+
+    private Mounted<?> getMounted() {
+        Entity entity = game.getEntity(entityId);
+        if (entity == null) {
+            return null;
+        }
+        return entity.getEquipment(mountedId);
     }
 }

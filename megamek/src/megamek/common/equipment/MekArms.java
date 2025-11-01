@@ -52,7 +52,6 @@ public class MekArms extends ExternalCargo {
      */
     @Override
     public boolean canLoad(Entity unit) {
-        //return unit instanceof HandheldWeapon;
         return unit.getTonnage() <= currentSpace;
     }
 

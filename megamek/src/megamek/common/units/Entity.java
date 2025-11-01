@@ -4428,6 +4428,13 @@ public abstract class Entity extends TurnOrdered
         return weaponList;
     }
 
+    /**
+     * Returns the values of {@link Entity#getWeaponList()} plus any weapons added by handheld weapons.
+     */
+    public List<WeaponMounted> getWeaponListWithHHW() {
+        return getWeaponList();
+    }
+
     public List<WeaponMounted> getWeaponList() {
         if (usesWeaponBays()) {
             if (!hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)) {

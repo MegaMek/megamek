@@ -1004,8 +1004,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
 
         boolean hasFiredWeapons = false;
-        for (int i = 0; i < entity.getWeaponList().size(); i++) {
-            WeaponMounted mounted = entity.getWeaponList().get(i);
+        for (int i = 0; i < entity.getWeaponListWithHHW().size(); i++) {
+            WeaponMounted mounted = entity.getWeaponListWithHHW().get(i);
 
             // Don't add bomb weapons for LAMs in mek mode except RL and TAG.
             if ((entity instanceof LandAirMek)
@@ -1235,7 +1235,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
      */
     public void selectFirstWeapon() {
         // Entity has no weapons, return -1;
-        if (entity.getWeaponList().isEmpty()
+        if (entity.getWeaponListWithHHW().isEmpty()
               || (entity.usesWeaponBays() && entity.getWeaponBayList().isEmpty())) {
             return;
         }
@@ -1279,7 +1279,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                   .getWeaponAt(selected);
         } while (!hasLooped && !entity.isWeaponValidForPhase(selectedWeapon));
 
-        if ((selected >= 0) && (selected < entity.getWeaponList().size())
+        if ((selected >= 0) && (selected < entity.getWeaponListWithHHW().size())
               && !hasLooped) {
             return selected;
         } else {
@@ -1312,7 +1312,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                   .getWeaponAt(selected);
         } while (!hasLooped && !entity.isWeaponValidForPhase(selectedWeapon));
 
-        if ((selected >= 0) && (selected < entity.getWeaponList().size())
+        if ((selected >= 0) && (selected < entity.getWeaponListWithHHW().size())
               && !hasLooped) {
             return selected;
         } else {
@@ -1322,7 +1322,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
     public int getNextWeaponNum() {
         int selected = getNextWeaponListIdx();
-        if ((selected >= 0) && (selected < entity.getWeaponList().size())) {
+        if ((selected >= 0) && (selected < entity.getWeaponListWithHHW().size())) {
             WeaponMounted weapon = ((WeaponListModel) weaponList
                   .getModel()).getWeaponAt(selected);
             Entity weaponEntity = weapon.getEntity();
@@ -1334,7 +1334,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
     public WeaponMounted getNextWeapon() {
         int selected = getNextWeaponListIdx();
-        if ((selected >= 0) && (selected < entity.getWeaponList().size())) {
+        if ((selected >= 0) && (selected < entity.getWeaponListWithHHW().size())) {
             return ((WeaponListModel) weaponList
                   .getModel()).getWeaponAt(selected);
         } else {
@@ -1351,7 +1351,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         int selected = getNextWeaponListIdx();
         weaponList.setSelectedIndex(selected);
         weaponList.ensureIndexIsVisible(selected);
-        if ((selected >= 0) && (selected < entity.getWeaponList().size())) {
+        if ((selected >= 0) && (selected < entity.getWeaponListWithHHW().size())) {
             return entity.getEquipmentNum(((WeaponListModel) weaponList
                   .getModel()).getWeaponAt(selected));
         } else {
@@ -1368,7 +1368,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         int selected = getPrevWeaponListIdx();
         weaponList.setSelectedIndex(selected);
         weaponList.ensureIndexIsVisible(selected);
-        if ((selected >= 0) && (selected < entity.getWeaponList().size())) {
+        if ((selected >= 0) && (selected < entity.getWeaponListWithHHW().size())) {
             return entity.getEquipmentNum(((WeaponListModel) weaponList
                   .getModel()).getWeaponAt(selected));
         } else {

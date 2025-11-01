@@ -1656,25 +1656,25 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             int effectiveDistance = Compute.effectiveDistance(game, attacker, target);
             clientgui.getUnitDisplay().wPan.wRangeR.setText("" + effectiveDistance);
 
-            Mounted<?> m = attacker.getEquipment(weaponId); // Psi - Can we use getSelectedWeapon() here?
-            if (m != null) {
+            WeaponMounted wm = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+            if (wm != null) {
                 // If we have a Centurion Weapon System selected, we may need to
                 // update ranges.
-                if (m.getType().hasFlag(WeaponType.F_CWS)) {
+                if (wm.getType().hasFlag(WeaponType.F_CWS)) {
                     clientgui.getUnitDisplay().wPan.selectWeapon(weaponId);
                 }
-                if (m.isUsedThisRound()) {
+                if (wm.isUsedThisRound()) {
                     clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.alreadyFired"));
                     setFireEnabled(false);
-                } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET)
-                      && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))
-                      || (m.hasModes() && m.curMode().equals("Point Defense"))) {
+                } else if ((wm.getType().hasFlag(WeaponType.F_AUTO_TARGET)
+                      && !wm.curMode().equals(Weapon.MODE_AMS_MANUAL))
+                      || (wm.hasModes() && wm.curMode().equals("Point Defense"))) {
                     clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.autoFiringWeapon"));
                     setFireEnabled(false);
-                } else if (m.isInBearingsOnlyMode()) {
+                } else if (wm.isInBearingsOnlyMode()) {
                     clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.bearingsOnlyWrongPhase"));
                     setFireEnabled(false);
-                } else if (m.isInternalBomb() && phaseInternalBombs >= 6) {
+                } else if (wm.isInternalBomb() && phaseInternalBombs >= 6) {
                     clientgui.getUnitDisplay().wPan
                           .setToHit(Messages.getString("WeaponAttackAction.AlreadyUsedMaxInternalBombs"));
                     setFireEnabled(false);
@@ -1700,7 +1700,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
         if ((clientgui.getDisplayedUnit() != null) && (clientgui.getDisplayedUnit().equals(attacker))
               && !isStrafing && (weaponId != -1)) {
-            adaptFireModeEnabled(attacker.getEquipment(weaponId));
+            adaptFireModeEnabled(clientgui.getUnitDisplay().wPan.getSelectedWeapon());
         } else {
             setFireModeEnabled(false);
         }

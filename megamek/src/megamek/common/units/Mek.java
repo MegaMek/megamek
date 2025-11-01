@@ -2808,7 +2808,7 @@ public abstract class Mek extends Entity {
     }
 
     @Override
-    public List<WeaponMounted> getWeaponList() {
+    public List<WeaponMounted> getWeaponListWithHHW() {
         List<WeaponMounted> combinedWeaponList = new ArrayList<>(super.getWeaponList());
         if (!getCarriedObjects().isEmpty()) {
             Map<Integer, ICarryable> carriedObjects = getCarriedObjects();

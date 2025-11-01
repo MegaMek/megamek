@@ -426,4 +426,18 @@ public class SupportTank extends Tank {
     public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(2.681 + 0.681 * Math.log(getWeight())));
     }
+
+    @Override
+    public int getRecoveryTime() {
+        int weightClass = getWeightClass();
+        if (weightClass == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            return 15;
+        } else if (weightClass == EntityWeightClass.WEIGHT_MEDIUM_SUPPORT) {
+            return 40;
+        } else if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+            return 80;
+        } else {
+            return 100;
+        }
+    }
 }

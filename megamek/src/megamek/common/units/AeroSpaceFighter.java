@@ -137,4 +137,9 @@ public class AeroSpaceFighter extends Aero {
     public boolean isCarryableObject() {
         return false; // TODO: Make true once we implement TO:AR 88 Grappling's missed attack consequences
     }
+
+    @Override
+    public int getRecoveryTime() {
+        return 60;
+    }
 }

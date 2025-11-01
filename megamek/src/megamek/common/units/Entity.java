@@ -2994,8 +2994,9 @@ public abstract class Entity extends TurnOrdered
      * Returns true if the carryable object is able to be picked up. Units must be hull down to pick up other units,
      * unless the unit is tall. Airborne aeros cannot be grabbed either.
      *
-     * @param isCarrierHullDown is the unit that's picking this up hull down, or otherwise able to pick up
-     *                          ground-level objects
+     * @param isCarrierHullDown is the unit that's picking this up hull down, or otherwise able to pick up ground-level
+     *                          objects
+     *
      * @return true if the object can be picked up, false if it cannot
      */
     @Override
@@ -5103,7 +5104,7 @@ public abstract class Entity extends TurnOrdered
         }
         return stateAppliesCount;
     }
-    
+
     /**
      * Returns the amount of heat that the entity can sink each turn.
      */
@@ -7370,26 +7371,26 @@ public abstract class Entity extends TurnOrdered
                 return new PilotingRollData(entityId,
                       TargetRoll.AUTOMATIC_FAIL,
                       getCrew().getPiloting() + 8,
-                      "Both legs destroyed");  
+                      "Both legs destroyed");
             } else {
-            return new PilotingRollData(entityId,
-                  TargetRoll.AUTOMATIC_FAIL,
-                  getCrew().getPiloting() + 10,
-                  "Both legs destroyed");
+                return new PilotingRollData(entityId,
+                      TargetRoll.AUTOMATIC_FAIL,
+                      getCrew().getPiloting() + 10,
+                      "Both legs destroyed");
             }
         } else if (this instanceof QuadMek) {
             if (((QuadMek) this).countBadLegs() >= 3) {
-              if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                  return new PilotingRollData(entityId,
-                        TargetRoll.AUTOMATIC_FAIL,
-                        getCrew().getPiloting() + (((Mek) this).countBadLegs() * 4),
-                        ((Mek) this).countBadLegs() + " legs destroyed");
-              } else {
-                  return new PilotingRollData(entityId,
-                        TargetRoll.AUTOMATIC_FAIL,
-                        getCrew().getPiloting() + (((Mek) this).countBadLegs() * 5),
-                        ((Mek) this).countBadLegs() + " legs destroyed");
-              }
+                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                    return new PilotingRollData(entityId,
+                          TargetRoll.AUTOMATIC_FAIL,
+                          getCrew().getPiloting() + (((Mek) this).countBadLegs() * 4),
+                          ((Mek) this).countBadLegs() + " legs destroyed");
+                } else {
+                    return new PilotingRollData(entityId,
+                          TargetRoll.AUTOMATIC_FAIL,
+                          getCrew().getPiloting() + (((Mek) this).countBadLegs() * 5),
+                          ((Mek) this).countBadLegs() + " legs destroyed");
+                }
             }
         }
         // entity shut down?
@@ -7624,7 +7625,7 @@ public abstract class Entity extends TurnOrdered
         if (getGyroType() == Mek.GYRO_HEAVY_DUTY) {
             // PLAYTEST3 No rolls for running with HD Gyro
             if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                gyroDamage  = 0; 
+                gyroDamage = 0;
             } else {
                 gyroDamage--; // HD gyro ignores 1st damage
             }
@@ -8089,7 +8090,7 @@ public abstract class Entity extends TurnOrdered
             }
             return roll;
         }
-        
+
         if ((waterLevel > 1) &&
               hasAbility(OptionsConstants.PILOT_TM_FROGMAN) &&
               ((this instanceof Mek) || (this instanceof ProtoMek))) {
@@ -10042,7 +10043,12 @@ public abstract class Entity extends TurnOrdered
         }
         // if you're charging or finding a club, it's already declared
         // PLAYTEST3 unjamming RAC no longer prevents weapon attacks
-        if ((isUnjammingRAC() && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) || isCharging() || isMakingDfa() || isRamming() || isFindingClub() || isOffBoard()) {
+        if ((isUnjammingRAC() && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3))
+              || isCharging()
+              || isMakingDfa()
+              || isRamming()
+              || isFindingClub()
+              || isOffBoard()) {
             return false;
         }
         // must be active
@@ -10060,7 +10066,10 @@ public abstract class Entity extends TurnOrdered
     public boolean isEligibleForFiring() {
         // if you're charging, no shooting
         // PLAYTEST3 unjamming RAC you can still shoot
-        if ((isUnjammingRAC() && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) || isCharging() || isMakingDfa() || isRamming()) {
+        if ((isUnjammingRAC() && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3))
+              || isCharging()
+              || isMakingDfa()
+              || isRamming()) {
             return false;
         }
 
@@ -10122,7 +10131,9 @@ public abstract class Entity extends TurnOrdered
 
         // if you're charging, no shooting
         // PLAYTEST3 Unjamming RAC no longer prevents this
-        if ((isUnjammingRAC()  && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) || isCharging() || isMakingDfa()) {
+        if ((isUnjammingRAC() && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3))
+              || isCharging()
+              || isMakingDfa()) {
             return false;
         }
 
@@ -10177,7 +10188,7 @@ public abstract class Entity extends TurnOrdered
 
         // if you're charging or finding a club, it's already declared
         // PLAYTEST3 unjamming no longer prevents this
-        if ((isUnjammingRAC()  && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3))||
+        if ((isUnjammingRAC() && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) ||
               isCharging() ||
               isMakingDfa() ||
               isRamming() ||
@@ -13191,18 +13202,18 @@ public abstract class Entity extends TurnOrdered
                   (hasC3M() && (calculateFreeC3Nodes() < 3)) ||
                   (hasC3S() && (c3Master > NONE)) ||
                   ((hasC3i() || hasNavalC3()) && (calculateFreeC3Nodes() < 5))) {
-                    totalForceBV += baseBV;
-                    // Ignore all other network members for playtest3
-                    if (!playtestThree) {
-                        for (Entity entity : game.getC3NetworkMembers(this)) {
-                            if (!equals(entity) && onSameC3NetworkAs(entity)) {
-                                totalForceBV += entity.calculateBattleValue(true, true);
-                            }
+                totalForceBV += baseBV;
+                // Ignore all other network members for playtest3
+                if (!playtestThree) {
+                    for (Entity entity : game.getC3NetworkMembers(this)) {
+                        if (!equals(entity) && onSameC3NetworkAs(entity)) {
+                            totalForceBV += entity.calculateBattleValue(true, true);
                         }
                     }
-                    if (hasBoostedC3()) {
-                        multiplier = 0.07;
-                    }
+                }
+                if (hasBoostedC3()) {
+                    multiplier = 0.07;
+                }
             } else if (hasNovaCEWS()) { //Nova CEWS applies 5% to every mek with Nova on the team {
                 for (Entity entity : game.getEntitiesVector()) {
                     if (!equals(entity) && entity.hasNovaCEWS() && !(entity.owner.isEnemyOf(this.owner))) {
@@ -13220,7 +13231,7 @@ public abstract class Entity extends TurnOrdered
                 } else {
                     multiplier = 0.3;
                 }
-            } 
+            }
             extraBV += (int) Math.round(totalForceBV * multiplier);
         }
         return extraBV;
@@ -14257,7 +14268,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     public Hex getOccupiedHex() {
-         return game.getBoard().getHex(getPosition());
+        return game.getBoard().getHex(getPosition());
     }
 
     /**
@@ -15928,7 +15939,9 @@ public abstract class Entity extends TurnOrdered
      * one.
      *
      * @param amount The damage
+     *
      * @return True if the cargo is destroyed by the damage, false otherwise
+     *
      * @see #getTonnage()
      */
     @Override
@@ -15959,12 +15972,69 @@ public abstract class Entity extends TurnOrdered
     public boolean isCarryableObject() {
         return false; // Not all entities are carryable.
     }
-    
+
     public void setC3ecmAffected(boolean ecmAffect) {
         this.isC3ecmAffected = ecmAffect;
     }
-    
+
     public boolean getC3ecmAffected() {
         return isC3ecmAffected;
+    }
+
+    /**
+     * Returns the recovery time for this entity in minutes.
+     *
+     * <p>This method provides the base recovery time required for this entity type. The recovery time represents the
+     * duration needed to recover, repair, or prepare the entity after deployment or damage.</p>
+     *
+     * <p>Subclasses should override this method to provide entity-specific recovery times based on their type,
+     * weight class, or other relevant characteristics.</p>
+     *
+     * <p><b>Manual Reference:</b> CamOps pg 214</p>
+     *
+     * @return The recovery time in minutes. The default implementation returns 60 minutes.
+     *
+     * @author Illiani
+     * @since 0.50.10
+     */
+    public int getRecoveryTime() {
+        // We don't have a default recovery time for misc units in CamOps, so we're going with 40 minutes (identical
+        // to medium combat vehicles)
+        return 40;
+    }
+
+    /**
+     * Determines whether salvage operations can be performed on the ground.
+     *
+     * <p>The default implementation returns {@code false}, indicating that salvage operations are not permitted.
+     * Subclasses should override this method to provide specific logic for determining salvage eligibility based on
+     * scenario conditions, campaign settings, or other relevant factors.</p>
+     *
+     * @return {@code true} if salvage operations can be performed, {@code false} otherwise. The default implementation
+     *       always returns {@code false}.
+     *
+     * @author Illiani
+     * @since 0.50.10
+     */
+    public boolean canPerformGroundSalvageOperations() {
+        return false;
+    }
+
+
+    /**
+     * Determines whether salvage operations can be performed in space scenarios.
+     *
+     * <p>The default implementation returns {@code false}, indicating that salvage operations are not permitted.
+     * Subclasses should override this method to provide specific logic for determining salvage eligibility based on
+     * scenario conditions, campaign settings, or other relevant factors.</p>
+     *
+     * @return {@code true} if salvage operations can be performed, {@code false} otherwise. The default implementation
+     *       always returns {@code false}.
+     *
+     * @author Illiani
+     * @since 0.50.10
+     */
+    public boolean canPerformSpaceSalvageOperations() {
+        return false;
     }
 }

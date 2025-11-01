@@ -1945,4 +1945,9 @@ public class BattleArmor extends Infantry {
     public CarriedObjectDamageAllocation getCarriedObjectDamageAllocation() {
         return CarriedObjectDamageAllocation.ARM_HIT;
     }
+
+    @Override
+    public int getRecoveryTime() {
+        return 10;
+    }
 }

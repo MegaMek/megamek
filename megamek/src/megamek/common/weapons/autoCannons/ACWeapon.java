@@ -99,7 +99,7 @@ public abstract class ACWeapon extends AmmoWeapon {
                         return new RapidFireACWeaponHandler(toHit, waa, game, gameManager);
                     }
 
-                    // PLAYTEST3 ammo
+                    // PLAYTEST3 AP Ammo
                     if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING) || ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST)) {
                         return new ACAPHandler(toHit, waa, game, gameManager);
                     }

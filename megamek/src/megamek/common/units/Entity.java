@@ -237,8 +237,8 @@ public abstract class Entity extends TurnOrdered
 
     public static final int MAX_C3_NODES = 12;
     public static final int MAX_C3i_NODES = 6;
-
-    // PLAYTEST3
+    
+    // PLAYTEST3 isC3ecmAffected
     protected boolean isC3ecmAffected = false;
 
     public static final int GRAPPLE_BOTH = 0;

@@ -1024,10 +1024,10 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "208, TM");
 
-    // PLAYTEST3
+    // PLAYTEST3 AP ammo new weight
     private static final MunitionMutator ARMOR_PIERCING_PLAYTEST_MUNITION_MUTATOR = new MunitionMutator("Armor" 
           + "-Piercing Playtest",
-          1.25,
+          (5.0/3),
           Munitions.M_ARMOR_PIERCING_PLAYTEST,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
@@ -1098,7 +1098,7 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "208, TM");
 
-    // PLAYTEST3
+    // PLAYTEST3 Precision ammo modifier
     private static final MunitionMutator PRECISION_PLAYTEST_MUNITION_MUTATOR = new MunitionMutator("Precision Playtest",
           (5.0/3),
           Munitions.M_PRECISION_PLAYTEST,

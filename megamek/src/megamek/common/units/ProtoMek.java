@@ -1414,4 +1414,9 @@ public class ProtoMek extends Entity {
     public boolean hasPatchworkArmor() {
         return false;
     }
+
+    @Override
+    public int getRecoveryTime() {
+        return 20;
+    }
 }

@@ -3083,4 +3083,24 @@ public class Tank extends Entity {
         // TODO: Make (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS))
         //  once we implement TO:AR 88 Grappling's missed attack consequences
     }
+
+    @Override
+    public int getRecoveryTime() {
+        int weightClass = getWeightClass();
+        // CamOps doesn't address Ultra-Light vehicles, so we're using COMBAT_VEHICLE_LIGHT for both
+        if (weightClass == EntityWeightClass.WEIGHT_LIGHT || weightClass == EntityWeightClass.WEIGHT_ULTRA_LIGHT) {
+            return 20;
+        } else if (weightClass == EntityWeightClass.WEIGHT_MEDIUM) {
+            return 40;
+        } else if (weightClass == EntityWeightClass.WEIGHT_HEAVY) {
+            return 60;
+        } else {
+            return 80;
+        }
+    }
+
+    @Override
+    public boolean canPerformGroundSalvageOperations() {
+        return true;
+    }
 }

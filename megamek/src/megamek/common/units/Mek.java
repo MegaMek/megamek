@@ -6012,9 +6012,11 @@ public abstract class Mek extends Entity {
         // certainly isn't leaving that hex under its own power anymore.
 
         int hitsToDestroyGyro = (gyroType == GYRO_HEAVY_DUTY) ? 3 : 2;
-        
+
         // PLAYTEST3 heavy duty gyro is now 4
-        if (game != null && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && gyroType == GYRO_HEAVY_DUTY) {
+        if (game != null
+              && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)
+              && gyroType == GYRO_HEAVY_DUTY) {
             hitsToDestroyGyro = 4;
         }
         return getGyroHits() >= hitsToDestroyGyro;
@@ -6403,5 +6405,10 @@ public abstract class Mek extends Entity {
      */
     protected int legCount() {
         return 2;
+    }
+
+    @Override
+    public int getRecoveryTime() {
+        return 60;
     }
 }

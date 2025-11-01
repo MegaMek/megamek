@@ -1950,4 +1950,9 @@ public class BattleArmor extends Infantry {
     public int targetForArmHitToHitCarriedObject() {
         return 5;
     }
+
+    @Override
+    public int getRecoveryTime() {
+        return 10;
+    }
 }

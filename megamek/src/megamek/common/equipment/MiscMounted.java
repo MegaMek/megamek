@@ -129,26 +129,22 @@ public class MiscMounted extends Mounted<MiscType> {
                 }
             }
         }
-        
-        // PLAYTEST3 actuator hits no longer reduce DA.
-        if (!(entity.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3))) {
-            if (entity.hasSystem(Mek.ACTUATOR_SHOULDER, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER,
-                  location)) {
-                base -= 2;
-            }
+        if (entity.hasSystem(Mek.ACTUATOR_SHOULDER, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER,
+              location)) {
+            base -= 2;
+        }
 
-            if (entity.hasSystem(Mek.ACTUATOR_LOWER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM,
-                  location)) {
-                base--;
-            }
-            if (entity.hasSystem(Mek.ACTUATOR_UPPER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM,
-                  location)) {
-                base--;
-            }
-            if (entity.hasSystem(Mek.ACTUATOR_HAND, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_HAND,
-                  location)) {
-                base--;
-            }
+        if (entity.hasSystem(Mek.ACTUATOR_LOWER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM,
+              location)) {
+            base--;
+        }
+        if (entity.hasSystem(Mek.ACTUATOR_UPPER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM,
+              location)) {
+            base--;
+        }
+        if (entity.hasSystem(Mek.ACTUATOR_HAND, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_HAND,
+              location)) {
+            base--;
         }
 
         return Math.max(0, base);
@@ -193,25 +189,22 @@ public class MiscMounted extends Mounted<MiscType> {
                 }
             }
         }
-        // PLAYTEST3 missing actuators no longer apply changes
-        if (!entity.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            if (entity.hasSystem(Mek.ACTUATOR_SHOULDER, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER,
-                  location)) {
-                base -= 2;
-            }
+        if (entity.hasSystem(Mek.ACTUATOR_SHOULDER, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER,
+              location)) {
+            base -= 2;
+        }
 
-            if (entity.hasSystem(Mek.ACTUATOR_LOWER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM,
-                  location)) {
-                base--;
-            }
-            if (entity.hasSystem(Mek.ACTUATOR_UPPER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM,
-                  location)) {
-                base--;
-            }
-            if (entity.hasSystem(Mek.ACTUATOR_HAND, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_HAND,
-                  location)) {
-                base--;
-            }
+        if (entity.hasSystem(Mek.ACTUATOR_LOWER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM,
+              location)) {
+            base--;
+        }
+        if (entity.hasSystem(Mek.ACTUATOR_UPPER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM,
+              location)) {
+            base--;
+        }
+        if (entity.hasSystem(Mek.ACTUATOR_HAND, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_HAND,
+              location)) {
+            base--;
         }
 
         return Math.max(0, base - damageTaken);

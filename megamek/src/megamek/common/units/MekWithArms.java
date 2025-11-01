@@ -407,7 +407,7 @@ public abstract class MekWithArms extends Mek {
         if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
             roll.addModifier(-1, "Trying to stand");
         }
-        
+
         if (hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
             roll.addModifier(2, "no/minimal arms");
             return;
@@ -439,5 +439,11 @@ public abstract class MekWithArms extends Mek {
         } else {
             return getWalkMP(mpCalculationSetting);
         }
+    }
+
+    @Override
+    public boolean canPerformGroundSalvageOperations() {
+        return hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM) &&
+              hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM);
     }
 }

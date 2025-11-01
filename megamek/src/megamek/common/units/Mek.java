@@ -2807,6 +2807,24 @@ public abstract class Mek extends Entity {
         }
     }
 
+    @Override
+    public List<WeaponMounted> getWeaponListWithHHW() {
+        List<WeaponMounted> combinedWeaponList = new ArrayList<>(super.getWeaponList());
+        if (!getCarriedObjects().isEmpty()) {
+            Map<Integer, ICarryable> carriedObjects = getCarriedObjects();
+            if (carriedObjects.get(LOC_RIGHT_ARM) != null) {
+                if (carriedObjects.get(LOC_RIGHT_ARM) instanceof HandheldWeapon hhw) {
+                    combinedWeaponList.addAll(hhw.getWeaponList());
+                }
+            } else if (carriedObjects.get(LOC_LEFT_ARM) != null) {
+                if (carriedObjects.get(LOC_LEFT_ARM) instanceof HandheldWeapon hhw) {
+                    combinedWeaponList.addAll(hhw.getWeaponList());
+                }
+            }
+        }
+        return combinedWeaponList;
+    }
+
     // From IO pg 50
     public static TechAdvancement getTechAdvancement(long etype, boolean primitive, boolean industrial,
           int weightClass) {

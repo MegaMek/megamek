@@ -41,6 +41,7 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.board.CrossBoardAttackHelper;
 import megamek.common.enums.FacingArc;
+import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
@@ -56,7 +57,9 @@ public class ComputeArc {
     private final static MMLogger LOGGER = MMLogger.create(ComputeArc.class);
 
     public static boolean isInArc(Game game, int attackerId, int weaponId, Targetable target) {
-        Entity attacker = game.getEntity(attackerId);
+        Entity weaponEntity = game.getEntity(attackerId);
+        Entity attacker = weaponEntity instanceof HandheldWeapon ?
+              game.getEntity(weaponEntity.getTransportId()) : game.getEntity(attackerId);
 
         if ((attacker == null) || (target == null)) {
             LOGGER.error("Trying to compute arc with a null attacker or target");
@@ -72,7 +75,7 @@ public class ComputeArc {
             return true;
         }
 
-        int facing = getFacing(weaponId, attacker);
+        int facing = getFacing(weaponId, weaponEntity);
 
         Coords aPos = attacker.getPosition();
         Coords tPos = target.getPosition();
@@ -105,8 +108,8 @@ public class ComputeArc {
         // AMS defending against Ground to Air fire needs to calculate arc based on the closest flight path
         // Technically it's an AirToGround attack since the AMS is on the aircraft
         if (Compute.isAirToGround(attacker, target)
-              && (attacker.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMS)
-              || attacker.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMS_BAY))) {
+              && (weaponEntity.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMS)
+              || weaponEntity.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMS_BAY))) {
             aPos = Compute.getClosestFlightPath(target.getId(), target.getPosition(), attacker);
         }
 
@@ -155,7 +158,7 @@ public class ComputeArc {
         //            LOGGER.error("Target Coords must be on the same board as the attacker!");
         //        }
 
-        FacingArc facingArc = FacingArc.valueOf(attacker.getWeaponArc(weaponId));
+        FacingArc facingArc = FacingArc.valueOf(weaponEntity.getWeaponArc(weaponId));
         return facingArc.isInsideArc(UnitPosition.of(aPos, facing), targetPosition);
     }
 

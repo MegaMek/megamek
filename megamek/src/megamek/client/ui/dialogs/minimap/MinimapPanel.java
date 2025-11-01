@@ -1239,7 +1239,9 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
      * Draw a line to represent an attack
      */
     private void paintAttack(Graphics g, AttackAction attack) {
-        Entity source = game.getEntity(attack.getEntityId());
+        Entity weaponEntity = game.getEntity(attack.getEntityId()); // ex. HHW
+        Entity source = weaponEntity != null ? weaponEntity.getAttackingEntity() : null;
+
         Targetable target = game.getTarget(attack.getTargetType(), attack.getTargetId());
         // sanity check...
         // cross-board attacks don't get attack arrows (for now, must possibly allow some A2G, O2G, A2A attacks later

@@ -2936,8 +2936,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // the entity can pick them up
         if ((ce == null) ||
               ((game.getGroundObjects(finalPosition(), ce).isEmpty())
-                    && (game.getEntitiesVector(finalPosition()).stream().filter(ce::canPickupCarryableObject).toList().isEmpty()) || !(game.getOptions()
-                    .booleanOption(OptionsConstants.ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS))) ||
+                    && (game.getEntitiesVector(finalPosition()).stream().filter(ce::canPickupCarryableObject).toList().isEmpty())) ||
               ((cmd.getLastStep() != null) && (cmd.getLastStep().getType() == MoveStepType.PICKUP_CARGO))) {
             setPickupCargoEnabled(false);
             return;
@@ -5545,9 +5544,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private void processPickupCargoCommand() {
         var options = game.getGroundObjects(finalPosition());
-        if (game.getOptions().booleanOption(ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS)) {
-            options.addAll(game.getEntitiesVector(finalPosition()));
-        }
+        options.addAll(game.getEntitiesVector(finalPosition()).stream().filter(Entity::isCarryableObject).toList());
         var displayedOptions =
               options.stream().filter(o -> currentEntity().canPickupCarryableObject(o)).toList();
 

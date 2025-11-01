@@ -58,20 +58,21 @@ public class WeaponDataEncoder {
      */
     public static List<Integer> getEncodedWeaponData(Entity entity) {
         List<Integer> weaponData = new ArrayList<>();
-        entity.getWeaponList().forEach(weapon -> serializeWeaponData(weapon, entity, weaponData));
+        entity.getWeaponListWithHHW().forEach(weapon -> serializeWeaponData(weapon, entity, weaponData));
         return weaponData;
     }
 
     private static void serializeWeaponData(WeaponMounted weapon, Entity entity, List<Integer> weaponData) {
         try {
-            int equipmentId = entity.getEquipmentNum(weapon);
-            var mounted = entity.getEquipment(equipmentId);
+            Entity weaponEntity = weapon.getEntity();
+            int equipmentId = weaponEntity.getEquipmentNum(weapon);
+            var mounted = weaponEntity.getEquipment(equipmentId);
             if (mounted == null) {
                 logger.warn("No such equipment {} [{}] for {}", weapon, equipmentId, entity);
                 return;
             }
 
-            int arc = entity.getWeaponArc(equipmentId);
+            int arc = weaponEntity.getWeaponArc(equipmentId);
             int shortRange = weapon.getType().getShortRange();
             int mediumRange = weapon.getType().getMediumRange();
             int longRange = weapon.getType().getLongRange();

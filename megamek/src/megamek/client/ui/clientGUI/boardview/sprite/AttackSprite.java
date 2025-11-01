@@ -101,7 +101,8 @@ public class AttackSprite extends Sprite {
         entityId = attack.getEntityId();
         int targetType = attack.getTargetType();
         targetId = attack.getTargetId();
-        attackingEntity = this.boardView1.game.getEntity(attack.getEntityId());
+        Entity weaponEntity = this.boardView1.game.getEntity(attack.getEntityId());
+        attackingEntity = weaponEntity.getAttackingEntity();
         targetedEntity = this.boardView1.game.getTarget(targetType, targetId);
 
         if (attackingEntity == null) {

@@ -144,6 +144,7 @@ import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
@@ -3418,6 +3419,9 @@ public class ClientGUI extends AbstractClientGUI
         }
         Mounted<?> weaponOnUnit = getDisplayedUnit().getEquipment(unitDisplayPanel.wPan.getSelectedWeaponNum());
         if (weaponOnUnit == weapon) {
+            return Optional.of(weapon);
+        } else if (weapon.getEntity() instanceof HandheldWeapon hhw && hhw.getAttackingEntity()
+              .equals(getDisplayedUnit())) {
             return Optional.of(weapon);
         } else {
             logger.error("Unsafe selected weapon. Returning null instead. Equipment ID {} on unit {}",

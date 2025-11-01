@@ -227,9 +227,13 @@ public abstract class AbstractConnection {
 
     /** Adds a packet to the send queue to be sent on a separate thread. */
     public synchronized void send(Packet packet) {
-        sendQueue.addPacket(new SendPacket(packet, this));
-        // Send right now
-        flush();
+        try {
+            sendQueue.addPacket(new SendPacket(packet, this));
+            // Send right now
+            flush();
+        } catch (Exception e) {
+            LOGGER.error("Failed to send packet {}", packet, e);
+        }
     }
 
     /** Send the packet now, on a separate thread; This is the blocking call. */

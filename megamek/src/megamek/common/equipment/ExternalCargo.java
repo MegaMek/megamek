@@ -42,7 +42,7 @@ import java.util.Vector;
 
 public class ExternalCargo implements Transporter {
 
-    protected Game game;
+    protected transient Game game;
 
     /** The total amount of space available for objects. */
     protected double totalSpace;

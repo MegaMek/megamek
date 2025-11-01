@@ -80,7 +80,7 @@ public abstract class ExternalCargo implements Transporter {
      */
     @Override
     public void load(Entity unit) throws IllegalArgumentException {
-        throw (IllegalArgumentException) new IllegalArgumentException("Non-Functional Feature");
+        throw new IllegalArgumentException("Non-Functional Feature");
     }
 
     /**

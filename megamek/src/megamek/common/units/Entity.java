@@ -8490,9 +8490,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Some entities will always have certain transporters. This method is overloaded to support that.
      */
-    public void addIntrinsicTransporters() {
-        return;
-    }
+    public void addIntrinsicTransporters() {}
 
     public void addRoofRack() {
         if (getTransports().stream().noneMatch(t -> t instanceof RoofRack)) {
@@ -15996,6 +15994,7 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * What entity is using this weapon to attack?
+     *
      * @return entity carrying this weapon, or the entity itself
      */
     public Entity getAttackingEntity() {

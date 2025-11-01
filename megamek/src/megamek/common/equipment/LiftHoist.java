@@ -33,9 +33,31 @@
 
 package megamek.common.equipment;
 
+import megamek.common.units.Entity;
+
 public class LiftHoist extends ExternalCargo {
 
-    public LiftHoist(double tonnage) {
+    transient private Mounted<?> mounted;
+
+    public LiftHoist(Mounted<?> mounted, double tonnage) {
         super(tonnage);
+        this.mounted = mounted;
+    }
+
+    @Override
+    public double getUnused() {
+        if (isOperable()) {
+            return super.getUnused();
+        }
+        return 0;
+    }
+
+    @Override
+    public boolean canLoad(Entity unit) {
+        return isOperable() && super.canLoad(unit);
+    }
+
+    private boolean isOperable() {
+        return !mounted.getEntity().isLocationBad(mounted.getLocation()) && mounted.isOperable();
     }
 }

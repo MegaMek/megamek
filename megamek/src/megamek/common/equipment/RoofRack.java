@@ -61,12 +61,12 @@ public class RoofRack extends ExternalCargo {
 
             // If the carrier is carrying objects in its arms, they count towards this penalty too, but only if
             // something is on the roof.
-            carrierWeight += carrier.getDistinctCarriedObjects()
+            double totalCarriedTonnage = getCarriedTonnage() + carrier.getDistinctCarriedObjects()
                   .stream()
                   .mapToDouble(ICarryable::getTonnage)
                   .sum();
 
-            double carriedWeightRatio = getCarriedTonnage() / carrierWeight;
+            double carriedWeightRatio = totalCarriedTonnage / carrierWeight;
             int mpReduction = MathUtility.roundAwayFromZero(entityBaseMP / 2.0);
 
             if (carriedWeightRatio <= .25) {

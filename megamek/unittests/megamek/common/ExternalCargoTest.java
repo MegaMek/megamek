@@ -42,6 +42,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import megamek.common.equipment.Cargo;
@@ -374,7 +375,37 @@ public class ExternalCargoTest {
 
         @ParameterizedTest
         @MethodSource(value = "entityMovementData")
-        void heavyLoadTest(int baseEntityMP, int lessThanQuarterWeightMPReduction, int heavyLoadMPReduction) {
+        void lightLoadAndCarriedObjectTest(int baseEntityMP, int lessThanQuarterWeightMPReduction,
+              int heavyLoadMPReduction) {
+            // Assemble
+            when(mockCarrier.getOriginalWalkMP()).thenReturn(baseEntityMP);
+
+            RoofRack roofRack = new RoofRack(TEST_WEIGHT);
+
+            Cargo cargo = new Cargo();
+            cargo.setTonnage((TEST_WEIGHT / 4.0) - 5);
+
+            Cargo cargoCarried = new Cargo();
+            cargoCarried.setTonnage(5);
+
+            when(mockCarrier.getDistinctCarriedObjects()).thenReturn(List.of(cargoCarried));
+
+            // Act
+            int mpReductionBefore = roofRack.getCargoMpReduction(mockCarrier);
+            roofRack.loadCarryable(cargo);
+            int mpReduction = roofRack.getCargoMpReduction(mockCarrier);
+
+            // Assert
+            assertEquals(0, mpReductionBefore);
+            assertEquals(lessThanQuarterWeightMPReduction, mpReduction);
+            assertEquals(1, roofRack.getCarryables().size());
+            assertEquals(cargo, roofRack.getCarryables().get(0));
+        }
+
+        @ParameterizedTest
+        @MethodSource(value = "entityMovementData")
+        void heavyLoadTest(int baseEntityMP, int lessThanQuarterWeightMPReduction,
+              int heavyLoadMPReduction) {
             // Assemble
             when(mockCarrier.getDistinctCarriedObjects()).thenReturn(new ArrayList<>());
             when(mockCarrier.getOriginalWalkMP()).thenReturn(baseEntityMP);
@@ -389,6 +420,35 @@ public class ExternalCargoTest {
             int mpReduction = roofRack.getCargoMpReduction(mockCarrier);
 
             // Assert
+            assertEquals(heavyLoadMPReduction, mpReduction);
+            assertEquals(1, roofRack.getCarryables().size());
+            assertEquals(cargo, roofRack.getCarryables().get(0));
+        }
+
+        @ParameterizedTest
+        @MethodSource(value = "entityMovementData")
+        void heavyLoadFromCarriedObjectTest(int baseEntityMP, int lessThanQuarterWeightMPReduction,
+              int heavyLoadMPReduction) {
+            // Assemble
+            when(mockCarrier.getOriginalWalkMP()).thenReturn(baseEntityMP);
+
+            RoofRack roofRack = new RoofRack(TEST_WEIGHT);
+
+            Cargo cargo = new Cargo();
+            cargo.setTonnage((TEST_WEIGHT / 4.0));
+
+            Cargo cargoCarried = new Cargo();
+            cargoCarried.setTonnage(5);
+
+            when(mockCarrier.getDistinctCarriedObjects()).thenReturn(List.of(cargoCarried));
+
+            // Act
+            int mpReductionBefore = roofRack.getCargoMpReduction(mockCarrier);
+            roofRack.loadCarryable(cargo);
+            int mpReduction = roofRack.getCargoMpReduction(mockCarrier);
+
+            // Assert
+            assertEquals(0, mpReductionBefore);
             assertEquals(heavyLoadMPReduction, mpReduction);
             assertEquals(1, roofRack.getCarryables().size());
             assertEquals(cargo, roofRack.getCarryables().get(0));

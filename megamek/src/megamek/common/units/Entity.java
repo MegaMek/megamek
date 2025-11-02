@@ -8541,8 +8541,9 @@ public abstract class Entity extends TurnOrdered
                       (unit.getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY);
             }
 
+            // External Cargo cannot be loaded, it should be picked up
             for (Transporter t : transports) {
-                if (t.canLoad(unit) &&
+                if (!(t instanceof ExternalCargo) && t.canLoad(unit) &&
                       (!checkElev || unit.getElevation() == getElevation()) &&
                       !((t instanceof BattleArmorHandles) && noExternalMount)) {
                     return true;
@@ -8923,14 +8924,16 @@ public abstract class Entity extends TurnOrdered
     /**
      * @return All Entities that can at this point be unloaded from any transports of this Entity which are not Bays.
      *       This does not include any units that were loaded this turn. Note that the returned list may be
-     *       unmodifiable.This shouldn't return towed entities, they're tracked separately.
+     *       unmodifiable. This shouldn't return towed entities, they're tracked separately. This shouldn't return
+     *       entities transported by {@link ExternalCargo} , they should be picked up / dropped, not loaded/unloaded.
      *
      * @see #getLoadedTrailers()
      * @see #wasLoadedThisTurn()
+     * @see #getCarriedObjects()
      */
     public List<Entity> getUnitsUnloadableFromNonBays() {
         return transports.stream()
-              .filter(t -> !(t instanceof Bay) && !(t instanceof TankTrailerHitch))
+              .filter(t -> !(t instanceof Bay) && !(t instanceof TankTrailerHitch) && !(t instanceof ExternalCargo))
               .flatMap(b -> b.getLoadedUnits().stream())
               .filter(e -> !e.wasLoadedThisTurn())
               .toList();

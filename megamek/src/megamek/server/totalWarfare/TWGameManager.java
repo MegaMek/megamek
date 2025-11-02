@@ -9599,6 +9599,10 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
             Entity attacker = weaponEntity.getAttackingEntity();
+            if (attacker == null) {
+                LOGGER.error("Attack packet has invalid attacker entity");
+                continue;
+            }
             if (attacker.getId() != entity.getId()) {
                 LOGGER.error("Attack packet has wrong attacker");
                 continue;

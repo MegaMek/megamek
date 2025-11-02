@@ -134,6 +134,10 @@ public abstract class ExternalCargo implements Transporter {
         return currentSpace;
     }
 
+    public double getCarriedTonnage() {
+        return currentSpace - totalSpace;
+    }
+
     /**
      * Return a string that identifies the unused capacity of this transporter.
      *

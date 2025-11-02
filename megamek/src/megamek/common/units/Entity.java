@@ -8538,8 +8538,9 @@ public abstract class Entity extends TurnOrdered
             }
 
             // External Cargo cannot be loaded, it should be picked up
+            // We can ignore this during the Lounge phase though
             for (Transporter t : transports) {
-                if (!(t instanceof ExternalCargo) && t.canLoad(unit) &&
+                if ((!(t instanceof ExternalCargo) || getGame().getPhase().isLounge()) && t.canLoad(unit) &&
                       (!checkElev || unit.getElevation() == getElevation()) &&
                       !((t instanceof BattleArmorHandles) && noExternalMount)) {
                     return true;

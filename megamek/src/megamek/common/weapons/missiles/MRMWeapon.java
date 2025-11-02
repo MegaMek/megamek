@@ -47,6 +47,7 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.MRMHandler;
 import megamek.server.totalWarfare.TWGameManager;
@@ -66,6 +67,16 @@ public abstract class MRMWeapon extends MissileWeapon {
         atClass = CLASS_MRM;
     }
 
+    @Override
+    // PLAYTEST3 MRMS no longer have a +1 to hit.
+    public int getToHitModifier(@Nullable Mounted<?> mounted) {
+        if (mounted != null && mounted.getEntity() != null && mounted.getEntity().getGame() != null && mounted.getEntity().getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            return 0;
+        } else {
+            return toHitModifier;
+        }
+    }
+    
     @Override
     @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {

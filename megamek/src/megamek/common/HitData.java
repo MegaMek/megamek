@@ -151,6 +151,28 @@ public class HitData {
     public void makeArmorPiercingPlaytest(AmmoType inType, int modifier) {
         specCrit = true;
         if (inType.getRackSize() == 2) {
+            specCritMod = -2;
+        } else if (inType.getRackSize() == 4) {
+            specCritMod = -2;
+        } else if (inType.getRackSize() == 5) {
+            specCritMod = -2;
+        } else if (inType.getRackSize() == 6) {
+            specCritMod = -2;
+        } else if (inType.getRackSize() == 8) {
+            specCritMod = -1;
+        } else if (inType.getRackSize() == 10) {
+            specCritMod = -1;
+        } else if (inType.getRackSize() == 15) {
+            specCritMod = -1;
+        } else if (inType.getRackSize() == 20) {
+            specCritMod = -1;
+        }
+        specCritMod += modifier;
+    }
+
+    public void makeArmorPiercing(AmmoType inType, int modifier) {
+        specCrit = true;
+        if (inType.getRackSize() == 2) {
             specCritMod = -4;
         } else if (inType.getRackSize() == 4) {
             specCritMod = -3;
@@ -167,28 +189,6 @@ public class HitData {
         } else if (inType.getRackSize() == 20) {
             specCritMod = -1;
         }
-        specCritMod += modifier;
-    }
-
-    public void makeArmorPiercing(AmmoType inType, int modifier) {
-        specCrit = true;
-                if (inType.getRackSize() == 2) {
-                    specCritMod = -2;
-                } else if (inType.getRackSize() == 4) {
-                    specCritMod = -2;
-                } else if (inType.getRackSize() == 5) {
-                    specCritMod = -2;
-                } else if (inType.getRackSize() == 6) {
-                    specCritMod = -2;
-                } else if (inType.getRackSize() == 8) {
-                    specCritMod = -1;
-                } else if (inType.getRackSize() == 10) {
-                    specCritMod = -1;
-                } else if (inType.getRackSize() == 15) {
-                    specCritMod = -1;
-                } else if (inType.getRackSize() == 20) {
-                    specCritMod = -1;
-                }
         specCritMod += modifier;
     }
 

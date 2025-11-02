@@ -3472,10 +3472,14 @@ public class AmmoType extends EquipmentType {
         // Create the munition types for AC rounds.
         munitions.clear();
         munitions.add(ARMOR_PIERCING_MUNITION_MUTATOR);
+        // PLAYTEST3 add AP ammo
+        munitions.add(ARMOR_PIERCING_PLAYTEST_MUNITION_MUTATOR);
         munitions.add(CASELESS_MUNITION_MUTATOR);
         munitions.add(FLAK_MUNITION_MUTATOR);
         munitions.add(FLECHETTE_MUNITION_MUTATOR);
         munitions.add(PRECISION_MUNITION_MUTATOR);
+        // PLAYTEST3 add Precision ammo
+        munitions.add(PRECISION_PLAYTEST_MUNITION_MUTATOR);
         munitions.add(TRACER_MUNITION_MUTATOR);
         AmmoType.createMunitions(acAmmos, munitions);
 

@@ -1464,10 +1464,7 @@ public class ComputeToHit {
                 }
             }
             toHit.addModifier(modifier, Messages.getString("WeaponAttackAction.WeaponMod"));
-            // PLAYTEST3 No more modifier for MRMs
-            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && weaponType instanceof MRMWeapon) {
-                modifier--;
-            }
+
         }
 
         // Indirect fire (LRMs, mortars and the like) has a +1 mod

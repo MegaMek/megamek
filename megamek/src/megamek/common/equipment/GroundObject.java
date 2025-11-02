@@ -55,6 +55,7 @@ public abstract class GroundObject implements ICarryable, Serializable {
     private int id;
     private int ownerId;
 
+
     @Override
     public boolean damage(double amount) {
         tonnage -= amount;

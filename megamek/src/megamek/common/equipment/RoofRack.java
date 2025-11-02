@@ -70,10 +70,10 @@ public class RoofRack extends ExternalCargo {
             int mpReduction = MathUtility.roundAwayFromZero(entityBaseMP / 2.0);
 
             if (carriedWeightRatio <= .25) {
-                mpReduction = Math.min(entityBaseMP - 3, mpReduction);
+                mpReduction = Math.min(3, mpReduction);
             }
 
-            return Math.max(0, entityBaseMP - mpReduction);
+            return Math.min(entityBaseMP, mpReduction);
         }
 
         return 0;

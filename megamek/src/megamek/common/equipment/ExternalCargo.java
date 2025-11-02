@@ -87,6 +87,19 @@ public abstract class ExternalCargo implements Transporter {
         throw new IllegalArgumentException("Non-Functional Feature");
     }
 
+    public void loadCarryable(ICarryable carryable) throws IllegalArgumentException {
+        if (carryable instanceof Entity) {
+            throw new IllegalArgumentException("Non-Functional Feature - Entities not supported");
+        }
+        if (carryable.getTonnage() > currentSpace) {
+            throw new IllegalArgumentException("Not enough space to load " + carryable.specificName());
+        }
+
+        carriedObjects.addElement(carryable);
+        currentSpace -= carryable.getTonnage();
+
+    }
+
     /**
      * Get a <code>Vector</code> of the units currently loaded into this payload.
      *
@@ -99,7 +112,7 @@ public abstract class ExternalCargo implements Transporter {
         if (carriedObjects.isEmpty()) {
             return List.of();
         }
-        List<Entity> retList = new ArrayList<Entity>();
+        List<Entity> retList = new ArrayList<>();
         for (ICarryable carriedObject : carriedObjects) {
             if (carriedObject instanceof Entity) {
                 retList.add((Entity) carriedObject);
@@ -107,6 +120,14 @@ public abstract class ExternalCargo implements Transporter {
         }
 
         return retList;
+    }
+
+    public List<ICarryable> getCarryables() {
+        if (carriedObjects.isEmpty()) {
+            return List.of();
+        }
+
+        return new ArrayList<>(carriedObjects);
     }
 
     /**
@@ -126,6 +147,14 @@ public abstract class ExternalCargo implements Transporter {
         return wasCarried;
     }
 
+    public boolean unloadCarryable(ICarryable carryable) {
+        boolean wasCarried = carriedObjects.removeElement(carryable);
+        if (wasCarried) {
+            currentSpace += carryable.getTonnage();
+        }
+        return wasCarried;
+    }
+
     /**
      * @return the number of unused spaces in this transporter.
      */
@@ -135,7 +164,7 @@ public abstract class ExternalCargo implements Transporter {
     }
 
     public double getCarriedTonnage() {
-        return currentSpace - totalSpace;
+        return totalSpace - currentSpace;
     }
 
     /**
@@ -206,6 +235,7 @@ public abstract class ExternalCargo implements Transporter {
      */
     @Override
     public void resetTransporter() {
-
+        carriedObjects.clear();
+        currentSpace = totalSpace;
     }
 }

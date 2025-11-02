@@ -4047,7 +4047,8 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @return List of {@link Report}
      */
-    private Vector<Report> processSkidDisplacement(Entity skidder, Coords curPos, int direction) throws InvalidPacketDataException {
+    private Vector<Report> processSkidDisplacement(Entity skidder, Coords curPos, int direction)
+          throws InvalidPacketDataException {
         Coords nextPos;
         Report report;
         Vector<Report> skidDisplacementReports = new Vector<>();
@@ -6272,7 +6273,8 @@ public class TWGameManager extends AbstractGameManager {
         }
     }
 
-    public int processTeleguidedMissileCFR(int playerId, List<Integer> targetIds, List<Integer> toHitValues) throws InvalidPacketDataException {
+    public int processTeleguidedMissileCFR(int playerId, List<Integer> targetIds, List<Integer> toHitValues)
+          throws InvalidPacketDataException {
         sendTeleguidedMissileCFR(playerId, targetIds, toHitValues);
         while (true) {
             synchronized (cfrPacketQueue) {
@@ -6305,7 +6307,8 @@ public class TWGameManager extends AbstractGameManager {
         }
     }
 
-    public int processTAGTargetCFR(int playerId, List<Integer> targetIds, List<Integer> targetTypes) throws InvalidPacketDataException {
+    public int processTAGTargetCFR(int playerId, List<Integer> targetIds, List<Integer> targetTypes)
+          throws InvalidPacketDataException {
         sendTAGTargetCFR(playerId, targetIds, targetTypes);
         while (true) {
             synchronized (cfrPacketQueue) {
@@ -9380,7 +9383,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param packet the packet to be processed
      * @param connId the id for connection that received the packet.
      */
-    private void receiveArtyAutoHitHexes(Packet packet, int connId)  throws InvalidPacketDataException {
+    private void receiveArtyAutoHitHexes(Packet packet, int connId) throws InvalidPacketDataException {
         PlayerIDAndList<BoardLocation> artyAutoHitHexes = packet.getPlayerIDAndListWithBoardLocation(0);
         int playerId = artyAutoHitHexes.getPlayerID();
 
@@ -9406,7 +9409,7 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Receives an updated data structure containing carryable objects on the ground
      */
-    private void receiveGroundObjectUpdate(Packet packet, int connId)  throws InvalidPacketDataException {
+    private void receiveGroundObjectUpdate(Packet packet, int connId) throws InvalidPacketDataException {
         Map<Coords, List<ICarryable>> groundObjects = packet.getCoordsWithBriefcaseICarryableListMap(0);
         getGame().setGroundObjects(groundObjects);
 
@@ -9420,7 +9423,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param packet the packet to be processed
      * @param connId the id for connection that received the packet.
      */
-    private void receiveDeployMinefields(Packet packet, int connId)  throws InvalidPacketDataException {
+    private void receiveDeployMinefields(Packet packet, int connId) throws InvalidPacketDataException {
         Vector<Minefield> minefields = packet.getMinefieldVector(0);
 
         // is this the right phase?
@@ -9480,7 +9483,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param packet the packet to be processed
      * @param connId the id for connection that received the packet.
      */
-    private void receiveGroundToAirHexSelectPacket(Packet packet, int connId)  throws InvalidPacketDataException {
+    private void receiveGroundToAirHexSelectPacket(Packet packet, int connId) throws InvalidPacketDataException {
         int targetId = packet.getIntValue(0);
         int attackerId = packet.getIntValue(1);
         Coords pos = packet.getCoords(2);
@@ -9494,7 +9497,7 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * The end of a unit's Premovement or Pre-firing
      */
-    private void receivePrephase(Packet packet, int connId)  throws InvalidPacketDataException {
+    private void receivePrephase(Packet packet, int connId) throws InvalidPacketDataException {
         Entity entity = game.getEntity(packet.getIntValue(0));
 
         if (entity == null) {
@@ -9537,7 +9540,7 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Gets a bunch of entity attacks from the packet. If valid, processes them and ends the current turn.
      */
-    private void receiveAttack(Packet packet, int connId)  throws InvalidPacketDataException {
+    private void receiveAttack(Packet packet, int connId) throws InvalidPacketDataException {
         Entity entity = game.getEntity(packet.getIntValue(0));
         List<EntityAction> actionList = packet.getEntityActionList(1);
 
@@ -9591,6 +9594,10 @@ public class TWGameManager extends AbstractGameManager {
         for (EntityAction ea : entityActions) {
             // is this the right entity?
             Entity weaponEntity = game.getEntity(ea.getEntityId());
+            if (weaponEntity == null) {
+                LOGGER.error("Attack packet has invalid weapon entity");
+                continue;
+            }
             Entity attacker = weaponEntity.getAttackingEntity();
             if (attacker.getId() != entity.getId()) {
                 LOGGER.error("Attack packet has wrong attacker");
@@ -13146,8 +13153,7 @@ public class TWGameManager extends AbstractGameManager {
                 if ((!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)
                       && te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_FERRO_LAMELLOR)
                       || (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)
-                      && te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION))
-                {
+                      && te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION)) {
                     Roll diceRoll2 = Compute.rollD6(2);
                     // Pierce checking report
                     r = new Report(4021);
@@ -14668,12 +14674,12 @@ public class TWGameManager extends AbstractGameManager {
             damageTaken -= cluster;
             hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
             cluster = checkForSpikes(ae, hit.getLocation(), cluster, te, Mek.LOC_CENTER_TORSO);
-            
+
             // PLAYTEST3 raised shield takes all the charge damage
             if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && ae.hasShield()) {
-                int[] armLocations = {Mek.LOC_LEFT_ARM, Mek.LOC_RIGHT_ARM};
+                int[] armLocations = { Mek.LOC_LEFT_ARM, Mek.LOC_RIGHT_ARM };
                 boolean foundShield = false;
-                
+
                 for (int armLoc : armLocations) {
                     for (int slot = 0; slot < ae.getNumberOfCriticalSlots(armLoc); slot++) {
                         CriticalSlot cs = ae.getCritical(armLoc, slot);
@@ -14687,11 +14693,12 @@ public class TWGameManager extends AbstractGameManager {
                         EquipmentType type = m.getType();
                         if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
                             if ((((MiscMounted) m).getDamageAbsorption(ae, armLoc) > 0)
-                                  && (((MiscMounted) m).getCurrentDamageCapacity(ae, armLoc) > 0) && ((MiscMounted) m).curMode().equals(MiscType.S_ACTIVE_SHIELD)) {
+                                  && (((MiscMounted) m).getCurrentDamageCapacity(ae, armLoc) > 0)
+                                  && ((MiscMounted) m).curMode().equals(MiscType.S_ACTIVE_SHIELD)) {
                                 hit = new HitData(armLoc);
                                 foundShield = true;
                                 break;
-                            } 
+                            }
                         }
                     }
                     if (foundShield) {
@@ -14699,7 +14706,7 @@ public class TWGameManager extends AbstractGameManager {
                     }
                 }
             }
-            
+
             addReport(damageEntity(ae, hit, cluster, false, DamageType.NONE, false, false, throughFront));
         }
 
@@ -14749,10 +14756,10 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // track any additional damage to the attacker due to the target having spikes
-        
+
         // PLAYTEST3 lance only on first cluster
-        boolean firstCluster = true; 
-        
+        boolean firstCluster = true;
+
         while (damage > 0) {
             int cluster = Math.min(5, damage);
             // AirMek ramming attacks do all damage to a single location
@@ -14789,7 +14796,7 @@ public class TWGameManager extends AbstractGameManager {
                     hit.makeDirectBlow(directBlowCritMod);
                 }
                 cluster = checkForSpikes(te, hit.getLocation(), cluster, ae, Mek.LOC_CENTER_TORSO);
-                
+
                 // PLAYTEST3 make lance deal 1 point internal to the first cluster if armor remained. ABA and 
                 // hardened block this
                 if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && firstCluster) {
@@ -18994,7 +19001,7 @@ public class TWGameManager extends AbstractGameManager {
                 reports.addElement(r);
             }
         }
-        
+
 
         if ((eqType instanceof MiscType) && eqType.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
             ((Mek) en).setHasDamagedCoolantSystem(true);
@@ -24489,7 +24496,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
-    private void receiveSquadronAdd(Packet packet, int connIndex)  throws InvalidPacketDataException {
+    private void receiveSquadronAdd(Packet packet, int connIndex) throws InvalidPacketDataException {
         final FighterSquadron fighterSquadron = packet.getFighterSquadron(0);
         final List<Integer> fighters = packet.getIntList(1);
 
@@ -24534,7 +24541,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
-    private void receiveEntityUpdate(Packet packet, int connIndex)  throws InvalidPacketDataException {
+    private void receiveEntityUpdate(Packet packet, int connIndex) throws InvalidPacketDataException {
         Entity entity = packet.getEntity(0);
 
         if (entity == null) {
@@ -24567,7 +24574,7 @@ public class TWGameManager extends AbstractGameManager {
      * units that are teammates of the sender. Other entities remain unchanged but still be sent back to overwrite
      * incorrect client changes.
      */
-    private void receiveEntitiesUpdate(Packet packet, int connIndex)  throws InvalidPacketDataException {
+    private void receiveEntitiesUpdate(Packet packet, int connIndex) throws InvalidPacketDataException {
         if (!getGame().getPhase().isLounge()) {
             LOGGER.error("Multi entity updates should not be used outside the lobby phase!");
         }
@@ -24601,7 +24608,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
-    private void receiveForcesDelete(Packet packet, int connIndex)  throws InvalidPacketDataException {
+    private void receiveForcesDelete(Packet packet, int connIndex) throws InvalidPacketDataException {
         List<Integer> forceList = packet.getIntList(0);
 
         // Gather the forces and entities to be deleted
@@ -24666,7 +24673,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
-    private void receiveEntityTow(Packet packet, int connIndex)  throws InvalidPacketDataException {
+    private void receiveEntityTow(Packet packet, int connIndex) throws InvalidPacketDataException {
         int trailerId = packet.getIntValue(0);
         int towingEntId = packet.getIntValue(1);
         Entity trailer = getGame().getEntity(trailerId);
@@ -24693,7 +24700,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
-    private void receiveCustomInit(Packet packet, int connIndex)  throws InvalidPacketDataException {
+    private void receiveCustomInit(Packet packet, int connIndex) throws InvalidPacketDataException {
         // In the chat lounge, notify players of customizing of unit
         if (game.getPhase().isLounge()) {
             Player player = packet.getPlayer(0);
@@ -24920,7 +24927,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
-    private void receiveEntityAmmoChange(Packet packet, int connIndex)  throws InvalidPacketDataException {
+    private void receiveEntityAmmoChange(Packet packet, int connIndex) throws InvalidPacketDataException {
         int entityId = packet.getIntValue(0);
         int weaponId = packet.getIntValue(1);
         int ammoId = packet.getIntValue(2);
@@ -24983,7 +24990,7 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Deletes an entity owned by a certain player from the list
      */
-    private void receiveEntityDelete(Packet packet, int connIndex)  throws InvalidPacketDataException {
+    private void receiveEntityDelete(Packet packet, int connIndex) throws InvalidPacketDataException {
         List<Integer> ids = packet.getIntList(0);
 
         Set<Entity> delEntities = new HashSet<>();
@@ -25082,7 +25089,7 @@ public class TWGameManager extends AbstractGameManager {
         }
     }
 
-    private void receiveInitiativeRerollRequest(Packet packet, int connIndex)  throws InvalidPacketDataException {
+    private void receiveInitiativeRerollRequest(Packet packet, int connIndex) throws InvalidPacketDataException {
         Player player = game.getPlayer(connIndex);
         if (!game.getPhase().isInitiativeReport()) {
             StringBuilder message = new StringBuilder();
@@ -25111,7 +25118,7 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @return true if any options have been successfully changed.
      */
-    private boolean receiveGameOptions(Packet packet, int connId)  throws InvalidPacketDataException {
+    private boolean receiveGameOptions(Packet packet, int connId) throws InvalidPacketDataException {
         Player player = game.getPlayer(connId);
         // Check player
         if (null == player) {
@@ -25172,7 +25179,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param packet the packet to be processed
      * @param connId the id for connection that received the packet.
      */
-    private void receiveGameOptionsAux(Packet packet, int connId)  throws InvalidPacketDataException {
+    private void receiveGameOptionsAux(Packet packet, int connId) throws InvalidPacketDataException {
         MapSettings mapSettings = game.getMapSettings();
         for (IBasicOption option : packet.getIBasicOptionVector(1)) {
             IOption originalOption = game.getOptions().getOption(option.getName());
@@ -26434,7 +26441,7 @@ public class TWGameManager extends AbstractGameManager {
      * execution. If all players that have stranded entities have answered, executes the pending requests and end the
      * current turn.
      */
-    private void receiveUnloadStranded(Packet packet, int connId)  throws InvalidPacketDataException {
+    private void receiveUnloadStranded(Packet packet, int connId) throws InvalidPacketDataException {
         UnloadStrandedTurn turn;
         final Player player = game.getPlayer(connId);
         int[] entityIds = (int[]) packet.getObject(0);

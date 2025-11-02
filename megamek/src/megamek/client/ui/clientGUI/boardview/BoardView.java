@@ -3648,14 +3648,14 @@ public final class BoardView extends AbstractBoardView
         if (scrollPane == null) {
             return;
         }
-        
+
         // restrict both values to between 0 and 1
         xRelative = Math.max(0, xRelative);
         xRelative = Math.min(1, xRelative);
         yRelative = Math.max(0, yRelative);
         yRelative = Math.min(1, yRelative);
         Point point = new Point((int) (boardSize.getWidth() * xRelative) + HEX_W,
-              (int) (boardSize.getHeight() * yRelative) + HEX_H);        
+              (int) (boardSize.getHeight() * yRelative) + HEX_H);
         JScrollBar verticalScroll = scrollPane.getVerticalScrollBar();
         verticalScroll.setValue(point.y - (verticalScroll.getVisibleAmount() / 2));
         JScrollBar horizontalScroll = scrollPane.getHorizontalScrollBar();
@@ -3987,6 +3987,9 @@ public final class BoardView extends AbstractBoardView
         // cross-board attacks don't get attack arrows (for now, must possibly allow some A2G, O2G, A2A attacks later
         // when target/attacker hexes are not really but effectively on the same board)
         Entity weaponEntity = game.getEntity(attackAction.getEntityId());
+        if (weaponEntity == null) {
+            return;
+        }
         Entity attacker = weaponEntity.getAttackingEntity();
         Targetable target = game.getTarget(attackAction.getTargetType(), attackAction.getTargetId());
         if ((attacker == null)

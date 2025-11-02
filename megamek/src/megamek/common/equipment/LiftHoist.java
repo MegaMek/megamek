@@ -35,6 +35,9 @@ package megamek.common.equipment;
 
 import megamek.common.units.Entity;
 
+/**
+ * Transporter for Lift Hoists as described TW p. 136
+ */
 public class LiftHoist extends ExternalCargo {
 
     //transient private Mounted<?> mounted;

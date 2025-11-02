@@ -33,6 +33,11 @@
 
 package megamek.common.equipment;
 
+/**
+ * Represents a cargo object.
+ * <p>
+ * TODO: Rules for generic objects in TO:AR p. 90
+ */
 public class Cargo extends GroundObject {
 
     /**

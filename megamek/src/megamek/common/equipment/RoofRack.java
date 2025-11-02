@@ -33,6 +33,9 @@
 
 package megamek.common.equipment;
 
+/**
+ * Cargo Carrier TW p. 261. Unprotected, in slings, strapped to the top, in lightweight containers and so on.
+ */
 public class RoofRack extends ExternalCargo {
 
     public RoofRack(double tonnage) {

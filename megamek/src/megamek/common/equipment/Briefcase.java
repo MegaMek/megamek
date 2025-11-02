@@ -34,7 +34,10 @@
 package megamek.common.equipment;
 
 /**
- * Represents a basic carryable object with no additional other properties
+ * Represents a basic carryable object with no additional other properties.
+ * <p>
+ * Briefcases use simplified logic for being picked up. It is intended to be used for objective based gameplay but
+ * without using the full depth of rules described in TO:AR.
  */
 public class Briefcase extends GroundObject {
 

@@ -40,6 +40,10 @@ import java.util.Vector;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
 
+/**
+ * Unprotected cargo transporter. Miscellaneous transporters that don't properly protect their cargo like a bay or
+ * infantry compartment, but support cargo unlike clamp mounts or BA Handles.
+ */
 public abstract class ExternalCargo implements Transporter {
 
     protected transient Game game;

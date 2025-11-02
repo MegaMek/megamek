@@ -42,7 +42,9 @@ import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.server.totalWarfare.TWGameManager;
 
-
+/**
+ * Abstract class for objects that can be placed on the ground but are not entities.
+ */
 public abstract class GroundObject implements ICarryable, Serializable {
     @Serial
     private static final long serialVersionUID = 8849879320465375457L;

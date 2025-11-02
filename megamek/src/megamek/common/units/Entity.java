@@ -238,7 +238,7 @@ public abstract class Entity extends TurnOrdered
 
     public static final int MAX_C3_NODES = 12;
     public static final int MAX_C3i_NODES = 6;
-    
+
     // PLAYTEST3 isC3ecmAffected
     protected boolean isC3ecmAffected = false;
 
@@ -4963,7 +4963,6 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * return how many misc equipments with the specified flag the unit has
-     *
      */
     public int countWorkingMisc(EquipmentFlag flag) {
         return countWorkingMisc(flag, -1);
@@ -5660,7 +5659,6 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * check if we have an active ECM unit for stealth armor purposes
-     *
      */
     public boolean hasActiveECM(boolean stealth) {
         // no ECM in space unless strat op option enabled
@@ -6221,7 +6219,6 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Set the C3 network ID to be used on the next turn. Used for reconfiguring a C3 network with Nova CEWS.
-     *
      */
     public void setNewRoundNovaNetworkString(String string) {
         // Only allow Nova CEWS to change
@@ -8447,7 +8444,6 @@ public abstract class Entity extends TurnOrdered
     /**
      * Returns the maximum number of downward elevation changes a unit can make. For some units (namely, WiGEs), this
      * can depend upon their current elevation (since elevation determines if the WiGEs is using WiGE movement or not).
-     *
      */
     public int getMaxElevationDown(int currElevation) {
         return getMaxElevationChange();
@@ -8925,7 +8921,7 @@ public abstract class Entity extends TurnOrdered
      * @return All Entities that can at this point be unloaded from any transports of this Entity which are not Bays.
      *       This does not include any units that were loaded this turn. Note that the returned list may be
      *       unmodifiable. This shouldn't return towed entities, they're tracked separately. This shouldn't return
-     *       entities transported by {@link ExternalCargo} , they should be picked up / dropped, not loaded/unloaded.
+     *       entities transported by {@link ExternalCargo}, they should be picked up / dropped, not loaded/unloaded.
      *
      * @see #getLoadedTrailers()
      * @see #wasLoadedThisTurn()
@@ -13298,7 +13294,6 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * do we have a half-hit hardened armor point in the location struck by this?
-     *
      */
     public boolean isHardenedArmorDamaged(HitData hit) {
         return hardenedArmorDamaged[hit.getLocation()];
@@ -15991,6 +15986,7 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * What entity is using this weapon to attack?
+     *
      * @return entity carrying this weapon, or the entity itself
      */
     public Entity getAttackingEntity() {

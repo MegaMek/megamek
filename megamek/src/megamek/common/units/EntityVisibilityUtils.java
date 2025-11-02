@@ -88,7 +88,7 @@ public class EntityVisibilityUtils {
         boolean sensorsDetectAll = entity.getGame()
               .getOptions()
               .booleanOption(OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
-        boolean doubleBlind = entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
+        boolean doubleBlind = entity.gameOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
 
         if (!doubleBlind) {
             return false;
@@ -119,9 +119,9 @@ public class EntityVisibilityUtils {
             return false;
         }
 
-        return e.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
+        return e.gameOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
               && ((e.getOwner().getId() == localPlayer.getId()) ||
-              (e.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)
+              (e.gameOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)
                     && (e.getOwner().getTeam() == localPlayer.getTeam())));
     }
 }

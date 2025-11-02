@@ -250,7 +250,7 @@ public class VTOL extends Tank implements IBomber {
                     break;
                 case 8:
                     if (bSide
-                          && !game.getOptions()
+                          && !gameOptions()
                           .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_EFFECTIVE)) {
                         rv.setEffect(HitData.EFFECT_CRITICAL);
                     }
@@ -281,7 +281,7 @@ public class VTOL extends Tank implements IBomber {
     @Override
     public boolean isBomber() {
         return (game != null)
-              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VTOL_ATTACKS);
+              && gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VTOL_ATTACKS);
     }
 
     @Override
@@ -398,7 +398,7 @@ public class VTOL extends Tank implements IBomber {
             roll = 12;
         }
         if ((roll < 6)
-              || (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)
+              || (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)
               && !getOverThresh() && !damagedByFire)) {
             return CRIT_NONE;
         }

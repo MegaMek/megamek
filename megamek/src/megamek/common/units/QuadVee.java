@@ -208,7 +208,7 @@ public class QuadVee extends QuadMek {
         }
 
         if (!mpCalculationSetting.ignoreHeat()) {
-            if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT)) {
+            if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT)) {
                 if (heat < 30) {
                     mp -= (heat / 5);
                 } else if (heat >= 49) {
@@ -252,7 +252,7 @@ public class QuadVee extends QuadMek {
     public int getSprintMP(MPCalculationSetting mpCalculationSetting) {
         if (!mpCalculationSetting.ignoreConversion() && (getConversionMode() == CONV_MODE_VEHICLE)
               && ((game == null) ||
-              !game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_ADVANCED_MANEUVERS))) {
+              !gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_ADVANCED_MANEUVERS))) {
             return getRunMP(mpCalculationSetting);
         } else {
             return super.getSprintMP(mpCalculationSetting);
@@ -532,7 +532,7 @@ public class QuadVee extends QuadMek {
     @Override
     public boolean usesTurnMode() {
         return getConversionMode() == CONV_MODE_VEHICLE && !convertingNow
-              && game != null && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TURN_MODE);
+              && game != null && gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TURN_MODE);
     }
 
     /**
@@ -546,7 +546,7 @@ public class QuadVee extends QuadMek {
         if (getConversionMode() == CONV_MODE_VEHICLE != convertingNow) {
             Hex occupiedHex = game.getHexOf(this);
             return occupiedHex.containsTerrain(Terrains.FORTIFIED)
-                  && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN);
+                  && gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN);
         }
         return super.canGoHullDown();
     }

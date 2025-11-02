@@ -561,7 +561,7 @@ public class Infantry extends Entity {
         int walkMP = getWalkMP(mpCalculationSetting);
         if (!mpCalculationSetting.ignoreOptionalRules() &&
               (game != null) &&
-              game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FAST_INFANTRY_MOVE)) {
+              gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FAST_INFANTRY_MOVE)) {
             return (walkMP > 0) ? walkMP + 1 : walkMP + 2;
         } else {
             return walkMP;
@@ -871,7 +871,7 @@ public class Infantry extends Entity {
         // Infantry can fire all around themselves. But field guns are set up to a
         // vehicular turret facing
         if (isFieldWeapon(weapon)) {
-            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
+            if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
                 return Compute.ARC_TURRET;
             }
             return Compute.ARC_FORWARD;
@@ -1204,7 +1204,7 @@ public class Infantry extends Entity {
 
     @Override
     public boolean canAssaultDrop() {
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_PARATROOPERS)) {
+        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_PARATROOPERS)) {
             return true;
         }
 
@@ -1226,7 +1226,7 @@ public class Infantry extends Entity {
 
     @Override
     public boolean isEligibleForFiring() {
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FAST_INFANTRY_MOVE) &&
+        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FAST_INFANTRY_MOVE) &&
               (moved == EntityMovementType.MOVE_RUN)) {
             return false;
         }
@@ -1713,7 +1713,7 @@ public class Infantry extends Entity {
 
     @Override
     public boolean isEligibleForPavementOrRoadBonus() {
-        if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_INF_PAVE_BONUS)) {
+        if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_INF_PAVE_BONUS)) {
             return movementMode == EntityMovementMode.TRACKED ||
                   movementMode == EntityMovementMode.WHEELED ||
                   movementMode == EntityMovementMode.INF_MOTORIZED ||

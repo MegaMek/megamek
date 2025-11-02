@@ -1463,10 +1463,6 @@ public class ComputeToHit {
                     modifier += RangeType.RANGE_LONG;
                 }
             }
-            // PLAYTEST3 No more modifier for MRMs
-            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && weaponType instanceof MRMWeapon) {
-                modifier--;
-            }
             toHit.addModifier(modifier, Messages.getString("WeaponAttackAction.WeaponMod"));
 
         }

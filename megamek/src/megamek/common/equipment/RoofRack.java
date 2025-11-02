@@ -33,6 +33,9 @@
 
 package megamek.common.equipment;
 
+import megamek.codeUtilities.MathUtility;
+import megamek.common.units.Entity;
+
 /**
  * Cargo Carrier TW p. 261. Unprotected, in slings, strapped to the top, in lightweight containers and so on.
  */
@@ -40,5 +43,39 @@ public class RoofRack extends ExternalCargo {
 
     public RoofRack(double tonnage) {
         super(tonnage);
+    }
+
+    /**
+     * @param carrier
+     *
+     * @return the MP reduction due to cargo carried by this transporter
+     */
+    @Override
+    public int getCargoMpReduction(Entity carrier) {
+        // TW p. 261 movement penalties
+        // A unit carrying up to a quarter its weight loses 3 MP or moves at half speed.
+        // A unit carrying more than a quarter moves at half speed.
+        if ((carrier != null) && (getCarriedTonnage() > 0) && (carrier.getWeight() > 0)) {
+            int entityBaseMP = carrier.getOriginalWalkMP();
+            double carrierWeight = carrier.getWeight();
+
+            // If the carrier is carrying objects in its arms, they count towards this penalty too, but only if
+            // something is on the roof.
+            carrierWeight += carrier.getDistinctCarriedObjects()
+                  .stream()
+                  .mapToDouble(ICarryable::getTonnage)
+                  .sum();
+
+            double carriedWeightRatio = getCarriedTonnage() / carrierWeight;
+            int mpReduction = MathUtility.roundAwayFromZero(entityBaseMP / 2.0);
+
+            if (carriedWeightRatio <= .25) {
+                mpReduction = Math.min(entityBaseMP - 3, mpReduction);
+            }
+
+            return Math.max(0, entityBaseMP - mpReduction);
+        }
+
+        return 0;
     }
 }

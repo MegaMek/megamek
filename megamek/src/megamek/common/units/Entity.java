@@ -15763,7 +15763,7 @@ public abstract class Entity extends TurnOrdered
      * @return The GameOptions of this Entity's game if it has one, otherwise a default options object.
      */
     protected final IGameOptions gameOptions() {
-        return game != null ? gameOptions() : new GameOptions();
+        return game != null ? game.getOptions() : new GameOptions();
     }
 
     public void setUnitRole(UnitRole role) {

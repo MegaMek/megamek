@@ -34,8 +34,9 @@
 package megamek.common.equipment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
+import java.util.Map;
 
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
@@ -51,14 +52,16 @@ public abstract class ExternalCargo implements Transporter {
     /** The total amount of space available for objects. */
     protected double totalSpace;
 
-    /** The current amount of space not occupied by objects. */
-    protected double currentSpace;
+    private Map<Integer, List<ICarryable>> carriedObjects = new HashMap<>();
+    private List<Integer> validPickupLocations;
 
-    protected Vector<ICarryable> carriedObjects = new Vector<>();
+    protected ExternalCargo(Entity entity) {
+        this(entity.getTonnage(), List.of(Entity.LOC_NONE));
+    }
 
-    protected ExternalCargo(double tonnage) {
+    protected ExternalCargo(double tonnage, List<Integer> validPickupLocations) {
         totalSpace = tonnage;
-        currentSpace = totalSpace;
+        this.validPickupLocations = validPickupLocations;
     }
 
     /**
@@ -88,16 +91,28 @@ public abstract class ExternalCargo implements Transporter {
     }
 
     public void loadCarryable(ICarryable carryable) throws IllegalArgumentException {
+        if (validPickupLocations.isEmpty()) {
+            throw new IllegalArgumentException("No valid locations for " + carryable.specificName());
+        }
+        loadCarryable(carryable, validPickupLocations.get(0));
+    }
+
+    public void loadCarryable(ICarryable carryable, int location) throws IllegalArgumentException {
+        if (!validPickupLocations.contains(location)) {
+            throw new IllegalArgumentException("Invalid location for " + carryable.specificName());
+        }
+        if (maxObjects(location)) {
+            throw new IllegalArgumentException("Location already occupied by " + carriedObjects.get(location).get(0)
+                  .specificName());
+        }
         if (carryable instanceof Entity) {
             throw new IllegalArgumentException("Non-Functional Feature - Entities not supported");
         }
-        if (carryable.getTonnage() > currentSpace) {
+        if (carryable.getTonnage() > getUnused()) {
             throw new IllegalArgumentException("Not enough space to load " + carryable.specificName());
         }
 
-        carriedObjects.addElement(carryable);
-        currentSpace -= carryable.getTonnage();
-
+        addCarriedObject(carryable, location);
     }
 
     /**
@@ -113,7 +128,7 @@ public abstract class ExternalCargo implements Transporter {
             return List.of();
         }
         List<Entity> retList = new ArrayList<>();
-        for (ICarryable carriedObject : carriedObjects) {
+        for (ICarryable carriedObject : getCarryables()) {
             if (carriedObject instanceof Entity) {
                 retList.add((Entity) carriedObject);
             }
@@ -127,7 +142,7 @@ public abstract class ExternalCargo implements Transporter {
             return List.of();
         }
 
-        return new ArrayList<>(carriedObjects);
+        return carriedObjects.values().stream().flatMap(List::stream).toList();
     }
 
     /**
@@ -140,19 +155,22 @@ public abstract class ExternalCargo implements Transporter {
      */
     @Override
     public boolean unload(Entity unit) {
-        boolean wasCarried = carriedObjects.removeElement(unit);
-        if (wasCarried) {
-            currentSpace += unit.getTonnage();
-        }
-        return wasCarried;
+        return unloadCarryable(unit);
     }
 
     public boolean unloadCarryable(ICarryable carryable) {
-        boolean wasCarried = carriedObjects.removeElement(carryable);
-        if (wasCarried) {
-            currentSpace += carryable.getTonnage();
+        boolean carried = getCarryables().contains(carryable);
+        if (carried) {
+            for (int i : carriedObjects.keySet()) {
+                if (carriedObjects.get(i).contains(carryable)) {
+                    carriedObjects.get(i).remove(carryable);
+                    if (carriedObjects.get(i).isEmpty()) {
+                        carriedObjects.remove(i);
+                    }
+                }
+            }
         }
-        return wasCarried;
+        return carried;
     }
 
     /**
@@ -160,11 +178,11 @@ public abstract class ExternalCargo implements Transporter {
      */
     @Override
     public double getUnused() {
-        return currentSpace;
+        return totalSpace - getCarriedTonnage();
     }
 
     public double getCarriedTonnage() {
-        return totalSpace - currentSpace;
+        return getCarryables().stream().mapToDouble(ICarryable::getTonnage).sum();
     }
 
     /**
@@ -236,6 +254,14 @@ public abstract class ExternalCargo implements Transporter {
     @Override
     public void resetTransporter() {
         carriedObjects.clear();
-        currentSpace = totalSpace;
+    }
+
+    protected boolean maxObjects(int location) {
+        // Only one item per location
+        return carriedObjects.containsKey(location);
+    }
+
+    private void addCarriedObject(ICarryable carryable, int location) {
+        carriedObjects.computeIfAbsent(location, k -> new ArrayList<>()).add(carryable);
     }
 }

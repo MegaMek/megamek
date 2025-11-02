@@ -54,8 +54,10 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.RoofRack;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -74,7 +76,6 @@ public class ExternalCargoTest {
         when(mockEntity.getId()).thenReturn(MOCK_ENTITY_ID);
     }
 
-
     @Nested
     class GenericExternalCargoTests {
         static double TEST_WEIGHT = 55;
@@ -86,7 +87,14 @@ public class ExternalCargoTest {
         static Stream<Arguments> externalCargoTypes() {
             return Stream.of(
                   Arguments.of(new RoofRack(55)),
-                  Arguments.of(new MekArms(55)),
+                  Arguments.of(new MekArms(55, List.of(Mek.LOC_LEFT_ARM, Mek.LOC_RIGHT_ARM))),
+                  Arguments.of(new LiftHoist(mockLiftHoist, 55))
+            );
+        }
+
+        static Stream<Arguments> singleSlotExternalCargoTypes() {
+            return Stream.of(
+                  Arguments.of(new MekArms(55, List.of(Mek.LOC_LEFT_ARM, Mek.LOC_RIGHT_ARM))),
                   Arguments.of(new LiftHoist(mockLiftHoist, 55))
             );
         }
@@ -147,7 +155,7 @@ public class ExternalCargoTest {
 
 
         @ParameterizedTest
-        @MethodSource(value = "externalCargoTypes")
+        @MethodSource(value = "singleSlotExternalCargoTypes")
         void loadCarryablesJustEnoughSpaceTest(ExternalCargo externalCargo) {
             // Arrange
             externalCargo.setGame(mockGame);
@@ -160,14 +168,16 @@ public class ExternalCargoTest {
 
             // Act
             externalCargo.loadCarryable(cargo);
-            externalCargo.loadCarryable(cargo2);
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                  () -> externalCargo.loadCarryable(cargo2));
 
             // Assert
-            assertEquals(MOCK_CARRYABLE_WEIGHT_1 + MOCK_CARRYABLE_WEIGHT_2, externalCargo.getCarriedTonnage());
-            assertEquals(TEST_WEIGHT - MOCK_CARRYABLE_WEIGHT_1 - MOCK_CARRYABLE_WEIGHT_2, externalCargo.getUnused());
-            assertEquals(2, externalCargo.getCarryables().size());
+            assertEquals("Location already occupied by " + cargo.specificName(), exception.getMessage());
+            assertEquals(MOCK_CARRYABLE_WEIGHT_1, externalCargo.getCarriedTonnage());
+            assertEquals(TEST_WEIGHT - MOCK_CARRYABLE_WEIGHT_1, externalCargo.getUnused());
+            assertEquals(1, externalCargo.getCarryables().size());
             assertTrue(externalCargo.getCarryables().contains(cargo));
-            assertTrue(externalCargo.getCarryables().contains(cargo2));
+            assertFalse(externalCargo.getCarryables().contains(cargo2));
         }
 
         @ParameterizedTest
@@ -190,7 +200,7 @@ public class ExternalCargoTest {
         }
 
         @ParameterizedTest
-        @MethodSource(value = "externalCargoTypes")
+        @MethodSource(value = "singleSlotExternalCargoTypes")
         void loadCarryablesBarelyTooMuchTest(ExternalCargo externalCargo) {
             // Arrange
             externalCargo.setGame(mockGame);
@@ -210,7 +220,7 @@ public class ExternalCargoTest {
             assertEquals(MOCK_CARRYABLE_WEIGHT_1, externalCargo.getCarriedTonnage());
             assertEquals(TEST_WEIGHT - MOCK_CARRYABLE_WEIGHT_1, externalCargo.getUnused());
             assertEquals(1, externalCargo.getCarryables().size());
-            assertEquals("Not enough space to load " + cargo2.specificName(), exception.getMessage());
+            assertEquals("Location already occupied by " + cargo.specificName(), exception.getMessage());
             assertTrue(externalCargo.getCarryables().contains(cargo));
             assertFalse(externalCargo.getCarryables().contains(cargo2));
         }
@@ -238,68 +248,6 @@ public class ExternalCargoTest {
             assertTrue(externalCargo.getCarryables().isEmpty());
             assertEquals(TEST_WEIGHT, externalCargo.getUnused());
             assertEquals(0, externalCargo.getCarriedTonnage());
-        }
-
-        @ParameterizedTest
-        @MethodSource(value = "externalCargoTypes")
-        void unloadCarryablesTest(ExternalCargo externalCargo) {
-            // Arrange
-            externalCargo.setGame(mockGame);
-
-            Cargo cargo = new Cargo();
-            cargo.setTonnage(MOCK_CARRYABLE_WEIGHT_1);
-
-            Cargo cargo2 = new Cargo();
-            cargo2.setTonnage(MOCK_CARRYABLE_WEIGHT_2);
-
-            externalCargo.loadCarryable(cargo);
-            externalCargo.loadCarryable(cargo2);
-
-            assertTrue(externalCargo.getCarryables().contains(cargo));
-            assertTrue(externalCargo.getCarryables().contains(cargo2));
-
-            // Act
-            boolean unloadedCargo = externalCargo.unloadCarryable(cargo);
-            boolean unloadedCargo2 = externalCargo.unloadCarryable(cargo2);
-
-            // Assert
-            assertTrue(unloadedCargo);
-            assertTrue(unloadedCargo2);
-            assertEquals(0, externalCargo.getCarriedTonnage());
-            assertEquals(TEST_WEIGHT, externalCargo.getUnused());
-            assertEquals(0, externalCargo.getCarryables().size());
-            assertFalse(externalCargo.getCarryables().contains(cargo));
-            assertFalse(externalCargo.getCarryables().contains(cargo2));
-        }
-
-        @ParameterizedTest
-        @MethodSource(value = "externalCargoTypes")
-        void unloadOneCarryableTest(ExternalCargo externalCargo) {
-            // Arrange
-            externalCargo.setGame(mockGame);
-
-            Cargo cargo = new Cargo();
-            cargo.setTonnage(MOCK_CARRYABLE_WEIGHT_1);
-
-            Cargo cargo2 = new Cargo();
-            cargo2.setTonnage(MOCK_CARRYABLE_WEIGHT_2);
-
-            externalCargo.loadCarryable(cargo);
-            externalCargo.loadCarryable(cargo2);
-
-            assertTrue(externalCargo.getCarryables().contains(cargo));
-            assertTrue(externalCargo.getCarryables().contains(cargo2));
-
-            // Act
-            boolean unloadedCargo = externalCargo.unloadCarryable(cargo);
-
-            // Assert
-            assertTrue(unloadedCargo);
-            assertEquals(MOCK_CARRYABLE_WEIGHT_2, externalCargo.getCarriedTonnage());
-            assertEquals(TEST_WEIGHT - MOCK_CARRYABLE_WEIGHT_2, externalCargo.getUnused());
-            assertEquals(1, externalCargo.getCarryables().size());
-            assertFalse(externalCargo.getCarryables().contains(cargo));
-            assertTrue(externalCargo.getCarryables().contains(cargo2));
         }
 
         @ParameterizedTest
@@ -332,6 +280,8 @@ public class ExternalCargoTest {
     @Nested
     class RoofRackTests {
         static double TEST_WEIGHT = 60;
+        static double MOCK_CARRYABLE_WEIGHT_1 = 20; // Less than half of TEST_ENTITY_WEIGHT, please
+        static double MOCK_CARRYABLE_WEIGHT_2 = TEST_WEIGHT - MOCK_CARRYABLE_WEIGHT_1;
 
         static Entity mockCarrier = mock(Entity.class);
 
@@ -452,6 +402,114 @@ public class ExternalCargoTest {
             assertEquals(heavyLoadMPReduction, mpReduction);
             assertEquals(1, roofRack.getCarryables().size());
             assertEquals(cargo, roofRack.getCarryables().get(0));
+        }
+
+        @Test
+        void loadCarryablesJustEnoughSpaceTest() {
+            // Arrange
+            RoofRack roofRack = new RoofRack(TEST_WEIGHT);
+
+            Cargo cargo = new Cargo();
+            cargo.setTonnage(MOCK_CARRYABLE_WEIGHT_1);
+
+            Cargo cargo2 = new Cargo();
+            cargo2.setTonnage(MOCK_CARRYABLE_WEIGHT_2);
+
+            // Act
+            roofRack.loadCarryable(cargo);
+            roofRack.loadCarryable(cargo2);
+
+            // Assert
+            assertEquals(MOCK_CARRYABLE_WEIGHT_1 + MOCK_CARRYABLE_WEIGHT_2, roofRack.getCarriedTonnage());
+            assertEquals(TEST_WEIGHT - MOCK_CARRYABLE_WEIGHT_1 - MOCK_CARRYABLE_WEIGHT_2, roofRack.getUnused());
+            assertEquals(2, roofRack.getCarryables().size());
+            assertTrue(roofRack.getCarryables().contains(cargo));
+            assertTrue(roofRack.getCarryables().contains(cargo2));
+        }
+
+        @Test
+        void loadCarryablesBarelyTooMuchTest() {
+            // Arrange
+            RoofRack roofRack = new RoofRack(TEST_WEIGHT);
+
+            Cargo cargo = new Cargo();
+            cargo.setTonnage(MOCK_CARRYABLE_WEIGHT_1);
+
+            Cargo cargo2 = new Cargo();
+            cargo2.setTonnage(MOCK_CARRYABLE_WEIGHT_2 + 1);
+
+            // Act
+            roofRack.loadCarryable(cargo);
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                  () -> roofRack.loadCarryable(cargo2));
+
+            // Assert
+            assertEquals(MOCK_CARRYABLE_WEIGHT_1, roofRack.getCarriedTonnage());
+            assertEquals(TEST_WEIGHT - MOCK_CARRYABLE_WEIGHT_1, roofRack.getUnused());
+            assertEquals(1, roofRack.getCarryables().size());
+            assertEquals("Not enough space to load " + cargo2.specificName(), exception.getMessage());
+            assertTrue(roofRack.getCarryables().contains(cargo));
+            assertFalse(roofRack.getCarryables().contains(cargo2));
+        }
+
+        @Test
+        void unloadCarryablesTest() {
+            // Arrange
+            RoofRack roofRack = new RoofRack(TEST_WEIGHT);
+
+            Cargo cargo = new Cargo();
+            cargo.setTonnage(MOCK_CARRYABLE_WEIGHT_1);
+
+            Cargo cargo2 = new Cargo();
+            cargo2.setTonnage(MOCK_CARRYABLE_WEIGHT_2);
+
+            roofRack.loadCarryable(cargo);
+            roofRack.loadCarryable(cargo2);
+
+            assertTrue(roofRack.getCarryables().contains(cargo));
+            assertTrue(roofRack.getCarryables().contains(cargo2));
+
+            // Act
+            boolean unloadedCargo = roofRack.unloadCarryable(cargo);
+            boolean unloadedCargo2 = roofRack.unloadCarryable(cargo2);
+
+            // Assert
+            assertTrue(unloadedCargo);
+            assertTrue(unloadedCargo2);
+            assertEquals(0, roofRack.getCarriedTonnage());
+            assertEquals(TEST_WEIGHT, roofRack.getUnused());
+            assertEquals(0, roofRack.getCarryables().size());
+            assertFalse(roofRack.getCarryables().contains(cargo));
+            assertFalse(roofRack.getCarryables().contains(cargo2));
+        }
+
+        @Test
+        void unloadOneCarryableTest() {
+            // Arrange
+            RoofRack roofRack = new RoofRack(TEST_WEIGHT);
+
+            Cargo cargo = new Cargo();
+            cargo.setTonnage(MOCK_CARRYABLE_WEIGHT_1);
+
+            Cargo cargo2 = new Cargo();
+            cargo2.setTonnage(MOCK_CARRYABLE_WEIGHT_2);
+
+            roofRack.loadCarryable(cargo);
+            roofRack.loadCarryable(cargo2);
+
+            assertTrue(roofRack.getCarryables().contains(cargo));
+            assertTrue(roofRack.getCarryables().contains(cargo2));
+
+            // Act
+            boolean unloadedCargo = roofRack.unloadCarryable(cargo);
+
+            // Assert
+            assertTrue(unloadedCargo);
+            assertEquals(MOCK_CARRYABLE_WEIGHT_2, roofRack.getCarriedTonnage());
+            assertEquals(TEST_WEIGHT - MOCK_CARRYABLE_WEIGHT_2, roofRack.getUnused());
+            assertEquals(1, roofRack.getCarryables().size());
+            assertFalse(roofRack.getCarryables().contains(cargo));
+            assertTrue(roofRack.getCarryables().contains(cargo2));
         }
     }
 }

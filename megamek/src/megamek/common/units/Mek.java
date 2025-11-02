@@ -503,15 +503,6 @@ public abstract class Mek extends Entity {
         }
     }
 
-    /**
-     * Add transporter for mek's arms for externally carried cargo
-     */
-    public void setMekArms() {
-        if (getTransports().stream().noneMatch(transporter -> transporter instanceof MekArms)) {
-            addTransporter(new MekArms(maxGroundObjectTonnage()));
-        }
-    }
-
     public void setProtoMekClampMounts() {
         boolean front = false;
         boolean rear = false;
@@ -536,7 +527,6 @@ public abstract class Mek extends Entity {
     public void addIntrinsicTransporters() {
         setBAGrabBars();
         setProtoMekClampMounts();
-        setMekArms();
         addRoofRack();
         if (!isOmni() && !hasBattleArmorHandles()) {
             addTransporter(new ClampMountMek());

@@ -33,19 +33,20 @@
 
 package megamek.common.equipment;
 
+import java.util.List;
+
 import megamek.common.units.Entity;
 
 /**
  * Transporter for Lift Hoists as described TW p. 136
  */
 public class LiftHoist extends ExternalCargo {
-    
+
     private int entityId;
     private int mountedId;
 
-
     public LiftHoist(Mounted<?> mounted, double tonnage) {
-        super(tonnage);
+        super(tonnage, List.of(Entity.LOC_NONE));
         entityId = mounted.getEntity().getId();
         mountedId = mounted.getEquipmentNum();
     }

@@ -33,12 +33,19 @@
 
 package megamek.common.equipment;
 
+import java.util.List;
+
 import megamek.common.units.Entity;
+import megamek.common.units.MekWithArms;
 
 public class MekArms extends ExternalCargo {
 
-    public MekArms(double tonnage) {
-        super(tonnage);
+    public MekArms(MekWithArms mek) {
+        this(mek.maxGroundObjectTonnage(), mek.getDefaultPickupLocations());
+    }
+
+    public MekArms(double tonnage, List<Integer> validPickupLocations) {
+        super(tonnage, validPickupLocations);
     }
 
     /**
@@ -52,7 +59,7 @@ public class MekArms extends ExternalCargo {
      */
     @Override
     public boolean canLoad(Entity unit) {
-        return unit.getTonnage() <= currentSpace;
+        return unit.getTonnage() <= getUnused();
     }
 
     /**
@@ -64,7 +71,6 @@ public class MekArms extends ExternalCargo {
      */
     @Override
     public void load(Entity unit) throws IllegalArgumentException {
-        carriedObjects.add(unit);
-        currentSpace -= unit.getTonnage();
+        loadCarryable(unit);
     }
 }

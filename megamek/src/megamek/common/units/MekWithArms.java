@@ -41,6 +41,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.MPCalculationSetting;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.MekArms;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
@@ -445,5 +446,20 @@ public abstract class MekWithArms extends Mek {
     public boolean canPerformGroundSalvageOperations() {
         return hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM) &&
               hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM);
+    }
+
+    @Override
+    public void addIntrinsicTransporters() {
+        setMekArms();
+        super.addIntrinsicTransporters();
+    }
+
+    /**
+     * Add transporter for mek's arms for externally carried cargo
+     */
+    public void setMekArms() {
+        if (getTransports().stream().noneMatch(transporter -> transporter instanceof MekArms)) {
+            addTransporter(new MekArms(this));
+        }
     }
 }

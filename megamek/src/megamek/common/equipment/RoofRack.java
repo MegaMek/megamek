@@ -33,6 +33,8 @@
 
 package megamek.common.equipment;
 
+import java.util.List;
+
 import megamek.codeUtilities.MathUtility;
 import megamek.common.units.Entity;
 
@@ -42,7 +44,7 @@ import megamek.common.units.Entity;
 public class RoofRack extends ExternalCargo {
 
     public RoofRack(double tonnage) {
-        super(tonnage);
+        super(tonnage, List.of(Entity.LOC_NONE));
     }
 
     /**
@@ -77,5 +79,10 @@ public class RoofRack extends ExternalCargo {
         }
 
         return 0;
+    }
+
+    @Override
+    protected boolean maxObjects(int location) {
+        return false; // No limit for roof racks
     }
 }

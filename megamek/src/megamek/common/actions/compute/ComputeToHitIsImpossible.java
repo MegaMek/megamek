@@ -127,7 +127,10 @@ class ComputeToHitIsImpossible {
           boolean exchangeSwarmTarget, boolean isHoming, boolean isInferno, boolean isIndirect, boolean isStrafing,
           boolean isTAG, boolean targetInBuilding, boolean usesAmmo, boolean underWater, boolean evenIfAlreadyFired) {
 
-
+        //Block if the weapon entity is null
+        if (weaponEntity == null) {
+            return Messages.getString("WeaponAttackAction.NoAttacker");
+        }
         Entity attacker = weaponEntity.getAttackingEntity();
         // Block the shot if the attacker is null
         if (attacker == null) {
@@ -452,7 +455,10 @@ class ComputeToHitIsImpossible {
         // Line of Sight and Range Reasons
 
         // attacker partial cover means no leg weapons
-        if (los.isAttackerCover() && weapon != null && weaponEntity.locationIsLeg(weapon.getLocation()) && !underWater) {
+        if (los.isAttackerCover()
+              && weapon != null
+              && weaponEntity.locationIsLeg(weapon.getLocation())
+              && !underWater) {
             return Messages.getString("WeaponAttackAction.LegBlockedByTerrain");
         }
 
@@ -574,14 +580,17 @@ class ComputeToHitIsImpossible {
         // HHW Specific
         if ((weapon != null) && (weapon.getEntity() != attacker) && weapon.getEntity() instanceof HandheldWeapon hhw) {
             // Are any other attacks from this HHW at different targets?
-            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
                 EntityAction ea = i.nextElement();
                 if ((ea instanceof WeaponAttackAction prevWeaponAttackAction) &&
                       (attackerId == prevWeaponAttackAction.getEntityId()) &&
                       (weaponId != prevWeaponAttackAction.getWeaponId())) {
                     WeaponMounted prevWeapon =
-                          (WeaponMounted) prevWeaponAttackAction.getEntity(game).getEquipment(prevWeaponAttackAction.getWeaponId());
-                    if ((prevWeapon != null) && hhw.equals(prevWeapon.getEntity()) && prevWeaponAttackAction.getTargetId() != target.getId()) {
+                          (WeaponMounted) prevWeaponAttackAction.getEntity(game)
+                                .getEquipment(prevWeaponAttackAction.getWeaponId());
+                    if ((prevWeapon != null)
+                          && hhw.equals(prevWeapon.getEntity())
+                          && prevWeaponAttackAction.getTargetId() != target.getId()) {
                         return Messages.getString("WeaponAttackAction.HandheldWeaponsMultipleTargets");
                     }
                 }
@@ -1736,7 +1745,7 @@ class ComputeToHitIsImpossible {
             if ((attacker instanceof ProtoMek) &&
                   !ComputeArc.isInArc(attacker.getPosition(), attacker.getFacing(), target, Compute.ARC_FORWARD) &&
                   weaponType.hasFlag(WeaponType.F_MGA)
-                  ) {
+            ) {
                 return Messages.getString("WeaponAttackAction.ProtoMGAOnlyFront");
             }
 

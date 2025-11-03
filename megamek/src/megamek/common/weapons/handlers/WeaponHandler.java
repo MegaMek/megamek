@@ -1810,9 +1810,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
         toHit = toHitData;
         this.weaponAttackAction = weaponAttackAction;
         this.game = game;
-        Entity weaponEntity = this.game.getEntity(this.weaponAttackAction.getEntityId());
-        attackingEntity = weaponEntity.getAttackingEntity();
 
+        Entity weaponEntity = this.game.getEntity(this.weaponAttackAction.getEntityId());
+        if (weaponEntity == null) {
+            throw new EntityLoadingException("Weapon Entity is NULL");
+        }
+
+        attackingEntity = weaponEntity.getAttackingEntity();
         if (attackingEntity == null) {
             throw new EntityLoadingException("Attacking Entity is NULL");
         }
@@ -2265,7 +2269,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
     /**
      * Used by certain artillery handlers to draw drift markers with "hit" graphics if anything is caught in the blast,
      * or "drift" marker if nothing is damaged. No-op for direct hits.
-     *
      */
     protected void handleArtilleryDriftMarker(Coords targetPos, Coords finalPos, ArtilleryAttackAction aaa,
           Vector<Integer> hitIds) {

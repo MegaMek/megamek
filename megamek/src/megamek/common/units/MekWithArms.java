@@ -404,7 +404,7 @@ public abstract class MekWithArms extends Mek {
 
     private void addAttemptStandingPenalties(PilotingRollData roll) {
         // PLAYTEST2 Standing has -1 PSR
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+        if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
             roll.addModifier(-1, "Trying to stand");
         }
 
@@ -413,7 +413,7 @@ public abstract class MekWithArms extends Mek {
             return;
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ATTEMPTING_STAND)) {
+        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ATTEMPTING_STAND)) {
             for (int loc : List.of(Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM)) {
                 if (isLocationBad(loc)) {
                     roll.addModifier(2, getLocationName(loc) + " destroyed");

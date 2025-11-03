@@ -492,7 +492,7 @@ public abstract class Mek extends Entity {
         // This is an unofficial rule and it doesn't work well anyway as changing the
         // option
         // does not affect units that are in the game
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_BA_GRAB_BARS)) {
+        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_BA_GRAB_BARS)) {
             addTransporter(new BattleArmorHandles());
         } else {
             addTransporter(new ClampMountMek());
@@ -1040,7 +1040,7 @@ public abstract class Mek extends Entity {
 
     @Override
     public int getRunningGravityLimit() {
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_SPRINT)) {
+        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_SPRINT)) {
             return getSprintMP(MPCalculationSetting.NO_GRAVITY);
         } else {
             return getRunMP(MPCalculationSetting.NO_GRAVITY);
@@ -1584,7 +1584,7 @@ public abstract class Mek extends Entity {
         // If the TacOps option for coolant failure is enabled, include reductions for
         // coolant failure
         if (game != null &&
-              game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_COOLANT_FAILURE)) {
+              gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_COOLANT_FAILURE)) {
             capacity -= heatSinkCoolantFailureFactor;
         }
 
@@ -1932,7 +1932,7 @@ public abstract class Mek extends Entity {
                 switch (roll) {
                     case 2:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
-                              && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
+                              && !gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(tac(table, side, Mek.LOC_CENTER_TORSO, cover, false));
@@ -1970,7 +1970,7 @@ public abstract class Mek extends Entity {
                 switch (roll) {
                     case 2:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
-                              && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
+                              && !gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
                                   aimedLocation, aimingMode, cover);
@@ -1987,13 +1987,13 @@ public abstract class Mek extends Entity {
                     case 7:
                         return new HitData(Mek.LOC_LEFT_TORSO);
                     case 8:
-                        if (game.getOptions().booleanOption(
+                        if (gameOptions().booleanOption(
                               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_CENTER_TORSO, true);
                         }
                         return new HitData(Mek.LOC_CENTER_TORSO);
                     case 9:
-                        if (game.getOptions().booleanOption(
+                        if (gameOptions().booleanOption(
                               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_RIGHT_TORSO, true);
                         }
@@ -2017,7 +2017,7 @@ public abstract class Mek extends Entity {
                 switch (roll) {
                     case 2:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
-                              && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
+                              && !gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
                                   aimedLocation, aimingMode, cover);
@@ -2034,13 +2034,13 @@ public abstract class Mek extends Entity {
                     case 7:
                         return new HitData(Mek.LOC_RIGHT_TORSO);
                     case 8:
-                        if (game.getOptions().booleanOption(
+                        if (gameOptions().booleanOption(
                               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_CENTER_TORSO, true);
                         }
                         return new HitData(Mek.LOC_CENTER_TORSO);
                     case 9:
-                        if (game.getOptions().booleanOption(
+                        if (gameOptions().booleanOption(
                               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_LEFT_TORSO, true);
                         }
@@ -2061,13 +2061,13 @@ public abstract class Mek extends Entity {
                 }
             } else if (side == ToHitData.SIDE_REAR) {
                 // normal rear hits
-                if (game.getOptions().booleanOption(
+                if (gameOptions().booleanOption(
                       OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)
                       && isProne()) {
                     switch (roll) {
                         case 2:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
-                                  && !game.getOptions().booleanOption(
+                                  && !gameOptions().booleanOption(
                                   OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side,
@@ -2108,7 +2108,7 @@ public abstract class Mek extends Entity {
                     switch (roll) {
                         case 2:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
-                                  && !game.getOptions().booleanOption(
+                                  && !gameOptions().booleanOption(
                                   OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side,
@@ -3375,7 +3375,7 @@ public abstract class Mek extends Entity {
         if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
               Mek.LOC_CENTER_TORSO) > 0) {
             if (getGyroType() == Mek.GYRO_HEAVY_DUTY) {
-                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
                     if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
                           Mek.LOC_CENTER_TORSO) == 1) {
                         roll.addModifier(1, "HD Gyro damaged once");
@@ -3395,7 +3395,7 @@ public abstract class Mek extends Entity {
                     }
                 }
             } else {
-                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
                     roll.addModifier(2, "Gyro damaged");
                 } else {
                     roll.addModifier(3, "Gyro damaged");
@@ -3473,7 +3473,7 @@ public abstract class Mek extends Entity {
 
     @Override
     public int getMaxElevationDown(int currElevation) {
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING)) {
+        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING)) {
             return UNLIMITED_JUMP_DOWN;
         }
         return getMaxElevationChange();
@@ -3767,7 +3767,7 @@ public abstract class Mek extends Entity {
         // Meks can charge, unless they are Clan and the "no clan physicals" option is
         // set
         return super.canCharge()
-              && !(game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
+              && !(gameOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
               && getCrew().isClanPilot());
     }
 
@@ -3775,7 +3775,7 @@ public abstract class Mek extends Entity {
     public boolean canDFA() {
         // Meks can DFA, unless they are Clan and the "no clan physicals" option is set
         return super.canDFA()
-              && !(game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
+              && !(gameOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
               && getCrew().isClanPilot());
     }
 
@@ -5327,7 +5327,7 @@ public abstract class Mek extends Entity {
         super.destroyLocation(loc, blownOff);
         // if it's a leg, the entity falls
         if (game != null && locationIsLeg(loc) && canFall()) {
-            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+            if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
                 game.addPSR(new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL, 4, "leg destroyed"));
             } else {
                 game.addPSR(new PilotingRollData(getId(),
@@ -6015,7 +6015,7 @@ public abstract class Mek extends Entity {
 
         // PLAYTEST3 heavy duty gyro is now 4
         if (game != null
-              && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)
+              && gameOptions().booleanOption(OptionsConstants.PLAYTEST_3)
               && gyroType == GYRO_HEAVY_DUTY) {
             hitsToDestroyGyro = 4;
         }

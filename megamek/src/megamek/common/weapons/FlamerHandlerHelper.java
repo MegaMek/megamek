@@ -66,7 +66,7 @@ public class FlamerHandlerHelper {
         boolean heatDamageReducedByArmor = false;
         int actualDamage = heatDamage;
         boolean playtestThree = false;
-        if (entityTarget != null) {
+        if (entityTarget != null && entityTarget.getGame() != null) {
             playtestThree = entityTarget.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3);
         }
 

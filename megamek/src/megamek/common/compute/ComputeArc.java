@@ -61,7 +61,7 @@ public class ComputeArc {
         Entity attacker = weaponEntity instanceof HandheldWeapon ?
               game.getEntity(weaponEntity.getTransportId()) : game.getEntity(attackerId);
 
-        if ((attacker == null) || (target == null)) {
+        if ((weaponEntity == null) || (attacker == null) || (target == null)) {
             LOGGER.error("Trying to compute arc with a null attacker or target");
             return false;
         }

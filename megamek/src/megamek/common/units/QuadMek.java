@@ -115,7 +115,7 @@ public class QuadMek extends Mek {
     // PLAYTEST2 New Method for immobile due to no legs.
     @Override
     public boolean isImmobile() {
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+        if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
             int legsDestroyed = 0;
             int hipHits = 0;
             for (int i = 0; i < locations(); i++) {
@@ -165,7 +165,7 @@ public class QuadMek extends Mek {
         } else {
             for (int i : List.of(Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM)) {
                 // PLAYTEST2 leg crits and MP
-                if (!(game == null) && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                if (!(game == null) && gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
                     if (!isLocationBad(i)) {
                         if (legHasHipCrit(i)) {
                             if (i == Mek.LOC_LEFT_ARM) {
@@ -182,7 +182,7 @@ public class QuadMek extends Mek {
                             }
                             hipHits++;
                             if ((game == null) ||
-                                  !game.getOptions()
+                                  !gameOptions()
                                         .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
                                 continue;
                             }
@@ -208,7 +208,7 @@ public class QuadMek extends Mek {
                         if (legHasHipCrit(i)) {
                             hipHits++;
                             if ((game == null) ||
-                                  !game.getOptions()
+                                  !gameOptions()
                                         .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
                                 continue;
                             }
@@ -225,7 +225,7 @@ public class QuadMek extends Mek {
         if (legsDestroyed > 0) {
             if (legsDestroyed == 1) {
                 mp--;
-            } else if (game != null && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+            } else if (game != null && gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
                 if (legsDestroyed == 4) {mp = 0;}
             } else if (legsDestroyed == 2) {
                 mp = 1;
@@ -234,7 +234,7 @@ public class QuadMek extends Mek {
             }
         }
         // PLAYTEST2 set reduction for hips and legs 2 and 3
-        if ((game != null) && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2) && (mp > 0)) {
+        if ((game != null) && gameOptions().booleanOption(OptionsConstants.PLAYTEST_2) && (mp > 0)) {
             if (hipHits == 4) {
                 mp = 0;
             } else {
@@ -296,7 +296,7 @@ public class QuadMek extends Mek {
             if (mp > 0) {
                 if (hipHits > 0) {
                     if ((game != null) &&
-                          game.getOptions()
+                          gameOptions()
                                 .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
                         mp = mp - (2 * hipHits);
                     } else {
@@ -320,7 +320,7 @@ public class QuadMek extends Mek {
 
         if (!mpCalculationSetting.ignoreHeat()) {
             // factor in heat
-            if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT)) {
+            if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT)) {
                 if (heat < 30) {
                     mp -= (heat / 5);
                 } else if (heat >= 49) {
@@ -456,7 +456,7 @@ public class QuadMek extends Mek {
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
         int destroyedLegs;
-        
+
         destroyedLegs = countBadLegs();
 
         // QuadVees lose the bonus when converting.
@@ -482,7 +482,7 @@ public class QuadMek extends Mek {
                 // getBasePiloting
                 if ((destroyedLegs == 2) && !destroyedLegCounted) {
                     // PLAYTEST2 pilot is +4 now
-                    if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                    if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
                         roll.addModifier(4, "2 legs destroyed");
                     } else {
                         roll.addModifier(5, "2 legs destroyed");
@@ -493,12 +493,12 @@ public class QuadMek extends Mek {
                 // check for damaged hip actuators
                 if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
                     // PLAYTEST2 now a +1 not +2
-                    if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+                    if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
                         roll.addModifier(1, getLocationName(loc) + " Hip Actuator destroyed");
                     } else {
                         roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
                     }
-                    if (!game.getOptions()
+                    if (!gameOptions()
                           .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
                         continue;
                     }
@@ -593,7 +593,7 @@ public class QuadMek extends Mek {
                     switch (roll) {
                         case 2:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
-                                  !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
+                                  !gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                                 result.setUndoneLocation(tac(table, side, Mek.LOC_CENTER_TORSO, cover, false));
@@ -629,7 +629,7 @@ public class QuadMek extends Mek {
                     switch (roll) {
                         case 2:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
-                                  !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
+                                  !gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                                 result.setUndoneLocation(tac(table, side, Mek.LOC_CENTER_TORSO, cover, true));
@@ -665,7 +665,7 @@ public class QuadMek extends Mek {
                     switch (roll) {
                         case 2:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
-                                  !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
+                                  !gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                                 result.setUndoneLocation(tac(table, side, Mek.LOC_LEFT_TORSO, cover, false));
@@ -701,7 +701,7 @@ public class QuadMek extends Mek {
                     switch (roll) {
                         case 2:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
-                                  !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
+                                  !gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                                 result.setUndoneLocation(tac(table, side, Mek.LOC_RIGHT_TORSO, cover, false));
@@ -967,7 +967,7 @@ public class QuadMek extends Mek {
     @Override
     public boolean canGoHullDown() {
         // check the option
-        boolean retVal = game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN);
+        boolean retVal = gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN);
         if (!retVal) {
             return false;
         }

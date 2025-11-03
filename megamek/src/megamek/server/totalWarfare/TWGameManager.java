@@ -9587,7 +9587,15 @@ public class TWGameManager extends AbstractGameManager {
         for (EntityAction ea : entityActions) {
             // is this the right entity?
             Entity weaponEntity = game.getEntity(ea.getEntityId());
+            if (weaponEntity == null) {
+                LOGGER.error("Attack packet has invalid weapon entity");
+                continue;
+            }
             Entity attacker = weaponEntity.getAttackingEntity();
+            if (attacker == null) {
+                LOGGER.error("Attack packet has invalid attacker entity");
+                continue;
+            }
             if (attacker.getId() != entity.getId()) {
                 LOGGER.error("Attack packet has wrong attacker");
                 continue;

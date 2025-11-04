@@ -338,14 +338,7 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
 
-            if (entity instanceof Mek mek) {
-                mek.setBAGrabBars();
-                mek.setProtoMekClampMounts();
-                mek.setMekArms();
-            }
-            if (entity instanceof Tank tank) {
-                tank.setBAGrabBars();
-            }
+            entity.addIntrinsicTransporters();
         }
 
         this.game.removeEntities(orphanEntities, IEntityRemovalConditions.REMOVE_UNKNOWN);
@@ -9410,7 +9403,7 @@ public class TWGameManager extends AbstractGameManager {
      * Receives an updated data structure containing carryable objects on the ground
      */
     private void receiveGroundObjectUpdate(Packet packet, int connId) throws InvalidPacketDataException {
-        Map<Coords, List<ICarryable>> groundObjects = packet.getCoordsWithBriefcaseICarryableListMap(0);
+        Map<Coords, List<ICarryable>> groundObjects = packet.getCoordsWithGroundObjectListMap(0);
         getGame().setGroundObjects(groundObjects);
 
         // make sure to update the other clients with the new ground objects data structure

@@ -75,14 +75,14 @@ import megamek.common.units.Aero;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
-import megamek.common.units.Mek;
+import megamek.common.units.MekWithArms;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
@@ -344,9 +344,9 @@ public class WeaponAttackActionToHitTest {
             when(mockAttackingEntity.isAirborne()).thenReturn(true);
             when(mockAttackingEntity.isAero()).thenReturn(true);
             when(mockAttackingEntity.passedOver(any())).thenReturn(true);
-        when(mockAttackingEntity.getAttackingEntity()).thenReturn(mockAttackingEntity);
+            when(mockAttackingEntity.getAttackingEntity()).thenReturn(mockAttackingEntity);
 
-        when(mockWeapon.getEntity()).thenReturn(mockAttackingEntity);
+            when(mockWeapon.getEntity()).thenReturn(mockAttackingEntity);
 
             mockTarget = mock(Tank.class);
             when(mockTarget.getOwner()).thenReturn(mockEnemy);
@@ -375,7 +375,8 @@ public class WeaponAttackActionToHitTest {
         }
 
         @Test
-        @Disabled // Psi - I don't know, the altitude is too high, why does this test exist?
+        @Disabled
+            // Psi - I don't know, the altitude is too high, why does this test exist?
         void inPitchBlackTest() {
             try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class,
                   invocationOnMock -> mockLos)) {
@@ -437,7 +438,6 @@ public class WeaponAttackActionToHitTest {
             when(mockAttackingEntity.getAttackingEntity()).thenReturn(mockAttackingEntity);
 
             when(mockWeapon.getEntity()).thenReturn(mockAttackingEntity);
-
 
 
             mockTarget = mock(Targetable.class);
@@ -641,14 +641,14 @@ public class WeaponAttackActionToHitTest {
 
             MekFileParser mekFileParser;
             HandheldWeapon handheldWeapon;
-            Mek mek;
+            MekWithArms mek;
 
             try {
                 mekFileParser = new MekFileParser(mekSummary.getSourceFile(), mekSummary.getEntryName());
                 handheldWeapon = (HandheldWeapon) mekFileParser.getEntity();
 
                 mekFileParser = new MekFileParser(otherMekSummary.getSourceFile(), otherMekSummary.getEntryName());
-                mek = (Mek) mekFileParser.getEntity();
+                mek = (MekWithArms) mekFileParser.getEntity();
 
             } catch (Exception ex) {
                 return;
@@ -700,10 +700,10 @@ public class WeaponAttackActionToHitTest {
             mek.setGame(mockGame);
             mek.newRound(1);
 
-            try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class, invocationOnMock -> mockLos)) {
+            try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class,
+                  invocationOnMock -> mockLos)) {
                 mockedLosEffects.when(() -> LosEffects.calculateLOS(any(), any(), any(), anyBoolean()))
                       .thenReturn(mockLos);
-
 
                 ToHitData toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
                 assertEquals(4, toHit.getValue());

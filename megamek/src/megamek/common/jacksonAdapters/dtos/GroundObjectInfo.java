@@ -30,32 +30,16 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
+package megamek.common.jacksonAdapters.dtos;
 
-package megamek.common.equipment;
+import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import megamek.common.board.Coords;
+import megamek.common.jacksonAdapters.CarryableDeserializer;
 
 /**
- * Represents a basic carryable object with no additional other properties.
- * <p>
- * Briefcases use simplified logic for being picked up. It is intended to be used for objective based gameplay but
- * without using the full depth of rules described in TO:AR.
+ * This is a temporary record for parsed info about a GroundObject object (which do not have a position field)
  */
-public class Briefcase extends GroundObject {
-
-    /**
-     * Returns true if the carryable object is able to be picked up. Briefcases can always be picked up.
-     *
-     * @param isCarrierHullDown is the unit that's picking this up hull down, or otherwise able to pick up ground-level
-     *                          objects
-     *
-     * @return true if the object can be picked up, false if it cannot
-     */
-    @Override
-    public boolean canBePickedUp(boolean isCarrierHullDown) {
-        return true; // Briefcases can always be picked up.
-    }
-
-    @Override
-    public CarriedObjectDamageAllocation getCarriedObjectDamageAllocation() {
-        return CarriedObjectDamageAllocation.ANY_HIT;
-    }
-}
+@JsonRootName(value = "Carryable")
+@JsonDeserialize(using = CarryableDeserializer.class)
+public record GroundObjectInfo(megamek.common.equipment.GroundObject groundObject, Coords position) {}

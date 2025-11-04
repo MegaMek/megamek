@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,29 +33,47 @@
 
 package megamek.common.equipment;
 
-/**
- * Represents a basic carryable object with no additional other properties.
- * <p>
- * Briefcases use simplified logic for being picked up. It is intended to be used for objective based gameplay but
- * without using the full depth of rules described in TO:AR.
- */
-public class Briefcase extends GroundObject {
+import java.util.List;
 
-    /**
-     * Returns true if the carryable object is able to be picked up. Briefcases can always be picked up.
-     *
-     * @param isCarrierHullDown is the unit that's picking this up hull down, or otherwise able to pick up ground-level
-     *                          objects
-     *
-     * @return true if the object can be picked up, false if it cannot
-     */
-    @Override
-    public boolean canBePickedUp(boolean isCarrierHullDown) {
-        return true; // Briefcases can always be picked up.
+import megamek.common.units.Entity;
+
+/**
+ * Transporter for Lift Hoists as described TW p. 136
+ */
+public class LiftHoist extends ExternalCargo {
+
+    private int entityId;
+    private int mountedId;
+
+    public LiftHoist(Mounted<?> mounted, double tonnage) {
+        super(tonnage, List.of(Entity.LOC_NONE));
+        entityId = mounted.getEntity().getId();
+        mountedId = mounted.getEquipmentNum();
     }
 
     @Override
-    public CarriedObjectDamageAllocation getCarriedObjectDamageAllocation() {
-        return CarriedObjectDamageAllocation.ANY_HIT;
+    public double getUnused() {
+        if (isOperable()) {
+            return super.getUnused();
+        }
+        return 0;
+    }
+
+    @Override
+    public boolean canLoad(Entity unit) {
+        return isOperable() && super.canLoad(unit);
+    }
+
+    private boolean isOperable() {
+        Mounted<?> mounted = getMounted();
+        return mounted != null && !mounted.getEntity().isLocationBad(mounted.getLocation()) && mounted.isOperable();
+    }
+
+    private Mounted<?> getMounted() {
+        Entity entity = game.getEntity(entityId);
+        if (entity == null) {
+            return null;
+        }
+        return entity.getEquipment(mountedId);
     }
 }

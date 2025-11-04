@@ -46,10 +46,9 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.equipment.Briefcase;
-import megamek.common.equipment.GroundObject;
-import megamek.common.jacksonAdapters.dtos.GroundObjectInfo;
+import megamek.common.jacksonAdapters.dtos.CarryableInfo;
 
-public class CarryableDeserializer extends StdDeserializer<GroundObjectInfo> {
+public class CarryableDeserializer extends StdDeserializer<CarryableInfo> {
 
     private static final String NAME = "name";
     private static final String WEIGHT = "weight";
@@ -68,20 +67,20 @@ public class CarryableDeserializer extends StdDeserializer<GroundObjectInfo> {
     }
 
     @Override
-    public GroundObjectInfo deserialize(JsonParser jp, DeserializationContext context) throws IOException {
+    public CarryableInfo deserialize(JsonParser jp, DeserializationContext context) throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
         requireFields("Carryable", node, NAME, WEIGHT);
 
-        GroundObject groundObject = new Briefcase(); //TODO: Differentiate between Briefcase and Cargo
+        Briefcase briefcase = new Briefcase();
 
-        groundObject.setName(node.get(NAME).textValue());
-        groundObject.setTonnage(node.get(WEIGHT).doubleValue());
-        assignStatus(groundObject, node);
-        Coords position = readPosition(groundObject, node);
-        return new GroundObjectInfo(groundObject, position);
+        briefcase.setName(node.get(NAME).textValue());
+        briefcase.setTonnage(node.get(WEIGHT).doubleValue());
+        assignStatus(briefcase, node);
+        Coords position = readPosition(briefcase, node);
+        return new CarryableInfo(briefcase, position);
     }
 
-    private @Nullable Coords readPosition(GroundObject groundObject, JsonNode node) {
+    private @Nullable Coords readPosition(Briefcase briefcase, JsonNode node) {
         try {
             if (node.has(AT)) {
                 List<Integer> xyList = new ArrayList<>();
@@ -93,25 +92,25 @@ public class CarryableDeserializer extends StdDeserializer<GroundObjectInfo> {
                 return new Coords(node.get(X).asInt(), node.get(Y).asInt());
             }
         } catch (Exception e) {
-            throw new IllegalArgumentException("Illegal position information for carryable " + groundObject, e);
+            throw new IllegalArgumentException("Illegal position information for carryable " + briefcase, e);
         }
         return null;
     }
 
-    private void assignStatus(GroundObject groundObject, JsonNode node) {
+    private void assignStatus(Briefcase briefcase, JsonNode node) {
         if (node.has(STATUS)) {
             JsonNode statusNode = node.get(STATUS);
             if (statusNode.isContainerNode() && statusNode.isArray()) {
-                statusNode.iterator().forEachRemaining(n -> parseStatus(groundObject, n.textValue()));
+                statusNode.iterator().forEachRemaining(n -> parseStatus(briefcase, n.textValue()));
             } else if (statusNode.isTextual()) {
-                parseStatus(groundObject, statusNode.asText());
+                parseStatus(briefcase, statusNode.asText());
             }
         }
     }
 
-    private void parseStatus(GroundObject groundObject, String statusString) {
+    private void parseStatus(Briefcase briefcase, String statusString) {
         if (statusString.equals(INVULNERABLE)) {
-            groundObject.setInvulnerable(true);
+            briefcase.setInvulnerable(true);
         } else {
             throw new IllegalArgumentException("Unknown status " + statusString);
         }

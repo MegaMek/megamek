@@ -4963,6 +4963,7 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * return how many misc equipments with the specified flag the unit has
+     *
      */
     public int countWorkingMisc(EquipmentFlag flag) {
         return countWorkingMisc(flag, -1);
@@ -5659,6 +5660,7 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * check if we have an active ECM unit for stealth armor purposes
+     *
      */
     public boolean hasActiveECM(boolean stealth) {
         // no ECM in space unless strat op option enabled
@@ -6219,6 +6221,7 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Set the C3 network ID to be used on the next turn. Used for reconfiguring a C3 network with Nova CEWS.
+     *
      */
     public void setNewRoundNovaNetworkString(String string) {
         // Only allow Nova CEWS to change
@@ -8444,6 +8447,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Returns the maximum number of downward elevation changes a unit can make. For some units (namely, WiGEs), this
      * can depend upon their current elevation (since elevation determines if the WiGEs is using WiGE movement or not).
+     *
      */
     public int getMaxElevationDown(int currElevation) {
         return getMaxElevationChange();
@@ -8485,17 +8489,6 @@ public abstract class Entity extends TurnOrdered
     public void removeAllTransporters() {
         transports = new Vector<>();
         omniPodTransports.clear();
-    }
-
-    /**
-     * Some entities will always have certain transporters. This method is overloaded to support that.
-     */
-    public void addIntrinsicTransporters() {}
-
-    public void addRoofRack() {
-        if (getTransports().stream().noneMatch(t -> t instanceof RoofRack)) {
-            addTransporter(new RoofRack(getWeight()));
-        }
     }
 
     /**
@@ -13302,6 +13295,7 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * do we have a half-hit hardened armor point in the location struck by this?
+     *
      */
     public boolean isHardenedArmorDamaged(HitData hit) {
         return hardenedArmorDamaged[hit.getLocation()];
@@ -15994,7 +15988,6 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * What entity is using this weapon to attack?
-     *
      * @return entity carrying this weapon, or the entity itself
      */
     public Entity getAttackingEntity() {

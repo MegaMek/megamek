@@ -56,7 +56,6 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
-import megamek.common.equipment.LiftHoist;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
@@ -1009,9 +1008,6 @@ public class MtfFile implements IMekLoader {
                             } else {
                                 mount.setFacing(facing);
                             }
-                        }
-                        if (mount.getType().hasFlag(MiscType.F_LIFT_HOIST)) { // Cargo Container too?
-                            mek.addTransporter(new LiftHoist(mount, mek.getWeight() / 2), isOmniPod);
                         }
                     }
                 } else {

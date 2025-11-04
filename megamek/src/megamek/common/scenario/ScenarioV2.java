@@ -76,7 +76,7 @@ import megamek.common.jacksonAdapters.MMUReader;
 import megamek.common.jacksonAdapters.MessageDeserializer;
 import megamek.common.jacksonAdapters.TriggerDeserializer;
 import megamek.common.jacksonAdapters.VictoryDeserializer;
-import megamek.common.jacksonAdapters.dtos.GroundObjectInfo;
+import megamek.common.jacksonAdapters.dtos.CarryableInfo;
 import megamek.common.options.GameOptions;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
@@ -432,16 +432,16 @@ public class ScenarioV2 implements Scenario {
             // Carryables
             if (playerNode.has(OBJECTS) && (game instanceof AbstractGame)) {
                 JsonNode carryablesNode = playerNode.get(OBJECTS);
-                List<GroundObjectInfo> carryables = new MMUReader(scenariofile)
-                      .read(carryablesNode, GroundObjectInfo.class).stream()
-                      .filter(o -> o instanceof GroundObjectInfo)
-                      .map(o -> (GroundObjectInfo) o)
+                List<CarryableInfo> carryables = new MMUReader(scenariofile)
+                      .read(carryablesNode, CarryableInfo.class).stream()
+                      .filter(o -> o instanceof CarryableInfo)
+                      .map(o -> (CarryableInfo) o)
                       .toList();
-                for (GroundObjectInfo groundObjectInfo : carryables) {
-                    if (groundObjectInfo.position() == null) {
-                        player.getGroundObjectsToPlace().add(groundObjectInfo.groundObject());
+                for (CarryableInfo carryableInfo : carryables) {
+                    if (carryableInfo.position() == null) {
+                        player.getGroundObjectsToPlace().add(carryableInfo.carryable());
                     } else {
-                        ((AbstractGame) game).placeGroundObject(groundObjectInfo.position(), groundObjectInfo.groundObject());
+                        ((AbstractGame) game).placeGroundObject(carryableInfo.position(), carryableInfo.carryable());
                     }
                 }
             }

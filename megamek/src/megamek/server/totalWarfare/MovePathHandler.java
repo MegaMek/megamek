@@ -63,7 +63,7 @@ import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
-import megamek.common.equipment.GroundObject;
+import megamek.common.equipment.Briefcase;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EscapePods;
@@ -3156,7 +3156,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // note that this should not be moved into the "!isLastStep" block above as cargo may be either
                 // unloaded peacefully or dumped on the move
                 if (!cargoDestroyed) {
-                    if (cargo instanceof GroundObject) {
+                    if (cargo instanceof Briefcase) {
                         getGame().placeGroundObject(step.getPosition(), cargo);
                     }
 
@@ -3169,7 +3169,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                     // a drop changes board state. Send an update for the overall ground object
                     // list.
-                    if (cargo instanceof GroundObject) {
+                    if (cargo instanceof Briefcase) {
                         gameManager.sendGroundObjectUpdate();
                     } else if (cargo instanceof Entity carriedEntity) {
                         gameManager.send(gameManager.getPacketHelper().createTurnListPacket());

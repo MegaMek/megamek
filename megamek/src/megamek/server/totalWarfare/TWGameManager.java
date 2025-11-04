@@ -22628,7 +22628,7 @@ public class TWGameManager extends AbstractGameManager {
         int damage = mounted.getExplosionDamage();
 
         // PLAYTEST3 explosive equipment does 2 damage per crit slot. This overrides previous amounts
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && !(mounted.getType() instanceof AmmoType)) {
             damage = mounted.getNumCriticalSlots() * 2;
         }
 

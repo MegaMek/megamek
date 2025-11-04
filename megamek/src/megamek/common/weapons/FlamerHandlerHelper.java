@@ -39,6 +39,7 @@ import megamek.common.Report;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponType;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 
 /**
@@ -50,16 +51,8 @@ public class FlamerHandlerHelper {
     /**
      * Handles flamer heat damage.
      */
-    // PLAYTEST3 call without playtest if it is not passed.
     public static void doHeatDamage(Entity entityTarget, Vector<Report> vPhaseReport, WeaponType weaponType,
           int subjectId, HitData hit) {
-        doHeatDamage(entityTarget, vPhaseReport, weaponType, subjectId, hit, false);
-    }
-
-
-    // PLAYTEST3 included. 
-    public static void doHeatDamage(Entity entityTarget, Vector<Report> vPhaseReport, WeaponType weaponType,
-          int subjectId, HitData hit, boolean playtestThree) {
         Report report = new Report(3400);
         report.subject = subjectId;
         report.indent(2);
@@ -72,6 +65,10 @@ public class FlamerHandlerHelper {
 
         boolean heatDamageReducedByArmor = false;
         int actualDamage = heatDamage;
+        boolean playtestThree = false;
+        if (entityTarget != null && entityTarget.getGame() != null) {
+            playtestThree = entityTarget.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3);
+        }
 
         // armor can't reduce damage if there isn't any
         if (entityTarget.getArmor(hit) > 0) {

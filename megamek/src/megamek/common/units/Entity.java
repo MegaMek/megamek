@@ -1761,6 +1761,11 @@ public abstract class Entity extends TurnOrdered
     public void setNPassenger(int pass) {
     }
 
+    public int getPassengerCapacityWithoutBayCrew() {
+        int bayCrew = getBayPersonnel();
+        return nPassenger - bayCrew;
+    }
+
     /**
      * @return The number conventional marines available to vessels for boarding actions.
      */

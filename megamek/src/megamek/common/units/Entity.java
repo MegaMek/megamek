@@ -6377,15 +6377,20 @@ public abstract class Entity extends TurnOrdered
         Entity master = m.getC3Master();
         while ((master != null) &&
               !master.equals(m) &&
-              master.hasC3() &&
-              ((m.hasBoostedC3() &&
-                    !ComputeECM.isAffectedByAngelECM(m, m.getPosition(), master.getPosition())) ||
-                    !(ComputeECM.isAffectedByECM(m, m.getPosition(), master.getPosition()))) &&
-              ((master.hasBoostedC3() &&
-                    !ComputeECM.isAffectedByAngelECM(master, master.getPosition(), master.getPosition())) ||
-                    !(ComputeECM.isAffectedByECM(master, master.getPosition(), master.getPosition())))) {
-            m = master;
-            master = m.getC3Master();
+              master.hasC3()) {
+            // PLAYTEST3 broke out the logic so we return the master, even with ECM in play
+            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                m = master;
+                master = m.getC3Master();
+            } else if (((m.hasBoostedC3() &&
+                  !ComputeECM.isAffectedByAngelECM(m, m.getPosition(), master.getPosition())) ||
+                  !(ComputeECM.isAffectedByECM(m, m.getPosition(), master.getPosition()))) &&
+                  ((master.hasBoostedC3() &&
+                        !ComputeECM.isAffectedByAngelECM(master, master.getPosition(), master.getPosition())) ||
+                        !(ComputeECM.isAffectedByECM(master, master.getPosition(), master.getPosition())))) {
+                m = master;
+                master = m.getC3Master();
+            }
         }
         return m;
     }
@@ -6575,6 +6580,10 @@ public abstract class Entity extends TurnOrdered
             if (ignoreECM) {
                 return true;
             }
+            // PLAYTEST3 we don't care about ECM here, the network is still there.
+            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                return true;
+            }
             return !(ComputeECM.isAffectedByECM(e, e.getPosition(), e.getPosition())) &&
                   !(ComputeECM.isAffectedByECM(this, getPosition(), getPosition()));
         }
@@ -6602,6 +6611,10 @@ public abstract class Entity extends TurnOrdered
             }
             ECMInfo srcInfo = ComputeECM.getECMEffects(e, e.getPosition(), e.getPosition(), true, null);
             ECMInfo dstInfo = ComputeECM.getECMEffects(this, getPosition(), getPosition(), true, null);
+            // PLAYTEST3 ignoring ECM for this check
+            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                return true;
+            }
             return !((srcInfo != null) && srcInfo.isNovaECM()) && !((dstInfo != null) && dstInfo.isNovaECM());
         }
 

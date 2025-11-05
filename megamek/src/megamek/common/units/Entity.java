@@ -1761,6 +1761,17 @@ public abstract class Entity extends TurnOrdered
     public void setNPassenger(int pass) {
     }
 
+    /**
+     * Gets the passenger capacity of this unit excluding bay crew personnel.
+     *
+     * <p>This method calculates the available passenger capacity by subtracting the number of bay crew members from
+     * the total passenger capacity.</p>
+     *
+     * @return the passenger capacity available for non-crew passengers
+     *
+     * @author Illiani
+     * @since 0.50.10
+     */
     public int getPassengerCapacityWithoutBayCrew() {
         int bayCrew = getBayPersonnel();
         return nPassenger - bayCrew;

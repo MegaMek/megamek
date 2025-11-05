@@ -46,7 +46,7 @@ public class LiftHoist extends ExternalCargo {
     private final static MMLogger logger = MMLogger.create(LiftHoist.class);
 
     private transient Entity entity;
-    private int entityId;
+    private int entityId = Entity.NONE;
     private int mountedId;
 
     public LiftHoist(Mounted<?> mounted, double tonnage) {

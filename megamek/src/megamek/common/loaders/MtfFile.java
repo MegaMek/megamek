@@ -1010,9 +1010,8 @@ public class MtfFile implements IMekLoader {
                                 mount.setFacing(facing);
                             }
                         }
-                        if (etype instanceof MiscType && mount.getType().hasFlag(MiscType.F_LIFT_HOIST)) { // Cargo
-                            // Container
-                            // too?
+                        if (etype instanceof MiscType && mount.getType().hasFlag(MiscType.F_LIFT_HOIST)) {
+                            // Cargo container too?
                             mek.addTransporter(new LiftHoist(mount, mek.getWeight() / 2), isOmniPod);
                         }
                     }

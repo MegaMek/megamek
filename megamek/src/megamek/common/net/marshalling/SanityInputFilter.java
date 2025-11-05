@@ -90,7 +90,7 @@ public class SanityInputFilter implements ObjectInputFilter {
           Pattern.compile("java\\.util\\.HashMap"),
           Pattern.compile("java\\.util\\.HashSet"),
           Pattern.compile("java\\.util\\.Hashtable"),
-          Pattern.compile("java\\.util\\.ImmutableCollections\\$List"),
+          Pattern.compile("java\\.util\\.ImmutableCollections\\$List.*"),
           Pattern.compile("java\\.util\\.LinkedHashMap"),
           Pattern.compile("java\\.util\\.LinkedHashSet"),
           Pattern.compile("java\\.util\\.LinkedList"),

@@ -35,19 +35,26 @@ package megamek.common.equipment;
 
 import java.util.List;
 
+import megamek.common.game.Game;
 import megamek.common.units.Entity;
+import megamek.logging.MMLogger;
 
 /**
  * Transporter for Lift Hoists as described TW p. 136
  */
 public class LiftHoist extends ExternalCargo {
+    private final static MMLogger logger = MMLogger.create(LiftHoist.class);
 
-    private int entityId;
+    private transient Entity entity;
+    private int entityId = Entity.NONE;
     private int mountedId;
 
     public LiftHoist(Mounted<?> mounted, double tonnage) {
         super(tonnage, List.of(Entity.LOC_NONE));
-        entityId = mounted.getEntity().getId();
+        entity = mounted.getEntity();
+        if (entity != null) {
+            entityId = mounted.getEntity().getId();
+        }
         mountedId = mounted.getEquipmentNum();
     }
 
@@ -62,6 +69,18 @@ public class LiftHoist extends ExternalCargo {
     @Override
     public boolean canLoad(Entity unit) {
         return isOperable() && super.canLoad(unit);
+    }
+
+    @Override
+    public void setGame(Game game) {
+        super.setGame(game);
+        if (entity != null) {
+            entityId = entity.getId();
+        } else if (entityId != Entity.NONE) {
+            entity = game.getEntity(entityId);
+        } else {
+            logger.warn("LiftHoist has no entity or entityId");
+        }
     }
 
     private boolean isOperable() {

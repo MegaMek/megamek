@@ -1458,7 +1458,7 @@ public class Compute {
         // find any c3 spotters that could help
         Entity c3spotter = ComputeC3Spotter.findC3Spotter(game, attackingEntity, target);
         Entity c3spotterWithECM = ComputeC3Spotter.playtestFindC3Spotter(game, attackingEntity, target);
-        
+
         if (isIndirect) {
             c3spotter = attackingEntity; // no c3 when using indirect fire
         }
@@ -1470,13 +1470,13 @@ public class Compute {
         int c3dist = Compute.effectiveDistance(game, c3spotter, target, false);
         // PLAYTEST3 if there is a member that is ECM blocked
         int c3ecmDist = Compute.effectiveDistance(game, c3spotterWithECM, target, false);
-        
+
         // C3 can't benefit from LOS range.
         int c3range = RangeType.rangeBracketC3(c3dist, distance, weaponRanges, useExtremeRange, false);
         // PLAYTEST3 checking for ECM ranged member
         int c3ecmRange = RangeType.rangeBracketC3(c3ecmDist, distance, weaponRanges, useExtremeRange, false);
-        
-       
+
+
         /*
          * Tac Ops Extreme Range Rule p. 85 if the weapons normal range is
          * Extreme then C3 uses the next highest range bracket, i.e. medium
@@ -1489,7 +1489,7 @@ public class Compute {
 
         // determine which range we're using
         int usingRange = range;
-        
+
         if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
             // PLAYTEST3 check ecm vs non ecm affected C3
             if (c3range > c3ecmRange) {
@@ -3739,7 +3739,7 @@ public class Compute {
                             // to reflect scaled crit chance
                             // Other armor-penetrating ammo types should be
                             // tested here, such as Tandem-charge SRMs
-                            
+
                             // PLAYTEST added
                             if (((ammoBinType.getAmmoType() == AmmoTypeEnum.AC)
                                   || (ammoBinType.getAmmoType() == AmmoTypeEnum.LAC)
@@ -3939,7 +3939,11 @@ public class Compute {
             } else if (weaponType.getAmmoType() == AmmoTypeEnum.AC_ROTARY) {
                 weapon.setMode(Weapon.MODE_RAC_TWO_SHOT);
             } else if (rapidAC) {
-                weapon.setMode(Weapon.MODE_AC_RAPID);
+                // Rapid firing standard autocannon is risky, so save it for
+                // better to-hit numbers
+                if (spinupThreshold >= (threshold + 1)) {
+                    weapon.setMode(Weapon.MODE_AC_RAPID);
+                }
             }
         }
 

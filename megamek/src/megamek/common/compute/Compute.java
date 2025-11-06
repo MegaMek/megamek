@@ -3887,14 +3887,17 @@ public class Compute {
     }
 
     /**
-     * If this is an ultra or rotary cannon, lets see about 'spinning it up' for extra damage
+     * Determine if autocannon should fire more than one round. Includes standard ACs if
+     * the game option for rapid-fire-mode is enabled.
      *
+     * @param atk              Attack action with weapon attack properties
+     * @param spinupThreshold  Maximum to-hit number to consider for rapid fire
      * @return the <code>int</code> ID of weapon mode
      */
 
     public static int spinUpCannon(Game cgame, WeaponAttackAction atk, int spinupThreshold) {
 
-        int threshold;
+        int to_hit;
         int final_spin;
         Entity shooter;
         Mounted<?> weapon;
@@ -3916,8 +3919,8 @@ public class Compute {
             return 0;
         }
 
-        // Get the to-hit number
-        threshold = atk.toHit(cgame).getValue();
+        // Get the to-hit number for this attack
+        to_hit = atk.toHit(cgame).getValue();
 
         // Set the weapon to single shot mode
         weapon.setMode(rapidAC ? "" : Weapon.MODE_AC_SINGLE);
@@ -3925,13 +3928,13 @@ public class Compute {
 
         // If weapon can't hit target, exit the function with the weapon on
         // single shot
-        if ((threshold == TargetRoll.IMPOSSIBLE)
-              || (threshold == TargetRoll.AUTOMATIC_FAIL)) {
+        if ((to_hit == TargetRoll.IMPOSSIBLE)
+              || (to_hit == TargetRoll.AUTOMATIC_FAIL)) {
             return final_spin;
         }
 
-        // If random roll is >= to-hit + 1, then set double-spin
-        if (spinupThreshold >= threshold) {
+        // If the to-hit number is under or at the provided threshold, set two-shot
+        if (to_hit <= spinupThreshold) {
             final_spin = 1;
             if ((weaponType.getAmmoType() == AmmoTypeEnum.AC_ULTRA)
                   || (weaponType.getAmmoType() == AmmoTypeEnum.AC_ULTRA_THB)) {
@@ -3939,29 +3942,33 @@ public class Compute {
             } else if (weaponType.getAmmoType() == AmmoTypeEnum.AC_ROTARY) {
                 weapon.setMode(Weapon.MODE_RAC_TWO_SHOT);
             } else if (rapidAC) {
-                // Rapid firing standard autocannon is risky, so save it for
-                // better to-hit numbers
-                if (spinupThreshold >= (threshold + 1)) {
+                // Rapid firing standard autocannon is risky, so save it for better
+                // to-hit numbers or when the 'kinder' option is enabled
+                if (to_hit <= (spinupThreshold - 1) ||
+                      cgame.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_KIND_RAPID_AC)) {
                     weapon.setMode(Weapon.MODE_AC_RAPID);
                 }
             }
         }
 
-        // If this is a Rotary cannon
+        // Rotary autocannon may be set to a higher rate of fire
         if (weaponType.getAmmoType() == AmmoTypeEnum.AC_ROTARY) {
 
-            // If random roll is >= to-hit + 2 then set to quad-spin
-            if (spinupThreshold >= (threshold + 1)) {
+            // If the to-hit number beats the provided threshold by at least 1, set for
+            // four shots
+            if (to_hit <= (spinupThreshold + 1)) {
                 final_spin = 2;
                 weapon.setMode(Weapon.MODE_RAC_FOUR_SHOT);
             }
 
-            // If random roll is >= to-hit + 3 then set to six-spin
-            if (spinupThreshold >= (threshold + 2)) {
+            // If the to-hit number beats the provided threshold by at least 2, set for
+            // six shots
+            if (to_hit <= (spinupThreshold + 2)) {
                 final_spin = 3;
                 weapon.setMode(Weapon.MODE_RAC_SIX_SHOT);
             }
         }
+
         return final_spin;
     }
 

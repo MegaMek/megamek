@@ -3892,12 +3892,14 @@ public class Compute {
      *
      * @param atk              Attack action with weapon attack properties
      * @param spinupThreshold  Maximum to-hit number to consider for rapid fire
-     * @return the <code>int</code> ID of weapon mode
+     * @return the <code>int</code> ID of weapon mode, which is also the number of mode changes
+     *          from single shot
      */
 
     public static int spinUpCannon(Game cgame, WeaponAttackAction atk, int spinupThreshold) {
 
         int to_hit;
+        // The number of mode changes needed to set a specific rate of fire
         int final_spin;
         Entity shooter;
         Mounted<?> weapon;
@@ -3933,42 +3935,53 @@ public class Compute {
             return final_spin;
         }
 
-        // If the to-hit number is under or at the provided threshold, set two-shot
+        // If the to-hit number is under or at the provided threshold, set multiple shots
         if (to_hit <= spinupThreshold) {
             final_spin = 1;
             if ((weaponType.getAmmoType() == AmmoTypeEnum.AC_ULTRA)
                   || (weaponType.getAmmoType() == AmmoTypeEnum.AC_ULTRA_THB)) {
                 weapon.setMode(Weapon.MODE_UAC_ULTRA);
             } else if (weaponType.getAmmoType() == AmmoTypeEnum.AC_ROTARY) {
+
                 weapon.setMode(Weapon.MODE_RAC_TWO_SHOT);
+
+                // If the to-hit number is significantly lower than the provided threshold,
+                // set for either five or six shots
+
+                if (to_hit <= (spinupThreshold - 3)) {
+                    final_spin = 5;
+                    weapon.setMode(Weapon.MODE_RAC_SIX_SHOT);
+                    return final_spin;
+                }
+
+                if (to_hit <= (spinupThreshold - 2)) {
+                    final_spin = 4;
+                    weapon.setMode(Weapon.MODE_RAC_FIVE_SHOT);
+                    return final_spin;
+                }
+
+                // If the to-hit number is slightly lower than the provided threshold, set for
+                // four shots.  Reduce to three shots if the to-hit number for high to-hit
+                // numbers to reduce chance of jamming and ammo use.
+                if (to_hit <= (spinupThreshold - 1)) {
+                    final_spin = to_hit >= 7 ? 2 : 3;
+                    weapon.setMode(to_hit >= 7 ? Weapon.MODE_RAC_THREE_SHOT : Weapon.MODE_RAC_FOUR_SHOT);
+                    return final_spin;
+                }
+
             } else if (rapidAC) {
                 // Rapid firing standard autocannon is risky, so save it for better
                 // to-hit numbers or when the 'kinder' option is enabled
                 if (to_hit <= (spinupThreshold - 1) ||
                       cgame.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_KIND_RAPID_AC)) {
                     weapon.setMode(Weapon.MODE_AC_RAPID);
+                } else {
+                    final_spin = 0;
                 }
             }
         }
 
-        // Rotary autocannon may be set to a higher rate of fire
-        if (weaponType.getAmmoType() == AmmoTypeEnum.AC_ROTARY) {
-
-            // If the to-hit number beats the provided threshold by at least 1, set for
-            // four shots
-            if (to_hit <= (spinupThreshold + 1)) {
-                final_spin = 2;
-                weapon.setMode(Weapon.MODE_RAC_FOUR_SHOT);
-            }
-
-            // If the to-hit number beats the provided threshold by at least 2, set for
-            // six shots
-            if (to_hit <= (spinupThreshold + 2)) {
-                final_spin = 3;
-                weapon.setMode(Weapon.MODE_RAC_SIX_SHOT);
-            }
-        }
-
+        // Return the number of mode changes needed to set the rate of fire
         return final_spin;
     }
 

@@ -493,17 +493,14 @@ public abstract class Mek extends Entity {
         // option
         // does not affect units that are in the game
         if (gameOptions().booleanOption(OptionsConstants.ADVANCED_BA_GRAB_BARS)) {
-            addTransporter(new BattleArmorHandles());
+            if (getTransports().stream().noneMatch(transporter -> transporter instanceof BattleArmorHandles)) {
+                addTransporter(new BattleArmorHandles());
+            }
         } else {
-            addTransporter(new ClampMountMek());
+            if (getTransports().stream().noneMatch(transporter -> transporter instanceof ClampMountMek)) {
+                addTransporter(new ClampMountMek());
+            }
         }
-    }
-
-    /**
-     * Add transporter for mek's arms for externally carried cargo
-     */
-    public void setMekArms() {
-        addTransporter(new ExternalCargo(maxGroundObjectTonnage()));
     }
 
     public void setProtoMekClampMounts() {
@@ -520,6 +517,19 @@ public abstract class Mek extends Entity {
         }
         if (!rear) {
             addTransporter(new ProtoMekClampMount(true));
+        }
+    }
+
+    /**
+     * Some entities will always have certain transporters. This method is overloaded to support that.
+     */
+    @Override
+    public void addIntrinsicTransporters() {
+        setBAGrabBars();
+        setProtoMekClampMounts();
+        addRoofRack();
+        if (!isOmni() && !hasBattleArmorHandles()) {
+            addTransporter(new ClampMountMek());
         }
     }
 

@@ -1762,6 +1762,22 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Gets the passenger capacity of this unit excluding bay crew personnel.
+     *
+     * <p>This method calculates the available passenger capacity by subtracting the number of bay crew members from
+     * the total passenger capacity.</p>
+     *
+     * @return the passenger capacity available for non-crew passengers
+     *
+     * @author Illiani
+     * @since 0.50.10
+     */
+    public int getPassengerCapacityWithoutBayCrew() {
+        int bayCrew = getBayPersonnel();
+        return nPassenger - bayCrew;
+    }
+
+    /**
      * @return The number conventional marines available to vessels for boarding actions.
      */
     public int getNMarines() {
@@ -4963,7 +4979,6 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * return how many misc equipments with the specified flag the unit has
-     *
      */
     public int countWorkingMisc(EquipmentFlag flag) {
         return countWorkingMisc(flag, -1);
@@ -5660,7 +5675,6 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * check if we have an active ECM unit for stealth armor purposes
-     *
      */
     public boolean hasActiveECM(boolean stealth) {
         // no ECM in space unless strat op option enabled
@@ -6221,7 +6235,6 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Set the C3 network ID to be used on the next turn. Used for reconfiguring a C3 network with Nova CEWS.
-     *
      */
     public void setNewRoundNovaNetworkString(String string) {
         // Only allow Nova CEWS to change
@@ -8460,7 +8473,6 @@ public abstract class Entity extends TurnOrdered
     /**
      * Returns the maximum number of downward elevation changes a unit can make. For some units (namely, WiGEs), this
      * can depend upon their current elevation (since elevation determines if the WiGEs is using WiGE movement or not).
-     *
      */
     public int getMaxElevationDown(int currElevation) {
         return getMaxElevationChange();
@@ -8502,6 +8514,17 @@ public abstract class Entity extends TurnOrdered
     public void removeAllTransporters() {
         transports = new Vector<>();
         omniPodTransports.clear();
+    }
+
+    /**
+     * Some entities will always have certain transporters. This method is overloaded to support that.
+     */
+    public void addIntrinsicTransporters() {}
+
+    public void addRoofRack() {
+        if (getTransports().stream().noneMatch(t -> t instanceof RoofRack)) {
+            addTransporter(new RoofRack(getWeight()));
+        }
     }
 
     /**
@@ -8554,8 +8577,14 @@ public abstract class Entity extends TurnOrdered
                       (unit.getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY);
             }
 
+            // External Cargo cannot be loaded, it should be picked up
+            // We can ignore this during the Lounge phase though
             for (Transporter t : transports) {
-                if (t.canLoad(unit) &&
+                boolean isLoungeOrUnknownPhase = false;
+                if (getGame() != null) {
+                    isLoungeOrUnknownPhase = getGame().getPhase().isLounge() || getGame().getPhase().isUnknown();
+                }
+                if ((!(t instanceof ExternalCargo) || isLoungeOrUnknownPhase) && t.canLoad(unit) &&
                       (!checkElev || unit.getElevation() == getElevation()) &&
                       !((t instanceof BattleArmorHandles) && noExternalMount)) {
                     return true;
@@ -8936,14 +8965,16 @@ public abstract class Entity extends TurnOrdered
     /**
      * @return All Entities that can at this point be unloaded from any transports of this Entity which are not Bays.
      *       This does not include any units that were loaded this turn. Note that the returned list may be
-     *       unmodifiable.This shouldn't return towed entities, they're tracked separately.
+     *       unmodifiable. This shouldn't return towed entities, they're tracked separately. This shouldn't return
+     *       entities transported by {@link ExternalCargo}, they should be picked up / dropped, not loaded/unloaded.
      *
      * @see #getLoadedTrailers()
      * @see #wasLoadedThisTurn()
+     * @see #getCarriedObjects()
      */
     public List<Entity> getUnitsUnloadableFromNonBays() {
         return transports.stream()
-              .filter(t -> !(t instanceof Bay) && !(t instanceof TankTrailerHitch))
+              .filter(t -> !(t instanceof Bay) && !(t instanceof TankTrailerHitch) && !(t instanceof ExternalCargo))
               .flatMap(b -> b.getLoadedUnits().stream())
               .filter(e -> !e.wasLoadedThisTurn())
               .toList();
@@ -13308,7 +13339,6 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * do we have a half-hit hardened armor point in the location struck by this?
-     *
      */
     public boolean isHardenedArmorDamaged(HitData hit) {
         return hardenedArmorDamaged[hit.getLocation()];
@@ -16001,6 +16031,7 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * What entity is using this weapon to attack?
+     *
      * @return entity carrying this weapon, or the entity itself
      */
     public Entity getAttackingEntity() {

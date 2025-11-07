@@ -1102,6 +1102,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             comMapSizes.addItem(size);
         }
 
+        comMapSizes.addItem(Messages.getString("ChatLounge.CustomMapSize"));
         comMapSizes.setSelectedIndex(oldSelection != -1 ? oldSelection : 0);
         comMapSizes.addActionListener(lobbyListener);
     }

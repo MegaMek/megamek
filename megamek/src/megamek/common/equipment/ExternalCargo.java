@@ -33,73 +33,102 @@
 
 package megamek.common.equipment;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
-public class ExternalCargo implements Transporter {
+/**
+ * Unprotected cargo transporter. Miscellaneous transporters that don't properly protect their cargo like a bay or
+ * infantry compartment, but support cargo unlike clamp mounts or BA Handles.
+ */
+public abstract class ExternalCargo implements Transporter {
 
     protected transient Game game;
 
     /** The total amount of space available for objects. */
     protected double totalSpace;
 
-    /** The current amount of space not occupied by objects. */
-    protected double currentSpace;
+    private Map<Integer, List<ICarryable>> carriedObjects = new HashMap<>();
+    private List<Integer> validPickupLocations;
 
-    protected Vector<ICarryable> carriedObjects = new Vector<>();
+    protected ExternalCargo(Entity entity) {
+        this(entity.getTonnage(), List.of(Entity.LOC_NONE));
+    }
 
-    public ExternalCargo(double tonnage) {
+    protected ExternalCargo(double tonnage, List<Integer> validPickupLocations) {
         totalSpace = tonnage;
-        currentSpace = totalSpace;
+        this.validPickupLocations = validPickupLocations;
     }
 
     /**
-     * Determines if this object can accept the given unit. The unit may not be
-     * of the appropriate type or there may be no room for the unit.
+     * Determines if this object can accept the given unit. The unit may not be of the appropriate type or there may be
+     * no room for the unit.
      *
      * @param unit - the <code>Entity</code> to be loaded.
+     *
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
-     * otherwise.
+     *       otherwise.
      */
     @Override
     public boolean canLoad(Entity unit) {
-        //return unit instanceof HandheldWeapon;
-        return unit.getTonnage() <= currentSpace;
+        return false; //TODO: Support loading cargo in game
     }
 
     /**
      * Load the given unit.
      *
      * @param unit the <code>Entity</code> to be loaded.
+     *
      * @throws IllegalArgumentException If the unit can't be loaded
      */
     @Override
     public void load(Entity unit) throws IllegalArgumentException {
-        carriedObjects.add(unit);
-        currentSpace -= unit.getTonnage();
+        throw new IllegalArgumentException("Non-Functional Feature");
+    }
+
+    public void loadCarryable(ICarryable carryable) throws IllegalArgumentException {
+        if (validPickupLocations.isEmpty()) {
+            throw new IllegalArgumentException("No valid locations for " + carryable.specificName());
+        }
+        loadCarryable(carryable, validPickupLocations.get(0));
+    }
+
+    public void loadCarryable(ICarryable carryable, int location) throws IllegalArgumentException {
+        if (!validPickupLocations.contains(location)) {
+            throw new IllegalArgumentException("Invalid location for " + carryable.specificName());
+        }
+        if (maxObjects(location)) {
+            throw new IllegalArgumentException("Location already occupied by " + carriedObjects.get(location).get(0)
+                  .specificName());
+        }
+        if (carryable instanceof Entity && !(carryable instanceof HandheldWeapon)) {
+            throw new IllegalArgumentException("Non-Functional Feature - Entities not supported");
+        }
+        if (carryable.getTonnage() > getUnused()) {
+            throw new IllegalArgumentException("Not enough space to load " + carryable.specificName());
+        }
+
+        addCarriedObject(carryable, location);
     }
 
     /**
-     * Get a <code>Vector</code> of the units currently loaded into this
-     * payload.
+     * Get a <code>Vector</code> of the units currently loaded into this payload.
      *
-     * @return A <code>List</code> of loaded <code>Entity</code> units.
-     * This list will never be <code>null</code>, but it may be
-     * empty. The returned <code>List</code> is independent from the
-     * underlying data structure; modifying one does not affect the
-     * other.
+     * @return A <code>List</code> of loaded <code>Entity</code> units. This list will never be <code>null</code>, but
+     *       it may be empty. The returned <code>List</code> is independent from the underlying data structure;
+     *       modifying one does not affect the other.
      */
     @Override
     public List<Entity> getLoadedUnits() {
         if (carriedObjects.isEmpty()) {
             return List.of();
         }
-        List<Entity> retList = new ArrayList<Entity>();
-        for(ICarryable carriedObject : carriedObjects ) {
+        List<Entity> retList = new ArrayList<>();
+        for (ICarryable carriedObject : getCarryables()) {
             if (carriedObject instanceof Entity) {
                 retList.add((Entity) carriedObject);
             }
@@ -108,20 +137,40 @@ public class ExternalCargo implements Transporter {
         return retList;
     }
 
+    public List<ICarryable> getCarryables() {
+        if (carriedObjects.isEmpty()) {
+            return List.of();
+        }
+
+        return carriedObjects.values().stream().flatMap(List::stream).toList();
+    }
+
     /**
      * Unload the given unit.
      *
      * @param unit - the <code>Entity</code> to be unloaded.
+     *
      * @return <code>true</code> if the unit was contained in this space,
-     * <code>false</code> otherwise.
+     *       <code>false</code> otherwise.
      */
     @Override
     public boolean unload(Entity unit) {
-        boolean wasCarried = carriedObjects.removeElement(unit);
-        if (wasCarried) {
-            currentSpace += unit.getTonnage();
+        return unloadCarryable(unit);
+    }
+
+    public boolean unloadCarryable(ICarryable carryable) {
+        boolean carried = getCarryables().contains(carryable);
+        if (carried) {
+            for (int i : carriedObjects.keySet()) {
+                if (carriedObjects.get(i).contains(carryable)) {
+                    carriedObjects.get(i).remove(carryable);
+                    if (carriedObjects.get(i).isEmpty()) {
+                        carriedObjects.remove(i);
+                    }
+                }
+            }
         }
-        return wasCarried;
+        return carried;
     }
 
     /**
@@ -129,7 +178,11 @@ public class ExternalCargo implements Transporter {
      */
     @Override
     public double getUnused() {
-        return currentSpace;
+        return totalSpace - getCarriedTonnage();
+    }
+
+    public double getCarriedTonnage() {
+        return getCarryables().stream().mapToDouble(ICarryable::getTonnage).sum();
     }
 
     /**
@@ -147,6 +200,7 @@ public class ExternalCargo implements Transporter {
      *
      * @param loc    the location attempting to fire.
      * @param isRear true if the weapon is rear-facing
+     *
      * @return True if a transported unit is in the way, false if the weapon can fire.
      */
     @Override
@@ -155,18 +209,16 @@ public class ExternalCargo implements Transporter {
     }
 
     /**
-     * If a unit is being transported on the outside of the transporter, it can
-     * suffer damage when the transporter is hit by an attack. Currently, no
-     * more than one unit can be at any single location; that same unit can be
-     * "spread" over multiple locations.
+     * If a unit is being transported on the outside of the transporter, it can suffer damage when the transporter is
+     * hit by an attack. Currently, no more than one unit can be at any single location; that same unit can be "spread"
+     * over multiple locations.
      *
      * @param loc    - the <code>int</code> location hit by attack.
-     * @param isRear - a <code>boolean</code> value stating if the given
-     *               location is rear facing; if <code>false</code>, the
-     *               location is front facing.
-     * @return The <code>Entity</code> being transported on the outside at
-     * that location. This value will be <code>null</code> if no unit
-     * is transported on the outside at that location.
+     * @param isRear - a <code>boolean</code> value stating if the given location is rear facing; if <code>false</code>,
+     *               the location is front facing.
+     *
+     * @return The <code>Entity</code> being transported on the outside at that location. This value will be
+     *       <code>null</code> if no unit is transported on the outside at that location.
      */
     @Override
     public Entity getExteriorUnitAt(int loc, boolean isRear) {
@@ -183,6 +235,7 @@ public class ExternalCargo implements Transporter {
 
     /**
      * @param carrier
+     *
      * @return the MP reduction due to cargo carried by this transporter
      */
     @Override
@@ -200,6 +253,15 @@ public class ExternalCargo implements Transporter {
      */
     @Override
     public void resetTransporter() {
+        carriedObjects.clear();
+    }
 
+    protected boolean maxObjects(int location) {
+        // Only one item per location
+        return carriedObjects.containsKey(location);
+    }
+
+    private void addCarriedObject(ICarryable carryable, int location) {
+        carriedObjects.computeIfAbsent(location, k -> new ArrayList<>()).add(carryable);
     }
 }

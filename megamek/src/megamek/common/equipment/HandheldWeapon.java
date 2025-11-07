@@ -43,7 +43,6 @@ import megamek.common.Report;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.TechConstants;
-import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.cost.HandheldWeaponCostCalculator;
 import megamek.common.enums.AimingMode;
@@ -251,27 +250,27 @@ public class HandheldWeapon extends Entity {
 
     @Override
     public boolean isCrippled() {
-        return getArmor(LOC_GUN) == 0;
+        return (getOArmor(LOC_GUN)) > 0 && (double) getArmor(LOC_GUN) / getOArmor(LOC_GUN) <= 0.5;
     }
 
     @Override
     public boolean isCrippled(boolean checkCrew) {
-        return getArmor(LOC_GUN) == 0;
+        return isCrippled();
     }
 
     @Override
     public boolean isDmgHeavy() {
-        return getArmor(LOC_GUN) == 0;
+        return (getOArmor(LOC_GUN)) > 0 && (double) getArmor(LOC_GUN) / getOArmor(LOC_GUN) > 0.5;
     }
 
     @Override
     public boolean isDmgModerate() {
-        return getArmor(LOC_GUN) == 0;
+        return (getOArmor(LOC_GUN)) > 0 && (double) getArmor(LOC_GUN) / getOArmor(LOC_GUN) > 0.75;
     }
 
     @Override
     public boolean isDmgLight() {
-        return getArmor(LOC_GUN) == 0;
+        return (getOArmor(LOC_GUN)) > 0 && (double) getArmor(LOC_GUN) / getOArmor(LOC_GUN) > 0.9;
     }
 
     @Override
@@ -298,8 +297,9 @@ public class HandheldWeapon extends Entity {
      * Returns true if the carryable object is able to be picked up. Units must be hull down to pick up other units,
      * unless the unit is tall. Airborne aeros cannot be grabbed either.
      *
-     * @param isCarrierHullDown is the unit that's picking this up hull down, or otherwise able to pick up
-     *                          ground-level objects
+     * @param isCarrierHullDown is the unit that's picking this up hull down, or otherwise able to pick up ground-level
+     *                          objects
+     *
      * @return true if the object can be picked up, false if it cannot
      */
     @Override
@@ -309,6 +309,7 @@ public class HandheldWeapon extends Entity {
 
     /**
      * What entity is using this weapon to attack?
+     *
      * @return entity carrying this weapon, or the entity itself
      */
     @Override

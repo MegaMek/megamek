@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,29 +33,44 @@
 
 package megamek.common.equipment;
 
-/**
- * Represents a basic carryable object with no additional other properties.
- * <p>
- * Briefcases use simplified logic for being picked up. It is intended to be used for objective based gameplay but
- * without using the full depth of rules described in TO:AR.
- */
-public class Briefcase extends GroundObject {
+import java.util.List;
 
-    /**
-     * Returns true if the carryable object is able to be picked up. Briefcases can always be picked up.
-     *
-     * @param isCarrierHullDown is the unit that's picking this up hull down, or otherwise able to pick up ground-level
-     *                          objects
-     *
-     * @return true if the object can be picked up, false if it cannot
-     */
-    @Override
-    public boolean canBePickedUp(boolean isCarrierHullDown) {
-        return true; // Briefcases can always be picked up.
+import megamek.common.units.Entity;
+import megamek.common.units.MekWithArms;
+
+public class MekArms extends ExternalCargo {
+
+    public MekArms(MekWithArms mek) {
+        this(mek.maxGroundObjectTonnage(), mek.getDefaultPickupLocations());
     }
 
+    public MekArms(double tonnage, List<Integer> validPickupLocations) {
+        super(tonnage, validPickupLocations);
+    }
+
+    /**
+     * Determines if this object can accept the given unit. The unit may not be of the appropriate type or there may be
+     * no room for the unit.
+     *
+     * @param unit - the <code>Entity</code> to be loaded.
+     *
+     * @return <code>true</code> if the unit can be loaded, <code>false</code>
+     *       otherwise.
+     */
     @Override
-    public CarriedObjectDamageAllocation getCarriedObjectDamageAllocation() {
-        return CarriedObjectDamageAllocation.ANY_HIT;
+    public boolean canLoad(Entity unit) {
+        return unit.getTonnage() <= getUnused();
+    }
+
+    /**
+     * Load the given unit.
+     *
+     * @param unit the <code>Entity</code> to be loaded.
+     *
+     * @throws IllegalArgumentException If the unit can't be loaded
+     */
+    @Override
+    public void load(Entity unit) throws IllegalArgumentException {
+        loadCarryable(unit);
     }
 }

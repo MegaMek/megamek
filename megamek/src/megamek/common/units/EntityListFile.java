@@ -1464,7 +1464,7 @@ public class EntityListFile {
         output.write("\" " + MULParser.ATTR_CLAN_PILOT + "=\"" + crew.isClanPilot(pos));
 
         if ((null != entity.getGame()) &&
-              entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
+              entity.gameOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
             output.write("\" " + MULParser.ATTR_GUNNERY_L + "=\"");
             output.write(String.valueOf(crew.getGunneryL(pos)));
             output.write("\" " + MULParser.ATTR_GUNNERY_M + "=\"");
@@ -1481,10 +1481,10 @@ public class EntityListFile {
             writeLAMAeroAttributes(output,
                   (LAMPilot) crew,
                   (null != entity.getGame()) &&
-                        entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY));
+                        entity.gameOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY));
         }
         if ((null != entity.getGame()) &&
-              entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
+              entity.gameOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
             output.write("\" " + MULParser.ATTR_ARTILLERY + "=\"");
             output.write(String.valueOf(crew.getArtillery(pos)));
         }
@@ -1577,7 +1577,7 @@ public class EntityListFile {
                 output.write("\" " + MULParser.ATTR_AUTO_EJECT + "=\"false");
             }
             if ((null != entity.getGame()) &&
-                  (entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION))) {
+                  (entity.gameOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION))) {
                 if (((Mek) entity).isCondEjectAmmo()) {
                     output.write("\" " + MULParser.ATTR_COND_EJECT_AMMO + "=\"true");
                 } else {

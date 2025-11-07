@@ -154,7 +154,7 @@ public class SuperHeavyTank extends Tank {
             motiveMod = 1;
             bRear = true;
         }
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_EFFECTIVE)) {
+        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_EFFECTIVE)) {
             motiveMod = 0;
         }
         HitData rv = new HitData(nArmorLoc);
@@ -171,7 +171,7 @@ public class SuperHeavyTank extends Tank {
         if (!bHitAimed) {
             switch (Compute.d6(2)) {
                 case 2:
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
+                    if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
                         setPotCrit(HitData.EFFECT_CRITICAL);
                     } else {
                         rv.setEffect(HitData.EFFECT_CRITICAL);
@@ -180,27 +180,27 @@ public class SuperHeavyTank extends Tank {
                 case 3:
                     if (bSide) {
                         rv = new HitData(LOC_FRONT, false);
-                        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
+                        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
                             setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                         } else {
                             rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                         }
                     } else if (bRear) {
                         rv = new HitData(LOC_REAR_LEFT, false);
-                        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
+                        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
                             setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                         } else {
                             rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                         }
                     } else if (bRearSide) {
-                        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
+                        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
                             setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                         } else {
                             rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                         }
                     } else {
                         rv = new HitData(LOC_FRONT_RIGHT, false);
-                        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
+                        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
                             setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                         } else {
                             rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
@@ -209,7 +209,7 @@ public class SuperHeavyTank extends Tank {
                     rv.setMotiveMod(motiveMod);
                     break;
                 case 4:
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
+                    if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
                         setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     } else {
                         rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
@@ -218,7 +218,7 @@ public class SuperHeavyTank extends Tank {
                     break;
                 case 5:
                     if (bRear || !(bSide || bRearSide)) {
-                        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
+                        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
                             setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                         } else {
                             rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
@@ -231,9 +231,9 @@ public class SuperHeavyTank extends Tank {
                     break;
                 case 8:
                     if ((bSide || bRearSide)
-                          && !game.getOptions().booleanOption(
+                          && !gameOptions().booleanOption(
                           OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_EFFECTIVE)) {
-                        if (game.getOptions().booleanOption(
+                        if (gameOptions().booleanOption(
                               OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
                             setPotCrit(HitData.EFFECT_CRITICAL);
                         } else {
@@ -242,9 +242,9 @@ public class SuperHeavyTank extends Tank {
                     }
                     break;
                 case 9:
-                    if (!game.getOptions()
+                    if (!gameOptions()
                           .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_EFFECTIVE)) {
-                        if (game.getOptions().booleanOption(
+                        if (gameOptions().booleanOption(
                               OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
                             setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                         } else {
@@ -292,7 +292,7 @@ public class SuperHeavyTank extends Tank {
                         }
                     }
 
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
+                    if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
                         setPotCrit(HitData.EFFECT_CRITICAL);
                     } else {
                         rv.setEffect(HitData.EFFECT_CRITICAL);
@@ -409,12 +409,12 @@ public class SuperHeavyTank extends Tank {
                 if (mounted.isPintleTurretMounted()) {
                     return Compute.ARC_PINTLE_TURRET_FRONT;
                 }
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
+                if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
                     return Compute.ARC_NOSE;
                 }
             case LOC_TURRET:
             case LOC_TURRET_2:
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
+                if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
                     return Compute.ARC_TURRET;
                 }
                 return Compute.ARC_FORWARD;
@@ -426,7 +426,7 @@ public class SuperHeavyTank extends Tank {
                 if (mounted.isPintleTurretMounted()) {
                     return Compute.ARC_PINTLE_TURRET_RIGHT;
                 }
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
+                if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
                     return Compute.ARC_RIGHT_BROADSIDE;
                 }
                 return Compute.ARC_RIGHT_SIDE;
@@ -438,7 +438,7 @@ public class SuperHeavyTank extends Tank {
                 if (mounted.isPintleTurretMounted()) {
                     return Compute.ARC_PINTLE_TURRET_LEFT;
                 }
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
+                if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
                     return Compute.ARC_LEFT_BROADSIDE;
                 }
                 return Compute.ARC_LEFT_SIDE;
@@ -446,7 +446,7 @@ public class SuperHeavyTank extends Tank {
                 if (mounted.isPintleTurretMounted()) {
                     return Compute.ARC_PINTLE_TURRET_REAR;
                 }
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
+                if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS)) {
                     return Compute.ARC_AFT;
                 }
                 return Compute.ARC_REAR;

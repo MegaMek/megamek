@@ -409,7 +409,6 @@ public class Client extends AbstractClient {
      *
      * @param entities The collection of Entity objects to add. This should ideally be an {@link ArrayList<Entity>}, but
      *                 other kinds of {@link List} will be converted to an {@link ArrayList}.
-     *
      */
     public void sendAddEntity(List<Entity> entities) {
         // Trying to pass a non-ArrayList jams the receiving client and prevents it from ever receiving more packets.
@@ -645,7 +644,7 @@ public class Client extends AbstractClient {
     }
 
     protected void receiveUpdateGroundObjects(Packet packet) throws InvalidPacketDataException {
-        game.setGroundObjects(packet.getCoordsWithBriefcaseICarryableListMap(0));
+        game.setGroundObjects(packet.getCoordsWithGroundObjectListMap(0));
         game.processGameEvent(new GameBoardChangeEvent(this));
     }
 

@@ -168,7 +168,7 @@ public class EjectedCrew extends Infantry {
             setInternal(crew.getSize() - dead, Infantry.LOC_INFANTRY);
         }
         if (game != null && (!(this instanceof MekWarrior)
-              || game.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MEKWARRIORS))) {
+              || gameOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MEKWARRIORS))) {
             try {
                 addEquipment(EquipmentType.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE), Infantry.LOC_INFANTRY);
                 setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));

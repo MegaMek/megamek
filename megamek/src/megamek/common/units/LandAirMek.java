@@ -1505,17 +1505,18 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
      * Hit location table for fighter mode
      */
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode, int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode, int cover,
+          boolean hasUsedEdge) {
         if (getConversionMode() != CONV_MODE_FIGHTER) {
-            return super.rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+            return super.rollHitLocation(table, side, aimedLocation, aimingMode, cover, hasUsedEdge);
         }
-        return rollHitLocation(table, side);
+        return rollHitLocation(table, side, hasUsedEdge);
     }
 
     @Override
-    public HitData rollHitLocation(int table, int side) {
+    public HitData rollHitLocation(int table, int side, boolean hasUsedEdge) {
         if (getConversionMode() != CONV_MODE_FIGHTER) {
-            return super.rollHitLocation(table, side);
+            return super.rollHitLocation(table, side, hasUsedEdge);
         }
 
         int roll = Compute.d6(2);
@@ -1554,7 +1555,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         boolean playtestLocations = gameOptions().booleanOption(OptionsConstants.PLAYTEST_1);
 
         if (playtestLocations && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)) {
-            return getPlaytestSideLocation(table, side, LosEffects.COVER_NONE);
+            return getPlaytestSideLocation(table, side, LosEffects.COVER_NONE, hasUsedEdge);
         }
 
         if (side == ToHitData.SIDE_FRONT) {
@@ -1973,7 +1974,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             int hits = (int) Math.ceil(damage / 5.0);
             int damPerHit = 5;
             for (int i = 0; i < hits; i++) {
-                int loc = rollHitLocation(ToHitData.HIT_ABOVE, ToHitData.SIDE_RANDOM).getLocation();
+                int loc = rollHitLocation(ToHitData.HIT_ABOVE, ToHitData.SIDE_RANDOM, false).getLocation();
                 setArmor(getArmor(loc) - Math.max(damPerHit, damage), loc);
                 // We did too much damage, so we need to damage the internal structure
                 if (getArmor(loc) < 0) {

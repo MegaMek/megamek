@@ -204,7 +204,7 @@ public class VTOL extends Tank implements IBomber {
 
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
-          int cover) {
+          int cover, boolean hasUsedEdge) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
         if (side == ToHitData.SIDE_LEFT) {

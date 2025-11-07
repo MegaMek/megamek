@@ -1253,12 +1253,13 @@ public abstract class Aero extends Entity implements IAero, IBomber {
      * Rolls up a hit location
      */
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode, int cover) {
-        return rollHitLocation(table, side);
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode, int cover,
+          boolean hasUsedEdge) {
+        return rollHitLocation(table, side, hasUsedEdge);
     }
 
     @Override
-    public HitData rollHitLocation(int table, int side) {
+    public HitData rollHitLocation(int table, int side, boolean hasUsedEdge) {
 
         /*
          * Unlike other units, ASFs determine potential critical slots based on the to-hit roll, so I need to set this

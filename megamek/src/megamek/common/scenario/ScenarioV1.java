@@ -427,7 +427,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         for (DamagePlan damagePlan : damagePlans) {
             LOGGER.debug("Applying damage to {}", damagePlan.entity.getShortName());
             for (int y = 0; y < damagePlan.nBlocks; ++y) {
-                HitData hit = damagePlan.entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                HitData hit = damagePlan.entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT, false);
                 LOGGER.debug("[s.damageEntity(dp.entity, hit, 5)]");
                 twGameManager.damageEntity(damagePlan.entity, hit, 5);
             }

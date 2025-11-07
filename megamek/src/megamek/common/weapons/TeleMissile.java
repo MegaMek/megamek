@@ -123,7 +123,7 @@ public class TeleMissile extends Aero {
     }
 
     @Override
-    public HitData rollHitLocation(int table, int side) {
+    public HitData rollHitLocation(int table, int side, boolean hasUsedEdge) {
         return new HitData(LOC_BODY, false, HitData.EFFECT_NONE);
     }
 

@@ -247,7 +247,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
             } else {
                 hit = target.rollHitLocation(toHit.getHitTable(),
                       toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
-                      weaponAttackAction.getAimingMode(), toHit.getCover());
+                      weaponAttackAction.getAimingMode(), toHit.getCover(), false);
                 if (target.getBARRating(hit.getLocation()) <= 6) {
                     hit.setGeneralDamageType(generalDamageType);
                     hit.setCapital(weaponType.isCapital());

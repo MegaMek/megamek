@@ -188,7 +188,7 @@ public class NarcHandler extends MissileWeaponHandler {
           int bldgAbsorbs) {
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
               toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
-              weaponAttackAction.getAimingMode(), toHit.getCover());
+              weaponAttackAction.getAimingMode(), toHit.getCover(), false);
 
         // If our narc pod "hits" an already-missing head, reroll until we hit
         // somewhere else as per the errata for torso-mounted cockpits.
@@ -197,7 +197,7 @@ public class NarcHandler extends MissileWeaponHandler {
             while (hit.getLocation() == Mek.LOC_HEAD) {
                 hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                       toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
-                      weaponAttackAction.getAimingMode(), toHit.getCover());
+                      weaponAttackAction.getAimingMode(), toHit.getCover(), false);
             }
         }
         hit.setAttackerId(getAttackerId());

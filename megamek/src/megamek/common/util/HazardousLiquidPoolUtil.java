@@ -145,7 +145,7 @@ public class HazardousLiquidPoolUtil {
         while (totalDamage > 0) {
             int damage = Math.min(totalDamage, 5);
             totalDamage = (Math.max(totalDamage - 5, 0));
-            HitData hitData = entity.rollHitLocation(toHitTable, ToHitData.SIDE_RANDOM);
+            HitData hitData = entity.rollHitLocation(toHitTable, ToHitData.SIDE_RANDOM, false);
             reports.addAll((twGameManager.damageEntity(entity, hitData, damage)));
 
         }

@@ -3684,12 +3684,13 @@ public abstract class Entity extends TurnOrdered
     /**
      * Rolls the to-hit number
      */
-    public abstract HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode, int cover);
+    public abstract HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode, int cover,
+          boolean hasUsedEdge);
 
     /**
      * Rolls up a hit location
      */
-    public abstract HitData rollHitLocation(int table, int side);
+    public abstract HitData rollHitLocation(int table, int side, boolean hasUsedEdge);
 
     /**
      * Gets the location that excess damage transfers to. That is, one location inwards.
@@ -9211,8 +9212,8 @@ public abstract class Entity extends TurnOrdered
         return transports.stream().mapToInt(t -> t.getCargoMpReduction(carrier)).sum();
     }
 
-    public HitData getTrooperAtLocation(HitData hit, Entity transport) {
-        return rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+    public HitData getTrooperAtLocation(HitData hit, Entity transport, boolean hasUsedEdge) {
+        return rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT, hasUsedEdge);
     }
 
     /**

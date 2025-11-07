@@ -44,7 +44,6 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.equipment.EquipmentMode;
-import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
@@ -101,7 +100,7 @@ public class FlamerHandler extends WeaponHandler {
         } else if (flamerDoesHeatOnlyDamage) {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                   toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
-                  weaponAttackAction.getAimingMode(), toHit.getCover());
+                  weaponAttackAction.getAimingMode(), toHit.getCover(), false);
             hit.setAttackerId(getAttackerId());
 
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),

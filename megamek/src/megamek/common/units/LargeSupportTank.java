@@ -111,7 +111,7 @@ public class LargeSupportTank extends SupportTank {
 
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
-          int cover) {
+          int cover, boolean hasUsedEdge) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
         boolean bRearSide = false;

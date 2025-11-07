@@ -183,7 +183,7 @@ public class MGAWeaponHandler extends MGHandler {
         if (hit == null) {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                   toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
-                  weaponAttackAction.getAimingMode(), toHit.getCover());
+                  weaponAttackAction.getAimingMode(), toHit.getCover(), false);
             hit.setAttackerId(getAttackerId());
         }
 

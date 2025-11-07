@@ -509,7 +509,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                     } else {
                         table = ToHitData.HIT_PUNCH;
                     }
-                    HitData hit = entity.rollHitLocation(table, ToHitData.SIDE_FRONT);
+                    HitData hit = entity.rollHitLocation(table, ToHitData.SIDE_FRONT, false);
                     hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                     vPhaseReport.addAll(gameManager.damageEntity(entity, hit, next));
                     remaining -= next;

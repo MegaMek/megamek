@@ -218,7 +218,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
                     }
                     hit = target.rollHitLocation(toHit.getHitTable(),
                           toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
-                          weaponAttackAction.getAimingMode(), toHit.getCover());
+                          weaponAttackAction.getAimingMode(), toHit.getCover(), false);
                     hit.setGeneralDamageType(generalDamageType);
                     hit.setCapital(weaponType.isCapital());
                     hit.setBoxCars(roll.getIntValue() == 12);
@@ -247,7 +247,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
                 for (int i = 0; i < numRounds; i++) {
                     hit = target.rollHitLocation(toHit.getHitTable(),
                           toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
-                          weaponAttackAction.getAimingMode(), toHit.getCover());
+                          weaponAttackAction.getAimingMode(), toHit.getCover(), false);
                     hit.setGeneralDamageType(generalDamageType);
                     hit.setCapital(weaponType.isCapital());
                     hit.setBoxCars(roll.getIntValue() == 12);

@@ -216,7 +216,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         if (entityTarget.tracksHeat()) {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                   toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
-                  weaponAttackAction.getAimingMode(), toHit.getCover());
+                  weaponAttackAction.getAimingMode(), toHit.getCover(), false);
             hit.setGeneralDamageType(generalDamageType);
             hit.setAttackerId(getAttackerId());
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
@@ -238,8 +238,10 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             r.indent(2);
             int extraHeat = Compute.d6(2);
-            if (entityTarget.getArmor(hit) > 0 &&
-                  (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE) && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            if (entityTarget.getArmor(hit) > 0
+                  &&
+                  (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE)
+                  && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
                 // PLAYTEST3 do not halve for reflective
                 entityTarget.heatFromExternal += Math.max(1, extraHeat / 2);
                 r.add(Math.max(1, extraHeat / 2));

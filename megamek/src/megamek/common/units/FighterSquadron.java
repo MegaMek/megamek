@@ -313,7 +313,7 @@ public class FighterSquadron extends AeroSpaceFighter {
 
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
-          int cover) {
+          int cover, boolean hasUsedEdge) {
         List<Entity> activeFighters = getActiveSubEntities();
 
         // If this squadron is doomed or is of size 1 then just return the first one
@@ -327,8 +327,8 @@ public class FighterSquadron extends AeroSpaceFighter {
     }
 
     @Override
-    public HitData rollHitLocation(int table, int side) {
-        return rollHitLocation(table, side, LOC_NONE, AimingMode.NONE, LosEffects.COVER_NONE);
+    public HitData rollHitLocation(int table, int side, boolean hasUsedEdge) {
+        return rollHitLocation(table, side, LOC_NONE, AimingMode.NONE, LosEffects.COVER_NONE, hasUsedEdge);
     }
 
     @Override

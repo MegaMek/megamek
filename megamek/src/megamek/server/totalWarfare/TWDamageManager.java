@@ -65,7 +65,6 @@ import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.TeleMissile;
-import megamek.common.weapons.handlers.plasma.PlasmaRifleHandler;
 import megamek.server.IDamageManager;
 import megamek.server.ServerHelper;
 
@@ -161,7 +160,7 @@ public class TWDamageManager implements IDamageManager {
                 return reportVec;
             }
             Entity fighter = fighters.get(hit.getLocation());
-            HitData new_hit = fighter.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+            HitData new_hit = fighter.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT, false);
             new_hit.setBoxCars(hit.rolledBoxCars());
             new_hit.setGeneralDamageType(hit.getGeneralDamageType());
             new_hit.setCapital(hit.isCapital());
@@ -320,7 +319,8 @@ public class TWDamageManager implements IDamageManager {
               (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_IMPACT_RESISTANT);
         boolean bar5 = entity.getBARRating(hit.getLocation()) <= 5;
         boolean heatArmor =
-              (entity instanceof Mek) && (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING);
+              (entity instanceof Mek) && (entity.getArmorType(hit.getLocation())
+                    == EquipmentType.T_ARMOR_HEAT_DISSIPATING);
         boolean abaArmor = (entity instanceof Mek) && (entity.getArmorType(hit.getLocation()) ==
               EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION);
 
@@ -831,7 +831,7 @@ public class TWDamageManager implements IDamageManager {
                     report.addDesc(swarm);
                     reportVec.addElement(report);
 
-                    HitData passHit = swarm.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                    HitData passHit = swarm.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT, false);
 
                     // How much damage will the swarm absorb?
                     int absorb = 0;
@@ -1002,7 +1002,8 @@ public class TWDamageManager implements IDamageManager {
                     report.indent(3);
                     report.add(damage);
                     reportVec.addElement(report);
-                } else if (heatArmor && hit.getHeatWeapon() && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                } else if (heatArmor && hit.getHeatWeapon() && game.getOptions()
+                      .booleanOption(OptionsConstants.PLAYTEST_3)) {
                     // PLAYTEST3 only applies if heat_weapon is true in hitdata, which can only occur when playtest 
                     // is on.
                     tmpDamageHold = damage;
@@ -1559,14 +1560,14 @@ public class TWDamageManager implements IDamageManager {
                         if ((entity instanceof Mek) || (entity instanceof Tank)) {
                             Entity passenger = entity.getExteriorUnitAt(hit.getLocation(), hit.isRear());
                             if ((null != passenger) && !passenger.isDoomed()) {
-                                HitData passHit = passenger.getTrooperAtLocation(hit, entity);
+                                HitData passHit = passenger.getTrooperAtLocation(hit, entity, false);
                                 // ensures a kill
                                 passHit.setEffect(HitData.EFFECT_CRITICAL);
                                 if (passenger.getInternal(passHit) > 0) {
                                     reportVec.addAll(damageEntity(new DamageInfo(passenger, passHit, damage)));
                                 }
                                 passHit = new HitData(hit.getLocation(), !hit.isRear());
-                                passHit = passenger.getTrooperAtLocation(passHit, entity);
+                                passHit = passenger.getTrooperAtLocation(passHit, entity, false);
                                 // ensures a kill
                                 passHit.setEffect(HitData.EFFECT_CRITICAL);
                                 if (passenger.getInternal(passHit) > 0) {

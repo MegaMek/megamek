@@ -134,9 +134,9 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 reportVec.addElement(chanceToHitCarriedUnit);
                 if (hitsOtherUnit) {
                     if (carryable instanceof Entity otherEntity) {
-                        return damageEntity(otherEntity, otherEntity.rollHitLocation(0, 0), damage, ammoExplosion,
-                              damageType, damageIS, areaSatArty, throughFront, underWater,
-                              nukeS2S, reportVec);
+                        return damageEntity(otherEntity, otherEntity.rollHitLocation(0, 0, false), damage,
+                              ammoExplosion, damageType, damageIS, areaSatArty, throughFront, underWater, nukeS2S,
+                              reportVec);
                     } else {
                         logger.error("Entity " + entityId + " is carrying something that is not an Entity but should "
                               + "be damaged on arm hits. This should not happen!");
@@ -613,7 +613,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
 
                 for (ICarryable cargo : mek.getDistinctCarriedObjects()) {
                     // This is handling damaged cargo per TW 261. Other carried objects are damaged elsewhere.
-                    if (cargo.isInvulnerable() || !cargo.getCarriedObjectDamageAllocation().isCarryableAlwaysDamaged()) {
+                    if (cargo.isInvulnerable() || !cargo.getCarriedObjectDamageAllocation()
+                          .isCarryableAlwaysDamaged()) {
                         continue;
                     }
 
@@ -870,14 +871,14 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         // all die when the location is destroyed.
                         Entity passenger = mek.getExteriorUnitAt(hit.getLocation(), hit.isRear());
                         if ((null != passenger) && !passenger.isDoomed()) {
-                            HitData passHit = passenger.getTrooperAtLocation(hit, mek);
+                            HitData passHit = passenger.getTrooperAtLocation(hit, mek, false);
                             // ensures a kill
                             passHit.setEffect(HitData.EFFECT_CRITICAL);
                             if (passenger.getInternal(passHit) > 0) {
                                 reportVec.addAll(damageEntity(new DamageInfo(passenger, passHit, damage)));
                             }
                             passHit = new HitData(hit.getLocation(), !hit.isRear());
-                            passHit = passenger.getTrooperAtLocation(passHit, mek);
+                            passHit = passenger.getTrooperAtLocation(passHit, mek, false);
                             // ensures a kill
                             passHit.setEffect(HitData.EFFECT_CRITICAL);
                             if (passenger.getInternal(passHit) > 0) {
@@ -1507,14 +1508,14 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         // all die when the location is destroyed.
                         Entity passenger = tank.getExteriorUnitAt(hit.getLocation(), hit.isRear());
                         if ((null != passenger) && !passenger.isDoomed()) {
-                            HitData passHit = passenger.getTrooperAtLocation(hit, tank);
+                            HitData passHit = passenger.getTrooperAtLocation(hit, tank, false);
                             // ensures a kill
                             passHit.setEffect(HitData.EFFECT_CRITICAL);
                             if (passenger.getInternal(passHit) > 0) {
                                 reportVec.addAll(damageEntity(new DamageInfo(passenger, passHit, damage)));
                             }
                             passHit = new HitData(hit.getLocation(), !hit.isRear());
-                            passHit = passenger.getTrooperAtLocation(passHit, tank);
+                            passHit = passenger.getTrooperAtLocation(passHit, tank, false);
                             // ensures a kill
                             passHit.setEffect(HitData.EFFECT_CRITICAL);
                             if (passenger.getInternal(passHit) > 0) {
@@ -1677,7 +1678,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             return;
         }
         Entity fighter = fighters.get(hit.getLocation());
-        HitData new_hit = fighter.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+        HitData new_hit = fighter.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT, false);
         new_hit.setBoxCars(hit.rolledBoxCars());
         new_hit.setGeneralDamageType(hit.getGeneralDamageType());
         new_hit.setCapital(hit.isCapital());
@@ -2317,7 +2318,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         return damage;
     }
 
-    public int applyPlaytestExplosionReduction(Mek mek, HitData hit, int damage, boolean ammoExplosion, Vector<Report> reportVec) {
+    public int applyPlaytestExplosionReduction(Mek mek, HitData hit, int damage, boolean ammoExplosion,
+          Vector<Report> reportVec) {
         if (!ammoExplosion) {
             return damage;
         }
@@ -2680,7 +2682,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 report.addDesc(swarm);
                 reportVec.addElement(report);
 
-                HitData passHit = swarm.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                HitData passHit = swarm.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT, false);
 
                 // How much damage will the swarm absorb?
                 int absorb = 0;
@@ -2848,7 +2850,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 report.indent(3);
                 report.add(damage);
                 reportVec.addElement(report);
-            } else if (heatArmor && hit.getHeatWeapon() && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            } else if (heatArmor && hit.getHeatWeapon() && game.getOptions()
+                  .booleanOption(OptionsConstants.PLAYTEST_3)) {
                 // PLAYTEST3 only applies if heat_weapon is true in hitdata, which can only occur when playtest 
                 // is on.
                 tmpDamageHold = damage;

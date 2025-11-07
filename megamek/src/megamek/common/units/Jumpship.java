@@ -869,7 +869,7 @@ public class Jumpship extends Aero {
     }
 
     @Override
-    public HitData rollHitLocation(int table, int side) {
+    public HitData rollHitLocation(int table, int side, boolean hasUsedEdge) {
 
         /*
          * Unlike other units, ASFs determine potential crits based on the

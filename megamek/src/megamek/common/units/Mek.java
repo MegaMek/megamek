@@ -1890,8 +1890,8 @@ public abstract class Mek extends Entity {
      * @see megamek.common.units.Entity#rollHitLocation(int, int)
      */
     @Override
-    public HitData rollHitLocation(int table, int side) {
-        return rollHitLocation(table, side, LOC_NONE, AimingMode.NONE, LosEffects.COVER_NONE);
+    public HitData rollHitLocation(int table, int side, boolean hasUsedEdge) {
+        return rollHitLocation(table, side, LOC_NONE, AimingMode.NONE, LosEffects.COVER_NONE, hasUsedEdge);
     }
 
     /*
@@ -1901,7 +1901,7 @@ public abstract class Mek extends Entity {
      */
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
-          int cover) {
+          int cover, boolean hasUsedEdge) {
         int roll;
 
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
@@ -1934,17 +1934,17 @@ public abstract class Mek extends Entity {
                   && roll != 2 // clarified on forum, TACs don't go to the CT in this case
                 // https://battletech.com/playtest-battletech/feedback-discussion/topic/through-armor-critical-hits-on-side-arc/
             ) {
-                return getPlaytestSideLocation(table, side, cover);
+                return getPlaytestSideLocation(table, side, cover, hasUsedEdge);
             }
 
             if (side == ToHitData.SIDE_FRONT) {
                 // normal front hits
                 switch (roll) {
                     case 2:
-                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
+                        if (!hasUsedEdge && shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
                               && !gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover, true);
                             result.setUndoneLocation(tac(table, side, Mek.LOC_CENTER_TORSO, cover, false));
                             return result;
                         }
@@ -1966,10 +1966,10 @@ public abstract class Mek extends Entity {
                     case 11:
                         return new HitData(Mek.LOC_LEFT_ARM);
                     case 12:
-                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
+                        if (!hasUsedEdge && shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
-                                  aimedLocation, aimingMode, cover);
+                                  aimedLocation, aimingMode, cover, true);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
                             return result;
                         } // if
@@ -1979,11 +1979,11 @@ public abstract class Mek extends Entity {
                 // normal left side hits
                 switch (roll) {
                     case 2:
-                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
+                        if (!hasUsedEdge && shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
                               && !gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
-                                  aimedLocation, aimingMode, cover);
+                                  aimedLocation, aimingMode, cover, true);
                             result.setUndoneLocation(tac(table, side,
                                   Mek.LOC_LEFT_TORSO, cover, false));
                             return result;
@@ -2013,10 +2013,10 @@ public abstract class Mek extends Entity {
                     case 11:
                         return new HitData(Mek.LOC_RIGHT_LEG);
                     case 12:
-                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
+                        if (!hasUsedEdge && shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
-                                  aimedLocation, aimingMode, cover);
+                                  aimedLocation, aimingMode, cover, true);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
                             return result;
                         } // if
@@ -2026,11 +2026,11 @@ public abstract class Mek extends Entity {
                 // normal right side hits
                 switch (roll) {
                     case 2:
-                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
+                        if (!hasUsedEdge && shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
                               && !gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
-                                  aimedLocation, aimingMode, cover);
+                                  aimedLocation, aimingMode, cover, true);
                             result.setUndoneLocation(tac(table, side,
                                   Mek.LOC_RIGHT_TORSO, cover, false));
                             return result;
@@ -2060,10 +2060,10 @@ public abstract class Mek extends Entity {
                     case 11:
                         return new HitData(Mek.LOC_LEFT_LEG);
                     case 12:
-                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
+                        if (!hasUsedEdge && shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
-                                  aimedLocation, aimingMode, cover);
+                                  aimedLocation, aimingMode, cover, true);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
                             return result;
                         } // if
@@ -2076,12 +2076,12 @@ public abstract class Mek extends Entity {
                       && isProne()) {
                     switch (roll) {
                         case 2:
-                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
+                            if (!hasUsedEdge && shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
                                   && !gameOptions().booleanOption(
                                   OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side,
-                                      aimedLocation, aimingMode, cover);
+                                      aimedLocation, aimingMode, cover, true);
                                 result.setUndoneLocation(tac(table, side,
                                       Mek.LOC_CENTER_TORSO, cover, true));
                                 return result;
@@ -2104,10 +2104,10 @@ public abstract class Mek extends Entity {
                         case 11:
                             return new HitData(Mek.LOC_LEFT_ARM, true);
                         case 12:
-                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
+                            if (!hasUsedEdge && shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side,
-                                      aimedLocation, aimingMode, cover);
+                                      aimedLocation, aimingMode, cover, true);
                                 result.setUndoneLocation(new HitData(
                                       Mek.LOC_HEAD, true));
                                 return result;
@@ -2117,12 +2117,12 @@ public abstract class Mek extends Entity {
                 } else {
                     switch (roll) {
                         case 2:
-                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
+                            if (!hasUsedEdge && shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
                                   && !gameOptions().booleanOption(
                                   OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side,
-                                      aimedLocation, aimingMode, cover);
+                                      aimedLocation, aimingMode, cover, true);
                                 result.setUndoneLocation(tac(table, side,
                                       Mek.LOC_CENTER_TORSO, cover, true));
                                 return result;
@@ -2145,10 +2145,10 @@ public abstract class Mek extends Entity {
                         case 11:
                             return new HitData(Mek.LOC_LEFT_ARM, true);
                         case 12:
-                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
+                            if (!hasUsedEdge && shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side,
-                                      aimedLocation, aimingMode, cover);
+                                      aimedLocation, aimingMode, cover, true);
                                 result.setUndoneLocation(new HitData(
                                       Mek.LOC_HEAD, true));
                                 return result;
@@ -2188,10 +2188,10 @@ public abstract class Mek extends Entity {
                     case 5:
                         return new HitData(Mek.LOC_RIGHT_ARM);
                     case 6:
-                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
+                        if (!hasUsedEdge && shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
-                                  aimedLocation, aimingMode, cover);
+                                  aimedLocation, aimingMode, cover, true);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
                             return result;
                         } // if
@@ -2210,10 +2210,10 @@ public abstract class Mek extends Entity {
                     case 5:
                         return new HitData(Mek.LOC_LEFT_ARM);
                     case 6:
-                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
+                        if (!hasUsedEdge && shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
-                                  aimedLocation, aimingMode, cover);
+                                  aimedLocation, aimingMode, cover, true);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
                             return result;
                         } // if
@@ -2232,10 +2232,10 @@ public abstract class Mek extends Entity {
                     case 5:
                         return new HitData(Mek.LOC_RIGHT_ARM);
                     case 6:
-                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
+                        if (!hasUsedEdge && shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
-                                  aimedLocation, aimingMode, cover);
+                                  aimedLocation, aimingMode, cover, true);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
                             return result;
                         } // if
@@ -2256,10 +2256,10 @@ public abstract class Mek extends Entity {
                     case 5:
                         return new HitData(Mek.LOC_RIGHT_ARM, true);
                     case 6:
-                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
+                        if (!hasUsedEdge && shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
-                                  aimedLocation, aimingMode, cover);
+                                  aimedLocation, aimingMode, cover, true);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD,
                                   true));
                             return result;
@@ -2333,9 +2333,9 @@ public abstract class Mek extends Entity {
             // Swarm attack locations.
             switch (roll) {
                 case 2:
-                    if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
+                    if (!hasUsedEdge && shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                         getCrew().decreaseEdge();
-                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover, true);
                         result.setUndoneLocation(new HitData(Mek.LOC_HEAD, false, effects));
                         return result;
                     }
@@ -2357,10 +2357,10 @@ public abstract class Mek extends Entity {
                 case 10:
                     return new HitData(Mek.LOC_LEFT_TORSO, true, effects);
                 case 12:
-                    if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
+                    if (!hasUsedEdge && shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                         getCrew().decreaseEdge();
                         HitData result = rollHitLocation(table, side,
-                              aimedLocation, aimingMode, cover);
+                              aimedLocation, aimingMode, cover, true);
                         result.setUndoneLocation(new HitData(Mek.LOC_HEAD,
                               false, effects));
                         return result;
@@ -2396,10 +2396,10 @@ public abstract class Mek extends Entity {
                 case 5:
                     return new HitData(Mek.LOC_RIGHT_ARM, (side == ToHitData.SIDE_REAR));
                 case 6:
-                    if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
+                    if (!hasUsedEdge && shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
                         getCrew().decreaseEdge();
                         HitData result = rollHitLocation(table, side,
-                              aimedLocation, aimingMode, cover);
+                              aimedLocation, aimingMode, cover, true);
                         result.setUndoneLocation(new HitData(Mek.LOC_HEAD,
                               (side == ToHitData.SIDE_REAR)));
                         return result;
@@ -2440,10 +2440,10 @@ public abstract class Mek extends Entity {
         return null;
     }
 
-    public HitData getPlaytestSideLocation(int table, int side, int cover) {
+    public HitData getPlaytestSideLocation(int table, int side, int cover, boolean hasUsedEdge) {
         var isLeft = side == ToHitData.SIDE_LEFT;
 
-        var hitData = rollHitLocation(table, ToHitData.SIDE_FRONT, LOC_NONE, AimingMode.NONE, cover);
+        var hitData = rollHitLocation(table, ToHitData.SIDE_FRONT, LOC_NONE, AimingMode.NONE, cover, hasUsedEdge);
         hitData.setLocation(switch (hitData.getLocation()) {
             case LOC_LEFT_ARM, LOC_RIGHT_ARM -> isLeft ? LOC_LEFT_ARM : LOC_RIGHT_ARM;
             case LOC_LEFT_LEG, LOC_RIGHT_LEG -> isLeft ? LOC_LEFT_LEG : LOC_RIGHT_LEG;
@@ -2463,13 +2463,13 @@ public abstract class Mek extends Entity {
         if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
             return new HitData(location, rear);
         } else if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_FLOATING_CRITS)) {
-            HitData hd = rollHitLocation(table, side);
+            HitData hd = rollHitLocation(table, side, false);
             // check for cover and keep rolling until you get something without
             // cover
             int i = 0;
             while (removePartialCoverHits(hd.getLocation(), cover, side)
                   && (i < 500)) {
-                hd = rollHitLocation(table, side);
+                hd = rollHitLocation(table, side, false);
                 i++;
             }
             return new HitData(hd.getLocation(), hd.isRear(),

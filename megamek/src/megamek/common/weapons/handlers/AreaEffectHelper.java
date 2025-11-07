@@ -608,7 +608,7 @@ public class AreaEffectHelper {
         } else {
             while (hits > 0) {
                 int damageToDeal = Math.min(cluster, hits);
-                HitData hit = entity.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+                HitData hit = entity.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(), false);
                 // per a rules question, for patchwork armor being attacked by fléchette ammo, we multiply the damage
                 // done by 5 - the BAR rating of the hit location
                 if (specialCaseFlechette && !(entity instanceof Infantry)) {
@@ -911,7 +911,7 @@ public class AreaEffectHelper {
             if (entity instanceof ProtoMek) {
                 table = ToHitData.HIT_SPECIAL_PROTO;
             }
-            HitData hit = entity.rollHitLocation(table, entity.sideTable(position));
+            HitData hit = entity.rollHitLocation(table, entity.sideTable(position), false);
             vDesc.addAll(gameManager.damageEntity(entity, hit, cluster, false,
                   DamageType.IGNORE_PASSENGER, false, true));
 

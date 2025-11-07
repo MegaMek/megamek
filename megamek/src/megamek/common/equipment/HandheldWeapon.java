@@ -43,7 +43,6 @@ import megamek.common.Report;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.TechConstants;
-import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.cost.HandheldWeaponCostCalculator;
 import megamek.common.enums.AimingMode;
@@ -133,12 +132,13 @@ public class HandheldWeapon extends Entity {
     }
 
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode, int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode, int cover,
+          boolean hasUsedEdge) {
         return new HitData(LOC_GUN);
     }
 
     @Override
-    public HitData rollHitLocation(int table, int side) {
+    public HitData rollHitLocation(int table, int side, boolean hasUsedEdge) {
         return new HitData(LOC_GUN);
     }
 
@@ -298,8 +298,9 @@ public class HandheldWeapon extends Entity {
      * Returns true if the carryable object is able to be picked up. Units must be hull down to pick up other units,
      * unless the unit is tall. Airborne aeros cannot be grabbed either.
      *
-     * @param isCarrierHullDown is the unit that's picking this up hull down, or otherwise able to pick up
-     *                          ground-level objects
+     * @param isCarrierHullDown is the unit that's picking this up hull down, or otherwise able to pick up ground-level
+     *                          objects
+     *
      * @return true if the object can be picked up, false if it cannot
      */
     @Override
@@ -309,6 +310,7 @@ public class HandheldWeapon extends Entity {
 
     /**
      * What entity is using this weapon to attack?
+     *
      * @return entity carrying this weapon, or the entity itself
      */
     @Override

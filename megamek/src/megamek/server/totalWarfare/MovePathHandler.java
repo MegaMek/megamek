@@ -40,7 +40,6 @@ import java.util.stream.Collectors;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
-import megamek.common.CriticalSlot;
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.LosEffects;
@@ -63,10 +62,10 @@ import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
-import megamek.common.equipment.GroundObject;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EscapePods;
+import megamek.common.equipment.GroundObject;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.MiscType;
@@ -731,7 +730,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         report.add("3d6");
                         addReport(report);
                         addReport(gameManager.damageEntity(swarmer,
-                              swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT),
+                              swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT, false),
                               Compute.d6(3)));
                         addNewLines();
                         swarmer.setPosition(curPos);
@@ -958,7 +957,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             report.add("3d6");
                             addReport(report);
                             addReport(gameManager.damageEntity(swarmer,
-                                  swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT),
+                                  swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT, false),
                                   Compute.d6(3)));
                             addNewLines();
                             swarmer.setPosition(curPos);
@@ -2644,7 +2643,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         // until we get a rules clarification assume that the
                         // entity is both giver and taker
                         // for charge damage
-                        HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                        HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT, false);
                         addReport(gameManager.damageEntity(entity, hit, ChargeAttackAction
                               .getDamageTakenBy(entity, entity)));
                         turnOver = true;
@@ -3091,7 +3090,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             if (step.getType() == MoveStepType.PICKUP_CARGO) {
                 var carryableObjects = getGame().getGroundObjects(step.getPosition());
-                carryableObjects.addAll(getGame().getEntitiesVector(step.getPosition()).stream().filter(entity::canPickupCarryableObject).toList());
+                carryableObjects.addAll(getGame().getEntitiesVector(step.getPosition())
+                      .stream()
+                      .filter(entity::canPickupCarryableObject)
+                      .toList());
                 Integer cargoPickupIndex;
 
                 // if there's only one object on the ground, let's just get that one and ignore
@@ -3213,7 +3215,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     report.choose(false);
                     addReport(report);
                     // damage unit
-                    HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                    HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT, false);
                     addReport(gameManager.damageEntity(entity, hit,
                           2 * (rollTarget.getValue() - diceRoll.getIntValue())));
                 } else {
@@ -3566,7 +3568,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 final int numFloors = Math.max(0, hex.terrainLevel(Terrains.BLDG_ELEV));
                 gameManager.getMainPhaseReport().addAll(gameManager.damageBuilding(bldg, 150, " is crushed for ", pos));
                 int damage = (int) Math.round((cf / 10.0) * numFloors);
-                HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT, false);
                 gameManager.getMainPhaseReport().addAll(gameManager.damageEntity(entity, hit, damage));
             }
 

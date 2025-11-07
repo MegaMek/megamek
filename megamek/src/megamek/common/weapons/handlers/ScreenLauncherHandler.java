@@ -123,7 +123,7 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
                       ent -> {
                           ToHitData squadronToHit = new ToHitData();
                           squadronToHit.setHitTable(ToHitData.HIT_NORMAL);
-                          HitData hit = ent.rollHitLocation(squadronToHit.getHitTable(), ToHitData.SIDE_FRONT);
+                          HitData hit = ent.rollHitLocation(squadronToHit.getHitTable(), ToHitData.SIDE_FRONT, false);
                           hit.setCapital(false);
                           vPhaseReport.addAll(gameManager.damageEntity(ent, hit, attackValue));
                           gameManager.creditKill(ent, attackingEntity);
@@ -131,7 +131,7 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
             } else {
                 ToHitData hexToHit = new ToHitData();
                 hexToHit.setHitTable(ToHitData.HIT_NORMAL);
-                HitData hit = entity.rollHitLocation(hexToHit.getHitTable(), ToHitData.SIDE_FRONT);
+                HitData hit = entity.rollHitLocation(hexToHit.getHitTable(), ToHitData.SIDE_FRONT, false);
                 hit.setCapital(false);
                 vPhaseReport.addAll(gameManager.damageEntity(entity, hit, attackValue));
                 gameManager.creditKill(entity, attackingEntity);

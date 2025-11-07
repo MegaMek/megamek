@@ -66,6 +66,12 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 import megamek.common.weapons.attacks.DiveBombAttack;
 import megamek.common.weapons.attacks.InfantryAttack;
+import megamek.common.weapons.autoCannons.ACWeapon;
+import megamek.common.weapons.autoCannons.HVACWeapon;
+import megamek.common.weapons.autoCannons.LACWeapon;
+import megamek.common.weapons.autoCannons.ProtoMekACWeapon;
+import megamek.common.weapons.autoCannons.RACWeapon;
+import megamek.common.weapons.autoCannons.UACWeapon;
 import megamek.common.weapons.battleArmor.innerSphere.ISBAPopUpMineLauncher;
 import megamek.common.weapons.bayWeapons.BayWeapon;
 import megamek.common.weapons.gaussRifles.HAGWeapon;
@@ -3900,48 +3906,51 @@ public class Compute {
 
         int to_hit;
         // The number of mode changes needed to set a specific rate of fire
-        int final_spin;
+        int final_spin = 0;
         Entity shooter;
         Mounted<?> weapon;
         WeaponType weaponType;
-
-        // Double check this is an Ultra or Rotary cannon
-        // or a standard AC with the TacOps rapid fire rule turned on
-        shooter = atk.getEntity(cgame);
-        weapon = shooter.getEquipment(atk.getWeaponId());
-        weaponType = (WeaponType) shooter.getEquipment(atk.getWeaponId()).getType();
-
-        boolean rapidAC = (weaponType.getAmmoType() == AmmoTypeEnum.AC)
-              && cgame.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RAPID_AC);
-
-        if (!((weaponType.getAmmoType() == AmmoTypeEnum.AC_ULTRA)
-              || (weaponType.getAmmoType() == AmmoTypeEnum.AC_ULTRA_THB)
-              || (weaponType.getAmmoType() == AmmoTypeEnum.AC_ROTARY)
-              || rapidAC)) {
-            return 0;
-        }
+        boolean isUAC = false;
+        boolean isRAC = false;
 
         // Get the to-hit number for this attack
         to_hit = atk.toHit(cgame).getValue();
 
-        // Set the weapon to single shot mode
-        weapon.setMode(rapidAC ? "" : Weapon.MODE_AC_SINGLE);
-        final_spin = 0;
-
-        // If weapon can't hit target, exit the function with the weapon on
-        // single shot
+        // If weapon can't hit target, exit with the default mode setting
         if ((to_hit == TargetRoll.IMPOSSIBLE)
               || (to_hit == TargetRoll.AUTOMATIC_FAIL)) {
             return final_spin;
         }
 
+        shooter = atk.getEntity(cgame);
+        weapon = shooter.getEquipment(atk.getWeaponId());
+        weaponType = (WeaponType) shooter.getEquipment(atk.getWeaponId()).getType();
+
+        // If optional rapid fire autocannons are enabled, check for conventional, LAC, and
+        // PAC types
+        boolean rapidAC =
+              cgame.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RAPID_AC) &&
+                    weaponType instanceof ACWeapon;
+
+        // Anything other than a standard AC or equivalent, UAC, or RAC does not apply
+        if (!rapidAC) {
+            isRAC = weaponType instanceof RACWeapon;
+            isUAC = !isRAC && (weaponType instanceof UACWeapon);
+
+            if (!isRAC && !isUAC) {
+                return final_spin;
+            }
+        }
+
+        // Set the weapon to single shot mode
+        weapon.setMode(rapidAC ? "" : Weapon.MODE_AC_SINGLE);
+
         // If the to-hit number is under or at the provided threshold, set multiple shots
         if (to_hit <= spinupThreshold) {
             final_spin = 1;
-            if ((weaponType.getAmmoType() == AmmoTypeEnum.AC_ULTRA)
-                  || (weaponType.getAmmoType() == AmmoTypeEnum.AC_ULTRA_THB)) {
+            if (isUAC) {
                 weapon.setMode(Weapon.MODE_UAC_ULTRA);
-            } else if (weaponType.getAmmoType() == AmmoTypeEnum.AC_ROTARY) {
+            } else if (isRAC) {
 
                 weapon.setMode(Weapon.MODE_RAC_TWO_SHOT);
 

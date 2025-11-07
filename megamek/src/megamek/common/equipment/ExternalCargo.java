@@ -105,7 +105,7 @@ public abstract class ExternalCargo implements Transporter {
             throw new IllegalArgumentException("Location already occupied by " + carriedObjects.get(location).get(0)
                   .specificName());
         }
-        if (carryable instanceof Entity) {
+        if (carryable instanceof Entity && !(carryable instanceof HandheldWeapon)) {
             throw new IllegalArgumentException("Non-Functional Feature - Entities not supported");
         }
         if (carryable.getTonnage() > getUnused()) {

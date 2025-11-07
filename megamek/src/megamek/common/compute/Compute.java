@@ -3888,6 +3888,7 @@ public class Compute {
      *
      * @return the <code>int</code> ID of weapon mode
      */
+    @Deprecated
     public static int spinUpCannon(Game cgame, WeaponAttackAction atk) {
         return spinUpCannon(cgame, atk, Compute.d6(2) - 1);
     }
@@ -3917,8 +3918,7 @@ public class Compute {
         to_hit = atk.toHit(cgame).getValue();
 
         // If weapon can't hit target, exit with the default mode setting
-        if ((to_hit == TargetRoll.IMPOSSIBLE)
-              || (to_hit == TargetRoll.AUTOMATIC_FAIL)) {
+        if (to_hit >= 12) {
             return final_spin;
         }
 
@@ -3928,12 +3928,12 @@ public class Compute {
 
         // If optional rapid fire autocannons are enabled, check for conventional, LAC, and
         // PAC types
-        boolean rapidAC =
+        boolean isRapidFireAC =
               cgame.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RAPID_AC) &&
                     weaponType instanceof ACWeapon;
 
         // Anything other than a standard AC or equivalent, UAC, or RAC does not apply
-        if (!rapidAC) {
+        if (!isRapidFireAC) {
             isRAC = weaponType instanceof RACWeapon;
             isUAC = !isRAC && (weaponType instanceof UACWeapon);
 
@@ -3943,7 +3943,7 @@ public class Compute {
         }
 
         // Set the weapon to single shot mode
-        weapon.setMode(rapidAC ? "" : Weapon.MODE_AC_SINGLE);
+        weapon.setMode(isRapidFireAC ? "" : Weapon.MODE_AC_SINGLE);
 
         // If the to-hit number is under or at the provided threshold, set multiple shots
         if (to_hit <= spinupThreshold) {
@@ -3978,10 +3978,11 @@ public class Compute {
                     return final_spin;
                 }
 
-            } else if (rapidAC) {
-                // Rapid firing standard autocannon is risky, so save it for better
-                // to-hit numbers or when the 'kinder' option is enabled
+            } else {
+                // Rapid firing standard autocannon is risky, so save it for better to-hit numbers,
+                // infantry field guns, or when the 'kinder' optional rule is set
                 if (to_hit <= (spinupThreshold - 2) ||
+                      shooter.isConventionalInfantry() ||
                       cgame.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_KIND_RAPID_AC)) {
                     weapon.setMode(Weapon.MODE_AC_RAPID);
                 } else {

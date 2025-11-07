@@ -77,7 +77,9 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, Building bldg, int hits,
           int nCluster, int bldgAbsorbs) {
         if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            hit.setHeatWeapon(true);
+            if (hit != null) {
+                hit.setHeatWeapon(true);
+            }
         }
         super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
         if (!missed && entityTarget.tracksHeat()) {

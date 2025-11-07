@@ -255,6 +255,7 @@ public abstract class AbstractIcon implements Serializable {
                 category = category.replace("Naval Driver", "Vehicle Crew Naval");
                 category = category.replace("VTOL Pilot", "Vehicle Crew VTOL");
                 category = category.replace("Vehicle Crewmember", "Combat Technician");
+                category = category.replace("Conventional Aircraft Pilot", "Conventional Aircraft Crew");
 
                 setCategory(category);
                 break;

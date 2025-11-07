@@ -3042,8 +3042,7 @@ public class Princess extends BotClient {
      */
     public int getSpinUpThreshold() {
         if (spinUpThreshold == null) {
-            spinUpThreshold = Math.max(4, Math.min(11, 12 - getBehaviorSettings().getSelfPreservationIndex()));
-            //spinUpThreshold = Math.min(11, Math.max(getBehaviorSettings().getSelfPreservationIndex() + 2, 6));
+            spinUpThreshold = Math.max(4, Math.min(11, 13 - getBehaviorSettings().getSelfPreservationIndex()));
         }
 
         return spinUpThreshold;

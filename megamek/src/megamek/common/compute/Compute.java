@@ -3961,18 +3961,18 @@ public class Compute {
                 }
 
                 // If the to-hit number is slightly lower than the provided threshold, set for
-                // four shots.  Reduce to three shots if the to-hit number for high to-hit
-                // numbers to reduce chance of jamming and ammo use.
+                // four shots.  Reduce to three shots for high to-hit numbers to reduce ammo
+                // use and chance of jamming.
                 if (to_hit <= (spinupThreshold - 1)) {
-                    final_spin = to_hit >= 7 ? 2 : 3;
-                    weapon.setMode(to_hit >= 7 ? Weapon.MODE_RAC_THREE_SHOT : Weapon.MODE_RAC_FOUR_SHOT);
+                    final_spin = to_hit >= 6 ? 2 : 3;
+                    weapon.setMode(to_hit >= 6 ? Weapon.MODE_RAC_THREE_SHOT : Weapon.MODE_RAC_FOUR_SHOT);
                     return final_spin;
                 }
 
             } else if (rapidAC) {
                 // Rapid firing standard autocannon is risky, so save it for better
                 // to-hit numbers or when the 'kinder' option is enabled
-                if (to_hit <= (spinupThreshold - 1) ||
+                if (to_hit <= (spinupThreshold - 2) ||
                       cgame.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_KIND_RAPID_AC)) {
                     weapon.setMode(Weapon.MODE_AC_RAPID);
                 } else {

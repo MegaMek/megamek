@@ -1482,7 +1482,6 @@ public class Compute {
         // PLAYTEST3 checking for ECM ranged member
         int c3ecmRange = RangeType.rangeBracketC3(c3ecmDist, distance, weaponRanges, useExtremeRange, false);
 
-
         /*
          * Tac Ops Extreme Range Rule p. 85 if the weapons normal range is
          * Extreme then C3 uses the next highest range bracket, i.e. medium
@@ -3987,6 +3986,7 @@ public class Compute {
                     weapon.setMode(Weapon.MODE_AC_RAPID);
                 } else {
                     final_spin = 0;
+                    weapon.setMode(Weapon.MODE_AC_SINGLE);
                 }
             }
         }

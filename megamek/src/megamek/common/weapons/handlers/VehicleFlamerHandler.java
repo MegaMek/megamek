@@ -102,7 +102,9 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
         if (bmmFlamerDamage || flamerDoesOnlyDamage || (flamerDoesHeatOnlyDamage && !entityTarget.tracksHeat())) {
             // PLAYTEST3 Heat-dissipating armor reduces damage
             if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                hit.setHeatWeapon(true);
+                if (hit != null) {
+                    hit.setHeatWeapon(true);
+                }
             }
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
 

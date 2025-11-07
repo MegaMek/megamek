@@ -21638,10 +21638,12 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Roll critical hits in this location.
+        boolean hasUsedEdge = false;
         while (hits > 0) {
 
             // Have we hit all available slots in this location?
-            if (en.getHittableCriticalSlots(loc) <= 0) {
+            int hittableCritSlots = en.getHittableCriticalSlots(loc);
+            if (hittableCritSlots <= 0) {
                 r = new Report(6340);
                 r.subject = en.getId();
                 r.indent(3);
@@ -21690,9 +21692,11 @@ public class TWGameManager extends AbstractGameManager {
                     continue;
                 }
                 // if explosive use edge
-                if ((en instanceof Mek) &&
+                if (!hasUsedEdge &&
+                      hittableCritSlots > 1 && // Don't use Edge if we can only reroll the same location
+                      en instanceof Mek &&
                       en.shouldUseEdge(OptionsConstants.EDGE_WHEN_EXPLOSION) &&
-                      (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) &&
+                      slot.getType() == CriticalSlot.TYPE_EQUIPMENT &&
                       slot.getMount().getType().isExplosive(slot.getMount())) {
                     en.getCrew().decreaseEdge();
                     r = new Report(6530);
@@ -21700,6 +21704,7 @@ public class TWGameManager extends AbstractGameManager {
                     r.indent(3);
                     r.add(en.getCrew().getOptions().intOption(OptionsConstants.EDGE));
                     vDesc.addElement(r);
+                    hasUsedEdge = true;
                     continue;
                 }
 

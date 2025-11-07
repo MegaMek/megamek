@@ -17,12 +17,12 @@
  * if not, see <https://www.gnu.org/licenses/>.
  *
  * NOTICE: The MegaMek organization is a non-profit group of volunteers
- * creating free software for the BattleTech community. 
+ * creating free software for the BattleTech community.
  *
- * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks 
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
  * of The Topps Company, Inc. All Rights Reserved.
- * 
- * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of 
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
  *
  * MechWarrior Copyright Microsoft Corporation. <Package Name> was created under
@@ -33,14 +33,6 @@
 
 
 package megamek.common;
-
-import megamek.common.equipment.EquipmentType;
-import megamek.common.units.BipedMek;
-import megamek.common.units.Mek;
-import megamek.common.units.QuadMek;
-import megamek.common.units.TripodMek;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 
 import static megamek.common.ToHitData.HIT_KICK;
 import static megamek.common.ToHitData.HIT_NORMAL;
@@ -55,7 +47,16 @@ import static megamek.common.units.Mek.LOC_LEFT_TORSO;
 import static megamek.common.units.Mek.LOC_RIGHT_ARM;
 import static megamek.common.units.Mek.LOC_RIGHT_LEG;
 import static megamek.common.units.Mek.LOC_RIGHT_TORSO;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import megamek.common.equipment.EquipmentType;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadMek;
+import megamek.common.units.TripodMek;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class PlaytestTests {
     @BeforeAll
@@ -68,7 +69,8 @@ public class PlaytestTests {
     void testBipedSideTable() {
         Mek mek = new BipedMek();
         for (int i = 0; i < 100; i++) {
-            var location = mek.getPlaytestSideLocation(HIT_NORMAL, SIDE_LEFT, LosEffects.COVER_NONE).getLocation();
+            var location = mek.getPlaytestSideLocation(HIT_NORMAL, SIDE_LEFT, LosEffects.COVER_NONE, false)
+                  .getLocation();
             assertNotEquals(LOC_RIGHT_ARM, location);
             assertNotEquals(LOC_RIGHT_LEG, location);
             assertNotEquals(LOC_RIGHT_TORSO, location);
@@ -79,7 +81,8 @@ public class PlaytestTests {
     void testTripodKickSideTable() {
         Mek mek = new TripodMek();
         for (int i = 0; i < 100; i++) {
-            var location = mek.getPlaytestSideLocation(HIT_KICK, SIDE_RIGHT, LosEffects.COVER_NONE).getLocation();
+            var location = mek.getPlaytestSideLocation(HIT_KICK, SIDE_RIGHT, LosEffects.COVER_NONE, false)
+                  .getLocation();
             assertTrue(location == LOC_RIGHT_LEG || location == LOC_CENTER_LEG);
         }
     }
@@ -88,8 +91,12 @@ public class PlaytestTests {
     void testQuadPunchSideTable() {
         Mek mek = new QuadMek();
         for (int i = 0; i < 100; i++) {
-            var location = mek.getPlaytestSideLocation(HIT_PUNCH, SIDE_LEFT, LosEffects.COVER_NONE).getLocation();
-            assertTrue(location == LOC_LEFT_ARM || location == LOC_LEFT_TORSO || location == LOC_HEAD || location == LOC_CENTER_TORSO);
+            var location = mek.getPlaytestSideLocation(HIT_PUNCH, SIDE_LEFT, LosEffects.COVER_NONE, false)
+                  .getLocation();
+            assertTrue(location == LOC_LEFT_ARM
+                  || location == LOC_LEFT_TORSO
+                  || location == LOC_HEAD
+                  || location == LOC_CENTER_TORSO);
         }
     }
 }

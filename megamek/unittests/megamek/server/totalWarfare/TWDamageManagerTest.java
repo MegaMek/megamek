@@ -182,7 +182,7 @@ class TWDamageManagerTest {
 
         // Deal damage with original method
         for (int count = 0; count <= 15; count++) {
-            HitData hit = mek.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+            HitData hit = mek.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT, false);
             damageInfo = new DamageInfo(mek, hit, 5);
             oldMan.damageEntity(damageInfo);
         }
@@ -197,7 +197,7 @@ class TWDamageManagerTest {
 
         // Deal damage with new method
         for (int count = 0; count <= 15; count++) {
-            HitData hit = mek2.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+            HitData hit = mek2.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT, false);
             damageInfo = new DamageInfo(mek2, hit, 5);
             newMan.damageEntity(damageInfo);
         }

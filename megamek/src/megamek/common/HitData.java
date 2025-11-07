@@ -90,6 +90,9 @@ public class HitData {
 
     private boolean ignoreInfantryDoubleDamage = false;
 
+    // Track Edge usage on this hit
+    private boolean usedEdge = false;
+
 
     public HitData(int location) {
         this(location, false, EFFECT_NONE, false, 0, false);
@@ -138,7 +141,7 @@ public class HitData {
     public void setHeatWeapon(boolean heatWeapon) {
         this.heat_weapon = heatWeapon;
     }
-    
+
     public void setFromFront(boolean dir) {
         fromFront = dir;
     }
@@ -146,7 +149,7 @@ public class HitData {
     public boolean isFromFront() {
         return fromFront;
     }
-    
+
     // PLAYTEST 3 - Only called if playtest 3 is enabled
     public void makeArmorPiercingPlaytest(AmmoType inType, int modifier) {
         specCrit = true;
@@ -265,12 +268,12 @@ public class HitData {
     public int getGeneralDamageType() {
         return generalDamageType;
     }
-    
+
     // PLAYTEST3 for heat-causing weapons
     public boolean getHeatWeapon() {
         return heat_weapon;
     }
-    
+
     public void setGeneralDamageType(int type) {
         generalDamageType = type;
     }
@@ -342,5 +345,13 @@ public class HitData {
 
     public void setAttackerId(int attackerId) {
         this.attackerId = attackerId;
+    }
+
+    public void setUsedEdge() {
+        this.usedEdge = true;
+    }
+
+    public boolean getUsedEdge() {
+        return this.usedEdge;
     }
 }

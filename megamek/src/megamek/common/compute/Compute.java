@@ -3986,7 +3986,7 @@ public class Compute {
                     weapon.setMode(Weapon.MODE_AC_RAPID);
                 } else {
                     final_spin = 0;
-                    weapon.setMode(Weapon.MODE_AC_SINGLE);
+                    weapon.setMode("");
                 }
             }
         }

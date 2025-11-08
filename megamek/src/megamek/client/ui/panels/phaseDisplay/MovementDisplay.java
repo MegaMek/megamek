@@ -3169,7 +3169,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         Vector<Entity> choices = new Vector<>();
         for (Entity other : game.getEntitiesVector(cmd.getFinalCoords())) {
-            if (other.isLoadableThisTurn() && (currentEntity() != null) && currentEntity().canLoad(other, false)) {
+            // Only allow selecting units that aren't already getting loaded
+            if (other.isLoadableThisTurn() && (currentEntity() != null) && currentEntity().canLoad(other, true,
+                  cmd.getFinalElevation()) && (other.getTargetBay() == -1)) {
+
                 choices.addElement(other);
             }
         }
@@ -3199,63 +3202,69 @@ public class MovementDisplay extends ActionPhaseDisplay {
             choice = choices.get(0);
         }
 
-        if (!(choice instanceof Infantry)) {
-            List<Integer> bayChoices = new ArrayList<>();
+        // Handle canceled dialog
+        if (choice == null) {
+            return null;
+        }
+
+        // Safety set, apparently
+        choice.setTargetBay(-1);
+
+        List<Integer> bayChoices = new ArrayList<>();
+        for (Transporter t : currentEntity().getTransports()) {
+            if (t.canLoad(choice) && (t instanceof Bay)) {
+                bayChoices.add(((Bay) t).getBayNumber());
+            }
+        }
+
+        if (bayChoices.size() == 1) {
+            choice.setTargetBay(bayChoices.get(0));
+        } else if (bayChoices.size() > 1) {
+            String[] retVal = new String[bayChoices.size()];
+            int i = 0;
+            for (Integer bn : bayChoices) {
+                retVal[i++] = bn.toString() + " (Free Slots: " + (int) currentEntity().getBayById(bn).getUnused() + ")";
+            }
+            String bayString = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
+                  Messages.getString("MovementDisplay.loadUnitBayNumberDialog.message", currentEntity().getShortName()),
+                  Messages.getString("MovementDisplay.loadUnitBayNumberDialog.title"),
+                  JOptionPane.QUESTION_MESSAGE,
+                  null,
+                  retVal,
+                  null);
+            choice.setTargetBay(MathUtility.parseInt(bayString.substring(0, bayString.indexOf(" "))));
+            // We need to update the entity here so that the server knows
+            // about our target bay
+            clientgui.getClient().sendUpdateEntity(choice);
+        } else if (choice.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
+            bayChoices = new ArrayList<>();
             for (Transporter t : currentEntity().getTransports()) {
-                if (t.canLoad(choice) && (t instanceof Bay)) {
-                    bayChoices.add(((Bay) t).getBayNumber());
+                if ((t instanceof ProtoMekClampMount) && t.canLoad(choice)) {
+                    bayChoices.add(((ProtoMekClampMount) t).isRear() ? 1 : 0);
                 }
             }
             if (bayChoices.size() > 1) {
                 String[] retVal = new String[bayChoices.size()];
                 int i = 0;
                 for (Integer bn : bayChoices) {
-                    retVal[i++] = bn.toString() + " (Free Slots: " + (int) currentEntity().getBayById(bn).getUnused() + ")";
+                    retVal[i++] = bn > 0 ?
+                          Messages.getString("MovementDisplay.loadProtoClampMountDialog.rear") :
+                          Messages.getString("MovementDisplay.loadProtoClampMountDialog.front");
                 }
                 String bayString = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
-                      Messages.getString("MovementDisplay.loadUnitBayNumberDialog.message", currentEntity().getShortName()),
-                      Messages.getString("MovementDisplay.loadUnitBayNumberDialog.title"),
+                      Messages.getString("MovementDisplay.loadProtoClampMountDialog.message",
+                            currentEntity().getShortName()),
+                      Messages.getString("MovementDisplay.loadProtoClampMountDialog.title"),
                       JOptionPane.QUESTION_MESSAGE,
                       null,
                       retVal,
                       null);
-                choice.setTargetBay(MathUtility.parseInt(bayString.substring(0, bayString.indexOf(" "))));
+                choice.setTargetBay(bayString.equals(Messages.getString(
+                      "MovementDisplay.loadProtoClampMountDialog.front")) ? 0 : 1);
                 // We need to update the entity here so that the server knows
                 // about our target bay
                 clientgui.getClient().sendUpdateEntity(choice);
-            } else if (choice.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
-                bayChoices = new ArrayList<>();
-                for (Transporter t : currentEntity().getTransports()) {
-                    if ((t instanceof ProtoMekClampMount) && t.canLoad(choice)) {
-                        bayChoices.add(((ProtoMekClampMount) t).isRear() ? 1 : 0);
-                    }
-                }
-                if (bayChoices.size() > 1) {
-                    String[] retVal = new String[bayChoices.size()];
-                    int i = 0;
-                    for (Integer bn : bayChoices) {
-                        retVal[i++] = bn > 0 ?
-                              Messages.getString("MovementDisplay.loadProtoClampMountDialog.rear") :
-                              Messages.getString("MovementDisplay.loadProtoClampMountDialog.front");
-                    }
-                    String bayString = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
-                          Messages.getString("MovementDisplay.loadProtoClampMountDialog.message", currentEntity().getShortName()),
-                          Messages.getString("MovementDisplay.loadProtoClampMountDialog.title"),
-                          JOptionPane.QUESTION_MESSAGE,
-                          null,
-                          retVal,
-                          null);
-                    choice.setTargetBay(bayString.equals(Messages.getString(
-                          "MovementDisplay.loadProtoClampMountDialog.front")) ? 0 : 1);
-                    // We need to update the entity here so that the server knows
-                    // about our target bay
-                    clientgui.getClient().sendUpdateEntity(choice);
-                } else {
-                    choice.setTargetBay(-1); // Safety set!
-                }
             }
-        } else {
-            choice.setTargetBay(-1); // Safety set!
         }
 
         // Return the chosen unit.

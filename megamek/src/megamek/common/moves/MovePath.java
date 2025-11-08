@@ -463,8 +463,8 @@ public class MovePath implements Cloneable, Serializable {
      * been declared illegal
      */
     private void performIllegalCheck(MoveStep step, Coords start, Coords land) {
-        // can't do anything after loading
-        if (contains(MoveStepType.LOAD)) {
+        // can't do anything after loading except loading again (if MPs exist)
+        if (contains(MoveStepType.LOAD) && !(getLastStep().getType() == MoveStepType.LOAD)) {
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             return;
         }

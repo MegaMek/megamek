@@ -9,6 +9,9 @@ This guide explains how to test pull requests (PRs) from the MegaMek repository 
 - Java 17 or newer installed (see [README.md](README.md) for Java installation instructions)
 - A local clone of the MegaMek repository
 
+**Note:** If you cloned MegaMek from GitHub, IntelliJ should handle all dependencies automatically when you open the project. 
+The build system will download any required data files during the first build.
+
 ## Quick Start: Testing PR #7483
 
 PR #7483 fixes laser heat sink bugs. Here's how to test it:
@@ -198,6 +201,18 @@ git branch -r | grep pull
 # If the branch isn't there, use the fetch command from Method 1
 git fetch origin pull/7483/head:pr-7483
 ```
+
+### Issue: Build fails with "Included build does not exist" error
+
+**Solution:** This typically means the project is looking for dependencies in sibling directories. IntelliJ IDEA handles 
+this automatically when you open the project. If building from command line fails, use IntelliJ's built-in Gradle 
+integration instead:
+1. Open the project in IntelliJ IDEA
+2. Let IntelliJ sync the Gradle project (it will show a notification)
+3. Use the Gradle tool window to build and run
+
+Alternatively, you can download a pre-built development release from the [MegaMek releases page](https://github.com/MegaMek/megamek/releases) 
+and only test specific features.
 
 ## Additional Resources
 

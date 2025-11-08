@@ -103,53 +103,57 @@ public class ComputeArc {
         // if using advanced AA options, then ground-to-air fire determines arc by closest position
         if (Compute.isGroundToAir(attacker, target) && (target instanceof Entity targetEntity)) {
             tPos = Compute.getClosestFlightPath(attacker.getId(), attacker.getPosition(), targetEntity);
-        }
+            targetPosition = UnitPosition.of(tPos, targetEntity.getFacing());
+        } else {
 
-        // AMS defending against Ground to Air fire needs to calculate arc based on the closest flight path
-        // Technically it's an AirToGround attack since the AMS is on the aircraft
-        if (Compute.isAirToGround(attacker, target)
-              && (weaponEntity.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMS)
-              || weaponEntity.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMS_BAY))) {
-            aPos = Compute.getClosestFlightPath(target.getId(), target.getPosition(), attacker);
-        }
-
-        if (CrossBoardAttackHelper.isCrossBoardArtyAttack(attacker, target, game)) {
-            // When attacking between two ground boards, replace the attacker and target positions with the positions
-            // of the boards themselves on the atmospheric map
-            // When the ground boards are only connected through a high atmospheric map, the arrangement of
-            // the maps is unkown and the arc cannot be tested; therefore return false in that case, although
-            // a distance could be computed
-            Board attackerAtmoBoard = game.getEnclosingBoard(game.getBoard(attacker));
-            Board targetAtmoBoard = game.getEnclosingBoard(game.getBoard(target));
-            if (attackerAtmoBoard.getBoardId() != targetAtmoBoard.getBoardId()) {
-                return false;
+            // AMS defending against Ground to Air fire needs to calculate arc based on the closest flight path
+            // Technically it's an AirToGround attack since the AMS is on the aircraft
+            if (Compute.isAirToGround(attacker, target)
+                  && (weaponEntity.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMS)
+                  || weaponEntity.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMS_BAY))) {
+                aPos = Compute.getClosestFlightPath(target.getId(), target.getPosition(), attacker);
             }
-            aPos = attackerAtmoBoard.embeddedBoardPosition(attacker.getBoardId());
-            targetPosition = UnitPosition.of(attackerAtmoBoard.embeddedBoardPosition(target.getBoardId()));
-        } else if (CrossBoardAttackHelper.isOrbitToSurface(game, attacker, target)) {
-            // For this attack, the ground row hex enclosing the ground map target must be in arc; replace position
-            Board targetAtmoBoard = game.getEnclosingBoard(game.getBoard(target.getBoardId()));
-            targetPosition = UnitPosition.of(game.getBoard(attacker)
-                  .embeddedBoardPosition(targetAtmoBoard.getBoardId()));
-        } else if (Compute.isAirToAir(game, attacker, target) && !game.onTheSameBoard(attacker, target)
-              && (game.onDirectlyConnectedBoards(attacker, target)
-              || CrossBoardAttackHelper.onGroundMapsWithinOneAtmosphereMap(game, attacker, target))) {
-            // In A2A attacks between different maps (only ground/ground, ground/atmo or atmo/ground), replace the
-            // position of the unit on the ground map with the position of the ground map itself in the atmo map
-            if (game.isOnGroundMap(attacker) && game.isOnAtmosphericMap(target)) {
-                aPos = game.getBoard(target).embeddedBoardPosition(attacker.getBoardId());
-                targetPosition = UnitPosition.of(target);
-            } else if (game.isOnAtmosphericMap(attacker) && game.isOnGroundMap(target)) {
-                targetPosition = UnitPosition.of(game.getBoard(attacker).embeddedBoardPosition(target.getBoardId()));
-            } else if (game.isOnGroundMap(attacker) && game.isOnGroundMap(target)) {
-                // Different ground maps, here replace both positions with their respective atmo map hexes
-                aPos = game.getBoard(target).embeddedBoardPosition(attacker.getBoardId());
-                targetPosition = UnitPosition.of(game.getBoard(attacker).embeddedBoardPosition(target.getBoardId()));
+
+            if (CrossBoardAttackHelper.isCrossBoardArtyAttack(attacker, target, game)) {
+                // When attacking between two ground boards, replace the attacker and target positions with the positions
+                // of the boards themselves on the atmospheric map
+                // When the ground boards are only connected through a high atmospheric map, the arrangement of
+                // the maps is unkown and the arc cannot be tested; therefore return false in that case, although
+                // a distance could be computed
+                Board attackerAtmoBoard = game.getEnclosingBoard(game.getBoard(attacker));
+                Board targetAtmoBoard = game.getEnclosingBoard(game.getBoard(target));
+                if (attackerAtmoBoard.getBoardId() != targetAtmoBoard.getBoardId()) {
+                    return false;
+                }
+                aPos = attackerAtmoBoard.embeddedBoardPosition(attacker.getBoardId());
+                targetPosition = UnitPosition.of(attackerAtmoBoard.embeddedBoardPosition(target.getBoardId()));
+            } else if (CrossBoardAttackHelper.isOrbitToSurface(game, attacker, target)) {
+                // For this attack, the ground row hex enclosing the ground map target must be in arc; replace position
+                Board targetAtmoBoard = game.getEnclosingBoard(game.getBoard(target.getBoardId()));
+                targetPosition = UnitPosition.of(game.getBoard(attacker)
+                      .embeddedBoardPosition(targetAtmoBoard.getBoardId()));
+            } else if (Compute.isAirToAir(game, attacker, target) && !game.onTheSameBoard(attacker, target)
+                  && (game.onDirectlyConnectedBoards(attacker, target)
+                  || CrossBoardAttackHelper.onGroundMapsWithinOneAtmosphereMap(game, attacker, target))) {
+                // In A2A attacks between different maps (only ground/ground, ground/atmo or atmo/ground), replace the
+                // position of the unit on the ground map with the position of the ground map itself in the atmo map
+                if (game.isOnGroundMap(attacker) && game.isOnAtmosphericMap(target)) {
+                    aPos = game.getBoard(target).embeddedBoardPosition(attacker.getBoardId());
+                    targetPosition = UnitPosition.of(target);
+                } else if (game.isOnAtmosphericMap(attacker) && game.isOnGroundMap(target)) {
+                    targetPosition = UnitPosition.of(game.getBoard(attacker)
+                          .embeddedBoardPosition(target.getBoardId()));
+                } else if (game.isOnGroundMap(attacker) && game.isOnGroundMap(target)) {
+                    // Different ground maps, here replace both positions with their respective atmo map hexes
+                    aPos = game.getBoard(target).embeddedBoardPosition(attacker.getBoardId());
+                    targetPosition = UnitPosition.of(game.getBoard(attacker)
+                          .embeddedBoardPosition(target.getBoardId()));
+                } else {
+                    targetPosition = UnitPosition.of(target);
+                }
             } else {
                 targetPosition = UnitPosition.of(target);
             }
-        } else {
-            targetPosition = UnitPosition.of(target);
         }
 
         // When the above methods all deliver BoardLocations, matching boardIds can be checked:
@@ -170,125 +174,6 @@ public class ComputeArc {
     public static boolean isInArc(Coords src, int facing, Coords dest, int arc) {
         FacingArc facingArc = FacingArc.valueOf(arc);
         return facingArc.isInsideArc(UnitPosition.of(src, facing), UnitPosition.of(dest));
-    }
-
-    /**
-     * Checks to see if a target is in arc of the specified weapon, on the specified entity
-     */
-    @Deprecated(forRemoval = true, since = "0.50.07")
-    public static boolean isInArcOld(Game game, int attackerId, int weaponId, Targetable target) {
-        Entity attacker = game.getEntity(attackerId);
-
-        if ((attacker == null) || (target == null)) {
-            LOGGER.error("Trying to compute arc with a null attacker or target");
-            return false;
-        }
-
-        if ((attacker.getPosition() == null) || (target.getPosition() == null)) {
-            LOGGER.error("Trying to compute arc with null position on attacker or target");
-            return false;
-        }
-
-        if ((attacker instanceof Mek) && (attacker.getGrappled() == target.getId())) {
-            return true;
-        }
-
-        int facing = getFacing(weaponId, attacker);
-
-        Coords aPos = attacker.getPosition();
-        Coords tPos = target.getPosition();
-
-        // aeros in the same hex in space may still be able to fire at one another. Translate
-        // their positions to see who was further back
-        if (attacker.isSpaceborne() && (target instanceof Entity targetEntity) && aPos.equals(tPos)
-              && attacker.isAero() && target.isAero()) {
-            if (Compute.shouldMoveBackHex(attacker, targetEntity) < 0) {
-                aPos = attacker.getPriorPosition();
-            } else {
-                tPos = targetEntity.getPriorPosition();
-            }
-        }
-
-        // Allow dive-bombing VTOLs to attack the hex they are in, if they didn't select one for bombing while moving
-        if ((attacker.getMovementMode() == EntityMovementMode.VTOL) && aPos.equals(tPos)
-              && game.onTheSameBoard(attacker, target)) {
-            if (attacker.getEquipment(weaponId).getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
-                return true;
-            }
-        }
-
-        // if using advanced AA options, then ground-to-air fire determines arc by closest position
-        if (Compute.isGroundToAir(attacker, target) && (target instanceof Entity targetEntity)) {
-            tPos = Compute.getClosestFlightPath(attacker.getId(), attacker.getPosition(), targetEntity);
-        }
-
-        // AMS defending against Ground to Air fire needs to calculate arc based on the closest flight path
-        // Technically it's an AirToGround attack since the AMS is on the aircraft
-        if (Compute.isAirToGround(attacker, target)
-              && (attacker.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMS)
-              || attacker.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMS_BAY))) {
-            aPos = Compute.getClosestFlightPath(target.getId(), target.getPosition(), attacker);
-        }
-
-        List<Coords> targetPositions = new ArrayList<>();
-        targetPositions.add(tPos);
-        targetPositions.addAll(target.getSecondaryPositions().values());
-        targetPositions.removeIf(Objects::isNull);
-
-        if (CrossBoardAttackHelper.isCrossBoardArtyAttack(attacker, target, game)) {
-            // When attacking between two ground boards, replace the attacker and target positions with the positions
-            // of the boards themselves on the atmospheric map
-            // When the ground boards are only connected through a high atmospheric map, the arrangement of
-            // the maps is unkown and the arc cannot be tested; therefore return false in that case, although
-            // a distance could be computed
-            Board attackerAtmoBoard = game.getEnclosingBoard(game.getBoard(attacker));
-            Board targetAtmoBoard = game.getEnclosingBoard(game.getBoard(target));
-            if (attackerAtmoBoard.getBoardId() == targetAtmoBoard.getBoardId()) {
-                aPos = attackerAtmoBoard.embeddedBoardPosition(attacker.getBoardId());
-                targetPositions.clear();
-                targetPositions.add(attackerAtmoBoard.embeddedBoardPosition(target.getBoardId()));
-            } else {
-                return false;
-            }
-        }
-
-        if (CrossBoardAttackHelper.isOrbitToSurface(game, attacker, target)) {
-            // For this attack, the ground row hex enclosing the ground map target must be in arc; replace position
-            Board targetAtmoBoard = game.getEnclosingBoard(game.getBoard(target.getBoardId()));
-            targetPositions.clear();
-            targetPositions.add(game.getBoard(attacker).embeddedBoardPosition(targetAtmoBoard.getBoardId()));
-        }
-
-        if (Compute.isAirToAir(game, attacker, target) && !game.onTheSameBoard(attacker, target)
-              && (game.onDirectlyConnectedBoards(attacker, target)
-              || CrossBoardAttackHelper.onGroundMapsWithinOneAtmosphereMap(game, attacker, target))) {
-            // In A2A attacks between different maps (only ground/ground, ground/atmo or atmo/ground), replace the
-            // position of the unit on the ground map with the position of the ground map itself in the atmo map
-            if (game.isOnGroundMap(attacker) && game.isOnAtmosphericMap(target)) {
-                aPos = game.getBoard(target).embeddedBoardPosition(attacker.getBoardId());
-            } else if (game.isOnAtmosphericMap(attacker) && game.isOnGroundMap(target)) {
-                targetPositions.clear();
-                targetPositions.add(game.getBoard(attacker).embeddedBoardPosition(target.getBoardId()));
-            } else if (game.isOnGroundMap(attacker) && game.isOnGroundMap(target)) {
-                // Different ground maps, here replace both positions with their respective atmo map hexes
-                aPos = game.getBoard(target).embeddedBoardPosition(attacker.getBoardId());
-                targetPositions.clear();
-                targetPositions.add(game.getBoard(attacker).embeddedBoardPosition(target.getBoardId()));
-            }
-        }
-
-        // When the above methods all deliver BoardLocations, matching boardIds can be checked:
-        //        final int attackerBoardId = attacker.getBoardId();
-        //        if (targetPositions.stream().anyMatch(bl -> !bl.isOnBoard(attackerBoardId))) {
-        //            LOGGER.error("Target Coords must be on the same board as the attacker!");
-        //        }
-
-        return isInArcOld(aPos, facing, targetPositions, attacker.getWeaponArc(weaponId));
-    }
-
-    @Deprecated(forRemoval = true, since = "0.50.07")
-    public static boolean isInArcOld(Coords src, int facing, Coords dest, int arc) {
-        return isInArcOld(src, facing, List.of(dest), arc);
     }
 
     @SuppressWarnings("unused")

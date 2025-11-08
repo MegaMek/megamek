@@ -10008,7 +10008,7 @@ public abstract class Entity extends TurnOrdered
      * @return Whether this type of unit can perform charges
      */
     public boolean canCharge() {
-        return !isImmobile() && (getWalkMP() > 0) && !isStuck() && !isProne();
+        return !isImmobile() && (getWalkMP() > 0) && !isStuck();
     }
 
     /**

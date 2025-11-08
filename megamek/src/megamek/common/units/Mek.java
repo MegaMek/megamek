@@ -1901,7 +1901,7 @@ public abstract class Mek extends Entity {
      * @param aimedLocation
      * @param aimingMode
      * @param cover
-     * @return
+     * @return HitData, possibly re-rolled once (once!) with Edge.
      */
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
@@ -1925,10 +1925,11 @@ public abstract class Mek extends Entity {
         }
 
         // Can aimed hits be rerolled with Edge?  We can check originalHit.hitAimedLocation() if necessary
-
         // Note: shouldUseEdge() checks if crew has Edge remaining, no need for explicit check
-        // Was this a TAC?
-        if (originalHit.getSpecCrit()) {
+        // Note: Edge use is _recorded_ here via setUndoneLocation(), but is _logged_ in the Damage Manager
+
+        // Was this a TAC or Special Critical (AP, Tandem Charge warhead)
+        if (originalHit.getEffect() == HitData.EFFECT_CRITICAL || originalHit.getSpecCrit()) {
             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
                   && !gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
                 getCrew().decreaseEdge();

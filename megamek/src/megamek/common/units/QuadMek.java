@@ -828,7 +828,7 @@ public class QuadMek extends Mek {
                     return new HitData(Mek.LOC_LEFT_TORSO, true, effects);
             }
         }
-        return super.rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+        return super.innerRollHitLocation(table, side, aimedLocation, aimingMode, cover);
     }
 
     @Override

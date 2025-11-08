@@ -429,6 +429,11 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "No backwards movement allowed while charging");
         }
 
+        // no prone
+        if (md.getFinalProne()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "You cannot charge if you end the movement phase prone");
+        }
+
         // no evading
         if (md.contains(MoveStepType.EVADE)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "No evading while charging");

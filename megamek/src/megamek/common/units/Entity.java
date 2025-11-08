@@ -8532,11 +8532,27 @@ public abstract class Entity extends TurnOrdered
      * no room for the unit.
      *
      * @param unit - the <code>Entity</code> to be loaded.
+     * @param checkElev - Whether to compare elevations (e.g. for VTOL loading infantry)
      *
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
      *       otherwise.
      */
     public boolean canLoad(Entity unit, boolean checkElev) {
+        return canLoad(unit, checkElev, getElevation());
+    }
+
+    /**
+     * Determines if this object can accept the given unit. The unit may not be of the appropriate type or there may be
+     * no room for the unit.
+     *
+     * @param unit - the <code>Entity</code> to be loaded.
+     * @param checkElev - Whether to compare elevations (e.g. for VTOL loading infantry)
+     * @param height - the height at which to consider the loader
+     *
+     * @return <code>true</code> if the unit can be loaded, <code>false</code>
+     *       otherwise.
+     */
+    public boolean canLoad(Entity unit, boolean checkElev, int height) {
         // For now, if it's infantry, it can't load anything. Period!
         if (this instanceof Infantry) {
             return false;
@@ -8583,9 +8599,9 @@ public abstract class Entity extends TurnOrdered
                 boolean isLoungeOrUnknownPhase = false;
                 if (getGame() != null) {
                     isLoungeOrUnknownPhase = getGame().getPhase().isLounge() || getGame().getPhase().isUnknown();
-                }
+                } // getElevation() on this is the issue; see ce.canGoUp(cmd.getFinalElevation(), cmd.getFinalCoords(), cmd.getFinalBoardId())
                 if ((!(t instanceof ExternalCargo) || isLoungeOrUnknownPhase) && t.canLoad(unit) &&
-                      (!checkElev || unit.getElevation() == getElevation()) &&
+                      (!checkElev || unit.getElevation() == height) &&
                       !((t instanceof BattleArmorHandles) && noExternalMount)) {
                     return true;
                 }

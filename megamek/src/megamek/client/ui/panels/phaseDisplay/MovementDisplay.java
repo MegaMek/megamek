@@ -2969,7 +2969,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
               .stream()
               .filter(other -> !ce.canTow(other.getId()))
               .filter(Entity::isLoadableThisTurn)
-              .anyMatch(ce::canLoad);
+              .anyMatch(other -> ce.canLoad(other, true, cmd.getFinalElevation()));
         setLoadEnabled(canLoad);
     }
 

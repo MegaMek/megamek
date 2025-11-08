@@ -428,6 +428,11 @@ with our [style guide](https://github.com/MegaMek/megamek/wiki/MegaMek-Coding-St
 for line length, tabs vs. spaces, etc. When all else fails, we follow
 the [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html).
 
+## Testing Pull Requests
+
+If you want to help test pull requests before they're merged, see the [Testing PRs Guide](TESTING_PRS.md) for detailed 
+instructions on how to check out and test PRs locally in IntelliJ IDEA or other IDEs.
+
 ## Support
 
 For bugs, crashes, or other issues you can fill out a [GitHub issue request](https://github.com/MegaMek/MegaMek/issues).

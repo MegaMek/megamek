@@ -3914,10 +3914,14 @@ public class Compute {
         boolean isRAC = false;
 
         // Get the to-hit number for this attack
+        if (null == atk) {
+            LOGGER.warn("null provided as WeaponAttackAction in Compute.spinUpCannon");
+            return final_spin;
+        }
         to_hit = atk.toHit(cgame).getValue();
 
         // If weapon can't hit target, exit with the default mode setting
-        if (to_hit >= 12) {
+        if (to_hit > 12) {
             return final_spin;
         }
 

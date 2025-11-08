@@ -147,6 +147,7 @@ public class LRMHandler extends MissileWeaponHandler {
         // is any hex in the flight path of the missile ECM affected?
         // if the attacker is affected by ECM or the target is protected by ECM
         // then act as if affected.
+
         boolean bECMAffected = ComputeECM.isAffectedByECM(attackingEntity,
               attackingEntity.getPosition(),
               target.getPosition());
@@ -273,11 +274,14 @@ public class LRMHandler extends MissileWeaponHandler {
 
         // ELRMs only hit with half their rack size rounded up at minimum range.
         // Ignore this for space combat. 1 hex is 18km across.
-        if (weaponType instanceof ExtendedLRMWeapon
-              && !game.getBoard().isSpace()
-              && (nRange <= weaponType.getMinimumRange())) {
-            rackSize = rackSize / 2 + rackSize % 2;
-            minRangeELRMAttack = true;
+        // PLAYTEST3 this is now ignored completely
+        if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            if (weaponType instanceof ExtendedLRMWeapon
+                  && !game.getBoard().isSpace()
+                  && (nRange <= weaponType.getMinimumRange())) {
+                rackSize = rackSize / 2 + rackSize % 2;
+                minRangeELRMAttack = true;
+            }
         }
 
         if (allShotsHit()) {

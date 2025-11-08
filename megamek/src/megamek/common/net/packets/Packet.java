@@ -62,6 +62,7 @@ import megamek.common.board.Coords;
 import megamek.common.containers.PlayerIDAndList;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.equipment.Flare;
+import megamek.common.equipment.GroundObject;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
 import megamek.common.force.Force;
@@ -90,7 +91,6 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
 
     /**
      * Creates a <code>Packet</code> with a command and an array of objects
-     *
      */
     public Packet(PacketCommand command, Object... data) {
         this.command = command;
@@ -190,7 +190,8 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
      * @return a Map of {@link Coords} key's with a Collection of {@link SpecialHexDisplay} value's of the object at the
      *       specified index
      */
-    public Map<Integer, List<SBFReportEntry>> getIntegerWithSBFReportEntryList(int index) throws InvalidPacketDataException {
+    public Map<Integer, List<SBFReportEntry>> getIntegerWithSBFReportEntryList(int index)
+          throws InvalidPacketDataException {
         Object object = getObject(index);
 
         Map<Integer, List<SBFReportEntry>> result = new HashMap<>();
@@ -365,7 +366,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
      *
      * @return the {@link Coords} value of the object at the specified index
      */
-    public @Nullable Coords getCoords(int index)  throws InvalidPacketDataException {
+    public @Nullable Coords getCoords(int index) throws InvalidPacketDataException {
         Object object = getObject(index);
 
         if (object instanceof Coords coords) {
@@ -422,10 +423,10 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return a Map of {@link Coords} key's with a List of {@link ICarryable} value's of the object at the specified
-     *       index
+     * @return a Map of {@link Coords} key's with a List of {@link GroundObject} {@link GroundObject} value's of the
+     *       object at the specified index
      */
-    public Map<Coords, List<ICarryable>> getCoordsWithICarryableListMap(int index) throws InvalidPacketDataException {
+    public Map<Coords, List<ICarryable>> getCoordsWithGroundObjectListMap(int index) throws InvalidPacketDataException {
         Object object = getObject(index);
 
         Map<Coords, List<ICarryable>> result = new HashMap<>();
@@ -436,8 +437,8 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
                     if (value instanceof List<?> valueList) {
                         List<ICarryable> verifiedList = new ArrayList<>();
                         for (Object listValue : valueList) {
-                            if (listValue instanceof ICarryable verifiedCarryable) {
-                                verifiedList.add(verifiedCarryable);
+                            if (listValue instanceof GroundObject verifiedGroundObject) {
+                                verifiedList.add(verifiedGroundObject);
                             }
                         }
 
@@ -457,7 +458,8 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
      * @return a Map of {@link Coords} key's with a Collection of {@link SpecialHexDisplay} value's of the object at the
      *       specified index
      */
-    public Map<Coords, Collection<SpecialHexDisplay>> getCoordsWithSpecialHexDisplayCollectionMap(int index) throws InvalidPacketDataException {
+    public Map<Coords, Collection<SpecialHexDisplay>> getCoordsWithSpecialHexDisplayCollectionMap(int index)
+          throws InvalidPacketDataException {
         Object object = getObject(index);
 
         Map<Coords, Collection<SpecialHexDisplay>> result = new HashMap<>();
@@ -872,7 +874,8 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
      *
      * @return a Vector of {@link Player}'s value of the object at the specified index
      */
-    public PlayerIDAndList<BoardLocation> getPlayerIDAndListWithBoardLocation(int index) throws InvalidPacketDataException {
+    public PlayerIDAndList<BoardLocation> getPlayerIDAndListWithBoardLocation(int index)
+          throws InvalidPacketDataException {
         Object object = getObject(index);
 
         PlayerIDAndList<BoardLocation> result = new PlayerIDAndList<>();
@@ -1079,6 +1082,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
 
         throw new InvalidPacketDataException("List", object, index);
     }
+
     /**
      * @param index the index of the desired object
      *

@@ -37,6 +37,7 @@ import java.io.Serial;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.HandheldWeapon;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 
@@ -80,6 +81,9 @@ public class EntityClassTurn extends GameTurn {
 
     /** The constant to represent warship entities. */
     public static final int CLASS_SMALL_CRAFT = 1024;
+
+    /** The constant to represent handheld weapon entities. */
+    public static final int CLASS_HANDHELD_WEAPON   = 2048;
 
     /**
      * Only allow entities for the given player which have types in the class mask to move.
@@ -166,6 +170,8 @@ public class EntityClassTurn extends GameTurn {
             return CLASS_TANK;
         } else if (entity instanceof Mek) {
             return CLASS_MEK;
+        } else if (entity instanceof HandheldWeapon) {
+            return CLASS_HANDHELD_WEAPON;
         } else {
             return 0;
         }

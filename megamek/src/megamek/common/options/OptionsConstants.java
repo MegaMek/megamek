@@ -412,6 +412,7 @@ public class OptionsConstants {
     public static final String ADVANCED_COMBAT_TAC_OPS_JUMP_JET_ATTACK = "tacops_jump_jet_attack";
     public static final String ADVANCED_COMBAT_TAC_OPS_TRIP_ATTACK = "tacops_trip_attack";
     public static final String ADVANCED_COMBAT_TAC_OPS_ENERGY_WEAPONS = "tacops_energy_weapons";
+    public static final String ADVANCED_COMBAT_GOTHIC_DAZZLE_MODE = "gothic_dazzle_mode";
     public static final String ADVANCED_COMBAT_TAC_OPS_GAUSS_WEAPONS = "tacops_gauss_weapons";
     public static final String ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES = "tacops_retractable_blades";
     public static final String ADVANCED_COMBAT_TAC_OPS_AMMUNITION = "tacops_ammunition";
@@ -445,6 +446,7 @@ public class OptionsConstants {
     public static final String ADVANCED_COMBAT_FOREST_FIRES_NO_SMOKE = "forest_fires_no_smoke";
     public static final String ADVANCED_COMBAT_HOT_LOAD_IN_GAME = "hotload_in_game";
     public static final String ADVANCED_COMBAT_MULTI_USE_AMS = "multiuse_ams";
+    public static final String ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS = "picking_up_and_throwing_units";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_SPRINT = "tacops_sprint";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_STANDING_STILL = "tacops_standing_still";
     public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_EVADE = "tacops_evade";
@@ -538,6 +540,7 @@ public class OptionsConstants {
 
     public static final String PLAYTEST_1 = "playtest_1";
     public static final String PLAYTEST_2 = "playtest_2";
+    public static final String PLAYTEST_3 = "playtest_3";
 
     private OptionsConstants() {
     }

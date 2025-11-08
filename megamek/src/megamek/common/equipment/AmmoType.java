@@ -1024,6 +1024,22 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "208, TM");
 
+    // PLAYTEST3 AP ammo new weight
+    private static final MunitionMutator ARMOR_PIERCING_PLAYTEST_MUNITION_MUTATOR = new MunitionMutator("Armor" 
+          + "-Piercing Playtest",
+          (5.0/3),
+          Munitions.M_ARMOR_PIERCING_PLAYTEST,
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
+                .setISAdvancement(3055, 3059, 3063, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setPrototypeFactions(Faction.FS, Faction.LC)
+                .setProductionFactions(Faction.FS)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),
+          "208, TM");
+    
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
     private static final MunitionMutator CASELESS_MUNITION_MUTATOR = new MunitionMutator("Caseless",
           1,
@@ -1071,6 +1087,21 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator PRECISION_MUNITION_MUTATOR = new MunitionMutator("Precision",
           2,
           Munitions.M_PRECISION,
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
+                .setISAdvancement(3058, 3062, 3066, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),
+          "208, TM");
+
+    // PLAYTEST3 Precision ammo modifier
+    private static final MunitionMutator PRECISION_PLAYTEST_MUNITION_MUTATOR = new MunitionMutator("Precision Playtest",
+          (5.0/3),
+          Munitions.M_PRECISION_PLAYTEST,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
@@ -1884,9 +1915,11 @@ public class AmmoType extends EquipmentType {
         // AC Munition Types
         M_CLUSTER,
         M_ARMOR_PIERCING,
+        M_ARMOR_PIERCING_PLAYTEST,
         M_FLECHETTE,
         M_INCENDIARY_AC,
         M_PRECISION,
+        M_PRECISION_PLAYTEST,
         M_TRACER,
         M_FLAK,
         M_CASELESS,
@@ -3439,10 +3472,14 @@ public class AmmoType extends EquipmentType {
         // Create the munition types for AC rounds.
         munitions.clear();
         munitions.add(ARMOR_PIERCING_MUNITION_MUTATOR);
+        // PLAYTEST3 add AP ammo
+        munitions.add(ARMOR_PIERCING_PLAYTEST_MUNITION_MUTATOR);
         munitions.add(CASELESS_MUNITION_MUTATOR);
         munitions.add(FLAK_MUNITION_MUTATOR);
         munitions.add(FLECHETTE_MUNITION_MUTATOR);
         munitions.add(PRECISION_MUNITION_MUTATOR);
+        // PLAYTEST3 add Precision ammo
+        munitions.add(PRECISION_PLAYTEST_MUNITION_MUTATOR);
         munitions.add(TRACER_MUNITION_MUTATOR);
         AmmoType.createMunitions(acAmmos, munitions);
 
@@ -4459,7 +4496,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "LB 2-X Cluster Ammo";
-        ammo.shortName = "LB-2X Cluster";
+        ammo.shortName = "LB 2-X Cluster";
         ammo.setInternalName("Clan LB 2-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 2-X (CL)");
         // this isn't a true mtf code
@@ -4489,7 +4526,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "LB 5-X Cluster Ammo";
-        ammo.shortName = "LB-5X Cluster";
+        ammo.shortName = "LB 5-X Cluster";
         ammo.setInternalName("Clan LB 5-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 5-X (CL)");
         // this isn't a true mtf code
@@ -4519,7 +4556,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "LB 10-X Cluster Ammo";
-        ammo.shortName = "LB-10X Cluster";
+        ammo.shortName = "LB 10-X Cluster";
         ammo.setInternalName("Clan LB 10-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 10-X (CL)");
         // this isn't a true mtf code
@@ -4550,7 +4587,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "LB 20-X Cluster Ammo";
-        ammo.shortName = "LB-20X Cluster";
+        ammo.shortName = "LB 20-X Cluster";
         ammo.setInternalName("Clan LB 20-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 20-X (CL)");
         // this isn't a true mtf code
@@ -4705,7 +4742,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "LB 2-X AC Ammo";
-        ammo.shortName = "LB-2X";
+        ammo.shortName = "LB 2-X";
         ammo.setInternalName("Clan LB 2-X AC Ammo");
         ammo.addLookupName("Clan Ammo 2-X");
         ammo.addLookupName("CLLBXAC2 Ammo");
@@ -4733,7 +4770,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "LB 5-X AC Ammo";
-        ammo.shortName = "LB-5X";
+        ammo.shortName = "LB 5-X";
         ammo.setInternalName("Clan LB 5-X AC Ammo");
         ammo.addLookupName("Clan Ammo 5-X");
         ammo.addLookupName("CLLBXAC5 Ammo");
@@ -4761,7 +4798,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "LB 10-X AC Ammo";
-        ammo.shortName = "LB-10X";
+        ammo.shortName = "LB 10-X";
         ammo.setInternalName("Clan LB 10-X AC Ammo");
         ammo.addLookupName("Clan Ammo 10-X");
         ammo.addLookupName("CLLBXAC10 Ammo");
@@ -4789,7 +4826,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "LB 20-X AC Ammo";
-        ammo.shortName = "LB-20X";
+        ammo.shortName = "LB 20-X";
         ammo.setInternalName("Clan LB 20-X AC Ammo");
         ammo.addLookupName("Clan Ammo 20-X");
         ammo.addLookupName("CLLBXAC20 Ammo");
@@ -15482,7 +15519,7 @@ public class AmmoType extends EquipmentType {
         /**
          * The weight ratio of a round of this munition to a standard round.
          */
-        private final int weight;
+        private final double weight;
 
         /**
          * The munition flag(s) for this type.
@@ -15493,7 +15530,8 @@ public class AmmoType extends EquipmentType {
 
         private final TechAdvancement techAdvancement;
 
-        public MunitionMutator(String munitionName, int weightRatio, Munitions munitionType,
+        // PLAyTEST3 changed to float for weightRatio
+        public MunitionMutator(String munitionName, double weightRatio, Munitions munitionType,
               TechAdvancement techAdvancement, String rulesRefs) {
             name = munitionName;
             weight = weightRatio;
@@ -15692,7 +15730,8 @@ public class AmmoType extends EquipmentType {
                 munition.shots = Math.max(1, base.shots * 2);
                 munition.kgPerShot = base.kgPerShot * (weight / 2.0);
             } else {
-                munition.shots = Math.max(1, base.shots / weight);
+                // PLAYTEST3 Changed weight to be double from int, so casting it back.
+                munition.shots = Math.max(1, (int) (base.shots / weight));
                 munition.kgPerShot = base.kgPerShot * weight;
             }
 
@@ -15715,7 +15754,8 @@ public class AmmoType extends EquipmentType {
             if ((munition.getAmmoType() == AmmoTypeEnum.AC) ||
                   (munition.getAmmoType() == AmmoTypeEnum.LAC) ||
                   (munition.getAmmoType() == AmmoTypeEnum.PAC)) {
-                if (munition.getMunitionType().contains(Munitions.M_ARMOR_PIERCING)) {
+                // PLAYTEST3 ammo changes
+                if (munition.getMunitionType().contains(Munitions.M_ARMOR_PIERCING) || munition.getMunitionType().contains(Munitions.M_ARMOR_PIERCING_PLAYTEST)) {
                     cost *= 4;
                 } else if ((munition.getMunitionType().contains(Munitions.M_FLECHETTE)) ||
                       (munition.getMunitionType().contains(Munitions.M_FLAK))) {
@@ -15725,7 +15765,7 @@ public class AmmoType extends EquipmentType {
                     bv *= 1.25;
                 } else if (munition.getMunitionType().contains(Munitions.M_INCENDIARY_AC)) {
                     cost *= 2;
-                } else if (munition.getMunitionType().contains(Munitions.M_PRECISION)) {
+                } else if (munition.getMunitionType().contains(Munitions.M_PRECISION) || munition.getMunitionType().contains(Munitions.M_PRECISION_PLAYTEST)) {
                     cost *= 6;
                 } else if (munition.getMunitionType().contains(Munitions.M_CASELESS)) {
                     cost *= 1.5;

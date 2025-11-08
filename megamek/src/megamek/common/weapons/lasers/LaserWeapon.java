@@ -75,6 +75,16 @@ public abstract class LaserWeapon extends EnergyWeapon {
     public void adaptToGameOptions(IGameOptions gameOptions) {
         super.adaptToGameOptions(gameOptions);
 
+        // Add Dazzle mode first (before Pulse modes) for Gothic BattleTech
+        // This ensures Pulse modes remain last for proper filtering
+        if (gameOptions.booleanOption(megamek.common.options.OptionsConstants.ADVANCED_COMBAT_GOTHIC_DAZZLE_MODE)) {
+            if (!hasModes()) {
+                addMode("");
+            }
+            addMode("Dazzle");
+        }
+
+        // Add Pulse modes last so they can be filtered by getModesCount()
         if (!(this instanceof PulseLaserWeapon)) {
             if (!hasModes()) {
                 addMode("");

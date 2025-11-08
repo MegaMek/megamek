@@ -37,7 +37,9 @@ import java.util.Comparator;
 import java.util.List;
 
 import megamek.common.ECMInfo;
+import megamek.common.LosEffects;
 import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
 
@@ -78,14 +80,63 @@ public class ComputeC3Spotter {
             List<ECMInfo> allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game.getEntitiesVector());
             spotters.sort(Comparator.comparingInt(SpotterInfo::rangeToTarget));
 
+            // PLAYTEST3 C3 spotters can only work if they have LOS to the target.
+            LosEffects c3LOS;
+
             int position = 0;
             for (SpotterInfo spotterInfo : spotters) {
                 Entity spotter = spotterInfo.spotter;
                 for (int count = position++; count < spotters.size(); count++) {
                     if (canCompleteNodePath(spotter, attacker, spotters, count, allECMInfo)) {
-                        return spotter;
+
+                        // PLAYTEST3 check the LOS from the spotter to the target
+                        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                            c3LOS = LosEffects.calculateLOS(game, spotter, target);
+                            if (!c3LOS.isBlocked()) {
+                                return spotter;
+                            }
+                        } else {
+                            return spotter;
+                        }
                     }
                 }
+            }
+        }
+
+        return attacker;
+    }
+
+    // PLAYTEST3 return spotter even with ECM
+    static Entity playtestFindC3Spotter(Game game, Entity attacker, Targetable target) {
+        if (!attackerCanUseC3(attacker, game)) {
+            return attacker;
+        }
+
+        List<SpotterInfo> spotters = new ArrayList<>();
+
+        for (Entity other : game.getEntitiesVector()) {
+            if (isValidC3Spotter(other, attacker, game)) {
+                int spotterRange = Compute.effectiveDistance(game, other, target, false);
+                spotters.add(new SpotterInfo(other, spotterRange));
+            }
+        }
+
+        if (!spotters.isEmpty()) {
+            // ensure network connectivity
+            List<ECMInfo> allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game.getEntitiesVector());
+            spotters.sort(Comparator.comparingInt(SpotterInfo::rangeToTarget));
+
+            LosEffects c3LOS;
+
+            int position = 0;
+            for (SpotterInfo spotterInfo : spotters) {
+                Entity spotter = spotterInfo.spotter;
+                c3LOS = LosEffects.calculateLOS(game, spotter, target);
+                if (!c3LOS.isBlocked()) {
+                    spotter.setC3ecmAffected(!canCompleteNodePath(spotter, attacker, spotters, position, allECMInfo));
+                    return spotter;
+                }
+                position++;
             }
         }
 
@@ -104,6 +155,13 @@ public class ComputeC3Spotter {
         if (attacker.isOffBoard() || attacker.isShutDown()
               || !attacker.hasC3() && !attacker.hasC3i() && !attacker.hasActiveNovaCEWS() && !attacker.hasNavalC3()) {
             return false;
+        }
+        
+        // PLAYTEST3 Stealth kills C3. Now that ECM halves bonuses, we need to exit early.
+        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            if (attacker.isStealthActive()) {
+                return false;
+            }
         }
 
         if (attacker.isLargeCraft() && !attacker.isSpaceborne()) {

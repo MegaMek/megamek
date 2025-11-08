@@ -76,7 +76,7 @@ import megamek.common.jacksonAdapters.MMUReader;
 import megamek.common.jacksonAdapters.MessageDeserializer;
 import megamek.common.jacksonAdapters.TriggerDeserializer;
 import megamek.common.jacksonAdapters.VictoryDeserializer;
-import megamek.common.jacksonAdapters.dtos.CarryableInfo;
+import megamek.common.jacksonAdapters.dtos.GroundObjectInfo;
 import megamek.common.options.GameOptions;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
@@ -230,6 +230,20 @@ public class ScenarioV2 implements Scenario {
                     }
                 } catch (Exception e) {
                     throw new ScenarioLoaderException("Faulty C3 network definition: " + network);
+                }
+            }
+
+            List<TransportsScenarioParser.ParsedTransportsInfo> transportsInfos = TransportsScenarioParser.parse(node);
+            for (TransportsScenarioParser.ParsedTransportsInfo transport : transportsInfos) {
+                try {
+                    Entity carrier = twGame.getEntity(transport.carrierId);
+                    List<Entity> units = transport.carriedUnits.stream().map(twGame::getEntity).toList();
+                    for (Entity unit : units) {
+                        carrier.load(unit);
+                        unit.setTransportId(transport.carrierId);
+                    }
+                } catch (Exception e) {
+                    throw new ScenarioLoaderException("Faulty transports definition: " + transport);
                 }
             }
 
@@ -418,16 +432,16 @@ public class ScenarioV2 implements Scenario {
             // Carryables
             if (playerNode.has(OBJECTS) && (game instanceof AbstractGame)) {
                 JsonNode carryablesNode = playerNode.get(OBJECTS);
-                List<CarryableInfo> carryables = new MMUReader(scenariofile)
-                      .read(carryablesNode, CarryableInfo.class).stream()
-                      .filter(o -> o instanceof CarryableInfo)
-                      .map(o -> (CarryableInfo) o)
+                List<GroundObjectInfo> carryables = new MMUReader(scenariofile)
+                      .read(carryablesNode, GroundObjectInfo.class).stream()
+                      .filter(o -> o instanceof GroundObjectInfo)
+                      .map(o -> (GroundObjectInfo) o)
                       .toList();
-                for (CarryableInfo carryableInfo : carryables) {
-                    if (carryableInfo.position() == null) {
-                        player.getGroundObjectsToPlace().add(carryableInfo.carryable());
+                for (GroundObjectInfo groundObjectInfo : carryables) {
+                    if (groundObjectInfo.position() == null) {
+                        player.getGroundObjectsToPlace().add(groundObjectInfo.groundObject());
                     } else {
-                        ((AbstractGame) game).placeGroundObject(carryableInfo.position(), carryableInfo.carryable());
+                        ((AbstractGame) game).placeGroundObject(groundObjectInfo.position(), groundObjectInfo.groundObject());
                     }
                 }
             }

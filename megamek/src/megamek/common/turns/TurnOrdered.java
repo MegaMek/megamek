@@ -135,7 +135,8 @@ public abstract class TurnOrdered implements ITurnOrdered {
         }
 
         if (game.getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_MULTI)) {
-            double lanceSize = game.getOptions().intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI);
+            //TODO: Prevent INIT_INF_PROTO_MOVE_MULTI from being less than 1 in settings
+            double lanceSize = Math.max(game.getOptions().intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI), 1.0);
             Integer numInfMultiples = turns_multi.get(EntityClassTurn.CLASS_INFANTRY);
             if (numInfMultiples != null) {
                 turns += (int) Math.ceil(numInfMultiples / lanceSize);

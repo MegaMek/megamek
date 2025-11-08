@@ -38,6 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 import java.util.Collections;
 import java.util.Vector;
@@ -55,6 +57,8 @@ import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.utils.EntityLoader;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -224,8 +228,114 @@ class EntityTest {
     }
 
     private static Hex createWaterHexWithDepth(int depth) {
-        Hex sourceHex = new Hex(0);
+        return createWaterHexWithDepth(depth, 0);
+    }
+
+    private static Hex createWaterHexWithDepth(int depth, int level) {
+        Hex sourceHex = new Hex(level);
         sourceHex.addTerrain(new Terrain(Terrains.WATER, depth));
         return sourceHex;
+    }
+
+    @Nested
+    class isUnderwaterTests {
+        BipedMek mek;
+
+        @BeforeEach
+        public void beforeEach() {
+            mek = spy(BipedMek.class);
+            doReturn(true).when(mek).hasOccupiedHex();
+        }
+
+        @Nested
+        class isUnderwaterEntityUnderwaterTests {
+
+            @BeforeEach
+            public void beforeEach() {
+                mek.setElevation(-2); //Underwater!
+            }
+
+            @Test
+            public void testUnderwater() {
+                // Arrange
+                doReturn(createWaterHexWithDepth(2)).when(mek).getOccupiedHex();
+
+                // Act
+                boolean isUnderwater = mek.isUnderwater();
+
+                // Assert
+                assertTrue(isUnderwater);
+            }
+
+            @Test
+            public void testUnderwaterDeeper() {
+                // Arrange
+                doReturn(createWaterHexWithDepth(2, -2)).when(mek).getOccupiedHex();
+
+                // Act
+                boolean isUnderwater = mek.isUnderwater();
+
+                // Assert
+                assertTrue(isUnderwater);
+            }
+
+            @Test
+            public void testUnderwaterHigher() {
+                // Arrange
+                doReturn(createWaterHexWithDepth(2, 2)).when(mek).getOccupiedHex();
+
+                // Act
+                boolean isUnderwater = mek.isUnderwater();
+
+                // Assert
+                assertTrue(isUnderwater);
+            }
+        }
+
+        @Nested
+        class isUnderwaterEntityAbovewaterTests {
+
+            @BeforeEach
+            public void beforeEach() {
+                mek.setElevation(0); // On surface!
+            }
+
+            @Test
+            public void testNotUnderwater() {
+                // Arrange
+                doReturn(createWaterHexWithDepth(2)).when(mek).getOccupiedHex();
+
+                // Act
+                boolean isUnderwater = mek.isUnderwater();
+
+                // Assert
+                assertFalse(isUnderwater);
+            }
+
+            @Test
+            public void testNotUnderwaterDeeper() {
+                // Arrange
+                doReturn(createWaterHexWithDepth(2, -2)).when(mek).getOccupiedHex();
+
+                // Act
+                boolean isUnderwater = mek.isUnderwater();
+
+                // Assert
+                assertFalse(isUnderwater);
+                ;
+            }
+
+            @Test
+            public void testNotUnderwaterHigher() {
+                // Arrange
+                doReturn(createWaterHexWithDepth(2, 2)).when(mek).getOccupiedHex();
+
+                // Act
+                boolean isUnderwater = mek.isUnderwater();
+
+                // Assert
+                assertFalse(isUnderwater);
+            }
+        }
     }
 }

@@ -159,18 +159,20 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             return true;
         }
 
-        if ((roll.getIntValue() == 2) && (howManyShots == 2) && !attackingEntity.isConventionalInfantry()) {
-            Report r = new Report();
-            r.subject = subjectId;
-            weapon.setJammed(true);
-            isJammed = true;
-            if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA)
-                  || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) {
-                r.messageId = 3160;
-            } else {
-                r.messageId = 3170;
+        if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            if ((roll.getIntValue() == 2) && (howManyShots == 2) && !attackingEntity.isConventionalInfantry()) {
+                Report r = new Report();
+                r.subject = subjectId;
+                weapon.setJammed(true);
+                isJammed = true;
+                if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA)
+                      || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) {
+                    r.messageId = 3160;
+                } else {
+                    r.messageId = 3170;
+                }
+                vPhaseReport.addElement(r);
             }
-            vPhaseReport.addElement(r);
         }
         return false;
     }

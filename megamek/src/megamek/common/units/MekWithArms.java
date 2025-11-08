@@ -41,6 +41,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.MPCalculationSetting;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.MekArms;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
@@ -105,7 +106,8 @@ public abstract class MekWithArms extends Mek {
         }
 
         double heavyLifterMultiplier = hasAbility(OptionsConstants.PILOT_HVY_LIFTER) ? 1.5 : 1.0;
-        return getWeight() * percentage * heavyLifterMultiplier;
+        double tsmModifier = hasActiveTSM(true) ? 2.0 : 1.0;
+        return getWeight() * percentage * heavyLifterMultiplier * tsmModifier;
     }
 
     @Override
@@ -403,16 +405,16 @@ public abstract class MekWithArms extends Mek {
 
     private void addAttemptStandingPenalties(PilotingRollData roll) {
         // PLAYTEST2 Standing has -1 PSR
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+        if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
             roll.addModifier(-1, "Trying to stand");
         }
-        
+
         if (hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
             roll.addModifier(2, "no/minimal arms");
             return;
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ATTEMPTING_STAND)) {
+        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ATTEMPTING_STAND)) {
             for (int loc : List.of(Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM)) {
                 if (isLocationBad(loc)) {
                     roll.addModifier(2, getLocationName(loc) + " destroyed");
@@ -437,6 +439,27 @@ public abstract class MekWithArms extends Mek {
             return super.getRunMP(mpCalculationSetting);
         } else {
             return getWalkMP(mpCalculationSetting);
+        }
+    }
+
+    @Override
+    public boolean canPerformGroundSalvageOperations() {
+        return hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM) &&
+              hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM);
+    }
+
+    @Override
+    public void addIntrinsicTransporters() {
+        setMekArms();
+        super.addIntrinsicTransporters();
+    }
+
+    /**
+     * Add transporter for mek's arms for externally carried cargo
+     */
+    public void setMekArms() {
+        if (getTransports().stream().noneMatch(transporter -> transporter instanceof MekArms)) {
+            addTransporter(new MekArms(this));
         }
     }
 }

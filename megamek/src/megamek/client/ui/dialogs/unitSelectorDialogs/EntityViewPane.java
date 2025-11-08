@@ -112,7 +112,7 @@ public class EntityViewPane extends EnhancedTabbedPane {
             factionPanel.reset();
         } else {
             troPanel.showEntity(entity, TROView.createView(entity, ViewFormatting.HTML));
-            factionPanel.setUnit(entity.getModel(), entity.getChassis());
+            factionPanel.setUnit(entity.getModel(), entity.getFullChassis());
         }
 
         summaryPanel.setEntity(entity);

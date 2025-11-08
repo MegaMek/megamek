@@ -33,87 +33,29 @@
 
 package megamek.common.equipment;
 
-import java.io.Serial;
-import java.io.Serializable;
-
 /**
- * Represents a basic carryable object with no additional other properties
+ * Represents a basic carryable object with no additional other properties.
+ * <p>
+ * Briefcases use simplified logic for being picked up. It is intended to be used for objective based gameplay but
+ * without using the full depth of rules described in TO:AR.
  */
-public class Briefcase implements ICarryable, Serializable {
-    @Serial
-    private static final long serialVersionUID = 8849879320465375457L;
+public class Briefcase extends GroundObject {
 
-    private double tonnage;
-    private String name;
-    private boolean invulnerable;
-    private int id;
-    private int ownerId;
-
+    /**
+     * Returns true if the carryable object is able to be picked up. Briefcases can always be picked up.
+     *
+     * @param isCarrierHullDown is the unit that's picking this up hull down, or otherwise able to pick up ground-level
+     *                          objects
+     *
+     * @return true if the object can be picked up, false if it cannot
+     */
     @Override
-    public boolean damage(double amount) {
-        tonnage -= amount;
-        return tonnage <= 0;
-    }
-
-    public void setTonnage(double value) {
-        tonnage = value;
+    public boolean canBePickedUp(boolean isCarrierHullDown) {
+        return true; // Briefcases can always be picked up.
     }
 
     @Override
-    public double getTonnage() {
-        return tonnage;
-    }
-
-    @Override
-    public boolean isInvulnerable() {
-        return invulnerable;
-    }
-
-    public void setInvulnerable(boolean value) {
-        invulnerable = value;
-    }
-
-    public void setName(String value) {
-        name = value;
-    }
-
-    @Override
-    public String generalName() {
-        return name;
-    }
-
-    @Override
-    public String specificName() {
-        return name + " (" + tonnage + " tons)";
-    }
-
-    @Override
-    public String toString() {
-        return specificName();
-    }
-
-    @Override
-    public int getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(int newId) {
-        this.id = newId;
-    }
-
-    @Override
-    public int getOwnerId() {
-        return ownerId;
-    }
-
-    @Override
-    public void setOwnerId(int newOwnerId) {
-        this.ownerId = newOwnerId;
-    }
-
-    @Override
-    public int getStrength() {
-        return 0;
+    public CarriedObjectDamageAllocation getCarriedObjectDamageAllocation() {
+        return CarriedObjectDamageAllocation.ANY_HIT;
     }
 }

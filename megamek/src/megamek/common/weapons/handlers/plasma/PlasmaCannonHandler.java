@@ -239,7 +239,8 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             r.indent(2);
             int extraHeat = Compute.d6(2);
             if (entityTarget.getArmor(hit) > 0 &&
-                  (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE)) {
+                  (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE) && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                // PLAYTEST3 do not halve for reflective
                 entityTarget.heatFromExternal += Math.max(1, extraHeat / 2);
                 r.add(Math.max(1, extraHeat / 2));
                 r.choose(true);
@@ -248,6 +249,10 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
                 r.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
             } else if (entityTarget.getArmor(hit) > 0 &&
                   (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
+                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                    // PLAYTEST3 no heat from plasma
+                    extraHeat = 0;
+                }
                 entityTarget.heatFromExternal += extraHeat / 2;
                 r.add(extraHeat / 2);
                 r.choose(true);

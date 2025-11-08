@@ -160,6 +160,6 @@ public class MekWarrior extends EjectedCrew {
 
     @Override
     public boolean canSpot() {
-        return super.canSpot() && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT);
+        return super.canSpot() && !gameOptions().booleanOption(OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT);
     }
 }

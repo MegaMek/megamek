@@ -110,6 +110,41 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         Report report;
         int entityId = entity.getId();
 
+
+        // If this unit is hit in the arm, and it's carrying something that should be damaged on arm hits, let's roll
+        // and determine if the unit being carried is hit instead
+        if ((hit.getLocation() == Mek.LOC_LEFT_ARM || hit.getLocation() == Mek.LOC_RIGHT_ARM)) {
+            ICarryable carryable = entity.getDistinctCarriedObjects()
+                  .stream()
+                  .filter(o -> o.getCarriedObjectDamageAllocation().isCarryableDamageOnArmHit())
+                  .findFirst()
+                  .orElse(null);
+            if (carryable != null) {
+                Roll doesAttackHitCarriedUnitInstead = Compute.rollD6(1);
+
+                int TARGET = carryable.targetForArmHitToHitCarriedObject();
+
+                boolean hitsOtherUnit = doesAttackHitCarriedUnitInstead.isTargetRollSuccess(TARGET);
+                Report chanceToHitCarriedUnit = new Report(2600);
+                chanceToHitCarriedUnit.subject(entityId);
+                chanceToHitCarriedUnit.add(entity.getDisplayName());
+                chanceToHitCarriedUnit.add(TARGET);
+                chanceToHitCarriedUnit.add(doesAttackHitCarriedUnitInstead.getIntValue());
+                chanceToHitCarriedUnit.choose(hitsOtherUnit);
+                reportVec.addElement(chanceToHitCarriedUnit);
+                if (hitsOtherUnit) {
+                    if (carryable instanceof Entity otherEntity) {
+                        return damageEntity(otherEntity, otherEntity.rollHitLocation(0, 0), damage, ammoExplosion,
+                              damageType, damageIS, areaSatArty, throughFront, underWater,
+                              nukeS2S, reportVec);
+                    } else {
+                        logger.error("Entity " + entityId + " is carrying something that is not an Entity but should "
+                              + "be damaged on arm hits. This should not happen!");
+                    }
+                }
+            }
+        }
+
         // if this is a fighter squadron, then pick an active fighter and pass on the damage
         if (entity instanceof FighterSquadron) {
             damageSquadronFighter(reportVec,
@@ -500,7 +535,11 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 // ok, we dealt damage but didn't go on to internal
                 // we get a chance of a crit, using Armor Piercing.
                 // but only if we don't have hardened, Ferro-Lamellor, or reactive armor
-                if (!(mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor)) {
+                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                    if (!(mods.hardenedArmor || mods.abaArmor)) {
+                        mods.specCrits = mods.specCrits + 1;
+                    }
+                } else if (!(mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor)) {
                     mods.specCrits = mods.specCrits + 1;
                 }
             }
@@ -573,7 +612,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 int damageLeftToCargo = damage;
 
                 for (ICarryable cargo : mek.getDistinctCarriedObjects()) {
-                    if (cargo.isInvulnerable()) {
+                    // This is handling damaged cargo per TW 261. Other carried objects are damaged elsewhere.
+                    if (cargo.isInvulnerable() || !cargo.getCarriedObjectDamageAllocation().isCarryableAlwaysDamaged()) {
                         continue;
                     }
 
@@ -584,7 +624,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     // if we have destroyed the cargo, remove it, add a report
                     // and move on to the next piece of cargo
                     if (cargoDestroyed) {
-                        mek.dropGroundObject(cargo, false);
+                        mek.dropCarriedObject(cargo, false);
 
                         report = new Report(6721);
                         report.subject = entityId;
@@ -2440,7 +2480,10 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 int critMod = entity.hasBARArmor(hit.getLocation()) ? 2 : 0;
                 critMod += ((mods.reflectiveArmor) && !(mods.isBattleArmor)) ? 2 : 0; // BA
                 // against impact armor, we get a +1 mod
-                critMod += (mods.impactArmor) ? 1 : 0;
+                // PLAYTEST3 no longer gets the +1 mod with impact.
+                if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                    critMod += (mods.impactArmor) ? 1 : 0;
+                }
                 // hardened armour has no crit penalty
                 if (!mods.hardenedArmor) {
                     // non-hardened armor gets modifiers
@@ -2500,6 +2543,11 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
               isBattleArmor &&
                     (entity.getArmorType(hit.getLocation()) ==
                           EquipmentType.T_ARMOR_BA_REFLECTIVE);
+        // PLAYTEST3 add notes for ABA and heat
+        mods.heatArmor = (entity instanceof Mek) &&
+              (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING);
+        mods.abaArmor = (entity instanceof Mek) &&
+              (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION);
     }
 
     public int manageDamageTypeReports(Entity entity, Vector<Report> reportVec, int damage, DamageType damageType,
@@ -2694,6 +2742,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         boolean reflectiveArmor = mods.reflectiveArmor;
         boolean reactiveArmor = mods.reactiveArmor;
         boolean isBattleArmor = (entity instanceof BattleArmor);
+        boolean heatArmor = mods.heatArmor;
+        boolean abaArmor = mods.abaArmor;
         int damageOriginal = mods.damageOriginal;
         int critBonus = mods.critBonus;
 
@@ -2794,6 +2844,19 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     damage = 1;
                 }
                 report = new Report(6068);
+                report.subject = entityId;
+                report.indent(3);
+                report.add(damage);
+                reportVec.addElement(report);
+            } else if (heatArmor && hit.getHeatWeapon() && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                // PLAYTEST3 only applies if heat_weapon is true in hitdata, which can only occur when playtest 
+                // is on.
+                tmpDamageHold = damage;
+                damage = (int) Math.ceil((((double) damage) / 2));
+                if (tmpDamageHold == 1) {
+                    damage = 1;
+                }
+                report = new Report(6093);
                 report.subject = entityId;
                 report.indent(3);
                 report.add(damage);
@@ -3000,5 +3063,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         public int crits = 0;
         public int specCrits = 0;
         public int damageOriginal = 0;
+        // PLAYTEST3 add armor types
+        public boolean heatArmor = false;
+        public boolean abaArmor = false;
     }
 }

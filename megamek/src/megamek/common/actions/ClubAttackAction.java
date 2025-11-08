@@ -415,8 +415,14 @@ public class ClubAttackAction extends PhysicalAttackAction {
             }
         } else if (shield) {
             if (!ae.hasPassiveShield(club.getLocation())) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE,
-                      "Shield not in passive mode");
+                // PLAYTEST3 no_shield mode is now the default
+                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && !ae.hasActiveShield(club.getLocation())) {
+                    return new ToHitData(TargetRoll.IMPOSSIBLE,
+                          "Shield not in default mode");
+                } else {
+                    return new ToHitData(TargetRoll.IMPOSSIBLE,
+                          "Shield not in passive mode");
+                }
             }
         } else {
             // check if location is present

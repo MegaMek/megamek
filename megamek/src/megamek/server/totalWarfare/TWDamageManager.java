@@ -65,6 +65,7 @@ import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.TeleMissile;
+import megamek.common.weapons.handlers.plasma.PlasmaRifleHandler;
 import megamek.server.IDamageManager;
 import megamek.server.ServerHelper;
 
@@ -318,6 +319,10 @@ public class TWDamageManager implements IDamageManager {
         boolean impactArmor = (entity instanceof Mek) &&
               (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_IMPACT_RESISTANT);
         boolean bar5 = entity.getBARRating(hit.getLocation()) <= 5;
+        boolean heatArmor =
+              (entity instanceof Mek) && (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING);
+        boolean abaArmor = (entity instanceof Mek) && (entity.getArmorType(hit.getLocation()) ==
+              EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION);
 
         // TACs from the hit location table
         int crits;
@@ -592,7 +597,7 @@ public class TWDamageManager implements IDamageManager {
                     // if we have destroyed the cargo, remove it, add a report
                     // and move on to the next piece of cargo
                     if (cargoDestroyed) {
-                        entity.dropGroundObject(cargo, false);
+                        entity.dropCarriedObject(cargo, false);
 
                         report = new Report(6721);
                         report.subject = entityId;
@@ -993,6 +998,19 @@ public class TWDamageManager implements IDamageManager {
                         damage = 1;
                     }
                     report = new Report(6068);
+                    report.subject = entityId;
+                    report.indent(3);
+                    report.add(damage);
+                    reportVec.addElement(report);
+                } else if (heatArmor && hit.getHeatWeapon() && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                    // PLAYTEST3 only applies if heat_weapon is true in hitdata, which can only occur when playtest 
+                    // is on.
+                    tmpDamageHold = damage;
+                    damage = (int) Math.ceil((((double) damage) / 2));
+                    if (tmpDamageHold == 1) {
+                        damage = 1;
+                    }
+                    report = new Report(6093);
                     report.subject = entityId;
                     report.indent(3);
                     report.add(damage);
@@ -1754,8 +1772,15 @@ public class TWDamageManager implements IDamageManager {
                 // ok, we dealt damage but didn't go on to internal
                 // we get a chance of a crit, using Armor Piercing.
                 // but only if we don't have hardened, Ferro-Lamellor, or reactive armor
-                if (!hardenedArmor && !ferroLamellorArmor && !reactiveArmor) {
-                    specCrits++;
+                // PLAYTEST3 no penetrating crits with ABA, ferroLam doesn't prevent them
+                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                    if (!hardenedArmor && !abaArmor) {
+                        specCrits++;
+                    }
+                } else {
+                    if (!hardenedArmor && !ferroLamellorArmor && !reactiveArmor) {
+                        specCrits++;
+                    }
                 }
             }
             // check for breaching
@@ -1790,7 +1815,10 @@ public class TWDamageManager implements IDamageManager {
                     int critMod = entity.hasBARArmor(hit.getLocation()) ? 2 : 0;
                     critMod += (reflectiveArmor && !isBattleArmor) ? 2 : 0; // BA
                     // against impact armor, we get a +1 mod
-                    critMod += impactArmor ? 1 : 0;
+                    // PLAYTEST3 no longer has penalty for impact.
+                    if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                        critMod += impactArmor ? 1 : 0;
+                    }
                     // hardened armour has no crit penalty
                     if (!hardenedArmor) {
                         // non-hardened armor gets modifiers

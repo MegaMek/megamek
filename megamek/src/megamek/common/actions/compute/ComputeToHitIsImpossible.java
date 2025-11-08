@@ -57,6 +57,7 @@ import megamek.common.compute.ComputeArc;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
@@ -118,7 +119,7 @@ class ComputeToHitIsImpossible {
      * @param usesAmmo              flag that indicates whether the WeaponType being used is ammo-fed
      * @param underWater            flag that indicates whether the weapon being used is underwater
      */
-    static String toHitIsImpossible(Game game, Entity attacker, int attackerId, Targetable target, int targetType,
+    static String toHitIsImpossible(Game game, Entity weaponEntity, int attackerId, Targetable target, int targetType,
           LosEffects los, ToHitData losMods, ToHitData toHit, int distance, Entity spotter, WeaponType weaponType,
           WeaponMounted weapon, int weaponId, AmmoType ammoType, AmmoMounted ammo, EnumSet<AmmoType.Munitions> munition,
           boolean isFlakAttack, boolean isArtilleryDirect, boolean isArtilleryFLAK, boolean isArtilleryIndirect,
@@ -126,6 +127,11 @@ class ComputeToHitIsImpossible {
           boolean exchangeSwarmTarget, boolean isHoming, boolean isInferno, boolean isIndirect, boolean isStrafing,
           boolean isTAG, boolean targetInBuilding, boolean usesAmmo, boolean underWater, boolean evenIfAlreadyFired) {
 
+        //Block if the weapon entity is null
+        if (weaponEntity == null) {
+            return Messages.getString("WeaponAttackAction.NoAttacker");
+        }
+        Entity attacker = weaponEntity.getAttackingEntity();
         // Block the shot if the attacker is null
         if (attacker == null) {
             return Messages.getString("WeaponAttackAction.NoAttacker");
@@ -160,7 +166,7 @@ class ComputeToHitIsImpossible {
         if (attacker.isBracing() && weapon != null && (attacker.braceLocation() != weapon.getLocation())) {
             return String.format(Messages.getString("WeaponAttackAction.BracingOtherLocation"),
                   attacker.getLocationName(attacker.braceLocation()),
-                  attacker.getLocationName(weapon.getLocation()));
+                  weaponEntity.getLocationName(weapon.getLocation()));
         }
 
         // Ammo-specific Reasons
@@ -449,7 +455,10 @@ class ComputeToHitIsImpossible {
         // Line of Sight and Range Reasons
 
         // attacker partial cover means no leg weapons
-        if (los.isAttackerCover() && weapon != null && attacker.locationIsLeg(weapon.getLocation()) && !underWater) {
+        if (los.isAttackerCover()
+              && weapon != null
+              && weaponEntity.locationIsLeg(weapon.getLocation())
+              && !underWater) {
             return Messages.getString("WeaponAttackAction.LegBlockedByTerrain");
         }
 
@@ -565,6 +574,26 @@ class ComputeToHitIsImpossible {
                   attacker.getSecondaryFacing(),
                   weapon.isRearMounted())) {
                 return Messages.getString("WeaponAttackAction.TrailerBlock");
+            }
+        }
+
+        // HHW Specific
+        if ((weapon != null) && (weapon.getEntity() != attacker) && weapon.getEntity() instanceof HandheldWeapon hhw) {
+            // Are any other attacks from this HHW at different targets?
+            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
+                EntityAction ea = i.nextElement();
+                if ((ea instanceof WeaponAttackAction prevWeaponAttackAction) &&
+                      (attackerId == prevWeaponAttackAction.getEntityId()) &&
+                      (weaponId != prevWeaponAttackAction.getWeaponId())) {
+                    WeaponMounted prevWeapon =
+                          (WeaponMounted) prevWeaponAttackAction.getEntity(game)
+                                .getEquipment(prevWeaponAttackAction.getWeaponId());
+                    if ((prevWeapon != null)
+                          && hhw.equals(prevWeapon.getEntity())
+                          && prevWeaponAttackAction.getTargetId() != target.getId()) {
+                        return Messages.getString("WeaponAttackAction.HandheldWeaponsMultipleTargets");
+                    }
+                }
             }
         }
 
@@ -1713,9 +1742,10 @@ class ComputeToHitIsImpossible {
             }
 
             // Protomek can fire MGA only into front arc, TW page 137
-            if (!ComputeArc.isInArc(attacker.getPosition(), attacker.getFacing(), target, Compute.ARC_FORWARD) &&
-                  weaponType.hasFlag(WeaponType.F_MGA) &&
-                  (attacker instanceof ProtoMek)) {
+            if ((attacker instanceof ProtoMek) &&
+                  !ComputeArc.isInArc(attacker.getPosition(), attacker.getFacing(), target, Compute.ARC_FORWARD) &&
+                  weaponType.hasFlag(WeaponType.F_MGA)
+            ) {
                 return Messages.getString("WeaponAttackAction.ProtoMGAOnlyFront");
             }
 

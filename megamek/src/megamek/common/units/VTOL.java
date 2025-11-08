@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.common.CompositeTechLevel;
+import megamek.common.CriticalSlot;
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.MPCalculationSetting;
@@ -63,6 +64,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter VTOLs are helicopters (more or less.)
@@ -250,7 +252,7 @@ public class VTOL extends Tank implements IBomber {
                     break;
                 case 8:
                     if (bSide
-                          && !game.getOptions()
+                          && !gameOptions()
                           .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_EFFECTIVE)) {
                         rv.setEffect(HitData.EFFECT_CRITICAL);
                     }
@@ -281,7 +283,7 @@ public class VTOL extends Tank implements IBomber {
     @Override
     public boolean isBomber() {
         return (game != null)
-              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VTOL_ATTACKS);
+              && gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VTOL_ATTACKS);
     }
 
     @Override
@@ -398,7 +400,7 @@ public class VTOL extends Tank implements IBomber {
             roll = 12;
         }
         if ((roll < 6)
-              || (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)
+              || (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)
               && !getOverThresh() && !damagedByFire)) {
             return CRIT_NONE;
         }
@@ -757,5 +759,19 @@ public class VTOL extends Tank implements IBomber {
     @Override
     public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(2.366 + 1.177 * Math.log(getWeight())));
+    }
+
+    @Override
+    public void processPickupStep(MoveStep step, Integer cargoPickupLocation, TWGameManager gameManager,
+          Entity entityPickingUpTarget, EntityMovementType overallMoveType) {
+        super.processPickupStep(step, cargoPickupLocation, gameManager, entityPickingUpTarget, overallMoveType);
+
+        // VTOL rotors are destroyed if they get picked up :(
+        gameManager.addReport(gameManager.applyCriticalHit(this,
+              VTOL.LOC_ROTOR,
+              new CriticalSlot(CriticalSlot.TYPE_SYSTEM, VTOL.CRIT_ROTOR_DESTROYED),
+              false,
+              0,
+              false));
     }
 }

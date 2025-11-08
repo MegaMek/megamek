@@ -243,7 +243,7 @@ public interface IAero {
      */
     default void updateWeaponGroups() {
         if ((this instanceof Entity entity) && (entity.game != null)
-              && entity.game.getOptions()
+              && entity.gameOptions()
               .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_CAPITAL_FIGHTER)) {
             // first we need to reset all the weapons in our existing mounts to zero
             // until proven otherwise

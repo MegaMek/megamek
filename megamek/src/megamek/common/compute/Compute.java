@@ -1457,6 +1457,8 @@ public class Compute {
 
         // find any c3 spotters that could help
         Entity c3spotter = ComputeC3Spotter.findC3Spotter(game, attackingEntity, target);
+        Entity c3spotterWithECM = ComputeC3Spotter.playtestFindC3Spotter(game, attackingEntity, target);
+        
         if (isIndirect) {
             c3spotter = attackingEntity; // no c3 when using indirect fire
         }
@@ -1466,21 +1468,38 @@ public class Compute {
         }
 
         int c3dist = Compute.effectiveDistance(game, c3spotter, target, false);
-
+        // PLAYTEST3 if there is a member that is ECM blocked
+        int c3ecmDist = Compute.effectiveDistance(game, c3spotterWithECM, target, false);
+        
         // C3 can't benefit from LOS range.
         int c3range = RangeType.rangeBracketC3(c3dist, distance, weaponRanges, useExtremeRange, false);
-
+        // PLAYTEST3 checking for ECM ranged member
+        int c3ecmRange = RangeType.rangeBracketC3(c3ecmDist, distance, weaponRanges, useExtremeRange, false);
+        
+       
         /*
          * Tac Ops Extreme Range Rule p. 85 if the weapons normal range is
          * Extreme then C3 uses the next highest range bracket, i.e. medium
          * instead of short.
          */
-        if ((range == RangeType.RANGE_EXTREME) && (c3range < range)) {
+        if ((range == RangeType.RANGE_EXTREME) && (c3range < range || c3ecmRange < range)) {
             c3range++;
+            c3ecmRange++;
         }
 
         // determine which range we're using
-        int usingRange = Math.min(range, c3range);
+        int usingRange = range;
+        
+        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            // PLAYTEST3 check ecm vs non ecm affected C3
+            if (c3range > c3ecmRange) {
+                usingRange = c3ecmRange;
+            } else if (range > c3range) {
+                usingRange = c3range;
+            }
+        } else {
+            usingRange = Math.min(range, c3range);
+        }
 
         // add range modifier, C3 can't be used with LOS Range
         if ((usingRange == range) || (range == RangeType.RANGE_LOS) || (attackingEntity.hasNavalC3()
@@ -1537,12 +1556,36 @@ public class Compute {
             }
         } else {
             // report c3 adjustment
-            if ((c3range == RangeType.RANGE_SHORT) || (c3range == RangeType.RANGE_MINIMUM)) {
-                mods.addModifier(attackingEntity.getShortRangeModifier(), "short range due to C3 spotter");
-            } else if (c3range == RangeType.RANGE_MEDIUM) {
-                mods.addModifier(attackingEntity.getMediumRangeModifier(), "medium range due to C3 spotter");
-            } else if (c3range == RangeType.RANGE_LONG) {
-                mods.addModifier(attackingEntity.getLongRangeModifier(), "long range due to C3 spotter");
+            // PLAYTEST3 C3 ECM halving
+            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && usingRange == c3ecmRange && usingRange != c3range && c3spotterWithECM.getC3ecmAffected()) {
+                // Halve the bonus, so we need to know what the original range was too.
+                int rangeModifier = 0;
+                if (range == RangeType.RANGE_LONG) {
+                    rangeModifier = attackingEntity.getLongRangeModifier();
+                } else if (range == RangeType.RANGE_MEDIUM) {
+                    rangeModifier = attackingEntity.getMediumRangeModifier();
+                } else if (range == RangeType.RANGE_EXTREME) {
+                    rangeModifier = attackingEntity.getExtremeRangeModifier();
+                }
+                if ((c3ecmRange == RangeType.RANGE_SHORT) || (c3ecmRange == RangeType.RANGE_MINIMUM)) {
+                    rangeModifier = (int) (rangeModifier + attackingEntity.getShortRangeModifier())/2;
+                    mods.addModifier(rangeModifier, "short range due to C3 spotter under ECM");
+                } else if (c3ecmRange == RangeType.RANGE_MEDIUM) {
+                    rangeModifier = (int) (rangeModifier + attackingEntity.getMediumRangeModifier())/2;
+                    mods.addModifier(rangeModifier, "medium range due to C3 spotter under ECM");
+                } else if (c3ecmRange == RangeType.RANGE_LONG) {
+                    rangeModifier = (int) (rangeModifier + attackingEntity.getLongRangeModifier())/2;
+                    mods.addModifier(rangeModifier, "long range due to C3 spotter under ECM");
+                }
+            } else {
+                // Normal C3 operation, no ECM
+                if ((c3range == RangeType.RANGE_SHORT) || (c3range == RangeType.RANGE_MINIMUM)) {
+                    mods.addModifier(attackingEntity.getShortRangeModifier(), "short range due to C3 spotter");
+                } else if (c3range == RangeType.RANGE_MEDIUM) {
+                    mods.addModifier(attackingEntity.getMediumRangeModifier(), "medium range due to C3 spotter");
+                } else if (c3range == RangeType.RANGE_LONG) {
+                    mods.addModifier(attackingEntity.getLongRangeModifier(), "long range due to C3 spotter");
+                }
             }
         }
 
@@ -1965,6 +2008,30 @@ public class Compute {
             }
         }
         return finalFacing;
+    }
+
+    /**
+     * @param flyingEntity         the flyer
+     * @param targetPosition       target
+     *
+     * @return the closest position along <code>flyingEntity</code>'s flight path to <code>targetPosition</code>. In the case of
+     *       multiple equidistance positions, the first one is picked.
+     */
+    public static @Nullable Coords getClosestToFlightPath(Entity flyingEntity, Coords targetPosition) {
+        Coords flyerPosition = flyingEntity.getPosition();
+        Coords finalPos = flyerPosition;
+        int distance = Integer.MAX_VALUE;
+        if (finalPos != null) {
+            distance = flyerPosition.distance(finalPos);
+        }
+        for (Coords coord : flyingEntity.getPassedThrough()) {
+            if ((coord != null)
+                  && ((coord.distance(targetPosition) < distance) || (distance == 0))) {
+                finalPos = coord;
+                distance = coord.distance(targetPosition);
+            }
+        }
+        return finalPos;
     }
 
     /**
@@ -3672,11 +3739,13 @@ public class Compute {
                             // to reflect scaled crit chance
                             // Other armor-penetrating ammo types should be
                             // tested here, such as Tandem-charge SRMs
+                            
+                            // PLAYTEST added
                             if (((ammoBinType.getAmmoType() == AmmoTypeEnum.AC)
                                   || (ammoBinType.getAmmoType() == AmmoTypeEnum.LAC)
                                   || (ammoBinType.getAmmoType() == AmmoTypeEnum.AC_IMP)
                                   || (ammoBinType.getAmmoType() == AmmoTypeEnum.PAC))
-                                  && (ammoBinType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING))) {
+                                  && (ammoBinType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING) || ammoBinType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST))) {
                                 if ((target instanceof Mek) || (target instanceof Tank)) {
                                     ammoMultiple = 1.0 + (weaponType.getRackSize() / 10.0);
                                 }
@@ -3986,26 +4055,30 @@ public class Compute {
                 targetPos = Compute.getClosestFlightPath(attackingEntity.getId(),
                       attackingEntity.getPosition(), targetedEntity);
             }
-
-            // Airborne units targeting ground have special rules
-            if (isAirToGround(attackingEntity, target)) {
-                // In Low Altitude, Airborne aerosphere can only see ground targets
-                // they overfly, and only at Alt <=8. It should also spot units
-                // next to this; Low-atmo board with ground units isn't implemented
-                if (game.isOnAtmosphericMap(attackingEntity)) {
-                    if (attackingEntity.getAltitude() > 8) {
-                        return false;
-                    }
-                    return attackingEntity.passedOver(target);
-                }
-            }
         }
 
+        // Airborne units targeting ground have special rules
+        Coords attackingPos = attackingEntity.getPosition();
+        if (isAirToGround(attackingEntity, target)) {
+            // In Low Altitude, Airborne aerosphere can only see ground targets
+            // they overfly, and only at Alt <=8. It should also spot units
+            // next to this; Low-atmo board with ground units isn't implemented
+            if (game.isOnAtmosphericMap(attackingEntity)) {
+                if (attackingEntity.getAltitude() > 8) {
+                    return false;
+                }
+                return attackingEntity.passedOver(target);
+            }
+            // On ground maps, we should consider the aircraft to be attacking from
+            // the closest point on the flight path
+            if (attackingEntity.isAirborneAeroOnGroundMap()) {
+                attackingPos = Compute.getClosestToFlightPath(attackingEntity, targetPos);
+            }
+        }
         // Undoes any negative visual ranges
         visualRange = Math.max(visualRange, 1);
-        int distance;
         // Ground distance
-        distance = attackingEntity.getPosition().distance(targetPos);
+        int distance = attackingPos.distance(targetPos);
         // Need to track difference in altitude, not just add altitude to the range
         distance += Math.abs(2 * target.getAltitude() - 2 * attackingEntity.getAltitude());
         return distance <= visualRange;
@@ -6512,7 +6585,7 @@ public class Compute {
               && (target.getTargetType() != Targetable.TYPE_HEX_ARTILLERY)
               && !attacker.isSpaceborne()
               && attacker.isAirborne()
-              && target.isGround()
+              && !target.isAirborne()
               && attacker.isAero();
     }
 
@@ -6787,7 +6860,9 @@ public class Compute {
         } else if (entity.isSupportVehicle()) {
             return getSupportVehicleGunnerNeeds(entity);
         } else if (entity instanceof Tank) {
-            return (getFullCrewSize(entity) - 1);
+            return (getFullCrewSize(entity)
+                  - getTotalDriverNeeds(entity)
+                  - getAdditionalNonGunner(entity));
         } else if (entity instanceof Infantry) {
             return getFullCrewSize(entity);
         } else if (entity.getCrew().getCrewType().getGunnerPos() > 0) {
@@ -6922,12 +6997,26 @@ public class Compute {
     }
 
     /**
-     * Calculates additional crew required by support vehicles and advanced aerospace vessels for certain misc
-     * equipment.
+     * Calculates the number of additional non-gunner crew members required by vehicles and advanced aerospace vessels
+     * due to specific miscellaneous equipment mounts or special unit features.
      *
-     * @param entity The unit
+     * <p>Crew additions are based on the tonnage or equipment size of certain mounted systems, such as:</p>
      *
-     * @return The number of additional crew required
+     * <ul>
+     *   <li>Communications equipment ({@code F_COMMUNICATIONS}): +1 crew per ton of equipment</li>
+     *   <li>Field Kitchens ({@code F_FIELD_KITCHEN}): +3 crew per mount</li>
+     *   <li>Mobile Field Bases ({@code F_MOBILE_FIELD_BASE}): +5 crew per mount</li>
+     *   <li>MASH units ({@code F_MASH}): +5 crew per size unit</li>
+     * </ul>
+     *
+     * <p>For tanks, any additional crew seats (via {@code getExtraCrewSeats()}) are added.</p>
+     *
+     * <p>If the unit has a drone operating system it requires 0 additional crew. For super-heavy meks, this always
+     * returns {@code 1} (to represent the Tactical Officer).</p>
+     *
+     * @param entity The unit for which to calculate the additional crew requirements
+     *
+     * @return The number of additional non-gunner crew required for the given unit
      */
     public static int getAdditionalNonGunner(Entity entity) {
         if (entity.hasDroneOs()) {
@@ -6946,6 +7035,11 @@ public class Compute {
                 crew += 5 * (int) m.getSize();
             }
         }
+
+        if (entity instanceof Tank tank) {
+            crew += tank.getExtraCrewSeats();
+        }
+
         if (entity instanceof Mek && entity.isSuperHeavy()) {
             // Tactical Officer
             return 1;
@@ -6969,7 +7063,7 @@ public class Compute {
             }
             return crew + (int) Math.ceil(crew / 6.0);
         } else if (entity instanceof Tank) {
-            return (int) Math.ceil(entity.getWeight() / 15.0) + ((Tank) entity).getExtraCrewSeats();
+            return (int) Math.ceil(entity.getWeight() / 15.0) + getAdditionalNonGunner(entity);
         } else if (entity instanceof BattleArmor) {
             int numTroopers = 0;
             for (int trooper = 1; trooper < entity.locations(); trooper++) {

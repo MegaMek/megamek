@@ -43,27 +43,32 @@ import megamek.logging.MMLogger;
 
 public enum SkillLevel {
     // region Enum Declarations
-    NONE("SkillLevel.NONE.text", "SkillLevel.NONE.toolTipText", 0),
-    ULTRA_GREEN("SkillLevel.ULTRA_GREEN.text", "SkillLevel.ULTRA_GREEN.toolTipText", 1),
-    GREEN("SkillLevel.GREEN.text", "SkillLevel.GREEN.toolTipText", 2),
-    REGULAR("SkillLevel.REGULAR.text", "SkillLevel.REGULAR.toolTipText", 3),
-    VETERAN("SkillLevel.VETERAN.text", "SkillLevel.VETERAN.toolTipText", 4),
-    ELITE("SkillLevel.ELITE.text", "SkillLevel.ELITE.toolTipText", 5),
-    HEROIC("SkillLevel.HEROIC.text", "SkillLevel.HEROIC.toolTipText", 6),
-    LEGENDARY("SkillLevel.LEGENDARY.text", "SkillLevel.LEGENDARY.toolTipText", 7);
+    NONE("SkillLevel.NONE.text", "SkillLevel.NONE.toolTipText", "SkillLevel.NONE.shortName", 0),
+    ULTRA_GREEN("SkillLevel.ULTRA_GREEN.text",
+          "SkillLevel.ULTRA_GREEN.toolTipText",
+          "SkillLevel.ULTRA_GREEN.shortName",
+          1),
+    GREEN("SkillLevel.GREEN.text", "SkillLevel.GREEN.toolTipText", "SkillLevel.GREEN.shortName", 2),
+    REGULAR("SkillLevel.REGULAR.text", "SkillLevel.REGULAR.toolTipText", "SkillLevel.REGULAR.shortName", 3),
+    VETERAN("SkillLevel.VETERAN.text", "SkillLevel.VETERAN.toolTipText", "SkillLevel.VETERAN.shortName", 4),
+    ELITE("SkillLevel.ELITE.text", "SkillLevel.ELITE.toolTipText", "SkillLevel.ELITE.shortName", 5),
+    HEROIC("SkillLevel.HEROIC.text", "SkillLevel.HEROIC.toolTipText", "SkillLevel.HEROIC.shortName", 6),
+    LEGENDARY("SkillLevel.LEGENDARY.text", "SkillLevel.LEGENDARY.toolTipText", "SkillLevel.LEGENDARY.shortName", 7);
     // endregion Enum Declarations
 
     // region Variable Declarations
     private final String name;
     private final String toolTipText;
+    private final String shortName;
     private final int experienceLevel;
     // endregion Variable Declarations
 
     // region Constructors
-    SkillLevel(final String name, final String toolTipText, final int experienceLevel) {
+    SkillLevel(final String name, final String toolTipText, final String shortName, final int experienceLevel) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
               MegaMek.getMMOptions().getLocale());
         this.name = resources.getString(name);
+        this.shortName = resources.getString(shortName);
         this.toolTipText = resources.getString(toolTipText);
         this.experienceLevel = experienceLevel;
     }
@@ -72,6 +77,10 @@ public enum SkillLevel {
     // region Getters
     public String getToolTipText() {
         return toolTipText;
+    }
+
+    public String getShortName() {
+        return shortName;
     }
 
     /**

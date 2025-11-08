@@ -81,6 +81,7 @@ public class GameOptions extends BasicGameOptions {
         // Change this to false for normal release
         addOption(base, OptionsConstants.PLAYTEST_1, false);
         addOption(base, OptionsConstants.PLAYTEST_2, false);
+        addOption(base, OptionsConstants.PLAYTEST_3, false);
         addOption(base, OptionsConstants.BASE_PUSH_OFF_BOARD, true);
         addOption(base, OptionsConstants.BASE_DUMPING_FROM_ROUND, 1);
         addOption(base, OptionsConstants.BASE_LOBBY_AMMO_DUMP, false);
@@ -195,6 +196,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_JUMP_JET_ATTACK, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_TRIP_ATTACK, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ENERGY_WEAPONS, false);
+        addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_GOTHIC_DAZZLE_MODE, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GAUSS_WEAPONS, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMMUNITION, false);
@@ -227,6 +229,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_FOREST_FIRES_NO_SMOKE, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_HOT_LOAD_IN_GAME, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_MULTI_USE_AMS, false);
+        addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS, false);
 
         IBasicOptionGroup advancedGroundMovement = addGroup("advancedGroundMovement");
         addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_SPRINT, false);

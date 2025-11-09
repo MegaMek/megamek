@@ -86,6 +86,7 @@ import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.game.Game;
+import megamek.common.game.InitiativeRoll;
 import megamek.common.moves.MovePath;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
@@ -120,6 +121,7 @@ public abstract class BotClient extends Client {
      * Keeps track of whether this client has started to calculate a turn this phase.
      */
     boolean calculatedTurnThisPhase = false;
+    boolean rerolledInitiative = false;
     int calculatedTurnsThisPhase = 0;
 
     /**
@@ -179,6 +181,7 @@ public abstract class BotClient extends Client {
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
                 calculatedTurnThisPhase = false;
+                rerolledInitiative = false;
                 if (e.getOldPhase().isSimultaneous(getGame())) {
                     LOGGER.info("{}: Calculated {} / {} turns for phase {}",
                           getName(),
@@ -486,8 +489,15 @@ public abstract class BotClient extends Client {
                     endOfTurnProcessing();
                     // intentional fallthrough: all reports must click "done", otherwise the game
                     // never moves on.
-                case TARGETING_REPORT:
                 case INITIATIVE_REPORT:
+                    // Let bots use Tactical Genius
+                    if (decideToRerollInitiative()) {
+                        rerolledInitiative = true;
+                        sendRerollInitiativeRequest();
+                    }
+                    sendDone(true);
+                    break;
+                case TARGETING_REPORT:
                 case MOVEMENT_REPORT:
                 case OFFBOARD_REPORT:
                 case FIRING_REPORT:
@@ -1366,6 +1376,32 @@ public abstract class BotClient extends Client {
     @Override
     public String receiveReport(List<Report> reports) {
         return "";
+    }
+
+    /**
+     * Let the bot decide whether to reroll initiative based on report info
+     * @return
+     */
+    protected boolean decideToRerollInitiative() {
+        Player me = getLocalPlayer();
+        if (game.hasTacticalGenius(me)) {
+            if (!rerolledInitiative) {
+                InitiativeRoll myRoll = me.getInitiative();
+                InitiativeRoll otherRoll;
+                List<Player> others = game.getPlayersList()
+                      .stream()
+                      .filter(p -> p != me && p.isEnemyOf(me))
+                      .toList();
+                for (Player other : others) {
+                    otherRoll = other.getInitiative();
+                    if (otherRoll.size() > 0 &&
+                          myRoll.getRoll(myRoll.size() - 1) < otherRoll.getRoll(otherRoll.size() - 1)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**

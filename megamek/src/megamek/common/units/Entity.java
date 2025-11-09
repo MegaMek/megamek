@@ -8599,7 +8599,7 @@ public abstract class Entity extends TurnOrdered
                 boolean isLoungeOrUnknownPhase = false;
                 if (getGame() != null) {
                     isLoungeOrUnknownPhase = getGame().getPhase().isLounge() || getGame().getPhase().isUnknown();
-                } // getElevation() on this is the issue; see ce.canGoUp(cmd.getFinalElevation(), cmd.getFinalCoords(), cmd.getFinalBoardId())
+                }
                 if ((!(t instanceof ExternalCargo) || isLoungeOrUnknownPhase) && t.canLoad(unit) &&
                       (!checkElev || unit.getElevation() == height) &&
                       !((t instanceof BattleArmorHandles) && noExternalMount)) {

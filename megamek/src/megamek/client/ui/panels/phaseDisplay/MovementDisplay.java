@@ -3232,6 +3232,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
                   null,
                   retVal,
                   null);
+            // Handle canceled dialog
+            if (bayString == null) {
+                return null;
+            }
+
             choice.setTargetBay(MathUtility.parseInt(bayString.substring(0, bayString.indexOf(" "))));
             // We need to update the entity here so that the server knows
             // about our target bay
@@ -3259,6 +3264,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       null,
                       retVal,
                       null);
+
+                if (bayString == null) {
+                    // Cancelled out, best to cancel the loading.
+                    return null;
+                }
+
                 choice.setTargetBay(bayString.equals(Messages.getString(
                       "MovementDisplay.loadProtoClampMountDialog.front")) ? 0 : 1);
                 // We need to update the entity here so that the server knows

@@ -1380,7 +1380,9 @@ public abstract class BotClient extends Client {
 
     /**
      * Let the bot decide whether to reroll initiative based on report info
-     * @return
+     *
+     * @return true if Tactical Genius A) is available, B) hasn't been used already, and C) would improve our initiative
+     * vs enemy players; otherwise return false.
      */
     protected boolean decideToRerollInitiative() {
         Player me = getLocalPlayer();

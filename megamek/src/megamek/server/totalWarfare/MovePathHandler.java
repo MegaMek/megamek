@@ -40,7 +40,6 @@ import java.util.stream.Collectors;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
-import megamek.common.CriticalSlot;
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.LosEffects;
@@ -88,6 +87,8 @@ import megamek.common.weapons.TeleMissile;
 import megamek.logging.MMLogger;
 import megamek.server.ServerHelper;
 import megamek.server.SmokeCloud;
+
+import static megamek.common.bays.Bay.UNSET_BAY;
 
 /**
  * Processes an Entity's MovePath when an ENTITY_MOVE packet is received.
@@ -1256,7 +1257,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     fighterSquadron.setDone(true);
                     // place on board
                     fighterSquadron.setPosition(loader.getPosition());
-                    gameManager.loadUnit(fighterSquadron, loader, -1);
+                    gameManager.loadUnit(fighterSquadron, loader, UNSET_BAY);
                     loader = fighterSquadron;
                     gameManager.entityUpdate(fighterSquadron.getId());
                 }

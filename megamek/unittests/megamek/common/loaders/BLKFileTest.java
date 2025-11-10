@@ -32,6 +32,7 @@
  */
 package megamek.common.loaders;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -112,7 +113,7 @@ class BLKFileTest {
     @Test
     void parseBayTypeIndicatorWithoutBayNumber() {
         Bay bay = new BattleArmorBay(2.0, 1, 4, false, true);
-        String numbers = getBayNumbers(bay).replace(":4", ":-1");
+        String numbers = getBayNumbers(bay).replace(":4", String.format(":%s", UNSET_BAY));
         HashSet<Integer> bayNums = new HashSet<>();
         bayNums.add(0);
         bayNums.add(1);
@@ -181,7 +182,7 @@ class BLKFileTest {
 
     @Test
     void parseDropShuttleBay() throws BLKDecodingException {
-        Bay bay = new DropShuttleBay(1, -1, Jumpship.LOC_AFT);
+        Bay bay = new DropShuttleBay(1, UNSET_BAY, Jumpship.LOC_AFT);
 
         ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
 
@@ -194,7 +195,7 @@ class BLKFileTest {
     void parseNavalRepairFacility() throws BLKDecodingException {
         final double SIZE = 5000.0;
         final int DOORS = 2;
-        Bay bay = new NavalRepairFacility(SIZE, DOORS, -1, Jumpship.LOC_AFT, true);
+        Bay bay = new NavalRepairFacility(SIZE, DOORS, UNSET_BAY, Jumpship.LOC_AFT, true);
 
         ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
 

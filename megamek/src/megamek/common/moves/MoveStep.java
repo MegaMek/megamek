@@ -3037,7 +3037,7 @@ public class MoveStep implements Serializable {
                 if (!entity.getOwner().isEnemyOf(other.getOwner()) && !entity.equals(other)) {
 
                     // The moving unit should be able to load the other unit.
-                    if (!entity.canLoad(other)) {
+                    if (!entity.canLoad(other, true, getElevation())) {
                         return false;
                     }
 

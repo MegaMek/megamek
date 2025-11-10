@@ -74,6 +74,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
 /**
  * Class for reading in and parsing MUL XML files. The MUL xsl is defined in the docs' directory.
  *
@@ -2166,7 +2168,7 @@ public class MULParser {
             return;
         } else {
             // Try to get a good index value.
-            bay = -1;
+            bay = UNSET_BAY;
             try {
                 bay = Integer.parseInt(index);
             } catch (NumberFormatException ignored) {

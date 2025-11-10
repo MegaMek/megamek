@@ -35,8 +35,8 @@ package megamek.client.ui.panels.phaseDisplay;
 
 import static megamek.common.LandingDirection.HORIZONTAL;
 import static megamek.common.LandingDirection.VERTICAL;
+import static megamek.common.bays.Bay.UNSET_BAY;
 import static megamek.common.equipment.MiscType.F_CHAFF_POD;
-import static megamek.common.options.OptionsConstants.ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS;
 import static megamek.common.options.OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES;
 
 import java.awt.Color;
@@ -162,6 +162,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
           CMD_AERO_VECTORED |
           CMD_PROTOMEK;
     public static final int CMD_NON_INF = CMD_MEK | CMD_TANK | CMD_VTOL | CMD_AERO | CMD_AERO_VECTORED | CMD_PROTOMEK;
+
+    public static int NO_UNIT_SELECTED = -1;
 
     private boolean isUnJammingRAC;
     private boolean isUsingChaff;
@@ -2969,7 +2971,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
               .stream()
               .filter(other -> !ce.canTow(other.getId()))
               .filter(Entity::isLoadableThisTurn)
-              .anyMatch(ce::canLoad);
+              .anyMatch(other -> ce.canLoad(other, true, cmd.getFinalElevation()));
         setLoadEnabled(canLoad);
     }
 
@@ -3154,10 +3156,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 // about our target bay
                 clientgui.getClient().sendUpdateEntity(ce);
             } else {
-                ce.setTargetBay(-1); // Safety set!
+                ce.setTargetBay(UNSET_BAY); // Safety set!
             }
         } else {
-            ce.setTargetBay(-1); // Safety set!
+            ce.setTargetBay(UNSET_BAY); // Safety set!
         }
 
         // Return the chosen unit.
@@ -3169,7 +3171,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         Vector<Entity> choices = new Vector<>();
         for (Entity other : game.getEntitiesVector(cmd.getFinalCoords())) {
-            if (other.isLoadableThisTurn() && (currentEntity() != null) && currentEntity().canLoad(other, false)) {
+            // Only allow selecting units that aren't already getting loaded
+            if (other.isLoadableThisTurn() && (currentEntity() != null) && currentEntity().canLoad(other, true,
+                  cmd.getFinalElevation()) && (other.getTargetBay() == UNSET_BAY)) {
+
                 choices.addElement(other);
             }
         }
@@ -3193,69 +3198,104 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         null,
                         SharedUtility.getDisplayArray(choices),
                         null);
-            choice = (Entity) SharedUtility.getTargetPicked(choices, input);
+            choice = (Entity) SharedUtility.getTargetPicked(choices, input); // Add matching notification below
         } else {
             // Only one choice.
             choice = choices.get(0);
+            // Notify user
+            JOptionPane.showMessageDialog(clientgui.getFrame(),
+                  Messages.getString(
+                        "DeploymentDisplay.loadUnitToDefault.message",
+                        currentEntity().getShortName(),
+                        choice.getShortName()),
+                        Messages.getString("DeploymentDisplay.loadUnitDialog.title"), JOptionPane.INFORMATION_MESSAGE
+            );
         }
 
-        if (!(choice instanceof Infantry)) {
-            List<Integer> bayChoices = new ArrayList<>();
-            for (Transporter t : currentEntity().getTransports()) {
-                if (t.canLoad(choice) && (t instanceof Bay)) {
-                    bayChoices.add(((Bay) t).getBayNumber());
+        // Handle canceled dialog
+        if (choice == null) {
+            return null;
+        }
+
+        // Safety set, apparently
+        choice.setTargetBay(UNSET_BAY);
+
+        List<Integer> bayChoices = new ArrayList<>();
+        for (Transporter transporter : currentEntity().getTransports()) {
+            if (transporter.canLoad(choice) && (transporter instanceof Bay)) {
+                bayChoices.add(((Bay) transporter).getBayNumber());
+            }
+        }
+
+        if (bayChoices.size() == 1) {
+            JOptionPane.showMessageDialog(clientgui.getFrame(),
+                  Messages.getString(
+                        "MovementDisplay.loadUnitBayNumberDefault.message",
+                        currentEntity().getShortName(),
+                        choice.getShortName(),
+                        String.format("Bay %s", bayChoices.get(0))
+                  ),
+                  Messages.getString("MovementDisplay.loadUnitBayNumberDialog.title"), JOptionPane.INFORMATION_MESSAGE
+            );
+            choice.setTargetBay(bayChoices.get(0));
+        } else if (bayChoices.size() > 1) {
+            String[] bayChoicesArray = new String[bayChoices.size()];
+            int i = 0;
+            for (Integer bayNumber : bayChoices) {
+                bayChoicesArray[i++] = bayNumber.toString() + " (Free Slots: " +
+                      (int) currentEntity().getBayById(bayNumber).getUnused() + ")";
+            }
+            String bayString = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
+                  Messages.getString("MovementDisplay.loadUnitBayNumberDialog.message", currentEntity().getShortName()),
+                  Messages.getString("MovementDisplay.loadUnitBayNumberDialog.title"),
+                  JOptionPane.QUESTION_MESSAGE,
+                  null,
+                  bayChoicesArray,
+                  null);
+            // Handle canceled dialog
+            if (bayString == null) {
+                return null;
+            }
+
+            choice.setTargetBay(MathUtility.parseInt(bayString.substring(0, bayString.indexOf(" "))));
+            // We need to update the entity here so that the server knows
+            // about our target bay
+            clientgui.getClient().sendUpdateEntity(choice);
+        } else if (choice.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
+            bayChoices = new ArrayList<>();
+            for (Transporter transporter : currentEntity().getTransports()) {
+                if ((transporter instanceof ProtoMekClampMount) && transporter.canLoad(choice)) {
+                    bayChoices.add(((ProtoMekClampMount) transporter).isRear() ? 1 : 0);
                 }
             }
             if (bayChoices.size() > 1) {
-                String[] retVal = new String[bayChoices.size()];
+                String[] clampChoicesArray = new String[bayChoices.size()];
                 int i = 0;
-                for (Integer bn : bayChoices) {
-                    retVal[i++] = bn.toString() + " (Free Slots: " + (int) currentEntity().getBayById(bn).getUnused() + ")";
+                for (Integer bayNumber : bayChoices) {
+                    clampChoicesArray[i++] = bayNumber > 0 ?
+                          Messages.getString("MovementDisplay.loadProtoClampMountDialog.rear") :
+                          Messages.getString("MovementDisplay.loadProtoClampMountDialog.front");
                 }
                 String bayString = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
-                      Messages.getString("MovementDisplay.loadUnitBayNumberDialog.message", currentEntity().getShortName()),
-                      Messages.getString("MovementDisplay.loadUnitBayNumberDialog.title"),
+                      Messages.getString("MovementDisplay.loadProtoClampMountDialog.message",
+                            currentEntity().getShortName()),
+                      Messages.getString("MovementDisplay.loadProtoClampMountDialog.title"),
                       JOptionPane.QUESTION_MESSAGE,
                       null,
-                      retVal,
+                      clampChoicesArray,
                       null);
-                choice.setTargetBay(MathUtility.parseInt(bayString.substring(0, bayString.indexOf(" "))));
+
+                if (bayString == null) {
+                    // Cancelled out, best to cancel the loading.
+                    return null;
+                }
+
+                choice.setTargetBay(bayString.equals(Messages.getString(
+                      "MovementDisplay.loadProtoClampMountDialog.front")) ? 0 : 1);
                 // We need to update the entity here so that the server knows
                 // about our target bay
                 clientgui.getClient().sendUpdateEntity(choice);
-            } else if (choice.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
-                bayChoices = new ArrayList<>();
-                for (Transporter t : currentEntity().getTransports()) {
-                    if ((t instanceof ProtoMekClampMount) && t.canLoad(choice)) {
-                        bayChoices.add(((ProtoMekClampMount) t).isRear() ? 1 : 0);
-                    }
-                }
-                if (bayChoices.size() > 1) {
-                    String[] retVal = new String[bayChoices.size()];
-                    int i = 0;
-                    for (Integer bn : bayChoices) {
-                        retVal[i++] = bn > 0 ?
-                              Messages.getString("MovementDisplay.loadProtoClampMountDialog.rear") :
-                              Messages.getString("MovementDisplay.loadProtoClampMountDialog.front");
-                    }
-                    String bayString = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
-                          Messages.getString("MovementDisplay.loadProtoClampMountDialog.message", currentEntity().getShortName()),
-                          Messages.getString("MovementDisplay.loadProtoClampMountDialog.title"),
-                          JOptionPane.QUESTION_MESSAGE,
-                          null,
-                          retVal,
-                          null);
-                    choice.setTargetBay(bayString.equals(Messages.getString(
-                          "MovementDisplay.loadProtoClampMountDialog.front")) ? 0 : 1);
-                    // We need to update the entity here so that the server knows
-                    // about our target bay
-                    clientgui.getClient().sendUpdateEntity(choice);
-                } else {
-                    choice.setTargetBay(-1); // Safety set!
-                }
             }
-        } else {
-            choice.setTargetBay(-1); // Safety set!
         }
 
         // Return the chosen unit.
@@ -4122,7 +4162,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         if (choices.isEmpty()) {
-            return -1;
+            return NO_UNIT_SELECTED;
         }
 
         if (choices.size() == 1) {
@@ -4134,7 +4174,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             } else {
                 return choices.get(0).getId();
             }
-            return -1;
+            return NO_UNIT_SELECTED;
         }
 
         String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
@@ -4157,7 +4197,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 return picked.getId();
             }
         }
-        return -1;
+        return NO_UNIT_SELECTED;
     }
 
     /**
@@ -4196,7 +4236,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         if (choices.isEmpty()) {
-            return -1;
+            return NO_UNIT_SELECTED;
         }
 
         if (choices.size() == 1) {
@@ -4214,7 +4254,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (picked != null) {
             return picked.getId();
         }
-        return -1;
+        return NO_UNIT_SELECTED;
     }
 
     /**
@@ -5370,7 +5410,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
               actionCmd.equals(MoveCommand.MOVE_DOCK.getCmd())) {
             // if more than one unit is available as a carrier, then bring up an option dialog
             int recoverer = getRecoveryUnit();
-            if (recoverer != -1) {
+            if (recoverer != NO_UNIT_SELECTED) {
                 addStepToMovePath(MoveStepType.RECOVER, recoverer, -1);
             }
             if (actionCmd.equals(MoveCommand.MOVE_DOCK.getCmd())) {

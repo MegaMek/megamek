@@ -3037,13 +3037,14 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Lazy-loaded calculation of the "to-hit target number" threshold for spinning up a rapid fire autocannon.
+     * Lazy-loaded calculation of the "to-hit target number" threshold, below which
+     * rapid fire autocannon will fire multiple shots. More aggressive behavior
+     * (left on the Self Preservation slider) start at TN 11 and under, while less
+     * aggressive behavior (right on the slider) start at 4 and under.
      */
     public int getSpinUpThreshold() {
         if (spinUpThreshold == null) {
-            // we start spinning up the cannon at 11+ TN at highest aggression levels
-            // dropping it down to 6+ TN at the lower aggression levels
-            spinUpThreshold = Math.min(11, Math.max(getBehaviorSettings().getHyperAggressionIndex() + 2, 6));
+            spinUpThreshold = Math.max(4, Math.min(11, 13 - getBehaviorSettings().getSelfPreservationIndex()));
         }
 
         return spinUpThreshold;

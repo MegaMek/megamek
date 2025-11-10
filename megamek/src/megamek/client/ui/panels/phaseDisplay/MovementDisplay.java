@@ -3198,10 +3198,18 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         null,
                         SharedUtility.getDisplayArray(choices),
                         null);
-            choice = (Entity) SharedUtility.getTargetPicked(choices, input);
+            choice = (Entity) SharedUtility.getTargetPicked(choices, input); // Add matching notification below
         } else {
             // Only one choice.
             choice = choices.get(0);
+            // Notify user
+            JOptionPane.showMessageDialog(clientgui.getFrame(),
+                  Messages.getString(
+                        "DeploymentDisplay.loadUnitToDefault.message",
+                        currentEntity().getShortName(),
+                        choice.getShortName()),
+                        Messages.getString("DeploymentDisplay.loadUnitDialog.title"), JOptionPane.INFORMATION_MESSAGE
+            );
         }
 
         // Handle canceled dialog
@@ -3220,6 +3228,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         if (bayChoices.size() == 1) {
+            JOptionPane.showMessageDialog(clientgui.getFrame(),
+                  Messages.getString(
+                        "MovementDisplay.loadUnitBayNumberDefault.message",
+                        currentEntity().getShortName(),
+                        choice.getShortName(),
+                        String.format("Bay %s", bayChoices.get(0))
+                  ),
+                  Messages.getString("MovementDisplay.loadUnitBayNumberDialog.title"), JOptionPane.INFORMATION_MESSAGE
+            );
             choice.setTargetBay(bayChoices.get(0));
         } else if (bayChoices.size() > 1) {
             String[] bayChoicesArray = new String[bayChoices.size()];

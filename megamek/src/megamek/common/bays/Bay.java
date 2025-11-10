@@ -62,6 +62,7 @@ public class Bay implements Transporter, ITechnology {
     @Serial
     private static final long serialVersionUID = -9056450317468016272L;
 
+    public static final int UNSET_BAY = -1;
     public static final String FIELD_SEPARATOR = ":";
     public static final String FACING_PREFIX = "f";
 
@@ -421,7 +422,7 @@ public class Bay implements Transporter, ITechnology {
     }
 
     public String bayString(String bayType, double space, int doors) {
-        return String.format("%s:%s:%s:%s:%s:%s:%s", bayType, space, doors, -1, "", Entity.LOC_NONE, 0);
+        return String.format("%s:%s:%s:%s:%s:%s:%s", bayType, space, doors, UNSET_BAY, "", Entity.LOC_NONE, 0);
     }
 
     /**

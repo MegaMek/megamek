@@ -35,8 +35,8 @@ package megamek.client.ui.panels.phaseDisplay;
 
 import static megamek.common.LandingDirection.HORIZONTAL;
 import static megamek.common.LandingDirection.VERTICAL;
+import static megamek.common.bays.Bay.UNSET_BAY;
 import static megamek.common.equipment.MiscType.F_CHAFF_POD;
-import static megamek.common.options.OptionsConstants.ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS;
 import static megamek.common.options.OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES;
 
 import java.awt.Color;
@@ -162,6 +162,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
           CMD_AERO_VECTORED |
           CMD_PROTOMEK;
     public static final int CMD_NON_INF = CMD_MEK | CMD_TANK | CMD_VTOL | CMD_AERO | CMD_AERO_VECTORED | CMD_PROTOMEK;
+
+    public static int NO_UNIT_SELECTED = -1;
 
     private boolean isUnJammingRAC;
     private boolean isUsingChaff;
@@ -3154,10 +3156,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 // about our target bay
                 clientgui.getClient().sendUpdateEntity(ce);
             } else {
-                ce.setTargetBay(-1); // Safety set!
+                ce.setTargetBay(UNSET_BAY); // Safety set!
             }
         } else {
-            ce.setTargetBay(-1); // Safety set!
+            ce.setTargetBay(UNSET_BAY); // Safety set!
         }
 
         // Return the chosen unit.
@@ -3171,7 +3173,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         for (Entity other : game.getEntitiesVector(cmd.getFinalCoords())) {
             // Only allow selecting units that aren't already getting loaded
             if (other.isLoadableThisTurn() && (currentEntity() != null) && currentEntity().canLoad(other, true,
-                  cmd.getFinalElevation()) && (other.getTargetBay() == -1)) {
+                  cmd.getFinalElevation()) && (other.getTargetBay() == UNSET_BAY)) {
 
                 choices.addElement(other);
             }
@@ -3208,29 +3210,30 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         // Safety set, apparently
-        choice.setTargetBay(-1);
+        choice.setTargetBay(UNSET_BAY);
 
         List<Integer> bayChoices = new ArrayList<>();
-        for (Transporter t : currentEntity().getTransports()) {
-            if (t.canLoad(choice) && (t instanceof Bay)) {
-                bayChoices.add(((Bay) t).getBayNumber());
+        for (Transporter transporter : currentEntity().getTransports()) {
+            if (transporter.canLoad(choice) && (transporter instanceof Bay)) {
+                bayChoices.add(((Bay) transporter).getBayNumber());
             }
         }
 
         if (bayChoices.size() == 1) {
             choice.setTargetBay(bayChoices.get(0));
         } else if (bayChoices.size() > 1) {
-            String[] retVal = new String[bayChoices.size()];
+            String[] bayChoicesArray = new String[bayChoices.size()];
             int i = 0;
-            for (Integer bn : bayChoices) {
-                retVal[i++] = bn.toString() + " (Free Slots: " + (int) currentEntity().getBayById(bn).getUnused() + ")";
+            for (Integer bayNumber : bayChoices) {
+                bayChoicesArray[i++] = bayNumber.toString() + " (Free Slots: " +
+                      (int) currentEntity().getBayById(bayNumber).getUnused() + ")";
             }
             String bayString = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
                   Messages.getString("MovementDisplay.loadUnitBayNumberDialog.message", currentEntity().getShortName()),
                   Messages.getString("MovementDisplay.loadUnitBayNumberDialog.title"),
                   JOptionPane.QUESTION_MESSAGE,
                   null,
-                  retVal,
+                  bayChoicesArray,
                   null);
             // Handle canceled dialog
             if (bayString == null) {
@@ -3243,16 +3246,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clientgui.getClient().sendUpdateEntity(choice);
         } else if (choice.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
             bayChoices = new ArrayList<>();
-            for (Transporter t : currentEntity().getTransports()) {
-                if ((t instanceof ProtoMekClampMount) && t.canLoad(choice)) {
-                    bayChoices.add(((ProtoMekClampMount) t).isRear() ? 1 : 0);
+            for (Transporter transporter : currentEntity().getTransports()) {
+                if ((transporter instanceof ProtoMekClampMount) && transporter.canLoad(choice)) {
+                    bayChoices.add(((ProtoMekClampMount) transporter).isRear() ? 1 : 0);
                 }
             }
             if (bayChoices.size() > 1) {
-                String[] retVal = new String[bayChoices.size()];
+                String[] clampChoicesArray = new String[bayChoices.size()];
                 int i = 0;
-                for (Integer bn : bayChoices) {
-                    retVal[i++] = bn > 0 ?
+                for (Integer bayNumber : bayChoices) {
+                    clampChoicesArray[i++] = bayNumber > 0 ?
                           Messages.getString("MovementDisplay.loadProtoClampMountDialog.rear") :
                           Messages.getString("MovementDisplay.loadProtoClampMountDialog.front");
                 }
@@ -3262,7 +3265,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       Messages.getString("MovementDisplay.loadProtoClampMountDialog.title"),
                       JOptionPane.QUESTION_MESSAGE,
                       null,
-                      retVal,
+                      clampChoicesArray,
                       null);
 
                 if (bayString == null) {
@@ -4142,7 +4145,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         if (choices.isEmpty()) {
-            return -1;
+            return NO_UNIT_SELECTED;
         }
 
         if (choices.size() == 1) {
@@ -4154,7 +4157,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             } else {
                 return choices.get(0).getId();
             }
-            return -1;
+            return NO_UNIT_SELECTED;
         }
 
         String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
@@ -4177,7 +4180,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 return picked.getId();
             }
         }
-        return -1;
+        return NO_UNIT_SELECTED;
     }
 
     /**
@@ -4216,7 +4219,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         if (choices.isEmpty()) {
-            return -1;
+            return NO_UNIT_SELECTED;
         }
 
         if (choices.size() == 1) {
@@ -4234,7 +4237,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (picked != null) {
             return picked.getId();
         }
-        return -1;
+        return NO_UNIT_SELECTED;
     }
 
     /**
@@ -5390,7 +5393,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
               actionCmd.equals(MoveCommand.MOVE_DOCK.getCmd())) {
             // if more than one unit is available as a carrier, then bring up an option dialog
             int recoverer = getRecoveryUnit();
-            if (recoverer != -1) {
+            if (recoverer != NO_UNIT_SELECTED) {
                 addStepToMovePath(MoveStepType.RECOVER, recoverer, -1);
             }
             if (actionCmd.equals(MoveCommand.MOVE_DOCK.getCmd())) {

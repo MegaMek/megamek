@@ -80,6 +80,8 @@ import megamek.common.units.FighterSquadron;
 import megamek.common.util.C3Util;
 import megamek.logging.MMLogger;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
 /**
  * This class provides static helper functions for the Lobby aka ChatLounge.
  *
@@ -356,7 +358,7 @@ public class LobbyUtility {
         if (optionalProtoMek.isPresent()) {
             Entity soleProtoMek = entities.stream().findAny().get();
 
-            if (bayNumber != -1) {
+            if (bayNumber != UNSET_BAY) {
                 Bay bay = loader.getBayById(bayNumber);
                 if (null != bay) {
                     double loadSize = entities.stream().mapToDouble(bay::spaceForUnit).sum();

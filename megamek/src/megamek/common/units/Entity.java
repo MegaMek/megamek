@@ -147,6 +147,8 @@ import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
 /**
  * Entity is a master class for basically anything on the board except terrain.
  */
@@ -335,7 +337,7 @@ public abstract class Entity extends TurnOrdered
     protected int ownerId;
     protected int traitorId = -1;
 
-    protected int targetBay = -1;
+    protected int targetBay = UNSET_BAY;
 
     private int startingPos = Board.START_NONE;
     private int startingOffset = 0;
@@ -8632,7 +8634,7 @@ public abstract class Entity extends TurnOrdered
             Transporter next = iter.nextElement();
             if (next.canLoad(unit) &&
                   (!checkElev || (unit.getElevation() == getElevation())) &&
-                  ((bayNumber == -1) ||
+                  ((bayNumber == UNSET_BAY) ||
                         ((next instanceof Bay) && (((Bay) next).getBayNumber() == bayNumber)) ||
                         ((next instanceof DockingCollar) &&
                               (((DockingCollar) next).getCollarNumber() == bayNumber)))) {
@@ -8640,7 +8642,7 @@ public abstract class Entity extends TurnOrdered
                 if (next instanceof ExternalCargo) {
                     pickupCarryableObject(unit, Entity.LOC_NONE);
                 }
-                unit.setTargetBay(-1); // Reset the target bay for later.
+                unit.setTargetBay(UNSET_BAY); // Reset the target bay for later.
                 return;
             }
         }

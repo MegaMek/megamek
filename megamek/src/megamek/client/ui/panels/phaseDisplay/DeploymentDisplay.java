@@ -84,6 +84,8 @@ import megamek.common.units.IAero;
 import megamek.common.units.Infantry;
 import megamek.logging.MMLogger;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
 public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private final static MMLogger logger = MMLogger.create(DeploymentDisplay.class);
 
@@ -822,13 +824,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                             // bay
                             clientgui.getClient().sendUpdateEntity(other);
                         } else {
-                            other.setTargetBay(-1); // Safety set!
+                            other.setTargetBay(UNSET_BAY); // Safety set!
                         }
                     } else {
-                        other.setTargetBay(-1); // Safety set!
+                        other.setTargetBay(UNSET_BAY); // Safety set!
                     }
                 } else {
-                    other.setTargetBay(-1); // Safety set!
+                    other.setTargetBay(UNSET_BAY); // Safety set!
                 }
 
                 // Please note, the Server may never get this load order.

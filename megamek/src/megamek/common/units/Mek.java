@@ -82,6 +82,8 @@ import megamek.common.weapons.gaussRifles.GaussWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.logging.MMLogger;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
 /**
  * You know what Meks are, silly.
  */
@@ -543,7 +545,7 @@ public abstract class Mek extends Entity {
                       && (!checkElev || (unit.getElevation() == getElevation()))
                       && (((ProtoMekClampMount) t).isRear() == rear)) {
                     t.load(unit);
-                    unit.setTargetBay(-1);
+                    unit.setTargetBay(UNSET_BAY);
                     return;
                 }
             }

@@ -930,17 +930,15 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 currentHeatBuildup += en.infernos.getHeat();
             }
 
-            if (!((Mek) en).hasLaserHeatSinks()) {
-                // extreme temperatures.
-                if ((game != null) && (game.getPlanetaryConditions().getTemperature() > 0)) {
-                    int buildup = game.getPlanetaryConditions().getTemperatureDifference(50, -30);
-                    if (((Mek) en).hasIntactHeatDissipatingArmor()) {
-                        buildup /= 2;
-                    }
-                    currentHeatBuildup += buildup;
-                } else if (game != null) {
-                    currentHeatBuildup -= game.getPlanetaryConditions().getTemperatureDifference(50, -30);
+            // extreme temperatures.
+            if ((game != null) && (game.getPlanetaryConditions().getTemperature() > 0)) {
+                int buildup = game.getPlanetaryConditions().getTemperatureDifference(50, -30);
+                if (((Mek) en).hasIntactHeatDissipatingArmor()) {
+                    buildup /= 2;
                 }
+                currentHeatBuildup += buildup;
+            } else if (game != null) {
+                currentHeatBuildup -= game.getPlanetaryConditions().getTemperatureDifference(50, -30);
             }
         }
         Coords position = entity.getPosition();

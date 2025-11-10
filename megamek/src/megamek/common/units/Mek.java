@@ -1635,8 +1635,8 @@ public abstract class Mek extends Entity {
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
                 sinksUnderwater++;
             } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                  || mounted.getType().hasFlag(
-                  MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+                  || mounted.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)
+                  || mounted.getType().hasFlag(MiscType.F_LASER_HEAT_SINK)) {
                 sinksUnderwater += 2;
             }
         }

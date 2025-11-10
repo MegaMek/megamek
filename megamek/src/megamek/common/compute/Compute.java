@@ -3913,11 +3913,13 @@ public class Compute {
         boolean isUAC = false;
         boolean isRAC = false;
 
-        // Get the to-hit number for this attack
-        if (null == atk) {
-            LOGGER.warn("null provided as WeaponAttackAction in Compute.spinUpCannon");
+        // Basic protections against null values
+        if (null == atk || null == cgame || null == atk.toHit(cgame)) {
+            LOGGER.warn("null parameter passed to Compute.spinUpCannon");
             return final_spin;
         }
+
+        // Get the to-hit number for this attack
         to_hit = atk.toHit(cgame).getValue();
 
         // If weapon can't hit target, exit with the default mode setting

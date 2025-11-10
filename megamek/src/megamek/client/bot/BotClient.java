@@ -121,8 +121,10 @@ public abstract class BotClient extends Client {
      * Keeps track of whether this client has started to calculate a turn this phase.
      */
     boolean calculatedTurnThisPhase = false;
-    boolean rerolledInitiative = false;
     int calculatedTurnsThisPhase = 0;
+
+    // Let bots remember whether they've rerolled an initiative roll this round
+    protected boolean rerolledInitiative = false;
 
     /**
      * Store a reference to the ClientGUI for the client who created this bot. This is used to ensure keep the ClientGUI

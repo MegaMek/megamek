@@ -59,6 +59,7 @@ import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.LosEffects;
 import megamek.common.MPCalculationSetting;
+import megamek.common.Player;
 import megamek.common.Team;
 import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -91,6 +92,7 @@ import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.game.IGame;
+import megamek.common.game.InitiativeRoll;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.net.enums.PacketCommand;
@@ -3836,5 +3838,127 @@ public class Princess extends BotClient {
 
     public ArtilleryCommandAndControl getArtilleryCommandAndControl() {
         return artilleryCommandAndControl;
+    }
+
+    /**
+     * Determines whether Princess should reroll initiative using the Tactical Genius special ability.
+     *
+     * <p>The decision is based on:</p>
+     *
+     * <ul>
+     *   <li>Whether Tactical Genius is available to the player</li>
+     *   <li>Whether it has already been used this round</li>
+     *   <li>The probability that rerolling will improve the net initiative outcome against enemies</li>
+     * </ul>
+     *
+     * <p>Princess will only reroll if currently losing more initiative comparisons than winning, and if the
+     * probability of improvement exceeds the configured threshold.</p>
+     *
+     * @return {@code true} if Tactical Genius should be used to reroll initiative
+     */
+    @Override
+    protected boolean decideToRerollInitiative() {
+        Player me = getLocalPlayer();
+
+        if (!game.hasTacticalGenius(me) || rerolledInitiative) {
+            return false;
+        }
+
+        int myRoll = getLastInitiativeRoll(me);
+        List<Integer> enemyRolls = game.getPlayersList().stream()
+              .filter(p -> p != me && p.isEnemyOf(me))
+              .map(this::getLastInitiativeRoll)
+              .sorted()
+              .toList();
+
+        int winsNow = countWins(myRoll, enemyRolls);
+        int lossesNow = countLosses(myRoll, enemyRolls);
+
+        // We're only interested in rerolling if we're actually losing overall.
+        if (winsNow >= lossesNow) {
+            return false;
+        }
+
+        double pMajority = probabilityOfMajorityWinOnReroll(enemyRolls);
+
+        // Threshold can be tweaked; 0.5 = only reroll if it's more likely than not to help.
+        double THRESHOLD = 0.5;
+        return pMajority >= THRESHOLD;
+    }
+
+    /**
+     * Retrieves the most recent initiative roll for the specified player.
+     *
+     * @param player the player whose initiative roll to retrieve
+     * @return the player's last initiative roll value, or {@code 0} if no roll exists
+     */
+    private int getLastInitiativeRoll(Player player) {
+        InitiativeRoll roll = player.getInitiative();
+        if (roll == null || roll.size() == 0) {
+            return 0;
+        }
+        return roll.getRoll(roll.size() - 1);
+    }
+
+    /**
+     * Counts how many enemy initiative rolls Princess' roll beats.
+     *
+     * @param myRoll the initiative roll to compare
+     * @param enemyRolls the list of enemy initiative rolls to compare against
+     * @return the number of enemy rolls that are lower than myRoll
+     */
+    private int countWins(int myRoll, List<Integer> enemyRolls) {
+        int wins = 0;
+        for (int roll : enemyRolls) {
+            if (myRoll > roll) {
+                wins++;
+            }
+        }
+        return wins;
+    }
+
+    /**
+     * Counts how many enemy initiative rolls beat Princess' roll.
+     *
+     * @param myRoll the initiative roll to compare
+     * @param enemyRolls the list of enemy initiative rolls to compare against
+     * @return the number of enemy rolls that are higher than myRoll
+     */
+    private int countLosses(int myRoll, List<Integer> enemyRolls) {
+        int losses = 0;
+        for (int roll : enemyRolls) {
+            if (myRoll < roll) {
+                losses++;
+            }
+        }
+        return losses;
+    }
+
+    /**
+     * Calculates the probability that rerolling 2d6 initiative will result in beating more enemy rolls than lose to.
+     *
+     * <p>Uses the standard 2d6 probability distribution to determine favorable outcomes, where a favorable outcome
+     * is defined as winning more initiative comparisons than losing.</p>
+     *
+     * @param enemyRolls the list of enemy initiative rolls to compare against
+     * @return the probability (0.0 to 1.0) that a reroll will improve the net initiative outcome
+     */
+    private double probabilityOfMajorityWinOnReroll(List<Integer> enemyRolls) {
+        // Number of ways to roll each total on 2d6
+        int[] ways = { 0, 0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1 };
+
+        int favorableOutcomes = 0;
+        int totalOutcomes = 36;
+
+        for (int myRoll = 2; myRoll <= 12; myRoll++) {
+            int wins = countWins(myRoll, enemyRolls);
+            int losses = countLosses(myRoll, enemyRolls);
+
+            if (wins > losses) {
+                favorableOutcomes += ways[myRoll];
+            }
+        }
+
+        return (double) favorableOutcomes / totalOutcomes;
     }
 }

@@ -14794,7 +14794,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 cluster = checkForSpikes(te, hit.getLocation(), cluster, ae, Mek.LOC_CENTER_TORSO);
 
-                // PLAYTEST3 make lance deal 1 point internal to the first cluster if armor remained. ABA and 
+                // PLAYTEST3 make lance deal 1 point internal to the first cluster if armor remained. ABA and
                 // hardened block this
                 if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && firstCluster) {
                     boolean hasLance = false;
@@ -25249,7 +25249,7 @@ public class TWGameManager extends AbstractGameManager {
     private Packet createTacticalGeniusReportPacket(Player player) {
         return new Packet(PacketCommand.SENDING_REPORTS_TACTICAL_GENIUS,
               (player == null) || !doBlind() ? mainPhaseReport.clone() :
-                    new Vector[] { filterReportVector(mainPhaseReport, player) });
+                    filterReportVector(mainPhaseReport, player));
     }
 
     /**

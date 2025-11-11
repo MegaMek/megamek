@@ -22,9 +22,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.awt.GraphicsEnvironment;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -47,6 +49,8 @@ import org.junit.jupiter.api.Test;
  * 4. Resource strings are properly loaded from messages.properties
  * 5. Dynamic values are correctly formatted using MessageFormat
  *
+ * Note: These tests require a graphical environment and will be skipped in headless CI environments.
+ *
  * @author MegaMek Team
  * @since 2025-11-10
  */
@@ -56,8 +60,9 @@ class ManeuverChoiceDialogTest {
     private JFrame mockFrame;
 
     @BeforeAll
-    static void setUpHeadless() {
-        System.setProperty("java.awt.headless", "true");
+    static void checkGraphicsEnvironment() {
+        assumeFalse(GraphicsEnvironment.isHeadless(),
+            "Skipping GUI tests - no display available in headless environment");
     }
 
     @BeforeEach

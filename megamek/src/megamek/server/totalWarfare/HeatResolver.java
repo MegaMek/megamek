@@ -697,9 +697,6 @@ class HeatResolver extends AbstractTWRuleHandler {
                     // Last line is a crutch; 45 heat should be no roll
                     // but automatic explosion.
                 }
-                if (mek.hasLaserHeatSinks()) {
-                    boom--;
-                }
                 Roll diceRoll = Compute.rollD6(2);
                 int rollValue = diceRoll.getIntValue();
                 report = new Report(5065);

@@ -61,6 +61,8 @@ import megamek.common.weapons.bayWeapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
 public class BLKFile {
     private static final MMLogger logger = MMLogger.create(BLKFile.class);
 
@@ -1472,7 +1474,7 @@ public class BLKFile {
             // if a positive bay number was not specified, assign one
             // if a bay number was specified but is a duplicate, assign a different one
             int newBay = 1;
-            if (bayNumber == -1 || usedBayNumbers.contains(bayNumber)) {
+            if (bayNumber == UNSET_BAY || usedBayNumbers.contains(bayNumber)) {
                 while (usedBayNumbers.contains(newBay)) {
                     newBay++;
                 }
@@ -1536,7 +1538,7 @@ public class BLKFile {
             // Copy initial two fields; later fields get defaults or are set later
             java.lang.System.arraycopy(numbersArray, 0, temp, 0, 2);
             // Fill in other fields with default/unset values
-            temp[2] = String.valueOf(-1);
+            temp[2] = String.valueOf(UNSET_BAY);
             temp[3] = "";
             temp[4] = String.valueOf(Entity.LOC_NONE);
             temp[5] = String.valueOf(0);
@@ -1580,7 +1582,7 @@ public class BLKFile {
                     temp[3] = potentialBayTypeIndicator;
                     if (temp[2].equals(temp[3])) {
                         // We found the infantry type in the bay number field; unset bay number
-                        temp[2] = String.valueOf(-1);
+                        temp[2] = String.valueOf(UNSET_BAY);
                     }
                 } else if (potentialBayTypeIndicator.startsWith(Bay.FACING_PREFIX)) {
                     // Strip old facing prefix, set field to remaining value.

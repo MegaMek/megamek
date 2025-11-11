@@ -34,6 +34,10 @@
 package megamek.common.game;
 
 import static java.util.stream.Collectors.toList;
+import static megamek.common.enums.GamePhase.DEPLOYMENT;
+import static megamek.common.enums.GamePhase.INITIATIVE;
+import static megamek.common.enums.GamePhase.INITIATIVE_REPORT;
+import static megamek.common.enums.GamePhase.UNKNOWN;
 import static megamek.common.options.OptionsConstants.ATOW_COMBAT_PARALYSIS;
 import static megamek.common.options.OptionsConstants.ATOW_COMBAT_SENSE;
 
@@ -613,11 +617,12 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * @return true if the player has a valid unit with the Tactical Genius pilot special ability.
      */
     public boolean hasTacticalGenius(Player player) {
+        // Note: rules do not state that Tactical Genius cannot apply to deployment initiative roll (CamOps pg 80)
         for (Entity entity : inGameTWEntities()) {
             if (entity.hasAbility(OptionsConstants.MISC_TACTICAL_GENIUS) &&
                   entity.getOwner().equals(player) &&
                   !entity.isDestroyed() &&
-                  entity.isDeployed() &&
+                  (entity.isDeployed() || (getPhase() == INITIATIVE_REPORT)) &&
                   !entity.isCarcass() &&
                   !entity.getCrew().isUnconscious()) {
                 return true;

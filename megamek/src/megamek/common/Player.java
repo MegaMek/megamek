@@ -806,6 +806,8 @@ public final class Player extends TurnOrdered {
 
         copy.admitsDefeat = admitsDefeat;
 
+        copy.setInitiative(getInitiative());
+
         return copy;
     }
 

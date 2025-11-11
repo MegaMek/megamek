@@ -82,6 +82,8 @@ import megamek.common.weapons.gaussRifles.GaussWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.logging.MMLogger;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
 /**
  * You know what Meks are, silly.
  */
@@ -543,7 +545,7 @@ public abstract class Mek extends Entity {
                       && (!checkElev || (unit.getElevation() == getElevation()))
                       && (((ProtoMekClampMount) t).isRear() == rear)) {
                     t.load(unit);
-                    unit.setTargetBay(-1);
+                    unit.setTargetBay(UNSET_BAY);
                     return;
                 }
             }
@@ -1612,9 +1614,6 @@ public abstract class Mek extends Entity {
 
     @Override
     public int getHeatCapacityWithWater() {
-        if (hasLaserHeatSinks()) {
-            return getHeatCapacity(true, false);
-        }
         return getHeatCapacity(true, false) + Math.min(sinksUnderwater(), 6);
     }
 
@@ -1647,8 +1646,8 @@ public abstract class Mek extends Entity {
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
                 sinksUnderwater++;
             } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                  || mounted.getType().hasFlag(
-                  MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+                  || mounted.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)
+                  || mounted.getType().hasFlag(MiscType.F_LASER_HEAT_SINK)) {
                 sinksUnderwater += 2;
             }
         }

@@ -66,6 +66,12 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 import megamek.common.weapons.attacks.DiveBombAttack;
 import megamek.common.weapons.attacks.InfantryAttack;
+import megamek.common.weapons.autoCannons.ACWeapon;
+import megamek.common.weapons.autoCannons.HVACWeapon;
+import megamek.common.weapons.autoCannons.LACWeapon;
+import megamek.common.weapons.autoCannons.ProtoMekACWeapon;
+import megamek.common.weapons.autoCannons.RACWeapon;
+import megamek.common.weapons.autoCannons.UACWeapon;
 import megamek.common.weapons.battleArmor.innerSphere.ISBAPopUpMineLauncher;
 import megamek.common.weapons.bayWeapons.BayWeapon;
 import megamek.common.weapons.gaussRifles.HAGWeapon;
@@ -1458,7 +1464,7 @@ public class Compute {
         // find any c3 spotters that could help
         Entity c3spotter = ComputeC3Spotter.findC3Spotter(game, attackingEntity, target);
         Entity c3spotterWithECM = ComputeC3Spotter.playtestFindC3Spotter(game, attackingEntity, target);
-        
+
         if (isIndirect) {
             c3spotter = attackingEntity; // no c3 when using indirect fire
         }
@@ -1470,13 +1476,12 @@ public class Compute {
         int c3dist = Compute.effectiveDistance(game, c3spotter, target, false);
         // PLAYTEST3 if there is a member that is ECM blocked
         int c3ecmDist = Compute.effectiveDistance(game, c3spotterWithECM, target, false);
-        
+
         // C3 can't benefit from LOS range.
         int c3range = RangeType.rangeBracketC3(c3dist, distance, weaponRanges, useExtremeRange, false);
         // PLAYTEST3 checking for ECM ranged member
         int c3ecmRange = RangeType.rangeBracketC3(c3ecmDist, distance, weaponRanges, useExtremeRange, false);
-        
-       
+
         /*
          * Tac Ops Extreme Range Rule p. 85 if the weapons normal range is
          * Extreme then C3 uses the next highest range bracket, i.e. medium
@@ -1489,7 +1494,7 @@ public class Compute {
 
         // determine which range we're using
         int usingRange = range;
-        
+
         if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
             // PLAYTEST3 check ecm vs non ecm affected C3
             if (c3range > c3ecmRange) {
@@ -3739,7 +3744,7 @@ public class Compute {
                             // to reflect scaled crit chance
                             // Other armor-penetrating ammo types should be
                             // tested here, such as Tandem-charge SRMs
-                            
+
                             // PLAYTEST added
                             if (((ammoBinType.getAmmoType() == AmmoTypeEnum.AC)
                                   || (ammoBinType.getAmmoType() == AmmoTypeEnum.LAC)
@@ -3882,82 +3887,117 @@ public class Compute {
      *
      * @return the <code>int</code> ID of weapon mode
      */
+    @Deprecated
     public static int spinUpCannon(Game cgame, WeaponAttackAction atk) {
         return spinUpCannon(cgame, atk, Compute.d6(2) - 1);
     }
 
     /**
-     * If this is an ultra or rotary cannon, lets see about 'spinning it up' for extra damage
+     * Determine if autocannon should fire more than one round. Includes standard ACs if
+     * the game option for rapid-fire-mode is enabled.
      *
-     * @return the <code>int</code> ID of weapon mode
+     * @param atk              Attack action with weapon attack properties
+     * @param spinupThreshold  Maximum to-hit number to consider for rapid fire
+     * @return the <code>int</code> ID of weapon mode, which is also the number of mode changes
+     *          from single shot
      */
 
     public static int spinUpCannon(Game cgame, WeaponAttackAction atk, int spinupThreshold) {
 
-        int threshold;
-        int final_spin;
+        int to_hit;
+        // The number of mode changes needed to set a specific rate of fire
+        int final_spin = 0;
         Entity shooter;
         Mounted<?> weapon;
         WeaponType weaponType;
+        boolean isUAC = false;
+        boolean isRAC = false;
 
-        // Double check this is an Ultra or Rotary cannon
-        // or a standard AC with the TacOps rapid fire rule turned on
+        // Basic protections against null values
+        if (null == atk || null == cgame || null == atk.toHit(cgame)) {
+            LOGGER.warn("null parameter passed to Compute.spinUpCannon");
+            return final_spin;
+        }
+
+        // Get the to-hit number for this attack
+        to_hit = atk.toHit(cgame).getValue();
+
+        // If weapon can't hit target, exit with the default mode setting
+        if (to_hit > 12) {
+            return final_spin;
+        }
+
         shooter = atk.getEntity(cgame);
         weapon = shooter.getEquipment(atk.getWeaponId());
         weaponType = (WeaponType) shooter.getEquipment(atk.getWeaponId()).getType();
 
-        boolean rapidAC = (weaponType.getAmmoType() == AmmoTypeEnum.AC)
-              && cgame.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RAPID_AC);
+        // If optional rapid fire autocannons are enabled, check for conventional, LAC, and
+        // PAC types
+        boolean isRapidFireAC =
+              cgame.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RAPID_AC) &&
+                    weaponType instanceof ACWeapon;
 
-        if (!((weaponType.getAmmoType() == AmmoTypeEnum.AC_ULTRA)
-              || (weaponType.getAmmoType() == AmmoTypeEnum.AC_ULTRA_THB)
-              || (weaponType.getAmmoType() == AmmoTypeEnum.AC_ROTARY)
-              || rapidAC)) {
-            return 0;
+        // Anything other than a standard AC or equivalent, UAC, or RAC does not apply
+        if (!isRapidFireAC) {
+            isRAC = weaponType instanceof RACWeapon;
+            isUAC = !isRAC && (weaponType instanceof UACWeapon);
+
+            if (!isRAC && !isUAC) {
+                return final_spin;
+            }
         }
-
-        // Get the to-hit number
-        threshold = atk.toHit(cgame).getValue();
 
         // Set the weapon to single shot mode
-        weapon.setMode(rapidAC ? "" : Weapon.MODE_AC_SINGLE);
-        final_spin = 0;
+        weapon.setMode(isRapidFireAC ? "" : Weapon.MODE_AC_SINGLE);
 
-        // If weapon can't hit target, exit the function with the weapon on
-        // single shot
-        if ((threshold == TargetRoll.IMPOSSIBLE)
-              || (threshold == TargetRoll.AUTOMATIC_FAIL)) {
-            return final_spin;
-        }
-
-        // If random roll is >= to-hit + 1, then set double-spin
-        if (spinupThreshold >= threshold) {
+        // If the to-hit number is under or at the provided threshold, set multiple shots
+        if (to_hit <= spinupThreshold) {
             final_spin = 1;
-            if ((weaponType.getAmmoType() == AmmoTypeEnum.AC_ULTRA)
-                  || (weaponType.getAmmoType() == AmmoTypeEnum.AC_ULTRA_THB)) {
+            if (isUAC) {
                 weapon.setMode(Weapon.MODE_UAC_ULTRA);
-            } else if (weaponType.getAmmoType() == AmmoTypeEnum.AC_ROTARY) {
+            } else if (isRAC) {
+
                 weapon.setMode(Weapon.MODE_RAC_TWO_SHOT);
-            } else if (rapidAC) {
-                weapon.setMode(Weapon.MODE_AC_RAPID);
+
+                // If the to-hit number is significantly lower than the provided threshold,
+                // set for either five or six shots
+
+                if (to_hit <= (spinupThreshold - 3)) {
+                    final_spin = 5;
+                    weapon.setMode(Weapon.MODE_RAC_SIX_SHOT);
+                    return final_spin;
+                }
+
+                if (to_hit <= (spinupThreshold - 2)) {
+                    final_spin = 4;
+                    weapon.setMode(Weapon.MODE_RAC_FIVE_SHOT);
+                    return final_spin;
+                }
+
+                // If the to-hit number is slightly lower than the provided threshold, set for
+                // four shots.  Reduce to three shots for high to-hit numbers to reduce ammo
+                // use and chance of jamming.
+                if (to_hit <= (spinupThreshold - 1)) {
+                    final_spin = to_hit >= 6 ? 2 : 3;
+                    weapon.setMode(to_hit >= 6 ? Weapon.MODE_RAC_THREE_SHOT : Weapon.MODE_RAC_FOUR_SHOT);
+                    return final_spin;
+                }
+
+            } else {
+                // Rapid firing standard autocannon is risky, so save it for better to-hit numbers,
+                // infantry field guns, or when the 'kinder' optional rule is set
+                if (to_hit <= (spinupThreshold - 2) ||
+                      shooter.isConventionalInfantry() ||
+                      cgame.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_KIND_RAPID_AC)) {
+                    weapon.setMode(Weapon.MODE_AC_RAPID);
+                } else {
+                    final_spin = 0;
+                    weapon.setMode("");
+                }
             }
         }
 
-        // If this is a Rotary cannon
-        if (weaponType.getAmmoType() == AmmoTypeEnum.AC_ROTARY) {
-
-            // If random roll is >= to-hit + 2 then set to quad-spin
-            if (spinupThreshold >= (threshold + 1)) {
-                final_spin = 2;
-                weapon.setMode(Weapon.MODE_RAC_FOUR_SHOT);
-            }
-
-            // If random roll is >= to-hit + 3 then set to six-spin
-            if (spinupThreshold >= (threshold + 2)) {
-                final_spin = 3;
-                weapon.setMode(Weapon.MODE_RAC_SIX_SHOT);
-            }
-        }
+        // Return the number of mode changes needed to set the rate of fire
         return final_spin;
     }
 

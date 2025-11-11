@@ -147,6 +147,8 @@ import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
 /**
  * Entity is a master class for basically anything on the board except terrain.
  */
@@ -335,7 +337,7 @@ public abstract class Entity extends TurnOrdered
     protected int ownerId;
     protected int traitorId = -1;
 
-    protected int targetBay = -1;
+    protected int targetBay = UNSET_BAY;
 
     private int startingPos = Board.START_NONE;
     private int startingOffset = 0;
@@ -8592,11 +8594,27 @@ public abstract class Entity extends TurnOrdered
      * no room for the unit.
      *
      * @param unit - the <code>Entity</code> to be loaded.
+     * @param checkElev - Whether to compare elevations (e.g. for VTOL loading infantry)
      *
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
      *       otherwise.
      */
     public boolean canLoad(Entity unit, boolean checkElev) {
+        return canLoad(unit, checkElev, getElevation());
+    }
+
+    /**
+     * Determines if this object can accept the given unit. The unit may not be of the appropriate type or there may be
+     * no room for the unit.
+     *
+     * @param unit - the <code>Entity</code> to be loaded.
+     * @param checkElev - Whether to compare elevations (e.g. for VTOL loading infantry)
+     * @param height - the height at which to consider the loader
+     *
+     * @return <code>true</code> if the unit can be loaded, <code>false</code>
+     *       otherwise.
+     */
+    public boolean canLoad(Entity unit, boolean checkElev, int height) {
         // For now, if it's infantry, it can't load anything. Period!
         if (this instanceof Infantry) {
             return false;
@@ -8645,7 +8663,7 @@ public abstract class Entity extends TurnOrdered
                     isLoungeOrUnknownPhase = getGame().getPhase().isLounge() || getGame().getPhase().isUnknown();
                 }
                 if ((!(t instanceof ExternalCargo) || isLoungeOrUnknownPhase) && t.canLoad(unit) &&
-                      (!checkElev || unit.getElevation() == getElevation()) &&
+                      (!checkElev || unit.getElevation() == height) &&
                       !((t instanceof BattleArmorHandles) && noExternalMount)) {
                     return true;
                 }
@@ -8676,13 +8694,13 @@ public abstract class Entity extends TurnOrdered
             Transporter next = iter.nextElement();
             if (next.canLoad(unit) &&
                   (!checkElev || (unit.getElevation() == getElevation())) &&
-                  ((bayNumber == -1) ||
+                  ((bayNumber == UNSET_BAY) ||
                         ((next instanceof Bay) && (((Bay) next).getBayNumber() == bayNumber)) ||
                         ((next instanceof DockingCollar) &&
                               (((DockingCollar) next).getCollarNumber() == bayNumber))) || (bayNumber
                   > getTransportBays().size() && getTransports().indexOf(next) == Integer.MAX_VALUE - bayNumber)) {
                 next.load(unit);
-                unit.setTargetBay(-1); // Reset the target bay for later.
+                unit.setTargetBay(UNSET_BAY); // Reset the target bay for later.
                 return;
             }
         }

@@ -697,18 +697,23 @@ class HeatResolver extends AbstractTWRuleHandler {
                     // Last line is a crutch; 45 heat should be no roll
                     // but automatic explosion.
                 }
-                if (mek.hasLaserHeatSinks()) {
-                    boom--;
-                }
                 Roll diceRoll = Compute.rollD6(2);
                 int rollValue = diceRoll.getIntValue();
                 report = new Report(5065);
                 report.subject = entity.getId();
                 report.addDesc(entity);
                 report.add(boom);
-                if (entity.getCrew().hasActiveTechOfficer()) {
+                if (entity.getCrew().hasActiveTechOfficer() && mek.hasLaserHeatSinks()) {
+                    rollValue += 3;
+                    String rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + 2 + 1]";
+                    report.addDataWithTooltip(rollCalc, diceRoll.getReport());
+                } else if (entity.getCrew().hasActiveTechOfficer()) {
                     rollValue += 2;
                     String rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + 2]";
+                    report.addDataWithTooltip(rollCalc, diceRoll.getReport());
+                } else if (mek.hasLaserHeatSinks()) {
+                    rollValue += 1;
+                    String rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + 1]";
                     report.addDataWithTooltip(rollCalc, diceRoll.getReport());
                 } else {
                     report.add(diceRoll);
@@ -1191,9 +1196,16 @@ class HeatResolver extends AbstractTWRuleHandler {
             report.add(boom);
 
             Roll diceRoll = Compute.rollD6(2);
-            report.add(diceRoll);
+            int rollValue = diceRoll.getIntValue();
+            if (entity.getCrew().hasActiveTechOfficer()) {
+                rollValue += 2;
+                String rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + 2]";
+                report.addDataWithTooltip(rollCalc, diceRoll.getReport());
+            } else {
+                report.add(diceRoll);
+            }
 
-            if (diceRoll.getIntValue() >= boom) {
+            if (rollValue >= boom) {
                 // no ammo explosion
                 report.choose(true);
                 vPhaseReport.add(report);
@@ -1242,14 +1254,12 @@ class HeatResolver extends AbstractTWRuleHandler {
         Report report;
         int tempDiff = getGame().getPlanetaryConditions().getTemperatureDifference(50, -30);
         boolean heatArmor = false;
-        boolean laserHS = false;
 
         if (entity instanceof Mek) {
-            laserHS = ((Mek) entity).hasLaserHeatSinks();
             heatArmor = ((Mek) entity).hasIntactHeatDissipatingArmor();
         }
 
-        if (entity.isSpaceborne() || (tempDiff == 0) || laserHS) {
+        if (entity.isSpaceborne() || (tempDiff == 0)) {
             return;
         } else {
             if (getGame().getPlanetaryConditions().getTemperature() > 50) {

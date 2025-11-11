@@ -156,6 +156,20 @@ public class HandheldWeapon extends Entity {
         return Compute.ARC_FORWARD;
     }
 
+    /**
+     * Returns the primary facing, or -1 if n/a
+     */
+    @Override
+    public int getFacing() {
+        if (isTransported() && getGame() != null) {
+            Entity carryingEntity = getGame().getEntity(getTransportId());
+            if (carryingEntity != null && carryingEntity.getDistinctCarriedObjects().contains(this)) {
+                return carryingEntity.getSecondaryFacing();
+            }
+        }
+        return super.getFacing();
+    }
+
     @Override
     public boolean isSecondaryArcWeapon(int weaponId) {
         return false;

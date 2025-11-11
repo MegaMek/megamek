@@ -33,6 +33,7 @@ import megamek.client.ui.Messages;
 import megamek.common.ManeuverType;
 import megamek.common.board.Board;
 import megamek.common.moves.MovePath;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -53,6 +54,11 @@ class ManeuverChoiceDialogTest {
 
     private ManeuverChoiceDialog dialog;
     private JFrame mockFrame;
+
+    @BeforeAll
+    static void setUpHeadless() {
+        System.setProperty("java.awt.headless", "true");
+    }
 
     @BeforeEach
     void setUp() {

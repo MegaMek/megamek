@@ -83,10 +83,8 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
     private AbstractButton[] checkboxes;
 
     /**
-     * Current unit parameters for tooltip generation
+     * Current VSTOL status for tooltip generation
      */
-    private int currentVelocity = 0;
-    private int currentAltitude = 0;
     private boolean isVSTOL_CF = false;
 
     /**
@@ -379,9 +377,6 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
             tooltip.append(MessageFormat.format(thrustCost, velocity));
         } else if (type == ManeuverType.MAN_VIFF) {
             tooltip.append(MessageFormat.format(thrustCost, velocity + 2));
-        } else if (type == ManeuverType.MAN_SIDE_SLIP_LEFT || type == ManeuverType.MAN_SIDE_SLIP_RIGHT) {
-            // Thrust cost is static for side slips
-            tooltip.append(thrustCost);
         } else {
             tooltip.append(thrustCost);
         }
@@ -429,9 +424,8 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
 
     public void checkPerformability(int velocity, int altitude, int ceiling,
           boolean isVTOL, int distance, Board board, MovePath mp) {
-        // Store current parameters for tooltip generation
-        this.currentVelocity = velocity;
-        this.currentAltitude = altitude;
+        // Store current VSTOL status for tooltip generation
+        this.isVSTOL_CF = isVTOL;
 
         for (int type = 0; type < ManeuverType.MAN_SIZE; type++) {
             boolean canPerform = ManeuverType.canPerform(type, velocity, altitude, ceiling, isVTOL, distance, board, mp);

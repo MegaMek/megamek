@@ -319,8 +319,8 @@ class ManeuverChoiceDialogTest {
             "Hammerhead should have +3 control modifier");
         assertEquals(-1, ManeuverType.getMod(ManeuverType.MAN_HALF_ROLL, false),
             "Half Roll should have -1 control modifier");
-        assertEquals(1, ManeuverType.getCost(ManeuverType.MAN_BARREL_ROLL, 0),
-            "Barrel Roll should cost 1 thrust");
+        assertEquals(0, ManeuverType.getMod(ManeuverType.MAN_BARREL_ROLL, false),
+            "Barrel Roll should have +0 control modifier");
         assertEquals(2, ManeuverType.getMod(ManeuverType.MAN_VIFF, false),
             "VIFF should have +2 control modifier");
 

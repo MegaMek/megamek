@@ -388,6 +388,28 @@ class LobbyMekPopup {
                             "<HTML>" + e.getShortNameRaw() + idString(game, e.getId()) + " (Free Collars: "
                                   + ((Jumpship) e).getFreeDockingCollars() + ")",
                             LMP_LOAD + "|" + e.getId() + ":-1" + enToken(entities), true, listener)));
+            } else if (entities.size() == 1) {
+                Entity transportedUnit = entities.iterator().next();
+                // Standard loading, not ProtoMeks, not DropShip -> JumpShip
+                game.getEntitiesVector().stream()
+                      .filter(e -> !e.isCapitalFighter(true))
+                      .filter(e -> !entities.contains(e))
+                      .filter(e -> canLoadAll(e, entities))
+                      .forEach(e -> {
+                          JMenu loaderMenu = new JMenu("<HTML>" + e.getShortNameRaw() + idString(game, e.getId()));
+                          e.getTransports().forEach(t -> {
+                              if (t.canLoad(transportedUnit)) {
+                                  loaderMenu.add(menuItem(
+                                        "Onto " + t.toString(),
+                                        LMP_LOAD + "|" + e.getId() + ":" + (Integer.MAX_VALUE
+                                              - e.getTransports().indexOf(t)) + enToken(entities),
+                                        true, listener));
+                              }
+                          });
+                          if (loaderMenu.getItemCount() > 0) {
+                              menu.add(loaderMenu);
+                          }
+                      });
             } else if (entities.stream().noneMatch(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMEK))) {
                 // Standard loading, not ProtoMeks, not DropShip -> JumpShip
                 game.getEntitiesVector().stream()

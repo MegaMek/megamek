@@ -1141,6 +1141,10 @@ public abstract class Entity extends TurnOrdered
         // they need it to return correct entities, because they store just the
         // IDs
         for (Transporter transport : getTransports()) {
+            // TODO: Find a better way to handle this
+            if (transport instanceof ExternalCargo externalCargo) {
+                externalCargo.setEntity(this);
+            }
             transport.setGame(game);
         }
     }
@@ -2997,7 +3001,11 @@ public abstract class Entity extends TurnOrdered
      * Returns true if the entity can pick up ground objects
      */
     public boolean canPickupGroundObject() {
-        return false;
+        return canPickupGroundObjectWithLiftHoist();
+    }
+
+    public boolean canPickupGroundObjectWithLiftHoist() {
+        return getTransports().stream().anyMatch(t -> t instanceof LiftHoist);
     }
 
     /**
@@ -3031,8 +3039,17 @@ public abstract class Entity extends TurnOrdered
               isHullDown())) {
             return false;
         }
+        boolean canPickupWithArms = carryable.getTonnage() <= maxGroundObjectTonnage();
+        boolean canPickupWithLiftHoist = false;
 
-        return carryable.getTonnage() <= maxGroundObjectTonnage();
+        for (Transporter transporter : getTransports()) {
+            if (transporter instanceof LiftHoist liftHoist) {
+                canPickupWithLiftHoist = liftHoist.canLoadCarryable(carryable);
+                break;
+            }
+        }
+
+        return canPickupWithArms || canPickupWithLiftHoist;
     }
 
     /**
@@ -3049,7 +3066,7 @@ public abstract class Entity extends TurnOrdered
             for (Integer defaultLocation : getDefaultPickupLocations()) {
                 carriedObjects.put(defaultLocation, carryable);
             }
-        } else {
+        } else if (location < locations()) {
             carriedObjects.put(location, carryable);
         }
         endOfTurnCargoInteraction = true;
@@ -3130,6 +3147,49 @@ public abstract class Entity extends TurnOrdered
      */
     public List<Integer> getValidHalfWeightPickupLocations(ICarryable cargo) {
         return List.of(LOC_NONE);
+    }
+
+    public Map<String, Integer> getPickupLocationMap(ICarryable cargo) {
+        // reverse lookup: location name to location ID - we're going to wind up with a name chosen but need to
+        // send the ID in the move path.
+        Map<String, Integer> locationMap = new HashMap<>();
+
+        List<Integer> validHalfWeightPickupLocations = getValidHalfWeightPickupLocations(cargo);
+        if (validHalfWeightPickupLocations != null && !validHalfWeightPickupLocations.isEmpty()) {
+            for (int location : validHalfWeightPickupLocations) {
+                locationMap.put(getLocationName(location), location);
+            }
+        }
+        for (Transporter transporter : getTransports()) {
+            if (transporter instanceof ExternalCargo externalCargo && cargo instanceof Entity cargoEntity) {
+                if (externalCargo.canLoad(cargoEntity)) {
+                    locationMap.put(transporter.toString(),
+                          Integer.MAX_VALUE - getTransports().indexOf(transporter));
+
+                }
+            }
+        }
+
+        return locationMap;
+    }
+
+    public Map<String, Integer> getDropCargoLocationMap() {
+        // reverse lookup: location name to location ID - we're going to wind up with a name chosen but need to
+        // send the ID in the move path.
+        Map<String, Integer> locationMap = new HashMap<>();
+
+        for (int location : getCarriedObjects().keySet()) {
+            locationMap.put(getLocationName(location), location);
+        }
+        for (Transporter transporter : getTransports()) {
+            if (transporter instanceof ExternalCargo externalCargo && !externalCargo.getCarryables().isEmpty()) {
+                locationMap.put(transporter.toString(),
+                      Integer.MAX_VALUE - getTransports().indexOf(transporter));
+
+            }
+        }
+
+        return locationMap;
     }
 
     /**
@@ -8619,11 +8679,9 @@ public abstract class Entity extends TurnOrdered
                   ((bayNumber == -1) ||
                         ((next instanceof Bay) && (((Bay) next).getBayNumber() == bayNumber)) ||
                         ((next instanceof DockingCollar) &&
-                              (((DockingCollar) next).getCollarNumber() == bayNumber)))) {
+                              (((DockingCollar) next).getCollarNumber() == bayNumber))) || (bayNumber
+                  > getTransportBays().size() && getTransports().indexOf(next) == Integer.MAX_VALUE - bayNumber)) {
                 next.load(unit);
-                if (next instanceof ExternalCargo) {
-                    pickupCarryableObject(unit, Entity.LOC_NONE);
-                }
                 unit.setTargetBay(-1); // Reset the target bay for later.
                 return;
             }
@@ -16075,11 +16133,17 @@ public abstract class Entity extends TurnOrdered
     protected void processPickupStepEntity(MoveStep step, Integer cargoPickupLocation, TWGameManager gameManager,
           Entity entityPickingUpTarget) {
 
-        gameManager.loadUnit(entityPickingUpTarget, this, -1);
+        int bayNumber = -1;
+        if (cargoPickupLocation >= locations()) {
+            bayNumber = cargoPickupLocation;
+        }
+        gameManager.loadUnit(entityPickingUpTarget, this, bayNumber);
 
-        // Normal loading won't always get the location right, let's fix that
-        entityPickingUpTarget.dropCarriedObject(this, false);
-        entityPickingUpTarget.pickupCarryableObject(this, cargoPickupLocation);
+        if (cargoPickupLocation < locations()) {
+            // Normal loading won't always get the location right, let's fix that
+            entityPickingUpTarget.dropCarriedObject(this, false);
+            entityPickingUpTarget.pickupCarryableObject(this, cargoPickupLocation);
+        }
 
         Report report = new Report(2513);
         report.subject = entityPickingUpTarget.getId();

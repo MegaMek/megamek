@@ -855,6 +855,15 @@ public abstract class Mek extends Entity {
     }
 
     /**
+     * The modifier for picking objects up based on the unit having TSM
+     *
+     * @return 2.0 if the entity has active TSM, 1.0 otherwise
+     */
+    public double getTSMPickupModifier() {
+        return hasActiveTSM(true) ? 2.0 : 1.0;
+    }
+
+    /**
      * does this Mek have industrial TSM=
      */
     public boolean hasIndustrialTSM() {
@@ -1896,11 +1905,13 @@ public abstract class Mek extends Entity {
 
     /**
      * Wrapper that handles applying Edge (if allowed).
+     *
      * @param table
      * @param side
      * @param aimedLocation
      * @param aimingMode
      * @param cover
+     *
      * @return HitData, possibly re-rolled once (once!) with Edge.
      */
     @Override
@@ -1914,9 +1925,11 @@ public abstract class Mek extends Entity {
      * For units that can use Edge to re-roll hits, determine whether to do so (if possible).
      *
      * @param originalHit the hit to consider using Edge on.
+     *
      * @return
      */
-    public HitData applyEdgeToHitLocation(HitData originalHit, int table, int side, int aimedLocation, AimingMode aimingMode,
+    public HitData applyEdgeToHitLocation(HitData originalHit, int table, int side, int aimedLocation,
+          AimingMode aimingMode,
           int cover) {
 
         // Already used Edge on this hit!  No more mods allowed.

@@ -40,14 +40,18 @@ import java.util.Map;
 
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
+import megamek.logging.MMLogger;
 
 /**
  * Unprotected cargo transporter. Miscellaneous transporters that don't properly protect their cargo like a bay or
  * infantry compartment, but support cargo unlike clamp mounts or BA Handles.
  */
 public abstract class ExternalCargo implements Transporter {
+    private final static MMLogger logger = MMLogger.create(ExternalCargo.class);
 
     protected transient Game game;
+    protected transient Entity entity;
+    protected int entityId = Entity.NONE;
 
     /** The total amount of space available for objects. */
     protected double totalSpace;
@@ -64,6 +68,10 @@ public abstract class ExternalCargo implements Transporter {
         this.validPickupLocations = validPickupLocations;
     }
 
+    protected boolean canLoad() {
+        return true;
+    }
+
     /**
      * Determines if this object can accept the given unit. The unit may not be of the appropriate type or there may be
      * no room for the unit.
@@ -75,7 +83,11 @@ public abstract class ExternalCargo implements Transporter {
      */
     @Override
     public boolean canLoad(Entity unit) {
-        return false; //TODO: Support loading cargo in game
+        return canLoadCarryable(unit);
+    }
+
+    public boolean canLoadCarryable(ICarryable carryable) {
+        return canLoad() && getUnused() >= carryable.getTonnage();
     }
 
     /**
@@ -87,7 +99,7 @@ public abstract class ExternalCargo implements Transporter {
      */
     @Override
     public void load(Entity unit) throws IllegalArgumentException {
-        throw new IllegalArgumentException("Non-Functional Feature");
+        loadCarryable(unit);
     }
 
     public void loadCarryable(ICarryable carryable) throws IllegalArgumentException {
@@ -246,6 +258,13 @@ public abstract class ExternalCargo implements Transporter {
     @Override
     public void setGame(Game game) {
         this.game = game;
+        if (entity != null) {
+            entityId = entity.getId();
+        } else if (entityId != Entity.NONE) {
+            entity = game.getEntity(entityId);
+        } else {
+            logger.warn("External Cargo has no entity or entityId");
+        }
     }
 
     /**
@@ -263,5 +282,16 @@ public abstract class ExternalCargo implements Transporter {
 
     private void addCarriedObject(ICarryable carryable, int location) {
         carriedObjects.computeIfAbsent(location, k -> new ArrayList<>()).add(carryable);
+    }
+
+    public void setEntity(Entity entity) {
+        if (this.entity == null) {
+            this.entity = entity;
+            if (entity != null && game != null) {
+                entityId = entity.getId();
+            } else {
+                entityId = Entity.NONE;
+            }
+        }
     }
 }

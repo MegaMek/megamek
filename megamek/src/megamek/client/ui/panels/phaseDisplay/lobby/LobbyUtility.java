@@ -63,7 +63,7 @@ import megamek.client.ui.entityreadout.LiveReadoutDialog;
 import megamek.client.ui.models.UnitTableModel;
 import megamek.client.ui.util.UIUtil;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.*;
+import megamek.common.Player;
 import megamek.common.battleArmor.BattleArmorHandlesTank;
 import megamek.common.bays.Bay;
 import megamek.common.equipment.TankTrailerHitch;
@@ -370,6 +370,8 @@ public class LobbyUtility {
                     // for ProtoMek mag clamp systems
                     hasEnoughCargoCapacity = entities.size() == 1;
                     errorMessage = Messages.getString("LoadingBay.protostoomany");
+                } else if (loader.getTransports().get(Integer.MAX_VALUE - bayNumber).canLoad(soleProtoMek)) {
+                    hasEnoughCargoCapacity = entities.size() == 1;
                 } else {
                     errorMessage = Messages.getString("LoadingBay.bayNumberNotFound", bayNumber);
                 }

@@ -19198,7 +19198,10 @@ public class TWGameManager extends AbstractGameManager {
                         if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
                             // No PSR for HD Gyro hits.
                         } else {
-                            game.addPSR(new PilotingRollData(en.getId(), 2, "gyro hit"));
+                            // Core ruleset: First hit to HD gyro does not require PSR per errata
+                            if (en.getGyroType() != Mek.GYRO_HEAVY_DUTY) {
+                                game.addPSR(new PilotingRollData(en.getId(), 2, "gyro hit"));
+                            }
                         }
 
                         break;

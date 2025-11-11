@@ -52,8 +52,11 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
+import java.text.MessageFormat;
+
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.board.Board;
 import megamek.common.ManeuverType;
 import megamek.common.moves.MovePath;
@@ -78,6 +81,13 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
      * The checkboxes for available choices.
      */
     private AbstractButton[] checkboxes;
+
+    /**
+     * Current unit parameters for tooltip generation
+     */
+    private int currentVelocity = 0;
+    private int currentAltitude = 0;
+    private boolean isVSTOL_CF = false;
 
     /**
      * Create and initialize the dialog.
@@ -294,11 +304,140 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
         return retVal[0];
     }
 
+    /**
+     * Creates an HTML tooltip for a maneuver showing requirements, costs, and effects.
+     * Uses localized strings from messages.properties.
+     *
+     * @param type       The maneuver type constant from ManeuverType
+     * @param canPerform Whether the maneuver can currently be performed
+     * @param velocity   Current unit velocity
+     * @param altitude   Current unit altitude
+     * @return HTML-formatted tooltip string
+     */
+    private String createManeuverTooltip(int type, boolean canPerform, int velocity, int altitude) {
+        StringBuilder tooltip = new StringBuilder("<HTML><BODY>");
+
+        // Maneuver name header
+        tooltip.append(UIUtil.fontHTML(UIUtil.uiLightViolet()))
+               .append("<B>").append(ManeuverType.getTypeName(type)).append("</B></FONT><BR>");
+
+        // Get the maneuver name for resource key
+        String maneuverKey = getManeuverResourceKey(type);
+
+        // For "None" maneuver, just show simple message
+        if (type == ManeuverType.MAN_NONE) {
+            tooltip.append(Messages.getString("ManeuverChoiceDialog.None.requirements"));
+            tooltip.append("</BODY></HTML>");
+            return tooltip.toString();
+        }
+
+        // Requirements
+        tooltip.append(Messages.getString("ManeuverChoiceDialog.requirementsLabel")).append(": ");
+        tooltip.append(Messages.getString("ManeuverChoiceDialog." + maneuverKey + ".requirements"));
+
+        // Add current value indicators for unavailable maneuvers
+        if (!canPerform) {
+            tooltip.append(UIUtil.fontHTML(UIUtil.uiLightRed()));
+            switch (type) {
+                case ManeuverType.MAN_LOOP:
+                    if (velocity < 4) {
+                        tooltip.append(" ").append(MessageFormat.format(
+                            Messages.getString("ManeuverChoiceDialog.currentValue"), velocity));
+                    }
+                    break;
+                case ManeuverType.MAN_IMMELMAN:
+                    if (velocity < 3 || altitude >= 9) {
+                        tooltip.append(" ").append(MessageFormat.format(
+                            Messages.getString("ManeuverChoiceDialog.currentValues"), velocity, altitude));
+                    }
+                    break;
+                case ManeuverType.MAN_BARREL_ROLL:
+                    if (velocity < 2) {
+                        tooltip.append(" ").append(MessageFormat.format(
+                            Messages.getString("ManeuverChoiceDialog.currentValue"), velocity));
+                    }
+                    break;
+                case ManeuverType.MAN_SIDE_SLIP_LEFT:
+                case ManeuverType.MAN_SIDE_SLIP_RIGHT:
+                    if (velocity <= 0) {
+                        tooltip.append(" ").append(MessageFormat.format(
+                            Messages.getString("ManeuverChoiceDialog.currentValue"), velocity));
+                    }
+                    break;
+                case ManeuverType.MAN_VIFF:
+                    tooltip.append(" ").append(Messages.getString("ManeuverChoiceDialog.notVSTOL"));
+                    break;
+            }
+            tooltip.append("</FONT>");
+        }
+        tooltip.append("<BR>");
+
+        // Thrust Cost
+        tooltip.append(Messages.getString("ManeuverChoiceDialog.thrustCostLabel")).append(": ");
+        String thrustCost = Messages.getString("ManeuverChoiceDialog." + maneuverKey + ".thrustCost");
+        if (type == ManeuverType.MAN_HAMMERHEAD) {
+            tooltip.append(MessageFormat.format(thrustCost, velocity));
+        } else if (type == ManeuverType.MAN_VIFF) {
+            tooltip.append(MessageFormat.format(thrustCost, velocity + 2));
+        } else if (type == ManeuverType.MAN_SIDE_SLIP_LEFT || type == ManeuverType.MAN_SIDE_SLIP_RIGHT) {
+            // Thrust cost is static for side slips
+            tooltip.append(thrustCost);
+        } else {
+            tooltip.append(thrustCost);
+        }
+        tooltip.append("<BR>");
+
+        // Control Modifier
+        tooltip.append(Messages.getString("ManeuverChoiceDialog.controlModLabel")).append(": ");
+        String controlMod = Messages.getString("ManeuverChoiceDialog." + maneuverKey + ".controlMod");
+        if (type == ManeuverType.MAN_SIDE_SLIP_LEFT || type == ManeuverType.MAN_SIDE_SLIP_RIGHT) {
+            tooltip.append(MessageFormat.format(controlMod, isVSTOL_CF ? "-1" : "+0"));
+        } else {
+            tooltip.append(controlMod);
+        }
+        tooltip.append("<BR>");
+
+        // Effect
+        tooltip.append(Messages.getString("ManeuverChoiceDialog.effectLabel")).append(": ");
+        tooltip.append(Messages.getString("ManeuverChoiceDialog." + maneuverKey + ".effect"));
+
+        tooltip.append("</BODY></HTML>");
+        return tooltip.toString();
+    }
+
+    /**
+     * Gets the resource key suffix for a maneuver type.
+     *
+     * @param type The maneuver type constant
+     * @return The resource key suffix (e.g., "Loop", "Immelman")
+     */
+    private String getManeuverResourceKey(int type) {
+        return switch (type) {
+            case ManeuverType.MAN_NONE -> "None";
+            case ManeuverType.MAN_LOOP -> "Loop";
+            case ManeuverType.MAN_IMMELMAN -> "Immelman";
+            case ManeuverType.MAN_SPLIT_S -> "SplitS";
+            case ManeuverType.MAN_HAMMERHEAD -> "Hammerhead";
+            case ManeuverType.MAN_HALF_ROLL -> "HalfRoll";
+            case ManeuverType.MAN_BARREL_ROLL -> "BarrelRoll";
+            case ManeuverType.MAN_SIDE_SLIP_LEFT -> "SideSlipLeft";
+            case ManeuverType.MAN_SIDE_SLIP_RIGHT -> "SideSlipRight";
+            case ManeuverType.MAN_VIFF -> "VIFF";
+            default -> "None";
+        };
+    }
+
     public void checkPerformability(int velocity, int altitude, int ceiling,
           boolean isVTOL, int distance, Board board, MovePath mp) {
+        // Store current parameters for tooltip generation
+        this.currentVelocity = velocity;
+        this.currentAltitude = altitude;
+
         for (int type = 0; type < ManeuverType.MAN_SIZE; type++) {
-            checkboxes[type].setEnabled(
-                  ManeuverType.canPerform(type, velocity, altitude, ceiling, isVTOL, distance, board, mp));
+            boolean canPerform = ManeuverType.canPerform(type, velocity, altitude, ceiling, isVTOL, distance, board, mp);
+            checkboxes[type].setEnabled(canPerform);
+            // Update tooltip to show current state
+            checkboxes[type].setToolTipText(createManeuverTooltip(type, canPerform, velocity, altitude));
         }
     }
 }

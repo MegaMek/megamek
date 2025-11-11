@@ -136,8 +136,8 @@ class TWGameManagerTest {
     }
 
     /**
-     * Test that standard gyro first hit triggers PSR with +2 modifier.
-     * Per TotalWarfare rules, first gyro hit on standard gyro requires PSR at +3.
+     * Test that standard gyro first hit triggers PSR with +3 modifier.
+     * Per TotalWarfare rules (BMM pg 48), first gyro hit on standard gyro requires PSR at +3.
      */
     @Test
     void testStandardGyroFirstHitTriggersPSR() {
@@ -155,12 +155,12 @@ class TWGameManagerTest {
         gyroSlot.setHit(true);
 
         // Simulate critical hit processing
-        game.addPSR(new PilotingRollData(mek.getId(), 2, "gyro hit"));
+        game.addPSR(new PilotingRollData(mek.getId(), 3, "gyro hit"));
 
         // Verify PSR was added
         List<PilotingRollData> psrs = Collections.list(game.getPSRs());
         assertEquals(1, psrs.size());
-        assertEquals(2, psrs.get(0).getValue());
+        assertEquals(3, psrs.get(0).getValue());
         assertTrue(psrs.get(0).getDesc().contains("gyro hit"));
     }
 

@@ -135,34 +135,47 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         public void mouseDragged(MouseEvent e) {
             removeListeners();
 
-            Object src = e.getSource();
-            // Check to see if we are in a state we care about
-            if (!mouseDragging || !(src instanceof JList<?> srcList)) {
-                return;
-            }
-            WeaponListModel srcModel = (WeaponListModel) srcList.getModel();
-            int currentIndex = srcList.locationToIndex(e.getPoint());
-            if (currentIndex != dragSourceIndex) {
-                int dragTargetIndex = srcList.getSelectedIndex();
-                WeaponMounted weaponAt = srcModel.getWeaponAt(dragSourceIndex);
-                srcModel.swapIdx(dragSourceIndex, dragTargetIndex);
-                dragSourceIndex = currentIndex;
-                Entity ent = weaponAt.getEntity();
-
-                // If this is a Custom Sort Order, update the weapon sort order drop down
-                if (!Objects.requireNonNull(comboWeaponSortOrder.getSelectedItem()).isCustom()) {
-                    // Set the order to custom
-                    ent.setWeaponSortOrder(WeaponSortOrder.CUSTOM);
-                    comboWeaponSortOrder.setSelectedItem(WeaponSortOrder.CUSTOM);
+            try {
+                Object src = e.getSource();
+                // Check to see if we are in a state we care about
+                if (!mouseDragging || !(src instanceof JList<?> srcList)) {
+                    return;
                 }
+                WeaponListModel srcModel = (WeaponListModel) srcList.getModel();
+                int currentIndex = srcList.locationToIndex(e.getPoint());
+                if (currentIndex != dragSourceIndex) {
+                    int dragTargetIndex = srcList.getSelectedIndex();
+                    WeaponMounted weaponAt = srcModel.getWeaponAt(dragSourceIndex);
 
-                // Update custom order
-                for (int i = 0; i < srcModel.getSize(); i++) {
-                    WeaponMounted m = srcModel.getWeaponAt(i);
-                    ent.setCustomWeaponOrder(m, i);
+                    if (weaponAt == null) {
+                        // Somehow we found no weapon there.
+                        return;
+                    }
+
+                    srcModel.swapIdx(dragSourceIndex, dragTargetIndex);
+                    dragSourceIndex = currentIndex;
+                    Entity ent = weaponAt.getEntity();
+
+                    // If this is a Custom Sort Order, update the weapon sort order drop down
+                    if (!Objects.requireNonNull(comboWeaponSortOrder.getSelectedItem()).isCustom()) {
+                        // Set the order to custom
+                        ent.setWeaponSortOrder(WeaponSortOrder.CUSTOM);
+                        comboWeaponSortOrder.setSelectedItem(WeaponSortOrder.CUSTOM);
+                    }
+
+                    // Update custom order
+                    for (int i = 0; i < srcModel.getSize(); i++) {
+                        WeaponMounted m = srcModel.getWeaponAt(i);
+                        ent.setCustomWeaponOrder(m, i);
+                    }
                 }
+            } catch (Exception ex) {
+                logger.error("Unable to handle unexpected drag event: {}", e.toString());
+
+            } finally {
+                // Return listeners before returning!
+                addListeners();
             }
-            addListeners();
         }
     }
 

@@ -132,6 +132,9 @@ class WeaponListModel extends AbstractListModel<String> {
     }
 
     public WeaponMounted getWeaponAt(int index) {
+        if (index < 0 || index >= weapons.size()) {
+            return null;
+        }
         return weapons.get(index);
     }
 

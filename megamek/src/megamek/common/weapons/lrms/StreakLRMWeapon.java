@@ -96,8 +96,7 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
         super.adaptToGameOptions(gameOptions);
 
         // Make sure Indirect Fire is not present for Streak LRMs
-        removeMode("");
-        removeMode("Indirect");
+        clearModes();
     }
 
     @Override

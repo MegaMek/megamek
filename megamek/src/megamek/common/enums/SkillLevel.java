@@ -33,6 +33,8 @@
 
 package megamek.common.enums;
 
+import static megamek.codeUtilities.MathUtility.clamp;
+
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -195,6 +197,13 @@ public enum SkillLevel {
      */
     public static List<SkillLevel> getGeneratableValues() {
         return Stream.of(values()).filter(skillLevel -> !skillLevel.isNone()).collect(Collectors.toList());
+    }
+
+    public static SkillLevel changeByDelta(final SkillLevel current, final int delta) {
+        int newExperienceLevel = clamp(current.experienceLevel + delta,
+              ULTRA_GREEN.getExperienceLevel(),
+              LEGENDARY.getExperienceLevel());
+        return parseFromInteger(newExperienceLevel);
     }
 
     // region File I/O

@@ -613,7 +613,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
 
                 for (ICarryable cargo : mek.getDistinctCarriedObjects()) {
                     // This is handling damaged cargo per TW 261. Other carried objects are damaged elsewhere.
-                    if (cargo.isInvulnerable() || !cargo.getCarriedObjectDamageAllocation().isCarryableAlwaysDamaged()) {
+                    if (cargo.isInvulnerable() || !cargo.getCarriedObjectDamageAllocation()
+                          .isCarryableAlwaysDamaged()) {
                         continue;
                     }
 
@@ -1452,14 +1453,6 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             }
 
             damage = applyEntityArmorDamage(tank, hit, damage, ammoExplosion, damageIS, areaSatArty, reportVec, mods);
-
-            // For optional tank damage thresholds, the `overthresh` flag won't be set if the internal structure is
-            // damaged, so set it here.
-            if (((tank.getArmor(hit) < 1) || damageIS) &&
-                  game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD) &&
-                  !((tank instanceof VTOL) || (tank instanceof GunEmplacement))) {
-                tank.setOverThresh(true);
-            }
 
             // Apply CASE II first
             damage = applyCASEIIDamageReduction(tank, hit, damage, ammoExplosion, reportVec);
@@ -2317,7 +2310,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         return damage;
     }
 
-    public int applyPlaytestExplosionReduction(Mek mek, HitData hit, int damage, boolean ammoExplosion, Vector<Report> reportVec) {
+    public int applyPlaytestExplosionReduction(Mek mek, HitData hit, int damage, boolean ammoExplosion,
+          Vector<Report> reportVec) {
         if (!ammoExplosion) {
             return damage;
         }
@@ -2848,7 +2842,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 report.indent(3);
                 report.add(damage);
                 reportVec.addElement(report);
-            } else if (heatArmor && hit.getHeatWeapon() && game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            } else if (heatArmor && hit.getHeatWeapon() && game.getOptions()
+                  .booleanOption(OptionsConstants.PLAYTEST_3)) {
                 // PLAYTEST3 only applies if heat_weapon is true in hitdata, which can only occur when playtest 
                 // is on.
                 tmpDamageHold = damage;
@@ -2861,37 +2856,6 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 report.indent(3);
                 report.add(damage);
                 reportVec.addElement(report);
-            }
-
-            // If we're using optional tank damage thresholds, set up our hit
-            // effects now...
-            if ((entity instanceof Tank) &&
-                  game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD) &&
-                  !((entity instanceof VTOL) || (entity instanceof GunEmplacement))) {
-                int thresh = (int) Math.ceil((game.getOptions()
-                      .booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD_VARIABLE) ?
-                      entity.getArmor(hit) :
-                      entity.getOArmor(hit)) /
-                      (double) game.getOptions()
-                            .intOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD_DIVISOR));
-
-                // adjust for hardened armor
-                if (hardenedArmor &&
-                      (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
-                      (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE) &&
-                      (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)) {
-                    thresh *= 2;
-                }
-
-                if ((damage > thresh) || (entity.getArmor(hit) < damage)) {
-                    hit.setEffect(((Tank) entity).getPotCrit());
-                    ((Tank) entity).setOverThresh(true);
-                    // TACs from the hit location table
-                    mods.crits = (((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) ? 1 : 0);
-                } else {
-                    ((Tank) entity).setOverThresh(false);
-                    mods.crits = 0;
-                }
             }
 
             // if there's a mast mount in the rotor, it and all other equipment on it get destroyed if it takes

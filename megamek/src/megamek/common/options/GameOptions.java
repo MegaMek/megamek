@@ -208,9 +208,6 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_COOLANT_FAILURE, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BA_VS_BA, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_NO_TAC, false);
-        addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD, false);
-        addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD_VARIABLE, false);
-        addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD_DIVISOR, 10);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_VTOL_STRAFING, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_VEHICLES_SAFE_FROM_INFERNOS, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_PROTOMEKS_SAFE_FROM_INFERNOS, false);

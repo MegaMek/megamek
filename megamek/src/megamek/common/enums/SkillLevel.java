@@ -199,6 +199,21 @@ public enum SkillLevel {
         return Stream.of(values()).filter(skillLevel -> !skillLevel.isNone()).collect(Collectors.toList());
     }
 
+    /**
+     * Adjusts a {@link SkillLevel} by a given delta, clamping the result within valid bounds.
+     *
+     * <p>This method increases or decreases the current skill level by the specified {@code delta}, ensuring that
+     * the resulting experience level remains between {@link #ULTRA_GREEN} and {@link #LEGENDARY}. It then returns the
+     * corresponding {@link SkillLevel} for the resulting experience level.
+     *
+     * @param current the current {@link SkillLevel} to adjust
+     * @param delta   the change in experience level (positive to increase, negative to decrease)
+     *
+     * @return the resulting {@link SkillLevel} after applying the delta and clamping within bounds
+     *
+     * @author Illiani
+     * @since 0.50.10
+     */
     public static SkillLevel changeByDelta(final SkillLevel current, final int delta) {
         int newExperienceLevel = clamp(current.experienceLevel + delta,
               ULTRA_GREEN.getExperienceLevel(),

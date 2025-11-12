@@ -52,7 +52,6 @@ import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IGameOptions;
-import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.lrm.StreakLRMHandler;
@@ -91,7 +90,7 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
 
     @Override
     // Streak LRMs could end up with an Indirect mode as a result of this game option selection. Overriding to 
-    // prevent this.
+    // prevent this. Bug report #7618
     public void adaptToGameOptions(IGameOptions gameOptions) {
         super.adaptToGameOptions(gameOptions);
 

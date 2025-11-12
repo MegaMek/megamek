@@ -19140,75 +19140,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 break;
             case Mek.SYSTEM_GYRO:
-                int gyroHits = en.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, loc);
-                if (en.getGyroType() != Mek.GYRO_HEAVY_DUTY) {
-                    gyroHits++;
-                }
-                // Automatically falls in AirMek mode, which it seems would indicate a crash if
-                // airborne.
-                if (gyroHits == 3 && en instanceof LandAirMek && en.isAirborneVTOLorWIGE()) {
-                    crashAirMek(en,
-                          new PilotingRollData(en.getId(), TargetRoll.AUTOMATIC_FAIL, 1, "gyro destroyed"),
-                          reports);
-                    break;
-                }
-                // No PSR for Meks in non-leg mode
-                if (!en.canFall(true)) {
-                    break;
-                }
-                // PLAYTEST2 for gyro hits.
-                switch (gyroHits) {
-                    case 4:
-                        // HD 4 hits
-                        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                            game.addPSR(new PilotingRollData(en.getId(),
-                                  TargetRoll.AUTOMATIC_FAIL,
-                                  1,
-                                  "gyro destroyed"));
-                            // Gyro destroyed entities may not be hull down
-                            en.setHullDown(false);
-                        }
-                    case 3:
-                        // HD 3 hits, standard 2 hits
-                        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                            if (en.getGyroType() != Mek.GYRO_HEAVY_DUTY) {
-                                game.addPSR(new PilotingRollData(en.getId(), 3, "gyro hit"));
-                            }
-                        } else {
-                            game.addPSR(new PilotingRollData(en.getId(),
-                                  TargetRoll.AUTOMATIC_FAIL,
-                                  1,
-                                  "gyro destroyed"));
-                            // Gyro destroyed entities may not be hull down
-                            en.setHullDown(false);
-                        }
-                        break;
-                    case 2:
-                        // HD 2 hits, standard 1 hit
-                        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                            if (en.getGyroType() != Mek.GYRO_HEAVY_DUTY) {
-                                game.addPSR(new PilotingRollData(en.getId(), 2, "gyro hit"));
-                            }
-                        } else {
-                            game.addPSR(new PilotingRollData(en.getId(), 3, "gyro hit"));
-                        }
-                        break;
-                    case 1:
-                        // HD 1 hit
-                        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                            // No PSR for HD Gyro hits.
-                        } else {
-                            // Core ruleset: First hit to HD gyro does not require PSR per errata
-                            if (en.getGyroType() != Mek.GYRO_HEAVY_DUTY) {
-                                game.addPSR(new PilotingRollData(en.getId(), 2, "gyro hit"));
-                            }
-                        }
-
-                        break;
-                    default:
-                        // ignore if >4 hits (don't over do it, the auto fail
-                        // already happened.)
-                }
+                handleGyroCriticalHit(en, loc, reports);
                 break;
             case Mek.ACTUATOR_UPPER_LEG:
             case Mek.ACTUATOR_LOWER_LEG:
@@ -20371,6 +20303,142 @@ public class TWGameManager extends AbstractGameManager {
             subset.add(list.get(random_method.nextInt(list.size())));
         }
         return subset;
+    }
+
+    /**
+     * Handle gyro critical hit processing for Meks.
+     * Delegates to specific methods based on gyro type to apply correct PSR and damage effects.
+     *
+     * @param en      the Mek taking the gyro hit
+     * @param loc     the location of the gyro critical
+     * @param reports the report vector to add messages to
+     */
+    private void handleGyroCriticalHit(Entity en, int loc, Vector<Report> reports) {
+        int actualGyroHits = en.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, loc);
+
+        // Special case: LandAirMek crashes when airborne with gyro destroyed (3+ hits for HD, 2+ for standard)
+        boolean isGyroDestroyed = (en.getGyroType() == Mek.GYRO_HEAVY_DUTY)
+                ? (actualGyroHits >= 3)
+                : (actualGyroHits >= 2);
+
+        if (isGyroDestroyed && en instanceof LandAirMek && en.isAirborneVTOLorWIGE()) {
+            crashAirMek(en,
+                  new PilotingRollData(en.getId(), TargetRoll.AUTOMATIC_FAIL, 1, "gyro destroyed"),
+                  reports);
+            return;
+        }
+
+        // No PSR for Meks in non-leg mode
+        if (!en.canFall(true)) {
+            return;
+        }
+
+        // Delegate to gyro-type-specific handler
+        if (en.getGyroType() == Mek.GYRO_HEAVY_DUTY) {
+            handleHeavyDutyGyroHit(en, actualGyroHits);
+        } else {
+            handleStandardGyroHit(en, actualGyroHits);
+        }
+    }
+
+    /**
+     * Handle heavy-duty gyro critical hit effects.
+     * Per errata: 1st hit = no PSR (just +1 modifier to future PSRs)
+     *             2nd hit = PSR +3
+     *             3rd hit = auto-fail (gyro destroyed)
+     *             4th hit = auto-fail (Playtest 2 only)
+     *
+     * @param en             the Mek with heavy-duty gyro
+     * @param actualGyroHits the number of gyro critical hits taken
+     */
+    private void handleHeavyDutyGyroHit(Entity en, int actualGyroHits) {
+        boolean isPlaytest2 = game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2);
+
+        switch (actualGyroHits) {
+            case 4:
+                // Playtest 2: 4th hit to HD gyro (gyro destroyed)
+                if (isPlaytest2) {
+                    game.addPSR(new PilotingRollData(en.getId(),
+                          TargetRoll.AUTOMATIC_FAIL,
+                          1,
+                          "gyro destroyed"));
+                    en.setHullDown(false);
+                }
+                break;
+            case 3:
+                // 3rd hit to HD gyro (gyro destroyed)
+                game.addPSR(new PilotingRollData(en.getId(),
+                      TargetRoll.AUTOMATIC_FAIL,
+                      1,
+                      "gyro destroyed"));
+                en.setHullDown(false);
+                break;
+            case 2:
+                // 2nd hit to HD gyro (PSR +3, same as standard gyro 1st hit)
+                if (!isPlaytest2) {
+                    game.addPSR(new PilotingRollData(en.getId(), 3, "gyro hit"));
+                }
+                break;
+            case 1:
+                // 1st hit to HD gyro: NO PSR per errata (just +1 modifier to future PSRs)
+                // No action needed
+                break;
+            default:
+                // Ignore if >4 hits (auto-fail already happened)
+                break;
+        }
+    }
+
+    /**
+     * Handle standard gyro critical hit effects.
+     * 1st hit = PSR +3 (Playtest 2: PSR +2)
+     * 2nd hit = auto-fail (gyro destroyed) (Playtest 2: PSR +3)
+     * 3rd+ hit = auto-fail (gyro destroyed)
+     *
+     * @param en             the Mek with standard gyro
+     * @param actualGyroHits the number of gyro critical hits taken
+     */
+    private void handleStandardGyroHit(Entity en, int actualGyroHits) {
+        boolean isPlaytest2 = game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2);
+
+        switch (actualGyroHits) {
+            case 3:
+                // 3rd+ hit to standard gyro (gyro destroyed)
+                if (isPlaytest2) {
+                    game.addPSR(new PilotingRollData(en.getId(), 3, "gyro hit"));
+                } else {
+                    game.addPSR(new PilotingRollData(en.getId(),
+                          TargetRoll.AUTOMATIC_FAIL,
+                          1,
+                          "gyro destroyed"));
+                    en.setHullDown(false);
+                }
+                break;
+            case 2:
+                // 2nd hit to standard gyro
+                if (isPlaytest2) {
+                    game.addPSR(new PilotingRollData(en.getId(), 2, "gyro hit"));
+                } else {
+                    // Core rules: 2nd hit destroys gyro (auto-fail)
+                    game.addPSR(new PilotingRollData(en.getId(),
+                          TargetRoll.AUTOMATIC_FAIL,
+                          1,
+                          "gyro destroyed"));
+                    en.setHullDown(false);
+                }
+                break;
+            case 1:
+                // 1st hit to standard gyro
+                if (isPlaytest2) {
+                    game.addPSR(new PilotingRollData(en.getId(), 2, "gyro hit"));
+                } else {
+                    game.addPSR(new PilotingRollData(en.getId(), 3, "gyro hit"));
+                }
+                break;
+            default:
+                // Ignore if >3 hits (auto-fail already happened)
+                break;
+        }
     }
 
     /**

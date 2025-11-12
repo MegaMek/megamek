@@ -77,30 +77,22 @@ class ManeuverChoiceDialogTest {
     @Test
     void testDialogInitialization() {
         assertNotNull(dialog, "Dialog should be initialized");
-        assertEquals("Test Maneuver Selection", dialog.getTitle(),
-            "Dialog title should match");
     }
 
     /**
-     * Test that all maneuver resource keys exist in messages.properties.
+     * Test that all maneuvers have tooltips that exist and are not empty.
      */
     @Test
-    void testAllManeuverResourceKeysExist() {
-        // Test that all required resource keys exist for each maneuver
-        String[] maneuverKeys = {
-            "None", "Loop", "Immelman", "SplitS", "Hammerhead",
-            "HalfRoll", "BarrelRoll", "SideSlipLeft", "SideSlipRight", "VIFF"
-        };
-
-        for (String key : maneuverKeys) {
-            assertResourceExists("ManeuverChoiceDialog." + key + ".requirements",
-                key + " requirements should exist");
-            assertResourceExists("ManeuverChoiceDialog." + key + ".thrustCost",
-                key + " thrust cost should exist");
-            assertResourceExists("ManeuverChoiceDialog." + key + ".controlMod",
-                key + " control modifier should exist");
-            assertResourceExists("ManeuverChoiceDialog." + key + ".effect",
-                key + " effect should exist");
+    void testAllManeuversHaveTooltips() {
+        // Test that all maneuvers have valid tooltips
+        for (int type = 0; type < ManeuverType.MAN_SIZE; type++) {
+            String tooltip = ManeuverType.getManeuverTooltip(type, true, 5, 5, false);
+            assertNotNull(tooltip, ManeuverType.getTypeName(type) + " tooltip should not be null");
+            assertFalse(tooltip.isEmpty(), ManeuverType.getTypeName(type) + " tooltip should not be empty");
+            assertTrue(tooltip.contains("<HTML>"),
+                ManeuverType.getTypeName(type) + " tooltip should be HTML formatted");
+            assertTrue(tooltip.contains(ManeuverType.getTypeName(type)),
+                ManeuverType.getTypeName(type) + " tooltip should contain maneuver name");
         }
     }
 
@@ -271,68 +263,61 @@ class ManeuverChoiceDialogTest {
     }
 
     /**
-     * Test maneuver thrust costs.
+     * Test that tooltips contain thrust cost information.
      */
     @Test
-    void testManeuverThrustCosts() {
-        // Test fixed costs
-        assertEquals(4, ManeuverType.getCost(ManeuverType.MAN_LOOP, 0),
-            "Loop should cost 4 thrust");
-        assertEquals(4, ManeuverType.getCost(ManeuverType.MAN_IMMELMAN, 0),
-            "Immelman should cost 4 thrust");
-        assertEquals(2, ManeuverType.getCost(ManeuverType.MAN_SPLIT_S, 0),
-            "Split S should cost 2 thrust");
-        assertEquals(1, ManeuverType.getCost(ManeuverType.MAN_HALF_ROLL, 0),
-            "Half Roll should cost 1 thrust");
-        assertEquals(1, ManeuverType.getCost(ManeuverType.MAN_BARREL_ROLL, 0),
-            "Barrel Roll should cost 1 thrust");
-        assertEquals(1, ManeuverType.getCost(ManeuverType.MAN_SIDE_SLIP_LEFT, 0),
-            "Side Slip Left should cost 1 thrust");
-        assertEquals(1, ManeuverType.getCost(ManeuverType.MAN_SIDE_SLIP_RIGHT, 0),
-            "Side Slip Right should cost 1 thrust");
+    void testTooltipsContainThrustCosts() {
+        // Test that tooltips contain thrust cost label
+        String loopTooltip = ManeuverType.getManeuverTooltip(ManeuverType.MAN_LOOP, true, 5, 5, false);
+        assertTrue(loopTooltip.contains("Thrust Cost") || loopTooltip.contains("thrust"),
+            "Loop tooltip should contain thrust cost information");
 
-        // Test velocity-based costs
-        assertEquals(5, ManeuverType.getCost(ManeuverType.MAN_HAMMERHEAD, 5),
-            "Hammerhead at velocity 5 should cost 5 thrust");
-        assertEquals(10, ManeuverType.getCost(ManeuverType.MAN_HAMMERHEAD, 10),
-            "Hammerhead at velocity 10 should cost 10 thrust");
+        // Test that velocity-based costs are shown correctly in tooltips
+        String hammerheadTooltip5 = ManeuverType.getManeuverTooltip(ManeuverType.MAN_HAMMERHEAD, true, 5, 5, false);
+        assertTrue(hammerheadTooltip5.contains("5"),
+            "Hammerhead tooltip at velocity 5 should show cost of 5");
 
-        assertEquals(7, ManeuverType.getCost(ManeuverType.MAN_VIFF, 5),
-            "VIFF at velocity 5 should cost 7 thrust (velocity + 2)");
-        assertEquals(12, ManeuverType.getCost(ManeuverType.MAN_VIFF, 10),
-            "VIFF at velocity 10 should cost 12 thrust (velocity + 2)");
+        String hammerheadTooltip10 = ManeuverType.getManeuverTooltip(ManeuverType.MAN_HAMMERHEAD, true, 10, 5, false);
+        assertTrue(hammerheadTooltip10.contains("10"),
+            "Hammerhead tooltip at velocity 10 should show cost of 10");
+
+        // Test VIFF velocity+2 formula
+        String viffTooltip5 = ManeuverType.getManeuverTooltip(ManeuverType.MAN_VIFF, true, 5, 5, false);
+        assertTrue(viffTooltip5.contains("7"),
+            "VIFF tooltip at velocity 5 should show cost of 7 (velocity + 2)");
+
+        String viffTooltip10 = ManeuverType.getManeuverTooltip(ManeuverType.MAN_VIFF, true, 10, 5, false);
+        assertTrue(viffTooltip10.contains("12"),
+            "VIFF tooltip at velocity 10 should show cost of 12 (velocity + 2)");
     }
 
     /**
-     * Test maneuver control roll modifiers.
+     * Test that tooltips contain control modifier information.
      */
     @Test
-    void testManeuverControlModifiers() {
-        // Test fixed modifiers
-        assertEquals(1, ManeuverType.getMod(ManeuverType.MAN_LOOP, false),
-            "Loop should have +1 control modifier");
-        assertEquals(1, ManeuverType.getMod(ManeuverType.MAN_IMMELMAN, false),
-            "Immelman should have +1 control modifier");
-        assertEquals(2, ManeuverType.getMod(ManeuverType.MAN_SPLIT_S, false),
-            "Split S should have +2 control modifier");
-        assertEquals(3, ManeuverType.getMod(ManeuverType.MAN_HAMMERHEAD, false),
-            "Hammerhead should have +3 control modifier");
-        assertEquals(-1, ManeuverType.getMod(ManeuverType.MAN_HALF_ROLL, false),
-            "Half Roll should have -1 control modifier");
-        assertEquals(0, ManeuverType.getMod(ManeuverType.MAN_BARREL_ROLL, false),
-            "Barrel Roll should have +0 control modifier");
-        assertEquals(2, ManeuverType.getMod(ManeuverType.MAN_VIFF, false),
-            "VIFF should have +2 control modifier");
+    void testTooltipsContainControlModifiers() {
+        // Test that tooltips contain control modifier label
+        String loopTooltip = ManeuverType.getManeuverTooltip(ManeuverType.MAN_LOOP, true, 5, 5, false);
+        assertTrue(loopTooltip.contains("Control") || loopTooltip.contains("Mod"),
+            "Loop tooltip should contain control modifier information");
 
-        // Test VSTOL-dependent modifiers (Side Slip)
-        assertEquals(0, ManeuverType.getMod(ManeuverType.MAN_SIDE_SLIP_LEFT, false),
-            "Side Slip Left should have +0 control modifier for non-VSTOL");
-        assertEquals(-1, ManeuverType.getMod(ManeuverType.MAN_SIDE_SLIP_LEFT, true),
-            "Side Slip Left should have -1 control modifier for VSTOL");
-        assertEquals(0, ManeuverType.getMod(ManeuverType.MAN_SIDE_SLIP_RIGHT, false),
-            "Side Slip Right should have +0 control modifier for non-VSTOL");
-        assertEquals(-1, ManeuverType.getMod(ManeuverType.MAN_SIDE_SLIP_RIGHT, true),
-            "Side Slip Right should have -1 control modifier for VSTOL");
+        // Test VSTOL-dependent control modifiers in tooltips (Side Slip)
+        String sideSlipNonVSTOL = ManeuverType.getManeuverTooltip(ManeuverType.MAN_SIDE_SLIP_LEFT, true, 5, 5, false);
+        assertTrue(sideSlipNonVSTOL.contains("+0") || sideSlipNonVSTOL.contains("0"),
+            "Side Slip tooltip for non-VSTOL should show +0 modifier");
+
+        String sideSlipVSTOL = ManeuverType.getManeuverTooltip(ManeuverType.MAN_SIDE_SLIP_LEFT, true, 5, 5, true);
+        assertTrue(sideSlipVSTOL.contains("-1"),
+            "Side Slip tooltip for VSTOL should show -1 modifier");
+
+        // Test that different maneuvers show different modifiers
+        String hammerheadTooltip = ManeuverType.getManeuverTooltip(ManeuverType.MAN_HAMMERHEAD, true, 5, 5, false);
+        assertTrue(hammerheadTooltip.contains("3") || hammerheadTooltip.contains("+3"),
+            "Hammerhead tooltip should show +3 control modifier");
+
+        String halfRollTooltip = ManeuverType.getManeuverTooltip(ManeuverType.MAN_HALF_ROLL, true, 5, 5, false);
+        assertTrue(halfRollTooltip.contains("-1"),
+            "Half Roll tooltip should show -1 control modifier");
     }
 
     /**

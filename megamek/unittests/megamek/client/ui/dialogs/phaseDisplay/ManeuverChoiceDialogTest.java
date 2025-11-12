@@ -49,12 +49,16 @@ import org.junit.jupiter.api.Test;
  * 4. Resource strings are properly loaded from messages.properties
  * 5. Dynamic values are correctly formatted using MessageFormat
  *
- * Note: These tests require a graphical environment and will be skipped in headless CI environments.
+ * Note: These tests require a graphical environment and the entire test class will be skipped in headless CI environments.
  *
  * @author MegaMek Team
  * @since 2025-11-10
  */
 class ManeuverChoiceDialogTest {
+
+    private static final int TEST_VELOCITY = 5;
+    private static final int TEST_ALTITUDE = 5;
+    private static final int TEST_CEILING = 10;
 
     private ManeuverChoiceDialog dialog;
     private JFrame mockFrame;
@@ -86,7 +90,7 @@ class ManeuverChoiceDialogTest {
     void testAllManeuversHaveTooltips() {
         // Test that all maneuvers have valid tooltips
         for (int type = 0; type < ManeuverType.MAN_SIZE; type++) {
-            String tooltip = ManeuverType.getManeuverTooltip(type, true, 5, 5, false);
+            String tooltip = ManeuverType.getManeuverTooltip(type, true, TEST_VELOCITY, TEST_ALTITUDE, false);
             assertNotNull(tooltip, ManeuverType.getTypeName(type) + " tooltip should not be null");
             assertFalse(tooltip.isEmpty(), ManeuverType.getTypeName(type) + " tooltip should not be empty");
             assertTrue(tooltip.contains("<HTML>"),
@@ -126,10 +130,10 @@ class ManeuverChoiceDialogTest {
         MovePath mockPath = mock(MovePath.class);
         when(mockPath.getStepVector()).thenReturn(new Vector<>());
 
-        dialog.checkPerformability(0, 0, 10, false, 0, mockBoard, mockPath);
+        dialog.checkPerformability(0, 0, TEST_CEILING, false, 0, mockBoard, mockPath);
 
         // None maneuver should always be enabled
-        assertTrue(ManeuverType.canPerform(ManeuverType.MAN_NONE, 0, 0, 10,
+        assertTrue(ManeuverType.canPerform(ManeuverType.MAN_NONE, 0, 0, TEST_CEILING,
             false, 0, mockBoard, mockPath),
             "None maneuver should always be available");
     }
@@ -144,15 +148,15 @@ class ManeuverChoiceDialogTest {
         when(mockPath.getStepVector()).thenReturn(new Vector<>());
 
         // Loop requires velocity >= 4
-        assertFalse(ManeuverType.canPerform(ManeuverType.MAN_LOOP, 3, 5, 10,
+        assertFalse(ManeuverType.canPerform(ManeuverType.MAN_LOOP, 3, TEST_ALTITUDE, TEST_CEILING,
             false, 0, mockBoard, mockPath),
             "Loop should not be available at velocity 3");
 
-        assertTrue(ManeuverType.canPerform(ManeuverType.MAN_LOOP, 4, 5, 10,
+        assertTrue(ManeuverType.canPerform(ManeuverType.MAN_LOOP, 4, TEST_ALTITUDE, TEST_CEILING,
             false, 0, mockBoard, mockPath),
             "Loop should be available at velocity 4");
 
-        assertTrue(ManeuverType.canPerform(ManeuverType.MAN_LOOP, 10, 5, 10,
+        assertTrue(ManeuverType.canPerform(ManeuverType.MAN_LOOP, 10, TEST_ALTITUDE, TEST_CEILING,
             false, 0, mockBoard, mockPath),
             "Loop should be available at velocity 10");
     }
@@ -167,19 +171,19 @@ class ManeuverChoiceDialogTest {
         when(mockPath.getStepVector()).thenReturn(new Vector<>());
 
         // Immelman requires velocity >= 3 AND altitude < 9
-        assertFalse(ManeuverType.canPerform(ManeuverType.MAN_IMMELMAN, 2, 5, 10,
+        assertFalse(ManeuverType.canPerform(ManeuverType.MAN_IMMELMAN, 2, TEST_ALTITUDE, TEST_CEILING,
             false, 0, mockBoard, mockPath),
             "Immelman should not be available at velocity 2");
 
-        assertTrue(ManeuverType.canPerform(ManeuverType.MAN_IMMELMAN, 3, 5, 10,
+        assertTrue(ManeuverType.canPerform(ManeuverType.MAN_IMMELMAN, 3, TEST_ALTITUDE, TEST_CEILING,
             false, 0, mockBoard, mockPath),
             "Immelman should be available at velocity 3, altitude 5");
 
-        assertFalse(ManeuverType.canPerform(ManeuverType.MAN_IMMELMAN, 3, 9, 10,
+        assertFalse(ManeuverType.canPerform(ManeuverType.MAN_IMMELMAN, 3, 9, TEST_CEILING,
             false, 0, mockBoard, mockPath),
             "Immelman should not be available at altitude 9");
 
-        assertFalse(ManeuverType.canPerform(ManeuverType.MAN_IMMELMAN, 3, 10, 10,
+        assertFalse(ManeuverType.canPerform(ManeuverType.MAN_IMMELMAN, 3, 10, TEST_CEILING,
             false, 0, mockBoard, mockPath),
             "Immelman should not be available at altitude 10");
     }
@@ -194,11 +198,11 @@ class ManeuverChoiceDialogTest {
         when(mockPath.getStepVector()).thenReturn(new Vector<>());
 
         // Barrel Roll requires velocity >= 2
-        assertFalse(ManeuverType.canPerform(ManeuverType.MAN_BARREL_ROLL, 1, 5, 10,
+        assertFalse(ManeuverType.canPerform(ManeuverType.MAN_BARREL_ROLL, 1, TEST_ALTITUDE, TEST_CEILING,
             false, 0, mockBoard, mockPath),
             "Barrel Roll should not be available at velocity 1");
 
-        assertTrue(ManeuverType.canPerform(ManeuverType.MAN_BARREL_ROLL, 2, 5, 10,
+        assertTrue(ManeuverType.canPerform(ManeuverType.MAN_BARREL_ROLL, 2, TEST_ALTITUDE, TEST_CEILING,
             false, 0, mockBoard, mockPath),
             "Barrel Roll should be available at velocity 2");
     }
@@ -213,11 +217,11 @@ class ManeuverChoiceDialogTest {
         when(mockPath.getStepVector()).thenReturn(new Vector<>());
 
         // Side Slip requires velocity > 0
-        assertFalse(ManeuverType.canPerform(ManeuverType.MAN_SIDE_SLIP_LEFT, 0, 5, 10,
+        assertFalse(ManeuverType.canPerform(ManeuverType.MAN_SIDE_SLIP_LEFT, 0, TEST_ALTITUDE, TEST_CEILING,
             false, 0, mockBoard, mockPath),
             "Side Slip Left should not be available at velocity 0");
 
-        assertFalse(ManeuverType.canPerform(ManeuverType.MAN_SIDE_SLIP_RIGHT, 0, 5, 10,
+        assertFalse(ManeuverType.canPerform(ManeuverType.MAN_SIDE_SLIP_RIGHT, 0, TEST_ALTITUDE, TEST_CEILING,
             false, 0, mockBoard, mockPath),
             "Side Slip Right should not be available at velocity 0");
 
@@ -234,11 +238,11 @@ class ManeuverChoiceDialogTest {
         when(mockPath.getStepVector()).thenReturn(new Vector<>());
 
         // VIFF requires VSTOL capability
-        assertFalse(ManeuverType.canPerform(ManeuverType.MAN_VIFF, 5, 5, 10,
+        assertFalse(ManeuverType.canPerform(ManeuverType.MAN_VIFF, TEST_VELOCITY, TEST_ALTITUDE, TEST_CEILING,
             false, 0, mockBoard, mockPath),
             "VIFF should not be available for non-VSTOL units");
 
-        assertTrue(ManeuverType.canPerform(ManeuverType.MAN_VIFF, 5, 5, 10,
+        assertTrue(ManeuverType.canPerform(ManeuverType.MAN_VIFF, TEST_VELOCITY, TEST_ALTITUDE, TEST_CEILING,
             true, 0, mockBoard, mockPath),
             "VIFF should be available for VSTOL units");
     }
@@ -253,11 +257,11 @@ class ManeuverChoiceDialogTest {
         when(mockPath.getStepVector()).thenReturn(new Vector<>());
 
         // Hammerhead and Half Roll are always available
-        assertTrue(ManeuverType.canPerform(ManeuverType.MAN_HAMMERHEAD, 0, 0, 10,
+        assertTrue(ManeuverType.canPerform(ManeuverType.MAN_HAMMERHEAD, 0, 0, TEST_CEILING,
             false, 0, mockBoard, mockPath),
             "Hammerhead should always be available");
 
-        assertTrue(ManeuverType.canPerform(ManeuverType.MAN_HALF_ROLL, 0, 0, 10,
+        assertTrue(ManeuverType.canPerform(ManeuverType.MAN_HALF_ROLL, 0, 0, TEST_CEILING,
             false, 0, mockBoard, mockPath),
             "Half Roll should always be available");
     }
@@ -268,25 +272,25 @@ class ManeuverChoiceDialogTest {
     @Test
     void testTooltipsContainThrustCosts() {
         // Test that tooltips contain thrust cost label
-        String loopTooltip = ManeuverType.getManeuverTooltip(ManeuverType.MAN_LOOP, true, 5, 5, false);
+        String loopTooltip = ManeuverType.getManeuverTooltip(ManeuverType.MAN_LOOP, true, TEST_VELOCITY, TEST_ALTITUDE, false);
         assertTrue(loopTooltip.contains("Thrust Cost") || loopTooltip.contains("thrust"),
             "Loop tooltip should contain thrust cost information");
 
         // Test that velocity-based costs are shown correctly in tooltips
-        String hammerheadTooltip5 = ManeuverType.getManeuverTooltip(ManeuverType.MAN_HAMMERHEAD, true, 5, 5, false);
+        String hammerheadTooltip5 = ManeuverType.getManeuverTooltip(ManeuverType.MAN_HAMMERHEAD, true, TEST_VELOCITY, TEST_ALTITUDE, false);
         assertTrue(hammerheadTooltip5.contains("5"),
             "Hammerhead tooltip at velocity 5 should show cost of 5");
 
-        String hammerheadTooltip10 = ManeuverType.getManeuverTooltip(ManeuverType.MAN_HAMMERHEAD, true, 10, 5, false);
+        String hammerheadTooltip10 = ManeuverType.getManeuverTooltip(ManeuverType.MAN_HAMMERHEAD, true, 10, TEST_ALTITUDE, false);
         assertTrue(hammerheadTooltip10.contains("10"),
             "Hammerhead tooltip at velocity 10 should show cost of 10");
 
         // Test VIFF velocity+2 formula
-        String viffTooltip5 = ManeuverType.getManeuverTooltip(ManeuverType.MAN_VIFF, true, 5, 5, false);
+        String viffTooltip5 = ManeuverType.getManeuverTooltip(ManeuverType.MAN_VIFF, true, TEST_VELOCITY, TEST_ALTITUDE, false);
         assertTrue(viffTooltip5.contains("7"),
             "VIFF tooltip at velocity 5 should show cost of 7 (velocity + 2)");
 
-        String viffTooltip10 = ManeuverType.getManeuverTooltip(ManeuverType.MAN_VIFF, true, 10, 5, false);
+        String viffTooltip10 = ManeuverType.getManeuverTooltip(ManeuverType.MAN_VIFF, true, 10, TEST_ALTITUDE, false);
         assertTrue(viffTooltip10.contains("12"),
             "VIFF tooltip at velocity 10 should show cost of 12 (velocity + 2)");
     }
@@ -297,25 +301,25 @@ class ManeuverChoiceDialogTest {
     @Test
     void testTooltipsContainControlModifiers() {
         // Test that tooltips contain control modifier label
-        String loopTooltip = ManeuverType.getManeuverTooltip(ManeuverType.MAN_LOOP, true, 5, 5, false);
+        String loopTooltip = ManeuverType.getManeuverTooltip(ManeuverType.MAN_LOOP, true, TEST_VELOCITY, TEST_ALTITUDE, false);
         assertTrue(loopTooltip.contains("Control") || loopTooltip.contains("Mod"),
             "Loop tooltip should contain control modifier information");
 
         // Test VSTOL-dependent control modifiers in tooltips (Side Slip)
-        String sideSlipNonVSTOL = ManeuverType.getManeuverTooltip(ManeuverType.MAN_SIDE_SLIP_LEFT, true, 5, 5, false);
+        String sideSlipNonVSTOL = ManeuverType.getManeuverTooltip(ManeuverType.MAN_SIDE_SLIP_LEFT, true, TEST_VELOCITY, TEST_ALTITUDE, false);
         assertTrue(sideSlipNonVSTOL.contains("+0") || sideSlipNonVSTOL.contains("0"),
             "Side Slip tooltip for non-VSTOL should show +0 modifier");
 
-        String sideSlipVSTOL = ManeuverType.getManeuverTooltip(ManeuverType.MAN_SIDE_SLIP_LEFT, true, 5, 5, true);
+        String sideSlipVSTOL = ManeuverType.getManeuverTooltip(ManeuverType.MAN_SIDE_SLIP_LEFT, true, TEST_VELOCITY, TEST_ALTITUDE, true);
         assertTrue(sideSlipVSTOL.contains("-1"),
             "Side Slip tooltip for VSTOL should show -1 modifier");
 
         // Test that different maneuvers show different modifiers
-        String hammerheadTooltip = ManeuverType.getManeuverTooltip(ManeuverType.MAN_HAMMERHEAD, true, 5, 5, false);
+        String hammerheadTooltip = ManeuverType.getManeuverTooltip(ManeuverType.MAN_HAMMERHEAD, true, TEST_VELOCITY, TEST_ALTITUDE, false);
         assertTrue(hammerheadTooltip.contains("3") || hammerheadTooltip.contains("+3"),
             "Hammerhead tooltip should show +3 control modifier");
 
-        String halfRollTooltip = ManeuverType.getManeuverTooltip(ManeuverType.MAN_HALF_ROLL, true, 5, 5, false);
+        String halfRollTooltip = ManeuverType.getManeuverTooltip(ManeuverType.MAN_HALF_ROLL, true, TEST_VELOCITY, TEST_ALTITUDE, false);
         assertTrue(halfRollTooltip.contains("-1"),
             "Half Roll tooltip should show -1 control modifier");
     }
@@ -341,9 +345,9 @@ class ManeuverChoiceDialogTest {
         when(mockPath.getStepVector()).thenReturn(new Vector<>());
 
         // Should not throw exception
-        dialog.checkPerformability(5, 5, 10, false, 0, mockBoard, mockPath);
-        dialog.checkPerformability(0, 0, 10, false, 0, mockBoard, mockPath);
-        dialog.checkPerformability(10, 8, 10, true, 0, mockBoard, mockPath);
+        dialog.checkPerformability(TEST_VELOCITY, TEST_ALTITUDE, TEST_CEILING, false, 0, mockBoard, mockPath);
+        dialog.checkPerformability(0, 0, TEST_CEILING, false, 0, mockBoard, mockPath);
+        dialog.checkPerformability(10, 8, TEST_CEILING, true, 0, mockBoard, mockPath);
     }
 
     /**

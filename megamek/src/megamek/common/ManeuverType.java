@@ -243,10 +243,9 @@ public class ManeuverType {
         // Thrust Cost
         tooltip.append(Messages.getString("ManeuverChoiceDialog.thrustCostLabel")).append(": ");
         String thrustCost = Messages.getString("ManeuverChoiceDialog." + maneuverKey + ".thrustCost");
-        if (type == MAN_HAMMERHEAD) {
-            tooltip.append(MessageFormat.format(thrustCost, velocity));
-        } else if (type == MAN_VIFF) {
-            tooltip.append(MessageFormat.format(thrustCost, velocity + 2));
+        int cost = getCost(type, velocity);
+        if ((type == MAN_HAMMERHEAD) || (type == MAN_VIFF)) {
+            tooltip.append(MessageFormat.format(thrustCost, cost));
         } else {
             tooltip.append(thrustCost);
         }
@@ -256,7 +255,9 @@ public class ManeuverType {
         tooltip.append(Messages.getString("ManeuverChoiceDialog.controlModLabel")).append(": ");
         String controlMod = Messages.getString("ManeuverChoiceDialog." + maneuverKey + ".controlMod");
         if ((type == MAN_SIDE_SLIP_LEFT) || (type == MAN_SIDE_SLIP_RIGHT)) {
-            tooltip.append(MessageFormat.format(controlMod, isVSTOL_CF ? "-1" : "+0"));
+            int mod = getMod(type, isVSTOL_CF);
+            String modStr = (mod >= 0) ? ("+" + mod) : String.valueOf(mod);
+            tooltip.append(MessageFormat.format(controlMod, modStr));
         } else {
             tooltip.append(controlMod);
         }

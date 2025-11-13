@@ -67,9 +67,6 @@ import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 import megamek.common.weapons.attacks.DiveBombAttack;
 import megamek.common.weapons.attacks.InfantryAttack;
 import megamek.common.weapons.autoCannons.ACWeapon;
-import megamek.common.weapons.autoCannons.HVACWeapon;
-import megamek.common.weapons.autoCannons.LACWeapon;
-import megamek.common.weapons.autoCannons.ProtoMekACWeapon;
 import megamek.common.weapons.autoCannons.RACWeapon;
 import megamek.common.weapons.autoCannons.UACWeapon;
 import megamek.common.weapons.battleArmor.innerSphere.ISBAPopUpMineLauncher;
@@ -658,11 +655,16 @@ public class Compute {
           Coords src, Coords dest, EntityMovementType movementType,
           boolean isTurning, boolean prevStepIsOnPavement, int srcElevation,
           int destElevation, MoveStep moveStep) {
-        // It's possible to get a real ID for an entity we've forgotten (Double Blind,
-        // for instance).
+        // It's possible to get a real ID for an entity we've forgotten (Double Blind, for instance).
         final Entity entity = game.getEntity(entityId);
         if (entity == null) {
-            throw new IllegalArgumentException("Entity invalid. ID " + entityId);
+            if (game.getEntityFromAllSources(entityId) == null) {
+                // We have no recollection of the entity anywhere. At this point an error will be thrown.
+                throw new IllegalArgumentException("Entity invalid. ID " + entityId);
+            }
+
+            // Otherwise, it's likely the unit has been destroyed prior to this point.
+            return false;
         }
 
         Board board = game.getBoard(moveStep.getBoardId());
@@ -1562,7 +1564,10 @@ public class Compute {
         } else {
             // report c3 adjustment
             // PLAYTEST3 C3 ECM halving
-            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && usingRange == c3ecmRange && usingRange != c3range && c3spotterWithECM.getC3ecmAffected()) {
+            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)
+                  && usingRange == c3ecmRange
+                  && usingRange != c3range
+                  && c3spotterWithECM.getC3ecmAffected()) {
                 // Halve the bonus, so we need to know what the original range was too.
                 int rangeModifier = 0;
                 if (range == RangeType.RANGE_LONG) {
@@ -1573,13 +1578,13 @@ public class Compute {
                     rangeModifier = attackingEntity.getExtremeRangeModifier();
                 }
                 if ((c3ecmRange == RangeType.RANGE_SHORT) || (c3ecmRange == RangeType.RANGE_MINIMUM)) {
-                    rangeModifier = (int) (rangeModifier + attackingEntity.getShortRangeModifier())/2;
+                    rangeModifier = (int) (rangeModifier + attackingEntity.getShortRangeModifier()) / 2;
                     mods.addModifier(rangeModifier, "short range due to C3 spotter under ECM");
                 } else if (c3ecmRange == RangeType.RANGE_MEDIUM) {
-                    rangeModifier = (int) (rangeModifier + attackingEntity.getMediumRangeModifier())/2;
+                    rangeModifier = (int) (rangeModifier + attackingEntity.getMediumRangeModifier()) / 2;
                     mods.addModifier(rangeModifier, "medium range due to C3 spotter under ECM");
                 } else if (c3ecmRange == RangeType.RANGE_LONG) {
-                    rangeModifier = (int) (rangeModifier + attackingEntity.getLongRangeModifier())/2;
+                    rangeModifier = (int) (rangeModifier + attackingEntity.getLongRangeModifier()) / 2;
                     mods.addModifier(rangeModifier, "long range due to C3 spotter under ECM");
                 }
             } else {
@@ -2016,11 +2021,11 @@ public class Compute {
     }
 
     /**
-     * @param flyingEntity         the flyer
-     * @param targetPosition       target
+     * @param flyingEntity   the flyer
+     * @param targetPosition target
      *
-     * @return the closest position along <code>flyingEntity</code>'s flight path to <code>targetPosition</code>. In the case of
-     *       multiple equidistance positions, the first one is picked.
+     * @return the closest position along <code>flyingEntity</code>'s flight path to <code>targetPosition</code>. In the
+     *       case of multiple equidistance positions, the first one is picked.
      */
     public static @Nullable Coords getClosestToFlightPath(Entity flyingEntity, Coords targetPosition) {
         Coords flyerPosition = flyingEntity.getPosition();
@@ -3750,7 +3755,9 @@ public class Compute {
                                   || (ammoBinType.getAmmoType() == AmmoTypeEnum.LAC)
                                   || (ammoBinType.getAmmoType() == AmmoTypeEnum.AC_IMP)
                                   || (ammoBinType.getAmmoType() == AmmoTypeEnum.PAC))
-                                  && (ammoBinType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING) || ammoBinType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST))) {
+                                  && (ammoBinType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING)
+                                  || ammoBinType.getMunitionType()
+                                  .contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST))) {
                                 if ((target instanceof Mek) || (target instanceof Tank)) {
                                     ammoMultiple = 1.0 + (weaponType.getRackSize() / 10.0);
                                 }
@@ -3893,13 +3900,13 @@ public class Compute {
     }
 
     /**
-     * Determine if autocannon should fire more than one round. Includes standard ACs if
-     * the game option for rapid-fire-mode is enabled.
+     * Determine if autocannon should fire more than one round. Includes standard ACs if the game option for
+     * rapid-fire-mode is enabled.
      *
-     * @param atk              Attack action with weapon attack properties
-     * @param spinupThreshold  Maximum to-hit number to consider for rapid fire
-     * @return the <code>int</code> ID of weapon mode, which is also the number of mode changes
-     *          from single shot
+     * @param atk             Attack action with weapon attack properties
+     * @param spinupThreshold Maximum to-hit number to consider for rapid fire
+     *
+     * @return the <code>int</code> ID of weapon mode, which is also the number of mode changes from single shot
      */
 
     public static int spinUpCannon(Game cgame, WeaponAttackAction atk, int spinupThreshold) {

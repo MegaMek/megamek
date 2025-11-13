@@ -464,18 +464,6 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             } else {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD_DIVISOR)) {
-            if ((options.getOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)).booleanValue()) {
-                optionComp.setEditable(editable);
-            } else {
-                optionComp.setEditable(false);
-            }
-        } else if (option.getName().equals(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD_VARIABLE)) {
-            if ((options.getOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)).booleanValue()) {
-                optionComp.setEditable(editable);
-            } else {
-                optionComp.setEditable(false);
-            }
         } else if (option.getName().equals(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_BEARINGS_ONLY_VELOCITY)) {
             if (option.intValue() < CapitalMissileBayWeapon.CAPITAL_MISSILE_MIN_VELOCITY) {
                 //Set to the minimum velocity if under
@@ -710,18 +698,6 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             for (DialogOptionComponentYPanel comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);
-            }
-        }
-        if (option.getName().equals(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
-            comps = optionComps.get(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD_VARIABLE);
-            for (DialogOptionComponentYPanel comp_i : comps) {
-                comp_i.setEditable(state);
-                comp_i.setSelected(false);
-            }
-            comps = optionComps.get(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD_DIVISOR);
-            for (DialogOptionComponentYPanel comp_i : comps) {
-                comp_i.setEditable(state);
-                comp_i.resetToDefault();
             }
         }
         if (option.getName().equals(OptionsConstants.ADVANCED_ALTERNATE_MASC)) {

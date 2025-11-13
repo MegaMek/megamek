@@ -21199,15 +21199,6 @@ public class TWGameManager extends AbstractGameManager {
 
         // now look up on vehicle crits table
         int critType = t.getCriticalEffect(roll, loc, damagedByFire);
-        if ((critType == Tank.CRIT_NONE) &&
-              game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD) &&
-              !((t instanceof VTOL) || (t instanceof GunEmplacement)) &&
-              !t.getOverThresh()) {
-            r = new Report(6006);
-            r.subject = t.getId();
-            r.newlines = 0;
-            vDesc.add(r);
-        }
         vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0, critType), true, damage, false));
         if ((critType != Tank.CRIT_NONE) &&
               t.hasEngine() &&

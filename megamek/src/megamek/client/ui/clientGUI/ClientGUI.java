@@ -1199,7 +1199,7 @@ public class ClientGUI extends AbstractClientGUI
     @Override
     public void die() {
         if (client.isAwaitingSave()) {
-            SwingUtilities.invokeLater(() -> die());
+            SwingUtilities.invokeLater(this::die);
             return;
         }
 

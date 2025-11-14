@@ -7071,10 +7071,9 @@ public class Compute {
         }
 
         int crew = 0;
+        crew += getCommunicationsCrew(entity);
         for (Mounted<?> m : entity.getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
-                crew += (int) m.getTonnage();
-            } else if (m.getType().hasFlag(MiscType.F_FIELD_KITCHEN)) {
+            if (m.getType().hasFlag(MiscType.F_FIELD_KITCHEN)) {
                 crew += 3;
             } else if (m.getType().hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
                 crew += 5;
@@ -7091,6 +7090,21 @@ public class Compute {
             // Tactical Officer
             return 1;
         }
+        return crew;
+    }
+
+    public static int getCommunicationsCrew(Entity entity) {
+        if (entity.hasDroneOs()) {
+            return 0;
+        }
+
+        int crew = 0;
+        for (Mounted<?> m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+                crew += (int) m.getTonnage();
+            }
+        }
+
         return crew;
     }
 

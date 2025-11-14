@@ -213,6 +213,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
 
         // This has to be up here so that we don't screw up glancing/direct blow reports
         attackValue = calcAttackValue();
+        nDamPerHit = attackValue;
 
         // CalcAttackValue triggers counterfire, so now we can safely get this
         CapMissileAMSMod = getCapMissileAMSMod();

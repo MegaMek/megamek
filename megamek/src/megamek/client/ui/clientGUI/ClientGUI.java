@@ -2206,6 +2206,7 @@ public class ClientGUI extends AbstractClientGUI
         String path = fc.getSelectedFile().getParentFile().getPath();
         path = path.replace(" ", "|");
         client.sendChat(CG_CHAT_COMMAND_LOCAL_SAVE + " " + file + " " + path);
+        client.setAwaitingSave(true);
         return true;
     }
 

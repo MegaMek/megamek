@@ -71,6 +71,8 @@ import megamek.common.units.UnitNameTracker;
 import megamek.logging.MMLogger;
 import megamek.server.ConnectionHandler;
 
+import static java.lang.Thread.sleep;
+
 /**
  * AbstractClient that handles basic client features.
  */
@@ -84,6 +86,7 @@ public abstract class AbstractClient implements IClient {
     protected String name;
     protected boolean connected = false;
     protected boolean disconnectFlag = false;
+    protected boolean awaitingSave = false;
     protected final String host;
     protected final int port;
     private ConnectionHandler packetUpdate;
@@ -158,6 +161,16 @@ public abstract class AbstractClient implements IClient {
     @Override
     public synchronized void die() {
         // If we're still connected, tell the server that we're going down.
+        while (awaitingSave) {
+            try {
+                sleep(100);
+                updateConnection();
+            } catch (InterruptedException e) {
+                logger.warn("Timed out while awaiting a save game packet");
+                break;
+            }
+        }
+
         if (connected) {
             // Stop listening for in coming packets, this should be done before
             // sending the close connection command
@@ -580,6 +593,13 @@ public abstract class AbstractClient implements IClient {
         return bots;
     }
 
+    public void setAwaitingSave(boolean awaitingSave) {
+        this.awaitingSave = awaitingSave;
+    }
+
+    public boolean isAwaitingSave() {
+        return awaitingSave;
+    }
     /**
      * Custom connection Listener for AbstractClient
      *

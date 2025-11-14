@@ -69,9 +69,6 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.units.Entity;
 import megamek.common.units.UnitNameTracker;
 import megamek.logging.MMLogger;
-import megamek.server.ConnectionHandler;
-
-import static java.lang.Thread.sleep;
 
 /**
  * AbstractClient that handles basic client features.

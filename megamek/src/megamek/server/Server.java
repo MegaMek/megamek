@@ -233,7 +233,7 @@ public class Server implements Runnable {
          */
         @Override
         public void disconnected(DisconnectedEvent e) {
-            // Only do this if nobody is trying to sav
+            // Only do this if nobody is trying to save a game currently
             GAME_LOCK.lock();
             AbstractConnection conn = e.getConnection();
 
@@ -960,14 +960,20 @@ public class Server implements Runnable {
 
     public void saveGame(String fileName) {
         GAME_LOCK.lock();
-        gameManager.saveGame(fileName);
-        GAME_LOCK.unlock();
+        try {
+            gameManager.saveGame(fileName);
+        } finally {
+            GAME_LOCK.unlock();
+        }
     }
 
     public void sendSaveGame(int connId, String fileName, String localPath) {
         GAME_LOCK.lock();
-        gameManager.sendSaveGame(connId, fileName, localPath);
-        GAME_LOCK.unlock();
+        try {
+            gameManager.sendSaveGame(connId, fileName, localPath);
+        } finally {
+            GAME_LOCK.unlock();
+        }
     }
 
     /**
@@ -1345,8 +1351,11 @@ public class Server implements Runnable {
                 default:
                     // We don't want to change the game state while other threads may be in the game
                     GAME_LOCK.lock();
-                    gameManager.handlePacket(connId, packet);
-                    GAME_LOCK.unlock();
+                    try {
+                        gameManager.handlePacket(connId, packet);
+                    } finally {
+                        GAME_LOCK.unlock();
+                    }
             }
         } catch (InvalidPacketDataException e) {
             LOGGER.error("Invalid packet data:", e);

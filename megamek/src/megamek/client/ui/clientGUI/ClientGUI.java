@@ -182,6 +182,8 @@ import megamek.common.util.StringUtil;
 import megamek.common.weapons.handlers.WeaponOrderHandler;
 import megamek.logging.MMLogger;
 
+import static java.lang.Thread.sleep;
+
 public class ClientGUI extends AbstractClientGUI
       implements BoardViewListener, ActionListener, IPreferenceChangeListener, MekDisplayListener, ILocalBots,
                  IDisconnectSilently, IHasUnitDisplay, IHasBoardView, IHasMenuBar, IHasCurrentPanel {
@@ -1196,6 +1198,11 @@ public class ClientGUI extends AbstractClientGUI
 
     @Override
     public void die() {
+        if (client.isAwaitingSave()) {
+            SwingUtilities.invokeLater(() -> die());
+            return;
+        }
+
         // Tell all the displays to remove themselves as listeners.
         boolean reportHandled = false;
         boardViews().forEach(IBoardView::dispose);

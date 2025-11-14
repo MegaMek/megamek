@@ -160,17 +160,6 @@ public abstract class AbstractClient implements IClient {
     /** Shuts down threads and sockets */
     @Override
     public synchronized void die() {
-        // If we're still connected, tell the server that we're going down.
-        while (awaitingSave) {
-            try {
-                sleep(100);
-                updateConnection();
-            } catch (InterruptedException e) {
-                logger.warn("Timed out while awaiting a save game packet");
-                break;
-            }
-        }
-
         if (connected) {
             // Stop listening for in coming packets, this should be done before
             // sending the close connection command

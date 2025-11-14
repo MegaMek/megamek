@@ -12255,7 +12255,8 @@ public abstract class Entity extends TurnOrdered
                 misc.getType().setInstantModeSwitch(false);
             }
 
-            if (misc.getType().hasFlag(MiscType.F_ECM)) {
+            // Nova CEWS has built-in "ECM"/"Off" modes - don't override them with dynamic modes
+            if (misc.getType().hasFlag(MiscType.F_ECM) && !misc.getType().hasFlag(MiscType.F_NOVA)) {
                 ArrayList<String> modes = new ArrayList<>();
                 modes.add("ECM");
                 String[] stringArray = {};
@@ -13307,7 +13308,13 @@ public abstract class Entity extends TurnOrdered
                     multiplier = 0.3;
                 }
             }
-            extraBV += (int) Math.round(totalForceBV * multiplier);
+            double rawBonus = totalForceBV * multiplier;
+            // IO p.197: Nova CEWS BV bonus capped at 35% of unit's base BV
+            if (hasNovaCEWS()) {
+                double maxBonus = baseBV * 0.35;
+                rawBonus = Math.min(rawBonus, maxBonus);
+            }
+            extraBV += (int) Math.round(rawBonus);
         }
         return extraBV;
     }

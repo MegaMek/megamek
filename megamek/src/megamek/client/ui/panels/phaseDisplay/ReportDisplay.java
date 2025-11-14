@@ -42,6 +42,7 @@ import java.util.Map;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkDialog;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.common.enums.GamePhase;
@@ -54,7 +55,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
     public enum ReportCommand implements PhaseCommand {
         REPORT_REPORT("reportReport"),
         REPORT_PLAYER_LIST("reportPlayerList"),
-        REPORT_REROLL_INITIATIVE("reportRerollInitiative");
+        REPORT_REROLL_INITIATIVE("reportRerollInitiative"),
+        REPORT_NOVA_NETWORK("reportNovaNetwork");
 
         final String cmd;
 
@@ -221,6 +223,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
             GUIP.toggleRoundReportEnabled();
         } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_PLAYER_LIST.getCmd()))) {
             GUIP.togglePlayerListEnabled();
+        } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_NOVA_NETWORK.getCmd()))) {
+            showNovaNetworkDialog();
         }
     }
 
@@ -233,6 +237,15 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
               .getGame()
               .hasTacticalGenius(clientgui.getClient().getLocalPlayer())) {
             setRerollInitiativeEnabled(true);
+        }
+
+        // Enable Nova Network button if player has Nova CEWS units (TT: declare networks in End Phase)
+        // Check both END and END_REPORT phases to ensure button is available during end phase
+        GamePhase currentPhase = clientgui.getClient().getGame().getPhase();
+        if (currentPhase == GamePhase.END || currentPhase == GamePhase.END_REPORT) {
+            setNovaNetworkEnabled(hasNovaUnits());
+        } else {
+            setNovaNetworkEnabled(false);
         }
     }
 
@@ -270,5 +283,34 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);
         clientgui.boardViews().forEach(bv -> bv.removeBoardViewListener(this));
+    }
+
+    /**
+     * Shows the Nova CEWS network management dialog.
+     */
+    private void showNovaNetworkDialog() {
+        System.out.println("[NOVA] Opening Nova CEWS Network Management Dialog");
+        NovaNetworkDialog dialog = new NovaNetworkDialog(clientgui.getFrame(), clientgui);
+        dialog.setVisible(true);
+        System.out.println("[NOVA] Dialog closed");
+    }
+
+    /**
+     * Checks if the local player has any Nova CEWS units.
+     */
+    private boolean hasNovaUnits() {
+        int localPlayerId = clientgui.getClient().getLocalPlayer().getId();
+        return clientgui.getClient().getGame().getEntitiesVector().stream()
+                .anyMatch(e -> e.getOwnerId() == localPlayerId && e.hasNovaCEWS());
+    }
+
+    /**
+     * Enables or disables the Nova Network button.
+     */
+    private void setNovaNetworkEnabled(boolean enabled) {
+        MegaMekButton button = buttons.get(ReportCommand.REPORT_NOVA_NETWORK);
+        if (button != null) {
+            button.setEnabled(enabled);
+        }
     }
 }

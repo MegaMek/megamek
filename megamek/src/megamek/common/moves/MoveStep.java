@@ -2038,6 +2038,8 @@ public class MoveStep implements Serializable {
                 if ((getEntity().getMovementMode() == EntityMovementMode.VTOL ||
                       getEntity().getMovementMode() == EntityMovementMode.WIGE) && getClearance() > 0) {
                     movementType = EntityMovementType.MOVE_VTOL_WALK;
+                } else if ((getEntity().getMovementMode() == EntityMovementMode.SUBMARINE) && getElevation() < 0) {
+                    movementType = EntityMovementType.MOVE_SUBMARINE_WALK;
                 } else {
                     movementType = EntityMovementType.MOVE_WALK;
                     // Vehicles moving along pavement get "road bonus" of 1 MP.
@@ -2080,6 +2082,8 @@ public class MoveStep implements Serializable {
                 if ((entity.getMovementMode() == EntityMovementMode.VTOL ||
                       entity.getMovementMode() == EntityMovementMode.WIGE) && getClearance() > 0) {
                     movementType = EntityMovementType.MOVE_VTOL_RUN;
+                } else if ((entity.getMovementMode() == EntityMovementMode.SUBMARINE) && getElevation() < 0) {
+                    movementType = EntityMovementType.MOVE_SUBMARINE_RUN;
                 } else {
                     movementType = EntityMovementType.MOVE_RUN;
                 }
@@ -2102,6 +2106,16 @@ public class MoveStep implements Serializable {
                 } else {
                     movementType = EntityMovementType.MOVE_SPRINT;
                 }
+            }
+        }
+
+        // Submarines at seafloor cannot move horizontally or change facing (TW p.56)
+        // They can only ascend vertically
+        if (entity.getMovementMode() == EntityMovementMode.SUBMARINE) {
+            final Hex prevHex = game.getBoard(boardId).getHex(prev.getPosition());
+            if ((prev.getElevation() == -prevHex.depth()) && (type != MoveStepType.UP)) {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+                return;
             }
         }
 

@@ -35,14 +35,19 @@ package megamek.server.totalWarfare;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Vector;
 
+import megamek.common.CriticalSlot;
 import megamek.common.Player;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.AeroSpaceFighter;
+import megamek.common.units.BipedMek;
 import megamek.common.units.LandAirMek;
+import megamek.common.units.Mek;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -127,5 +132,128 @@ class TWGameManagerTest {
         assertTrue(reasons.toString().contains("avionics hit"));
         assertTrue(reasons.toString().contains("threshold"));
         assertTrue(reasons.toString().contains("highest damage threshold exceeded"));
+    }
+
+    /**
+     * Test that standard gyro first hit triggers PSR with +3 modifier.
+     * Per TotalWarfare rules (BMM pg 48), first gyro hit on standard gyro requires PSR at +3.
+     */
+    @Test
+    void testStandardGyroFirstHitTriggersPSR() {
+        BipedMek mek = new BipedMek();
+        mek.setGyroType(Mek.GYRO_STANDARD);
+
+        // Initialize gyro critical slots (normally done by unit loader)
+        mek.setCritical(Mek.LOC_CENTER_TORSO, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO));
+        mek.setCritical(Mek.LOC_CENTER_TORSO, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO));
+
+        game.addEntity(mek);
+
+        // Trigger game logic to apply gyro critical hit
+        CriticalSlot gyroSlot = mek.getCritical(Mek.LOC_CENTER_TORSO, 3);
+        gameManager.applyCriticalHit(mek, Mek.LOC_CENTER_TORSO, gyroSlot, true, 0, false);
+
+        // Verify PSR was added by game logic
+        List<PilotingRollData> psrs = Collections.list(game.getPSRs());
+        assertEquals(1, psrs.size(), "Standard gyro first hit should trigger PSR");
+        assertEquals(3, psrs.get(0).getValue(), "PSR modifier should be +3");
+        assertTrue(psrs.get(0).getDesc().contains("gyro hit"), "PSR description should mention gyro");
+    }
+
+    /**
+     * Test that heavy-duty gyro first hit does NOT trigger PSR.
+     * Per errata: First hit to HD gyro does not require PSR, but applies +1 modifier to all future PSRs.
+     * This tests the fix for Issue #3651.
+     */
+    @Test
+    void testHeavyDutyGyroFirstHitNoPSR() {
+        BipedMek mek = new BipedMek();
+        mek.setGyroType(Mek.GYRO_HEAVY_DUTY);
+
+        // Initialize gyro critical slots (normally done by unit loader)
+        // Heavy-duty gyro takes 4 slots
+        mek.setCritical(Mek.LOC_CENTER_TORSO, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO));
+        mek.setCritical(Mek.LOC_CENTER_TORSO, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO));
+        mek.setCritical(Mek.LOC_CENTER_TORSO, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO));
+        mek.setCritical(Mek.LOC_CENTER_TORSO, 6, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO));
+
+        game.addEntity(mek);
+
+        // Trigger game logic to apply gyro critical hit
+        CriticalSlot gyroSlot = mek.getCritical(Mek.LOC_CENTER_TORSO, 3);
+        gameManager.applyCriticalHit(mek, Mek.LOC_CENTER_TORSO, gyroSlot, true, 0, false);
+
+        // Verify NO PSR was added by game logic (this is the fix for Issue #3651)
+        List<PilotingRollData> psrs = Collections.list(game.getPSRs());
+        assertEquals(0, psrs.size(), "Heavy-duty gyro first hit should NOT trigger PSR per errata");
+    }
+
+    /**
+     * Test that heavy-duty gyro second hit triggers PSR with +3 modifier.
+     * Per errata: Second hit to HD gyro has same effect as first hit to standard gyro.
+     */
+    @Test
+    void testHeavyDutyGyroSecondHitTriggersPSR() {
+        BipedMek mek = new BipedMek();
+        mek.setGyroType(Mek.GYRO_HEAVY_DUTY);
+
+        // Initialize gyro critical slots (normally done by unit loader)
+        mek.setCritical(Mek.LOC_CENTER_TORSO, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO));
+        mek.setCritical(Mek.LOC_CENTER_TORSO, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO));
+        mek.setCritical(Mek.LOC_CENTER_TORSO, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO));
+        mek.setCritical(Mek.LOC_CENTER_TORSO, 6, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO));
+
+        game.addEntity(mek);
+
+        // Apply first gyro hit
+        CriticalSlot gyroSlot1 = mek.getCritical(Mek.LOC_CENTER_TORSO, 3);
+        gameManager.applyCriticalHit(mek, Mek.LOC_CENTER_TORSO, gyroSlot1, true, 0, false);
+
+        // Apply second gyro hit
+        CriticalSlot gyroSlot2 = mek.getCritical(Mek.LOC_CENTER_TORSO, 4);
+        gameManager.applyCriticalHit(mek, Mek.LOC_CENTER_TORSO, gyroSlot2, true, 0, false);
+
+        // Verify PSR was added by game logic for second hit
+        List<PilotingRollData> psrs = Collections.list(game.getPSRs());
+        assertEquals(1, psrs.size(), "HD gyro second hit should trigger PSR");
+        assertEquals(3, psrs.get(0).getValue(), "PSR modifier should be +3");
+    }
+
+    /**
+     * Test that heavy-duty gyro third hit causes automatic fall (gyro destroyed).
+     * Per errata: Third hit to HD gyro destroys it with all usual effects.
+     */
+    @Test
+    void testHeavyDutyGyroThirdHitAutoFail() {
+        BipedMek mek = new BipedMek();
+        mek.setGyroType(Mek.GYRO_HEAVY_DUTY);
+
+        // Initialize gyro critical slots (normally done by unit loader)
+        mek.setCritical(Mek.LOC_CENTER_TORSO, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO));
+        mek.setCritical(Mek.LOC_CENTER_TORSO, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO));
+        mek.setCritical(Mek.LOC_CENTER_TORSO, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO));
+        mek.setCritical(Mek.LOC_CENTER_TORSO, 6, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO));
+
+        game.addEntity(mek);
+
+        // Apply first gyro hit
+        CriticalSlot gyroSlot1 = mek.getCritical(Mek.LOC_CENTER_TORSO, 3);
+        gameManager.applyCriticalHit(mek, Mek.LOC_CENTER_TORSO, gyroSlot1, true, 0, false);
+
+        // Apply second gyro hit (clears first PSR from game)
+        game.resetPSRs();
+        CriticalSlot gyroSlot2 = mek.getCritical(Mek.LOC_CENTER_TORSO, 4);
+        gameManager.applyCriticalHit(mek, Mek.LOC_CENTER_TORSO, gyroSlot2, true, 0, false);
+
+        // Apply third gyro hit (gyro destroyed)
+        game.resetPSRs();
+        CriticalSlot gyroSlot3 = mek.getCritical(Mek.LOC_CENTER_TORSO, 5);
+        gameManager.applyCriticalHit(mek, Mek.LOC_CENTER_TORSO, gyroSlot3, true, 0, false);
+
+        // Verify automatic fail PSR was added by game logic
+        List<PilotingRollData> psrs = Collections.list(game.getPSRs());
+        assertEquals(1, psrs.size(), "HD gyro third hit should trigger auto-fail PSR");
+        assertEquals(PilotingRollData.AUTOMATIC_FAIL, psrs.get(0).getValue(), "PSR should be automatic fail");
+        assertTrue(psrs.get(0).getDesc().contains("gyro destroyed"), "PSR description should mention gyro destroyed");
     }
 }

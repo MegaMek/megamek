@@ -40,6 +40,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -136,7 +137,10 @@ public class QuirksPanel extends JPanel {
 
     private void addWeaponQuirk(int key, IOption option, boolean editable) {
         DialogOptionComponentYPanel optionComp = new DialogOptionComponentYPanel(parent, option, editable);
-        add(optionComp, GBC.eol());
+        JPanel indentPanel = new JPanel(new GridBagLayout());
+        indentPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
+        indentPanel.add(optionComp, GBC.eol());
+        add(indentPanel, GBC.eol());
         h_wpnQuirkComps.get(key).add(optionComp);
     }
 

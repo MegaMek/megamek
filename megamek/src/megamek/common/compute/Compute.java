@@ -7073,15 +7073,12 @@ public class Compute {
         int crew = 0;
         crew += getCommunicationsCrew(entity);
         crew += getDoctorCrew(entity);
+        crew += getMedicCrew(entity);
         for (Mounted<?> m : entity.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_FIELD_KITCHEN)) {
                 crew += 3;
             } else if (m.getType().hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
                 crew += 5;
-            } else if (m.getType().hasFlag(MiscType.F_MASH)) {
-                // Not all players enjoy having permanent MedTechs, so we're going to treat the MedTech requirements
-                // as generic crew seats. Doctors (the 5th crew addition/theater) are calculated elsewhere.
-                crew += 4 * (int) m.getSize();
             }
         }
 
@@ -7120,6 +7117,21 @@ public class Compute {
         for (Mounted<?> m : entity.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_MASH)) {
                 crew += (int) m.getSize();
+            }
+        }
+
+        return crew;
+    }
+
+    public static int getMedicCrew(Entity entity) {
+        if (entity.hasDroneOs()) {
+            return 0;
+        }
+
+        int crew = 0;
+        for (Mounted<?> m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_MASH)) {
+                crew += 4 * (int) m.getSize();
             }
         }
 

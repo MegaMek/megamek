@@ -45,6 +45,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -100,6 +101,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.DockingCollar;
+import megamek.common.equipment.ExternalCargo;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.MiscMounted;
@@ -1691,7 +1693,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // Jumps with mechanical jump boosters are special
             Coords src = (cmd.getLastStep() != null) ? cmd.getLastStep().getPosition() : currentEntity().getPosition();
             int direction = src.direction(dest);
-            MoveStepType moveStepType = MoveStepType.stepTypeForRelativeDirection(direction, currentEntity().getFacing());
+            MoveStepType moveStepType = MoveStepType.stepTypeForRelativeDirection(direction,
+                  currentEntity().getFacing());
             cmd.findSimplePathTo(dest, moveStepType, src.direction(dest), currentEntity().getFacing());
 
         } else if (gear == GEAR_STRAFE) {
@@ -2938,7 +2941,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // the entity can pick them up
         if ((ce == null) ||
               ((game.getGroundObjects(finalPosition(), ce).isEmpty())
-                    && (game.getEntitiesVector(finalPosition()).stream().filter(ce::canPickupCarryableObject).toList().isEmpty())) ||
+                    && (game.getEntitiesVector(finalPosition())
+                    .stream()
+                    .filter(ce::canPickupCarryableObject)
+                    .toList()
+                    .isEmpty())) ||
               ((cmd.getLastStep() != null) && (cmd.getLastStep().getType() == MoveStepType.PICKUP_CARGO))) {
             setPickupCargoEnabled(false);
             return;
@@ -2951,7 +2958,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void updateDropCargoButton() {
         final Entity currentlySelectedEntity = currentEntity();
         // there has to be an entity, objects are on the ground, the entity can pick them up
-        if ((currentlySelectedEntity == null) || currentlySelectedEntity.getCarriedObjects().isEmpty()) {
+        if ((currentlySelectedEntity == null)
+              || (currentlySelectedEntity.getCarriedObjects().isEmpty()
+              && currentlySelectedEntity.getTransports()
+              .stream()
+              .filter(t -> t instanceof ExternalCargo)
+              .map(t -> ((ExternalCargo) t).getCarryables().toArray(ICarryable[]::new))
+              .flatMap(Arrays::stream)
+              .toList().isEmpty())) {
             setDropCargoEnabled(false);
             return;
         }
@@ -3069,7 +3083,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
      * @return True when the endpoint of the current movement path is on the board.
      */
     private boolean isFinalPositionOnBoard() {
-        return game.getBoard(currentEntity().getBoardId()).contains(cmd == null ? currentEntity().getPosition() : cmd.getFinalCoords());
+        return game.getBoard(currentEntity().getBoardId())
+              .contains(cmd == null ? currentEntity().getPosition() : cmd.getFinalCoords());
     }
 
     private int finalBoardId() {
@@ -3242,15 +3257,18 @@ public class MovementDisplay extends ActionPhaseDisplay {
             String[] bayChoicesArray = new String[bayChoices.size()];
             int i = 0;
             for (Integer bayNumber : bayChoices) {
-                bayChoicesArray[i++] = bayNumber.toString() + " (Free Slots: " +
-                      (int) currentEntity().getBayById(bayNumber).getUnused() + ")";
+                bayChoicesArray[i++] = bayNumber.toString()
+                          + " (Free Slots: "
+                          + (int) currentEntity().getBayById(bayNumber).getUnused()
+                          + ")";
             }
-            String bayString = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
-                  Messages.getString("MovementDisplay.loadUnitBayNumberDialog.message", currentEntity().getShortName()),
-                  Messages.getString("MovementDisplay.loadUnitBayNumberDialog.title"),
-                  JOptionPane.QUESTION_MESSAGE,
-                  null,
-                  bayChoicesArray,
+                String bayString = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
+                      Messages.getString("MovementDisplay.loadUnitBayNumberDialog.message",
+                            currentEntity().getShortName()),
+                      Messages.getString("MovementDisplay.loadUnitBayNumberDialog.title"),
+                      JOptionPane.QUESTION_MESSAGE,
+                      null,
+                      bayChoicesArray,
                   null);
             // Handle canceled dialog
             if (bayString == null) {
@@ -3273,16 +3291,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 int i = 0;
                 for (Integer bayNumber : bayChoices) {
                     clampChoicesArray[i++] = bayNumber > 0 ?
-                          Messages.getString("MovementDisplay.loadProtoClampMountDialog.rear") :
-                          Messages.getString("MovementDisplay.loadProtoClampMountDialog.front");
-                }
-                String bayString = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
-                      Messages.getString("MovementDisplay.loadProtoClampMountDialog.message",
-                            currentEntity().getShortName()),
-                      Messages.getString("MovementDisplay.loadProtoClampMountDialog.title"),
-                      JOptionPane.QUESTION_MESSAGE,
-                      null,
-                      clampChoicesArray,
+                              Messages.getString("MovementDisplay.loadProtoClampMountDialog.rear") :
+                              Messages.getString("MovementDisplay.loadProtoClampMountDialog.front");
+                    }
+                    String bayString = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
+                          Messages.getString("MovementDisplay.loadProtoClampMountDialog.message",
+                                currentEntity().getShortName()),
+                          Messages.getString("MovementDisplay.loadProtoClampMountDialog.title"),
+                          JOptionPane.QUESTION_MESSAGE,
+                          null,
+                          clampChoicesArray,
                       null);
 
                 if (bayString == null) {
@@ -5189,7 +5207,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if (other != null) {
                 if (!other.isInfantry() ||
                       currentEntity() instanceof SmallCraft ||
-                      (currentEntity().isSupportVehicle() && (currentEntity().getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT))
+                      (currentEntity().isSupportVehicle() && (currentEntity().getWeightClass()
+                            == EntityWeightClass.WEIGHT_LARGE_SUPPORT))
                       // FIXME: unclear why towed/towing is checked here:
                       ||
                       !currentEntity().getAllTowedUnits().isEmpty() ||
@@ -5211,19 +5230,23 @@ public class MovementDisplay extends ActionPhaseDisplay {
             processPickupCargoCommand();
         } else if (actionCmd.equals(MoveCommand.MOVE_DROP_CARGO.getCmd())) {
             var options = currentEntity().getDistinctCarriedObjects();
+            List<ICarryable> moreOptions = entity.getTransports()
+                  .stream()
+                  .filter(t -> t instanceof ExternalCargo)
+                  .map(t -> ((ExternalCargo) t).getCarryables().toArray(ICarryable[]::new))
+                  .flatMap(Arrays::stream)
+                  .toList().stream().filter(carryable -> !options.contains(carryable)).collect(Collectors.toList());
 
-            if (options.size() == 1) {
+            var fullOptions = List.of(options.toArray(ICarryable[]::new), moreOptions.toArray(ICarryable[]::new));
+
+            if (fullOptions.size() == 1) {
                 addStepToMovePath(MoveStepType.DROP_CARGO);
                 updateDonePanel();
-            } else if (options.size() > 1) {
+            } else if (fullOptions.size() > 1) {
                 // reverse lookup: location name to location ID - we're going to wind up with a
                 // name chosen
                 // but need to send the ID in the move path.
-                Map<String, Integer> locationMap = new HashMap<>();
-
-                for (int location : currentEntity().getCarriedObjects().keySet()) {
-                    locationMap.put(currentEntity().getLocationName(location), location);
-                }
+                Map<String, Integer> locationMap = currentEntity().getDropCargoLocationMap();
 
                 // Dialog for choosing which object to pick up
                 String title = "Choose Cargo to Drop";
@@ -5234,7 +5257,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       JOptionPane.QUESTION_MESSAGE,
                       null,
                       locationMap.keySet().toArray(),
-                      locationMap.keySet().toArray()[0]);
+                      Arrays.stream(locationMap.keySet().toArray()).findFirst());
 
                 // Verify that we have a valid option...
                 if (option != null) {
@@ -5634,18 +5657,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
      * Worker function to choose a limb (or whatever) with which to pick up cargo
      */
     private Integer getPickupLocation(ICarryable cargo) {
-        var validPickupLocations = currentEntity().getValidHalfWeightPickupLocations(cargo);
+        Map<String, Integer> locationMap = currentEntity().getPickupLocationMap(cargo);
         int pickupLocation = Entity.LOC_NONE;
 
         // if we need to choose a pickup location, then do so
-        if (validPickupLocations.size() > 1) {
-            // reverse lookup: location name to location ID - we're going to wind up with a name chosen but need to
-            // send the ID in the move path.
-            Map<String, Integer> locationMap = new HashMap<>();
+        if (locationMap.size() > 1) {
 
-            for (int location : currentEntity().getValidHalfWeightPickupLocations(cargo)) {
-                locationMap.put(currentEntity().getLocationName(location), location);
-            }
 
             // Dialog for choosing which object to pick up
             String title = "Choose Pickup Location";
@@ -5663,8 +5680,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             } else {
                 return null;
             }
-        } else if (validPickupLocations.size() == 1) {
-            pickupLocation = validPickupLocations.get(0);
+        } else if (locationMap.size() == 1) {
+            pickupLocation = locationMap.get(locationMap.keySet().toArray()[0]);
         }
 
         return pickupLocation;
@@ -5679,7 +5696,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void adjustConvertSteps(EntityMovementMode endMode) {
         // Since conversion is not allowed in water, we shouldn't have to deal with the possibility of `swim` modes.
         // Account for grounded LAMs in fighter mode with movement type wheeled
-        if (currentEntity().getMovementMode() == endMode || (currentEntity().isAero() && endMode == EntityMovementMode.AERODYNE)) {
+        if (currentEntity().getMovementMode() == endMode || (currentEntity().isAero()
+              && endMode == EntityMovementMode.AERODYNE)) {
             cmd.clear();
             return;
         }

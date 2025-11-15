@@ -37,11 +37,17 @@ import java.util.List;
 
 import megamek.common.units.Entity;
 import megamek.common.units.MekWithArms;
+import megamek.logging.MMLogger;
 
 public class MekArms extends ExternalCargo {
+    private final static MMLogger logger = MMLogger.create(MekArms.class);
 
     public MekArms(MekWithArms mek) {
-        this(mek.maxGroundObjectTonnage(), mek.getDefaultPickupLocations());
+        this(mek.unmodifiedMaxGroundObjectTonnage(), mek.getDefaultPickupLocations());
+        if (entity != null) {
+            this.entity = mek;
+            this.entityId = mek.getId();
+        }
     }
 
     public MekArms(double tonnage, List<Integer> validPickupLocations) {
@@ -62,15 +68,23 @@ public class MekArms extends ExternalCargo {
         return unit.getTonnage() <= getUnused();
     }
 
+    @Override
+    public void loadCarryable(ICarryable carryable, int location) throws IllegalArgumentException {
+        super.loadCarryable(carryable, location);
+        if (entity != null) {
+            entity.pickupCarryableObject(carryable, location);
+        }
+    }
+
     /**
-     * Load the given unit.
-     *
-     * @param unit the <code>Entity</code> to be loaded.
-     *
-     * @throws IllegalArgumentException If the unit can't be loaded
+     * @return the number of unused spaces in this transporter.
      */
     @Override
-    public void load(Entity unit) throws IllegalArgumentException {
-        loadCarryable(unit);
+    public double getUnused() {
+        if (entity != null && entity instanceof MekWithArms mek) {
+            return (totalSpace * mek.getTSMPickupModifier()) - getCarriedTonnage();
+        }
+
+        return super.getUnused();
     }
 }

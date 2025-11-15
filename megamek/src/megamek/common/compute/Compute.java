@@ -7075,6 +7075,7 @@ public class Compute {
         crew += getDoctorCrew(entity);
         crew += getMedicCrew(entity);
         crew += getCombatTechCrew(entity);
+        crew += getAstechCrew(entity);
         for (Mounted<?> m : entity.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_FIELD_KITCHEN)) {
                 crew += 3;
@@ -7146,6 +7147,21 @@ public class Compute {
         for (Mounted<?> m : entity.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
                 crew++;
+            }
+        }
+
+        return crew;
+    }
+
+    public static int getAstechCrew(Entity entity) {
+        if (entity.hasDroneOs()) {
+            return 0;
+        }
+
+        int crew = 0;
+        for (Mounted<?> m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
+                crew += 4;
             }
         }
 

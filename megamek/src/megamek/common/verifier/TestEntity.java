@@ -1789,6 +1789,7 @@ public abstract class TestEntity implements TestEntityOption {
 
         // Find all locations with modular armor and map the number in that location to
         // the location index.
+        // Front and rear are seperate locations: https://battletech.com/forums/index.php?topic=89727.0
         Map<Pair<Integer, Boolean>, Long> modArmorByLocation = getEntity().getMisc().stream()
               .filter(m -> m.getType().hasFlag(MiscType.F_MODULAR_ARMOR))
               .filter(m -> m.getLocation() != Entity.LOC_NONE)

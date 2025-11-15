@@ -1106,6 +1106,8 @@ public class Client extends AbstractClient {
                             }
                         } catch (Exception ex) {
                             LOGGER.error(ex, "Unable to create savegames directory.");
+                        } finally {
+                            setAwaitingSave(false);
                         }
                     }
 
@@ -1119,6 +1121,7 @@ public class Client extends AbstractClient {
                     } catch (Exception ex) {
                         LOGGER.error(ex, "Unable to save file {}", sFinalFile);
                     }
+                    setAwaitingSave(false);
                     break;
                 case LOAD_SAVEGAME:
                     String loadFile = packet.getStringValue(0);

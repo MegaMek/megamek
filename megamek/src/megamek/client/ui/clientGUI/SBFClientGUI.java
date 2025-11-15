@@ -46,6 +46,7 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.SwingUtilities;
 
 import megamek.client.SBFClient;
 import megamek.client.ui.Messages;
@@ -270,11 +271,17 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     @Override
     protected boolean saveGame() {
         // TODO
+        // client.setAwaitingSave(true) // necessary to avoid exit/save race condition
         return true;
     }
 
     @Override
     public void die() {
+        // Will prevent race condition once saveGame() is implemented
+        if (client.isAwaitingSave()) {
+            SwingUtilities.invokeLater(this::die);
+            return;
+        }
         client.getGame().removeGameListener(gameListener);
         super.die();
     }

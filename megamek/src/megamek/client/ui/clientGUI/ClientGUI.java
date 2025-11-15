@@ -1196,6 +1196,11 @@ public class ClientGUI extends AbstractClientGUI
 
     @Override
     public void die() {
+        if (client.isAwaitingSave()) {
+            SwingUtilities.invokeLater(this::die);
+            return;
+        }
+
         // Tell all the displays to remove themselves as listeners.
         boolean reportHandled = false;
         boardViews().forEach(IBoardView::dispose);
@@ -2206,6 +2211,7 @@ public class ClientGUI extends AbstractClientGUI
         String path = fc.getSelectedFile().getParentFile().getPath();
         path = path.replace(" ", "|");
         client.sendChat(CG_CHAT_COMMAND_LOCAL_SAVE + " " + file + " " + path);
+        client.setAwaitingSave(true);
         return true;
     }
 

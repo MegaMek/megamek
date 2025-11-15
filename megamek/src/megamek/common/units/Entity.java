@@ -1128,7 +1128,7 @@ public abstract class Entity extends TurnOrdered
         this.game = game;
         restore();
         // Make sure the owner is set.
-        if (null == owner) {
+        if (game != null && owner == null) {
             if (Entity.NONE == ownerId) {
                 throw new IllegalStateException("Entity doesn't know its owner's ID.");
             }

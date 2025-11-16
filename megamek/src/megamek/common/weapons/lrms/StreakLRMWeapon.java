@@ -51,6 +51,7 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.options.IGameOptions;
 import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.lrm.StreakLRMHandler;
@@ -85,6 +86,16 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
         } else {
             return super.getTonnage(entity, location, size);
         }
+    }
+
+    @Override
+    // Streak LRMs could end up with an Indirect mode as a result of this game option selection. Overriding to 
+    // prevent this. Bug report #7618
+    public void adaptToGameOptions(IGameOptions gameOptions) {
+        super.adaptToGameOptions(gameOptions);
+
+        // Make sure Indirect Fire is not present for Streak LRMs
+        clearModes();
     }
 
     @Override

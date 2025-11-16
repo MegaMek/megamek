@@ -64,6 +64,7 @@ import megamek.client.ui.util.MenuScroller;
 import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.battleArmor.ProtoMekClampMount;
 import megamek.common.bays.Bay;
 import megamek.common.equipment.AmmoType;
@@ -993,6 +994,10 @@ class LobbyMekPopup {
      * @return true when the entity has an MG set to rapid fire.
      */
     private static boolean hasRapidFireMG(Entity entity) {
+        // Battle armor cannot use burst-fire MGs per errata
+        if (entity instanceof BattleArmor) {
+            return false;
+        }
         for (Mounted<?> m : entity.getWeaponList()) {
             EquipmentType etype = m.getType();
             if (etype.hasFlag(WeaponType.F_MG) && m.isRapidFire()) {
@@ -1004,6 +1009,10 @@ class LobbyMekPopup {
 
     /** Returns true when the entity has an MG set to normal (non-rapid) fire. */
     private static boolean hasNormalFireMG(Entity entity) {
+        // Battle armor cannot use burst-fire MGs per errata
+        if (entity instanceof BattleArmor) {
+            return false;
+        }
         for (Mounted<?> m : entity.getWeaponList()) {
             EquipmentType etype = m.getType();
             if (etype.hasFlag(WeaponType.F_MG) && !m.isRapidFire()) {

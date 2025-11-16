@@ -150,16 +150,26 @@ public class ARADEquipmentDetector {
      * C3 systems qualify if they are powered on. Network status is IRRELEVANT -
      * an isolated C3 computer still emits electronic signals.
      *
+     * Note: C3 Master and C3 Company Master are weapons, not equipment, so we
+     * check Entity methods hasC3M() and hasC3MM() instead of equipment flags.
+     *
      * @param target The entity to check
      * @return true if entity has functional C3 (any type)
      */
     public static boolean hasC3(Entity target) {
         // Quick check: does entity have any C3 system?
+        // hasC3() returns true for C3 Slave/Master/Company Master
+        // hasC3i() returns true for C3i systems
         if (!target.hasC3() && !target.hasC3i()) {
             return false;
         }
 
-        // Verify at least one C3 system is functional and powered
+        // C3 Master and Company Master are weapons - check via Entity methods
+        if (target.hasC3M() || target.hasC3MM()) {
+            return true;
+        }
+
+        // Check equipment-based C3 systems (Slave, Boosted Slave, C3i, Nova CEWS)
         for (Mounted<?> equipment : target.getEquipment()) {
             if ((equipment.getType().hasFlag(MiscType.F_C3S) ||
                  equipment.getType().hasFlag(MiscType.F_C3I) ||

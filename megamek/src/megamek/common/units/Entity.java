@@ -507,8 +507,8 @@ public abstract class Entity extends TurnOrdered
     protected int c3CompanyMasterIndex = LOC_DESTROYED;
     private String c3UUID = null;
     private String c3MasterIsUUID = null;
-    private final String[] c3iUUIDs = new String[MAX_C3i_NODES];
-    private final String[] NC3UUIDs = new String[MAX_C3i_NODES];
+    private String[] c3iUUIDs = new String[MAX_C3i_NODES];
+    private String[] NC3UUIDs = new String[MAX_C3i_NODES];
 
     protected int structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
     protected int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
@@ -6133,7 +6133,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return True if this unit is not off board nor shutdown and has a Nova CEWS that is not offline.
+     * @return True if this unit has an active Nova CEWS that can communicate.
+     *         Returns false if the unit is shutdown, off board, or the Nova CEWS is inoperable/offline.
      */
     public boolean hasActiveNovaCEWS() {
         if (isShutDown() || isOffBoard()) {
@@ -6141,15 +6142,18 @@ public abstract class Entity extends TurnOrdered
         } else {
             return getMisc().stream()
                   .filter(Mounted::isOperable)
-                  .filter(m -> !m.curMode().equals("Off"))
                   .anyMatch(m -> m.getType().hasFlag(MiscType.F_NOVA));
         }
     }
 
     /**
-     * @return True if this unit is not off board nor shutdown and has a Nova CEWS that is not offline.
+     * @return True if this unit has a Nova CEWS that can network (not destroyed/breached, not shutdown, not offboard).
+     *         Does NOT check ECM mode - networking works regardless of Off/ECM mode setting.
      */
     public boolean hasNovaCEWS() {
+        if (isShutDown() || isOffBoard()) {
+            return false;
+        }
         return getMisc().stream().filter(Mounted::isOperable).anyMatch(m -> m.getType().hasFlag(MiscType.F_NOVA));
     }
 
@@ -6227,11 +6231,23 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Switches the C3 network ID to the new network ID.
+     * Clears the pending change after applying it.
+     * If reverting to original network (unlinking), clears the NC3UUID array
+     * to prevent wireC3() from reconstructing old network connections.
      */
     public void newRoundNovaNetSwitch() {
-        if (hasNovaCEWS()) {
+        if (hasNovaCEWS() && (newC3NetIdString != null)) {
             // FIXME: no check for network limit of 3 units
             c3NetIdString = newC3NetIdString;
+            newC3NetIdString = null; // Clear pending change after applying
+
+            // If reverting to original network (unlinking), clear UUID array
+            // This prevents wireC3() from finding old partner UUIDs and re-establishing the network
+            if (c3NetIdString.equals(getOriginalNovaC3NetId())) {
+                for (int i = 0; i < MAX_C3i_NODES; i++) {
+                    setNC3NextUUIDAsString(i, null);
+                }
+            }
         }
     }
 
@@ -6248,12 +6264,9 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return C3 network id that will be switched to on the next turn.
+     * @return C3 network id that will be switched to on the next turn, or null if no change is pending.
      */
     public String getNewRoundNovaNetworkString() {
-        if ((newC3NetIdString == null) || newC3NetIdString.isEmpty()) {
-            newC3NetIdString = getOriginalNovaC3NetId();
-        }
         return newC3NetIdString;
     }
 
@@ -12255,7 +12268,8 @@ public abstract class Entity extends TurnOrdered
                 misc.getType().setInstantModeSwitch(false);
             }
 
-            if (misc.getType().hasFlag(MiscType.F_ECM)) {
+            // Nova CEWS has built-in "ECM"/"Off" modes - don't override them with dynamic modes
+            if (misc.getType().hasFlag(MiscType.F_ECM) && !misc.getType().hasFlag(MiscType.F_NOVA)) {
                 ArrayList<String> modes = new ArrayList<>();
                 modes.add("ECM");
                 String[] stringArray = {};
@@ -13307,7 +13321,13 @@ public abstract class Entity extends TurnOrdered
                     multiplier = 0.3;
                 }
             }
-            extraBV += (int) Math.round(totalForceBV * multiplier);
+            double rawBonus = totalForceBV * multiplier;
+            // IO: Alternate Eras p.183: Nova CEWS BV bonus capped at 35% of unit's base BV
+            if (hasNovaCEWS()) {
+                double maxBonus = baseBV * 0.35;
+                rawBonus = Math.min(rawBonus, maxBonus);
+            }
+            extraBV += (int) Math.round(rawBonus);
         }
         return extraBV;
     }

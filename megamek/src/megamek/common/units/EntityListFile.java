@@ -1233,10 +1233,15 @@ public class EntityListFile {
             }
 
             // Write the NC3 Data if needed
-            if (entity.hasNavalC3()) {
+            if (entity.hasNavalC3() || entity.hasNovaCEWS()) {
+                logger.debug("[EntityListFile] Saving NC3 for entity {} ({}), hasNavalC3={}, hasNovaCEWS={}",
+                    entity.getId(), entity.getShortName(), entity.hasNavalC3(), entity.hasNovaCEWS());
                 output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_NC3 + ">\n");
+                int linkCount = 0;
                 for (Entity NC3Entity : list) {
                     if ((NC3Entity.getC3UUIDAsString() != null) && NC3Entity.onSameC3NetworkAs(entity, true)) {
+                        logger.debug("[EntityListFile]   Writing NC3LINK for entity {} UUID: {}",
+                            NC3Entity.getId(), NC3Entity.getC3UUIDAsString());
                         output.write(indentStr(indentLvl + 1) +
                               '<' +
                               MULParser.ELE_NC3LINK +
@@ -1245,8 +1250,10 @@ public class EntityListFile {
                               "=\"");
                         output.write(NC3Entity.getC3UUIDAsString());
                         output.write("\"/>\n");
+                        linkCount++;
                     }
                 }
+                logger.debug("[EntityListFile] Saved {} NC3 links for entity {}", linkCount, entity.getId());
                 output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_NC3 + ">\n");
             }
 

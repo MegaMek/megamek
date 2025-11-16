@@ -152,7 +152,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(MML_PATH, "");
         store.setDefault(NAG_ASK_FOR_VICTORY_LIST, true);
         store.setDefault(DATA_LOGGING, true);
-        store.setDefault(SHOW_AUTO_RESOLVE_PANEL, true);
+        store.setDefault(SHOW_AUTO_RESOLVE_PANEL, false);
         store.setDefault(STAMP_FILENAMES, false);
         store.setDefault(FAVORITE_PRINCESS_BEHAVIOR_SETTING, DEFAULT_BEHAVIOR_DESCRIPTION);
         store.setDefault(LAST_SCENARIO, "");

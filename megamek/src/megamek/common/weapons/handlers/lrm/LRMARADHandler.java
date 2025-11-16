@@ -92,10 +92,11 @@ public class LRMARADHandler extends LRMHandler {
                 return +1;  // Narc overrides ECM
             }
 
-            // Check if ECM is affecting the attack path
+            // Check if target hex is ECM-affected
+            // Use target position for both start/end to check if target is in ECM field
             boolean isECMAffected = ComputeECM.isAffectedByECM(
                     attackingEntity,
-                    attackingEntity.getPosition(),
+                    target.getPosition(),
                     target.getPosition());
 
             if (isECMAffected) {

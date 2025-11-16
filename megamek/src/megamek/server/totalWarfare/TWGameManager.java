@@ -24578,6 +24578,15 @@ public class TWGameManager extends AbstractGameManager {
             // Only update entities that existed and are owned by a teammate of the sender
             if ((oldEntity != null) && (!oldEntity.getOwner().isEnemyOf(game.getPlayer(connIndex)))) {
                 game.setEntity(entity.getId(), entity);
+
+                // Reconstruct C3 network IDs from UUIDs (fixes lobby C3 configuration)
+                List<Entity> c3affected = C3Util.wireC3(game, entity);
+                for (Entity e : c3affected) {
+                    if (!newEntities.contains(e)) {
+                        newEntities.add(e);
+                    }
+                }
+
                 sendServerChat(ServerLobbyHelper.entityUpdateMessage(entity, game));
                 newEntities.add(game.getEntity(entity.getId()));
                 if (entity.isPartOfFighterSquadron()) {
@@ -24725,20 +24734,6 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
 
-        // IO p.197: Only one Nova CEWS may be active and jamming enemy units in a force at any one time
-        if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_NOVA)) {
-            // Attempting to activate Nova CEWS ECM mode (mode != "Off")
-            // Mode 0 = "ECM", Mode 1 = "Off" per MiscType.createNovaCEWS()
-            if (mode == 0) {  // Activating ECM mode
-                if (hasOtherActiveNovaCEWSOnTeam(e)) {
-                    sendServerChat(connIndex,
-                        "Cannot activate Nova CEWS: Another unit on your team already has active Nova CEWS ECM. " +
-                        "Per IO p.197, only one Nova CEWS may be jamming at a time.");
-                    return;  // Reject the mode change
-                }
-            }
-        }
-
         try {
             if ((m.getType() instanceof MiscType miscType) && miscType.isBoobyTrap() && mode != 0 && e.hasBoobyTrap()) {
                 sendServerChat("There is no turning back now...");
@@ -24791,39 +24786,6 @@ public class TWGameManager extends AbstractGameManager {
         } catch (Exception ex) {
             LOGGER.error("", ex);
         }
-    }
-
-    /**
-     * Checks if any other entity on the same team has an active Nova CEWS.
-     * Per IO p.197: "Only one Nova CEWS may be active and jamming enemy units in a force at any one time."
-     *
-     * @param entity The entity attempting to activate its Nova CEWS
-     * @return true if another entity on the same team already has an active Nova CEWS
-     */
-    private boolean hasOtherActiveNovaCEWSOnTeam(Entity entity) {
-        Player owner = entity.getOwner();
-        if (owner == null) {
-            return false;
-        }
-
-        for (Entity e : game.getEntitiesVector()) {
-            // Skip the entity we're checking for
-            if (e.getId() == entity.getId()) {
-                continue;
-            }
-
-            // Check if on same team (not enemies)
-            if (e.getOwner() == null || e.isEnemyOf(entity)) {
-                continue;
-            }
-
-            // Check if has active Nova CEWS ECM
-            if (e.hasActiveNovaCEWS()) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -25317,6 +25279,32 @@ public class TWGameManager extends AbstractGameManager {
      * Creates a packet containing all current and out-of-game entities
      */
     public Packet createFullEntitiesPacket() {
+        for (Entity entity : getGame().getEntitiesVector()) {
+            if (entity.hasNovaCEWS()) {
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < Entity.MAX_C3i_NODES; i++) {
+                    sb.append(entity.getNC3NextUUIDAsString(i)).append(", ");
+                }
+                LOGGER.info("[SERVER] createFullEntitiesPacket: Entity {} ({}), c3NetIdString: {}, NC3UUIDs: [{}]",
+                    entity.getId(), entity.getShortName(), entity.getC3NetId(), sb.toString());
+            }
+        }
+
+        // DIAGNOSTIC: Explicit Entity 1 check before serialization
+        Entity entity1 = getGame().getEntity(1);
+        if (entity1 != null && entity1.hasNovaCEWS()) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < Entity.MAX_C3i_NODES; i++) {
+                sb.append(entity1.getNC3NextUUIDAsString(i)).append(", ");
+            }
+            LOGGER.info("[PRE-SERIALIZE] Entity 1 EXPLICIT CHECK: hasNovaCEWS={}, NC3UUIDs=[{}]",
+                entity1.hasNovaCEWS(), sb.toString());
+        } else if (entity1 == null) {
+            LOGGER.warn("[PRE-SERIALIZE] Entity 1 is NULL!");
+        } else {
+            LOGGER.warn("[PRE-SERIALIZE] Entity 1 exists but hasNovaCEWS()={}", entity1.hasNovaCEWS());
+        }
+
         return new Packet(PacketCommand.SENDING_ENTITIES,
               getGame().getEntitiesVector(),
               getGame().getOutOfGameEntitiesVector(),

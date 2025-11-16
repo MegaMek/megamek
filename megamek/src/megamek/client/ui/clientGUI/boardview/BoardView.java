@@ -612,6 +612,14 @@ public final class BoardView extends AbstractBoardView
                     case INITIATIVE:
                         clearAllAttacks();
                         break;
+                    case INITIATIVE_REPORT:
+                    case MOVEMENT_REPORT:
+                    case FIRING_REPORT:
+                    case PHYSICAL_REPORT:
+                    case END_REPORT:
+                        // Rebuild entity sprites (including C3 connection lines) for report phases
+                        redrawAllEntities();
+                        break;
                     case END:
                     case VICTORY:
                         clearSprites();
@@ -3367,7 +3375,7 @@ public final class BoardView extends AbstractBoardView
               == entity.getId()));
 
         // Update C3 link, if necessary
-        if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3()) {
+        if (entity.hasC3() || entity.hasC3i() || entity.hasNovaCEWS() || entity.hasNavalC3()) {
             addC3Link(entity);
         }
 
@@ -3473,7 +3481,7 @@ public final class BoardView extends AbstractBoardView
                 }
             }
 
-            if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3()) {
+            if (entity.hasC3() || entity.hasC3i() || entity.hasNovaCEWS() || entity.hasNavalC3()) {
                 addC3Link(entity);
             }
         }
@@ -3938,7 +3946,7 @@ public final class BoardView extends AbstractBoardView
                     c3Sprites.add(new C3Sprite(this, entity, entity1));
                 }
             }
-        } else if (entity.hasActiveNovaCEWS()) {
+        } else if (entity.hasNovaCEWS()) {
             // WOR Nova CEWS
             for (Entity entity1 : game.getEntitiesVector()) {
                 if (entity1.getPosition() == null) {

@@ -72,6 +72,7 @@ import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TagInfo;
+import megamek.common.util.C3Util;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -527,6 +528,26 @@ public class Client extends AbstractClient {
         }
 
         game.setEntitiesVector(newEntities);
+
+        // CRITICAL FIX: Reconstruct C3 networks from UUIDs (matches server-side handling)
+        // This is necessary for lobby-configured networks (Naval C3, Nova CEWS, C3i)
+        for (Entity entity : newEntities) {
+            if (entity.hasC3() || entity.hasC3i() || entity.hasNavalC3() || entity.hasNovaCEWS()) {
+                C3Util.wireC3(game, entity);
+            }
+        }
+
+        // Diagnostic logging for Nova CEWS networks
+        for (Entity entity : newEntities) {
+            if (entity.hasNovaCEWS()) {
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < Entity.MAX_C3i_NODES; i++) {
+                    sb.append(entity.getNC3NextUUIDAsString(i)).append(", ");
+                }
+                LOGGER.info("[CLIENT] receiveEntities: Entity {} ({}), c3NetIdString: {}, NC3UUIDs: [{}]",
+                    entity.getId(), entity.getShortName(), entity.getC3NetId(), sb.toString());
+            }
+        }
         game.setOutOfGameEntitiesVector(newOutOfGame);
         for (Entity entity : newOutOfGame) {
             cacheImgTag(entity);

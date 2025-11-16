@@ -40,10 +40,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
 
 public class C3Util {
+    private static final Logger LOGGER = LogManager.getLogger();
 
     public static class MissingC3MException extends Exception {
     }
@@ -64,9 +68,12 @@ public class C3Util {
      */
     public static List<Entity> wireC3(Game game, Entity entity) {
         ArrayList<Entity> affectedUnits = new ArrayList<>();
-        if (!entity.hasC3() && !entity.hasC3i() && !entity.hasNavalC3()) {
+        if (!entity.hasC3() && !entity.hasC3i() && !entity.hasNavalC3() && !entity.hasNovaCEWS()) {
             return affectedUnits;
         }
+
+        LOGGER.debug("[C3Util] wireC3() called for entity {} ({}), hasNovaCEWS={}, currentNetId={}",
+            entity.getId(), entity.getShortName(), entity.hasNovaCEWS(), entity.getC3NetId());
 
         boolean C3iSet = false;
 
@@ -89,7 +96,10 @@ public class C3Util {
 
             // C3i Checks
             if (entity.hasC3i() && !C3iSet) {
-                entity.setC3NetIdSelf();
+                // Only initialize network ID if not already set (preserves lobby configuration)
+                if (entity.getC3NetId() == null) {
+                    entity.setC3NetIdSelf();
+                }
                 int pos = 0;
                 while (pos < Entity.MAX_C3i_NODES) {
                     // We've found a network, join it.
@@ -108,7 +118,10 @@ public class C3Util {
 
             // NC3 Checks
             if (entity.hasNavalC3() && !C3iSet) {
-                entity.setC3NetIdSelf();
+                // Only initialize network ID if not already set (preserves lobby configuration)
+                if (entity.getC3NetId() == null) {
+                    entity.setC3NetIdSelf();
+                }
                 int pos = 0;
                 while (pos < Entity.MAX_C3i_NODES) {
                     // We've found a network, join it.
@@ -124,7 +137,63 @@ public class C3Util {
                     pos++;
                 }
             }
+
+            // Nova CEWS Checks (uses same UUID array as NC3)
+            if (entity.hasNovaCEWS() && !C3iSet) {
+                LOGGER.debug("[C3Util] Nova CEWS check for entity {} ({})", entity.getId(), entity.getShortName());
+                LOGGER.debug("[C3Util]   Current network ID: {}", entity.getC3NetId());
+
+                // DEBUGGING: Log entire NC3UUID array
+                StringBuilder uuidDump = new StringBuilder("[");
+                for (int debugPos = 0; debugPos < Entity.MAX_C3i_NODES; debugPos++) {
+                    String debugUUID = entity.getNC3NextUUIDAsString(debugPos);
+                    if (debugPos > 0) uuidDump.append(", ");
+                    uuidDump.append(debugUUID == null ? "null" : "\"" + debugUUID + "\"");
+                }
+                uuidDump.append("]");
+                LOGGER.debug("[C3Util]   NC3UUID array contents: {}", uuidDump);
+
+                // Only initialize network ID if not already set (preserves lobby configuration)
+                if (entity.getC3NetId() == null) {
+                    entity.setC3NetIdSelf();
+                    LOGGER.debug("[C3Util]   Network ID was null, initialized to: {}", entity.getC3NetId());
+                } else {
+                    LOGGER.debug("[C3Util]   Network ID already set, preserving: {}", entity.getC3NetId());
+                }
+
+                int pos = 0;
+                while (pos < Entity.MAX_C3i_NODES) {
+                    String uuidAtPos = entity.getNC3NextUUIDAsString(pos);
+                    if (uuidAtPos != null) {
+                        LOGGER.debug("[C3Util]   Checking entity {} UUID: \"{}\"", e.getId(), e.getC3UUIDAsString());
+                        LOGGER.debug("[C3Util]   Against stored UUID at pos {}: \"{}\"", pos, uuidAtPos);
+                    }
+
+                    // We've found a network, join it.
+                    if ((entity.getNC3NextUUIDAsString(pos) != null)
+                          && (e.getC3UUIDAsString() != null)
+                          && entity.getNC3NextUUIDAsString(pos)
+                          .equals(e.getC3UUIDAsString())) {
+                        LOGGER.debug("[C3Util]   MATCH FOUND! Entity {} UUID matches at pos {}", e.getId(), pos);
+                        LOGGER.debug("[C3Util]   Copying network ID from entity {} ({}): {}",
+                            e.getId(), e.getShortName(), e.getC3NetId());
+                        entity.setC3NetId(e);
+                        LOGGER.debug("[C3Util]   Entity {} network ID now: {}", entity.getId(), entity.getC3NetId());
+                        C3iSet = true;
+                        break;
+                    }
+
+                    pos++;
+                }
+
+                if (!C3iSet) {
+                    LOGGER.debug("[C3Util]   No network partners found in UUID array");
+                }
+            }
         }
+
+        LOGGER.debug("[C3Util] wireC3() complete for entity {} ({}), final network ID: {}, C3iSet={}",
+            entity.getId(), entity.getShortName(), entity.getC3NetId(), C3iSet);
 
         return affectedUnits;
     }
@@ -146,6 +215,17 @@ public class C3Util {
         for (Entity entity : entities) {
             if (entity.hasNhC3()) {
                 entity.setC3NetIdSelf();
+
+                // CRITICAL FIX: Clear UUID arrays when disconnecting from network
+                // Prevents stale UUIDs from interfering with future network joins
+                for (int pos = 0; pos < Entity.MAX_C3i_NODES; pos++) {
+                    if (entity.hasNavalC3() || entity.hasNovaCEWS()) {
+                        entity.setNC3NextUUIDAsString(pos, null);
+                    } else if (entity.hasC3i()) {
+                        entity.setC3iNextUUIDAsString(pos, null);
+                    }
+                }
+
                 updateCandidates.add(entity);
             } else if (entity.hasAnyC3System()) {
                 entity.setC3Master(null, true);
@@ -215,7 +295,56 @@ public class C3Util {
             throw new C3CapacityException();
         }
 
+        // Copy network ID to all entities
         entities.forEach(e -> e.setC3NetId(master));
+
+        // Build complete list of ALL network members, including those already in the network
+        // This is critical for lobby configuration where units are added one at a time
+        List<Entity> networkMembers = new ArrayList<>();
+        for (Entity e : game.getEntitiesVector()) {
+            // Include entities that:
+            // 1. Are being added now (in entities collection)
+            // 2. Are the master
+            // 3. Are already networked with the master (same C3 system and same network ID)
+            if (entities.contains(e) || e.equals(master) ||
+                (sameNhC3System(master, e) && e.onSameC3NetworkAs(master))) {
+                networkMembers.add(e);
+            }
+        }
+
+        LOGGER.debug("[C3Util] joinNh() storing UUID cross-references for {} network members", networkMembers.size());
+
+        // Store UUID cross-references for all network members
+        // This allows wireC3() to reconnect the network when the game starts
+        for (Entity entity : networkMembers) {
+            // CRITICAL FIX: Clear all UUID slots before assigning new network partners
+            // This prevents stale UUIDs from previous network configurations
+            for (int clearPos = 0; clearPos < Entity.MAX_C3i_NODES; clearPos++) {
+                if (entity.hasNovaCEWS() || entity.hasNavalC3()) {
+                    entity.setNC3NextUUIDAsString(clearPos, null);
+                } else if (entity.hasC3i()) {
+                    entity.setC3iNextUUIDAsString(clearPos, null);
+                }
+            }
+
+            // Now assign UUIDs for current network partners
+            int pos = 0;
+            for (Entity partner : networkMembers) {
+                if (!partner.equals(entity) && pos < Entity.MAX_C3i_NODES) {
+                    String partnerUUID = partner.getC3UUIDAsString();
+                    if (entity.hasNovaCEWS() || entity.hasNavalC3()) {
+                        entity.setNC3NextUUIDAsString(pos, partnerUUID);
+                        LOGGER.debug("[C3Util]   Entity {} ({}): NC3UUID[{}] = \"{}\" (from entity {} {})",
+                            entity.getId(), entity.getShortName(), pos, partnerUUID, partner.getId(), partner.getShortName());
+                    } else if (entity.hasC3i()) {
+                        entity.setC3iNextUUIDAsString(pos, partnerUUID);
+                        LOGGER.debug("[C3Util]   Entity {} ({}): C3iUUID[{}] = \"{}\" (from entity {} {})",
+                            entity.getId(), entity.getShortName(), pos, partnerUUID, partner.getId(), partner.getShortName());
+                    }
+                    pos++;
+                }
+            }
+        }
     }
 
     /**

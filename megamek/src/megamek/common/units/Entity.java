@@ -507,8 +507,8 @@ public abstract class Entity extends TurnOrdered
     protected int c3CompanyMasterIndex = LOC_DESTROYED;
     private String c3UUID = null;
     private String c3MasterIsUUID = null;
-    private final String[] c3iUUIDs = new String[MAX_C3i_NODES];
-    private final String[] NC3UUIDs = new String[MAX_C3i_NODES];
+    private String[] c3iUUIDs = new String[MAX_C3i_NODES];
+    private String[] NC3UUIDs = new String[MAX_C3i_NODES];
 
     protected int structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
     protected int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
@@ -6141,7 +6141,6 @@ public abstract class Entity extends TurnOrdered
         } else {
             return getMisc().stream()
                   .filter(Mounted::isOperable)
-                  .filter(m -> !m.curMode().equals("Off"))
                   .anyMatch(m -> m.getType().hasFlag(MiscType.F_NOVA));
         }
     }
@@ -13309,7 +13308,7 @@ public abstract class Entity extends TurnOrdered
                 }
             }
             double rawBonus = totalForceBV * multiplier;
-            // IO p.197: Nova CEWS BV bonus capped at 35% of unit's base BV
+            // IO: Alternate Eras p.183: Nova CEWS BV bonus capped at 35% of unit's base BV
             if (hasNovaCEWS()) {
                 double maxBonus = baseBV * 0.35;
                 rawBonus = Math.min(rawBonus, maxBonus);

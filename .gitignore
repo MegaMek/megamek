@@ -88,3 +88,6 @@ equipment.txt
 # No need to re-commit this folder
 /megamek/data
 units.cache
+/.claude/settings.local.json
+/docs/templates/issue-documentation-template.md
+/docs/templates/pr-description-template.md

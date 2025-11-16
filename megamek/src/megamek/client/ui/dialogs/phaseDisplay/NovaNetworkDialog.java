@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 
 /**
  * Dialog for managing Nova CEWS networks during End Phase.
- * Per IO p.197: "A unit wishing to link with another unit must declare the
+ * Per IO: Alternate Eras p.60: "A unit wishing to link with another unit must declare the
  * connection in the End Phase. Beginning in the next turn, the two units
  * are linked and operate per the rules for C3i."
  *
@@ -267,14 +267,16 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
 
     /**
      * Checks if an entity is currently networked with other units.
+     * An entity is considered networked if at least one other Nova CEWS unit
+     * shares its network ID.
      */
     private boolean isEntityNetworked(Entity entity) {
         String networkId = entity.getC3NetId();
-        if (networkId == null || networkId.equals(entity.getOriginalNovaC3NetId())) {
-            return false; // Using own network ID = unlinked
+        if (networkId == null) {
+            return false;
         }
 
-        // Check if at least one other unit shares this network
+        // Entity is networked if at least one other unit shares this network ID
         return game.getEntitiesVector().stream()
                 .filter(e -> e.hasActiveNovaCEWS())
                 .filter(e -> e.getId() != entity.getId())
@@ -363,22 +365,61 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
             return;
         }
 
-        // Determine target network: Prefer existing network, otherwise use first unit's original network
-        // Find first unit that's already networked (if any)
-        Entity networkedUnit = selectedEntities.stream()
-            .filter(this::isEntityNetworked)
-            .findFirst()
-            .orElse(null);
+        // Determine target network based on selection:
+        // - If ALL selected units share the same network (all networked, same network): Keep that network
+        // - Otherwise (mixed networked/unlinked, different networks, all unlinked): Create new network
+        LOGGER.info("Link action: Analyzing {} selected units", selectedEntities.size());
 
         String targetNetworkId;
-        if (networkedUnit != null) {
-            // Join the existing network
-            targetNetworkId = networkedUnit.getC3NetId();
-            LOGGER.info("Target network ID (from existing network): {}", targetNetworkId);
+        List<String> existingNetworks = selectedEntities.stream()
+            .filter(this::isEntityNetworked)
+            .map(Entity::getC3NetId)
+            .distinct()
+            .collect(Collectors.toList());
+
+        long networkedCount = selectedEntities.stream()
+            .filter(this::isEntityNetworked)
+            .count();
+
+        LOGGER.debug("Selected units breakdown: {} networked, {} unlinked",
+            networkedCount, selectedEntities.size() - networkedCount);
+        LOGGER.debug("Unique networks in selection: {}", existingNetworks);
+
+        // Check if ALL selected units are networked AND in the same network
+        if ((networkedCount == selectedEntities.size()) && (existingNetworks.size() == 1)) {
+            // All selected units are in the same network - preserve it
+            targetNetworkId = existingNetworks.get(0);
+            LOGGER.info("Decision: Preserving existing network (all units from same network): {}", targetNetworkId);
+
+            // Check if this is a no-op (all units already in target network)
+            boolean anyChanges = selectedEntities.stream()
+                .anyMatch(e -> !targetNetworkId.equals(e.getC3NetId()));
+
+            if (!anyChanges) {
+                LOGGER.info("No action needed: All selected units already in network {}", targetNetworkId);
+                showInfo("All selected units are already networked together in " + targetNetworkId + ". No changes made.");
+                return;  // Exit without making changes
+            }
         } else {
-            // All units are unlinked - create new network using first unit's ID
-            targetNetworkId = selectedEntities.get(0).getOriginalNovaC3NetId();
-            LOGGER.info("Target network ID (new network): {}", targetNetworkId);
+            // Mixed selection or different networks - create new network
+            // Find a network ID from selected units that won't include unintended units
+            targetNetworkId = selectedEntities.stream()
+                .map(Entity::getOriginalNovaC3NetId)
+                .filter(netId -> {
+                    // Count how many units (not in selection) currently use this network
+                    long othersUsingNetwork = game.getEntitiesVector().stream()
+                        .filter(entity -> entity.hasActiveNovaCEWS())
+                        .filter(entity -> netId.equals(entity.getC3NetId()))
+                        .filter(entity -> selectedEntities.stream()
+                            .noneMatch(sel -> sel.getId() == entity.getId()))
+                        .count();
+                    return othersUsingNetwork == 0; // No other units using it
+                })
+                .findFirst()
+                .orElse(selectedEntities.get(0).getOriginalNovaC3NetId()); // Fallback
+
+            LOGGER.info("Decision: Creating new network from available ID (mixed selection): {}", targetNetworkId);
+            LOGGER.debug("Selected network ID {} to avoid including unintended units", targetNetworkId);
         }
 
         // Calculate resulting network size
@@ -395,11 +436,11 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         LOGGER.debug("Existing units in network: {}, Selected units: {}, Resulting size: {}",
             existingUnitsInNetwork, selectedEntities.size(), resultingNetworkSize);
 
-        // IO p.197: "link up to two other units" = max 3 total
+        // IO: Alternate Eras p.60: "link up to two other units" = max 3 total
         if (resultingNetworkSize > 3) {
             LOGGER.warn("Link action failed: Resulting network would have {} units (max 3)", resultingNetworkSize);
             showError("Cannot link: Resulting network would have " + resultingNetworkSize +
-                " units. Maximum is 3 units per network (IO p.197).");
+                " units. Maximum is 3 units per network (IO: Alternate Eras p.60).");
             return;
         }
 
@@ -440,13 +481,17 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
             return;
         }
 
-        // Unlink each unit to its own network
+        // Unlink each unit to its own original network
+        // Simple approach: Each unit reverts to its own network (C3Nova.X based on unit ID)
         for (Entity entity : selectedEntities) {
-            String originalNetwork = entity.getOriginalNovaC3NetId();
-            LOGGER.debug("Unlinking entity {} ({}) to original network {}",
-                entity.getId(), entity.getShortName(), originalNetwork);
-            entity.setNewRoundNovaNetworkString(originalNetwork);
-            clientGUI.getClient().sendNovaChange(entity.getId(), originalNetwork);
+            String currentNetworkId = entity.getC3NetId();
+            String targetNetworkId = entity.getOriginalNovaC3NetId();
+
+            LOGGER.info("Unlinking entity {} ({}) from network {} to original network {}",
+                entity.getId(), entity.getShortName(), currentNetworkId, targetNetworkId);
+
+            entity.setNewRoundNovaNetworkString(targetNetworkId);
+            clientGUI.getClient().sendNovaChange(entity.getId(), targetNetworkId);
         }
 
         // Refresh display

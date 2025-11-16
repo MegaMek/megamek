@@ -75,6 +75,7 @@ import megamek.common.weapons.lasers.innerSphere.ISBombastLaser;
 import megamek.common.weapons.lrms.LRTWeapon;
 import megamek.common.weapons.srms.SRTWeapon;
 import megamek.common.weapons.missiles.MRMWeapon;
+import megamek.common.weapons.handlers.ARADEquipmentDetector;
 import megamek.logging.MMLogger;
 
 public class ComputeToHit {
@@ -236,6 +237,14 @@ public class ComputeToHit {
                     (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)) &&
               (munition.contains(AmmoType.Munitions.M_FOLLOW_THE_LEADER) &&
                     !ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition()));
+
+        boolean bARAD = (ammoType != null) &&
+              ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
+                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP) ||
+                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML)) &&
+              munition.contains(AmmoType.Munitions.M_ARAD);
 
         Mounted<?> mLinker = weapon.getLinkedBy();
 
@@ -768,6 +777,7 @@ public class ComputeToHit {
               bArtemisV,
               bFTL,
               bHeatSeeking,
+              bARAD,
               isECMAffected,
               isINarcGuided);
 
@@ -793,13 +803,14 @@ public class ComputeToHit {
      * @param bArtemisV     flag that indicates whether the attacker is using an Artemis V FCS
      * @param bFTL          flag that indicates whether the attacker is using FTL missiles
      * @param bHeatSeeking  flag that indicates whether the attacker is using Heat Seeking missiles
+     * @param bARAD         flag that indicates whether the attacker is using ARAD missiles
      * @param isECMAffected flag that indicates whether the target is inside an ECM bubble
      * @param isINarcGuided flag that indicates whether the target is broadcasting an iNarc beacon
      */
     private static ToHitData compileAmmoToHitMods(Game game, Entity ae, Targetable target, int targetType,
           ToHitData toHit, WeaponType weaponType, Mounted<?> weapon, AmmoType ammoType,
           EnumSet<AmmoType.Munitions> munition, boolean bApollo, boolean bArtemisV, boolean bFTL, boolean bHeatSeeking,
-          boolean isECMAffected, boolean isINarcGuided) {
+          boolean bARAD, boolean isECMAffected, boolean isINarcGuided) {
         if (ae == null || ammoType == null) {
             // Can't calculate ammo mods without valid ammo and an attacker to fire it
             return toHit;
@@ -904,6 +915,22 @@ public class ComputeToHit {
             // +2 penalty if shooting into or through a burning hex
             if (target != null && LosEffects.hasFireBetween(ae.getBoardLocation(), target.getBoardLocation(), game)) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.HsmThruFire"));
+            }
+        }
+
+        // ARAD (Anti-Radiation) Missiles
+        if (bARAD && (te != null)) {
+            int friendlyTeam = ae.getOwner().getTeam();
+            boolean hasElectronics = ARADEquipmentDetector.targetHasQualifyingElectronics(te, friendlyTeam);
+
+            if (hasElectronics) {
+                // -1 bonus vs targets with electronics
+                toHit.addModifier(-1,
+                      ammoType.getSubMunitionName() + Messages.getString("WeaponAttackAction.AmmoMod"));
+            } else {
+                // +2 penalty vs targets without electronics
+                toHit.addModifier(2,
+                      ammoType.getSubMunitionName() + Messages.getString("WeaponAttackAction.AmmoMod"));
             }
         }
 

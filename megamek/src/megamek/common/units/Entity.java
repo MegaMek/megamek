@@ -6231,11 +6231,13 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Switches the C3 network ID to the new network ID.
+     * Clears the pending change after applying it.
      */
     public void newRoundNovaNetSwitch() {
-        if (hasNovaCEWS()) {
+        if (hasNovaCEWS() && (newC3NetIdString != null)) {
             // FIXME: no check for network limit of 3 units
             c3NetIdString = newC3NetIdString;
+            newC3NetIdString = null; // Clear pending change after applying
         }
     }
 
@@ -6252,12 +6254,9 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return C3 network id that will be switched to on the next turn.
+     * @return C3 network id that will be switched to on the next turn, or null if no change is pending.
      */
     public String getNewRoundNovaNetworkString() {
-        if ((newC3NetIdString == null) || newC3NetIdString.isEmpty()) {
-            newC3NetIdString = getOriginalNovaC3NetId();
-        }
         return newC3NetIdString;
     }
 

@@ -240,7 +240,8 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
 
         if (isEntityNetworked(entity)) {
             int networkSize = getNetworkSize(currentNetwork);
-            sb.append(" [Network: ").append(currentNetwork);
+            String networkMembers = getNetworkMembersDisplay(entity, currentNetwork);
+            sb.append(" [Network: ").append(networkMembers);
             sb.append(" (").append(networkSize).append("/3)]");
         } else {
             sb.append(" [Unlinked]");
@@ -252,7 +253,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
             if (pendingNetwork.equals(entity.getOriginalNovaC3NetId())) {
                 sb.append("Unlinked");
             } else {
-                sb.append(pendingNetwork);
+                sb.append(getNetworkMembersDisplay(entity, pendingNetwork));
             }
             sb.append("]");
         }
@@ -291,6 +292,35 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
                 .filter(e -> e.hasActiveNovaCEWS())
                 .filter(e -> networkId.equals(e.getC3NetId()))
                 .count();
+    }
+
+    /**
+     * Gets a human-readable display of network members (excluding the current entity).
+     * Returns a comma-separated list of IDs like "ID2, ID3" or "No other members".
+     */
+    private String getNetworkMembersDisplay(Entity currentEntity, String networkId) {
+        if (networkId == null) {
+            return "Unknown network";
+        }
+
+        // Find all OTHER entities in the same network
+        List<String> memberIds = new ArrayList<>();
+        for (Entity entity : game.getEntitiesVector()) {
+            // Skip self
+            if (entity.getId() == currentEntity.getId()) {
+                continue;
+            }
+            // Check if in same network
+            if (entity.hasNovaCEWS() && networkId.equals(entity.getC3NetId())) {
+                memberIds.add("ID" + entity.getId());
+            }
+        }
+
+        if (memberIds.isEmpty()) {
+            return "No other members";
+        } else {
+            return String.join(", ", memberIds);
+        }
     }
 
     /**

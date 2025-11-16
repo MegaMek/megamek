@@ -6147,10 +6147,13 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return True if this unit has a Nova CEWS that is operable (not destroyed/breached).
-     *         Does NOT check shutdown or offboard status - use hasActiveNovaCEWS() for communication checks.
+     * @return True if this unit has a Nova CEWS that can network (not destroyed/breached, not shutdown, not offboard).
+     *         Does NOT check ECM mode - networking works regardless of Off/ECM mode setting.
      */
     public boolean hasNovaCEWS() {
+        if (isShutDown() || isOffBoard()) {
+            return false;
+        }
         return getMisc().stream().filter(Mounted::isOperable).anyMatch(m -> m.getType().hasFlag(MiscType.F_NOVA));
     }
 

@@ -205,6 +205,9 @@ public class ARADEquipmentDetector {
     /**
      * Checks if target has active ECM suite.
      *
+     * ECM equipment qualifies regardless of mode (ECM/ECCM/Ghost Targets).
+     * The ECM field blocking effect is handled separately in cluster calculation.
+     *
      * @param target The entity to check
      * @return true if entity has functional ECM
      */
@@ -214,7 +217,8 @@ public class ARADEquipmentDetector {
         }
 
         // Verify at least one ECM suite is functional and powered
-        for (Mounted<?> equipment : target.getEquipment()) {
+        // Use getMisc() instead of getEquipment() to match Entity.hasECM() behavior
+        for (Mounted<?> equipment : target.getMisc()) {
             if (equipment.getType().hasFlag(MiscType.F_ECM) &&
                 isValidEquipment(equipment)) {
                 return true;

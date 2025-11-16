@@ -185,9 +185,11 @@ public class NovaCEWSNetworkTest {
         entity2.setC3NetIdSelf();
         entity3.setC3NetIdSelf();
 
-        // Verify network IDs are now different
-        assertNotEquals(originalNetworkId, entity1.getC3NetId(),
-            "Network ID should be reset after setC3NetIdSelf()");
+        // Verify each entity now has its own unique network ID
+        assertNotEquals(entity1.getC3NetId(), entity2.getC3NetId(),
+            "Entity 1 and Entity 2 should have different network IDs after setC3NetIdSelf()");
+        assertNotEquals(entity1.getC3NetId(), entity3.getC3NetId(),
+            "Entity 1 and Entity 3 should have different network IDs after setC3NetIdSelf()");
 
         // Step 3: Call wireC3() to reconstruct network (simulates client-side processing)
         C3Util.wireC3(game, entity1);
@@ -218,7 +220,10 @@ public class NovaCEWSNetworkTest {
         assertNull(entity1.getNC3NextUUIDAsString(1),
             "Entity 1 should have null at position 1 (only 1 partner)");
 
-        // Reconfigure to 3-unit network
+        // Disconnect entity2 from the network before reconfiguring
+        C3Util.disconnectFromNetwork(game, Arrays.asList(entity2));
+
+        // Reconfigure to 3-unit network (entity1, entity3, entity4)
         List<Entity> newNetwork = Arrays.asList(entity1, entity3, entity4);
         C3Util.joinNh(game, newNetwork, entity1.getId(), true);
 

@@ -6133,7 +6133,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return True if this unit is not off board nor shutdown and has a Nova CEWS that is not offline.
+     * @return True if this unit has an active Nova CEWS that can communicate.
+     *         Returns false if the unit is shutdown, off board, or the Nova CEWS is inoperable/offline.
      */
     public boolean hasActiveNovaCEWS() {
         if (isShutDown() || isOffBoard()) {
@@ -6146,7 +6147,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return True if this unit is not off board nor shutdown and has a Nova CEWS that is not offline.
+     * @return True if this unit has a Nova CEWS that is operable (not destroyed/breached).
+     *         Does NOT check shutdown or offboard status - use hasActiveNovaCEWS() for communication checks.
      */
     public boolean hasNovaCEWS() {
         return getMisc().stream().filter(Mounted::isOperable).anyMatch(m -> m.getType().hasFlag(MiscType.F_NOVA));

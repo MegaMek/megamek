@@ -397,7 +397,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
 
             if (!anyChanges) {
                 LOGGER.info("No action needed: All selected units already in network {}", targetNetworkId);
-                showInfo("All selected units are already networked together in " + targetNetworkId + ". No changes made.");
+                showInfo(Messages.getString("NovaNetworkDialog.info.alreadyNetworked", targetNetworkId));
                 return;  // Exit without making changes
             }
         } else {

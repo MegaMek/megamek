@@ -47,10 +47,13 @@ import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ReportDisplay extends StatusBarPhaseDisplay {
     @Serial
     private static final long serialVersionUID = 6185643976857892270L;
+    private static final Logger LOGGER = LogManager.getLogger();
 
     public enum ReportCommand implements PhaseCommand {
         REPORT_REPORT("reportReport"),
@@ -289,10 +292,10 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
      * Shows the Nova CEWS network management dialog.
      */
     private void showNovaNetworkDialog() {
-        System.out.println("[NOVA] Opening Nova CEWS Network Management Dialog");
+        LOGGER.debug("Opening Nova CEWS Network Management Dialog");
         NovaNetworkDialog dialog = new NovaNetworkDialog(clientgui.getFrame(), clientgui);
         dialog.setVisible(true);
-        System.out.println("[NOVA] Dialog closed");
+        LOGGER.debug("Nova CEWS Network Management Dialog closed");
     }
 
     /**

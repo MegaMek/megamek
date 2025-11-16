@@ -3375,7 +3375,7 @@ public final class BoardView extends AbstractBoardView
               == entity.getId()));
 
         // Update C3 link, if necessary
-        if (entity.hasC3() || entity.hasC3i() || entity.hasNovaCEWS() || entity.hasNavalC3()) {
+        if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3()) {
             addC3Link(entity);
         }
 
@@ -3946,7 +3946,7 @@ public final class BoardView extends AbstractBoardView
                     c3Sprites.add(new C3Sprite(this, entity, entity1));
                 }
             }
-        } else if (entity.hasNovaCEWS()) {
+        } else if (entity.hasActiveNovaCEWS()) {
             // WOR Nova CEWS
             for (Entity entity1 : game.getEntitiesVector()) {
                 if (entity1.getPosition() == null) {

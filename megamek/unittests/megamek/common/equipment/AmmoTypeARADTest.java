@@ -21,6 +21,7 @@ package megamek.common.equipment;
 import megamek.common.TechAdvancement;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.TechConstants;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -37,6 +38,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 2025-01-16
  */
 public class AmmoTypeARADTest {
+
+    @BeforeAll
+    static void initializeEquipment() {
+        EquipmentType.initializeTypes();
+    }
 
     @Test
     void testARADMunitionEnumExists() {

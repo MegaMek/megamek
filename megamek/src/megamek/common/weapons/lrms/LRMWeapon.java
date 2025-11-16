@@ -50,6 +50,7 @@ import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.MissileMineClearanceHandler;
 import megamek.common.weapons.handlers.lrm.LRMAntiTSMHandler;
+import megamek.common.weapons.handlers.lrm.LRMARADHandler;
 import megamek.common.weapons.handlers.lrm.LRMDeadFireHandler;
 import megamek.common.weapons.handlers.lrm.LRMFollowTheLeaderHandler;
 import megamek.common.weapons.handlers.lrm.LRMFragHandler;
@@ -171,6 +172,9 @@ public abstract class LRMWeapon extends MissileWeapon {
             }
             if (atype.getMunitionType().contains(AmmoType.Munitions.M_MINE_CLEARANCE)) {
                 return new MissileMineClearanceHandler(toHit, waa, game, manager);
+            }
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_ARAD)) {
+                return new LRMARADHandler(toHit, waa, game, manager);
             }
             return new LRMHandler(toHit, waa, game, manager);
         } catch (EntityLoadingException ignored) {

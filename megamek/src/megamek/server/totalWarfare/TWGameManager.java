@@ -5252,8 +5252,8 @@ public class TWGameManager extends AbstractGameManager {
                     // destruction (of DropShips and larger) is assured.
                     // Reasons: crew incapacitated, ship shut down, engines destroyed prior to this turn.
                     destroyDropShip = true;
-                    canCrashLand = false;
                 }
+                canCrashLand = false;
             }
 
             // 2. Check if there is space available to land; if not, they will crash
@@ -5267,9 +5267,6 @@ public class TWGameManager extends AbstractGameManager {
             // Also update 'c' to represent final position.
             entity.setPosition(finalPosition, true);
             c = finalPosition;
-
-            // Technically bring to a halt; actual landing is handled above.
-            ((IAero) entity).land();
 
             // Check if still on board
             if (board.contains(c) && board.contains(finalPosition)) {
@@ -5351,10 +5348,14 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
         }
+
         // Units with velocity zero are treated like that had velocity two
         if (vel < 1) {
             vel = 2;
         }
+
+        // Technically bring to a halt; actual landing is handled above.
+        ((IAero) entity).land();
 
         // deal crash damage only once; if entity already crash-landed, don't damage it again.
         boolean damageDealt = crashLanded;

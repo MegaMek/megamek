@@ -23,6 +23,8 @@ import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.units.BipedMek;
+import megamek.common.units.Crew;
+import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
 import megamek.common.util.C3Util;
 import org.junit.jupiter.api.BeforeAll;
@@ -62,6 +64,9 @@ public class NovaCEWSNetworkTest {
     void setUp() {
         game = new Game();
 
+        // CRITICAL: Add a player to the game (entities need owners for BV calculation)
+        game.addPlayer(0, new megamek.common.Player(0, "Test Player"));
+
         // Create test entities with Nova CEWS
         entity1 = createNovaCEWSEntity(1, "Unit 1");
         entity2 = createNovaCEWSEntity(2, "Unit 2");
@@ -84,6 +89,17 @@ public class NovaCEWSNetworkTest {
         entity.setId(id);
         entity.setChassis(name);
         entity.setModel("");
+
+        // CRITICAL FIX: Initialize crew to avoid NullPointerException when adding to game
+        Crew crew = new Crew(CrewType.SINGLE);
+        entity.setCrew(crew);
+
+        // CRITICAL FIX: Set owner (required for BV calculation in getExtraC3BV)
+        entity.setOwner(game.getPlayer(0));
+
+        // Set basic properties required by game
+        entity.setWeight(50.0);
+        entity.setOriginalWalkMP(5);
 
         // Add Nova CEWS equipment
         try {

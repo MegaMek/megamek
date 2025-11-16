@@ -33,6 +33,7 @@
  */
 package megamek.client.ui.dialogs.customMek;
 
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.Serial;
 import java.util.ArrayList;
@@ -41,12 +42,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.DialogOptionListener;
+import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.panels.DialogOptionComponentYPanel;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
@@ -73,6 +78,10 @@ public class QuirksPanel extends JPanel {
     private final boolean editable;
     private final DialogOptionListener parent;
 
+    private JPanel positiveQuirksPanel;
+    private JPanel negativeQuirksPanel;
+    private JPanel weaponQuirksPanel;
+
     public QuirksPanel(Entity entity, Quirks quirks, boolean editable, DialogOptionListener parent,
           HashMap<Integer, WeaponQuirks> h_wpnQuirks) {
         this.entity = entity;
@@ -91,29 +100,54 @@ public class QuirksPanel extends JPanel {
             h_wpnQuirkComps.put(eqNum, new ArrayList<>());
         }
 
+        // Create positive quirks panel
+        positiveQuirksPanel = createTopAlignedPanel();
+        positiveQuirksPanel.setBorder(BorderFactory.createTitledBorder("Chassis Quirks (Positive)"));
+
+        // Create negative quirks panel
+        negativeQuirksPanel = createTopAlignedPanel();
+        negativeQuirksPanel.setBorder(BorderFactory.createTitledBorder("Chassis Quirks (Negative)"));
+
+        // Process chassis quirks and separate into positive/negative
         for (Enumeration<IOptionGroup> i = quirks.getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
-            add(new JLabel(group.getDisplayableName()), GBC.eol());
+            boolean isPositive = Quirks.POS_QUIRKS.equals(group.getKey());
+            boolean isNegative = Quirks.NEG_QUIRKS.equals(group.getKey());
 
-            for (Enumeration<IOption> j = group.getSortedOptions(); j.hasMoreElements(); ) {
-                IOption option = j.nextElement();
+            if (isPositive || isNegative) {
+                JPanel targetPanel = isPositive ? positiveQuirksPanel : negativeQuirksPanel;
+                targetPanel.add(new JLabel(group.getDisplayableName()), GBC.eol());
 
-                if (null == option || Quirks.isQuirkDisallowed(option, entity)) {
-                    continue;
+                for (Enumeration<IOption> j = group.getSortedOptions(); j.hasMoreElements(); ) {
+                    IOption option = j.nextElement();
+
+                    if (null == option || Quirks.isQuirkDisallowed(option, entity)) {
+                        continue;
+                    }
+
+                    addQuirk(option, editable, targetPanel);
                 }
-
-                addQuirk(option, editable);
             }
         }
 
-        // now for weapon quirks
+        // Add vertical glue to push content to top
+        positiveQuirksPanel.add(Box.createVerticalGlue(),
+            GBC.eol().weighty(1.0).fill(GridBagConstraints.VERTICAL));
+        negativeQuirksPanel.add(Box.createVerticalGlue(),
+            GBC.eol().weighty(1.0).fill(GridBagConstraints.VERTICAL));
+
+        // Create weapon quirks panel
+        weaponQuirksPanel = createTopAlignedPanel();
+        weaponQuirksPanel.setBorder(BorderFactory.createTitledBorder("Weapon Quirks"));
+
+        // Process weapon quirks
         Set<Integer> set = h_wpnQuirks.keySet();
         for (int key : set) {
             Mounted<?> m = entity.getEquipment(key);
             WeaponQuirks wpnQuirks = h_wpnQuirks.get(key);
             JLabel labWpn = new JLabel(m.getName() + " ("
                   + entity.getLocationName(m.getLocation()) + ")");
-            add(labWpn, GBC.eol());
+            weaponQuirksPanel.add(labWpn, GBC.eol());
             for (Enumeration<IOptionGroup> i = wpnQuirks.getGroups(); i.hasMoreElements(); ) {
                 IOptionGroup group = i.nextElement();
                 for (Enumeration<IOption> j = group.getSortedOptions(); j.hasMoreElements(); ) {
@@ -126,21 +160,53 @@ public class QuirksPanel extends JPanel {
             }
         }
 
+        // Add vertical glue to weapon panel
+        weaponQuirksPanel.add(Box.createVerticalGlue(),
+            GBC.eol().weighty(1.0).fill(GridBagConstraints.VERTICAL));
+
+        // Wrap panels in scroll panes
+        JScrollPane positiveScrollPane = new JScrollPane(positiveQuirksPanel);
+        positiveScrollPane.setBorder(null);
+        JScrollPane negativeScrollPane = new JScrollPane(negativeQuirksPanel);
+        negativeScrollPane.setBorder(null);
+        JScrollPane weaponScrollPane = new JScrollPane(weaponQuirksPanel);
+        weaponScrollPane.setBorder(null);
+
+        // Create nested split panes for three-way split
+        JSplitPane leftSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+            positiveScrollPane, negativeScrollPane);
+        leftSplitPane.setResizeWeight(0.5);
+        leftSplitPane.setDividerLocation(0.5);
+
+        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+            leftSplitPane, weaponScrollPane);
+        mainSplitPane.setResizeWeight(0.67);
+        mainSplitPane.setDividerLocation(0.67);
+
+        // Add the split pane to the main panel
+        setLayout(new GridBagLayout());
+        add(mainSplitPane, GBC.eol().fill().weightX(1.0).weighty(1.0));
+
         validate();
     }
 
-    private void addQuirk(IOption option, boolean editable) {
+    private JPanel createTopAlignedPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        return panel;
+    }
+
+    private void addQuirk(IOption option, boolean editable, JPanel targetPanel) {
         DialogOptionComponentYPanel optionComp = new DialogOptionComponentYPanel(parent, option, editable);
-        add(optionComp, GBC.eol());
+        targetPanel.add(optionComp, GBC.eol());
         quirkComps.add(optionComp);
     }
 
     private void addWeaponQuirk(int key, IOption option, boolean editable) {
         DialogOptionComponentYPanel optionComp = new DialogOptionComponentYPanel(parent, option, editable);
         JPanel indentPanel = new JPanel(new GridBagLayout());
-        indentPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
+        indentPanel.setBorder(BorderFactory.createEmptyBorder(0, UIUtil.scaleForGUI(20), 0, 0));
         indentPanel.add(optionComp, GBC.eol());
-        add(indentPanel, GBC.eol());
+        weaponQuirksPanel.add(indentPanel, GBC.eol());
         h_wpnQuirkComps.get(key).add(optionComp);
     }
 

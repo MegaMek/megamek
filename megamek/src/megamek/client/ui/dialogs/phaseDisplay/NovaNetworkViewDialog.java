@@ -217,14 +217,21 @@ public class NovaNetworkViewDialog extends JDialog implements ActionListener {
     }
 
     /**
-     * Checks if an entity is currently networked.
+     * Checks if an entity is currently networked with other units.
+     * An entity is considered networked if at least one other Nova CEWS unit
+     * shares its network ID.
      */
     private boolean isEntityNetworked(Entity entity) {
         String networkId = entity.getC3NetId();
-        String originalId = entity.getOriginalNovaC3NetId();
+        if (networkId == null) {
+            return false;
+        }
 
-        // Networked if network ID differs from original solo ID
-        return networkId != null && !networkId.equals(originalId);
+        // Entity is networked if at least one other unit shares this network ID
+        return game.getEntitiesVector().stream()
+                .filter(e -> e.hasNovaCEWS())
+                .filter(e -> e.getId() != entity.getId())
+                .anyMatch(e -> networkId.equals(e.getC3NetId()));
     }
 
     /**

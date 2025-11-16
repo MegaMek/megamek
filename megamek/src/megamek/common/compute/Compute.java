@@ -1497,7 +1497,7 @@ public class Compute {
 
         if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
             // PLAYTEST3 check ecm vs non ecm affected C3
-            if (c3range > c3ecmRange) {
+            if ( (c3range > c3ecmRange) && (c3range > range) ) {
                 usingRange = c3ecmRange;
             } else if (range > c3range) {
                 usingRange = c3range;

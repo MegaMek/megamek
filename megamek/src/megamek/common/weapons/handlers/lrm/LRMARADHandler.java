@@ -34,16 +34,13 @@ import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * Weapon handler for ARAD (Anti-Radiation) LRM missiles.
- *
  * ARAD missiles receive cluster bonuses against targets with active electronics,
  * and penalties against targets without electronics. ECM can block the bonus
  * unless the target is Narc-tagged (Narc overrides ECM).
- *
  * Cluster Modifiers:
  * - +1 against targets with qualifying electronics (unless blocked by ECM)
  * - 0 if target has electronics but ECM blocks (and no Narc override)
  * - -2 against targets without electronics (minimum 2 hits enforced by engine)
- *
  * Rules Reference: Tactical Operations: Advanced Units & Equipment, p.180
  *
  * @author MegaMek Team
@@ -60,7 +57,6 @@ public class LRMARADHandler extends LRMHandler {
 
     /**
      * Calculate ARAD cluster modifier based on target electronics and ECM status.
-     *
      * Logic:
      * 1. Check if target is an Entity (only Entities have electronics)
      * 2. Check if target has qualifying electronics (via ARADEquipmentDetector)
@@ -115,7 +111,6 @@ public class LRMARADHandler extends LRMHandler {
 
     /**
      * Override calcHits() to add ARAD-specific report messages for cluster modifiers.
-     *
      * This method adds visible feedback to players about ARAD cluster modifier state:
      * - Report 3363: ECM blocked bonus
      * - Report 3364: Narc override (bonus despite ECM)

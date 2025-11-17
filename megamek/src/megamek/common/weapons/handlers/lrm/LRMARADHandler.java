@@ -19,10 +19,9 @@
 package megamek.common.weapons.handlers.lrm;
 
 import java.io.Serial;
+import java.util.Vector;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.ComputeECM;
@@ -51,8 +50,6 @@ import megamek.server.totalWarfare.TWGameManager;
  * @since 2025-01-16
  */
 public class LRMARADHandler extends LRMHandler {
-    private static final Logger LOGGER = LogManager.getLogger();
-
     @Serial
     private static final long serialVersionUID = -8675309867530986753L;
 
@@ -77,12 +74,8 @@ public class LRMARADHandler extends LRMHandler {
      */
     @Override
     public int getSalvoBonus() {
-        LOGGER.debug("ARAD getSalvoBonus() called - attacker: {}, target: {}",
-                attackingEntity.getDisplayName(), target.getDisplayName());
-
         // Only Entities can have electronics
         if (target.getTargetType() != Targetable.TYPE_ENTITY) {
-            LOGGER.debug("ARAD: Target is not an entity, returning -2");
             return -2;  // Non-entity targets have no electronics
         }
 
@@ -92,16 +85,12 @@ public class LRMARADHandler extends LRMHandler {
         // Check if target has qualifying electronics
         boolean hasElectronics = ARADEquipmentDetector.targetHasQualifyingElectronics(
                 entityTarget, friendlyTeam);
-        LOGGER.debug("ARAD: Target has electronics: {}", hasElectronics);
 
         if (hasElectronics) {
             // Target has electronics - check for ECM interference
 
             // Narc-tagged targets ALWAYS get bonus (Narc overrides ECM)
-            boolean isNarcTagged = ARADEquipmentDetector.isNarcTagged(entityTarget, friendlyTeam);
-            LOGGER.debug("ARAD: Target is Narc-tagged: {}", isNarcTagged);
-            if (isNarcTagged) {
-                LOGGER.debug("ARAD: Narc override - returning +1");
+            if (ARADEquipmentDetector.isNarcTagged(entityTarget, friendlyTeam)) {
                 return +1;  // Narc overrides ECM
             }
 
@@ -111,20 +100,79 @@ public class LRMARADHandler extends LRMHandler {
                     attackingEntity,
                     attackingEntity.getPosition(),
                     target.getPosition());
-            LOGGER.debug("ARAD: Flight path ECM-affected: {}", isECMAffected);
 
             if (isECMAffected) {
-                LOGGER.debug("ARAD: ECM blocking - returning 0");
                 return 0;  // ECM blocks bonus (but no penalty)
             }
 
             // Target has electronics, no ECM interference
-            LOGGER.debug("ARAD: Electronics, no ECM - returning +1");
             return +1;  // Standard ARAD bonus
         } else {
             // Target has NO electronics
-            LOGGER.debug("ARAD: No electronics - returning -2");
             return -2;  // ARAD penalty (minimum 2 hits enforced by Compute.missilesHit)
         }
+    }
+
+    /**
+     * Override calcHits() to add ARAD-specific report messages for cluster modifiers.
+     *
+     * This method adds visible feedback to players about ARAD cluster modifier state:
+     * - Report 3363: ECM blocked bonus
+     * - Report 3364: Narc override (bonus despite ECM)
+     * - Report 3368: No electronics penalty
+     *
+     * @param vPhaseReport Vector to collect report messages
+     * @return Number of missiles that hit
+     */
+    @Override
+    protected int calcHits(Vector<Report> vPhaseReport) {
+        // Call parent to calculate hits using our getSalvoBonus()
+        int hits = super.calcHits(vPhaseReport);
+
+        // Add ARAD-specific reporting based on cluster modifier state
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            Entity entityTarget = (Entity) target;
+            int friendlyTeam = attackingEntity.getOwner().getTeam();
+
+            boolean hasElectronics = ARADEquipmentDetector.targetHasQualifyingElectronics(
+                    entityTarget, friendlyTeam);
+
+            if (hasElectronics) {
+                boolean isNarcTagged = ARADEquipmentDetector.isNarcTagged(entityTarget, friendlyTeam);
+                boolean isECMAffected = ComputeECM.isAffectedByECM(
+                        attackingEntity,
+                        attackingEntity.getPosition(),
+                        target.getPosition());
+
+                if (isECMAffected && !isNarcTagged) {
+                    // ECM blocked bonus (Report 3363)
+                    Report r = new Report(3363);
+                    r.subject = subjectId;
+                    r.newlines = 0;
+                    vPhaseReport.addElement(r);
+                } else if (isNarcTagged && isECMAffected) {
+                    // Narc override (Report 3364) - bonus applied despite ECM
+                    Report r = new Report(3364);
+                    r.subject = subjectId;
+                    r.newlines = 0;
+                    vPhaseReport.addElement(r);
+                }
+                // Note: Normal +1 bonus case handled by parent's modifier reporting
+            } else {
+                // No electronics - penalty applied (Report 3368)
+                Report r = new Report(3368);
+                r.subject = subjectId;
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            }
+        } else {
+            // Non-entity target (buildings, hexes) - penalty (Report 3368)
+            Report r = new Report(3368);
+            r.subject = subjectId;
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+        }
+
+        return hits;
     }
 }

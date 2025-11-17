@@ -3148,6 +3148,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
                 if (cargo == null) {
                     logger.error("No cargo to drop at location {}", cargoLocation);
+                    return;
                 }
 
                 entity.dropCarriedObject(cargo, isLastStep);

@@ -3182,7 +3182,7 @@ public abstract class Entity extends TurnOrdered
         }
         for (Transporter transporter : getTransports()) {
             if (transporter instanceof ExternalCargo externalCargo && cargo instanceof Entity cargoEntity) {
-                if (externalCargo.canLoad(cargoEntity) && getTransports().contains(transporter)) {
+                if (externalCargo.canLoad(cargoEntity)) {
                     // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly
                     //  load into that transporter.
                     locationMap.put(transporter.getType() + " " + getTransports().indexOf(transporter),
@@ -3214,8 +3214,7 @@ public abstract class Entity extends TurnOrdered
         }
         for (Transporter transporter : getTransports()) {
             if (transporter instanceof ExternalCargo externalCargo
-                  && !externalCargo.getCarryables().isEmpty()
-                  && getTransports().contains(transporter)) {
+                  && !externalCargo.getCarryables().isEmpty()) {
                 // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly load into
                 //  that transporter.
                 locationMap.put(transporter.getType() + " " + externalCargo.getCarryables().get(0).toString(),

@@ -325,7 +325,7 @@ public abstract class ExternalCargo implements Transporter {
      * transporter doesn't have an entity, let's set it. Tries to set entityId as well but the entity might not have
      * that if the entity doesn't have a game yet.
      *
-     * @param entity
+     * @param entity the entity to associate with this transporter
      */
     public void setEntity(Entity entity) {
         if (this.entity == null) {

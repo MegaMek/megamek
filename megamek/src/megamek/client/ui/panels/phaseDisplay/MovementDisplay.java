@@ -2963,8 +2963,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
               && currentlySelectedEntity.getTransports()
               .stream()
               .filter(t -> t instanceof ExternalCargo)
-              .map(t -> ((ExternalCargo) t).getCarryables().toArray(ICarryable[]::new))
-              .flatMap(Arrays::stream)
+              .flatMap(t -> ((ExternalCargo) t).getCarryables().stream())
               .toList().isEmpty())) {
             setDropCargoEnabled(false);
             return;
@@ -5682,7 +5681,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 return null;
             }
         } else if (locationMap.size() == 1) {
-            pickupLocation = locationMap.get(locationMap.keySet().toArray()[0]);
+            pickupLocation = locationMap.get(locationMap.keySet().iterator().next());
         }
 
         return pickupLocation;

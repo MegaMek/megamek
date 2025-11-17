@@ -93,7 +93,7 @@ public class LiftHoist extends ExternalCargo {
 
     /**
      * Determines if this object can accept the given {@link ICarryable}. The carryable may not be of the appropriate
-     * type or there may be room for the unit.
+     * type or there may be no room for the unit.
      *
      * @param carryable the {@link ICarryable} to be loaded
      *

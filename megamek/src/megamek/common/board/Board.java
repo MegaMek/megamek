@@ -60,6 +60,7 @@ import megamek.common.event.board.BoardListener;
 import megamek.common.hexArea.HexArea;
 import megamek.common.loaders.MapSettings;
 import megamek.common.units.Building;
+import megamek.common.units.BuildingTerrain;
 import megamek.common.units.Entity;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
@@ -356,7 +357,7 @@ public class Board implements Serializable {
 
                         // Nope. Try to create an object for the new building.
                         try {
-                            Building bldg = new Building(coords, this, Terrains.BUILDING,
+                            Building bldg = new BuildingTerrain(coords, this, Terrains.BUILDING,
                                   BasementType.getType(curHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
                             buildings.addElement(bldg);
 
@@ -410,7 +411,7 @@ public class Board implements Serializable {
                     if (!bldgByCoords.containsKey(coords)) {
                         // Nope. Try to create an object for the new building.
                         try {
-                            Building bldg = new Building(coords, this, Terrains.BRIDGE, BasementType.NONE);
+                            Building bldg = new BuildingTerrain(coords, this, Terrains.BRIDGE, BasementType.NONE);
                             buildings.addElement(bldg);
 
                             // Each building will identify the hexes it covers.
@@ -1552,7 +1553,6 @@ public class Board implements Serializable {
      * <code>bldgByCoords</code> member.
      *
      * @param in the <code>ObjectInputStream</code> to read.
-     *
      */
     @Serial
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -1590,7 +1590,6 @@ public class Board implements Serializable {
      * minimap being redrawn. This is public as the boards and minimaps show some data that is not part of the Board
      * class and Board has no way of knowing when a change happens. An example of this is arty auto hexes which are
      * stored in the player class
-     *
      */
     public void processBoardEvent(BoardEvent event) {
         if (boardListeners == null) {

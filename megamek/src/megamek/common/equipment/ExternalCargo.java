@@ -68,6 +68,11 @@ public abstract class ExternalCargo implements Transporter {
         this.validPickupLocations = validPickupLocations;
     }
 
+    /**
+     * If this specific transporter is capable of loading regardless of what the object is.
+     *
+     * @return <code>true</code> if the transporter is capable of loading, <code>false</code> otherwise.
+     */
     protected boolean canLoad() {
         return true;
     }
@@ -86,6 +91,14 @@ public abstract class ExternalCargo implements Transporter {
         return canLoadCarryable(unit);
     }
 
+    /**
+     * Determines if this object can accept the given {@link ICarryable}. The carryable may not be of the appropriate
+     * type or there may be room for the unit.
+     *
+     * @param carryable the {@link ICarryable} to be loaded
+     *
+     * @return <code>true</code> if the carryable can be loaded, <code>false</code> otherwise.
+     */
     public boolean canLoadCarryable(ICarryable carryable) {
         return canLoad() && getUnused() >= carryable.getTonnage();
     }
@@ -102,6 +115,14 @@ public abstract class ExternalCargo implements Transporter {
         loadCarryable(unit);
     }
 
+
+    /**
+     * Load the given carryable into the given location
+     *
+     * @param carryable the {@link ICarryable} to be loaded
+     *
+     * @throws IllegalArgumentException If the unit can't be loaded
+     */
     public void loadCarryable(ICarryable carryable) throws IllegalArgumentException {
         if (validPickupLocations.isEmpty()) {
             throw new IllegalArgumentException("No valid locations for " + carryable.specificName());
@@ -109,6 +130,14 @@ public abstract class ExternalCargo implements Transporter {
         loadCarryable(carryable, validPickupLocations.get(0));
     }
 
+    /**
+     * Load the given carryable into the given location
+     *
+     * @param carryable the {@link ICarryable} to be loaded
+     * @param location  the location it should be loaded into
+     *
+     * @throws IllegalArgumentException If the unit can't be loaded
+     */
     public void loadCarryable(ICarryable carryable, int location) throws IllegalArgumentException {
         if (!validPickupLocations.contains(location)) {
             throw new IllegalArgumentException("Invalid location for " + carryable.specificName());
@@ -259,10 +288,17 @@ public abstract class ExternalCargo implements Transporter {
     public void setGame(Game game) {
         this.game = game;
         if (entity != null) {
+            // If the entity isn't null, we should make sure we have its latest entityId stored in-case this class is
+            // serialized.
             entityId = entity.getId();
         } else if (entityId != Entity.NONE) {
+            // If the entity is null, but we have an entityId (such as after being serialized and deserialized) we
+            // should set the actual entity again.
             entity = game.getEntity(entityId);
         } else {
+            // If both the entity and entityId are null, something might be wrong. If the ExternalCargo is missing
+            // both of those then the transporter probably needs setEntity to be called first. This shouldn't be
+            // happening though, so let's log it as a warning for now, just in case it somehow does.
             logger.warn("External Cargo has no entity or entityId");
         }
     }
@@ -284,6 +320,13 @@ public abstract class ExternalCargo implements Transporter {
         carriedObjects.computeIfAbsent(location, k -> new ArrayList<>()).add(carryable);
     }
 
+    /**
+     * External cargo transporters often need to get information about the entity, like if its TSM is active. If this
+     * transporter doesn't have an entity, let's set it. Tries to set entityId as well but the entity might not have
+     * that if the entity doesn't have a game yet.
+     *
+     * @param entity
+     */
     public void setEntity(Entity entity) {
         if (this.entity == null) {
             this.entity = entity;

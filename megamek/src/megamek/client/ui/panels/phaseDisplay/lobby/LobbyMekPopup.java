@@ -400,6 +400,7 @@ class LobbyMekPopup {
                           JMenu loaderMenu = new JMenu("<HTML>" + e.getShortNameRaw() + idString(game, e.getId()));
                           e.getTransports().forEach(t -> {
                               if (t.canLoad(transportedUnit)) {
+                                  // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly load into that transporter.
                                   loaderMenu.add(menuItem(
                                         "Onto " + t.toString(),
                                         LMP_LOAD + "|" + e.getId() + ":" + (Integer.MAX_VALUE

@@ -399,8 +399,10 @@ public abstract class MekWithArms extends Mek {
 
     @Override
     public boolean canPickupGroundObject() {
-        return hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM) && (getCarriedObject(Mek.LOC_LEFT_ARM) == null) ||
-              hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM) && (getCarriedObject(Mek.LOC_RIGHT_ARM) == null) ||
+        return (hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM) && (getCarriedObject(Mek.LOC_LEFT_ARM) == null))
+              ||
+              (hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM) && (getCarriedObject(Mek.LOC_RIGHT_ARM) == null))
+              ||
               super.canPickupGroundObject();
     }
 

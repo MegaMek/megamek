@@ -43,11 +43,11 @@ public class MekArms extends ExternalCargo {
     private final static MMLogger logger = MMLogger.create(MekArms.class);
 
     public MekArms(MekWithArms mek) {
+        // FIXME #7640: Split MekArms into individual transporters once there is support for picking up cargo into
+        //  multiple locations.
         this(mek.unmodifiedMaxGroundObjectTonnage(), mek.getDefaultPickupLocations());
-        if (entity != null) {
-            this.entity = mek;
-            this.entityId = mek.getId();
-        }
+        this.entity = mek;
+        this.entityId = mek.getId();
     }
 
     public MekArms(double tonnage, List<Integer> validPickupLocations) {
@@ -68,10 +68,20 @@ public class MekArms extends ExternalCargo {
         return unit.getTonnage() <= getUnused();
     }
 
+    /**
+     * Load the given carryable into the given location
+     *
+     * @param carryable the {@link ICarryable} to be loaded
+     * @param location  the location it should be loaded into
+     *
+     * @throws IllegalArgumentException If the unit can't be loaded
+     */
     @Override
     public void loadCarryable(ICarryable carryable, int location) throws IllegalArgumentException {
         super.loadCarryable(carryable, location);
         if (entity != null) {
+            // FIXME #7640: Once we have transporters for each location that could carry an object, we can update the entity
+            //  logic to just be disabling additional loading
             entity.pickupCarryableObject(carryable, location);
         }
     }
@@ -86,5 +96,10 @@ public class MekArms extends ExternalCargo {
         }
 
         return super.getUnused();
+    }
+
+    @Override
+    public String getType() {
+        return "Arms";
     }
 }

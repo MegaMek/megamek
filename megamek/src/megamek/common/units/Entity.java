@@ -34,6 +34,8 @@
 
 package megamek.common.units;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
 import java.awt.Image;
 import java.io.Serial;
 import java.util.*;
@@ -146,8 +148,6 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
-
-import static megamek.common.bays.Bay.UNSET_BAY;
 
 /**
  * Entity is a master class for basically anything on the board except terrain.
@@ -3006,6 +3006,11 @@ public abstract class Entity extends TurnOrdered
         return canPickupGroundObjectWithLiftHoist();
     }
 
+    /**
+     * Returns true if the entity can pickup a ground object using a lift hoist specifically
+     *
+     * @return true if the entity has a {@link LiftHoist} transporter that could pick up a ground object
+     */
     public boolean canPickupGroundObjectWithLiftHoist() {
         return getTransports().stream().anyMatch(t -> t instanceof LiftHoist);
     }
@@ -3151,6 +3156,19 @@ public abstract class Entity extends TurnOrdered
         return List.of(LOC_NONE);
     }
 
+    /**
+     * Get a map of location names / transporter names and their location / index that could be used to transport the
+     * provided cargo.
+     *
+     * @param cargo {@link ICarryable} carryable object that needs to be picked up
+     *
+     * @return Map where the key is the {@link String} name of the location or transporter, and the value is an
+     *       {@link Integer} that is either the location on an entity, or the index of the transporter from the list of
+     *       the entity's transports from {@link Entity#getTransports()}.
+     */
+    // FIXME #7640: This should only return a list of transports once we are able to carry an object in multiple
+    //  transports & the MekArms transporter is split into each arm, eliminating the need for the legacy location to
+    //  be used.
     public Map<String, Integer> getPickupLocationMap(ICarryable cargo) {
         // reverse lookup: location name to location ID - we're going to wind up with a name chosen but need to
         // send the ID in the move path.
@@ -3164,8 +3182,10 @@ public abstract class Entity extends TurnOrdered
         }
         for (Transporter transporter : getTransports()) {
             if (transporter instanceof ExternalCargo externalCargo && cargo instanceof Entity cargoEntity) {
-                if (externalCargo.canLoad(cargoEntity)) {
-                    locationMap.put(transporter.toString(),
+                if (externalCargo.canLoad(cargoEntity) && getTransports().contains(transporter)) {
+                    // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly
+                    //  load into that transporter.
+                    locationMap.put(transporter.getType() + " " + getTransports().indexOf(transporter),
                           Integer.MAX_VALUE - getTransports().indexOf(transporter));
 
                 }
@@ -3175,6 +3195,15 @@ public abstract class Entity extends TurnOrdered
         return locationMap;
     }
 
+    /**
+     * Get a map of location names / transporter names and their location / index that have cargo that can be dropped.
+     *
+     * @return Map where the key is the {@link String} name of the location or transporter, and the value is an
+     *       {@link Integer} that is either the location on an entity, or the index of the transporter from the list of
+     *       the entity's transports from {@link Entity#getTransports()}.
+     */
+    // FIXME #7640: This should only return a list of transports once we are able to carry an object in multiple transports
+    //  & the MekArms transporter is split into each arm, eliminating the need for the legacy location to be used.
     public Map<String, Integer> getDropCargoLocationMap() {
         // reverse lookup: location name to location ID - we're going to wind up with a name chosen but need to
         // send the ID in the move path.
@@ -3184,8 +3213,12 @@ public abstract class Entity extends TurnOrdered
             locationMap.put(getLocationName(location), location);
         }
         for (Transporter transporter : getTransports()) {
-            if (transporter instanceof ExternalCargo externalCargo && !externalCargo.getCarryables().isEmpty()) {
-                locationMap.put(transporter.toString(),
+            if (transporter instanceof ExternalCargo externalCargo
+                  && !externalCargo.getCarryables().isEmpty()
+                  && getTransports().contains(transporter)) {
+                // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly load into
+                //  that transporter.
+                locationMap.put(transporter.getType() + " " + externalCargo.getCarryables().get(0).toString(),
                       Integer.MAX_VALUE - getTransports().indexOf(transporter));
 
             }
@@ -8593,7 +8626,7 @@ public abstract class Entity extends TurnOrdered
      * Determines if this object can accept the given unit. The unit may not be of the appropriate type or there may be
      * no room for the unit.
      *
-     * @param unit - the <code>Entity</code> to be loaded.
+     * @param unit      - the <code>Entity</code> to be loaded.
      * @param checkElev - Whether to compare elevations (e.g. for VTOL loading infantry)
      *
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
@@ -8607,9 +8640,9 @@ public abstract class Entity extends TurnOrdered
      * Determines if this object can accept the given unit. The unit may not be of the appropriate type or there may be
      * no room for the unit.
      *
-     * @param unit - the <code>Entity</code> to be loaded.
+     * @param unit      - the <code>Entity</code> to be loaded.
      * @param checkElev - Whether to compare elevations (e.g. for VTOL loading infantry)
-     * @param height - the height at which to consider the loader
+     * @param height    - the height at which to consider the loader
      *
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
      *       otherwise.
@@ -8692,13 +8725,19 @@ public abstract class Entity extends TurnOrdered
         Enumeration<Transporter> iter = transports.elements();
         while (iter.hasMoreElements()) {
             Transporter next = iter.nextElement();
-            if (next.canLoad(unit) &&
-                  (!checkElev || (unit.getElevation() == getElevation())) &&
-                  ((bayNumber == UNSET_BAY) ||
-                        ((next instanceof Bay) && (((Bay) next).getBayNumber() == bayNumber)) ||
-                        ((next instanceof DockingCollar) &&
-                              (((DockingCollar) next).getCollarNumber() == bayNumber))) || (bayNumber
-                  > getTransportBays().size() && getTransports().indexOf(next) == Integer.MAX_VALUE - bayNumber)) {
+            boolean canLoadUnit = next.canLoad(unit);
+            boolean elevationMatches = !checkElev || (unit.getElevation() == getElevation());
+            boolean bayNumberMatches = (bayNumber == UNSET_BAY) ||
+                  ((next instanceof Bay) && (((Bay) next).getBayNumber() == bayNumber)) ||
+                  ((next instanceof DockingCollar) &&
+                        (((DockingCollar) next).getCollarNumber() == bayNumber));
+
+            // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly
+            //  load into that transporter.
+            boolean specificTransporterMatches = (bayNumber > getTransportBays().size() &&
+                  getTransports().indexOf(next) == Integer.MAX_VALUE - bayNumber);
+
+            if (canLoadUnit && elevationMatches && (bayNumberMatches || specificTransporterMatches)) {
                 next.load(unit);
                 unit.setTargetBay(UNSET_BAY); // Reset the target bay for later.
                 return;

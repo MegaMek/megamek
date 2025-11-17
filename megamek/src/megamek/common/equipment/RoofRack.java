@@ -111,4 +111,9 @@ public class RoofRack extends ExternalCargo {
     protected boolean maxObjects(int location) {
         return false; // No limit for roof racks
     }
+
+    @Override
+    public String getType() {
+        return "Roof Rack";
+    }
 }

@@ -34,6 +34,8 @@
 
 package megamek.server.totalWarfare;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -79,8 +81,6 @@ import megamek.common.weapons.TeleMissile;
 import megamek.logging.MMLogger;
 import megamek.server.ServerHelper;
 import megamek.server.SmokeCloud;
-
-import static megamek.common.bays.Bay.UNSET_BAY;
 
 /**
  * Processes an Entity's MovePath when an ENTITY_MOVE packet is received.
@@ -3105,6 +3105,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                       && (cargoPickupIndex < carryableObjects.size())) {
 
                     ICarryable pickupTarget = carryableObjects.get(cargoPickupIndex);
+                    // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly load into that transporter.
                     if (entity.maxGroundObjectTonnage() >= pickupTarget.getTonnage() || ((entity.getTransports().size()
                           > (Integer.MAX_VALUE - cargoPickupLocation))
                           && (entity.getTransports()
@@ -3129,20 +3130,20 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             if (step.getType() == MoveStepType.DROP_CARGO) {
                 Integer cargoLocation = step.getAdditionalData(MoveStep.CARGO_LOCATION_KEY);
-                ICarryable cargo;
+                ICarryable cargo = null;
 
                 // if we're not supplied a specific location, then the assumption is we only have one piece of cargo,
                 // and we're going to just drop that one
                 if (cargoLocation == null) {
                     cargo = entity.getDistinctCarriedObjects().get(0);
-                } else if (cargoLocation >= 0 && cargoLocation < entity.getDistinctCarriedObjects().size()) {
+                } else if (entity.getCarriedObject(cargoLocation) != null) {
                     cargo = entity.getCarriedObject(cargoLocation);
-                } else {
+                } else if ((cargoLocation >= 0) && (Integer.MAX_VALUE - cargoLocation < entity.getTransports()
+                      .size())) {
+                    // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly load into that transporter.
                     Transporter transporter = entity.getTransports().get(Integer.MAX_VALUE - cargoLocation);
                     if (transporter instanceof ExternalCargo externalCargo) {
                         cargo = externalCargo.getCarryables().stream().findFirst().orElse(null);
-                    } else {
-                        cargo = null;
                     }
                 }
                 if (cargo == null) {

@@ -3223,7 +3223,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         "DeploymentDisplay.loadUnitToDefault.message",
                         currentEntity().getShortName(),
                         choice.getShortName()),
-                        Messages.getString("DeploymentDisplay.loadUnitDialog.title"), JOptionPane.INFORMATION_MESSAGE
+                  Messages.getString("DeploymentDisplay.loadUnitDialog.title"), JOptionPane.INFORMATION_MESSAGE
             );
         }
 
@@ -3258,17 +3258,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
             int i = 0;
             for (Integer bayNumber : bayChoices) {
                 bayChoicesArray[i++] = bayNumber.toString()
-                          + " (Free Slots: "
-                          + (int) currentEntity().getBayById(bayNumber).getUnused()
-                          + ")";
+                      + " (Free Slots: "
+                      + (int) currentEntity().getBayById(bayNumber).getUnused()
+                      + ")";
             }
-                String bayString = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
-                      Messages.getString("MovementDisplay.loadUnitBayNumberDialog.message",
-                            currentEntity().getShortName()),
-                      Messages.getString("MovementDisplay.loadUnitBayNumberDialog.title"),
-                      JOptionPane.QUESTION_MESSAGE,
-                      null,
-                      bayChoicesArray,
+            String bayString = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
+                  Messages.getString("MovementDisplay.loadUnitBayNumberDialog.message",
+                        currentEntity().getShortName()),
+                  Messages.getString("MovementDisplay.loadUnitBayNumberDialog.title"),
+                  JOptionPane.QUESTION_MESSAGE,
+                  null,
+                  bayChoicesArray,
                   null);
             // Handle canceled dialog
             if (bayString == null) {
@@ -3291,16 +3291,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 int i = 0;
                 for (Integer bayNumber : bayChoices) {
                     clampChoicesArray[i++] = bayNumber > 0 ?
-                              Messages.getString("MovementDisplay.loadProtoClampMountDialog.rear") :
-                              Messages.getString("MovementDisplay.loadProtoClampMountDialog.front");
-                    }
-                    String bayString = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
-                          Messages.getString("MovementDisplay.loadProtoClampMountDialog.message",
-                                currentEntity().getShortName()),
-                          Messages.getString("MovementDisplay.loadProtoClampMountDialog.title"),
-                          JOptionPane.QUESTION_MESSAGE,
-                          null,
-                          clampChoicesArray,
+                          Messages.getString("MovementDisplay.loadProtoClampMountDialog.rear") :
+                          Messages.getString("MovementDisplay.loadProtoClampMountDialog.front");
+                }
+                String bayString = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
+                      Messages.getString("MovementDisplay.loadProtoClampMountDialog.message",
+                            currentEntity().getShortName()),
+                      Messages.getString("MovementDisplay.loadProtoClampMountDialog.title"),
+                      JOptionPane.QUESTION_MESSAGE,
+                      null,
+                      clampChoicesArray,
                       null);
 
                 if (bayString == null) {
@@ -5237,7 +5237,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                   .flatMap(Arrays::stream)
                   .toList().stream().filter(carryable -> !options.contains(carryable)).collect(Collectors.toList());
 
-            var fullOptions = List.of(options.toArray(ICarryable[]::new), moreOptions.toArray(ICarryable[]::new));
+            List<ICarryable> fullOptions = new ArrayList<>(options);
+            fullOptions.addAll(moreOptions);
 
             if (fullOptions.size() == 1) {
                 addStepToMovePath(MoveStepType.DROP_CARGO);
@@ -5257,7 +5258,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       JOptionPane.QUESTION_MESSAGE,
                       null,
                       locationMap.keySet().toArray(),
-                      Arrays.stream(locationMap.keySet().toArray()).findFirst());
+                      locationMap.keySet().toArray()[0]);
 
                 // Verify that we have a valid option...
                 if (option != null) {

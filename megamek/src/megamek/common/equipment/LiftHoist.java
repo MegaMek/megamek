@@ -64,6 +64,12 @@ public class LiftHoist extends ExternalCargo {
         return 0;
     }
 
+    /**
+     * If this specific transporter is capable of loading regardless of what the object is. LiftHoists are only able to
+     * load if they are operable and not carrying anything else.
+     *
+     * @return <code>true</code> if the transporter is capable of loading, <code>false</code> otherwise.
+     */
     @Override
     protected boolean canLoad() {
         return super.canLoad() && isOperable() && getCarryables().isEmpty();
@@ -85,9 +91,22 @@ public class LiftHoist extends ExternalCargo {
         return unit instanceof HandheldWeapon && super.canLoadCarryable(unit);
     }
 
+    /**
+     * Determines if this object can accept the given {@link ICarryable}. The carryable may not be of the appropriate
+     * type or there may be room for the unit.
+     *
+     * @param carryable the {@link ICarryable} to be loaded
+     *
+     * @return <code>true</code> if the carryable can be loaded, <code>false</code> otherwise.
+     */
     @Override
     public boolean canLoadCarryable(ICarryable carryable) {
         return super.canLoadCarryable(carryable);
+    }
+
+    @Override
+    public String getType() {
+        return "Lift Hoist";
     }
 
     private boolean isOperable() {

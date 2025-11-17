@@ -140,6 +140,21 @@ public class MathUtility {
     }
 
     /**
+     * This is a convenience method for calling {@link #getGaussianAverage(List, double)} with a strictness of 1.0
+     * (neutral).
+     *
+     * @param values the list of integer values to average; must not be {@code null}
+     *
+     * @return the Gaussian-weighted average as an {@code int}, or {@code 0} if the list is empty
+     *
+     * @author Illiani
+     * @since 0.50.10
+     */
+    public static int getGaussianAverage(List<Integer> values) {
+        return getGaussianAverage(values, 1.0);
+    }
+
+    /**
      * Calculates a Gaussian-weighted average from a list of integer values.
      *
      * <p>This method computes a “soft” average that down-weights statistical outliers using a Gaussian
@@ -179,14 +194,15 @@ public class MathUtility {
      * <p>To protect against overflow during conversion to {@code int}, the final result is clamped to
      * {@code Integer.MAX_VALUE} using {@link Math#min(long, long)}.</p>
      *
-     * @param values the list of integer values to average; must not be {@code null}
+     * @param values     the list of integer values to average; must not be {@code null}
+     * @param strictness how strict the calculations should be. Used to increase or decrease the influence of outliers.
      *
      * @return the Gaussian-weighted average as an {@code int}, or {@code 0} if the list is empty
      *
      * @author Illiani
      * @since 0.50.10
      */
-    public static int getGaussianAverage(List<Integer> values) {
+    public static int getGaussianAverage(List<Integer> values, double strictness) {
         if (values.isEmpty()) {
             return 0;
         }
@@ -217,12 +233,6 @@ public class MathUtility {
 
         // Below, we define how strict we want the calculations. strictness < 1.0 -> more strict. strictness > 1.0 ->
         // less strict.
-
-        // At the time of writing we've set strictness to 1.0, which is neutral. We probably won't need to
-        // adjust this. However, I opted to leave it in, as it was in the guide I was following, and it harms nobody
-        // having it set up already in the event we do need to change it. We should probably never raise strictness
-        // below 0.5 or above 2.0 - Illiani, Nov 16th 2025
-        double strictness = 1.0;
         double adjustedDeviation = baseDeviation * strictness;
 
         // This is where the magic happens.

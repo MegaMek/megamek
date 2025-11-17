@@ -115,6 +115,7 @@ public class LRMARADHandler extends LRMHandler {
      * - Report 3363: ECM blocked bonus
      * - Report 3364: Narc override (bonus despite ECM)
      * - Report 3368: No electronics penalty
+     * - Report 3369: Normal bonus (electronics detected)
      *
      * @param vPhaseReport Vector to collect report messages
      * @return Number of missiles that hit
@@ -151,8 +152,13 @@ public class LRMARADHandler extends LRMHandler {
                     r.subject = subjectId;
                     r.newlines = 0;
                     vPhaseReport.addElement(r);
+                } else {
+                    // Normal bonus (Report 3369) - electronics detected, no ECM interference
+                    Report r = new Report(3369);
+                    r.subject = subjectId;
+                    r.newlines = 0;
+                    vPhaseReport.addElement(r);
                 }
-                // Note: Normal +1 bonus case handled by parent's modifier reporting
             } else {
                 // No electronics - penalty applied (Report 3368)
                 Report r = new Report(3368);

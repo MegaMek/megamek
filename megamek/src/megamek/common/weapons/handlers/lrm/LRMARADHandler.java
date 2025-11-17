@@ -20,6 +20,9 @@ package megamek.common.weapons.handlers.lrm;
 
 import java.io.Serial;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.ComputeECM;
@@ -48,6 +51,8 @@ import megamek.server.totalWarfare.TWGameManager;
  * @since 2025-01-16
  */
 public class LRMARADHandler extends LRMHandler {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     @Serial
     private static final long serialVersionUID = -8675309867530986753L;
 
@@ -72,8 +77,12 @@ public class LRMARADHandler extends LRMHandler {
      */
     @Override
     public int getSalvoBonus() {
+        LOGGER.debug("ARAD getSalvoBonus() called - attacker: {}, target: {}",
+                attackingEntity.getDisplayName(), target.getDisplayName());
+
         // Only Entities can have electronics
         if (target.getTargetType() != Targetable.TYPE_ENTITY) {
+            LOGGER.debug("ARAD: Target is not an entity, returning -2");
             return -2;  // Non-entity targets have no electronics
         }
 
@@ -83,30 +92,38 @@ public class LRMARADHandler extends LRMHandler {
         // Check if target has qualifying electronics
         boolean hasElectronics = ARADEquipmentDetector.targetHasQualifyingElectronics(
                 entityTarget, friendlyTeam);
+        LOGGER.debug("ARAD: Target has electronics: {}", hasElectronics);
 
         if (hasElectronics) {
             // Target has electronics - check for ECM interference
 
             // Narc-tagged targets ALWAYS get bonus (Narc overrides ECM)
-            if (ARADEquipmentDetector.isNarcTagged(entityTarget, friendlyTeam)) {
+            boolean isNarcTagged = ARADEquipmentDetector.isNarcTagged(entityTarget, friendlyTeam);
+            LOGGER.debug("ARAD: Target is Narc-tagged: {}", isNarcTagged);
+            if (isNarcTagged) {
+                LOGGER.debug("ARAD: Narc override - returning +1");
                 return +1;  // Narc overrides ECM
             }
 
-            // Check if target hex is ECM-affected
-            // Use target position for both start/end to check if target is in ECM field
+            // Check if flight path is ECM-affected (matches Artemis IV pattern)
+            // ECM affects the missile flight path from attacker to target
             boolean isECMAffected = ComputeECM.isAffectedByECM(
                     attackingEntity,
-                    target.getPosition(),
+                    attackingEntity.getPosition(),
                     target.getPosition());
+            LOGGER.debug("ARAD: Flight path ECM-affected: {}", isECMAffected);
 
             if (isECMAffected) {
+                LOGGER.debug("ARAD: ECM blocking - returning 0");
                 return 0;  // ECM blocks bonus (but no penalty)
             }
 
             // Target has electronics, no ECM interference
+            LOGGER.debug("ARAD: Electronics, no ECM - returning +1");
             return +1;  // Standard ARAD bonus
         } else {
             // Target has NO electronics
+            LOGGER.debug("ARAD: No electronics - returning -2");
             return -2;  // ARAD penalty (minimum 2 hits enforced by Compute.missilesHit)
         }
     }

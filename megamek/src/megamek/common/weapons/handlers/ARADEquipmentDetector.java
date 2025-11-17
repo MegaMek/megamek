@@ -102,7 +102,7 @@ public class ARADEquipmentDetector {
         }
 
         // Verify at least one Active Probe is functional and powered
-        for (Mounted<?> equipment : target.getEquipment()) {
+        for (Mounted<?> equipment : target.getMisc()) {
             if (equipment.getType().hasFlag(MiscType.F_BAP) &&
                 isValidEquipment(equipment)) {
                 return true;
@@ -118,7 +118,7 @@ public class ARADEquipmentDetector {
      * @return true if entity has functional Artemis IV or Artemis V
      */
     public static boolean hasArtemis(Entity target) {
-        for (Mounted<?> equipment : target.getEquipment()) {
+        for (Mounted<?> equipment : target.getMisc()) {
             if ((equipment.getType().hasFlag(MiscType.F_ARTEMIS) ||
                  equipment.getType().hasFlag(MiscType.F_ARTEMIS_V)) &&
                 isValidEquipment(equipment)) {
@@ -135,7 +135,7 @@ public class ARADEquipmentDetector {
      * @return true if entity has functional Blue Shield
      */
     public static boolean hasBlueShield(Entity target) {
-        for (Mounted<?> equipment : target.getEquipment()) {
+        for (Mounted<?> equipment : target.getMisc()) {
             if (equipment.getType().hasFlag(MiscType.F_BLUE_SHIELD) &&
                 isValidEquipment(equipment)) {
                 return true;
@@ -170,7 +170,7 @@ public class ARADEquipmentDetector {
         }
 
         // Check equipment-based C3 systems (Slave, Boosted Slave, C3i, Nova CEWS)
-        for (Mounted<?> equipment : target.getEquipment()) {
+        for (Mounted<?> equipment : target.getMisc()) {
             if ((equipment.getType().hasFlag(MiscType.F_C3S) ||
                  equipment.getType().hasFlag(MiscType.F_C3I) ||
                  equipment.getType().hasFlag(MiscType.F_C3SBS) ||
@@ -192,7 +192,7 @@ public class ARADEquipmentDetector {
      * @return true if entity has >= 3.5 tons of dedicated comms
      */
     public static boolean hasHeavyComms(Entity target) {
-        for (Mounted<?> equipment : target.getEquipment()) {
+        for (Mounted<?> equipment : target.getMisc()) {
             if (equipment.getType().hasFlag(MiscType.F_COMMUNICATIONS) &&
                 equipment.getType().getTonnage(target) >= 3.5 &&
                 isValidEquipment(equipment)) {

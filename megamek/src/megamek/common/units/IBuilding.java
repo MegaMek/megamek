@@ -58,7 +58,7 @@ import megamek.common.enums.BuildingType;
  *
  * @author Suvarov454@sourceforge.net (James A. Damour)
  */
-public interface Building extends Serializable {
+public interface IBuilding extends Serializable {
 
     int UNKNOWN = -1;
 
@@ -232,9 +232,9 @@ public interface Building extends Serializable {
      */
     static String className(int bldgClass) {
         return switch (bldgClass) {
-            case Building.HANGAR -> "Hangar";
-            case Building.FORTRESS -> "Fortress";
-            case Building.GUN_EMPLACEMENT -> "Gun Emplacement";
+            case IBuilding.HANGAR -> "Hangar";
+            case IBuilding.FORTRESS -> "Fortress";
+            case IBuilding.GUN_EMPLACEMENT -> "Gun Emplacement";
             default -> "Building";
         };
     }
@@ -277,8 +277,8 @@ public interface Building extends Serializable {
      */
     default double getDamageFromScale() {
         return switch (getBldgClass()) {
-            case Building.HANGAR -> 0.5;
-            case Building.FORTRESS, Building.GUN_EMPLACEMENT -> 2.0;
+            case IBuilding.HANGAR -> 0.5;
+            case IBuilding.FORTRESS, IBuilding.GUN_EMPLACEMENT -> 2.0;
             default -> 1.0;
         };
     }
@@ -288,7 +288,7 @@ public interface Building extends Serializable {
      */
     default double getDamageToScale() {
         return switch (getBldgClass()) {
-            case Building.FORTRESS, Building.GUN_EMPLACEMENT -> 0.5;
+            case IBuilding.FORTRESS, IBuilding.GUN_EMPLACEMENT -> 0.5;
             default -> 1.0;
         };
     }

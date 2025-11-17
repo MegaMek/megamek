@@ -49,9 +49,9 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Terrains;
 
 /**
@@ -303,7 +303,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
             return friendlyFireCheckResults.get(position);
         }
 
-        Building building = game.getBoard(shooter).getBuildingAt(position);
+        IBuilding building = game.getBoard(shooter).getBuildingAt(position);
 
         // no building, no problem
         if (building == null) {

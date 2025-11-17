@@ -1691,7 +1691,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // Jumps with mechanical jump boosters are special
             Coords src = (cmd.getLastStep() != null) ? cmd.getLastStep().getPosition() : currentEntity().getPosition();
             int direction = src.direction(dest);
-            MoveStepType moveStepType = MoveStepType.stepTypeForRelativeDirection(direction, currentEntity().getFacing());
+            MoveStepType moveStepType = MoveStepType.stepTypeForRelativeDirection(direction,
+                  currentEntity().getFacing());
             cmd.findSimplePathTo(dest, moveStepType, src.direction(dest), currentEntity().getFacing());
 
         } else if (gear == GEAR_STRAFE) {
@@ -2022,7 +2023,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                   cmd.getHexesMoved());
                         } else if ((target.getTargetType() == Targetable.TYPE_FUEL_TANK) ||
                               (target.getTargetType() == Targetable.TYPE_BUILDING)) {
-                            Building bldg = game.getBoard(currentlySelectedEntity).getBuildingAt(moveto);
+                            IBuilding bldg = game.getBoard(currentlySelectedEntity).getBuildingAt(moveto);
                             toAttacker = ChargeAttackAction.getDamageTakenBy(currentlySelectedEntity, bldg, moveto);
                         }
                     }
@@ -2938,7 +2939,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // the entity can pick them up
         if ((ce == null) ||
               ((game.getGroundObjects(finalPosition(), ce).isEmpty())
-                    && (game.getEntitiesVector(finalPosition()).stream().filter(ce::canPickupCarryableObject).toList().isEmpty())) ||
+                    && (game.getEntitiesVector(finalPosition())
+                    .stream()
+                    .filter(ce::canPickupCarryableObject)
+                    .toList()
+                    .isEmpty())) ||
               ((cmd.getLastStep() != null) && (cmd.getLastStep().getType() == MoveStepType.PICKUP_CARGO))) {
             setPickupCargoEnabled(false);
             return;
@@ -3069,7 +3074,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
      * @return True when the endpoint of the current movement path is on the board.
      */
     private boolean isFinalPositionOnBoard() {
-        return game.getBoard(currentEntity().getBoardId()).contains(cmd == null ? currentEntity().getPosition() : cmd.getFinalCoords());
+        return game.getBoard(currentEntity().getBoardId())
+              .contains(cmd == null ? currentEntity().getPosition() : cmd.getFinalCoords());
     }
 
     private int finalBoardId() {
@@ -3208,7 +3214,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         "DeploymentDisplay.loadUnitToDefault.message",
                         currentEntity().getShortName(),
                         choice.getShortName()),
-                        Messages.getString("DeploymentDisplay.loadUnitDialog.title"), JOptionPane.INFORMATION_MESSAGE
+                  Messages.getString("DeploymentDisplay.loadUnitDialog.title"), JOptionPane.INFORMATION_MESSAGE
             );
         }
 
@@ -4358,7 +4364,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // Is there a building in the hex?
         if (ce != null) {
-            Building bldg = game.getBoard(ce).getBuildingAt(pos);
+            IBuilding bldg = game.getBoard(ce).getBuildingAt(pos);
             if (bldg != null) {
                 targets.add(new BuildingTarget(pos, game.getBoard(ce), false));
             }
@@ -5189,7 +5195,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if (other != null) {
                 if (!other.isInfantry() ||
                       currentEntity() instanceof SmallCraft ||
-                      (currentEntity().isSupportVehicle() && (currentEntity().getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT))
+                      (currentEntity().isSupportVehicle() && (currentEntity().getWeightClass()
+                            == EntityWeightClass.WEIGHT_LARGE_SUPPORT))
                       // FIXME: unclear why towed/towing is checked here:
                       ||
                       !currentEntity().getAllTowedUnits().isEmpty() ||
@@ -5679,7 +5686,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void adjustConvertSteps(EntityMovementMode endMode) {
         // Since conversion is not allowed in water, we shouldn't have to deal with the possibility of `swim` modes.
         // Account for grounded LAMs in fighter mode with movement type wheeled
-        if (currentEntity().getMovementMode() == endMode || (currentEntity().isAero() && endMode == EntityMovementMode.AERODYNE)) {
+        if (currentEntity().getMovementMode() == endMode || (currentEntity().isAero()
+              && endMode == EntityMovementMode.AERODYNE)) {
             cmd.clear();
             return;
         }

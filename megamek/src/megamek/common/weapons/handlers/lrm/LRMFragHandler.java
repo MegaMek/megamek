@@ -45,8 +45,8 @@ import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.weapons.DamageType;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -96,7 +96,7 @@ public class LRMFragHandler extends LRMHandler {
 
     @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
-          Building bldg, int nDamage) {
+          IBuilding bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -136,5 +136,5 @@ public class LRMFragHandler extends LRMHandler {
     }
 
     @Override
-    protected void handleBuildingDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage, Coords coords) {}
+    protected void handleBuildingDamage(Vector<Report> vPhaseReport, IBuilding bldg, int nDamage, Coords coords) {}
 }

@@ -66,7 +66,7 @@ import megamek.logging.MMLogger;
  *
  * @author Suvarov454@sourceforge.net (James A. Damour)
  */
-public class BuildingTerrain implements Building {
+public class BuildingTerrain implements IBuilding {
 
     @Serial
     private static final long serialVersionUID = -8236017592012683793L;
@@ -230,7 +230,7 @@ public class BuildingTerrain implements Building {
         // hashcode).
         //
         // ASSUMPTION: this will be unique ID across ALL the building's hexes for ALL the clients of this board.
-        id = Building.currentId(board, coords);
+        id = IBuilding.currentId(board, coords);
 
         // The building occupies the given coords, at least.
         coordinates.addElement(coords);
@@ -250,8 +250,8 @@ public class BuildingTerrain implements Building {
         bldgClass = startHex.terrainLevel(Terrains.BLDG_CLASS);
 
         // Ensure that we've got a good type (and initialize our CF).
-        currentCF.put(coords, Building.getDefaultCF(type));
-        if (currentCF.get(coords) == Building.UNKNOWN) {
+        currentCF.put(coords, IBuilding.getDefaultCF(type));
+        if (currentCF.get(coords) == IBuilding.UNKNOWN) {
             throw new IllegalArgumentException("Unknown construction type: "
                   + type + ".  The board is invalid.");
         }
@@ -548,7 +548,7 @@ public class BuildingTerrain implements Building {
      */
     @Override
     public boolean equals(Object other) {
-        return (this == other) || ((other instanceof Building otherBuilding) && (getId() == otherBuilding.getId()));
+        return (this == other) || ((other instanceof IBuilding otherBuilding) && (getId() == otherBuilding.getId()));
     }
 
     @Override
@@ -561,9 +561,9 @@ public class BuildingTerrain implements Building {
      */
     public static String className(int bldgClass) {
         return switch (bldgClass) {
-            case Building.HANGAR -> "Hangar";
-            case Building.FORTRESS -> "Fortress";
-            case Building.GUN_EMPLACEMENT -> "Gun Emplacement";
+            case IBuilding.HANGAR -> "Hangar";
+            case IBuilding.FORTRESS -> "Fortress";
+            case IBuilding.GUN_EMPLACEMENT -> "Gun Emplacement";
             default -> "Building";
         };
     }

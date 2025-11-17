@@ -60,9 +60,9 @@ import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Aero;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.bayWeapons.TeleOperatedMissileBayWeapon;
@@ -410,7 +410,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         // Bearings-only missiles shouldn't be able to target buildings, being
         // space-only weapons
         // but if these two things aren't defined, handleEntityDamage() doesn't work.
-        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+        IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
         int bldgAbsorbs = 0;
 
         // We have to adjust the reports on a miss, so they line up
@@ -704,7 +704,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
     }
 
     @Override
-    protected boolean handleSpecialMiss(Entity entityTarget, boolean bldgDamagedOnMiss, Building bldg,
+    protected boolean handleSpecialMiss(Entity entityTarget, boolean bldgDamagedOnMiss, IBuilding bldg,
           Vector<Report> vPhaseReport) {
         return true;
     }

@@ -48,8 +48,8 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.Weapon;
 import megamek.server.totalWarfare.TWGameManager;
@@ -77,7 +77,7 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
     }
 
     @Override
-    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, Building bldg, int hits,
+    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, IBuilding bldg, int hits,
           int nCluster, int bldgAbsorbs) {
         if (entityTarget.tracksHeat()) {
             Report.addNewline(vPhaseReport);

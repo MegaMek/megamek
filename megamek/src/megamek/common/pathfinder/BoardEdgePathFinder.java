@@ -49,9 +49,9 @@ import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.MiscType;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Terrains;
 
 /**
@@ -194,7 +194,6 @@ public class BoardEdgePathFinder {
      * Helper method that attempts to find a path that connects from the entity's current position to the path's desired
      * edge. The reason being that a particular path may technically lead to an edge, but we cut the path generation
      * short when it reaches another path that already goes to that edge.
-     *
      */
     public MovePath findCombinedPath(Entity entity) {
         MovePath currentPath = null;
@@ -280,7 +279,6 @@ public class BoardEdgePathFinder {
     /**
      * Helper function that, given a unit facing and a move step, adds turns to the given path until the facing of the
      * path matches the facing of the step.
-     *
      */
     private void matchFacingToPath(MovePath initialPath, MoveStep intersectionStep) {
         // algorithm: from initial facing, two rotation paths: add and subtract one
@@ -322,7 +320,6 @@ public class BoardEdgePathFinder {
     /**
      * Invalidate all paths that go through this set of coordinates (because of a building or bridge collapse), or some
      * other terrain change either directly or by connecting to a path that goes through this set of coordinates.
-     *
      */
     public void invalidatePaths(Coords coords) {
         // identify if this set of coordinates has a path that leads to an edge
@@ -562,7 +559,7 @@ public class BoardEdgePathFinder {
         Coords dest = movePath.getFinalCoords();
         Board board = movePath.getGame().getBoard(movePath.getFinalBoardId());
         Hex destHex = board.getHex(dest);
-        Building destinationBuilding = board.getBuildingAt(dest);
+        IBuilding destinationBuilding = board.getBuildingAt(dest);
 
         return isLegalMove(movePath, destHex, destinationBuilding);
     }
@@ -576,7 +573,7 @@ public class BoardEdgePathFinder {
      *
      * @return Whether the given move path is "legal" in the context of this pathfinder.
      */
-    private MoveLegalityIndicator isLegalMove(MovePath movePath, Hex destHex, Building destinationBuilding) {
+    private MoveLegalityIndicator isLegalMove(MovePath movePath, Hex destHex, IBuilding destinationBuilding) {
         Coords dest = movePath.getFinalCoords();
         Board board = movePath.getGame().getBoard(movePath.getFinalBoardId());
         Coords src = movePath.getSecondLastStep().getPosition();

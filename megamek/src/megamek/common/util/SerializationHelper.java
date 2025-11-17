@@ -51,14 +51,12 @@ import megamek.common.net.marshalling.SanityInputFilter;
 import megamek.common.options.AbstractOptions;
 import megamek.common.rolls.Roll;
 import megamek.common.units.BTObject;
-import megamek.common.units.Building;
 import megamek.common.units.Crew;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.IBuilding;
 import megamek.common.units.InfantryMount;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.victory.VictoryCondition;
-
-import java.io.Serializable;
 
 /**
  * Class that off-loads serialization related code from Server.java
@@ -81,7 +79,7 @@ public class SerializationHelper {
         xStream.allowTypesByRegExp(SanityInputFilter.getFilterList());
 
         xStream.allowTypeHierarchy(BTObject.class);
-        xStream.allowTypeHierarchy(Building.class);
+        xStream.allowTypeHierarchy(IBuilding.class);
         xStream.allowTypeHierarchy(Crew.class);
         xStream.allowTypeHierarchy(GameTurn.class);
         xStream.allowTypeHierarchy(ITechnology.class);
@@ -260,7 +258,7 @@ public class SerializationHelper {
                 return (read) ? new InfantryMount(
                       name, size, weight, movementPoints, movementMode, burstDamage, vehicleDamage,
                       damageDivisor, maxWaterDepth, secondaryGroundMP, uwEndurance, custom
-                ): null;
+                ) : null;
             }
 
             @Override

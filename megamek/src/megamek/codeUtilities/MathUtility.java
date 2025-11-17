@@ -191,8 +191,8 @@ public class MathUtility {
      * <p>The strictness value should rarely be set below {@code 0.5} or above {@code 2.0}. The default of
      * {@code 1.0} should work well for most distributions.</p>
      *
-     * <p>To protect against overflow during conversion to {@code int}, the final result is clamped to
-     * {@code Integer.MAX_VALUE} using {@link Math#min(long, long)}.</p>
+     * <p>To protect against overflow during conversion to {@code int}, the final result is clamped within
+     * {@link Integer#MIN_VALUE} and {@link Integer#MIN_VALUE} using {@link MathUtility#clamp(int, int, int)}.</p>
      *
      * @param values     the list of integer values to average; must not be {@code null}
      * @param strictness how strict the calculations should be. Used to increase or decrease the influence of outliers.
@@ -212,12 +212,12 @@ public class MathUtility {
         for (int value : values) {
             total += value;
         }
-        double mean = total / values.size();
+        double crudeMean = total / values.size();
 
         // Then, we need to calculate standard deviation.
         double varianceTotal = 0;
         for (int value : values) {
-            double difference = value - mean;
+            double difference = value - crudeMean;
             varianceTotal += difference * difference;
         }
         double variance = varianceTotal / values.size();
@@ -226,9 +226,9 @@ public class MathUtility {
         // Miraculously, all the values are identical (most likely because there is only one value). This guards
         // against divide by 0 errors.
         if (baseDeviation == 0) {
-            // We use Math.min() to avoid the risk of an overflow when dealing with insanely large player campaigns.
-            // This probably isn't necessary, but no reason not to include it.
-            return (int) Math.min(Integer.MAX_VALUE, Math.round(mean));
+            // We use MathUtility.clamp() to avoid the risk of an overflow when dealing with insanely large player
+            // campaigns. This probably isn't necessary, but no reason not to include it.
+            return MathUtility.clamp((int) Math.round(crudeMean), Integer.MIN_VALUE, Integer.MAX_VALUE);
         }
 
         // Below, we define how strict we want the calculations. strictness < 1.0 -> more strict. strictness > 1.0 ->
@@ -241,7 +241,7 @@ public class MathUtility {
         double weightTotal = 0;
 
         for (int value : values) {
-            double distanceFromMean = (value - mean) / adjustedDeviation;
+            double distanceFromMean = (value - crudeMean) / adjustedDeviation;
             double weight = Math.exp(-0.5 * distanceFromMean * distanceFromMean);
             weightedSum += value * weight;
             weightTotal += weight;
@@ -250,7 +250,7 @@ public class MathUtility {
         double gaussianMean = weightedSum / weightTotal;
 
         // Using Math.min() for the same reason as outlined above.
-        return (int) Math.min(Integer.MAX_VALUE, Math.round(gaussianMean));
+        return MathUtility.clamp((int) Math.round(gaussianMean), Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     // region Linear Interpolation

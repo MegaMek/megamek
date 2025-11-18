@@ -274,17 +274,17 @@ public class HandheldWeapon extends Entity {
 
     @Override
     public boolean isDmgHeavy() {
-        return (getOArmor(LOC_GUN)) > 0 && (double) getArmor(LOC_GUN) / getOArmor(LOC_GUN) > 0.5;
+        return (getOArmor(LOC_GUN)) > 0 && (double) getArmor(LOC_GUN) / getOArmor(LOC_GUN) < 0.5;
     }
 
     @Override
     public boolean isDmgModerate() {
-        return (getOArmor(LOC_GUN)) > 0 && (double) getArmor(LOC_GUN) / getOArmor(LOC_GUN) > 0.75;
+        return (getOArmor(LOC_GUN)) > 0 && (double) getArmor(LOC_GUN) / getOArmor(LOC_GUN) < 0.75;
     }
 
     @Override
     public boolean isDmgLight() {
-        return (getOArmor(LOC_GUN)) > 0 && (double) getArmor(LOC_GUN) / getOArmor(LOC_GUN) > 0.9;
+        return (getOArmor(LOC_GUN)) > 0 && (double) getArmor(LOC_GUN) / getOArmor(LOC_GUN) < 0.9;
     }
 
     @Override
@@ -345,5 +345,52 @@ public class HandheldWeapon extends Entity {
     @Override
     public int targetForArmHitToHitCarriedObject() {
         return 6;
+    }
+
+    /**
+     * An entity is eligible for firing if it's not taking some kind of action that prevents it from firing, such as a
+     * full-round physical attack or sprinting.
+     */
+    @Override
+    public boolean isEligibleForFiring() {
+        return false;
+    }
+
+    /**
+     * Pretty much anybody's eligible for movement. If the game option is toggled on, inactive and immobile entities are
+     * not eligible. OffBoard units are always ineligible
+     *
+     * @return whether the entity is allowed to move
+     */
+    @Override
+    public boolean isEligibleForMovement() {
+        return false;
+    }
+
+    @Override
+    public boolean isEligibleForOffboard() {
+        return false;
+    }
+
+    /**
+     * Check if the entity has any valid targets for physical attacks.
+     */
+    @Override
+    public boolean isEligibleForPhysical() {
+        return false;
+    }
+
+    @Override
+    public boolean isEligibleForTargetingPhase() {
+        return false;
+    }
+
+    /**
+     * @return True if this Entity is eligible to pre-designate hexes as auto-hits. Per TacOps pg 180, if a player has
+     *       off board artillery they get 5 pre-designated hexes per map sheet.
+     */
+    @Override
+    public boolean isEligibleForArtyAutoHitHexes() {
+        return false;
     }
 }

@@ -182,4 +182,19 @@ public interface Transporter extends Serializable {
     default String getNameForRecordSheets() {
         return getType();
     }
+
+    /**
+     * Sets the specified entity to the transporter. Not implemented by default, only implemented for Transporters that
+     * need it (like {@link ExternalCargo})
+     *
+     * @param entity the {@code Entity} to be set for the transporter
+     */
+    default void setEntity(Entity entity) {}
+
+    /**
+     * Returns true if the transporter can pick up ground objects
+     */
+    default boolean canPickupGroundObject() {
+        return false;
+    }
 }

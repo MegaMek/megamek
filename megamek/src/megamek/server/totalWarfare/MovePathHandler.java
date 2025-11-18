@@ -64,15 +64,7 @@ import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
-import megamek.common.equipment.Engine;
-import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.EscapePods;
-import megamek.common.equipment.GroundObject;
-import megamek.common.equipment.ICarryable;
-import megamek.common.equipment.Minefield;
-import megamek.common.equipment.MiscType;
-import megamek.common.equipment.Mounted;
-import megamek.common.equipment.Transporter;
+import megamek.common.equipment.*;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.moves.MovePath;
@@ -3113,7 +3105,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
                       && (cargoPickupIndex < carryableObjects.size())) {
 
                     ICarryable pickupTarget = carryableObjects.get(cargoPickupIndex);
-                    if (entity.maxGroundObjectTonnage() >= pickupTarget.getTonnage()) {
+                    // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly load into that transporter.
+                    if (entity.maxGroundObjectTonnage() >= pickupTarget.getTonnage() || ((entity.getTransports().size()
+                          > (Integer.MAX_VALUE - cargoPickupLocation))
+                          && (entity.getTransports()
+                          .get(Integer.MAX_VALUE - cargoPickupLocation) instanceof ExternalCargo externalCargo
+                          && externalCargo.canLoadCarryable(pickupTarget)))) {
                         pickupTarget.processPickupStep(step, cargoPickupLocation, gameManager, entity,
                               overallMoveType);
                     } else {
@@ -3133,14 +3130,25 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             if (step.getType() == MoveStepType.DROP_CARGO) {
                 Integer cargoLocation = step.getAdditionalData(MoveStep.CARGO_LOCATION_KEY);
-                ICarryable cargo;
+                ICarryable cargo = null;
 
                 // if we're not supplied a specific location, then the assumption is we only have one piece of cargo,
                 // and we're going to just drop that one
                 if (cargoLocation == null) {
                     cargo = entity.getDistinctCarriedObjects().get(0);
-                } else {
+                } else if (entity.getCarriedObject(cargoLocation) != null) {
                     cargo = entity.getCarriedObject(cargoLocation);
+                } else if ((cargoLocation >= 0) && (Integer.MAX_VALUE - cargoLocation < entity.getTransports()
+                      .size())) {
+                    // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly load into that transporter.
+                    Transporter transporter = entity.getTransports().get(Integer.MAX_VALUE - cargoLocation);
+                    if (transporter instanceof ExternalCargo externalCargo) {
+                        cargo = externalCargo.getCarryables().stream().findFirst().orElse(null);
+                    }
+                }
+                if (cargo == null) {
+                    logger.error("No cargo to drop at location {}", cargoLocation);
+                    return;
                 }
 
                 entity.dropCarriedObject(cargo, isLastStep);

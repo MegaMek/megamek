@@ -7065,15 +7065,14 @@ public class Compute {
         }
 
         int crew = 0;
+        crew += getCommunicationsCrew(entity);
+        crew += getDoctorCrew(entity);
+        crew += getMedicCrew(entity);
+        crew += getCombatTechCrew(entity);
+        crew += getAstechCrew(entity);
         for (Mounted<?> m : entity.getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
-                crew += (int) m.getTonnage();
-            } else if (m.getType().hasFlag(MiscType.F_FIELD_KITCHEN)) {
+            if (m.getType().hasFlag(MiscType.F_FIELD_KITCHEN)) {
                 crew += 3;
-            } else if (m.getType().hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
-                crew += 5;
-            } else if (m.getType().hasFlag(MiscType.F_MASH)) {
-                crew += 5 * (int) m.getSize();
             }
         }
 
@@ -7085,6 +7084,81 @@ public class Compute {
             // Tactical Officer
             return 1;
         }
+        return crew;
+    }
+
+    public static int getCommunicationsCrew(Entity entity) {
+        if (entity.hasDroneOs()) {
+            return 0;
+        }
+
+        int crew = 0;
+        for (Mounted<?> m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+                crew += (int) m.getTonnage();
+            }
+        }
+
+        return crew;
+    }
+
+    public static int getDoctorCrew(Entity entity) {
+        if (entity.hasDroneOs()) {
+            return 0;
+        }
+
+        int crew = 0;
+        for (Mounted<?> m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_MASH)) {
+                crew += (int) m.getSize();
+            }
+        }
+
+        return crew;
+    }
+
+    public static int getMedicCrew(Entity entity) {
+        if (entity.hasDroneOs()) {
+            return 0;
+        }
+
+        int crew = 0;
+        for (Mounted<?> m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_MASH)) {
+                crew += 4 * (int) m.getSize();
+            }
+        }
+
+        return crew;
+    }
+
+    public static int getCombatTechCrew(Entity entity) {
+        if (entity.hasDroneOs()) {
+            return 0;
+        }
+
+        int crew = 0;
+        for (Mounted<?> m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
+                crew++;
+            }
+        }
+
+        return crew;
+    }
+
+    public static int getAstechCrew(Entity entity) {
+        if (entity.hasDroneOs()) {
+            return 0;
+        }
+
+        int crew = 0;
+        for (Mounted<?> m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
+                crew += 4;
+            }
+        }
+
         return crew;
     }
 

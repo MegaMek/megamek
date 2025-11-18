@@ -1797,7 +1797,7 @@ public abstract class TestEntity implements TestEntityOption {
         for (var loc : modArmorByLocation.keySet()) {
             if (modArmorByLocation.get(loc) > 1) {
                 buff.append("Only one modular armor slot may be mounted in a single location (")
-                      .append(getEntity().getLocationName(loc.getLeft())).append(loc.getRight() ?  " (R))" : ")").append('\n');
+                      .append(getEntity().getLocationName(loc.getLeft())).append(loc.getRight() ? " (R))" : ")").append('\n');
                 illegal = true;
             }
         }

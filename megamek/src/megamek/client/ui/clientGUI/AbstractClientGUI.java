@@ -130,7 +130,7 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
                         // When the user clicked YES but did not actually save the game, don't close the game
                         return;
                     }
-                }
+                } // We should wait here until the save game packet arrives.
                 frame.setVisible(false);
                 saveSettings();
                 die();

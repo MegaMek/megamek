@@ -44,9 +44,9 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.units.IBomber;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Targetable;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -65,7 +65,7 @@ public class TAGHandler extends WeaponHandler {
 
     @Override
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
-          Building bldg, int hits, int nCluster, int bldgAbsorbs) {
+          IBuilding bldg, int hits, int nCluster, int bldgAbsorbs) {
         if (entityTarget == null) {
             Report r = new Report(3187);
             r.subject = subjectId;
@@ -94,7 +94,7 @@ public class TAGHandler extends WeaponHandler {
 
     @Override
     protected boolean handleSpecialMiss(Entity entityTarget, boolean bldgDamagedOnMiss,
-          Building bldg, Vector<Report> vPhaseReport) {
+          IBuilding bldg, Vector<Report> vPhaseReport) {
         // add even misses, as they waste homing missiles.
         TagInfo info = new TagInfo(attackingEntity.getId(), target.getTargetType(), target, true);
         game.addTagInfo(info);

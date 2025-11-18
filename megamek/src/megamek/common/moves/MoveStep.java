@@ -522,11 +522,11 @@ public class MoveStep implements Serializable {
             setElevation(getElevation() + 1);
         } else if (isJumping()) {
             Hex hex = game.getBoard(boardId).getHex(getPosition());
-            Optional<Building> optionalBuilding = game.getBuildingAt(entity.getPosition(), boardId);
+            Optional<IBuilding> optionalBuilding = game.getBuildingAt(entity.getPosition(), boardId);
 
             boolean isInsideTheSameBuilding = false;
             if (optionalBuilding.isPresent()) {
-                Optional<Building> optionalBuildingAtCurrentStep = game.getBuildingAt(getPosition(), boardId);
+                Optional<IBuilding> optionalBuildingAtCurrentStep = game.getBuildingAt(getPosition(), boardId);
                 if (optionalBuildingAtCurrentStep.isPresent()) {
                     isInsideTheSameBuilding = optionalBuildingAtCurrentStep.get().equals(optionalBuilding.get());
                 }
@@ -586,7 +586,7 @@ public class MoveStep implements Serializable {
                 setElevation(Math.max(getElevation(), hex.terrainLevel(Terrains.BRIDGE_ELEV)));
             }
         } else {
-            Building bld = game.getBoard(boardId).getBuildingAt(getPosition());
+            IBuilding bld = game.getBoard(boardId).getBuildingAt(getPosition());
 
             if (bld != null) {
                 Hex hex = game.getBoard(boardId).getHex(getPosition());
@@ -704,7 +704,7 @@ public class MoveStep implements Serializable {
                 secondaryPositions.add(getPosition().translated(dir));
             }
             for (Coords pos : secondaryPositions) {
-                Building bld = game.getBoard(boardId).getBuildingAt(pos);
+                IBuilding bld = game.getBoard(boardId).getBuildingAt(pos);
                 if (bld != null) {
                     getCrushedBuildingLocs().add(pos);
                     // This is dangerous!
@@ -2038,6 +2038,8 @@ public class MoveStep implements Serializable {
                 if ((getEntity().getMovementMode() == EntityMovementMode.VTOL ||
                       getEntity().getMovementMode() == EntityMovementMode.WIGE) && getClearance() > 0) {
                     movementType = EntityMovementType.MOVE_VTOL_WALK;
+                } else if ((getEntity().getMovementMode() == EntityMovementMode.SUBMARINE) && getElevation() < 0) {
+                    movementType = EntityMovementType.MOVE_SUBMARINE_WALK;
                 } else {
                     movementType = EntityMovementType.MOVE_WALK;
                     // Vehicles moving along pavement get "road bonus" of 1 MP.
@@ -2080,6 +2082,8 @@ public class MoveStep implements Serializable {
                 if ((entity.getMovementMode() == EntityMovementMode.VTOL ||
                       entity.getMovementMode() == EntityMovementMode.WIGE) && getClearance() > 0) {
                     movementType = EntityMovementType.MOVE_VTOL_RUN;
+                } else if ((entity.getMovementMode() == EntityMovementMode.SUBMARINE) && getElevation() < 0) {
+                    movementType = EntityMovementType.MOVE_SUBMARINE_RUN;
                 } else {
                     movementType = EntityMovementType.MOVE_RUN;
                 }
@@ -2102,6 +2106,16 @@ public class MoveStep implements Serializable {
                 } else {
                     movementType = EntityMovementType.MOVE_SPRINT;
                 }
+            }
+        }
+
+        // Submarines at seafloor cannot move horizontally or change facing (TW p.56)
+        // They can only ascend vertically
+        if (entity.getMovementMode() == EntityMovementMode.SUBMARINE) {
+            final Hex prevHex = game.getBoard(boardId).getHex(prev.getPosition());
+            if ((prev.getElevation() == -prevHex.depth()) && (type != MoveStepType.UP)) {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+                return;
             }
         }
 
@@ -2829,16 +2843,16 @@ public class MoveStep implements Serializable {
 
         // If we're entering a building, all non-infantry pay additional MP.
         if (nDestEl < destHex.terrainLevel(Terrains.BLDG_ELEV)) {
-            Building bldg = game.getBoard(boardId).getBuildingAt(getPosition());
+            IBuilding bldg = game.getBoard(boardId).getBuildingAt(getPosition());
             // check for inside hangar movement
             if (!isInfantry && !isSuperHeavyMek) {
                 if (!isProto) {
                     // non-ProtoMeks pay extra according to the building type
                     mp += bldg.getType().getTypeValue();
-                    if (bldg.getBldgClass() == Building.HANGAR) {
+                    if (bldg.getBldgClass() == IBuilding.HANGAR) {
                         mp--;
                     }
-                    if (bldg.getBldgClass() == Building.FORTRESS) {
+                    if (bldg.getBldgClass() == IBuilding.FORTRESS) {
                         mp++;
                     }
                 } else {
@@ -2955,7 +2969,7 @@ public class MoveStep implements Serializable {
 
         final int srcAlt = srcEl + srcHex.getLevel();
 
-        Building bld = game.getBoard(boardId).getBuildingAt(dest);
+        IBuilding bld = game.getBoard(boardId).getBuildingAt(dest);
 
         final int destAlt;
         if (bld != null && getEntity().getElevation() == 0 && climbMode) {
@@ -2992,7 +3006,7 @@ public class MoveStep implements Serializable {
 
             // only infantry can enter a gun emplacement
             if ((elevation < hex.terrainLevel(Terrains.BLDG_ELEV)) &&
-                  (bld.getBldgClass() == Building.GUN_EMPLACEMENT) &&
+                  (bld.getBldgClass() == IBuilding.GUN_EMPLACEMENT) &&
                   !(entity instanceof Infantry)) {
                 return false;
             }
@@ -3003,10 +3017,13 @@ public class MoveStep implements Serializable {
         if (!(entity instanceof VTOL) &&
               isThisStepBackwards() &&
               !(isJumping() && isUsingMekJumpBooster) &&
-              (((destAlt != srcAlt) &&
-                    !game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS) && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2))
+              (((destAlt != srcAlt)
+                    &&
+                    !game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS)
+                    && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2))
                     ||
-                    ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS) || game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2))
+                    ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS)
+                          || game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2))
                           &&
                           (Math.abs(destAlt - srcAlt) > 1)))) {
             return false;
@@ -3161,7 +3178,8 @@ public class MoveStep implements Serializable {
               !(isJumping() && isUsingMekJumpBooster)) {
             // Generally forbidden without TacOps Expanded Backward Movement p.22
             // PLAYTEST2 allow backwards up elevation changes
-            if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS) && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS)
+                  && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
                 return false;
             }
             // Even with Expanded Backward Movement, ...

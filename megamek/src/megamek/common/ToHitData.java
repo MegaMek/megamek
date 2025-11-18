@@ -42,8 +42,8 @@ import java.util.List;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 
 /**
  * Contains the to-hit number and a short description of how it was reached
@@ -96,13 +96,13 @@ public class ToHitData extends TargetRoll {
      * primary cover is used if there is a sole piece of cover (horizontal cover, 25% cover). In the case of a primary
      * and secondary, the primary cover protects the right side.
      */
-    Building coverBuildingPrimary = null;
+    IBuilding coverBuildingPrimary = null;
     /**
      * Keeps track of the building that provides cover.  This is used to assign damage for shots that hit cover.  The
      * secondary cover is used if there are two buildings that provide cover, like in the case of 75% cover or two
      * buildings providing 25% cover for a total of horizontal cover.  The secondary cover protects the left side.
      */
-    Building coverBuildingSecondary = null;
+    IBuilding coverBuildingSecondary = null;
     /**
      * Keeps track of the grounded Dropship that provides cover.  This is used to assign damage for shots that hit
      * cover. The primary cover is used if there is a sole piece of cover (horizontal cover, 25% cover). In the case of
@@ -130,7 +130,7 @@ public class ToHitData extends TargetRoll {
      * That is, if LoS from the attacker to target is traced  through a single building, then this value will be
      * non-null.
      */
-    Building thruBldg = null;
+    IBuilding thruBldg = null;
 
     /**
      * Construct default.
@@ -292,11 +292,11 @@ public class ToHitData extends TargetRoll {
         coverDropshipPrimary = coverDropship;
     }
 
-    public Building getCoverBuildingPrimary() {
+    public IBuilding getCoverBuildingPrimary() {
         return coverBuildingPrimary;
     }
 
-    public void setCoverBuildingPrimary(Building coverBuilding) {
+    public void setCoverBuildingPrimary(IBuilding coverBuilding) {
         coverBuildingPrimary = coverBuilding;
     }
 
@@ -324,11 +324,11 @@ public class ToHitData extends TargetRoll {
         coverDropshipSecondary = coverDropship;
     }
 
-    public Building getCoverBuildingSecondary() {
+    public IBuilding getCoverBuildingSecondary() {
         return coverBuildingSecondary;
     }
 
-    public void setCoverBuildingSecondary(Building coverBuilding) {
+    public void setCoverBuildingSecondary(IBuilding coverBuilding) {
         coverBuildingSecondary = coverBuilding;
     }
 
@@ -340,11 +340,11 @@ public class ToHitData extends TargetRoll {
         coverLocSecondary = coverLoc;
     }
 
-    public Building getThruBldg() {
+    public IBuilding getThruBldg() {
         return thruBldg;
     }
 
-    public void setThruBldg(Building b) {
+    public void setThruBldg(IBuilding b) {
         thruBldg = b;
     }
 

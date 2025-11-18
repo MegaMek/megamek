@@ -64,6 +64,7 @@ import megamek.client.ui.util.MenuScroller;
 import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.battleArmor.ProtoMekClampMount;
 import megamek.common.bays.Bay;
 import megamek.common.equipment.AmmoType;
@@ -388,6 +389,29 @@ class LobbyMekPopup {
                             "<HTML>" + e.getShortNameRaw() + idString(game, e.getId()) + " (Free Collars: "
                                   + ((Jumpship) e).getFreeDockingCollars() + ")",
                             LMP_LOAD + "|" + e.getId() + ":-1" + enToken(entities), true, listener)));
+            } else if (entities.size() == 1) {
+                Entity transportedUnit = entities.iterator().next();
+                // Standard loading, not ProtoMeks, not DropShip -> JumpShip
+                game.getEntitiesVector().stream()
+                      .filter(e -> !e.isCapitalFighter(true))
+                      .filter(e -> !entities.contains(e))
+                      .filter(e -> canLoadAll(e, entities))
+                      .forEach(e -> {
+                          JMenu loaderMenu = new JMenu("<HTML>" + e.getShortNameRaw() + idString(game, e.getId()));
+                          e.getTransports().forEach(t -> {
+                              if (t.canLoad(transportedUnit)) {
+                                  // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly load into that transporter.
+                                  loaderMenu.add(menuItem(
+                                        "Onto " + t.toString(),
+                                        LMP_LOAD + "|" + e.getId() + ":" + (Integer.MAX_VALUE
+                                              - e.getTransports().indexOf(t)) + enToken(entities),
+                                        true, listener));
+                              }
+                          });
+                          if (loaderMenu.getItemCount() > 0) {
+                              menu.add(loaderMenu);
+                          }
+                      });
             } else if (entities.stream().noneMatch(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMEK))) {
                 // Standard loading, not ProtoMeks, not DropShip -> JumpShip
                 game.getEntitiesVector().stream()
@@ -993,6 +1017,10 @@ class LobbyMekPopup {
      * @return true when the entity has an MG set to rapid fire.
      */
     private static boolean hasRapidFireMG(Entity entity) {
+        // Battle armor cannot use burst-fire MGs per errata
+        if (entity instanceof BattleArmor) {
+            return false;
+        }
         for (Mounted<?> m : entity.getWeaponList()) {
             EquipmentType etype = m.getType();
             if (etype.hasFlag(WeaponType.F_MG) && m.isRapidFire()) {
@@ -1004,6 +1032,10 @@ class LobbyMekPopup {
 
     /** Returns true when the entity has an MG set to normal (non-rapid) fire. */
     private static boolean hasNormalFireMG(Entity entity) {
+        // Battle armor cannot use burst-fire MGs per errata
+        if (entity instanceof BattleArmor) {
+            return false;
+        }
         for (Mounted<?> m : entity.getWeaponList()) {
             EquipmentType etype = m.getType();
             if (etype.hasFlag(WeaponType.F_MG) && !m.isRapidFire()) {

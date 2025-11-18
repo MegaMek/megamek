@@ -468,7 +468,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             }
 
             // only twist if crew conscious
-            setTwistEnabled(!currentEntity().getAlreadyTwisted() && currentEntity().canChangeSecondaryFacing() && currentEntity().getCrew().isActive());
+            setTwistEnabled(!currentEntity().getAlreadyTwisted()
+                  && currentEntity().canChangeSecondaryFacing()
+                  && currentEntity().getCrew().isActive());
 
             setFindClubEnabled(FindClubAction.canMekFindClub(game, en));
             setFlipArmsEnabled(!currentEntity().getAlreadyTwisted() && currentEntity().canFlipArms());
@@ -1088,7 +1090,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 }
             }
 
-            Building bldg = strafedBoard.getBuildingAt(c);
+            IBuilding bldg = strafedBoard.getBuildingAt(c);
             if (bldg != null) {
                 Targetable t = new BuildingTarget(c, strafedBoard, false);
                 ToHitData toHit = WeaponAttackAction.toHit(game, currentEntity, t, weaponId,
@@ -1583,7 +1585,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             }
         }
         if ((target instanceof Entity) && Compute.isGroundToAir(currentEntity(), target)) {
-            Coords targetPos = Compute.getClosestFlightPath(currentEntity, currentEntity().getPosition(), (Entity) target);
+            Coords targetPos = Compute.getClosestFlightPath(currentEntity,
+                  currentEntity().getPosition(),
+                  (Entity) target);
             if (clientgui.getBoardView(currentEntity()) != null) {
                 clientgui.getBoardView(currentEntity()).cursor(targetPos);
             }
@@ -1792,7 +1796,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         }
 
         if (event.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
-            if ((currentEntity() != null) && !currentEntity().getAlreadyTwisted() && (event.isShiftHeld() || twisting)) {
+            if ((currentEntity() != null) && !currentEntity().getAlreadyTwisted() && (event.isShiftHeld()
+                  || twisting)) {
                 updateFlipArms(false);
                 torsoTwist(event.getCoords());
             }
@@ -1977,7 +1982,6 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
     /**
      * update for change of arms-flipping status
-     *
      */
     public void updateFlipArms(boolean armsFlipped) {
         if (currentEntity() == null) {
@@ -2141,7 +2145,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         }
         // if we're clearing a "blood stalker" activation from the queue,
         // clear the local entity's blood stalker
-        if ((currentEntity() != null) && attacks.stream().anyMatch(item -> item instanceof ActivateBloodStalkerAction)) {
+        if ((currentEntity() != null) && attacks.stream()
+              .anyMatch(item -> item instanceof ActivateBloodStalkerAction)) {
             currentEntity().setBloodStalkerTarget(Entity.NONE);
         }
         clearAttacks();
@@ -2269,7 +2274,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
         // Is there a building in the hex?
         Board board = game.getBoard(boardId);
-        Building bldg = board.getBuildingAt(pos);
+        IBuilding bldg = board.getBuildingAt(pos);
         if (bldg != null) {
             targets.add(new BuildingTarget(pos, board, false));
         }

@@ -57,8 +57,8 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.handlers.AreaEffectHelper;
@@ -81,7 +81,8 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         super(toHitData, weaponAttackAction, game, gameManager);
         // PLAYTEST3 AMS below 0 is enabled
         advancedAMS =
-              game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS) || game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3);
+              game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS) || game.getOptions()
+                    .booleanOption(OptionsConstants.PLAYTEST_3);
         advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);
     }
 
@@ -140,7 +141,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
               && attackingEntity.getPosition().distance(target.getPosition()) <= 1;
 
         // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+        IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
 
         // Report weapon attack and its to-hit value.
         Report r = new Report(3115);
@@ -456,7 +457,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
      */
     @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
-          boolean bldgDamagedOnMiss, Building bldg,
+          boolean bldgDamagedOnMiss, IBuilding bldg,
           Vector<Report> vPhaseReport) {
         return true;
     }

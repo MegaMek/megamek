@@ -33,6 +33,8 @@
 
 package megamek.codeUtilities;
 
+import java.util.List;
+
 import megamek.logging.MMLogger;
 
 public class MathUtility {
@@ -135,6 +137,120 @@ public class MathUtility {
             LOGGER.warn("Can't round '{}' towards zero due to {}. Returning {}.", value, e.getMessage(), extreme);
             return extreme;
         }
+    }
+
+    /**
+     * This is a convenience method for calling {@link #getGaussianAverage(List, double)} with a strictness of 1.0
+     * (neutral).
+     *
+     * @param values the list of integer values to average; must not be {@code null}
+     *
+     * @return the Gaussian-weighted average as an {@code int}, or {@code 0} if the list is empty
+     *
+     * @author Illiani
+     * @since 0.50.10
+     */
+    public static int getGaussianAverage(List<Integer> values) {
+        return getGaussianAverage(values, 1.0);
+    }
+
+    /**
+     * Calculates a Gaussian-weighted average from a list of integer values.
+     *
+     * <p>This method computes a “soft” average that down-weights statistical outliers using a Gaussian
+     * (normal-distribution) weighting function. This is useful when a handful of extreme values should not influence
+     * the final result as strongly as values clustered near the center of the distribution.</p>
+     *
+     * <p><b>How It Works</b></p>
+     * <ol>
+     *   <li>Compute the arithmetic mean of all values.</li>
+     *   <li>Compute the standard deviation. This measures how far values typically lie from the mean.</li>
+     *   <li>If the standard deviation is zero (all values identical), simply return the mean. This avoids a
+     *   divide-by-zero error when standardizing distances.</li>
+     *   <li>Apply a configurable strictness factor to the standard deviation. Values less than {@code 1.0} increase
+     *   strictness by shrinking the effective deviation (causing outliers to be down-weighted more aggressively).
+     *   Values greater than {@code 1.0} reduce strictness.</li>
+     *   <li>For each value, compute its standardized distance from the mean and apply a Gaussian weighting function:
+     *       {@code weight = exp( -0.5 * ((value - mean) / adjustedDeviation)^2)}. Values closer to the mean receive
+     *       weights near {@code 1.0}, while more distant values rapidly approach zero weight.</li>
+     *   <li>Return the ratio of the weighted sum of values to the total weight.</li>
+     * </ol>
+     *
+     * <p>The result behaves like a robust average: representative values dominate the calculation, while extreme
+     * outliers exert proportionally less influence. This is especially useful when working with mixed-force Battle
+     * Value (BV) or unit count arrays where unusually large or unusually small BVs/counts should not skew budgeting
+     * logic.</p>
+     *
+     * <p><b>Strictness Guidelines</b></p>
+     * <ul>
+     *   <li>{@code strictness < 1.0}: more strict; outliers are strongly suppressed.</li>
+     *   <li>{@code strictness = 1.0}: neutral; standard Gaussian weighting (default).</li>
+     *   <li>{@code strictness > 1.0}: less strict; outliers retain more influence.</li>
+     * </ul>
+     *
+     * <p>The strictness value should rarely be set below {@code 0.5} or above {@code 2.0}. The default of
+     * {@code 1.0} should work well for most distributions.</p>
+     *
+     * <p>To protect against overflow during conversion to {@code int}, the final result is clamped within
+     * {@link Integer#MIN_VALUE} and {@link Integer#MIN_VALUE} using {@link MathUtility#clamp(int, int, int)}.</p>
+     *
+     * @param values     the list of integer values to average; must not be {@code null}
+     * @param strictness how strict the calculations should be. Used to increase or decrease the influence of outliers.
+     *
+     * @return the Gaussian-weighted average as an {@code int}, or {@code 0} if the list is empty
+     *
+     * @author Illiani
+     * @since 0.50.10
+     */
+    public static int getGaussianAverage(List<Integer> values, double strictness) {
+        if (values.isEmpty()) {
+            return 0;
+        }
+
+        // Start with the crude mean, this is going to be the middle-ground we use to weight everything
+        double total = 0;
+        for (int value : values) {
+            total += value;
+        }
+        double crudeMean = total / values.size();
+
+        // Then, we need to calculate standard deviation.
+        double varianceTotal = 0;
+        for (int value : values) {
+            double difference = value - crudeMean;
+            varianceTotal += difference * difference;
+        }
+        double variance = varianceTotal / values.size();
+        double baseDeviation = Math.sqrt(variance);
+
+        // Miraculously, all the values are identical (most likely because there is only one value). This guards
+        // against divide by 0 errors.
+        if (baseDeviation == 0) {
+            // We use MathUtility.clamp() to avoid the risk of an overflow when dealing with insanely large player
+            // campaigns. This probably isn't necessary, but no reason not to include it.
+            return MathUtility.clamp((int) Math.round(crudeMean), Integer.MIN_VALUE, Integer.MAX_VALUE);
+        }
+
+        // Below, we define how strict we want the calculations. strictness < 1.0 -> more strict. strictness > 1.0 ->
+        // less strict.
+        double adjustedDeviation = baseDeviation * strictness;
+
+        // This is where the magic happens.
+        // weight(value) = exp( -0.5 * ((value - mean) / adjustedDeviation)^2 )
+        double weightedSum = 0;
+        double weightTotal = 0;
+
+        for (int value : values) {
+            double distanceFromMean = (value - crudeMean) / adjustedDeviation;
+            double weight = Math.exp(-0.5 * distanceFromMean * distanceFromMean);
+            weightedSum += value * weight;
+            weightTotal += weight;
+        }
+
+        double gaussianMean = weightedSum / weightTotal;
+
+        // Using Math.min() for the same reason as outlined above.
+        return MathUtility.clamp((int) Math.round(gaussianMean), Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     // region Linear Interpolation

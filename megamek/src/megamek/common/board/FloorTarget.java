@@ -40,8 +40,8 @@ import megamek.common.Hex;
 import megamek.common.Messages;
 import megamek.common.Player;
 import megamek.common.ToHitData;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Targetable;
 
 /**
@@ -75,7 +75,7 @@ public class FloorTarget implements Targetable {
     public FloorTarget(Coords coords, Board board, int targetElevation) {
         position = coords;
 
-        Building bldg = board.getBuildingAt(position);
+        IBuilding bldg = board.getBuildingAt(position);
         if (bldg == null) {
             throw new IllegalArgumentException("The coordinates, " + position.getBoardNum()
                   + ", do not contain a building.");

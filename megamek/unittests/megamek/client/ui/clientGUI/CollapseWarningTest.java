@@ -48,8 +48,8 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.game.Game;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import org.junit.jupiter.api.Test;
 
 class CollapseWarningTest {
@@ -115,7 +115,7 @@ class CollapseWarningTest {
         Entity e = createMockEntityWith(new Coords(3, 3), 4, 6, 45.0, true, false);
 
         Coords buildingPosition = new Coords(3, 5);
-        Building bld = createMockBuildingWith(buildingPosition, 20);
+        IBuilding bld = createMockBuildingWith(buildingPosition, 20);
 
         Board b = createMockBoardWith(buildingPosition, bld);
 
@@ -134,7 +134,7 @@ class CollapseWarningTest {
         Entity e = createMockEntityWith(new Coords(3, 3), 5, 3, 45.0, true, true);
 
         Coords buildingPosition = new Coords(3, 5);
-        Building bld = createMockBuildingWith(buildingPosition, 20);
+        IBuilding bld = createMockBuildingWith(buildingPosition, 20);
 
         Board b = createMockBoardWith(buildingPosition, bld);
 
@@ -153,7 +153,7 @@ class CollapseWarningTest {
         Entity e = createMockEntityWith(null, 5, 3, 45.0, true, false);
 
         Coords buildingPosition = new Coords(3, 5);
-        Building bld = createMockBuildingWith(buildingPosition, 20);
+        IBuilding bld = createMockBuildingWith(buildingPosition, 20);
 
         Board b = createMockBoardWith(buildingPosition, bld);
 
@@ -172,7 +172,7 @@ class CollapseWarningTest {
         Entity e = createMockEntityWith(new Coords(3, 5), 5, 3, 45.0, true, false);
 
         Coords buildingPosition = new Coords(3, 5);
-        Building bld = createMockBuildingWith(buildingPosition, 90);
+        IBuilding bld = createMockBuildingWith(buildingPosition, 90);
 
         Board b = createMockBoardWith(buildingPosition, bld);
 
@@ -188,7 +188,7 @@ class CollapseWarningTest {
         Entity entity = createMockEntityWith(new Coords(3, 5), 5, 3, 45.0, true, false);
 
         Coords buildingPosition = new Coords(3, 5);
-        Building bld = createMockBuildingWith(buildingPosition, 20);
+        IBuilding bld = createMockBuildingWith(buildingPosition, 20);
 
         Board board = createMockBoardWith(buildingPosition, bld);
 
@@ -203,8 +203,8 @@ class CollapseWarningTest {
         // Test happy bath for handler when in deployment phase for an eligible
         // deployment hex.
         Coords expectedHex = new Coords(3, 6);
-        Vector<Building> buildings = new Vector<>();
-        Building bld = createMockBuildingWith(expectedHex, 20);
+        Vector<IBuilding> buildings = new Vector<>();
+        IBuilding bld = createMockBuildingWith(expectedHex, 20);
         buildings.add(bld);
 
         Entity e = createMockEntityWith(null, 5, 3, 70, true, false);
@@ -228,8 +228,8 @@ class CollapseWarningTest {
         // Test happy bath for handler when in deployment phase for an eligible
         // deployment hex.
         Coords expectedHex = new Coords(3, 6);
-        Vector<Building> buildings = new Vector<>();
-        Building bld = createMockBuildingWith(expectedHex, 20);
+        Vector<IBuilding> buildings = new Vector<>();
+        IBuilding bld = createMockBuildingWith(expectedHex, 20);
         buildings.add(bld);
 
         Entity e = createMockEntityWith(null, 5, 3, 70, true, false);
@@ -254,8 +254,8 @@ class CollapseWarningTest {
         // Test happy bath for handler when in deployment phase for an eligible
         // deployment hex.
         Coords expectedHex = new Coords(3, 6);
-        Vector<Building> buildings = new Vector<>();
-        Building bld = createMockBuildingWith(expectedHex, 20);
+        Vector<IBuilding> buildings = new Vector<>();
+        IBuilding bld = createMockBuildingWith(expectedHex, 20);
         buildings.add(bld);
 
         // Entity is not a ground unit.
@@ -281,8 +281,8 @@ class CollapseWarningTest {
         // Test happy bath for handler when in deployment phase for an eligible
         // deployment hex.
         Coords expectedHex = new Coords(3, 6);
-        Vector<Building> buildings = new Vector<>();
-        Building bld = createMockBuildingWith(expectedHex, 90);
+        Vector<IBuilding> buildings = new Vector<>();
+        IBuilding bld = createMockBuildingWith(expectedHex, 90);
         buildings.add(bld);
 
         // Entity is lighter than the CF of the building in a legal deploy hex, no
@@ -434,9 +434,9 @@ class CollapseWarningTest {
     }
 
     // Helper function to set up mock building with position and construction factor.
-    private Building createMockBuildingWith(Coords pos, int cf) {
+    private IBuilding createMockBuildingWith(Coords pos, int cf) {
         List<Coords> hexes = new ArrayList<>();
-        Building building = mock(Building.class);
+        IBuilding building = mock(IBuilding.class);
         hexes.add(pos);
         when(building.getCurrentCF(pos)).thenReturn(cf);
         when(building.getCoordsList()).thenReturn(hexes);
@@ -444,7 +444,7 @@ class CollapseWarningTest {
     }
 
     // Helper function to create a mock board
-    private Board createMockBoardWith(Coords pos, Building bld) {
+    private Board createMockBoardWith(Coords pos, IBuilding bld) {
         Board b = mock(Board.class);
         when(b.getBuildingAt(pos)).thenReturn(bld);
         return b;

@@ -59,8 +59,9 @@ import megamek.common.event.board.BoardEvent;
 import megamek.common.event.board.BoardListener;
 import megamek.common.hexArea.HexArea;
 import megamek.common.loaders.MapSettings;
-import megamek.common.units.Building;
+import megamek.common.units.BuildingTerrain;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -118,8 +119,8 @@ public class Board implements Serializable {
     /**
      * Building data structures.
      */
-    private final Vector<Building> buildings = new Vector<>();
-    private transient Hashtable<Coords, Building> bldgByCoords = new Hashtable<>();
+    private final Vector<IBuilding> buildings = new Vector<>();
+    private transient Hashtable<Coords, IBuilding> bldgByCoords = new Hashtable<>();
 
     protected transient Vector<BoardListener> boardListeners = new Vector<>();
 
@@ -356,7 +357,7 @@ public class Board implements Serializable {
 
                         // Nope. Try to create an object for the new building.
                         try {
-                            Building bldg = new Building(coords, this, Terrains.BUILDING,
+                            IBuilding bldg = new BuildingTerrain(coords, this, Terrains.BUILDING,
                                   BasementType.getType(curHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
                             buildings.addElement(bldg);
 
@@ -410,7 +411,7 @@ public class Board implements Serializable {
                     if (!bldgByCoords.containsKey(coords)) {
                         // Nope. Try to create an object for the new building.
                         try {
-                            Building bldg = new Building(coords, this, Terrains.BRIDGE, BasementType.NONE);
+                            IBuilding bldg = new BuildingTerrain(coords, this, Terrains.BRIDGE, BasementType.NONE);
                             buildings.addElement(bldg);
 
                             // Each building will identify the hexes it covers.
@@ -1354,14 +1355,14 @@ public class Board implements Serializable {
     /**
      * @return an <code>Enumeration</code> of <code>Building</code>s on the Board
      */
-    public Enumeration<Building> getBuildings() {
+    public Enumeration<IBuilding> getBuildings() {
         return buildings.elements();
     }
 
     /**
      * @return the Vector of all the board's buildings
      */
-    public Vector<Building> getBuildingsVector() {
+    public Vector<IBuilding> getBuildingsVector() {
         return buildings;
     }
 
@@ -1373,7 +1374,7 @@ public class Board implements Serializable {
      * @return a <code>Building</code> object, if there is one at the given coordinates, otherwise a
      *       <code>null</code> will be returned.
      */
-    public @Nullable Building getBuildingAt(Coords coords) {
+    public @Nullable IBuilding getBuildingAt(Coords coords) {
         return bldgByCoords.get(coords);
     }
 
@@ -1387,7 +1388,7 @@ public class Board implements Serializable {
      * @return The local <code>Building</code> object if we can find a match. If the other building is not on this
      *       board, a <code>null</code> is returned instead.
      */
-    private Building getLocalBuilding(Building other) {
+    private IBuilding getLocalBuilding(IBuilding other) {
         return buildings.stream().filter(building -> building.equals(other)).findFirst().orElse(null);
     }
 
@@ -1414,7 +1415,7 @@ public class Board implements Serializable {
         final Hex curHex = getHex(coords);
 
         // Remove the building from the building map.
-        Building bldg = bldgByCoords.get(coords);
+        IBuilding bldg = bldgByCoords.get(coords);
         if (bldg == null) {
             logger.error("No building found at {}", coords);
             return;
@@ -1468,7 +1469,7 @@ public class Board implements Serializable {
      *
      * @param bldg the <code>Building</code> that has collapsed.
      */
-    public void collapseBuilding(Building bldg) {
+    public void collapseBuilding(IBuilding bldg) {
 
         // Remove the building from our building vector.
         buildings.removeElement(bldg);
@@ -1486,8 +1487,8 @@ public class Board implements Serializable {
      *
      * @param receivedBuilding The Building received from the server
      */
-    public void updateBuilding(Building receivedBuilding) {
-        Building localBuilding = getLocalBuilding(receivedBuilding);
+    public void updateBuilding(IBuilding receivedBuilding) {
+        IBuilding localBuilding = getLocalBuilding(receivedBuilding);
 
         if ((receivedBuilding.getBoardId() != boardId) || (localBuilding == null)) {
             logger.error("Could not find a match for {} to update.", receivedBuilding);
@@ -1535,9 +1536,9 @@ public class Board implements Serializable {
         bldgByCoords = new Hashtable<>();
 
         // Walk through the vector of buildings.
-        Enumeration<Building> loop = buildings.elements();
+        Enumeration<IBuilding> loop = buildings.elements();
         while (loop.hasMoreElements()) {
-            final Building bldg = loop.nextElement();
+            final IBuilding bldg = loop.nextElement();
 
             // Each building identifies the hexes it covers.
             Enumeration<Coords> iter = bldg.getCoords();
@@ -1552,7 +1553,6 @@ public class Board implements Serializable {
      * <code>bldgByCoords</code> member.
      *
      * @param in the <code>ObjectInputStream</code> to read.
-     *
      */
     @Serial
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -1590,7 +1590,6 @@ public class Board implements Serializable {
      * minimap being redrawn. This is public as the boards and minimaps show some data that is not part of the Board
      * class and Board has no way of knowing when a change happens. An example of this is arty auto hexes which are
      * stored in the player class
-     *
      */
     public void processBoardEvent(BoardEvent event) {
         if (boardListeners == null) {
@@ -1624,7 +1623,7 @@ public class Board implements Serializable {
      * @param value The value to set the bridge CF to.
      */
     public void setBridgeCF(int value) {
-        for (Building bldg : buildings) {
+        for (IBuilding bldg : buildings) {
             for (Enumeration<Coords> coords = bldg.getCoords(); coords.hasMoreElements(); ) {
                 Coords c = coords.nextElement();
                 Hex h = getHex(c);
@@ -1637,7 +1636,7 @@ public class Board implements Serializable {
 
     // Kill all the unknown basements
     public void setRandomBasementsOff() {
-        for (Building b : buildings) {
+        for (IBuilding b : buildings) {
             for (Enumeration<Coords> coords = b.getCoords(); coords.hasMoreElements(); ) {
                 Coords c = coords.nextElement();
                 if (b.getBasement(c).isUnknown()) {
@@ -2044,7 +2043,7 @@ public class Board implements Serializable {
     public void setBoardId(int boardId) {
         this.boardId = boardId;
         // must update buildings that have already been created.
-        for (Building building : buildings) {
+        for (IBuilding building : buildings) {
             building.setBoardId(boardId);
         }
     }

@@ -545,8 +545,9 @@ public class ProtoMek extends Entity {
 
     @Override
     public boolean canPickupGroundObject() {
-        return !isLocationBad(ProtoMek.LOC_LEFT_ARM) && (getCarriedObject(ProtoMek.LOC_LEFT_ARM) == null) ||
-              !isLocationBad(ProtoMek.LOC_RIGHT_ARM) && (getCarriedObject(ProtoMek.LOC_RIGHT_ARM) == null);
+        return (!isLocationBad(ProtoMek.LOC_LEFT_ARM) && (getCarriedObject(ProtoMek.LOC_LEFT_ARM) == null)) ||
+              (!isLocationBad(ProtoMek.LOC_RIGHT_ARM) && (getCarriedObject(ProtoMek.LOC_RIGHT_ARM) == null)) ||
+              super.canPickupGroundObject();
     }
 
     @Override

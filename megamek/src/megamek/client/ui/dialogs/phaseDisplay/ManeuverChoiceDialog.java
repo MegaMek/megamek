@@ -80,6 +80,11 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
     private AbstractButton[] checkboxes;
 
     /**
+     * Current VSTOL status for tooltip generation
+     */
+    private boolean isVSTOL_CF = false;
+
+    /**
      * Create and initialize the dialog.
      *
      * @param parent  - the <code>Frame</code> that is locked by this dialog.
@@ -294,11 +299,28 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
         return retVal[0];
     }
 
+    /**
+     * Updates the maneuver buttons based on current unit state and generates tooltips.
+     *
+     * @param velocity Current unit velocity
+     * @param altitude Current unit altitude
+     * @param ceiling  Current ceiling for the unit
+     * @param isVTOL   Whether the unit is a VSTOL
+     * @param distance Distance traveled so far this turn
+     * @param board    The game board
+     * @param mp       The current movement path
+     */
     public void checkPerformability(int velocity, int altitude, int ceiling,
           boolean isVTOL, int distance, Board board, MovePath mp) {
+        // Store current VSTOL status for tooltip generation
+        this.isVSTOL_CF = isVTOL;
+
         for (int type = 0; type < ManeuverType.MAN_SIZE; type++) {
-            checkboxes[type].setEnabled(
-                  ManeuverType.canPerform(type, velocity, altitude, ceiling, isVTOL, distance, board, mp));
+            boolean canPerform = ManeuverType.canPerform(type, velocity, altitude, ceiling, isVTOL, distance, board, mp);
+            checkboxes[type].setEnabled(canPerform);
+            // Update tooltip to show current state using ManeuverType
+            checkboxes[type].setToolTipText(
+                ManeuverType.getManeuverTooltip(type, canPerform, velocity, altitude, isVSTOL_CF));
         }
     }
 }

@@ -340,7 +340,7 @@ public class MapMenu extends JPopupMenu {
     private JMenu touchOffExplosivesMenu() {
         JMenu menu = new JMenu("Touch off explosives");
 
-        Building bldg = board.getBuildingAt(coords);
+        IBuilding bldg = board.getBuildingAt(coords);
         if ((bldg != null)) {
             for (final DemolitionCharge charge : bldg.getDemolitionCharges()) {
                 if (charge.playerId == client.getLocalPlayer().getId() && coords.equals(charge.pos)) {
@@ -601,7 +601,6 @@ public class MapMenu extends JPopupMenu {
 
     /**
      * Create various menus related to GameMaster (GM) mode
-     *
      */
     private JMenu createGameMasterMenu() {
         JMenu menu = new JMenu(Messages.getString("Gamemaster.Gamemaster"));

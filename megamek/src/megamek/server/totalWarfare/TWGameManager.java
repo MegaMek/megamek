@@ -25351,30 +25351,18 @@ public class TWGameManager extends AbstractGameManager {
      * Creates a packet containing all current and out-of-game entities
      */
     public Packet createFullEntitiesPacket() {
-        for (Entity entity : getGame().getEntitiesVector()) {
-            if (entity.hasNovaCEWS()) {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < Entity.MAX_C3i_NODES; i++) {
-                    sb.append(entity.getNC3NextUUIDAsString(i)).append(", ");
+        // DIAGNOSTIC: Nova CEWS network state logging (enable DEBUG logging for C3 debugging)
+        if (LOGGER.isDebugEnabled()) {
+            for (Entity entity : getGame().getEntitiesVector()) {
+                if (entity.hasNovaCEWS()) {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < Entity.MAX_C3i_NODES; i++) {
+                        sb.append(entity.getNC3NextUUIDAsString(i)).append(", ");
+                    }
+                    LOGGER.debug("[SERVER] createFullEntitiesPacket: Entity {} ({}), c3NetIdString: {}, NC3UUIDs: [{}]",
+                        entity.getId(), entity.getShortName(), entity.getC3NetId(), sb.toString());
                 }
-                LOGGER.info("[SERVER] createFullEntitiesPacket: Entity {} ({}), c3NetIdString: {}, NC3UUIDs: [{}]",
-                    entity.getId(), entity.getShortName(), entity.getC3NetId(), sb.toString());
             }
-        }
-
-        // DIAGNOSTIC: Explicit Entity 1 check before serialization
-        Entity entity1 = getGame().getEntity(1);
-        if (entity1 != null && entity1.hasNovaCEWS()) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < Entity.MAX_C3i_NODES; i++) {
-                sb.append(entity1.getNC3NextUUIDAsString(i)).append(", ");
-            }
-            LOGGER.info("[PRE-SERIALIZE] Entity 1 EXPLICIT CHECK: hasNovaCEWS={}, NC3UUIDs=[{}]",
-                entity1.hasNovaCEWS(), sb.toString());
-        } else if (entity1 == null) {
-            LOGGER.warn("[PRE-SERIALIZE] Entity 1 is NULL!");
-        } else {
-            LOGGER.warn("[PRE-SERIALIZE] Entity 1 exists but hasNovaCEWS()={}", entity1.hasNovaCEWS());
         }
 
         return new Packet(PacketCommand.SENDING_ENTITIES,

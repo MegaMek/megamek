@@ -56,9 +56,9 @@ import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.rolls.PilotingRollData;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Tank;
 import megamek.common.units.Terrains;
 import megamek.common.units.UnitType;
@@ -374,7 +374,7 @@ public class GunEmplacement extends Tank {
     @Override
     public void setDeployed(boolean deployed) {
         super.setDeployed(deployed);
-        Optional<Building> occupiedBuilding = occupiedBuilding();
+        Optional<IBuilding> occupiedBuilding = occupiedBuilding();
         initialBuildingCF = occupiedBuilding.map(bldg -> bldg.getCurrentCF(getPosition())).orElse(0);
         initialBuildingArmor = occupiedBuilding.map(bldg -> bldg.getArmor(getPosition())).orElse(0);
     }
@@ -383,7 +383,7 @@ public class GunEmplacement extends Tank {
      * @return The Building this Gun Emplacement is deployed onto, if any. Safe to call under any circumstances (game
      *       may be null, may be un deployed etc.).
      */
-    private Optional<Building> occupiedBuilding() {
+    private Optional<IBuilding> occupiedBuilding() {
         if (game != null) {
             return game.getBuildingAt(getPosition(), getBoardId());
         } else {
@@ -396,7 +396,7 @@ public class GunEmplacement extends Tank {
         return occupiedBuilding().map(this::armorPercentage).orElse(1d);
     }
 
-    private double armorPercentage(Building building) {
+    private double armorPercentage(IBuilding building) {
         if (initialBuildingCF + initialBuildingArmor == 0) {
             // probably un-deployed; avoid division by zero
             return 1;

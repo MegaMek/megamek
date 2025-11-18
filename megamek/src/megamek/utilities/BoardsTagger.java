@@ -59,7 +59,7 @@ import megamek.common.Configuration;
 import megamek.common.Hex;
 import megamek.common.board.Board;
 import megamek.common.enums.BuildingType;
-import megamek.common.units.Building;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 
@@ -248,7 +248,7 @@ public class BoardsTagger {
                 weighedLevels += Math.abs(hex.getLevel());
                 water += hex.containsTerrain(WATER) ? 1 : 0;
                 if (hex.containsTerrain(BUILDING)
-                      && (!hex.containsTerrain(BLDG_CLASS) || hex.terrainLevel(BLDG_CLASS) == Building.STANDARD)
+                      && (!hex.containsTerrain(BLDG_CLASS) || hex.terrainLevel(BLDG_CLASS) == IBuilding.STANDARD)
                       && ((hex.terrainLevel(BUILDING) == BuildingType.LIGHT.getTypeValue())
                       || (hex.terrainLevel(BUILDING) == BuildingType.MEDIUM.getTypeValue()))) {
                     stdBuildings++;
@@ -257,9 +257,9 @@ public class BoardsTagger {
                     highBuildings += (height > 2) ? 1 : 0;
                 }
                 if (hex.containsTerrain(BUILDING)) {
-                    hangar += hex.terrainLevel(BLDG_CLASS) == Building.HANGAR ? 1 : 0;
-                    fortress += hex.terrainLevel(BLDG_CLASS) == Building.FORTRESS ? 1 : 0;
-                    gunEmplacement += hex.terrainLevel(BLDG_CLASS) == Building.GUN_EMPLACEMENT ? 1 : 0;
+                    hangar += hex.terrainLevel(BLDG_CLASS) == IBuilding.HANGAR ? 1 : 0;
+                    fortress += hex.terrainLevel(BLDG_CLASS) == IBuilding.FORTRESS ? 1 : 0;
+                    gunEmplacement += hex.terrainLevel(BLDG_CLASS) == IBuilding.GUN_EMPLACEMENT ? 1 : 0;
                     heavyBuilding += hex.terrainLevel(BUILDING) == BuildingType.HEAVY.getTypeValue() ? 1 : 0;
                     hardenedBuilding += hex.terrainLevel(BUILDING) == BuildingType.HARDENED.getTypeValue() ? 1 : 0;
                     armoredBuilding += hex.containsTerrain(BLDG_ARMOR) && hex.terrainLevel(Terrains.BLDG_ARMOR) > 0 ?

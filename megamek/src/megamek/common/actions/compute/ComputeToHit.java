@@ -57,9 +57,9 @@ import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
@@ -74,7 +74,6 @@ import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.lasers.innerSphere.ISBombastLaser;
 import megamek.common.weapons.lrms.LRTWeapon;
 import megamek.common.weapons.srms.SRTWeapon;
-import megamek.common.weapons.missiles.MRMWeapon;
 import megamek.logging.MMLogger;
 
 public class ComputeToHit {
@@ -100,7 +99,9 @@ public class ComputeToHit {
         if (ammoId == WeaponAttackAction.UNASSIGNED) {
             linkedAmmo = weapon.getLinkedAmmo();
         } else {
-            Entity carrier = (ammoCarrier == WeaponAttackAction.UNASSIGNED) ? weaponEntity : game.getEntity(ammoCarrier);
+            Entity carrier = (ammoCarrier == WeaponAttackAction.UNASSIGNED) ?
+                  weaponEntity :
+                  game.getEntity(ammoCarrier);
             linkedAmmo = (carrier == null) ? null : carrier.getAmmo(ammoId);
         }
 
@@ -660,7 +661,7 @@ public class ComputeToHit {
         // situations,
         // this occurs regardless of other LOS consideration.
         if (WeaponAttackAction.targetInShortCoverBuilding(target)) {
-            Building currentBuilding = game.getBuildingAt(target.getPosition(), target.getBoardId()).get();
+            IBuilding currentBuilding = game.getBuildingAt(target.getPosition(), target.getBoardId()).get();
 
             LosEffects shortBuildingLos = new LosEffects();
             shortBuildingLos.setTargetCover(LosEffects.COVER_HORIZONTAL);

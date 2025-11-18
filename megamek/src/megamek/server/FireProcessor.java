@@ -54,8 +54,8 @@ import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.Wind;
 import megamek.common.planetaryConditions.WindDirection;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
@@ -106,9 +106,9 @@ public class FireProcessor extends DynamicTerrainProcessor {
         // Cycle through all buildings, checking for fire.
         // ASSUMPTION: buildings don't lose 2 CF on the turn a fire starts.
         // ASSUMPTION: multi-hex buildings lose 2 CF in each burning hex
-        Enumeration<Building> buildings = board.getBuildings();
+        Enumeration<IBuilding> buildings = board.getBuildings();
         while (buildings.hasMoreElements()) {
-            Building bldg = buildings.nextElement();
+            IBuilding bldg = buildings.nextElement();
             Enumeration<Coords> bldgCoords = bldg.getCoords();
             while (bldgCoords.hasMoreElements()) {
                 Coords coords = bldgCoords.nextElement();
@@ -175,7 +175,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                 Hex currentHex = board.getHex(currentXCoord, currentYCoord);
 
                 if (currentHex.containsTerrain(Terrains.FIRE)) {
-                    Building bldg = board.getBuildingAt(currentCoords);
+                    IBuilding bldg = board.getBuildingAt(currentCoords);
                     // Was the fire started this turn?
                     if (currentHex.getFireTurn() == 0) {
                         // Report fire started this round

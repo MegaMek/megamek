@@ -519,7 +519,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      *       hitting a building, or an AMS only shooting down some missiles.
      */
     protected boolean handleSpecialMiss(Entity entityTarget, boolean bldgDamagedOnMiss,
-          Building bldg, Vector<Report> vPhaseReport) {
+          IBuilding bldg, Vector<Report> vPhaseReport) {
         // Shots that miss an entity can set fires.
         // Buildings can't be accidentally ignited,
         // and some weapons can't ignite fires.
@@ -858,7 +858,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             attackingEntity.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
         // Which building takes the damage?
-        Building bldg = game.getBuildingAt(target.getBoardLocation()).orElse(null);
+        IBuilding bldg = game.getBuildingAt(target.getBoardLocation()).orElse(null);
         String number = numWeapons > 1 ? " (" + numWeapons + ")" : "";
         for (int i = numAttacks; i > 0; i--) {
             // Report weapon attack and its to-hit value.
@@ -1374,7 +1374,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
      *
      * @param entityTarget The target Entity
      */
-    protected void handlePartialCoverHit(Entity entityTarget, Vector<Report> vPhaseReport, HitData pcHit, Building bldg,
+    protected void handlePartialCoverHit(Entity entityTarget, Vector<Report> vPhaseReport, HitData pcHit,
+          IBuilding bldg,
           int hits, int nCluster, int bldgAbsorbs) {
 
         // Report the hit and table description, if this isn't part of a salvo
@@ -1405,7 +1406,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         vPhaseReport.addElement(r);
 
         int damageableCoverType;
-        Building coverBuilding;
+        IBuilding coverBuilding;
         Entity coverDropShip;
         Coords coverLoc;
 
@@ -1502,7 +1503,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * Handle damage against an entity, called once per hit by default.
      */
     protected void handleEntityDamage(Entity entityTarget,
-          Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+          Vector<Report> vPhaseReport, IBuilding bldg, int hits, int nCluster,
           int bldgAbsorbs) {
         missed = false;
 
@@ -1657,7 +1658,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * Worker function to (maybe) have a building absorb damage meant for the entity
      */
     protected int absorbBuildingDamage(int nDamage, Entity entityTarget, int bldgAbsorbs,
-          Vector<Report> vPhaseReport, Building bldg,
+          Vector<Report> vPhaseReport, IBuilding bldg,
           boolean targetStickingOutOfBuilding) {
         // if the building will absorb some damage and the target is actually
         // entirely inside the building:
@@ -1693,7 +1694,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         return nDamage;
     }
 
-    protected void handleIgnitionDamage(Vector<Report> vPhaseReport, Building bldg, int hits) {
+    protected void handleIgnitionDamage(Vector<Report> vPhaseReport, IBuilding bldg, int hits) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -1709,11 +1710,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
     }
 
-    protected void handleClearDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage) {
+    protected void handleClearDamage(Vector<Report> vPhaseReport, IBuilding bldg, int nDamage) {
         handleClearDamage(vPhaseReport, bldg, nDamage, true);
     }
 
-    protected void handleClearDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage,
+    protected void handleClearDamage(Vector<Report> vPhaseReport, IBuilding bldg, int nDamage,
           boolean hitReport) {
         if (!bSalvo && hitReport) {
             // hits!
@@ -1747,7 +1748,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         vPhaseReport.addAll(clearReports);
     }
 
-    protected void handleBuildingDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage,
+    protected void handleBuildingDamage(Vector<Report> vPhaseReport, IBuilding bldg, int nDamage,
           Coords coords) {
         if (!bSalvo) {
             // hits!

@@ -840,7 +840,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // check for building collapse
-            Building bldg = getGame().getBoard(curBoardId).getBuildingAt(curPos);
+            IBuilding bldg = getGame().getBoard(curBoardId).getBuildingAt(curPos);
             if (bldg != null) {
                 gameManager.checkForCollapse(bldg, curPos, true,
                       gameManager.getMainPhaseReport());
@@ -1098,7 +1098,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     }
 
                     if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
-                        Building bldg = getGame().getBoard(curBoardId).getBuildingAt(entity.getPosition());
+                        IBuilding bldg = getGame().getBoard(curBoardId).getBuildingAt(entity.getPosition());
                         entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
                         gameManager.addAffectedBldg(bldg,
                               gameManager.checkBuildingCollapseWhileMoving(bldg, entity, entity.getPosition()));
@@ -2390,10 +2390,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // when first entering a building, we need to roll what type
             // of basement it has
             if (isOnGround && curHex.containsTerrain(Terrains.BUILDING)) {
-                Building bldg = getGame().getBoard(curBoardId).getBuildingAt(curPos);
+                IBuilding bldg = getGame().getBoard(curBoardId).getBuildingAt(curPos);
                 if (bldg.rollBasement(curPos, getGame().getBoard(curBoardId), gameManager.getMainPhaseReport())) {
                     gameManager.sendChangedHex(curPos);
-                    Vector<Building> buildings = new Vector<>();
+                    Vector<IBuilding> buildings = new Vector<>();
                     buildings.add(bldg);
                     gameManager.sendChangedBuildings(buildings);
                 }
@@ -3372,20 +3372,20 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // Handle non-infantry moving into a building.
             if (buildingMove > 0) {
                 // Get the building being exited.
-                Building bldgExited = null;
+                IBuilding bldgExited = null;
                 if ((buildingMove & 1) == 1) {
                     bldgExited = getGame().getBoard(curBoardId).getBuildingAt(lastPos);
                 }
 
                 // Get the building being entered.
-                Building bldgEntered = null;
+                IBuilding bldgEntered = null;
                 if ((buildingMove & 2) == 2) {
                     bldgEntered = getGame().getBoard(curBoardId).getBuildingAt(curPos);
                 }
 
                 // ProtoMeks changing levels within a building cause damage
                 if (((buildingMove & 8) == 8) && (entity instanceof ProtoMek)) {
-                    Building bldg = getGame().getBoard(curBoardId).getBuildingAt(curPos);
+                    IBuilding bldg = getGame().getBoard(curBoardId).getBuildingAt(curPos);
                     Vector<Report> vBuildingReport = gameManager.damageBuilding(bldg, 1, curPos);
                     for (Report report : vBuildingReport) {
                         report.subject = entity.getId();
@@ -3427,7 +3427,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                   || (entity.getMovementMode().isWiGE() && (step.getClearance() == 1))
                   || curElevation == curHex.terrainLevel(Terrains.BLDG_ELEV)
                   || curElevation == curHex.terrainLevel(Terrains.BRIDGE_ELEV))) {
-                Building bldg = getGame().getBoard(curBoardId).getBuildingAt(curPos);
+                IBuilding bldg = getGame().getBoard(curBoardId).getBuildingAt(curPos);
                 if ((bldg != null) && (entity.getElevation() >= 0)) {
                     boolean wigeFlyingOver = entity.getMovementMode() == EntityMovementMode.WIGE
                           && ((curHex.containsTerrain(Terrains.BLDG_ELEV)
@@ -3564,7 +3564,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // Check for crushing buildings by Dropships/Mobile Structures
             for (Coords pos : step.getCrushedBuildingLocs()) {
-                Building bldg = getGame().getBoard(curBoardId).getBuildingAt(pos);
+                IBuilding bldg = getGame().getBoard(curBoardId).getBuildingAt(pos);
                 Hex hex = getGame().getBoard(curBoardId).getHex(pos);
 
                 report = new Report(3443);
@@ -3613,7 +3613,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
     }
 
-    private String getReason(Building bldgExited, Building bldgEntered) {
+    private String getReason(IBuilding bldgExited, IBuilding bldgEntered) {
         String reason;
         if (bldgExited == null) {
             // If we're not leaving a building, just handle the "entered".

@@ -2025,7 +2025,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                   cmd.getHexesMoved());
                         } else if ((target.getTargetType() == Targetable.TYPE_FUEL_TANK) ||
                               (target.getTargetType() == Targetable.TYPE_BUILDING)) {
-                            Building bldg = game.getBoard(currentlySelectedEntity).getBuildingAt(moveto);
+                            IBuilding bldg = game.getBoard(currentlySelectedEntity).getBuildingAt(moveto);
                             toAttacker = ChargeAttackAction.getDamageTakenBy(currentlySelectedEntity, bldg, moveto);
                         }
                     }
@@ -4375,7 +4375,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // Is there a building in the hex?
         if (ce != null) {
-            Building bldg = game.getBoard(ce).getBuildingAt(pos);
+            IBuilding bldg = game.getBoard(ce).getBuildingAt(pos);
             if (bldg != null) {
                 targets.add(new BuildingTarget(pos, game.getBoard(ce), false));
             }

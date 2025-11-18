@@ -8276,10 +8276,10 @@ public abstract class Entity extends TurnOrdered
         }
 
         // check for movement inside a hangar
-        Building curBldg = board.getBuildingAt(curPos);
+        IBuilding curBldg = board.getBuildingAt(curPos);
         if ((null != curBldg) &&
               curBldg.isIn(prevPos) &&
-              (curBldg.getBldgClass() == Building.HANGAR) &&
+              (curBldg.getBldgClass() == IBuilding.HANGAR) &&
               (curHex.terrainLevel(Terrains.BLDG_ELEV) > height()) &&
               (step.getElevation() < curHex.terrainLevel(Terrains.BLDG_ELEV))) {
             return 0;
@@ -8309,7 +8309,7 @@ public abstract class Entity extends TurnOrdered
 
         // check to see if it's a wall
         if (rv > 1) {
-            Building bldgEntered;
+            IBuilding bldgEntered;
             bldgEntered = board.getBuildingAt(curPos);
             if (bldgEntered.getType() == BuildingType.WALL) {
                 return 4;
@@ -8338,7 +8338,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Calculates and returns the roll for an entity moving in buildings.
      */
-    public PilotingRollData rollMovementInBuilding(Building bldg, int distance, String why,
+    public PilotingRollData rollMovementInBuilding(IBuilding bldg, int distance, String why,
           EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
@@ -8364,12 +8364,12 @@ public abstract class Entity extends TurnOrdered
                 desc = "Light";
                 break;
             case MEDIUM:
-                if (bldg.getBldgClass() != Building.HANGAR) {
+                if (bldg.getBldgClass() != IBuilding.HANGAR) {
                     mod = 1;
                     desc = "Medium";
                 }
 
-                if (bldg.getBldgClass() >= Building.FORTRESS) {
+                if (bldg.getBldgClass() >= IBuilding.FORTRESS) {
                     mod = 2;
                     desc = desc + " Fortress";
                 }
@@ -8377,12 +8377,12 @@ public abstract class Entity extends TurnOrdered
             case HEAVY:
                 mod = 2;
                 desc = "Heavy";
-                if (bldg.getBldgClass() == Building.HANGAR) {
+                if (bldg.getBldgClass() == IBuilding.HANGAR) {
                     mod = 1;
                     desc = desc + " Hangar";
                 }
 
-                if (bldg.getBldgClass() == Building.FORTRESS) {
+                if (bldg.getBldgClass() == IBuilding.FORTRESS) {
                     mod = 3;
                     desc = desc + " Fortress";
                 }
@@ -8390,11 +8390,11 @@ public abstract class Entity extends TurnOrdered
             case HARDENED:
                 mod = 5;
                 desc = "Hardened";
-                if (bldg.getBldgClass() == Building.HANGAR) {
+                if (bldg.getBldgClass() == IBuilding.HANGAR) {
                     mod = 3;
                     desc = desc + " Hangar";
                 }
-                if (bldg.getBldgClass() == Building.FORTRESS) {
+                if (bldg.getBldgClass() == IBuilding.FORTRESS) {
                     mod = 4;
                     desc = desc + " Fortress";
                 }
@@ -10421,9 +10421,9 @@ public abstract class Entity extends TurnOrdered
         }
 
         // If there are no valid Entity targets, check for add valid buildings.
-        Enumeration<Building> buildings = game.getBoard(boardId).getBuildings();
+        Enumeration<IBuilding> buildings = game.getBoard(boardId).getBuildings();
         while (!canHit && buildings.hasMoreElements()) {
-            final Building bldg = buildings.nextElement();
+            final IBuilding bldg = buildings.nextElement();
 
             // Walk through the hexes of the building.
             Enumeration<Coords> hexes = bldg.getCoords();

@@ -101,7 +101,7 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.loaders.MapSettings;
-import megamek.common.units.Building;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.common.util.BoardUtilities;
@@ -709,8 +709,8 @@ public class BoardEditorPanel extends JPanel
                     // now,
                     // i.e. if the user has not manually set it to something else
                     int curCF = curHex.getTerrain(Terrains.BLDG_CF).getLevel();
-                    if (curCF == Building.getDefaultCF(oldLevel)) {
-                        curHex.addTerrain(new Terrain(Terrains.BLDG_CF, Building.getDefaultCF(newLevel)));
+                    if (curCF == IBuilding.getDefaultCF(oldLevel)) {
+                        curHex.addTerrain(new Terrain(Terrains.BLDG_CF, IBuilding.getDefaultCF(newLevel)));
                     }
                 }
             } else {

@@ -42,9 +42,9 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.units.Building;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Jumpship;
 import megamek.common.units.Warship;
 import megamek.server.totalWarfare.TWGameManager;
@@ -72,7 +72,7 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
 
     @Override
     protected void handleEntityDamage(Entity entityTarget,
-          Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+          Vector<Report> vPhaseReport, IBuilding bldg, int hits, int nCluster,
           int bldgAbsorbs) {
         missed = false;
 

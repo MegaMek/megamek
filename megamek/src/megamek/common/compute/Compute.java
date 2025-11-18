@@ -363,7 +363,6 @@ public class Compute {
      * set.
      *
      * @param dropLowest Flag that determines whether 2d6 or 3d6 drop the lowest is used
-     *
      */
     public static double oddsAbove(int n, boolean dropLowest) {
         if (n <= 2) {
@@ -800,10 +799,10 @@ public class Compute {
         // need to make a piloting check to avoid damage.
         if ((destElevation < destHex.terrainLevel(Terrains.BLDG_ELEV))
               && !(entity instanceof Infantry)) {
-            Building bldg = board.getBuildingAt(dest);
+            IBuilding bldg = board.getBuildingAt(dest);
             boolean insideHangar = (null != bldg)
                   && bldg.isIn(src)
-                  && (bldg.getBldgClass() == Building.HANGAR)
+                  && (bldg.getBldgClass() == IBuilding.HANGAR)
                   && (destHex.terrainLevel(Terrains.BLDG_ELEV) > entity
                   .height());
             if (!insideHangar) {
@@ -1500,7 +1499,7 @@ public class Compute {
 
         if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
             // PLAYTEST3 check ecm vs non ecm affected C3
-            if ( (c3range > c3ecmRange) && (c3range > range) ) {
+            if ((c3range > c3ecmRange) && (c3range > range)) {
                 usingRange = c3ecmRange;
                 usingC3 = true;
             } else if (range > c3range) {
@@ -3059,7 +3058,7 @@ public class Compute {
             // Buildings are a simple sum of their current CF and armor values.
             // the building the targeted hex belongs to. We have to get this and then get
             // values for the specific hex internally to it.
-            final Building parentBuilding = game.getBoard().getBuildingAt(position);
+            final IBuilding parentBuilding = game.getBoard().getBuildingAt(position);
             return (parentBuilding == null) ? 0
                   : parentBuilding.getCurrentCF(position) + parentBuilding.getArmor(position);
         } else if (targetType == Targetable.TYPE_ENTITY) {
@@ -3072,7 +3071,7 @@ public class Compute {
                 return 0;
             } else if (targetEntity instanceof GunEmplacement) {
                 // If this is a gun emplacement, handle it as the building hex it is in.
-                final Building parentBuilding = game.getBoard().getBuildingAt(position);
+                final IBuilding parentBuilding = game.getBoard().getBuildingAt(position);
                 return (parentBuilding == null) ? 0
                       : parentBuilding.getCurrentCF(position) + parentBuilding.getArmor(position);
             } else {
@@ -4168,7 +4167,6 @@ public class Compute {
      *
      * @param detector - the entity making a sensor scan
      * @param targetId - the entity id of the scan target
-     *
      */
     public static boolean hasSensorContact(Entity detector, int targetId) {
         return detector.hasSensorContactFor(targetId);
@@ -4201,7 +4199,6 @@ public class Compute {
      * @param game            The current {@link Game}
      * @param attackingEntity - the entity making a sensor scan
      * @param target          - the entity we're trying to spot
-     *
      */
     private static int calcSpaceECM(Game game, Entity attackingEntity, Targetable target) {
         int mod = 0;
@@ -4229,7 +4226,6 @@ public class Compute {
      * @param game   The current {@link Game}
      * @param ae     the entity making a sensor scan
      * @param target the entity we're trying to spot
-     *
      */
     private static int calcSensorShadow(Game game, Entity ae, Targetable target) {
         int mod = 0;
@@ -4362,7 +4358,6 @@ public class Compute {
      * @param game   The current {@link Game}
      * @param ae     the entity making a sensor scan
      * @param target the entity we're trying to spot
-     *
      */
     public static boolean calcFiringSolution(Game game, Entity ae, Targetable target) {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -4574,7 +4569,6 @@ public class Compute {
      * @param game   The current {@link Game}
      * @param ae     the entity making a sensor scan
      * @param target the entity we're trying to spot
-     *
      */
     public static boolean calcSensorContact(Game game, Entity ae, Targetable target) {
         // NPE check. Fighter squadrons don't start with sensors, but pick them up from
@@ -5081,7 +5075,6 @@ public class Compute {
 
     /**
      * Maintain backwards compatability.
-     *
      */
     public static int missilesHit(int missiles, int nMod) {
         return missilesHit(missiles, nMod, false);
@@ -5089,7 +5082,6 @@ public class Compute {
 
     /**
      * Maintain backwards compatability.
-     *
      */
     public static int missilesHit(int missiles, int nMod, boolean hotLoaded) {
         return Compute.missilesHit(missiles, nMod, hotLoaded, false, false);
@@ -5943,8 +5935,8 @@ public class Compute {
             return false;
         }
 
-        Building attackingBuilding = game.getBoard().getBuildingAt(attacker.getPosition());
-        Building targetBuilding = game.getBoard().getBuildingAt(target.getPosition());
+        IBuilding attackingBuilding = game.getBoard().getBuildingAt(attacker.getPosition());
+        IBuilding targetBuilding = game.getBoard().getBuildingAt(target.getPosition());
         return attackingBuilding.equals(targetBuilding);
     }
 
@@ -6162,7 +6154,6 @@ public class Compute {
 
     /**
      * method to change a set of active vectors for a one-point thrust expenditure in the giving facing
-     *
      */
     public static int[] changeVectors(int[] v, int facing) {
 
@@ -6223,7 +6214,6 @@ public class Compute {
 
     /**
      * compare two vectors and determine if they are the same
-     *
      */
     public static boolean sameVectors(int[] v1, int[] v2) {
 
@@ -6258,7 +6248,6 @@ public class Compute {
      * @param damage     Original weapon damage
      * @param damageType The damage type for BA vs BA damage
      * @param target     The target, used for ensuring the target BA isn't fire-resistant
-     *
      */
     public static int directBlowBADamage(double damage, int damageType,
           BattleArmor target) {
@@ -6314,7 +6303,6 @@ public class Compute {
     /**
      * Method replicates the Non-Conventional Damage against Infantry damage table as well as shifting for direct blows.
      * also adjust for non-infantry damaging mechanized infantry
-     *
      */
     public static int directBlowInfantryDamage(double damage, int mos, int damageType,
           boolean isNonInfantryAgainstMechanized, boolean isAttackThruBuilding, int attackerId,
@@ -7332,7 +7320,6 @@ public class Compute {
      * @param ae       Attacker
      * @param target   Target hex/entity
      * @param velocity speed of round, default 50 according to WeaponAttackAction
-     *
      */
     public static int turnsTilBOMHit(Game game, Entity ae, Targetable target, int velocity) {
         int distance = Compute.effectiveDistance(game, ae, target);

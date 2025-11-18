@@ -109,6 +109,14 @@ public class LiftHoist extends ExternalCargo {
         return "Lift Hoist";
     }
 
+    /**
+     * Returns true if the transporter can pick up ground objects
+     */
+    @Override
+    public boolean canPickupGroundObject() {
+        return canLoad();
+    }
+
     private boolean isOperable() {
         Mounted<?> mounted = getMounted();
         return mounted != null && !mounted.getEntity().isLocationBad(mounted.getLocation()) && mounted.isOperable();

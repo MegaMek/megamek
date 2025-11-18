@@ -178,12 +178,51 @@ public abstract class ExternalCargo implements Transporter {
         return retList;
     }
 
+    /**
+     * Retrieves a list of all {@link ICarryable} objects currently carried by this transporter. If no objects are being
+     * carried, the returned list will be empty.
+     * <p>
+     * The returned list is a separate instance and modifying it will not affect the underlying data structure of
+     * carried objects.
+     *
+     * @return a list of {@link ICarryable} objects currently carried. Never null, but may be empty.
+     */
     public List<ICarryable> getCarryables() {
         if (carriedObjects.isEmpty()) {
             return List.of();
         }
 
         return carriedObjects.values().stream().flatMap(List::stream).toList();
+    }
+
+    /**
+     * Retrieves a list of {@link ICarryable} objects currently carried at the specified location. If no objects are
+     * being carried at the given location, the returned list will be empty.
+     * <p>
+     * The returned list is a separate instance and modifying it will not affect the underlying data structure of
+     * carried objects.
+     *
+     * @param location the integer value representing the location to check for carried objects
+     *
+     * @return a list of {@link ICarryable} objects at the specified location. The list is never null, but it may be
+     *       empty.
+     */
+    public List<ICarryable> getCarryables(int location) {
+        if (carriedObjects.isEmpty() || !carriedObjects.containsKey(location)) {
+            return List.of();
+        }
+
+        return carriedObjects.get(location);
+    }
+
+    /**
+     * Retrieves a list of valid pickup locations for this transporter. The returned list is a new instance and
+     * modifying it will not affect the underlying data structure of valid pickup locations.
+     *
+     * @return a list of integers representing valid pickup locations. The list will never be null, but it may be empty.
+     */
+    public List<Integer> getLocations() {
+        return new ArrayList<>(validPickupLocations);
     }
 
     /**
@@ -327,6 +366,7 @@ public abstract class ExternalCargo implements Transporter {
      *
      * @param entity the entity to associate with this transporter
      */
+    @Override
     public void setEntity(Entity entity) {
         if (this.entity == null) {
             this.entity = entity;

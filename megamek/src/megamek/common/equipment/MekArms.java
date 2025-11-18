@@ -55,6 +55,21 @@ public class MekArms extends ExternalCargo {
     }
 
     /**
+     * If this specific transporter is capable of loading regardless of what the object is.
+     *
+     * @return <code>true</code> if the transporter is capable of loading, <code>false</code> otherwise.
+     */
+    @Override
+    protected boolean canLoad() {
+        for (int location : getLocations()) {
+            if (getCarryables(location).isEmpty() && super.canLoad()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Determines if this object can accept the given unit. The unit may not be of the appropriate type or there may be
      * no room for the unit.
      *
@@ -91,7 +106,7 @@ public class MekArms extends ExternalCargo {
      */
     @Override
     public double getUnused() {
-        if (entity != null && entity instanceof MekWithArms mek) {
+        if (entity instanceof MekWithArms mek) {
             return (totalSpace * mek.getTSMPickupModifier()) - getCarriedTonnage();
         }
 

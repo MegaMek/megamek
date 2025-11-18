@@ -1139,14 +1139,10 @@ public abstract class Entity extends TurnOrdered
                 setOwner(player);
             }
         }
-        // also set game for our transports
-        // they need it to return correct entities, because they store just the
-        // IDs
+        // also set game for our transports they need it to return correct entities, because they store just the IDs.
+        // Also let's set the entity for those transporters that use one.
         for (Transporter transport : getTransports()) {
-            // TODO: Find a better way to handle this
-            if (transport instanceof ExternalCargo externalCargo) {
-                externalCargo.setEntity(this);
-            }
+            transport.setEntity(this);
             transport.setGame(game);
         }
     }
@@ -3002,17 +2998,9 @@ public abstract class Entity extends TurnOrdered
     /**
      * Returns true if the entity can pick up ground objects
      */
+    @Override
     public boolean canPickupGroundObject() {
-        return canPickupGroundObjectWithLiftHoist();
-    }
-
-    /**
-     * Returns true if the entity can pickup a ground object using a lift hoist specifically
-     *
-     * @return true if the entity has a {@link LiftHoist} transporter that could pick up a ground object
-     */
-    public boolean canPickupGroundObjectWithLiftHoist() {
-        return getTransports().stream().anyMatch(t -> t instanceof LiftHoist);
+        return getTransports().stream().anyMatch(Transporter::canPickupGroundObject);
     }
 
     /**
@@ -16189,7 +16177,7 @@ public abstract class Entity extends TurnOrdered
     protected void processPickupStepEntity(MoveStep step, Integer cargoPickupLocation, TWGameManager gameManager,
           Entity entityPickingUpTarget) {
 
-        int bayNumber = -1;
+        int bayNumber = Bay.UNSET_BAY;
         if (cargoPickupLocation >= locations()) {
             bayNumber = cargoPickupLocation;
         }

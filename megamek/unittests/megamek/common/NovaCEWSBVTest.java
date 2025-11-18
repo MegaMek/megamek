@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Tests for Nova CEWS BV calculation and cap enforcement.
  *
- * TT Rules (IO p.197):
+ * TT Rules (IO: Alternate Eras p.183):
  * - Nova CEWS provides 5% BV bonus for all friendly units with Nova CEWS
  * - Bonus only applies if 2+ units with Nova CEWS are present
  * - Maximum bonus capped at 35% of unit's base BV

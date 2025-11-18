@@ -6267,6 +6267,7 @@ public abstract class Entity extends TurnOrdered
      * @return C3 network id that will be switched to on the next turn, or null if no change is pending.
      */
     public String getNewRoundNovaNetworkString() {
+        // Returns null when no change is pending (simple return avoids side effects - see commit 8d2cd0d011)
         return newC3NetIdString;
     }
 

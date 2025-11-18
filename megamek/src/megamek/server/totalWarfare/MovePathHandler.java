@@ -34,6 +34,8 @@
 
 package megamek.server.totalWarfare;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -62,15 +64,7 @@ import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
-import megamek.common.equipment.GroundObject;
-import megamek.common.equipment.Engine;
-import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.EscapePods;
-import megamek.common.equipment.ICarryable;
-import megamek.common.equipment.Minefield;
-import megamek.common.equipment.MiscType;
-import megamek.common.equipment.Mounted;
-import megamek.common.equipment.Transporter;
+import megamek.common.equipment.*;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.moves.MovePath;
@@ -87,8 +81,6 @@ import megamek.common.weapons.TeleMissile;
 import megamek.logging.MMLogger;
 import megamek.server.ServerHelper;
 import megamek.server.SmokeCloud;
-
-import static megamek.common.bays.Bay.UNSET_BAY;
 
 /**
  * Processes an Entity's MovePath when an ENTITY_MOVE packet is received.
@@ -1330,7 +1322,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
      * Places the entity on the atmospheric map in the hex corresponding to its current ground map. Used for lift-off
      * when aero-on-ground movement is not used. Before doing this, test if this can be done with
      * hasAtmosphericMapForLiftOff().
-     *
      */
     private void positionOnAtmosphericMap() {
         // without aero on ground movement, lift off places the aero directly on the atmospheric map, TW p. 88
@@ -3092,7 +3083,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             if (step.getType() == MoveStepType.PICKUP_CARGO) {
                 var carryableObjects = getGame().getGroundObjects(step.getPosition());
-                carryableObjects.addAll(getGame().getEntitiesVector(step.getPosition()).stream().filter(entity::canPickupCarryableObject).toList());
+                carryableObjects.addAll(getGame().getEntitiesVector(step.getPosition())
+                      .stream()
+                      .filter(entity::canPickupCarryableObject)
+                      .toList());
                 Integer cargoPickupIndex;
 
                 // if there's only one object on the ground, let's just get that one and ignore
@@ -3111,7 +3105,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
                       && (cargoPickupIndex < carryableObjects.size())) {
 
                     ICarryable pickupTarget = carryableObjects.get(cargoPickupIndex);
-                    if (entity.maxGroundObjectTonnage() >= pickupTarget.getTonnage()) {
+                    // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly load into that transporter.
+                    if (entity.maxGroundObjectTonnage() >= pickupTarget.getTonnage() || ((entity.getTransports().size()
+                          > (Integer.MAX_VALUE - cargoPickupLocation))
+                          && (entity.getTransports()
+                          .get(Integer.MAX_VALUE - cargoPickupLocation) instanceof ExternalCargo externalCargo
+                          && externalCargo.canLoadCarryable(pickupTarget)))) {
                         pickupTarget.processPickupStep(step, cargoPickupLocation, gameManager, entity,
                               overallMoveType);
                     } else {
@@ -3131,14 +3130,25 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             if (step.getType() == MoveStepType.DROP_CARGO) {
                 Integer cargoLocation = step.getAdditionalData(MoveStep.CARGO_LOCATION_KEY);
-                ICarryable cargo;
+                ICarryable cargo = null;
 
                 // if we're not supplied a specific location, then the assumption is we only have one piece of cargo,
                 // and we're going to just drop that one
                 if (cargoLocation == null) {
                     cargo = entity.getDistinctCarriedObjects().get(0);
-                } else {
+                } else if (entity.getCarriedObject(cargoLocation) != null) {
                     cargo = entity.getCarriedObject(cargoLocation);
+                } else if ((cargoLocation >= 0) && (Integer.MAX_VALUE - cargoLocation < entity.getTransports()
+                      .size())) {
+                    // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly load into that transporter.
+                    Transporter transporter = entity.getTransports().get(Integer.MAX_VALUE - cargoLocation);
+                    if (transporter instanceof ExternalCargo externalCargo) {
+                        cargo = externalCargo.getCarryables().stream().findFirst().orElse(null);
+                    }
+                }
+                if (cargo == null) {
+                    logger.error("No cargo to drop at location {}", cargoLocation);
+                    return;
                 }
 
                 entity.dropCarriedObject(cargo, isLastStep);

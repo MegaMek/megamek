@@ -537,15 +537,17 @@ public class Client extends AbstractClient {
             }
         }
 
-        // Diagnostic logging for Nova CEWS networks
-        for (Entity entity : newEntities) {
-            if (entity.hasNovaCEWS()) {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < Entity.MAX_C3i_NODES; i++) {
-                    sb.append(entity.getNC3NextUUIDAsString(i)).append(", ");
+        // Diagnostic logging for Nova CEWS networks (enable DEBUG logging for C3 debugging)
+        if (LOGGER.isDebugEnabled()) {
+            for (Entity entity : newEntities) {
+                if (entity.hasNovaCEWS()) {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < Entity.MAX_C3i_NODES; i++) {
+                        sb.append(entity.getNC3NextUUIDAsString(i)).append(", ");
+                    }
+                    LOGGER.debug("[CLIENT] receiveEntities: Entity {} ({}), c3NetIdString: {}, NC3UUIDs: [{}]",
+                        entity.getId(), entity.getShortName(), entity.getC3NetId(), sb.toString());
                 }
-                LOGGER.info("[CLIENT] receiveEntities: Entity {} ({}), c3NetIdString: {}, NC3UUIDs: [{}]",
-                    entity.getId(), entity.getShortName(), entity.getC3NetId(), sb.toString());
             }
         }
         game.setOutOfGameEntitiesVector(newOutOfGame);

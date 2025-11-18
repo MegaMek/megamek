@@ -271,6 +271,7 @@ public class TeamOverviewPanel extends JPanel {
                             unitCritical[classIndex(entity)] = true;
                         }
                         if (((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5))
+                              || (entity.hasNovaCEWS() && (entity.calculateFreeC3Nodes() == 2))
                               || ((entity.getC3Master() == null) && entity.hasC3S())) {
                             unitWarnings[classIndex(entity)] = true;
                         }

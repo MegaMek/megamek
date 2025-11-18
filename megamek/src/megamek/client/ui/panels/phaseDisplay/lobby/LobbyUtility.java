@@ -32,6 +32,8 @@
  */
 package megamek.client.ui.panels.phaseDisplay.lobby;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -63,7 +65,7 @@ import megamek.client.ui.entityreadout.LiveReadoutDialog;
 import megamek.client.ui.models.UnitTableModel;
 import megamek.client.ui.util.UIUtil;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.*;
+import megamek.common.Player;
 import megamek.common.battleArmor.BattleArmorHandlesTank;
 import megamek.common.bays.Bay;
 import megamek.common.equipment.TankTrailerHitch;
@@ -79,8 +81,6 @@ import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
 import megamek.common.util.C3Util;
 import megamek.logging.MMLogger;
-
-import static megamek.common.bays.Bay.UNSET_BAY;
 
 /**
  * This class provides static helper functions for the Lobby aka ChatLounge.
@@ -372,6 +372,10 @@ public class LobbyUtility {
                     // for ProtoMek mag clamp systems
                     hasEnoughCargoCapacity = entities.size() == 1;
                     errorMessage = Messages.getString("LoadingBay.protostoomany");
+                } else if (loader.getTransports().get(Integer.MAX_VALUE - bayNumber).canLoad(soleProtoMek)) {
+                    // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly load
+                    //  into that transporter.
+                    hasEnoughCargoCapacity = entities.size() == 1;
                 } else {
                     errorMessage = Messages.getString("LoadingBay.bayNumberNotFound", bayNumber);
                 }

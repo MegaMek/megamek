@@ -68,7 +68,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
 
     public NovaNetworkDialog(JFrame parent, ClientGUI clientGUI) {
         super(parent, Messages.getString("NovaNetworkDialog.title"), true);
-        LOGGER.info("Opening Nova CEWS Network Management Dialog");
+        LOGGER.debug("Opening Nova CEWS Network Management Dialog");
         this.clientGUI = clientGUI;
         this.game = clientGUI.getClient().getGame();
         this.localPlayerId = clientGUI.getClient().getLocalPlayer().getId();
@@ -379,7 +379,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
      */
     private void linkSelectedUnits() {
         List<Entity> selectedEntities = getSelectedEntities();
-        LOGGER.info("Link action: {} units selected", selectedEntities.size());
+        LOGGER.debug("Link action: {} units selected", selectedEntities.size());
 
         if (selectedEntities.isEmpty()) {
             LOGGER.warn("Link action failed: No units selected");
@@ -398,7 +398,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         // Determine target network based on selection:
         // - If ALL selected units share the same network (all networked, same network): Keep that network
         // - Otherwise (mixed networked/unlinked, different networks, all unlinked): Create new network
-        LOGGER.info("Link action: Analyzing {} selected units", selectedEntities.size());
+        LOGGER.debug("Link action: Analyzing {} selected units", selectedEntities.size());
 
         String targetNetworkId;
         List<String> existingNetworks = selectedEntities.stream()
@@ -419,14 +419,14 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         if ((networkedCount == selectedEntities.size()) && (existingNetworks.size() == 1)) {
             // All selected units are in the same network - preserve it
             targetNetworkId = existingNetworks.get(0);
-            LOGGER.info("Decision: Preserving existing network (all units from same network): {}", targetNetworkId);
+            LOGGER.debug("Decision: Preserving existing network (all units from same network): {}", targetNetworkId);
 
             // Check if this is a no-op (all units already in target network)
             boolean anyChanges = selectedEntities.stream()
                 .anyMatch(e -> !targetNetworkId.equals(e.getC3NetId()));
 
             if (!anyChanges) {
-                LOGGER.info("No action needed: All selected units already in network {}", targetNetworkId);
+                LOGGER.debug("No action needed: All selected units already in network {}", targetNetworkId);
                 showInfo(Messages.getString("NovaNetworkDialog.info.alreadyNetworked", targetNetworkId));
                 return;  // Exit without making changes
             }
@@ -448,7 +448,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
                 .findFirst()
                 .orElse(selectedEntities.get(0).getOriginalNovaC3NetId()); // Fallback
 
-            LOGGER.info("Decision: Creating new network from available ID (mixed selection): {}", targetNetworkId);
+            LOGGER.debug("Decision: Creating new network from available ID (mixed selection): {}", targetNetworkId);
             LOGGER.debug("Selected network ID {} to avoid including unintended units", targetNetworkId);
         }
 
@@ -486,7 +486,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         populateUnitList();
         updatePendingChanges();
 
-        LOGGER.info("Link action completed successfully: {} units now in network", resultingNetworkSize);
+        LOGGER.debug("Link action completed successfully: {} units now in network", resultingNetworkSize);
         showInfo(Messages.getString("NovaNetworkDialog.info.linked"));
     }
 
@@ -495,7 +495,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
      */
     private void unlinkSelectedUnits() {
         List<Entity> selectedEntities = getSelectedEntities();
-        LOGGER.info("Unlink action: {} units selected", selectedEntities.size());
+        LOGGER.debug("Unlink action: {} units selected", selectedEntities.size());
 
         if (selectedEntities.isEmpty()) {
             LOGGER.warn("Unlink action failed: No units selected");
@@ -517,7 +517,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
             String currentNetworkId = entity.getC3NetId();
             String targetNetworkId = entity.getOriginalNovaC3NetId();
 
-            LOGGER.info("Unlinking entity {} ({}) from network {} to original network {}",
+            LOGGER.debug("Unlinking entity {} ({}) from network {} to original network {}",
                 entity.getId(), entity.getShortName(), currentNetworkId, targetNetworkId);
 
             entity.setNewRoundNovaNetworkString(targetNetworkId);
@@ -528,7 +528,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         populateUnitList();
         updatePendingChanges();
 
-        LOGGER.info("Unlink action completed successfully");
+        LOGGER.debug("Unlink action completed successfully");
         showInfo(Messages.getString("NovaNetworkDialog.info.unlinked"));
     }
 

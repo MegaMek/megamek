@@ -67,6 +67,7 @@ import megamek.common.units.*;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.battleArmor.BAFlamerWeapon;
 import megamek.common.weapons.lasers.clan.CLChemicalLaserWeapon;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * Abstract parent class for testing and validating instantiations of
@@ -1788,14 +1789,15 @@ public abstract class TestEntity implements TestEntityOption {
 
         // Find all locations with modular armor and map the number in that location to
         // the location index.
-        Map<Integer, Long> modArmorByLocation = getEntity().getMisc().stream()
+        // Front and rear are seperate locations: https://battletech.com/forums/index.php?topic=89727.0
+        Map<Pair<Integer, Boolean>, Long> modArmorByLocation = getEntity().getMisc().stream()
               .filter(m -> m.getType().hasFlag(MiscType.F_MODULAR_ARMOR))
               .filter(m -> m.getLocation() != Entity.LOC_NONE)
-              .collect(Collectors.groupingBy(Mounted::getLocation, Collectors.counting()));
-        for (Integer loc : modArmorByLocation.keySet()) {
+              .collect(Collectors.groupingBy(m -> Pair.of(m.getLocation(), m.isRearMounted()), Collectors.counting()));
+        for (var loc : modArmorByLocation.keySet()) {
             if (modArmorByLocation.get(loc) > 1) {
                 buff.append("Only one modular armor slot may be mounted in a single location (")
-                      .append(getEntity().getLocationName(loc)).append(")\n");
+                      .append(getEntity().getLocationName(loc.getLeft())).append(loc.getRight() ? " (R))" : ")").append('\n');
                 illegal = true;
             }
         }

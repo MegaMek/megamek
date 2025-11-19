@@ -46,8 +46,8 @@ import megamek.common.BulldozerMovePath;
 import megamek.common.Hex;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Terrains;
 import megamek.common.util.BoardUtilities;
 
@@ -169,7 +169,6 @@ public class BoardClusterTracker {
 
     /**
      * Returns a set of coordinates that intersect with the cluster in which the given entity resides.
-     *
      */
     public Set<Coords> getDestinationCoords(Entity entity, Coords destination, boolean terrainReduction) {
         updateMovableAreas(entity);
@@ -378,7 +377,7 @@ public class BoardClusterTracker {
         if (!hex.containsTerrain(Terrains.BLDG_CF) && !hex.containsExit(Terrains.FUEL_TANK_CF)) {
             return false;
         } else if (relevantMovementType == MovementType.Walker) {
-            final Building building = board.getBuildingAt(coords);
+            final IBuilding building = board.getBuildingAt(coords);
 
             if (building == null) {
                 return false;

@@ -94,10 +94,10 @@ import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.turns.SpecificEntityTurn;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityListFile;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.ProtoMek;
 import megamek.common.units.Terrains;
@@ -706,7 +706,7 @@ public abstract class BotClient extends Client {
             }
 
             // Make sure we don't overload any buildings in this hex.
-            Building building = game.getBoard(deployedUnit).getBuildingAt(dest);
+            IBuilding building = game.getBoard(deployedUnit).getBuildingAt(dest);
             if (null != building) {
                 double mass = getMassOfAllInBuilding(game, dest, deployedUnit.getBoardId()) + deployedUnit.getWeight();
                 if (mass > building.getCurrentCF(dest)) {
@@ -1042,7 +1042,7 @@ public abstract class BotClient extends Client {
 
     private double potentialBuildingDamage(int x, int y, Entity entity) {
         Coords coords = new Coords(x, y);
-        Building building = game.getBoard(entity).getBuildingAt(coords);
+        IBuilding building = game.getBoard(entity).getBuildingAt(coords);
         if (building == null) {
             return 0;
         }
@@ -1384,7 +1384,7 @@ public abstract class BotClient extends Client {
      * Let the bot decide whether to reroll initiative based on report info
      *
      * @return true if Tactical Genius A) is available, B) hasn't been used already, and C) would improve our initiative
-     * vs enemy players; otherwise return false.
+     *       vs enemy players; otherwise return false.
      */
     protected boolean decideToRerollInitiative() {
         Player me = getLocalPlayer();

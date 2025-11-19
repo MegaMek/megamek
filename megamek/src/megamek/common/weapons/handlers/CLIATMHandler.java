@@ -59,8 +59,8 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Aero;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
@@ -442,7 +442,7 @@ public class CLIATMHandler extends ATMHandler {
      */
     @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
-          boolean bldgDamagedOnMiss, Building bldg,
+          boolean bldgDamagedOnMiss, IBuilding bldg,
           Vector<Report> vPhaseReport) {
         if (streakInactive()) {
             return super.handleSpecialMiss(entityTarget, bldgDamagedOnMiss,
@@ -481,7 +481,7 @@ public class CLIATMHandler extends ATMHandler {
                   && attackingEntity.getPosition().distance(target.getPosition()) <= 1;
 
             // Which building takes the damage?
-            Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+            IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
 
             // Report weapon attack and its to-hit value.
             Report r = new Report(3115);
@@ -604,7 +604,7 @@ public class CLIATMHandler extends ATMHandler {
             }
 
             // Which building takes the damage?
-            Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+            IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
             String number = numWeapons > 1 ? " (" + numWeapons + ")" : "";
             // Report weapon attack and its to-hit value.
             Report report = new Report(3115);

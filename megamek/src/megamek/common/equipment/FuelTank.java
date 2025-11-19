@@ -39,14 +39,14 @@ import java.io.Serial;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.enums.BasementType;
-import megamek.common.units.Building;
+import megamek.common.units.BuildingTerrain;
 
 /**
  * This class represents a single, possibly multi-hex fuel tank on the board.
  *
  * @author fastsammy@sourceforge.net (Robin D. Toll)
  */
-public class FuelTank extends Building {
+public class FuelTank extends BuildingTerrain {
     @Serial
     private static final long serialVersionUID = 5275543640680231747L;
     private final int _magnitude;

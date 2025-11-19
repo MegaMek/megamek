@@ -53,9 +53,9 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.BuildingTarget;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
@@ -82,7 +82,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
      */
     @Override
     protected void handlePartialCoverHit(Entity entityTarget, Vector<Report> vPhaseReport,
-          HitData hit, Building bldg, int hits, int nCluster,
+          HitData hit, IBuilding bldg, int hits, int nCluster,
           int bldgAbsorbs) {
         // Report the hit and table description, if this isn't part of a salvo
         Report r;
@@ -105,7 +105,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         vPhaseReport.addElement(r);
 
         int damageableCoverType;
-        Building coverBuilding;
+        IBuilding coverBuilding;
         Entity coverDropShip;
         Coords coverLoc;
 
@@ -211,7 +211,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
 
     @Override
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
-          Building bldg, int hits, int nCluster, int bldgAbsorbs) {
+          IBuilding bldg, int hits, int nCluster, int bldgAbsorbs) {
 
         if (entityTarget.tracksHeat()) {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
@@ -238,8 +238,10 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             r.indent(2);
             int extraHeat = Compute.d6(2);
-            if (entityTarget.getArmor(hit) > 0 &&
-                  (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE) && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            if (entityTarget.getArmor(hit) > 0
+                  &&
+                  (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE)
+                  && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
                 // PLAYTEST3 do not halve for reflective
                 entityTarget.heatFromExternal += Math.max(1, extraHeat / 2);
                 r.add(Math.max(1, extraHeat / 2));
@@ -316,7 +318,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected void handleIgnitionDamage(Vector<Report> vPhaseReport, Building bldg, int hits) {
+    protected void handleIgnitionDamage(Vector<Report> vPhaseReport, IBuilding bldg, int hits) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -333,7 +335,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected void handleClearDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage) {
+    protected void handleClearDamage(Vector<Report> vPhaseReport, IBuilding bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -374,7 +376,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected void handleBuildingDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage,
+    protected void handleBuildingDamage(Vector<Report> vPhaseReport, IBuilding bldg, int nDamage,
           Coords coords) {
         // Plasma weapons deal double damage to buildings.
         super.handleBuildingDamage(vPhaseReport, bldg, nDamage * 2, coords);

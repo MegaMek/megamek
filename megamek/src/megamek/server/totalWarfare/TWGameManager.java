@@ -156,7 +156,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     // Track buildings that are affected by an entity's movement.
-    private final Hashtable<Building, Boolean> affectedBuildings = new Hashtable<>();
+    private final Hashtable<IBuilding, Boolean> affectedBuildings = new Hashtable<>();
 
     // Track Physical Action results, HACK to deal with opposing pushes
     // canceling each other
@@ -3761,7 +3761,7 @@ public class TWGameManager extends AbstractGameManager {
                     count = 0;
                     if (game.getBoard().contains(newPos)) {
                         Hex newHex = game.getBoard().getHex(newPos);
-                        Building bldg = game.getBoard().getBuildingAt(newPos);
+                        IBuilding bldg = game.getBoard().getBuildingAt(newPos);
                         boolean danger = newHex.containsTerrain(Terrains.WATER) ||
                               newHex.containsTerrain(Terrains.MAGMA) ||
                               (null != bldg);
@@ -3783,7 +3783,7 @@ public class TWGameManager extends AbstractGameManager {
                     count = 0;
                     if (game.getBoard().contains(newPos)) {
                         Hex newHex = game.getBoard().getHex(newPos);
-                        Building bldg = game.getBoard().getBuildingAt(newPos);
+                        IBuilding bldg = game.getBoard().getBuildingAt(newPos);
                         boolean danger = newHex.containsTerrain(Terrains.WATER) ||
                               newHex.containsTerrain(Terrains.MAGMA) ||
                               (null != bldg);
@@ -3858,7 +3858,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param collapse - a <code>boolean</code> value that specifies that the building collapsed (when
      *                 <code>true</code>).
      */
-    void addAffectedBldg(Building bldg, boolean collapse) {
+    void addAffectedBldg(IBuilding bldg, boolean collapse) {
         // If the building collapsed, then the clients have already
         // been notified, so remove it from the notification list.
         if (collapse) {
@@ -3875,15 +3875,15 @@ public class TWGameManager extends AbstractGameManager {
      */
     private void applyAffectedBuildings() {
         // Build a list of Building updates.
-        Vector<Building> bldgUpdates = new Vector<>();
+        Vector<IBuilding> bldgUpdates = new Vector<>();
 
         // Only send a single turn update.
         boolean bTurnsChanged = false;
 
         // Walk the set of buildings.
-        Enumeration<Building> buildings = affectedBuildings.keys();
+        Enumeration<IBuilding> buildings = affectedBuildings.keys();
         while (buildings.hasMoreElements()) {
-            final Building bldg = buildings.nextElement();
+            final IBuilding bldg = buildings.nextElement();
 
             // Walk through the building's coordinates.
             Enumeration<Coords> bldgCoords = bldg.getCoords();
@@ -4231,13 +4231,13 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             if (nextHex.containsTerrain(Terrains.BLDG_ELEV)) {
-                Building bldg = board.getBuildingAt(nextPos);
+                IBuilding bldg = board.getBuildingAt(nextPos);
 
                 if (bldg.getType() == BuildingType.WALL) {
                     crashedIntoTerrain = true;
                 }
 
-                if (bldg.getBldgClass() == Building.GUN_EMPLACEMENT) {
+                if (bldg.getBldgClass() == IBuilding.GUN_EMPLACEMENT) {
                     crashedIntoTerrain = true;
                 }
             }
@@ -4269,14 +4269,14 @@ public class TWGameManager extends AbstractGameManager {
 
             if (crashedIntoTerrain) {
                 if (nextHex.containsTerrain(Terrains.BLDG_ELEV)) {
-                    Building bldg = board.getBuildingAt(nextPos);
+                    IBuilding bldg = board.getBuildingAt(nextPos);
 
                     // If you crash into a wall you want to stop in the hex
                     // before the wall not in the wall
                     // Like a building.
                     if (bldg.getType() == BuildingType.WALL) {
                         r = new Report(2047);
-                    } else if (bldg.getBldgClass() == Building.GUN_EMPLACEMENT) {
+                    } else if (bldg.getBldgClass() == IBuilding.GUN_EMPLACEMENT) {
                         r = new Report(2049);
                     } else {
                         r = new Report(2045);
@@ -4304,7 +4304,7 @@ public class TWGameManager extends AbstractGameManager {
                           nextHex.containsTerrain(Terrains.JUNGLE)) {
                         addReport(destroyEntity(entity, "could not land in crash site"));
                     } else if (elevation < nextHex.terrainLevel(Terrains.BLDG_ELEV)) {
-                        Building bldg = board.getBuildingAt(nextPos);
+                        IBuilding bldg = board.getBuildingAt(nextPos);
 
                         // If you crash into a wall you want to stop in the hex
                         // before the wall not in the wall
@@ -4313,7 +4313,7 @@ public class TWGameManager extends AbstractGameManager {
                             addReport(destroyEntity(entity, "crashed into a wall"));
                             break;
                         }
-                        if (bldg.getBldgClass() == Building.GUN_EMPLACEMENT) {
+                        if (bldg.getBldgClass() == IBuilding.GUN_EMPLACEMENT) {
                             addReport(destroyEntity(entity, "crashed into a gun emplacement"));
                             break;
                         }
@@ -4391,7 +4391,7 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             // Get any building in the hex.
-            Building bldg = null;
+            IBuilding bldg = null;
             if (nextElevation < nextHex.terrainLevel(Terrains.BLDG_ELEV)) {
                 // We will only run into the building if it's at a higher level,
                 // otherwise we skid over the roof
@@ -4656,7 +4656,7 @@ public class TWGameManager extends AbstractGameManager {
 
                     if (bldg.rollBasement(nextPos, board, mainPhaseReport)) {
                         sendChangedHex(nextPos);
-                        Vector<Building> buildings = new Vector<>();
+                        Vector<IBuilding> buildings = new Vector<>();
                         buildings.add(bldg);
                         sendChangedBuildings(buildings);
                     }
@@ -4679,7 +4679,7 @@ public class TWGameManager extends AbstractGameManager {
             skidDistance++;
 
             // Check for collapse of any building the entity might be on
-            Building roof = board.getBuildingAt(nextPos);
+            IBuilding roof = board.getBuildingAt(nextPos);
             if (roof != null) {
                 if (checkForCollapse(roof, nextPos, true, mainPhaseReport)) {
                     break; // stop skidding if the building collapsed
@@ -5364,7 +5364,7 @@ public class TWGameManager extends AbstractGameManager {
             int crash_damage = orig_crash_damage;
             int direction = entity.getFacing();
             // first check for buildings
-            Building bldg = game.getBoard(entity.getBoardId()).getBuildingAt(hitCoords);
+            IBuilding bldg = game.getBoard(entity.getBoardId()).getBuildingAt(hitCoords);
             if ((null != bldg) && (bldg.getType() == BuildingType.HARDENED)) {
                 crash_damage *= 2;
             }
@@ -9054,7 +9054,7 @@ public class TWGameManager extends AbstractGameManager {
         // move the entity into the new location gently
         entity.setPosition(dest);
         entity.setElevation(entity.calcElevation(srcHex, destHex));
-        Building bldg = game.getBoard(entity).getBuildingAt(dest);
+        IBuilding bldg = game.getBoard(entity).getBuildingAt(dest);
         if (bldg != null) {
             if (destHex.terrainLevel(Terrains.BLDG_ELEV) > oldElev) {
                 // whoops, into the building we go
@@ -9108,7 +9108,7 @@ public class TWGameManager extends AbstractGameManager {
             bldg = game.getBoard(entity).getBuildingAt(dest);
             if (bldg.rollBasement(dest, game.getBoard(entity), displacementReport)) {
                 sendChangedHex(dest);
-                Vector<Building> buildings = new Vector<>();
+                Vector<IBuilding> buildings = new Vector<>();
                 buildings.add(bldg);
                 sendChangedBuildings(buildings);
             }
@@ -10987,7 +10987,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // building modifiers
-        Building bldg = game.getBuildingAt(c, boardId).orElse(null);
+        IBuilding bldg = game.getBuildingAt(c, boardId).orElse(null);
         if (null != bldg) {
             nTargetRoll.addModifier(bldg.getType().getTypeValue() - 3, "building");
         }
@@ -11397,7 +11397,7 @@ public class TWGameManager extends AbstractGameManager {
               ((toHit.getMoS() / 3) >= 1);
 
         // Which building takes the damage?
-        Building bldg = game.getBoard(target).getBuildingAt(target.getPosition());
+        IBuilding bldg = game.getBoard(target).getBuildingAt(target.getPosition());
 
         if (lastEntityId != paa.getEntityId()) {
             // report who is making the attacks
@@ -11700,7 +11700,7 @@ public class TWGameManager extends AbstractGameManager {
               ((toHit.getMoS() / 3) >= 1);
 
         // Which building takes the damage?
-        Building bldg = game.getBoard(target).getBuildingAt(target.getPosition());
+        IBuilding bldg = game.getBoard(target).getBuildingAt(target.getPosition());
 
         if (lastEntityId != ae.getId()) {
             // who is making the attacks
@@ -11950,7 +11950,7 @@ public class TWGameManager extends AbstractGameManager {
               ((toHit.getMoS() / 3) >= 1);
 
         // Which building takes the damage?
-        Building bldg = game.getBoard(target).getBuildingAt(target.getPosition());
+        IBuilding bldg = game.getBoard(target).getBuildingAt(target.getPosition());
 
         if (lastEntityId != ae.getId()) {
             // who is making the attacks
@@ -12160,7 +12160,7 @@ public class TWGameManager extends AbstractGameManager {
         Report r;
 
         // Which building takes the damage?
-        Building bldg = game.getBoard(target).getBuildingAt(target.getPosition());
+        IBuilding bldg = game.getBoard(target).getBuildingAt(target.getPosition());
 
         if (lastEntityId != ae.getId()) {
             // who is making the attacks
@@ -12856,7 +12856,7 @@ public class TWGameManager extends AbstractGameManager {
         Report r;
 
         // Which building takes the damage?
-        Building bldg = game.getBoard(target).getBuildingAt(target.getPosition());
+        IBuilding bldg = game.getBoard(target).getBuildingAt(target.getPosition());
 
         // restore club attack
         caa.getClub().restore();
@@ -13918,7 +13918,7 @@ public class TWGameManager extends AbstractGameManager {
         Report r;
 
         // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(caa.getTargetPos());
+        IBuilding bldg = game.getBoard().getBuildingAt(caa.getTargetPos());
 
         final int direction = ae.getFacing();
 
@@ -14115,7 +14115,7 @@ public class TWGameManager extends AbstractGameManager {
         Report r;
 
         // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(caa.getTargetPos());
+        IBuilding bldg = game.getBoard().getBuildingAt(caa.getTargetPos());
 
         final int direction = ae.getFacing();
 
@@ -14630,7 +14630,7 @@ public class TWGameManager extends AbstractGameManager {
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
 
         // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(te.getPosition());
+        IBuilding bldg = game.getBoard().getBuildingAt(te.getPosition());
 
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
@@ -14992,9 +14992,9 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
         // Check for touched-off explosives
-        Vector<Building> updatedBuildings = new Vector<>();
+        Vector<IBuilding> updatedBuildings = new Vector<>();
         for (DemolitionCharge charge : explodingCharges) {
-            Building bldg = game.getBoard().getBuildingAt(charge.pos);
+            IBuilding bldg = game.getBoard().getBuildingAt(charge.pos);
             if (bldg == null) { // Shouldn't happen...
                 continue;
             }
@@ -15024,7 +15024,7 @@ public class TWGameManager extends AbstractGameManager {
                 r.addDesc(inf);
                 addReport(r);
             } else {
-                Building building = game.getBoard().getBuildingAt(ae.getPosition());
+                IBuilding building = game.getBoard().getBuildingAt(ae.getPosition());
                 if (building != null) {
                     building.addDemolitionCharge(ae.getOwner().getId(), pr.damage, ae.getPosition());
                     Report r = new Report(4275);
@@ -15033,7 +15033,7 @@ public class TWGameManager extends AbstractGameManager {
                     r.add(pr.damage);
                     addReport(r);
                     // Update clients with this info
-                    Vector<Building> updatedBuildings = new Vector<>();
+                    Vector<IBuilding> updatedBuildings = new Vector<>();
                     updatedBuildings.add(building);
                     sendChangedBuildings(updatedBuildings);
                 }
@@ -15262,7 +15262,7 @@ public class TWGameManager extends AbstractGameManager {
         if ((target.getTargetType() == Targetable.TYPE_BUILDING) ||
               (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
             // Which building takes the damage?
-            Building bldg = board.getBuildingAt(daa.getTargetPos());
+            IBuilding bldg = board.getBuildingAt(daa.getTargetPos());
 
             // The building takes the full brunt of the attack.
             Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
@@ -15699,9 +15699,9 @@ public class TWGameManager extends AbstractGameManager {
                 Vector<GunEmplacement> gun = new Vector<>();
                 gun.add((GunEmplacement) entity);
 
-                Optional<Building> optionalBuilding = getGame().getBuildingAt(entity.getBoardLocation());
+                Optional<IBuilding> optionalBuilding = getGame().getBuildingAt(entity.getBoardLocation());
                 if (optionalBuilding.isPresent()) {
-                    Building building = optionalBuilding.get();
+                    IBuilding building = optionalBuilding.get();
                     Report.addNewline(mainPhaseReport);
                     addReport(criticalGunEmplacement(gun, building, entity.getPosition()));
                 }
@@ -17925,9 +17925,9 @@ public class TWGameManager extends AbstractGameManager {
         HashSet<Entity> entitiesHit = new HashSet<>();
 
         // We need to damage buildings.
-        Enumeration<Building> buildings = game.getBoard(boardId).getBuildings();
+        Enumeration<IBuilding> buildings = game.getBoard(boardId).getBuildings();
         while (buildings.hasMoreElements()) {
-            final Building bldg = buildings.nextElement();
+            final IBuilding bldg = buildings.nextElement();
 
             // Let's find the closest hex from the building.
             Enumeration<Coords> hexes = bldg.getCoords();
@@ -18617,7 +18617,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // This ISN'T part of the blast, but if there's ANYTHING in the ground
         // zero hex, destroy it.
-        Building tmpB = game.getBoard().getBuildingAt(position);
+        IBuilding tmpB = game.getBoard().getBuildingAt(position);
         if (tmpB != null) {
             r = new Report(2415);
             r.add(tmpB.getName());
@@ -20307,8 +20307,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Handle gyro critical hit processing for Meks.
-     * Delegates to specific methods based on gyro type to apply correct PSR and damage effects.
+     * Handle gyro critical hit processing for Meks. Delegates to specific methods based on gyro type to apply correct
+     * PSR and damage effects.
      *
      * @param en      the Mek taking the gyro hit
      * @param loc     the location of the gyro critical
@@ -20319,8 +20319,8 @@ public class TWGameManager extends AbstractGameManager {
 
         // Special case: LandAirMek crashes when airborne with gyro destroyed (3+ hits for HD, 2+ for standard)
         boolean isGyroDestroyed = (en.getGyroType() == Mek.GYRO_HEAVY_DUTY)
-                ? (actualGyroHits >= 3)
-                : (actualGyroHits >= 2);
+              ? (actualGyroHits >= 3)
+              : (actualGyroHits >= 2);
 
         if (isGyroDestroyed && en instanceof LandAirMek && en.isAirborneVTOLorWIGE()) {
             crashAirMek(en,
@@ -20343,11 +20343,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Handle heavy-duty gyro critical hit effects.
-     * Per errata: 1st hit = no PSR (just +1 modifier to future PSRs)
-     *             2nd hit = PSR +3
-     *             3rd hit = auto-fail (gyro destroyed)
-     *             4th hit = auto-fail (Playtest 2 only)
+     * Handle heavy-duty gyro critical hit effects. Per errata: 1st hit = no PSR (just +1 modifier to future PSRs) 2nd
+     * hit = PSR +3 3rd hit = auto-fail (gyro destroyed) 4th hit = auto-fail (Playtest 2 only)
      *
      * @param en             the Mek with heavy-duty gyro
      * @param actualGyroHits the number of gyro critical hits taken
@@ -20391,10 +20388,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Handle standard gyro critical hit effects.
-     * 1st hit = PSR +3 (Playtest 2: PSR +2)
-     * 2nd hit = auto-fail (gyro destroyed) (Playtest 2: PSR +3)
-     * 3rd+ hit = auto-fail (gyro destroyed)
+     * Handle standard gyro critical hit effects. 1st hit = PSR +3 (Playtest 2: PSR +2) 2nd hit = auto-fail (gyro
+     * destroyed) (Playtest 2: PSR +3) 3rd+ hit = auto-fail (gyro destroyed)
      *
      * @param en             the Mek with standard gyro
      * @param actualGyroHits the number of gyro critical hits taken
@@ -23012,7 +23007,7 @@ public class TWGameManager extends AbstractGameManager {
         // only do these basement checks if we didn't fall onto the building
         // from above
         if (intoBasement) {
-            Building bldg = game.getBoard(entity.getBoardId()).getBuildingAt(fallPos);
+            IBuilding bldg = game.getBoard(entity.getBoardId()).getBuildingAt(fallPos);
             BasementType basement = bldg.getBasement(fallPos);
             if (!basement.isNone() &&
                   !basement.isOneDeepNormalInfantryOnly() &&
@@ -25821,7 +25816,7 @@ public class TWGameManager extends AbstractGameManager {
         }
     }
 
-    void passBuildingWall(Entity entity, Building bldg, Coords lastPos, Coords curPos, int distance, String why,
+    void passBuildingWall(Entity entity, IBuilding bldg, Coords lastPos, Coords curPos, int distance, String why,
           boolean backwards, EntityMovementType overallMoveType, boolean entering) {
         passBuildingWall(entity,
               bldg,
@@ -25850,7 +25845,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param backwards - the <code>boolean</code> indicating if the entity is entering the hex backwards
      * @param entering  - a <code>boolean</code> if the entity is entering or exiting a building
      */
-    void passBuildingWall(Entity entity, Building bldg, Coords lastPos, Coords curPos, int distance, String why,
+    void passBuildingWall(Entity entity, IBuilding bldg, Coords lastPos, Coords curPos, int distance, String why,
           boolean backwards, EntityMovementType overallMoveType, boolean entering, Vector<Report> buildingReport) {
         Report r;
 
@@ -25937,7 +25932,7 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @return a <code>boolean</code> value indicating if the building collapses
      */
-    boolean checkBuildingCollapseWhileMoving(Building bldg, Entity entity, Coords curPos) {
+    boolean checkBuildingCollapseWhileMoving(IBuilding bldg, Entity entity, Coords curPos) {
         Coords oldPos = entity.getPosition();
         // Count the moving entity in its current position, not
         // its pre-move position. Be sure to handle nulls.
@@ -25953,7 +25948,7 @@ public class TWGameManager extends AbstractGameManager {
         return rv;
     }
 
-    public Vector<Report> damageInfantryIn(Building bldg, int damage, Coords hexCoords) {
+    public Vector<Report> damageInfantryIn(IBuilding bldg, int damage, Coords hexCoords) {
         return damageInfantryIn(bldg, damage, hexCoords, WeaponType.WEAPON_NA);
     }
 
@@ -25964,7 +25959,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param bldg   - the <code>Building</code> that sustained the damage.
      * @param damage - the <code>int</code> amount of damage.
      */
-    public Vector<Report> damageInfantryIn(Building bldg, int damage, Coords hexCoords, int infDamageClass) {
+    public Vector<Report> damageInfantryIn(IBuilding bldg, int damage, Coords hexCoords, int infDamageClass) {
         Vector<Report> vDesc = new Vector<>();
 
         if (bldg == null) {
@@ -26049,7 +26044,7 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @return true if the building collapsed.
      */
-    public boolean checkForCollapse(Building bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
+    public boolean checkForCollapse(IBuilding bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
           boolean checkBecauseOfDamage, Vector<Report> vPhaseReport) {
         return buildingCollapseHandler.checkForCollapse(bldg, positionMap, coords, checkBecauseOfDamage, vPhaseReport);
     }
@@ -26064,7 +26059,7 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @return true if the building collapsed.
      */
-    public boolean checkForCollapse(Building bldg, Coords coords, boolean checkBecauseOfDamage,
+    public boolean checkForCollapse(IBuilding bldg, Coords coords, boolean checkBecauseOfDamage,
           Vector<Report> vPhaseReport) {
         return buildingCollapseHandler.checkForCollapse(bldg, coords, checkBecauseOfDamage, vPhaseReport);
     }
@@ -26076,7 +26071,7 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @return a <code>Packet</code> for the command.
      */
-    private Packet createUpdateBuildingPacket(Vector<Building> buildings) {
+    private Packet createUpdateBuildingPacket(Vector<IBuilding> buildings) {
         return new Packet(PacketCommand.BLDG_UPDATE, buildings);
     }
 
@@ -26089,13 +26084,13 @@ public class TWGameManager extends AbstractGameManager {
         // Build the collapse and update vectors as you go.
         // N.B. never, NEVER, collapse buildings while you are walking through
         // the Enumeration from megamek.common.board.Board#getBuildings.
-        Map<Building, Vector<Coords>> collapse = new HashMap<>();
-        Map<Building, Vector<Coords>> update = new HashMap<>();
-        List<Building> allBuildings = game.getBoards().values().stream()
+        Map<IBuilding, Vector<Coords>> collapse = new HashMap<>();
+        Map<IBuilding, Vector<Coords>> update = new HashMap<>();
+        List<IBuilding> allBuildings = game.getBoards().values().stream()
               .map(Board::getBuildingsVector)
               .flatMap(List::stream)
               .toList();
-        for (Building bldg : allBuildings) {
+        for (IBuilding bldg : allBuildings) {
             Vector<Coords> collapseCoords = new Vector<>();
             Vector<Coords> updateCoords = new Vector<>();
             Enumeration<Coords> buildingCoords = bldg.getCoords();
@@ -26122,7 +26117,7 @@ public class TWGameManager extends AbstractGameManager {
             Map<BoardLocation, List<Entity>> positionMap = game.getPositionMapMulti();
 
             // Walk through the hexes that have collapsed.
-            for (Building bldg : collapse.keySet()) {
+            for (IBuilding bldg : collapse.keySet()) {
                 Vector<Coords> coordsVector = collapse.get(bldg);
                 for (Coords coords : coordsVector) {
                     Report r = new Report(6460, Report.PUBLIC);
@@ -26137,7 +26132,7 @@ public class TWGameManager extends AbstractGameManager {
         // CF is reduced
         if (!update.isEmpty()) {
             Map<BoardLocation, List<Entity>> positionMap = game.getPositionMapMulti();
-            for (Building bldg : update.keySet()) {
+            for (IBuilding bldg : update.keySet()) {
                 Vector<Coords> updateCoords = update.get(bldg);
                 Vector<Coords> coordsToRemove = new Vector<>();
                 for (Coords coords : updateCoords) {
@@ -26156,7 +26151,7 @@ public class TWGameManager extends AbstractGameManager {
         }
     }
 
-    public Vector<Report> damageBuilding(Building bldg, int damage, Coords coords) {
+    public Vector<Report> damageBuilding(IBuilding bldg, int damage, Coords coords) {
         final String defaultWhy = " absorbs ";
         return damageBuilding(bldg, damage, defaultWhy, coords);
     }
@@ -26175,12 +26170,12 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @return a <code>Report</code> to be shown to the players.
      */
-    public Vector<Report> damageBuilding(Building bldg, int damage, Coords coords, int level) {
+    public Vector<Report> damageBuilding(IBuilding bldg, int damage, Coords coords, int level) {
         final String defaultWhy = " absorbs ";
         return damageBuilding(bldg, damage, defaultWhy, coords, level);
     }
 
-    public Vector<Report> damageBuilding(Building bldg, int damage, String why, Coords coords) {
+    public Vector<Report> damageBuilding(IBuilding bldg, int damage, String why, Coords coords) {
         return damageBuilding(bldg, damage, why, coords, 0);
     }
 
@@ -26197,7 +26192,7 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @return a <code>Report</code> to be shown to the players.
      */
-    public Vector<Report> damageBuilding(Building bldg, int damage, String why, Coords coords, int level) {
+    public Vector<Report> damageBuilding(IBuilding bldg, int damage, String why, Coords coords, int level) {
         Vector<Report> vPhaseReport = new Vector<>();
         Report r = new Report(1210, Report.PUBLIC);
 
@@ -26309,7 +26304,7 @@ public class TWGameManager extends AbstractGameManager {
         return vPhaseReport;
     }
 
-    private Vector<Report> criticalGunEmplacement(Collection<GunEmplacement> guns, Building bldg, Coords coords) {
+    private Vector<Report> criticalGunEmplacement(Collection<GunEmplacement> guns, IBuilding bldg, Coords coords) {
         Vector<Report> vDesc = new Vector<>();
         Report r;
         r = new Report(3800);
@@ -26522,7 +26517,7 @@ public class TWGameManager extends AbstractGameManager {
         return vDesc;
     }
 
-    public void sendChangedBuildings(Vector<Building> buildings) {
+    public void sendChangedBuildings(Vector<IBuilding> buildings) {
         send(createUpdateBuildingPacket(buildings));
     }
 
@@ -28492,7 +28487,7 @@ public class TWGameManager extends AbstractGameManager {
             int bldgElev = hex.containsTerrain(Terrains.BLDG_ELEV) ? hex.terrainLevel(Terrains.BLDG_ELEV) : 0;
             entity.setElevation(bldgElev);
 
-            Building bldg = game.getBoard().getBuildingAt(entity.getPosition());
+            IBuilding bldg = game.getBoard().getBuildingAt(entity.getPosition());
             if (bldg != null) {
                 // whoops we step on the roof
                 checkBuildingCollapseWhileMoving(bldg, entity, entity.getPosition());
@@ -28687,7 +28682,7 @@ public class TWGameManager extends AbstractGameManager {
                           BombTypeEnum.FAE_SMALL ||
                           BombTypeEnum.fromInternalName(ammo.getInternalName()) ==
                                 BombTypeEnum.FAE_LARGE));
-        Building bldg = game.getBuildingAt(coords, boardId).orElse(null);
+        IBuilding bldg = game.getBuildingAt(coords, boardId).orElse(null);
         Hex hex = game.getHex(coords, boardId);
         int effectiveLevel = (hex != null) ? hex.getLevel() : 0;
 
@@ -29340,7 +29335,7 @@ public class TWGameManager extends AbstractGameManager {
         Vector<Report> newReports = tryClearHex(coords, damage, Entity.NONE);
         Vector<Report> vFullReport = new Vector<>(newReports);
 
-        Building bldg = game.getBoard().getBuildingAt(coords);
+        IBuilding bldg = game.getBoard().getBuildingAt(coords);
 
         if (bldg != null) {
             Vector<Report> buildingReport = damageBuilding(bldg, damage, coords);

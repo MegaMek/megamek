@@ -47,8 +47,8 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.common.weapons.DamageType;
@@ -113,7 +113,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
      */
     @Override
     protected void handleEntityDamage(Entity entityTarget,
-          Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+          Vector<Report> vPhaseReport, IBuilding bldg, int hits, int nCluster,
           int bldgAbsorbs) {
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
               toHit.getSideTable(), weaponAttackAction.getAimedLocation(),

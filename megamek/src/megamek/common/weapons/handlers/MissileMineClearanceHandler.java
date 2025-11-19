@@ -53,8 +53,8 @@ import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.weapons.lrms.LRMWeapon;
 import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
@@ -200,7 +200,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         Vector<Report> newReports;
 
         // Damage building directly
-        Building bldg = game.getBuildingAt(targetPos, target.getBoardId()).orElse(null);
+        IBuilding bldg = game.getBuildingAt(targetPos, target.getBoardId()).orElse(null);
         if (bldg != null) {
             newReports = gameManager.damageBuilding(bldg, damage, " receives ", targetPos);
             adjustReports(newReports);
@@ -277,7 +277,6 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
     /**
      * Indents all reports in the collection, and adds a new line to the last one. This is used to make nested reports
      * line-up and look nicer.
-     *
      */
     private void adjustReports(Vector<Report> reports) {
         for (Report report : reports) {

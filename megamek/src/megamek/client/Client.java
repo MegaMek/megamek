@@ -113,12 +113,12 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.turns.UnloadStrandedTurn;
-import megamek.common.units.Building;
 import megamek.common.units.Crew;
 import megamek.common.units.DemolitionCharge;
 import megamek.common.units.Entity;
 import megamek.common.units.EntitySelector;
 import megamek.common.units.FighterSquadron;
+import megamek.common.units.IBuilding;
 import megamek.common.units.UnitLocation;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
@@ -714,7 +714,7 @@ public class Client extends AbstractClient {
     }
 
     protected void receiveBuildingUpdate(Packet packet) throws InvalidPacketDataException {
-        for (Building building : packet.getBuildingList(0)) {
+        for (IBuilding building : packet.getBuildingList(0)) {
             game.getBoard(building.getBoardId()).updateBuilding(building);
         }
     }

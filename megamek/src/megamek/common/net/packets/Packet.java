@@ -78,9 +78,9 @@ import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.strategicBattleSystems.SBFReportEntry;
 import megamek.common.strategicBattleSystems.SBFTurn;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
+import megamek.common.units.IBuilding;
 import megamek.common.units.UnitLocation;
 import megamek.server.SmokeCloud;
 
@@ -342,16 +342,16 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return a List of {@link Building}'s value of the object at the specified index
+     * @return a List of {@link IBuilding}'s value of the object at the specified index
      */
-    public List<Building> getBuildingList(int index) throws InvalidPacketDataException {
+    public List<IBuilding> getBuildingList(int index) throws InvalidPacketDataException {
         Object object = getObject(index);
 
-        ArrayList<Building> result = new ArrayList<>();
+        ArrayList<IBuilding> result = new ArrayList<>();
 
         if (object instanceof Vector<?> vector) {
             for (Object building : vector) {
-                if (building instanceof Building verifiedBuilding) {
+                if (building instanceof IBuilding verifiedBuilding) {
                     result.add(verifiedBuilding);
                 }
             }

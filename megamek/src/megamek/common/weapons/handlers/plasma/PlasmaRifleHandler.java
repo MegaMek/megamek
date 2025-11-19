@@ -51,8 +51,8 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.server.totalWarfare.TWGameManager;
@@ -74,7 +74,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, Building bldg, int hits,
+    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, IBuilding bldg, int hits,
           int nCluster, int bldgAbsorbs) {
         if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
             if (hit != null) {
@@ -93,8 +93,10 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
                 extraHeat += Compute.d6();
             }
 
-            if (entityTarget.getArmor(hit) > 0 &&
-                  (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE) && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            if (entityTarget.getArmor(hit) > 0
+                  &&
+                  (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE)
+                  && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
                 // PLAYTEST3 do not halve for reflective
                 entityTarget.heatFromExternal += Math.max(1, extraHeat / 2);
                 report.add(Math.max(1, extraHeat / 2));
@@ -184,7 +186,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected void handleIgnitionDamage(Vector<Report> vPhaseReport, Building bldg, int hits) {
+    protected void handleIgnitionDamage(Vector<Report> vPhaseReport, IBuilding bldg, int hits) {
         if (!bSalvo) {
             // hits!
             Report report = new Report(2270);
@@ -209,7 +211,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected void handleClearDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage) {
+    protected void handleClearDamage(Vector<Report> vPhaseReport, IBuilding bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
             Report report = new Report(2270);
@@ -252,7 +254,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected void handleBuildingDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage, Coords coords) {
+    protected void handleBuildingDamage(Vector<Report> vPhaseReport, IBuilding bldg, int nDamage, Coords coords) {
         // Plasma weapons deal double damage to buildings.
         super.handleBuildingDamage(vPhaseReport, bldg, nDamage * 2, coords);
     }

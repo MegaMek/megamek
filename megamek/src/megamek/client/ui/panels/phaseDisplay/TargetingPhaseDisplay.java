@@ -81,10 +81,10 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.turns.TriggerAPPodTurn;
 import megamek.common.turns.TriggerBPodTurn;
-import megamek.common.units.Building;
 import megamek.common.units.BuildingTarget;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.Weapon;
@@ -345,7 +345,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             if (cmd == TargetingCommand.FIRE_CANCEL) {
                 continue;
             }
-            if ((cmd == TargetingCommand.FIRE_DISENGAGE) && ((currentEntity() == null) || !currentEntity().isOffBoard())) {
+            if ((cmd == TargetingCommand.FIRE_DISENGAGE) && ((currentEntity() == null)
+                  || !currentEntity().isOffBoard())) {
                 continue;
             }
             if (cmd == TargetingCommand.FIRE_CLEAR_WEAPON && !(currentEntity() instanceof Tank)) {
@@ -441,7 +442,9 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         if (GUIP.getAutoSelectNextUnit()) {
             selectEntity(clientgui.getClient().getFirstEntityNum());
         }
-        setDisengageEnabled((currentEntity() != null) && attacks.isEmpty() && currentEntity().canFlee(currentEntity().getPosition()));
+        setDisengageEnabled((currentEntity() != null)
+              && attacks.isEmpty()
+              && currentEntity().canFlee(currentEntity().getPosition()));
 
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for triggering AP Pods.
@@ -799,7 +802,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             if (o instanceof WeaponAttackAction waa) {
                 currentEntity().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
                 removeAttack(o);
-                setDisengageEnabled(attacks.isEmpty() && currentEntity().isOffBoard() && currentEntity().canFlee(currentEntity().getPosition()));
+                setDisengageEnabled(attacks.isEmpty() && currentEntity().isOffBoard() && currentEntity().canFlee(
+                      currentEntity().getPosition()));
                 clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
                 game.removeAction(o);
                 clientgui.boardViews().forEach(bv -> ((BoardView) bv).refreshAttacks());
@@ -1159,7 +1163,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
 
         // Is there a building in the hex?
-        Building bldg = game.getBoard()
+        IBuilding bldg = game.getBoard()
               .getBuildingAt(location.coords());
         if (bldg != null) {
             targets.add(new BuildingTarget(location.coords(), game

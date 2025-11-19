@@ -6312,8 +6312,8 @@ public abstract class Entity extends TurnOrdered
     /**
      * Switches the C3 network ID to the new network ID.
      * Clears the pending change after applying it.
-     * If reverting to original network (unlinking), clears the NC3UUID array
-     * to prevent wireC3() from reconstructing old network connections.
+     * Always clears the NC3UUID array when network changes to prevent stale UUIDs
+     * from causing unintended network connections during wireC3().
      */
     public void newRoundNovaNetSwitch() {
         if (hasNovaCEWS() && (newC3NetIdString != null)) {
@@ -6321,12 +6321,11 @@ public abstract class Entity extends TurnOrdered
             c3NetIdString = newC3NetIdString;
             newC3NetIdString = null; // Clear pending change after applying
 
-            // If reverting to original network (unlinking), clear UUID array
-            // This prevents wireC3() from finding old partner UUIDs and re-establishing the network
-            if (c3NetIdString.equals(getOriginalNovaC3NetId())) {
-                for (int i = 0; i < MAX_C3i_NODES; i++) {
-                    setNC3NextUUIDAsString(i, null);
-                }
+            // Always clear UUID array when network changes
+            // This prevents wireC3() from finding stale partner UUIDs and incorrectly linking entities
+            // wireC3() will rebuild the UUID array based on current network state
+            for (int i = 0; i < MAX_C3i_NODES; i++) {
+                setNC3NextUUIDAsString(i, null);
             }
         }
     }

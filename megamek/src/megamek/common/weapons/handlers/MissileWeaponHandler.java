@@ -60,8 +60,8 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
@@ -84,7 +84,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         generalDamageType = HitData.DAMAGE_MISSILE;
         // PLAYTEST3 also enabled advanced AMS
         advancedAMS =
-              g.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS) || g.getOptions().booleanOption(OptionsConstants.PLAYTEST_3);
+              g.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS) || g.getOptions()
+                    .booleanOption(OptionsConstants.PLAYTEST_3);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);
         multiAMS = g.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_MULTI_USE_AMS);
         sSalvoType = " missile(s) ";
@@ -431,7 +432,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
     @Override
     protected boolean handleSpecialMiss(Entity entityTarget, boolean bldgDamagedOnMiss,
-          Building bldg, Vector<Report> vPhaseReport) {
+          IBuilding bldg, Vector<Report> vPhaseReport) {
         // Shots that miss an entity can set fires.
         // Buildings can't be accidentally ignited,
         // and some weapons can't ignite fires.
@@ -601,7 +602,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                         // set the ams as having fired
                         counter.setUsedThisRound(true);
                     }
-                    
+
                     // PLAYTEST3 AMS can engage twice now.
                     if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
                         if (!multiAMS && !isAMS) {
@@ -681,7 +682,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         }
 
         // Which building takes the damage?
-        Building bldg = game.getBuildingAt(target.getPosition(), target.getBoardId()).orElse(null);
+        IBuilding bldg = game.getBuildingAt(target.getPosition(), target.getBoardId()).orElse(null);
         String number = numWeapons > 1 ? " (" + numWeapons + ")" : "";
         // Report weapon attack and its to-hit value.
         Report r = new Report(3115);

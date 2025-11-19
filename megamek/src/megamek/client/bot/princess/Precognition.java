@@ -82,8 +82,8 @@ import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.GameOptions;
 import megamek.common.planetaryConditions.PlanetaryConditions;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.UnitLocation;
 import megamek.logging.MMLogger;
 import megamek.server.SmokeCloud;
@@ -843,7 +843,7 @@ public class Precognition implements Runnable {
 
     @SuppressWarnings("unchecked")
     private void receiveBuildingUpdate(Packet packet) throws InvalidPacketDataException {
-        for (Building building : (List<Building>) packet.getObject(0)) {
+        for (IBuilding building : (List<IBuilding>) packet.getObject(0)) {
             game.getBoard(building.getBoardId()).updateBuilding(building);
         }
     }

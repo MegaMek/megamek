@@ -49,10 +49,10 @@ import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.LandAirMek;
 import megamek.common.units.ProtoMek;
@@ -148,7 +148,7 @@ public class AirMekRamAttackAction extends DisplacementAttackAction {
         final int targetElevation = target.getElevation()
               + targHex.getLevel();
         final int targetHeight = targetElevation + target.getHeight();
-        Building bldg = game.getBoard().getBuildingAt(getTargetPos());
+        IBuilding bldg = game.getBoard().getBuildingAt(getTargetPos());
         ToHitData toHit;
         boolean targIsBuilding = ((getTargetType() == Targetable.TYPE_FUEL_TANK)
               || (getTargetType() == Targetable.TYPE_BUILDING));

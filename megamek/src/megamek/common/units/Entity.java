@@ -34,6 +34,8 @@
 
 package megamek.common.units;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
 import java.awt.Image;
 import java.io.Serial;
 import java.util.*;
@@ -146,8 +148,6 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
-
-import static megamek.common.bays.Bay.UNSET_BAY;
 
 /**
  * Entity is a master class for basically anything on the board except terrain.
@@ -1128,7 +1128,7 @@ public abstract class Entity extends TurnOrdered
         this.game = game;
         restore();
         // Make sure the owner is set.
-        if (null == owner) {
+        if (game != null && owner == null) {
             if (Entity.NONE == ownerId) {
                 throw new IllegalStateException("Entity doesn't know its owner's ID.");
             }
@@ -1139,10 +1139,10 @@ public abstract class Entity extends TurnOrdered
                 setOwner(player);
             }
         }
-        // also set game for our transports
-        // they need it to return correct entities, because they store just the
-        // IDs
+        // also set game for our transports they need it to return correct entities, because they store just the IDs.
+        // Also let's set the entity for those transporters that use one.
         for (Transporter transport : getTransports()) {
+            transport.setEntity(this);
             transport.setGame(game);
         }
     }
@@ -2998,8 +2998,9 @@ public abstract class Entity extends TurnOrdered
     /**
      * Returns true if the entity can pick up ground objects
      */
+    @Override
     public boolean canPickupGroundObject() {
-        return false;
+        return getTransports().stream().anyMatch(Transporter::canPickupGroundObject);
     }
 
     /**
@@ -3033,8 +3034,17 @@ public abstract class Entity extends TurnOrdered
               isHullDown())) {
             return false;
         }
+        boolean canPickupWithArms = carryable.getTonnage() <= maxGroundObjectTonnage();
+        boolean canPickupWithLiftHoist = false;
 
-        return carryable.getTonnage() <= maxGroundObjectTonnage();
+        for (Transporter transporter : getTransports()) {
+            if (transporter instanceof LiftHoist liftHoist) {
+                canPickupWithLiftHoist = liftHoist.canLoadCarryable(carryable);
+                break;
+            }
+        }
+
+        return canPickupWithArms || canPickupWithLiftHoist;
     }
 
     /**
@@ -3051,7 +3061,7 @@ public abstract class Entity extends TurnOrdered
             for (Integer defaultLocation : getDefaultPickupLocations()) {
                 carriedObjects.put(defaultLocation, carryable);
             }
-        } else {
+        } else if (location < locations()) {
             carriedObjects.put(location, carryable);
         }
         endOfTurnCargoInteraction = true;
@@ -3132,6 +3142,76 @@ public abstract class Entity extends TurnOrdered
      */
     public List<Integer> getValidHalfWeightPickupLocations(ICarryable cargo) {
         return List.of(LOC_NONE);
+    }
+
+    /**
+     * Get a map of location names / transporter names and their location / index that could be used to transport the
+     * provided cargo.
+     *
+     * @param cargo {@link ICarryable} carryable object that needs to be picked up
+     *
+     * @return Map where the key is the {@link String} name of the location or transporter, and the value is an
+     *       {@link Integer} that is either the location on an entity, or the index of the transporter from the list of
+     *       the entity's transports from {@link Entity#getTransports()}.
+     */
+    // FIXME #7640: This should only return a list of transports once we are able to carry an object in multiple
+    //  transports & the MekArms transporter is split into each arm, eliminating the need for the legacy location to
+    //  be used.
+    public Map<String, Integer> getPickupLocationMap(ICarryable cargo) {
+        // reverse lookup: location name to location ID - we're going to wind up with a name chosen but need to
+        // send the ID in the move path.
+        Map<String, Integer> locationMap = new HashMap<>();
+
+        List<Integer> validHalfWeightPickupLocations = getValidHalfWeightPickupLocations(cargo);
+        if (validHalfWeightPickupLocations != null && !validHalfWeightPickupLocations.isEmpty()) {
+            for (int location : validHalfWeightPickupLocations) {
+                locationMap.put(getLocationName(location), location);
+            }
+        }
+        for (Transporter transporter : getTransports()) {
+            if (transporter instanceof ExternalCargo externalCargo && cargo instanceof Entity cargoEntity) {
+                if (externalCargo.canLoad(cargoEntity)) {
+                    // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly
+                    //  load into that transporter.
+                    locationMap.put(transporter.getType() + " " + getTransports().indexOf(transporter),
+                          Integer.MAX_VALUE - getTransports().indexOf(transporter));
+
+                }
+            }
+        }
+
+        return locationMap;
+    }
+
+    /**
+     * Get a map of location names / transporter names and their location / index that have cargo that can be dropped.
+     *
+     * @return Map where the key is the {@link String} name of the location or transporter, and the value is an
+     *       {@link Integer} that is either the location on an entity, or the index of the transporter from the list of
+     *       the entity's transports from {@link Entity#getTransports()}.
+     */
+    // FIXME #7640: This should only return a list of transports once we are able to carry an object in multiple transports
+    //  & the MekArms transporter is split into each arm, eliminating the need for the legacy location to be used.
+    public Map<String, Integer> getDropCargoLocationMap() {
+        // reverse lookup: location name to location ID - we're going to wind up with a name chosen but need to
+        // send the ID in the move path.
+        Map<String, Integer> locationMap = new HashMap<>();
+
+        for (int location : getCarriedObjects().keySet()) {
+            locationMap.put(getLocationName(location), location);
+        }
+        for (Transporter transporter : getTransports()) {
+            if (transporter instanceof ExternalCargo externalCargo
+                  && !externalCargo.getCarryables().isEmpty()) {
+                // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly load into
+                //  that transporter.
+                locationMap.put(transporter.getType() + " " + externalCargo.getCarryables().get(0).toString(),
+                      Integer.MAX_VALUE - getTransports().indexOf(transporter));
+
+            }
+        }
+
+        return locationMap;
     }
 
     /**
@@ -8196,10 +8276,10 @@ public abstract class Entity extends TurnOrdered
         }
 
         // check for movement inside a hangar
-        Building curBldg = board.getBuildingAt(curPos);
+        IBuilding curBldg = board.getBuildingAt(curPos);
         if ((null != curBldg) &&
               curBldg.isIn(prevPos) &&
-              (curBldg.getBldgClass() == Building.HANGAR) &&
+              (curBldg.getBldgClass() == IBuilding.HANGAR) &&
               (curHex.terrainLevel(Terrains.BLDG_ELEV) > height()) &&
               (step.getElevation() < curHex.terrainLevel(Terrains.BLDG_ELEV))) {
             return 0;
@@ -8229,7 +8309,7 @@ public abstract class Entity extends TurnOrdered
 
         // check to see if it's a wall
         if (rv > 1) {
-            Building bldgEntered;
+            IBuilding bldgEntered;
             bldgEntered = board.getBuildingAt(curPos);
             if (bldgEntered.getType() == BuildingType.WALL) {
                 return 4;
@@ -8258,7 +8338,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Calculates and returns the roll for an entity moving in buildings.
      */
-    public PilotingRollData rollMovementInBuilding(Building bldg, int distance, String why,
+    public PilotingRollData rollMovementInBuilding(IBuilding bldg, int distance, String why,
           EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
@@ -8284,12 +8364,12 @@ public abstract class Entity extends TurnOrdered
                 desc = "Light";
                 break;
             case MEDIUM:
-                if (bldg.getBldgClass() != Building.HANGAR) {
+                if (bldg.getBldgClass() != IBuilding.HANGAR) {
                     mod = 1;
                     desc = "Medium";
                 }
 
-                if (bldg.getBldgClass() >= Building.FORTRESS) {
+                if (bldg.getBldgClass() >= IBuilding.FORTRESS) {
                     mod = 2;
                     desc = desc + " Fortress";
                 }
@@ -8297,12 +8377,12 @@ public abstract class Entity extends TurnOrdered
             case HEAVY:
                 mod = 2;
                 desc = "Heavy";
-                if (bldg.getBldgClass() == Building.HANGAR) {
+                if (bldg.getBldgClass() == IBuilding.HANGAR) {
                     mod = 1;
                     desc = desc + " Hangar";
                 }
 
-                if (bldg.getBldgClass() == Building.FORTRESS) {
+                if (bldg.getBldgClass() == IBuilding.FORTRESS) {
                     mod = 3;
                     desc = desc + " Fortress";
                 }
@@ -8310,11 +8390,11 @@ public abstract class Entity extends TurnOrdered
             case HARDENED:
                 mod = 5;
                 desc = "Hardened";
-                if (bldg.getBldgClass() == Building.HANGAR) {
+                if (bldg.getBldgClass() == IBuilding.HANGAR) {
                     mod = 3;
                     desc = desc + " Hangar";
                 }
-                if (bldg.getBldgClass() == Building.FORTRESS) {
+                if (bldg.getBldgClass() == IBuilding.FORTRESS) {
                     mod = 4;
                     desc = desc + " Fortress";
                 }
@@ -8533,7 +8613,7 @@ public abstract class Entity extends TurnOrdered
      * Determines if this object can accept the given unit. The unit may not be of the appropriate type or there may be
      * no room for the unit.
      *
-     * @param unit - the <code>Entity</code> to be loaded.
+     * @param unit      - the <code>Entity</code> to be loaded.
      * @param checkElev - Whether to compare elevations (e.g. for VTOL loading infantry)
      *
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
@@ -8547,9 +8627,9 @@ public abstract class Entity extends TurnOrdered
      * Determines if this object can accept the given unit. The unit may not be of the appropriate type or there may be
      * no room for the unit.
      *
-     * @param unit - the <code>Entity</code> to be loaded.
+     * @param unit      - the <code>Entity</code> to be loaded.
      * @param checkElev - Whether to compare elevations (e.g. for VTOL loading infantry)
-     * @param height - the height at which to consider the loader
+     * @param height    - the height at which to consider the loader
      *
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
      *       otherwise.
@@ -8632,16 +8712,20 @@ public abstract class Entity extends TurnOrdered
         Enumeration<Transporter> iter = transports.elements();
         while (iter.hasMoreElements()) {
             Transporter next = iter.nextElement();
-            if (next.canLoad(unit) &&
-                  (!checkElev || (unit.getElevation() == getElevation())) &&
-                  ((bayNumber == UNSET_BAY) ||
-                        ((next instanceof Bay) && (((Bay) next).getBayNumber() == bayNumber)) ||
-                        ((next instanceof DockingCollar) &&
-                              (((DockingCollar) next).getCollarNumber() == bayNumber)))) {
+            boolean canLoadUnit = next.canLoad(unit);
+            boolean elevationMatches = !checkElev || (unit.getElevation() == getElevation());
+            boolean bayNumberMatches = (bayNumber == UNSET_BAY) ||
+                  ((next instanceof Bay) && (((Bay) next).getBayNumber() == bayNumber)) ||
+                  ((next instanceof DockingCollar) &&
+                        (((DockingCollar) next).getCollarNumber() == bayNumber));
+
+            // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly
+            //  load into that transporter.
+            boolean specificTransporterMatches = (bayNumber > getTransportBays().size() &&
+                  getTransports().indexOf(next) == Integer.MAX_VALUE - bayNumber);
+
+            if (canLoadUnit && elevationMatches && (bayNumberMatches || specificTransporterMatches)) {
                 next.load(unit);
-                if (next instanceof ExternalCargo) {
-                    pickupCarryableObject(unit, Entity.LOC_NONE);
-                }
                 unit.setTargetBay(UNSET_BAY); // Reset the target bay for later.
                 return;
             }
@@ -10337,9 +10421,9 @@ public abstract class Entity extends TurnOrdered
         }
 
         // If there are no valid Entity targets, check for add valid buildings.
-        Enumeration<Building> buildings = game.getBoard(boardId).getBuildings();
+        Enumeration<IBuilding> buildings = game.getBoard(boardId).getBuildings();
         while (!canHit && buildings.hasMoreElements()) {
-            final Building bldg = buildings.nextElement();
+            final IBuilding bldg = buildings.nextElement();
 
             // Walk through the hexes of the building.
             Enumeration<Coords> hexes = bldg.getCoords();
@@ -16093,11 +16177,17 @@ public abstract class Entity extends TurnOrdered
     protected void processPickupStepEntity(MoveStep step, Integer cargoPickupLocation, TWGameManager gameManager,
           Entity entityPickingUpTarget) {
 
-        gameManager.loadUnit(entityPickingUpTarget, this, -1);
+        int bayNumber = Bay.UNSET_BAY;
+        if (cargoPickupLocation >= locations()) {
+            bayNumber = cargoPickupLocation;
+        }
+        gameManager.loadUnit(entityPickingUpTarget, this, bayNumber);
 
-        // Normal loading won't always get the location right, let's fix that
-        entityPickingUpTarget.dropCarriedObject(this, false);
-        entityPickingUpTarget.pickupCarryableObject(this, cargoPickupLocation);
+        if (cargoPickupLocation < locations()) {
+            // Normal loading won't always get the location right, let's fix that
+            entityPickingUpTarget.dropCarriedObject(this, false);
+            entityPickingUpTarget.pickupCarryableObject(this, cargoPickupLocation);
+        }
 
         Report report = new Report(2513);
         report.subject = entityPickingUpTarget.getId();

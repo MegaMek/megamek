@@ -48,6 +48,32 @@ public class RoofRack extends ExternalCargo {
     }
 
     /**
+     * Determines if this object can accept the given unit. The unit may not be of the appropriate type or there may be
+     * no room for the unit.
+     *
+     * @param unit - the <code>Entity</code> to be loaded.
+     *
+     * @return <code>true</code> if the unit can be loaded, <code>false</code>
+     *       otherwise.
+     */
+    @Override
+    public boolean canLoad(Entity unit) {
+        return false; //TODO: Support loading cargo in game
+    }
+
+    /**
+     * Load the given unit.
+     *
+     * @param unit the <code>Entity</code> to be loaded.
+     *
+     * @throws IllegalArgumentException If the unit can't be loaded
+     */
+    @Override
+    public void load(Entity unit) throws IllegalArgumentException {
+        throw new IllegalArgumentException("Non-Functional Feature");
+    }
+
+    /**
      * @param carrier
      *
      * @return the MP reduction due to cargo carried by this transporter
@@ -84,5 +110,10 @@ public class RoofRack extends ExternalCargo {
     @Override
     protected boolean maxObjects(int location) {
         return false; // No limit for roof racks
+    }
+
+    @Override
+    public String getType() {
+        return "Roof Rack";
     }
 }

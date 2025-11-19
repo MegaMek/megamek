@@ -141,7 +141,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             // target unit in building checks
             final boolean targetInBuilding = Compute.isInBuilding(game, te);
             if (targetInBuilding) {
-                Building TargBldg = game.getBoard(target).getBuildingAt(te.getPosition());
+                IBuilding TargBldg = game.getBoard(target).getBuildingAt(te.getPosition());
 
                 // Can't target units in buildings (from the outside).
                 if (!Compute.isInBuilding(game, ae)) {

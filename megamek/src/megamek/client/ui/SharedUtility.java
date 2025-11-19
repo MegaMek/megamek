@@ -509,7 +509,7 @@ public class SharedUtility {
             int buildingMove = entity.checkMovementInBuilding(step, prevStep, curPos, lastPos);
             if ((buildingMove > 1) && !(entity instanceof ProtoMek)) {
                 // Get the building being entered.
-                Building bldg = null;
+                IBuilding bldg = null;
                 String reason = "entering";
                 if ((buildingMove & 2) == 2) {
                     bldg = board.getBuildingAt(curPos);
@@ -1018,7 +1018,6 @@ public class SharedUtility {
      * Per TacOps p 20, a leap carries the following risks: 1. risk of damaging each leg by distance leaped (3 or more
      * per leg); mod is 2 x distance leaped. 1.a 1 critical roll _per leg_. 1.b 1 _additional_ critical per leg that
      * takes internal structure damage due to leaping damage. 2. risk of falling; mod is distance leaped.
-     *
      */
     public static double predictLeapDamage(Entity movingEntity, TargetRoll data) {
         int legMultiplier = (movingEntity.isQuadMek()) ? 4 : 2;

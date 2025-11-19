@@ -50,9 +50,9 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.units.Building;
 import megamek.common.units.BuildingTarget;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import megamek.server.totalWarfare.TWGameManager;
@@ -109,7 +109,7 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
 
 
         for (Coords c : affectedCoords) {
-            Building bldg = game.getBoard().getBuildingAt(c);
+            IBuilding bldg = game.getBoard().getBuildingAt(c);
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_SMOKE)) {
                 gameManager.deliverSmokeGrenade(c, vPhaseReport);
             } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_CHAFF)) {

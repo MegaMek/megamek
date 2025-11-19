@@ -1384,7 +1384,7 @@ class BasicPathRankerTest {
         when(mockUnit.getCrew()).thenReturn(mockCrew);
         when(mockCrew.getPiloting()).thenReturn(5);
 
-        final Building mockBuilding = mock(Building.class);
+        final IBuilding mockBuilding = mock(IBuilding.class);
         when(mockGame.getBoard().getBuildingAt(eq(testCoordsThree))).thenReturn(mockBuilding);
         when(mockBuilding.getCurrentCF(eq(testCoordsThree))).thenReturn(77);
 
@@ -1570,7 +1570,7 @@ class BasicPathRankerTest {
         when(mockUnit.getCrew()).thenReturn(mockCrew);
         when(mockCrew.getPiloting()).thenReturn(5);
 
-        final Building mockBuilding = mock(Building.class);
+        final IBuilding mockBuilding = mock(IBuilding.class);
         when(mockGame.getBoard().getBuildingAt(eq(testCoordsThree))).thenReturn(mockBuilding);
         when(mockBuilding.getCurrentCF(eq(testCoordsThree))).thenReturn(77);
 
@@ -1688,7 +1688,7 @@ class BasicPathRankerTest {
         Entity mockUnit;
         Crew mockCrew;
 
-        Building mockBuilding;
+        IBuilding mockBuilding;
 
         @BeforeEach
         void init() {
@@ -1711,7 +1711,7 @@ class BasicPathRankerTest {
             when(mockUnit.getCrew()).thenReturn(mockCrew);
             when(mockCrew.getPiloting()).thenReturn(5);
 
-            mockBuilding = mock(Building.class);
+            mockBuilding = mock(IBuilding.class);
 
             when(mockGame.getBoard().getBuildingAt(eq(testCoordsThree))).thenReturn(mockBuilding);
             when(mockBuilding.getCurrentCF(eq(testCoordsThree))).thenReturn(77);
@@ -2153,7 +2153,7 @@ class BasicPathRankerTest {
         when(mockUnit.getCrew()).thenReturn(mockCrew);
         when(mockCrew.getPiloting()).thenReturn(5);
 
-        final Building mockBuilding = mock(Building.class);
+        final IBuilding mockBuilding = mock(IBuilding.class);
         when(mockGame.getBoard().getBuildingAt(eq(testCoordsThree))).thenReturn(mockBuilding);
         when(mockBuilding.getCurrentCF(eq(testCoordsThree))).thenReturn(77);
 
@@ -2234,7 +2234,7 @@ class BasicPathRankerTest {
         when(mockUnit.getCrew()).thenReturn(mockCrew);
         when(mockCrew.getPiloting()).thenReturn(5);
 
-        final Building mockBuilding = mock(Building.class);
+        final IBuilding mockBuilding = mock(IBuilding.class);
         when(mockGame.getBoard().getBuildingAt(eq(testCoordsThree))).thenReturn(mockBuilding);
 
         when(mockBuilding.getCurrentCF(eq(testCoordsThree))).thenReturn(77);

@@ -63,12 +63,15 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
     private JTextArea pendingChangesArea;
     private JButton btnLink;
     private JButton btnUnlink;
+    private JButton btnApply;
+    private JButton btnRevert;
     private JButton btnCancel;
 
     // Data structures
     private List<Entity> playerNovaUnits;
     private List<Entity> alliedNovaUnits;
     private Map<Integer, Entity> entityMap; // Index to Entity mapping
+    private Map<Integer, String> pendingChanges = new HashMap<>(); // Entity ID -> target network ID
 
     public NovaNetworkDialog(JFrame parent, ClientGUI clientGUI) {
         super(parent, Messages.getString("NovaNetworkDialog.title"), true);
@@ -186,11 +189,21 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         btnUnlink.addActionListener(this);
         btnUnlink.setToolTipText(Messages.getString("NovaNetworkDialog.btnUnlink.tooltip"));
 
+        btnApply = new JButton(Messages.getString("NovaNetworkDialog.btnApply"));
+        btnApply.addActionListener(this);
+        btnApply.setToolTipText(Messages.getString("NovaNetworkDialog.btnApply.tooltip"));
+
+        btnRevert = new JButton(Messages.getString("NovaNetworkDialog.btnRevert"));
+        btnRevert.addActionListener(this);
+        btnRevert.setToolTipText(Messages.getString("NovaNetworkDialog.btnRevert.tooltip"));
+
         btnCancel = new JButton(Messages.getString("NovaNetworkDialog.btnCancel"));
         btnCancel.addActionListener(this);
 
         buttonPanel.add(btnLink);
         buttonPanel.add(btnUnlink);
+        buttonPanel.add(btnApply);
+        buttonPanel.add(btnRevert);
         buttonPanel.add(btnCancel);
 
         bottomPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -346,36 +359,52 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
      */
     private void updatePendingChanges() {
         StringBuilder sb = new StringBuilder();
-
-        List<Entity> allNovaUnits = new ArrayList<>();
-        allNovaUnits.addAll(playerNovaUnits);
-        allNovaUnits.addAll(alliedNovaUnits);
-
         boolean hasPending = false;
 
-        for (Entity entity : allNovaUnits) {
-            String currentNetwork = entity.getC3NetId();
-            String pendingNetwork = entity.getNewRoundNovaNetworkString();
+        for (Map.Entry<Integer, String> entry : pendingChanges.entrySet()) {
+            Entity entity = game.getEntity(entry.getKey());
+            if (entity != null) {
+                String currentNetwork = entity.getC3NetId();
+                String targetNetwork = entry.getValue();
 
-            if (pendingNetwork != null && !pendingNetwork.equals(currentNetwork)) {
-                hasPending = true;
-                sb.append("ID ").append(entity.getId()).append(" (").append(entity.getShortName()).append("): ");
-
-                if (pendingNetwork.equals(entity.getOriginalNovaC3NetId())) {
-                    sb.append("Will disconnect from network");
-                } else {
-                    sb.append("Will join network ").append(pendingNetwork);
+                if (!currentNetwork.equals(targetNetwork)) {
+                    hasPending = true;
+                    sb.append(entity.getShortName()).append(": ");
+                    sb.append(getNetworkDisplayName(currentNetwork));
+                    sb.append(" → ");
+                    sb.append(getNetworkDisplayName(targetNetwork));
+                    sb.append("\n");
                 }
-
-                sb.append("\n");
             }
         }
 
-        if (!hasPending) {
-            sb.append(Messages.getString("NovaNetworkDialog.noPendingChanges"));
+        if (hasPending) {
+            pendingChangesArea.setText(sb.toString());
+        } else {
+            pendingChangesArea.setText(Messages.getString("NovaNetworkDialog.noPendingChanges"));
         }
+    }
 
-        pendingChangesArea.setText(sb.toString());
+    /**
+     * Gets a user-friendly display name for a network ID.
+     *
+     * @param networkId The network ID (e.g., "C3Nova.5")
+     * @return User-friendly display name
+     */
+    private String getNetworkDisplayName(String networkId) {
+        if (networkId.contains(".")) {
+            String idPart = networkId.substring(networkId.indexOf('.') + 1);
+            try {
+                int entityId = Integer.parseInt(idPart);
+                Entity entity = game.getEntity(entityId);
+                if (entity != null) {
+                    return String.format("Network of %s", entity.getShortName());
+                }
+            } catch (NumberFormatException e) {
+                // Fall through to default
+            }
+        }
+        return networkId;
     }
 
     /**
@@ -387,7 +416,24 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
             linkSelectedUnits();
         } else if (e.getSource() == btnUnlink) {
             unlinkSelectedUnits();
+        } else if (e.getSource() == btnApply) {
+            applyPendingChanges();
+        } else if (e.getSource() == btnRevert) {
+            revertPendingChanges();
         } else if (e.getSource() == btnCancel) {
+            if (!pendingChanges.isEmpty()) {
+                int result = JOptionPane.showConfirmDialog(this,
+                    Messages.getString("NovaNetworkDialog.discardChanges"),
+                    Messages.getString("NovaNetworkDialog.title"),
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+
+                if (result != JOptionPane.YES_OPTION) {
+                    return;  // Don't close if user cancels
+                }
+            }
+
+            pendingChanges.clear();
             clearHighlighting();
             dispose();
         }
@@ -493,12 +539,11 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
             return;
         }
 
-        // Link all selected units to this network
+        // Queue link actions for all selected units
         for (Entity entity : selectedEntities) {
-            LOGGER.debug("Linking entity {} ({}) to network {}",
+            LOGGER.debug("Queuing link for entity {} ({}) to network {}",
                 entity.getId(), entity.getShortName(), targetNetworkId);
-            entity.setNewRoundNovaNetworkString(targetNetworkId);
-            clientGUI.getClient().sendNovaChange(entity.getId(), targetNetworkId);
+            pendingChanges.put(entity.getId(), targetNetworkId);
         }
 
         // Refresh display
@@ -506,7 +551,6 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         updatePendingChanges();
 
         LOGGER.debug("Link action completed successfully: {} units now in network", resultingNetworkSize);
-        showInfo(Messages.getString("NovaNetworkDialog.info.linked"));
     }
 
     /**
@@ -530,17 +574,16 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
             return;
         }
 
-        // Unlink each unit to its own original network
-        // Simple approach: Each unit reverts to its own network (C3Nova.X based on unit ID)
+        // Queue unlink actions for all selected units
+        // Each unit reverts to its own network (C3Nova.X based on unit ID)
         for (Entity entity : selectedEntities) {
             String currentNetworkId = entity.getC3NetId();
             String targetNetworkId = entity.getOriginalNovaC3NetId();
 
-            LOGGER.debug("Unlinking entity {} ({}) from network {} to original network {}",
+            LOGGER.debug("Queuing unlink for entity {} ({}) from network {} to original network {}",
                 entity.getId(), entity.getShortName(), currentNetworkId, targetNetworkId);
 
-            entity.setNewRoundNovaNetworkString(targetNetworkId);
-            clientGUI.getClient().sendNovaChange(entity.getId(), targetNetworkId);
+            pendingChanges.put(entity.getId(), targetNetworkId);
         }
 
         // Refresh display
@@ -548,7 +591,49 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         updatePendingChanges();
 
         LOGGER.debug("Unlink action completed successfully");
-        showInfo(Messages.getString("NovaNetworkDialog.info.unlinked"));
+    }
+
+    /**
+     * Applies all pending network changes by sending them to the server.
+     */
+    private void applyPendingChanges() {
+        if (pendingChanges.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                Messages.getString("NovaNetworkDialog.noPendingChanges"),
+                Messages.getString("NovaNetworkDialog.title"),
+                JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        // Send all pending changes to server
+        for (Map.Entry<Integer, String> entry : pendingChanges.entrySet()) {
+            int entityId = entry.getKey();
+            String targetNetwork = entry.getValue();
+            Entity entity = game.getEntity(entityId);
+
+            if (entity != null) {
+                LOGGER.info("Applying network change for entity {} ({}): {} -> {}",
+                    entityId, entity.getShortName(),
+                    entity.getC3NetId(), targetNetwork);
+
+                entity.setNewRoundNovaNetworkString(targetNetwork);
+                clientGUI.getClient().sendNovaChange(entityId, targetNetwork);
+            }
+        }
+
+        pendingChanges.clear();
+        clearHighlighting();
+        dispose();
+    }
+
+    /**
+     * Clears all pending network changes without applying them.
+     */
+    private void revertPendingChanges() {
+        pendingChanges.clear();
+        populateUnitList();
+        updatePendingChanges();
+        // Visual feedback in UI is sufficient - no dialog needed
     }
 
     /**

@@ -20,6 +20,8 @@ package megamek.client.ui.dialogs.phaseDisplay;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
 import org.apache.logging.log4j.LogManager;
@@ -29,6 +31,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -81,6 +85,15 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
 
         pack();
         setLocationRelativeTo(parent);
+
+        // Add window listener to clear highlighting when dialog closes
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                clearHighlighting();
+            }
+        });
+
         LOGGER.debug("Nova CEWS Dialog initialized: {} player units, {} allied units",
             playerNovaUnits.size(), alliedNovaUnits.size());
     }
@@ -134,6 +147,11 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         unitList = new JList<>(unitListModel);
         unitList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         unitList.setVisibleRowCount(10);
+        unitList.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                updateEntityHighlighting();
+            }
+        });
 
         JScrollPane scrollPane = new JScrollPane(unitList);
         scrollPane.setPreferredSize(new Dimension(500, 200));
@@ -370,6 +388,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         } else if (e.getSource() == btnUnlink) {
             unlinkSelectedUnits();
         } else if (e.getSource() == btnCancel) {
+            clearHighlighting();
             dispose();
         }
     }
@@ -547,6 +566,42 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         }
 
         return entities;
+    }
+
+    /**
+     * Updates the board view to highlight the currently selected entities.
+     * Highlights both the entity name tags and hex borders.
+     */
+    private void updateEntityHighlighting() {
+        List<Entity> selectedEntities = getSelectedEntities();
+        BoardView boardView = clientGUI.getBoardView();
+
+        // Highlight entity name tags
+        boardView.highlightSelectedEntities(selectedEntities);
+
+        // Highlight hex borders
+        List<Coords> hexesToHighlight = selectedEntities.stream()
+                .map(Entity::getPosition)
+                .collect(Collectors.toList());
+        boardView.setHighlightedEntityHexes(hexesToHighlight);
+
+        boardView.repaint();
+    }
+
+    /**
+     * Clears all entity highlighting on the board view.
+     * Clears both entity name tag highlights and hex border highlights.
+     */
+    private void clearHighlighting() {
+        BoardView boardView = clientGUI.getBoardView();
+
+        // Clear entity name tag highlights
+        boardView.highlightSelectedEntities(new ArrayList<>());
+
+        // Clear hex border highlights
+        boardView.setHighlightedEntityHexes(new ArrayList<>());
+
+        boardView.repaint();
     }
 
     /**

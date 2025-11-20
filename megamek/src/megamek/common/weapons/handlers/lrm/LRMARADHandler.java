@@ -37,11 +37,19 @@ import megamek.server.totalWarfare.TWGameManager;
  * ARAD missiles receive cluster bonuses against targets with active electronics,
  * and penalties against targets without electronics. ECM can block the bonus
  * unless the target is Narc-tagged (Narc overrides ECM).
+ *
  * Cluster Modifiers:
  * - +1 against targets with qualifying electronics (unless blocked by ECM)
  * - 0 if target has electronics but ECM blocks (and no Narc override)
  * - -2 against targets without electronics (minimum 2 hits enforced by engine)
+ *
  * Rules Reference: Tactical Operations: Advanced Units & Equipment, p.180
+ * Quote: "ARAD missiles ignore hostile ECM effects when targeting a unit tagged
+ * by a friendly Narc pod. However, the ARAD missile does not receive any further
+ * to-hit bonus from the pod."
+ *
+ * Forum Ruling (Narc/ECM interaction):
+ * https://battletech.com/forums/index.php?topic=26824.msg609067#msg609067
  *
  * @author MegaMek Team
  * @since 2025-01-16
@@ -86,8 +94,11 @@ public class LRMARADHandler extends LRMHandler {
             // Target has electronics - check for ECM interference
 
             // Narc-tagged targets ALWAYS get bonus (Narc overrides ECM)
+            // TO:AUE p.180: "ignore hostile ECM effects when targeting a unit tagged by a friendly Narc pod"
+            // However, ARAD does NOT receive additional Narc-specific bonuses (no stacking)
+            // Forum ruling: https://battletech.com/forums/index.php?topic=26824.msg609067#msg609067
             if (ARADEquipmentDetector.isNarcTagged(entityTarget, friendlyTeam)) {
-                return +1;  // Narc overrides ECM
+                return +1;  // Narc overrides ECM, but no additional Narc bonus
             }
 
             // Check if flight path is ECM-affected (matches Artemis IV pattern)
@@ -98,7 +109,7 @@ public class LRMARADHandler extends LRMHandler {
                     target.getPosition());
 
             if (isECMAffected) {
-                return 0;  // ECM blocks bonus (but no penalty)
+                return 0;  // ECM blocks bonus for non-Narc targets (but no penalty applied)
             }
 
             // Target has electronics, no ECM interference

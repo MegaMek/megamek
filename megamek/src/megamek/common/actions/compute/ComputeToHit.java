@@ -925,12 +925,10 @@ public class ComputeToHit {
 
             if (hasElectronics) {
                 // -1 bonus vs targets with electronics
-                toHit.addModifier(-1,
-                      ammoType.getSubMunitionName() + Messages.getString("WeaponAttackAction.AmmoMod"));
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.AradElectronics"));
             } else {
                 // +2 penalty vs targets without electronics
-                toHit.addModifier(2,
-                      ammoType.getSubMunitionName() + Messages.getString("WeaponAttackAction.AmmoMod"));
+                toHit.addModifier(2, Messages.getString("WeaponAttackAction.AradNoElectronics"));
             }
         }
 

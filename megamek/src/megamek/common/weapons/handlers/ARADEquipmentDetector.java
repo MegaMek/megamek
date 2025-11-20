@@ -35,6 +35,13 @@ import java.util.Iterator;
  * Rules Reference: Tactical Operations: Advanced Units & Equipment, p.180
  * Forum Rulings: Consolidated in docs/issues/features/arad-implementation.md
  *
+ * Key Forum Rulings:
+ * - Stealth blocking: https://battletech.com/forums/index.php?topic=78845.msg1866412#msg1866412
+ * - Powered-down equipment: https://battletech.com/forums/index.php?topic=31896.msg1369654#msg1369654
+ * - Communications threshold: https://battletech.com/forums/index.php?topic=17456.msg396440#msg396440
+ * - Narc/iNarc interaction: https://battletech.com/forums/index.php?topic=26824.msg609067#msg609067
+ * - General exclusions: https://battletech.com/forums/index.php?topic=63179.msg1452217#msg1452217
+ *
  * @author MegaMek Team
  * @since 2025-01-16
  */
@@ -82,6 +89,10 @@ public class ARADEquipmentDetector {
      *
      * Active Stealth Armor makes a unit "completely non-emitting" by blocking
      * all internal electronic systems. External Narc pods are NOT blocked.
+     *
+     * Reference: TO:AUE p.180, Xotl forum ruling:
+     * https://battletech.com/forums/index.php?topic=78845.msg1866412#msg1866412
+     * Quote: "Active Stealth Armor makes a unit completely non-emitting"
      *
      * @param target The entity to check
      * @return true if Stealth Armor is active
@@ -188,6 +199,10 @@ public class ARADEquipmentDetector {
      * Only dedicated communications equipment >= 3.5 tons qualifies.
      * Built-in cockpit communications (standard 1-ton equivalent) does NOT count.
      *
+     * Reference: Welshman (Catalyst Freelancer) forum ruling:
+     * https://battletech.com/forums/index.php?topic=17456.msg396440#msg396440
+     * Quote: "Built-in 1-ton communications do not count, only dedicated equipment >= 3.5 tons"
+     *
      * @param target The entity to check
      * @return true if entity has >= 3.5 tons of dedicated comms
      */
@@ -266,6 +281,13 @@ public class ARADEquipmentDetector {
      *
      * External Narc pods are NOT blocked by Stealth Armor.
      *
+     * Reference: TO:AUE p.180, Xotl forum ruling:
+     * https://battletech.com/forums/index.php?topic=26824.msg609067#msg609067
+     * Quote: "ARAD receives standard bonus when targeting Narc-tagged units, but does NOT
+     * receive additional Narc-specific bonuses (no stacking)"
+     *
+     * Friendly vs enemy Nemesis distinction confirmed by same forum ruling.
+     *
      * @param target The entity to check
      * @param friendlyTeam Team ID of the attacking entity
      * @return true if target has friendly Narc/iNarc pod
@@ -298,6 +320,12 @@ public class ARADEquipmentDetector {
      * - Not breached
      *
      * Note: Power state (shut down) is checked via equipment modes, not this method.
+     * Powered-down equipment does NOT emit and will not trigger ARAD bonuses.
+     *
+     * Reference: Xotl ruling (November 2017, Errata to TO p.99):
+     * https://battletech.com/forums/index.php?topic=31896.msg1369654#msg1369654
+     * Quote: "Players may power down equipment during End Phase. Powered-down electronics
+     * do not function and are not valid targets for ARAD bonuses."
      *
      * @param equipment The equipment to validate
      * @return true if equipment is functional

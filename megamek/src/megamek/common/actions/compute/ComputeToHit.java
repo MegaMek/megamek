@@ -918,7 +918,7 @@ public class ComputeToHit {
             }
         }
 
-        // ARAD (Anti-Radiation) Missiles
+        // ARAD (Anti-Radiation) Missiles - Entity targets
         if (bARAD && (te != null)) {
             int friendlyTeam = ae.getOwner().getTeam();
             boolean hasElectronics = ARADEquipmentDetector.targetHasQualifyingElectronics(te, friendlyTeam);
@@ -930,6 +930,11 @@ public class ComputeToHit {
                 // +2 penalty vs targets without electronics
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.AradNoElectronics"));
             }
+        }
+        // ARAD (Anti-Radiation) Missiles - Non-entity targets (buildings, hexes)
+        else if (bARAD && (te == null)) {
+            // Buildings/terrain hexes have no electronics
+            toHit.addModifier(2, Messages.getString("WeaponAttackAction.AradNoElectronics"));
         }
 
         // Narc-capable missiles homing on an iNarc beacon
@@ -957,7 +962,7 @@ public class ComputeToHit {
      * null return means we can continue processing the attack
      *
      * @param game                  The current {@link Game}
-     * @param ae                    The Entity making this attack
+     * @param weaponEntity          The Entity making this attack
      * @param target                The Targetable object being attacked
      * @param targetType            The targetable object type
      * @param los                   The calculated LOS between attacker and target

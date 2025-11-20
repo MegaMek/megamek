@@ -878,8 +878,11 @@ public class Server implements Runnable {
     void disconnected(Player player) {
         // Only do this if nobody is trying to save a game currently
         GAME_LOCK.lock();
-        gameManager.disconnect(player);
-        GAME_LOCK.unlock();
+        try {
+            gameManager.disconnect(player);
+        } finally {
+            GAME_LOCK.unlock();
+        }
     }
 
     public void resetGame() {

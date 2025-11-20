@@ -233,8 +233,6 @@ public class Server implements Runnable {
          */
         @Override
         public void disconnected(DisconnectedEvent e) {
-            // Only do this if nobody is trying to save a game currently
-            GAME_LOCK.lock();
             AbstractConnection conn = e.getConnection();
 
             // write something in the log
@@ -256,7 +254,6 @@ public class Server implements Runnable {
             if (null != player) {
                 Server.this.disconnected(player);
             }
-            GAME_LOCK.unlock();
         }
 
         @Override
@@ -879,7 +876,10 @@ public class Server implements Runnable {
      * appropriate housekeeping.
      */
     void disconnected(Player player) {
+        // Only do this if nobody is trying to save a game currently
+        GAME_LOCK.lock();
         gameManager.disconnect(player);
+        GAME_LOCK.unlock();
     }
 
     public void resetGame() {

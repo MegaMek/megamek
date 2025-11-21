@@ -438,6 +438,7 @@ public class Compute {
      * <p>
      * The position and elevation for the stacking violation are derived from the Entity represented by the passed
      * Entity ID.
+     * By default, ignores hidden units.
      *
      * @param game       The Game instance
      * @param enteringId The gameId of the moving Entity
@@ -449,7 +450,7 @@ public class Compute {
         if (entering == null) {
             return null;
         }
-        return Compute.stackingViolation(game, entering, coords, null, climbMode);
+        return Compute.stackingViolation(game, entering, coords, null, climbMode, true);
     }
 
     /**
@@ -463,11 +464,12 @@ public class Compute {
      * @param dest      The hex being entered
      * @param transport Represents the unit transporting entering, which may affect stacking, can be null
      * @param climbMode The moving Entity's climb mode at the point it enters the destination hex
+     * @param ignoreHidden true by default.
      */
     public static Entity stackingViolation(Game game, Entity entering,
-          Coords dest, Entity transport, boolean climbMode) {
+          Coords dest, Entity transport, boolean climbMode, boolean ignoreHidden) {
         return stackingViolation(game, entering, entering.getElevation(), dest,
-              transport, climbMode);
+              transport, climbMode, ignoreHidden);
     }
 
     /**
@@ -484,21 +486,21 @@ public class Compute {
      * @param climbMode The moving Entity's climb mode at the point it enters the destination hex
      */
     public static Entity stackingViolation(Game game, Entity entering,
-          int elevation, Coords dest, Entity transport, boolean climbMode) {
+          int elevation, Coords dest, Entity transport, boolean climbMode, boolean ignoreHidden) {
         return stackingViolation(game, entering, entering.getPosition(),
-              elevation, dest, entering.getBoardId(), transport, climbMode);
+              elevation, dest, entering.getBoardId(), transport, climbMode, ignoreHidden);
     }
 
     public static Entity stackingViolation(Game game, Entity entering,
-          Coords origPosition, int elevation, Coords dest, Entity transport, boolean climbMode) {
+          Coords origPosition, int elevation, Coords dest, Entity transport, boolean climbMode, boolean ignoreHidden) {
         return stackingViolation(game, entering, origPosition,
-              elevation, dest, entering.getBoardId(), transport, climbMode);
+              elevation, dest, entering.getBoardId(), transport, climbMode, ignoreHidden);
     }
 
     public static Entity stackingViolation(Game game, Entity entering,
-          int elevation, Coords dest, int destBoardId, Entity transport, boolean climbMode) {
+          int elevation, Coords dest, int destBoardId, Entity transport, boolean climbMode, boolean ignoreHidden) {
         return stackingViolation(game, entering, entering.getPosition(),
-              elevation, dest, destBoardId, transport, climbMode);
+              elevation, dest, destBoardId, transport, climbMode, ignoreHidden);
     }
 
     /**
@@ -516,7 +518,8 @@ public class Compute {
      * @param climbMode    The moving Entity's climb mode at the point it enters the destination hex
      */
     public static Entity stackingViolation(Game game, Entity entering,
-          Coords origPosition, int elevation, Coords dest, int destBoardId, Entity transport, boolean climbMode) {
+          Coords origPosition, int elevation, Coords dest, int destBoardId, Entity transport, boolean climbMode,
+          boolean ignoreHidden) {
         // no stacking violations on low-atmosphere and space maps
         if (!game.getBoard(destBoardId).isGround()) {
             return null;
@@ -586,6 +589,11 @@ public class Compute {
             for (Entity inHex : game.getEntitiesVector(coords, destBoardId)) {
 
                 if (inHex.isAirborne()) {
+                    continue;
+                }
+
+                // We are not allowed to consider hidden units here!
+                if (ignoreHidden && inHex.isHidden()) {
                     continue;
                 }
 

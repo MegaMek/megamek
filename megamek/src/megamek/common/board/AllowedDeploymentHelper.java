@@ -87,7 +87,7 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
         }
         result.removeIf(o -> entity.isLocationProhibited(coords, board().getBoardId(), o.elevation()));
         result.removeIf(o -> Compute.stackingViolation(game, entity, o.elevation(), coords,
-              board.getBoardId(), null, entity.climbMode()) != null);
+              board.getBoardId(), null, entity.climbMode(), true) != null);
 
         if (entity.getMovementMode().isWiGE()) {
             addAirborneWiGEOptions(result);

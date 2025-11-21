@@ -320,7 +320,8 @@ public class ServerHelper {
         if (isAero && game.isOnGroundMap(detector)) {
             // Aerospace with BAP on the ground map detect hidden units to 1 hex on either
             // side of their flight path; see https://bg.battletech.com/forums/index.php?topic=84054.0
-            probeRange = 1;
+            // Otherwise, range is 0 (fly-over only)
+            probeRange = (probeRange > 0) ? 1 : 0;
         }
 
         // Get all hidden units in probe range

@@ -1115,7 +1115,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                     // Check for stacking violations in the target hex
                     Entity violation = Compute.stackingViolation(getGame(),
-                          entity.getId(), entity.getPosition(), entity.climbMode());
+                          entity, entity.getPosition(), null, entity.climbMode(), false);
                     if (violation != null) {
                         PilotingRollData prd = new PilotingRollData(
                               violation.getId(), 2, "fallen on");
@@ -1353,10 +1353,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
                 for (Entity entity : hiddenEnemies) {
                     int dist = entity.getPosition().distance(step.getPosition());
-                    // Checking for same hex and stacking violation
+                    // Checking for same hex and stacking violation; do _not_ ignore hidden units here.
                     if ((dist == 0) && !continueTurnFromPBS
-                          && (Compute.stackingViolation(getGame(), this.entity.getId(),
-                          step.getPosition(), this.entity.climbMode()) != null)) {
+                          && (Compute.stackingViolation(getGame(), this.entity,
+                          step.getPosition(), null, this.entity.climbMode(), false) != null)) {
                         // Moving into hex of a hidden unit detects the unit
                         entity.setHidden(false);
                         gameManager.entityUpdate(entity.getId());
@@ -1390,8 +1390,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         this.entity.setDone(true);
                         gameManager.entityUpdate(this.entity.getId(), movePath, true, losCache);
                         return;
-                        // Potential point-blank shot
-                    } else if ((dist == 1) && !entity.madePointblankShot()) {
+                        // Potential point-blank shot, but only in some situations:
+                        // 1. mover is Aerospace,
+                        // 2. mover is ground unit _and_ ends its movement in or adjacent to the hidden unit's hex.
+                    } else if ((dist == 1) && !entity.madePointblankShot() &&
+                          (this.entity.isAero() || md.isEndStep(step))
+                    ) {
                         this.entity.setPosition(step.getPosition());
                         this.entity.setFacing(step.getFacing());
                         // If not set, BV icons could have wrong facing
@@ -2698,9 +2702,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         addReport(report);
                         // check for quicksand
                         addReport(gameManager.checkQuickSand(curPos));
-                        // check for accidental stacking violation
+                        // check for accidental stacking violation (not ignoring hidden units here)
                         Entity violation = Compute.stackingViolation(getGame(),
-                              entity.getId(), curPos, entity.climbMode());
+                              entity, curPos, null, entity.climbMode(), false);
                         if (violation != null) {
                             // target gets displaced, because of low elevation
                             int direction = lastPos.direction(curPos);

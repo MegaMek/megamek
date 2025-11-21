@@ -26,10 +26,14 @@ import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
+import megamek.common.options.GameOptions;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -74,23 +78,30 @@ public class SRMARADHandlerTest {
         WeaponAttackAction mockAction = mock(WeaponAttackAction.class);
         TWGameManager mockGameManager = mock(TWGameManager.class);
 
-        // Configure mock action
-        when(mockAction.getEntityId()).thenReturn(attacker.getId());
+        // Get IDs first to avoid UnfinishedStubbingException
+        int attackerId = attacker.getId();
+        int targetId = target.getId();
+
+        // Configure mock action to return entity and weapon IDs
+        doReturn(attackerId).when(mockAction).getEntityId();
+        doReturn(0).when(mockAction).getWeaponId();  // Weapon slot 0
+        doReturn(Targetable.TYPE_ENTITY).when(mockAction).getTargetType();
+        doReturn(targetId).when(mockAction).getTargetId();
+
+        // Mock weapon equipment
+        WeaponMounted mockWeapon = mock(WeaponMounted.class);
+        WeaponType mockWeaponType = mock(WeaponType.class);
+        doReturn(mockWeaponType).when(mockWeapon).getType();
+        doReturn("ISSRM2").when(mockWeaponType).getInternalName();
+        doReturn(null).when(mockWeapon).getLinked();  // No ammo linked (not needed for test)
+
+        // Configure attacker entity to return weapon
+        doReturn(mockWeapon).when(attacker).getEquipment(0);
+
+        // Configure game to return target
+        doReturn(target).when(game).getTarget(Targetable.TYPE_ENTITY, targetId);
 
         SRMARADHandler handler = new SRMARADHandler(mockToHit, mockAction, game, mockGameManager);
-
-        // Inject dependencies using reflection (since fields are protected/private)
-        try {
-            java.lang.reflect.Field attackingEntityField = handler.getClass().getSuperclass().getSuperclass().getSuperclass().getDeclaredField("attackingEntity");
-            attackingEntityField.setAccessible(true);
-            attackingEntityField.set(handler, attacker);
-
-            java.lang.reflect.Field targetField = handler.getClass().getSuperclass().getSuperclass().getSuperclass().getDeclaredField("target");
-            targetField.setAccessible(true);
-            targetField.set(handler, target);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to inject test dependencies", e);
-        }
 
         return handler;
     }
@@ -101,21 +112,35 @@ public class SRMARADHandlerTest {
     private Entity createMockEntity(int team) {
         Entity entity = mock(Entity.class);
         Player owner = mock(Player.class);
-        when(owner.getTeam()).thenReturn(team);
-        when(entity.getOwner()).thenReturn(owner);
-        when(entity.getId()).thenReturn(team * 100);  // Unique ID
-        when(entity.getPosition()).thenReturn(new Coords(0, 0));
-        when(entity.getEquipment()).thenReturn(new ArrayList<>());
+        doReturn(team).when(owner).getTeam();
+        doReturn(owner).when(entity).getOwner();
+        doReturn(team * 100).when(entity).getId();  // Unique ID
+        doReturn(new Coords(0, 0)).when(entity).getPosition();
+        doReturn(new ArrayList<>()).when(entity).getEquipment();
+        doReturn(entity).when(entity).getAttackingEntity();  // WeaponHandler needs this
         return entity;
     }
 
     /**
      * Test helper: Create mock game with ECM behavior.
      */
-    private Game createMockGame(boolean ecmAffected) {
+    private Game createMockGame(boolean ecmAffected, Entity attacker) {
         Game game = mock(Game.class);
         Board mockBoard = mock(Board.class);
-        when(game.getBoard()).thenReturn(mockBoard);
+        GameOptions mockOptions = mock(GameOptions.class);
+
+        doReturn(mockBoard).when(game).getBoard();
+        doReturn(mockOptions).when(game).getOptions();
+        doReturn(false).when(mockOptions).booleanOption(any(String.class));  // Default all game options to false
+        doReturn(new ArrayList<>()).when(game).getEntitiesVector();  // Empty entities list (no ECM sources)
+
+        // WeaponHandler constructor needs game.getEntity() to return attacker
+        // Get ID value first to avoid UnfinishedStubbingException
+        int attackerId = attacker.getId();
+        doReturn(attacker).when(game).getEntity(attackerId);
+
+        // ComputeECM.isAffectedByECM() calls attackingEntity.getGame()
+        doReturn(game).when(attacker).getGame();
 
         // Mock ECM detection globally
         // Note: ComputeECM.isAffectedByECM is static, so we'll test both ECM states
@@ -132,17 +157,17 @@ public class SRMARADHandlerTest {
         Entity target = createMockEntity(ENEMY_TEAM);
 
         // Configure target with C3 (qualifying electronics)
-        when(target.hasC3()).thenReturn(true);
-        when(target.isNarcedBy(FRIENDLY_TEAM)).thenReturn(false);
-        when(target.getINarcPodsAttached()).thenReturn(Collections.emptyIterator());
-        when(target.isStealthActive()).thenReturn(false);
+        doReturn(true).when(target).hasC3();
+        doReturn(false).when(target).isNarcedBy(FRIENDLY_TEAM);
+        doReturn(Collections.emptyIterator()).when(target).getINarcPodsAttached();
+        doReturn(false).when(target).isStealthActive();
 
         Mounted<?> c3Equipment = createMockEquipment(MiscType.F_C3S, false);
         List<Mounted<?>> equipment = new ArrayList<>();
         equipment.add(c3Equipment);
-        when(target.getEquipment()).thenReturn(equipment);
+        doReturn(equipment).when(target).getEquipment();
 
-        Game game = createMockGame(false);  // No ECM
+        Game game = createMockGame(false, attacker);  // No ECM
 
         SRMARADHandler handler = createHandler(attacker, target, game);
 
@@ -156,17 +181,17 @@ public class SRMARADHandlerTest {
         Entity target = createMockEntity(ENEMY_TEAM);
 
         // Configure target with C3 and Narc
-        when(target.hasC3()).thenReturn(true);
-        when(target.isNarcedBy(FRIENDLY_TEAM)).thenReturn(true);  // Narc-tagged
-        when(target.getINarcPodsAttached()).thenReturn(Collections.emptyIterator());
-        when(target.isStealthActive()).thenReturn(false);
+        doReturn(true).when(target).hasC3();
+        doReturn(true).when(target).isNarcedBy(FRIENDLY_TEAM);  // Narc-tagged
+        doReturn(Collections.emptyIterator()).when(target).getINarcPodsAttached();
+        doReturn(false).when(target).isStealthActive();
 
         Mounted<?> c3Equipment = createMockEquipment(MiscType.F_C3S, false);
         List<Mounted<?>> equipment = new ArrayList<>();
         equipment.add(c3Equipment);
-        when(target.getEquipment()).thenReturn(equipment);
+        doReturn(equipment).when(target).getEquipment();
 
-        Game game = createMockGame(true);  // ECM present (but Narc overrides)
+        Game game = createMockGame(true, attacker);  // ECM present (but Narc overrides)
 
         SRMARADHandler handler = createHandler(attacker, target, game);
 
@@ -180,18 +205,18 @@ public class SRMARADHandlerTest {
         Entity target = createMockEntity(ENEMY_TEAM);
 
         // Configure target with NO electronics
-        when(target.hasC3()).thenReturn(false);
-        when(target.hasC3i()).thenReturn(false);
-        when(target.hasECM()).thenReturn(false);
-        when(target.hasBAP()).thenReturn(false);
-        when(target.getTaggedBy()).thenReturn(-1);
-        when(target.hasGhostTargets(true)).thenReturn(false);
-        when(target.isNarcedBy(FRIENDLY_TEAM)).thenReturn(false);
-        when(target.getINarcPodsAttached()).thenReturn(Collections.emptyIterator());
-        when(target.isStealthActive()).thenReturn(false);
-        when(target.getEquipment()).thenReturn(new ArrayList<>());
+        doReturn(false).when(target).hasC3();
+        doReturn(false).when(target).hasC3i();
+        doReturn(false).when(target).hasECM();
+        doReturn(false).when(target).hasBAP();
+        doReturn(-1).when(target).getTaggedBy();
+        doReturn(false).when(target).hasGhostTargets(true);
+        doReturn(false).when(target).isNarcedBy(FRIENDLY_TEAM);
+        doReturn(Collections.emptyIterator()).when(target).getINarcPodsAttached();
+        doReturn(false).when(target).isStealthActive();
+        doReturn(new ArrayList<>()).when(target).getEquipment();
 
-        Game game = createMockGame(false);
+        Game game = createMockGame(false, attacker);
 
         SRMARADHandler handler = createHandler(attacker, target, game);
 
@@ -205,17 +230,17 @@ public class SRMARADHandlerTest {
         Entity target = createMockEntity(ENEMY_TEAM);
 
         // Configure target with active Stealth Armor and C3 (blocked)
-        when(target.isStealthActive()).thenReturn(true);  // Blocks internal systems
-        when(target.hasC3()).thenReturn(true);
-        when(target.isNarcedBy(FRIENDLY_TEAM)).thenReturn(false);  // No Narc
-        when(target.getINarcPodsAttached()).thenReturn(Collections.emptyIterator());
+        doReturn(true).when(target).isStealthActive();  // Blocks internal systems
+        doReturn(true).when(target).hasC3();
+        doReturn(false).when(target).isNarcedBy(FRIENDLY_TEAM);  // No Narc
+        doReturn(Collections.emptyIterator()).when(target).getINarcPodsAttached();
 
         Mounted<?> c3Equipment = createMockEquipment(MiscType.F_C3S, false);
         List<Mounted<?>> equipment = new ArrayList<>();
         equipment.add(c3Equipment);
-        when(target.getEquipment()).thenReturn(equipment);
+        doReturn(equipment).when(target).getEquipment();
 
-        Game game = createMockGame(false);
+        Game game = createMockGame(false, attacker);
 
         SRMARADHandler handler = createHandler(attacker, target, game);
 
@@ -229,17 +254,17 @@ public class SRMARADHandlerTest {
         Entity target = createMockEntity(ENEMY_TEAM);
 
         // Configure target with active Stealth Armor and Narc (Narc NOT blocked)
-        when(target.isStealthActive()).thenReturn(true);  // Blocks internal systems
-        when(target.hasC3()).thenReturn(true);
-        when(target.isNarcedBy(FRIENDLY_TEAM)).thenReturn(true);  // Narc overrides Stealth
-        when(target.getINarcPodsAttached()).thenReturn(Collections.emptyIterator());
+        doReturn(true).when(target).isStealthActive();  // Blocks internal systems
+        doReturn(true).when(target).hasC3();
+        doReturn(true).when(target).isNarcedBy(FRIENDLY_TEAM);  // Narc overrides Stealth
+        doReturn(Collections.emptyIterator()).when(target).getINarcPodsAttached();
 
         Mounted<?> c3Equipment = createMockEquipment(MiscType.F_C3S, false);
         List<Mounted<?>> equipment = new ArrayList<>();
         equipment.add(c3Equipment);
-        when(target.getEquipment()).thenReturn(equipment);
+        doReturn(equipment).when(target).getEquipment();
 
-        Game game = createMockGame(false);
+        Game game = createMockGame(false, attacker);
 
         SRMARADHandler handler = createHandler(attacker, target, game);
 
@@ -253,13 +278,14 @@ public class SRMARADHandlerTest {
         Entity target = createMockEntity(ENEMY_TEAM);
 
         // Configure target with TAG (qualifying electronics)
-        when(target.getTaggedBy()).thenReturn(attacker.getId());  // Tagged by attacker
-        when(target.isNarcedBy(FRIENDLY_TEAM)).thenReturn(false);
-        when(target.getINarcPodsAttached()).thenReturn(Collections.emptyIterator());
-        when(target.isStealthActive()).thenReturn(false);
-        when(target.getEquipment()).thenReturn(new ArrayList<>());
+        int attackerId = attacker.getId();  // Get ID first to avoid UnfinishedStubbingException
+        doReturn(attackerId).when(target).getTaggedBy();  // Tagged by attacker
+        doReturn(false).when(target).isNarcedBy(FRIENDLY_TEAM);
+        doReturn(Collections.emptyIterator()).when(target).getINarcPodsAttached();
+        doReturn(false).when(target).isStealthActive();
+        doReturn(new ArrayList<>()).when(target).getEquipment();
 
-        Game game = createMockGame(false);
+        Game game = createMockGame(false, attacker);
 
         SRMARADHandler handler = createHandler(attacker, target, game);
 
@@ -273,13 +299,13 @@ public class SRMARADHandlerTest {
         Entity target = createMockEntity(ENEMY_TEAM);
 
         // Configure target generating Ghost Targets (qualifying electronics)
-        when(target.hasGhostTargets(true)).thenReturn(true);
-        when(target.isNarcedBy(FRIENDLY_TEAM)).thenReturn(false);
-        when(target.getINarcPodsAttached()).thenReturn(Collections.emptyIterator());
-        when(target.isStealthActive()).thenReturn(false);
-        when(target.getEquipment()).thenReturn(new ArrayList<>());
+        doReturn(true).when(target).hasGhostTargets(true);
+        doReturn(false).when(target).isNarcedBy(FRIENDLY_TEAM);
+        doReturn(Collections.emptyIterator()).when(target).getINarcPodsAttached();
+        doReturn(false).when(target).isStealthActive();
+        doReturn(new ArrayList<>()).when(target).getEquipment();
 
-        Game game = createMockGame(false);
+        Game game = createMockGame(false, attacker);
 
         SRMARADHandler handler = createHandler(attacker, target, game);
 
@@ -294,12 +320,12 @@ public class SRMARADHandlerTest {
         Mounted<?> equipment = mock(Mounted.class);
         EquipmentType type = mock(EquipmentType.class);
 
-        when(type.hasFlag(Mockito.any(MiscTypeFlag.class))).thenReturn(false);
-        when(type.hasFlag(flag)).thenReturn(true);
-        when(equipment.getType()).thenReturn(type);
-        when(equipment.isDestroyed()).thenReturn(destroyed);
-        when(equipment.isMissing()).thenReturn(false);
-        when(equipment.isBreached()).thenReturn(false);
+        doReturn(false).when(type).hasFlag(Mockito.any(MiscTypeFlag.class));
+        doReturn(true).when(type).hasFlag(flag);
+        doReturn(type).when(equipment).getType();
+        doReturn(destroyed).when(equipment).isDestroyed();
+        doReturn(false).when(equipment).isMissing();
+        doReturn(false).when(equipment).isBreached();
 
         return equipment;
     }

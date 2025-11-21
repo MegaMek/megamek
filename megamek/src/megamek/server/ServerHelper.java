@@ -309,13 +309,15 @@ public class ServerHelper {
         }
 
         int probeRange = detector.getBAPRange();
+        boolean isAero = detector.isAero();
 
         // if no probe, save ourselves a few loops
-        if (probeRange <= 0) {
+        // TODO: ASF should have range 0 (fly-over only) so exempt them
+        if (probeRange <= 0 && !isAero) {
             return false;
         }
 
-        if (detector.isAerospace() && game.isOnGroundMap(detector)) {
+        if (isAero && game.isOnGroundMap(detector)) {
             // Aerospace with BAP on the ground map detect hidden units to 1 hex on either
             // side of their flight path; see https://bg.battletech.com/forums/index.php?topic=84054.0
             probeRange = 1;

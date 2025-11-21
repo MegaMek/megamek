@@ -7486,7 +7486,7 @@ public class Compute {
             // (https://bg.battletech.com/forums/index.php?topic=84054.0)
             return distance == 0;
         } else {return (distance == 1) && endStep;}
-        // Active Probe detection happens is handled in detectHiddenUnits
+        // Active Probe detection is handled in detectHiddenUnits
         // Anything not explicitly detected is not detected.
     }
 

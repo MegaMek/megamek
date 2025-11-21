@@ -1348,6 +1348,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
             isOnGround &= step.getElevation() < 1;
 
             // Check for hidden units point-blank shots
+            // TODO: only reveal Hidden entities if the last step ends adjacent or in the hidden
+            // TODO: unit's hex (TW somethingorother); may need to record initial MP remaining here.
             if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
                 for (Entity entity : hiddenEnemies) {
                     int dist = entity.getPosition().distance(step.getPosition());

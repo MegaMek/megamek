@@ -7167,7 +7167,7 @@ public class Compute {
         if (entity.hasDroneOs()) {
             return 0;
         }
-        if (entity.defaultCrewType().equals(CrewType.NONE)) {
+        if (entity.isNotCrewedEntityType()) {
             return 0;
         }
         if (entity.isSupportVehicle()) {
@@ -7217,7 +7217,7 @@ public class Compute {
         if (entity.hasDroneOs()) {
             return 0;
         }
-        if (entity.defaultCrewType().equals(CrewType.NONE)) {
+        if (entity.isNotCrewedEntityType()) {
             return 0;
         }
         // Fix for MHQ Bug #3. Space stations have as much need for pilots as jumpships

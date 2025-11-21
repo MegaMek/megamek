@@ -283,6 +283,50 @@ public class Compute {
     }
 
     /**
+     * Returns the sum of the highest two d6 rolls from the provided list of roll values.
+     *
+     * <p>This method efficiently computes the top two results without sorting, making it suitable for rules that
+     * require selecting the best two dice out of several rolled, such as natural aptitude empowered checks.</p>
+     *
+     * <p>Edge cases are handled gracefully:</p>
+     * <ul>
+     *     <li>If no rolls are provided, the result is {@code 0}.</li>
+     *     <li>If only one roll is provided, that value is returned.</li>
+     *     <li>If two or more rolls are provided, the sum of the highest two is returned.</li>
+     * </ul>
+     *
+     * @param rolls one or more integer roll results, typically from {@code d6(1)}
+     *
+     * @return the sum of the highest two roll values, or a fallback value for edge cases
+     *
+     * @author Illiani
+     * @since 0.50.10
+     */
+    public static int highestTwoIntegers(int... values) {
+        int highest = Integer.MIN_VALUE;
+        int second = Integer.MIN_VALUE;
+
+        // Find the highest two values
+        for (int value : values) {
+            if (value > highest) {
+                second = highest;
+                highest = value;
+            } else if (value > second) {
+                second = value;
+            }
+        }
+
+        // Edge cases
+        if (values.length == 0) {
+            return 0;
+        } else if (values.length == 1) {
+            return highest;
+        }
+
+        return highest + second;
+    }
+
+    /**
      * Generates a number between 0 and  max value exclusive (this means maxValue-1). e.g. randomInt(3) will generate 0,
      * 1, or 2.
      */

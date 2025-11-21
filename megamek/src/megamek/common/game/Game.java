@@ -34,10 +34,7 @@
 package megamek.common.game;
 
 import static java.util.stream.Collectors.toList;
-import static megamek.common.enums.GamePhase.DEPLOYMENT;
-import static megamek.common.enums.GamePhase.INITIATIVE;
 import static megamek.common.enums.GamePhase.INITIATIVE_REPORT;
-import static megamek.common.enums.GamePhase.UNKNOWN;
 import static megamek.common.options.OptionsConstants.ATOW_COMBAT_PARALYSIS;
 import static megamek.common.options.OptionsConstants.ATOW_COMBAT_SENSE;
 
@@ -1639,7 +1636,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             return false;
         }
         Board board = getBoard(boardId);
-        Building building = board.getBuildingAt(c);
+        IBuilding building = board.getBuildingAt(c);
         if (building == null) {
             return false;
         }
@@ -3685,7 +3682,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @return The building at the location, if any
      */
-    public Optional<Building> getBuildingAt(@Nullable BoardLocation boardLocation) {
+    public Optional<IBuilding> getBuildingAt(@Nullable BoardLocation boardLocation) {
         return getBuildingAt(boardLocation.coords(), boardLocation.boardId());
     }
 
@@ -3697,7 +3694,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @return The building at the location, if any
      */
-    public Optional<Building> getBuildingAt(@Nullable Coords coords, int boardId) {
+    public Optional<IBuilding> getBuildingAt(@Nullable Coords coords, int boardId) {
         if (hasBoardLocation(coords, boardId)) {
             return Optional.ofNullable(getBoard(boardId).getBuildingAt(coords));
         } else {

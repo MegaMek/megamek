@@ -34,6 +34,8 @@
 
 package megamek.common.loaders;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -60,8 +62,6 @@ import megamek.common.weapons.attacks.InfantryAttack;
 import megamek.common.weapons.bayWeapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
-
-import static megamek.common.bays.Bay.UNSET_BAY;
 
 public class BLKFile {
     private static final MMLogger logger = MMLogger.create(BLKFile.class);
@@ -1629,6 +1629,13 @@ public class BLKFile {
             entity.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
         } else {
             entity.setArmorTechLevel(entity.getStaticTechLevel().getCompoundTechLevel(entity.isClan()));
+        }
+    }
+
+
+    protected void resetCrew(Entity entity) {
+        if (entity.getCrew() != null && entity.getCrew().getCrewType() != entity.defaultCrewType()) {
+            entity.setCrew(new Crew(entity.defaultCrewType()));
         }
     }
 }

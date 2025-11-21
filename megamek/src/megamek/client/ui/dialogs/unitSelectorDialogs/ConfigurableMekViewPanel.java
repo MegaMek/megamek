@@ -61,8 +61,8 @@ import megamek.client.ui.entityreadout.ReadoutSections;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.ViewFormatting;
-import megamek.common.units.Entity;
 import megamek.common.annotations.Nullable;
+import megamek.common.units.Entity;
 
 /**
  * This class wraps the MekView / MekViewPanel and gives it a toolbar to choose font, open the MUL and copy the
@@ -191,7 +191,7 @@ public class ConfigurableMekViewPanel extends JPanel {
     }
 
     private boolean pilotBV(Entity entity) {
-        return entity.getCrew() != null; // for now
+        return !entity.isUncrewed(); // for now
     }
 
     public void reset() {

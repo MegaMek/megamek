@@ -165,7 +165,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             targetElevation = target.getElevation() + targHex.getLevel();
         }
         final int targetHeight = targetElevation + target.getHeight();
-        Building bldg = game.getBoard().getBuildingAt(getTargetPos());
+        IBuilding bldg = game.getBoard().getBuildingAt(getTargetPos());
         ToHitData toHit;
         boolean targIsBuilding = ((getTargetType() == Targetable.TYPE_FUEL_TANK)
               || (getTargetType() == Targetable.TYPE_BUILDING));
@@ -527,7 +527,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     /**
      * Damage that a mek suffers after a successful charge.
      */
-    public static int getDamageTakenBy(Entity entity, Building bldg, Coords coords) {
+    public static int getDamageTakenBy(Entity entity, IBuilding bldg, Coords coords) {
         // Charges against targets that have no tonnage use the attacker's tonnage to
         // compute damage.
         return getDamageTakenBy(entity, entity, false, entity.delta_distance);

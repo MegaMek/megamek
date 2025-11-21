@@ -67,11 +67,11 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.BipedMek;
-import megamek.common.units.Building;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
 import megamek.common.units.IBomber;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.weapons.handlers.TAGHandler;
@@ -124,7 +124,7 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         when(mockHex.getLevel()).thenReturn(0);
         when(mockHex.containsTerrain(anyInt())).thenReturn(false);
         when(mockBoard.getHex(any(Coords.class))).thenReturn(mockHex);
-        when(mockBoard.getBuildings()).thenReturn(new Vector<Building>().elements());
+        when(mockBoard.getBuildings()).thenReturn(new Vector<IBuilding>().elements());
         when(mockBoard.getSpecialHexDisplayTable()).thenReturn(new Hashtable<>());
         game.setBoard(mockBoard);
 

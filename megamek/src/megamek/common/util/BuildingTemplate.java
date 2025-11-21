@@ -39,7 +39,7 @@ import java.util.Iterator;
 
 import megamek.common.board.Coords;
 import megamek.common.enums.BuildingType;
-import megamek.common.units.Building;
+import megamek.common.units.IBuilding;
 
 /**
  * Building template, for placing on the map during map generation.
@@ -71,7 +71,7 @@ public class BuildingTemplate implements Serializable {
     public BuildingTemplate(BuildingType type, ArrayList<Coords> coords) {
         this.type = type;
         coordsList = coords;
-        CF = Building.getDefaultCF(type);
+        CF = IBuilding.getDefaultCF(type);
     }
 
     public BuildingTemplate(BuildingType type, ArrayList<Coords> coords, int CF, int height, int basement) {

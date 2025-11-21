@@ -51,9 +51,9 @@ import megamek.common.board.Coords;
 import megamek.common.enums.BasementType;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 
@@ -257,7 +257,7 @@ public class Hex implements Serializable {
 
             // gun emplacements can only be single hex buildings
             if ((cTerr.getType() == Terrains.BUILDING)
-                  && (terrainLevel(Terrains.BLDG_CLASS) == Building.GUN_EMPLACEMENT)) {
+                  && (terrainLevel(Terrains.BLDG_CLASS) == IBuilding.GUN_EMPLACEMENT)) {
                 cTerr.setExit(direction, false);
             }
 
@@ -518,7 +518,6 @@ public class Hex implements Serializable {
 
     /**
      * If there's a road on this tile, and it's paved, return true
-     *
      */
     public boolean hasPavedRoad() {
         if (containsTerrain(Terrains.ROAD)) {
@@ -682,7 +681,6 @@ public class Hex implements Serializable {
 
     /**
      * Returns true if the hex is valid for takeoff - either clear, has pavement, or a road
-     *
      */
     public boolean isClearForTakeoff() {
         if (hasPavementOrRoad()) {
@@ -697,7 +695,6 @@ public class Hex implements Serializable {
 
     /**
      * Returns the "Base Terrain" for the hex, or 0 if it is clear
-     *
      */
     public int getBaseTerrainType() {
         for (int terrain : terrains.keySet()) {

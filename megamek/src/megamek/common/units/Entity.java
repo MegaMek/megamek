@@ -2022,7 +2022,7 @@ public abstract class Entity extends TurnOrdered
         if (isUncrewed() && isNotCrewedEntityType()) {
             return false;
         }
-        if (checkCrew && ((getCrew() == null) || getCrew().isDead())) {
+        if (checkCrew && ((isUncrewed()) || getCrew().isDead())) {
             return true;
         } else if ((this instanceof Mek mek) &&
               (mek.getOriginalMechanicalJumpBoosterMP() > 0) &&

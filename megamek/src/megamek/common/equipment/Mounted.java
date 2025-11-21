@@ -1211,7 +1211,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
 
         // Is the entity even active?
-        return !entity.isShutDown() && (entity.getCrew().isActive() || entity.getAttackingEntity()
+        return !entity.isShutDown() && ((entity.getCrew() == null)
+              || entity.getCrew().isActive()
+              || entity.getAttackingEntity()
               .getCrew()
               .isActive());
 

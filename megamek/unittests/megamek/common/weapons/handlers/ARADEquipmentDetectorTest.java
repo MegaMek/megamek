@@ -419,7 +419,7 @@ public class ARADEquipmentDetectorTest {
 
         when(type.hasFlag(Mockito.any(MiscTypeFlag.class))).thenReturn(false);
         when(type.hasFlag(MiscType.F_COMMUNICATIONS)).thenReturn(true);
-        when(type.getTonnage(Mockito.any(Entity.class))).thenReturn(tonnage);
+        when(equipment.getTonnage()).thenReturn(tonnage);  // Fixed: Mock Mounted.getTonnage() not EquipmentType.getTonnage()
         when(equipment.getType()).thenReturn(type);
         when(equipment.isDestroyed()).thenReturn(destroyed);
         when(equipment.isMissing()).thenReturn(missing);

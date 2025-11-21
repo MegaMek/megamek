@@ -116,7 +116,7 @@ public class ARADEquipmentDetector {
         }
 
         // Verify at least one Active Probe is functional and powered
-        for (Mounted<?> equipment : target.getMisc()) {
+        for (Mounted<?> equipment : target.getEquipment()) {
             if (equipment.getType().hasFlag(MiscType.F_BAP) &&
                 isValidEquipment(equipment)) {
                 return true;
@@ -132,7 +132,7 @@ public class ARADEquipmentDetector {
      * @return true if entity has functional Artemis IV or Artemis V
      */
     public static boolean hasArtemis(Entity target) {
-        for (Mounted<?> equipment : target.getMisc()) {
+        for (Mounted<?> equipment : target.getEquipment()) {
             if ((equipment.getType().hasFlag(MiscType.F_ARTEMIS) ||
                  equipment.getType().hasFlag(MiscType.F_ARTEMIS_V)) &&
                 isValidEquipment(equipment)) {
@@ -149,7 +149,7 @@ public class ARADEquipmentDetector {
      * @return true if entity has functional Blue Shield
      */
     public static boolean hasBlueShield(Entity target) {
-        for (Mounted<?> equipment : target.getMisc()) {
+        for (Mounted<?> equipment : target.getEquipment()) {
             if (equipment.getType().hasFlag(MiscType.F_BLUE_SHIELD) &&
                 isValidEquipment(equipment)) {
                 return true;
@@ -184,7 +184,7 @@ public class ARADEquipmentDetector {
         }
 
         // Check equipment-based C3 systems (Slave, Boosted Slave, C3i, Nova CEWS)
-        for (Mounted<?> equipment : target.getMisc()) {
+        for (Mounted<?> equipment : target.getEquipment()) {
             if ((equipment.getType().hasFlag(MiscType.F_C3S) ||
                  equipment.getType().hasFlag(MiscType.F_C3I) ||
                  equipment.getType().hasFlag(MiscType.F_C3SBS) ||
@@ -212,7 +212,7 @@ public class ARADEquipmentDetector {
     public static boolean hasHeavyComms(Entity target) {
         LOGGER.debug("[ARAD] Checking hasHeavyComms() for target: {}", target.getDisplayName());
         int equipmentCount = 0;
-        for (Mounted<?> equipment : target.getMisc()) {
+        for (Mounted<?> equipment : target.getEquipment()) {
             equipmentCount++;
             boolean hasFlag = equipment.getType().hasFlag(MiscType.F_COMMUNICATIONS);
             double tonnage = equipment.getTonnage();  // Use Mounted.getTonnage(), not EquipmentType.getTonnage()
@@ -246,7 +246,7 @@ public class ARADEquipmentDetector {
 
         // Verify at least one ECM suite is functional and powered
         // Use getMisc() instead of getEquipment() to match Entity.hasECM() behavior
-        for (Mounted<?> equipment : target.getMisc()) {
+        for (Mounted<?> equipment : target.getEquipment()) {
             if (equipment.getType().hasFlag(MiscType.F_ECM) &&
                 isValidEquipment(equipment)) {
                 return true;

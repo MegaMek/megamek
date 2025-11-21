@@ -34,7 +34,7 @@ import java.util.Iterator;
  * against targets without electronics. This class centralizes all equipment detection
  * logic used by ARAD weapon handlers.
  *
- * Rules Reference: Tactical Operations: Advanced Units & Equipment, p.180
+ * Rules Reference: Tactical Operations: Advanced Units &amp; Equipment, p.180
  * Forum Rulings: Consolidated in docs/issues/features/arad-implementation.md
  *
  * Key Forum Rulings:

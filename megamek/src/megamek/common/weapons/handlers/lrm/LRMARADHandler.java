@@ -43,7 +43,7 @@ import megamek.server.totalWarfare.TWGameManager;
  * - 0 if target has electronics but ECM blocks (and no Narc override)
  * - -2 against targets without electronics (minimum 2 hits enforced by engine)
  *
- * Rules Reference: Tactical Operations: Advanced Units & Equipment, p.180
+ * Rules Reference: Tactical Operations: Advanced Units &amp; Equipment, p.180
  * Quote: "ARAD missiles ignore hostile ECM effects when targeting a unit tagged
  * by a friendly Narc pod. However, the ARAD missile does not receive any further
  * to-hit bonus from the pod."

@@ -71,9 +71,8 @@ public class SingletonForces extends ForceConsolidation {
 
     private static int transformIntoTopLevelForce(IGame game, Force force, Force subForce,
           ArrayList<Container> newTopLevelForces, int forceId, int team) {
-        var hasNoSubForce = subForce.subForceCount() == 0;
         var hasEntities = subForce.entityCount() > 0;
-        if (hasNoSubForce && hasEntities) {
+        if (hasEntities) {
             for (var entityId : subForce.getEntities()) {
                 var optionalEntity = game.getInGameObject(entityId);
                 if (optionalEntity.isPresent() && optionalEntity.get() instanceof Entity entity) {

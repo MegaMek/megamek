@@ -96,6 +96,17 @@ public abstract class MekWithArms extends Mek {
 
     @Override
     public double maxGroundObjectTonnage() {
+        double heavyLifterMultiplier = hasAbility(OptionsConstants.PILOT_HVY_LIFTER) ? 1.5 : 1.0;
+        double tsmModifier = getTSMPickupModifier();
+        return unmodifiedMaxGroundObjectTonnage() * heavyLifterMultiplier * tsmModifier;
+    }
+
+    /**
+     * The ground object tonnage this unit can lift, unmodified by TSM or Heavy Lifter
+     *
+     * @return the tonnage this mek can lift based on its weight and how many arms it has
+     */
+    public double unmodifiedMaxGroundObjectTonnage() {
         double percentage = 0.0;
 
         if (hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM) && (getCarriedObject(Mek.LOC_LEFT_ARM) == null)) {
@@ -105,9 +116,7 @@ public abstract class MekWithArms extends Mek {
             percentage += 0.05;
         }
 
-        double heavyLifterMultiplier = hasAbility(OptionsConstants.PILOT_HVY_LIFTER) ? 1.5 : 1.0;
-        double tsmModifier = hasActiveTSM(true) ? 2.0 : 1.0;
-        return getWeight() * percentage * heavyLifterMultiplier * tsmModifier;
+        return getWeight() * percentage;
     }
 
     @Override
@@ -390,8 +399,11 @@ public abstract class MekWithArms extends Mek {
 
     @Override
     public boolean canPickupGroundObject() {
-        return hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM) && (getCarriedObject(Mek.LOC_LEFT_ARM) == null) ||
-              hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM) && (getCarriedObject(Mek.LOC_RIGHT_ARM) == null);
+        return (hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM) && (getCarriedObject(Mek.LOC_LEFT_ARM) == null))
+              ||
+              (hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM) && (getCarriedObject(Mek.LOC_RIGHT_ARM) == null))
+              ||
+              super.canPickupGroundObject();
     }
 
     @Override

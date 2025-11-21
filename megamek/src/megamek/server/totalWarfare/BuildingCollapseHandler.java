@@ -53,9 +53,9 @@ import megamek.common.equipment.MiscType;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.rolls.PilotingRollData;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
@@ -84,7 +84,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
      *
      * @return True if the building hex collapsed.
      */
-    public boolean checkForCollapse(Building bldg, Coords coords, boolean checkBecauseOfDamage,
+    public boolean checkForCollapse(IBuilding bldg, Coords coords, boolean checkBecauseOfDamage,
           Vector<Report> vPhaseReport) {
         return checkForCollapse(bldg, getGame().getPositionMapMulti(), coords, checkBecauseOfDamage, vPhaseReport);
     }
@@ -101,7 +101,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
      *
      * @return true if the building collapsed.
      */
-    boolean checkForCollapse(Building bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
+    boolean checkForCollapse(IBuilding bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
           boolean checkBecauseOfDamage, Vector<Report> vPhaseReport) {
 
         // If the input is meaningless, do nothing and throw no exception.
@@ -276,12 +276,12 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
 
     }
 
-    void collapseBuilding(Building bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
+    void collapseBuilding(IBuilding bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
           Vector<Report> vPhaseReport) {
         collapseBuilding(bldg, positionMap, coords, true, false, vPhaseReport);
     }
 
-    void collapseBuilding(Building bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
+    void collapseBuilding(IBuilding bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
           boolean collapseAll, Vector<Report> vPhaseReport) {
         collapseBuilding(bldg, positionMap, coords, collapseAll, false, vPhaseReport);
     }
@@ -295,7 +295,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
      *                    that position. This value should not be null.
      * @param coords      The Coords of the building basement hex that has collapsed
      */
-    public void collapseBasement(Building bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
+    public void collapseBasement(IBuilding bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
           Vector<Report> vPhaseReport) {
         if (!bldg.hasCFIn(coords)) {
             return;
@@ -380,7 +380,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
             bldg.setPhaseCF(runningCFTotal, coords);
         }
         gameManager.sendChangedHex(coords, bldg.getBoardId());
-        Vector<Building> buildings = new Vector<>();
+        Vector<IBuilding> buildings = new Vector<>();
         buildings.add(bldg);
         gameManager.sendChangedBuildings(buildings);
     }
@@ -397,7 +397,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
      *                    building
      * @param topFloor    A boolean indicating that only the top floor collapses (from a WiGE flying over the top).
      */
-    void collapseBuilding(Building bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
+    void collapseBuilding(IBuilding bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
           boolean collapseAll, boolean topFloor, Vector<Report> vPhaseReport) {
         // sometimes, buildings that reach CF 0 decide against collapsing,
         // but we want them to go away anyway, as a building with CF 0 cannot stand

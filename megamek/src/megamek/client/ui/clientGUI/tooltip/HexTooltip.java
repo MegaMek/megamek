@@ -60,8 +60,8 @@ import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
 import megamek.common.game.Game;
 import megamek.common.planetaryConditions.IlluminationLevel;
-import megamek.common.units.Building;
 import megamek.common.units.BuildingTarget;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Terrains;
 
 
@@ -122,7 +122,7 @@ public final class HexTooltip {
                       Math.max(mhex.terrainLevel(Terrains.BLDG_ARMOR), 0),
                       BasementType.getType(mhex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).toString());
             } else {
-                Building bldg = game.getBoard(boardId).getBuildingAt(mcoords);
+                IBuilding bldg = game.getBoard(boardId).getBuildingAt(mcoords);
                 sBuilding = Messages.getString("BoardView1.Tooltip.Building",
                       mhex.terrainLevel(Terrains.BLDG_ELEV),
                       bldg.toString(),
@@ -158,7 +158,7 @@ public final class HexTooltip {
                       Terrains.getEditorName(Terrains.BRIDGE),
                       mhex.terrainLevel(Terrains.BRIDGE_CF));
             } else {
-                Building bldg = game.getBoard(boardId).getBuildingAt(mcoords);
+                IBuilding bldg = game.getBoard(boardId).getBuildingAt(mcoords);
                 sBridge = Messages.getString("BoardView1.Tooltip.Bridge",
                       mhex.terrainLevel(Terrains.BRIDGE_ELEV),
                       bldg.toString(),
@@ -238,7 +238,7 @@ public final class HexTooltip {
             return "Error - Could not create building tooltip";
         }
         Coords mcoords = target.getPosition();
-        Building bldg = board.getBuildingAt(mcoords);
+        IBuilding bldg = board.getBuildingAt(mcoords);
         Hex mhex = board.getHex(mcoords);
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
 
@@ -264,7 +264,7 @@ public final class HexTooltip {
     public static String getOneLineSummary(BuildingTarget target, Board board) {
         String result = "";
         Coords mcoords = target.getPosition();
-        Building bldg = board.getBuildingAt(mcoords);
+        IBuilding bldg = board.getBuildingAt(mcoords);
         Hex mhex = board.getHex(mcoords);
         result += Messages.getString("BoardView1.Tooltip.BuildingLine",
               mhex.terrainLevel(Terrains.BLDG_ELEV),

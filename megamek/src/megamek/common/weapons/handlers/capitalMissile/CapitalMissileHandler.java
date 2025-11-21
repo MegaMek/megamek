@@ -49,8 +49,8 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.common.weapons.handlers.WeaponHandler;
@@ -94,7 +94,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             attackingEntity.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
         // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+        IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
         String number = numWeapons > 1 ? " (" + numWeapons + ")" : "";
         for (int i = numAttacks; i > 0; i--) {
             // Report weapon attack and its to-hit value.

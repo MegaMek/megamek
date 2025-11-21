@@ -47,8 +47,8 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.DamageType;
@@ -87,7 +87,7 @@ public class SRMInfernoHandler extends SRMHandler {
               && attackingEntity.getPosition().distance(target.getPosition()) <= 1;
 
         // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+        IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
 
         // Report weapon attack and its to-hit value.
         Report r = new Report(3115);
@@ -276,7 +276,7 @@ public class SRMInfernoHandler extends SRMHandler {
 
     @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
-          Building bldg, int nDamage) {
+          IBuilding bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);

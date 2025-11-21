@@ -45,9 +45,9 @@ import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityWeightClass;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
@@ -144,7 +144,7 @@ public class PushAttackAction extends DisplacementAttackAction {
 
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
-        Building bldg = null;
+        IBuilding bldg = null;
         if (targetInBuilding) {
             bldg = game.getBuildingAt(te.getBoardLocation()).orElse(null);
         }

@@ -53,8 +53,8 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import megamek.server.totalWarfare.TWGameManager;
@@ -307,7 +307,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         }
 
         // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+        IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
         String number = numWeapons > 1 ? " (" + numWeapons + ")" : "";
 
         // Report weapon attack and its to-hit value.

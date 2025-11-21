@@ -715,7 +715,7 @@ public class Princess extends BotClient {
         final List<Coords> turretDeploymentLocations = new Vector<>();
 
         for (final Coords coords : possibleDeployCoords) {
-            final Building building = game.getBoard(deployedUnit).getBuildingAt(coords);
+            final IBuilding building = game.getBoard(deployedUnit).getBuildingAt(coords);
             final Hex hex = game.getBoard(deployedUnit).getHex(coords);
 
             if (null != building) {
@@ -753,7 +753,7 @@ public class Princess extends BotClient {
         //      (CF + height * 2) / # turrets placed on the roof
         //      This way, we will generally favor unpopulated higher CF buildings,
         //      but have some wiggle room in case of a really tall high CF building
-        final Building building = game.getBoard().getBuildingAt(coords);
+        final IBuilding building = game.getBoard().getBuildingAt(coords);
         final Hex hex = game.getBoard().getHex(coords);
         final int turretCount = 1 + game.getGunEmplacements(coords).size();
 
@@ -811,7 +811,6 @@ public class Princess extends BotClient {
      *         </ol>
      *     </li>
      * </ol>
-     *
      */
     protected Coords rankDeploymentCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
         StringBuilder sb = null;
@@ -2437,9 +2436,9 @@ public class Princess extends BotClient {
             // pre-movement(infantry can move so we only set target buildings
             // after they do).
             for (Board board : game.getBoards().values()) {
-                final Enumeration<Building> buildings = board.getBuildings();
+                final Enumeration<IBuilding> buildings = board.getBuildings();
                 while (buildings.hasMoreElements()) {
-                    final Building bldg = buildings.nextElement();
+                    final IBuilding bldg = buildings.nextElement();
                     final Enumeration<Coords> bldgCoords = bldg.getCoords();
                     while (bldgCoords.hasMoreElements()) {
                         final Coords coords = bldgCoords.nextElement();
@@ -2696,9 +2695,9 @@ public class Princess extends BotClient {
 
             // Pick up on any turrets and shoot their buildings as well.
             for (Board board : game.getBoards().values()) {
-                final Enumeration<Building> buildings = board.getBuildings();
+                final Enumeration<IBuilding> buildings = board.getBuildings();
                 while (buildings.hasMoreElements()) {
-                    final Building bldg = buildings.nextElement();
+                    final IBuilding bldg = buildings.nextElement();
                     final Enumeration<Coords> bldgCoords = bldg.getCoords();
                     while (bldgCoords.hasMoreElements()) {
                         final Coords coords = bldgCoords.nextElement();
@@ -2760,9 +2759,9 @@ public class Princess extends BotClient {
 
             // Pick up any turrets and add their buildings to the strategic targets list.
             for (Board board : game.getBoards().values()) {
-                final Enumeration<Building> buildings = board.getBuildings();
+                final Enumeration<IBuilding> buildings = board.getBuildings();
                 while (buildings.hasMoreElements()) {
-                    final Building bldg = buildings.nextElement();
+                    final IBuilding bldg = buildings.nextElement();
                     final Enumeration<Coords> bldgCoords = bldg.getCoords();
                     while (bldgCoords.hasMoreElements()) {
                         final Coords coords = bldgCoords.nextElement();
@@ -2842,7 +2841,6 @@ public class Princess extends BotClient {
     /**
      * Reduce utility of TAGging something if we're already trying.  Update the utility if it's better, otherwise try to
      * dissuade the next attacker.
-     *
      */
     public int computeTeamTagUtility(Targetable te, int damage) {
         int key = te.getId();
@@ -3037,10 +3035,9 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Lazy-loaded calculation of the "to-hit target number" threshold, below which
-     * rapid fire autocannon will fire multiple shots. More aggressive behavior
-     * (left on the Self Preservation slider) start at TN 11 and under, while less
-     * aggressive behavior (right on the slider) start at 4 and under.
+     * Lazy-loaded calculation of the "to-hit target number" threshold, below which rapid fire autocannon will fire
+     * multiple shots. More aggressive behavior (left on the Self Preservation slider) start at TN 11 and under, while
+     * less aggressive behavior (right on the slider) start at 4 and under.
      */
     public int getSpinUpThreshold() {
         if (spinUpThreshold == null) {
@@ -3656,7 +3653,6 @@ public class Princess extends BotClient {
 
     /**
      * Flag an entity as having used manual AMS this round
-     *
      */
     public void flagManualAMSUse(int id) {
         if (manualAMSIds == null) {
@@ -3687,7 +3683,6 @@ public class Princess extends BotClient {
 
     /**
      * Get a list of all hot spots (positions of high activity) for opposing units
-     *
      */
     public List<Coords> getEnemyHotSpots() {
         List<Coords> accumulatedHotSpots = new ArrayList<>();
@@ -3716,7 +3711,6 @@ public class Princess extends BotClient {
 
     /**
      * Get the nearest top-rated hot spot for friendly units
-     *
      */
     public Coords getFriendlyHotSpot(Coords testPosition) {
         return friendlyHeatMap == null ? null : friendlyHeatMap.getHotSpot(testPosition, true);
@@ -3891,6 +3885,7 @@ public class Princess extends BotClient {
      * Retrieves the most recent initiative roll for the specified player.
      *
      * @param player the player whose initiative roll to retrieve
+     *
      * @return the player's last initiative roll value, or {@code 0} if no roll exists
      */
     private int getLastInitiativeRoll(Player player) {
@@ -3904,8 +3899,9 @@ public class Princess extends BotClient {
     /**
      * Counts how many enemy initiative rolls Princess' roll beats.
      *
-     * @param myRoll the initiative roll to compare
+     * @param myRoll     the initiative roll to compare
      * @param enemyRolls the list of enemy initiative rolls to compare against
+     *
      * @return the number of enemy rolls that are lower than myRoll
      */
     private int countWins(int myRoll, List<Integer> enemyRolls) {
@@ -3921,8 +3917,9 @@ public class Princess extends BotClient {
     /**
      * Counts how many enemy initiative rolls beat Princess' roll.
      *
-     * @param myRoll the initiative roll to compare
+     * @param myRoll     the initiative roll to compare
      * @param enemyRolls the list of enemy initiative rolls to compare against
+     *
      * @return the number of enemy rolls that are higher than myRoll
      */
     private int countLosses(int myRoll, List<Integer> enemyRolls) {
@@ -3942,6 +3939,7 @@ public class Princess extends BotClient {
      * is defined as winning more initiative comparisons than losing.</p>
      *
      * @param enemyRolls the list of enemy initiative rolls to compare against
+     *
      * @return the probability (0.0 to 1.0) that a reroll will improve the net initiative outcome
      */
     private double probabilityOfMajorityWinOnReroll(List<Integer> enemyRolls) {

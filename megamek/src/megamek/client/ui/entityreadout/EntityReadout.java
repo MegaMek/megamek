@@ -36,16 +36,16 @@ package megamek.client.ui.entityreadout;
 import java.util.Collection;
 
 import megamek.client.ui.util.ViewFormatting;
-import megamek.common.units.Aero;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
 import megamek.common.units.Tank;
-import megamek.common.annotations.Nullable;
 
 /**
  * The Entity information shown in the unit selector and many other places in MM, MML and MHQ.
@@ -97,7 +97,10 @@ public interface EntityReadout {
      *                         for conventional infantry for MekHQ.
      */
     static EntityReadout createReadout(Entity entity, boolean showDetail, boolean useAlternateCost) {
-        return createReadout(entity, showDetail, useAlternateCost, entity.getCrew() != null);
+        return createReadout(entity,
+              showDetail,
+              useAlternateCost,
+              entity.getCrew() != null);
     }
 
     /**

@@ -64,7 +64,7 @@ import megamek.server.totalWarfare.TWGameManager;
  * Forum Ruling (Narc/ECM interaction):
  * https://battletech.com/forums/index.php?topic=26824.msg609067#msg609067
  *
- * @author MegaMek Team
+ * @author Hammer - Built with Claude Code
  * @since 2025-01-16
  */
 public class LRMARADHandler extends LRMHandler {

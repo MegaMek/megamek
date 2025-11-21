@@ -70,7 +70,7 @@ import static org.mockito.Mockito.*;
  * - -2 against targets without electronics
  * - -2 against non-entity targets
  *
- * @author MegaMek Team
+ * @author Hammer - Built with Claude Code
  * @since 2025-01-17
  */
 public class SRMARADHandlerTest {

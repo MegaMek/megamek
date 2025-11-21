@@ -57,7 +57,7 @@ import java.util.Iterator;
  * - Narc/iNarc interaction: https://battletech.com/forums/index.php?topic=26824.msg609067#msg609067
  * - General exclusions: https://battletech.com/forums/index.php?topic=63179.msg1452217#msg1452217
  *
- * @author MegaMek Team
+ * @author Hammer - Built with Claude Code
  * @since 2025-01-16
  */
 public class ARADEquipmentDetector {

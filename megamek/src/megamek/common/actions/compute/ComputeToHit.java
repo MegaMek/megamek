@@ -240,13 +240,23 @@ public class ComputeToHit {
               (munition.contains(AmmoType.Munitions.M_FOLLOW_THE_LEADER) &&
                     !ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition()));
 
-        boolean bARAD = (ammoType != null) &&
-              ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
-                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
-                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
-                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP) ||
-                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML)) &&
-              munition.contains(AmmoType.Munitions.M_ARAD);
+        AmmoType.AmmoTypeEnum ammoTypeEnum = (ammoType != null) ? ammoType.getAmmoType() : null;
+
+        // Break weapon type checks into logical groups
+        boolean isLrmType = (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
+                (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP);
+        boolean isSrmType = (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM) ||
+                (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM_IMP);
+        boolean isMmlType = (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML);
+
+        // Combine into weapon compatibility check
+        boolean isCompatibleWeaponType = isLrmType || isSrmType || isMmlType;
+
+        // Check for ARAD munition
+        boolean hasAradMunition = munition.contains(AmmoType.Munitions.M_ARAD);
+
+        // Final check combines all requirements
+        boolean isAradAttack = (ammoTypeEnum != null) && isCompatibleWeaponType && hasAradMunition;
 
         Mounted<?> mLinker = weapon.getLinkedBy();
 
@@ -779,7 +789,7 @@ public class ComputeToHit {
               bArtemisV,
               bFTL,
               bHeatSeeking,
-              bARAD,
+              isAradAttack,
               isECMAffected,
               isINarcGuided);
 
@@ -805,14 +815,14 @@ public class ComputeToHit {
      * @param bArtemisV     flag that indicates whether the attacker is using an Artemis V FCS
      * @param bFTL          flag that indicates whether the attacker is using FTL missiles
      * @param bHeatSeeking  flag that indicates whether the attacker is using Heat Seeking missiles
-     * @param bARAD         flag that indicates whether the attacker is using ARAD missiles
+     * @param isAradAttack  flag that indicates whether the attacker is using ARAD missiles
      * @param isECMAffected flag that indicates whether the target is inside an ECM bubble
      * @param isINarcGuided flag that indicates whether the target is broadcasting an iNarc beacon
      */
     private static ToHitData compileAmmoToHitMods(Game game, Entity ae, Targetable target, int targetType,
           ToHitData toHit, WeaponType weaponType, Mounted<?> weapon, AmmoType ammoType,
           EnumSet<AmmoType.Munitions> munition, boolean bApollo, boolean bArtemisV, boolean bFTL, boolean bHeatSeeking,
-          boolean bARAD, boolean isECMAffected, boolean isINarcGuided) {
+          boolean isAradAttack, boolean isECMAffected, boolean isINarcGuided) {
         if (ae == null || ammoType == null) {
             // Can't calculate ammo mods without valid ammo and an attacker to fire it
             return toHit;
@@ -921,7 +931,7 @@ public class ComputeToHit {
         }
 
         // ARAD (Anti-Radiation) Missiles - Entity targets
-        if (bARAD && (te != null)) {
+        if (isAradAttack && (te != null)) {
             int friendlyTeam = ae.getOwner().getTeam();
             boolean hasElectronics = ARADEquipmentDetector.targetHasQualifyingElectronics(te, friendlyTeam);
 
@@ -934,7 +944,7 @@ public class ComputeToHit {
             }
         }
         // ARAD (Anti-Radiation) Missiles - Non-entity targets (buildings, hexes)
-        else if (bARAD && (te == null)) {
+        else if (isAradAttack && (te == null)) {
             // Buildings/terrain hexes have no electronics
             toHit.addModifier(2, Messages.getString("WeaponAttackAction.AradNoElectronics"));
         }

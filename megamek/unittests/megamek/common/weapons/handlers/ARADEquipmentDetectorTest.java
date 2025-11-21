@@ -42,7 +42,6 @@ import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -55,7 +54,7 @@ import static org.mockito.Mockito.*;
  * electronic systems, including edge cases like Stealth Armor blocking,
  * friendly vs enemy Narc pods, and destroyed equipment.
  *
- * @author MegaMek Team
+ * @author Hammer - Built with Claude Code
  * @since 2025-01-16
  */
 public class ARADEquipmentDetectorTest {
@@ -413,12 +412,12 @@ public class ARADEquipmentDetectorTest {
         Mounted<?> equipment = mock(Mounted.class);
         EquipmentType type = mock(EquipmentType.class);
 
-        when(type.hasFlag(Mockito.any(MiscTypeFlag.class))).thenReturn(false);
-        when(type.hasFlag(flag)).thenReturn(true);
-        when(equipment.getType()).thenReturn(type);
-        when(equipment.isDestroyed()).thenReturn(destroyed);
-        when(equipment.isMissing()).thenReturn(missing);
-        when(equipment.isBreached()).thenReturn(breached);
+        doReturn(false).when(type).hasFlag(Mockito.any(MiscTypeFlag.class));
+        doReturn(true).when(type).hasFlag(flag);
+        doReturn(type).when(equipment).getType();
+        doReturn(destroyed).when(equipment).isDestroyed();
+        doReturn(missing).when(equipment).isMissing();
+        doReturn(breached).when(equipment).isBreached();
 
         return equipment;
     }
@@ -430,13 +429,13 @@ public class ARADEquipmentDetectorTest {
         Mounted<?> equipment = mock(Mounted.class);
         EquipmentType type = mock(EquipmentType.class);
 
-        when(type.hasFlag(Mockito.any(MiscTypeFlag.class))).thenReturn(false);
-        when(type.hasFlag(MiscType.F_COMMUNICATIONS)).thenReturn(true);
-        when(equipment.getTonnage()).thenReturn(tonnage);  // Fixed: Mock Mounted.getTonnage() not EquipmentType.getTonnage()
-        when(equipment.getType()).thenReturn(type);
-        when(equipment.isDestroyed()).thenReturn(destroyed);
-        when(equipment.isMissing()).thenReturn(missing);
-        when(equipment.isBreached()).thenReturn(breached);
+        doReturn(false).when(type).hasFlag(Mockito.any(MiscTypeFlag.class));
+        doReturn(true).when(type).hasFlag(MiscType.F_COMMUNICATIONS);
+        doReturn(tonnage).when(equipment).getTonnage();
+        doReturn(type).when(equipment).getType();
+        doReturn(destroyed).when(equipment).isDestroyed();
+        doReturn(missing).when(equipment).isMissing();
+        doReturn(breached).when(equipment).isBreached();
 
         return equipment;
     }

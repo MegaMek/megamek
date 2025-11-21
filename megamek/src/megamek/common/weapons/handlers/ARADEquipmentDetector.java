@@ -22,6 +22,8 @@ import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.units.Entity;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Iterator;
 
@@ -46,6 +48,7 @@ import java.util.Iterator;
  * @since 2025-01-16
  */
 public class ARADEquipmentDetector {
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Determines if a target has qualifying electronics for ARAD missile bonuses.
@@ -207,13 +210,23 @@ public class ARADEquipmentDetector {
      * @return true if entity has >= 3.5 tons of dedicated comms
      */
     public static boolean hasHeavyComms(Entity target) {
+        LOGGER.debug("[ARAD] Checking hasHeavyComms() for target: {}", target.getDisplayName());
+        int equipmentCount = 0;
         for (Mounted<?> equipment : target.getMisc()) {
-            if (equipment.getType().hasFlag(MiscType.F_COMMUNICATIONS) &&
-                equipment.getType().getTonnage(target) >= 3.5 &&
-                isValidEquipment(equipment)) {
+            equipmentCount++;
+            boolean hasFlag = equipment.getType().hasFlag(MiscType.F_COMMUNICATIONS);
+            double tonnage = equipment.getTonnage();  // Use Mounted.getTonnage(), not EquipmentType.getTonnage()
+            boolean isValid = isValidEquipment(equipment);
+
+            LOGGER.debug("[ARAD]   Equipment #{}: {} (hasFlag={}, tonnage={}, isValid={})",
+                equipmentCount, equipment.getName(), hasFlag, tonnage, isValid);
+
+            if (hasFlag && tonnage >= 3.5 && isValid) {
+                LOGGER.debug("[ARAD]   MATCH FOUND: Heavy comms detected!");
                 return true;
             }
         }
+        LOGGER.debug("[ARAD] No heavy comms found (checked {} equipment items)", equipmentCount);
         return false;
     }
 

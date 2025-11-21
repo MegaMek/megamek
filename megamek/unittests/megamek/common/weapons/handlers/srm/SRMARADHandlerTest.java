@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.weapons.handlers.lrm;
+package megamek.common.weapons.handlers.srm;
 
 import megamek.common.Player;
 import megamek.common.ToHitData;
@@ -44,7 +44,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit tests for LRMARADHandler cluster modifier calculations.
+ * Unit tests for SRMARADHandler cluster modifier calculations.
  *
  * Tests verify that ARAD missiles apply correct cluster modifiers:
  * - +1 against targets with electronics (not blocked by ECM)
@@ -54,9 +54,9 @@ import static org.mockito.Mockito.*;
  * - -2 against non-entity targets
  *
  * @author MegaMek Team
- * @since 2025-01-16
+ * @since 2025-01-17
  */
-public class LRMARADHandlerTest {
+public class SRMARADHandlerTest {
 
     private static final int FRIENDLY_TEAM = 1;
     private static final int ENEMY_TEAM = 2;
@@ -69,7 +69,7 @@ public class LRMARADHandlerTest {
     /**
      * Test helper: Create a mock handler with specified attacker and target.
      */
-    private LRMARADHandler createHandler(Entity attacker, Entity target, Game game) throws EntityLoadingException {
+    private SRMARADHandler createHandler(Entity attacker, Entity target, Game game) throws EntityLoadingException {
         ToHitData mockToHit = mock(ToHitData.class);
         WeaponAttackAction mockAction = mock(WeaponAttackAction.class);
         TWGameManager mockGameManager = mock(TWGameManager.class);
@@ -77,7 +77,7 @@ public class LRMARADHandlerTest {
         // Configure mock action
         when(mockAction.getEntityId()).thenReturn(attacker.getId());
 
-        LRMARADHandler handler = new LRMARADHandler(mockToHit, mockAction, game, mockGameManager);
+        SRMARADHandler handler = new SRMARADHandler(mockToHit, mockAction, game, mockGameManager);
 
         // Inject dependencies using reflection (since fields are protected/private)
         try {
@@ -144,7 +144,7 @@ public class LRMARADHandlerTest {
 
         Game game = createMockGame(false);  // No ECM
 
-        LRMARADHandler handler = createHandler(attacker, target, game);
+        SRMARADHandler handler = createHandler(attacker, target, game);
 
         assertEquals(+1, handler.getSalvoBonus(),
                 "Target with electronics and no ECM should receive +1 bonus");
@@ -168,7 +168,7 @@ public class LRMARADHandlerTest {
 
         Game game = createMockGame(true);  // ECM present (but Narc overrides)
 
-        LRMARADHandler handler = createHandler(attacker, target, game);
+        SRMARADHandler handler = createHandler(attacker, target, game);
 
         assertEquals(+1, handler.getSalvoBonus(),
                 "Narc-tagged target should receive +1 bonus even with ECM (Narc overrides)");
@@ -193,7 +193,7 @@ public class LRMARADHandlerTest {
 
         Game game = createMockGame(false);
 
-        LRMARADHandler handler = createHandler(attacker, target, game);
+        SRMARADHandler handler = createHandler(attacker, target, game);
 
         assertEquals(-2, handler.getSalvoBonus(),
                 "Target with no electronics should receive -2 penalty");
@@ -217,7 +217,7 @@ public class LRMARADHandlerTest {
 
         Game game = createMockGame(false);
 
-        LRMARADHandler handler = createHandler(attacker, target, game);
+        SRMARADHandler handler = createHandler(attacker, target, game);
 
         assertEquals(-2, handler.getSalvoBonus(),
                 "Active Stealth Armor should block internal systems (C3) without Narc");
@@ -241,7 +241,7 @@ public class LRMARADHandlerTest {
 
         Game game = createMockGame(false);
 
-        LRMARADHandler handler = createHandler(attacker, target, game);
+        SRMARADHandler handler = createHandler(attacker, target, game);
 
         assertEquals(+1, handler.getSalvoBonus(),
                 "Narc should override Stealth Armor blocking (external attachment)");
@@ -261,7 +261,7 @@ public class LRMARADHandlerTest {
 
         Game game = createMockGame(false);
 
-        LRMARADHandler handler = createHandler(attacker, target, game);
+        SRMARADHandler handler = createHandler(attacker, target, game);
 
         assertEquals(+1, handler.getSalvoBonus(),
                 "TAG'd target should receive +1 bonus");
@@ -281,7 +281,7 @@ public class LRMARADHandlerTest {
 
         Game game = createMockGame(false);
 
-        LRMARADHandler handler = createHandler(attacker, target, game);
+        SRMARADHandler handler = createHandler(attacker, target, game);
 
         assertEquals(+1, handler.getSalvoBonus(),
                 "Target generating Ghost Targets should receive +1 bonus");

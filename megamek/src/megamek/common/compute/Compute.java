@@ -34,6 +34,8 @@
 
 package megamek.common.compute;
 
+import static megamek.codeUtilities.MathUtility.clamp;
+
 import java.util.*;
 
 import megamek.common.*;
@@ -283,28 +285,35 @@ public class Compute {
     }
 
     /**
-     * Returns the sum of the highest two d6 rolls from the provided list of roll values.
+     * Returns the sum of the highest two values from the provided list of integer values.
      *
      * <p>This method efficiently computes the top two results without sorting, making it suitable for rules that
-     * require selecting the best two dice out of several rolled, such as natural aptitude empowered skill checks.</p>
+     * require selecting the best two dice out of several rolled, such as natural aptitude-empowered skill checks.</p>
      *
      * <p>Edge cases are handled gracefully:</p>
      * <ul>
-     *     <li>If no rolls are provided, the result is {@code 0}.</li>
-     *     <li>If only one roll is provided, that value is returned.</li>
-     *     <li>If two or more rolls are provided, the sum of the highest two is returned.</li>
+     *     <li>If no values are provided, the result is {@code 0}.</li>
+     *     <li>If only one value is provided, that value is returned.</li>
+     *     <li>If two or more values are provided, the sum of the highest two is returned.</li>
      * </ul>
      *
      * @param values one or more integers
      *
-     * @return the sum of the highest two roll values, or a fallback value for edge cases
+     * @return the sum of the highest two values (clamped within Integer Min/Max), or a fallback value for edge cases
      *
      * @author Illiani
      * @since 0.50.10
      */
-    public static int highestTwoIntegers(int... values) {
+    public static int getHighestTwoIntegers(int... values) {
         int highest = Integer.MIN_VALUE;
         int second = Integer.MIN_VALUE;
+
+        // Edge cases
+        if (values.length == 0) {
+            return 0;
+        } else if (values.length == 1) {
+            return highest;
+        }
 
         // Find the highest two values
         for (int value : values) {
@@ -316,14 +325,7 @@ public class Compute {
             }
         }
 
-        // Edge cases
-        if (values.length == 0) {
-            return 0;
-        } else if (values.length == 1) {
-            return highest;
-        }
-
-        return highest + second;
+        return clamp(highest + second, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     /**

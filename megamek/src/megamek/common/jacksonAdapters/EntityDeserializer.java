@@ -94,12 +94,6 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private static final String AREA = "area";
     private static final String BOMBS = "bombs";
     private static final String ENGINE = "engine";
-    private static final String C3_NETWORK = "c3network";
-    private static final String C3_UUID = "c3uuid";
-    private static final String C3_MASTER_UUID = "c3masteruuid";
-    private static final String C3I_UUIDS = "c3iuuids";
-    private static final String NC3_UUIDS = "nc3uuids";
-    private static final String C3_NET_ID = "c3NetIdString";
 
     public EntityDeserializer() {
         this(null);
@@ -132,7 +126,6 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
         assignAmmunition(entity, node);
         assignBombs(entity, node);
         assignFleeArea(entity, node);
-        assignC3(entity, node);
         return entity;
     }
 
@@ -417,37 +410,6 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
                 entity.setFleeZone(HexAreaDeserializer.parseShape(node.get(FLEE_AREA).get(AREA)));
             } else {
                 entity.setFleeZone(HexAreaDeserializer.parseShape(node.get(FLEE_AREA)));
-            }
-        }
-    }
-
-    private void assignC3(Entity entity, JsonNode node) {
-        if (node.has(C3_NETWORK)) {
-            JsonNode c3Node = node.get(C3_NETWORK);
-            if (c3Node.has(C3_UUID)) {
-                entity.setC3UUIDAsString(c3Node.get(C3_UUID).asText());
-            }
-            if (c3Node.has(C3_MASTER_UUID)) {
-                entity.setC3MasterIsUUIDAsString(c3Node.get(C3_MASTER_UUID).asText());
-            }
-            if (c3Node.has(C3_NET_ID)) {
-                entity.setC3NetId(c3Node.get(C3_NET_ID).asText());
-            }
-            if (c3Node.has(C3I_UUIDS)) {
-                int pos = 0;
-                for (JsonNode uuidNode : c3Node.get(C3I_UUIDS)) {
-                    if (pos < Entity.MAX_C3i_NODES) {
-                        entity.setC3iNextUUIDAsString(pos++, uuidNode.asText());
-                    }
-                }
-            }
-            if (c3Node.has(NC3_UUIDS)) {
-                int pos = 0;
-                for (JsonNode uuidNode : c3Node.get(NC3_UUIDS)) {
-                    if (pos < Entity.MAX_C3i_NODES) {
-                        entity.setNC3NextUUIDAsString(pos++, uuidNode.asText());
-                    }
-                }
             }
         }
     }

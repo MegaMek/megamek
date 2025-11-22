@@ -292,15 +292,14 @@ public class Compute {
      *
      * <p>Edge cases are handled gracefully:</p>
      * <ul>
-     *     <li>If no rolls are provided, the result is {@code 0}.</li>
-     *     <li>If only one roll is provided, that value is returned.</li>
-     *     <li>If two or more rolls are provided, the sum of the highest two is returned.</li>
+     *     <li>If no values are provided, the result is {@code 0}.</li>
+     *     <li>If only one value is provided, that value is returned.</li>
+     *     <li>If two or more values are provided, the sum of the highest two is returned.</li>
      * </ul>
      *
      * @param values one or more integers
      *
-     * @return the sum of the highest two roll values (clamped within Integer Min/Max), or a fallback value for edge
-     *       cases
+     * @return the sum of the highest two values (clamped within Integer Min/Max), or a fallback value for edge cases
      *
      * @author Illiani
      * @since 0.50.10

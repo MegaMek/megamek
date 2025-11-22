@@ -2636,8 +2636,7 @@ public class ClientGUI extends AbstractClientGUI
             menuBar.setPhase(phase);
 
             // Update Nova Networks menu based on whether Nova CEWS units exist
-            boolean hasNovaUnits = client.getGame().getEntitiesVector().stream()
-                .anyMatch(entity -> entity.hasNovaCEWS());
+            boolean hasNovaUnits = client.getGame().getEntitiesVector().stream().anyMatch(Entity::hasNovaCEWS);
             menuBar.setEnabled(VIEW_NOVA_NETWORKS, hasNovaUnits);
 
             clientGuiPanel.validate();

@@ -34,6 +34,8 @@
 
 package megamek.common.compute;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static megamek.codeUtilities.MathUtility.clamp;
 
 import java.util.*;
@@ -312,7 +314,7 @@ public class Compute {
         if (values.length == 0) {
             return 0;
         } else if (values.length == 1) {
-            return highest;
+            return values[0];
         }
 
         // Find the highest two values
@@ -325,7 +327,9 @@ public class Compute {
             }
         }
 
-        return clamp(highest + second, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        // Compute sum in long to avoid overflow, then clamp to int range
+        long sum = (long) highest + (long) second;
+        return (int) clamp(sum, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     /**
@@ -1553,7 +1557,7 @@ public class Compute {
                 usingC3 = true;
             }
         } else {
-            usingRange = Math.min(range, c3range);
+            usingRange = min(range, c3range);
             if (usingRange == c3range && range > c3range) {
                 usingC3 = true;
             }
@@ -1661,7 +1665,7 @@ public class Compute {
         // calculation
         // to figure out range, so overwrite whatever we have at this point
         if (isWeaponInfantry) {
-            mods = Compute.getInfantryRangeMods(Math.min(distance, c3dist),
+            mods = Compute.getInfantryRangeMods(min(distance, c3dist),
                   (InfantryWeapon) weaponType,
                   (attackingEntity instanceof Infantry) ? ((Infantry) attackingEntity).getSecondaryWeapon() : null,
                   weaponUnderwater);
@@ -3643,7 +3647,7 @@ public class Compute {
 
             // Cap damage to prevent run-away values
             if (infShootingStrength > 0) {
-                fDamage = Math.min(infShootingStrength, fDamage);
+                fDamage = min(infShootingStrength, fDamage);
             }
         }
         return fDamage;
@@ -4174,7 +4178,7 @@ public class Compute {
             }
         }
         // Undoes any negative visual ranges
-        visualRange = Math.max(visualRange, 1);
+        visualRange = max(visualRange, 1);
         // Ground distance
         int distance = attackingPos.distance(targetPos);
         // Need to track difference in altitude, not just add altitude to the range
@@ -4252,7 +4256,7 @@ public class Compute {
         if (!attackingEntity.isLargeCraft()) {
             ecm += ComputeECM.getSmallCraftECM(attackingEntity, attackingEntity.getPosition(), target.getPosition());
         }
-        ecm = Math.min(4, ecm);
+        ecm = min(4, ecm);
         int eccm = 0;
         if (attackingEntity.isLargeCraft()) {
             eccm = ((Aero) attackingEntity).getECCMBonus();
@@ -4260,7 +4264,7 @@ public class Compute {
         if (ecm > 0) {
             mod += ecm;
             if (eccm > 0) {
-                mod -= (Math.min(ecm, eccm));
+                mod -= (min(ecm, eccm));
             }
         }
         return mod;
@@ -4709,7 +4713,7 @@ public class Compute {
         int visualRange = game.getPlanetaryConditions().getVisualRange(ae, targetIlluminated);
         visualRange -= los.getLightSmoke();
         visualRange -= 2 * los.getHeavySmoke();
-        visualRange = Math.max(1, visualRange);
+        visualRange = max(1, visualRange);
         return visualRange;
     }
 
@@ -4794,7 +4798,7 @@ public class Compute {
         int range = Compute.getSensorRangeByBracket(game, ae, target, los);
 
         int maxSensorRange = bracket * range;
-        int minSensorRange = Math.max((bracket - 1) * range, 0);
+        int minSensorRange = max((bracket - 1) * range, 0);
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
             minSensorRange = 0;
         }
@@ -4991,7 +4995,7 @@ public class Compute {
 
         // now adjust for anything about the target entity (size, heat, etc.)
         range = sensor.entityAdjustments(range, te, game);
-        return Math.max(range, 0);
+        return max(range, 0);
     }
 
     public static int getADARangeModifier(int distance) {
@@ -5067,9 +5071,9 @@ public class Compute {
         }
 
         int maxSensorRange = bracket * range;
-        int minSensorRange = Math.max((bracket - 1) * range, 0);
+        int minSensorRange = max((bracket - 1) * range, 0);
         int maxGroundSensorRange = bracket * groundRange;
-        int minGroundSensorRange = Math.max((maxGroundSensorRange - 1), 0);
+        int minGroundSensorRange = max((maxGroundSensorRange - 1), 0);
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
             minSensorRange = 0;
@@ -5154,13 +5158,13 @@ public class Compute {
 
             if ((roll1 <= roll2) && (roll1 <= roll3)) {
                 lowRoll1 = roll1;
-                lowRoll2 = Math.min(roll2, roll3);
+                lowRoll2 = min(roll2, roll3);
             } else if ((roll2 <= roll1) && (roll2 <= roll3)) {
                 lowRoll1 = roll2;
-                lowRoll2 = Math.min(roll1, roll3);
+                lowRoll2 = min(roll1, roll3);
             } else {
                 lowRoll1 = roll3;
-                lowRoll2 = Math.min(roll2, roll1);
+                lowRoll2 = min(roll2, roll1);
             }
             nRoll = lowRoll1 + lowRoll2;
         }
@@ -5169,9 +5173,9 @@ public class Compute {
         }
         nRoll += nMod;
         if (!advancedAMS) {
-            nRoll = Math.min(Math.max(nRoll, 2), 12);
+            nRoll = min(max(nRoll, 2), 12);
         } else {
-            nRoll = Math.min(nRoll, 12);
+            nRoll = min(nRoll, 12);
         }
         if (nRoll < 2) {
             return 0;
@@ -5408,7 +5412,7 @@ public class Compute {
         // according to the following rules clarification, this should be maxed
         // out at +4
         // http://www.classicbattletech.com/forums/index.php?topic=66036.0
-        return Math.min(4, highestMod + totalGT);
+        return min(4, highestMod + totalGT);
     }
 
     /**
@@ -6279,10 +6283,10 @@ public class Compute {
         int angle = te.sideTableRam(src);
 
         return switch (angle) {
-            case Aero.RAM_TOWARD_DIR -> Math.max(attackerVelocity + targetVelocity, 1);
-            case Aero.RAM_TOWARD_OBL -> Math.max(attackerVelocity + (targetVelocity / 2), 1);
-            case Aero.RAM_AWAY_OBL -> Math.max(attackerVelocity - (targetVelocity / 2), 1);
-            case Aero.RAM_AWAY_DIR -> Math.max(attackerVelocity - targetVelocity, 1);
+            case Aero.RAM_TOWARD_DIR -> max(attackerVelocity + targetVelocity, 1);
+            case Aero.RAM_TOWARD_OBL -> max(attackerVelocity + (targetVelocity / 2), 1);
+            case Aero.RAM_AWAY_OBL -> max(attackerVelocity - (targetVelocity / 2), 1);
+            case Aero.RAM_AWAY_DIR -> max(attackerVelocity - targetVelocity, 1);
             default -> 0;
         };
     }
@@ -6567,7 +6571,7 @@ public class Compute {
             }
         }
 
-        return Math.min(weaponType.getDamage(range), toReturn);
+        return min(weaponType.getDamage(range), toReturn);
 
     }
 
@@ -6595,8 +6599,8 @@ public class Compute {
         int damage = weaponType.getDamage(range);
         int newDamage = Compute.dialDownDamage(weapon, weaponType, range);
 
-        toReturn = Math.max(1,
-              weaponType.getHeat() - Math.max(0, damage - newDamage));
+        toReturn = max(1,
+              weaponType.getHeat() - max(0, damage - newDamage));
         return toReturn;
 
     }
@@ -7058,7 +7062,7 @@ public class Compute {
                 if (advFireCon) {
                     // Advanced fire control lets the driver count as a gunner, so one fewer
                     // dedicated gunners is needed.
-                    return Math.max(0, pintleLocations.size() + facings.size() - 1);
+                    return max(0, pintleLocations.size() + facings.size() - 1);
                 } else {
                     return pintleLocations.size() + facings.size();
                 }

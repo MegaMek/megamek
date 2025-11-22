@@ -4625,9 +4625,7 @@ public final class BoardView extends AbstractBoardView
      */
     public synchronized void highlightSelectedEntities(List<Entity> entities) {
         for (EntitySprite sprite : entitySprites) {
-            boolean shouldHighlight = entities.stream()
-                    .anyMatch(e -> sprite.getEntity().equals(e));
-            sprite.setSelected(shouldHighlight);
+            sprite.setSelected(entities.contains(sprite.getEntity()));
         }
     }
 

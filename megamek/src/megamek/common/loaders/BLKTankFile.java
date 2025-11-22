@@ -271,6 +271,9 @@ public class BLKTankFile extends BLKFile implements IMekLoader {
         }
         t.recalculateTechAdvancement();
         loadQuirks(t);
+
+        resetCrew(t);
+
         return t;
     }
 

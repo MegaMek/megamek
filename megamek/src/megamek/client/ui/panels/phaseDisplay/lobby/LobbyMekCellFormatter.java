@@ -1019,30 +1019,36 @@ class LobbyMekCellFormatter {
             return result.toString();
         }
 
-        if (crew.getSlotCount() == 1 && !(entity instanceof FighterSquadron)) { // Single-person crew
-            if (crew.isMissing(0)) {
-                result.append("<B>No ").append(crew.getCrewType().getRoleName(0)).append("</B>");
-            } else {
-                if ((crew.getNickname(0) != null) && !crew.getNickname(0).isEmpty()) {
-                    result.append(fontHTML(uiNickColor()));
-                    result.append("<B>'").append(crew.getNickname(0).toUpperCase()).append("'</B></FONT>");
+        // Uncrewed
+        if (entity.isUncrewed()) {
+            result.append("<I>").append(Messages.getString("ChatLounge.noCrew")).append("</I>");
+            result.append("<BR>");
+        } else {
+            if (crew.getSlotCount() == 1 && !(entity instanceof FighterSquadron)) { // Single-person crew
+                if (crew.isMissing(0)) {
+                    result.append("<B>No ").append(crew.getCrewType().getRoleName(0)).append("</B>");
                 } else {
-                    result.append("<B>").append(crew.getDesc(0)).append("</B>");
+                    if ((crew.getNickname(0) != null) && !crew.getNickname(0).isEmpty()) {
+                        result.append(fontHTML(uiNickColor()));
+                        result.append("<B>'").append(crew.getNickname(0).toUpperCase()).append("'</B></FONT>");
+                    } else {
+                        result.append("<B>").append(crew.getDesc(0)).append("</B>");
+                    }
                 }
+                result.append("<BR>");
+            } else { // Multi-person crew
+                result.append("<I>").append(Messages.getString("ChatLounge.multipleCrew")).append("</I>");
+                result.append("<BR>");
             }
-            result.append("<BR>");
-        } else { // Multi-person crew
-            result.append("<I>").append(Messages.getString("ChatLounge.multipleCrew")).append("</I>");
-            result.append("<BR>");
-        }
-        result.append(CrewSkillSummaryUtil.getSkillNames(entity)).append(": ");
-        result.append("<B>").append(crew.getSkillsAsString(rpgSkills)).append("</B><BR>");
+            result.append(CrewSkillSummaryUtil.getSkillNames(entity)).append(": ");
+            result.append("<B>").append(crew.getSkillsAsString(rpgSkills)).append("</B><BR>");
 
-        // Advantages, MD, Edge
-        if ((crew.countOptions(LVL3_ADVANTAGES) > 0) || (crew.countOptions(MD_ADVANTAGES) > 0)) {
-            result.append(fontHTML(uiQuirksColor()));
-            result.append(Messages.getString("ChatLounge.abilities"));
-            result.append("</FONT>");
+            // Advantages, MD, Edge
+            if ((crew.countOptions(LVL3_ADVANTAGES) > 0) || (crew.countOptions(MD_ADVANTAGES) > 0)) {
+                result.append(fontHTML(uiQuirksColor()));
+                result.append(Messages.getString("ChatLounge.abilities"));
+                result.append("</FONT>");
+            }
         }
         result.append("</FONT>");
         return result.toString();

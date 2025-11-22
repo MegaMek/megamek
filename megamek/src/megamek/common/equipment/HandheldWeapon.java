@@ -52,6 +52,7 @@ import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.moves.MoveStep;
 import megamek.common.rolls.PilotingRollData;
+import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.UnitType;
@@ -67,6 +68,12 @@ public class HandheldWeapon extends Entity {
         super();
         setArmorType(MiscType.T_ARMOR_STANDARD);
         setArmorTechLevel(TechConstants.T_INTRO_BOX_SET);
+    }
+
+    @Override
+    public CrewType defaultCrewType() {
+        // Handheld Weapons don't have a crew
+        return CrewType.NONE;
     }
 
     @Override

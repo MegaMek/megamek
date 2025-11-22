@@ -2020,7 +2020,10 @@ public abstract class Entity extends TurnOrdered
      * @return true if unit is permanently immobile
      */
     public boolean isPermanentlyImmobilized(boolean checkCrew) {
-        if ((checkCrew || defaultCrewType().equals(CrewType.NONE)) && ((getCrew() == null) || getCrew().isDead())) {
+        if (isUncrewed() && isNotCrewedEntityType()) {
+            return false;
+        }
+        if (checkCrew && ((isUncrewed()) || getCrew().isDead())) {
             return true;
         } else if ((this instanceof Mek mek) &&
               (mek.getOriginalMechanicalJumpBoosterMP() > 0) &&
@@ -2036,6 +2039,22 @@ public abstract class Entity extends TurnOrdered
         }
 
         return false;
+    }
+
+    /**
+     * @return true if the unit is always uncrewed, like a Handheld Weapon or unarmed, unpowered trailer. Should not
+     *       return true for remote drone OS.
+     */
+    public boolean isNotCrewedEntityType() {
+        return defaultCrewType().equals(CrewType.NONE);
+    }
+
+    /**
+     * @return true if the entity's crew is null or the entity is uncrewed, like a Handheld Weapon or unarmed, unpowered
+     *       trailer.
+     */
+    public boolean isUncrewed() {
+        return getCrew() == null || (getCrew().isCrewTypeNone());
     }
 
     public boolean isCharging() {

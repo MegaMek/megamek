@@ -240,6 +240,7 @@ public abstract class Entity extends TurnOrdered
 
     public static final int MAX_C3_NODES = 12;
     public static final int MAX_C3i_NODES = 6;
+    public static final int MAX_NOVA_CEWS_NODES = 3;
 
     // PLAYTEST3 isC3ecmAffected
     protected boolean isC3ecmAffected = false;
@@ -6465,7 +6466,7 @@ public abstract class Entity extends TurnOrdered
                 }
             }
         } else if (hasActiveNovaCEWS()) {
-            nodes = 2;
+            nodes = MAX_NOVA_CEWS_NODES - 1;
             if (game != null) {
                 for (Entity e : game.getEntitiesVector()) {
                     if (!equals(e) && onSameC3NetworkAs(e)) {

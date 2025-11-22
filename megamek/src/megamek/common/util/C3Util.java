@@ -214,9 +214,19 @@ public class C3Util {
         HashSet<Entity> updateCandidates = new HashSet<>();
         for (Entity entity : entities) {
             if (entity.hasNhC3()) {
+                // CRITICAL FIX: Find all network members BEFORE disconnecting
+                // We need to remove the disconnecting entity's UUID from their arrays
+                List<Entity> networkMembers = new ArrayList<>();
+                for (Entity other : game.getEntitiesVector()) {
+                    if (!other.equals(entity) && entity.onSameC3NetworkAs(other)) {
+                        networkMembers.add(other);
+                    }
+                }
+
+                // Disconnect this entity
                 entity.setC3NetIdSelf();
 
-                // CRITICAL FIX: Clear UUID arrays when disconnecting from network
+                // Clear UUID arrays on disconnecting entity
                 // Prevents stale UUIDs from interfering with future network joins
                 for (int pos = 0; pos < Entity.MAX_C3i_NODES; pos++) {
                     if (entity.hasNavalC3() || entity.hasNovaCEWS()) {
@@ -224,6 +234,27 @@ public class C3Util {
                     } else if (entity.hasC3i()) {
                         entity.setC3iNextUUIDAsString(pos, null);
                     }
+                }
+
+                // CRITICAL FIX: Remove disconnecting entity's UUID from ALL network members
+                // This allows master units to truly disconnect from their networks
+                String disconnectingUUID = entity.getC3UUIDAsString();
+                for (Entity other : networkMembers) {
+                    for (int pos = 0; pos < Entity.MAX_C3i_NODES; pos++) {
+                        String storedUUID = null;
+                        if (other.hasNavalC3() || other.hasNovaCEWS()) {
+                            storedUUID = other.getNC3NextUUIDAsString(pos);
+                            if (disconnectingUUID.equals(storedUUID)) {
+                                other.setNC3NextUUIDAsString(pos, null);
+                            }
+                        } else if (other.hasC3i()) {
+                            storedUUID = other.getC3iNextUUIDAsString(pos);
+                            if (disconnectingUUID.equals(storedUUID)) {
+                                other.setC3iNextUUIDAsString(pos, null);
+                            }
+                        }
+                    }
+                    updateCandidates.add(other);  // Mark network member for update
                 }
 
                 updateCandidates.add(entity);
@@ -288,6 +319,42 @@ public class C3Util {
             performDisconnect(game, entities);
         }
 
+        // CRITICAL VALIDATION: Calculate total network size AFTER join and verify it doesn't exceed maximum
+        // This prevents oversized networks when master units fail to disconnect (Bug #6754)
+        int currentNetworkSize = 1;  // Master counts as 1
+        for (Entity e : game.getEntitiesVector()) {
+            if (!e.equals(master) && master.onSameC3NetworkAs(e)) {
+                currentNetworkSize++;
+            }
+        }
+
+        // Count NEW entities being added (exclude those already in network)
+        int newEntities = 0;
+        for (Entity e : entities) {
+            if (!e.equals(master) && !master.onSameC3NetworkAs(e)) {
+                newEntities++;
+            }
+        }
+
+        // Calculate total network size after join
+        int totalAfterJoin = currentNetworkSize + newEntities;
+
+        // Determine max network size based on system type
+        int maxNetworkSize;
+        if (master.hasNovaCEWS()) {
+            maxNetworkSize = Entity.MAX_NOVA_CEWS_NODES;  // 3
+        } else if (master.hasC3i() || master.hasNavalC3()) {
+            maxNetworkSize = Entity.MAX_C3i_NODES;  // 6
+        } else {
+            maxNetworkSize = Entity.MAX_C3i_NODES;  // Default to 6
+        }
+
+        // Validate total network size
+        if (totalAfterJoin > maxNetworkSize) {
+            throw new C3CapacityException();
+        }
+
+        // Original validation (keep as secondary check)
         int freeNodes = master.calculateFreeC3Nodes();
         freeNodes += entities.contains(master) ? 1 : 0;
 

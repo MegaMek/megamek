@@ -202,8 +202,11 @@ public class NovaNetworkViewDialog extends JDialog implements ActionListener {
         if (isEntityNetworked(entity)) {
             int networkSize = getNetworkSize(currentNetwork);
             String networkMembers = getNetworkMembersDisplay(entity, currentNetwork);
-            sb.append(" [Network: ").append(networkMembers);
-            sb.append(" (").append(networkSize).append("/3)]");
+            int freeNodes = 3 - networkSize;
+            String availability = (freeNodes == 0) ? "Full" : "Available";
+
+            sb.append(" Network consists of: ").append(networkMembers);
+            sb.append(", (").append(networkSize).append("/3 ").append(availability).append(")");
         } else {
             sb.append(" [Unlinked]");
         }

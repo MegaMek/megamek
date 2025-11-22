@@ -102,14 +102,22 @@ public class C3Util {
                 }
                 int pos = 0;
                 while (pos < Entity.MAX_C3i_NODES) {
-                    // We've found a network, join it.
+                    // We've found a potential network partner
                     if ((entity.getC3iNextUUIDAsString(pos) != null)
                           && (e.getC3UUIDAsString() != null)
                           && entity.getC3iNextUUIDAsString(pos)
                           .equals(e.getC3UUIDAsString())) {
-                        entity.setC3NetId(e);
-                        C3iSet = true;
-                        break;
+
+                        // BIDIRECTIONAL CHECK: Verify partnership is reciprocal
+                        if (hasEntityInC3iArray(e, entity.getC3UUIDAsString())) {
+                            // Valid bidirectional partnership - join network
+                            entity.setC3NetId(e);
+                            C3iSet = true;
+                            break;
+                        } else {
+                            // Orphaned UUID - clear it
+                            entity.setC3iNextUUIDAsString(pos, null);
+                        }
                     }
 
                     pos++;
@@ -124,14 +132,22 @@ public class C3Util {
                 }
                 int pos = 0;
                 while (pos < Entity.MAX_C3i_NODES) {
-                    // We've found a network, join it.
+                    // We've found a potential network partner
                     if ((entity.getNC3NextUUIDAsString(pos) != null)
                           && (e.getC3UUIDAsString() != null)
                           && entity.getNC3NextUUIDAsString(pos)
                           .equals(e.getC3UUIDAsString())) {
-                        entity.setC3NetId(e);
-                        C3iSet = true;
-                        break;
+
+                        // BIDIRECTIONAL CHECK: Verify partnership is reciprocal
+                        if (hasEntityInNC3Array(e, entity.getC3UUIDAsString())) {
+                            // Valid bidirectional partnership - join network
+                            entity.setC3NetId(e);
+                            C3iSet = true;
+                            break;
+                        } else {
+                            // Orphaned UUID - clear it
+                            entity.setNC3NextUUIDAsString(pos, null);
+                        }
                     }
 
                     pos++;
@@ -169,25 +185,36 @@ public class C3Util {
                         LOGGER.debug("[C3Util]   Against stored UUID at pos {}: \"{}\"", pos, uuidAtPos);
                     }
 
-                    // We've found a network, join it.
+                    // We've found a potential network partner
                     if ((entity.getNC3NextUUIDAsString(pos) != null)
                           && (e.getC3UUIDAsString() != null)
                           && entity.getNC3NextUUIDAsString(pos)
                           .equals(e.getC3UUIDAsString())) {
                         LOGGER.debug("[C3Util]   MATCH FOUND! Entity {} UUID matches at pos {}", e.getId(), pos);
-                        LOGGER.debug("[C3Util]   Copying network ID from entity {} ({}): {}",
-                            e.getId(), e.getShortName(), e.getC3NetId());
-                        entity.setC3NetId(e);
-                        LOGGER.debug("[C3Util]   Entity {} network ID now: {}", entity.getId(), entity.getC3NetId());
-                        C3iSet = true;
-                        break;
+
+                        // BIDIRECTIONAL CHECK: Verify partnership is reciprocal
+                        if (hasEntityInNC3Array(e, entity.getC3UUIDAsString())) {
+                            LOGGER.debug("[C3Util]   Bidirectional check PASSED - entity {} has this entity's UUID", e.getId());
+                            LOGGER.debug("[C3Util]   Copying network ID from entity {} ({}): {}",
+                                e.getId(), e.getShortName(), e.getC3NetId());
+                            // Valid bidirectional partnership - join network
+                            entity.setC3NetId(e);
+                            LOGGER.debug("[C3Util]   Entity {} network ID now: {}", entity.getId(), entity.getC3NetId());
+                            C3iSet = true;
+                            break;
+                        } else {
+                            LOGGER.debug("[C3Util]   Bidirectional check FAILED - entity {} does NOT have this entity's UUID", e.getId());
+                            LOGGER.debug("[C3Util]   Clearing orphaned UUID at pos {}", pos);
+                            // Orphaned UUID - clear it
+                            entity.setNC3NextUUIDAsString(pos, null);
+                        }
                     }
 
                     pos++;
                 }
 
                 if (!C3iSet) {
-                    LOGGER.debug("[C3Util]   No network partners found in UUID array");
+                    LOGGER.debug("[C3Util]   No valid network partners found in UUID array");
                 }
             }
         }
@@ -196,6 +223,46 @@ public class C3Util {
             entity.getId(), entity.getShortName(), entity.getC3NetId(), C3iSet);
 
         return affectedUnits;
+    }
+
+    /**
+     * Checks if an entity has a specific UUID in its C3i array.
+     * Used to verify bidirectional network partnerships.
+     *
+     * @param entity The entity to check
+     * @param targetUUID The UUID to search for
+     * @return true if the UUID is found in the entity's C3i array
+     */
+    private static boolean hasEntityInC3iArray(Entity entity, String targetUUID) {
+        if (targetUUID == null) {
+            return false;
+        }
+        for (int i = 0; i < Entity.MAX_C3i_NODES; i++) {
+            if (targetUUID.equals(entity.getC3iNextUUIDAsString(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if an entity has a specific UUID in its NC3 array.
+     * Used to verify bidirectional network partnerships for Naval C3 and Nova CEWS.
+     *
+     * @param entity The entity to check
+     * @param targetUUID The UUID to search for
+     * @return true if the UUID is found in the entity's NC3 array
+     */
+    private static boolean hasEntityInNC3Array(Entity entity, String targetUUID) {
+        if (targetUUID == null) {
+            return false;
+        }
+        for (int i = 0; i < Entity.MAX_C3i_NODES; i++) {
+            if (targetUUID.equals(entity.getNC3NextUUIDAsString(i))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -211,6 +278,12 @@ public class C3Util {
      * affected units.
      */
     private static HashSet<Entity> performDisconnect(Game game, Collection<Entity> entities) {
+        LOGGER.debug("[DISCONNECT] performDisconnect() called for {} entities", entities.size());
+        for (Entity e : entities) {
+            LOGGER.debug("[DISCONNECT]   Entity {} ({}), hasNhC3={}, network: {}",
+                e.getId(), e.getShortName(), e.hasNhC3(), e.getC3NetId());
+        }
+
         HashSet<Entity> updateCandidates = new HashSet<>();
         for (Entity entity : entities) {
             if (entity.hasNhC3()) {
@@ -222,9 +295,13 @@ public class C3Util {
                         networkMembers.add(other);
                     }
                 }
+                LOGGER.debug("[DISCONNECT]   Found {} network members for entity {}",
+                    networkMembers.size(), entity.getId());
 
                 // Disconnect this entity
                 entity.setC3NetIdSelf();
+                LOGGER.debug("[DISCONNECT]   Set entity {} network to self: {}",
+                    entity.getId(), entity.getC3NetId());
 
                 // Clear UUID arrays on disconnecting entity
                 // Prevents stale UUIDs from interfering with future network joins

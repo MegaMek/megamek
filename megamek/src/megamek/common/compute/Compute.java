@@ -329,7 +329,7 @@ public class Compute {
 
         // Compute sum in long to avoid overflow, then clamp to int range
         long sum = (long) highest + (long) second;
-        return clamp((int) max(min(sum, Integer.MAX_VALUE), Integer.MIN_VALUE), Integer.MIN_VALUE, Integer.MAX_VALUE);
+        return (int) clamp(sum, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     /**

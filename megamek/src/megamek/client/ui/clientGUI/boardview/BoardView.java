@@ -1768,10 +1768,6 @@ public final class BoardView extends AbstractBoardView
      * @param graphics The graphics object to draw on
      */
     private void drawEntityHexHighlights(Graphics2D graphics) {
-        if (highlightedEntityHexes.isEmpty()) {
-            return;
-        }
-
         graphics.setColor(Color.WHITE);
         graphics.setStroke(new BasicStroke((float) (2.0 * scale)));
 

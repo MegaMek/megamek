@@ -687,9 +687,14 @@ public class Compute {
      * called for stacking purposes, and so does not return true if the enemy unit is currently making a DFA.
      */
     public static boolean isEnemyIn(Game game, Entity entity, Coords coords,
-          boolean onlyMeks, boolean ignoreInfantry, int enLowEl) {
+          boolean onlyMeks, boolean ignoreInfantry, int enLowEl, boolean ignoreHidden) {
         int enHighEl = enLowEl + entity.getHeight();
         for (Entity inHex : game.getEntitiesVector(coords)) {
+            // If we're ignoring hidden units and this one *is* hidden, pretend we don't see it.
+            if (inHex.isHidden() && ignoreHidden) {
+                continue;
+            }
+
             int inHexAlt = inHex.getAltitude();
             boolean crewOnGround = (inHex instanceof EjectedCrew) && (inHexAlt == 0);
             int inHexEnLowEl = inHex.getElevation();

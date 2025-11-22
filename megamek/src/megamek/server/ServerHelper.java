@@ -312,8 +312,7 @@ public class ServerHelper {
         boolean isAero = detector.isAero();
 
         // if no probe, save ourselves a few loops
-        // TODO: ASF should have range 0 (fly-over only) so exempt them
-        if (probeRange <= 0 && !isAero) {
+        if (probeRange < 0) {
             return false;
         }
 

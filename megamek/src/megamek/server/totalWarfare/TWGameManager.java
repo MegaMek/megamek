@@ -6150,9 +6150,10 @@ public class TWGameManager extends AbstractGameManager {
      * Handles a pointblank shot for hidden units, which must request feedback from the client of the player who owns
      * the hidden unit.
      *
-     * @return Returns true if a point-blank shot was taken, otherwise false
+     * @return Returns reports vector if a point-blank shot was taken, otherwise null
      */
-    boolean processPointblankShotCFR(Entity hidden, Entity target) throws InvalidPacketDataException {
+    Vector<Report> processPointblankShotCFR(Entity hidden, Entity target) throws InvalidPacketDataException {
+        Vector<Report> reports = new Vector<>();
         sendPointBlankShotCFR(hidden, target);
         boolean firstPacket = true;
         // Keep processing until we get a response
@@ -6163,7 +6164,7 @@ public class TWGameManager extends AbstractGameManager {
                         cfrPacketQueue.wait();
                     }
                 } catch (InterruptedException e) {
-                    return false;
+                    return null;
                 }
                 // Get the packet, if there's something to get
                 Server.ReceivedPacket rp;
@@ -6188,7 +6189,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (firstPacket) {
                     // Check to see if the client declined the PBS
                     if (rp.getPacket().getObject(1) == null) {
-                        return false;
+                        return null;
                     } else {
                         firstPacket = false;
                         // Notify other clients, so they can display a message
@@ -6210,7 +6211,7 @@ public class TWGameManager extends AbstractGameManager {
 
                 // The second packet contains the attacks to process _or_ signals not firing
                 if (rp.getPacket().getObject(1) == null) {
-                    return false;
+                    return null;
                 } else {
                     List<EntityAction> attacks = rp.getPacket().getEntityActionList(1);
                     // Mark the hidden unit as having taken a PBS
@@ -6235,7 +6236,7 @@ public class TWGameManager extends AbstractGameManager {
                             if (hexesAdded) {
                                 send(createIlluminatedHexesPacket());
                             }
-                            addReport(saa.resolveAction(game));
+                            reports.addAll(saa.resolveAction(game));
                         } else if (entityAction instanceof WeaponAttackAction waa) {
                             Entity ae = game.getEntity(waa.getEntityId());
                             if (ae != null) {
@@ -6260,10 +6261,12 @@ public class TWGameManager extends AbstractGameManager {
                 GamePhase currentPhase = game.getPhase();
                 game.setPhase(GamePhase.FIRING);
                 // Handle attacks
-                handleAttacks(true);
+                reports.addAll(handleAttacks(true));
+                // Report for attack phase report
+                addReport(reports);
                 // Restore Phase
                 game.setPhase(currentPhase);
-                return true;
+                return reports;
             }
         }
     }
@@ -29120,7 +29123,7 @@ public class TWGameManager extends AbstractGameManager {
         handleAttacks(false);
     }
 
-    private void handleAttacks(boolean pointblankShot) {
+    private Vector<Report> handleAttacks(boolean pointblankShot) {
         Report r;
         int lastAttackerId = -1;
         Vector<AttackHandler> currentAttacks, keptAttacks;
@@ -29203,6 +29206,7 @@ public class TWGameManager extends AbstractGameManager {
         // HACK, but anything else seems to run into weird problems.
         game.setAttacksVector(keptAttacks);
         datasetLogger.append(game, true);
+        return handleAttackReports;
     }
 
     /**

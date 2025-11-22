@@ -1348,32 +1348,23 @@ class MovePathHandler extends AbstractTWRuleHandler {
             isOnGround &= step.getElevation() < 1;
 
             // Check for hidden units point-blank shots
-            // TODO: only reveal Hidden entities if the last step ends adjacent or in the hidden
-            // TODO: unit's hex (TW somethingorother); may need to record initial MP remaining here.
+            // TODO: unit's hex (TW somethingorother); may need to record initial MP remaining (for immediate forced
+            // TODO: withdrawal) here.
             if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
-                for (Entity entity : hiddenEnemies) {
-                    int dist = entity.getPosition().distance(step.getPosition());
+                for (Entity hiddenEntity : hiddenEnemies) {
+                    int dist = hiddenEntity.getPosition().distance(step.getPosition());
                     // Checking for same hex and stacking violation; do _not_ ignore hidden units here.
-                    if ((dist == 0) && !continueTurnFromPBS
-                          && (Compute.stackingViolation(getGame(), this.entity,
-                          step.getPosition(), null, this.entity.climbMode(), false) != null)) {
+                    if ((dist == 0) && !continueTurnFromPBS &&
+                          (Compute.stackingViolation(getGame(), this.entity,
+                              step.getPosition(), null, this.entity.climbMode(), false
+                          ) != null)
+                    ) {
                         // Moving into hex of a hidden unit detects the unit
-                        entity.setHidden(false);
-                        gameManager.entityUpdate(entity.getId());
-                        report = new Report(9960);
-                        report.addDesc(this.entity);
-                        report.subject = this.entity.getId();
-                        report.add(entity.getPosition().getBoardNum());
-                        addReport(report);
-                        // Report the block
-                        if (gameManager.doBlind()) {
-                            report = new Report(9961);
-                            report.subject = entity.getId();
-                            report.addDesc(entity);
-                            report.addDesc(this.entity);
-                            report.add(step.getPosition().getBoardNum());
-                            addReport(report);
-                        }
+                        hiddenEntity.setHidden(false);
+
+                        // Handle prompting for possible PBS.
+                        gameManager.getMainPhaseReport().addAll(processPossiblePBS(step, hiddenEntity));
+
                         // Report halted movement
                         report = new Report(9962);
                         report.subject = this.entity.getId();
@@ -1384,59 +1375,60 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         addNewLines();
                         // If we aren't at the end, send a special report
                         if ((getGame().getTurnIndex() + 1) < getGame().getTurnsList().size()) {
-                            gameManager.send(entity.getOwner().getId(), gameManager.createSpecialReportPacket());
+                            gameManager.send(hiddenEntity.getOwner().getId(), gameManager.createSpecialReportPacket());
                             gameManager.send(this.entity.getOwner().getId(), gameManager.createSpecialReportPacket());
                         }
+                        // End this entity's turn _without_ updating its position to the current step, because the
+                        // current step position is actually illegal; it will keep the previous step's position.
                         this.entity.setDone(true);
                         gameManager.entityUpdate(this.entity.getId(), movePath, true, losCache);
                         return;
+
                         // Potential point-blank shot, but only in some situations:
-                        // 1. mover is Aerospace,
-                        // 2. mover is ground unit _and_ ends its movement in or adjacent to the hidden unit's hex.
-                    } else if ((dist == 1) && !entity.madePointblankShot() &&
-                          (this.entity.isAero() || md.isEndStep(step))
+                        // 1. mover is ground unit _and_ ends its movement adjacent to / in the hidden unit's hex;
+                        // 2. mover is Aerospace and hidden unit is within detection range of its flight path
+                        //    (with or without Active Probe).
+                        // and the revealed hidden unit has not already made a pointblank shot this turn.
+                    } else if ((dist <= 1) && !hiddenEntity.madePointblankShot() &&
+                          ((!this.entity.isAero() && md.isEndStep(step)) ||
+                                (
+                                    this.entity.isAero() && (dist == ((this.entity.getBAPRange() > 0) ? 1 : 0))
+                                )
+                          )
                     ) {
+                        // Hidden unit should always be revealed as the PBS trigger _is_ getting revealed.
+                        hiddenEntity.setHidden(false);
+
+                        // If not set, BV icons could have wrong facing
                         this.entity.setPosition(step.getPosition());
                         this.entity.setFacing(step.getFacing());
-                        // If not set, BV icons could have wrong facing
                         this.entity.setSecondaryFacing(step.getFacing());
-                        // Update entity position on client
-                        gameManager.send(entity.getOwnerId(),
-                              gameManager.createEntityPacket(this.entity.getId(), null));
-                        // Allow for packet data read failure
-                        boolean tookPBS = false;
-                        try {
-                            tookPBS = gameManager.processPointblankShotCFR(entity, this.entity);
-                        } catch (InvalidPacketDataException e) {
-                            logger.error("Invalid packet data:", e);
-                        }
-                        // Movement should be interrupted
-                        if (tookPBS) {
-                            // Attacking reveals hidden unit
-                            entity.setHidden(false);
-                            gameManager.entityUpdate(entity.getId());
-                            report = new Report(9960);
-                            report.addDesc(this.entity);
-                            report.subject = this.entity.getId();
-                            report.add(entity.getPosition().getBoardNum());
-                            gameManager.getMainPhaseReport().addElement(report);
-                            continueTurnFromPBS = true;
 
-                            curFacing = this.entity.getFacing();
-                            curPos = this.entity.getPosition();
-                            mpUsed = step.getMpUsed();
-                            break;
+                        gameManager.getMainPhaseReport().addAll(processPossiblePBS(step, hiddenEntity));
+                        gameManager.entityUpdate(hiddenEntity.getId());
+
+                        // If we aren't at the end, send a special report
+                        if ((getGame().getTurnIndex() + 1) < getGame().getTurnsList().size()) {
+                            gameManager.send(hiddenEntity.getOwner().getId(), gameManager.createSpecialReportPacket());
+                            gameManager.send(this.entity.getOwner().getId(), gameManager.createSpecialReportPacket());
                         }
+
+                        curFacing = this.entity.getFacing();
+                        curPos = this.entity.getPosition();
+                        mpUsed = step.getMpUsed();
+
+                        break;
                     } else if (Compute.canDetectHidden(this.entity, dist, md.isEndStep(step))) {
                         // There are a variety of other ways to detect a hidden unit.
                         // Reveal the detected unit and add the report to the movement report.
-                        entity.setHidden(false);
-                        gameManager.entityUpdate(entity.getId());
+                        // This does _not_ trigger a Pointblank Shot
+                        hiddenEntity.setHidden(false);
+                        gameManager.entityUpdate(hiddenEntity.getId());
                         report = new Report(9960);
                         report.addDesc(this.entity);
                         report.subject = this.entity.getId();
-                        report.add(entity.getPosition().getBoardNum());
-                        addReport(report);
+                        report.add(hiddenEntity.getPosition().getBoardNum());
+                        gameManager.getMainPhaseReport().addElement(report);
                     }
                 }
             }
@@ -3617,6 +3609,40 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
         }
 
+    }
+
+    protected Vector<Report> processPossiblePBS(MoveStep step, Entity hiddenEntity) {
+        Vector<Report> pbsReports = new Vector<>();
+        // Update hidden entity owner with current mover's position.
+        gameManager.send(hiddenEntity.getOwnerId(),
+              gameManager.createEntityPacket(this.entity.getId(), null));
+
+        // Allow for packet data read failure
+        try {
+            gameManager.processPointblankShotCFR(hiddenEntity, this.entity);
+        } catch (InvalidPacketDataException e) {
+            logger.error("Invalid packet data:", e);
+        }
+
+        // Report finding the hidden unit
+        gameManager.entityUpdate(hiddenEntity.getId());
+        report = new Report(9960);
+        report.addDesc(this.entity);
+        report.subject = this.entity.getId();
+        report.add(hiddenEntity.getPosition().getBoardNum());
+        pbsReports.add(report);
+
+        // Report the block in Double Blind context
+        if (gameManager.doBlind()) {
+            report = new Report(9961);
+            report.subject = hiddenEntity.getId();
+            report.addDesc(hiddenEntity);
+            report.addDesc(this.entity);
+            report.add(step.getPosition().getBoardNum());
+            pbsReports.add(report);
+        }
+
+        return pbsReports;
     }
 
     private String getReason(IBuilding bldgExited, IBuilding bldgEntered) {

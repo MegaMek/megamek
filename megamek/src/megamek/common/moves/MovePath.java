@@ -470,7 +470,6 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         // check for illegal jumps
-
         if ((start == null) || (land == null)) {
             // If we have null for either coordinate then we know the step
             // isn't legal.
@@ -662,7 +661,7 @@ public class MovePath implements Cloneable, Serializable {
         Coords pos = getEntity().getPosition();
         boolean isMek = getEntity() instanceof Mek;
         int elev = getEntity().getElevation();
-        if (Compute.isEnemyIn(getGame(), getEntity(), pos, false, isMek, elev)) {
+        if (Compute.isEnemyIn(getGame(), getEntity(), pos, false, isMek, elev, true)) {
             // There is an enemy, can't go out and back in, and go out again
             boolean left = false;
             boolean returned = false;

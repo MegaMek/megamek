@@ -6311,10 +6311,11 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Switches the C3 network ID to the new network ID.
+     * Applies pending Nova CEWS network ID change at the start of a new round.
      * Clears the pending change after applying it.
-     * Always clears the NC3UUID array when network changes to prevent stale UUIDs
+     * Always clears the Nova CEWS UUID array when network changes to prevent stale UUIDs
      * from causing unintended network connections during wireC3().
+     * Note: Nova CEWS shares UUID array infrastructure with Naval C3 (NC3).
      */
     public void newRoundNovaNetSwitch() {
         if (hasNovaCEWS() && (newC3NetIdString != null)) {
@@ -6322,9 +6323,10 @@ public abstract class Entity extends TurnOrdered
             c3NetIdString = newC3NetIdString;
             newC3NetIdString = null; // Clear pending change after applying
 
-            // Always clear UUID array when network changes
+            // Always clear Nova CEWS UUID array when network changes
             // This prevents wireC3() from finding stale partner UUIDs and incorrectly linking entities
             // wireC3() will rebuild the UUID array based on current network state
+            // Note: Nova CEWS shares UUID array infrastructure with Naval C3 (NC3)
             for (int i = 0; i < MAX_C3i_NODES; i++) {
                 setNC3NextUUIDAsString(i, null);
             }

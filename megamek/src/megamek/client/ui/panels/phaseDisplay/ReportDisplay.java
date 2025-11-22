@@ -47,6 +47,7 @@ import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.units.Entity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -302,7 +303,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
     private boolean hasNovaUnits() {
         int localPlayerId = clientgui.getClient().getLocalPlayer().getId();
         return clientgui.getClient().getGame().getEntitiesVector().stream()
-                .anyMatch(e -> e.getOwnerId() == localPlayerId && e.hasNovaCEWS());
+                .filter(e -> e.getOwnerId() == localPlayerId)
+                .anyMatch(Entity::hasNovaCEWS);
     }
 
     /**

@@ -286,7 +286,7 @@ public class Compute {
      * Returns the sum of the highest two d6 rolls from the provided list of roll values.
      *
      * <p>This method efficiently computes the top two results without sorting, making it suitable for rules that
-     * require selecting the best two dice out of several rolled, such as natural aptitude empowered checks.</p>
+     * require selecting the best two dice out of several rolled, such as natural aptitude empowered skill checks.</p>
      *
      * <p>Edge cases are handled gracefully:</p>
      * <ul>
@@ -295,7 +295,7 @@ public class Compute {
      *     <li>If two or more rolls are provided, the sum of the highest two is returned.</li>
      * </ul>
      *
-     * @param rolls one or more integer roll results, typically from {@code d6(1)}
+     * @param values one or more integers
      *
      * @return the sum of the highest two roll values, or a fallback value for edge cases
      *

@@ -68,6 +68,8 @@ public final class LobbyErrors {
           "A converted force must conform to the rules given in Interstellar Operations. Conversion " +
           "will typically work with companies created in the Force Generator.";
     private static final String NO_DUAL_TOW = "Both units must have an open appropriate tow hitch.";
+    private static final String CANNOT_DISCONNECT_MASTER = "Cannot disconnect the master unit of a C3i/Naval C3/Nova CEWS network. " +
+          "To break up this network, disconnect the other units first, or connect the master unit to a different network.";
 
     public static void showOnlyOwnBot(JFrame owner) {
         JOptionPane.showMessageDialog(owner, ONLY_OWN_BOT);
@@ -167,6 +169,10 @@ public final class LobbyErrors {
 
     public static void showCannotEditWhileDone(JFrame owner) {
         JOptionPane.showMessageDialog(owner, PLAYER_DONE);
+    }
+
+    public static void showCannotDisconnectMasterUnit(JFrame owner) {
+        JOptionPane.showMessageDialog(owner, CANNOT_DISCONNECT_MASTER);
     }
 
     private LobbyErrors() {}

@@ -278,12 +278,6 @@ public class C3Util {
      * affected units.
      */
     private static HashSet<Entity> performDisconnect(Game game, Collection<Entity> entities) {
-        LOGGER.debug("[DISCONNECT] performDisconnect() called for {} entities", entities.size());
-        for (Entity e : entities) {
-            LOGGER.debug("[DISCONNECT]   Entity {} ({}), hasNhC3={}, network: {}",
-                e.getId(), e.getShortName(), e.hasNhC3(), e.getC3NetId());
-        }
-
         HashSet<Entity> updateCandidates = new HashSet<>();
         for (Entity entity : entities) {
             if (entity.hasNhC3()) {
@@ -295,13 +289,9 @@ public class C3Util {
                         networkMembers.add(other);
                     }
                 }
-                LOGGER.debug("[DISCONNECT]   Found {} network members for entity {}",
-                    networkMembers.size(), entity.getId());
 
                 // Disconnect this entity
                 entity.setC3NetIdSelf();
-                LOGGER.debug("[DISCONNECT]   Set entity {} network to self: {}",
-                    entity.getId(), entity.getC3NetId());
 
                 // Clear UUID arrays on disconnecting entity
                 // Prevents stale UUIDs from interfering with future network joins
@@ -314,7 +304,7 @@ public class C3Util {
                 }
 
                 // CRITICAL FIX: Remove disconnecting entity's UUID from ALL network members
-                // This allows master units to truly disconnect from their networks
+                // This prevents orphaned UUIDs that can cause network corruption
                 String disconnectingUUID = entity.getC3UUIDAsString();
                 for (Entity other : networkMembers) {
                     for (int pos = 0; pos < Entity.MAX_C3i_NODES; pos++) {

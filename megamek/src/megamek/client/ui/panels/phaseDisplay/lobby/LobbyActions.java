@@ -824,22 +824,22 @@ public class LobbyActions {
      * Entity, units cannot disconnect from a C3 network with an id that is the entity's own id.
      */
     void c3DisconnectFromNetwork(Collection<Entity> entities) {
-        logger.debug("[DISCONNECT] c3DisconnectFromNetwork() called for {} entities", entities.size());
-        for (Entity e : entities) {
-            logger.debug("[DISCONNECT]   Entity {} ({}), network: {}",
-                e.getId(), e.getShortName(), e.getC3NetId());
+        // Check if any entity is the master unit of its network (C3i/NC3/Nova CEWS)
+        for (Entity entity : entities) {
+            if (entity.hasNhC3()) {
+                String networkId = entity.getC3NetId();
+                if (networkId != null && networkId.endsWith("." + entity.getId())) {
+                    LobbyErrors.showCannotDisconnectMasterUnit(frame());
+                    return;
+                }
+            }
         }
 
         if (!validateUpdate(entities)) {
-            logger.debug("[DISCONNECT] validateUpdate() returned false - disconnect blocked");
             return;
         }
 
-        logger.debug("[DISCONNECT] Calling C3Util.disconnectFromNetwork()");
-        Set<Entity> updates = C3Util.disconnectFromNetwork(game(), entities);
-        logger.debug("[DISCONNECT] C3Util returned {} entities to update", updates.size());
-        sendUpdates(updates);
-        logger.debug("[DISCONNECT] Updates sent to server");
+        sendUpdates(C3Util.disconnectFromNetwork(game(), entities));
     }
 
     /** Sets the entities' C3M to act as a Company Master. */

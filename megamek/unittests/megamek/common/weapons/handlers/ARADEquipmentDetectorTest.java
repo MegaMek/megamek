@@ -32,6 +32,7 @@
 package megamek.common.weapons.handlers;
 
 import megamek.common.equipment.INarcPod;
+import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.MiscType;
@@ -346,12 +347,78 @@ public class ARADEquipmentDetectorTest {
         when(target.isStealthActive()).thenReturn(false);
 
         Mounted<?> blueShield = createMockEquipment(MiscType.F_BLUE_SHIELD, false, false, false);
+
+        // Mock Blue Shield in "On" mode
+        EquipmentMode onMode = mock(EquipmentMode.class);
+        when(onMode.equals("On")).thenReturn(true);
+        doReturn(onMode).when(blueShield).curMode();
+
         List<Mounted<?>> equipment = new ArrayList<>();
         equipment.add(blueShield);
         when(target.getEquipment()).thenReturn(equipment);
 
         assertTrue(ARADEquipmentDetector.hasBlueShield(target),
-                "Should detect functional Blue Shield");
+                "Should detect Blue Shield in On mode");
+    }
+
+    @Test
+    void testBlueShieldOffMode() {
+        Entity target = mock(Entity.class);
+        when(target.isStealthActive()).thenReturn(false);
+
+        Mounted<?> blueShield = createMockEquipment(MiscType.F_BLUE_SHIELD, false, false, false);
+
+        // Mock Blue Shield in "Off" mode
+        EquipmentMode offMode = mock(EquipmentMode.class);
+        when(offMode.equals("On")).thenReturn(false);
+        when(offMode.equals("Off")).thenReturn(true);
+        doReturn(offMode).when(blueShield).curMode();
+
+        List<Mounted<?>> equipment = new ArrayList<>();
+        equipment.add(blueShield);
+        when(target.getEquipment()).thenReturn(equipment);
+
+        assertFalse(ARADEquipmentDetector.hasBlueShield(target),
+                "Should NOT detect Blue Shield in Off mode");
+    }
+
+    @Test
+    void testBlueShieldModeAffectsElectronicsDetection() {
+        Entity target = mock(Entity.class);
+        when(target.isStealthActive()).thenReturn(false);
+        // Mock all other equipment detection methods to isolate Blue Shield testing
+        when(target.hasC3()).thenReturn(false);
+        when(target.hasC3i()).thenReturn(false);
+        when(target.hasC3M()).thenReturn(false);
+        when(target.hasC3MM()).thenReturn(false);
+        when(target.hasECM()).thenReturn(false);
+        when(target.hasBAP()).thenReturn(false);
+        when(target.getTaggedBy()).thenReturn(-1);
+        when(target.hasGhostTargets(true)).thenReturn(false);
+        when(target.isNarcedBy(FRIENDLY_TEAM)).thenReturn(false);
+        when(target.getINarcPodsAttached()).thenReturn(Collections.emptyIterator());
+
+        Mounted<?> blueShield = createMockEquipment(MiscType.F_BLUE_SHIELD, false, false, false);
+
+        // Scenario 1: Blue Shield ON - should be detected
+        EquipmentMode onMode = mock(EquipmentMode.class);
+        when(onMode.equals("On")).thenReturn(true);
+        doReturn(onMode).when(blueShield).curMode();
+
+        List<Mounted<?>> equipment = new ArrayList<>();
+        equipment.add(blueShield);
+        when(target.getEquipment()).thenReturn(equipment);
+
+        assertTrue(ARADEquipmentDetector.targetHasQualifyingElectronics(target, FRIENDLY_TEAM),
+                "Blue Shield in On mode should qualify as electronics");
+
+        // Scenario 2: Blue Shield OFF - should NOT be detected
+        EquipmentMode offMode = mock(EquipmentMode.class);
+        when(offMode.equals("On")).thenReturn(false);
+        doReturn(offMode).when(blueShield).curMode();
+
+        assertFalse(ARADEquipmentDetector.targetHasQualifyingElectronics(target, FRIENDLY_TEAM),
+                "Blue Shield in Off mode should NOT qualify as electronics");
     }
 
     @Test

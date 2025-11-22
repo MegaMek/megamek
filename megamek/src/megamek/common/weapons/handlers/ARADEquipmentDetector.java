@@ -156,14 +156,18 @@ public class ARADEquipmentDetector {
     }
 
     /**
-     * Checks if target has functional Blue Shield system.
+     * Checks if target has active Blue Shield system.
+     *
+     * Blue Shield must be powered on (mode "On") to count as qualifying electronics.
+     * Powered-down Blue Shield does not emit detectable signals.
      *
      * @param target The entity to check
-     * @return true if entity has functional Blue Shield
+     * @return true if entity has Blue Shield in "On" mode and functional
      */
     public static boolean hasBlueShield(Entity target) {
         for (Mounted<?> equipment : target.getEquipment()) {
             if (equipment.getType().hasFlag(MiscType.F_BLUE_SHIELD) &&
+                equipment.curMode().equals("On") &&
                 isValidEquipment(equipment)) {
                 return true;
             }

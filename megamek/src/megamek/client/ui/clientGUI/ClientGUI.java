@@ -119,6 +119,7 @@ import megamek.client.ui.dialogs.unitDisplay.IHasUnitDisplay;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayDialog;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.client.ui.dialogs.unitSelectorDialogs.MegaMekUnitSelectorDialog;
+import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkViewDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.ReceivingGameDataPanel;
 import megamek.client.ui.panels.StartingScenarioPanel;
@@ -2480,8 +2481,7 @@ public class ClientGUI extends AbstractClientGUI
      * Shows the Nova CEWS network view dialog (read-only).
      */
     private void showNovaNetworkViewDialog() {
-        megamek.client.ui.dialogs.phaseDisplay.NovaNetworkViewDialog dialog =
-            new megamek.client.ui.dialogs.phaseDisplay.NovaNetworkViewDialog(frame, this);
+        NovaNetworkViewDialog dialog = new NovaNetworkViewDialog(frame, this);
         dialog.setVisible(true);
     }
 

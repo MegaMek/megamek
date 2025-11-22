@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration status="debug">
+    <Properties>
+        <Property name="layout">%d{ABSOLUTE} %-5p [%logger{36}] {%t}%n%l - %m%n%ex%n</Property>
+        <Property name="tsvLayout">%d{ABSOLUTE}\t%p\t[%logger{36}]\t{%t}\t%l\t%m\t%ex%n</Property>
+    </Properties>
+
+    <Appenders>
+        <RollingFile name="UnifiedLog" fileName="logs/unified_log.log" filePattern="logs/unified_log_%d{yyyyMMdd}_%i.log.gz" append="true" bufferedIO="false">
+            <PatternLayout pattern="${layout}" />
+            <Policies>
+                <OnStartupTriggeringPolicy minSize="1" />
+                <SizeBasedTriggeringPolicy size="25MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="10" />
+        </RollingFile>
+        <RollingFile name="BotLog" fileName="logs/bot_path_ranker.log" filePattern="logs/bot_path_ranker_%d{yyyyMMdd}_%i.log.gz" append="true" bufferedIO="false">
+            <PatternLayout pattern="${tsvLayout}" />
+            <Policies>
+                <OnStartupTriggeringPolicy minSize="1" />
+                <SizeBasedTriggeringPolicy size="50MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="10" />
+        </RollingFile>
+        <File name="MegaMekLog" fileName="logs/megamek.log" append="false">
+            <PatternLayout pattern="${layout}" />
+        </File>
+        <File name="MegaMekLabLog" fileName="logs/megameklab.log" append="false">
+            <PatternLayout pattern="${layout}" />
+        </File>
+        <File name="MekHQLog" fileName="logs/mekhq.log" append="false">
+            <PatternLayout pattern="${layout}" />
+        </File>
+        <Console name="dev">
+            <PatternLayout pattern="${layout}" />
+        </Console>
+        <Null name="null" />
+    </Appenders>
+
+    <Loggers>
+        <Logger name="megamek.client.bot" level="error" additivity="false">
+            <AppenderRef ref="${env:mm.profile:-null}" />
+            <AppenderRef ref="UnifiedLog" />
+        </Logger>
+        <Logger name="BotLogger" level="info" additivity="false">
+            <AppenderRef ref="BotLog" />
+        </Logger>
+        <Logger name="megamek" level="debug" additivity="false">
+            <AppenderRef ref="${env:mm.profile:-null}" />
+            <AppenderRef ref="UnifiedLog" />
+            <AppenderRef ref="MegaMekLog" />
+        </Logger>
+        <Root level="info">
+            <AppenderRef ref="${env:mm.profile:-null}" />
+            <AppenderRef ref="UnifiedLog" />
+        </Root>
+    </Loggers>
+</Configuration>

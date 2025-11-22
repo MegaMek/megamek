@@ -1250,7 +1250,8 @@ public class CustomMekDialog extends AbstractButtonDialog
         mainPanel.add(panButtons, GBC.eol().anchor(GridBagConstraints.CENTER));
 
         JScrollPane scrEquip = new JScrollPane(panEquip);
-        if (!multipleEntities) {
+        // Don't show the crew panel if there's multiple entities or no crew to show
+        if (!multipleEntities && panCrewMember.length > 0) {
             if (panCrewMember.length > 1) {
                 for (int i = 0; i < panCrewMember.length; i++) {
                     JScrollPane memberScrollPane = new JScrollPane(panCrewMember[i]);

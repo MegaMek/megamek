@@ -2373,9 +2373,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             xmlFiles.addAll(filteredFiles(internalUserDataDir, ".xml"));
             xmlFiles.removeIf(file -> !SkinXMLHandler.validSkinSpecFile(file));
             Collections.sort(xmlFiles);
-            var model = new DefaultComboBoxModel<>(xmlFiles.toArray(new String[0]));
+            ComboBoxModel<String> model = new DefaultComboBoxModel<>(xmlFiles.toArray(new String[0]));
+            model.setSelectedItem(GUIP.getSkinFile());
             skinFiles.setModel(model);
-            skinFiles.setSelectedItem(GUIP.getSkinFile());
 
             uiThemes.removeAllItems();
             for (LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels()) {

@@ -292,10 +292,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
      * Shows the Nova CEWS network management dialog.
      */
     private void showNovaNetworkDialog() {
-        LOGGER.debug("Opening Nova CEWS Network Management Dialog");
         NovaNetworkDialog dialog = new NovaNetworkDialog(clientgui.getFrame(), clientgui);
         dialog.setVisible(true);
-        LOGGER.debug("Nova CEWS Network Management Dialog closed");
     }
 
     /**

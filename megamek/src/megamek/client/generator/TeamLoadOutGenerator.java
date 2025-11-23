@@ -953,6 +953,7 @@ public class TeamLoadOutGenerator {
                   castPropertyDouble("mtSeekingAmmoEnemyECMExceedThreshold", 1.0)) {
                 munitionWeightCollection.decreaseGuidedMunitions();
                 munitionWeightCollection.increaseSeekingMunitions();
+                munitionWeightCollection.increaseMunitions(new ArrayList<>(List.of("Anti-Radiation")));
             }
             if (reconfigurationParameters.enemyTSMCount >
                   castPropertyDouble("mtSeekingAmmoEnemyTSMExceedThreshold", 1.0)) {
@@ -989,6 +990,7 @@ public class TeamLoadOutGenerator {
             }
             for (long i = 0; i < reconfigurationParameters.friendlyNARCs; i++) {
                 munitionWeightCollection.increaseNARCGuidedMunitions();
+                munitionWeightCollection.increaseMunitions(new ArrayList<>(List.of("Anti-Radiation")));
             }
 
             // TAG-guided rounds may have _some_ use, but not as much as base rounds, without TAG support

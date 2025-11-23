@@ -48,6 +48,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.MissileMineClearanceHandler;
+import megamek.common.weapons.handlers.srm.SRMARADHandler;
 import megamek.common.weapons.handlers.srm.SRMAXHandler;
 import megamek.common.weapons.handlers.srm.SRMAntiTSMHandler;
 import megamek.common.weapons.handlers.srm.SRMDeadFireHandler;
@@ -147,6 +148,9 @@ public abstract class SRMWeapon extends MissileWeapon {
                 }
                 if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_MINE_CLEARANCE)) {
                     return new MissileMineClearanceHandler(toHit, waa, game, manager);
+                }
+                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARAD)) {
+                    return new SRMARADHandler(toHit, waa, game, manager);
                 }
             }
 

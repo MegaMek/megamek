@@ -243,7 +243,10 @@ public class Tank extends Entity {
     @Override
     public CrewType defaultCrewType() {
         // A tank that is a trailer, has no weapon list, and has no engine does not need any crew.
-        if (isTrailer() && getWeaponList().isEmpty() && (getEngineType() == Engine.NONE)) {
+        if (isTrailer()
+              && getWeaponList().isEmpty()
+              && (getEngineType() == Engine.NONE)
+              && Compute.getAdditionalNonGunner(this) == 0) {
             return CrewType.NONE;
         }
         return CrewType.CREW;

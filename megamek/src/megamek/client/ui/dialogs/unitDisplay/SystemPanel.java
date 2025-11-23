@@ -830,9 +830,18 @@ class SystemPanel extends PicMap
                           && m.getType().hasFlag(MiscType.F_STEALTH)
                           && m.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
+                    }
+                    // Nova CEWS has built-in "ECM"/"Off" modes and should always be switchable
+                    if (!m.isInoperable()
+                          && (m.getType() instanceof MiscType)
+                          && m.getType().hasFlag(MiscType.F_NOVA)
+                          && m.isModeSwitchable()) {
+                        m_chMode.setEnabled(true);
                     } // if the max tech eccm option is not set then the ECM
                     // should not show anything.
+                    // Exception: Nova CEWS has built-in "ECM"/"Off" modes and should always be switchable
                     if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_ECM)
+                          && !m.getType().hasFlag(MiscType.F_NOVA)
                           && !(client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_ECCM)
                           || client.getGame().getOptions()
                           .booleanOption(OptionsConstants.ADVANCED_TAC_OPS_GHOST_TARGET))) {

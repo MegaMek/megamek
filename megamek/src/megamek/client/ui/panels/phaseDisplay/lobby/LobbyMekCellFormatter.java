@@ -364,6 +364,17 @@ class LobbyMekCellFormatter {
             result.append("</FONT>");
         }
 
+        if (entity.hasNovaCEWS()) {
+            firstEntry = dotSpacer(result, firstEntry);
+            result.append(UIUtil.fontHTML(uiC3Color()));
+            if (entity.calculateFreeC3Nodes() >= 2) {
+                result.append("Nova CEWS").append(UNCONNECTED_SIGN);
+            } else {
+                result.append("Nova CEWS").append(CONNECTED_SIGN).append(entity.getC3NetId());
+            }
+            result.append("</FONT>");
+        }
+
         if (entity.hasC3()) {
             if (entity.getC3Master() == null) {
                 if (entity.hasC3S()) {
@@ -701,13 +712,25 @@ class LobbyMekCellFormatter {
         }
 
         // C3 ...
-        if (entity.hasC3i() || entity.hasNavalC3()) {
+        if (entity.hasC3i() || entity.hasNavalC3() || entity.hasNovaCEWS()) {
             result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiC3Color()));
             String msg_c3i = Messages.getString("ChatLounge.C3i");
             String msg_nc3 = Messages.getString("ChatLounge.NC3");
 
-            String c3Name = entity.hasC3i() ? msg_c3i : msg_nc3;
-            if (entity.calculateFreeC3Nodes() >= 5) {
+            String c3Name;
+            int maxNodes;
+            if (entity.hasC3i()) {
+                c3Name = msg_c3i;
+                maxNodes = 5;
+            } else if (entity.hasNavalC3()) {
+                c3Name = msg_nc3;
+                maxNodes = 5;
+            } else { // Nova CEWS
+                c3Name = "Nova CEWS";
+                maxNodes = 2;
+            }
+
+            if (entity.calculateFreeC3Nodes() >= maxNodes) {
                 result.append(c3Name).append(UNCONNECTED_SIGN);
             } else {
                 result.append(c3Name).append(CONNECTED_SIGN).append(entity.getC3NetId());

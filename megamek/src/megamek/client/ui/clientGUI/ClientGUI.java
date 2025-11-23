@@ -119,6 +119,7 @@ import megamek.client.ui.dialogs.unitDisplay.IHasUnitDisplay;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayDialog;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.client.ui.dialogs.unitSelectorDialogs.MegaMekUnitSelectorDialog;
+import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkViewDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.ReceivingGameDataPanel;
 import megamek.client.ui.panels.StartingScenarioPanel;
@@ -244,6 +245,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_INC_GUI_SCALE = "viewIncGUIScale";
     public static final String VIEW_DEC_GUI_SCALE = "viewDecGUIScale";
     public static final String VIEW_FORCE_DISPLAY = "viewForceDisplay";
+    public static final String VIEW_NOVA_NETWORKS = "viewNovaNetworks";
     public static final String VIEW_UNIT_DISPLAY = "viewMekDisplay";
     public static final String VIEW_ACCESSIBILITY_WINDOW = "viewAccessibilityWindow";
     public static final String VIEW_KEYBINDS_OVERLAY = "viewKeyboardShortcuts";
@@ -990,6 +992,9 @@ public class ClientGUI extends AbstractClientGUI
                 break;
             case VIEW_FORCE_DISPLAY:
                 GUIP.toggleForceDisplay();
+                break;
+            case VIEW_NOVA_NETWORKS:
+                showNovaNetworkViewDialog();
                 break;
             case VIEW_MINI_MAP:
                 GUIP.toggleMinimapEnabled();
@@ -2473,6 +2478,14 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
+     * Shows the Nova CEWS network view dialog (read-only).
+     */
+    private void showNovaNetworkViewDialog() {
+        NovaNetworkViewDialog dialog = new NovaNetworkViewDialog(frame, this);
+        dialog.setVisible(true);
+    }
+
+    /**
      * Loads a preview image of the unit into the BufferedPanel.
      *
      * @param bp     The JLabel to set the image as icon to
@@ -2621,6 +2634,10 @@ public class ClientGUI extends AbstractClientGUI
             }
 
             menuBar.setPhase(phase);
+
+            // Update Nova Networks menu based on whether Nova CEWS units exist
+            boolean hasNovaUnits = client.getGame().getEntitiesVector().stream().anyMatch(Entity::hasNovaCEWS);
+            menuBar.setEnabled(VIEW_NOVA_NETWORKS, hasNovaUnits);
 
             clientGuiPanel.validate();
             cb.moveToEnd();

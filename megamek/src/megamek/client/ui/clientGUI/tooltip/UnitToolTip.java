@@ -2516,7 +2516,15 @@ public final class UnitToolTip {
                 if (entity.hasNhC3()) {
                     String msg_c3i = Messages.getString("BoardView1.Tooltip.C3i");
                     String msg_nc3 = Messages.getString("BoardView1.Tooltip.NC3");
-                    sC3Info = entity.hasC3i() ? msg_c3i : msg_nc3;
+                    String msg_nova = Messages.getString("BoardView1.Tooltip.NovaCEWS");
+
+                    if (entity.hasC3i()) {
+                        sC3Info = msg_c3i;
+                    } else if (entity.hasNovaCEWS()) {
+                        sC3Info = msg_nova;
+                    } else {  // hasNavalC3()
+                        sC3Info = msg_nc3;
+                    }
                 } else {
                     sC3Info = Messages.getString("BoardView1.Tooltip.C3");
                 }

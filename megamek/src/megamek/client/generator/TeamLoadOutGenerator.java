@@ -176,7 +176,8 @@ public class TeamLoadOutGenerator {
     public static final ArrayList<String> SEEKING_MUNITIONS = new ArrayList<>(List.of("Heat-Seeking",
           "Listen-Kill",
           "Swarm",
-          "Swarm-I"));
+          "Swarm-I",
+          "Anti-Radiation"));
 
     public static final ArrayList<String> AMMO_REDUCING_MUNITIONS = new ArrayList<>(List.of("Acid",
           "Laser Inhibiting",

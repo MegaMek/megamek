@@ -77,7 +77,8 @@ public class MunitionTree {
           "Anti-TSM",
           "Listen-Kill",
           "Smoke",
-          "Mine Clearance"));
+          "Mine Clearance",
+          "Anti-Radiation"));
 
     public static final List<String> SRM_MUNITION_NAMES = new ArrayList<>(List.of("Dead-Fire",
           "Standard",
@@ -91,7 +92,8 @@ public class MunitionTree {
           "Anti-TSM",
           "Listen-Kill",
           "Mine Clearance",
-          "Smoke"));
+          "Smoke",
+          "Anti-Radiation"));
 
     public static final List<String> AC_MUNITION_NAMES = new ArrayList<>(List.of("Precision",
           "Standard",

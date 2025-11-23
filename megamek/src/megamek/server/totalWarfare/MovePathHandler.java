@@ -182,9 +182,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 gameManager.entityUpdate(ship.getId());
                 Coords legalPos = entity.getPosition();
                 // Get the step so we can pass it in and get the abandon coords from it
-                for (final Enumeration<MoveStep> i = md.getSteps(); i
-                      .hasMoreElements(); ) {
-                    final MoveStep step = i.nextElement();
+                for (final ListIterator<MoveStep> i = md.getSteps(); i
+                      .hasNext(); ) {
+                    final MoveStep step = i.next();
                     if (step.getType() == MoveStepType.EJECT) {
                         legalPos = step.getTargetPosition();
                     }
@@ -1336,65 +1336,102 @@ class MovePathHandler extends AbstractTWRuleHandler {
      * Iterate through the steps of the movement path and handle each step.
      */
     private void processSteps() {
-        for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
+        MoveStep previousStep = null;
+        for (final ListIterator<MoveStep> i = md.getSteps(); i.hasNext(); ) {
+            if (i.hasPrevious()) {
+                previousStep = i.previous();
+                // move iterator back to original position; we know this is safe due to for loop terminator
+                i.next();
+            }
+            final MoveStep step = i.next();
             EntityMovementType stepMoveType = step.getMovementType(md.isEndStep(step));
             wasProne = entity.isProne();
             boolean isPavementStep = step.isPavementStep();
             entity.inReverse = step.isThisStepBackwards();
             boolean entityFellWhileAttemptingToStand = false;
-            boolean isOnGround = !i.hasMoreElements();
+            boolean isOnGround = !i.hasNext();
             isOnGround |= stepMoveType != EntityMovementType.MOVE_JUMP;
             isOnGround &= step.getElevation() < 1;
 
             // Check for hidden units point-blank shots
-            // TODO: unit's hex (TW somethingorother); may need to record initial MP remaining (for immediate forced
-            // TODO: withdrawal) here.
             if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
                 for (Entity hiddenEntity : hiddenEnemies) {
                     int dist = hiddenEntity.getPosition().distance(step.getPosition());
                     // Checking for same hex and stacking violation; do _not_ ignore hidden units here.
+                    // This covers entities moving into a hex occupied hidden enemies that would cause a stacking
+                    // violation, to wit:
+                    // 1. Entity moving into a hex at ground / water bottom height occupied by a hidden enemy
+                    // 2. Entity jumping into a hex occupied by a hidden enemy
+                    // Does not cover VTOLs ending in an occupied hex above the height of the enemy, or ASFs overflying
+                    // hidden enemies, or ground units ending their movement adjacent to a hex hiding an enemy (see
+                    // next clause).
                     if ((dist == 0) && !continueTurnFromPBS &&
                           (Compute.stackingViolation(getGame(), this.entity,
                               step.getPosition(), null, this.entity.climbMode(), false
                           ) != null)
                     ) {
-                        // Moving into hex of a hidden unit detects the unit
+                        // Attempting to move into hex of a hidden unit detects the unit
                         hiddenEntity.setHidden(false);
+
+                        // Set location per previous step; this prevents destroyed entities appearing at move start loc.
+                        this.entity.setPosition(previousStep.getPosition());
+                        this.entity.setFacing(previousStep.getFacing());
+                        this.entity.setSecondaryFacing(previousStep.getFacing());
+                        boolean jumping = stepMoveType == EntityMovementType.MOVE_JUMP;
 
                         // Handle prompting for possible PBS.
                         gameManager.getMainPhaseReport().addAll(processPossiblePBS(step, hiddenEntity));
 
-                        // Report halted movement
-                        report = new Report(9962);
-                        report.subject = this.entity.getId();
-                        report.addDesc(this.entity);
-                        report.add(step.getPosition().getBoardNum());
-                        addReport(report);
-                        addNewLines();
-                        addNewLines();
+                        // Handle jumping unit's domino effect now; this does not apply to normal movement
+                        if (jumping) {
+                            // handle domino effect; report immediately
+                            addReport(
+                                  gameManager.doEntityDisplacement(
+                                        this.entity,
+                                        previousStep.getPosition(),
+                                        step.getPosition(),
+                                        new PilotingRollData(this.entity.getId(), 0,
+                                              "Domino effect from jumping into hidden unit!")
+                                  )
+                            );
+                        } else {
+                            // Not domino effect from jumping so mover stops short of the occupied hex;
+                            // report halted movement
+                            report = new Report(9962);
+                            report.subject = this.entity.getId();
+                            report.addDesc(this.entity);
+                            report.add(step.getPosition().getBoardNum());
+                            addReport(report);
+                            addNewLines();
+                            addNewLines();
+                        }
+
                         // If we aren't at the end, send a special report
                         if ((getGame().getTurnIndex() + 1) < getGame().getTurnsList().size()) {
                             gameManager.send(hiddenEntity.getOwner().getId(), gameManager.createSpecialReportPacket());
                             gameManager.send(this.entity.getOwner().getId(), gameManager.createSpecialReportPacket());
                         }
+
                         // End this entity's turn _without_ updating its position to the current step, because the
                         // current step position is actually illegal; it will keep the previous step's position.
                         this.entity.setDone(true);
                         gameManager.entityUpdate(this.entity.getId(), movePath, true, losCache);
+                        if (jumping) {
+                            break;
+                        }
+
                         return;
 
-                        // Potential point-blank shot, but only in some situations:
+
+                        // Potential point-blank shot when not causing stacking violation, but only in some situations:
                         // 1. mover is ground unit _and_ ends its movement adjacent to / in the hidden unit's hex;
                         // 2. mover is Aerospace and hidden unit is within detection range of its flight path
                         //    (with or without Active Probe).
                         // and the revealed hidden unit has not already made a pointblank shot this turn.
-                    } else if ((dist <= 1) && !hiddenEntity.madePointblankShot() &&
+                    } else if (
+                          (dist <= 1) && !hiddenEntity.madePointblankShot() &&
                           ((!this.entity.isAero() && md.isEndStep(step)) ||
-                                (
-                                    this.entity.isAero() && (dist == ((this.entity.getBAPRange() > 0) ? 1 : 0))
-                                )
-                          )
+                                (this.entity.isAero() && (dist == ((this.entity.getBAPRange() > 0) ? 1 : 0))))
                     ) {
                         // Hidden unit should always be revealed as the PBS trigger _is_ getting revealed.
                         hiddenEntity.setHidden(false);
@@ -2676,7 +2713,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // check if we jumped into magma
             boolean jumpedIntoMagma = false;
-            if (!i.hasMoreElements() && curHex.terrainLevel(Terrains.MAGMA) == 2) {
+            if (!i.hasNext() && curHex.terrainLevel(Terrains.MAGMA) == 2) {
                 jumpedIntoMagma = (moveType == EntityMovementType.MOVE_JUMP);
             }
             if (curHex.terrainLevel(Terrains.MAGMA) != 2 || jumpedIntoMagma) {
@@ -2774,7 +2811,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // check for extreme gravity movement
-            if (!i.hasMoreElements() && !firstStep) {
+            if (!i.hasNext() && !firstStep) {
                 gameManager.checkExtremeGravityMovement(entity, step, lastStepMoveType, curPos, cachedGravityLimit);
             }
 
@@ -2795,7 +2832,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             gameManager)) {
                     detectedHiddenHazard = true;
 
-                    if (i.hasMoreElements() && (stepMoveType != EntityMovementType.MOVE_JUMP)) {
+                    if (i.hasNext() && (stepMoveType != EntityMovementType.MOVE_JUMP)) {
                         md.clear();
                     }
                 }
@@ -2806,7 +2843,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // jumping units may end their movement with a turn but should still check at
             // end of movement
             if (!lastPos.equals(curPos) || (lastElevation != curElevation) ||
-                  ((stepMoveType == EntityMovementType.MOVE_JUMP) && !i.hasMoreElements())) {
+                  ((stepMoveType == EntityMovementType.MOVE_JUMP) && !i.hasNext())) {
                 boolean boom = false;
                 if (isOnGround) {
                     boom = gameManager.checkVibraBombs(entity, curPos, false, lastPos, curPos,
@@ -2838,7 +2875,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // taken account of (functions the same as MASC failure)
                     // only do this if they had more steps (and they were not
                     // jumping
-                    if (i.hasMoreElements() && (stepMoveType != EntityMovementType.MOVE_JUMP)) {
+                    if (i.hasNext() && (stepMoveType != EntityMovementType.MOVE_JUMP)) {
                         md.clear();
                         fellDuringMovement = true;
                     }
@@ -2849,7 +2886,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // infantry discovers minefields if they end their move
             // in a minefield.
-            if (!lastPos.equals(curPos) && !i.hasMoreElements() && isInfantry) {
+            if (!lastPos.equals(curPos) && !i.hasNext() && isInfantry) {
                 if (getGame().containsMinefield(curPos)) {
                     Player owner = entity.getOwner();
                     for (Minefield mf : getGame().getMinefields(curPos)) {
@@ -3613,13 +3650,17 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
     protected Vector<Report> processPossiblePBS(MoveStep step, Entity hiddenEntity) {
         Vector<Report> pbsReports = new Vector<>();
+        Vector<Report> attackReports = new Vector<>();
         // Update hidden entity owner with current mover's position.
         gameManager.send(hiddenEntity.getOwnerId(),
               gameManager.createEntityPacket(this.entity.getId(), null));
 
         // Allow for packet data read failure
         try {
-            gameManager.processPointblankShotCFR(hiddenEntity, this.entity);
+            attackReports = gameManager.processPointblankShotCFR(hiddenEntity, this.entity);
+            if (attackReports != null) {
+                pbsReports.addAll(attackReports);
+            }
         } catch (InvalidPacketDataException e) {
             logger.error("Invalid packet data:", e);
         }

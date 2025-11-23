@@ -36,6 +36,7 @@ package megamek.common.actions;
 
 import java.io.Serial;
 import java.util.Enumeration;
+import java.util.ListIterator;
 
 import megamek.client.ui.Messages;
 import megamek.common.CriticalSlot;
@@ -441,8 +442,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
 
         // determine last valid step
         md.compile(game, attackingEntity);
-        for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
+        for (final ListIterator<MoveStep> i = md.getSteps(); i.hasNext(); ) {
+            final MoveStep step = i.next();
             if (step.getMovementType(md.isEndStep(step)) == EntityMovementType.MOVE_ILLEGAL) {
                 break;
             }

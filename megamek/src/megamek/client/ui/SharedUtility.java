@@ -37,6 +37,7 @@ package megamek.client.ui;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.ListIterator;
 
 import megamek.client.Client;
 import megamek.common.Hex;
@@ -106,8 +107,8 @@ public class SharedUtility {
         EntityMovementType overallMoveType = md.getLastStepMovementType();
 
         // iterate through steps
-        for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
+        for (final ListIterator<MoveStep> i = md.getSteps(); i.hasNext(); ) {
+            final MoveStep step = i.next();
 
             // stop for illegal movement
             if (step.getMovementType(md.isEndStep(step)) == EntityMovementType.MOVE_ILLEGAL) {
@@ -224,8 +225,8 @@ public class SharedUtility {
         firstStep = true;
         /* Bug 754610: Revert fix for bug 702735. */
         MoveStep prevStep = null;
-        for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
+        for (final ListIterator<MoveStep> i = md.getSteps(); i.hasNext(); ) {
+            final MoveStep step = i.next();
             boolean isPavementStep = step.isPavementStep();
 
             // stop for illegal movement
@@ -413,7 +414,7 @@ public class SharedUtility {
             }
 
             // Check if used more MPs than Mek/Vehicle would have w/o gravity
-            if (!i.hasMoreElements() && !firstStep) {
+            if (!i.hasNext() && !firstStep) {
                 if ((entity instanceof Mek) || (entity instanceof Tank)) {
                     if ((moveType == EntityMovementType.MOVE_WALK)
                           || (moveType == EntityMovementType.MOVE_VTOL_WALK)
@@ -727,8 +728,8 @@ public class SharedUtility {
         // cycle through movement. Collect thrust used until position changes.
         int thrustUsed = 0;
         int j = 0;
-        for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
+        for (final ListIterator<MoveStep> i = md.getSteps(); i.hasNext(); ) {
+            final MoveStep step = i.next();
             j++;
             // how do I figure out last step?
             if ((step.getDistance() == 0) && (md.length() != j)) {

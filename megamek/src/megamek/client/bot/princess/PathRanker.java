@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Optional;
 import java.util.TreeSet;
 
@@ -556,9 +557,9 @@ public abstract class PathRanker implements IPathRanker {
         // If we're not jumping, check each building to see if it will collapse if it
         // has a basement.
         final double mass = path.getEntity().getWeight() + 10;
-        final Enumeration<MoveStep> steps = path.getSteps();
-        while (steps.hasMoreElements()) {
-            final MoveStep step = steps.nextElement();
+        final ListIterator<MoveStep> steps = path.getSteps();
+        while (steps.hasNext()) {
+            final MoveStep step = steps.next();
             final IBuilding building = game.getBoard(step.getBoardId()).getBuildingAt(step.getPosition());
             if (building == null) {
                 continue;

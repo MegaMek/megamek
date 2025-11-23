@@ -6255,20 +6255,20 @@ public class TWGameManager extends AbstractGameManager {
                             }
                         }
                     }
+                    break;
                 }
-                // Now handle the attacks
-                // Set to the firing phase, so the attacks handle
-                GamePhase currentPhase = game.getPhase();
-                game.setPhase(GamePhase.FIRING);
-                // Handle attacks
-                reports.addAll(handleAttacks(true));
-                // Report for attack phase report
-                addReport(reports);
-                // Restore Phase
-                game.setPhase(currentPhase);
-                return reports;
             }
         }
+        // Now handle the attacks
+        // Set to the firing phase, so the attacks handle
+        GamePhase currentPhase = game.getPhase();
+        game.setPhase(GamePhase.FIRING);
+        // Handle attacks
+        // Reports are consolidated here but
+        reports.addAll(handleAttacks(true));
+        // Restore Phase
+        game.setPhase(currentPhase);
+        return reports;
     }
 
     public int processTeleguidedMissileCFR(int playerId, List<Integer> targetIds, List<Integer> toHitValues)
@@ -29120,7 +29120,7 @@ public class TWGameManager extends AbstractGameManager {
      * TODO : Refactor the new entity announcement out of here.
      */
     void handleAttacks() {
-        handleAttacks(false);
+        addReport(handleAttacks(false));
     }
 
     private Vector<Report> handleAttacks(boolean pointblankShot) {
@@ -29202,7 +29202,7 @@ public class TWGameManager extends AbstractGameManager {
         // resolve standard to capital one more time
         handleAttackReports.addAll(checkFatalThresholds(lastAttackerId, lastAttackerId));
         Report.addNewline(handleAttackReports);
-        addReport(handleAttackReports);
+        // addReport(handleAttackReports);
         // HACK, but anything else seems to run into weird problems.
         game.setAttacksVector(keptAttacks);
         datasetLogger.append(game, true);

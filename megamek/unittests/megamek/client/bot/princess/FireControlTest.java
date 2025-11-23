@@ -2737,7 +2737,7 @@ class FireControlTest {
         MoveStep mockStep = mock(MoveStep.class);
         pathSteps.add(mockStep);
         MovePath mockPath = mock(MovePath.class);
-        when(mockPath.getSteps()).thenReturn(pathSteps.elements());
+        when(mockPath.getSteps()).thenReturn(pathSteps.listIterator());
         when(mockStep.getPosition()).thenReturn(mockTargetCoords);
         assertTrue(testFireControl.isTargetUnderFlightPath(mockPath, mockTargetState));
 
@@ -2746,7 +2746,7 @@ class FireControlTest {
         mockStep = mock(MoveStep.class);
         pathSteps.add(mockStep);
         mockPath = mock(MovePath.class);
-        when(mockPath.getSteps()).thenReturn(pathSteps.elements());
+        when(mockPath.getSteps()).thenReturn(pathSteps.listIterator());
         when(mockStep.getPosition()).thenReturn(mockShooterCoords);
         assertFalse(testFireControl.isTargetUnderFlightPath(mockPath, mockTargetState));
     }

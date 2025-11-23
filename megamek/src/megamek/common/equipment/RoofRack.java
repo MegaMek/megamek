@@ -116,4 +116,13 @@ public class RoofRack extends ExternalCargo {
     public String getType() {
         return "Roof Rack";
     }
+
+    /**
+     * Returns true if the transporter damages its cargo if the transport is hit, otherwise false.
+     */
+    @Override
+    public boolean alwaysDamageCargoIfTransportHit() {
+        // Any successful attack on a unit carrying unprotected cargo also strikes the cargo.
+        return true;
+    }
 }

@@ -35,7 +35,6 @@
 package megamek.client.ui;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.ListIterator;
 

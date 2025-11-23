@@ -444,6 +444,7 @@ public class Compute {
      * @param enteringId The gameId of the moving Entity
      * @param coords     The hex being entered
      * @param climbMode  The moving Entity's climb mode at the point it enters the destination hex
+     * @return Entity instance that is causing the violation
      */
     public static Entity stackingViolation(Game game, int enteringId, Coords coords, boolean climbMode) {
         Entity entering = game.getEntity(enteringId);
@@ -465,6 +466,7 @@ public class Compute {
      * @param transport Represents the unit transporting entering, which may affect stacking, can be null
      * @param climbMode The moving Entity's climb mode at the point it enters the destination hex
      * @param ignoreHidden true by default.
+     * @return Entity instance that is causing the violation
      */
     public static Entity stackingViolation(Game game, Entity entering,
           Coords dest, Entity transport, boolean climbMode, boolean ignoreHidden) {
@@ -484,6 +486,8 @@ public class Compute {
      * @param dest      The hex being entered
      * @param transport Represents the unit transporting entering, which may affect stacking, can be null
      * @param climbMode The moving Entity's climb mode at the point it enters the destination hex
+     * @param ignoreHidden true by default.
+     * @return Entity instance that is causing the violation
      */
     public static Entity stackingViolation(Game game, Entity entering,
           int elevation, Coords dest, Entity transport, boolean climbMode, boolean ignoreHidden) {
@@ -491,12 +495,37 @@ public class Compute {
               elevation, dest, entering.getBoardId(), transport, climbMode, ignoreHidden);
     }
 
+    /** Used by Princess / bots for checking deployment positions.
+     *
+     * @param game      The Game instance
+     * @param entering  The Entity entering the hex
+     * @param origPosition The coords of the hex the moving Entity is leaving
+     * @param elevation The elevation of the moving Entity
+     * @param dest      The hex being entered
+     * @param transport Represents the unit transporting entering, which may affect stacking, can be null
+     * @param climbMode The moving Entity's climb mode at the point it enters the destination hex
+     * @param ignoreHidden true by default.
+     * @return Entity instance that is causing the violation
+     */
     public static Entity stackingViolation(Game game, Entity entering,
           Coords origPosition, int elevation, Coords dest, Entity transport, boolean climbMode, boolean ignoreHidden) {
         return stackingViolation(game, entering, origPosition,
               elevation, dest, entering.getBoardId(), transport, climbMode, ignoreHidden);
     }
 
+    /**
+     * Board-aware check used when compiling movepaths
+     *
+     * @param game      The Game instance
+     * @param entering  The Entity entering the hex
+     * @param elevation The elevation of the moving Entity
+     * @param dest      The hex being entered
+     * @param destBoardId Allows setting a different board for checking destination hex
+     * @param transport Represents the unit transporting entering, which may affect stacking, can be null
+     * @param climbMode The moving Entity's climb mode at the point it enters the destination hex
+     * @param ignoreHidden true by default.
+     * @return Entity instance that is causing the violation
+     */
     public static Entity stackingViolation(Game game, Entity entering,
           int elevation, Coords dest, int destBoardId, Entity transport, boolean climbMode, boolean ignoreHidden) {
         return stackingViolation(game, entering, entering.getPosition(),
@@ -514,8 +543,11 @@ public class Compute {
      * @param origPosition The coords of the hex the moving Entity is leaving
      * @param elevation    The elevation of the moving Entity
      * @param dest         The hex being entered
+     * @param destBoardId Allows setting a different board for checking destination hex
      * @param transport    Represents the unit transporting entering, which may affect stacking, can be null
      * @param climbMode    The moving Entity's climb mode at the point it enters the destination hex
+     * @param ignoreHidden true by default.
+     * @return Entity instance that is causing the violation
      */
     public static Entity stackingViolation(Game game, Entity entering,
           Coords origPosition, int elevation, Coords dest, int destBoardId, Entity transport, boolean climbMode,

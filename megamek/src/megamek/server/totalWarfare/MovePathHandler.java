@@ -1434,8 +1434,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         // and the revealed hidden unit has not already made a pointblank shot this turn.
                     } else if (
                           (dist <= 1) && !hiddenEntity.madePointblankShot() &&
-                          ((!this.entity.isAero() && md.isEndStep(step)) ||
-                                (this.entity.isAero() && (dist == ((this.entity.getBAPRange() > 0) ? 1 : 0))))
+                          ((!this.entity.isAirborne() && md.isEndStep(step)) ||
+                                (this.entity.isAirborne() && (dist == ((this.entity.getBAPRange() > 0) ? 1 : 0))))
                     ) {
                         // Hidden unit should always be revealed as the PBS trigger _is_ getting revealed.
                         hiddenEntity.setHidden(false);
@@ -3652,6 +3652,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
     }
 
+    /**
+     * Wrapper for processPointblankShotCFR with packet error handling and consolidated reports
+     * @param step          MoveStep to prompt for a PBS
+     * @param hiddenEntity  Candidate to fire PBS
+     * @return  Vector<Report> collection of reports; caller responsible for displaying these.
+     */
     protected Vector<Report> processPossiblePBS(MoveStep step, Entity hiddenEntity) {
         Vector<Report> pbsReports = new Vector<>();
         Vector<Report> attackReports = new Vector<>();

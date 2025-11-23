@@ -810,7 +810,8 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     public ListIterator<MoveStep> getSteps() {
-        return steps.listIterator();
+        // Create shallow copy for iterator thread safety.
+        return new Vector<MoveStep>(steps).listIterator();
     }
 
     public @Nullable MoveStep getStep(final int index) {

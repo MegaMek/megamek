@@ -35,7 +35,6 @@
 package megamek.common.actions;
 
 import java.io.Serial;
-import java.util.Enumeration;
 import java.util.ListIterator;
 
 import megamek.client.ui.Messages;

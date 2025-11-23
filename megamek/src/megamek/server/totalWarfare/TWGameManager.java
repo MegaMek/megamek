@@ -29123,6 +29123,11 @@ public class TWGameManager extends AbstractGameManager {
         addReport(handleAttacks(false));
     }
 
+    /**
+     * Phase-agnostic attack handler that returns a Vector of reports generated from its handled attacks.
+     * @param pointblankShot    should attacks be handled as PBS?  Changes some report verbiage.
+     * @return Vector           reports (caller is responsible for displaying)
+     */
     private Vector<Report> handleAttacks(boolean pointblankShot) {
         Report r;
         int lastAttackerId = -1;

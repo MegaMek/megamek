@@ -35,7 +35,6 @@
 package megamek.common.actions;
 
 import java.io.Serial;
-import java.util.Enumeration;
 import java.util.ListIterator;
 import java.util.Objects;
 

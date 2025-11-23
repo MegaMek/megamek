@@ -1373,6 +1373,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         // Attempting to move into hex of a hidden unit detects the unit
                         hiddenEntity.setHidden(false);
 
+                        // If first step, use this step as the previous step - probably impossible, but safe.
+                        if (previousStep == null) {
+                            previousStep = step;
+                        }
                         // Set location per previous step; this prevents destroyed entities appearing at move start loc.
                         this.entity.setPosition(previousStep.getPosition());
                         this.entity.setFacing(previousStep.getFacing());

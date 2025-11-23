@@ -3722,9 +3722,9 @@ public final class BoardView extends AbstractBoardView
 
         refreshMoveVectors(entity, movePath, color);
 
-        for (Enumeration<MoveStep> i = movePath.getSteps();
-              i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
+        for (ListIterator<MoveStep> i = movePath.getSteps();
+              i.hasNext(); ) {
+            final MoveStep step = i.next();
             if ((null != previousStep) && ((step.getType() == MoveStepType.UP)
                   || (step.getType() == MoveStepType.DOWN)
                   || (step.getType() == MoveStepType.ACC)

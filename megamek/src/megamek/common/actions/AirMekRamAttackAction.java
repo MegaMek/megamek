@@ -34,7 +34,7 @@
 package megamek.common.actions;
 
 import java.io.Serial;
-import java.util.Enumeration;
+import java.util.ListIterator;
 
 import megamek.common.Hex;
 import megamek.common.Player;
@@ -366,8 +366,8 @@ public class AirMekRamAttackAction extends DisplacementAttackAction {
 
         // determine last valid step
         movePath.compile(game, attackingEntity);
-        for (final Enumeration<MoveStep> i = movePath.getSteps(); i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
+        for (final ListIterator<MoveStep> i = movePath.getSteps(); i.hasNext(); ) {
+            final MoveStep step = i.next();
             if (step.getMovementType(movePath.isEndStep(step)) == EntityMovementType.MOVE_ILLEGAL) {
                 break;
             }

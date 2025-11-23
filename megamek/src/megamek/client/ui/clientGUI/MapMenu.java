@@ -831,8 +831,13 @@ public class MapMenu extends JPopupMenu {
         JMenu menu = new JMenu("View");
         Game game = client.getGame();
         Player localPlayer = client.getLocalPlayer();
+        int playerId = localPlayer.getId();
 
         for (Entity entity : game.getEntitiesVector(boardLocation, true)) {
+            // Skip hidden entities
+            if (entity.isHidden() && !(entity.getOwnerId() == playerId)) {
+                continue;
+            }
             // Only add the unit if it's actually visible
             // With double-blind on, the game may unsee units
             if (!entity.isSensorReturn(localPlayer) && entity.hasSeenEntity(localPlayer)) {

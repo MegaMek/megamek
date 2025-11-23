@@ -438,18 +438,20 @@ public class Compute {
      * <p>
      * The position and elevation for the stacking violation are derived from the Entity represented by the passed
      * Entity ID.
+     * By default, ignores hidden units.
      *
      * @param game       The Game instance
      * @param enteringId The gameId of the moving Entity
      * @param coords     The hex being entered
      * @param climbMode  The moving Entity's climb mode at the point it enters the destination hex
+     * @return Entity instance that is causing the violation
      */
     public static Entity stackingViolation(Game game, int enteringId, Coords coords, boolean climbMode) {
         Entity entering = game.getEntity(enteringId);
         if (entering == null) {
             return null;
         }
-        return Compute.stackingViolation(game, entering, coords, null, climbMode);
+        return Compute.stackingViolation(game, entering, coords, null, climbMode, true);
     }
 
     /**
@@ -463,11 +465,13 @@ public class Compute {
      * @param dest      The hex being entered
      * @param transport Represents the unit transporting entering, which may affect stacking, can be null
      * @param climbMode The moving Entity's climb mode at the point it enters the destination hex
+     * @param ignoreHidden true by default.
+     * @return Entity instance that is causing the violation
      */
     public static Entity stackingViolation(Game game, Entity entering,
-          Coords dest, Entity transport, boolean climbMode) {
+          Coords dest, Entity transport, boolean climbMode, boolean ignoreHidden) {
         return stackingViolation(game, entering, entering.getElevation(), dest,
-              transport, climbMode);
+              transport, climbMode, ignoreHidden);
     }
 
     /**
@@ -482,23 +486,50 @@ public class Compute {
      * @param dest      The hex being entered
      * @param transport Represents the unit transporting entering, which may affect stacking, can be null
      * @param climbMode The moving Entity's climb mode at the point it enters the destination hex
+     * @param ignoreHidden true by default.
+     * @return Entity instance that is causing the violation
      */
     public static Entity stackingViolation(Game game, Entity entering,
-          int elevation, Coords dest, Entity transport, boolean climbMode) {
+          int elevation, Coords dest, Entity transport, boolean climbMode, boolean ignoreHidden) {
         return stackingViolation(game, entering, entering.getPosition(),
-              elevation, dest, entering.getBoardId(), transport, climbMode);
+              elevation, dest, entering.getBoardId(), transport, climbMode, ignoreHidden);
     }
 
+    /** Used by Princess / bots for checking deployment positions.
+     *
+     * @param game      The Game instance
+     * @param entering  The Entity entering the hex
+     * @param origPosition The coords of the hex the moving Entity is leaving
+     * @param elevation The elevation of the moving Entity
+     * @param dest      The hex being entered
+     * @param transport Represents the unit transporting entering, which may affect stacking, can be null
+     * @param climbMode The moving Entity's climb mode at the point it enters the destination hex
+     * @param ignoreHidden true by default.
+     * @return Entity instance that is causing the violation
+     */
     public static Entity stackingViolation(Game game, Entity entering,
-          Coords origPosition, int elevation, Coords dest, Entity transport, boolean climbMode) {
+          Coords origPosition, int elevation, Coords dest, Entity transport, boolean climbMode, boolean ignoreHidden) {
         return stackingViolation(game, entering, origPosition,
-              elevation, dest, entering.getBoardId(), transport, climbMode);
+              elevation, dest, entering.getBoardId(), transport, climbMode, ignoreHidden);
     }
 
+    /**
+     * Board-aware check used when compiling movepaths
+     *
+     * @param game      The Game instance
+     * @param entering  The Entity entering the hex
+     * @param elevation The elevation of the moving Entity
+     * @param dest      The hex being entered
+     * @param destBoardId Allows setting a different board for checking destination hex
+     * @param transport Represents the unit transporting entering, which may affect stacking, can be null
+     * @param climbMode The moving Entity's climb mode at the point it enters the destination hex
+     * @param ignoreHidden true by default.
+     * @return Entity instance that is causing the violation
+     */
     public static Entity stackingViolation(Game game, Entity entering,
-          int elevation, Coords dest, int destBoardId, Entity transport, boolean climbMode) {
+          int elevation, Coords dest, int destBoardId, Entity transport, boolean climbMode, boolean ignoreHidden) {
         return stackingViolation(game, entering, entering.getPosition(),
-              elevation, dest, destBoardId, transport, climbMode);
+              elevation, dest, destBoardId, transport, climbMode, ignoreHidden);
     }
 
     /**
@@ -512,11 +543,15 @@ public class Compute {
      * @param origPosition The coords of the hex the moving Entity is leaving
      * @param elevation    The elevation of the moving Entity
      * @param dest         The hex being entered
+     * @param destBoardId Allows setting a different board for checking destination hex
      * @param transport    Represents the unit transporting entering, which may affect stacking, can be null
      * @param climbMode    The moving Entity's climb mode at the point it enters the destination hex
+     * @param ignoreHidden true by default.
+     * @return Entity instance that is causing the violation
      */
     public static Entity stackingViolation(Game game, Entity entering,
-          Coords origPosition, int elevation, Coords dest, int destBoardId, Entity transport, boolean climbMode) {
+          Coords origPosition, int elevation, Coords dest, int destBoardId, Entity transport, boolean climbMode,
+          boolean ignoreHidden) {
         // no stacking violations on low-atmosphere and space maps
         if (!game.getBoard(destBoardId).isGround()) {
             return null;
@@ -586,6 +621,11 @@ public class Compute {
             for (Entity inHex : game.getEntitiesVector(coords, destBoardId)) {
 
                 if (inHex.isAirborne()) {
+                    continue;
+                }
+
+                // We are not allowed to consider hidden units here!
+                if (ignoreHidden && inHex.isHidden()) {
                     continue;
                 }
 
@@ -679,9 +719,14 @@ public class Compute {
      * called for stacking purposes, and so does not return true if the enemy unit is currently making a DFA.
      */
     public static boolean isEnemyIn(Game game, Entity entity, Coords coords,
-          boolean onlyMeks, boolean ignoreInfantry, int enLowEl) {
+          boolean onlyMeks, boolean ignoreInfantry, int enLowEl, boolean ignoreHidden) {
         int enHighEl = enLowEl + entity.getHeight();
         for (Entity inHex : game.getEntitiesVector(coords)) {
+            // If we're ignoring hidden units and this one *is* hidden, pretend we don't see it.
+            if (inHex.isHidden() && ignoreHidden) {
+                continue;
+            }
+
             int inHexAlt = inHex.getAltitude();
             boolean crewOnGround = (inHex instanceof EjectedCrew) && (inHexAlt == 0);
             int inHexEnLowEl = inHex.getElevation();
@@ -7486,7 +7531,7 @@ public class Compute {
             // (https://bg.battletech.com/forums/index.php?topic=84054.0)
             return distance == 0;
         } else {return (distance == 1) && endStep;}
-        // Active Probe detection happens is handled in detectHiddenUnits
+        // Active Probe detection is handled in detectHiddenUnits
         // Anything not explicitly detected is not detected.
     }
 

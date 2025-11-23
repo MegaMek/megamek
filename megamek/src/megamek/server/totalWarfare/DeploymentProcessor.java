@@ -268,7 +268,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
             // from the sky!
             entity.setAssaultDropInProgress(true);
         } else if ((entity instanceof VTOL) && (entity.getExternalUnits().isEmpty())) {
-            while ((Compute.stackingViolation(getGame(), entity, coords, null, entity.climbMode()) != null) &&
+            while ((Compute.stackingViolation(getGame(), entity, coords, null, entity.climbMode(), false) != null) &&
                   (entity.getElevation() <= 500)) {
                 entity.setElevation(entity.getElevation() + 1);
             }

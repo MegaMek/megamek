@@ -944,7 +944,6 @@ public class TeamLoadOutGenerator {
                   reconfigurationParameters.enemyCount /
                         castPropertyDouble("mtEnergyBoatEnemyFractionDivisor", 4.0)) {
                 munitionWeightCollection.increaseHeatMunitions();
-                munitionWeightCollection.increaseHeatMunitions();
                 munitionWeightCollection.increaseMunitions(new ArrayList<>(List.of("Heat-Seeking")));
             }
 
@@ -953,7 +952,10 @@ public class TeamLoadOutGenerator {
                   castPropertyDouble("mtSeekingAmmoEnemyECMExceedThreshold", 1.0)) {
                 munitionWeightCollection.decreaseGuidedMunitions();
                 munitionWeightCollection.increaseSeekingMunitions();
-                munitionWeightCollection.increaseMunitions(new ArrayList<>(List.of("Anti-Radiation")));
+
+                for(int i=1; i<=Compute.log2(Math.min(2, (int) reconfigurationParameters.enemyECMCount)); i++) {
+                    munitionWeightCollection.increaseMunitions(new ArrayList<>(List.of("Anti-Radiation")));
+                }
             }
             if (reconfigurationParameters.enemyTSMCount >
                   castPropertyDouble("mtSeekingAmmoEnemyTSMExceedThreshold", 1.0)) {

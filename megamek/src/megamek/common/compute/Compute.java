@@ -7658,5 +7658,13 @@ public class Compute {
         return entities;
     }
 
+    // Fast log2 implementation
+    public static int log2(int number) throws IllegalArgumentException {
+        if (number <= 0) {
+            throw new IllegalArgumentException();
+        }
+        return 31 - Integer.numberOfLeadingZeros(number);
+    }
+
     private Compute() {}
 }

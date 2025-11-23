@@ -477,7 +477,7 @@ public class ARADEquipmentDetectorTest {
      */
     private Mounted<?> createMockEquipment(MiscTypeFlag flag, boolean destroyed, boolean missing, boolean breached) {
         Mounted<?> equipment = mock(Mounted.class);
-        EquipmentType type = mock(EquipmentType.class);
+        MiscType type = mock(MiscType.class);
 
         doReturn(false).when(type).hasFlag(Mockito.any(MiscTypeFlag.class));
         doReturn(true).when(type).hasFlag(flag);
@@ -494,7 +494,7 @@ public class ARADEquipmentDetectorTest {
      */
     private Mounted<?> createMockCommsEquipment(double tonnage, boolean destroyed, boolean missing, boolean breached) {
         Mounted<?> equipment = mock(Mounted.class);
-        EquipmentType type = mock(EquipmentType.class);
+        MiscType type = mock(MiscType.class);
 
         doReturn(false).when(type).hasFlag(Mockito.any(MiscTypeFlag.class));
         doReturn(true).when(type).hasFlag(MiscType.F_COMMUNICATIONS);

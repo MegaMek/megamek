@@ -7658,5 +7658,17 @@ public class Compute {
         return entities;
     }
 
+    /**
+     * Fast log2 implementation; throws if number &le; 0 
+     * @param number        positive int to get the log2 of
+     * @return int          approximate log2 of number; functionally (Math.floor(log10(10)/log10(2))
+     */
+    public static int log2(int number) throws IllegalArgumentException {
+        if (number <= 0) {
+            throw new IllegalArgumentException();
+        }
+        return 31 - Integer.numberOfLeadingZeros(number);
+    }
+
     private Compute() {}
 }

@@ -24654,9 +24654,9 @@ public class TWGameManager extends AbstractGameManager {
 
                 // Reconstruct C3 network IDs from UUIDs (fixes lobby C3 configuration)
                 List<Entity> c3affected = C3Util.wireC3(game, entity);
-                for (Entity e : c3affected) {
-                    if (!newEntities.contains(e)) {
-                        newEntities.add(e);
+                for (Entity affectedEntity : c3affected) {
+                    if (!newEntities.contains(affectedEntity)) {
+                        newEntities.add(affectedEntity);
                     }
                 }
 

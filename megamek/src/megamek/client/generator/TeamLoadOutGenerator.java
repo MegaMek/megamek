@@ -953,7 +953,7 @@ public class TeamLoadOutGenerator {
                 munitionWeightCollection.decreaseGuidedMunitions();
                 munitionWeightCollection.increaseSeekingMunitions();
 
-                for(int i=1; i<=Compute.log2(Math.min(2, (int) reconfigurationParameters.enemyECMCount)); i++) {
+                for (int i=0; i<Compute.log2(Math.max(2, (int) reconfigurationParameters.enemyECMCount)); i++) {
                     munitionWeightCollection.increaseMunitions(new ArrayList<>(List.of("Anti-Radiation")));
                 }
             }

@@ -241,7 +241,8 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
 
         // Add player's units
         if (!playerNovaUnits.isEmpty()) {
-            unitListModel.addElement("=== " + Messages.getString("NovaNetworkDialog.yourUnits") + " ===");
+            unitListModel.addElement(Messages.getString("NovaNetworkDialog.sectionHeader",
+                  Messages.getString("NovaNetworkDialog.yourUnits")));
             entityMap.put(index++, null); // Header, no entity
 
             for (Entity entity : playerNovaUnits) {
@@ -258,7 +259,8 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
                 entityMap.put(index++, null);
             }
 
-            unitListModel.addElement("=== " + Messages.getString("NovaNetworkDialog.alliedUnits") + " ===");
+            unitListModel.addElement(Messages.getString("NovaNetworkDialog.sectionHeader",
+                  Messages.getString("NovaNetworkDialog.alliedUnits")));
             entityMap.put(index++, null); // Header, no entity
 
             for (Entity entity : alliedNovaUnits) {
@@ -276,7 +278,8 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         StringBuilder entityDisplayText = new StringBuilder();
 
         // ID and name
-        entityDisplayText.append("ID ").append(entity.getId()).append(": ").append(entity.getShortName());
+        entityDisplayText.append(Messages.getString("NovaNetworkDialog.entityIdFormat",
+              entity.getId(), entity.getShortName()));
 
         // Current network
         String currentNetwork = entity.getC3NetId();
@@ -290,28 +293,31 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
             int networkSize = getNetworkSize(currentNetwork);
             String networkMembers = getNetworkMembersDisplay(entity, currentNetwork);
             int freeNodes = 3 - networkSize;
-            String availability = (freeNodes == 0) ? "Full" : "Available";
+            String availability = (freeNodes == 0)
+                  ? Messages.getString("NovaNetworkDialog.networkFull")
+                  : Messages.getString("NovaNetworkDialog.networkAvailable");
 
-            entityDisplayText.append(" Network consists of: ").append(networkMembers);
-            entityDisplayText.append(", (").append(networkSize).append("/3 ").append(availability).append(")");
+            entityDisplayText.append(Messages.getString("NovaNetworkDialog.networkStatus",
+                  networkMembers, networkSize, availability));
         } else {
-            entityDisplayText.append(" [Unlinked]");
+            entityDisplayText.append(Messages.getString("NovaNetworkDialog.unlinked"));
         }
 
         // Show if pending change
         if (pendingNetwork != null && !pendingNetwork.equals(currentNetwork)) {
-            entityDisplayText.append(" → [Next turn: ");
+            String pendingDisplay;
             if (pendingNetwork.equals(entity.getOriginalNovaC3NetId())) {
-                entityDisplayText.append("Unlinked");
+                pendingDisplay = Messages.getString("NovaNetworkDialog.pendingUnlinked");
             } else {
-                entityDisplayText.append(getNetworkMembersDisplay(entity, pendingNetwork));
+                pendingDisplay = getNetworkMembersDisplay(entity, pendingNetwork);
             }
-            entityDisplayText.append("]");
+            entityDisplayText.append(Messages.getString("NovaNetworkDialog.pendingChange", pendingDisplay));
         }
 
         // Owner info for allied units
         if (entity.getOwnerId() != localPlayerId) {
-            entityDisplayText.append(" (").append(game.getPlayer(entity.getOwnerId()).getName()).append(")");
+            entityDisplayText.append(Messages.getString("NovaNetworkDialog.ownerSuffix",
+                  game.getPlayer(entity.getOwnerId()).getName()));
         }
 
         return entityDisplayText.toString();
@@ -351,7 +357,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
      */
     private String getNetworkMembersDisplay(Entity currentEntity, String networkId) {
         if (networkId == null) {
-            return "Unknown network";
+            return Messages.getString("NovaNetworkDialog.unknownNetwork");
         }
 
         // Find all OTHER entities in the same network
@@ -363,12 +369,12 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
             }
             // Check if in same network
             if (entity.hasNovaCEWS() && networkId.equals(entity.getC3NetId())) {
-                memberIds.add("ID" + entity.getId());
+                memberIds.add(Messages.getString("NovaNetworkDialog.memberId", entity.getId()));
             }
         }
 
         if (memberIds.isEmpty()) {
-            return "No other members";
+            return Messages.getString("NovaNetworkDialog.noOtherMembers");
         } else {
             return String.join(", ", memberIds);
         }
@@ -389,10 +395,10 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
 
                 if (!currentNetwork.equals(targetNetwork)) {
                     hasPending = true;
-                    pendingChangesText.append(entity.getShortName()).append(": ");
-                    pendingChangesText.append(getNetworkDisplayName(currentNetwork));
-                    pendingChangesText.append(" → ");
-                    pendingChangesText.append(getNetworkDisplayName(targetNetwork));
+                    pendingChangesText.append(Messages.getString("NovaNetworkDialog.pendingChangeFormat",
+                          entity.getShortName(),
+                          getNetworkDisplayName(currentNetwork),
+                          getNetworkDisplayName(targetNetwork)));
                     pendingChangesText.append("\n");
                 }
             }
@@ -418,7 +424,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
                 int entityId = Integer.parseInt(idPart);
                 Entity entity = game.getEntity(entityId);
                 if (entity != null) {
-                    return String.format("Network of %s", entity.getShortName());
+                    return Messages.getString("NovaNetworkDialog.networkOf", entity.getShortName());
                 }
             } catch (NumberFormatException e) {
                 // Fall through to default
@@ -554,8 +560,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         // IO: Alternate Eras p.60: "link up to two other units" = max 3 total
         if (resultingNetworkSize > 3) {
             logger.warn("Link action failed: Resulting network would have {} units (max 3)", resultingNetworkSize);
-            showError("Cannot link: Resulting network would have " + resultingNetworkSize +
-                " units. Maximum is 3 units per network (IO: Alternate Eras p.60).");
+            showError(Messages.getString("NovaNetworkDialog.error.tooManyUnitsResult", resultingNetworkSize));
             return;
         }
 

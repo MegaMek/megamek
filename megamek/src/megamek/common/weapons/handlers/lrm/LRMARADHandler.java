@@ -140,9 +140,15 @@ public class LRMARADHandler extends LRMHandler {
     }
 
     /**
-     * Override calcHits() to add ARAD-specific report messages for cluster modifiers. This method adds visible feedback
-     * to players about ARAD cluster modifier state: - Report 3363: ECM blocked bonus - Report 3364: Narc override
-     * (bonus despite ECM) - Report 3368: No electronics penalty - Report 3369: Normal bonus (electronics detected)
+     * Override calcHits() to add ARAD-specific report messages for cluster modifiers.
+     * <p>
+     * This method adds visible feedback to players about ARAD cluster modifier state:
+     * <ul>
+     *   <li>Report 3363: ECM blocked bonus</li>
+     *   <li>Report 3364: Narc override (bonus despite ECM)</li>
+     *   <li>Report 3368: No electronics penalty</li>
+     *   <li>Report 3369: Normal bonus (electronics detected)</li>
+     * </ul>
      *
      * @param vPhaseReport Vector to collect report messages
      *

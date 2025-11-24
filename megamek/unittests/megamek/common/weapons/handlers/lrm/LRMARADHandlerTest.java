@@ -65,10 +65,14 @@ import org.mockito.Mockito;
 /**
  * Unit tests for LRMARADHandler cluster modifier calculations.
  * <p>
- * Tests verify that ARAD missiles apply correct cluster modifiers: - +1 against targets with electronics (not blocked
- * by ECM) - 0 against targets with electronics (blocked by ECM, no Narc) - +1 against targets with electronics (Narc
- * overrides ECM) - -2 against targets without electronics - -2 against non-entity targets
- *
+ * Tests verify that ARAD missiles apply correct cluster modifiers:
+ * <ul>
+ *   <li>+1 against targets with electronics (not blocked by ECM)</li>
+ *   <li>0 against targets with electronics (blocked by ECM, no Narc)</li>
+ *   <li>+1 against targets with electronics (Narc overrides ECM)</li>
+ *   <li>-2 against targets without electronics</li>
+ *   <li>-2 against non-entity targets</li>
+ * </ul>
  * @author Hammer - Built with Claude Code
  * @since 2025-01-16
  */

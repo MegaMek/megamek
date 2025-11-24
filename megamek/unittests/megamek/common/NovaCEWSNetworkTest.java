@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This file is part of <Package Name>.
+ * This file is part of MegaMek.
  *
- * <Package Name> is free software: you can redistribute it and/or modify
+ * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
  * version 3 or (at your option) any later version,
  * as published by the Free Software Foundation.

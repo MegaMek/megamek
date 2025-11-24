@@ -1,34 +1,40 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.phaseDisplay;
 
-import megamek.client.ui.Messages;
-import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.client.ui.clientGUI.boardview.BoardView;
-import megamek.common.board.Coords;
-import megamek.common.game.Game;
-import megamek.common.units.Entity;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -39,6 +45,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.swing.*;
+
+import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.common.board.Coords;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
+import megamek.logging.MMLogger;
 
 /**
  * Dialog for managing Nova CEWS networks during End Phase.
@@ -51,7 +66,7 @@ import java.util.stream.Collectors;
 public class NovaNetworkDialog extends JDialog implements ActionListener {
     @Serial
     private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final MMLogger logger = MMLogger.create(NovaNetworkDialog.class);
 
     private final ClientGUI clientGUI;
     private final Game game;
@@ -75,7 +90,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
 
     public NovaNetworkDialog(JFrame parent, ClientGUI clientGUI) {
         super(parent, Messages.getString("NovaNetworkDialog.title"), true);
-        LOGGER.debug("Opening Nova CEWS Network Management Dialog");
+        logger.debug("Opening Nova CEWS Network Management Dialog");
         this.clientGUI = clientGUI;
         this.game = clientGUI.getClient().getGame();
         this.localPlayerId = clientGUI.getClient().getLocalPlayer().getId();
@@ -97,7 +112,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
             }
         });
 
-        LOGGER.debug("Nova CEWS Dialog initialized: {} player units, {} allied units",
+        logger.debug("Nova CEWS Dialog initialized: {} player units, {} allied units",
             playerNovaUnits.size(), alliedNovaUnits.size());
     }
 
@@ -266,7 +281,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         String originalNetwork = entity.getOriginalNovaC3NetId();
         String pendingNetwork = entity.getNewRoundNovaNetworkString();
 
-        LOGGER.debug("Entity {}: currentNetwork={}, originalNetwork={}, pendingNetwork={}, isNetworked={}",
+        logger.debug("Entity {}: currentNetwork={}, originalNetwork={}, pendingNetwork={}, isNetworked={}",
             entity.getId(), currentNetwork, originalNetwork, pendingNetwork, isEntityNetworked(entity));
 
         if (isEntityNetworked(entity)) {
@@ -447,10 +462,10 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
      */
     private void linkSelectedUnits() {
         List<Entity> selectedEntities = getSelectedEntities();
-        LOGGER.debug("Link action: {} units selected", selectedEntities.size());
+        logger.debug("Link action: {} units selected", selectedEntities.size());
 
         if (selectedEntities.isEmpty()) {
-            LOGGER.warn("Link action failed: No units selected");
+            logger.warn("Link action failed: No units selected");
             showError(Messages.getString("NovaNetworkDialog.error.noSelection"));
             return;
         }
@@ -458,7 +473,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         // Validate: can only link units owned by local player
         boolean canModify = selectedEntities.stream().anyMatch(e -> e.getOwnerId() == localPlayerId);
         if (!canModify) {
-            LOGGER.warn("Link action failed: No units owned by local player");
+            logger.warn("Link action failed: No units owned by local player");
             showError(Messages.getString("NovaNetworkDialog.error.notYourUnits"));
             return;
         }
@@ -466,7 +481,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         // Determine target network based on selection:
         // - If ALL selected units share the same network (all networked, same network): Keep that network
         // - Otherwise (mixed networked/unlinked, different networks, all unlinked): Create new network
-        LOGGER.debug("Link action: Analyzing {} selected units", selectedEntities.size());
+        logger.debug("Link action: Analyzing {} selected units", selectedEntities.size());
 
         String targetNetworkId;
         List<String> existingNetworks = selectedEntities.stream()
@@ -479,22 +494,22 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
             .filter(this::isEntityNetworked)
             .count();
 
-        LOGGER.debug("Selected units breakdown: {} networked, {} unlinked",
+        logger.debug("Selected units breakdown: {} networked, {} unlinked",
             networkedCount, selectedEntities.size() - networkedCount);
-        LOGGER.debug("Unique networks in selection: {}", existingNetworks);
+        logger.debug("Unique networks in selection: {}", existingNetworks);
 
         // Check if ALL selected units are networked AND in the same network
         if ((networkedCount == selectedEntities.size()) && (existingNetworks.size() == 1)) {
             // All selected units are in the same network - preserve it
             targetNetworkId = existingNetworks.get(0);
-            LOGGER.debug("Decision: Preserving existing network (all units from same network): {}", targetNetworkId);
+            logger.debug("Decision: Preserving existing network (all units from same network): {}", targetNetworkId);
 
             // Check if this is a no-op (all units already in target network)
             boolean anyChanges = selectedEntities.stream()
                 .anyMatch(e -> !targetNetworkId.equals(e.getC3NetId()));
 
             if (!anyChanges) {
-                LOGGER.debug("No action needed: All selected units already in network {}", targetNetworkId);
+                logger.debug("No action needed: All selected units already in network {}", targetNetworkId);
                 showInfo(Messages.getString("NovaNetworkDialog.info.alreadyNetworked", targetNetworkId));
                 return;  // Exit without making changes
             }
@@ -516,8 +531,8 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
                 .findFirst()
                 .orElse(selectedEntities.get(0).getOriginalNovaC3NetId()); // Fallback
 
-            LOGGER.debug("Decision: Creating new network from available ID (mixed selection): {}", targetNetworkId);
-            LOGGER.debug("Selected network ID {} to avoid including unintended units", targetNetworkId);
+            logger.debug("Decision: Creating new network from available ID (mixed selection): {}", targetNetworkId);
+            logger.debug("Selected network ID {} to avoid including unintended units", targetNetworkId);
         }
 
         // Calculate resulting network size
@@ -531,12 +546,12 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         // Add the selected units
         int resultingNetworkSize = (int) existingUnitsInNetwork + selectedEntities.size();
 
-        LOGGER.debug("Existing units in network: {}, Selected units: {}, Resulting size: {}",
+        logger.debug("Existing units in network: {}, Selected units: {}, Resulting size: {}",
             existingUnitsInNetwork, selectedEntities.size(), resultingNetworkSize);
 
         // IO: Alternate Eras p.60: "link up to two other units" = max 3 total
         if (resultingNetworkSize > 3) {
-            LOGGER.warn("Link action failed: Resulting network would have {} units (max 3)", resultingNetworkSize);
+            logger.warn("Link action failed: Resulting network would have {} units (max 3)", resultingNetworkSize);
             showError("Cannot link: Resulting network would have " + resultingNetworkSize +
                 " units. Maximum is 3 units per network (IO: Alternate Eras p.60).");
             return;
@@ -544,7 +559,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
 
         // Queue link actions for all selected units
         for (Entity entity : selectedEntities) {
-            LOGGER.debug("Queuing link for entity {} ({}) to network {}",
+            logger.debug("Queuing link for entity {} ({}) to network {}",
                 entity.getId(), entity.getShortName(), targetNetworkId);
             pendingChanges.put(entity.getId(), targetNetworkId);
         }
@@ -553,7 +568,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         populateUnitList();
         updatePendingChanges();
 
-        LOGGER.debug("Link action completed successfully: {} units now in network", resultingNetworkSize);
+        logger.debug("Link action completed successfully: {} units now in network", resultingNetworkSize);
     }
 
     /**
@@ -561,10 +576,10 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
      */
     private void unlinkSelectedUnits() {
         List<Entity> selectedEntities = getSelectedEntities();
-        LOGGER.debug("Unlink action: {} units selected", selectedEntities.size());
+        logger.debug("Unlink action: {} units selected", selectedEntities.size());
 
         if (selectedEntities.isEmpty()) {
-            LOGGER.warn("Unlink action failed: No units selected");
+            logger.warn("Unlink action failed: No units selected");
             showError(Messages.getString("NovaNetworkDialog.error.noSelection"));
             return;
         }
@@ -572,7 +587,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         // Validate: can only modify units owned by local player
         boolean canModify = selectedEntities.stream().anyMatch(e -> e.getOwnerId() == localPlayerId);
         if (!canModify) {
-            LOGGER.warn("Unlink action failed: No units owned by local player");
+            logger.warn("Unlink action failed: No units owned by local player");
             showError(Messages.getString("NovaNetworkDialog.error.notYourUnits"));
             return;
         }
@@ -583,7 +598,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
             String currentNetworkId = entity.getC3NetId();
             String targetNetworkId = entity.getOriginalNovaC3NetId();
 
-            LOGGER.debug("Queuing unlink for entity {} ({}) from network {} to original network {}",
+            logger.debug("Queuing unlink for entity {} ({}) from network {} to original network {}",
                 entity.getId(), entity.getShortName(), currentNetworkId, targetNetworkId);
 
             pendingChanges.put(entity.getId(), targetNetworkId);
@@ -593,7 +608,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         populateUnitList();
         updatePendingChanges();
 
-        LOGGER.debug("Unlink action completed successfully");
+        logger.debug("Unlink action completed successfully");
     }
 
     /**
@@ -615,7 +630,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
             Entity entity = game.getEntity(entityId);
 
             if (entity != null) {
-                LOGGER.info("Applying network change for entity {} ({}): {} -> {}",
+                logger.info("Applying network change for entity {} ({}): {} -> {}",
                     entityId, entity.getShortName(),
                     entity.getC3NetId(), targetNetwork);
 

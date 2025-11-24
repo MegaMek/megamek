@@ -7659,7 +7659,7 @@ public class Compute {
     }
 
     /**
-     * Fast log2 implementation; throws if number <= 0 
+     * Fast log2 implementation; throws if number &le; 0 
      * @param number        positive int to get the log2 of
      * @return int          approximate log2 of number; functionally (Math.floor(log10(10)/log10(2))
      */

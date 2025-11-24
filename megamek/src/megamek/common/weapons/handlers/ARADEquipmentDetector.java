@@ -314,10 +314,18 @@ public class ARADEquipmentDetector {
     /**
      * Checks if target has been tagged by friendly Narc or iNarc pods.
      * <p>
-     * Only FRIENDLY pods count: - Standard Narc Missile Beacons (friendly team) - iNarc Homing Pods (friendly team) -
-     * iNarc Nemesis Pods (friendly team only)
+     * Only FRIENDLY pods count:
+     * <ul>
+     *   <li>Standard Narc Missile Beacons (friendly team)</li>
+     *   <li>iNarc Homing Pods (friendly team)</li>
+     *   <li>iNarc Nemesis Pods (friendly team only)</li>
+     * </ul>
      * <p>
-     * EXCLUDED: - iNarc Haywire Pods (do not trigger ARAD) - Enemy Narc/iNarc pods (team ownership check fails)
+     * EXCLUDED:
+     * <ul>
+     *   <li>iNarc Haywire Pods (do not trigger ARAD)</li>
+     *   <li>Enemy Narc/iNarc pods (team ownership check fails)</li>
+     * </ul>
      * <p>
      * External Narc pods are NOT blocked by Stealth Armor.
      * <p>

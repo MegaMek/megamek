@@ -51,9 +51,12 @@ import megamek.server.totalWarfare.TWGameManager;
  * active electronics, and penalties against targets without electronics. ECM can block the bonus unless the target is
  * Narc-tagged (Narc overrides ECM).
  * <p>
- * Cluster Modifiers: - +1 against targets with qualifying electronics (unless blocked by ECM) - 0 if target has
- * electronics but ECM blocks (and no Narc override) - -2 against targets without electronics (minimum 2 hits enforced
- * by engine)
+ * Cluster Modifiers:
+ * <ul>
+ *   <li>+1 against targets with qualifying electronics (unless blocked by ECM)</li>
+ *   <li>0 if target has electronics but ECM blocks (and no Narc override)</li>
+ *   <li>-2 against targets without electronics (minimum 2 hits enforced by engine)</li>
+ * </ul>
  * <p>
  * Rules Reference: Tactical Operations: Advanced Units &amp; Equipment, p.180 Quote: "ARAD missiles ignore hostile ECM
  * effects when targeting a unit tagged by a friendly Narc pod. However, the ARAD missile does not receive any further

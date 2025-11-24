@@ -274,10 +274,10 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
      * Formats an entity for display in the list.
      */
     private String formatEntityDisplay(Entity entity) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder entityDisplayText = new StringBuilder();
 
         // ID and name
-        sb.append("ID ").append(entity.getId()).append(": ").append(entity.getShortName());
+        entityDisplayText.append("ID ").append(entity.getId()).append(": ").append(entity.getShortName());
 
         // Current network
         String currentNetwork = entity.getC3NetId();
@@ -293,29 +293,29 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
             int freeNodes = 3 - networkSize;
             String availability = (freeNodes == 0) ? "Full" : "Available";
 
-            sb.append(" Network consists of: ").append(networkMembers);
-            sb.append(", (").append(networkSize).append("/3 ").append(availability).append(")");
+            entityDisplayText.append(" Network consists of: ").append(networkMembers);
+            entityDisplayText.append(", (").append(networkSize).append("/3 ").append(availability).append(")");
         } else {
-            sb.append(" [Unlinked]");
+            entityDisplayText.append(" [Unlinked]");
         }
 
         // Show if pending change
         if (pendingNetwork != null && !pendingNetwork.equals(currentNetwork)) {
-            sb.append(" → [Next turn: ");
+            entityDisplayText.append(" → [Next turn: ");
             if (pendingNetwork.equals(entity.getOriginalNovaC3NetId())) {
-                sb.append("Unlinked");
+                entityDisplayText.append("Unlinked");
             } else {
-                sb.append(getNetworkMembersDisplay(entity, pendingNetwork));
+                entityDisplayText.append(getNetworkMembersDisplay(entity, pendingNetwork));
             }
-            sb.append("]");
+            entityDisplayText.append("]");
         }
 
         // Owner info for allied units
         if (entity.getOwnerId() != localPlayerId) {
-            sb.append(" (").append(game.getPlayer(entity.getOwnerId()).getName()).append(")");
+            entityDisplayText.append(" (").append(game.getPlayer(entity.getOwnerId()).getName()).append(")");
         }
 
-        return sb.toString();
+        return entityDisplayText.toString();
     }
 
     /**

@@ -50,11 +50,14 @@ import org.apache.logging.log4j.Logger;
  * Rules Reference: Tactical Operations: Advanced Units &amp; Equipment, p.180 Forum Rulings: Consolidated in
  * docs/issues/features/arad-implementation.md
  * <p>
- * Key Forum Rulings: - Stealth blocking: https://battletech.com/forums/index.php?topic=78845.msg1866412#msg1866412 -
- * Powered-down equipment: https://battletech.com/forums/index.php?topic=31896.msg1369654#msg1369654 - Communications
- * threshold: https://battletech.com/forums/index.php?topic=17456.msg396440#msg396440 - Narc/iNarc interaction:
- * https://battletech.com/forums/index.php?topic=26824.msg609067#msg609067 - General exclusions:
- * https://battletech.com/forums/index.php?topic=63179.msg1452217#msg1452217
+ * Key Forum Rulings:
+ * <ul>
+ *   <li>Stealth blocking: https://battletech.com/forums/index.php?topic=78845.msg1866412#msg1866412</li>
+ *   <li>Powered-down equipment: https://battletech.com/forums/index.php?topic=31896.msg1369654#msg1369654</li>
+ *   <li>Communications threshold: https://battletech.com/forums/index.php?topic=17456.msg396440#msg396440</li>
+ *   <li>Narc/iNarc interaction: https://battletech.com/forums/index.php?topic=26824.msg609067#msg609067</li>
+ *   <li>General exclusions: https://battletech.com/forums/index.php?topic=63179.msg1452217#msg1452217</li>
+ * </ul>
  *
  * @author Hammer - Built with Claude Code
  * @since 2025-01-16

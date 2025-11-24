@@ -54,8 +54,12 @@ import org.mockito.Mockito;
 /**
  * Unit tests for ARADEquipmentDetector.
  * <p>
- * Tests verify that equipment detection works correctly for all qualifying electronic systems, including edge cases
- * like Stealth Armor blocking, friendly vs enemy Narc pods, and destroyed equipment.
+ * Tests verify that equipment detection works correctly for all qualifying electronic systems, including edge cases:
+ * <ul>
+ *   <li>Stealth Armor blocking</li>
+ *   <li>Friendly vs enemy Narc pods</li>
+ *   <li>Destroyed equipment</li>
+ * </ul>
  *
  * @author Hammer - Built with Claude Code
  * @since 2025-01-16

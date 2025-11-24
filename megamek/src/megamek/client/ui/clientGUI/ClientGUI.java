@@ -160,6 +160,8 @@ import megamek.common.event.GameScriptedMessageEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.board.GameBoardNewEvent;
 import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.event.entity.GameEntityNewEvent;
+import megamek.common.event.entity.GameEntityRemoveEvent;
 import megamek.common.event.player.GamePlayerChangeEvent;
 import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.event.player.GamePlayerDisconnectedEvent;
@@ -2636,8 +2638,7 @@ public class ClientGUI extends AbstractClientGUI
             menuBar.setPhase(phase);
 
             // Update Nova Networks menu based on whether Nova CEWS units exist
-            boolean hasNovaUnits = client.getGame().getEntitiesVector().stream().anyMatch(Entity::hasNovaCEWS);
-            menuBar.setEnabled(VIEW_NOVA_NETWORKS, hasNovaUnits);
+            updateNovaNetworksMenu();
 
             clientGuiPanel.validate();
             cb.moveToEnd();
@@ -2653,6 +2654,16 @@ public class ClientGUI extends AbstractClientGUI
                 // underlying object may have changed, so reset
                 unitDisplayPanel.displayEntity(e.getEntity());
             }
+        }
+
+        @Override
+        public void gameEntityNew(GameEntityNewEvent e) {
+            updateNovaNetworksMenu();
+        }
+
+        @Override
+        public void gameEntityRemove(GameEntityRemoveEvent e) {
+            updateNovaNetworksMenu();
         }
 
         @Override
@@ -3502,6 +3513,17 @@ public class ClientGUI extends AbstractClientGUI
      */
     public void clearFieldOfFire() {
         firingArcSpriteHandler.clearValues();
+    }
+
+    /**
+     * Updates the Nova Networks menu enablement based on whether the local player
+     * has any Nova CEWS units in their force.
+     */
+    private void updateNovaNetworksMenu() {
+        boolean hasNovaUnits = client.getGame().getEntitiesVector().stream()
+            .filter(entity -> entity.getOwner().equals(client.getLocalPlayer()))
+            .anyMatch(Entity::hasNovaCEWS);
+        menuBar.setEnabled(VIEW_NOVA_NETWORKS, hasNovaUnits);
     }
 
     /**

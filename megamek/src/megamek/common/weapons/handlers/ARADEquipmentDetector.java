@@ -68,8 +68,11 @@ public class ARADEquipmentDetector {
     /**
      * Determines if a target has qualifying electronics for ARAD missile bonuses.
      * <p>
-     * ARAD missiles receive: - Bonuses (-1 to-hit, +1 cluster) against targets with qualifying electronics - Penalties
-     * (+2 to-hit, -2 cluster) against targets without electronics
+     * ARAD missiles receive:
+     * <ul>
+     *   <li>Bonuses (-1 to-hit, +1 cluster) against targets with qualifying electronics</li>
+     *   <li>Penalties (+2 to-hit, -2 cluster) against targets without electronics</li>
+     * </ul>
      * <p>
      * Active Stealth Armor blocks ALL internal systems but NOT external Narc pods.
      *

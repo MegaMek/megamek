@@ -972,8 +972,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         String unicodeIcon = "";
 
         ArrayList<String> turnDetails = new ArrayList<>();
-        for (final Enumeration<MoveStep> steps = cmd.getSteps(); steps.hasMoreElements(); ) {
-            MoveStep currentStep = steps.nextElement();
+        for (final ListIterator<MoveStep> steps = cmd.getSteps(); steps.hasNext(); ) {
+            MoveStep currentStep = steps.next();
             MoveStepType currentType = currentStep.getType();
             int currentDanger = currentStep.isDanger() ? 1 : 0;
             boolean currentLegal = currentStep.isLegal(cmd);

@@ -728,7 +728,8 @@ public class Princess extends BotClient {
                       buildingHeight,
                       coords,
                       null,
-                      deployedUnit.climbMode());
+                      deployedUnit.climbMode(),
+                      true);
                 // Ignore coords that could cause a stacking violation
                 if (null == violation) {
                     turretDeploymentLocations.add(coords);
@@ -3293,7 +3294,8 @@ public class Princess extends BotClient {
                       loadedEntity,
                       pathEndpoint,
                       movingEntity,
-                      loadedEntity.climbMode()) != null;
+                      loadedEntity.climbMode(),
+                      true) != null;
 
                 // this is a primitive condition that checks whether we're within "engagement range" of an enemy
                 // where "engagement range" is defined as the maximum range of our weapons plus our walking movement
@@ -3456,7 +3458,8 @@ public class Princess extends BotClient {
                               loadedEntity,
                               dismountLocation,
                               (dismountLocations.size() == 1) ? movingEntity : null,
-                              loadedEntity.climbMode()) != null;
+                              loadedEntity.climbMode(),
+                              true) != null;
 
                         if (unloadIllegal) {
                             // Try the next hex

@@ -74,10 +74,21 @@ public class SRMARADHandler extends SRMHandler {
     }
 
     /**
-     * Calculate ARAD cluster modifier based on target electronics and ECM status. Logic: 1. Check if target is an
-     * Entity (only Entities have electronics) 2. Check if target has qualifying electronics (via ARADEquipmentDetector)
-     * 3. If YES electronics: - Check if Narc-tagged → +1 (Narc overrides ECM) - Check if ECM-affected → 0 (ECM blocks
-     * bonus) - Otherwise → +1 (standard bonus) 4. If NO electronics → -2 (penalty, minimum 2 enforced automatically)
+     * Calculate ARAD cluster modifier based on target electronics and ECM status.
+     * <p>
+     * Logic:
+     * <ol>
+     *   <li>Check if target is an Entity (only Entities have electronics)</li>
+     *   <li>Check if target has qualifying electronics (via ARADEquipmentDetector)</li>
+     *   <li>If YES electronics:
+     *     <ul>
+     *       <li>Check if Narc-tagged &rarr; +1 (Narc overrides ECM)</li>
+     *       <li>Check if ECM-affected &rarr; 0 (ECM blocks bonus)</li>
+     *       <li>Otherwise &rarr; +1 (standard bonus)</li>
+     *     </ul>
+     *   </li>
+     *   <li>If NO electronics &rarr; -2 (penalty, minimum 2 enforced automatically)</li>
+     * </ol>
      *
      * @return Cluster modifier for ARAD missiles
      */

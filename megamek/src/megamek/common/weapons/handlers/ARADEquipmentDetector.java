@@ -354,7 +354,12 @@ public class ARADEquipmentDetector {
     /**
      * Validates that equipment is functional and powered.
      * <p>
-     * Equipment must meet ALL criteria: - Not destroyed - Not missing - Not breached
+     * Equipment must meet ALL criteria:
+     * <ul>
+     *   <li>Not destroyed</li>
+     *   <li>Not missing</li>
+     *   <li>Not breached</li>
+     * </ul>
      * <p>
      * Note: Power state (shut down) is checked via equipment modes, not this method. Powered-down equipment does NOT
      * emit and will not trigger ARAD bonuses.

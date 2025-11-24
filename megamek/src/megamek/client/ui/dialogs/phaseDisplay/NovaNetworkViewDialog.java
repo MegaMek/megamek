@@ -33,7 +33,6 @@
 package megamek.client.ui.dialogs.phaseDisplay;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,10 +45,10 @@ import javax.swing.*;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import megamek.logging.MMLogger;
 
 /**
  * Read-only dialog for viewing Nova CEWS network configurations.
@@ -61,7 +60,9 @@ import org.apache.logging.log4j.Logger;
 public class NovaNetworkViewDialog extends JDialog implements ActionListener {
     @Serial
     private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final MMLogger logger = MMLogger.create(NovaNetworkViewDialog.class);
+    private static final int PADDING = UIUtil.scaleForGUI(10);
+    private static final int PADDING_SMALL = UIUtil.scaleForGUI(5);
 
     private final ClientGUI clientGUI;
     private final Game game;
@@ -79,7 +80,7 @@ public class NovaNetworkViewDialog extends JDialog implements ActionListener {
 
     public NovaNetworkViewDialog(JFrame parent, ClientGUI clientGUI) {
         super(parent, Messages.getString("NovaNetworkViewDialog.title"), true);
-        LOGGER.debug("Opening Nova CEWS Network View Dialog");
+        logger.debug("Opening Nova CEWS Network View Dialog");
         this.clientGUI = clientGUI;
         this.game = clientGUI.getClient().getGame();
         this.localPlayerId = clientGUI.getClient().getLocalPlayer().getId();
@@ -91,7 +92,7 @@ public class NovaNetworkViewDialog extends JDialog implements ActionListener {
 
         pack();
         setLocationRelativeTo(parent);
-        LOGGER.debug("Nova CEWS View Dialog initialized: {} player units, {} allied units",
+        logger.debug("Nova CEWS View Dialog initialized: {} player units, {} allied units",
             playerNovaUnits.size(), alliedNovaUnits.size());
     }
 
@@ -120,20 +121,20 @@ public class NovaNetworkViewDialog extends JDialog implements ActionListener {
      * Initializes the UI components.
      */
     private void initializeUI() {
-        setLayout(new BorderLayout(10, 10));
+        setLayout(new BorderLayout(PADDING, PADDING));
         setResizable(false);
 
         // Main panel with padding
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel mainPanel = new JPanel(new BorderLayout(PADDING, PADDING));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING));
 
         // Top: Instructions
         JLabel instructions = new JLabel(Messages.getString("NovaNetworkViewDialog.instructions"));
-        instructions.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        instructions.setBorder(BorderFactory.createEmptyBorder(0, 0, PADDING, 0));
         mainPanel.add(instructions, BorderLayout.NORTH);
 
         // Center: Unit list
-        JPanel centerPanel = new JPanel(new BorderLayout(5, 5));
+        JPanel centerPanel = new JPanel(new BorderLayout(PADDING_SMALL, PADDING_SMALL));
 
         JLabel unitListLabel = new JLabel(Messages.getString("NovaNetworkViewDialog.unitListLabel"));
         centerPanel.add(unitListLabel, BorderLayout.NORTH);
@@ -146,13 +147,13 @@ public class NovaNetworkViewDialog extends JDialog implements ActionListener {
         unitList.setVisibleRowCount(10);
 
         JScrollPane scrollPane = new JScrollPane(unitList);
-        scrollPane.setPreferredSize(new Dimension(500, 200));
+        scrollPane.setPreferredSize(UIUtil.scaleForGUI(500, 200));
         centerPanel.add(scrollPane, BorderLayout.CENTER);
 
         mainPanel.add(centerPanel, BorderLayout.CENTER);
 
         // Bottom: Close button
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, PADDING, PADDING));
 
         btnClose = new JButton(Messages.getString("NovaNetworkViewDialog.btnClose"));
         btnClose.addActionListener(this);
@@ -175,7 +176,8 @@ public class NovaNetworkViewDialog extends JDialog implements ActionListener {
 
         // Add player's units
         if (!playerNovaUnits.isEmpty()) {
-            unitListModel.addElement("=== " + Messages.getString("NovaNetworkViewDialog.yourUnits") + " ===");
+            unitListModel.addElement(Messages.getString("NovaNetworkDialog.sectionHeader",
+                  Messages.getString("NovaNetworkViewDialog.yourUnits")));
             entityMap.put(index++, null); // Header, no entity
 
             for (Entity entity : playerNovaUnits) {
@@ -192,7 +194,8 @@ public class NovaNetworkViewDialog extends JDialog implements ActionListener {
                 entityMap.put(index++, null);
             }
 
-            unitListModel.addElement("=== " + Messages.getString("NovaNetworkViewDialog.alliedUnits") + " ===");
+            unitListModel.addElement(Messages.getString("NovaNetworkDialog.sectionHeader",
+                  Messages.getString("NovaNetworkViewDialog.alliedUnits")));
             entityMap.put(index++, null); // Header, no entity
 
             for (Entity entity : alliedNovaUnits) {
@@ -207,10 +210,11 @@ public class NovaNetworkViewDialog extends JDialog implements ActionListener {
      * Formats an entity for display in the list (read-only, no pending changes).
      */
     private String formatEntityDisplay(Entity entity) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder entityDisplayText = new StringBuilder();
 
         // ID and name
-        sb.append("ID ").append(entity.getId()).append(": ").append(entity.getShortName());
+        entityDisplayText.append(Messages.getString("NovaNetworkDialog.entityIdFormat",
+              entity.getId(), entity.getShortName()));
 
         // Current network
         String currentNetwork = entity.getC3NetId();
@@ -219,20 +223,23 @@ public class NovaNetworkViewDialog extends JDialog implements ActionListener {
             int networkSize = getNetworkSize(currentNetwork);
             String networkMembers = getNetworkMembersDisplay(entity, currentNetwork);
             int freeNodes = 3 - networkSize;
-            String availability = (freeNodes == 0) ? "Full" : "Available";
+            String availability = (freeNodes == 0)
+                  ? Messages.getString("NovaNetworkDialog.networkFull")
+                  : Messages.getString("NovaNetworkDialog.networkAvailable");
 
-            sb.append(" Network consists of: ").append(networkMembers);
-            sb.append(", (").append(networkSize).append("/3 ").append(availability).append(")");
+            entityDisplayText.append(Messages.getString("NovaNetworkDialog.networkStatus",
+                  networkMembers, networkSize, availability));
         } else {
-            sb.append(" [Unlinked]");
+            entityDisplayText.append(Messages.getString("NovaNetworkDialog.unlinked"));
         }
 
         // Owner info for allied units
         if (entity.getOwnerId() != localPlayerId) {
-            sb.append(" (").append(game.getPlayer(entity.getOwnerId()).getName()).append(")");
+            entityDisplayText.append(Messages.getString("NovaNetworkDialog.ownerSuffix",
+                  game.getPlayer(entity.getOwnerId()).getName()));
         }
 
-        return sb.toString();
+        return entityDisplayText.toString();
     }
 
     /**
@@ -248,9 +255,9 @@ public class NovaNetworkViewDialog extends JDialog implements ActionListener {
 
         // Entity is networked if at least one other unit shares this network ID
         return game.getEntitiesVector().stream()
-                .filter(e -> e.hasNovaCEWS())
-                .filter(e -> e.getId() != entity.getId())
-                .anyMatch(e -> networkId.equals(e.getC3NetId()));
+              .filter(other -> other.hasNovaCEWS())
+              .filter(other -> other.getId() != entity.getId())
+              .anyMatch(other -> networkId.equals(other.getC3NetId()));
     }
 
     /**
@@ -262,8 +269,8 @@ public class NovaNetworkViewDialog extends JDialog implements ActionListener {
         }
 
         return (int) game.getEntitiesVector().stream()
-                .filter(e -> e.hasNovaCEWS())
-                .filter(e -> networkId.equals(e.getC3NetId()))
+              .filter(other -> other.hasNovaCEWS())
+              .filter(other -> networkId.equals(other.getC3NetId()))
                 .count();
     }
 
@@ -273,33 +280,33 @@ public class NovaNetworkViewDialog extends JDialog implements ActionListener {
      */
     private String getNetworkMembersDisplay(Entity currentEntity, String networkId) {
         if (networkId == null) {
-            return "Unknown network";
+            return Messages.getString("NovaNetworkDialog.unknownNetwork");
         }
 
         // Find all OTHER entities in the same network
         List<String> memberIds = new ArrayList<>();
-        for (Entity entity : game.getEntitiesVector()) {
+        for (Entity networkMember : game.getEntitiesVector()) {
             // Skip self
-            if (entity.getId() == currentEntity.getId()) {
+            if (networkMember.getId() == currentEntity.getId()) {
                 continue;
             }
             // Check if in same network
-            if (entity.hasNovaCEWS() && networkId.equals(entity.getC3NetId())) {
-                memberIds.add("ID" + entity.getId());
+            if (networkMember.hasNovaCEWS() && networkId.equals(networkMember.getC3NetId())) {
+                memberIds.add(Messages.getString("NovaNetworkDialog.memberId", networkMember.getId()));
             }
         }
 
         if (memberIds.isEmpty()) {
-            return "No other members";
+            return Messages.getString("NovaNetworkDialog.noOtherMembers");
         } else {
             return String.join(", ", memberIds);
         }
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnClose) {
-            LOGGER.debug("Closing Nova CEWS View Dialog");
+    public void actionPerformed(ActionEvent actionEvent) {
+        if (actionEvent.getSource() == btnClose) {
+            logger.debug("Closing Nova CEWS View Dialog");
             dispose();
         }
     }

@@ -25,11 +25,21 @@
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
  *
- * MechWarrior Copyright Microsoft Corporation. MegaMek was created
- * under Microsoft's "Game Content Usage Rules" and is not endorsed by or
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
 package megamek.common.weapons.handlers.srm;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import megamek.common.Player;
 import megamek.common.ToHitData;
@@ -43,8 +53,8 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
-import megamek.common.options.GameOptions;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.options.GameOptions;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
 import megamek.server.totalWarfare.TWGameManager;
@@ -52,24 +62,17 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
 /**
  * Unit tests for SRMARADHandler cluster modifier calculations.
- *
+ * <p>
  * Tests verify that ARAD missiles apply correct cluster modifiers:
- * - +1 against targets with electronics (not blocked by ECM)
- * - 0 against targets with electronics (blocked by ECM, no Narc)
- * - +1 against targets with electronics (Narc overrides ECM)
- * - -2 against targets without electronics
- * - -2 against non-entity targets
- *
+ * <ul>
+ *   <li>+1 against targets with electronics (not blocked by ECM)</li>
+ *   <li>0 against targets with electronics (blocked by ECM, no Narc)</li>
+ *   <li>+1 against targets with electronics (Narc overrides ECM)</li>
+ *   <li>-2 against targets without electronics</li>
+ *   <li>-2 against non-entity targets</li>
+ * </ul>
  * @author Hammer - Built with Claude Code
  * @since 2025-01-17
  */
@@ -185,7 +188,7 @@ public class SRMARADHandlerTest {
         SRMARADHandler handler = createHandler(attacker, target, game);
 
         assertEquals(+1, handler.getSalvoBonus(),
-                "Target with electronics and no ECM should receive +1 bonus");
+              "Target with electronics and no ECM should receive +1 bonus");
     }
 
     @Test
@@ -209,7 +212,7 @@ public class SRMARADHandlerTest {
         SRMARADHandler handler = createHandler(attacker, target, game);
 
         assertEquals(+1, handler.getSalvoBonus(),
-                "Narc-tagged target should receive +1 bonus even with ECM (Narc overrides)");
+              "Narc-tagged target should receive +1 bonus even with ECM (Narc overrides)");
     }
 
     @Test
@@ -234,7 +237,7 @@ public class SRMARADHandlerTest {
         SRMARADHandler handler = createHandler(attacker, target, game);
 
         assertEquals(-2, handler.getSalvoBonus(),
-                "Target with no electronics should receive -2 penalty");
+              "Target with no electronics should receive -2 penalty");
     }
 
     @Test
@@ -258,7 +261,7 @@ public class SRMARADHandlerTest {
         SRMARADHandler handler = createHandler(attacker, target, game);
 
         assertEquals(-2, handler.getSalvoBonus(),
-                "Active Stealth Armor should block internal systems (C3) without Narc");
+              "Active Stealth Armor should block internal systems (C3) without Narc");
     }
 
     @Test
@@ -282,7 +285,7 @@ public class SRMARADHandlerTest {
         SRMARADHandler handler = createHandler(attacker, target, game);
 
         assertEquals(+1, handler.getSalvoBonus(),
-                "Narc should override Stealth Armor blocking (external attachment)");
+              "Narc should override Stealth Armor blocking (external attachment)");
     }
 
     @Test
@@ -303,7 +306,7 @@ public class SRMARADHandlerTest {
         SRMARADHandler handler = createHandler(attacker, target, game);
 
         assertEquals(+1, handler.getSalvoBonus(),
-                "TAG'd target should receive +1 bonus");
+              "TAG'd target should receive +1 bonus");
     }
 
     @Test
@@ -323,7 +326,7 @@ public class SRMARADHandlerTest {
         SRMARADHandler handler = createHandler(attacker, target, game);
 
         assertEquals(+1, handler.getSalvoBonus(),
-                "Target generating Ghost Targets should receive +1 bonus");
+              "Target generating Ghost Targets should receive +1 bonus");
     }
 
     /**

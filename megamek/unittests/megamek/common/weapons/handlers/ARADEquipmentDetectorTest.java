@@ -25,35 +25,37 @@
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
  *
- * MechWarrior Copyright Microsoft Corporation. MegaMek was created
- * under Microsoft's "Game Content Usage Rules" and is not endorsed by or
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
 package megamek.common.weapons.handlers;
 
-import megamek.common.equipment.INarcPod;
-import megamek.common.equipment.EquipmentMode;
-import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.Mounted;
-import megamek.common.equipment.MiscType;
-import megamek.common.equipment.enums.MiscTypeFlag;
-import megamek.common.units.Entity;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import megamek.common.equipment.EquipmentMode;
+import megamek.common.equipment.INarcPod;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.units.Entity;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 /**
  * Unit tests for ARADEquipmentDetector.
- *
- * Tests verify that equipment detection works correctly for all qualifying
- * electronic systems, including edge cases like Stealth Armor blocking,
- * friendly vs enemy Narc pods, and destroyed equipment.
+ * <p>
+ * Tests verify that equipment detection works correctly for all qualifying electronic systems, including edge cases
+ * like Stealth Armor blocking, friendly vs enemy Narc pods, and destroyed equipment.
  *
  * @author Hammer - Built with Claude Code
  * @since 2025-01-16
@@ -66,7 +68,7 @@ public class ARADEquipmentDetectorTest {
     @Test
     void testNullTargetReturnsFalse() {
         assertFalse(ARADEquipmentDetector.targetHasQualifyingElectronics(null, FRIENDLY_TEAM),
-                "Null target should return false");
+              "Null target should return false");
     }
 
     @Test
@@ -75,7 +77,7 @@ public class ARADEquipmentDetectorTest {
         when(target.isStealthActive()).thenReturn(true);
 
         assertTrue(ARADEquipmentDetector.hasActiveStealthArmor(target),
-                "Should detect active Stealth Armor");
+              "Should detect active Stealth Armor");
     }
 
     @Test
@@ -84,7 +86,7 @@ public class ARADEquipmentDetectorTest {
         when(target.isStealthActive()).thenReturn(false);
 
         assertFalse(ARADEquipmentDetector.hasActiveStealthArmor(target),
-                "Inactive Stealth Armor should not be detected");
+              "Inactive Stealth Armor should not be detected");
     }
 
     @Test
@@ -98,7 +100,7 @@ public class ARADEquipmentDetectorTest {
 
         // Stealth blocks C3 and ECM, so should return false
         assertFalse(ARADEquipmentDetector.targetHasQualifyingElectronics(target, FRIENDLY_TEAM),
-                "Active Stealth should block internal systems");
+              "Active Stealth should block internal systems");
     }
 
     @Test
@@ -109,7 +111,7 @@ public class ARADEquipmentDetectorTest {
 
         // Stealth blocks internal systems but NOT external Narc
         assertTrue(ARADEquipmentDetector.targetHasQualifyingElectronics(target, FRIENDLY_TEAM),
-                "Narc should override Stealth Armor blocking");
+              "Narc should override Stealth Armor blocking");
     }
 
     @Test
@@ -118,7 +120,7 @@ public class ARADEquipmentDetectorTest {
         when(target.getTaggedBy()).thenReturn(5);  // Some entity ID
 
         assertTrue(ARADEquipmentDetector.hasActiveTAG(target),
-                "Should detect TAG'd target");
+              "Should detect TAG'd target");
     }
 
     @Test
@@ -127,7 +129,7 @@ public class ARADEquipmentDetectorTest {
         when(target.getTaggedBy()).thenReturn(-1);  // Not TAG'd
 
         assertFalse(ARADEquipmentDetector.hasActiveTAG(target),
-                "Should not detect non-TAG'd target");
+              "Should not detect non-TAG'd target");
     }
 
     @Test
@@ -136,7 +138,7 @@ public class ARADEquipmentDetectorTest {
         when(target.hasGhostTargets(true)).thenReturn(true);
 
         assertTrue(ARADEquipmentDetector.hasGhostTargets(target),
-                "Should detect Ghost Target generation");
+              "Should detect Ghost Target generation");
     }
 
     @Test
@@ -145,7 +147,7 @@ public class ARADEquipmentDetectorTest {
         when(target.hasGhostTargets(true)).thenReturn(false);
 
         assertFalse(ARADEquipmentDetector.hasGhostTargets(target),
-                "Should not detect when no Ghost Targets");
+              "Should not detect when no Ghost Targets");
     }
 
     @Test
@@ -156,7 +158,7 @@ public class ARADEquipmentDetectorTest {
         when(target.getINarcPodsAttached()).thenReturn(Collections.emptyIterator());
 
         assertTrue(ARADEquipmentDetector.isNarcTagged(target, FRIENDLY_TEAM),
-                "Should detect friendly standard Narc");
+              "Should detect friendly standard Narc");
     }
 
     @Test
@@ -167,7 +169,7 @@ public class ARADEquipmentDetectorTest {
         when(target.getINarcPodsAttached()).thenReturn(Collections.emptyIterator());
 
         assertFalse(ARADEquipmentDetector.isNarcTagged(target, FRIENDLY_TEAM),
-                "Enemy Narc should not trigger ARAD");
+              "Enemy Narc should not trigger ARAD");
     }
 
     @Test
@@ -180,7 +182,7 @@ public class ARADEquipmentDetectorTest {
         when(target.getINarcPodsAttached()).thenReturn(pods.iterator());
 
         assertTrue(ARADEquipmentDetector.isNarcTagged(target, FRIENDLY_TEAM),
-                "Friendly iNarc Homing pod should trigger ARAD");
+              "Friendly iNarc Homing pod should trigger ARAD");
     }
 
     @Test
@@ -193,7 +195,7 @@ public class ARADEquipmentDetectorTest {
         when(target.getINarcPodsAttached()).thenReturn(pods.iterator());
 
         assertTrue(ARADEquipmentDetector.isNarcTagged(target, FRIENDLY_TEAM),
-                "Friendly iNarc Nemesis pod should trigger ARAD");
+              "Friendly iNarc Nemesis pod should trigger ARAD");
     }
 
     @Test
@@ -206,7 +208,7 @@ public class ARADEquipmentDetectorTest {
         when(target.getINarcPodsAttached()).thenReturn(pods.iterator());
 
         assertFalse(ARADEquipmentDetector.isNarcTagged(target, FRIENDLY_TEAM),
-                "Enemy iNarc Nemesis pod should NOT trigger ARAD");
+              "Enemy iNarc Nemesis pod should NOT trigger ARAD");
     }
 
     @Test
@@ -219,7 +221,7 @@ public class ARADEquipmentDetectorTest {
         when(target.getINarcPodsAttached()).thenReturn(pods.iterator());
 
         assertFalse(ARADEquipmentDetector.isNarcTagged(target, FRIENDLY_TEAM),
-                "iNarc Haywire pod should NOT trigger ARAD");
+              "iNarc Haywire pod should NOT trigger ARAD");
     }
 
     @Test
@@ -235,7 +237,7 @@ public class ARADEquipmentDetectorTest {
         when(target.getEquipment()).thenReturn(equipment);
 
         assertTrue(ARADEquipmentDetector.hasC3(target),
-                "Should detect functional C3");
+              "Should detect functional C3");
     }
 
     @Test
@@ -250,7 +252,7 @@ public class ARADEquipmentDetectorTest {
         when(target.getEquipment()).thenReturn(equipment);
 
         assertFalse(ARADEquipmentDetector.hasC3(target),
-                "Destroyed C3 should not trigger ARAD");
+              "Destroyed C3 should not trigger ARAD");
     }
 
     @Test
@@ -265,7 +267,7 @@ public class ARADEquipmentDetectorTest {
         when(target.getEquipment()).thenReturn(equipment);
 
         assertTrue(ARADEquipmentDetector.hasHeavyComms(target),
-                "Should detect 4-ton communications equipment");
+              "Should detect 4-ton communications equipment");
     }
 
     @Test
@@ -279,7 +281,7 @@ public class ARADEquipmentDetectorTest {
         when(target.getEquipment()).thenReturn(equipment);
 
         assertFalse(ARADEquipmentDetector.hasHeavyComms(target),
-                "2-ton comms should not trigger ARAD (below 3.5 ton threshold)");
+              "2-ton comms should not trigger ARAD (below 3.5 ton threshold)");
     }
 
     @Test
@@ -294,7 +296,7 @@ public class ARADEquipmentDetectorTest {
         when(target.getEquipment()).thenReturn(equipment);
 
         assertTrue(ARADEquipmentDetector.hasHeavyComms(target),
-                "Exactly 3.5-ton comms should trigger ARAD (inclusive threshold)");
+              "Exactly 3.5-ton comms should trigger ARAD (inclusive threshold)");
     }
 
     @Test
@@ -309,7 +311,7 @@ public class ARADEquipmentDetectorTest {
         when(target.getEquipment()).thenReturn(equipment);
 
         assertTrue(ARADEquipmentDetector.hasECM(target),
-                "Should detect functional ECM");
+              "Should detect functional ECM");
     }
 
     @Test
@@ -324,7 +326,7 @@ public class ARADEquipmentDetectorTest {
         when(target.getEquipment()).thenReturn(equipment);
 
         assertTrue(ARADEquipmentDetector.hasActiveProbe(target),
-                "Should detect functional Active Probe");
+              "Should detect functional Active Probe");
     }
 
     @Test
@@ -338,7 +340,7 @@ public class ARADEquipmentDetectorTest {
         when(target.getEquipment()).thenReturn(equipment);
 
         assertTrue(ARADEquipmentDetector.hasArtemis(target),
-                "Should detect functional Artemis IV");
+              "Should detect functional Artemis IV");
     }
 
     @Test
@@ -358,7 +360,7 @@ public class ARADEquipmentDetectorTest {
         when(target.getEquipment()).thenReturn(equipment);
 
         assertTrue(ARADEquipmentDetector.hasBlueShield(target),
-                "Should detect Blue Shield in On mode");
+              "Should detect Blue Shield in On mode");
     }
 
     @Test
@@ -379,7 +381,7 @@ public class ARADEquipmentDetectorTest {
         when(target.getEquipment()).thenReturn(equipment);
 
         assertFalse(ARADEquipmentDetector.hasBlueShield(target),
-                "Should NOT detect Blue Shield in Off mode");
+              "Should NOT detect Blue Shield in Off mode");
     }
 
     @Test
@@ -410,7 +412,7 @@ public class ARADEquipmentDetectorTest {
         when(target.getEquipment()).thenReturn(equipment);
 
         assertTrue(ARADEquipmentDetector.targetHasQualifyingElectronics(target, FRIENDLY_TEAM),
-                "Blue Shield in On mode should qualify as electronics");
+              "Blue Shield in On mode should qualify as electronics");
 
         // Scenario 2: Blue Shield OFF - should NOT be detected
         EquipmentMode offMode = mock(EquipmentMode.class);
@@ -418,7 +420,7 @@ public class ARADEquipmentDetectorTest {
         doReturn(offMode).when(blueShield).curMode();
 
         assertFalse(ARADEquipmentDetector.targetHasQualifyingElectronics(target, FRIENDLY_TEAM),
-                "Blue Shield in Off mode should NOT qualify as electronics");
+              "Blue Shield in Off mode should NOT qualify as electronics");
     }
 
     @Test
@@ -436,7 +438,7 @@ public class ARADEquipmentDetectorTest {
         when(target.getEquipment()).thenReturn(equipment);
 
         assertTrue(ARADEquipmentDetector.targetHasQualifyingElectronics(target, FRIENDLY_TEAM),
-                "Target with C3 + ECM should have qualifying electronics");
+              "Target with C3 + ECM should have qualifying electronics");
     }
 
     @Test
@@ -452,7 +454,7 @@ public class ARADEquipmentDetectorTest {
         when(target.getEquipment()).thenReturn(equipment);
 
         assertTrue(ARADEquipmentDetector.targetHasQualifyingElectronics(target, FRIENDLY_TEAM),
-                "Single ECM should be sufficient for ARAD bonus");
+              "Single ECM should be sufficient for ARAD bonus");
     }
 
     @Test
@@ -469,7 +471,7 @@ public class ARADEquipmentDetectorTest {
         when(target.getEquipment()).thenReturn(new ArrayList<>());
 
         assertFalse(ARADEquipmentDetector.targetHasQualifyingElectronics(target, FRIENDLY_TEAM),
-                "Target with no electronics should return false");
+              "Target with no electronics should return false");
     }
 
     /**

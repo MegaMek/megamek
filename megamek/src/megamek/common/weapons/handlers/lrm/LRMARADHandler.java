@@ -25,8 +25,9 @@
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
  *
- * MechWarrior Copyright Microsoft Corporation. MegaMek was created
- * under Microsoft's "Game Content Usage Rules" and is not endorsed by or
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
 package megamek.common.weapons.handlers.lrm;
@@ -46,23 +47,19 @@ import megamek.common.weapons.handlers.ARADEquipmentDetector;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
- * Weapon handler for ARAD (Anti-Radiation) LRM missiles.
- * ARAD missiles receive cluster bonuses against targets with active electronics,
- * and penalties against targets without electronics. ECM can block the bonus
- * unless the target is Narc-tagged (Narc overrides ECM).
- *
- * Cluster Modifiers:
- * - +1 against targets with qualifying electronics (unless blocked by ECM)
- * - 0 if target has electronics but ECM blocks (and no Narc override)
- * - -2 against targets without electronics (minimum 2 hits enforced by engine)
- *
- * Rules Reference: Tactical Operations: Advanced Units &amp; Equipment, p.180
- * Quote: "ARAD missiles ignore hostile ECM effects when targeting a unit tagged
- * by a friendly Narc pod. However, the ARAD missile does not receive any further
+ * Weapon handler for ARAD (Anti-Radiation) LRM missiles. ARAD missiles receive cluster bonuses against targets with
+ * active electronics, and penalties against targets without electronics. ECM can block the bonus unless the target is
+ * Narc-tagged (Narc overrides ECM).
+ * <p>
+ * Cluster Modifiers: - +1 against targets with qualifying electronics (unless blocked by ECM) - 0 if target has
+ * electronics but ECM blocks (and no Narc override) - -2 against targets without electronics (minimum 2 hits enforced
+ * by engine)
+ * <p>
+ * Rules Reference: Tactical Operations: Advanced Units &amp; Equipment, p.180 Quote: "ARAD missiles ignore hostile ECM
+ * effects when targeting a unit tagged by a friendly Narc pod. However, the ARAD missile does not receive any further
  * to-hit bonus from the pod."
- *
- * Forum Ruling (Narc/ECM interaction):
- * https://battletech.com/forums/index.php?topic=26824.msg609067#msg609067
+ * <p>
+ * Forum Ruling (Narc/ECM interaction): https://battletech.com/forums/index.php?topic=26824.msg609067#msg609067
  *
  * @author Hammer - Built with Claude Code
  * @since 2025-01-16
@@ -72,20 +69,15 @@ public class LRMARADHandler extends LRMHandler {
     private static final long serialVersionUID = -8675309867530986753L;
 
     public LRMARADHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
-            throws EntityLoadingException {
+          throws EntityLoadingException {
         super(t, w, g, m);
     }
 
     /**
-     * Calculate ARAD cluster modifier based on target electronics and ECM status.
-     * Logic:
-     * 1. Check if target is an Entity (only Entities have electronics)
-     * 2. Check if target has qualifying electronics (via ARADEquipmentDetector)
-     * 3. If YES electronics:
-     *    - Check if Narc-tagged → +1 (Narc overrides ECM)
-     *    - Check if ECM-affected → 0 (ECM blocks bonus)
-     *    - Otherwise → +1 (standard bonus)
-     * 4. If NO electronics → -2 (penalty, minimum 2 enforced automatically)
+     * Calculate ARAD cluster modifier based on target electronics and ECM status. Logic: 1. Check if target is an
+     * Entity (only Entities have electronics) 2. Check if target has qualifying electronics (via ARADEquipmentDetector)
+     * 3. If YES electronics: - Check if Narc-tagged → +1 (Narc overrides ECM) - Check if ECM-affected → 0 (ECM blocks
+     * bonus) - Otherwise → +1 (standard bonus) 4. If NO electronics → -2 (penalty, minimum 2 enforced automatically)
      *
      * @return Cluster modifier for ARAD missiles
      */
@@ -101,7 +93,7 @@ public class LRMARADHandler extends LRMHandler {
 
         // Check if target has qualifying electronics
         boolean hasElectronics = ARADEquipmentDetector.targetHasQualifyingElectronics(
-                entityTarget, friendlyTeam);
+              entityTarget, friendlyTeam);
 
         if (hasElectronics) {
             // Target has electronics - check for ECM interference
@@ -117,9 +109,9 @@ public class LRMARADHandler extends LRMHandler {
             // Check if flight path is ECM-affected (matches Artemis IV pattern)
             // ECM affects the missile flight path from attacker to target
             boolean isECMAffected = ComputeECM.isAffectedByECM(
-                    attackingEntity,
-                    attackingEntity.getPosition(),
-                    target.getPosition());
+                  attackingEntity,
+                  attackingEntity.getPosition(),
+                  target.getPosition());
 
             if (isECMAffected) {
                 return 0;  // ECM blocks bonus for non-Narc targets (but no penalty applied)
@@ -134,14 +126,12 @@ public class LRMARADHandler extends LRMHandler {
     }
 
     /**
-     * Override calcHits() to add ARAD-specific report messages for cluster modifiers.
-     * This method adds visible feedback to players about ARAD cluster modifier state:
-     * - Report 3363: ECM blocked bonus
-     * - Report 3364: Narc override (bonus despite ECM)
-     * - Report 3368: No electronics penalty
-     * - Report 3369: Normal bonus (electronics detected)
+     * Override calcHits() to add ARAD-specific report messages for cluster modifiers. This method adds visible feedback
+     * to players about ARAD cluster modifier state: - Report 3363: ECM blocked bonus - Report 3364: Narc override
+     * (bonus despite ECM) - Report 3368: No electronics penalty - Report 3369: Normal bonus (electronics detected)
      *
      * @param vPhaseReport Vector to collect report messages
+     *
      * @return Number of missiles that hit
      */
     @Override
@@ -155,14 +145,14 @@ public class LRMARADHandler extends LRMHandler {
             int friendlyTeam = attackingEntity.getOwner().getTeam();
 
             boolean hasElectronics = ARADEquipmentDetector.targetHasQualifyingElectronics(
-                    entityTarget, friendlyTeam);
+                  entityTarget, friendlyTeam);
 
             if (hasElectronics) {
                 boolean isNarcTagged = ARADEquipmentDetector.isNarcTagged(entityTarget, friendlyTeam);
                 boolean isECMAffected = ComputeECM.isAffectedByECM(
-                        attackingEntity,
-                        attackingEntity.getPosition(),
-                        target.getPosition());
+                      attackingEntity,
+                      attackingEntity.getPosition(),
+                      target.getPosition());
 
                 if (isECMAffected && !isNarcTagged) {
                     // ECM blocked bonus (Report 3363)

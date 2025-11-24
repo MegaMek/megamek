@@ -509,8 +509,8 @@ public abstract class Entity extends TurnOrdered
     protected int c3CompanyMasterIndex = LOC_DESTROYED;
     private String c3UUID = null;
     private String c3MasterIsUUID = null;
-    private String[] c3iUUIDs = new String[MAX_C3i_NODES];
-    private String[] NC3UUIDs = new String[MAX_C3i_NODES];
+    private final String[] c3iUUIDs = new String[MAX_C3i_NODES];
+    private final String[] NC3UUIDs = new String[MAX_C3i_NODES];
 
     protected int structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
     protected int structureTechLevel = TechConstants.T_TECH_UNKNOWN;

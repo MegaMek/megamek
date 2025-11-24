@@ -50,6 +50,7 @@ import javax.swing.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
@@ -67,6 +68,8 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
     @Serial
     private static final long serialVersionUID = 1L;
     private static final MMLogger logger = MMLogger.create(NovaNetworkDialog.class);
+    private static final int PADDING = UIUtil.scaleForGUI(10);
+    private static final int PADDING_SMALL = UIUtil.scaleForGUI(5);
 
     private final ClientGUI clientGUI;
     private final Game game;
@@ -141,20 +144,20 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
      * Initializes the UI components.
      */
     private void initializeUI() {
-        setLayout(new BorderLayout(10, 10));
+        setLayout(new BorderLayout(PADDING, PADDING));
         setResizable(false);
 
         // Main panel with padding
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel mainPanel = new JPanel(new BorderLayout(PADDING, PADDING));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING));
 
         // Top: Instructions
         JLabel instructions = new JLabel(Messages.getString("NovaNetworkDialog.instructions"));
-        instructions.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        instructions.setBorder(BorderFactory.createEmptyBorder(0, 0, PADDING, 0));
         mainPanel.add(instructions, BorderLayout.NORTH);
 
         // Center: Unit list
-        JPanel centerPanel = new JPanel(new BorderLayout(5, 5));
+        JPanel centerPanel = new JPanel(new BorderLayout(PADDING_SMALL, PADDING_SMALL));
 
         JLabel unitListLabel = new JLabel(Messages.getString("NovaNetworkDialog.unitListLabel"));
         centerPanel.add(unitListLabel, BorderLayout.NORTH);
@@ -172,13 +175,13 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         });
 
         JScrollPane scrollPane = new JScrollPane(unitList);
-        scrollPane.setPreferredSize(new Dimension(500, 200));
+        scrollPane.setPreferredSize(new Dimension(UIUtil.scaleForGUI(500), UIUtil.scaleForGUI(200)));
         centerPanel.add(scrollPane, BorderLayout.CENTER);
 
         mainPanel.add(centerPanel, BorderLayout.CENTER);
 
         // Bottom: Pending changes and buttons
-        JPanel bottomPanel = new JPanel(new BorderLayout(5, 5));
+        JPanel bottomPanel = new JPanel(new BorderLayout(PADDING_SMALL, PADDING_SMALL));
 
         // Pending changes area
         JLabel pendingLabel = new JLabel(Messages.getString("NovaNetworkDialog.pendingLabel"));
@@ -194,7 +197,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         bottomPanel.add(pendingScrollPane, BorderLayout.CENTER);
 
         // Buttons
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, PADDING, PADDING));
 
         btnLink = new JButton(Messages.getString("NovaNetworkDialog.btnLink"));
         btnLink.addActionListener(this);

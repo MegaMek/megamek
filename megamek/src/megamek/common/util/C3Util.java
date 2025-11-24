@@ -40,11 +40,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class C3Util {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -108,15 +107,9 @@ public class C3Util {
                           && entity.getC3iNextUUIDAsString(pos)
                           .equals(e.getC3UUIDAsString())) {
 
-                        // BIDIRECTIONAL CHECK: Verify partnership is reciprocal
-                        if (hasEntityInC3iArray(e, entity.getC3UUIDAsString())) {
-                            // Valid bidirectional partnership - join network
-                            entity.setC3NetId(e);
+                        if (tryEstablishBidirectionalPartnership(entity, e, pos, false)) {
                             C3iSet = true;
                             break;
-                        } else {
-                            // Orphaned UUID - clear it
-                            entity.setC3iNextUUIDAsString(pos, null);
                         }
                     }
 
@@ -138,15 +131,9 @@ public class C3Util {
                           && entity.getNC3NextUUIDAsString(pos)
                           .equals(e.getC3UUIDAsString())) {
 
-                        // BIDIRECTIONAL CHECK: Verify partnership is reciprocal
-                        if (hasEntityInNC3Array(e, entity.getC3UUIDAsString())) {
-                            // Valid bidirectional partnership - join network
-                            entity.setC3NetId(e);
+                        if (tryEstablishBidirectionalPartnership(entity, e, pos, true)) {
                             C3iSet = true;
                             break;
-                        } else {
-                            // Orphaned UUID - clear it
-                            entity.setNC3NextUUIDAsString(pos, null);
                         }
                     }
 
@@ -192,21 +179,14 @@ public class C3Util {
                           .equals(e.getC3UUIDAsString())) {
                         LOGGER.debug("[C3Util]   MATCH FOUND! Entity {} UUID matches at pos {}", e.getId(), pos);
 
-                        // BIDIRECTIONAL CHECK: Verify partnership is reciprocal
-                        if (hasEntityInNC3Array(e, entity.getC3UUIDAsString())) {
-                            LOGGER.debug("[C3Util]   Bidirectional check PASSED - entity {} has this entity's UUID", e.getId());
-                            LOGGER.debug("[C3Util]   Copying network ID from entity {} ({}): {}",
-                                e.getId(), e.getShortName(), e.getC3NetId());
-                            // Valid bidirectional partnership - join network
-                            entity.setC3NetId(e);
-                            LOGGER.debug("[C3Util]   Entity {} network ID now: {}", entity.getId(), entity.getC3NetId());
+                        if (tryEstablishBidirectionalPartnership(entity, e, pos, true)) {
+                            LOGGER.debug("[C3Util]   Bidirectional check PASSED - joined network: {}",
+                                  entity.getC3NetId());
                             C3iSet = true;
                             break;
                         } else {
-                            LOGGER.debug("[C3Util]   Bidirectional check FAILED - entity {} does NOT have this entity's UUID", e.getId());
-                            LOGGER.debug("[C3Util]   Clearing orphaned UUID at pos {}", pos);
-                            // Orphaned UUID - clear it
-                            entity.setNC3NextUUIDAsString(pos, null);
+                            LOGGER.debug("[C3Util]   Bidirectional check FAILED - cleared orphaned UUID at pos {}",
+                                  pos);
                         }
                     }
 
@@ -263,6 +243,40 @@ public class C3Util {
             }
         }
         return false;
+    }
+
+    /**
+     * Attempts to establish a bidirectional network partnership for non-hierarchic C3 systems. If the partner entity
+     * has this entity's UUID in its array, joins the network. If not, clears the orphaned UUID reference.
+     *
+     * @param entity  The entity trying to join a network
+     * @param partner The potential network partner
+     * @param pos     The position in the UUID array where partner's UUID was found
+     * @param useNC3  true to use NC3 arrays (Naval C3/Nova CEWS), false to use C3i arrays
+     *
+     * @return true if partnership was established (entity joined partner's network), false if orphaned UUID was cleared
+     */
+    private static boolean tryEstablishBidirectionalPartnership(Entity entity, Entity partner, int pos,
+          boolean useNC3) {
+        String entityUUID = entity.getC3UUIDAsString();
+
+        boolean hasBidirectional = useNC3
+              ? hasEntityInNC3Array(partner, entityUUID)
+              : hasEntityInC3iArray(partner, entityUUID);
+
+        if (hasBidirectional) {
+            // Valid bidirectional partnership - join network
+            entity.setC3NetId(partner);
+            return true;
+        } else {
+            // Orphaned UUID - clear it
+            if (useNC3) {
+                entity.setNC3NextUUIDAsString(pos, null);
+            } else {
+                entity.setC3iNextUUIDAsString(pos, null);
+            }
+            return false;
+        }
     }
 
     /**

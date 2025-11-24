@@ -378,7 +378,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
      * Updates the pending changes display area.
      */
     private void updatePendingChanges() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder pendingChangesText = new StringBuilder();
         boolean hasPending = false;
 
         for (Map.Entry<Integer, String> entry : pendingChanges.entrySet()) {
@@ -389,17 +389,17 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
 
                 if (!currentNetwork.equals(targetNetwork)) {
                     hasPending = true;
-                    sb.append(entity.getShortName()).append(": ");
-                    sb.append(getNetworkDisplayName(currentNetwork));
-                    sb.append(" → ");
-                    sb.append(getNetworkDisplayName(targetNetwork));
-                    sb.append("\n");
+                    pendingChangesText.append(entity.getShortName()).append(": ");
+                    pendingChangesText.append(getNetworkDisplayName(currentNetwork));
+                    pendingChangesText.append(" → ");
+                    pendingChangesText.append(getNetworkDisplayName(targetNetwork));
+                    pendingChangesText.append("\n");
                 }
             }
         }
 
         if (hasPending) {
-            pendingChangesArea.setText(sb.toString());
+            pendingChangesArea.setText(pendingChangesText.toString());
         } else {
             pendingChangesArea.setText(Messages.getString("NovaNetworkDialog.noPendingChanges"));
         }

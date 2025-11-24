@@ -1763,12 +1763,12 @@ public final class BoardView extends AbstractBoardView
     }
 
     /**
-     * Draws white hex borders for highlighted entity hexes (Nova CEWS network dialog).
+     * Draws hex borders for highlighted entity hexes (Nova CEWS network dialog).
      *
      * @param graphics The graphics object to draw on
      */
     private void drawEntityHexHighlights(Graphics2D graphics) {
-        graphics.setColor(Color.WHITE);
+        graphics.setColor(UIUtil.uiGreen());
         graphics.setStroke(new BasicStroke((float) (2.0 * scale)));
 
         for (Coords hex : highlightedEntityHexes) {

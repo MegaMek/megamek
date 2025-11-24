@@ -33,7 +33,6 @@
 package megamek.client.ui.dialogs.phaseDisplay;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -175,7 +174,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         });
 
         JScrollPane scrollPane = new JScrollPane(unitList);
-        scrollPane.setPreferredSize(new Dimension(UIUtil.scaleForGUI(500), UIUtil.scaleForGUI(200)));
+        scrollPane.setPreferredSize(UIUtil.scaleForGUI(500, 200));
         centerPanel.add(scrollPane, BorderLayout.CENTER);
 
         mainPanel.add(centerPanel, BorderLayout.CENTER);

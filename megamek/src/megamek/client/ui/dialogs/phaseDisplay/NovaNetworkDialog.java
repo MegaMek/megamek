@@ -426,7 +426,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
                 if (entity != null) {
                     return Messages.getString("NovaNetworkDialog.networkOf", entity.getShortName());
                 }
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
                 // Fall through to default
             }
         }
@@ -437,16 +437,16 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
      * Handles button clicks.
      */
     @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnLink) {
+    public void actionPerformed(ActionEvent actionEvent) {
+        if (actionEvent.getSource() == btnLink) {
             linkSelectedUnits();
-        } else if (e.getSource() == btnUnlink) {
+        } else if (actionEvent.getSource() == btnUnlink) {
             unlinkSelectedUnits();
-        } else if (e.getSource() == btnApply) {
+        } else if (actionEvent.getSource() == btnApply) {
             applyPendingChanges();
-        } else if (e.getSource() == btnRevert) {
+        } else if (actionEvent.getSource() == btnRevert) {
             revertPendingChanges();
-        } else if (e.getSource() == btnCancel) {
+        } else if (actionEvent.getSource() == btnCancel) {
             if (!pendingChanges.isEmpty()) {
                 int result = JOptionPane.showConfirmDialog(this,
                     Messages.getString("NovaNetworkDialog.discardChanges"),

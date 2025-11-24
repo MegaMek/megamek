@@ -828,7 +828,7 @@ public class LobbyActions {
         for (Entity entity : entities) {
             if (entity.hasNhC3()) {
                 String networkId = entity.getC3NetId();
-                if (networkId != null && networkId.endsWith("." + entity.getId())) {
+                if (networkId != null && networkId.endsWith(Entity.C3_NETWORK_ID_SEPARATOR + entity.getId())) {
                     LobbyErrors.showCannotDisconnectMasterUnit(frame());
                     return;
                 }

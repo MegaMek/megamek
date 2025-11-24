@@ -241,6 +241,7 @@ public abstract class Entity extends TurnOrdered
     public static final int MAX_C3_NODES = 12;
     public static final int MAX_C3i_NODES = 6;
     public static final int MAX_NOVA_CEWS_NODES = 3;
+    public static final String C3_NETWORK_ID_SEPARATOR = ".";
 
     // PLAYTEST3 isC3ecmAffected
     protected boolean isC3ecmAffected = false;
@@ -6313,20 +6314,20 @@ public abstract class Entity extends TurnOrdered
     public @Nullable String getC3NetId() {
         if (c3NetIdString == null) {
             if (hasC3()) {
-                c3NetIdString = "C3." + getId();
+                c3NetIdString = "C3" + C3_NETWORK_ID_SEPARATOR + getId();
             } else if (hasC3i()) {
-                c3NetIdString = "C3i." + getId();
+                c3NetIdString = "C3i" + C3_NETWORK_ID_SEPARATOR + getId();
             } else if (hasActiveNovaCEWS()) {
-                c3NetIdString = "C3Nova." + getId();
+                c3NetIdString = "C3Nova" + C3_NETWORK_ID_SEPARATOR + getId();
             } else if (hasNavalC3()) {
-                c3NetIdString = "NC3." + getId();
+                c3NetIdString = "NC3" + C3_NETWORK_ID_SEPARATOR + getId();
             }
         }
         return c3NetIdString;
     }
 
     public String getOriginalNovaC3NetId() {
-        return "C3Nova." + getId();
+        return "C3Nova" + C3_NETWORK_ID_SEPARATOR + getId();
     }
 
     /**
@@ -6381,11 +6382,11 @@ public abstract class Entity extends TurnOrdered
 
     public void setC3NetIdSelf() {
         if (hasActiveNovaCEWS()) {
-            c3NetIdString = "C3Nova." + getId();
+            c3NetIdString = "C3Nova" + C3_NETWORK_ID_SEPARATOR + getId();
         } else if (hasNavalC3()) {
-            c3NetIdString = "NC3." + getId();
+            c3NetIdString = "NC3" + C3_NETWORK_ID_SEPARATOR + getId();
         } else {
-            c3NetIdString = "C3i." + getId();
+            c3NetIdString = "C3i" + C3_NETWORK_ID_SEPARATOR + getId();
         }
     }
 
@@ -6665,11 +6666,11 @@ public abstract class Entity extends TurnOrdered
             c3Master = entityId;
         }
         if (hasC3() && (entityId == NONE)) {
-            c3NetIdString = "C3." + id;
+            c3NetIdString = "C3" + C3_NETWORK_ID_SEPARATOR + id;
         } else if (hasC3i() && (entityId == NONE)) {
-            c3NetIdString = "C3i." + id;
+            c3NetIdString = "C3i" + C3_NETWORK_ID_SEPARATOR + id;
         } else if (hasNavalC3() && (entityId == NONE)) {
-            c3NetIdString = "NC3." + id;
+            c3NetIdString = "NC3" + C3_NETWORK_ID_SEPARATOR + id;
         } else if (hasC3() || hasC3i() || hasNavalC3()) {
             c3NetIdString = Objects.requireNonNull(game.getEntity(entityId)).getC3NetId();
         }

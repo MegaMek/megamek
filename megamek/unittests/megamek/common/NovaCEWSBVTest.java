@@ -34,174 +34,181 @@
 package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import megamek.common.equipment.EquipmentType;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
+import megamek.utils.EntityLoader;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for Nova CEWS BV calculation and cap enforcement.
+ * Tests for Nova CEWS BV calculation via Entity.getExtraC3BV().
  *
  * TT Rules (IO: Alternate Eras p.183):
  * - Nova CEWS provides 5% BV bonus for all friendly units with Nova CEWS
  * - Bonus only applies if 2+ units with Nova CEWS are present
  * - Maximum bonus capped at 35% of unit's base BV
  *
- * These tests focus on the cap calculation logic.
+ * Uses Pariah (Septicemia) A-Z (Base BV: 2,388) which has Nova CEWS built-in.
  */
 public class NovaCEWSBVTest {
 
-    /**
-     * Test the cap calculation logic directly.
-     * Verifies that the 35% cap is properly applied using the same
-     * logic as Entity.getExtraC3BV().
-     */
-    @Test
-    void novaCEWSBonusCappedAt35Percent() {
-        int baseBV = 1000;
-        double multiplier = 0.05; // 5% for Nova CEWS
+    private static final String PARIAH_FILE = "Pariah (Septicemia) A-Z.mtf";
 
-        // Scenario 1: Bonus under cap (should not be capped)
-        int totalForceBV_underCap = 2000; // 2 units @ 1000 each
-        double rawBonus_underCap = totalForceBV_underCap * multiplier; // 100
-        double maxBonus = baseBV * 0.35; // 350
-        double cappedBonus_underCap = Math.min(rawBonus_underCap, maxBonus);
+    private Game game;
+    private int nextEntityId = 1;
 
-        assertEquals(100, (int) Math.round(cappedBonus_underCap),
-            "Bonus of 100 should not be capped (under 35% limit of 350)");
+    @BeforeAll
+    static void initializeEquipment() {
+        EquipmentType.initializeTypes();
+    }
 
-        // Scenario 2: Bonus over cap (should be capped at 35%)
-        int totalForceBV_overCap = 21000; // 21 units @ 1000 each
-        double rawBonus_overCap = totalForceBV_overCap * multiplier; // 1050
-        double cappedBonus_overCap = Math.min(rawBonus_overCap, maxBonus);
-
-        assertEquals(350, (int) Math.round(cappedBonus_overCap),
-            "Bonus of 1050 should be capped at 350 (35% of 1000 base BV)");
-
-        // Scenario 3: Bonus exactly at cap
-        int totalForceBV_atCap = 7000; // 7 units @ 1000 each
-        double rawBonus_atCap = totalForceBV_atCap * multiplier; // 350
-        double cappedBonus_atCap = Math.min(rawBonus_atCap, maxBonus);
-
-        assertEquals(350, (int) Math.round(cappedBonus_atCap),
-            "Bonus of 350 should equal the cap (35% of 1000 base BV)");
+    @BeforeEach
+    void setUp() {
+        game = new Game();
+        game.addPlayer(0, new Player(0, "Test Player"));
+        nextEntityId = 1;
     }
 
     /**
-     * Test cap calculation with different base BV values.
-     * The 35% cap should scale with base BV.
+     * Helper method to load the Pariah (Septicemia) A-Z unit and configure it for the game.
      */
-    @Test
-    void novaCEWSCapScalesWithBaseBV() {
-        double multiplier = 0.05;
-
-        // Low BV unit
-        int baseBV_low = 500;
-        int totalForceBV_low = 10000; // Would give 500 without cap
-        double maxBonus_low = baseBV_low * 0.35; // 175
-        double cappedBonus_low = Math.min(totalForceBV_low * multiplier, maxBonus_low);
-
-        assertEquals(175, (int) Math.round(cappedBonus_low),
-            "Low BV unit (500) should be capped at 175 (35%)");
-
-        // High BV unit
-        int baseBV_high = 2000;
-        int totalForceBV_high = 40000; // Would give 2000 without cap
-        double maxBonus_high = baseBV_high * 0.35; // 700
-        double cappedBonus_high = Math.min(totalForceBV_high * multiplier, maxBonus_high);
-
-        assertEquals(700, (int) Math.round(cappedBonus_high),
-            "High BV unit (2000) should be capped at 700 (35%)");
+    private Entity loadPariah() {
+        Entity entity = EntityLoader.loadFromFile(PARIAH_FILE);
+        entity.setGame(game);
+        entity.setOwner(game.getPlayer(0));
+        entity.setId(nextEntityId++);
+        return entity;
     }
 
     /**
-     * Test that the cap only applies to Nova CEWS.
-     * This verifies the conditional logic: if (hasNovaCEWS())
+     * Verify that the test unit has Nova CEWS and expected base BV.
      */
     @Test
-    void capOnlyAppliesWhenNovaCEWSPresent() {
-        int baseBV = 1000;
-        double multiplier = 0.05;
-        int totalForceBV = 21000; // Would give 1050 bonus
+    void testPariahHasNovaCEWS() {
+        Entity pariah = loadPariah();
+        game.addEntity(pariah);
 
-        // Simulate Nova CEWS scenario (cap applies)
-        boolean hasNovaCEWS = true;
-        double rawBonus_withNova = totalForceBV * multiplier;
-        if (hasNovaCEWS) {
-            double maxBonus = baseBV * 0.35;
-            rawBonus_withNova = Math.min(rawBonus_withNova, maxBonus);
+        assertTrue(pariah.hasNovaCEWS(), "Pariah (Septicemia) A-Z should have Nova CEWS");
+
+        int baseBV = pariah.calculateBattleValue(true, true);
+        assertEquals(2388, baseBV, "Pariah base BV should be 2388");
+    }
+
+    /**
+     * Single unit with Nova CEWS should get no bonus (requires 2+ units).
+     */
+    @Test
+    void testGetExtraC3BV_NoBonus_SingleUnit() {
+        Entity pariah = loadPariah();
+        game.addEntity(pariah);
+
+        int baseBV = pariah.calculateBattleValue(true, true);
+        int extraBV = pariah.getExtraC3BV(baseBV);
+
+        assertEquals(0, extraBV, "Single Nova CEWS unit should get no bonus");
+    }
+
+    /**
+     * Two units with Nova CEWS should get 5% of total force BV as bonus.
+     */
+    @Test
+    void testGetExtraC3BV_TwoUnitNetwork() {
+        Entity pariah1 = loadPariah();
+        Entity pariah2 = loadPariah();
+        game.addEntity(pariah1);
+        game.addEntity(pariah2);
+
+        int baseBV1 = pariah1.calculateBattleValue(true, true);
+        int baseBV2 = pariah2.calculateBattleValue(true, true);
+
+        // Expected: (baseBV1 + baseBV2) * 0.05
+        int expectedBonus = (int) Math.round((baseBV1 + baseBV2) * 0.05);
+
+        int actualBonus = pariah1.getExtraC3BV(baseBV1);
+
+        assertEquals(expectedBonus, actualBonus,
+              "Nova CEWS bonus should be 5% of total friendly Nova CEWS force BV");
+    }
+
+    /**
+     * Three units with Nova CEWS should get 5% of total force BV as bonus.
+     */
+    @Test
+    void testGetExtraC3BV_ThreeUnitNetwork() {
+        Entity pariah1 = loadPariah();
+        Entity pariah2 = loadPariah();
+        Entity pariah3 = loadPariah();
+        game.addEntity(pariah1);
+        game.addEntity(pariah2);
+        game.addEntity(pariah3);
+
+        int baseBV1 = pariah1.calculateBattleValue(true, true);
+        int baseBV2 = pariah2.calculateBattleValue(true, true);
+        int baseBV3 = pariah3.calculateBattleValue(true, true);
+
+        // Expected: (baseBV1 + baseBV2 + baseBV3) * 0.05
+        int totalForceBV = baseBV1 + baseBV2 + baseBV3;
+        int expectedBonus = (int) Math.round(totalForceBV * 0.05);
+
+        int actualBonus = pariah1.getExtraC3BV(baseBV1);
+
+        assertEquals(expectedBonus, actualBonus,
+              "Nova CEWS bonus should be 5% of total friendly Nova CEWS force BV");
+    }
+
+    /**
+     * Bonus should be capped at 35% of unit's base BV when total force BV is high.
+     * With 8+ Pariah units, raw 5% bonus would exceed 35% cap.
+     */
+    @Test
+    void testGetExtraC3BV_CappedAt35Percent() {
+        Entity pariah1 = loadPariah();
+        game.addEntity(pariah1);
+
+        // Add enough units to exceed 35% cap
+        // 35% cap = 2388 * 0.35 = 835.8 -> 836
+        // To exceed: need totalForceBV * 0.05 > 836
+        // totalForceBV > 16720, so need 8+ units (8 * 2388 = 19104)
+        for (int i = 0; i < 8; i++) {
+            Entity pariah = loadPariah();
+            game.addEntity(pariah);
         }
 
-        assertEquals(350, (int) Math.round(rawBonus_withNova),
-            "Nova CEWS bonus should be capped at 350");
+        int baseBV = pariah1.calculateBattleValue(true, true);
+        int maxBonus = (int) Math.round(baseBV * 0.35);
 
-        // Simulate non-Nova scenario (cap does not apply)
-        boolean hasNovaCEWS_false = false;
-        double rawBonus_withoutNova = totalForceBV * multiplier;
-        if (hasNovaCEWS_false) {
-            double maxBonus = baseBV * 0.35;
-            rawBonus_withoutNova = Math.min(rawBonus_withoutNova, maxBonus);
-        }
+        int actualBonus = pariah1.getExtraC3BV(baseBV);
 
-        assertEquals(1050, (int) Math.round(rawBonus_withoutNova),
-            "Non-Nova bonus should NOT be capped (remains at 1050)");
+        assertEquals(maxBonus, actualBonus,
+              "Nova CEWS bonus should be capped at 35% of base BV (" + maxBonus + ")");
     }
 
     /**
-     * Test edge case: Zero base BV.
-     * Cap should be 0, resulting in 0 bonus.
+     * Entity without Nova CEWS should get no C3 bonus from Nova CEWS units.
      */
     @Test
-    void zeroBaseBVResultsInZeroCap() {
-        int baseBV = 0;
-        double multiplier = 0.05;
-        int totalForceBV = 5000;
+    void testGetExtraC3BV_NoBonus_WithoutNovaCEWS() {
+        // Load an entity without Nova CEWS
+        Entity exterminator = EntityLoader.loadFromFile("Exterminator EXT-4A.mtf");
+        exterminator.setGame(game);
+        exterminator.setOwner(game.getPlayer(0));
+        exterminator.setId(nextEntityId++);
+        game.addEntity(exterminator);
 
-        double maxBonus = baseBV * 0.35; // 0
-        double cappedBonus = Math.min(totalForceBV * multiplier, maxBonus);
+        // Add some Pariah units with Nova CEWS
+        Entity pariah1 = loadPariah();
+        Entity pariah2 = loadPariah();
+        game.addEntity(pariah1);
+        game.addEntity(pariah2);
 
-        assertEquals(0, (int) Math.round(cappedBonus),
-            "Zero base BV should result in zero cap");
-    }
+        int baseBV = exterminator.calculateBattleValue(true, true);
+        int extraBV = exterminator.getExtraC3BV(baseBV);
 
-    /**
-     * Test edge case: Negative bonus (shouldn't happen, but verifies Math.min logic).
-     */
-    @Test
-    void mathMinHandlesNegativeValues() {
-        int baseBV = 1000;
-        int totalForceBV = -1000; // Hypothetical negative scenario
-        double multiplier = 0.05;
-
-        double rawBonus = totalForceBV * multiplier; // -50
-        double maxBonus = baseBV * 0.35; // 350
-        double result = Math.min(rawBonus, maxBonus);
-
-        assertEquals(-50, (int) Math.round(result),
-            "Math.min should select negative value when raw bonus is negative");
-    }
-
-    /**
-     * Test rounding behavior.
-     * Verifies that (int) Math.round() correctly rounds the capped bonus.
-     */
-    @Test
-    void roundingBehaviorIsCorrect() {
-        int baseBV = 1000;
-        double multiplier = 0.05;
-
-        // Test rounding down
-        int totalForceBV_roundDown = 2004; // 2004 * 0.05 = 100.2
-        double rawBonus_roundDown = totalForceBV_roundDown * multiplier;
-        int roundedBonus_roundDown = (int) Math.round(rawBonus_roundDown);
-
-        assertEquals(100, roundedBonus_roundDown,
-            "100.2 should round down to 100");
-
-        // Test rounding up
-        int totalForceBV_roundUp = 2010; // 2010 * 0.05 = 100.5
-        double rawBonus_roundUp = totalForceBV_roundUp * multiplier;
-        int roundedBonus_roundUp = (int) Math.round(rawBonus_roundUp);
-
-        assertEquals(101, roundedBonus_roundUp,
-            "100.5 should round up to 101");
+        assertEquals(0, extraBV,
+              "Entity without Nova CEWS should get no bonus from Nova CEWS units");
     }
 }

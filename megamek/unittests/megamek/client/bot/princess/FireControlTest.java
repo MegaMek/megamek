@@ -67,6 +67,7 @@ import megamek.common.ToHitData;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.enums.VariableRangeTargetingMode;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentFlag;
@@ -2150,10 +2151,12 @@ class FireControlTest {
                     mockAmmo,
                     mockGame));
         when(mockShooter.hasQuirk(eq(OptionsConstants.QUIRK_POS_IMP_TARG_L))).thenReturn(false);
-        when(mockShooter.hasQuirk(eq(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S))).thenReturn(true);
+        // Variable Range Targeting SHORT mode at long range = penalty
+        when(mockShooter.hasVariableRangeTargeting()).thenReturn(true);
+        when(mockShooter.getVariableRangeTargetingMode()).thenReturn(VariableRangeTargetingMode.SHORT);
         expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expected.addModifier(FireControl.TH_LONG_RANGE);
-        expected.addModifier(FireControl.TH_VAR_RNG_TARGETING_SHORT_AT_LONG);
+        expected.addModifier(FireControl.TH_VAR_RNG_TARGETING_PENALTY);
         assertToHitDataEquals(expected,
               testFireControl.guessToHitModifierForWeapon(mockShooter,
                     mockShooterState,
@@ -2162,11 +2165,11 @@ class FireControlTest {
                     mockWeapon,
                     mockAmmo,
                     mockGame));
-        when(mockShooter.hasQuirk(eq(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S))).thenReturn(false);
-        when(mockShooter.hasQuirk(eq(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L))).thenReturn(true);
+        // Variable Range Targeting LONG mode at long range = bonus
+        when(mockShooter.getVariableRangeTargetingMode()).thenReturn(VariableRangeTargetingMode.LONG);
         expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expected.addModifier(FireControl.TH_LONG_RANGE);
-        expected.addModifier(FireControl.TH_VAR_RNG_TARGETING_LONG_AT_LONG);
+        expected.addModifier(FireControl.TH_VAR_RNG_TARGETING_BONUS);
         assertToHitDataEquals(expected,
               testFireControl.guessToHitModifierForWeapon(mockShooter,
                     mockShooterState,
@@ -2175,7 +2178,7 @@ class FireControlTest {
                     mockWeapon,
                     mockAmmo,
                     mockGame));
-        when(mockShooter.hasQuirk(eq(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L))).thenReturn(false);
+        when(mockShooter.hasVariableRangeTargeting()).thenReturn(false);
         when(mockShooter.hasQuirk(eq(OptionsConstants.QUIRK_NEG_POOR_TARG_L))).thenReturn(true);
         expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expected.addModifier(FireControl.TH_LONG_RANGE);
@@ -2234,10 +2237,12 @@ class FireControlTest {
                     mockAmmo,
                     mockGame));
         when(mockShooter.hasQuirk(eq(OptionsConstants.QUIRK_POS_IMP_TARG_S))).thenReturn(false);
-        when(mockShooter.hasQuirk(eq(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S))).thenReturn(true);
+        // Variable Range Targeting SHORT mode at short range = bonus
+        when(mockShooter.hasVariableRangeTargeting()).thenReturn(true);
+        when(mockShooter.getVariableRangeTargetingMode()).thenReturn(VariableRangeTargetingMode.SHORT);
         expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expected.addModifier(FireControl.TH_SHORT_RANGE);
-        expected.addModifier(FireControl.TH_VAR_RNG_TARGETING_SHORT_AT_SHORT);
+        expected.addModifier(FireControl.TH_VAR_RNG_TARGETING_BONUS);
         assertToHitDataEquals(expected,
               testFireControl.guessToHitModifierForWeapon(mockShooter,
                     mockShooterState,
@@ -2246,11 +2251,11 @@ class FireControlTest {
                     mockWeapon,
                     mockAmmo,
                     mockGame));
-        when(mockShooter.hasQuirk(eq(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S))).thenReturn(false);
-        when(mockShooter.hasQuirk(eq(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L))).thenReturn(true);
+        // Variable Range Targeting LONG mode at short range = penalty
+        when(mockShooter.getVariableRangeTargetingMode()).thenReturn(VariableRangeTargetingMode.LONG);
         expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expected.addModifier(FireControl.TH_SHORT_RANGE);
-        expected.addModifier(FireControl.TH_VAR_RNG_TARGETING_LONG_AT_SHORT);
+        expected.addModifier(FireControl.TH_VAR_RNG_TARGETING_PENALTY);
         assertToHitDataEquals(expected,
               testFireControl.guessToHitModifierForWeapon(mockShooter,
                     mockShooterState,
@@ -2259,7 +2264,7 @@ class FireControlTest {
                     mockWeapon,
                     mockAmmo,
                     mockGame));
-        when(mockShooter.hasQuirk(eq(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L))).thenReturn(false);
+        when(mockShooter.hasVariableRangeTargeting()).thenReturn(false);
         when(mockShooter.hasQuirk(eq(OptionsConstants.QUIRK_NEG_POOR_TARG_S))).thenReturn(true);
         expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expected.addModifier(FireControl.TH_SHORT_RANGE);

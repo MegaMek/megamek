@@ -512,6 +512,17 @@ public abstract class Entity extends TurnOrdered
     private final String[] c3iUUIDs = new String[MAX_C3i_NODES];
     private final String[] NC3UUIDs = new String[MAX_C3i_NODES];
 
+    /**
+     * Current Variable Range Targeting mode (SO pg. 196). Determines whether unit gets bonus at short range (SHORT
+     * mode) or long range (LONG mode).
+     */
+    private VariableRangeTargetingMode variableRangeTargetingMode = VariableRangeTargetingMode.LONG;
+
+    /**
+     * Pending Variable Range Targeting mode to be applied at start of next round. null means no change pending.
+     */
+    private VariableRangeTargetingMode pendingVariableRangeTargetingMode = null;
+
     protected int structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
     protected int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
 
@@ -6373,6 +6384,77 @@ public abstract class Entity extends TurnOrdered
         return newC3NetIdString;
     }
 
+    //region Variable Range Targeting (SO pg. 196)
+
+    /**
+     * Checks if this entity has the Variable Range Targeting quirk. Supports both the new unified quirk and legacy
+     * quirks for backward compatibility.
+     *
+     * @return true if this entity has Variable Range Targeting capability
+     */
+    public boolean hasVariableRangeTargeting() {
+        return hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG) ||
+              hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L) ||
+              hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S);
+    }
+
+    /**
+     * Returns the current Variable Range Targeting mode. For legacy quirks, the mode is determined by which quirk is
+     * set.
+     *
+     * @return the current VariableRangeTargetingMode
+     */
+    public VariableRangeTargetingMode getVariableRangeTargetingMode() {
+        // Legacy quirk support: if using old SHORT quirk, return SHORT mode
+        if (hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S) &&
+              !hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG)) {
+            return VariableRangeTargetingMode.SHORT;
+        }
+        return variableRangeTargetingMode;
+    }
+
+    /**
+     * Sets the current Variable Range Targeting mode. Only applies to units with the new unified Variable Range
+     * Targeting quirk.
+     *
+     * @param mode the new VariableRangeTargetingMode
+     */
+    public void setVariableRangeTargetingMode(VariableRangeTargetingMode mode) {
+        if (mode != null) {
+            variableRangeTargetingMode = mode;
+        }
+    }
+
+    /**
+     * Returns the pending Variable Range Targeting mode to be applied next round.
+     *
+     * @return the pending mode, or null if no change is pending
+     */
+    public VariableRangeTargetingMode getPendingVariableRangeTargetingMode() {
+        return pendingVariableRangeTargetingMode;
+    }
+
+    /**
+     * Sets the pending Variable Range Targeting mode to be applied at the start of the next round.
+     *
+     * @param mode the mode to apply next round, or null to cancel pending change
+     */
+    public void setPendingVariableRangeTargetingMode(VariableRangeTargetingMode mode) {
+        pendingVariableRangeTargetingMode = mode;
+    }
+
+    /**
+     * Applies pending Variable Range Targeting mode change at the start of a new round. Called from newRound().
+     */
+    public void newRoundVariableRangeSwitch() {
+        if (hasVariableRangeTargeting() && (pendingVariableRangeTargetingMode != null)) {
+            variableRangeTargetingMode = pendingVariableRangeTargetingMode;
+            pendingVariableRangeTargetingMode = null;
+        }
+    }
+
+    //endregion Variable Range Targeting
+
     public void setC3NetId(Entity e) {
         if ((e == null) || isEnemyOf(e)) {
             return;
@@ -6881,6 +6963,7 @@ public abstract class Entity extends TurnOrdered
         }
 
         newRoundNovaNetSwitch();
+        newRoundVariableRangeSwitch();
         doNewRoundIMP();
 
         // reset hexes passed through
@@ -10895,11 +10978,9 @@ public abstract class Entity extends TurnOrdered
         if (hasQuirk(OptionsConstants.QUIRK_NEG_POOR_TARG_S)) {
             mod++;
         }
-        if (hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L)) {
-            mod++;
-        }
-        if (hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S)) {
-            mod--;
+        // Variable Range Targeting: mode-based modifier (SO pg. 196)
+        if (hasVariableRangeTargeting()) {
+            mod += getVariableRangeTargetingMode().getShortRangeModifier();
         }
         return mod;
     }
@@ -10935,11 +11016,9 @@ public abstract class Entity extends TurnOrdered
         if (hasQuirk(OptionsConstants.QUIRK_NEG_POOR_TARG_L)) {
             mod++;
         }
-        if (hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L)) {
-            mod--;
-        }
-        if (hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S)) {
-            mod++;
+        // Variable Range Targeting: mode-based modifier (SO pg. 196)
+        if (hasVariableRangeTargeting()) {
+            mod += getVariableRangeTargetingMode().getLongRangeModifier();
         }
         return mod;
     }

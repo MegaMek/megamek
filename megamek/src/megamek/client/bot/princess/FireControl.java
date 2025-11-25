@@ -59,6 +59,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
+import megamek.common.enums.VariableRangeTargetingMode;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
@@ -205,14 +206,10 @@ public class FireControl {
           "improved targeting (medium) quirk");
     static final TargetRollModifier TH_IMP_TARGETING_LONG = new TargetRollModifier(-1,
           "improved targeting (long) quirk");
-    static final TargetRollModifier TH_VAR_RNG_TARGETING_SHORT_AT_SHORT = new TargetRollModifier(-1,
-          "variable range targeting (short) quirk");
-    static final TargetRollModifier TH_VAR_RNG_TARGETING_SHORT_AT_LONG = new TargetRollModifier(1,
-          "variable range targeting (short) quirk");
-    static final TargetRollModifier TH_VAR_RNG_TARGETING_LONG_AT_LONG = new TargetRollModifier(-1,
-          "variable range targeting (long) quirk");
-    static final TargetRollModifier TH_VAR_RNG_TARGETING_LONG_AT_SHORT = new TargetRollModifier(1,
-          "variable range targeting (long) quirk");
+    static final TargetRollModifier TH_VAR_RNG_TARGETING_BONUS = new TargetRollModifier(-1,
+          "variable range targeting quirk (bonus)");
+    static final TargetRollModifier TH_VAR_RNG_TARGETING_PENALTY = new TargetRollModifier(1,
+          "variable range targeting quirk (penalty)");
     static final TargetRollModifier TH_POOR_TARGETING_SHORT = new TargetRollModifier(1, "poor targeting (short) quirk");
     static final TargetRollModifier TH_POOR_TARGETING_MEDIUM = new TargetRollModifier(1,
           "poor targeting (medium) quirk");
@@ -1048,11 +1045,14 @@ public class FireControl {
             if (shooter.hasQuirk(OptionsConstants.QUIRK_POS_IMP_TARG_S)) {
                 toHit.addModifier(TH_IMP_TARGETING_SHORT);
             }
-            if (shooter.hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S)) {
-                toHit.addModifier(TH_VAR_RNG_TARGETING_SHORT_AT_SHORT);
-            }
-            if (shooter.hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L)) {
-                toHit.addModifier(TH_VAR_RNG_TARGETING_LONG_AT_SHORT);
+            // Variable Range Targeting: mode-based modifier (SO pg. 196)
+            if (shooter.hasVariableRangeTargeting()) {
+                VariableRangeTargetingMode mode = shooter.getVariableRangeTargetingMode();
+                if (mode.isShort()) {
+                    toHit.addModifier(TH_VAR_RNG_TARGETING_BONUS);
+                } else {
+                    toHit.addModifier(TH_VAR_RNG_TARGETING_PENALTY);
+                }
             }
             if (shooter.hasQuirk(OptionsConstants.QUIRK_NEG_POOR_TARG_S)) {
                 toHit.addModifier(TH_POOR_TARGETING_SHORT);
@@ -1065,16 +1065,20 @@ public class FireControl {
             if (shooter.hasQuirk(OptionsConstants.QUIRK_NEG_POOR_TARG_M)) {
                 toHit.addModifier(TH_POOR_TARGETING_MEDIUM);
             }
+            // Variable Range Targeting: medium range unaffected (SO pg. 196)
         }
         if (RangeType.RANGE_LONG == range) {
             if (shooter.hasQuirk(OptionsConstants.QUIRK_POS_IMP_TARG_L)) {
                 toHit.addModifier(TH_IMP_TARGETING_LONG);
             }
-            if (shooter.hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S)) {
-                toHit.addModifier(TH_VAR_RNG_TARGETING_SHORT_AT_LONG);
-            }
-            if (shooter.hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L)) {
-                toHit.addModifier(TH_VAR_RNG_TARGETING_LONG_AT_LONG);
+            // Variable Range Targeting: mode-based modifier (SO pg. 196)
+            if (shooter.hasVariableRangeTargeting()) {
+                VariableRangeTargetingMode mode = shooter.getVariableRangeTargetingMode();
+                if (mode.isLong()) {
+                    toHit.addModifier(TH_VAR_RNG_TARGETING_BONUS);
+                } else {
+                    toHit.addModifier(TH_VAR_RNG_TARGETING_PENALTY);
+                }
             }
             if (shooter.hasQuirk(OptionsConstants.QUIRK_NEG_POOR_TARG_L)) {
                 toHit.addModifier(TH_POOR_TARGETING_LONG);

@@ -68,6 +68,7 @@ import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.MoveStepType;
+import megamek.common.enums.VariableRangeTargetingMode;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.equipment.*;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
@@ -828,6 +829,9 @@ public class TWGameManager extends AbstractGameManager {
                     break;
                 case ENTITY_NOVA_NETWORK_CHANGE:
                     receiveEntityNovaNetworkModeChange(packet, connId);
+                    break;
+                case ENTITY_VARIABLE_RANGE_MODE_CHANGE:
+                    receiveEntityVariableRangeModeChange(packet, connId);
                     break;
                 case ENTITY_MOUNTED_FACING_CHANGE:
                     receiveEntityMountedFacingChange(packet, connId);
@@ -24933,6 +24937,34 @@ public class TWGameManager extends AbstractGameManager {
             entityUpdate(entityId);
         } catch (Exception ex) {
             LOGGER.error("", ex);
+        }
+    }
+
+    /**
+     * Receive and process a Variable Range Targeting mode change packet (SO pg. 196). Sets the pending mode on the
+     * entity, which will be applied at the start of the next round.
+     *
+     * @param packet    the packet to be processed
+     * @param connIndex the id for connection that received the packet
+     */
+    private void receiveEntityVariableRangeModeChange(Packet packet, int connIndex) {
+        try {
+            int entityId = packet.getIntValue(0);
+            VariableRangeTargetingMode mode = (VariableRangeTargetingMode) packet.getObject(1);
+            Entity entity = game.getEntity(entityId);
+
+            if (entity == null || entity.getOwner() != game.getPlayer(connIndex)) {
+                return;
+            }
+
+            if (!entity.hasVariableRangeTargeting()) {
+                return;
+            }
+
+            entity.setPendingVariableRangeTargetingMode(mode);
+            entityUpdate(entityId);
+        } catch (Exception ex) {
+            LOGGER.error("Error processing Variable Range Targeting mode change", ex);
         }
     }
 

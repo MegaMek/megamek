@@ -236,7 +236,7 @@ public class VariableRangeTargetingDialog extends JDialog implements ActionListe
             String pendingText = pendingMode.isLong()
                   ? Messages.getString("VariableRangeTargetingDialog.modeLong")
                   : Messages.getString("VariableRangeTargetingDialog.modeShort");
-            modeText += " -> " + pendingText;
+            modeText += Messages.getString("VariableRangeTargetingDialog.modeTransition") + pendingText;
         }
 
         return modeText;

@@ -10978,10 +10978,8 @@ public abstract class Entity extends TurnOrdered
         if (hasQuirk(OptionsConstants.QUIRK_NEG_POOR_TARG_S)) {
             mod++;
         }
-        // Variable Range Targeting: mode-based modifier (SO pg. 196)
-        if (hasVariableRangeTargeting()) {
-            mod += getVariableRangeTargetingMode().getShortRangeModifier();
-        }
+        // Note: Variable Range Targeting modifier is applied separately in Compute.java
+        // to ensure it appears as a distinct line item in the to-hit breakdown
         return mod;
     }
 
@@ -11016,11 +11014,32 @@ public abstract class Entity extends TurnOrdered
         if (hasQuirk(OptionsConstants.QUIRK_NEG_POOR_TARG_L)) {
             mod++;
         }
-        // Variable Range Targeting: mode-based modifier (SO pg. 196)
-        if (hasVariableRangeTargeting()) {
-            mod += getVariableRangeTargetingMode().getLongRangeModifier();
-        }
+        // Note: Variable Range Targeting modifier is applied separately in Compute.java
+        // to ensure it appears as a distinct line item in the to-hit breakdown
         return mod;
+    }
+
+    /**
+     * Returns the Variable Range Targeting modifier for the specified range type. Used by Compute.java to add a
+     * separate line item in the to-hit breakdown.
+     *
+     * @param rangeType the range type constant from {@link RangeType}
+     *
+     * @return the modifier value, or 0 if the entity doesn't have Variable Range Targeting or the range type doesn't
+     *       apply
+     */
+    public int getVariableRangeTargetingModifier(int rangeType) {
+        if (!hasVariableRangeTargeting()) {
+            return 0;
+        }
+        VariableRangeTargetingMode mode = getVariableRangeTargetingMode();
+        if ((rangeType == RangeType.RANGE_SHORT) || (rangeType == RangeType.RANGE_MINIMUM)) {
+            return mode.getShortRangeModifier();
+        } else if (rangeType == RangeType.RANGE_LONG) {
+            return mode.getLongRangeModifier();
+        }
+        // Medium, Extreme, and LOS ranges are not affected
+        return 0;
     }
 
     public int getExtremeRangeModifier() {

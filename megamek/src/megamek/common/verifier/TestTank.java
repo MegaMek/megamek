@@ -376,12 +376,12 @@ public class TestTank extends TestEntity {
         for (Mounted<?> m : tank.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_COMBAT_VEHICLE_ESCAPE_POD)) {
                 if (m.getLocation() != (tank instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR : Tank.LOC_REAR)) {
-                    buff.append("combat vehicle escape pod must be placed in rear");
+                    buff.append("Combat vehicle escape pod must be placed in rear.\n");
                     correct = false;
                 }
             } else if (m.getType().hasFlag(MiscType.F_MASC) && m.getType().hasSubType(MiscType.S_SUPERCHARGER)
                   && (tank instanceof VTOL)) {
-                buff.append("VTOL'S cannot mount superchargers.");
+                buff.append("VTOLs cannot mount superchargers.\n");
                 correct = false;
             }
         }
@@ -393,9 +393,16 @@ public class TestTank extends TestEntity {
                 }
             }
             if (count > 2) {
-                buff.append("max of 2 manipulators per location");
+                buff.append("Max of 2 manipulators per location.\n");
                 correct = false;
                 break;
+            }
+        }
+
+        if (tank.getMovementMode() == EntityMovementMode.WIGE) {
+            if (tank.getWalkMP() < 5) {
+                buff.append("WiGE must have at least 5 Cruise MP.\n");
+                correct = false;
             }
         }
 

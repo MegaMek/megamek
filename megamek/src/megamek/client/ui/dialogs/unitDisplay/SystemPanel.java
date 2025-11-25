@@ -774,7 +774,7 @@ class SystemPanel extends PicMap
                 Client client = unitDisplayPanel.getClientGUI().getClient();
                 m_bDumpAmmo.setEnabled(false);
                 m_chMode.setEnabled(false);
-                Mounted<?> m = getSelectedEquipment();
+                Mounted<?> mounted = getSelectedEquipment();
                 boolean carryingBAsOnBack = (en instanceof Mek)
                       && ((en.getExteriorUnitAt(Mek.LOC_CENTER_TORSO, true) != null)
                       || (en.getExteriorUnitAt(Mek.LOC_LEFT_TORSO, true) != null) || (en
@@ -791,74 +791,83 @@ class SystemPanel extends PicMap
                 ((DefaultComboBoxModel<String>) m_chMode.getModel())
                       .removeAllElements();
                 boolean bOwner = client.getLocalPlayer().equals(en.getOwner());
-                if ((m != null)
+                if ((mounted != null)
                       && bOwner
-                      && (m.getType() instanceof AmmoType)
+                      && (mounted.getType() instanceof AmmoType)
                       && !client.getGame().getPhase().isDeployment()
                       && !client.getGame().getPhase().isMovement()
-                      && (m.getUsableShotsLeft() > 0)
-                      && !m.isDumping()
+                      && (mounted.getUsableShotsLeft() > 0)
+                      && !mounted.isDumping()
                       && en.isActive()
                       && (client.getGame().getOptions().intOption(OptionsConstants.BASE_DUMPING_FROM_ROUND) <= client
                       .getGame().getRoundCount())
                       && !carryingBAsOnBack && !invalidEnvironment) {
                     m_bDumpAmmo.setEnabled(true);
-                } else if ((m != null) && bOwner
-                      && (m.getType() instanceof WeaponType)
-                      && !m.isMissing() && m.isDWPMounted()) {
+                } else if ((mounted != null) && bOwner
+                      && (mounted.getType() instanceof WeaponType)
+                      && !mounted.isMissing() && mounted.isDWPMounted()) {
                     m_bDumpAmmo.setEnabled(true);
                     // Allow dumping of body-mounted missile launchers on BA
-                } else if ((m != null) && bOwner
+                } else if ((mounted != null) && bOwner
                       && (en instanceof BattleArmor)
-                      && (m.getType() instanceof WeaponType)
-                      && !m.isMissing() && m.isBodyMounted()
-                      && m.getType().hasFlag(WeaponType.F_MISSILE)
-                      && (m.getLinked() != null)
-                      && (m.getLinked().getUsableShotsLeft() > 0)) {
+                      && (mounted.getType() instanceof WeaponType)
+                      && !mounted.isMissing() && mounted.isBodyMounted()
+                      && mounted.getType().hasFlag(WeaponType.F_MISSILE)
+                      && (mounted.getLinked() != null)
+                      && (mounted.getLinked().getUsableShotsLeft() > 0)) {
                     m_bDumpAmmo.setEnabled(true);
                 }
                 int round = client.getGame().getRoundCount();
                 boolean inSquadron = en.isPartOfFighterSquadron();
-                if ((m != null) && bOwner && m.hasModes()) {
-                    if (!m.isInoperable() && !m.isDumping()
+                if ((mounted != null) && bOwner && mounted.hasModes()) {
+                    if (!mounted.isInoperable() && !mounted.isDumping()
                           && (en.isActive() || en.isActive(round) || inSquadron)
-                          && m.isModeSwitchable()) {
+                          && mounted.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
                     }
-                    if (!m.isInoperable()
-                          && (m.getType() instanceof MiscType)
-                          && m.getType().hasFlag(MiscType.F_STEALTH)
-                          && m.isModeSwitchable()) {
+                    if (!mounted.isInoperable()
+                          && (mounted.getType() instanceof MiscType)
+                          && mounted.getType().hasFlag(MiscType.F_STEALTH)
+                          && mounted.isModeSwitchable()) {
+                        m_chMode.setEnabled(true);
+                    }
+                    // Nova CEWS has built-in "ECM"/"Off" modes and should always be switchable
+                    if (!mounted.isInoperable()
+                          && (mounted.getType() instanceof MiscType)
+                          && mounted.getType().hasFlag(MiscType.F_NOVA)
+                          && mounted.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
                     } // if the max tech eccm option is not set then the ECM
                     // should not show anything.
-                    if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_ECM)
+                    // Exception: Nova CEWS has built-in "ECM"/"Off" modes and should always be switchable
+                    if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_ECM)
+                          && !mounted.getType().hasFlag(MiscType.F_NOVA)
                           && !(client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_ECCM)
                           || client.getGame().getOptions()
                           .booleanOption(OptionsConstants.ADVANCED_TAC_OPS_GHOST_TARGET))) {
                         return;
                     }
-                    for (Enumeration<EquipmentMode> e = m.getType()
-                          .getModes(); e.hasMoreElements(); ) {
-                        EquipmentMode em = e.nextElement();
+                    for (Enumeration<EquipmentMode> modeEnumeration = mounted.getType()
+                          .getModes(); modeEnumeration.hasMoreElements(); ) {
+                        EquipmentMode equipmentMode = modeEnumeration.nextElement();
                         // Hack to prevent showing an option that is disabled by the server, but would
                         // be overwritten by every entity update if made also in the client
-                        if (em.equals("HotLoad") && en instanceof Mek
+                        if (equipmentMode.equals("HotLoad") && en instanceof Mek
                               && !client.getGame().getOptions()
                               .booleanOption(OptionsConstants.ADVANCED_COMBAT_HOT_LOAD_IN_GAME)) {
                             continue;
                         }
-                        m_chMode.addItem(em.getDisplayableName());
+                        m_chMode.addItem(equipmentMode.getDisplayableName());
                     }
                     if (m_chMode.getModel().getSize() <= 1) {
                         m_chMode.removeAllItems();
                         m_chMode.setEnabled(false);
                     } else {
-                        if (m.pendingMode().equals("None")) {
-                            m_chMode.setSelectedItem(m.curMode()
+                        if (mounted.pendingMode().equals("None")) {
+                            m_chMode.setSelectedItem(mounted.curMode()
                                   .getDisplayableName());
                         } else {
-                            m_chMode.setSelectedItem(m.pendingMode()
+                            m_chMode.setSelectedItem(mounted.pendingMode()
                                   .getDisplayableName());
                         }
                     }

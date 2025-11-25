@@ -24651,6 +24651,15 @@ public class TWGameManager extends AbstractGameManager {
             // Only update entities that existed and are owned by a teammate of the sender
             if ((oldEntity != null) && (!oldEntity.getOwner().isEnemyOf(game.getPlayer(connIndex)))) {
                 game.setEntity(entity.getId(), entity);
+
+                // Reconstruct C3 network IDs from UUIDs (fixes lobby C3 configuration)
+                List<Entity> c3affected = C3Util.wireC3(game, entity);
+                for (Entity affectedEntity : c3affected) {
+                    if (!newEntities.contains(affectedEntity)) {
+                        newEntities.add(affectedEntity);
+                    }
+                }
+
                 sendServerChat(ServerLobbyHelper.entityUpdateMessage(entity, game));
                 newEntities.add(game.getEntity(entity.getId()));
                 if (entity.isPartOfFighterSquadron()) {
@@ -24920,6 +24929,8 @@ public class TWGameManager extends AbstractGameManager {
             // FIXME: Greg: This can result in setting the network to link to hostile units. However, it should be
             //  caught by both the isMemberOfNetwork test from the c3 module as well as by the clients possible input.
             entity.setNewRoundNovaNetworkString(networkID);
+            // Trigger entity update to refresh BV display in lobby
+            entityUpdate(entityId);
         } catch (Exception ex) {
             LOGGER.error("", ex);
         }
@@ -25341,6 +25352,20 @@ public class TWGameManager extends AbstractGameManager {
      * Creates a packet containing all current and out-of-game entities
      */
     public Packet createFullEntitiesPacket() {
+        // DIAGNOSTIC: Nova CEWS network state logging (enable DEBUG logging for C3 debugging)
+        if (LOGGER.isDebugEnabled()) {
+            for (Entity entity : getGame().getEntitiesVector()) {
+                if (entity.hasNovaCEWS()) {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < Entity.MAX_C3i_NODES; i++) {
+                        sb.append(entity.getNC3NextUUIDAsString(i)).append(", ");
+                    }
+                    LOGGER.debug("[SERVER] createFullEntitiesPacket: Entity {} ({}), c3NetIdString: {}, NC3UUIDs: [{}]",
+                        entity.getId(), entity.getShortName(), entity.getC3NetId(), sb.toString());
+                }
+            }
+        }
+
         return new Packet(PacketCommand.SENDING_ENTITIES,
               getGame().getEntitiesVector(),
               getGame().getOutOfGameEntitiesVector(),

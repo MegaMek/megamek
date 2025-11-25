@@ -252,7 +252,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
         GamePhase currentPhase = clientgui.getClient().getGame().getPhase();
         if (currentPhase == GamePhase.END || currentPhase == GamePhase.END_REPORT) {
             setNovaNetworkEnabled(hasNovaUnits());
-            // Enable Variable Range Targeting button (SO pg. 196: player chooses mode during End Phase)
+            // Enable Variable Range Targeting button (BMM pg. 86: player chooses mode during End Phase)
             setVariableRangeTargetingEnabled(hasVariableRangeUnits());
         } else {
             setNovaNetworkEnabled(false);
@@ -325,7 +325,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
     }
 
     /**
-     * Shows the Variable Range Targeting mode selection dialog (SO pg. 196).
+     * Shows the Variable Range Targeting mode selection dialog (BMM pg. 86).
      */
     private void showVariableRangeTargetingDialog() {
         VariableRangeTargetingDialog dialog = new VariableRangeTargetingDialog(clientgui.getFrame(), clientgui);

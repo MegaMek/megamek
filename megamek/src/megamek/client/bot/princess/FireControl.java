@@ -1045,7 +1045,7 @@ public class FireControl {
             if (shooter.hasQuirk(OptionsConstants.QUIRK_POS_IMP_TARG_S)) {
                 toHit.addModifier(TH_IMP_TARGETING_SHORT);
             }
-            // Variable Range Targeting: mode-based modifier (SO pg. 196)
+            // Variable Range Targeting: mode-based modifier (BMM pg. 86)
             if (shooter.hasVariableRangeTargeting()) {
                 VariableRangeTargetingMode mode = shooter.getVariableRangeTargetingMode();
                 if (mode.isShort()) {
@@ -1065,13 +1065,13 @@ public class FireControl {
             if (shooter.hasQuirk(OptionsConstants.QUIRK_NEG_POOR_TARG_M)) {
                 toHit.addModifier(TH_POOR_TARGETING_MEDIUM);
             }
-            // Variable Range Targeting: medium range unaffected (SO pg. 196)
+            // Variable Range Targeting: medium range unaffected (BMM pg. 86)
         }
         if (RangeType.RANGE_LONG == range) {
             if (shooter.hasQuirk(OptionsConstants.QUIRK_POS_IMP_TARG_L)) {
                 toHit.addModifier(TH_IMP_TARGETING_LONG);
             }
-            // Variable Range Targeting: mode-based modifier (SO pg. 196)
+            // Variable Range Targeting: mode-based modifier (BMM pg. 86)
             if (shooter.hasVariableRangeTargeting()) {
                 VariableRangeTargetingMode mode = shooter.getVariableRangeTargetingMode();
                 if (mode.isLong()) {

@@ -1921,7 +1921,7 @@ public final class UnitToolTip {
 
     /**
      * Returns Variable Range Targeting mode info for tooltip display. Shows icon + mode name for units with VRT quirk
-     * (SO pg. 196).
+     * (BMM pg. 86).
      */
     private static String getVariableRangeTargetingInfo(Entity entity) {
         if (!entity.hasVariableRangeTargeting()) {
@@ -2000,7 +2000,7 @@ public final class UnitToolTip {
             rows += row;
         }
 
-        // Variable Range Targeting mode (SO pg. 196)
+        // Variable Range Targeting mode (BMM pg. 86)
         String vrtInfo = getVariableRangeTargetingInfo(entity);
         if (!vrtInfo.isEmpty()) {
             attr = String.format("FACE=Dialog COLOR=%s",

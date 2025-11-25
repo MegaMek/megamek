@@ -203,7 +203,7 @@ public class Quirks extends AbstractOptions {
     public static boolean isQuirkLegalFor(IOption quirk, Entity en) {
         String qName = quirk.getName();
 
-        // Variable Range Targeting cannot be combined with Improved Targeting quirks (SO pg. 196)
+        // Variable Range Targeting cannot be combined with Improved Targeting quirks (BMM pg. 86)
         if (qName.equals(QUIRK_POS_VAR_RNG_TARG) ||
               qName.equals(QUIRK_POS_VAR_RNG_TARG_L) ||
               qName.equals(QUIRK_POS_VAR_RNG_TARG_S)) {
@@ -214,7 +214,7 @@ public class Quirks extends AbstractOptions {
             }
         }
 
-        // Improved Targeting cannot be combined with Variable Range Targeting (SO pg. 196)
+        // Improved Targeting cannot be combined with Variable Range Targeting (BMM pg. 86)
         if (qName.equals(QUIRK_POS_IMP_TARG_S) ||
               qName.equals(QUIRK_POS_IMP_TARG_M) ||
               qName.equals(QUIRK_POS_IMP_TARG_L)) {

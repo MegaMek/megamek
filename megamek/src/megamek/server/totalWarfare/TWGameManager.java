@@ -24941,7 +24941,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Receive and process a Variable Range Targeting mode change packet (SO pg. 196). Sets the pending mode on the
+     * Receive and process a Variable Range Targeting mode change packet (BMM pg. 86). Sets the pending mode on the
      * entity, which will be applied at the start of the next round.
      *
      * @param packet    the packet to be processed

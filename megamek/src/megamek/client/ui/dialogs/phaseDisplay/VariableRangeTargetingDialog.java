@@ -86,8 +86,7 @@ public class VariableRangeTargetingDialog extends JDialog implements ActionListe
 
     // Data structures
     private List<Entity> playerUnits;
-    private Map<Integer, JRadioButton> longModeButtons = new HashMap<>();
-    private Map<Integer, JRadioButton> shortModeButtons = new HashMap<>();
+    private final Map<Integer, JRadioButton> longModeButtons = new HashMap<>();
 
     public VariableRangeTargetingDialog(JFrame parent, ClientGUI clientGUI) {
         super(parent, Messages.getString("VariableRangeTargetingDialog.title"), true);
@@ -199,9 +198,8 @@ public class VariableRangeTargetingDialog extends JDialog implements ActionListe
             modePanel.add(shortButton);
             unitPanel.add(modePanel, gbc);
 
-            // Store references
+            // Store reference for apply logic
             longModeButtons.put(entity.getId(), longButton);
-            shortModeButtons.put(entity.getId(), shortButton);
         }
 
         JScrollPane scrollPane = new JScrollPane(unitPanel);

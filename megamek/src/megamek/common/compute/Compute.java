@@ -1699,7 +1699,7 @@ public class Compute {
             }
         }
 
-        // Variable Range Targeting quirk modifier (SO pg. 196)
+        // Variable Range Targeting quirk modifier (BMM pg. 86)
         // Shows as a separate line item in the to-hit breakdown
         int vrtModifier = attackingEntity.getVariableRangeTargetingModifier(usingRange);
         if (vrtModifier != 0) {

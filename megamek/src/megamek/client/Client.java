@@ -929,7 +929,7 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Send a Variable Range Targeting mode change packet (SO pg. 196). Mode changes are applied at the start of the
+     * Send a Variable Range Targeting mode change packet (BMM pg. 86). Mode changes are applied at the start of the
      * next round.
      *
      * @param entityId the ID of the entity changing modes

@@ -513,7 +513,7 @@ public abstract class Entity extends TurnOrdered
     private final String[] NC3UUIDs = new String[MAX_C3i_NODES];
 
     /**
-     * Current Variable Range Targeting mode (SO pg. 196). Determines whether unit gets bonus at short range (SHORT
+     * Current Variable Range Targeting mode (BMM pg. 86). Determines whether unit gets bonus at short range (SHORT
      * mode) or long range (LONG mode).
      */
     private VariableRangeTargetingMode variableRangeTargetingMode = VariableRangeTargetingMode.LONG;
@@ -6384,7 +6384,7 @@ public abstract class Entity extends TurnOrdered
         return newC3NetIdString;
     }
 
-    //region Variable Range Targeting (SO pg. 196)
+    //region Variable Range Targeting (BMM pg. 86)
 
     /**
      * Checks if this entity has the Variable Range Targeting quirk. Supports both the new unified quirk and legacy

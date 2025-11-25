@@ -35,7 +35,7 @@
 package megamek.common.actions;
 
 import java.io.Serial;
-import java.util.Enumeration;
+import java.util.ListIterator;
 
 import megamek.client.ui.Messages;
 import megamek.common.CriticalSlot;
@@ -178,8 +178,8 @@ public class DfaAttackAction extends DisplacementAttackAction {
 
         // determine last valid step
         md.compile(game, ae);
-        for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
+        for (final ListIterator<MoveStep> i = md.getSteps(); i.hasNext(); ) {
+            final MoveStep step = i.next();
             if (!step.isLegal(md)) {
                 break;
             }

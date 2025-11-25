@@ -1188,8 +1188,8 @@ public class FireControl {
           final EntityState targetState) {
 
         final Coords targetCoords = targetState.getPosition();
-        for (final Enumeration<MoveStep> step = flightPath.getSteps(); step.hasMoreElements(); ) {
-            final Coords stepCoords = step.nextElement().getPosition();
+        for (final ListIterator<MoveStep> step = flightPath.getSteps(); step.hasNext(); ) {
+            final Coords stepCoords = step.next().getPosition();
             if (targetCoords.equals(stepCoords)) {
                 return true;
             }

@@ -773,7 +773,8 @@ public class MoveStep implements Serializable {
               getElevation(),
               getPosition(), boardId,
               null,
-              climbMode);
+              climbMode,
+              true);
         if ((violation != null) && (getType() != MoveStepType.CHARGE) && (getType() != MoveStepType.DFA)) {
             setStackingViolation(true);
         }
@@ -2306,7 +2307,7 @@ public class MoveStep implements Serializable {
                     if (getTargetPosition() != null) {
                         curPos = getTargetPosition();
                     }
-                    if ((null != Compute.stackingViolation(game, other, curPos, entity, climbMode)) ||
+                    if ((null != Compute.stackingViolation(game, other, curPos, entity, climbMode, true)) ||
                           other.isLocationProhibited(curPos, getElevation())) {
                         movementType = EntityMovementType.MOVE_ILLEGAL;
                     }
@@ -2332,7 +2333,7 @@ public class MoveStep implements Serializable {
             // or into stacking violation.
             Targetable target = getTarget(game);
             if (target instanceof Entity other) {
-                if ((null != Compute.stackingViolation(game, other, curPos, entity, climbMode)) ||
+                if ((null != Compute.stackingViolation(game, other, curPos, entity, climbMode, true)) ||
                       other.isLocationProhibited(curPos, getElevation())) {
                     movementType = EntityMovementType.MOVE_ILLEGAL;
                 }
@@ -3260,13 +3261,15 @@ public class MoveStep implements Serializable {
         // through a hex
         if (!isJumping() && (type != MoveStepType.CHARGE) && (type != MoveStepType.DFA)) {
             // can't move a mek into a hex with an enemy mek
-            if ((entity instanceof Mek) && Compute.isEnemyIn(game, entity, dest, true, true, getElevation())) {
+            if ((entity instanceof Mek) &&
+                  Compute.isEnemyIn(game, entity, dest, true, true, getElevation(), true)
+            ) {
                 return false;
             }
 
             // Can't move out of a hex with an enemy unit unless we started
             // there, BUT we're allowed to turn, unload/Disconnect, or go prone.
-            if (Compute.isEnemyIn(game, entity, src, false, entity instanceof Mek, srcEl) &&
+            if (Compute.isEnemyIn(game, entity, src, false, entity instanceof Mek, srcEl, true) &&
                   !src.equals(entity.getPosition()) &&
                   (type != MoveStepType.TURN_LEFT) &&
                   (type != MoveStepType.TURN_RIGHT) &&
@@ -3280,7 +3283,7 @@ public class MoveStep implements Serializable {
             // high enough elevation
             if (!(entity instanceof Infantry)) {
                 for (Entity inHex : game.getEntitiesVector(src)) {
-                    if (inHex.equals(entity)) {
+                    if (inHex.equals(entity) || inHex.isHidden()) {
                         continue;
                     }
 

@@ -1008,7 +1008,7 @@ public class Client extends AbstractClient {
                             initGameLog();
                         }
                         if (log != null) {
-                            log.append(phaseReport);
+                            log.appendRaw(phaseReport);
                         }
                     }
                     game.addReports(packet.getReportList(0));
@@ -1028,7 +1028,7 @@ public class Client extends AbstractClient {
                         initGameLog();
                         if (log != null) {
                             for (List<Report> allReport : allReports) {
-                                log.append(receiveReport(allReport));
+                                log.appendRaw(receiveReport(allReport));
                             }
                         }
                     }

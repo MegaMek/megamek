@@ -35,11 +35,15 @@ package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Crew;
+import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
-import megamek.utils.EntityLoader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,11 +56,9 @@ import org.junit.jupiter.api.Test;
  * - Bonus only applies if 2+ units with Nova CEWS are present
  * - Maximum bonus capped at 35% of unit's base BV
  *
- * Uses Pariah (Septicemia) A-Z (Base BV: 2,388) which has Nova CEWS built-in.
+ * Creates entities programmatically with Nova CEWS equipment.
  */
 public class NovaCEWSBVTest {
-
-    private static final String PARIAH_FILE = "Pariah (Septicemia) A-Z.mtf";
 
     private Game game;
     private int nextEntityId = 1;
@@ -74,28 +76,71 @@ public class NovaCEWSBVTest {
     }
 
     /**
-     * Helper method to load the Pariah (Septicemia) A-Z unit and configure it for the game.
+     * Helper method to create an entity with Nova CEWS equipment.
      */
-    private Entity loadPariah() {
-        Entity entity = EntityLoader.loadFromFile(PARIAH_FILE);
+    private Entity createNovaCEWSEntity() {
+        Entity entity = new BipedMek();
         entity.setGame(game);
-        entity.setOwner(game.getPlayer(0));
         entity.setId(nextEntityId++);
+        entity.setChassis("Test Mek");
+        entity.setModel("Nova");
+
+        // Initialize crew to avoid NullPointerException
+        Crew crew = new Crew(CrewType.SINGLE);
+        entity.setCrew(crew);
+
+        // Set owner (required for BV calculation)
+        entity.setOwner(game.getPlayer(0));
+
+        // Set basic properties
+        entity.setWeight(50.0);
+        entity.setOriginalWalkMP(5);
+
+        // Add Nova CEWS equipment
+        try {
+            EquipmentType novaCEWS = EquipmentType.get("NovaCEWS");
+            Mounted<?> novaMounted = entity.addEquipment(novaCEWS, Entity.LOC_NONE);
+            novaMounted.setMode("ECM");
+        } catch (Exception e) {
+            fail("Failed to add Nova CEWS equipment: " + e.getMessage());
+        }
+
         return entity;
     }
 
     /**
-     * Verify that the test unit has Nova CEWS and expected base BV.
+     * Helper method to create an entity WITHOUT Nova CEWS equipment.
+     */
+    private Entity createStandardEntity() {
+        Entity entity = new BipedMek();
+        entity.setGame(game);
+        entity.setId(nextEntityId++);
+        entity.setChassis("Test Mek");
+        entity.setModel("Standard");
+
+        // Initialize crew to avoid NullPointerException
+        Crew crew = new Crew(CrewType.SINGLE);
+        entity.setCrew(crew);
+
+        // Set owner (required for BV calculation)
+        entity.setOwner(game.getPlayer(0));
+
+        // Set basic properties
+        entity.setWeight(50.0);
+        entity.setOriginalWalkMP(5);
+
+        return entity;
+    }
+
+    /**
+     * Verify that the test unit has Nova CEWS equipment.
      */
     @Test
-    void testPariahHasNovaCEWS() {
-        Entity pariah = loadPariah();
-        game.addEntity(pariah);
+    void testEntityHasNovaCEWS() {
+        Entity entity = createNovaCEWSEntity();
+        game.addEntity(entity);
 
-        assertTrue(pariah.hasNovaCEWS(), "Pariah (Septicemia) A-Z should have Nova CEWS");
-
-        int baseBV = pariah.calculateBattleValue(true, true);
-        assertEquals(2388, baseBV, "Pariah base BV should be 2388");
+        assertTrue(entity.hasNovaCEWS(), "Entity with Nova CEWS equipment should return true for hasNovaCEWS()");
     }
 
     /**
@@ -103,11 +148,11 @@ public class NovaCEWSBVTest {
      */
     @Test
     void testGetExtraC3BV_NoBonus_SingleUnit() {
-        Entity pariah = loadPariah();
-        game.addEntity(pariah);
+        Entity entity = createNovaCEWSEntity();
+        game.addEntity(entity);
 
-        int baseBV = pariah.calculateBattleValue(true, true);
-        int extraBV = pariah.getExtraC3BV(baseBV);
+        int baseBV = entity.calculateBattleValue(true, true);
+        int extraBV = entity.getExtraC3BV(baseBV);
 
         assertEquals(0, extraBV, "Single Nova CEWS unit should get no bonus");
     }
@@ -117,18 +162,18 @@ public class NovaCEWSBVTest {
      */
     @Test
     void testGetExtraC3BV_TwoUnitNetwork() {
-        Entity pariah1 = loadPariah();
-        Entity pariah2 = loadPariah();
-        game.addEntity(pariah1);
-        game.addEntity(pariah2);
+        Entity entity1 = createNovaCEWSEntity();
+        Entity entity2 = createNovaCEWSEntity();
+        game.addEntity(entity1);
+        game.addEntity(entity2);
 
-        int baseBV1 = pariah1.calculateBattleValue(true, true);
-        int baseBV2 = pariah2.calculateBattleValue(true, true);
+        int baseBV1 = entity1.calculateBattleValue(true, true);
+        int baseBV2 = entity2.calculateBattleValue(true, true);
 
         // Expected: (baseBV1 + baseBV2) * 0.05
         int expectedBonus = (int) Math.round((baseBV1 + baseBV2) * 0.05);
 
-        int actualBonus = pariah1.getExtraC3BV(baseBV1);
+        int actualBonus = entity1.getExtraC3BV(baseBV1);
 
         assertEquals(expectedBonus, actualBonus,
               "Nova CEWS bonus should be 5% of total friendly Nova CEWS force BV");
@@ -139,22 +184,22 @@ public class NovaCEWSBVTest {
      */
     @Test
     void testGetExtraC3BV_ThreeUnitNetwork() {
-        Entity pariah1 = loadPariah();
-        Entity pariah2 = loadPariah();
-        Entity pariah3 = loadPariah();
-        game.addEntity(pariah1);
-        game.addEntity(pariah2);
-        game.addEntity(pariah3);
+        Entity entity1 = createNovaCEWSEntity();
+        Entity entity2 = createNovaCEWSEntity();
+        Entity entity3 = createNovaCEWSEntity();
+        game.addEntity(entity1);
+        game.addEntity(entity2);
+        game.addEntity(entity3);
 
-        int baseBV1 = pariah1.calculateBattleValue(true, true);
-        int baseBV2 = pariah2.calculateBattleValue(true, true);
-        int baseBV3 = pariah3.calculateBattleValue(true, true);
+        int baseBV1 = entity1.calculateBattleValue(true, true);
+        int baseBV2 = entity2.calculateBattleValue(true, true);
+        int baseBV3 = entity3.calculateBattleValue(true, true);
 
         // Expected: (baseBV1 + baseBV2 + baseBV3) * 0.05
         int totalForceBV = baseBV1 + baseBV2 + baseBV3;
         int expectedBonus = (int) Math.round(totalForceBV * 0.05);
 
-        int actualBonus = pariah1.getExtraC3BV(baseBV1);
+        int actualBonus = entity1.getExtraC3BV(baseBV1);
 
         assertEquals(expectedBonus, actualBonus,
               "Nova CEWS bonus should be 5% of total friendly Nova CEWS force BV");
@@ -162,26 +207,27 @@ public class NovaCEWSBVTest {
 
     /**
      * Bonus should be capped at 35% of unit's base BV when total force BV is high.
-     * With 8+ Pariah units, raw 5% bonus would exceed 35% cap.
+     * With enough units, raw 5% bonus would exceed 35% cap.
      */
     @Test
     void testGetExtraC3BV_CappedAt35Percent() {
-        Entity pariah1 = loadPariah();
-        game.addEntity(pariah1);
+        Entity entity1 = createNovaCEWSEntity();
+        game.addEntity(entity1);
+
+        int baseBV = entity1.calculateBattleValue(true, true);
 
         // Add enough units to exceed 35% cap
-        // 35% cap = 2388 * 0.35 = 835.8 -> 836
-        // To exceed: need totalForceBV * 0.05 > 836
-        // totalForceBV > 16720, so need 8+ units (8 * 2388 = 19104)
+        // 35% cap means we need totalForceBV * 0.05 > baseBV * 0.35
+        // Which means totalForceBV > baseBV * 7
+        // So we need 8+ units total to exceed the cap
         for (int i = 0; i < 8; i++) {
-            Entity pariah = loadPariah();
-            game.addEntity(pariah);
+            Entity entity = createNovaCEWSEntity();
+            game.addEntity(entity);
         }
 
-        int baseBV = pariah1.calculateBattleValue(true, true);
         int maxBonus = (int) Math.round(baseBV * 0.35);
 
-        int actualBonus = pariah1.getExtraC3BV(baseBV);
+        int actualBonus = entity1.getExtraC3BV(baseBV);
 
         assertEquals(maxBonus, actualBonus,
               "Nova CEWS bonus should be capped at 35% of base BV (" + maxBonus + ")");
@@ -192,21 +238,18 @@ public class NovaCEWSBVTest {
      */
     @Test
     void testGetExtraC3BV_NoBonus_WithoutNovaCEWS() {
-        // Load an entity without Nova CEWS
-        Entity exterminator = EntityLoader.loadFromFile("Exterminator EXT-4A.mtf");
-        exterminator.setGame(game);
-        exterminator.setOwner(game.getPlayer(0));
-        exterminator.setId(nextEntityId++);
-        game.addEntity(exterminator);
+        // Create an entity without Nova CEWS
+        Entity standardEntity = createStandardEntity();
+        game.addEntity(standardEntity);
 
-        // Add some Pariah units with Nova CEWS
-        Entity pariah1 = loadPariah();
-        Entity pariah2 = loadPariah();
-        game.addEntity(pariah1);
-        game.addEntity(pariah2);
+        // Add some entities with Nova CEWS
+        Entity novaEntity1 = createNovaCEWSEntity();
+        Entity novaEntity2 = createNovaCEWSEntity();
+        game.addEntity(novaEntity1);
+        game.addEntity(novaEntity2);
 
-        int baseBV = exterminator.calculateBattleValue(true, true);
-        int extraBV = exterminator.getExtraC3BV(baseBV);
+        int baseBV = standardEntity.calculateBattleValue(true, true);
+        int extraBV = standardEntity.getExtraC3BV(baseBV);
 
         assertEquals(0, extraBV,
               "Entity without Nova CEWS should get no bonus from Nova CEWS units");

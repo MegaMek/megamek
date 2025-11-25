@@ -400,7 +400,7 @@ public class TestTank extends TestEntity {
         }
 
         if (tank.getMovementMode() == EntityMovementMode.WIGE) {
-            if (tank.getOriginalWalkMP() < 5) {
+            if (tank.getWalkMP() < 5) {
                 buff.append("WiGE must have at least 5 Cruise MP.\n");
                 correct = false;
             }

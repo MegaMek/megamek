@@ -155,16 +155,24 @@ public class VariableRangeTargetingDialog extends JDialog implements ActionListe
         gbc.insets = new Insets(PADDING_SMALL, PADDING_SMALL, PADDING_SMALL, PADDING_SMALL);
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Header row
+        // Header row (bold headers, center aligned for columns 1 and 2)
         gbc.gridx = 0;
         gbc.gridy = 0;
-        unitPanel.add(new JLabel(Messages.getString("VariableRangeTargetingDialog.unitHeader")), gbc);
+        unitPanel.add(new JLabel("<html><b>"
+              + Messages.getString("VariableRangeTargetingDialog.unitHeader")
+              + "</b></html>"), gbc);
 
         gbc.gridx = 1;
-        unitPanel.add(new JLabel(Messages.getString("VariableRangeTargetingDialog.currentModeHeader")), gbc);
+        gbc.anchor = GridBagConstraints.CENTER;
+        unitPanel.add(new JLabel("<html><b>"
+              + Messages.getString("VariableRangeTargetingDialog.currentModeHeader")
+              + "</b></html>"), gbc);
 
         gbc.gridx = 2;
-        unitPanel.add(new JLabel(Messages.getString("VariableRangeTargetingDialog.newModeHeader")), gbc);
+        unitPanel.add(new JLabel("<html><b>"
+              + Messages.getString("VariableRangeTargetingDialog.newModeHeader")
+              + "</b></html>"), gbc);
+        gbc.anchor = GridBagConstraints.WEST;
 
         // Unit rows
         int row = 1;
@@ -175,16 +183,17 @@ public class VariableRangeTargetingDialog extends JDialog implements ActionListe
             gbc.gridx = 0;
             unitPanel.add(new JLabel(entity.getShortName()), gbc);
 
-            // Current mode
+            // Current mode (center aligned)
             gbc.gridx = 1;
+            gbc.anchor = GridBagConstraints.CENTER;
             VariableRangeTargetingMode currentMode = entity.getVariableRangeTargetingMode();
             VariableRangeTargetingMode pendingMode = entity.getPendingVariableRangeTargetingMode();
             String modeDisplay = getModeDisplayText(currentMode, pendingMode);
             unitPanel.add(new JLabel(modeDisplay), gbc);
 
-            // Mode selection
+            // Mode selection (center aligned)
             gbc.gridx = 2;
-            JPanel modePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, PADDING_SMALL, 0));
+            JPanel modePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, PADDING_SMALL, 0));
             ButtonGroup modeGroup = new ButtonGroup();
 
             JRadioButton longButton = new JRadioButton(Messages.getString("VariableRangeTargetingDialog.modeLong"));
@@ -213,6 +222,7 @@ public class VariableRangeTargetingDialog extends JDialog implements ActionListe
             modePanel.add(longButton);
             modePanel.add(shortButton);
             unitPanel.add(modePanel, gbc);
+            gbc.anchor = GridBagConstraints.WEST;
 
             // Store reference for apply logic
             longModeButtons.put(entity.getId(), longButton);

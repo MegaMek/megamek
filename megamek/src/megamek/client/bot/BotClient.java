@@ -699,7 +699,8 @@ public abstract class BotClient extends Client {
                   deployedUnit.getElevation(),
                   dest,
                   null,
-                  deployedUnit.climbMode());
+                  deployedUnit.climbMode(),
+                  true);
             // Ignore coords that could cause a stacking violation
             if (violation != null) {
                 continue;

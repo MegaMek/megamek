@@ -240,6 +240,8 @@ public abstract class Entity extends TurnOrdered
 
     public static final int MAX_C3_NODES = 12;
     public static final int MAX_C3i_NODES = 6;
+    public static final int MAX_NOVA_CEWS_NODES = 3;
+    public static final String C3_NETWORK_ID_SEPARATOR = ".";
 
     // PLAYTEST3 isC3ecmAffected
     protected boolean isC3ecmAffected = false;
@@ -6232,7 +6234,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return True if this unit is not off board nor shutdown and has a Nova CEWS that is not offline.
+     * @return True if this unit has an active Nova CEWS that can communicate.
+     *         Returns false if the unit is shutdown, off board, or the Nova CEWS is inoperable/offline.
      */
     public boolean hasActiveNovaCEWS() {
         if (isShutDown() || isOffBoard()) {
@@ -6240,15 +6243,18 @@ public abstract class Entity extends TurnOrdered
         } else {
             return getMisc().stream()
                   .filter(Mounted::isOperable)
-                  .filter(m -> !m.curMode().equals("Off"))
                   .anyMatch(m -> m.getType().hasFlag(MiscType.F_NOVA));
         }
     }
 
     /**
-     * @return True if this unit is not off board nor shutdown and has a Nova CEWS that is not offline.
+     * @return True if this unit has a Nova CEWS that can network (not destroyed/breached, not shutdown, not offboard).
+     *         Does NOT check ECM mode - networking works regardless of Off/ECM mode setting.
      */
     public boolean hasNovaCEWS() {
+        if (isShutDown() || isOffBoard()) {
+            return false;
+        }
         return getMisc().stream().filter(Mounted::isOperable).anyMatch(m -> m.getType().hasFlag(MiscType.F_NOVA));
     }
 
@@ -6308,29 +6314,42 @@ public abstract class Entity extends TurnOrdered
     public @Nullable String getC3NetId() {
         if (c3NetIdString == null) {
             if (hasC3()) {
-                c3NetIdString = "C3." + getId();
+                c3NetIdString = "C3" + C3_NETWORK_ID_SEPARATOR + getId();
             } else if (hasC3i()) {
-                c3NetIdString = "C3i." + getId();
+                c3NetIdString = "C3i" + C3_NETWORK_ID_SEPARATOR + getId();
             } else if (hasActiveNovaCEWS()) {
-                c3NetIdString = "C3Nova." + getId();
+                c3NetIdString = "C3Nova" + C3_NETWORK_ID_SEPARATOR + getId();
             } else if (hasNavalC3()) {
-                c3NetIdString = "NC3." + getId();
+                c3NetIdString = "NC3" + C3_NETWORK_ID_SEPARATOR + getId();
             }
         }
         return c3NetIdString;
     }
 
     public String getOriginalNovaC3NetId() {
-        return "C3Nova." + getId();
+        return "C3Nova" + C3_NETWORK_ID_SEPARATOR + getId();
     }
 
     /**
-     * Switches the C3 network ID to the new network ID.
+     * Applies pending Nova CEWS network ID change at the start of a new round.
+     * Clears the pending change after applying it.
+     * Always clears the Nova CEWS UUID array when network changes to prevent stale UUIDs
+     * from causing unintended network connections during wireC3().
+     * Note: Nova CEWS shares UUID array infrastructure with Naval C3 (NC3).
      */
     public void newRoundNovaNetSwitch() {
-        if (hasNovaCEWS()) {
+        if (hasNovaCEWS() && (newC3NetIdString != null)) {
             // FIXME: no check for network limit of 3 units
             c3NetIdString = newC3NetIdString;
+            newC3NetIdString = null; // Clear pending change after applying
+
+            // Always clear Nova CEWS UUID array when network changes
+            // This prevents wireC3() from finding stale partner UUIDs and incorrectly linking entities
+            // wireC3() will rebuild the UUID array based on current network state
+            // Note: Nova CEWS shares UUID array infrastructure with Naval C3 (NC3)
+            for (int i = 0; i < MAX_C3i_NODES; i++) {
+                setNC3NextUUIDAsString(i, null);
+            }
         }
     }
 
@@ -6347,12 +6366,10 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return C3 network id that will be switched to on the next turn.
+     * @return C3 network id that will be switched to on the next turn, or null if no change is pending.
      */
     public String getNewRoundNovaNetworkString() {
-        if ((newC3NetIdString == null) || newC3NetIdString.isEmpty()) {
-            newC3NetIdString = getOriginalNovaC3NetId();
-        }
+        // Returns null when no change is pending (simple return avoids side effects - see commit 8d2cd0d011)
         return newC3NetIdString;
     }
 
@@ -6365,11 +6382,11 @@ public abstract class Entity extends TurnOrdered
 
     public void setC3NetIdSelf() {
         if (hasActiveNovaCEWS()) {
-            c3NetIdString = "C3Nova." + getId();
+            c3NetIdString = "C3Nova" + C3_NETWORK_ID_SEPARATOR + getId();
         } else if (hasNavalC3()) {
-            c3NetIdString = "NC3." + getId();
+            c3NetIdString = "NC3" + C3_NETWORK_ID_SEPARATOR + getId();
         } else {
-            c3NetIdString = "C3i." + getId();
+            c3NetIdString = "C3i" + C3_NETWORK_ID_SEPARATOR + getId();
         }
     }
 
@@ -6471,7 +6488,7 @@ public abstract class Entity extends TurnOrdered
                 }
             }
         } else if (hasActiveNovaCEWS()) {
-            nodes = 2;
+            nodes = MAX_NOVA_CEWS_NODES - 1;
             if (game != null) {
                 for (Entity e : game.getEntitiesVector()) {
                     if (!equals(e) && onSameC3NetworkAs(e)) {
@@ -6649,11 +6666,11 @@ public abstract class Entity extends TurnOrdered
             c3Master = entityId;
         }
         if (hasC3() && (entityId == NONE)) {
-            c3NetIdString = "C3." + id;
+            c3NetIdString = "C3" + C3_NETWORK_ID_SEPARATOR + id;
         } else if (hasC3i() && (entityId == NONE)) {
-            c3NetIdString = "C3i." + id;
+            c3NetIdString = "C3i" + C3_NETWORK_ID_SEPARATOR + id;
         } else if (hasNavalC3() && (entityId == NONE)) {
-            c3NetIdString = "NC3." + id;
+            c3NetIdString = "NC3" + C3_NETWORK_ID_SEPARATOR + id;
         } else if (hasC3() || hasC3i() || hasNavalC3()) {
             c3NetIdString = Objects.requireNonNull(game.getEntity(entityId)).getC3NetId();
         }
@@ -12358,7 +12375,8 @@ public abstract class Entity extends TurnOrdered
                 misc.getType().setInstantModeSwitch(false);
             }
 
-            if (misc.getType().hasFlag(MiscType.F_ECM)) {
+            // Nova CEWS has built-in "ECM"/"Off" modes - don't override them with dynamic modes
+            if (misc.getType().hasFlag(MiscType.F_ECM) && !misc.getType().hasFlag(MiscType.F_NOVA)) {
                 ArrayList<String> modes = new ArrayList<>();
                 modes.add("ECM");
                 String[] stringArray = {};
@@ -13410,7 +13428,13 @@ public abstract class Entity extends TurnOrdered
                     multiplier = 0.3;
                 }
             }
-            extraBV += (int) Math.round(totalForceBV * multiplier);
+            double rawBonus = totalForceBV * multiplier;
+            // IO: Alternate Eras p.183: Nova CEWS BV bonus capped at 35% of unit's base BV
+            if (hasNovaCEWS()) {
+                double maxBonus = baseBV * 0.35;
+                rawBonus = Math.min(rawBonus, maxBonus);
+            }
+            extraBV += (int) Math.round(rawBonus);
         }
         return extraBV;
     }

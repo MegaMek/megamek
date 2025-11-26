@@ -220,6 +220,34 @@ class TeamLoadOutGeneratorTest {
     }
 
     @Test
+    void testReconfigureEntityMekARADAmmoType() throws LocationFullException {
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
+
+        Mek mockMek = createMek("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
+        Mounted<?> bin1 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> bin2 = mockMek.addEquipment(mockLRM15AmmoType, Mek.LOC_RIGHT_TORSO);
+
+        MunitionTree mt = new MunitionTree();
+        mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Anti-Radiation");
+
+        // We expect that all bins are set to the desired munition type as only one type
+        // is provided
+        tlg.reconfigureEntity(mockMek, mt, "IS");
+        assertFalse(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
+        assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_ARAD));
+        assertFalse(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_STANDARD));
+        assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_ARAD));
+
+        // Now reset the ammo
+        mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Standard");
+        tlg.reconfigureEntity(mockMek, mt, "IS");
+        assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
+        assertFalse(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_ARAD));
+        assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_STANDARD));
+        assertFalse(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_ARAD));
+    }
+
+    @Test
     void testReconfigureEntityMekThreeAmmoTypesFourBins() throws LocationFullException {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
 

@@ -470,7 +470,6 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         // check for illegal jumps
-
         if ((start == null) || (land == null)) {
             // If we have null for either coordinate then we know the step
             // isn't legal.
@@ -662,7 +661,7 @@ public class MovePath implements Cloneable, Serializable {
         Coords pos = getEntity().getPosition();
         boolean isMek = getEntity() instanceof Mek;
         int elev = getEntity().getElevation();
-        if (Compute.isEnemyIn(getGame(), getEntity(), pos, false, isMek, elev)) {
+        if (Compute.isEnemyIn(getGame(), getEntity(), pos, false, isMek, elev, true)) {
             // There is an enemy, can't go out and back in, and go out again
             boolean left = false;
             boolean returned = false;
@@ -810,8 +809,9 @@ public class MovePath implements Cloneable, Serializable {
         return true;
     }
 
-    public Enumeration<MoveStep> getSteps() {
-        return steps.elements();
+    public ListIterator<MoveStep> getSteps() {
+        // Create shallow copy for iterator thread safety.
+        return new Vector<MoveStep>(steps).listIterator();
     }
 
     public @Nullable MoveStep getStep(final int index) {
@@ -857,8 +857,8 @@ public class MovePath implements Cloneable, Serializable {
      * Check for MASC use
      */
     public boolean hasActiveMASC() {
-        for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
+        for (final ListIterator<MoveStep> i = getSteps(); i.hasNext(); ) {
+            final MoveStep step = i.next();
             if (step.isUsingMASC()) {
                 return true;
             }
@@ -870,8 +870,8 @@ public class MovePath implements Cloneable, Serializable {
      * Check for Supercharger use
      */
     public boolean hasActiveSupercharger() {
-        for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
+        for (final ListIterator<MoveStep> i = getSteps(); i.hasNext(); ) {
+            final MoveStep step = i.next();
             if (step.isUsingSupercharger()) {
                 return true;
             }
@@ -911,8 +911,8 @@ public class MovePath implements Cloneable, Serializable {
      * Returns the starting {@link Coords} of this path.
      */
     public @Nullable Coords getStartCoords() {
-        for (final Enumeration<MoveStep> e = getSteps(); e.hasMoreElements(); ) {
-            final MoveStep step = e.nextElement();
+        for (final ListIterator<MoveStep> e = getSteps(); e.hasNext(); ) {
+            final MoveStep step = e.next();
             final Coords coords = step.getPosition();
             if (coords != null) {
                 return coords;
@@ -997,8 +997,8 @@ public class MovePath implements Cloneable, Serializable {
      * returns if the unit had any altitude above 0 during the movement path
      */
     public boolean isAirborne() {
-        for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
+        for (final ListIterator<MoveStep> i = getSteps(); i.hasNext(); ) {
+            final MoveStep step = i.next();
             if (step.getAltitude() > 0) {
                 return true;
             }
@@ -1811,8 +1811,8 @@ public class MovePath implements Cloneable, Serializable {
             return priorPos;
         }
 
-        for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
+        for (final ListIterator<MoveStep> i = getSteps(); i.hasNext(); ) {
+            final MoveStep step = i.next();
             if (!step.getPosition().equals(finalPos)) {
                 priorPos = step.getPosition();
             }

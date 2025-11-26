@@ -119,6 +119,7 @@ import megamek.client.ui.dialogs.unitDisplay.IHasUnitDisplay;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayDialog;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.client.ui.dialogs.unitSelectorDialogs.MegaMekUnitSelectorDialog;
+import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkViewDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.ReceivingGameDataPanel;
 import megamek.client.ui.panels.StartingScenarioPanel;
@@ -159,6 +160,8 @@ import megamek.common.event.GameScriptedMessageEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.board.GameBoardNewEvent;
 import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.event.entity.GameEntityNewEvent;
+import megamek.common.event.entity.GameEntityRemoveEvent;
 import megamek.common.event.player.GamePlayerChangeEvent;
 import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.event.player.GamePlayerDisconnectedEvent;
@@ -244,6 +247,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_INC_GUI_SCALE = "viewIncGUIScale";
     public static final String VIEW_DEC_GUI_SCALE = "viewDecGUIScale";
     public static final String VIEW_FORCE_DISPLAY = "viewForceDisplay";
+    public static final String VIEW_NOVA_NETWORKS = "viewNovaNetworks";
     public static final String VIEW_UNIT_DISPLAY = "viewMekDisplay";
     public static final String VIEW_ACCESSIBILITY_WINDOW = "viewAccessibilityWindow";
     public static final String VIEW_KEYBINDS_OVERLAY = "viewKeyboardShortcuts";
@@ -990,6 +994,9 @@ public class ClientGUI extends AbstractClientGUI
                 break;
             case VIEW_FORCE_DISPLAY:
                 GUIP.toggleForceDisplay();
+                break;
+            case VIEW_NOVA_NETWORKS:
+                showNovaNetworkViewDialog();
                 break;
             case VIEW_MINI_MAP:
                 GUIP.toggleMinimapEnabled();
@@ -2473,6 +2480,14 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
+     * Shows the Nova CEWS network view dialog (read-only).
+     */
+    private void showNovaNetworkViewDialog() {
+        NovaNetworkViewDialog dialog = new NovaNetworkViewDialog(frame, this);
+        dialog.setVisible(true);
+    }
+
+    /**
      * Loads a preview image of the unit into the BufferedPanel.
      *
      * @param bp     The JLabel to set the image as icon to
@@ -2622,6 +2637,9 @@ public class ClientGUI extends AbstractClientGUI
 
             menuBar.setPhase(phase);
 
+            // Update Nova Networks menu based on whether Nova CEWS units exist
+            updateNovaNetworksMenu();
+
             clientGuiPanel.validate();
             cb.moveToEnd();
             hideFleeZone();
@@ -2636,6 +2654,16 @@ public class ClientGUI extends AbstractClientGUI
                 // underlying object may have changed, so reset
                 unitDisplayPanel.displayEntity(e.getEntity());
             }
+        }
+
+        @Override
+        public void gameEntityNew(GameEntityNewEvent e) {
+            updateNovaNetworksMenu();
+        }
+
+        @Override
+        public void gameEntityRemove(GameEntityRemoveEvent e) {
+            updateNovaNetworksMenu();
         }
 
         @Override
@@ -3485,6 +3513,17 @@ public class ClientGUI extends AbstractClientGUI
      */
     public void clearFieldOfFire() {
         firingArcSpriteHandler.clearValues();
+    }
+
+    /**
+     * Updates the Nova Networks menu enablement based on whether the local player
+     * has any Nova CEWS units in their force.
+     */
+    private void updateNovaNetworksMenu() {
+        boolean hasNovaUnits = client.getGame().getEntitiesVector().stream()
+            .filter(entity -> entity.getOwner().equals(client.getLocalPlayer()))
+            .anyMatch(Entity::hasNovaCEWS);
+        menuBar.setEnabled(VIEW_NOVA_NETWORKS, hasNovaUnits);
     }
 
     /**

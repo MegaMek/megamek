@@ -4049,7 +4049,7 @@ public class TWGameManager extends AbstractGameManager {
         // If the skidding entity violates stacking,
         // displace targets until it doesn't.
         // Set climb mode off for skid calculations A) in buildings, B) by non-flying vehicles?
-        Entity target = Compute.stackingViolation(game, skidder.getId(), curPos, false);
+        Entity target = Compute.stackingViolation(game, skidder, curPos, null, false, false);
         while (target != null) {
             nextPos = Compute.getValidDisplacement(game, target.getId(), target.getPosition(), direction);
             // ASSUMPTION
@@ -4075,7 +4075,7 @@ public class TWGameManager extends AbstractGameManager {
                   curPos,
                   nextPos,
                   skidder.getElevation()));
-            target = Compute.stackingViolation(game, skidder.getId(), curPos, skidder.climbMode());
+            target = Compute.stackingViolation(game, skidder, curPos, null, skidder.climbMode(), false);
         }
 
         return skidDisplacementReports;
@@ -4423,7 +4423,8 @@ public class TWGameManager extends AbstractGameManager {
                             addReport(r);
                             continue;
                         } else if (target instanceof ProtoMek) {
-                            if (target != Compute.stackingViolation(game, entity, nextPos, null, entity.climbMode())) {
+                            if (target != Compute.stackingViolation(game, entity, nextPos, null, entity.climbMode(),
+                                  false)) {
                                 r = new Report(2420);
                                 r.subject = target.getId();
                                 r.addDesc(target);
@@ -4760,7 +4761,7 @@ public class TWGameManager extends AbstractGameManager {
                 // check for quicksand
                 addReport(checkQuickSand(nextPos));
                 // check for accidental stacking violation
-                Entity violation = Compute.stackingViolation(game, entity.getId(), curPos, entity.climbMode());
+                Entity violation = Compute.stackingViolation(game, entity, curPos, null, entity.climbMode(), false);
                 if (violation != null) {
                     // target gets displaced, because of low elevation
                     Coords targetDest = Compute.getValidDisplacement(game, entity.getId(), curPos, direction);
@@ -5542,7 +5543,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // check for a stacking violation - which should only happen in the
         // case of grounded dropships, because they are not movable
-        if (null != Compute.stackingViolation(game, entity.getId(), c, entity.climbMode())) {
+        if (null != Compute.stackingViolation(game, entity, c, null, entity.climbMode(), false)) {
             Coords dest = Compute.getValidDisplacement(game, entity.getId(), c, Compute.d6() - 1);
             if (null != dest) {
                 doEntityDisplacement(entity, c, dest, null);
@@ -6149,9 +6150,10 @@ public class TWGameManager extends AbstractGameManager {
      * Handles a pointblank shot for hidden units, which must request feedback from the client of the player who owns
      * the hidden unit.
      *
-     * @return Returns true if a point-blank shot was taken, otherwise false
+     * @return Returns reports vector if a point-blank shot was taken, otherwise null
      */
-    boolean processPointblankShotCFR(Entity hidden, Entity target) throws InvalidPacketDataException {
+    Vector<Report> processPointblankShotCFR(Entity hidden, Entity target) throws InvalidPacketDataException {
+        Vector<Report> reports = new Vector<>();
         sendPointBlankShotCFR(hidden, target);
         boolean firstPacket = true;
         // Keep processing until we get a response
@@ -6162,7 +6164,7 @@ public class TWGameManager extends AbstractGameManager {
                         cfrPacketQueue.wait();
                     }
                 } catch (InterruptedException e) {
-                    return false;
+                    return null;
                 }
                 // Get the packet, if there's something to get
                 Server.ReceivedPacket rp;
@@ -6187,7 +6189,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (firstPacket) {
                     // Check to see if the client declined the PBS
                     if (rp.getPacket().getObject(1) == null) {
-                        return false;
+                        return null;
                     } else {
                         firstPacket = false;
                         // Notify other clients, so they can display a message
@@ -6209,7 +6211,7 @@ public class TWGameManager extends AbstractGameManager {
 
                 // The second packet contains the attacks to process _or_ signals not firing
                 if (rp.getPacket().getObject(1) == null) {
-                    return false;
+                    return null;
                 } else {
                     List<EntityAction> attacks = rp.getPacket().getEntityActionList(1);
                     // Mark the hidden unit as having taken a PBS
@@ -6234,7 +6236,7 @@ public class TWGameManager extends AbstractGameManager {
                             if (hexesAdded) {
                                 send(createIlluminatedHexesPacket());
                             }
-                            addReport(saa.resolveAction(game));
+                            reports.addAll(saa.resolveAction(game));
                         } else if (entityAction instanceof WeaponAttackAction waa) {
                             Entity ae = game.getEntity(waa.getEntityId());
                             if (ae != null) {
@@ -6253,18 +6255,20 @@ public class TWGameManager extends AbstractGameManager {
                             }
                         }
                     }
+                    break;
                 }
-                // Now handle the attacks
-                // Set to the firing phase, so the attacks handle
-                GamePhase currentPhase = game.getPhase();
-                game.setPhase(GamePhase.FIRING);
-                // Handle attacks
-                handleAttacks(true);
-                // Restore Phase
-                game.setPhase(currentPhase);
-                return true;
             }
         }
+        // Now handle the attacks
+        // Set to the firing phase, so the attacks handle
+        GamePhase currentPhase = game.getPhase();
+        game.setPhase(GamePhase.FIRING);
+        // Handle attacks
+        // Reports are consolidated here but
+        reports.addAll(handleAttacks(true));
+        // Restore Phase
+        game.setPhase(currentPhase);
+        return reports;
     }
 
     public int processTeleguidedMissileCFR(int playerId, List<Integer> targetIds, List<Integer> toHitValues)
@@ -8913,7 +8917,8 @@ public class TWGameManager extends AbstractGameManager {
 
                     // defender pushed away, or destroyed, if there is a
                     // stacking violation
-                    Entity violation = Compute.stackingViolation(game, entity.getId(), dest, entity.climbMode());
+                    Entity violation = Compute.stackingViolation(game, entity, dest, null, entity.climbMode(),
+                          false);
                     if (violation != null) {
                         PilotingRollData prd = new PilotingRollData(violation.getId(), 2, "fallen on");
                         if (violation instanceof Dropship) {
@@ -8968,7 +8973,7 @@ public class TWGameManager extends AbstractGameManager {
         } else {
             // damage as normal
             vPhaseReport.addAll(doEntityFall(entity, dest, fallElevation, roll));
-            Entity violation = Compute.stackingViolation(game, entity.getId(), dest, entity.climbMode());
+            Entity violation = Compute.stackingViolation(game, entity, dest, null, entity.climbMode(), false);
             if (violation != null) {
                 PilotingRollData prd = new PilotingRollData(violation.getId(), 0, "domino effect");
                 if (violation instanceof Dropship) {
@@ -9083,7 +9088,7 @@ public class TWGameManager extends AbstractGameManager {
         ServerHelper.checkEnteringHazardousLiquid(destHex, entity.getElevation(), entity, this);
         ServerHelper.checkEnteringUltraSublevel(destHex, entity.getElevation(), entity, this);
 
-        Entity violation = Compute.stackingViolation(game, entity.getId(), dest, entity.climbMode());
+        Entity violation = Compute.stackingViolation(game, entity, dest, null, entity.climbMode(), false);
         if (violation == null) {
             // move and roll normally
             r = new Report(2235);
@@ -15225,7 +15230,7 @@ public class TWGameManager extends AbstractGameManager {
                 // entity isn't DFA-ing anymore
                 ae.setDisplacementAttack(null);
                 addReport(doEntityFall(ae, dest, 2, 3, ae.getBasePilotingRoll(), false, false), 1);
-                Entity violation = Compute.stackingViolation(game, ae.getId(), dest, ae.climbMode());
+                Entity violation = Compute.stackingViolation(game, ae, dest, null, ae.climbMode(), false);
                 if (violation != null) {
                     // target gets displaced
                     targetDest = Compute.getValidDisplacement(game, violation.getId(), dest, direction);
@@ -17696,7 +17701,7 @@ public class TWGameManager extends AbstractGameManager {
                 facing = (facing + 3) % 6;
             }
             unloadUnit(te, passenger, position, facing, te.getElevation(), false, false);
-            Entity violation = Compute.stackingViolation(game, passenger.getId(), position, passenger.climbMode());
+            Entity violation = Compute.stackingViolation(game, passenger, position, null, passenger.climbMode(), false);
             if (violation != null) {
                 Coords targetDest = Compute.getValidDisplacement(game, passenger.getId(), position, Compute.d6() - 1);
                 addReport(doEntityDisplacement(violation, position, targetDest, null));
@@ -22507,7 +22512,8 @@ public class TWGameManager extends AbstractGameManager {
                   loadedEntity,
                   candidate,
                   null,
-                  loadedEntity.climbMode()) != null;
+                  loadedEntity.climbMode(),
+                  false) != null;
             if (!(unloadFatal || unloadIllegal)) {
                 // The loaded entity can legally exit to this candidate hex, if it can get there.
                 int mpRequired = 0;
@@ -24645,6 +24651,15 @@ public class TWGameManager extends AbstractGameManager {
             // Only update entities that existed and are owned by a teammate of the sender
             if ((oldEntity != null) && (!oldEntity.getOwner().isEnemyOf(game.getPlayer(connIndex)))) {
                 game.setEntity(entity.getId(), entity);
+
+                // Reconstruct C3 network IDs from UUIDs (fixes lobby C3 configuration)
+                List<Entity> c3affected = C3Util.wireC3(game, entity);
+                for (Entity affectedEntity : c3affected) {
+                    if (!newEntities.contains(affectedEntity)) {
+                        newEntities.add(affectedEntity);
+                    }
+                }
+
                 sendServerChat(ServerLobbyHelper.entityUpdateMessage(entity, game));
                 newEntities.add(game.getEntity(entity.getId()));
                 if (entity.isPartOfFighterSquadron()) {
@@ -24914,6 +24929,8 @@ public class TWGameManager extends AbstractGameManager {
             // FIXME: Greg: This can result in setting the network to link to hostile units. However, it should be
             //  caught by both the isMemberOfNetwork test from the c3 module as well as by the clients possible input.
             entity.setNewRoundNovaNetworkString(networkID);
+            // Trigger entity update to refresh BV display in lobby
+            entityUpdate(entityId);
         } catch (Exception ex) {
             LOGGER.error("", ex);
         }
@@ -25335,6 +25352,20 @@ public class TWGameManager extends AbstractGameManager {
      * Creates a packet containing all current and out-of-game entities
      */
     public Packet createFullEntitiesPacket() {
+        // DIAGNOSTIC: Nova CEWS network state logging (enable DEBUG logging for C3 debugging)
+        if (LOGGER.isDebugEnabled()) {
+            for (Entity entity : getGame().getEntitiesVector()) {
+                if (entity.hasNovaCEWS()) {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < Entity.MAX_C3i_NODES; i++) {
+                        sb.append(entity.getNC3NextUUIDAsString(i)).append(", ");
+                    }
+                    LOGGER.debug("[SERVER] createFullEntitiesPacket: Entity {} ({}), c3NetIdString: {}, NC3UUIDs: [{}]",
+                        entity.getId(), entity.getShortName(), entity.getC3NetId(), sb.toString());
+                }
+            }
+        }
+
         return new Packet(PacketCommand.SENDING_ENTITIES,
               getGame().getEntitiesVector(),
               getGame().getOutOfGameEntitiesVector(),
@@ -28468,8 +28499,10 @@ public class TWGameManager extends AbstractGameManager {
                 checkBuildingCollapseWhileMoving(bldg, entity, entity.getPosition());
             }
 
-            // finally, check for any stacking violations
-            Entity violated = Compute.stackingViolation(game, entity, entity.getPosition(), null, entity.climbMode());
+            // finally, check for any stacking violations - don't ignore hidden entities here as we must cause domino
+            // effect if any real violation exists.
+            Entity violated = Compute.stackingViolation(game, entity, entity.getPosition(), null, entity.climbMode(),
+                  false);
             if (violated != null) {
                 // StratOps explicitly says that this is not treated as an accident
                 // fall from above
@@ -29112,10 +29145,15 @@ public class TWGameManager extends AbstractGameManager {
      * TODO : Refactor the new entity announcement out of here.
      */
     void handleAttacks() {
-        handleAttacks(false);
+        addReport(handleAttacks(false));
     }
 
-    private void handleAttacks(boolean pointblankShot) {
+    /**
+     * Phase-agnostic attack handler that returns a Vector of reports generated from its handled attacks.
+     * @param pointblankShot    should attacks be handled as PBS?  Changes some report verbiage.
+     * @return Vector           reports (caller is responsible for displaying)
+     */
+    private Vector<Report> handleAttacks(boolean pointblankShot) {
         Report r;
         int lastAttackerId = -1;
         Vector<AttackHandler> currentAttacks, keptAttacks;
@@ -29194,10 +29232,11 @@ public class TWGameManager extends AbstractGameManager {
         // resolve standard to capital one more time
         handleAttackReports.addAll(checkFatalThresholds(lastAttackerId, lastAttackerId));
         Report.addNewline(handleAttackReports);
-        addReport(handleAttackReports);
+        // addReport(handleAttackReports);
         // HACK, but anything else seems to run into weird problems.
         game.setAttacksVector(keptAttacks);
         datasetLogger.append(game, true);
+        return handleAttackReports;
     }
 
     /**

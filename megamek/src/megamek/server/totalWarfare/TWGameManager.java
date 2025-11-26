@@ -7492,6 +7492,11 @@ public class TWGameManager extends AbstractGameManager {
                 if (entity.hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
                     target += 2;
                 }
+                // Comm implant makes it easier for infantry to avoid mines
+                if ((entity instanceof Infantry) &&
+                      entity.hasAbility(OptionsConstants.MD_COMM_IMPLANT)) {
+                    target -= 1;
+                }
                 if ((entity.getMovementMode() == EntityMovementMode.HOVER) ||
                       (entity.getMovementMode() == EntityMovementMode.WIGE)) {
                     target = Minefield.HOVER_WIGE_DETONATION_TARGET;

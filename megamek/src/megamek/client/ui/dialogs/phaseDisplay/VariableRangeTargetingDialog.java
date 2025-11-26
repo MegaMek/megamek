@@ -173,8 +173,7 @@ public class VariableRangeTargetingDialog extends JDialog implements ActionListe
 
             // Unit name
             gbc.gridx = 0;
-            String unitName = String.format("[%d] %s", entity.getId(), entity.getShortName());
-            unitPanel.add(new JLabel(unitName), gbc);
+            unitPanel.add(new JLabel(entity.getShortName()), gbc);
 
             // Current mode
             gbc.gridx = 1;

@@ -39,8 +39,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +59,7 @@ import javax.swing.JScrollPane;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.enums.VariableRangeTargetingMode;
 import megamek.common.game.Game;
@@ -100,6 +104,14 @@ public class VariableRangeTargetingDialog extends JDialog implements ActionListe
 
         pack();
         setLocationRelativeTo(parent);
+
+        // Clear highlighting when dialog is closed via X button
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                clearHighlighting();
+            }
+        });
 
         logger.debug("Variable Range Targeting Dialog initialized: {} units", playerUnits.size());
     }
@@ -183,6 +195,11 @@ public class VariableRangeTargetingDialog extends JDialog implements ActionListe
             longButton.setToolTipText(Messages.getString("VariableRangeTargetingDialog.modeLong.tooltip"));
             shortButton.setToolTipText(Messages.getString("VariableRangeTargetingDialog.modeShort.tooltip"));
 
+            // Add highlighting when radio button is clicked
+            ActionListener highlightListener = e -> highlightEntity(entity);
+            longButton.addActionListener(highlightListener);
+            shortButton.addActionListener(highlightListener);
+
             modeGroup.add(longButton);
             modeGroup.add(shortButton);
 
@@ -203,7 +220,18 @@ public class VariableRangeTargetingDialog extends JDialog implements ActionListe
         }
 
         JScrollPane scrollPane = new JScrollPane(unitPanel);
-        scrollPane.setPreferredSize(UIUtil.scaleForGUI(600, 300));
+
+        // Calculate dynamic height based on unit count
+        int headerRowHeight = UIUtil.scaleForGUI(35);  // Column headers
+        int unitRowHeight = UIUtil.scaleForGUI(30);    // Each unit row
+        int contentHeight = headerRowHeight + (playerUnits.size() * unitRowHeight);
+
+        // Clamp between min (2 units worth) and max (10 units worth)
+        int minHeight = UIUtil.scaleForGUI(95);   // ~2 units
+        int maxHeight = UIUtil.scaleForGUI(335);  // ~10 units, then scroll
+        int scrollHeight = Math.max(minHeight, Math.min(contentHeight, maxHeight));
+
+        scrollPane.setPreferredSize(UIUtil.scaleForGUI(600, scrollHeight));
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
         // Bottom: Buttons
@@ -242,12 +270,41 @@ public class VariableRangeTargetingDialog extends JDialog implements ActionListe
         return modeText;
     }
 
+    /**
+     * Highlights the specified entity on the board view.
+     */
+    private void highlightEntity(Entity entity) {
+        BoardView boardView = clientGUI.getBoardView();
+
+        // Highlight entity name tag
+        boardView.highlightSelectedEntities(Collections.singletonList(entity));
+
+        // Highlight hex border
+        if (entity.getPosition() != null) {
+            boardView.setHighlightedEntityHexes(Collections.singletonList(entity.getPosition()));
+        }
+
+        boardView.repaint();
+    }
+
+    /**
+     * Clears all entity highlighting on the board view.
+     */
+    private void clearHighlighting() {
+        BoardView boardView = clientGUI.getBoardView();
+        boardView.highlightSelectedEntities(Collections.emptyList());
+        boardView.setHighlightedEntityHexes(Collections.emptyList());
+        boardView.repaint();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnApply) {
             applyChanges();
+            clearHighlighting();
             dispose();
         } else if (e.getSource() == btnCancel) {
+            clearHighlighting();
             dispose();
         }
     }

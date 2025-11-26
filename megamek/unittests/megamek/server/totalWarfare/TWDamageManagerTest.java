@@ -36,15 +36,21 @@ package megamek.server.totalWarfare;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import megamek.common.DamageInfo;
 import megamek.common.HitData;
 import megamek.common.Player;
 import megamek.common.ToHitData;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.HandheldWeapon;
@@ -58,6 +64,7 @@ import megamek.common.loaders.MekFileParser;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.Roll;
 import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
@@ -71,7 +78,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.MockedStatic;
 
 class TWDamageManagerTest {
 
@@ -784,6 +793,221 @@ class TWDamageManagerTest {
         assertFalse(asf.isDestroyed());
         assertFalse(asf.isDoomed());
     }
+
+    @Nested
+    class HandheldWeaponDamageTests {
+        String unit = "Quickdraw QKD-8X.mtf";
+        String unit2 = "Light Anti-Infantry Weapon.blk";
+
+        static BipedMek mek;
+
+        public static List<Integer> nonArmLocations() {
+            List<Integer> nonArmLocations = new ArrayList<>();
+            for (int i = 0; i < 8; i++) {
+                if (i != BipedMek.LOC_LEFT_ARM && i != BipedMek.LOC_RIGHT_ARM) {
+                    nonArmLocations.add(i);
+                }
+            }
+            return nonArmLocations;
+        }
+
+        @BeforeEach
+        void beforeEach() throws EntityLoadingException {
+            mek = loadMek(unit);
+        }
+
+        @ParameterizedTest
+        @ValueSource(ints = { 6 })
+        void damageMekWithHHWHitHHWLArm(int roll) throws EntityLoadingException {
+            // Arrange
+            HandheldWeapon hhwInArms = loadHHW(unit2);
+            int TARGET = hhwInArms.targetForArmHitToHitCarriedObject();
+
+            Roll mockRoll = mock(Roll.class);
+            when(mockRoll.getIntValue()).thenReturn(roll);
+            when(mockRoll.isTargetRollSuccess(roll)).thenReturn(roll >= TARGET);
+
+            for (Transporter transporter : mek.getTransports()) {
+                if (transporter instanceof MekArms) {
+                    transporter.load(hhwInArms);
+                }
+            }
+
+            // Validate starting armor for Mek (16)
+            assertEquals(16, mek.getArmor(BipedMek.LOC_LEFT_ARM));
+
+            // Validate starting armor for HHW (16)
+            assertEquals(16, hhwInArms.getArmor(HandheldWeapon.LOC_GUN));
+
+            // Act
+            HitData hit = new HitData(BipedMek.LOC_LEFT_ARM);
+            DamageInfo damageInfo = new DamageInfo(mek, hit, 10);
+            try (MockedStatic<Compute> mockedCompute = mockStatic(Compute.class)) {
+                mockedCompute.when(() -> Compute.rollD6(1)).thenReturn(mockRoll);
+
+                newMan.damageEntity(damageInfo);
+            }
+
+            // Assert
+            // This should also hurt the HHW in the MekArms
+            assertEquals(16, mek.getArmor(BipedMek.LOC_LEFT_ARM));
+            assertEquals(6, hhwInArms.getArmor(HandheldWeapon.LOC_GUN));
+        }
+
+        @ParameterizedTest
+        @ValueSource(ints = { 1, 2, 3, 4, 5 })
+        void damageMekWithHHWHitArmsNoHitHHWLArm(int roll) throws EntityLoadingException {
+            // Arrange
+            HandheldWeapon hhwInArms = loadHHW(unit2);
+            int TARGET = hhwInArms.targetForArmHitToHitCarriedObject();
+
+            Roll mockRoll = mock(Roll.class);
+            when(mockRoll.getIntValue()).thenReturn(roll);
+            when(mockRoll.isTargetRollSuccess(roll)).thenReturn(roll >= TARGET);
+
+            for (Transporter transporter : mek.getTransports()) {
+                if (transporter instanceof MekArms) {
+                    transporter.load(hhwInArms);
+                }
+            }
+
+            // Validate starting armor for Mek (16)
+            assertEquals(16, mek.getArmor(BipedMek.LOC_LEFT_ARM));
+
+            // Validate starting armor for HHW (16)
+            assertEquals(16, hhwInArms.getArmor(HandheldWeapon.LOC_GUN));
+
+            // Act
+            HitData hit = new HitData(BipedMek.LOC_LEFT_ARM);
+            DamageInfo damageInfo = new DamageInfo(mek, hit, 10);
+            try (MockedStatic<Compute> mockedCompute = mockStatic(Compute.class)) {
+                mockedCompute.when(() -> Compute.rollD6(1)).thenReturn(mockRoll);
+
+                newMan.damageEntity(damageInfo);
+            }
+
+            // Assert
+            // This should not hurt the HHW in the MekArms
+            assertEquals(6, mek.getArmor(BipedMek.LOC_LEFT_ARM));
+            assertEquals(16, hhwInArms.getArmor(HandheldWeapon.LOC_GUN));
+        }
+
+        @ParameterizedTest
+        @ValueSource(ints = { 6 })
+        void damageMekWithHHWHitHHWRArm(int roll) throws EntityLoadingException {
+            // Arrange
+            HandheldWeapon hhwInArms = loadHHW(unit2);
+            int TARGET = hhwInArms.targetForArmHitToHitCarriedObject();
+
+            Roll mockRoll = mock(Roll.class);
+            when(mockRoll.getIntValue()).thenReturn(roll);
+            when(mockRoll.isTargetRollSuccess(roll)).thenReturn(roll >= TARGET);
+
+            for (Transporter transporter : mek.getTransports()) {
+                if (transporter instanceof MekArms) {
+                    transporter.load(hhwInArms);
+                }
+            }
+
+            // Validate starting armor for Mek (16)
+            assertEquals(16, mek.getArmor(BipedMek.LOC_RIGHT_ARM));
+
+            // Validate starting armor for HHW (16)
+            assertEquals(16, hhwInArms.getArmor(HandheldWeapon.LOC_GUN));
+
+            // Act
+            HitData hit = new HitData(BipedMek.LOC_RIGHT_ARM);
+            DamageInfo damageInfo = new DamageInfo(mek, hit, 10);
+            try (MockedStatic<Compute> mockedCompute = mockStatic(Compute.class)) {
+                mockedCompute.when(() -> Compute.rollD6(1)).thenReturn(mockRoll);
+
+                newMan.damageEntity(damageInfo);
+            }
+
+            // Assert
+            // This should also hurt the HHW in the MekArms
+            assertEquals(16, mek.getArmor(BipedMek.LOC_RIGHT_ARM));
+            assertEquals(6, hhwInArms.getArmor(HandheldWeapon.LOC_GUN));
+        }
+
+        @ParameterizedTest
+        @ValueSource(ints = { 1, 2, 3, 4, 5 })
+        void damageMekWithHHWHitArmsNoHitHHWRArm(int roll) throws EntityLoadingException {
+            // Arrange
+            HandheldWeapon hhwInArms = loadHHW(unit2);
+            int TARGET = hhwInArms.targetForArmHitToHitCarriedObject();
+
+            Roll mockRoll = mock(Roll.class);
+            when(mockRoll.getIntValue()).thenReturn(roll);
+            when(mockRoll.isTargetRollSuccess(roll)).thenReturn(roll >= TARGET);
+
+            for (Transporter transporter : mek.getTransports()) {
+                if (transporter instanceof MekArms) {
+                    transporter.load(hhwInArms);
+                }
+            }
+
+            // Validate starting armor for Mek (16)
+            assertEquals(16, mek.getArmor(BipedMek.LOC_RIGHT_ARM));
+
+            // Validate starting armor for HHW (16)
+            assertEquals(16, hhwInArms.getArmor(HandheldWeapon.LOC_GUN));
+
+            // Act
+            HitData hit = new HitData(BipedMek.LOC_RIGHT_ARM);
+            DamageInfo damageInfo = new DamageInfo(mek, hit, 10);
+            try (MockedStatic<Compute> mockedCompute = mockStatic(Compute.class)) {
+                mockedCompute.when(() -> Compute.rollD6(1)).thenReturn(mockRoll);
+
+                newMan.damageEntity(damageInfo);
+            }
+
+            // Assert
+            // This should not hurt the HHW in the MekArms
+            assertEquals(6, mek.getArmor(BipedMek.LOC_RIGHT_ARM));
+            assertEquals(16, hhwInArms.getArmor(HandheldWeapon.LOC_GUN));
+        }
+
+        @ParameterizedTest
+        @MethodSource(value = "nonArmLocations")
+        void damageMekWithHHWHitArmsNoHitNotArm(int location) throws EntityLoadingException {
+            // Arrange
+            HandheldWeapon hhwInArms = loadHHW(unit2);
+            int TARGET = hhwInArms.targetForArmHitToHitCarriedObject();
+
+            // Mock roll should force a hit if we hit the Mek's arms
+            Roll mockRoll = mock(Roll.class);
+            when(mockRoll.getIntValue()).thenReturn(6);
+            when(mockRoll.isTargetRollSuccess(6)).thenReturn(6 >= TARGET);
+
+            for (Transporter transporter : mek.getTransports()) {
+                if (transporter instanceof MekArms) {
+                    transporter.load(hhwInArms);
+                }
+            }
+
+            // Get starting armor for Mek
+            int startingArmor = mek.getArmor(location);
+
+            // Validate starting armor for HHW (16)
+            assertEquals(16, hhwInArms.getArmor(HandheldWeapon.LOC_GUN));
+
+            // Act
+            HitData hit = new HitData(location);
+            DamageInfo damageInfo = new DamageInfo(mek, hit, 5);
+            try (MockedStatic<Compute> mockedCompute = mockStatic(Compute.class)) {
+                mockedCompute.when(() -> Compute.rollD6(1)).thenReturn(mockRoll);
+
+                newMan.damageEntity(damageInfo);
+            }
+
+            // Assert
+            // This should not hurt the HHW in the MekArms
+            assertEquals(startingArmor - 5, mek.getArmor(location));
+            assertEquals(16, hhwInArms.getArmor(HandheldWeapon.LOC_GUN));
+        }
+    }
+
 
     @Nested
     class TransporterDamageTransferTests {

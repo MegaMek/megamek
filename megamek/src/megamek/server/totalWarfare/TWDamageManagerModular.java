@@ -138,7 +138,6 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         }
 
         // For any transporter that should always damage its carryables & isn't empty:
-        // For any transporter that should always damage its carryables & isn't empty:
         for (Transporter transporter :
               entity.getTransports()
                     .stream()
@@ -150,10 +149,11 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     chanceToHitCarriedUnit.subject(entityId);
                     chanceToHitCarriedUnit.add(entity.getDisplayName());
 
-                    reportVec.addAll(damageEntity(transportedEntity, transportedEntity.rollHitLocation(0, 0), damage,
+                    reportVec.addElement(chanceToHitCarriedUnit);
+                    damageEntity(transportedEntity, transportedEntity.rollHitLocation(0, 0), damage,
                           ammoExplosion,
                           damageType, damageIS, areaSatArty, throughFront, underWater,
-                          nukeS2S, reportVec));
+                          nukeS2S, reportVec);
                 } else {
                     damageCargo(reportVec, entity, carryable, damage, entityId);
                 }
@@ -1708,35 +1708,11 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 if (hhw.getInternal(hit) <= 0) {
                     // the internal structure is gone, what are the transfer potentials?
                     nextHit = hhw.getTransferLocation(hit);
-                    if (nextHit.getLocation() == Entity.LOC_DESTROYED) {
-                        // nowhere for further damage to go
-                        damage = 0;
-                    } else if (nextHit.getLocation() == Entity.LOC_NONE) {
-                        // The rest of the damage is wasted.
-                        damage = 0;
-                    } else if (damage > 0) {
+                    if ((nextHit.getLocation() == Entity.LOC_DESTROYED) || (nextHit.getLocation() == Entity.LOC_NONE)) {
                         // TODO: Implement HHW Damage Transfer - what if on lift hoist?
-                        /*
-                        // remaining damage transfers
-                        report = new Report(6130);
-                        report.subject = entityId;
-                        report.indent(2);
-                        report.add(damage);
-                        report.add(tank.getLocationAbbr(nextHit));
-                        reportVec.addElement(report);
-
-                        // if this is damage from a nail/rivet gun, and we transfer to a location that has armor, and
-                        // BAR >=5, no damage
-                        if ((damageType == DamageType.NAIL_RIVET) &&
-                              (tank.getArmor(nextHit.getLocation()) > 0) &&
-                              (tank.getBARRating(nextHit.getLocation()) >= 5)) {
-                            damage = 0;
-                            report = new Report(6065);
-                            report.subject = entityId;
-                            report.indent(2);
-                            reportVec.add(report);
-                        }
-                         */
+                        //  I think it might be better to rework HHWs form standalone Entitys to a collection of
+                        //  Mounted that can be added to another unit's Mounted, which would remove the need for
+                        //  complicated handling here.
                     }
                 }
             } else if (hit.getSpecCrit()) {
@@ -1754,7 +1730,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             // If the location has run out of internal structure, finally actually destroy it here. *EXCEPTION:* Aero
             // units have 0 internal structure in every location by default and are handled elsewhere, so they get a
             // bye.
-            if ((hhw.getInternal(hit) < 0)) {
+            if ((hhw.getInternal(hit) <= 0) && damage > 0) {
+                damage = 0;
                 hhw.destroyLocation(hit.getLocation());
             }
 

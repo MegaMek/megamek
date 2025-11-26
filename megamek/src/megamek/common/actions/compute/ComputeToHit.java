@@ -1542,6 +1542,10 @@ public class ComputeToHit {
                       !Compute.isTargetTagged(target, game)) {
                     toHit.addModifier(1, Messages.getString("WeaponAttackAction.SpotterAttacking"));
                 }
+                // Comm implant provides -1 bonus when spotting for indirect LRM
+                if (spotter.hasAbility(OptionsConstants.MD_COMM_IMPLANT)) {
+                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.CommImplantSpotter"));
+                }
             }
         }
 
@@ -1813,6 +1817,11 @@ public class ComputeToHit {
             toHit.addModifier(adjust, Messages.getString("WeaponAttackAction.AdjustedFire"));
             if (spotterIsForwardObserver) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.FooSpotter"));
+            }
+            // Comm implant provides -1 bonus for non-infantry spotters
+            boolean spotterHasCommImplant = ae.aTracker.getSpotterHasCommImplant();
+            if (spotterHasCommImplant) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.CommImplantArtillerySpotter"));
             }
         }
         // Capital missiles used for surface-to-surface artillery attacks

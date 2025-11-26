@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Vector;
 
+import megamek.common.Infantry;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
@@ -54,6 +55,7 @@ import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
@@ -122,6 +124,11 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
             if (currentModifier != TargetRoll.AUTOMATIC_SUCCESS) {
                 if (isForwardObserver(spotter.get())) {
                     attackingEntity.aTracker.setSpotterHasForwardObs(true);
+                }
+                // Comm implant bonus only applies to non-infantry spotters
+                if (!(spotter.get() instanceof Infantry) &&
+                      spotter.get().hasAbility(OptionsConstants.MD_COMM_IMPLANT)) {
+                    attackingEntity.aTracker.setSpotterHasCommImplant(true);
                 }
                 attackingEntity.aTracker.setModifier(currentModifier - 1, target.getPosition());
             }

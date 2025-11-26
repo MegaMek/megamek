@@ -41,6 +41,7 @@ import java.util.Vector;
 
 import megamek.common.Hex;
 import megamek.common.HexTarget;
+import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
@@ -218,6 +219,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 if (attackingEntity.aTracker.getModifier(weapon, targetPos) != TargetRoll.AUTOMATIC_SUCCESS) {
                     if (bestSpotter.get().hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
                         attackingEntity.aTracker.setSpotterHasForwardObs(true);
+                    }
+                    // Comm implant bonus only applies to non-infantry spotters
+                    if (!(bestSpotter.get() instanceof Infantry) &&
+                          bestSpotter.get().hasAbility(OptionsConstants.MD_COMM_IMPLANT)) {
+                        attackingEntity.aTracker.setSpotterHasCommImplant(true);
                     }
                     attackingEntity.aTracker.setModifier(attackingEntity.aTracker.getModifier(weapon, targetPos) - 1,
                           targetPos);

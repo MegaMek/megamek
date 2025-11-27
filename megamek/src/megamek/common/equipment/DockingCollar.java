@@ -71,6 +71,7 @@ public class DockingCollar implements Transporter {
         this.collarId = collarId;
     }
 
+    @Override
     public String getTransporterType() {
         return "Docking Collar";
     }

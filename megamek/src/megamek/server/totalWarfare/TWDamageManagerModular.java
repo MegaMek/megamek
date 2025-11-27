@@ -46,16 +46,8 @@ import megamek.common.ToHitData;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
-import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.*;
 import megamek.common.equipment.AmmoType.Munitions;
-import megamek.common.equipment.Engine;
-import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.GunEmplacement;
-import megamek.common.equipment.IArmorState;
-import megamek.common.equipment.ICarryable;
-import megamek.common.equipment.MiscType;
-import megamek.common.equipment.Mounted;
-import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
@@ -141,6 +133,29 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         logger.error("Entity " + entityId + " is carrying something that is not an Entity but should "
                               + "be damaged on arm hits. This should not happen!");
                     }
+                }
+            }
+        }
+
+        // For any transporter that should always damage its carryables & isn't empty:
+        for (Transporter transporter :
+              entity.getTransports()
+                    .stream()
+                    .filter(t -> t.alwaysDamageCargoIfTransportHit() && !t.getCarryables().isEmpty())
+                    .toList()) {
+            for (ICarryable carryable : transporter.getCarryables()) {
+                if (carryable instanceof Entity transportedEntity) {
+                    Report chanceToHitCarriedUnit = new Report(2610);
+                    chanceToHitCarriedUnit.subject(entityId);
+                    chanceToHitCarriedUnit.add(entity.getDisplayName());
+
+                    reportVec.addElement(chanceToHitCarriedUnit);
+                    damageEntity(transportedEntity, transportedEntity.rollHitLocation(0, 0), damage,
+                          ammoExplosion,
+                          damageType, damageIS, areaSatArty, throughFront, underWater,
+                          nukeS2S, reportVec);
+                } else {
+                    damageCargo(reportVec, entity, carryable, damage, entityId);
                 }
             }
         }
@@ -290,6 +305,18 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                   mods);
         } else if (entity instanceof Infantry teCast && teCast.isConventionalInfantry()) {
             damageInfantry(reportVec,
+                  teCast,
+                  hit,
+                  damage,
+                  ammoExplosion,
+                  damageType,
+                  areaSatArty,
+                  throughFront,
+                  underWater,
+                  nukeS2S,
+                  mods);
+        } else if (entity instanceof HandheldWeapon teCast) {
+            damageHandheldWeapon(reportVec,
                   teCast,
                   hit,
                   damage,
@@ -608,39 +635,14 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
 
             // damage some cargo if we're taking damage
             // maybe move past "exterior passenger" check
-            if (!ammoExplosion) {
-                int damageLeftToCargo = damage;
-
-                for (ICarryable cargo : mek.getDistinctCarriedObjects()) {
-                    // This is handling damaged cargo per TW 261. Other carried objects are damaged elsewhere.
-                    if (cargo.isInvulnerable() || !cargo.getCarriedObjectDamageAllocation()
-                          .isCarryableAlwaysDamaged()) {
-                        continue;
-                    }
-
-                    double tonnage = cargo.getTonnage();
-                    boolean cargoDestroyed = cargo.damage(damageLeftToCargo);
-                    damageLeftToCargo -= (int) Math.ceil(tonnage);
-
-                    // if we have destroyed the cargo, remove it, add a report
-                    // and move on to the next piece of cargo
-                    if (cargoDestroyed) {
-                        mek.dropCarriedObject(cargo, false);
-
-                        report = new Report(6721);
-                        report.subject = entityId;
-                        report.indent(2);
-                        report.add(cargo.generalName());
-                        reportVec.addElement(report);
-                        // we have not destroyed the cargo means there is no damage left to report and stop destroying
-                        // cargo
-                    } else {
-                        report = new Report(6720);
-                        report.subject = entityId;
-                        report.indent(2);
-                        report.add(cargo.generalName());
-                        report.add(Double.toString(cargo.getTonnage()));
-                        break;
+            for (ICarryable cargo : mek.getDistinctCarriedObjects()) {
+                // This is handling damaged cargo per TW 261. Other carried objects are damaged elsewhere.
+                if (cargo.isInvulnerable() || !cargo.getCarriedObjectDamageAllocation()
+                      .isCarryableAlwaysDamaged()) {
+                    continue;
+                } else {
+                    if (!ammoExplosion) {
+                        damageCargo(reportVec, mek, cargo, damage, entityId);
                     }
                 }
             }
@@ -1102,6 +1104,35 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 mods.wasDamageIS = true;
                 damageIS = false;
             }
+        }
+    }
+
+    private void damageCargo(Vector<Report> reportVec, Entity entity, ICarryable cargo, int damage, int entityId) {
+        Report report;
+        int damageLeftToCargo = damage;
+
+        double tonnage = cargo.getTonnage();
+        boolean cargoDestroyed = cargo.damage(damageLeftToCargo);
+        damageLeftToCargo -= (int) Math.ceil(tonnage);
+
+        // if we have destroyed the cargo, remove it, add a report
+        // and move on to the next piece of cargo
+        if (cargoDestroyed) {
+            entity.dropCarriedObject(cargo, false);
+
+            report = new Report(6721);
+            report.subject = entityId;
+            report.indent(2);
+            report.add(cargo.generalName());
+            reportVec.addElement(report);
+            // we have not destroyed the cargo means there is no damage left to report and stop destroying
+            // cargo
+        } else {
+            report = new Report(6720);
+            report.subject = entityId;
+            report.indent(2);
+            report.add(cargo.generalName());
+            report.add(Double.toString(cargo.getTonnage()));
         }
     }
 
@@ -1626,6 +1657,89 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             if (damage > 0) {
                 hit = nextHit;
                 updateArmorTypeMap(mods, tank, hit);
+            }
+            if (damageIS) {
+                mods.wasDamageIS = true;
+                damageIS = false;
+            }
+        }
+    }
+
+
+    public void damageHandheldWeapon(Vector<Report> reportVec, HandheldWeapon hhw, HitData hit, int damage,
+          boolean ammoExplosion,
+          DamageType damageType, boolean areaSatArty, boolean throughFront, boolean underWater, boolean nukeS2S,
+          ModsInfo mods) {
+        int entityId = hhw.getId();
+        boolean damageIS = mods.damageIS;
+        Report report;
+
+        HitData nextHit = null;
+
+        damage = manageDamageTypeReports(hhw, reportVec, damage, damageType, hit, false, mods);
+
+        // Allocate the damage
+        while (damage > 0) {
+
+            // Report this either way
+            report = new Report(6065);
+            report.subject = entityId;
+            report.indent(2);
+            report.addDesc(hhw);
+            report.add(damage);
+            if (damageIS) {
+                report.messageId = 6070;
+            }
+            report.add(hhw.getLocationAbbr(hit));
+            reportVec.addElement(report);
+
+            damage = applyModularArmor(hhw, hit, damage, ammoExplosion, damageIS, reportVec);
+
+            damage = applyEntityArmorDamage(hhw, hit, damage, ammoExplosion, damageIS, areaSatArty, reportVec, mods);
+
+            // Apply CASE II first
+            damage = applyCASEIIDamageReduction(hhw, hit, damage, ammoExplosion, reportVec);
+
+            // Apply Tank CASE here
+
+            // is there damage remaining?
+            if (damage > 0) {
+
+                if (hhw.getInternal(hit) <= 0) {
+                    // the internal structure is gone, what are the transfer potentials?
+                    nextHit = hhw.getTransferLocation(hit);
+                    if ((nextHit.getLocation() == Entity.LOC_DESTROYED) || (nextHit.getLocation() == Entity.LOC_NONE)) {
+                        // TODO: Implement HHW Damage Transfer - what if on lift hoist?
+                        //  I think it might be better to rework HHWs form standalone Entitys to a collection of
+                        //  Mounted that can be added to another unit's Mounted, which would remove the need for
+                        //  complicated handling here.
+                    }
+                }
+            } else if (hit.getSpecCrit()) {
+                // ok, we dealt damage but didn't go on to internal
+                // we get a chance of a crit, using Armor Piercing.
+                // but only if we don't have hardened, Ferro-Lamellor, or reactive armor
+                if (!(mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor)) {
+                    mods.specCrits = mods.specCrits + 1;
+                }
+            }
+
+            // Deal special effect damage and crits
+            dealSpecialCritEffects(hhw, reportVec, hit, mods, underWater, damageType);
+
+            // If the location has run out of internal structure, finally actually destroy it here. *EXCEPTION:* Aero
+            // units have 0 internal structure in every location by default and are handled elsewhere, so they get a
+            // bye.
+            if ((hhw.getInternal(hit) <= 0) && damage > 0) {
+                damage = 0;
+                hhw.destroyLocation(hit.getLocation());
+            }
+
+            // If damage remains, loop to the next location; if not, be sure to stop here because we may need to
+            // refer back to the last *damaged* location again later. (This is safe because at damage <= 0 the loop
+            // terminates anyway.)
+            if (damage > 0) {
+                hit = nextHit;
             }
             if (damageIS) {
                 mods.wasDamageIS = true;

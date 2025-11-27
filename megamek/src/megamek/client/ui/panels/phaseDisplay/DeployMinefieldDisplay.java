@@ -98,6 +98,8 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
         /**
          * Given a string, figure out the command value
+         * @param command                   String name of the requested command
+         * @return DeployMinefieldCommand   found command or COMMAND_NONE
          */
         public static DeployMinefieldCommand fromString(String command) {
             for (DeployMinefieldCommand value : values()) {
@@ -106,7 +108,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                 }
             }
 
-            return null;
+            return COMMAND_NONE;
         }
 
         /**

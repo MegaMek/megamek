@@ -1,6 +1,129 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.50.08
+0.50.10 (2025-10- 2030 UTC)
+* Improvement: Added JavaDocs to `TargetRollModifier` Class & Constructor to Reduce Ambiguity by @IllianiBird in https://github.com/MegaMek/megamek/pull/7491
+* Add QA Test Build GitHub Actions workflow for manual testing by @Copilot in https://github.com/MegaMek/megamek/pull/7499
+* Fluff data for MekBay by @exeea in https://github.com/MegaMek/megamek/pull/7497
+* Fix: allow proper characterization of C3 master systems by @SuperStucco in https://github.com/MegaMek/megamek/pull/7496
+* Fix #7481: UMUs do not function if water hex is at a negative elevation by @psikomonkie in https://github.com/MegaMek/megamek/pull/7501
+* Improvement: Updated Crew Needs Calculations to Account for Extra Seating by @IllianiBird in https://github.com/MegaMek/megamek/pull/7500
+* Issue MegaMek#7492: Send full entities list in more cases by @psikomonkie in https://github.com/MegaMek/megamek/pull/7503
+* Fix: Gunnery Specialization Incorrectly Labeled as an ATOW SPA Instead of Unofficial by @IllianiBird in https://github.com/MegaMek/megamek/pull/7502
+* Fix #7495: Illegal Capacity Errors when Advancing to New Round  by @psikomonkie in https://github.com/MegaMek/megamek/pull/7504
+* Issue MegaMekLab#2021: Add Transports Back by @psikomonkie in https://github.com/MegaMek/megamek/pull/7505
+* Issue MegaMek#7489: Use correct calculation for SV Booby Traps by @psikomonkie in https://github.com/MegaMek/megamek/pull/7509
+* Pg 79 Implementation by @HammerGS in https://github.com/MegaMek/megamek/pull/7476
+* Improvement: Added Additional Rounding Utility Methods to MathUtility by @IllianiBird in https://github.com/MegaMek/megamek/pull/7510
+* Issue MegaMek#7507: Get firerer from all entities so dead entities can have their missiles targeted by AMS. by @psikomonkie in https://github.com/MegaMek/megamek/pull/7512
+* Fix: Fixed Hammer Traveling Back in Time to Release MegaMek Before MegaMek Was Invented, Thus Creating an Time Paradox That Breaches the Temporal Prime Directive by @IllianiBird in https://github.com/MegaMek/megamek/pull/7513
+* Fix: Added Additional Cache Exclusions from Build Scripts by @IllianiBird in https://github.com/MegaMek/megamek/pull/7519
+* FIX: Issue 7400 - fixes missing faction availability for clan mechs with is names by @GypsyFromTheSatelliteofLove in https://github.com/MegaMek/megamek/pull/7516
+* Fix: Issue 7506 clan mek engines get IS suffix when making mtfFiles by @GypsyFromTheSatelliteofLove in https://github.com/MegaMek/megamek/pull/7517
+* Improvement #7521: Added Client Option to Hide Unit Fluff Images from Certain Views in MegaMek & MekHQ by @IllianiBird in https://github.com/MegaMek/megamek/pull/7522
+* Refactoring: Added Default Image Size Constant to `Portrait.java` by @IllianiBird in https://github.com/MegaMek/megamek/pull/7526
+* Improvement: Updated CodeQL to (Hopefully) Analyze Using the Right Version of Java by @IllianiBird in https://github.com/MegaMek/megamek/pull/7529
+* RFE: I Lift Things Up and Put Them Down by @psikomonkie in https://github.com/MegaMek/megamek/pull/7520
+* Fix 4879: zipline dropping using starting position rather than target step position by @Sleet01 in https://github.com/MegaMek/megamek/pull/7536
+* Bump actions/upload-artifact from 4 to 5 by @dependabot[bot] in https://github.com/MegaMek/megamek/pull/7530
+* Small Misc Code Update by @SJuliez in https://github.com/MegaMek/megamek/pull/7537
+* Issue 7535 Image Logging Fixes  by @SJuliez in https://github.com/MegaMek/megamek/pull/7540
+* Default keybinds by @SJuliez in https://github.com/MegaMek/megamek/pull/7539
+* Issue 7524 Custom Deploy Zone Fixes by @SJuliez in https://github.com/MegaMek/megamek/pull/7538
+* PLAYTEST3 - Gear implementation by @TenkawaBC in https://github.com/MegaMek/megamek/pull/7534
+* Task: Expanded Portrait Compatibility Handler to Account for MekHQ Vehicle Crew Changes by @IllianiBird in https://github.com/MegaMek/megamek/pull/7533
+* Return Unit Sprites to be Inline in `Report` by @psikomonkie in https://github.com/MegaMek/megamek/pull/7527
+* Fix #5225: "More" Button greyed out for units, sometimes by @psikomonkie in https://github.com/MegaMek/megamek/pull/7547
+* Fix #7546: No Air to Ground LOS if Aircraft Ended Really Far Away by @psikomonkie in https://github.com/MegaMek/megamek/pull/7549
+* Issue #7359 - fix MMJB path finding by @SJuliez in https://github.com/MegaMek/megamek/pull/7544
+* Fix for 7550: allow JumboEnumSet to be deserialized by @Sleet01 in https://github.com/MegaMek/megamek/pull/7551
+* Task: Added Salvage Related Methods to Entity & Children by @IllianiBird in https://github.com/MegaMek/megamek/pull/7552
+* Playtest3 adjustments and updates after moderator updates by @TenkawaBC in https://github.com/MegaMek/megamek/pull/7553
+* Fix 7548: avoid hang and serialization exceptions by making Game ref in ExternalCargo transient  by @Sleet01 in https://github.com/MegaMek/megamek/pull/7554
+* RFE #6635: This Is My Boomstick - Handheld Weapons Gameplay by @psikomonkie in https://github.com/MegaMek/megamek/pull/7541
+* Playtest issues. AP ammo crit modifiers were flipped. Playtest ammos were not available. by @TenkawaBC in https://github.com/MegaMek/megamek/pull/7559
+* Optimize MRM to-hit modifier into MRMWeapon by @TenkawaBC in https://github.com/MegaMek/megamek/pull/7563
+* Fix #7555: Null checks for `weaponEntity` by @psikomonkie in https://github.com/MegaMek/megamek/pull/7566
+* Fix #7564: Replaced Raw Calls to Game Options with Safetied Calls by @IllianiBird in https://github.com/MegaMek/megamek/pull/7565
+* Add a null check on hit to fix #7567 by @TenkawaBC in https://github.com/MegaMek/megamek/pull/7569
+* Fix playtest3 ammo explosion with 0 rounds remaining bug #7571 by @TenkawaBC in https://github.com/MegaMek/megamek/pull/7572
+* RFE: Simple Cargo (Lift Hoists) by @psikomonkie in https://github.com/MegaMek/megamek/pull/7556
+* Fix: Fixed Map Size Picker Missing 'Custom Board Size' Option by @IllianiBird in https://github.com/MegaMek/megamek/pull/7560
+* Fix #7561: Prevent load/unload for things carried in `ExternalCargo` by @psikomonkie in https://github.com/MegaMek/megamek/pull/7562
+* Fix: Corrected DropShips Being Incorrectly Able to Salvage on Ground by @IllianiBird in https://github.com/MegaMek/megamek/pull/7573
+* Improvement: Added Skill Level Short Names for GUI Use by @IllianiBird in https://github.com/MegaMek/megamek/pull/7574
+* Playtest3 C3 network fix for bug #7576.  by @TenkawaBC in https://github.com/MegaMek/megamek/pull/7577
+* Sanity Input Filter Fix by @psikomonkie in https://github.com/MegaMek/megamek/pull/7578
+* Simple Cargo - Improvements to support Lift Hoist in MHQ by @psikomonkie in https://github.com/MegaMek/megamek/pull/7579
+* Task: Added Utility Method to Entity to Fetch Passenger Capacity Without Bay Personnel Count by @IllianiBird in https://github.com/MegaMek/megamek/pull/7580
+* Fix: Fixed Portrait Compatibility Handler Not Covering All Changed Professions by @IllianiBird in https://github.com/MegaMek/megamek/pull/7582
+* Support for Handheld Weapons in MHQ by @psikomonkie in https://github.com/MegaMek/megamek/pull/7581
+* Fix; HHW with no original armor won't show as crippled by @psikomonkie in https://github.com/MegaMek/megamek/pull/7583
+* Add null checks for hit in vehicle flamers and plasma weapons by @TenkawaBC in https://github.com/MegaMek/megamek/pull/7586
+* Fix #5477, #5478: Enforce Official Rule That Edge Can Only Be Used on a Single Roll Once Per Roll; Stopped Edge Being Used to Re-roll Crit Locations When Only 1 Viable Location Remains (revised) by @Sleet01 in https://github.com/MegaMek/megamek/pull/7588
+* Fix 7592: Call correct super method to avoid infinite recursion in QuadMek hit location resolution by @Sleet01 in https://github.com/MegaMek/megamek/pull/7593
+* Fix 7508: ASFs not being targeted correctly by ground units by @Sleet01 in https://github.com/MegaMek/megamek/pull/7589
+* Fix 7421: Replace incorrect artillery code with correct bomb code in BA Micro Bomb Rack handler by @Sleet01 in https://github.com/MegaMek/megamek/pull/7590
+* Fix #6413: Fixed Inability to Charge From Prone by @IllianiBird in https://github.com/MegaMek/megamek/pull/7594
+* Fix: HHW should use unit weilding it's facing by @psikomonkie in https://github.com/MegaMek/megamek/pull/7600
+* Fix 5234: vtols cannot load at end of turn by @Sleet01 in https://github.com/MegaMek/megamek/pull/7596
+* Fix 7543: Freeze using Tactical Genius by @Sleet01 in https://github.com/MegaMek/megamek/pull/7601
+* PR: Updates to Princess autocannon rate-of-fire by @SuperStucco in https://github.com/MegaMek/megamek/pull/7584
+* Issue 7377 laser heatsinks by @HammerGS in https://github.com/MegaMek/megamek/pull/7602
+* Fix burst-fire MG menu incorrectly appearing for battle armor by @HammerGS in https://github.com/MegaMek/megamek/pull/7605
+* RFE #1020 Aero Maneuvers Tooltip Request by @HammerGS in https://github.com/MegaMek/megamek/pull/7603
+* Improvement: Added Ability to Change Skill Level by Delta by @IllianiBird in https://github.com/MegaMek/megamek/pull/7610
+* Improvement: Removed Vehicle Threshold Unofficial Option by @IllianiBird in https://github.com/MegaMek/megamek/pull/7616
+* Adding override to Streak LRMs to prevent indirect mode by @TenkawaBC in https://github.com/MegaMek/megamek/pull/7617
+* Sentry: Added Sanity Check Around `Compute.isPilotingSkillNeeded()` by @IllianiBird in https://github.com/MegaMek/megamek/pull/7619
+* Fix 7515: Double-safety the weapon panel list and drag event handling by @Sleet01 in https://github.com/MegaMek/megamek/pull/7607
+* Issue #7290 Fix - Protomechs cannot back up by @HammerGS in https://github.com/MegaMek/megamek/pull/7622
+* Issue #7382 - Fixes Submarines can move when at the seafloor by @HammerGS in https://github.com/MegaMek/megamek/pull/7623
+* Fix 7599: save game broken exiting simult deploy by @Sleet01 in https://github.com/MegaMek/megamek/pull/7628
+* Fix 7612: Non-DS ASFs landing too softly when terrain isn't causing them to crash by @Sleet01 in https://github.com/MegaMek/megamek/pull/7625
+* Issue #3651 Fixes where heavy-duty gyros incorrectly triggered a Piloting Skill Roll (PSR) by @HammerGS in https://github.com/MegaMek/megamek/pull/7606
+* Playtest issue found with ecmC3 range used when direct should by @TenkawaBC in https://github.com/MegaMek/megamek/pull/7638
+* Task: Code Support for Additional Crew Needs by @IllianiBird in https://github.com/MegaMek/megamek/pull/7633
+* Allow setting an entity's game to null by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/7632
+* Improvement: Set 'Show Auto Resolve Panel' to Hidden by Default to Improve Experience of Users With Small Monitors by @IllianiBird in https://github.com/MegaMek/megamek/pull/7636
+* Improvement: Added Utility Method to Calculate Gaussian-Weighted Averages by @IllianiBird in https://github.com/MegaMek/megamek/pull/7639
+* PR: Functional Lift Hoists by @psikomonkie in https://github.com/MegaMek/megamek/pull/7608
+* PR: Split `Building` into `IBuilding` and `BuildingTerrain` by @psikomonkie in https://github.com/MegaMek/megamek/pull/7641
+* Allow two modular armor in the same location if they have different facing by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/7631
+* Quirk Display Fix by @HammerGS in https://github.com/MegaMek/megamek/pull/7624
+* Task: Added Portrait Compatibility Handler for Removal of Combat Technician/Engineer by @IllianiBird in https://github.com/MegaMek/megamek/pull/7647
+* ACAR complex force structure handling by @Beornwulf in https://github.com/MegaMek/megamek/pull/7648
+* Fix Megamek/mekhq#8226: Fix Crew for HHW in MHQ by @psikomonkie in https://github.com/MegaMek/megamek/pull/7651
+* Fix for MHQ 8240: move GAME_LOCK.lock/.unlock deeper into stack to tighten coverage by @Sleet01 in https://github.com/MegaMek/megamek/pull/7650
+* Fixes #7134 - Default skin selection correction in client settings. by @HoneySkull in https://github.com/MegaMek/megamek/pull/7653
+* Bump actions/checkout from 5 to 6 by @dependabot[bot] in https://github.com/MegaMek/megamek/pull/7654
+* Improvement: Added Utility Method to Compute to Fetch the Highest Two of Any Given List of Integers by @IllianiBird in https://github.com/MegaMek/megamek/pull/7655
+* Improvement: Updated `getHighestTwoIntegers` to Include Copilot Feedback by @IllianiBird in https://github.com/MegaMek/megamek/pull/7657
+* Improvement: Updated `getHighestTwoIntegers` to Include Copilot Feedback 2: The Over-Eager Merging Strikes Back by @IllianiBird in https://github.com/MegaMek/megamek/pull/7658
+* Implement Anti-Radiation Ammunition (ARAD) by @HammerGS in https://github.com/MegaMek/megamek/pull/7652
+* Fix bearings-only capital missiles dealing zero damage on hit (#7597) by @HammerGS in https://github.com/MegaMek/megamek/pull/7604
+* Fix Issue MegaMek/mekhq#7948: Trailers with equipment that requires crew should be considered crewed by @psikomonkie in https://github.com/MegaMek/megamek/pull/7659
+* Fix ARAD equipment detector flag type checking by @HammerGS in https://github.com/MegaMek/megamek/pull/7661
+* Fix 7642-7644: hidden units visible, Pointblank Shots not working properly, Aero non-BAP range was 1 by @Sleet01 in https://github.com/MegaMek/megamek/pull/7662
+* Add ARAD munitions to autoconfig by @Sleet01 in https://github.com/MegaMek/megamek/pull/7663
+* Fix #7666: Restored Missing Whitespace Causing Glancing Blow Reports to Break by @IllianiBird in https://github.com/MegaMek/megamek/pull/7667
+* Fix: Fixed Incorrect Legal Header on Several Files by @IllianiBird in https://github.com/MegaMek/megamek/pull/7668
+* Fix: #7669: Update the unit display even if we're out of weapons to fire by @psikomonkie in https://github.com/MegaMek/megamek/pull/7670
+* Enforce min 5mp requirement for WiGEs by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/7671
+* Two minor 0.50.10 fixes by @Sleet01 in https://github.com/MegaMek/megamek/pull/7672
+* Nova CEWS fixes by @HammerGS in https://github.com/MegaMek/megamek/pull/7635
+* Update regex to include 'BattleMech Manual' in checkstyle by @HammerGS in https://github.com/MegaMek/megamek/pull/7674
+* Improvement: Added Two New Utility Methods to Reduce Potential Mistakes When Comparing Planetary Tech Levels by @IllianiBird in https://github.com/MegaMek/megamek/pull/7675
+* Fix 7676: Return default value rather than null for fromString() by @Sleet01 in https://github.com/MegaMek/megamek/pull/7677
+* Cargo including units in Lift Hoists should always take damage if the unit with the lift hoist is damaged by @psikomonkie in https://github.com/MegaMek/megamek/pull/7660
+* Fix ammo combo box becoming unresponsive in weapon panel by @HammerGS in https://github.com/MegaMek/megamek/pull/7681
+
+## New Contributors
+* @Copilot made their first contribution in https://github.com/MegaMek/megamek/pull/7499
+* @GypsyFromTheSatelliteofLove made their first contribution in https://github.com/MegaMek/megamek/pull/7516
+* @Beornwulf made their first contribution in https://github.com/MegaMek/megamek/pull/7648
+* @Claude.AI made their first contribution in https://github.com/MegaMek/megamek/pull/7622
+
+================PLEASE NOTE VERSION JUMP IS DUE TO GRADLE PACKAGING BUG THE WON'T ALLOW FOR VERSIONS LIKE 0.50.08 or 0.50.09================
 
 0.50.07 (2025-10- 2130 UTC)
 * fix: adds padding in between maps if they are of odd width size, making it possible to tile those. Small performance improvements. by @Scoppio in https://github.com/MegaMek/megamek/pull/6971

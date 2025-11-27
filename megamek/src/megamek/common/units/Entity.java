@@ -8347,7 +8347,7 @@ public abstract class Entity extends TurnOrdered
         if (rv > 1) {
             IBuilding bldgEntered;
             bldgEntered = board.getBuildingAt(curPos);
-            if (bldgEntered.getType() == BuildingType.WALL) {
+            if (bldgEntered.getBuildingType() == BuildingType.WALL) {
                 return 4;
             }
         }
@@ -8395,7 +8395,7 @@ public abstract class Entity extends TurnOrdered
             desc = why + " ";
         }
 
-        switch (bldg.getType()) {
+        switch (bldg.getBuildingType()) {
             case LIGHT:
                 desc = "Light";
                 break;

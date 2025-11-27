@@ -161,7 +161,7 @@ public class BuildingTerrain implements IBuilding {
         if (structureType == Terrains.BUILDING) {
             // Error if the Building Type (Light, Medium...) or Building Class (Standard,
             // Hangar...) is off.
-            if (getType().getTypeValue() != nextHex.terrainLevel(Terrains.BUILDING)) {
+            if (getBuildingType().getTypeValue() != nextHex.terrainLevel(Terrains.BUILDING)) {
                 throw new IllegalArgumentException("The coordinates, "
                       + coords.getBoardNum()
                       + ", should contain the same type of building as "
@@ -295,7 +295,7 @@ public class BuildingTerrain implements IBuilding {
         StringBuilder sb = new StringBuilder();
         if (structureType == Terrains.FUEL_TANK) {
             sb.append("Fuel Tank #");
-        } else if (getType() == BuildingType.WALL) {
+        } else if (getBuildingType() == BuildingType.WALL) {
             sb.append("Wall #");
         } else if (structureType == Terrains.BUILDING) {
             sb.append("Building #");
@@ -356,7 +356,7 @@ public class BuildingTerrain implements IBuilding {
      * @return the <code>int</code> code of the building's construction type.
      */
     @Override
-    public BuildingType getType() {
+    public BuildingType getBuildingType() {
         return type;
     }
 
@@ -570,7 +570,7 @@ public class BuildingTerrain implements IBuilding {
 
     @Override
     public String toString() {
-        return getType().toString() + " " + className(getBldgClass()) + " " + name;
+        return getBuildingType().toString() + " " + className(getBldgClass()) + " " + name;
     }
 
     /**

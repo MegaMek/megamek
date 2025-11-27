@@ -122,7 +122,7 @@ public interface IBuilding extends Serializable {
      *
      * @return the <code>int</code> code of the building's construction type.
      */
-    BuildingType getType();
+    BuildingType getBuildingType();
 
     /**
      * Get the building class, per TacOps rules.
@@ -305,7 +305,7 @@ public interface IBuilding extends Serializable {
      * units within the building. TW pg175.
      */
     default double getInfDmgFromInside() {
-        return switch (getType()) {
+        return switch (getBuildingType()) {
             case LIGHT, MEDIUM -> 0.0;
             case HEAVY -> 0.5;
             case HARDENED -> 0.75;
@@ -320,7 +320,7 @@ public interface IBuilding extends Serializable {
      * @return Damage fraction.
      */
     default float getDamageReductionFromOutside() {
-        return switch (getType()) {
+        return switch (getBuildingType()) {
             case LIGHT -> 0.75f;
             case MEDIUM -> 0.5f;
             case HEAVY -> 0.25f;

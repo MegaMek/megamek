@@ -1,6 +1,8 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.50.10 (2025-10- 2030 UTC)
+0.50.11
+
+0.50.10 (2025-10-12 2030 UTC)
 * Improvement: Added JavaDocs to `TargetRollModifier` Class & Constructor to Reduce Ambiguity by @IllianiBird in https://github.com/MegaMek/megamek/pull/7491
 * Add QA Test Build GitHub Actions workflow for manual testing by @Copilot in https://github.com/MegaMek/megamek/pull/7499
 * Fluff data for MekBay by @exeea in https://github.com/MegaMek/megamek/pull/7497

@@ -72,6 +72,9 @@ public enum TechRating {
      * <p>The comparison is based on the internal {@code index} value; a larger index indicates a more advanced
      * rating.</p>
      *
+     * <p><b>Warning:</b> Do not use when comparing planetary tech levels. Use
+     * {@link #isPlanetaryTechLevelBetterThan(TechRating)} instead.</p>
+     *
      * @param other the {@link TechRating} to compare against
      *
      * @return {@code true} if this rating is strictly higher than {@code other}
@@ -87,6 +90,9 @@ public enum TechRating {
      * <p>The comparison is based on the internal {@code index} value; a larger or equal index indicates an
      * equivalent or more advanced rating.</p>
      *
+     * <p><b>Warning:</b> Do not use when comparing planetary tech levels. Use
+     * {@link #isPlanetaryTechLevelBetterOrEqualThan(TechRating)} instead.</p>
+     *
      * @param other the {@link TechRating} to compare against
      * @return {@code true} if this rating is greater than or equal to {@code other}
      */
@@ -100,6 +106,9 @@ public enum TechRating {
      *
      * <p><b>Note:</b> Planetary tech levels use an inverted scale compared to normal tech ratings — a <b>lower</b>
      * internal {@code index} indicates a more advanced planetary tech level.</p>
+     *
+     * <p><b>Warning:</b> Do not use when comparing equipment tech levels. Use {@link #isBetterThan(TechRating)}
+     * instead.</p>
      *
      * @param other the {@link TechRating} to compare against
      *
@@ -119,6 +128,9 @@ public enum TechRating {
      *
      * <p><b>Note:</b> Planetary tech levels use an inverted scale compared to normal tech ratings — a <b>lower</b>
      * internal {@code index} indicates a more advanced planetary tech level.</p>
+     *
+     * <p><b>Warning:</b> Do not use when comparing equipment tech levels. Use
+     * {@link #isBetterOrEqualThan(TechRating)} instead.</p>
      *
      * @param other the {@link TechRating} to compare against
      *

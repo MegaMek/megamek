@@ -25641,7 +25641,8 @@ public class TWGameManager extends AbstractGameManager {
                 if (mounted.getType() instanceof AmmoType ammoType) {
                     if (!ammoType.isExplosive(mounted) ||
                           (!(ammoType.getMunitionType().contains(Munitions.M_INFERNO)) &&
-                                !(ammoType.getMunitionType().contains(Munitions.M_IATM_IIW)))) {
+                                !(ammoType.getMunitionType().contains(Munitions.M_IATM_IIW)) &&
+                                !(ammoType.getMunitionType().contains(Munitions.M_INCENDIARY_LRM)))) {
                         continue;
                     }
                     // ignore empty, destroyed, or missing bins

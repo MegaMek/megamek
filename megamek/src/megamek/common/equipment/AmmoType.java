@@ -701,6 +701,18 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "180, TO:AUE");
 
+    private static final MunitionMutator INCENDIARY_LRM_MUNITION_MUTATOR = new MunitionMutator("Incendiary",
+          1,
+          Munitions.M_INCENDIARY_LRM,
+          new TechAdvancement(TechBase.ALL).setIntroLevel(false)
+                .setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
+                .setAdvancement(2341, 2342, 2352, DATE_NONE, DATE_NONE)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          "181, TO:AUE");
+
     private static final MunitionMutator SEMI_GUIDED_MUNITION_MUTATOR = new MunitionMutator("Semi-guided",
           1,
           Munitions.M_SEMIGUIDED,
@@ -3439,10 +3451,10 @@ public class AmmoType extends EquipmentType {
          * .setPrototypeFactions(Faction.TH) .setProductionFactions(Faction.TH),"369, TO"));
          */
         // TODO Flare LRMs IO pg 230
-        // TODO Incendiary LRMs - IO pg 61, TO pg 369
         // TODO Mag Pulse see IO pg 62
         munitions.add(ARAD_MUNITION_MUTATOR);
         munitions.add(FOLLOW_THE_LEADER_MUNITION_MUTATOR);
+        munitions.add(INCENDIARY_LRM_MUNITION_MUTATOR);
         munitions.add(HEAT_SEEKING_MUNITION_MUTATOR);
         munitions.add(SEMI_GUIDED_MUNITION_MUTATOR);
         munitions.add(SMOKE_MUNITION_MUTATOR);
@@ -3474,10 +3486,10 @@ public class AmmoType extends EquipmentType {
          * DATE_NONE, DATE_NONE) .setClanApproximate(false, false, false, false, false)
          * .setPrototypeFactions(Faction.TH) .setProductionFactions(Faction.TH),"369, TO"));
          */
-        // TODO Incendiary LRMs - IO pg 61, TO pg 369
         // TODO Mag Pulse see IO pg 62
         munitions.add(CLAN_ARAD_MUNITION_MUTATOR);
         munitions.add(CLAN_FOLLOW_THE_LEADER_MUNITION_MUTATOR);
+        munitions.add(INCENDIARY_LRM_MUNITION_MUTATOR);
         munitions.add(CLAN_HEAT_SEEKING_MUNITIONS_MUTATOR);
         munitions.add(CLAN_SEMI_GUIDED);
         munitions.add(CLAN_SMOKE_STANDARD_MUNITION_MUTATOR);

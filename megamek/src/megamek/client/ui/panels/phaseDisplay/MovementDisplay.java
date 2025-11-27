@@ -3849,7 +3849,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
             ChoiceDialog choiceDialog = null;
             while (!doIt) {
                 choiceDialog = new ChoiceDialog(clientgui.getFrame(),
-                      Messages.getString("MovementDisplay.LaunchFighterDialog.title", currentBay.getType(), bayNum),
+                      Messages.getString("MovementDisplay.LaunchFighterDialog.title",
+                            currentBay.getTransporterType(),
+                            bayNum),
                       question,
                       names);
                 choiceDialog.setVisible(true);
@@ -3941,13 +3943,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
                     boolean doIt = false;
                     ChoiceDialog choiceDialog = new ChoiceDialog(clientgui.getFrame(),
-                          Messages.getString("MovementDisplay.LaunchDropshipDialog.title", collar.getType(), collarNum),
+                          Messages.getString("MovementDisplay.LaunchDropshipDialog.title",
+                                collar.getTransporterType(),
+                                collarNum),
                           question,
                           names);
                     while (!doIt) {
                         choiceDialog = new ChoiceDialog(clientgui.getFrame(),
                               Messages.getString("MovementDisplay.LaunchDropshipDialog.title",
-                                    collar.getType(),
+                                    collar.getTransporterType(),
                                     collarNum),
                               question,
                               names);
@@ -4118,7 +4122,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 // If this is an infantry-transporting bay (cargo, Infantry Bay, etc.), no limit on drops
                 int max = (isInfantryTransporter) ? -1 : doorsEligibleForDrop;
                 ChoiceDialog choiceDialog = new ChoiceDialog(clientgui.getFrame(),
-                      Messages.getString("MovementDisplay.DropUnitDialog.title", currentTransporter.getType(), bayNum),
+                      Messages.getString("MovementDisplay.DropUnitDialog.title",
+                            currentTransporter.getTransporterType(),
+                            bayNum),
                       question,
                       names,
                       false,

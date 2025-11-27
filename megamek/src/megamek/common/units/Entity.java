@@ -3194,7 +3194,7 @@ public abstract class Entity extends TurnOrdered
                 if (externalCargo.canLoad(cargoEntity)) {
                     // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly
                     //  load into that transporter.
-                    locationMap.put(transporter.getType() + " " + getTransports().indexOf(transporter),
+                    locationMap.put(transporter.getTransporterType() + " " + getTransports().indexOf(transporter),
                           Integer.MAX_VALUE - getTransports().indexOf(transporter));
 
                 }
@@ -3226,7 +3226,9 @@ public abstract class Entity extends TurnOrdered
                   && !externalCargo.getCarryables().isEmpty()) {
                 // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly load into
                 //  that transporter.
-                locationMap.put(transporter.getType() + " " + externalCargo.getCarryables().get(0).toString(),
+                locationMap.put(transporter.getTransporterType() + " " + externalCargo.getCarryables()
+                            .get(0)
+                            .toString(),
                       Integer.MAX_VALUE - getTransports().indexOf(transporter));
 
             }
@@ -6234,8 +6236,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return True if this unit has an active Nova CEWS that can communicate.
-     *         Returns false if the unit is shutdown, off board, or the Nova CEWS is inoperable/offline.
+     * @return True if this unit has an active Nova CEWS that can communicate. Returns false if the unit is shutdown,
+     *       off board, or the Nova CEWS is inoperable/offline.
      */
     public boolean hasActiveNovaCEWS() {
         if (isShutDown() || isOffBoard()) {
@@ -6249,7 +6251,7 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * @return True if this unit has a Nova CEWS that can network (not destroyed/breached, not shutdown, not offboard).
-     *         Does NOT check ECM mode - networking works regardless of Off/ECM mode setting.
+     *       Does NOT check ECM mode - networking works regardless of Off/ECM mode setting.
      */
     public boolean hasNovaCEWS() {
         if (isShutDown() || isOffBoard()) {
@@ -6331,11 +6333,9 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Applies pending Nova CEWS network ID change at the start of a new round.
-     * Clears the pending change after applying it.
-     * Always clears the Nova CEWS UUID array when network changes to prevent stale UUIDs
-     * from causing unintended network connections during wireC3().
-     * Note: Nova CEWS shares UUID array infrastructure with Naval C3 (NC3).
+     * Applies pending Nova CEWS network ID change at the start of a new round. Clears the pending change after applying
+     * it. Always clears the Nova CEWS UUID array when network changes to prevent stale UUIDs from causing unintended
+     * network connections during wireC3(). Note: Nova CEWS shares UUID array infrastructure with Naval C3 (NC3).
      */
     public void newRoundNovaNetSwitch() {
         if (hasNovaCEWS() && (newC3NetIdString != null)) {
@@ -8885,7 +8885,7 @@ public abstract class Entity extends TurnOrdered
             Bay chosenBay = potential.elementAt(Compute.randomInt(potential.size()));
             chosenBay.destroyDoor();
             chosenBay.resetDoors();
-            bayType = String.format("%s bay #%s", chosenBay.getType(), chosenBay.getBayNumber());
+            bayType = String.format("%s bay #%s", chosenBay.getTransporterType(), chosenBay.getBayNumber());
         }
 
         return bayType;

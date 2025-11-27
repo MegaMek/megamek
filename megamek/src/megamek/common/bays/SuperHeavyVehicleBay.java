@@ -83,7 +83,7 @@ public final class SuperHeavyVehicleBay extends UnitBay {
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         return "Superheavy Vehicle";
     }
 

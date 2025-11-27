@@ -110,7 +110,7 @@ public final class ProtoMekBay extends UnitBay {
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         return "ProtoMek";
     }
 

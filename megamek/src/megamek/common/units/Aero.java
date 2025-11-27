@@ -2490,11 +2490,11 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         for (Bay transportBay : getTransportBays()) {
             conditionalStringJoiner.add(transportBay.getBayDamage() > 0,
                   () -> String.format(Messages.getString("Aero.bayDamageString"),
-                        transportBay.getType(),
+                        transportBay.getTransporterType(),
                         transportBay.getBayNumber()));
             conditionalStringJoiner.add(transportBay.getCurrentDoors() < transportBay.getDoors(),
                   () -> String.format(Messages.getString("Aero.bayDoorDamageString"),
-                        transportBay.getType(),
+                        transportBay.getTransporterType(),
                         transportBay.getBayNumber(),
                         (transportBay.getDoors() - transportBay.getCurrentDoors())));
         }

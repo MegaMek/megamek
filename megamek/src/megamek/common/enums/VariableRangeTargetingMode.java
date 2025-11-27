@@ -35,7 +35,7 @@ package megamek.common.enums;
 /**
  * Represents the targeting mode for the Variable Range Targeting quirk.
  * <p>
- * Per BattleMech Manual pg. 86: - Player selects Long or Short mode during End Phase for the NEXT turn - LONG mode:
+ * Per BMM pg. 86: - Player selects Long or Short mode during End Phase for the NEXT turn - LONG mode:
  * -1 TN at long range, +1 TN at short range - SHORT mode: -1 TN at short range, +1 TN at long range - Medium range is
  * unaffected by either mode
  */

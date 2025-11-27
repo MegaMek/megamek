@@ -67,7 +67,7 @@ import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**
- * Dialog for managing Variable Range Targeting modes during End Phase. Per BattleMech Manual pg. 86: Player selects
+ * Dialog for managing Variable Range Targeting modes during End Phase. Per BMM pg. 86: Player selects
  * Long or Short mode during End Phase for the NEXT turn.
  * <p>
  * - LONG mode: -1 TN at long range, +1 TN at short range - SHORT mode: -1 TN at short range, +1 TN at long range -

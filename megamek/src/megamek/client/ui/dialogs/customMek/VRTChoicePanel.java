@@ -43,7 +43,7 @@ import megamek.common.enums.VariableRangeTargetingMode;
 import megamek.common.units.Entity;
 
 /**
- * Panel for selecting Variable Range Targeting mode during lobby configuration. Per BattleMech Manual pg. 86: Player
+ * Panel for selecting Variable Range Targeting mode during lobby configuration. Per BMM pg. 86: Player
  * selects Long or Short mode. - LONG mode: -1 TN at long range, +1 TN at short range - SHORT mode: -1 TN at short
  * range, +1 TN at long range
  */

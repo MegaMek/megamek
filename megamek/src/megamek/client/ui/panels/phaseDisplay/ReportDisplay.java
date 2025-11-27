@@ -330,6 +330,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
     private void showVariableRangeTargetingDialog() {
         VariableRangeTargetingDialog dialog = new VariableRangeTargetingDialog(clientgui.getFrame(), clientgui);
         dialog.setVisible(true);
+        // Clear focus from the button after dialog closes to reset highlight state
+        buttons.get(ReportCommand.REPORT_VAR_RANGE_TARGETING).transferFocus();
     }
 
     /**

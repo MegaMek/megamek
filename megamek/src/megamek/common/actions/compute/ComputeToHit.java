@@ -70,12 +70,11 @@ import megamek.common.weapons.attacks.InfantryAttack;
 import megamek.common.weapons.battleArmor.clan.CLBALBX;
 import megamek.common.weapons.bayWeapons.ScreenLauncherBayWeapon;
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
+import megamek.common.weapons.handlers.ARADEquipmentDetector;
 import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.lasers.innerSphere.ISBombastLaser;
 import megamek.common.weapons.lrms.LRTWeapon;
 import megamek.common.weapons.srms.SRTWeapon;
-import megamek.common.weapons.missiles.MRMWeapon;
-import megamek.common.weapons.handlers.ARADEquipmentDetector;
 import megamek.logging.MMLogger;
 
 public class ComputeToHit {
@@ -1818,11 +1817,11 @@ public class ComputeToHit {
             if (spotterIsForwardObserver) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.FooSpotter"));
             }
-            // Comm implant provides -1 bonus for non-infantry spotters
-            boolean spotterHasCommImplant = ae.aTracker.getSpotterHasCommImplant();
-            if (spotterHasCommImplant) {
-                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.CommImplantArtillerySpotter"));
-            }
+        }
+        // Comm implant applies to ANY spotted artillery attack, not just adjusted fire
+        boolean spotterHasCommImplant = ae.aTracker.getSpotterHasCommImplant();
+        if (spotterHasCommImplant) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.CommImplantArtillerySpotter"));
         }
         // Capital missiles used for surface-to-surface artillery attacks
         // See SO p110

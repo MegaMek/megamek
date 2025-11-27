@@ -41,7 +41,6 @@ import java.util.Vector;
 
 import megamek.common.Hex;
 import megamek.common.HexTarget;
-import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
@@ -63,6 +62,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.ArtilleryHandlerHelper;
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
@@ -195,6 +195,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                       bestSpotter.get().getCrew().getGunnery()) - 4) / 2;
                 mod += foMod;
                 toHit.addModifier(mod, "Spotting modifier");
+                // Comm implant bonus applies to non-infantry spotters for artillery
+                if (!(bestSpotter.get() instanceof Infantry) &&
+                      bestSpotter.get().hasAbility(OptionsConstants.MD_COMM_IMPLANT)) {
+                    toHit.addModifier(-1, "Spotter has comm implant");
+                }
             }
 
             // If the shot hit the target hex, then all subsequent

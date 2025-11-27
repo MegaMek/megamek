@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.common.Hex;
-import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
@@ -66,6 +65,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.EntitySelector;
+import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.ArtilleryHandlerHelper;
 import megamek.common.weapons.handlers.AmmoBayWeaponHandler;
@@ -268,6 +268,11 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             int mod = (bestSpotter.getCrew().getGunnery() - 4) / 2;
             mod += foMod;
             toHit.addModifier(mod, "Spotting modifier");
+            // Comm implant bonus applies to non-infantry spotters for artillery
+            if (!(bestSpotter instanceof Infantry) &&
+                  bestSpotter.hasAbility(OptionsConstants.MD_COMM_IMPLANT)) {
+                toHit.addModifier(-1, "Spotter has comm implant");
+            }
         }
 
         // Is the attacker still alive, and we're not shooting FLAK?

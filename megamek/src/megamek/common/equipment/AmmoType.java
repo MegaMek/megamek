@@ -690,7 +690,7 @@ public class AmmoType extends EquipmentType {
           "368, TO");
 
     private static final MunitionMutator ARAD_MUNITION_MUTATOR = new MunitionMutator("Anti-Radiation",
-          2,
+          1,
           Munitions.M_ARAD,
           new TechAdvancement(TechBase.IS).setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.F)
@@ -849,7 +849,7 @@ public class AmmoType extends EquipmentType {
 
     private static final MunitionMutator CLAN_ARAD_MUNITION_MUTATOR = new MunitionMutator(
           "(Clan) Anti-Radiation",
-          2,
+          1,
           Munitions.M_ARAD,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
@@ -16084,6 +16084,17 @@ public class AmmoType extends EquipmentType {
                   (munition.getAmmoType() == AmmoTypeEnum.FLUID_GUN)) &&
                   (munition.getMunitionType().contains(Munitions.M_COOLANT))) {
                 cost = 3000;
+            }
+
+            if (((munition.getAmmoType() == AmmoTypeEnum.LRM) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.LRM_IMP) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.MML) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.SRM) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.SRM_IMP) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.NLRM)) &&
+                  (munition.getMunitionType().contains(Munitions.M_ARAD))) {
+                bv *= 1.3;
+                cost *= 3.0;
             }
 
             // Account for floating point imprecision

@@ -5862,11 +5862,6 @@ public abstract class Mek extends Entity {
             return true;
         }
 
-        if (isPermanentlyImmobilized(checkCrew)) {
-            LOGGER.debug("{} CRIPPLED: Immobilized.", getDisplayName());
-            return true;
-        }
-
         // If this is not a military unit, we don't care about weapon status.
         if (!isMilitary()) {
             return false;

@@ -600,16 +600,10 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
      * Fire Mode - Adds a Fire Mode Change to the current Attack Action
      */
     protected void changeMode(boolean forward) {
-        int wn = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
+        WeaponMounted weaponMounted = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
 
-        // Do nothing we have no unit selected.
-        if (currentEntity() == null) {
-            return;
-        }
-
-        // If the weapon does not have modes, just exit.
-        Mounted<?> m = currentEntity().getEquipment(wn);
-        if ((m == null) || !m.hasModes()) {
+        // Do nothing we have no unit selected or no weapon selected or if the weapon doesn't have modes
+        if (currentEntity() == null || weaponMounted == null || !weaponMounted.hasModes()) {
             return;
         }
 
@@ -619,31 +613,31 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
          */
 
         // send change to the server
-        int nMode = m.switchMode(forward);
+        int nMode = weaponMounted.switchMode(forward);
         // BattleArmor can fire popup-mine launchers individually. The mode determines
         // how many will be fired, but we don't want to set the mode higher than the
         // number of troopers in the squad.
         if ((currentEntity() instanceof BattleArmor)
-              && (m.getType() instanceof WeaponType)
-              && m.getType().hasFlag(WeaponType.F_BA_INDIVIDUAL)
-              && (m.curMode().getName().contains("-shot"))
-              && (Integer.parseInt(m.curMode().getName().replace("-shot", "")) > currentEntity().getTotalInternal())) {
-            m.setMode(0);
+              && (weaponMounted.getType() instanceof WeaponType)
+              && weaponMounted.getType().hasFlag(WeaponType.F_BA_INDIVIDUAL)
+              && (weaponMounted.curMode().getName().contains("-shot"))
+              && (Integer.parseInt(weaponMounted.curMode().getName().replace("-shot", "")) > currentEntity().getTotalInternal())) {
+            weaponMounted.setMode(0);
         }
-        clientgui.getClient().sendModeChange(currentEntity, wn, nMode);
+        clientgui.getClient().sendModeChange(weaponMounted.getEntity().getId(), weaponMounted.getEquipmentNum(), nMode);
 
         // notify the player
-        if (m.canInstantSwitch(nMode)) {
-            clientgui.systemMessage(Messages.getString("FiringDisplay.switched", m.getName(),
-                  m.curMode().getDisplayableName(true)));
+        if (weaponMounted.canInstantSwitch(nMode)) {
+            clientgui.systemMessage(Messages.getString("FiringDisplay.switched", weaponMounted.getName(),
+                  weaponMounted.curMode().getDisplayableName(true)));
         } else {
-            clientgui.systemMessage(Messages.getString("FiringDisplay.willSwitch", m.getName(),
-                  m.pendingMode().getDisplayableName(true)));
+            clientgui.systemMessage(Messages.getString("FiringDisplay.willSwitch", weaponMounted.getName(),
+                  weaponMounted.pendingMode().getDisplayableName(true)));
         }
 
         updateTarget();
         clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
-        clientgui.getUnitDisplay().wPan.selectWeapon(wn);
+        clientgui.getUnitDisplay().wPan.selectWeapon(weaponMounted);
     }
 
     /**

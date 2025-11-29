@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers;
 
+import static java.lang.Math.floor;
+
 import java.io.Serial;
 import java.util.Vector;
 
@@ -202,7 +204,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             // Cluster bonuses or penalties can't apply to "two rolls" UACs, so
             // if we have one, modify the damage per hit directly.
         } else if (bDirect && (howManyShots == 1 || twoRollsUltra)) {
-            toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0), toReturn * 2);
+            toReturn = Math.min(toReturn + (int) floor(toHit.getMoS() / 3.0), toReturn * 2);
         }
 
         if (howManyShots == 1 || twoRollsUltra) {

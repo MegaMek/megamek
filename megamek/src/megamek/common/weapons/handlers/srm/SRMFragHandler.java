@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers.srm;
 
+import static java.lang.Math.floor;
+
 import java.io.Serial;
 import java.util.Vector;
 
@@ -82,7 +84,7 @@ public class SRMFragHandler extends SRMHandler {
         if (target.isConventionalInfantry()) {
             toReturn *= weaponType.getRackSize();
             if (bDirect) {
-                toReturn += toHit.getMoS() / 3.0;
+                toReturn += (int) floor(toHit.getMoS() / 3.0);
             }
 
             toReturn = applyGlancingBlowModifier(toReturn, true);

@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers.ac;
 
+import static java.lang.Math.floor;
+
 import java.io.Serial;
 
 import megamek.common.RangeType;
@@ -78,7 +80,7 @@ public class ACWeaponHandler extends AmmoWeaponHandler {
                   toHit.getThruBldg() != null,
                   attackingEntity.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
-            toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0), toReturn * 2);
+            toReturn = Math.min(toReturn + (int) floor(toHit.getMoS() / 3.0), toReturn * 2);
         }
         toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)

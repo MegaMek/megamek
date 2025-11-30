@@ -439,9 +439,6 @@ public class SuperHeavyTank extends Tank {
         } else if ((getArmor(LOC_REAR) < 1) && (getOArmor(LOC_REAR) > 0)) {
             logger.debug("{} CRIPPLED: Rear armor destroyed.", getDisplayName());
             return true;
-        } else if (isPermanentlyImmobilized(checkCrew)) {
-            logger.debug("{} CRIPPLED: Immobilized.", getDisplayName());
-            return true;
         }
 
         // If this is not a military vehicle, we don't need to do a weapon check.

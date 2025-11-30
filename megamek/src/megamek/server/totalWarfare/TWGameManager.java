@@ -9736,9 +9736,14 @@ public class TWGameManager extends AbstractGameManager {
                     });
                     Vector<Integer> spotterIds = new Vector<>();
                     while (spotters.hasNext()) {
-                        Integer id = spotters.next().getId();
+                        Entity spotter = spotters.next();
+                        Integer id = spotter.getId();
                         spotterIds.addElement(id);
+                        LOGGER.debug("Artillery attack declaration: found spotter {} (id={})",
+                              spotter.getDisplayName(), id);
                     }
+                    LOGGER.debug("Artillery attack declaration: setting {} spotters on action",
+                          spotterIds.size());
                     aaa.setSpotterIds(spotterIds);
                 }
             }

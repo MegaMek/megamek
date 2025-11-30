@@ -1811,6 +1811,10 @@ public class ComputeToHit {
         int adjust = 0;
         if (weapon != null) {
             adjust = ae.aTracker.getModifier(weapon, target.getPosition());
+            logger.debug("Artillery aTracker check: weapon={}, targetPos={}, adjust={}",
+                  weapon.getName(), target.getPosition(), adjust);
+        } else {
+            logger.debug("Artillery aTracker check: weapon is null");
         }
 
         if (adjust == TargetRoll.AUTOMATIC_SUCCESS) {

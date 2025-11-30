@@ -41,7 +41,6 @@ import java.util.Vector;
 
 import megamek.common.Hex;
 import megamek.common.HexTarget;
-import megamek.common.units.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
@@ -63,6 +62,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.ArtilleryHandlerHelper;
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
@@ -158,6 +158,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return true;
         }
         final Vector<Integer> spottersBefore = artilleryAttackAction.getSpotterIds();
+        logger.debug("Artillery resolution: spottersBefore={}, size={}",
+              spottersBefore, spottersBefore != null ? spottersBefore.size() : "null");
 
         Coords targetPos = target.getPosition();
         Coords finalPos;
@@ -209,6 +211,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             if (roll.getIntValue() >= toHit.getValue()
                   && !(this instanceof ArtilleryWeaponDirectFireHandler)) {
                 attackingEntity.aTracker.setModifier(TargetRoll.AUTOMATIC_SUCCESS, targetPos);
+                logger.debug("Artillery HIT - setting AUTOMATIC_SUCCESS for pos={}", targetPos);
             }
             // If the shot missed, but was adjusted by a
             // spotter, future shots are more likely to hit.
@@ -231,9 +234,14 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                           bestSpotter.get().hasAbility(OptionsConstants.MD_COMM_IMPLANT)) {
                         attackingEntity.aTracker.setSpotterHasCommImplant(true);
                     }
-                    attackingEntity.aTracker.setModifier(attackingEntity.aTracker.getModifier(weapon, targetPos) - 1,
-                          targetPos);
+                    int newMod = attackingEntity.aTracker.getModifier(weapon, targetPos) - 1;
+                    attackingEntity.aTracker.setModifier(newMod, targetPos);
+                    logger.debug("Artillery MISSED with spotter - setting modifier={} for pos={}, spotter={}",
+                          newMod, targetPos, bestSpotter.get().getDisplayName());
                 }
+            } else {
+                logger.debug("Artillery MISSED - no spotter found, bestSpotter.isPresent()={}",
+                      bestSpotter.isPresent());
             }
         }
 

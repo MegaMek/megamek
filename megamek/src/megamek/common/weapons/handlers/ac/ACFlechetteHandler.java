@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers.ac;
 
+import static java.lang.Math.floor;
+
 import java.io.Serial;
 import java.util.Vector;
 
@@ -77,7 +79,7 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
         double toReturn = weaponType.getDamage();
 
         if (bDirect) {
-            toReturn += toHit.getMoS() / 3.0;
+            toReturn += (int) floor(toHit.getMoS() / 3.0);
         }
 
         toReturn = applyGlancingBlowModifier(toReturn, false);

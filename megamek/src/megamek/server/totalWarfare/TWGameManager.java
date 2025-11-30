@@ -6173,16 +6173,15 @@ public class TWGameManager extends AbstractGameManager {
                 if (cfrType != null) {
                     // Make sure we got the right type of response
                     if (!cfrType.isCFRHiddenPBS()) {
-                        LOGGER.error("Expected a CFR_HIDDEN_PBS CFR packet, received: {}", cfrType);
+                        // Re-queue packet for other handlers - don't discard it
+                        cfrPacketQueue.add(rp);
                         continue;
                     }
                 }
                 // Check packet came from right ID
                 if (rp.getConnectionId() != hidden.getOwnerId()) {
-                    LOGGER.error(
-                          "Expected a CFR_HIDDEN_PBS CFR packet from player {}, but instead it came from player {}",
-                          hidden.getOwnerId(),
-                          rp.getConnectionId());
+                    // Re-queue packet for other handlers - don't discard it
+                    cfrPacketQueue.add(rp);
                     continue;
                 }
                 // First packet indicates whether the PBS is taken or declined
@@ -6289,15 +6288,14 @@ public class TWGameManager extends AbstractGameManager {
                 final PacketCommand cfrType = rp.getPacket().getPacketCommand(0);
                 // Make sure we got the right type of response
                 if (cfrType != null && !cfrType.isCFRTeleguidedTarget()) {
-                    LOGGER.error("Expected a CFR_TELEGUIDED_TARGET CFR packet, received: {}", cfrType);
+                    // Re-queue packet for other handlers - don't discard it
+                    cfrPacketQueue.add(rp);
                     continue;
                 }
                 // Check packet came from right ID
                 if (rp.getConnectionId() != playerId) {
-                    LOGGER.error(
-                          "Expected a CFR_TELEGUIDED_TARGET CFR packet from player {}, but instead it came from player {}",
-                          playerId,
-                          rp.getConnectionId());
+                    // Re-queue packet for other handlers - don't discard it
+                    cfrPacketQueue.add(rp);
                     continue;
                 }
                 return (int) rp.getPacket().data()[1];
@@ -6322,15 +6320,14 @@ public class TWGameManager extends AbstractGameManager {
                 final PacketCommand cfrType = rp.getPacket().getPacketCommand(0);
                 // Make sure we got the right type of response
                 if (cfrType != null && !cfrType.isCFRTagTarget()) {
-                    LOGGER.error("Expected a CFR_TAG_TARGET CFR packet, received: {}", cfrType);
+                    // Re-queue packet for other handlers - don't discard it
+                    cfrPacketQueue.add(rp);
                     continue;
                 }
                 // Check packet came from right ID
                 if (rp.getConnectionId() != playerId) {
-                    LOGGER.error(
-                          "Expected a CFR_TAG_TARGET CFR packet from player {} but instead it came from player {}",
-                          playerId,
-                          rp.getConnectionId());
+                    // Re-queue packet for other handlers - don't discard it
+                    cfrPacketQueue.add(rp);
                     continue;
                 }
                 return (int) rp.getPacket().data()[1];

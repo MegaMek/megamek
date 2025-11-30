@@ -1670,7 +1670,7 @@ public class ComputeToHit {
             ComputeAbilityMods.processAttackerSPAs(toHit, ae, te, weapon, game);
             ComputeAbilityMods.processDefenderSPAs(toHit, ae, te, game);
 
-            return artilleryIndirectToHit(ae, target, toHit, weaponType, weapon, srt);
+            return artilleryIndirectToHit(game, ae, target, toHit, weaponType, weapon, srt);
         }
 
         // If we get here, this isn't an artillery attack
@@ -1789,6 +1789,7 @@ public class ComputeToHit {
     /**
      * Convenience method that compiles the ToHit modifiers applicable to indirect artillery attacks
      *
+     * @param game                     The current {@link Game}
      * @param ae                       The Entity making this attack
      * @param target                   The Targetable object being attacked
      * @param toHit                    The running total ToHitData for this WeaponAttackAction
@@ -1796,7 +1797,7 @@ public class ComputeToHit {
      * @param weapon                   The Mounted weapon being used
      * @param specialResolutionTracker Class that stores whether this WAA should return a special resolution
      */
-    private static ToHitData artilleryIndirectToHit(Entity ae, Targetable target, ToHitData toHit,
+    private static ToHitData artilleryIndirectToHit(Game game, Entity ae, Targetable target, ToHitData toHit,
           WeaponType weaponType, Mounted<?> weapon, SpecialResolutionTracker specialResolutionTracker) {
 
         // See MegaMek/megamek#5168
@@ -1805,23 +1806,32 @@ public class ComputeToHit {
             mod--;
         }
         toHit.addModifier(mod, Messages.getString("WeaponAttackAction.IndirectArty"));
+
+        // Check for adjusted fire from previous shots
         int adjust = 0;
         if (weapon != null) {
             adjust = ae.aTracker.getModifier(weapon, target.getPosition());
         }
-        boolean spotterIsForwardObserver = ae.aTracker.getSpotterHasForwardObs();
+
         if (adjust == TargetRoll.AUTOMATIC_SUCCESS) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Artillery firing at target that's been hit before.");
         } else if (adjust != 0) {
+            // Adjusted fire - use stored modifiers from aTracker
             toHit.addModifier(adjust, Messages.getString("WeaponAttackAction.AdjustedFire"));
-            if (spotterIsForwardObserver) {
+            if (ae.aTracker.getSpotterHasForwardObs()) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.FooSpotter"));
             }
-        }
-        // Comm implant applies to ANY spotted artillery attack, not just adjusted fire
-        boolean spotterHasCommImplant = ae.aTracker.getSpotterHasCommImplant();
-        if (spotterHasCommImplant) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.CommImplantArtillerySpotter"));
+            if (ae.aTracker.getSpotterHasCommImplant()) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.CommImplantArtillerySpotter"));
+            }
+        } else {
+            // First shot - show informational message if spotter exists
+            // Per rules, spotter modifiers only apply AFTER first shell lands
+            Entity bestSpotter = findBestArtillerySpotter(game, ae, target);
+            if (bestSpotter != null) {
+                // Show +0 informational message - modifiers don't apply until adjusted fire
+                toHit.addModifier(0, Messages.getString("WeaponAttackAction.SpotterAvailable"));
+            }
         }
         // Capital missiles used for surface-to-surface artillery attacks
         // See SO p110
@@ -1848,6 +1858,58 @@ public class ComputeToHit {
         }
         specialResolutionTracker.setSpecialResolution(true);
         return toHit;
+    }
+
+    /**
+     * Finds the best available artillery spotter with LOS to the target. For artillery spotting, any friendly unit with
+     * LOS is an implicit spotter.
+     *
+     * @param game   The game instance
+     * @param ae     The attacking entity
+     * @param target The target being attacked
+     *
+     * @return The best spotter, or null if no valid spotter exists
+     */
+    private static Entity findBestArtillerySpotter(Game game, Entity ae, Targetable target) {
+        Entity bestSpotter = null;
+        int bestGunnery = Integer.MAX_VALUE;
+        boolean bestIsFO = false;
+
+        for (Entity entity : game.getEntitiesVector()) {
+            // Must be same owner, active, have LOS, not airborne aero, not haywire INarced
+            if (entity.getOwnerId() != ae.getOwnerId()) {
+                continue;
+            }
+            if (!entity.isActive()) {
+                continue;
+            }
+            if (entity.isAero() && entity.isAirborne()) {
+                continue;
+            }
+            if (entity.isINarcedWith(INarcPod.HAYWIRE)) {
+                continue;
+            }
+
+            // Check LOS to target
+            LosEffects los = LosEffects.calculateLOS(game, entity, target, true);
+            if (los.isBlocked()) {
+                continue;
+            }
+
+            boolean isFO = entity.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER);
+            int gunnery = entity.getCrew().getGunnery();
+
+            // Pick best: prefer Forward Observer, then lowest gunnery
+            if (bestSpotter == null ||
+                  (isFO && !bestIsFO) ||
+                  (isFO == bestIsFO && gunnery < bestGunnery)) {
+                bestSpotter = entity;
+                bestGunnery = gunnery;
+                bestIsFO = isFO;
+            }
+        }
+
+        return bestSpotter;
     }
 
     private ComputeToHit() {}

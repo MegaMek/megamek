@@ -1,0 +1,17 @@
+# Prohibited ammo will never be used by any faction
+Prohibited:
+  - Tandem-Charge
+  - AlamoMissile Ammo
+# Default values can be overridden
+Defaults:
+  Dead-Fire:
+    IS: 2.0
+    Clan: 1.0
+  Inferno:
+    IS: 1.0
+    Clan: 0.5
+# Overrides will replace default values (if set) and final generated values in the configurator
+Overrides:
+  Dead-Fire:
+    IS: 4.0
+

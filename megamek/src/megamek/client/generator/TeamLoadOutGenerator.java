@@ -40,6 +40,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ui.dialogs.unitSelectorDialogs.AbstractUnitSelectorDialog;
 import megamek.common.SimpleTechLevel;
@@ -75,16 +77,21 @@ import megamek.logging.MMLogger;
 
 public class TeamLoadOutGenerator {
     private final static MMLogger logger = MMLogger.create(TeamLoadOutGenerator.class);
+    private static ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 
     // region Constants
     // XML file containing flat list of weights; if not found, defaults used. If
     // found, defaults overridden.
-    public static final String LOAD_OUT_SETTINGS_PATH = "mmconf" + File.separator + "munitionLoadOutSettings.xml";
-    public static Properties weightProperties = new Properties();
+    public static final String LOAD_OUT_SETTINGS_PATH = "mmconf" + File.separator + "munitionLoadoutSettings.yaml";
+    public static LinkedHashMap<String, Object> weightMap = new LinkedHashMap<String, Object>();
 
     static {
         try (InputStream is = new FileInputStream(LOAD_OUT_SETTINGS_PATH)) {
-            weightProperties.loadFromXML(is);
+            weightMap = mapper.readValue(is, LinkedHashMap.class);
+            logger.debug("Loaded weight map: " + weightMap);
+            for (String key : weightMap.keySet()) {
+                logger.debug(String.format("Key %s = %s", key, weightMap.get(key)));
+            }
         } catch (Exception e) {
             logger.warn(e, "Munition weight properties could not be loaded!  Using defaults...");
             logger.debug(e, "{} was not loaded: ", LOAD_OUT_SETTINGS_PATH);
@@ -449,7 +456,7 @@ public class TeamLoadOutGenerator {
      */
     public static Double castPropertyDouble(String field, Double defValue) {
         try {
-            return Double.parseDouble(TeamLoadOutGenerator.weightProperties.getProperty(field));
+            return Double.parseDouble((String) TeamLoadOutGenerator.weightMap.get(field));
         } catch (Exception ignored) {
             return defValue;
         }
@@ -457,7 +464,7 @@ public class TeamLoadOutGenerator {
 
     public static int castPropertyInt(String field, int defValue) {
         try {
-            return Integer.parseInt(TeamLoadOutGenerator.weightProperties.getProperty(field));
+            return Integer.parseInt((String) TeamLoadOutGenerator.weightMap.get(field));
         } catch (Exception ignored) {
             return defValue;
         }

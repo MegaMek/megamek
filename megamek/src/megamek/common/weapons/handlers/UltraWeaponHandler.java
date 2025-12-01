@@ -197,7 +197,6 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
                 }
                 vPhaseReport.addElement(r);
             }
-            
         }
         return false;
     }

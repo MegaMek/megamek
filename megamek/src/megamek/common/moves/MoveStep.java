@@ -2396,7 +2396,7 @@ public class MoveStep implements Serializable {
         }
 
         // do not allow to move onto a bridge if there's no exit in lastPos's
-        // direction, unless jumping
+        // direction, unless jumping or already at/above bridge level
         if (!isFirstStep() &&
               !curPos.equals(lastPos) &&
               climbMode &&
@@ -2405,8 +2405,7 @@ public class MoveStep implements Serializable {
               (movementType != EntityMovementType.MOVE_JUMP) &&
               game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.BRIDGE) &&
               !game.getBoard(boardId).getHex(curPos).containsTerrainExit(Terrains.BRIDGE, curPos.direction(lastPos)) &&
-              (getElevation() + entity.getHeight() >=
-                    game.getBoard(boardId).getHex(curPos).terrainLevel(Terrains.BRIDGE_ELEV))) {
+              (getElevation() < game.getBoard(boardId).getHex(curPos).terrainLevel(Terrains.BRIDGE_ELEV))) {
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
@@ -2973,7 +2972,10 @@ public class MoveStep implements Serializable {
         IBuilding bld = game.getBoard(boardId).getBuildingAt(dest);
 
         final int destAlt;
-        if (bld != null && getEntity().getElevation() == 0 && climbMode) {
+        // For buildings (but NOT bridges), when entering from ground level in climbMode,
+        // use floor elevation. Bridges should use the bridge elevation instead.
+        if (bld != null && getEntity().getElevation() == 0 && climbMode
+              && !destHex.containsTerrain(Terrains.BRIDGE)) {
             destAlt = destHex.floor();
         } else {
             destAlt = elevation + destHex.getLevel();

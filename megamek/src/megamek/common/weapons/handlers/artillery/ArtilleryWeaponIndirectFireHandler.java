@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Vector;
 
+import megamek.client.ui.Messages;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.LosEffects;
@@ -211,14 +212,14 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 int gunneryMod = (spotterGunnery - 4) / 2;
                 logger.debug("  Spotter gunnery: skill={}, modifier={}", spotterGunnery, gunneryMod);
                 if (gunneryMod != 0) {
-                    toHit.addModifier(gunneryMod, "spotter gunnery modifier");
+                    toHit.addModifier(gunneryMod, Messages.getString("WeaponAttackAction.SpotterGunnery"));
                 }
 
                 // Add Forward Observer modifier separately
                 boolean hasFO = bestSpotter.get().hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER);
                 logger.debug("  Spotter FO check: hasFO={}, modifier={}", hasFO, hasFO ? -2 : 0);
                 if (hasFO) {
-                    toHit.addModifier(-2, "spotter is forward observer");
+                    toHit.addModifier(-2, Messages.getString("WeaponAttackAction.SpotterFO"));
                 }
 
                 // Comm implant bonus only applies to non-infantry spotters
@@ -228,7 +229,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 logger.debug("  Spotter comm implant check: isInfantry={}, hasCommImplant={}, modifier={}",
                       isInfantry, hasCommImplant, commImplantMod);
                 if (!isInfantry && hasCommImplant) {
-                    toHit.addModifier(-1, "spotter has comm implant");
+                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.CommImplantArtillerySpotter"));
                 }
 
                 logger.debug("  Final toHit value after spotter bonuses: {}", toHit.getValue());

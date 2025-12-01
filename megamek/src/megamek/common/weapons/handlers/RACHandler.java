@@ -123,7 +123,6 @@ public class RACHandler extends UltraWeaponHandler {
                 vPhaseReport.addElement(r);
             }
         }
-        
         if (jams) {
             Report r = new Report(3160);
             r.subject = subjectId;

@@ -78,7 +78,7 @@ import megamek.server.totalWarfare.TWGameManager;
  * @since Sep 24, 2004
  */
 public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
-    private static final MMLogger logger = MMLogger.create(ArtilleryBayWeaponIndirectFireHandler.class);
+    private static final MMLogger logger = MMLogger.create(ArtilleryWeaponIndirectFireHandler.class);
 
     @Serial
     private static final long serialVersionUID = -1277649123562229298L;

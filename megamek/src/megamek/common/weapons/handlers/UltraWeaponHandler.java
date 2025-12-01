@@ -178,7 +178,8 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             // PLAYTEST3 Caseless ammo support for RAC
             // Will potentially explode when rolling a 2. Can still jam if not blowing up.
             // The check above will only get to this if playtest3 is enabled
-            if ((roll.getIntValue() <= 2) && !attackingEntity.isConventionalInfantry()) {
+            if ((roll.getIntValue() <= 2) && !attackingEntity.isConventionalInfantry() 
+                  && ammoType.getMunitionType().contains(AmmoType.Munitions.M_CASELESS)) {
                 Roll diceRoll = Compute.rollD6(2);
 
                 Report r = new Report(3164);

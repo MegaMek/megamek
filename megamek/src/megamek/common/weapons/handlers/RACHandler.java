@@ -102,7 +102,8 @@ public class RACHandler extends UltraWeaponHandler {
         // PLAYTEST3 Caseless ammo support for RAC
         // Will potentially explode when rolling a 2. Can still jam if not blowing up.
         if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            if ((roll.getIntValue() <= 2) && !attackingEntity.isConventionalInfantry()) {
+            if ((roll.getIntValue() <= 2) && !attackingEntity.isConventionalInfantry()
+                && ammoType.getMunitionType().contains(megamek.common.weapons.AmmoType.Munitions.M_CASELESS)) {
                 Roll diceRoll = Compute.rollD6(2);
 
                 Report r = new Report(3164);

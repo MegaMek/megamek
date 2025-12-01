@@ -205,29 +205,33 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 toHit.removeModifier("comm implant");
 
                 // Add spotter gunnery modifier
-                int gunneryMod = ((useArtillerySkill ?
+                int spotterGunnery = useArtillerySkill ?
                       bestSpotter.get().getCrew().getArtillery() :
-                      bestSpotter.get().getCrew().getGunnery()) - 4) / 2;
+                      bestSpotter.get().getCrew().getGunnery();
+                int gunneryMod = (spotterGunnery - 4) / 2;
+                logger.debug("  Spotter gunnery: skill={}, modifier={}", spotterGunnery, gunneryMod);
                 if (gunneryMod != 0) {
                     toHit.addModifier(gunneryMod, "spotter gunnery modifier");
                 }
 
                 // Add Forward Observer modifier separately
                 boolean hasFO = bestSpotter.get().hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER);
-                logger.debug("  Spotter FO check: hasFO={}", hasFO);
+                logger.debug("  Spotter FO check: hasFO={}, modifier={}", hasFO, hasFO ? -2 : 0);
                 if (hasFO) {
-                    toHit.addModifier(-1, "spotter is forward observer");
+                    toHit.addModifier(-2, "spotter is forward observer");
                 }
 
                 // Comm implant bonus only applies to non-infantry spotters
                 boolean isInfantry = bestSpotter.get() instanceof Infantry;
                 boolean hasCommImplant = bestSpotter.get().hasAbility(OptionsConstants.MD_COMM_IMPLANT);
-                logger.debug("  Spotter comm implant check: isInfantry={}, hasCommImplant={}",
-                      isInfantry,
-                      hasCommImplant);
+                int commImplantMod = (!isInfantry && hasCommImplant) ? -1 : 0;
+                logger.debug("  Spotter comm implant check: isInfantry={}, hasCommImplant={}, modifier={}",
+                      isInfantry, hasCommImplant, commImplantMod);
                 if (!isInfantry && hasCommImplant) {
                     toHit.addModifier(-1, "spotter has comm implant");
                 }
+
+                logger.debug("  Final toHit value after spotter bonuses: {}", toHit.getValue());
             }
 
             // If the shot hit the target hex, then all subsequent

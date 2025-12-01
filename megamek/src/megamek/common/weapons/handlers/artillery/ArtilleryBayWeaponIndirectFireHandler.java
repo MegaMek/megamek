@@ -263,7 +263,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         if (null != bestSpotter) {
             int foMod = 0;
             if (bestSpotter.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
-                foMod = -1;
+                foMod = -2;
             }
             // Comm implant bonus only applies to non-infantry spotters
             int commImplantMod = 0;
@@ -274,11 +274,6 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             int mod = (bestSpotter.getCrew().getGunnery() - 4) / 2;
             mod += foMod + commImplantMod;
             toHit.addModifier(mod, "Spotting modifier");
-            // Comm implant bonus applies to non-infantry spotters for artillery
-            if (!(bestSpotter instanceof Infantry) &&
-                  bestSpotter.hasAbility(OptionsConstants.MD_COMM_IMPLANT)) {
-                toHit.addModifier(-1, "Spotter has comm implant");
-            }
         }
 
         // Is the attacker still alive, and we're not shooting FLAK?

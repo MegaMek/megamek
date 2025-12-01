@@ -144,9 +144,9 @@ class ArtilleryHandlerHelperTest {
      */
     @Test
     void nonInfantrySpotter_isNotInstanceOfInfantry() {
-        Entity mech = mock(Entity.class);
+        Entity spotter = mock(Entity.class);
 
-        assertFalse(mech instanceof Infantry);
+        assertFalse(spotter instanceof Infantry);
     }
 
     /**
@@ -163,11 +163,11 @@ class ArtilleryHandlerHelperTest {
         assertFalse(infantryGetsBonus, "Infantry should not get comm implant artillery bonus");
 
         // Non-infantry with comm implant - SHOULD get bonus
-        Entity mech = mock(Entity.class);
-        when(mech.hasAbility(OptionsConstants.MD_COMM_IMPLANT)).thenReturn(true);
-        boolean mechGetsBonus = !(mech instanceof Infantry)
-              && mech.hasAbility(OptionsConstants.MD_COMM_IMPLANT);
-        assertTrue(mechGetsBonus, "Non-infantry with comm implant should get artillery bonus");
+        Entity spotter = mock(Entity.class);
+        when(spotter.hasAbility(OptionsConstants.MD_COMM_IMPLANT)).thenReturn(true);
+        boolean spotterGetsBonus = !(spotter instanceof Infantry)
+              && spotter.hasAbility(OptionsConstants.MD_COMM_IMPLANT);
+        assertTrue(spotterGetsBonus, "Non-infantry with comm implant should get artillery bonus");
     }
 
     /**
@@ -175,11 +175,11 @@ class ArtilleryHandlerHelperTest {
      */
     @Test
     void commImplantBonus_requiresAbility() {
-        // Mech without comm implant - should NOT get bonus
-        Entity mech = mock(Entity.class);
-        when(mech.hasAbility(OptionsConstants.MD_COMM_IMPLANT)).thenReturn(false);
-        boolean getsBonus = !(mech instanceof Infantry)
-              && mech.hasAbility(OptionsConstants.MD_COMM_IMPLANT);
+        // Entity without comm implant - should NOT get bonus
+        Entity spotter = mock(Entity.class);
+        when(spotter.hasAbility(OptionsConstants.MD_COMM_IMPLANT)).thenReturn(false);
+        boolean getsBonus = !(spotter instanceof Infantry)
+              && spotter.hasAbility(OptionsConstants.MD_COMM_IMPLANT);
         assertFalse(getsBonus, "Entity without comm implant should not get bonus");
     }
 }

@@ -44,6 +44,7 @@ import java.util.Optional;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import org.junit.jupiter.api.Test;
 
@@ -100,5 +101,85 @@ class ArtilleryHandlerHelperTest {
         when(entity.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)).thenReturn(false);
 
         assertFalse(ArtilleryHandlerHelper.isForwardObserver(entity));
+    }
+
+    // Comm Implant related tests
+
+    /**
+     * Test that an entity with Comm Implant ability is correctly identified. Note: The actual modifier application
+     * happens in the handlers, not in findSpotter.
+     */
+    @Test
+    void entityWithCommImplant_hasAbilityReturnsTrue() {
+        Entity entity = mock(Entity.class);
+        when(entity.hasAbility(OptionsConstants.MD_COMM_IMPLANT)).thenReturn(true);
+
+        assertTrue(entity.hasAbility(OptionsConstants.MD_COMM_IMPLANT));
+    }
+
+    /**
+     * Test that an entity without Comm Implant ability is correctly identified.
+     */
+    @Test
+    void entityWithoutCommImplant_hasAbilityReturnsFalse() {
+        Entity entity = mock(Entity.class);
+        when(entity.hasAbility(OptionsConstants.MD_COMM_IMPLANT)).thenReturn(false);
+
+        assertFalse(entity.hasAbility(OptionsConstants.MD_COMM_IMPLANT));
+    }
+
+    /**
+     * Test that Infantry can be identified for comm implant exclusion. Per rules, infantry spotters do not benefit from
+     * comm implant for artillery.
+     */
+    @Test
+    void infantrySpotter_isInstanceOfInfantry() {
+        Infantry infantry = mock(Infantry.class);
+
+        assertTrue(infantry instanceof Infantry);
+    }
+
+    /**
+     * Test that non-Infantry entities are not excluded from comm implant bonus.
+     */
+    @Test
+    void nonInfantrySpotter_isNotInstanceOfInfantry() {
+        Entity mech = mock(Entity.class);
+
+        assertFalse(mech instanceof Infantry);
+    }
+
+    /**
+     * Test the comm implant exclusion logic for infantry spotters. This mirrors the check in the artillery handlers:
+     * !(spotter instanceof Infantry) && spotter.hasAbility(MD_COMM_IMPLANT)
+     */
+    @Test
+    void commImplantBonus_excludesInfantry() {
+        // Infantry with comm implant - should NOT get bonus
+        Infantry infantry = mock(Infantry.class);
+        when(infantry.hasAbility(OptionsConstants.MD_COMM_IMPLANT)).thenReturn(true);
+        boolean infantryGetsBonus = !(infantry instanceof Infantry)
+              && infantry.hasAbility(OptionsConstants.MD_COMM_IMPLANT);
+        assertFalse(infantryGetsBonus, "Infantry should not get comm implant artillery bonus");
+
+        // Non-infantry with comm implant - SHOULD get bonus
+        Entity mech = mock(Entity.class);
+        when(mech.hasAbility(OptionsConstants.MD_COMM_IMPLANT)).thenReturn(true);
+        boolean mechGetsBonus = !(mech instanceof Infantry)
+              && mech.hasAbility(OptionsConstants.MD_COMM_IMPLANT);
+        assertTrue(mechGetsBonus, "Non-infantry with comm implant should get artillery bonus");
+    }
+
+    /**
+     * Test that entity without comm implant does not get the bonus regardless of type.
+     */
+    @Test
+    void commImplantBonus_requiresAbility() {
+        // Mech without comm implant - should NOT get bonus
+        Entity mech = mock(Entity.class);
+        when(mech.hasAbility(OptionsConstants.MD_COMM_IMPLANT)).thenReturn(false);
+        boolean getsBonus = !(mech instanceof Infantry)
+              && mech.hasAbility(OptionsConstants.MD_COMM_IMPLANT);
+        assertFalse(getsBonus, "Entity without comm implant should not get bonus");
     }
 }

@@ -1823,17 +1823,16 @@ public class ComputeToHit {
             // Adjusted fire - use stored modifiers from aTracker
             toHit.addModifier(adjust, Messages.getString("WeaponAttackAction.AdjustedFire"));
             if (ae.aTracker.getSpotterHasForwardObs()) {
-                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.FooSpotter"));
+                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.SpotterFO"));
             }
             if (ae.aTracker.getSpotterHasCommImplant()) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.CommImplantArtillerySpotter"));
             }
         } else {
             // First shot - show informational message if spotter exists
-            // Per rules, spotter modifiers only apply AFTER first shell lands
+            // The handler will remove this and add actual modifiers during resolution
             Entity bestSpotter = findBestArtillerySpotter(game, ae, target);
             if (bestSpotter != null) {
-                // Show +0 informational message - modifiers don't apply until adjusted fire
                 toHit.addModifier(0, Messages.getString("WeaponAttackAction.SpotterAvailable"));
             }
         }

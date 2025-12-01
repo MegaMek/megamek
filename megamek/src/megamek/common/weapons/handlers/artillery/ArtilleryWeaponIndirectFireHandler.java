@@ -186,23 +186,48 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             Optional<Entity> bestSpotter = ArtilleryHandlerHelper.findSpotter(spottersBefore,
                   artilleryAttackAction.getPlayerId(), game, target);
 
-            // If at least one valid spotter, then get the benefits thereof.
-            if (bestSpotter.isPresent()) {
-                int foMod = 0;
-                if (bestSpotter.get().hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
-                    foMod = -1;
-                }
-                // Comm implant bonus only applies to non-infantry spotters
-                int commImplantMod = 0;
-                if (!(bestSpotter.get() instanceof Infantry) &&
-                      bestSpotter.get().hasAbility(OptionsConstants.MD_COMM_IMPLANT)) {
-                    commImplantMod = -1;
-                }
-                int mod = ((useArtillerySkill ?
+            // Check if this is adjusted fire (previous shot has landed at this hex)
+            // Spotter bonuses only apply to adjusted fire, not first shots
+            int existingMod = attackingEntity.aTracker.getModifier(weapon, targetPos);
+            boolean isAdjustedFire = (existingMod != 0);
+            logger.debug("Artillery spotter check: existingMod={}, isAdjustedFire={}, bestSpotter={}",
+                  existingMod, isAdjustedFire, bestSpotter.isPresent() ? bestSpotter.get().getDisplayName() : "none");
+
+            // Remove informational message from first-shot preview
+            toHit.removeModifier("spotter available");
+
+            // If at least one valid spotter AND this is adjusted fire, apply spotter bonuses
+            if (bestSpotter.isPresent() && isAdjustedFire) {
+                logger.debug("Applying adjusted fire spotter bonuses");
+                // Remove FO/comm implant if present from ComputeToHit preview
+                // to avoid double-counting - we recalculate everything here
+                toHit.removeModifier("forward observer");
+                toHit.removeModifier("comm implant");
+
+                // Add spotter gunnery modifier
+                int gunneryMod = ((useArtillerySkill ?
                       bestSpotter.get().getCrew().getArtillery() :
                       bestSpotter.get().getCrew().getGunnery()) - 4) / 2;
-                mod += foMod + commImplantMod;
-                toHit.addModifier(mod, "Spotting modifier");
+                if (gunneryMod != 0) {
+                    toHit.addModifier(gunneryMod, "spotter gunnery modifier");
+                }
+
+                // Add Forward Observer modifier separately
+                boolean hasFO = bestSpotter.get().hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER);
+                logger.debug("  Spotter FO check: hasFO={}", hasFO);
+                if (hasFO) {
+                    toHit.addModifier(-1, "spotter is forward observer");
+                }
+
+                // Comm implant bonus only applies to non-infantry spotters
+                boolean isInfantry = bestSpotter.get() instanceof Infantry;
+                boolean hasCommImplant = bestSpotter.get().hasAbility(OptionsConstants.MD_COMM_IMPLANT);
+                logger.debug("  Spotter comm implant check: isInfantry={}, hasCommImplant={}",
+                      isInfantry,
+                      hasCommImplant);
+                if (!isInfantry && hasCommImplant) {
+                    toHit.addModifier(-1, "spotter has comm implant");
+                }
             }
 
             // If the shot hit the target hex, then all subsequent

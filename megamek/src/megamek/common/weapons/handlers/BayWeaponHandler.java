@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers;
 
+import static java.lang.Math.floor;
+
 import java.io.Serial;
 import java.util.Vector;
 
@@ -102,7 +104,7 @@ public class BayWeaponHandler extends WeaponHandler {
             }
         }
         if (bDirect) {
-            av = Math.min(av + (toHit.getMoS() / 3.0), av * 2);
+            av = Math.min(av + (int) floor(toHit.getMoS() / 3.0), av * 2);
         }
         av = applyGlancingBlowModifier(av, false);
         av = (int) Math.floor(getBracketingMultiplier() * av);

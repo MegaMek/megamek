@@ -200,7 +200,8 @@ public class BridgeTest extends GameBoardTestCase {
               MoveStepType.FORWARDS,
               MoveStepType.FORWARDS,
               MoveStepType.FORWARDS);
-        assertTrue(movePath.isMoveLegal());
+        // TO:AR 115 (6th ed) - If a unit cannot move under, it must move over
+        assertFalse(movePath.isMoveLegal());
         assertMovePathElevations(movePath, 0, 0, 0, 0, 0);
     }
 
@@ -213,8 +214,8 @@ public class BridgeTest extends GameBoardTestCase {
               MoveStepType.FORWARDS,
               MoveStepType.FORWARDS,
               MoveStepType.FORWARDS);
-        // Move is illegal, we can't get onto a bridge without an exit
-        assertFalse(movePath.isMoveLegal());
+        // Move is legal - TO:AR 115 (6th ed) - If a unit cannot move under, it must move over
+        assertTrue(movePath.isMoveLegal());
         assertMovePathElevations(movePath, 0, 0, 1, 0, 0);
     }
 
@@ -225,8 +226,8 @@ public class BridgeTest extends GameBoardTestCase {
               MoveStepType.CLIMB_MODE_ON,
               MoveStepType.FORWARDS,
               MoveStepType.FORWARDS);
-        // Move is illegal, we can't get onto a bridge without an exit
-        assertFalse(movePath.isMoveLegal());
+        // Move is legal
+        assertTrue(movePath.isMoveLegal());
         assertMovePathElevations(movePath, 0, 0, 1);
     }
 

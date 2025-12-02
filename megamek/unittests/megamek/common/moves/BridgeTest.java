@@ -41,6 +41,10 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.units.BipedMek;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Infantry;
+import megamek.common.units.QuadMek;
+import megamek.common.units.Tank;
+import megamek.common.units.VTOL;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -111,6 +115,17 @@ public class BridgeTest extends GameBoardTestCase {
               hex 0103 0 "bridge:1:09;bridge_cf:100;bridge_elev:1" ""
               hex 0103 0 "bridge:1:09;bridge_cf:100;bridge_elev:1" ""
               hex 0105 2 "" ""
+              end"""
+        );
+
+        // Water board with bridge for naval/VTOL tests
+        initializeBoard("BOARD_BRIDGE_OVER_WATER", """
+              size 1 5
+              hex 0101 0 "water:2" ""
+              hex 0102 0 "water:2" ""
+              hex 0103 0 "water:2;bridge:1;bridge_cf:100;bridge_elev:2" ""
+              hex 0104 0 "water:2" ""
+              hex 0105 0 "water:2" ""
               end"""
         );
     }
@@ -338,5 +353,264 @@ public class BridgeTest extends GameBoardTestCase {
         // Move is illegal, we aren't trying to climb up
         assertTrue(movePath.isMoveLegal());
         assertMovePathElevations(movePath, 0, 1, 1, 1, 0);
+    }
+
+    // ========== QUAD MEK TESTS ==========
+
+    @Test
+    void testQuadMek_WalkUnderHighBridge() {
+        setBoard("BOARD_WALK_UNDER_BRIDGE");
+        MovePath movePath = getMovePathFor(new QuadMek(), EntityMovementMode.QUAD,
+              MoveStepType.CLIMB_MODE_OFF,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+        // QuadMek has height 1, bridge_elev 4, can fit under
+        assertTrue(movePath.isMoveLegal());
+        assertMovePathElevations(movePath, 0, 0, 0, 0, 0);
+    }
+
+    @Test
+    void testQuadMek_WalkUnderLowBridge_ForcedOnto() {
+        setBoard("BOARD_WALK_UNDER_LOW_BRIDGE");
+        MovePath movePath = getMovePathFor(new QuadMek(), EntityMovementMode.QUAD,
+              MoveStepType.CLIMB_MODE_OFF,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+        // QuadMek has height 1, bridge_elev 1, cannot fit under - forced onto bridge
+        assertTrue(movePath.isMoveLegal());
+        assertMovePathElevations(movePath, 0, 0, 1, 0, 0);
+    }
+
+    @Test
+    void testQuadMek_WalkOverBridge() {
+        setBoard("BOARD_BRIDGE_BETWEEN_LAND");
+        MovePath movePath = getMovePathFor(new QuadMek(), EntityMovementMode.QUAD,
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+        assertTrue(movePath.isMoveLegal());
+        assertMovePathElevations(movePath, 0, 4, 4, 4, 0);
+    }
+
+    // ========== TANK TESTS (Height 0 - Can Always Fit Under) ==========
+
+    @Test
+    void testTrackedTank_DriveUnderHighBridge() {
+        setBoard("BOARD_WALK_UNDER_BRIDGE");
+        Tank tank = new Tank();
+        tank.setMovementMode(EntityMovementMode.TRACKED);
+        MovePath movePath = getMovePathFor(tank, EntityMovementMode.TRACKED,
+              MoveStepType.CLIMB_MODE_OFF,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+        // Tanks have height 0, can always fit under bridges
+        assertTrue(movePath.isMoveLegal());
+        assertMovePathElevations(movePath, 0, 0, 0, 0, 0);
+    }
+
+    @Test
+    void testTrackedTank_DriveUnderLowBridge() {
+        setBoard("BOARD_WALK_UNDER_LOW_BRIDGE");
+        Tank tank = new Tank();
+        tank.setMovementMode(EntityMovementMode.TRACKED);
+        MovePath movePath = getMovePathFor(tank, EntityMovementMode.TRACKED,
+              MoveStepType.CLIMB_MODE_OFF,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+        // Tanks have height 0, can fit under even low bridges
+        assertTrue(movePath.isMoveLegal());
+        assertMovePathElevations(movePath, 0, 0, 0, 0, 0);
+    }
+
+    @Test
+    void testTrackedTank_DriveOverBridge() {
+        setBoard("BOARD_BRIDGE_BETWEEN_LAND");
+        Tank tank = new Tank();
+        tank.setMovementMode(EntityMovementMode.TRACKED);
+        MovePath movePath = getMovePathFor(tank, EntityMovementMode.TRACKED,
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+        assertTrue(movePath.isMoveLegal());
+        assertMovePathElevations(movePath, 0, 4, 4, 4, 0);
+    }
+
+    @Test
+    void testWheeledTank_DriveUnderLowBridge() {
+        setBoard("BOARD_WALK_UNDER_LOW_BRIDGE");
+        Tank tank = new Tank();
+        tank.setMovementMode(EntityMovementMode.WHEELED);
+        MovePath movePath = getMovePathFor(tank, EntityMovementMode.WHEELED,
+              MoveStepType.CLIMB_MODE_OFF,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+        // Wheeled tanks have height 0, can fit under
+        assertTrue(movePath.isMoveLegal());
+        assertMovePathElevations(movePath, 0, 0, 0, 0, 0);
+    }
+
+    @Test
+    void testHoverTank_DriveUnderLowBridge() {
+        setBoard("BOARD_WALK_UNDER_LOW_BRIDGE");
+        Tank tank = new Tank();
+        tank.setMovementMode(EntityMovementMode.HOVER);
+        MovePath movePath = getMovePathFor(tank, EntityMovementMode.HOVER,
+              MoveStepType.CLIMB_MODE_OFF,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+        // Hover tanks have height 0, can fit under
+        assertTrue(movePath.isMoveLegal());
+        assertMovePathElevations(movePath, 0, 0, 0, 0, 0);
+    }
+
+    // ========== VTOL TESTS (Can Fly Under Bridges) ==========
+
+    @Test
+    void testVTOL_FlyUnderBridge() {
+        setBoard("BOARD_WALK_UNDER_BRIDGE");
+        VTOL vtol = new VTOL();
+        // VTOL at elevation 1 can fly under bridge at elev 4
+        MovePath movePath = getMovePathFor(vtol, 1, EntityMovementMode.VTOL,
+              MoveStepType.CLIMB_MODE_OFF,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+        // VTOL can fly under bridge at elevation 1 (bridge at elev 4)
+        assertTrue(movePath.isMoveLegal());
+        assertMovePathElevations(movePath, 1, 1, 1, 1, 1);
+    }
+
+    @Test
+    void testVTOL_FlyOverBridge() {
+        setBoard("BOARD_WALK_UNDER_BRIDGE");
+        VTOL vtol = new VTOL();
+        // VTOL at elevation 5 flies over bridge at elev 4
+        MovePath movePath = getMovePathFor(vtol, 5, EntityMovementMode.VTOL,
+              MoveStepType.CLIMB_MODE_OFF,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+        // VTOL can fly over bridge at elevation 5 (bridge at elev 4)
+        assertTrue(movePath.isMoveLegal());
+        assertMovePathElevations(movePath, 5, 5, 5, 5, 5);
+    }
+
+    // ========== INFANTRY TESTS (Height 0 - Can Always Fit Under) ==========
+
+    @Test
+    void testLegInfantry_WalkUnderHighBridge() {
+        setBoard("BOARD_WALK_UNDER_BRIDGE");
+        Infantry infantry = new Infantry();
+        infantry.setMovementMode(EntityMovementMode.INF_LEG);
+        MovePath movePath = getMovePathFor(infantry, EntityMovementMode.INF_LEG,
+              MoveStepType.CLIMB_MODE_OFF,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+        // Infantry has height 0, can fit under
+        assertTrue(movePath.isMoveLegal());
+        assertMovePathElevations(movePath, 0, 0, 0, 0, 0);
+    }
+
+    @Test
+    void testLegInfantry_WalkUnderLowBridge() {
+        setBoard("BOARD_WALK_UNDER_LOW_BRIDGE");
+        Infantry infantry = new Infantry();
+        infantry.setMovementMode(EntityMovementMode.INF_LEG);
+        MovePath movePath = getMovePathFor(infantry, EntityMovementMode.INF_LEG,
+              MoveStepType.CLIMB_MODE_OFF,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+        // Infantry has height 0, can fit under even low bridges
+        assertTrue(movePath.isMoveLegal());
+        assertMovePathElevations(movePath, 0, 0, 0, 0, 0);
+    }
+
+    @Test
+    void testLegInfantry_WalkOverBridge() {
+        setBoard("BOARD_BRIDGE_BETWEEN_LAND");
+        Infantry infantry = new Infantry();
+        infantry.setMovementMode(EntityMovementMode.INF_LEG);
+        MovePath movePath = getMovePathFor(infantry, EntityMovementMode.INF_LEG,
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+        assertTrue(movePath.isMoveLegal());
+        assertMovePathElevations(movePath, 0, 4, 4, 4, 0);
+    }
+
+    // ========== NAVAL TESTS (Surface Water - Can Pass Under Bridges) ==========
+
+    @Test
+    void testNaval_PassUnderBridge() {
+        setBoard("BOARD_BRIDGE_OVER_WATER");
+        Tank naval = new Tank();
+        naval.setMovementMode(EntityMovementMode.NAVAL);
+        // Naval units at surface (elevation 0)
+        MovePath movePath = getMovePathFor(naval, 0, EntityMovementMode.NAVAL,
+              MoveStepType.CLIMB_MODE_OFF,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+        // Naval units travel on water surface (elevation 0), bridges are above
+        assertTrue(movePath.isMoveLegal());
+        assertMovePathElevations(movePath, 0, 0, 0, 0, 0);
+    }
+
+    @Test
+    void testHydrofoil_PassUnderBridge() {
+        setBoard("BOARD_BRIDGE_OVER_WATER");
+        Tank hydrofoil = new Tank();
+        hydrofoil.setMovementMode(EntityMovementMode.HYDROFOIL);
+        // Hydrofoils at surface (elevation 0)
+        MovePath movePath = getMovePathFor(hydrofoil, 0, EntityMovementMode.HYDROFOIL,
+              MoveStepType.CLIMB_MODE_OFF,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+        // Hydrofoils travel on water surface, bridges are above
+        assertTrue(movePath.isMoveLegal());
+        assertMovePathElevations(movePath, 0, 0, 0, 0, 0);
+    }
+
+    @Test
+    void testSubmarine_PassUnderBridge() {
+        setBoard("BOARD_BRIDGE_OVER_WATER");
+        Tank submarine = new Tank();
+        submarine.setMovementMode(EntityMovementMode.SUBMARINE);
+        // Submarine underwater at depth -1 (below surface)
+        MovePath movePath = getMovePathFor(submarine, -1, EntityMovementMode.SUBMARINE,
+              MoveStepType.CLIMB_MODE_OFF,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+        // Submarines travel underwater, bridges are above water
+        assertTrue(movePath.isMoveLegal());
     }
 }

@@ -1253,6 +1253,7 @@ public class TeamLoadOutGenerator {
             String sName = ("".equals(aType.getBaseName())) ? ammoBin.getType().getShortName() : aType.getBaseName();
 
             // Store the actual bins under their types
+            // This should probably allow for clan munitions, and use lowercasing
             if (!binLists.containsKey(sName)) {
                 binLists.put(sName, new ArrayList<>());
             }

@@ -45,7 +45,6 @@
     <entry key="antiConvBombLoad_CLUSTER">50</entry>
     <entry key="antiConvBombLoad_INFERNO">40</entry>
     <entry key="antiConvBombLoad_FAE_SMALL">8</entry>
-    <entry key="antiMekBombLoad_HOMING">2</entry>
     <entry key="standoffBombLoad_ARROW">40</entry>
     <entry key="standoffBombLoad_HOMING">60</entry>
     <entry key="strikeBombLoad_LG">45</entry>

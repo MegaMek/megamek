@@ -25,8 +25,103 @@ Defaults:
     Inferno:
       IS: 1.0
       Clan: 0.5
+    Artemis:
+      # Never weight Artemis munitions above 0; they are assigned to Artemis-compatible launchers automatically
+      IS: -1.0
+      Clan: -1.0
+    ATM:
+      Standard:
+        Clan: 2.0
+      Extended Range:
+        Clan: 2.0
+      High Explosive:
+        Clan: 2.0
+    iATM:
+      Standard:
+        Clan: 2.0
+      Extended Range:
+        Clan: 2.0
+      High Explosive:
+        Clan: 2.0
+
+    defaultATMMunitionWeight: 2.0
+    defaultATMStandardWeight: 1.0
   Bombs:
-    -
+    # These values control the loadout spread, types, and percentages of various bomb roles and munition types
+    bombMapGroundSpreadNormal: 6
+    bombMapGroundSpreadAnti-Mek: 3
+    bombMapGroundSpreadAnti-conventional: 2
+    bombMapGroundSpreadStandoff: 1
+    bombMapGroundSpreadStrike: 2
+    bombMapPirateGroundSpreadNormal: 7
+    bombMapPirateGroundSpreadFirestorm: 3
+    normalBombLoad_HE: 40
+    normalBombLoad_LG: 5
+    normalBombLoad_CLUSTER: 30
+    normalBombLoad_INFERNO: 15
+    normalBombLoad_THUNDER: 10
+    antiMekBombLoad_HE: 55
+    antiMekBombLoad_LG: 15
+    antiMekBombLoad_INFERNO: 10
+    antiMekBombLoad_THUNDER: 10
+    antiMekBombLoad_HOMING: 10
+    antiConvBombLoad_CLUSTER: 50
+    antiConvBombLoad_INFERNO: 40
+    antiConvBombLoad_FAE_SMALL: 8
+    standoffBombLoad_ARROW: 40
+    standoffBombLoad_HOMING: 60
+    strikeBombLoad_LG: 45
+    strikeBombLoad_HOMING: 25
+    strikeBombLoad_HE: 30
+    lowTechBombLoad_HE: 35
+    lowTechBombLoad_RL: 65
+    pirateBombLoad_HE: 7
+    pirateBombLoad_RL: 45
+    pirateBombLoad_INFERNO: 35
+    pirateBombLoad_CLUSTER: 5
+    pirateBombLoad_FAE_SMALL: 6
+    pirateBombLoad_FAE_LARGE: 2
+    pirateFirestormBombLoad_INFERNO: 60
+    pirateFirestormBombLoad_FAE_SMALL: 30
+    pirateFirestormBombLoad_FAE_LARGE: 10
+    antiAirBombLoad_RL: 40
+    antiAirBombLoad_LAA: 40
+    antiAirBombLoad_AAA: 15
+    antiAirBombLoad_AS: 4
+    antiAirBombLoad_ASEW: 1
+    antiShipBombLoad_AAA: 50
+    antiShipBombLoad_AS: 35
+    antiShipBombLoad_ASEW: 15
+    pirateAntiBombLoad_RL: 60
+    pirateAntiBombLoad_LAA: 30
+    pirateAntiBombLoad_AAA: 10
+    # Sets the minimum + (0 ~ N) range of bomber units to equip.
+    percentBombersToEquipMin: 40
+    percentBombersToEquipRange: 60
+    # For each Aerospace unit, if 1d6 is equal or below threshold, equip for CAP
+    fightersLoadForCAPRollTargetThreshold: 1
+    bomberMinUnarmedSafeThrustValue: 2
+    bomberMinArmedSafeThrustValue: 3
+    fighterCAPMinUnarmedSafeThrustValue: 2
+    fighterCAPMinArmedSafeThrustFractionDivisor: 2.0
+    maxBomberLoadFactorDivisor: 5.0
+    maxBomberLoadThrustDiffFactor: 5
+    maxPercentBomberLoadToEquipMin: 50
+    maxPercentBomberLoadToEquipRange: 40
+    bombersToAddTagMaxCount: 3
+    bomberRandomThresholdMaxPercent: 100
+    fighterCAPRandomPercentageRange: 100
+    fighterCAPAntiShipLoadOutRandomPercentageMax: 20
+    # If a munition must be replaced, range and threshold of RL vs HE
+    bombReplacementIntRange: 2
+    bombReplacementRLThreshold: 0
+    maxBombApplicationLoopCount: 10
+    maxBombOrdnanceWeightPercentThreshold: 100
+    bombRandomReplaceRating4PlusThreshold: 5
+    bombRandomReplaceRating3PlusThreshold: 10
+    bombRandomReplaceRating2PlusThreshold: 25
+    bombRandomReplaceRating1PlusThreshold: 40
+    bombRandomReplaceRating0PlusThreshold: 80
   Factors:
     # These values adjust how munition categories are valued by various triggers and are used by the MunitionTree class
     #
@@ -68,4 +163,19 @@ Defaults:
     mtSeekingAmmoEnemyTSMExceedThreshold: 1.0
     # Weight cut-off beneath which to ignore munitions (final weights below this will never be equipped)
     mtMunitionWeightThreshold: 1.0
-
+    # These factors determine how far up and down an "increase" or "decrease" step actually moves the weight
+    # of a munition type.  The default values increase a weight by (2.0 x weight) + 1, and decrease by
+    # (0.5 * weight), so no weight should end below 0 unless set there initially.
+    increaseWeightFactor: 2.0
+    increaseWeightIncrement: 1.0
+    decreaseWeightFactor: 0.5
+    decreaseWeightDecrement: 0.0
+    # These factors determine how Pirates and Rebels are penalized for their low quality
+    # Pirates and Rebels get ammo bins filled at random ratios -
+    # Min(maxAllowed, Max(minAllowed, random/rangeDivisor + quality/qualityDivisor))
+    # E.g. the defaults give a range of 20% to 100%, with Quality Rating 0 giving ~20%
+    # and Rating 5 giving ~75% on average
+    pirateMaxAllowedBinFillRatio: 1.0
+    pirateMinAllowedBinFillRatio: 0.2
+    pirateRandomRangeDivisor: 4.0
+    pirateQualityDivisor: 8.0

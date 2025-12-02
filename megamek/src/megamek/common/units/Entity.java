@@ -2647,6 +2647,18 @@ public abstract class Entity extends TurnOrdered
             }
             // can move on the ground unless its underwater
             if (assumedAlt == hex.floor()) {
+                // Check bridge clearance - can only be at floor if entity fits under bridge
+                // TO:AR 115: "a unit may enter a bridge hex and be considered underneath
+                // the bridge, provided the level of the underlying hex plus the height
+                // of the unit is equal to or less than the level of the bridge"
+                if (hex.containsTerrain(Terrains.BRIDGE)) {
+                    int bridgeElev = hex.terrainLevel(Terrains.BRIDGE_ELEV);
+                    // Entity fits under if: elevation + height + 1 <= bridge elevation
+                    // (matches VTOL check logic at lines 2599-2602)
+                    if (assumedElevation + height() + 1 > bridgeElev) {
+                        return false;  // Can't fit under bridge, floor is invalid
+                    }
+                }
                 return true;
             }
 

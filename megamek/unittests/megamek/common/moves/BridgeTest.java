@@ -111,9 +111,9 @@ public class BridgeTest extends GameBoardTestCase {
         initializeBoard("BOARD_WALK_UP_ONTO_LOW_BRIDGE", """
               size 1 5
               hex 0101 0 "" ""
+              hex 0102 0 "bridge:1:09;bridge_cf:250;bridge_elev:1" ""
               hex 0103 0 "bridge:1:09;bridge_cf:250;bridge_elev:1" ""
-              hex 0103 0 "bridge:1:09;bridge_cf:250;bridge_elev:1" ""
-              hex 0103 0 "bridge:1:09;bridge_cf:250;bridge_elev:1" ""
+              hex 0104 0 "bridge:1:09;bridge_cf:250;bridge_elev:1" ""
               hex 0105 2 "" ""
               end"""
         );
@@ -278,6 +278,7 @@ public class BridgeTest extends GameBoardTestCase {
     private static Arguments newGroundedAeroSpace() {
         AeroSpaceFighter aeroSpaceFighter = new AeroSpaceFighter();
         aeroSpaceFighter.setAltitude(0);
+        aeroSpaceFighter.setMovementMode(EntityMovementMode.WHEELED);
         aeroSpaceFighter.setChassis("Grounded Aerospace Fighter");
         return Arguments.of(aeroSpaceFighter, EntityMovementMode.WHEELED);
     }
@@ -295,6 +296,7 @@ public class BridgeTest extends GameBoardTestCase {
     private static Arguments newSmallCraft() {
         SmallCraft smallCraft = new SmallCraft();
         smallCraft.setAltitude(0);
+        smallCraft.setMovementMode(EntityMovementMode.WHEELED);
         smallCraft.setChassis("Small Craft");
         return Arguments.of(smallCraft, EntityMovementMode.WHEELED);
     }
@@ -405,12 +407,8 @@ public class BridgeTest extends GameBoardTestCase {
               MoveStepType.FORWARDS,
               MoveStepType.FORWARDS,
               MoveStepType.FORWARDS);
-        // FIXME: Why can't grounded aero move up/down bridges? This check exempts them from this test, but this
-        //  should be fixed
-        if (!(entity instanceof Aero)) {
-            assertTrue(movePath.isMoveLegal(),
-                  "Move should be legal - TO:AR 115 (6th ed) - If a unit cannot move under, it must move over");
-        }
+        assertTrue(movePath.isMoveLegal(),
+              "Move should be legal - TO:AR 115 (6th ed) - If a unit cannot move under, it must move over");
         assertMovePathElevations(movePath, 0, 0, 1, 0, 0);
     }
 
@@ -438,11 +436,7 @@ public class BridgeTest extends GameBoardTestCase {
               MoveStepType.FORWARDS,
               MoveStepType.FORWARDS,
               MoveStepType.FORWARDS);
-        // FIXME: Why can't grounded aero move up/down bridges? This check exempts them from this test, but this
-        //  should be fixed
-        if (!(entity instanceof Aero)) {
-            assertTrue(movePath.isMoveLegal(), "Move should be legal, we can climb onto a bridge");
-        }
+        assertTrue(movePath.isMoveLegal(), "Move should be legal, we can climb onto a bridge");
 
         assertMovePathElevations(movePath, 0, 1, 1, 1, 0);
     }

@@ -166,7 +166,7 @@ public class BridgeTest extends GameBoardTestCase {
     private static Arguments newBipedMek() {
         BipedMek bipedMek = new BipedMek();
         bipedMek.setChassis("Biped Mek");
-        return Arguments.of(new BipedMek(), EntityMovementMode.BIPED);
+        return Arguments.of(bipedMek, EntityMovementMode.BIPED);
     }
 
     private static Arguments newSuperheavyBipedMek() {
@@ -297,7 +297,7 @@ public class BridgeTest extends GameBoardTestCase {
         SmallCraft smallCraft = new SmallCraft();
         smallCraft.setAltitude(0);
         smallCraft.setMovementMode(EntityMovementMode.WHEELED);
-        smallCraft.setChassis("Small Craft");
+        smallCraft.setChassis("Grounded Small Craft");
         return Arguments.of(smallCraft, EntityMovementMode.WHEELED);
     }
 

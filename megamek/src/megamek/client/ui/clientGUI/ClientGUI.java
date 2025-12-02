@@ -2771,10 +2771,9 @@ public class ClientGUI extends AbstractClientGUI
 
         @Override
         public void gameClientFeedbackRequest(GameCFREvent gameCFREvent) {
+            // Note: entity may be null for CFR types that don't use entityId (e.g., TAG_TARGET, TELEGUIDED_TARGET)
+            // Each case handles null checking as appropriate
             Entity entity = client.getGame().getEntity(gameCFREvent.getEntityId());
-            if (entity == null) {
-                return;
-            }
 
             Object result;
             String input;
@@ -2784,6 +2783,9 @@ public class ClientGUI extends AbstractClientGUI
                     // If the client connects to a game as a bot, it's possible to have the bot respond AND have the
                     // client ask the player. This is bad, ignore this if the client is a bot
                     if (client instanceof BotClient) {
+                        return;
+                    }
+                    if (entity == null) {
                         return;
                     }
 
@@ -2839,6 +2841,9 @@ public class ClientGUI extends AbstractClientGUI
                     client.sendDominoCFRResponse(paths[choice]);
                     break;
                 case CFR_AMS_ASSIGN:
+                    if (entity == null) {
+                        return;
+                    }
                     ArrayList<String> amsOptions = new ArrayList<>();
                     amsOptions.add(Messages.getString("NONE"));
                     for (WeaponAttackAction waa : gameCFREvent.getWAAs()) {
@@ -2868,6 +2873,9 @@ public class ClientGUI extends AbstractClientGUI
                     }
                     break;
                 case CFR_APDS_ASSIGN:
+                    if (entity == null) {
+                        return;
+                    }
                     ArrayList<String> apdsOptions = new ArrayList<>();
                     apdsOptions.add(Messages.getString("NONE"));
                     Iterator<Integer> distIt = gameCFREvent.getApdsDistances().iterator();

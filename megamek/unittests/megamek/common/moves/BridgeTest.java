@@ -243,15 +243,16 @@ public class BridgeTest extends GameBoardTestCase {
             mek.addEquipment(equipmentType, BipedMek.LOC_CENTER_TORSO);
             mek.addEquipment(equipmentType, BipedMek.LOC_CENTER_TORSO);
         } catch (Exception ignored) {}
-        MovePath movePath = getMovePathFor(new BipedMek(), EntityMovementMode.BIPED,
+        MovePath movePath = getMovePathFor(mek, EntityMovementMode.BIPED,
               MoveStepType.CLIMB_MODE_OFF,
+              MoveStepType.START_JUMP,
               MoveStepType.FORWARDS,
               MoveStepType.FORWARDS,
               MoveStepType.FORWARDS,
               MoveStepType.FORWARDS);
         // Move is legal, we can jump past a bridge
         assertTrue(movePath.isMoveLegal());
-        assertMovePathElevations(movePath, 0, 0, 0, 0, 0);
+        assertMovePathElevations(movePath, 0, 0, 0, 0, 0, 0);
     }
     
     @Test

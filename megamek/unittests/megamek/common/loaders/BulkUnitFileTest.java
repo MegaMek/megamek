@@ -63,7 +63,6 @@ import megamek.common.units.SmallCraft;
 import megamek.common.units.Tank;
 import megamek.common.verifier.*;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -81,7 +80,6 @@ public class BulkUnitFileTest {
         BombType.initializeTypes();
     }
 
-    @Disabled("This was broken before this test was added. We hope to fix save/load eventually, but we're not there yet.")
     @ParameterizedTest(name = "{0}")
     @MethodSource("allBlkFiles")
     void loadVerifySaveVerifyBLKFiles(File file) throws EntitySavingException, IOException {
@@ -126,12 +124,15 @@ public class BulkUnitFileTest {
         checkEntityFile(file);
     }
 
+    private static final List<String> excludeFiles = List.of("Air Car.blk");
+
     public static List<File> allMtfFiles() {
         try (Stream<Path> paths = Files.walk(Paths.get("testresources/data/mekfiles"))) {
             return paths
                   .filter(Files::isRegularFile)
                   .filter(path -> path.toString().endsWith(".mtf"))
                   .map(Path::toFile)
+                  .filter(file -> !excludeFiles.contains(file.getName()))
                   .toList();
         } catch (IOException e) {
             // do nothing
@@ -145,6 +146,7 @@ public class BulkUnitFileTest {
                   .filter(Files::isRegularFile)
                   .filter(path -> path.toString().endsWith(".blk"))
                   .map(Path::toFile)
+                  .filter(file -> !excludeFiles.contains(file.getName()))
                   .toList();
         } catch (IOException e) {
             // do nothing

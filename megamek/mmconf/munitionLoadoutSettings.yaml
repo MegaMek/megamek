@@ -1,17 +1,71 @@
-# Prohibited ammo will never be used by any faction
+### Ammo types
 Prohibited:
+  # Prohibited ammo will never be used by any faction
   - Tandem-Charge
   - AlamoMissile Ammo
-# Default values can be overridden
-Defaults:
-  Dead-Fire:
-    IS: 2.0
-    Clan: 1.0
-  Inferno:
-    IS: 1.0
-    Clan: 0.5
-# Overrides will replace default values (if set) and final generated values in the configurator
 Overrides:
-  Dead-Fire:
-    IS: 4.0
+  # Overrides will replace final generated values in the configurator.
+  # To prohibit a specific munition type for IS or Clans only, set its final weight override to below the value of
+  # "mtMunitionWeightThreshold" (see Defaults.Factors.mtMunitionWeightThreshold)
+  Munitions:
+    Dead-Fire:
+      IS: 4.0
+  Bombs:
+  Factors:
+
+Defaults:
+  # Default starting values
+  Munitions:
+    # Default weights of all munitions; increase or decrease to change relative weights prior to
+    # unit- and map-related autoconfiguration.
+    Weight: 1.0
+    Dead-Fire:
+      IS: 2.0
+      Clan: 1.0
+    Inferno:
+      IS: 1.0
+      Clan: 0.5
+  Bombs:
+    -
+  Factors:
+    # These values adjust how munition categories are valued by various triggers and are used by the MunitionTree class
+    #
+    # Decrease count-reducing ammo wight factor if own team: enemy team count < this factor
+    mtReducingAmmoReduceIfUnderFactor: 2.0
+    # Increase count-reducing ammo weight factor if own team: enemy team count >= this factor
+    mtReducingAmmoIncreaseIfOverFactor: 3.0
+    # Min number of bombers to cause Flak munition weight increase (default is 1 or more)
+    mtFlakMinBombersExceedThreshold: 0.0
+    # If enemy force is 1/<this value> fliers of any kind, weight Flak munitions higher
+    mtFlakEnemyFliersFractionDivisor: 4.0
+    # If enemy force is 1/<this value> fast movers, weight precision-increasing munitions higher
+    mtPrecisionAmmoFastEnemyFractionDivisor: 4.0
+    # If number of enemy units with advanced armor types exceeds this, weight high-powered munitions (TC, AP) higher
+    mtHPAmmoAdvArmorEnemiesExceedThreshold: 0.0
+    # If enemy force is 1/<this value> fireproof units, reduce heat- and fire-based munition weight
+    mtFireproofMaxEnemyFractionDivisor: 4.0
+    # If enemy force is 1/<this value> infantry units, increase anti-infantry munition weight
+    mtInfantryEnemyExceedsFractionDivisor: 4.0
+    # If enemy force is 1/<this value> vehicles, increase heat- and fire-producing munition weight
+    mtVeeEnemyExceedsFractionDivisor: 4.0
+    # If enemy force is 1/<this value> BA units, increase AE, AP, TC, and heat/fire munitions (mod fireproof)
+    mtBAEnemyExceedsFractionDivisor: 4.0
+    # If enemy force contains more than this number of ECM units, weight seeking munitions up and guided down
+    mtSeekingAmmoEnemyECMExceedThreshold: 1.0
+    # If friendly forces' TAG count exceeds this threshold, weight guided munitions higher
+    mtGuidedAmmoFriendlyTAGThreshold: 1.0
+    # If friendly forces' NARC count exceeds this threshold, weight guided munitions higher
+    mtGuidedAmmoFriendlyNARCThreshold: 1.0
+    # If friendly force is 1/<this value> "missile boats", weight guided munitions higher
+    mtGuidedAmmoFriendlyMissileBoatFractionDivisor: 3.0
+    # If off-board artillery units do not exceed this count, reduce weight of "utility" munitions (smoke, mines, flares)
+    mtUtilityAmmoOffBoardUnitsThreshold: 2.0
+    # If friendly forces: enemy forces does not exceed this fraction, reduce weight of "utility" munitions
+    mtUtilityAmmoFriendlyVsEnemyFractionDivisor: 1.0
+    # If enemy force is 1/<this value> "energy boats", increase heat-producing munition weight
+    mtEnergyBoatEnemyFractionDivisor: 4.0
+    # If enemy TSM-equipped units exceed this count, increase heat-seeking munition weight
+    mtSeekingAmmoEnemyTSMExceedThreshold: 1.0
+    # Weight cut-off beneath which to ignore munitions (final weights below this will never be equipped)
+    mtMunitionWeightThreshold: 1.0
 

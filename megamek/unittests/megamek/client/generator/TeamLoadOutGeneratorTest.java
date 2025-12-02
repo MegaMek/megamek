@@ -46,6 +46,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -93,6 +94,9 @@ class TeamLoadOutGeneratorTest {
     static AmmoType mockMML7LRMAmmoType = (AmmoType) EquipmentType.get("ISMML7 LRM Ammo");
     static AmmoType mockMML7SRMAmmoType = (AmmoType) EquipmentType.get("ISMML7 SRM Ammo");
 
+    // Test version; may be loaded with YAML values or set explicitly
+    static LinkedHashMap<String, Object> testMap;
+
     @BeforeAll
     static void setUpAll() {
         // Need equipment initialized
@@ -118,6 +122,8 @@ class TeamLoadOutGeneratorTest {
 
         team.addPlayer(player);
         game.addPlayer(0, player);
+
+        testMap = new LinkedHashMap<>();
     }
 
     @AfterEach
@@ -790,4 +796,38 @@ class TeamLoadOutGeneratorTest {
         // Pre-2823, Clan units can take RL-P bombs
         assertTrue(generatedBombs.getCount(BombTypeEnum.RLP) > 0);
     }
+
+    @Test
+    void testMapSearchWithKnownGoodDoubleValue() throws Exception {
+        testMap = new LinkedHashMap<String, Object>(
+              Map.of(
+                    "Defaults", Map.of(
+                          "Munitions", Map.of(
+                            "Dead-Fire", Map.of(
+                                  "IS", 2.0)
+                          )
+                    )
+              )
+        );
+        Object value = TeamLoadOutGenerator.searchMap("Defaults.Munitions.Dead-Fire.IS", testMap);
+        assertEquals(2.0, value);
+    }
+
+    @Test
+    void testMapSearchWithKnownGoodListValue() throws Exception {
+        testMap = new LinkedHashMap<String, Object>(
+              Map.of(
+                    "Prohibited", List.of(
+                          "Tandem-Charge",
+                          "AlamoMissile Ammo"
+                    )
+              )
+        );
+        List<String> prohibitedList = (List<String>) TeamLoadOutGenerator.searchMap("Prohibited");
+        assertEquals(2, prohibitedList.size());
+        assertTrue(prohibitedList.contains("Tandem-Charge"));
+        assertTrue(prohibitedList.contains("AlamoMissile Ammo"));
+    }
+
+
 }

@@ -47,6 +47,7 @@ import megamek.client.ui.dialogs.unitSelectorDialogs.AbstractUnitSelectorDialog;
 import megamek.common.SimpleTechLevel;
 import megamek.common.Team;
 import megamek.common.TechConstants;
+import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.containers.MunitionTree;
 import megamek.common.enums.Faction;
@@ -80,8 +81,7 @@ public class TeamLoadOutGenerator {
     private static ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 
     // region Constants
-    // XML file containing flat list of weights; if not found, defaults used. If
-    // found, defaults overridden.
+    // YAML file contains three sections:
     public static final String LOAD_OUT_SETTINGS_PATH = "mmconf" + File.separator + "munitionLoadoutSettings.yaml";
     public static LinkedHashMap<String, Object> weightMap = new LinkedHashMap<String, Object>();
 
@@ -243,7 +243,6 @@ public class TeamLoadOutGenerator {
     private static final Set<BombTypeEnum> validBotAABombs = Set.of(BombTypeEnum.RL,
           BombTypeEnum.LAA,
           BombTypeEnum.AAA);
-
 
     /**
      * Relative weight distribution of various external ordnance choices for non-pirate forces
@@ -446,25 +445,61 @@ public class TeamLoadOutGenerator {
     }
 
     /**
+     * Simple recursive Map search for new  Yaml-based config file
+     *
+     * @param keyPath   Dotted path (e.g. "Overrides.Tandem-Charge.Clan"; max depth of 3.
+     * @return entry    at the provided path (should be Map\<String, Object\> or String, Int, Double as Object)
+     * @throws Exception if any part of path is not found.
+     */
+    public static Object searchMap(String keyPath) throws Exception {
+        return searchMap(keyPath, weightMap);
+    }
+
+    /**
+     * For sub-tree search and testing purposes
+     * @param keyPath
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    @Nullable
+    protected static Object searchMap(String keyPath, Map<String, Object> map) throws Exception {
+        ArrayList<String> keys = new ArrayList<String>(Arrays.asList(keyPath.split("\\.")));
+        Map<String, Object> node = map;
+        Object value = null;
+        for (String key : keys) {
+            if (node.containsKey(key)) {
+                value = node.get(key);
+                if (value instanceof Map) {
+                    node = (Map<String, Object>) value;
+                }
+            } else {
+                throw new Exception(String.format("Key '%s' not found!", keyPath));
+            }
+        }
+        return value;
+    }
+
+    /**
      * Use values from the Properties file defined in TeamLoadOutGenerator class if available; else use provided
      * default
      *
-     * @param field    Field name in property file
-     * @param defValue Default value to use
+     * @param keyPath   dotted path to desired value, e.g. "Defaults.Dead-Fire.IS"
+     * @param defValue  Default value to use
      *
      * @return Double read value or default
      */
-    public static Double castPropertyDouble(String field, Double defValue) {
+    public static Double castPropertyDouble(String keyPath, Double defValue) {
         try {
-            return Double.parseDouble((String) TeamLoadOutGenerator.weightMap.get(field));
+            return (Double) searchMap(keyPath);
         } catch (Exception ignored) {
             return defValue;
         }
     }
 
-    public static int castPropertyInt(String field, int defValue) {
+    public static int castPropertyInt(String keyPath, int defValue) {
         try {
-            return Integer.parseInt((String) TeamLoadOutGenerator.weightMap.get(field));
+            return (int) searchMap(keyPath);
         } catch (Exception ignored) {
             return defValue;
         }

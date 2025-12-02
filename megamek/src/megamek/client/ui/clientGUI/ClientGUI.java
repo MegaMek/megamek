@@ -2972,6 +2972,7 @@ public class ClientGUI extends AbstractClientGUI
                     }
                     break;
                 case CFR_TELEGUIDED_TARGET:
+                    logger.debug("CFR_TELEGUIDED_TARGET: processing teleguided missile target selection");
                     List<Integer> targetIds = gameCFREvent.getTelemissileTargetIds();
                     List<Integer> toHitValues = gameCFREvent.getTmToHitValues();
                     List<String> targetDescriptions = new ArrayList<>();
@@ -2985,6 +2986,7 @@ public class ClientGUI extends AbstractClientGUI
                                   th));
                         }
                     }
+                    logger.debug("CFR_TELEGUIDED_TARGET: showing dialog with {} targets", targetDescriptions.size());
                     // Set up the selection pane
                     input = (String) JOptionPane.showInputDialog(frame,
                           Messages.getString("TeleMissileTargetDialog.message"),
@@ -2996,6 +2998,7 @@ public class ClientGUI extends AbstractClientGUI
                     if (input != null) {
                         for (int i = 0; i < targetDescriptions.size(); i++) {
                             if (input.equals(targetDescriptions.get(i))) {
+                                logger.debug("CFR_TELEGUIDED_TARGET: user selected target index {}", i);
                                 client.sendTelemissileTargetCFRResponse(i);
                                 break;
                             }
@@ -3004,10 +3007,12 @@ public class ClientGUI extends AbstractClientGUI
                         // If input is null, as in the case of pressing the close or cancel buttons...
                         // Just pick the first target in the list, or server will be left waiting
                         // indefinitely.
+                        logger.debug("CFR_TELEGUIDED_TARGET: dialog cancelled, defaulting to first target");
                         client.sendTelemissileTargetCFRResponse(0);
                     }
                     break;
                 case CFR_TAG_TARGET:
+                    logger.debug("CFR_TAG_TARGET: processing TAG target selection");
                     List<Integer> TAGTargets = gameCFREvent.getTAGTargets();
                     List<Integer> TAGTargetTypes = gameCFREvent.getTAGTargetTypes();
                     List<String> TAGTargetDescriptions = new ArrayList<>();
@@ -3019,6 +3024,7 @@ public class ClientGUI extends AbstractClientGUI
                             TAGTargetDescriptions.add(tgt.getDisplayName());
                         }
                     }
+                    logger.debug("CFR_TAG_TARGET: showing dialog with {} targets", TAGTargetDescriptions.size());
                     // Set up the selection pane
                     input = (String) JOptionPane.showInputDialog(frame,
                           Messages.getString("TAGTargetDialog.message"),
@@ -3030,6 +3036,7 @@ public class ClientGUI extends AbstractClientGUI
                     if (input != null) {
                         for (int i = 0; i < TAGTargetDescriptions.size(); i++) {
                             if (input.equals(TAGTargetDescriptions.get(i))) {
+                                logger.debug("CFR_TAG_TARGET: user selected target index {}", i);
                                 client.sendTAGTargetCFRResponse(i);
                                 break;
                             }
@@ -3038,6 +3045,7 @@ public class ClientGUI extends AbstractClientGUI
                         // If input IS null, as in the case of pressing the close or cancel buttons...
                         // Just pick the first target in the list, or server will be left waiting
                         // indefinitely.
+                        logger.debug("CFR_TAG_TARGET: dialog cancelled, defaulting to first target");
                         client.sendTAGTargetCFRResponse(0);
                     }
                     break;

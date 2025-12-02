@@ -6272,6 +6272,7 @@ public class TWGameManager extends AbstractGameManager {
 
     public int processTeleguidedMissileCFR(int playerId, List<Integer> targetIds, List<Integer> toHitValues)
           throws InvalidPacketDataException {
+        LOGGER.debug("processTeleguidedMissileCFR: playerId={}, targetCount={}", playerId, targetIds.size());
         sendTeleguidedMissileCFR(playerId, targetIds, toHitValues);
         while (true) {
             synchronized (cfrPacketQueue) {
@@ -6280,6 +6281,7 @@ public class TWGameManager extends AbstractGameManager {
                         cfrPacketQueue.wait();
                     }
                 } catch (InterruptedException e) {
+                    LOGGER.debug("processTeleguidedMissileCFR: interrupted while waiting for response");
                     return 0;
                 }
 
@@ -6289,22 +6291,27 @@ public class TWGameManager extends AbstractGameManager {
                 // Make sure we got the right type of response
                 if (cfrType != null && !cfrType.isCFRTeleguidedTarget()) {
                     // Re-queue packet for other handlers - don't discard it
+                    LOGGER.trace("processTeleguidedMissileCFR: re-queuing mismatched packet type {}", cfrType);
                     cfrPacketQueue.add(rp);
                     continue;
                 }
                 // Check packet came from right ID
                 if (rp.getConnectionId() != playerId) {
                     // Re-queue packet for other handlers - don't discard it
+                    LOGGER.trace("processTeleguidedMissileCFR: re-queuing packet from wrong player {}", rp.getConnectionId());
                     cfrPacketQueue.add(rp);
                     continue;
                 }
-                return (int) rp.getPacket().data()[1];
+                int result = (int) rp.getPacket().data()[1];
+                LOGGER.debug("processTeleguidedMissileCFR: received response, selected target index {}", result);
+                return result;
             }
         }
     }
 
     public int processTAGTargetCFR(int playerId, List<Integer> targetIds, List<Integer> targetTypes)
           throws InvalidPacketDataException {
+        LOGGER.debug("processTAGTargetCFR: playerId={}, targetCount={}", playerId, targetIds.size());
         sendTAGTargetCFR(playerId, targetIds, targetTypes);
         while (true) {
             synchronized (cfrPacketQueue) {
@@ -6313,6 +6320,7 @@ public class TWGameManager extends AbstractGameManager {
                         cfrPacketQueue.wait();
                     }
                 } catch (InterruptedException e) {
+                    LOGGER.debug("processTAGTargetCFR: interrupted while waiting for response");
                     return 0;
                 }
                 // Get the packet, if there's something to get
@@ -6321,16 +6329,20 @@ public class TWGameManager extends AbstractGameManager {
                 // Make sure we got the right type of response
                 if (cfrType != null && !cfrType.isCFRTagTarget()) {
                     // Re-queue packet for other handlers - don't discard it
+                    LOGGER.trace("processTAGTargetCFR: re-queuing mismatched packet type {}", cfrType);
                     cfrPacketQueue.add(rp);
                     continue;
                 }
                 // Check packet came from right ID
                 if (rp.getConnectionId() != playerId) {
                     // Re-queue packet for other handlers - don't discard it
+                    LOGGER.trace("processTAGTargetCFR: re-queuing packet from wrong player {}", rp.getConnectionId());
                     cfrPacketQueue.add(rp);
                     continue;
                 }
-                return (int) rp.getPacket().data()[1];
+                int result = (int) rp.getPacket().data()[1];
+                LOGGER.debug("processTAGTargetCFR: received response, selected target index {}", result);
+                return result;
             }
         }
     }

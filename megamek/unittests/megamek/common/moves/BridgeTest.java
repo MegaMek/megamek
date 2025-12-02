@@ -117,6 +117,17 @@ public class BridgeTest extends GameBoardTestCase {
               hex 0105 2 "" ""
               end"""
         );
+
+        // Water board with bridge for naval/VTOL tests
+        initializeBoard("BOARD_BRIDGE_OVER_WATER", """
+              size 1 5
+              hex 0101 0 "water:2" ""
+              hex 0102 0 "water:2" ""
+              hex 0103 0 "water:2;bridge:1;bridge_cf:100;bridge_elev:2" ""
+              hex 0104 0 "water:2" ""
+              hex 0105 0 "water:2" ""
+              end"""
+        );
     }
 
     public static Stream<Arguments> allGroundedEntityTypes() {
@@ -595,5 +606,58 @@ public class BridgeTest extends GameBoardTestCase {
             assertTrue(movePath.isMoveLegal(), "Move should be legal, we'll land on the bridge");
             assertMovePathElevations(movePath, 0, 0, 0, 4);
         }
+    }
+
+
+    @Test
+    void testNaval_PassUnderBridge() {
+        setBoard("BOARD_BRIDGE_OVER_WATER");
+        Tank naval = new Tank();
+        naval.setMovementMode(EntityMovementMode.NAVAL);
+        // Naval units at surface (elevation 0)
+        MovePath movePath = getMovePathFor(naval, 0, EntityMovementMode.NAVAL,
+              MoveStepType.CLIMB_MODE_OFF,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+        // Naval units travel on water surface (elevation 0), bridges are above
+        assertTrue(movePath.isMoveLegal());
+        assertMovePathElevations(movePath, 0, 0, 0, 0, 0);
+    }
+
+
+    @Test
+    void testHydrofoil_PassUnderBridge() {
+        setBoard("BOARD_BRIDGE_OVER_WATER");
+        Tank hydrofoil = new Tank();
+        hydrofoil.setMovementMode(EntityMovementMode.HYDROFOIL);
+        // Hydrofoils at surface (elevation 0)
+        MovePath movePath = getMovePathFor(hydrofoil, 0, EntityMovementMode.HYDROFOIL,
+              MoveStepType.CLIMB_MODE_OFF,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+        // Hydrofoils travel on water surface, bridges are above
+        assertTrue(movePath.isMoveLegal());
+        assertMovePathElevations(movePath, 0, 0, 0, 0, 0);
+    }
+
+
+    @Test
+    void testSubmarine_PassUnderBridge() {
+        setBoard("BOARD_BRIDGE_OVER_WATER");
+        Tank submarine = new Tank();
+        submarine.setMovementMode(EntityMovementMode.SUBMARINE);
+        // Submarine underwater at depth -1 (below surface)
+        MovePath movePath = getMovePathFor(submarine, -1, EntityMovementMode.SUBMARINE,
+              MoveStepType.CLIMB_MODE_OFF,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+        // Submarines travel underwater, bridges are above water
+        assertTrue(movePath.isMoveLegal());
     }
 }

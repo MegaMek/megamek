@@ -1364,7 +1364,8 @@ public class TestMek extends TestEntity {
                 buff.append("Unit mounts both null-signature-system and void-signature-system\n");
                 illegal = true;
             }
-            if (hasC3) {
+            // Nova CEWS is exempt and can be mounted with a null-sig (but not a void-sig)
+            if (mek.hasC3() || mek.hasC3i()) {
                 buff.append("Unit mounts both null-signature-system and a c3 system\n");
                 illegal = true;
             }

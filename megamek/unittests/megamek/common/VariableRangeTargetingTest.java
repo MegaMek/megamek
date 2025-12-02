@@ -34,14 +34,13 @@ package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.enums.VariableRangeTargetingMode;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for Variable Range Targeting quirk functionality (SO pg. 196).
+ * Tests for Variable Range Targeting quirk functionality (BMM pg. 86).
  * <p>
  * Rules Summary: - Player selects Long or Short mode during End Phase for the NEXT turn - LONG mode: -1 TN at long
  * range, +1 TN at short range - SHORT mode: -1 TN at short range, +1 TN at long range - Medium range is unaffected by
@@ -106,18 +105,4 @@ public class VariableRangeTargetingTest {
     }
 
     //endregion Modifier Tests
-
-    //region Pending Mode Tests
-
-    @Test
-    void testPendingModeInitiallyNull() {
-        // Note: We cannot easily test Entity without full initialization,
-        // so this test is a placeholder for the concept.
-        // In a full test setup, we would verify:
-        // - New entity has null pendingVariableRangeTargetingMode
-        // - getPendingVariableRangeTargetingMode() returns null initially
-        assertNull(null, "Pending mode should initially be null (placeholder test)");
-    }
-
-    //endregion Pending Mode Tests
 }

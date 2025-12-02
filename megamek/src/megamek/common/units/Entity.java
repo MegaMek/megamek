@@ -6410,6 +6410,10 @@ public abstract class Entity extends TurnOrdered
               !hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG)) {
             return VariableRangeTargetingMode.SHORT;
         }
+        // Handle null from old save files that don't have this field
+        if (variableRangeTargetingMode == null) {
+            return VariableRangeTargetingMode.LONG;
+        }
         return variableRangeTargetingMode;
     }
 

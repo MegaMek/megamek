@@ -1392,8 +1392,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
      */
     private void displaySelected() {
         removeListeners();
-        // short circuit if not selected
-        if (weaponList.getSelectedIndex() == -1) {
+        try {
+            // short circuit if not selected
+            if (weaponList.getSelectedIndex() == -1) {
             ((DefaultComboBoxModel<String>) m_chAmmo.getModel())
                   .removeAllElements();
             m_chAmmo.setEnabled(false);
@@ -1989,7 +1990,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         unitDisplayPanel.getClientGUI().showSensorRanges(entity);
         unitDisplayPanel.processMekDisplayEvent(new MekDisplayEvent(this, entity, mounted));
         onResize();
-        addListeners();
+        } finally {
+            addListeners();
+        }
     }
 
     private String formatAmmo(Mounted<?> m) {

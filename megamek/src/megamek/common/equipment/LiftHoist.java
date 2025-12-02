@@ -129,4 +129,13 @@ public class LiftHoist extends ExternalCargo {
         }
         return entity.getEquipment(mountedId);
     }
+
+    /**
+     * Returns true if the transporter damages its cargo if the transport is hit, otherwise false.
+     */
+    @Override
+    public boolean alwaysDamageCargoIfTransportHit() {
+        // TW p. 137 - Resolve damage per the Cargo Carrier rules (TW p. 261)
+        return true;
+    }
 }

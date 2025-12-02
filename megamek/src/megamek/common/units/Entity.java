@@ -16245,6 +16245,7 @@ public abstract class Entity extends TurnOrdered
      */
     @Override
     public boolean damage(double amount) {
+
         return false;
     }
 

@@ -137,9 +137,11 @@ public class RapidFireACWeaponHandler extends UltraWeaponHandler {
             spawnAutoHitAttacks(shotsHit, vPhaseReport);
         }
 
-        // Return 0 to prevent WeaponHandler from dealing damage directly
-        // (damage is handled by the spawned attacks)
-        return 0;
+        // Return shotsHit but mark as missed to skip redundant damage processing.
+        // This prevents "Attack deals zero damage" message since spawned attacks
+        // already handled all damage reporting.
+        bMissed = true;
+        return shotsHit;
     }
 
     /**

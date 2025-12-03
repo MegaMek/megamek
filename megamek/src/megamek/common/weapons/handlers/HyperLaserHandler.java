@@ -73,21 +73,21 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
             r.newlines = 1;
             weapon.setHit(true);
             int weaponLocation = weapon.getLocation();
-            for (int i = 0; i < attackingEntity.getNumberOfCriticalSlots(weaponLocation); i++) {
-                CriticalSlot slot1 = attackingEntity.getCritical(weaponLocation, i);
+            for (int i = 0; i < weaponEntity.getNumberOfCriticalSlots(weaponLocation); i++) {
+                CriticalSlot slot1 = weaponEntity.getCritical(weaponLocation, i);
                 if ((slot1 == null) ||
                       (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                     continue;
                 }
                 Mounted<?> mounted = slot1.getMount();
                 if (mounted.equals(weapon)) {
-                    attackingEntity.hitAllCriticalSlots(weaponLocation, i);
+                    weaponEntity.hitAllCriticalSlots(weaponLocation, i);
                     break;
                 }
             }
             r.choose(false);
             vPhaseReport.addElement(r);
-            vPhaseReport.addAll(gameManager.explodeEquipment(attackingEntity, weaponLocation, weapon));
+            vPhaseReport.addAll(gameManager.explodeEquipment(weaponEntity, weaponLocation, weapon));
             return true;
         }
         return false;
@@ -122,7 +122,7 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
                   bDirect ? toHit.getMoS() / 3 : 0,
                   weaponType.getInfantryDamageClass(),
                   ((Infantry) target).isMechanized(),
-                  toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
+                  toHit.getThruBldg() != null, weaponEntity.getId(), calcDmgPerHitReport);
             if (nRange <= nRanges[RangeType.RANGE_SHORT]) {
                 toReturn += 3;
             } else if (nRange <= nRanges[RangeType.RANGE_MEDIUM]) {

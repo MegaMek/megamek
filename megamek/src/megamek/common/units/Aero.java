@@ -1621,7 +1621,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         if (isAirborne()) {
             return super.getRunMP(mpCalculationSetting);
         } else {
-            return getWalkMP(mpCalculationSetting);
+            return super.getWalkMP(mpCalculationSetting);
         }
     }
 

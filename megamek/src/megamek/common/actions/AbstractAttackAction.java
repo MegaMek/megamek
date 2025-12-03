@@ -38,6 +38,7 @@ import java.io.Serial;
 import java.util.Enumeration;
 
 import megamek.client.Client;
+import megamek.client.ui.Messages;
 import megamek.common.ToHitData;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
@@ -183,15 +184,24 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
             toHit.addModifier(-searchlightMod, "target illuminated by searchlight");
             night_modifier -= searchlightMod;
         } else if (ammoType != null) {
-            // Certain ammunition reduce the penalty
+            // Tracer ammo reduces light penalties - TO:AuE pg 165
+            // Dusk/dawn: eliminate modifier entirely
+            // Night combat: reduce to +1 (rather than +2)
             if (((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AC)
                   || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LAC)
                   || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP)
                   || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.PAC))
-                  && ((ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_AC))
-                  || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_TRACER)))) {
-                toHit.addModifier(-1, "incendiary/tracer ammo");
-                night_modifier--;
+                  && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_TRACER))) {
+                if (conditions.getLight().isDusk()) {
+                    // Eliminate dusk/dawn modifier entirely
+                    toHit.addModifier(-night_modifier, Messages.getString("WeaponAttackAction.TracerAmmo"));
+                    night_modifier = 0;
+                } else if (night_modifier > 1) {
+                    // Reduce night combat to +1
+                    int reduction = night_modifier - 1;
+                    toHit.addModifier(-reduction, Messages.getString("WeaponAttackAction.TracerAmmo"));
+                    night_modifier = 1;
+                }
             }
         }
 

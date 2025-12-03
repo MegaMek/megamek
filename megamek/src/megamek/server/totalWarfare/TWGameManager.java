@@ -20816,6 +20816,14 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Rolls and resolves critical hits with a die roll modifier, with HitData for modifier descriptions.
+     */
+    public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear, int critMod, int damage,
+          @Nullable HitData hit) {
+        return criticalEntity(en, loc, isRear, critMod, true, false, damage, DamageType.NONE, hit);
+    }
+
+    /**
      * Rolls and resolves critical hits with a die roll modifier.
      */
 
@@ -21486,7 +21494,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear, int critMod, boolean rollNumber,
           boolean isCapital, int damage) {
-        return criticalEntity(en, loc, isRear, critMod, rollNumber, isCapital, damage, DamageType.NONE);
+        return criticalEntity(en, loc, isRear, critMod, rollNumber, isCapital, damage, DamageType.NONE, null);
     }
 
     /**
@@ -21495,6 +21503,17 @@ public class TWGameManager extends AbstractGameManager {
      */
     public Vector<Report> criticalEntity(final Entity en, int loc, boolean isRear, int critMod, boolean rollNumber,
           boolean isCapital, int damage, DamageType damageType) {
+        return criticalEntity(en, loc, isRear, critMod, rollNumber, isCapital, damage, damageType, null);
+    }
+
+    /**
+     * Rolls and resolves critical hits on meks or vehicles. if rollNumber is false, a single hit is applied - needed
+     * for MaxTech Heat Scale rule.
+     *
+     * @param hit optional HitData to extract modifier descriptions (AP ammo, glancing blow, etc.)
+     */
+    public Vector<Report> criticalEntity(final Entity en, int loc, boolean isRear, int critMod, boolean rollNumber,
+          boolean isCapital, int damage, DamageType damageType, @Nullable HitData hit) {
 
         if (en.hasQuirk("poor_work")) {
             critMod += 1;
@@ -21536,6 +21555,24 @@ public class TWGameManager extends AbstractGameManager {
             r = new Report(6310);
             r.subject = en.getId();
             String rollString = "";
+            // Build modifier description from HitData if available
+            StringBuilder modDesc = new StringBuilder();
+            if (hit != null) {
+                if (hit.getSpecCrit() && (hit.getSpecCritMod() != 0)) {
+                    modDesc.append(" AP");
+                }
+                if (hit.glancingMod() < 0) {
+                    if (!modDesc.isEmpty()) {
+                        modDesc.append(",");
+                    }
+                    modDesc.append(" Glancing");
+                } else if (hit.glancingMod() > 0) {
+                    if (!modDesc.isEmpty()) {
+                        modDesc.append(",");
+                    }
+                    modDesc.append(" Direct");
+                }
+            }
             // industrials get a +2 bonus on the roll
             if ((en instanceof Mek) && ((Mek) en).isIndustrial()) {
                 critMod += 2;
@@ -21549,7 +21586,11 @@ public class TWGameManager extends AbstractGameManager {
                 if (critMod > 0) {
                     rollString += "+";
                 }
-                rollString += critMod + ") = ";
+                rollString += critMod;
+                if (!modDesc.isEmpty()) {
+                    rollString += modDesc.toString();
+                }
+                rollString += ") = ";
                 roll += critMod;
             }
             rollString += roll;

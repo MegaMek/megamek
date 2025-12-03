@@ -54,13 +54,7 @@ import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.RapidFireACWeaponHandler;
-import megamek.common.weapons.handlers.ac.ACAPHandler;
-import megamek.common.weapons.handlers.ac.ACCaselessHandler;
-import megamek.common.weapons.handlers.ac.ACFlakHandler;
-import megamek.common.weapons.handlers.ac.ACFlechetteHandler;
-import megamek.common.weapons.handlers.ac.ACIncendiaryHandler;
-import megamek.common.weapons.handlers.ac.ACTracerHandler;
-import megamek.common.weapons.handlers.ac.ACWeaponHandler;
+import megamek.common.weapons.handlers.ac.*;
 import megamek.server.Server;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -94,34 +88,49 @@ public abstract class ACWeapon extends AmmoWeapon {
 
                 if (mountedEquipment instanceof AmmoType ammoType) {
                     Mounted<?> weapon = entity.getEquipment(waa.getWeaponId());
-
-                    if (weapon.curMode().equals("Rapid")) {
-                        return new RapidFireACWeaponHandler(toHit, waa, game, gameManager);
-                    }
+                    boolean isRapidFire = weapon.curMode().equals("Rapid");
 
                     // PLAYTEST3 AP Ammo
-                    if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING) || ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST)) {
-                        return new ACAPHandler(toHit, waa, game, gameManager);
+                    if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING)
+                            || ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST)) {
+                        return isRapidFire
+                                ? new RapidFireACAPHandler(toHit, waa, game, gameManager)
+                                : new ACAPHandler(toHit, waa, game, gameManager);
                     }
 
                     if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)) {
-                        return new ACFlechetteHandler(toHit, waa, game, gameManager);
+                        return isRapidFire
+                                ? new RapidFireACFlechetteHandler(toHit, waa, game, gameManager)
+                                : new ACFlechetteHandler(toHit, waa, game, gameManager);
                     }
 
                     if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_AC)) {
-                        return new ACIncendiaryHandler(toHit, waa, game, gameManager);
+                        return isRapidFire
+                                ? new RapidFireACIncendiaryHandler(toHit, waa, game, gameManager)
+                                : new ACIncendiaryHandler(toHit, waa, game, gameManager);
                     }
 
                     if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_TRACER)) {
-                        return new ACTracerHandler(toHit, waa, game, gameManager);
+                        return isRapidFire
+                                ? new RapidFireACTracerHandler(toHit, waa, game, gameManager)
+                                : new ACTracerHandler(toHit, waa, game, gameManager);
                     }
 
                     if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLAK)) {
-                        return new ACFlakHandler(toHit, waa, game, gameManager);
+                        return isRapidFire
+                                ? new RapidFireACFlakHandler(toHit, waa, game, gameManager)
+                                : new ACFlakHandler(toHit, waa, game, gameManager);
                     }
 
                     if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_CASELESS)) {
-                        return new ACCaselessHandler(toHit, waa, game, gameManager);
+                        return isRapidFire
+                                ? new RapidFireACCaselessHandler(toHit, waa, game, gameManager)
+                                : new ACCaselessHandler(toHit, waa, game, gameManager);
+                    }
+
+                    // Standard ammo in rapid-fire mode
+                    if (isRapidFire) {
+                        return new RapidFireACWeaponHandler(toHit, waa, game, gameManager);
                     }
                 }
             }

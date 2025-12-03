@@ -426,6 +426,15 @@ public class TWDamageManager implements IDamageManager {
             reportVec.addElement(report);
         }
 
+        // Report flechette before open hex doubling for infantry
+        // so the message order is: "hit by flechette" then "caught in the open"
+        if (damageType == DamageType.FLECHETTE && isPlatoon) {
+            report = new Report(6055);
+            report.subject = entityId;
+            report.indent(2);
+            reportVec.addElement(report);
+        }
+
         // Is the infantry in the open?
         if (ServerHelper.infantryInOpen(entity,
               te_hex,
@@ -481,17 +490,17 @@ public class TWDamageManager implements IDamageManager {
                 }
                 break;
             case FLECHETTE:
-                // Fléchette ammo deals full damage to conventional infantry and
+                // Flechette ammo deals full damage to conventional infantry and
                 // half damage to other targets (including battle armor).
+                // Note: Infantry report (6055) is output earlier, before open hex check,
+                // so the message order is: "hit by flechette" then "caught in the open"
                 if (!isPlatoon) {
                     damage /= 2;
                     report = new Report(6060);
-                } else {
-                    report = new Report(6055);
+                    report.subject = entityId;
+                    report.indent(2);
+                    reportVec.addElement(report);
                 }
-                report.subject = entityId;
-                report.indent(2);
-                reportVec.addElement(report);
                 break;
             case ACID:
                 if (isFerroFibrousTarget || reactiveArmor || reflectiveArmor || ferroLamellorArmor || bar5) {
@@ -1792,7 +1801,8 @@ public class TWDamageManager implements IDamageManager {
                           hit.getLocation(),
                           hit.isRear(),
                           critMod + critBonus,
-                          damage_orig));
+                          damage_orig,
+                          hit));
                 }
                 specCrits = 0;
             }

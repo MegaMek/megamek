@@ -1944,6 +1944,8 @@ public class AmmoType extends EquipmentType {
         M_ARMOR_PIERCING,
         M_ARMOR_PIERCING_PLAYTEST,
         M_FLECHETTE,
+        // M_INCENDIARY_AC: From Field Manual: Federated Suns pg 158, but retconned.
+        // Kept for potential future unofficial ammo support. No MunitionMutator exists yet.
         M_INCENDIARY_AC,
         M_PRECISION,
         M_PRECISION_PLAYTEST,

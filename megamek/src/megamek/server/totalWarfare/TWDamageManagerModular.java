@@ -2195,15 +2195,18 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
 
                     infantry.damageThisPhase += tmpDamageHold;
                     damage = 0;
-                    if (!infantry.isHardenedArmorDamaged(hit)) {
-                        report = new Report(6085);
+                    // Use trooper-specific messages for Battle Armor
+                    if (infantry instanceof BattleArmor) {
+                        report = new Report(infantry.isHardenedArmorDamaged(hit) ? 6097 : 6096);
+                        report.add(infantry.getLocationAbbr(hit));
+                        report.add(infantry.getArmor(hit));
                     } else {
-                        report = new Report(6086);
+                        report = new Report(infantry.isHardenedArmorDamaged(hit) ? 6086 : 6085);
+                        report.add(infantry.getArmor(hit));
                     }
 
                     report.subject = entityId;
                     report.indent(3);
-                    report.add(infantry.getArmor(hit));
                     reportVec.addElement(report);
                 }
 
@@ -3046,15 +3049,18 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 entity.damageThisPhase += damage;
 
                 damage = 0;
-                if (!entity.isHardenedArmorDamaged(hit)) {
-                    report = new Report(6085);
+                // Use trooper-specific messages for Battle Armor
+                if (entity instanceof BattleArmor) {
+                    report = new Report(entity.isHardenedArmorDamaged(hit) ? 6097 : 6096);
+                    report.add(entity.getLocationAbbr(hit));
+                    report.add(entity.getArmor(hit));
                 } else {
-                    report = new Report(6086);
+                    report = new Report(entity.isHardenedArmorDamaged(hit) ? 6086 : 6085);
+                    report.add(entity.getArmor(hit));
                 }
 
                 report.subject = entityId;
                 report.indent(3);
-                report.add(entity.getArmor(hit));
                 reportVec.addElement(report);
 
                 // teleMissiles are destroyed if they lose all armor

@@ -214,7 +214,7 @@ public class NarcHandler extends MissileWeaponHandler {
         }
 
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-              .getCover(), ComputeSideTable.sideTable(attackingEntity, entityTarget, weapon
+              .getCover(), ComputeSideTable.sideTable(weaponEntity, entityTarget, weapon
               .getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
@@ -243,7 +243,7 @@ public class NarcHandler extends MissileWeaponHandler {
         AmmoType ammoType = ammo.getType();
         if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NARC) {
             // narced
-            NarcPod pod = new NarcPod(attackingEntity.getOwner().getTeam(),
+            NarcPod pod = new NarcPod(weaponEntity.getOwner().getTeam(),
                   hit.getLocation());
             Report r = new Report(3250);
             r.subject = subjectId;

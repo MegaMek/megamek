@@ -129,7 +129,7 @@ public class MicroBombHandler extends AmmoWeaponHandler {
         // Deal bomb damage to the hit coordinates, with all that entails
         HexTarget dropHex = new HexTarget(coords, target.getBoardId(), target.getTargetType());
         Vector<Integer> hitIds = gameManager.deliverBombDamage(dropHex,
-              BombType.BombTypeEnum.HE, subjectId, attackingEntity,
+              BombType.BombTypeEnum.HE, subjectId, weaponEntity,
               vPhaseReport);
 
         // Display drifts that hit nothing separately from drifts that dealt damage

@@ -49,7 +49,6 @@ import megamek.common.units.EntityMovementMode;
 import megamek.common.units.SupportTank;
 import megamek.common.units.Tank;
 import megamek.common.units.TripodMek;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -102,9 +101,9 @@ public class BuildingTest extends GameBoardTestCase {
         initializeBoard("BOARD_ASCENDING_BUILDINGS_TO_PLATEAU", """
               size 1 5
               hex 0101 0 "" ""
-              hex 0102 0 "bldg_elev:1;building:2;bldg_cf:100"
+              hex 0102 0 "bldg_elev:1;building:2;bldg_cf:100" ""
               hex 0103 0 "bldg_elev:2;building:2;bldg_cf:100" ""
-              hex 0104 0 "bldg_elev:3;building:2;bldg_cf:100"
+              hex 0104 0 "bldg_elev:3;building:2;bldg_cf:100" ""
               hex 0105 4 "" ""
               end"""
         );
@@ -262,7 +261,6 @@ public class BuildingTest extends GameBoardTestCase {
 
     @ParameterizedTest
     @MethodSource(value = "meks")
-    @Disabled
     void mekJumpsOntoHeight4Building(Entity entity, EntityMovementMode entityMovementMode) {
         setBoard("BOARD_HEIGHT_4_BUILDING");
         entity.setOriginalJumpMP(3);
@@ -272,15 +270,93 @@ public class BuildingTest extends GameBoardTestCase {
             entity.addEquipment(equipmentType, BipedMek.LOC_CENTER_TORSO);
             entity.addEquipment(equipmentType, BipedMek.LOC_CENTER_TORSO);
         } catch (Exception ignored) {}
-        // Jump onto a 4-level building (jumping ignores climb restrictions)
+        // Jump onto a 4-level building
         MovePath movePath = getMovePathFor(entity, entityMovementMode,
               MoveStepType.CLIMB_MODE_ON,
               MoveStepType.START_JUMP,
               MoveStepType.FORWARDS,
               MoveStepType.FORWARDS);
 
-        assertTrue(movePath.isMoveLegal(), "Mek can jump onto height-4 building (jumping ignores climb restrictions)");
+        assertFalse(movePath.isMoveLegal(), "Mek cannot jump onto height-4 building with only three jump MPs");
         assertMovePathElevations(movePath, 0, 0, 0, 4);
+    }
+
+    @ParameterizedTest
+    @MethodSource(value = "meks")
+    void mekCannotJumpThroughHeight8Building(Entity entity, EntityMovementMode entityMovementMode) {
+        setBoard("BOARD_HEIGHT_8_BUILDING");
+        entity.setOriginalJumpMP(5);
+        EquipmentType equipmentType = EquipmentType.get(EquipmentTypeLookup.JUMP_JET);
+        try {
+            entity.addEquipment(equipmentType, BipedMek.LOC_CENTER_TORSO);
+            entity.addEquipment(equipmentType, BipedMek.LOC_CENTER_TORSO);
+            entity.addEquipment(equipmentType, BipedMek.LOC_CENTER_TORSO);
+            entity.addEquipment(equipmentType, BipedMek.LOC_CENTER_TORSO);
+            entity.addEquipment(equipmentType, BipedMek.LOC_CENTER_TORSO);
+        } catch (Exception ignored) {}
+        // Jump through an 8-level building (insufficient jump MPs)
+        MovePath movePath = getMovePathFor(entity, entityMovementMode,
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.START_JUMP,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+
+        assertFalse(movePath.isMoveLegal(), "Mek cannot jump through height-8 building with only five jump MPs");
+        assertMovePathElevations(movePath, 0, 0, 0, 8, 0, 0);
+    }
+
+    @ParameterizedTest
+    @MethodSource(value = "meks")
+    void mekJumpsOntoHeight4BuildingWithSufficientJumpMP(Entity entity, EntityMovementMode entityMovementMode) {
+        setBoard("BOARD_HEIGHT_4_BUILDING");
+        entity.setOriginalJumpMP(4);
+        EquipmentType equipmentType = EquipmentType.get(EquipmentTypeLookup.JUMP_JET);
+        try {
+            entity.addEquipment(equipmentType, BipedMek.LOC_CENTER_TORSO);
+            entity.addEquipment(equipmentType, BipedMek.LOC_CENTER_TORSO);
+            entity.addEquipment(equipmentType, BipedMek.LOC_CENTER_TORSO);
+            entity.addEquipment(equipmentType, BipedMek.LOC_CENTER_TORSO);
+        } catch (Exception ignored) {}
+        // Jump onto a 4-level building with sufficient jump MPs
+        MovePath movePath = getMovePathFor(entity, entityMovementMode,
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.START_JUMP,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+
+        assertTrue(movePath.isMoveLegal(), "Mek can jump onto height-4 building with four jump MPs");
+        assertMovePathElevations(movePath, 0, 0, 0, 4);
+    }
+
+    @ParameterizedTest
+    @MethodSource(value = "meks")
+    void mekJumpsThroughHeight8BuildingWithSufficientJumpMP(Entity entity, EntityMovementMode entityMovementMode) {
+        setBoard("BOARD_HEIGHT_8_BUILDING");
+        entity.setOriginalJumpMP(8);
+        EquipmentType equipmentType = EquipmentType.get(EquipmentTypeLookup.JUMP_JET);
+        try {
+            entity.addEquipment(equipmentType, BipedMek.LOC_CENTER_TORSO);
+            entity.addEquipment(equipmentType, BipedMek.LOC_CENTER_TORSO);
+            entity.addEquipment(equipmentType, BipedMek.LOC_CENTER_TORSO);
+            entity.addEquipment(equipmentType, BipedMek.LOC_CENTER_TORSO);
+            entity.addEquipment(equipmentType, BipedMek.LOC_CENTER_TORSO);
+            entity.addEquipment(equipmentType, BipedMek.LOC_CENTER_TORSO);
+            entity.addEquipment(equipmentType, BipedMek.LOC_CENTER_TORSO);
+            entity.addEquipment(equipmentType, BipedMek.LOC_CENTER_TORSO);
+        } catch (Exception ignored) {}
+        // Jump through an 8-level building with sufficient jump MPs
+        MovePath movePath = getMovePathFor(entity, entityMovementMode,
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.START_JUMP,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+
+        assertTrue(movePath.isMoveLegal(), "Mek can jump through height-8 building with eight jump MPs");
+        assertMovePathElevations(movePath, 0, 0, 0, 8, 0, 0);
     }
 
     @ParameterizedTest

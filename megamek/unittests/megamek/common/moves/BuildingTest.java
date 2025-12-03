@@ -411,16 +411,16 @@ public class BuildingTest extends GameBoardTestCase {
 
     @ParameterizedTest
     @MethodSource(value = "tanks")
-    void trackedTankWalksThroughHeight2BuildingAtGroundLevel(Entity entity, EntityMovementMode entityMovementMode) {
+    void tankWalksThroughHeight2BuildingAtGroundLevel(Entity entity, EntityMovementMode entityMovementMode) {
         setBoard("BOARD_HEIGHT_2_BUILDING");
-        // Tracked tanks can move through buildings at ground level
+        // Tanks can move through buildings at ground level
         MovePath movePath = getMovePathFor(entity, entityMovementMode,
               MoveStepType.CLIMB_MODE_OFF,
               MoveStepType.FORWARDS,
               MoveStepType.FORWARDS,
               MoveStepType.FORWARDS);
 
-        assertTrue(movePath.isMoveLegal(), "Tracked tank can move through height-2 building at ground level");
+        assertTrue(movePath.isMoveLegal(), "Tank can move through height-2 building at ground level");
         assertMovePathElevations(movePath, 0, 0, 0, 0);
     }
 

@@ -80,7 +80,7 @@ public class MGAWeaponHandler extends MGHandler {
                   weaponType.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
                   weaponType.getInfantryDamageClass(),
                   ((Infantry) target).isMechanized(),
-                  toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport, howManyShots);
+                  toHit.getThruBldg() != null, weaponEntity.getId(), calcDmgPerHitReport, howManyShots);
             damage = applyGlancingBlowModifier(damage, true);
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)) {
                 if (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG]) {
@@ -106,13 +106,13 @@ public class MGAWeaponHandler extends MGHandler {
         setDone();
         checkAmmo();
         howManyShots = weapon.getCurrentShots();
-        int total = attackingEntity.getTotalAmmoOfType(ammo.getType());
+        int total = weaponEntity.getTotalAmmoOfType(ammo.getType());
         if (total <= howManyShots) {
             howManyShots = total;
         }
         shotsNeedFiring = howManyShots;
         if (ammo.getUsableShotsLeft() == 0) {
-            attackingEntity.loadWeapon(weapon);
+            weaponEntity.loadWeapon(weapon);
             ammo = (AmmoMounted) weapon.getLinked();
             // there will be some ammo somewhere, otherwise shot will not have
             // been fired.
@@ -120,7 +120,7 @@ public class MGAWeaponHandler extends MGHandler {
         while (shotsNeedFiring > ammo.getUsableShotsLeft()) {
             shotsNeedFiring -= ammo.getBaseShotsLeft();
             ammo.setShotsLeft(0);
-            attackingEntity.loadWeapon(weapon);
+            weaponEntity.loadWeapon(weapon);
             ammo = (AmmoMounted) weapon.getLinked();
         }
         ammo.setShotsLeft(ammo.getBaseShotsLeft() - shotsNeedFiring);
@@ -255,7 +255,7 @@ public class MGAWeaponHandler extends MGHandler {
             }
             vPhaseReport
                   .addAll(gameManager.damageEntity(entityTarget, hit, nDamage,
-                        false, attackingEntity.getSwarmTargetId() == entityTarget
+                        false, weaponEntity.getSwarmTargetId() == entityTarget
                               .getId() ? DamageType.IGNORE_PASSENGER
                               : damageType, false, false, throughFront,
                         underWater));

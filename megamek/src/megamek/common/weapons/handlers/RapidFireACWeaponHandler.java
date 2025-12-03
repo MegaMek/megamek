@@ -106,8 +106,9 @@ public class RapidFireACWeaponHandler extends UltraWeaponHandler {
 
     /**
      * Checks if the current ammo type has special effects that require a specialized handler.
+     * Note: M_INCENDIARY_AC is intentionally excluded as it was retconned (FMFS pg 158).
      *
-     * @return true if using special ammo (AP, flak, flechette, tracer, incendiary, caseless)
+     * @return true if using special ammo (AP, flak, flechette, tracer, caseless)
      */
     private boolean hasSpecialAmmo() {
         if (ammoType == null) {
@@ -118,7 +119,6 @@ public class RapidFireACWeaponHandler extends UltraWeaponHandler {
               || ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLAK)
               || ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)
               || ammoType.getMunitionType().contains(AmmoType.Munitions.M_TRACER)
-              || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_AC)
               || ammoType.getMunitionType().contains(AmmoType.Munitions.M_CASELESS);
     }
 

@@ -48,7 +48,7 @@ import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * Handles rapid-fire autocannon attacks with caseless ammunition. Combines the rapid-fire mechanics (jam checks,
- * cluster table) with the caseless-specific jam/explode checks (on attack roll <= 2).
+ * cluster table) with the caseless-specific jam/explode checks (on attack roll {@code <= 2}).
  *
  * @see RapidFireACWeaponHandler
  * @see ACCaselessHandler

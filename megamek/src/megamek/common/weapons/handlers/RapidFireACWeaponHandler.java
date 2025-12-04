@@ -134,7 +134,21 @@ public class RapidFireACWeaponHandler extends UltraWeaponHandler {
 
         // For special ammo, spawn auto-hit attacks to apply ammo-specific effects
         if (shotsHit > 0) {
-            spawnAutoHitAttacks(shotsHit, vPhaseReport);
+            // For infantry, all shots hit as a single "lump" so shotsHit=1,
+            // but we need to spawn attacks for all shots that actually fired
+            int attacksToSpawn = target.isConventionalInfantry() ? howManyShots : shotsHit;
+
+            // Report number of shots hitting (UltraWeaponHandler skips this for infantry)
+            if (target.isConventionalInfantry() && (howManyShots > 1)) {
+                Report r = new Report(3325);
+                r.subject = subjectId;
+                r.add(howManyShots);
+                r.add(sSalvoType);
+                r.add(toHit.getTableDesc());
+                vPhaseReport.addElement(r);
+            }
+
+            spawnAutoHitAttacks(attacksToSpawn, vPhaseReport);
         }
 
         // Return shotsHit but mark as missed to skip redundant damage processing.

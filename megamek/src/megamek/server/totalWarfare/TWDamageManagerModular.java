@@ -2115,6 +2115,9 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             reportVec.addElement(report);
         }
 
+        // Handle damage type effects (flechette, fragmentation, etc.) before situational modifiers
+        damage = manageDamageTypeReports(infantry, reportVec, damage, damageType, hit, true, mods);
+
         // Is the infantry in the open?
         if (ServerHelper.infantryInOpen(infantry,
               te_hex,
@@ -2141,8 +2144,6 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             report.indent(2);
             reportVec.addElement(report);
         }
-
-        damage = manageDamageTypeReports(infantry, reportVec, damage, damageType, hit, true, mods);
 
         // infantry armor can reduce damage
         if (infantry.calcDamageDivisor() != 1.0) {
@@ -2195,18 +2196,15 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
 
                     infantry.damageThisPhase += tmpDamageHold;
                     damage = 0;
-                    // Use trooper-specific messages for Battle Armor
-                    if (infantry instanceof BattleArmor) {
-                        report = new Report(infantry.isHardenedArmorDamaged(hit) ? 6097 : 6096);
-                        report.add(infantry.getLocationAbbr(hit));
-                        report.add(infantry.getArmor(hit));
+                    if (!infantry.isHardenedArmorDamaged(hit)) {
+                        report = new Report(6085);
                     } else {
-                        report = new Report(infantry.isHardenedArmorDamaged(hit) ? 6086 : 6085);
-                        report.add(infantry.getArmor(hit));
+                        report = new Report(6086);
                     }
 
                     report.subject = entityId;
                     report.indent(3);
+                    report.add(infantry.getArmor(hit));
                     reportVec.addElement(report);
                 }
 

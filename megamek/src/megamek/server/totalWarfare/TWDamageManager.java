@@ -426,35 +426,7 @@ public class TWDamageManager implements IDamageManager {
             reportVec.addElement(report);
         }
 
-        // Is the infantry in the open?
-        if (ServerHelper.infantryInOpen(entity,
-              te_hex,
-              game,
-              isPlatoon,
-              ammoExplosion,
-              hit.isIgnoreInfantryDoubleDamage())) {
-            // PBI. Damage is doubled.
-            damage *= 2;
-            report = new Report(6040);
-            report.subject = entityId;
-            report.indent(2);
-            reportVec.addElement(report);
-        }
-
-        // Is the infantry in vacuum?
-        boolean platoonOrBattleArmor = isPlatoon || isBattleArmor;
-        if (platoonOrBattleArmor &&
-              !entity.isDestroyed() &&
-              !entity.isDoomed() &&
-              game.getPlanetaryConditions().getAtmosphere().isLighterThan(Atmosphere.THIN)) {
-            // PBI. Double damage.
-            damage *= 2;
-            report = new Report(6041);
-            report.subject = entityId;
-            report.indent(2);
-            reportVec.addElement(report);
-        }
-
+        // Handle damage type effects (flechette, fragmentation, etc.) before situational modifiers
         switch (damageType) {
             case FRAGMENTATION:
                 // Fragmentation missiles deal full damage to conventional
@@ -535,6 +507,35 @@ public class TWDamageManager implements IDamageManager {
             default:
                 // We can ignore this.
                 break;
+        }
+
+        // Is the infantry in the open?
+        if (ServerHelper.infantryInOpen(entity,
+              te_hex,
+              game,
+              isPlatoon,
+              ammoExplosion,
+              hit.isIgnoreInfantryDoubleDamage())) {
+            // PBI. Damage is doubled.
+            damage *= 2;
+            report = new Report(6040);
+            report.subject = entityId;
+            report.indent(2);
+            reportVec.addElement(report);
+        }
+
+        // Is the infantry in vacuum?
+        boolean platoonOrBattleArmor = isPlatoon || isBattleArmor;
+        if (platoonOrBattleArmor &&
+              !entity.isDestroyed() &&
+              !entity.isDoomed() &&
+              game.getPlanetaryConditions().getAtmosphere().isLighterThan(Atmosphere.THIN)) {
+            // PBI. Double damage.
+            damage *= 2;
+            report = new Report(6041);
+            report.subject = entityId;
+            report.indent(2);
+            reportVec.addElement(report);
         }
 
         // adjust VTOL rotor damage

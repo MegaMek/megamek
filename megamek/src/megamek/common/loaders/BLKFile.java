@@ -637,6 +637,8 @@ public class BLKFile {
             blk.writeBlockData("UnitType", "Aero");
         } else if (t instanceof HandheldWeapon) {
             blk.writeBlockData("UnitType", "HandheldWeapon");
+        } else if (t instanceof BuildingEntity) {
+            blk.writeBlockData("UnitType", "BuildingEntity");
         }
 
         blk.writeBlockData("Name", t.getChassis());

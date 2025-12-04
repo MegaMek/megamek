@@ -225,6 +225,7 @@ public class MekFileParser {
                     case "Warship" -> new BLKWarshipFile(bb);
                     case "SpaceStation" -> new BLKSpaceStationFile(bb);
                     case "HandheldWeapon" -> new BLKHandheldWeaponFile(bb);
+                    case "BuildingEntity" -> new BLKStructureFile(bb);
                     default -> throw new EntityLoadingException("Unknown UnitType: " + sType);
                 };
             } else {
@@ -243,7 +244,6 @@ public class MekFileParser {
      * Parse a string containing the representation of a unit.
      *
      * @param content String containing the unit representation
-     *
      */
     public void parse(String content) throws Exception {
         final boolean isBlk = content.contains("<BlockVersion>") || content.contains("<UnitType>");

@@ -94,6 +94,10 @@ public interface IBuilding extends Serializable {
         return getCoordsList().contains(coords);
     }
 
+    default IBuilding getBuilding() {
+        return this;
+    }
+
 
     /**
      * Determines if the coord exist in the currentCF has.

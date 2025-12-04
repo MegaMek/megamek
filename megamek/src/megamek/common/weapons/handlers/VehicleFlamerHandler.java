@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers;
 
+import static java.lang.Math.floor;
+
 import java.io.Serial;
 import java.util.Vector;
 
@@ -153,7 +155,7 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
                 toReturn = Compute.d6(4);
             }
             if (bDirect) {
-                toReturn += toHit.getMoS() / 3.0;
+                toReturn += (int) floor(toHit.getMoS() / 3.0);
             }
             // pain shunted infantry get half damage
             if (((Entity) target).hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {

@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers;
 
+import static java.lang.Math.floor;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -112,7 +114,14 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected AmmoType ammoType;
     protected String typeName;
     protected WeaponMounted weapon;
+    /**
+     * Attacking Entity is the {@link Entity}  where the attack is coming from
+     */
     protected Entity attackingEntity;
+    /**
+     * Weapon Entity is the {@link Entity} that has the {@link WeaponMounted} {@link WeaponHandler#weapon}
+     */
+    protected Entity weaponEntity;
     protected Targetable target;
     protected int subjectId;
     protected int nRange;
@@ -211,20 +220,20 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     int loc = prevWeapon.getLocation();
 
                     // create an array of booleans of locations
-                    boolean[] usedFrontArc = new boolean[attackingEntity.locations()];
-                    boolean[] usedRearArc = new boolean[attackingEntity.locations()];
-                    for (int i = 0; i < attackingEntity.locations(); i++) {
+                    boolean[] usedFrontArc = new boolean[weaponEntity.locations()];
+                    boolean[] usedRearArc = new boolean[weaponEntity.locations()];
+                    for (int i = 0; i < weaponEntity.locations(); i++) {
                         usedFrontArc[i] = false;
                         usedRearArc[i] = false;
                     }
                     if (!rearMount) {
                         if (!usedFrontArc[loc]) {
-                            totalHeat += attackingEntity.getHeatInArc(loc, rearMount);
+                            totalHeat += weaponEntity.getHeatInArc(loc, rearMount);
                             usedFrontArc[loc] = true;
                         }
                     } else {
                         if (!usedRearArc[loc]) {
-                            totalHeat += attackingEntity.getHeatInArc(loc, rearMount);
+                            totalHeat += weaponEntity.getHeatInArc(loc, rearMount);
                             usedRearArc[loc] = true;
                         }
                     }
@@ -1280,7 +1289,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
-            toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0), toReturn * 2);
+            toReturn = Math.min(toReturn + (int) floor(toHit.getMoS() / 3.0), toReturn * 2);
         }
 
         toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
@@ -1812,7 +1821,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         this.weaponAttackAction = weaponAttackAction;
         this.game = game;
 
-        Entity weaponEntity = this.game.getEntity(this.weaponAttackAction.getEntityId());
+        weaponEntity = this.game.getEntity(this.weaponAttackAction.getEntityId());
         if (weaponEntity == null) {
             throw new EntityLoadingException("Weapon Entity is NULL");
         }

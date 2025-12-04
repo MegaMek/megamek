@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers.capitalMissile;
 
+import static java.lang.Math.floor;
+
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -797,7 +799,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         CapMissileAMSMod = calcCapMissileAMSMod();
 
         if (bDirect) {
-            attackValue = Math.min(attackValue + (toHit.getMoS() / 3.0f), attackValue * 2);
+            attackValue = Math.min(attackValue + (int) floor(toHit.getMoS() / 3.0), attackValue * 2);
         }
 
         attackValue = applyGlancingBlowModifier(attackValue, false);
@@ -841,7 +843,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
 
         // we default to direct fire weapons for anti-infantry damage
         if (bDirect) {
-            toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0f), toReturn * 2);
+            toReturn = Math.min(toReturn + (int) floor(toHit.getMoS() / 3.0), toReturn * 2);
         }
 
         toReturn = applyGlancingBlowModifier(toReturn, false);

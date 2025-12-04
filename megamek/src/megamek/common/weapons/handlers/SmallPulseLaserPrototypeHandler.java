@@ -76,7 +76,7 @@ public class SmallPulseLaserPrototypeHandler extends EnergyWeaponHandler {
         }
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             super.addHeat();
-            attackingEntity.heatBuildup += Compute.d6() / 2;
+            weaponEntity.heatBuildup += Compute.d6() / 2;
         }
 
     }

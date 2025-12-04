@@ -4322,7 +4322,7 @@ public abstract class Mek extends Entity {
         if (hasEngine()) {
             sb.append(getEngine().getEngineName())
                   .append(" Engine")
-                  .append((!getEngine().hasFlag(Engine.CLAN_ENGINE) || isMixedTech()) ? ("(IS)")
+                  .append((!getEngine().hasFlag(Engine.CLAN_ENGINE) && isMixedTech()) ? ("(IS)")
                         : "");
         } else {
             sb.append("(none)");
@@ -5859,11 +5859,6 @@ public abstract class Mek extends Entity {
 
         if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
             LOGGER.debug("{} CRIPPLED: Pilot has taken 4+ damage.", getDisplayName());
-            return true;
-        }
-
-        if (isPermanentlyImmobilized(checkCrew)) {
-            LOGGER.debug("{} CRIPPLED: Immobilized.", getDisplayName());
             return true;
         }
 

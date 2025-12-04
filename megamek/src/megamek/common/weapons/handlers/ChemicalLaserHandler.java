@@ -102,7 +102,7 @@ public class ChemicalLaserHandler extends AmmoWeaponHandler {
                   toReturn, bDirect ? toHit.getMoS() / 3 : 0,
                   weaponType.getInfantryDamageClass(),
                   ((Infantry) target).isMechanized(),
-                  toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
+                  toHit.getThruBldg() != null, weaponEntity.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (int) floor(toHit.getMoS() / 3.0), toReturn * 2);
         }

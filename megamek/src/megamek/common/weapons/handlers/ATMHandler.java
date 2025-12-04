@@ -91,7 +91,7 @@ public class ATMHandler extends MissileWeaponHandler {
                   weaponType.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
                   weaponType.getInfantryDamageClass(),
                   ((Infantry) target).isMechanized(),
-                  toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
+                  toHit.getThruBldg() != null, weaponEntity.getId(), calcDmgPerHitReport);
             toReturn = applyGlancingBlowModifier(toReturn, true);
         }
 
@@ -128,7 +128,7 @@ public class ATMHandler extends MissileWeaponHandler {
             return 5;
         }
     }
-    
+
     /**
      * Calculate the attack value based on range
      *

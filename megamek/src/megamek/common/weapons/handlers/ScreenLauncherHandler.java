@@ -80,6 +80,11 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
             return true;
         }
 
+        // Calculate attack value (damage) - must be done before applying damage
+        // Screen Launcher damage is in capital scale (15 capital = 150 standard)
+        // Multiply by 10 to convert to standard scale for damage application
+        attackValue = calcAttackValue() * 10;
+
         // Report weapon attack and its to-hit value.
         Report r = new Report(3115);
         r.indent();
@@ -131,9 +136,27 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
             } else {
                 ToHitData hexToHit = new ToHitData();
                 hexToHit.setHitTable(ToHitData.HIT_NORMAL);
-                HitData hit = entity.rollHitLocation(hexToHit.getHitTable(), ToHitData.SIDE_FRONT);
-                hit.setCapital(false);
-                vPhaseReport.addAll(gameManager.damageEntity(entity, hit, attackValue));
+
+                if (entity.isLargeCraft()) {
+                    // Large craft (500+ tons): single hit, use capital scale (no x10 conversion)
+                    int capitalDamage = attackValue / 10;  // Convert back to capital scale
+                    HitData hit = entity.rollHitLocation(hexToHit.getHitTable(), ToHitData.SIDE_FRONT);
+                    hit.setCapital(false);
+                    vPhaseReport.addAll(gameManager.damageEntity(entity, hit, capitalDamage));
+                } else {
+                    // Individual craft: 5-point clusters per official ruling
+                    // See: https://battletech.com/forums/index.php?topic=77239
+                    // Cluster size is 50 in standard scale (becomes 5 after capital conversion)
+                    int clusterSize = 50;
+                    int remainingDamage = attackValue;
+                    while (remainingDamage > 0) {
+                        int clusterDamage = Math.min(clusterSize, remainingDamage);
+                        HitData hit = entity.rollHitLocation(hexToHit.getHitTable(), ToHitData.SIDE_FRONT);
+                        hit.setCapital(false);
+                        vPhaseReport.addAll(gameManager.damageEntity(entity, hit, clusterDamage));
+                        remainingDamage -= clusterDamage;
+                    }
+                }
                 gameManager.creditKill(entity, attackingEntity);
             }
         }

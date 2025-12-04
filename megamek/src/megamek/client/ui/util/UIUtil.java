@@ -83,6 +83,7 @@ public final class UIUtil {
     public final static String QUIRKS_SIGN = " \u24E0 ";
     public static final String DOT_SPACER = " \u2B1D ";
     public static final String BOT_MARKER = " \u259A ";
+    public static final String VRT_SIGN = " \u25CE ";  // Bullseye for Variable Range Targeting
 
     public static void showMUL(int mulId, Component parent) {
         browse(MMConstants.MUL_URL_PREFIX + mulId, parent);

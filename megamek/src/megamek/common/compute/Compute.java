@@ -1699,6 +1699,16 @@ public class Compute {
             }
         }
 
+        // Variable Range Targeting quirk modifier (BMM pg. 86)
+        // Shows as a separate line item in the to-hit breakdown
+        int vrtModifier = attackingEntity.getVariableRangeTargetingModifier(usingRange);
+        if (vrtModifier != 0) {
+            String vrtMode = attackingEntity.getVariableRangeTargetingMode().isShort()
+                  ? Messages.getString("Compute.VariableRangeTargetingShort")
+                  : Messages.getString("Compute.VariableRangeTargetingLong");
+            mods.addModifier(vrtModifier, vrtMode);
+        }
+
         // add minimum range modifier (only for ground-to-ground attacks)
         int minRange = weaponRanges[RangeType.RANGE_MINIMUM];
         if ((minRange > 0) && (distance <= minRange) && Compute.isGroundToGround(attackingEntity, target)) {

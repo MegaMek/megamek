@@ -62,6 +62,7 @@ public class ArtilleryTracker implements Serializable {
     private final Map<Mounted<?>, Vector<ArtilleryModifier>> weapons;
 
     private boolean spotterIsForwardObs;
+    private boolean spotterHasCommImplant;
 
     /**
      * Creates new instance of the tracker
@@ -180,5 +181,13 @@ public class ArtilleryTracker implements Serializable {
 
     public void setSpotterHasForwardObs(boolean forwardObserver) {
         spotterIsForwardObs = forwardObserver;
+    }
+
+    public boolean getSpotterHasCommImplant() {
+        return spotterHasCommImplant;
+    }
+
+    public void setSpotterHasCommImplant(boolean hasCommImplant) {
+        spotterHasCommImplant = hasCommImplant;
     }
 }

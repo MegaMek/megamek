@@ -209,8 +209,11 @@ public class MekFileParser {
                     case "Tank", "Naval", "Surface", "Hydrofoil" -> new BLKTankFile(bb);
                     case "Infantry" -> new BLKInfantryFile(bb);
                     case "BattleArmor" -> new BLKBattleArmorFile(bb);
-                    case "ProtoMek" -> new BLKProtoMekFile(bb);
-                    case "Mek" -> new BLKMekFile(bb);
+                    // CHECKSTYLE IGNORE ForbiddenWords FOR 4 LINES
+                    // Do not remove <50.0 compatibility handler 'ProtoMech'
+                    case "ProtoMech", "ProtoMek" -> new BLKProtoMekFile(bb);
+                    // Do not remove <50.0 compatibility handler 'Mech'
+                    case "Mek", "Mech" -> new BLKMekFile(bb);
                     case "VTOL" -> new BLKVTOLFile(bb);
                     case "GunEmplacement" -> new BLKGunEmplacementFile(bb);
                     case "SupportTank" -> new BLKSupportTankFile(bb);

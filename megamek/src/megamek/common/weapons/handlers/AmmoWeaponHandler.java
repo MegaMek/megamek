@@ -49,6 +49,7 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.units.IBomber;
 import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
@@ -78,6 +79,13 @@ public class AmmoWeaponHandler extends WeaponHandler {
             return;
         }
 
+        // Skip ammo consumption for spawned rapid-fire attacks.
+        // The parent RapidFireACWeaponHandler already consumed ammo for all shots.
+        if (isSpawnedRapidFireAttack()) {
+            super.useAmmo();
+            return;
+        }
+
         if (ammo.getUsableShotsLeft() <= 0) {
             weaponEntity.loadWeaponWithSameAmmo(weapon);
             ammo = (AmmoMounted) weapon.getLinked();
@@ -89,6 +97,15 @@ public class AmmoWeaponHandler extends WeaponHandler {
         }
 
         super.useAmmo();
+    }
+
+    /**
+     * Checks if this attack was spawned from a rapid-fire AC handler. Spawned attacks use auto-hit and have the
+     * rapid-fire spawn marker.
+     */
+    private boolean isSpawnedRapidFireAttack() {
+        return (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS)
+              && toHit.getDesc().contains(RapidFireACWeaponHandler.RAPID_FIRE_SPAWN_MARKER);
     }
 
     protected void checkAmmo() {

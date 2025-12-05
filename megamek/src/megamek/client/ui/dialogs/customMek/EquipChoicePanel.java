@@ -121,6 +121,8 @@ public class EquipChoicePanel extends JPanel {
     private final JPanel panWeaponAmmoSelector = new JPanel();
     private final ArrayList<RapidFireMGPanel> m_vMGs = new ArrayList<>();
     private final JPanel panRapidFireMGs = new JPanel();
+    private VRTChoicePanel panVRT;
+    private final JPanel panVRTContainer = new JPanel();
     private final ArrayList<MineChoicePanel> m_vMines = new ArrayList<>();
     private final JPanel panMines = new JPanel();
     private final JPanel panBombs = new JPanel();
@@ -286,6 +288,12 @@ public class EquipChoicePanel extends JPanel {
               !(entity instanceof Infantry)) {
             setupRapidFireMGs();
             add(panRapidFireMGs, GBC.eop().anchor(GridBagConstraints.CENTER));
+        }
+
+        // Set up Variable Range Targeting mode selection
+        if (entity.hasVariableRangeTargeting()) {
+            setupVRT();
+            add(panVRTContainer, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
         // set up infantry armor
@@ -740,6 +748,18 @@ public class EquipChoicePanel extends JPanel {
         }
     }
 
+    /**
+     * Sets up the Variable Range Targeting mode selection panel. Only called if entity has the VRT quirk.
+     */
+    private void setupVRT() {
+        panVRT = new VRTChoicePanel(entity);
+        panVRTContainer.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
+              Messages.getString("CustomMekDialog.VRTPanelTitle"),
+              TitledBorder.TOP,
+              TitledBorder.DEFAULT_POSITION));
+        panVRTContainer.add(panVRT);
+    }
+
     private void setupMines() {
         GridBagLayout gbl = new GridBagLayout();
         panMines.setLayout(gbl);
@@ -785,6 +805,7 @@ public class EquipChoicePanel extends JPanel {
         disableAPMEditing();
         disableMEAEditing();
         disableMGSetting();
+        disableVRTSetting();
         disableMineSetting();
         panInfArmor.setEnabled(false);
     }
@@ -810,6 +831,12 @@ public class EquipChoicePanel extends JPanel {
     private void disableMGSetting() {
         for (RapidFireMGPanel mVMG : m_vMGs) {
             mVMG.setEnabled(false);
+        }
+    }
+
+    private void disableVRTSetting() {
+        if (panVRT != null) {
+            panVRT.setEnabled(false);
         }
     }
 
@@ -874,6 +901,10 @@ public class EquipChoicePanel extends JPanel {
         // update MG rapid fire settings
         for (final RapidFireMGPanel rapidfireMGPanel : m_vMGs) {
             rapidfireMGPanel.applyChoice();
+        }
+        // update Variable Range Targeting mode
+        if (panVRT != null) {
+            panVRT.applyChoice();
         }
         // update mines setting
         for (final MineChoicePanel mineChoicePanel : m_vMines) {

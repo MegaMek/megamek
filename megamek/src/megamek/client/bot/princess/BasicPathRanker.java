@@ -821,7 +821,20 @@ public class BasicPathRanker extends PathRanker {
                 }
             }
 
-            expectedDamageTaken += eval.getEstimatedEnemyDamage();
+            // Apply allied damage discount if enabled - when allies can also engage this enemy,
+            // the threat is reduced proportionally
+            double enemyDamage = eval.getEstimatedEnemyDamage();
+            if (getOwner().getBehaviorSettings().isConsiderAlliedDamage()) {
+                int alliesEngaging = countAlliesWhoCanEngage(enemy, path.getFinalCoords());
+                if (alliesEngaging > 0) {
+                    double allyFactor = alliesEngaging + 1.0;  // +1 for self
+                    double originalDamage = enemyDamage;
+                    enemyDamage = enemyDamage / allyFactor;
+                    logger.debug("Allied discount for {}: {} allies engaging, damage {} -> {} (factor {})",
+                          enemy.getDisplayName(), alliesEngaging, originalDamage, enemyDamage, allyFactor);
+                }
+            }
+            expectedDamageTaken += enemyDamage;
         }
 
         // if we're not in the air, we may get hit by friendly artillery
@@ -2058,6 +2071,43 @@ public class BasicPathRanker extends PathRanker {
         }
         logger.trace("Total Hazard = {}", hazard);
         return Math.round(hazard);
+    }
+
+    /**
+     * Count friendly units who can potentially engage the given enemy from the given position. Used for allied damage
+     * discount calculation - when multiple allies can engage an enemy, the threat from that enemy is reduced
+     * proportionally.
+     *
+     * @param enemy         The enemy entity to check engagement range against
+     * @param myFinalCoords The final coordinates of the unit being evaluated (not used for ally checks, but included
+     *                      for potential future enhancements)
+     *
+     * @return The number of allied units (excluding the moving unit) who are in weapon range of the enemy
+     */
+    protected int countAlliesWhoCanEngage(Entity enemy, Coords myFinalCoords) {
+        if (enemy.getPosition() == null) {
+            return 0;
+        }
+
+        int count = 0;
+        List<Entity> friends = getOwner().getFriendEntities();
+
+        for (Entity ally : friends) {
+            // Skip if ally has no position or is off-board
+            if (ally.getPosition() == null || ally.isOffBoard()) {
+                continue;
+            }
+
+            // Check if ally is in weapon range of the enemy
+            int distance = ally.getPosition().distance(enemy.getPosition());
+            int allyMaxRange = getOwner().getMaxWeaponRange(ally, enemy.isAirborne());
+
+            if (distance <= allyMaxRange) {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     /**

@@ -2086,14 +2086,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 // check if it's a valid DFA
                 ToHitData toHit = DfaAttackAction.toHit(game, currentEntity, target, cmd);
                 if (toHit != null && toHit.getValue() != TargetRoll.IMPOSSIBLE) {
-                    // Calculate piloting roll to stay standing after DFA
-                    PilotingRollData pilotRoll = currentlySelectedEntity.getBasePilotingRoll(
-                          EntityMovementType.MOVE_JUMP);
-                    pilotRoll.addModifier(4, Messages.getString("MovementDisplay.DFADialog.dfaModifier"));
-
                     // if yes, ask them if they want to DFA
-                    if (currentlySelectedEntity != null &&
-                          clientgui.doYesNoDialog(Messages.getString("MovementDisplay.DFADialog.title",
+                    if (currentlySelectedEntity != null) {
+                        // Calculate piloting roll to stay standing after DFA
+                        PilotingRollData pilotRoll = currentlySelectedEntity.getBasePilotingRoll(
+                              EntityMovementType.MOVE_JUMP);
+                        pilotRoll.addModifier(4, Messages.getString("MovementDisplay.DFADialog.dfaModifier"));
+
+                        if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.DFADialog.title",
                                       target.getDisplayName()),
                                 Messages.getString("MovementDisplay.DFADialog.message",
                                       toHit.getValueAsString(),
@@ -2106,12 +2106,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                       pilotRoll.getValueAsString(),
                                       Compute.oddsAbove(pilotRoll.getValue()),
                                       pilotRoll.getDesc()))) {
-                        // if they answer yes, DFA the target
-                        cmd.getLastStep().setTarget(target);
-                        ready();
-                    } else {
-                        // else clear movement
-                        clear();
+                            // if they answer yes, DFA the target
+                            cmd.getLastStep().setTarget(target);
+                            ready();
+                        } else {
+                            // else clear movement
+                            clear();
+                        }
                     }
                     return;
                 }

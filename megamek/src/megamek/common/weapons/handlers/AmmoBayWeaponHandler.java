@@ -88,14 +88,14 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
             AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
             if (null == bayWAmmo || bayWAmmo.getUsableShotsLeft() < 1) {
                 // try loading something else
-                attackingEntity.loadWeaponWithSameAmmo(bayW);
+                weaponEntity.loadWeaponWithSameAmmo(bayW);
                 bayWAmmo = bayW.getLinkedAmmo();
             }
             if (!bayW.isBreached()
                   && !bayW.isDestroyed()
                   && !bayW.isJammed()
                   && bayWAmmo != null
-                  && attackingEntity.getTotalAmmoOfType(bayWAmmo.getType()) >= bayW.getCurrentShots()) {
+                  && weaponEntity.getTotalAmmoOfType(bayWAmmo.getType()) >= bayW.getCurrentShots()) {
                 WeaponType bayWType = bayW.getType();
                 // need to cycle through weapons and add av
                 double current_av = 0;
@@ -120,7 +120,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                         if (null == bayWAmmo
                               || bayWAmmo.getUsableShotsLeft() < 1) {
                             // try loading something else
-                            attackingEntity.loadWeaponWithSameAmmo(bayW);
+                            weaponEntity.loadWeaponWithSameAmmo(bayW);
                             bayWAmmo = bayW.getLinkedAmmo();
                         }
                         if (null != bayWAmmo) {

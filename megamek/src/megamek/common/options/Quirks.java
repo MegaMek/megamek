@@ -114,6 +114,8 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, QUIRK_POS_TRAILER_HITCH, false);
         addOption(posQuirk, QUIRK_POS_UBIQUITOUS_IS, false);
         addOption(posQuirk, QUIRK_POS_UBIQUITOUS_CLAN, false);
+        addOption(posQuirk, QUIRK_POS_VAR_RNG_TARG, false);
+        // Legacy Variable Range Targeting quirks - kept for backward compatibility
         addOption(posQuirk, QUIRK_POS_VAR_RNG_TARG_L, false);
         addOption(posQuirk, QUIRK_POS_VAR_RNG_TARG_S, false);
         addOption(posQuirk, QUIRK_POS_VESTIGIAL_HANDS_LA, false);
@@ -200,6 +202,28 @@ public class Quirks extends AbstractOptions {
 
     public static boolean isQuirkLegalFor(IOption quirk, Entity en) {
         String qName = quirk.getName();
+
+        // Variable Range Targeting cannot be combined with Improved Targeting quirks (BMM pg. 86)
+        if (qName.equals(QUIRK_POS_VAR_RNG_TARG) ||
+              qName.equals(QUIRK_POS_VAR_RNG_TARG_L) ||
+              qName.equals(QUIRK_POS_VAR_RNG_TARG_S)) {
+            if (en.hasQuirk(QUIRK_POS_IMP_TARG_S) ||
+                  en.hasQuirk(QUIRK_POS_IMP_TARG_M) ||
+                  en.hasQuirk(QUIRK_POS_IMP_TARG_L)) {
+                return false;
+            }
+        }
+
+        // Improved Targeting cannot be combined with Variable Range Targeting (BMM pg. 86)
+        if (qName.equals(QUIRK_POS_IMP_TARG_S) ||
+              qName.equals(QUIRK_POS_IMP_TARG_M) ||
+              qName.equals(QUIRK_POS_IMP_TARG_L)) {
+            if (en.hasQuirk(QUIRK_POS_VAR_RNG_TARG) ||
+                  en.hasQuirk(QUIRK_POS_VAR_RNG_TARG_L) ||
+                  en.hasQuirk(QUIRK_POS_VAR_RNG_TARG_S)) {
+                return false;
+            }
+        }
 
         if (qName.equals(QUIRK_NEG_GAS_HOG)) {
             return en.hasEngine() &&

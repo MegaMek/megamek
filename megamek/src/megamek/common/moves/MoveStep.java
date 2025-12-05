@@ -582,8 +582,16 @@ public class MoveStep implements Serializable {
                     default -> setElevation(subDepth);
                 }
             }
-            if (climbMode() && (maxElevation >= hex.terrainLevel(Terrains.BRIDGE_ELEV))) {
-                setElevation(Math.max(getElevation(), hex.terrainLevel(Terrains.BRIDGE_ELEV)));
+            // Handle bridge elevation for jumping
+            if (hex.containsTerrain(Terrains.BRIDGE)) {
+                int bridgeElev = hex.terrainLevel(Terrains.BRIDGE_ELEV);
+                if (climbMode() && (maxElevation >= bridgeElev)) {
+                    // Climb mode ON - go onto bridge if reachable
+                    setElevation(Math.max(getElevation(), bridgeElev));
+                } else if (!entity.isElevationValid(getElevation(), hex)) {
+                    // Can't fit under bridge - force onto bridge (TO:AR 115)
+                    setElevation(bridgeElev);
+                }
             }
         } else {
             IBuilding bld = game.getBoard(boardId).getBuildingAt(getPosition());
@@ -2396,7 +2404,7 @@ public class MoveStep implements Serializable {
         }
 
         // do not allow to move onto a bridge if there's no exit in lastPos's
-        // direction, unless jumping
+        // direction, unless jumping or already at/above bridge level
         if (!isFirstStep() &&
               !curPos.equals(lastPos) &&
               climbMode &&
@@ -2405,6 +2413,19 @@ public class MoveStep implements Serializable {
               (movementType != EntityMovementType.MOVE_JUMP) &&
               game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.BRIDGE) &&
               !game.getBoard(boardId).getHex(curPos).containsTerrainExit(Terrains.BRIDGE, curPos.direction(lastPos)) &&
+              (getElevation() < game.getBoard(boardId).getHex(curPos).terrainLevel(Terrains.BRIDGE_ELEV)) &&
+              (getElevation() + entity.getHeight() >=
+                    game.getBoard(boardId).getHex(curPos).terrainLevel(Terrains.BRIDGE_ELEV))) {
+            movementType = EntityMovementType.MOVE_ILLEGAL;
+        }
+
+        // Walking under a bridge: check if entity fits (TO:AR 115)
+        // If entity is under the bridge and can't fit, move is illegal (unless jumping)
+        if (!isFirstStep() &&
+              !curPos.equals(lastPos) &&
+              (movementType != EntityMovementType.MOVE_JUMP) &&
+              game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.BRIDGE) &&
+              (getElevation() < game.getBoard(boardId).getHex(curPos).terrainLevel(Terrains.BRIDGE_ELEV)) &&
               (getElevation() + entity.getHeight() >=
                     game.getBoard(boardId).getHex(curPos).terrainLevel(Terrains.BRIDGE_ELEV))) {
             movementType = EntityMovementType.MOVE_ILLEGAL;
@@ -2998,7 +3019,10 @@ public class MoveStep implements Serializable {
         IBuilding bld = game.getBoard(boardId).getBuildingAt(dest);
 
         final int destAlt;
-        if (bld != null && getEntity().getElevation() == 0 && climbMode) {
+        // For buildings (but NOT bridges), when entering from ground level in climbMode,
+        // use floor elevation. Bridges should use the bridge elevation instead.
+        if (bld != null && getEntity().getElevation() == 0 && climbMode
+              && !destHex.containsTerrain(Terrains.BRIDGE)) {
             destAlt = destHex.floor();
         } else {
             destAlt = elevation + destHex.getLevel();

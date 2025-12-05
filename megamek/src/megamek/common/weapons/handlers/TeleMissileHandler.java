@@ -96,7 +96,7 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
         for (WeaponMounted bayW : weapon.getBayWeapons()) {
             WeaponType bayWType = bayW.getType();
             damage += (int) bayWType.getShortAV();
-            attackingEntity.heatBuildup += bayW.getCurrentHeat();
+            weaponEntity.heatBuildup += bayW.getCurrentHeat();
             missileArmor = bayWType.getMissileArmor();
         }
         return damage;
@@ -117,7 +117,7 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
                 if (null == bayWAmmo
                       || bayWAmmo.getUsableShotsLeft() < 1) {
                     // try loading something else
-                    attackingEntity.loadWeaponWithSameAmmo(bayW);
+                    weaponEntity.loadWeaponWithSameAmmo(bayW);
                     bayWAmmo = bayW.getLinkedAmmo();
                 }
                 if (null != bayWAmmo) {
@@ -135,10 +135,10 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         // just launch the tele-missile
-        gameManager.deployTeleMissile(attackingEntity,
+        gameManager.deployTeleMissile(weaponEntity,
               weaponType,
               getBayAmmoType(),
-              attackingEntity.getEquipmentNum(weapon),
+              weaponEntity.getEquipmentNum(weapon),
               getCapMisMod(), calcBayDamageAndHeat(), missileArmor, vPhaseReport);
 
         return false;

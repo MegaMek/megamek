@@ -248,18 +248,18 @@ public class TeamLoadOutGenerator {
      * Relative weight distribution of various external ordnance choices for non-pirate forces
      */
     private static final Map<String, Integer> bombMapGroundSpread = Map.ofEntries(Map.entry("Normal",
-                castPropertyInt("bombMapGroundSpreadNormal", 6)),
-          Map.entry("Anti-Mek", castPropertyInt("bombMapGroundSpreadAnti-Mek", 3)),
-          Map.entry("Anti-conventional", castPropertyInt("bombMapGroundSpreadAnti-conventional", 2)),
-          Map.entry("Standoff", castPropertyInt("bombMapGroundSpreadStandoff", 1)),
-          Map.entry("Strike", castPropertyInt("bombMapGroundSpreadStrike", 2)));
+                castPropertyInt("Defaults.Bombs.MapGroundSpreadNormal", 6)),
+          Map.entry("Anti-Mek", castPropertyInt("Defaults.Bombs.MapGroundSpreadAnti-Mek", 3)),
+          Map.entry("Anti-conventional", castPropertyInt("Defaults.Bombs.MapGroundSpreadAnti-conventional", 2)),
+          Map.entry("Standoff", castPropertyInt("Defaults.Bombs.MapGroundSpreadStandoff", 1)),
+          Map.entry("Strike", castPropertyInt("Defaults.Bombs.MapGroundSpreadStrike", 2)));
 
     /**
      * Relative weight distribution of various external ordnance choices for pirate forces
      */
     private static final Map<String, Integer> bombMapPirateGroundSpread = Map.ofEntries(Map.entry("Normal",
-                castPropertyInt("bombMapPirateGroundSpreadNormal", 7)),
-          Map.entry("Firestorm", castPropertyInt("bombMapPirateGroundSpreadFirestorm", 3)));
+                castPropertyInt("Defaults.Bombs.MapPirateGroundSpreadNormal", 7)),
+          Map.entry("Firestorm", castPropertyInt("Defaults.Bombs.MapPirateGroundSpreadFirestorm", 3)));
 
     /**
      * Relative weight distribution of general purpose external ordnance choices
@@ -323,20 +323,20 @@ public class TeamLoadOutGenerator {
      * Relative weight distribution of external ordnance choices for pirates. Low tech, high chaos factor.
      */
     private static final BombLoadout pirateBombLoad = new BombLoadout() {{
-        put(BombTypeEnum.HE, castPropertyInt("pirateBombLoad_HE", 7));
-        put(BombTypeEnum.RL, castPropertyInt("pirateBombLoad_RL", 45));
-        put(BombTypeEnum.INFERNO, castPropertyInt("pirateBombLoad_INFERNO", 35));
-        put(BombTypeEnum.CLUSTER, castPropertyInt("pirateBombLoad_CLUSTER", 5));
-        put(BombTypeEnum.FAE_SMALL, castPropertyInt("pirateBombLoad_FAE_SMALL", 6));
-        put(BombTypeEnum.FAE_LARGE, castPropertyInt("pirateBombLoad_FAE_LARGE", 2));
+        put(BombTypeEnum.HE, castPropertyInt("Defaults.Factors.pirateBombLoad_HE", 7));
+        put(BombTypeEnum.RL, castPropertyInt("Defaults.Factors.pirateBombLoad_RL", 45));
+        put(BombTypeEnum.INFERNO, castPropertyInt("Defaults.Factors.pirateBombLoad_INFERNO", 35));
+        put(BombTypeEnum.CLUSTER, castPropertyInt("Defaults.Factors.pirateBombLoad_CLUSTER", 5));
+        put(BombTypeEnum.FAE_SMALL, castPropertyInt("Defaults.Factors.pirateBombLoad_FAE_SMALL", 6));
+        put(BombTypeEnum.FAE_LARGE, castPropertyInt("Defaults.Factors.pirateBombLoad_FAE_LARGE", 2));
     }};
     /**
      * External ordnance choices for pirates to set things on fire
      */
     private static final BombLoadout pirateFirestormBombLoad = new BombLoadout() {{
-        put(BombTypeEnum.INFERNO, castPropertyInt("pirateFirestormBombLoad_INFERNO", 60));
-        put(BombTypeEnum.FAE_SMALL, castPropertyInt("pirateFirestormBombLoad_FAE_SMALL", 30));
-        put(BombTypeEnum.FAE_LARGE, castPropertyInt("pirateFirestormBombLoad_FAE_LARGE", 10));
+        put(BombTypeEnum.INFERNO, castPropertyInt("Defaults.Factors.pirateFirestormBombLoad_INFERNO", 60));
+        put(BombTypeEnum.FAE_SMALL, castPropertyInt("Defaults.Factors.pirateFirestormBombLoad_FAE_SMALL", 30));
+        put(BombTypeEnum.FAE_LARGE, castPropertyInt("Defaults.Factors.pirateFirestormBombLoad_FAE_LARGE", 10));
     }};
 
     /**
@@ -364,9 +364,9 @@ public class TeamLoadOutGenerator {
      * out.
      */
     private static final BombLoadout pirateAirBombLoad = new BombLoadout() {{
-        put(BombTypeEnum.RL, castPropertyInt("pirateAntiBombLoad_RL", 60));
-        put(BombTypeEnum.LAA, castPropertyInt("pirateAntiBombLoad_LAA", 30));
-        put(BombTypeEnum.AAA, castPropertyInt("pirateAntiBombLoad_AAA", 10));
+        put(BombTypeEnum.RL, castPropertyInt("Defaults.Factors.pirateAntiBombLoad_RL", 60));
+        put(BombTypeEnum.LAA, castPropertyInt("Defaults.Factors.pirateAntiBombLoad_LAA", 30));
+        put(BombTypeEnum.AAA, castPropertyInt("Defaults.Factors.pirateAntiBombLoad_AAA", 10));
     }};
 
     // end subregion Bombs
@@ -897,22 +897,22 @@ public class TeamLoadOutGenerator {
             // Drop weight of shot-reducing ammo unless this team significantly outnumbers the enemy
             if (!(reconfigurationParameters.friendlyCount >=
                   reconfigurationParameters.enemyCount *
-                        castPropertyDouble("mtReducingAmmoReduceIfUnderFactor", 2.0))) {
+                        castPropertyDouble("Defaults.Factors.mtReducingAmmoReduceIfUnderFactor", 2.0))) {
                 // Skip munitions that reduce the number of rounds because we need to shoot a lot!
                 munitionWeightCollection.decreaseAmmoReducingMunitions();
             } else if (reconfigurationParameters.friendlyCount >=
                   reconfigurationParameters.enemyCount *
-                        castPropertyDouble("mtReducingAmmoIncreaseIfOverFactor", 3.0)) {
+                        castPropertyDouble("Defaults.Factors.mtReducingAmmoIncreaseIfOverFactor", 3.0)) {
                 munitionWeightCollection.increaseAmmoReducingMunitions();
             }
 
             // Flak: bump for any bombers, or fliers > 1/4th of enemy force
-            if (reconfigurationParameters.enemyBombers > castPropertyDouble("mtFlakMinBombersExceedThreshold", 0.0)) {
+            if (reconfigurationParameters.enemyBombers > castPropertyDouble("Defaults.Factors.mtFlakMinBombersExceedThreshold", 0.0)) {
                 munitionWeightCollection.increaseFlakMunitions();
             }
             if (reconfigurationParameters.enemyFliers >=
                   reconfigurationParameters.enemyCount /
-                        castPropertyDouble("mtFlakEnemyFliersFractionDivisor", 4.0)) {
+                        castPropertyDouble("Defaults.Factors.mtFlakEnemyFliersFractionDivisor", 4.0)) {
                 munitionWeightCollection.increaseFlakMunitions();
             }
             // Decrease if no bombers or fliers at all
@@ -923,13 +923,13 @@ public class TeamLoadOutGenerator {
             // Enemy fast movers make more precise ammo attractive
             if (reconfigurationParameters.enemyFastMovers >=
                   reconfigurationParameters.enemyCount /
-                        castPropertyDouble("mtPrecisionAmmoFastEnemyFractionDivisor", 4.0)) {
+                        castPropertyDouble("Defaults.Factors.mtPrecisionAmmoFastEnemyFractionDivisor", 4.0)) {
                 munitionWeightCollection.increaseAccurateMunitions();
             }
 
             // AP munitions are hard-countered by hardened, reactive, etc. armor
             if (reconfigurationParameters.enemyAdvancedArmorCount >
-                  castPropertyDouble("mtHPAmmoAdvArmorEnemiesExceedThreshold", 0.0) &&
+                  castPropertyDouble("Defaults.Factors.mtHPAmmoAdvArmorEnemiesExceedThreshold", 0.0) &&
                   reconfigurationParameters.enemyAdvancedArmorCount >
                         reconfigurationParameters.enemyReflectiveArmorCount) {
                 munitionWeightCollection.decreaseAPMunitions();
@@ -944,10 +944,10 @@ public class TeamLoadOutGenerator {
             // without infantry targets
             if (reconfigurationParameters.enemyFireproofArmorCount <
                   reconfigurationParameters.enemyCount /
-                        castPropertyDouble("mtFireproofMaxEnemyFractionDivisor", 4.0)) {
+                        castPropertyDouble("Defaults.Factors.mtFireproofMaxEnemyFractionDivisor", 4.0)) {
                 if (reconfigurationParameters.enemyInfantry >=
                       reconfigurationParameters.enemyCount /
-                            castPropertyDouble("mtInfantryEnemyExceedsFractionDivisor", 4.0)) {
+                            castPropertyDouble("Defaults.Factors.mtInfantryEnemyExceedsFractionDivisor", 4.0)) {
                     munitionWeightCollection.increaseHeatMunitions();
                     munitionWeightCollection.increaseAntiInfMunitions();
                 } else {
@@ -955,27 +955,27 @@ public class TeamLoadOutGenerator {
                 }
                 if (reconfigurationParameters.enemyVehicles >=
                       reconfigurationParameters.enemyCount /
-                            castPropertyDouble("mtVeeEnemyExceedsFractionDivisor", 4.0)) {
+                            castPropertyDouble("Defaults.Factors.mtVeeEnemyExceedsFractionDivisor", 4.0)) {
                     munitionWeightCollection.increaseHeatMunitions();
                 }
                 // BAs are proof against some dedicated Anti-Infantry weapons but not heat-generating rounds
                 if (reconfigurationParameters.enemyBattleArmor >
                       reconfigurationParameters.enemyCount /
-                            castPropertyDouble("mtBAEnemyExceedsFractionDivisor", 4.0)) {
+                            castPropertyDouble("Defaults.Factors.mtBAEnemyExceedsFractionDivisor", 4.0)) {
                     munitionWeightCollection.increaseHeatMunitions();
                     munitionWeightCollection.increaseAntiBAMunitions();
                 }
             } else if (reconfigurationParameters.enemyFireproofArmorCount >=
                   reconfigurationParameters.enemyCount /
-                        castPropertyDouble("mtFireproofMaxEnemyFractionDivisor", 4.0)) {
+                        castPropertyDouble("Defaults.Factors.mtFireproofMaxEnemyFractionDivisor", 4.0)) {
                 if (reconfigurationParameters.enemyInfantry >=
                       reconfigurationParameters.enemyCount /
-                            castPropertyDouble("mtInfantryEnemyExceedsFractionDivisor", 4.0)) {
+                            castPropertyDouble("Defaults.Factors.mtInfantryEnemyExceedsFractionDivisor", 4.0)) {
                     munitionWeightCollection.increaseAntiInfMunitions();
                 }
                 if (reconfigurationParameters.enemyBattleArmor >
                       reconfigurationParameters.enemyCount /
-                            castPropertyDouble("mtBAEnemyExceedsFractionDivisor", 4.0)) {
+                            castPropertyDouble("Defaults.Factors.mtBAEnemyExceedsFractionDivisor", 4.0)) {
                     munitionWeightCollection.increaseAntiBAMunitions();
                 }
                 munitionWeightCollection.decreaseHeatMunitions();
@@ -984,14 +984,14 @@ public class TeamLoadOutGenerator {
             // Energy boats run hot; increase heat munitions and heat-seeking specifically
             if (reconfigurationParameters.enemyEnergyBoats >
                   reconfigurationParameters.enemyCount /
-                        castPropertyDouble("mtEnergyBoatEnemyFractionDivisor", 4.0)) {
+                        castPropertyDouble("Defaults.Factors.mtEnergyBoatEnemyFractionDivisor", 4.0)) {
                 munitionWeightCollection.increaseHeatMunitions();
                 munitionWeightCollection.increaseMunitions(new ArrayList<>(List.of("Heat-Seeking")));
             }
 
             // Counter EMC by swapping Seeking in for Guided
             if (reconfigurationParameters.enemyECMCount >
-                  castPropertyDouble("mtSeekingAmmoEnemyECMExceedThreshold", 1.0)) {
+                  castPropertyDouble("Defaults.Factors.mtSeekingAmmoEnemyECMExceedThreshold", 1.0)) {
                 munitionWeightCollection.decreaseGuidedMunitions();
                 munitionWeightCollection.increaseSeekingMunitions();
 
@@ -1000,7 +1000,7 @@ public class TeamLoadOutGenerator {
                 }
             }
             if (reconfigurationParameters.enemyTSMCount >
-                  castPropertyDouble("mtSeekingAmmoEnemyTSMExceedThreshold", 1.0)) {
+                  castPropertyDouble("Defaults.Factors.mtSeekingAmmoEnemyTSMExceedThreshold", 1.0)) {
                 // Seeking
                 munitionWeightCollection.increaseSeekingMunitions();
             }
@@ -1015,14 +1015,14 @@ public class TeamLoadOutGenerator {
         // Section: Friendly capabilities
 
         // Guided munitions are worth exponentially more with guidance and supporting missile units
-        if (reconfigurationParameters.friendlyTAGs >= castPropertyDouble("mtGuidedAmmoFriendlyTAGThreshold", 1.0) ||
+        if (reconfigurationParameters.friendlyTAGs >= castPropertyDouble("Defaults.Factors.mtGuidedAmmoFriendlyTAGThreshold", 1.0) ||
               reconfigurationParameters.friendlyNARCs >=
-                    castPropertyDouble("mtGuidedAmmoFriendlyNARCThreshold", 1.0)) {
+                    castPropertyDouble("Defaults.Factors.mtGuidedAmmoFriendlyNARCThreshold", 1.0)) {
 
             // And worth even more with more guidance around
             if (reconfigurationParameters.friendlyMissileBoats >=
                   reconfigurationParameters.friendlyCount /
-                        castPropertyDouble("mtGuidedAmmoFriendlyMissileBoatFractionDivisor", 3.0)) {
+                        castPropertyDouble("Defaults.Factors.mtGuidedAmmoFriendlyMissileBoatFractionDivisor", 3.0)) {
                 for (long i = 0; i < reconfigurationParameters.friendlyMissileBoats; i++) {
                     munitionWeightCollection.increaseGuidedMunitions();
                 }
@@ -1052,11 +1052,11 @@ public class TeamLoadOutGenerator {
 
         // Downgrade utility munitions unless there are multiple units that could use them; off-board arty in particular
         if (reconfigurationParameters.friendlyOffBoard >
-              castPropertyDouble("mtUtilityAmmoOffBoardUnitsThreshold", 2.0)) {
+              castPropertyDouble("Defaults.Factors.mtUtilityAmmoOffBoardUnitsThreshold", 2.0)) {
             // Only increase utility rounds if we have more off-board units that the other guys
             if (reconfigurationParameters.enemyOffBoard <
                   reconfigurationParameters.friendlyOffBoard /
-                        castPropertyDouble("mtUtilityAmmoFriendlyVsEnemyFractionDivisor", 1.0)) {
+                        castPropertyDouble("Defaults.Factors.mtUtilityAmmoFriendlyVsEnemyFractionDivisor", 1.0)) {
                 munitionWeightCollection.increaseArtilleryUtilityMunitions();
             }
         } else {
@@ -1112,7 +1112,7 @@ public class TeamLoadOutGenerator {
      */
     public static void applyWeightsToMunitionTree(MunitionWeightCollection mwc, MunitionTree mt) {
         // Iterate over every entry in the set of top-weighted munitions for each category
-        HashMap<String, List<String>> topWeights = mwc.getTopN(castPropertyInt("mtTopMunitionsSubsetCount", 8));
+        HashMap<String, List<String>> topWeights = mwc.getTopN(castPropertyInt("Defaults.Factors.mtTopMunitionsSubsetCount", 8));
 
         for (Map.Entry<String, List<String>> e : topWeights.entrySet()) {
             StringBuilder sb = new StringBuilder();
@@ -1166,12 +1166,12 @@ public class TeamLoadOutGenerator {
         if (reconfigurationParameters.binFillPercent == UNSET_FILL_RATIO) {
             if (reconfigurationParameters.isPirate) {
                 reconfigurationParameters.binFillPercent = (float) (Math.min(castPropertyDouble(
-                            "pirateMaxAllowedBinFillRatio",
+                            "Defaults.Factors.pirateMaxAllowedBinFillRatio",
                             1.0),
-                      Math.max(castPropertyDouble("pirateMinAllowedBinFillRatio", 0.2),
-                            Math.random() / castPropertyDouble("pirateRandomRangeDivisor", 4.0) +
+                      Math.max(castPropertyDouble("Defaults.Factors.pirateMinAllowedBinFillRatio", 0.2),
+                            Math.random() / castPropertyDouble("Defaults.Factors.pirateRandomRangeDivisor", 4.0) +
                                   (reconfigurationParameters.friendlyQuality /
-                                        castPropertyDouble("pirateQualityDivisor", 8.0)))));
+                                        castPropertyDouble("Defaults.Factors.pirateQualityDivisor", 8.0)))));
             } else {
                 // If we get this far without setting the ratio, but are not pirates, reset to fill
                 reconfigurationParameters.binFillPercent = 1.0f;
@@ -1741,8 +1741,8 @@ public class TeamLoadOutGenerator {
             } else {
                 BombTypeEnum replacementBomb = airOnly ?
                       BombTypeEnum.RL :
-                      Compute.randomInt(castPropertyInt("bombReplacementIntRange", 2)) <=
-                            castPropertyInt("bombReplacementRLThreshold", 0) ?
+                      Compute.randomInt(castPropertyInt("Defaults.Bombs.ReplacementIntRange", 2)) <=
+                            castPropertyInt("Defaults.Bombs.ReplacementRLThreshold", 0) ?
                             BombTypeEnum.RL :
                             BombTypeEnum.HE;
                 if (workingBombMap.containsKey(replacementBomb)) {
@@ -1827,11 +1827,11 @@ public class TeamLoadOutGenerator {
 
         randomThreshold = switch (quality) {
             case ForceDescriptor.RATING_5, ForceDescriptor.RATING_4 ->
-                  castPropertyInt("bombRandomReplaceRating4PlusThreshold", 5);
-            case ForceDescriptor.RATING_3 -> castPropertyInt("bombRandomReplaceRating3PlusThreshold", 10);
-            case ForceDescriptor.RATING_2 -> castPropertyInt("bombRandomReplaceRating2PlusThreshold", 25);
-            case ForceDescriptor.RATING_1 -> castPropertyInt("bombRandomReplaceRating1PlusThreshold", 40);
-            case ForceDescriptor.RATING_0 -> castPropertyInt("bombRandomReplaceRating0PlusThreshold", 80);
+                  castPropertyInt("Defaults.Bombs.RandomReplaceRating4PlusThreshold", 5);
+            case ForceDescriptor.RATING_3 -> castPropertyInt("Defaults.Bombs.RandomReplaceRating3PlusThreshold", 10);
+            case ForceDescriptor.RATING_2 -> castPropertyInt("Defaults.Bombs.RandomReplaceRating2PlusThreshold", 25);
+            case ForceDescriptor.RATING_1 -> castPropertyInt("Defaults.Bombs.RandomReplaceRating1PlusThreshold", 40);
+            case ForceDescriptor.RATING_0 -> castPropertyInt("Defaults.Bombs.RandomReplaceRating0PlusThreshold", 80);
             default -> throw new IllegalArgumentException("Unrecognized rating value: " + quality);
         };
 
@@ -1843,9 +1843,9 @@ public class TeamLoadOutGenerator {
                     if (airOnly) {
                         bombLoad.addBombs(BombTypeEnum.RL, 1);
                     } else {
-                        BombTypeEnum replacementBomb = Compute.randomInt(castPropertyInt("bombReplacementIntRange", 2))
+                        BombTypeEnum replacementBomb = Compute.randomInt(castPropertyInt("Defaults.Bombs.ReplacementIntRange", 2))
                               <=
-                              castPropertyInt("bombReplacementRLThreshold", 0) ?
+                              castPropertyInt("Defaults.Bombs.ReplacementRLThreshold", 0) ?
                               BombTypeEnum.RL :
                               BombTypeEnum.HE;
                         bombLoad.addBombs(replacementBomb, 1);

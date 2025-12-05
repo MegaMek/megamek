@@ -101,19 +101,23 @@ class MunitionWeightCollection {
     }
 
     // Section: initializing weights
-    private static HashMap<String, Double> initializeWeaponWeights(List<String> wepAL) {
+
+    /**
+     * Iterate over all listed munitions for the Weapon type and set the default weights
+     * @param munitionsList
+     * @return
+     */
+    private static HashMap<String, Double> initializeWeaponWeights(List<String> munitionsList) {
         HashMap<String, Double> weights = new HashMap<>();
-        for (String name : wepAL) {
-            weights.put(name, getPropDouble("defaultWeaponWeight", 1.0));
+        for (String name : munitionsList) {
+            weights.put(name, getPropDouble("Defaults.Munitions.Weight", 1.0));
         }
-        // Every weight list should have a Standard set as weight 2.0
-        weights.put("Standard", getPropDouble("defaultStandardMunitionWeight", 2.0));
         return weights;
     }
 
-    private static HashMap<String, Double> initializeMissileWeaponWeights(List<String> wepAL) {
+    private static HashMap<String, Double> initializeMissileWeaponWeights(List<String> munitionsList) {
         HashMap<String, Double> weights = new HashMap<>();
-        for (String name : wepAL) {
+        for (String name : munitionsList) {
             weights.put(name, getPropDouble("defaultWeaponWeight", 1.0));
         }
         // Every missile weight list should have a Standard set as weight 2.0
@@ -126,13 +130,13 @@ class MunitionWeightCollection {
         return weights;
     }
 
-    private static HashMap<String, Double> initializeATMWeights(List<String> wepAL) {
+    private static HashMap<String, Double> initializeATMWeights(List<String> munitionsList) {
         HashMap<String, Double> weights = new HashMap<>();
-        for (String name : wepAL) {
-            weights.put(name, getPropDouble("defaultATMMunitionWeight", 2.0));
+        for (String name : munitionsList) {
+            weights.put(name, getPropDouble("Defaults.Munitions.defaultATMMunitionWeight", 2.0));
         }
         // ATM Standard ammo is weighted lower due to overlap with HE and ER
-        weights.put("Standard", getPropDouble("defaultATMStandardWeight", 1.0));
+        weights.put("Standard", getPropDouble("Defaults.Munitions.defaultATMStandardWeight", 1.0));
         return weights;
     }
 
@@ -141,15 +145,15 @@ class MunitionWeightCollection {
     public void increaseMunitions(List<String> munitions) {
         mapTypeToWeights.forEach((key, value) -> modifyMatchingWeights(value,
               munitions,
-              getPropDouble("increaseWeightFactor", 2.0),
-              getPropDouble("increaseWeightIncrement", 1.0)));
+              getPropDouble("Defaults.Factors.increaseWeightFactor", 2.0),
+              getPropDouble("Defaults.Factors.increaseWeightIncrement", 1.0)));
     }
 
     public void decreaseMunitions(List<String> munitions) {
         mapTypeToWeights.forEach((key, value) -> modifyMatchingWeights(value,
               munitions,
-              getPropDouble("decreaseWeightFactor", 0.5),
-              getPropDouble("decreaseWeightDecrement", 0.0)));
+              getPropDouble("Defaults.Factors.decreaseWeightFactor", 0.5),
+              getPropDouble("Defaults.Factors.decreaseWeightDecrement", 0.0)));
     }
 
     public void zeroMunitionsWeight(List<String> munitions) {
@@ -223,15 +227,15 @@ class MunitionWeightCollection {
     public void increaseArtilleryUtilityMunitions() {
         modifyMatchingWeights(mapTypeToWeights.get("Artillery"),
               TeamLoadOutGenerator.UTILITY_MUNITIONS,
-              getPropDouble("increaseWeightFactor", 2.0),
-              getPropDouble("increaseWeightDecrement", 1.0));
+              getPropDouble("Defaults.Factors.increaseWeightFactor", 2.0),
+              getPropDouble("Defaults.Factors.increaseWeightDecrement", 1.0));
     }
 
     public void decreaseArtilleryUtilityMunitions() {
         modifyMatchingWeights(mapTypeToWeights.get("Artillery"),
               TeamLoadOutGenerator.UTILITY_MUNITIONS,
-              getPropDouble("decreaseWeightFactor", 0.5),
-              getPropDouble("decreaseWeightDecrement", 0.0));
+              getPropDouble("Defaults.Factors.decreaseWeightFactor", 0.5),
+              getPropDouble("Defaults.Factors.decreaseWeightDecrement", 0.0));
     }
 
     public void increaseGuidedMunitions() {

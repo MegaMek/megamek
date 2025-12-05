@@ -18,43 +18,272 @@ Defaults:
   Munitions:
     # Default weights of all munitions; increase or decrease to change relative weights prior to
     # unit- and map-related autoconfiguration.
-    Weight: 1.0
-    Dead-Fire:
-      IS: 2.0
-      Clan: 1.0
-    Inferno:
-      IS: 1.0
-      Clan: 0.5
-    Artemis:
-      # Never weight Artemis munitions above 0; they are assigned to Artemis-compatible launchers automatically
-      IS: -1.0
-      Clan: -1.0
-    ATM:
+    Weight: &DefaultWeight 1.0
+    LRM:
+      Dead-Fire:
+        IS: 2.0
+        Clan: *DefaultWeight
       Standard:
+        IS: 2.0
         Clan: 2.0
-      Extended Range:
-        Clan: 2.0
-      High Explosive:
-        Clan: 2.0
-    iATM:
+      Swarm-I:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Swarm:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Heat-Seeking:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Semi-guided:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Artemis-capable:
+        # Never weight Artemis munitions above 0; they are assigned to Artemis-compatible launchers automatically
+        IS: &NegativeWeight -1.0
+        Clan: *NegativeWeight
+      Narc-capable:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Follow The Leader:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Fragmentation:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Thunder:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Thunder-Active:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Thunder-Augmented:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Thunder-Vibrabomb:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Thunder-Inferno:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Anti-TSM:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Listen-Kill:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Smoke:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Mine Clearance:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Anti-Radiation:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+
+    SRM:
+      Dead-Fire:
+        IS: 2.0
+        Clan: *DefaultWeight
       Standard:
+        IS: 2.0
         Clan: 2.0
-      Extended Range:
+      Tandem-Charge:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Inferno:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Heat-Seeking:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Artemis-capable:
+        # Never weight Artemis munitions above 0; they are assigned to Artemis-compatible launchers automatically
+        IS: *NegativeWeight
+        Clan: *NegativeWeight
+      Narc-capable:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Fragmentation:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Acid:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Anti-TSM:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Listen-Kill:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Mine Clearance:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Smoke:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Anti-Radiation:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+
+    AC:
+      Precision:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Standard:
+        IS: 2.0
         Clan: 2.0
-      High Explosive:
+      Armor-Piercing:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Caseless:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Flak:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Tracer:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Flechette:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Armor-Piercing Playtest:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Precision Playtest:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+
+    Arrow:
+      Fuel-Air:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Standard:
+        IS: 2.0
+        Clan: 2.0
+      ADA:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Cluster:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Inferno-IV:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Homing:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Thunder:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Thunder Vibrabomb-IV:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Illumination:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Smoke:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Laser Inhibiting:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Davy Crockett-M:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+
+    Artillery:
+      Fuel-Air:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Standard:
+        IS: 2.0
+        Clan: 2.0
+      Cluster:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Copperhead:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      FASCAM:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Flechette:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Illumination:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Smoke:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Davy Crockett-M:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+
+    Artillery Cannon:
+      Fuel-Air:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Standard:
+        IS: 2.0
         Clan: 2.0
 
-    defaultATMMunitionWeight: 2.0
-    defaultATMStandardWeight: 1.0
+    ATM:
+      Standard:
+        Clan: 1.0
+      ER:
+        Clan: 2.0
+      HE:
+        Clan: 2.0
+
+    iATM:
+      Standard:
+        Clan: 1.0
+      ER:
+        Clan: 2.0
+      HE:
+        Clan: 2.0
+
+    Mek Mortar:
+      Standard:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Semi-Guided:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Anti-personnel:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Airburst:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Flare:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Smoke:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+
+    Narc:
+      Narc Explosive:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+      Standard:
+        IS: *DefaultWeight
+        Clan: *DefaultWeight
+
   Bombs:
     # These values control the loadout spread, types, and percentages of various bomb roles and munition types
-    bombMapGroundSpreadNormal: 6
-    bombMapGroundSpreadAnti-Mek: 3
-    bombMapGroundSpreadAnti-conventional: 2
-    bombMapGroundSpreadStandoff: 1
-    bombMapGroundSpreadStrike: 2
-    bombMapPirateGroundSpreadNormal: 7
-    bombMapPirateGroundSpreadFirestorm: 3
+    MapGroundSpreadNormal: 6
+    MapGroundSpreadAnti-Mek: 3
+    MapGroundSpreadAnti-conventional: 2
+    MapGroundSpreadStandoff: 1
+    MapGroundSpreadStrike: 2
+    MapPirateGroundSpreadNormal: 7
+    MapPirateGroundSpreadFirestorm: 3
     normalBombLoad_HE: 40
     normalBombLoad_LG: 5
     normalBombLoad_CLUSTER: 30
@@ -113,15 +342,15 @@ Defaults:
     fighterCAPRandomPercentageRange: 100
     fighterCAPAntiShipLoadOutRandomPercentageMax: 20
     # If a munition must be replaced, range and threshold of RL vs HE
-    bombReplacementIntRange: 2
-    bombReplacementRLThreshold: 0
+    ReplacementIntRange: 2
+    ReplacementRLThreshold: 0
     maxBombApplicationLoopCount: 10
     maxBombOrdnanceWeightPercentThreshold: 100
-    bombRandomReplaceRating4PlusThreshold: 5
-    bombRandomReplaceRating3PlusThreshold: 10
-    bombRandomReplaceRating2PlusThreshold: 25
-    bombRandomReplaceRating1PlusThreshold: 40
-    bombRandomReplaceRating0PlusThreshold: 80
+    RandomReplaceRating4PlusThreshold: 5
+    RandomReplaceRating3PlusThreshold: 10
+    RandomReplaceRating2PlusThreshold: 25
+    RandomReplaceRating1PlusThreshold: 40
+    RandomReplaceRating0PlusThreshold: 80
   Factors:
     # These values adjust how munition categories are valued by various triggers and are used by the MunitionTree class
     #

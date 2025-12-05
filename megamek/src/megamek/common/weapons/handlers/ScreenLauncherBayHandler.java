@@ -87,9 +87,7 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
         }
 
         // Calculate attack value (damage) - must be done before applying damage
-        // Screen Launcher damage is in capital scale (15 capital = 150 standard)
-        // Multiply by 10 to convert to standard scale for damage application
-        attackValue = calcAttackValue() * 10;
+        attackValue = calcAttackValue();
 
         // same as ScreenLauncher handler, except run multiple times depending
         // on
@@ -149,19 +147,16 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
                     hexToHit.setHitTable(ToHitData.HIT_NORMAL);
 
                     if (entity.isLargeCraft()) {
-                        // Large craft (500+ tons): single hit, use capital scale (no x10 conversion)
-                        int capitalDamage = attackValue / 10;
+                        // Large craft (500+ tons): single hit
                         HitData hit = entity.rollHitLocation(hexToHit.getHitTable(), ToHitData.SIDE_FRONT);
                         hit.setCapital(false);
-                        vPhaseReport.addAll(gameManager.damageEntity(entity, hit, capitalDamage));
+                        vPhaseReport.addAll(gameManager.damageEntity(entity, hit, attackValue));
                     } else {
                         // Individual craft: 5-point clusters per official ruling
                         // See: https://battletech.com/forums/index.php?topic=77239
-                        // Cluster size is 50 in standard scale (becomes 5 after capital conversion)
-                        int clusterSize = 50;
                         int remainingDamage = attackValue;
                         while (remainingDamage > 0) {
-                            int clusterDamage = Math.min(clusterSize, remainingDamage);
+                            int clusterDamage = Math.min(5, remainingDamage);
                             HitData hit = entity.rollHitLocation(hexToHit.getHitTable(), ToHitData.SIDE_FRONT);
                             hit.setCapital(false);
                             vPhaseReport.addAll(gameManager.damageEntity(entity, hit, clusterDamage));

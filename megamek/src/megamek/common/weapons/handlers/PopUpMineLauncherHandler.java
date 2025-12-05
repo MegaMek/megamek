@@ -47,8 +47,8 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.common.weapons.DamageType;
@@ -113,7 +113,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
      */
     @Override
     protected void handleEntityDamage(Entity entityTarget,
-          Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+          Vector<Report> vPhaseReport, IBuilding bldg, int hits, int nCluster,
           int bldgAbsorbs) {
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
               toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
@@ -145,7 +145,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
                         hit,
                         damage,
                         false,
-                        attackingEntity.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER
+                        weaponEntity.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER
                               : damageType,
                         false, false, throughFront,
                         underWater);
@@ -175,7 +175,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
 
         // do we need to revert to single shot?
         if (nShots > 1) {
-            int nAvail = attackingEntity.getTotalAmmoOfType(ammo.getType());
+            int nAvail = weaponEntity.getTotalAmmoOfType(ammo.getType());
             while (nAvail < nShots) {
                 nShots--;
             }
@@ -184,7 +184,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
         // use up ammo
         for (int i = 0; i < nShots; i++) {
             if (ammo.getUsableShotsLeft() <= 0) {
-                attackingEntity.loadWeaponWithSameAmmo(weapon);
+                weaponEntity.loadWeaponWithSameAmmo(weapon);
                 ammo = (AmmoMounted) weapon.getLinked();
             }
             ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);

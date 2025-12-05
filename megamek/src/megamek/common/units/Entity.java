@@ -34,6 +34,8 @@
 
 package megamek.common.units;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
 import java.awt.Image;
 import java.io.Serial;
 import java.util.*;
@@ -147,8 +149,6 @@ import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
 
-import static megamek.common.bays.Bay.UNSET_BAY;
-
 /**
  * Entity is a master class for basically anything on the board except terrain.
  */
@@ -240,6 +240,8 @@ public abstract class Entity extends TurnOrdered
 
     public static final int MAX_C3_NODES = 12;
     public static final int MAX_C3i_NODES = 6;
+    public static final int MAX_NOVA_CEWS_NODES = 3;
+    public static final String C3_NETWORK_ID_SEPARATOR = ".";
 
     // PLAYTEST3 isC3ecmAffected
     protected boolean isC3ecmAffected = false;
@@ -509,6 +511,17 @@ public abstract class Entity extends TurnOrdered
     private String c3MasterIsUUID = null;
     private final String[] c3iUUIDs = new String[MAX_C3i_NODES];
     private final String[] NC3UUIDs = new String[MAX_C3i_NODES];
+
+    /**
+     * Current Variable Range Targeting mode (BMM pg. 86). Determines whether unit gets bonus at short range (SHORT
+     * mode) or long range (LONG mode).
+     */
+    private VariableRangeTargetingMode variableRangeTargetingMode = VariableRangeTargetingMode.LONG;
+
+    /**
+     * Pending Variable Range Targeting mode to be applied at start of next round. null means no change pending.
+     */
+    private VariableRangeTargetingMode pendingVariableRangeTargetingMode = null;
 
     protected int structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
     protected int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
@@ -1128,7 +1141,7 @@ public abstract class Entity extends TurnOrdered
         this.game = game;
         restore();
         // Make sure the owner is set.
-        if (null == owner) {
+        if (game != null && owner == null) {
             if (Entity.NONE == ownerId) {
                 throw new IllegalStateException("Entity doesn't know its owner's ID.");
             }
@@ -1139,10 +1152,10 @@ public abstract class Entity extends TurnOrdered
                 setOwner(player);
             }
         }
-        // also set game for our transports
-        // they need it to return correct entities, because they store just the
-        // IDs
+        // also set game for our transports they need it to return correct entities, because they store just the IDs.
+        // Also let's set the entity for those transporters that use one.
         for (Transporter transport : getTransports()) {
+            transport.setEntity(this);
             transport.setGame(game);
         }
     }
@@ -2019,7 +2032,10 @@ public abstract class Entity extends TurnOrdered
      * @return true if unit is permanently immobile
      */
     public boolean isPermanentlyImmobilized(boolean checkCrew) {
-        if ((checkCrew || defaultCrewType().equals(CrewType.NONE)) && ((getCrew() == null) || getCrew().isDead())) {
+        if (isUncrewed() && isNotCrewedEntityType()) {
+            return false;
+        }
+        if (checkCrew && ((isUncrewed()) || getCrew().isDead())) {
             return true;
         } else if ((this instanceof Mek mek) &&
               (mek.getOriginalMechanicalJumpBoosterMP() > 0) &&
@@ -2035,6 +2051,22 @@ public abstract class Entity extends TurnOrdered
         }
 
         return false;
+    }
+
+    /**
+     * @return true if the unit is always uncrewed, like a Handheld Weapon or unarmed, unpowered trailer. Should not
+     *       return true for remote drone OS.
+     */
+    public boolean isNotCrewedEntityType() {
+        return defaultCrewType().equals(CrewType.NONE);
+    }
+
+    /**
+     * @return true if the entity's crew is null or the entity is uncrewed, like a Handheld Weapon or unarmed, unpowered
+     *       trailer.
+     */
+    public boolean isUncrewed() {
+        return getCrew() == null || (getCrew().isCrewTypeNone());
     }
 
     public boolean isCharging() {
@@ -2220,7 +2252,7 @@ public abstract class Entity extends TurnOrdered
         if (next == null) {
             return retVal;
         }
-        if (isAero()) {
+        if (isAero() && isAirborne()) {
             return retVal;
         }
 
@@ -2626,6 +2658,18 @@ public abstract class Entity extends TurnOrdered
             }
             // can move on the ground unless its underwater
             if (assumedAlt == hex.floor()) {
+                // Check bridge clearance - can only be at floor if entity fits under bridge
+                // TO:AR 115: "a unit may enter a bridge hex and be considered underneath
+                // the bridge, provided the level of the underlying hex plus the height
+                // of the unit is equal to or less than the level of the bridge"
+                if (hex.containsTerrain(Terrains.BRIDGE)) {
+                    int bridgeElev = hex.terrainLevel(Terrains.BRIDGE_ELEV);
+                    // Entity fits under if: elevation + height + 1 <= bridge elevation
+                    // (matches VTOL check logic at lines 2599-2602)
+                    if (assumedElevation + height() + 1 > bridgeElev) {
+                        return false;  // Can't fit under bridge, floor is invalid
+                    }
+                }
                 return true;
             }
 
@@ -2998,8 +3042,9 @@ public abstract class Entity extends TurnOrdered
     /**
      * Returns true if the entity can pick up ground objects
      */
+    @Override
     public boolean canPickupGroundObject() {
-        return false;
+        return getTransports().stream().anyMatch(Transporter::canPickupGroundObject);
     }
 
     /**
@@ -3033,8 +3078,17 @@ public abstract class Entity extends TurnOrdered
               isHullDown())) {
             return false;
         }
+        boolean canPickupWithArms = carryable.getTonnage() <= maxGroundObjectTonnage();
+        boolean canPickupWithLiftHoist = false;
 
-        return carryable.getTonnage() <= maxGroundObjectTonnage();
+        for (Transporter transporter : getTransports()) {
+            if (transporter instanceof LiftHoist liftHoist) {
+                canPickupWithLiftHoist = liftHoist.canLoadCarryable(carryable);
+                break;
+            }
+        }
+
+        return canPickupWithArms || canPickupWithLiftHoist;
     }
 
     /**
@@ -3051,7 +3105,7 @@ public abstract class Entity extends TurnOrdered
             for (Integer defaultLocation : getDefaultPickupLocations()) {
                 carriedObjects.put(defaultLocation, carryable);
             }
-        } else {
+        } else if (location < locations()) {
             carriedObjects.put(location, carryable);
         }
         endOfTurnCargoInteraction = true;
@@ -3132,6 +3186,76 @@ public abstract class Entity extends TurnOrdered
      */
     public List<Integer> getValidHalfWeightPickupLocations(ICarryable cargo) {
         return List.of(LOC_NONE);
+    }
+
+    /**
+     * Get a map of location names / transporter names and their location / index that could be used to transport the
+     * provided cargo.
+     *
+     * @param cargo {@link ICarryable} carryable object that needs to be picked up
+     *
+     * @return Map where the key is the {@link String} name of the location or transporter, and the value is an
+     *       {@link Integer} that is either the location on an entity, or the index of the transporter from the list of
+     *       the entity's transports from {@link Entity#getTransports()}.
+     */
+    // FIXME #7640: This should only return a list of transports once we are able to carry an object in multiple
+    //  transports & the MekArms transporter is split into each arm, eliminating the need for the legacy location to
+    //  be used.
+    public Map<String, Integer> getPickupLocationMap(ICarryable cargo) {
+        // reverse lookup: location name to location ID - we're going to wind up with a name chosen but need to
+        // send the ID in the move path.
+        Map<String, Integer> locationMap = new HashMap<>();
+
+        List<Integer> validHalfWeightPickupLocations = getValidHalfWeightPickupLocations(cargo);
+        if (validHalfWeightPickupLocations != null && !validHalfWeightPickupLocations.isEmpty()) {
+            for (int location : validHalfWeightPickupLocations) {
+                locationMap.put(getLocationName(location), location);
+            }
+        }
+        for (Transporter transporter : getTransports()) {
+            if (transporter instanceof ExternalCargo externalCargo && cargo instanceof Entity cargoEntity) {
+                if (externalCargo.canLoad(cargoEntity)) {
+                    // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly
+                    //  load into that transporter.
+                    locationMap.put(transporter.getType() + " " + getTransports().indexOf(transporter),
+                          Integer.MAX_VALUE - getTransports().indexOf(transporter));
+
+                }
+            }
+        }
+
+        return locationMap;
+    }
+
+    /**
+     * Get a map of location names / transporter names and their location / index that have cargo that can be dropped.
+     *
+     * @return Map where the key is the {@link String} name of the location or transporter, and the value is an
+     *       {@link Integer} that is either the location on an entity, or the index of the transporter from the list of
+     *       the entity's transports from {@link Entity#getTransports()}.
+     */
+    // FIXME #7640: This should only return a list of transports once we are able to carry an object in multiple transports
+    //  & the MekArms transporter is split into each arm, eliminating the need for the legacy location to be used.
+    public Map<String, Integer> getDropCargoLocationMap() {
+        // reverse lookup: location name to location ID - we're going to wind up with a name chosen but need to
+        // send the ID in the move path.
+        Map<String, Integer> locationMap = new HashMap<>();
+
+        for (int location : getCarriedObjects().keySet()) {
+            locationMap.put(getLocationName(location), location);
+        }
+        for (Transporter transporter : getTransports()) {
+            if (transporter instanceof ExternalCargo externalCargo
+                  && !externalCargo.getCarryables().isEmpty()) {
+                // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly load into
+                //  that transporter.
+                locationMap.put(transporter.getType() + " " + externalCargo.getCarryables().get(0).toString(),
+                      Integer.MAX_VALUE - getTransports().indexOf(transporter));
+
+            }
+        }
+
+        return locationMap;
     }
 
     /**
@@ -6133,7 +6257,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return True if this unit is not off board nor shutdown and has a Nova CEWS that is not offline.
+     * @return True if this unit has an active Nova CEWS that can communicate. Returns false if the unit is shutdown,
+     *       off board, or the Nova CEWS is inoperable/offline.
      */
     public boolean hasActiveNovaCEWS() {
         if (isShutDown() || isOffBoard()) {
@@ -6141,15 +6266,18 @@ public abstract class Entity extends TurnOrdered
         } else {
             return getMisc().stream()
                   .filter(Mounted::isOperable)
-                  .filter(m -> !m.curMode().equals("Off"))
                   .anyMatch(m -> m.getType().hasFlag(MiscType.F_NOVA));
         }
     }
 
     /**
-     * @return True if this unit is not off board nor shutdown and has a Nova CEWS that is not offline.
+     * @return True if this unit has a Nova CEWS that can network (not destroyed/breached, not shutdown, not offboard).
+     *       Does NOT check ECM mode - networking works regardless of Off/ECM mode setting.
      */
     public boolean hasNovaCEWS() {
+        if (isShutDown() || isOffBoard()) {
+            return false;
+        }
         return getMisc().stream().filter(Mounted::isOperable).anyMatch(m -> m.getType().hasFlag(MiscType.F_NOVA));
     }
 
@@ -6209,29 +6337,40 @@ public abstract class Entity extends TurnOrdered
     public @Nullable String getC3NetId() {
         if (c3NetIdString == null) {
             if (hasC3()) {
-                c3NetIdString = "C3." + getId();
+                c3NetIdString = "C3" + C3_NETWORK_ID_SEPARATOR + getId();
             } else if (hasC3i()) {
-                c3NetIdString = "C3i." + getId();
+                c3NetIdString = "C3i" + C3_NETWORK_ID_SEPARATOR + getId();
             } else if (hasActiveNovaCEWS()) {
-                c3NetIdString = "C3Nova." + getId();
+                c3NetIdString = "C3Nova" + C3_NETWORK_ID_SEPARATOR + getId();
             } else if (hasNavalC3()) {
-                c3NetIdString = "NC3." + getId();
+                c3NetIdString = "NC3" + C3_NETWORK_ID_SEPARATOR + getId();
             }
         }
         return c3NetIdString;
     }
 
     public String getOriginalNovaC3NetId() {
-        return "C3Nova." + getId();
+        return "C3Nova" + C3_NETWORK_ID_SEPARATOR + getId();
     }
 
     /**
-     * Switches the C3 network ID to the new network ID.
+     * Applies pending Nova CEWS network ID change at the start of a new round. Clears the pending change after applying
+     * it. Always clears the Nova CEWS UUID array when network changes to prevent stale UUIDs from causing unintended
+     * network connections during wireC3(). Note: Nova CEWS shares UUID array infrastructure with Naval C3 (NC3).
      */
     public void newRoundNovaNetSwitch() {
-        if (hasNovaCEWS()) {
+        if (hasNovaCEWS() && (newC3NetIdString != null)) {
             // FIXME: no check for network limit of 3 units
             c3NetIdString = newC3NetIdString;
+            newC3NetIdString = null; // Clear pending change after applying
+
+            // Always clear Nova CEWS UUID array when network changes
+            // This prevents wireC3() from finding stale partner UUIDs and incorrectly linking entities
+            // wireC3() will rebuild the UUID array based on current network state
+            // Note: Nova CEWS shares UUID array infrastructure with Naval C3 (NC3)
+            for (int i = 0; i < MAX_C3i_NODES; i++) {
+                setNC3NextUUIDAsString(i, null);
+            }
         }
     }
 
@@ -6248,14 +6387,87 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return C3 network id that will be switched to on the next turn.
+     * @return C3 network id that will be switched to on the next turn, or null if no change is pending.
      */
     public String getNewRoundNovaNetworkString() {
-        if ((newC3NetIdString == null) || newC3NetIdString.isEmpty()) {
-            newC3NetIdString = getOriginalNovaC3NetId();
-        }
+        // Returns null when no change is pending (simple return avoids side effects - see commit 8d2cd0d011)
         return newC3NetIdString;
     }
+
+    //region Variable Range Targeting (BMM pg. 86)
+
+    /**
+     * Checks if this entity has the Variable Range Targeting quirk. Supports both the new unified quirk and legacy
+     * quirks for backward compatibility.
+     *
+     * @return true if this entity has Variable Range Targeting capability
+     */
+    public boolean hasVariableRangeTargeting() {
+        return hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG) ||
+              hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L) ||
+              hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S);
+    }
+
+    /**
+     * Returns the current Variable Range Targeting mode. For legacy quirks, the mode is determined by which quirk is
+     * set.
+     *
+     * @return the current VariableRangeTargetingMode
+     */
+    public VariableRangeTargetingMode getVariableRangeTargetingMode() {
+        // Legacy quirk support: if using old SHORT quirk, return SHORT mode
+        if (hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S) &&
+              !hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG)) {
+            return VariableRangeTargetingMode.SHORT;
+        }
+        // Handle null from old save files that don't have this field
+        if (variableRangeTargetingMode == null) {
+            return VariableRangeTargetingMode.LONG;
+        }
+        return variableRangeTargetingMode;
+    }
+
+    /**
+     * Sets the current Variable Range Targeting mode. Only applies to units with the new unified Variable Range
+     * Targeting quirk.
+     *
+     * @param mode the new VariableRangeTargetingMode
+     */
+    public void setVariableRangeTargetingMode(VariableRangeTargetingMode mode) {
+        if (mode != null) {
+            variableRangeTargetingMode = mode;
+        }
+    }
+
+    /**
+     * Returns the pending Variable Range Targeting mode to be applied next round.
+     *
+     * @return the pending mode, or null if no change is pending
+     */
+    public VariableRangeTargetingMode getPendingVariableRangeTargetingMode() {
+        return pendingVariableRangeTargetingMode;
+    }
+
+    /**
+     * Sets the pending Variable Range Targeting mode to be applied at the start of the next round.
+     *
+     * @param mode the mode to apply next round, or null to cancel pending change
+     */
+    public void setPendingVariableRangeTargetingMode(VariableRangeTargetingMode mode) {
+        pendingVariableRangeTargetingMode = mode;
+    }
+
+    /**
+     * Applies pending Variable Range Targeting mode change at the start of a new round. Called from newRound().
+     */
+    public void newRoundVariableRangeSwitch() {
+        if (hasVariableRangeTargeting() && (pendingVariableRangeTargetingMode != null)) {
+            variableRangeTargetingMode = pendingVariableRangeTargetingMode;
+            pendingVariableRangeTargetingMode = null;
+        }
+    }
+
+    //endregion Variable Range Targeting
 
     public void setC3NetId(Entity e) {
         if ((e == null) || isEnemyOf(e)) {
@@ -6266,11 +6478,11 @@ public abstract class Entity extends TurnOrdered
 
     public void setC3NetIdSelf() {
         if (hasActiveNovaCEWS()) {
-            c3NetIdString = "C3Nova." + getId();
+            c3NetIdString = "C3Nova" + C3_NETWORK_ID_SEPARATOR + getId();
         } else if (hasNavalC3()) {
-            c3NetIdString = "NC3." + getId();
+            c3NetIdString = "NC3" + C3_NETWORK_ID_SEPARATOR + getId();
         } else {
-            c3NetIdString = "C3i." + getId();
+            c3NetIdString = "C3i" + C3_NETWORK_ID_SEPARATOR + getId();
         }
     }
 
@@ -6372,7 +6584,7 @@ public abstract class Entity extends TurnOrdered
                 }
             }
         } else if (hasActiveNovaCEWS()) {
-            nodes = 2;
+            nodes = MAX_NOVA_CEWS_NODES - 1;
             if (game != null) {
                 for (Entity e : game.getEntitiesVector()) {
                     if (!equals(e) && onSameC3NetworkAs(e)) {
@@ -6550,11 +6762,11 @@ public abstract class Entity extends TurnOrdered
             c3Master = entityId;
         }
         if (hasC3() && (entityId == NONE)) {
-            c3NetIdString = "C3." + id;
+            c3NetIdString = "C3" + C3_NETWORK_ID_SEPARATOR + id;
         } else if (hasC3i() && (entityId == NONE)) {
-            c3NetIdString = "C3i." + id;
+            c3NetIdString = "C3i" + C3_NETWORK_ID_SEPARATOR + id;
         } else if (hasNavalC3() && (entityId == NONE)) {
-            c3NetIdString = "NC3." + id;
+            c3NetIdString = "NC3" + C3_NETWORK_ID_SEPARATOR + id;
         } else if (hasC3() || hasC3i() || hasNavalC3()) {
             c3NetIdString = Objects.requireNonNull(game.getEntity(entityId)).getC3NetId();
         }
@@ -6765,6 +6977,7 @@ public abstract class Entity extends TurnOrdered
         }
 
         newRoundNovaNetSwitch();
+        newRoundVariableRangeSwitch();
         doNewRoundIMP();
 
         // reset hexes passed through
@@ -8196,10 +8409,10 @@ public abstract class Entity extends TurnOrdered
         }
 
         // check for movement inside a hangar
-        Building curBldg = board.getBuildingAt(curPos);
+        IBuilding curBldg = board.getBuildingAt(curPos);
         if ((null != curBldg) &&
               curBldg.isIn(prevPos) &&
-              (curBldg.getBldgClass() == Building.HANGAR) &&
+              (curBldg.getBldgClass() == IBuilding.HANGAR) &&
               (curHex.terrainLevel(Terrains.BLDG_ELEV) > height()) &&
               (step.getElevation() < curHex.terrainLevel(Terrains.BLDG_ELEV))) {
             return 0;
@@ -8229,7 +8442,7 @@ public abstract class Entity extends TurnOrdered
 
         // check to see if it's a wall
         if (rv > 1) {
-            Building bldgEntered;
+            IBuilding bldgEntered;
             bldgEntered = board.getBuildingAt(curPos);
             if (bldgEntered.getType() == BuildingType.WALL) {
                 return 4;
@@ -8258,7 +8471,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Calculates and returns the roll for an entity moving in buildings.
      */
-    public PilotingRollData rollMovementInBuilding(Building bldg, int distance, String why,
+    public PilotingRollData rollMovementInBuilding(IBuilding bldg, int distance, String why,
           EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
@@ -8284,12 +8497,12 @@ public abstract class Entity extends TurnOrdered
                 desc = "Light";
                 break;
             case MEDIUM:
-                if (bldg.getBldgClass() != Building.HANGAR) {
+                if (bldg.getBldgClass() != IBuilding.HANGAR) {
                     mod = 1;
                     desc = "Medium";
                 }
 
-                if (bldg.getBldgClass() >= Building.FORTRESS) {
+                if (bldg.getBldgClass() >= IBuilding.FORTRESS) {
                     mod = 2;
                     desc = desc + " Fortress";
                 }
@@ -8297,12 +8510,12 @@ public abstract class Entity extends TurnOrdered
             case HEAVY:
                 mod = 2;
                 desc = "Heavy";
-                if (bldg.getBldgClass() == Building.HANGAR) {
+                if (bldg.getBldgClass() == IBuilding.HANGAR) {
                     mod = 1;
                     desc = desc + " Hangar";
                 }
 
-                if (bldg.getBldgClass() == Building.FORTRESS) {
+                if (bldg.getBldgClass() == IBuilding.FORTRESS) {
                     mod = 3;
                     desc = desc + " Fortress";
                 }
@@ -8310,11 +8523,11 @@ public abstract class Entity extends TurnOrdered
             case HARDENED:
                 mod = 5;
                 desc = "Hardened";
-                if (bldg.getBldgClass() == Building.HANGAR) {
+                if (bldg.getBldgClass() == IBuilding.HANGAR) {
                     mod = 3;
                     desc = desc + " Hangar";
                 }
-                if (bldg.getBldgClass() == Building.FORTRESS) {
+                if (bldg.getBldgClass() == IBuilding.FORTRESS) {
                     mod = 4;
                     desc = desc + " Fortress";
                 }
@@ -8533,7 +8746,7 @@ public abstract class Entity extends TurnOrdered
      * Determines if this object can accept the given unit. The unit may not be of the appropriate type or there may be
      * no room for the unit.
      *
-     * @param unit - the <code>Entity</code> to be loaded.
+     * @param unit      - the <code>Entity</code> to be loaded.
      * @param checkElev - Whether to compare elevations (e.g. for VTOL loading infantry)
      *
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
@@ -8547,9 +8760,9 @@ public abstract class Entity extends TurnOrdered
      * Determines if this object can accept the given unit. The unit may not be of the appropriate type or there may be
      * no room for the unit.
      *
-     * @param unit - the <code>Entity</code> to be loaded.
+     * @param unit      - the <code>Entity</code> to be loaded.
      * @param checkElev - Whether to compare elevations (e.g. for VTOL loading infantry)
-     * @param height - the height at which to consider the loader
+     * @param height    - the height at which to consider the loader
      *
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
      *       otherwise.
@@ -8632,16 +8845,20 @@ public abstract class Entity extends TurnOrdered
         Enumeration<Transporter> iter = transports.elements();
         while (iter.hasMoreElements()) {
             Transporter next = iter.nextElement();
-            if (next.canLoad(unit) &&
-                  (!checkElev || (unit.getElevation() == getElevation())) &&
-                  ((bayNumber == UNSET_BAY) ||
-                        ((next instanceof Bay) && (((Bay) next).getBayNumber() == bayNumber)) ||
-                        ((next instanceof DockingCollar) &&
-                              (((DockingCollar) next).getCollarNumber() == bayNumber)))) {
+            boolean canLoadUnit = next.canLoad(unit);
+            boolean elevationMatches = !checkElev || (unit.getElevation() == getElevation());
+            boolean bayNumberMatches = (bayNumber == UNSET_BAY) ||
+                  ((next instanceof Bay) && (((Bay) next).getBayNumber() == bayNumber)) ||
+                  ((next instanceof DockingCollar) &&
+                        (((DockingCollar) next).getCollarNumber() == bayNumber));
+
+            // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly
+            //  load into that transporter.
+            boolean specificTransporterMatches = (bayNumber > getTransportBays().size() &&
+                  getTransports().indexOf(next) == Integer.MAX_VALUE - bayNumber);
+
+            if (canLoadUnit && elevationMatches && (bayNumberMatches || specificTransporterMatches)) {
                 next.load(unit);
-                if (next instanceof ExternalCargo) {
-                    pickupCarryableObject(unit, Entity.LOC_NONE);
-                }
                 unit.setTargetBay(UNSET_BAY); // Reset the target bay for later.
                 return;
             }
@@ -10337,9 +10554,9 @@ public abstract class Entity extends TurnOrdered
         }
 
         // If there are no valid Entity targets, check for add valid buildings.
-        Enumeration<Building> buildings = game.getBoard(boardId).getBuildings();
+        Enumeration<IBuilding> buildings = game.getBoard(boardId).getBuildings();
         while (!canHit && buildings.hasMoreElements()) {
-            final Building bldg = buildings.nextElement();
+            final IBuilding bldg = buildings.nextElement();
 
             // Walk through the hexes of the building.
             Enumeration<Coords> hexes = bldg.getCoords();
@@ -10775,12 +10992,8 @@ public abstract class Entity extends TurnOrdered
         if (hasQuirk(OptionsConstants.QUIRK_NEG_POOR_TARG_S)) {
             mod++;
         }
-        if (hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L)) {
-            mod++;
-        }
-        if (hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S)) {
-            mod--;
-        }
+        // Note: Variable Range Targeting modifier is applied separately in Compute.java
+        // to ensure it appears as a distinct line item in the to-hit breakdown
         return mod;
     }
 
@@ -10815,13 +11028,32 @@ public abstract class Entity extends TurnOrdered
         if (hasQuirk(OptionsConstants.QUIRK_NEG_POOR_TARG_L)) {
             mod++;
         }
-        if (hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L)) {
-            mod--;
-        }
-        if (hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S)) {
-            mod++;
-        }
+        // Note: Variable Range Targeting modifier is applied separately in Compute.java
+        // to ensure it appears as a distinct line item in the to-hit breakdown
         return mod;
+    }
+
+    /**
+     * Returns the Variable Range Targeting modifier for the specified range type. Used by Compute.java to add a
+     * separate line item in the to-hit breakdown.
+     *
+     * @param rangeType the range type constant from {@link RangeType}
+     *
+     * @return the modifier value, or 0 if the entity doesn't have Variable Range Targeting or the range type doesn't
+     *       apply
+     */
+    public int getVariableRangeTargetingModifier(int rangeType) {
+        if (!hasVariableRangeTargeting()) {
+            return 0;
+        }
+        VariableRangeTargetingMode mode = getVariableRangeTargetingMode();
+        if ((rangeType == RangeType.RANGE_SHORT) || (rangeType == RangeType.RANGE_MINIMUM)) {
+            return mode.getShortRangeModifier();
+        } else if (rangeType == RangeType.RANGE_LONG) {
+            return mode.getLongRangeModifier();
+        }
+        // Medium, Extreme, and LOS ranges are not affected
+        return 0;
     }
 
     public int getExtremeRangeModifier() {
@@ -12255,7 +12487,8 @@ public abstract class Entity extends TurnOrdered
                 misc.getType().setInstantModeSwitch(false);
             }
 
-            if (misc.getType().hasFlag(MiscType.F_ECM)) {
+            // Nova CEWS has built-in "ECM"/"Off" modes - don't override them with dynamic modes
+            if (misc.getType().hasFlag(MiscType.F_ECM) && !misc.getType().hasFlag(MiscType.F_NOVA)) {
                 ArrayList<String> modes = new ArrayList<>();
                 modes.add("ECM");
                 String[] stringArray = {};
@@ -13307,7 +13540,13 @@ public abstract class Entity extends TurnOrdered
                     multiplier = 0.3;
                 }
             }
-            extraBV += (int) Math.round(totalForceBV * multiplier);
+            double rawBonus = totalForceBV * multiplier;
+            // IO: Alternate Eras p.183: Nova CEWS BV bonus capped at 35% of unit's base BV
+            if (hasNovaCEWS()) {
+                double maxBonus = baseBV * 0.35;
+                rawBonus = Math.min(rawBonus, maxBonus);
+            }
+            extraBV += (int) Math.round(rawBonus);
         }
         return extraBV;
     }
@@ -16020,6 +16259,7 @@ public abstract class Entity extends TurnOrdered
      */
     @Override
     public boolean damage(double amount) {
+
         return false;
     }
 
@@ -16093,11 +16333,17 @@ public abstract class Entity extends TurnOrdered
     protected void processPickupStepEntity(MoveStep step, Integer cargoPickupLocation, TWGameManager gameManager,
           Entity entityPickingUpTarget) {
 
-        gameManager.loadUnit(entityPickingUpTarget, this, -1);
+        int bayNumber = Bay.UNSET_BAY;
+        if (cargoPickupLocation >= locations()) {
+            bayNumber = cargoPickupLocation;
+        }
+        gameManager.loadUnit(entityPickingUpTarget, this, bayNumber);
 
-        // Normal loading won't always get the location right, let's fix that
-        entityPickingUpTarget.dropCarriedObject(this, false);
-        entityPickingUpTarget.pickupCarryableObject(this, cargoPickupLocation);
+        if (cargoPickupLocation < locations()) {
+            // Normal loading won't always get the location right, let's fix that
+            entityPickingUpTarget.dropCarriedObject(this, false);
+            entityPickingUpTarget.pickupCarryableObject(this, cargoPickupLocation);
+        }
 
         Report report = new Report(2513);
         report.subject = entityPickingUpTarget.getId();

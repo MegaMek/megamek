@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers.ac;
 
+import static java.lang.Math.floor;
+
 import java.io.Serial;
 import java.util.Vector;
 
@@ -45,7 +47,7 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
+import megamek.common.units.IBuilding;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.server.totalWarfare.TWGameManager;
@@ -77,7 +79,7 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
         double toReturn = weaponType.getDamage();
 
         if (bDirect) {
-            toReturn += toHit.getMoS() / 3.0;
+            toReturn += (int) floor(toHit.getMoS() / 3.0);
         }
 
         toReturn = applyGlancingBlowModifier(toReturn, false);
@@ -95,7 +97,7 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected void handleClearDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage) {
+    protected void handleClearDamage(Vector<Report> vPhaseReport, IBuilding bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);

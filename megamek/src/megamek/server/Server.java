@@ -54,6 +54,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 import java.util.zip.GZIPInputStream;
 
@@ -103,6 +104,8 @@ public class Server implements Runnable {
     private final EmailService mailer;
 
     private static final MMLogger LOGGER = MMLogger.create(Server.class);
+
+    private final ReentrantLock GAME_LOCK = new ReentrantLock();
 
     public static class ReceivedPacket {
         private int connectionId;
@@ -873,7 +876,13 @@ public class Server implements Runnable {
      * appropriate housekeeping.
      */
     void disconnected(Player player) {
-        gameManager.disconnect(player);
+        // Only do this if nobody is trying to save a game currently
+        GAME_LOCK.lock();
+        try {
+            gameManager.disconnect(player);
+        } finally {
+            GAME_LOCK.unlock();
+        }
     }
 
     public void resetGame() {
@@ -953,11 +962,21 @@ public class Server implements Runnable {
     }
 
     public void saveGame(String fileName) {
-        gameManager.saveGame(fileName);
+        GAME_LOCK.lock();
+        try {
+            gameManager.saveGame(fileName);
+        } finally {
+            GAME_LOCK.unlock();
+        }
     }
 
     public void sendSaveGame(int connId, String fileName, String localPath) {
-        gameManager.sendSaveGame(connId, fileName, localPath);
+        GAME_LOCK.lock();
+        try {
+            gameManager.sendSaveGame(connId, fileName, localPath);
+        } finally {
+            GAME_LOCK.unlock();
+        }
     }
 
     /**
@@ -1264,6 +1283,7 @@ public class Server implements Runnable {
             LOGGER.error("Got null packet");
             return;
         }
+
         // act on it
         try {
             switch (packet.command()) {
@@ -1332,7 +1352,13 @@ public class Server implements Runnable {
                     }
                     break;
                 default:
-                    gameManager.handlePacket(connId, packet);
+                    // We don't want to change the game state while other threads may be in the game
+                    GAME_LOCK.lock();
+                    try {
+                        gameManager.handlePacket(connId, packet);
+                    } finally {
+                        GAME_LOCK.unlock();
+                    }
             }
         } catch (InvalidPacketDataException e) {
             LOGGER.error("Invalid packet data:", e);

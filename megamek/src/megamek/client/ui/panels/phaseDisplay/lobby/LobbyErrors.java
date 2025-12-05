@@ -169,5 +169,9 @@ public final class LobbyErrors {
         JOptionPane.showMessageDialog(owner, PLAYER_DONE);
     }
 
+    public static void showCannotDisconnectMasterUnit(JFrame owner) {
+        JOptionPane.showMessageDialog(owner, Messages.getString("LobbyErrors.cannotDisconnectMaster"));
+    }
+
     private LobbyErrors() {}
 }

@@ -57,9 +57,9 @@ import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
@@ -75,6 +75,7 @@ import megamek.common.weapons.lasers.innerSphere.ISBombastLaser;
 import megamek.common.weapons.lrms.LRTWeapon;
 import megamek.common.weapons.srms.SRTWeapon;
 import megamek.common.weapons.missiles.MRMWeapon;
+import megamek.common.weapons.handlers.ARADEquipmentDetector;
 import megamek.logging.MMLogger;
 
 public class ComputeToHit {
@@ -100,7 +101,9 @@ public class ComputeToHit {
         if (ammoId == WeaponAttackAction.UNASSIGNED) {
             linkedAmmo = weapon.getLinkedAmmo();
         } else {
-            Entity carrier = (ammoCarrier == WeaponAttackAction.UNASSIGNED) ? weaponEntity : game.getEntity(ammoCarrier);
+            Entity carrier = (ammoCarrier == WeaponAttackAction.UNASSIGNED) ?
+                  weaponEntity :
+                  game.getEntity(ammoCarrier);
             linkedAmmo = (carrier == null) ? null : carrier.getAmmo(ammoId);
         }
 
@@ -236,6 +239,24 @@ public class ComputeToHit {
                     (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)) &&
               (munition.contains(AmmoType.Munitions.M_FOLLOW_THE_LEADER) &&
                     !ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition()));
+
+        AmmoType.AmmoTypeEnum ammoTypeEnum = (ammoType != null) ? ammoType.getAmmoType() : null;
+
+        // Break weapon type checks into logical groups
+        boolean isLrmType = (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
+                (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP);
+        boolean isSrmType = (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM) ||
+                (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM_IMP);
+        boolean isMmlType = (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML);
+
+        // Combine into weapon compatibility check
+        boolean isCompatibleWeaponType = isLrmType || isSrmType || isMmlType;
+
+        // Check for ARAD munition
+        boolean hasAradMunition = munition.contains(AmmoType.Munitions.M_ARAD);
+
+        // Final check combines all requirements
+        boolean isAradAttack = (ammoTypeEnum != null) && isCompatibleWeaponType && hasAradMunition;
 
         Mounted<?> mLinker = weapon.getLinkedBy();
 
@@ -660,7 +681,7 @@ public class ComputeToHit {
         // situations,
         // this occurs regardless of other LOS consideration.
         if (WeaponAttackAction.targetInShortCoverBuilding(target)) {
-            Building currentBuilding = game.getBuildingAt(target.getPosition(), target.getBoardId()).get();
+            IBuilding currentBuilding = game.getBuildingAt(target.getPosition(), target.getBoardId()).get();
 
             LosEffects shortBuildingLos = new LosEffects();
             shortBuildingLos.setTargetCover(LosEffects.COVER_HORIZONTAL);
@@ -768,6 +789,7 @@ public class ComputeToHit {
               bArtemisV,
               bFTL,
               bHeatSeeking,
+              isAradAttack,
               isECMAffected,
               isINarcGuided);
 
@@ -793,13 +815,14 @@ public class ComputeToHit {
      * @param bArtemisV     flag that indicates whether the attacker is using an Artemis V FCS
      * @param bFTL          flag that indicates whether the attacker is using FTL missiles
      * @param bHeatSeeking  flag that indicates whether the attacker is using Heat Seeking missiles
+     * @param isAradAttack  flag that indicates whether the attacker is using ARAD missiles
      * @param isECMAffected flag that indicates whether the target is inside an ECM bubble
      * @param isINarcGuided flag that indicates whether the target is broadcasting an iNarc beacon
      */
     private static ToHitData compileAmmoToHitMods(Game game, Entity ae, Targetable target, int targetType,
           ToHitData toHit, WeaponType weaponType, Mounted<?> weapon, AmmoType ammoType,
           EnumSet<AmmoType.Munitions> munition, boolean bApollo, boolean bArtemisV, boolean bFTL, boolean bHeatSeeking,
-          boolean isECMAffected, boolean isINarcGuided) {
+          boolean isAradAttack, boolean isECMAffected, boolean isINarcGuided) {
         if (ae == null || ammoType == null) {
             // Can't calculate ammo mods without valid ammo and an attacker to fire it
             return toHit;
@@ -907,6 +930,25 @@ public class ComputeToHit {
             }
         }
 
+        // ARAD (Anti-Radiation) Missiles - Entity targets
+        if (isAradAttack && (te != null)) {
+            int friendlyTeam = ae.getOwner().getTeam();
+            boolean hasElectronics = ARADEquipmentDetector.targetHasQualifyingElectronics(te, friendlyTeam);
+
+            if (hasElectronics) {
+                // -1 bonus vs targets with electronics
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.AradElectronics"));
+            } else {
+                // +2 penalty vs targets without electronics
+                toHit.addModifier(2, Messages.getString("WeaponAttackAction.AradNoElectronics"));
+            }
+        }
+        // ARAD (Anti-Radiation) Missiles - Non-entity targets (buildings, hexes)
+        else if (isAradAttack && (te == null)) {
+            // Buildings/terrain hexes have no electronics
+            toHit.addModifier(2, Messages.getString("WeaponAttackAction.AradNoElectronics"));
+        }
+
         // Narc-capable missiles homing on an iNarc beacon
         if (isINarcGuided) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.iNarcHoming"));
@@ -932,7 +974,7 @@ public class ComputeToHit {
      * null return means we can continue processing the attack
      *
      * @param game                  The current {@link Game}
-     * @param ae                    The Entity making this attack
+     * @param weaponEntity          The Entity making this attack
      * @param target                The Targetable object being attacked
      * @param targetType            The targetable object type
      * @param los                   The calculated LOS between attacker and target

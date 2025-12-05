@@ -401,7 +401,7 @@ public class AreaEffectHelper {
      * @param vPhaseReport   Vector of reports to which we append reports
      * @param gameManager    GameManager object for invocation of various methods
      */
-    public static void artilleryDamageEntity(Entity entity, int damage, Building bldg, int bldgAbsorbs,
+    public static void artilleryDamageEntity(Entity entity, int damage, IBuilding bldg, int bldgAbsorbs,
           boolean variableDamage, boolean asfFlak, boolean flak, int altitude, Coords attackSource, AmmoType ammo,
           Coords coords, boolean isFuelAirBomb, Entity killer, Hex hex, int subjectId, Vector<Report> vPhaseReport,
           TWGameManager gameManager) {
@@ -594,6 +594,15 @@ public class AreaEffectHelper {
         report.addDesc(entity);
         report.add(toHit.getTableDesc());
         report.add(hits);
+        vPhaseReport.add(report);
+
+        // Reveal hidden entity caught in the blast (per TW pg. 259)
+        if (entity.isHidden()) {
+            entity.setHidden(false);
+        }
+        report = new Report(9963);
+        report.subject = entity.getId();
+        report.addDesc(entity);
         vPhaseReport.add(report);
 
         if (entity instanceof BattleArmor) {

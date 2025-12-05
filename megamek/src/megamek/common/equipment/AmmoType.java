@@ -689,6 +689,18 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "368, TO");
 
+    private static final MunitionMutator ARAD_MUNITION_MUTATOR = new MunitionMutator("Anti-Radiation",
+          1,
+          Munitions.M_ARAD,
+          new TechAdvancement(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.F)
+                .setISAdvancement(3066, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setPrototypeFactions(Faction.FW)
+                .setProductionFactions(Faction.FW)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
+          "180, TO:AUE");
+
     private static final MunitionMutator SEMI_GUIDED_MUNITION_MUTATOR = new MunitionMutator("Semi-guided",
           1,
           Munitions.M_SEMIGUIDED,
@@ -834,6 +846,21 @@ public class AmmoType extends EquipmentType {
                 .setReintroductionFactions(Faction.FS, Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "368, TO");
+
+    private static final MunitionMutator CLAN_ARAD_MUNITION_MUTATOR = new MunitionMutator(
+          "(Clan) Anti-Radiation",
+          1,
+          Munitions.M_ARAD,
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.F)
+                .setClanAdvancement(3057, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false)
+                .setPrototypeFactions(Faction.CSJ)
+                .setProductionFactions(Faction.CSJ)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
+          "180, TO:AUE");
 
     private static final MunitionMutator CLAN_SEMI_GUIDED = new MunitionMutator("(Clan) Semi-guided",
           1,
@@ -1957,6 +1984,7 @@ public class AmmoType extends EquipmentType {
         M_THUNDER_VIBRABOMB,
         M_THUNDER_ACTIVE,
         M_FOLLOW_THE_LEADER,
+        M_ARAD,
         M_MULTI_PURPOSE,
 
         // SRM Munition Types
@@ -3352,8 +3380,8 @@ public class AmmoType extends EquipmentType {
         // TODO Tear Gas See IO pg 372
         // TODO Retro-Streak IO pg 132
         // TODO Mag Pulse see IO pg 62
-        // TODO Anti-Radiation Missiles (see IO pg 62)
         // TODO: Harpoon SRMs (TO 369), Tear Gas SRMs (TO 371), RETRO-STREAK (IO 193)
+        munitions.add(ARAD_MUNITION_MUTATOR);
         munitions.add(INFERNO_MUNITION_MUTATOR);
         munitions.add(ACID_MUNITION_MUTATOR);
         munitions.add(HEAT_SEEKING_MUNITION_MUTATOR);
@@ -3382,8 +3410,8 @@ public class AmmoType extends EquipmentType {
         munitions.clear();
         // TODO Tear Gas See IO pg 372
         // TODO Mag Pulse See IO pg 62
-        // TODO Anti-Radiation Missiles See IO pg 62 (TO 368)
         // TODO: Harpoon SRMs (TO 369), Tear Gas SRMs (TO 371), RETRO-STREAK (IO 193)
+        munitions.add(CLAN_ARAD_MUNITION_MUTATOR);
         munitions.add(CLAN_ACID_MUNITION_MUTATOR);
         munitions.add(CLAN_HEAT_SEEKING_MUNITIONS_MUTATOR);
         munitions.add(CLAN_INFERNO_MUNITION_MUTATOR);
@@ -3413,6 +3441,7 @@ public class AmmoType extends EquipmentType {
         // TODO Flare LRMs IO pg 230
         // TODO Incendiary LRMs - IO pg 61, TO pg 369
         // TODO Mag Pulse see IO pg 62
+        munitions.add(ARAD_MUNITION_MUTATOR);
         munitions.add(FOLLOW_THE_LEADER_MUNITION_MUTATOR);
         munitions.add(HEAT_SEEKING_MUNITION_MUTATOR);
         munitions.add(SEMI_GUIDED_MUNITION_MUTATOR);
@@ -3447,6 +3476,7 @@ public class AmmoType extends EquipmentType {
          */
         // TODO Incendiary LRMs - IO pg 61, TO pg 369
         // TODO Mag Pulse see IO pg 62
+        munitions.add(CLAN_ARAD_MUNITION_MUTATOR);
         munitions.add(CLAN_FOLLOW_THE_LEADER_MUNITION_MUTATOR);
         munitions.add(CLAN_HEAT_SEEKING_MUNITIONS_MUTATOR);
         munitions.add(CLAN_SEMI_GUIDED);
@@ -16054,6 +16084,17 @@ public class AmmoType extends EquipmentType {
                   (munition.getAmmoType() == AmmoTypeEnum.FLUID_GUN)) &&
                   (munition.getMunitionType().contains(Munitions.M_COOLANT))) {
                 cost = 3000;
+            }
+
+            if (((munition.getAmmoType() == AmmoTypeEnum.LRM) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.LRM_IMP) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.MML) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.SRM) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.SRM_IMP) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.NLRM)) &&
+                  (munition.getMunitionType().contains(Munitions.M_ARAD))) {
+                bv *= 1.3;
+                cost *= 3.0;
             }
 
             // Account for floating point imprecision

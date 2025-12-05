@@ -119,6 +119,7 @@ import megamek.client.ui.dialogs.unitDisplay.IHasUnitDisplay;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayDialog;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.client.ui.dialogs.unitSelectorDialogs.MegaMekUnitSelectorDialog;
+import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkViewDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.ReceivingGameDataPanel;
 import megamek.client.ui.panels.StartingScenarioPanel;
@@ -159,6 +160,8 @@ import megamek.common.event.GameScriptedMessageEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.board.GameBoardNewEvent;
 import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.event.entity.GameEntityNewEvent;
+import megamek.common.event.entity.GameEntityRemoveEvent;
 import megamek.common.event.player.GamePlayerChangeEvent;
 import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.event.player.GamePlayerDisconnectedEvent;
@@ -244,6 +247,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_INC_GUI_SCALE = "viewIncGUIScale";
     public static final String VIEW_DEC_GUI_SCALE = "viewDecGUIScale";
     public static final String VIEW_FORCE_DISPLAY = "viewForceDisplay";
+    public static final String VIEW_NOVA_NETWORKS = "viewNovaNetworks";
     public static final String VIEW_UNIT_DISPLAY = "viewMekDisplay";
     public static final String VIEW_ACCESSIBILITY_WINDOW = "viewAccessibilityWindow";
     public static final String VIEW_KEYBINDS_OVERLAY = "viewKeyboardShortcuts";
@@ -991,6 +995,9 @@ public class ClientGUI extends AbstractClientGUI
             case VIEW_FORCE_DISPLAY:
                 GUIP.toggleForceDisplay();
                 break;
+            case VIEW_NOVA_NETWORKS:
+                showNovaNetworkViewDialog();
+                break;
             case VIEW_MINI_MAP:
                 GUIP.toggleMinimapEnabled();
                 break;
@@ -1196,6 +1203,11 @@ public class ClientGUI extends AbstractClientGUI
 
     @Override
     public void die() {
+        if (client.isAwaitingSave()) {
+            SwingUtilities.invokeLater(this::die);
+            return;
+        }
+
         // Tell all the displays to remove themselves as listeners.
         boolean reportHandled = false;
         boardViews().forEach(IBoardView::dispose);
@@ -2206,6 +2218,7 @@ public class ClientGUI extends AbstractClientGUI
         String path = fc.getSelectedFile().getParentFile().getPath();
         path = path.replace(" ", "|");
         client.sendChat(CG_CHAT_COMMAND_LOCAL_SAVE + " " + file + " " + path);
+        client.setAwaitingSave(true);
         return true;
     }
 
@@ -2467,6 +2480,14 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
+     * Shows the Nova CEWS network view dialog (read-only).
+     */
+    private void showNovaNetworkViewDialog() {
+        NovaNetworkViewDialog dialog = new NovaNetworkViewDialog(frame, this);
+        dialog.setVisible(true);
+    }
+
+    /**
      * Loads a preview image of the unit into the BufferedPanel.
      *
      * @param bp     The JLabel to set the image as icon to
@@ -2616,6 +2637,9 @@ public class ClientGUI extends AbstractClientGUI
 
             menuBar.setPhase(phase);
 
+            // Update Nova Networks menu based on whether Nova CEWS units exist
+            updateNovaNetworksMenu();
+
             clientGuiPanel.validate();
             cb.moveToEnd();
             hideFleeZone();
@@ -2630,6 +2654,16 @@ public class ClientGUI extends AbstractClientGUI
                 // underlying object may have changed, so reset
                 unitDisplayPanel.displayEntity(e.getEntity());
             }
+        }
+
+        @Override
+        public void gameEntityNew(GameEntityNewEvent e) {
+            updateNovaNetworksMenu();
+        }
+
+        @Override
+        public void gameEntityRemove(GameEntityRemoveEvent e) {
+            updateNovaNetworksMenu();
         }
 
         @Override
@@ -2737,10 +2771,9 @@ public class ClientGUI extends AbstractClientGUI
 
         @Override
         public void gameClientFeedbackRequest(GameCFREvent gameCFREvent) {
+            // Note: entity may be null for CFR types that don't use entityId (e.g., TAG_TARGET, TELEGUIDED_TARGET)
+            // Each case handles null checking as appropriate
             Entity entity = client.getGame().getEntity(gameCFREvent.getEntityId());
-            if (entity == null) {
-                return;
-            }
 
             Object result;
             String input;
@@ -2750,6 +2783,9 @@ public class ClientGUI extends AbstractClientGUI
                     // If the client connects to a game as a bot, it's possible to have the bot respond AND have the
                     // client ask the player. This is bad, ignore this if the client is a bot
                     if (client instanceof BotClient) {
+                        return;
+                    }
+                    if (entity == null) {
                         return;
                     }
 
@@ -2805,6 +2841,9 @@ public class ClientGUI extends AbstractClientGUI
                     client.sendDominoCFRResponse(paths[choice]);
                     break;
                 case CFR_AMS_ASSIGN:
+                    if (entity == null) {
+                        return;
+                    }
                     ArrayList<String> amsOptions = new ArrayList<>();
                     amsOptions.add(Messages.getString("NONE"));
                     for (WeaponAttackAction waa : gameCFREvent.getWAAs()) {
@@ -2834,6 +2873,9 @@ public class ClientGUI extends AbstractClientGUI
                     }
                     break;
                 case CFR_APDS_ASSIGN:
+                    if (entity == null) {
+                        return;
+                    }
                     ArrayList<String> apdsOptions = new ArrayList<>();
                     apdsOptions.add(Messages.getString("NONE"));
                     Iterator<Integer> distIt = gameCFREvent.getApdsDistances().iterator();
@@ -2930,6 +2972,7 @@ public class ClientGUI extends AbstractClientGUI
                     }
                     break;
                 case CFR_TELEGUIDED_TARGET:
+                    logger.debug("CFR_TELEGUIDED_TARGET: processing teleguided missile target selection");
                     List<Integer> targetIds = gameCFREvent.getTelemissileTargetIds();
                     List<Integer> toHitValues = gameCFREvent.getTmToHitValues();
                     List<String> targetDescriptions = new ArrayList<>();
@@ -2943,6 +2986,7 @@ public class ClientGUI extends AbstractClientGUI
                                   th));
                         }
                     }
+                    logger.debug("CFR_TELEGUIDED_TARGET: showing dialog with {} targets", targetDescriptions.size());
                     // Set up the selection pane
                     input = (String) JOptionPane.showInputDialog(frame,
                           Messages.getString("TeleMissileTargetDialog.message"),
@@ -2954,6 +2998,7 @@ public class ClientGUI extends AbstractClientGUI
                     if (input != null) {
                         for (int i = 0; i < targetDescriptions.size(); i++) {
                             if (input.equals(targetDescriptions.get(i))) {
+                                logger.debug("CFR_TELEGUIDED_TARGET: user selected target index {}", i);
                                 client.sendTelemissileTargetCFRResponse(i);
                                 break;
                             }
@@ -2962,10 +3007,12 @@ public class ClientGUI extends AbstractClientGUI
                         // If input is null, as in the case of pressing the close or cancel buttons...
                         // Just pick the first target in the list, or server will be left waiting
                         // indefinitely.
+                        logger.debug("CFR_TELEGUIDED_TARGET: dialog cancelled, defaulting to first target");
                         client.sendTelemissileTargetCFRResponse(0);
                     }
                     break;
                 case CFR_TAG_TARGET:
+                    logger.debug("CFR_TAG_TARGET: processing TAG target selection");
                     List<Integer> TAGTargets = gameCFREvent.getTAGTargets();
                     List<Integer> TAGTargetTypes = gameCFREvent.getTAGTargetTypes();
                     List<String> TAGTargetDescriptions = new ArrayList<>();
@@ -2977,6 +3024,7 @@ public class ClientGUI extends AbstractClientGUI
                             TAGTargetDescriptions.add(tgt.getDisplayName());
                         }
                     }
+                    logger.debug("CFR_TAG_TARGET: showing dialog with {} targets", TAGTargetDescriptions.size());
                     // Set up the selection pane
                     input = (String) JOptionPane.showInputDialog(frame,
                           Messages.getString("TAGTargetDialog.message"),
@@ -2988,6 +3036,7 @@ public class ClientGUI extends AbstractClientGUI
                     if (input != null) {
                         for (int i = 0; i < TAGTargetDescriptions.size(); i++) {
                             if (input.equals(TAGTargetDescriptions.get(i))) {
+                                logger.debug("CFR_TAG_TARGET: user selected target index {}", i);
                                 client.sendTAGTargetCFRResponse(i);
                                 break;
                             }
@@ -2996,6 +3045,7 @@ public class ClientGUI extends AbstractClientGUI
                         // If input IS null, as in the case of pressing the close or cancel buttons...
                         // Just pick the first target in the list, or server will be left waiting
                         // indefinitely.
+                        logger.debug("CFR_TAG_TARGET: dialog cancelled, defaulting to first target");
                         client.sendTAGTargetCFRResponse(0);
                     }
                     break;
@@ -3479,6 +3529,17 @@ public class ClientGUI extends AbstractClientGUI
      */
     public void clearFieldOfFire() {
         firingArcSpriteHandler.clearValues();
+    }
+
+    /**
+     * Updates the Nova Networks menu enablement based on whether the local player
+     * has any Nova CEWS units in their force.
+     */
+    private void updateNovaNetworksMenu() {
+        boolean hasNovaUnits = client.getGame().getEntitiesVector().stream()
+            .filter(entity -> entity.getOwner().equals(client.getLocalPlayer()))
+            .anyMatch(Entity::hasNovaCEWS);
+        menuBar.setEnabled(VIEW_NOVA_NETWORKS, hasNovaUnits);
     }
 
     /**

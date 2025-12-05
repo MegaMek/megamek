@@ -63,7 +63,7 @@ public class PrimitiveACWeaponHandler extends ACWeaponHandler {
             return true;
         }
 
-        if ((roll.getIntValue() == 2) && !attackingEntity.isConventionalInfantry()) {
+        if ((roll.getIntValue() == 2) && !weaponEntity.isConventionalInfantry()) {
             Report r = new Report(3161);
             r.subject = subjectId;
             r.newlines = 0;

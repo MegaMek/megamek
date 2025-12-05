@@ -42,11 +42,11 @@ import megamek.client.ui.panels.phaseDisplay.DeploymentDisplay;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
-import megamek.common.units.Building;
 import megamek.common.board.Coords;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.enums.GamePhase;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.logging.MMLogger;
 
 /**
@@ -136,7 +136,7 @@ public final class CollapseWarning {
             // For each hex in jumping range, look for buildings, if found check for collapse.
             for (Coords c : hexesToCheck) {
                 // is there a building at this location? If so add it to hexes with buildings.
-                Building bld = board.getBuildingAt(c);
+                IBuilding bld = board.getBuildingAt(c);
 
                 // If a building, compare total weight and add to warning list.
                 if (null != bld) {
@@ -192,11 +192,11 @@ public final class CollapseWarning {
                 return warnList;
             }
 
-            Enumeration<Building> buildings = board.getBuildings();
+            Enumeration<IBuilding> buildings = board.getBuildings();
 
             // Enumerate through all the buildings
             while (buildings.hasMoreElements()) {
-                Building bld = buildings.nextElement();
+                IBuilding bld = buildings.nextElement();
                 List<Coords> buildingList = bld.getCoordsList();
 
                 // For each hex occupied by the building, check if it's a legal deploy hex.

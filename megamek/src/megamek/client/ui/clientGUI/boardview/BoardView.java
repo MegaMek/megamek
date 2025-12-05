@@ -341,6 +341,9 @@ public final class BoardView extends AbstractBoardView
     private ArrayList<WreckSprite> wreckSprites = new ArrayList<>();
     private ArrayList<IsometricWreckSprite> isometricWreckSprites = new ArrayList<>();
 
+    // highlighted entity hexes (for Nova CEWS network dialog)
+    private List<Coords> highlightedEntityHexes = new ArrayList<>();
+
     private Coords rulerStart;
     private Coords rulerEnd;
     private Color rulerStartColor;
@@ -611,6 +614,14 @@ public final class BoardView extends AbstractBoardView
                         break;
                     case INITIATIVE:
                         clearAllAttacks();
+                        break;
+                    case INITIATIVE_REPORT:
+                    case MOVEMENT_REPORT:
+                    case FIRING_REPORT:
+                    case PHYSICAL_REPORT:
+                    case END_REPORT:
+                        // Rebuild entity sprites (including C3 connection lines) for report phases
+                        redrawAllEntities();
                         break;
                     case END:
                     case VICTORY:
@@ -1181,6 +1192,9 @@ public final class BoardView extends AbstractBoardView
         // draw highlight border
         drawSprite(graphics2D, highlightSprite);
 
+        // draw entity hex highlights (Nova CEWS network dialog)
+        drawEntityHexHighlights(graphics2D);
+
         // draw cursors
         drawSprite(graphics2D, cursorSprite);
         drawSprite(graphics2D, selectedSprite);
@@ -1746,6 +1760,28 @@ public final class BoardView extends AbstractBoardView
     @Nullable
     private Mounted<?> selectedWeapon() {
         return (clientgui != null) ? clientgui.getDisplayedWeapon().orElse(null) : null;
+    }
+
+    /**
+     * Draws hex borders for highlighted entity hexes (Nova CEWS network dialog).
+     *
+     * @param graphics The graphics object to draw on
+     */
+    private void drawEntityHexHighlights(Graphics2D graphics) {
+        graphics.setColor(UIUtil.uiGreen());
+        graphics.setStroke(new BasicStroke((float) (2.0 * scale)));
+
+        for (Coords hex : highlightedEntityHexes) {
+            Point hexPos = getHexLocation(hex);
+            Shape hexBorder = HexDrawUtilities.getHexFullBorderLine(0);
+            Shape scaled = AffineTransform
+                    .getScaleInstance(scale, scale)
+                    .createTransformedShape(hexBorder);
+            Shape translated = AffineTransform
+                    .getTranslateInstance(hexPos.x, hexPos.y)
+                    .createTransformedShape(scaled);
+            graphics.draw(translated);
+        }
     }
 
     /**
@@ -3367,7 +3403,7 @@ public final class BoardView extends AbstractBoardView
               == entity.getId()));
 
         // Update C3 link, if necessary
-        if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3()) {
+        if (entity.hasC3() || entity.hasC3i() || entity.hasNovaCEWS() || entity.hasNavalC3()) {
             addC3Link(entity);
         }
 
@@ -3473,7 +3509,7 @@ public final class BoardView extends AbstractBoardView
                 }
             }
 
-            if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3()) {
+            if (entity.hasC3() || entity.hasC3i() || entity.hasNovaCEWS() || entity.hasNavalC3()) {
                 addC3Link(entity);
             }
         }
@@ -3722,9 +3758,9 @@ public final class BoardView extends AbstractBoardView
 
         refreshMoveVectors(entity, movePath, color);
 
-        for (Enumeration<MoveStep> i = movePath.getSteps();
-              i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
+        for (ListIterator<MoveStep> i = movePath.getSteps();
+              i.hasNext(); ) {
+            final MoveStep step = i.next();
             if ((null != previousStep) && ((step.getType() == MoveStepType.UP)
                   || (step.getType() == MoveStepType.DOWN)
                   || (step.getType() == MoveStepType.ACC)
@@ -3938,7 +3974,7 @@ public final class BoardView extends AbstractBoardView
                     c3Sprites.add(new C3Sprite(this, entity, entity1));
                 }
             }
-        } else if (entity.hasActiveNovaCEWS()) {
+        } else if (entity.hasNovaCEWS()) {
             // WOR Nova CEWS
             for (Entity entity1 : game.getEntitiesVector()) {
                 if (entity1.getPosition() == null) {
@@ -4574,6 +4610,30 @@ public final class BoardView extends AbstractBoardView
         for (EntitySprite sprite : entitySprites) {
             sprite.setSelected(sprite.getEntity().equals(entity));
         }
+    }
+
+    /**
+     * Highlights multiple entities on the board view.
+     * All entities in the provided list will be highlighted.
+     * All other entities will be unhighlighted.
+     *
+     * @param entities List of entities to highlight (can be empty to clear all highlights)
+     */
+    public synchronized void highlightSelectedEntities(List<Entity> entities) {
+        for (EntitySprite sprite : entitySprites) {
+            sprite.setSelected(entities.contains(sprite.getEntity()));
+        }
+    }
+
+    /**
+     * Sets the hexes to highlight with white borders (for Nova CEWS network dialog).
+     * Draws white hexagon borders around the specified hex coordinates.
+     *
+     * @param hexes List of hex coordinates to highlight (can be empty to clear all highlights)
+     */
+    public void setHighlightedEntityHexes(List<Coords> hexes) {
+        highlightedEntityHexes = new ArrayList<>(hexes);
+        repaint();
     }
 
     /**

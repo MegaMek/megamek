@@ -85,6 +85,7 @@ import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.VariableRangeTargetingMode;
 import megamek.common.equipment.Flare;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
@@ -112,13 +113,14 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.turns.UnloadStrandedTurn;
-import megamek.common.units.Building;
 import megamek.common.units.Crew;
 import megamek.common.units.DemolitionCharge;
 import megamek.common.units.Entity;
 import megamek.common.units.EntitySelector;
 import megamek.common.units.FighterSquadron;
+import megamek.common.units.IBuilding;
 import megamek.common.units.UnitLocation;
+import megamek.common.util.C3Util;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
@@ -527,6 +529,28 @@ public class Client extends AbstractClient {
         }
 
         game.setEntitiesVector(newEntities);
+
+        // CRITICAL FIX: Reconstruct C3 networks from UUIDs (matches server-side handling)
+        // This is necessary for lobby-configured networks (Naval C3, Nova CEWS, C3i)
+        for (Entity entity : newEntities) {
+            if (entity.hasC3() || entity.hasC3i() || entity.hasNavalC3() || entity.hasNovaCEWS()) {
+                C3Util.wireC3(game, entity);
+            }
+        }
+
+        // Diagnostic logging for Nova CEWS networks (enable DEBUG logging for C3 debugging)
+        if (LOGGER.isDebugEnabled()) {
+            for (Entity entity : newEntities) {
+                if (entity.hasNovaCEWS()) {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < Entity.MAX_C3i_NODES; i++) {
+                        sb.append(entity.getNC3NextUUIDAsString(i)).append(", ");
+                    }
+                    LOGGER.debug("[CLIENT] receiveEntities: Entity {} ({}), c3NetIdString: {}, NC3UUIDs: [{}]",
+                        entity.getId(), entity.getShortName(), entity.getC3NetId(), sb.toString());
+                }
+            }
+        }
         game.setOutOfGameEntitiesVector(newOutOfGame);
         for (Entity entity : newOutOfGame) {
             cacheImgTag(entity);
@@ -691,7 +715,7 @@ public class Client extends AbstractClient {
     }
 
     protected void receiveBuildingUpdate(Packet packet) throws InvalidPacketDataException {
-        for (Building building : packet.getBuildingList(0)) {
+        for (IBuilding building : packet.getBuildingList(0)) {
             game.getBoard(building.getBoardId()).updateBuilding(building);
         }
     }
@@ -904,6 +928,17 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.ENTITY_NOVA_NETWORK_CHANGE, id, net));
     }
 
+    /**
+     * Send a Variable Range Targeting mode change packet (BMM pg. 86). Mode changes are applied at the start of the
+     * next round.
+     *
+     * @param entityId the ID of the entity changing modes
+     * @param mode     the new VariableRangeTargetingMode to apply next round
+     */
+    public void sendVariableRangeTargetingModeChange(int entityId, VariableRangeTargetingMode mode) {
+        send(new Packet(PacketCommand.ENTITY_VARIABLE_RANGE_MODE_CHANGE, entityId, mode));
+    }
+
     public void sendSpecialHexDisplayAppend(Coords c, int boardId, SpecialHexDisplay shd) {
         send(new Packet(PacketCommand.SPECIAL_HEX_DISPLAY_APPEND, c, boardId, shd));
     }
@@ -1106,6 +1141,8 @@ public class Client extends AbstractClient {
                             }
                         } catch (Exception ex) {
                             LOGGER.error(ex, "Unable to create savegames directory.");
+                        } finally {
+                            setAwaitingSave(false);
                         }
                     }
 
@@ -1119,6 +1156,7 @@ public class Client extends AbstractClient {
                     } catch (Exception ex) {
                         LOGGER.error(ex, "Unable to save file {}", sFinalFile);
                     }
+                    setAwaitingSave(false);
                     break;
                 case LOAD_SAVEGAME:
                     String loadFile = packet.getStringValue(0);

@@ -34,8 +34,8 @@
 
 package megamek.server.commands;
 
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.server.Server;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -62,7 +62,7 @@ public class FixElevationCommand extends ServerCommand {
         int countBad = 0;
         for (Entity entity : gameManager.getGame().getEntitiesVector()) {
             if (entity.fixElevation()) {
-                Building bldg = gameManager.getGame().getBoard().getBuildingAt(entity.getPosition());
+                IBuilding bldg = gameManager.getGame().getBoard().getBuildingAt(entity.getPosition());
                 if (bldg != null) {
                     gameManager.checkForCollapse(bldg, entity.getPosition(), true, gameManager.getMainPhaseReport());
                 }

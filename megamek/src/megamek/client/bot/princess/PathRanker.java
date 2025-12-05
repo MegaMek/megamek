@@ -41,8 +41,8 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Optional;
 import java.util.TreeSet;
 
@@ -60,8 +60,8 @@ import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
 import org.apache.logging.log4j.Level;
@@ -434,7 +434,6 @@ public abstract class PathRanker implements IPathRanker {
      * conditions.
      * <p>
      * XXX Sleet01: add fall pilot damage, skid damage, and low-gravity overspeed damage calcs
-     *
      */
     protected double calculateMovePathPSRDamage(Entity movingEntity, MovePath path) {
         double damage = 0.0;
@@ -539,7 +538,7 @@ public abstract class PathRanker implements IPathRanker {
         // If we're jumping onto a building, make sure it can support our weight.
         if (path.isJumping()) {
             final Coords finalCoords = path.getFinalCoords();
-            Optional<Building> building = game.getBuildingAt(finalCoords, path.getFinalBoardId());
+            Optional<IBuilding> building = game.getBuildingAt(finalCoords, path.getFinalBoardId());
             if (building.isEmpty()) {
                 return false;
             }
@@ -557,10 +556,10 @@ public abstract class PathRanker implements IPathRanker {
         // If we're not jumping, check each building to see if it will collapse if it
         // has a basement.
         final double mass = path.getEntity().getWeight() + 10;
-        final Enumeration<MoveStep> steps = path.getSteps();
-        while (steps.hasMoreElements()) {
-            final MoveStep step = steps.nextElement();
-            final Building building = game.getBoard(step.getBoardId()).getBuildingAt(step.getPosition());
+        final ListIterator<MoveStep> steps = path.getSteps();
+        while (steps.hasNext()) {
+            final MoveStep step = steps.next();
+            final IBuilding building = game.getBoard(step.getBoardId()).getBuildingAt(step.getPosition());
             if (building == null) {
                 continue;
             }

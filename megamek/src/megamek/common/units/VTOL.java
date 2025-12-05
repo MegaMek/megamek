@@ -399,9 +399,7 @@ public class VTOL extends Tank implements IBomber {
         if (roll > 12) {
             roll = 12;
         }
-        if ((roll < 6)
-              || (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)
-              && !getOverThresh() && !damagedByFire)) {
+        if (roll < 6) {
             return CRIT_NONE;
         }
         for (int i = 0; i < 2; i++) {

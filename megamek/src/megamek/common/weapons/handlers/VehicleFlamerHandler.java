@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers;
 
+import static java.lang.Math.floor;
+
 import java.io.Serial;
 import java.util.Vector;
 
@@ -45,13 +47,12 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.equipment.EquipmentMode;
-import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.weapons.FlamerHandlerHelper;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.flamers.clan.CLHeavyFlamer;
@@ -84,7 +85,7 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
      */
     @Override
     protected void handleEntityDamage(Entity entityTarget,
-          Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+          Vector<Report> vPhaseReport, IBuilding bldg, int hits, int nCluster,
           int bldgAbsorbs) {
         boolean bmmFlamerDamage = game.getOptions().booleanOption(OptionsConstants.BASE_FLAMER_HEAT);
         Entity entity = game.getEntity(weaponAttackAction.getEntityId());
@@ -154,7 +155,7 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
                 toReturn = Compute.d6(4);
             }
             if (bDirect) {
-                toReturn += toHit.getMoS() / 3.0;
+                toReturn += (int) floor(toHit.getMoS() / 3.0);
             }
             // pain shunted infantry get half damage
             if (((Entity) target).hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
@@ -169,7 +170,7 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected void handleIgnitionDamage(Vector<Report> vPhaseReport, Building bldg, int hits) {
+    protected void handleIgnitionDamage(Vector<Report> vPhaseReport, IBuilding bldg, int hits) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -186,7 +187,7 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected void handleClearDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage) {
+    protected void handleClearDamage(Vector<Report> vPhaseReport, IBuilding bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);

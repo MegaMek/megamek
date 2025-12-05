@@ -171,58 +171,30 @@ public class SuperHeavyTank extends Tank {
         if (!bHitAimed) {
             switch (Compute.d6(2)) {
                 case 2:
-                    if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
-                        setPotCrit(HitData.EFFECT_CRITICAL);
-                    } else {
-                        rv.setEffect(HitData.EFFECT_CRITICAL);
-                    }
+                    rv.setEffect(HitData.EFFECT_CRITICAL);
                     break;
                 case 3:
                     if (bSide) {
                         rv = new HitData(LOC_FRONT, false);
-                        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
-                            setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                        } else {
-                            rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                        }
+                        rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     } else if (bRear) {
                         rv = new HitData(LOC_REAR_LEFT, false);
-                        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
-                            setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                        } else {
-                            rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                        }
+                        rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     } else if (bRearSide) {
-                        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
-                            setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                        } else {
-                            rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                        }
+                        rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     } else {
                         rv = new HitData(LOC_FRONT_RIGHT, false);
-                        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
-                            setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                        } else {
-                            rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                        }
-                    }
-                    rv.setMotiveMod(motiveMod);
-                    break;
-                case 4:
-                    if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
-                        setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                    } else {
                         rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     }
                     rv.setMotiveMod(motiveMod);
                     break;
+                case 4:
+                    rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    rv.setMotiveMod(motiveMod);
+                    break;
                 case 5:
                     if (bRear || !(bSide || bRearSide)) {
-                        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
-                            setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                        } else {
-                            rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                        }
+                        rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                         rv.setMotiveMod(motiveMod);
                     }
                     break;
@@ -233,23 +205,13 @@ public class SuperHeavyTank extends Tank {
                     if ((bSide || bRearSide)
                           && !gameOptions().booleanOption(
                           OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_EFFECTIVE)) {
-                        if (gameOptions().booleanOption(
-                              OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
-                            setPotCrit(HitData.EFFECT_CRITICAL);
-                        } else {
-                            rv.setEffect(HitData.EFFECT_CRITICAL);
-                        }
+                        rv.setEffect(HitData.EFFECT_CRITICAL);
                     }
                     break;
                 case 9:
                     if (!gameOptions()
                           .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_VEHICLE_EFFECTIVE)) {
-                        if (gameOptions().booleanOption(
-                              OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
-                            setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                        } else {
-                            rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                        }
+                        rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                         rv.setMotiveMod(motiveMod);
                     }
                     break;
@@ -292,11 +254,7 @@ public class SuperHeavyTank extends Tank {
                         }
                     }
 
-                    if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_VEHICLES_THRESHOLD)) {
-                        setPotCrit(HitData.EFFECT_CRITICAL);
-                    } else {
-                        rv.setEffect(HitData.EFFECT_CRITICAL);
-                    }
+                    rv.setEffect(HitData.EFFECT_CRITICAL);
                     break;
             }
         }
@@ -480,9 +438,6 @@ public class SuperHeavyTank extends Tank {
             return true;
         } else if ((getArmor(LOC_REAR) < 1) && (getOArmor(LOC_REAR) > 0)) {
             logger.debug("{} CRIPPLED: Rear armor destroyed.", getDisplayName());
-            return true;
-        } else if (isPermanentlyImmobilized(checkCrew)) {
-            logger.debug("{} CRIPPLED: Immobilized.", getDisplayName());
             return true;
         }
 

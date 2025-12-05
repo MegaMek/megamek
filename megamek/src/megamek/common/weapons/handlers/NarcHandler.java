@@ -50,8 +50,8 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
 import megamek.common.units.Targetable;
@@ -184,7 +184,7 @@ public class NarcHandler extends MissileWeaponHandler {
      */
     @Override
     protected void handleEntityDamage(Entity entityTarget,
-          Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+          Vector<Report> vPhaseReport, IBuilding bldg, int hits, int nCluster,
           int bldgAbsorbs) {
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
               toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
@@ -214,7 +214,7 @@ public class NarcHandler extends MissileWeaponHandler {
         }
 
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-              .getCover(), ComputeSideTable.sideTable(attackingEntity, entityTarget, weapon
+              .getCover(), ComputeSideTable.sideTable(weaponEntity, entityTarget, weapon
               .getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
@@ -243,7 +243,7 @@ public class NarcHandler extends MissileWeaponHandler {
         AmmoType ammoType = ammo.getType();
         if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NARC) {
             // narced
-            NarcPod pod = new NarcPod(attackingEntity.getOwner().getTeam(),
+            NarcPod pod = new NarcPod(weaponEntity.getOwner().getTeam(),
                   hit.getLocation());
             Report r = new Report(3250);
             r.subject = subjectId;

@@ -45,10 +45,10 @@ import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.turns.SpecificEntityTurn;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.IAero;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Terrains;
 import megamek.common.units.VTOL;
 import megamek.logging.MMLogger;
@@ -268,7 +268,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
             // from the sky!
             entity.setAssaultDropInProgress(true);
         } else if ((entity instanceof VTOL) && (entity.getExternalUnits().isEmpty())) {
-            while ((Compute.stackingViolation(getGame(), entity, coords, null, entity.climbMode()) != null) &&
+            while ((Compute.stackingViolation(getGame(), entity, coords, null, entity.climbMode(), false) != null) &&
                   (entity.getElevation() <= 500)) {
                 entity.setElevation(entity.getElevation() + 1);
             }
@@ -297,7 +297,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
                 }
             }
         } else {
-            Building bld = getGame().getBoard(boardId).getBuildingAt(entity.getPosition());
+            IBuilding bld = getGame().getBoard(boardId).getBuildingAt(entity.getPosition());
             if ((bld != null) && (bld.getType() == BuildingType.WALL)) {
                 entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
             }
@@ -310,13 +310,13 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
 
         // when first entering a building, we need to roll what type
         // of basement it has
-        Building bldg = getGame().getBoard(boardId).getBuildingAt(entity.getPosition());
+        IBuilding bldg = getGame().getBoard(boardId).getBuildingAt(entity.getPosition());
         if ((bldg != null)) {
             if (bldg.rollBasement(entity.getPosition(),
                   getGame().getBoard(boardId),
                   gameManager.getMainPhaseReport())) {
                 gameManager.sendChangedHex(entity.getPosition(), boardId);
-                Vector<Building> buildings = new Vector<>();
+                Vector<IBuilding> buildings = new Vector<>();
                 buildings.add(bldg);
                 gameManager.sendChangedBuildings(buildings);
             }

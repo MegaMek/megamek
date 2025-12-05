@@ -48,8 +48,8 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.InfantryMount;
 import megamek.common.weapons.DamageType;
@@ -155,7 +155,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
             damageDealt /= 2;
         }
         // this doesn't work...
-        if ((target instanceof Building) && (weaponType.hasFlag(WeaponType.F_INF_NONPENETRATING))) {
+        if ((target instanceof IBuilding) && (weaponType.hasFlag(WeaponType.F_INF_NONPENETRATING))) {
             damageDealt = 0;
         }
         if (weaponType.hasFlag(WeaponType.F_INF_NONPENETRATING)) {

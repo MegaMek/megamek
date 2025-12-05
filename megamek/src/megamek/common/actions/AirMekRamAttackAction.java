@@ -34,7 +34,7 @@
 package megamek.common.actions;
 
 import java.io.Serial;
-import java.util.Enumeration;
+import java.util.ListIterator;
 
 import megamek.common.Hex;
 import megamek.common.Player;
@@ -49,10 +49,10 @@ import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.LandAirMek;
 import megamek.common.units.ProtoMek;
@@ -148,7 +148,7 @@ public class AirMekRamAttackAction extends DisplacementAttackAction {
         final int targetElevation = target.getElevation()
               + targHex.getLevel();
         final int targetHeight = targetElevation + target.getHeight();
-        Building bldg = game.getBoard().getBuildingAt(getTargetPos());
+        IBuilding bldg = game.getBoard().getBuildingAt(getTargetPos());
         ToHitData toHit;
         boolean targIsBuilding = ((getTargetType() == Targetable.TYPE_FUEL_TANK)
               || (getTargetType() == Targetable.TYPE_BUILDING));
@@ -366,8 +366,8 @@ public class AirMekRamAttackAction extends DisplacementAttackAction {
 
         // determine last valid step
         movePath.compile(game, attackingEntity);
-        for (final Enumeration<MoveStep> i = movePath.getSteps(); i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
+        for (final ListIterator<MoveStep> i = movePath.getSteps(); i.hasNext(); ) {
+            final MoveStep step = i.next();
             if (step.getMovementType(movePath.isEndStep(step)) == EntityMovementType.MOVE_ILLEGAL) {
                 break;
             }

@@ -59,8 +59,8 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Aero;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
@@ -108,7 +108,7 @@ public class CLIATMHandler extends ATMHandler {
                   weaponType.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
                   weaponType.getInfantryDamageClass(),
                   ((Infantry) target).isMechanized(),
-                  toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
+                  toHit.getThruBldg() != null, weaponEntity.getId(), calcDmgPerHitReport);
 
             // some question here about "partial streak missiles"
             if (streakInactive()) {
@@ -397,7 +397,7 @@ public class CLIATMHandler extends ATMHandler {
         }
 
         if (ammo.getUsableShotsLeft() <= 0) {
-            attackingEntity.loadWeaponWithSameAmmo(weapon);
+            weaponEntity.loadWeaponWithSameAmmo(weapon);
             if (weapon.getLinked() instanceof AmmoMounted ammoMounted) {
                 ammo = ammoMounted;
             } else {
@@ -442,7 +442,7 @@ public class CLIATMHandler extends ATMHandler {
      */
     @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
-          boolean bldgDamagedOnMiss, Building bldg,
+          boolean bldgDamagedOnMiss, IBuilding bldg,
           Vector<Report> vPhaseReport) {
         if (streakInactive()) {
             return super.handleSpecialMiss(entityTarget, bldgDamagedOnMiss,
@@ -481,7 +481,7 @@ public class CLIATMHandler extends ATMHandler {
                   && attackingEntity.getPosition().distance(target.getPosition()) <= 1;
 
             // Which building takes the damage?
-            Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+            IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
 
             // Report weapon attack and its to-hit value.
             Report r = new Report(3115);
@@ -581,7 +581,7 @@ public class CLIATMHandler extends ATMHandler {
 
             if (!bMissed) {
                 // light inferno missiles all at once, if not missed
-                vPhaseReport.addAll(gameManager.deliverInfernoMissiles(attackingEntity, target,
+                vPhaseReport.addAll(gameManager.deliverInfernoMissiles(weaponEntity, target,
                       hits, weapon.getCalledShot().getCall()));
             }
             return false;
@@ -604,7 +604,7 @@ public class CLIATMHandler extends ATMHandler {
             }
 
             // Which building takes the damage?
-            Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+            IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
             String number = numWeapons > 1 ? " (" + numWeapons + ")" : "";
             // Report weapon attack and its to-hit value.
             Report report = new Report(3115);
@@ -634,9 +634,9 @@ public class CLIATMHandler extends ATMHandler {
                     vPhaseReport.addElement(report);
                     weapon.setUsedThisRound(false);
                     WeaponAttackAction newWaa = new WeaponAttackAction(
-                          attackingEntity.getId(), entity.getId(), weaponAttackAction.getWeaponId());
+                          weaponEntity.getId(), entity.getId(), weaponAttackAction.getWeaponId());
                     newWaa.setNemesisConfused(true);
-                    Mounted<?> m = attackingEntity.getEquipment(weaponAttackAction.getWeaponId());
+                    Mounted<?> m = weaponEntity.getEquipment(weaponAttackAction.getWeaponId());
                     Weapon w = (Weapon) m.getType();
                     AttackHandler attackHandler = w.fire(newWaa, game, gameManager);
                     // increase ammo by one, because we just incorrectly used

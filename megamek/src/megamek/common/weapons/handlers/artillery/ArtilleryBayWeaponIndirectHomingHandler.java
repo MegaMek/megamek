@@ -60,8 +60,8 @@ import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.DamageType;
@@ -143,7 +143,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
               && attackingEntity.getPosition().distance(target.getPosition()) <= 1;
 
         // Which building takes the damage?
-        Building building = game.getBoard().getBuildingAt(target.getPosition());
+        IBuilding building = game.getBoard().getBuildingAt(target.getPosition());
 
         // Determine what ammo we're firing for reporting and (later) damage
         AmmoMounted ammoUsed = attackingEntity.getAmmo(artilleryAttackAction.getAmmoId());
@@ -466,7 +466,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
      */
     @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
-          boolean bldgDamagedOnMiss, Building bldg,
+          boolean bldgDamagedOnMiss, IBuilding bldg,
           Vector<Report> vPhaseReport) {
         return true;
     }

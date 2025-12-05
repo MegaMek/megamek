@@ -62,7 +62,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.IBomber;
 import megamek.common.util.StringUtil;
-import megamek.common.weapons.handlers.artillery.ArtilleryWeaponIndirectHomingHandler;
 import megamek.logging.MMLogger;
 
 /** The ActionListener for the lobby popup menu for both the MekTable and MekTrees. */
@@ -121,6 +120,8 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
             case LMP_RAPID_FIRE_MG_OFF:
             case LMP_HOT_LOAD_ON:
             case LMP_HOT_LOAD_OFF:
+            case LMP_VRT_LONG:
+            case LMP_VRT_SHORT:
             case LMP_SQUADRON:
             case LMP_LOAD:
             case LMP_UNLOAD:
@@ -267,6 +268,11 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
                 case LMP_HOT_LOAD_ON:
                 case LMP_HOT_LOAD_OFF:
                     lobby.lobbyActions.toggleHotLoad(entities, command.equals(LMP_HOT_LOAD_ON));
+                    break;
+
+                case LMP_VRT_LONG:
+                case LMP_VRT_SHORT:
+                    lobby.lobbyActions.setVRTMode(entities, command.equals(LMP_VRT_LONG));
                     break;
 
                 case LMP_SQUADRON:

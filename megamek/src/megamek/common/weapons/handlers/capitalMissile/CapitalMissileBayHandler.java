@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers.capitalMissile;
 
+import static java.lang.Math.floor;
+
 import java.io.Serial;
 import java.util.Vector;
 
@@ -52,8 +54,8 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Building;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.Weapon;
@@ -104,7 +106,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             attackingEntity.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
         // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+        IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
         String number = numWeapons > 1 ? " (" + numWeapons + ")" : "";
         for (int i = numAttacks; i > 0; i--) {
             // Report weapon attack and its to-hit value.
@@ -382,7 +384,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         CapMissileAMSMod = calcCapMissileAMSMod();
 
         if (bDirect) {
-            av = Math.min(av + (toHit.getMoS() / 3.0), av * 2);
+            av = Math.min(av + (int) floor(toHit.getMoS() / 3.0), av * 2);
         }
         av = applyGlancingBlowModifier(av, false);
         av = (int) Math.floor(getBracketingMultiplier() * av);
@@ -575,7 +577,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             attackingEntity.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
         // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+        IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
         // Report weapon attack and its to-hit value.
         Report report = new Report(3115);
         report.indent();

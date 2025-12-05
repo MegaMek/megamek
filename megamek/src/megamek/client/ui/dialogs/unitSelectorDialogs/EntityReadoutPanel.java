@@ -196,7 +196,7 @@ public class EntityReadoutPanel extends JPanel {
         EntityReadout mekView = EntityReadout.createReadout(entity,
               false,
               false,
-              entity.getCrew() == null
+              (entity.isUncrewed())
         );
         showEntity(entity, mekView, fontName);
     }

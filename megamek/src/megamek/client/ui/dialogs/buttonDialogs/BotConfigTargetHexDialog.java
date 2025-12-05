@@ -48,10 +48,10 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.TipList;
 import megamek.client.ui.util.UIUtil.TipTextField;
-import megamek.common.board.Board;
-import megamek.common.units.Building;
-import megamek.common.board.Coords;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.units.IBuilding;
 import megamek.server.ServerBoardHelper;
 
 public class BotConfigTargetHexDialog extends AbstractButtonDialog {
@@ -130,7 +130,7 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
             listLabel.setEnabled(false);
             coordsList.setEnabled(false);
         } else {
-            board.getBuildingsVector().stream().map(Building::getCoordsList).forEach(coordsListModel::addAll);
+            board.getBuildingsVector().stream().map(IBuilding::getCoordsList).forEach(coordsListModel::addAll);
         }
 
         result.add(Box.createVerticalStrut(15));

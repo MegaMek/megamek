@@ -90,7 +90,12 @@ public class OptionsConstants {
     public static final String QUIRK_POS_TRAILER_HITCH = "trailer_hitch";
     public static final String QUIRK_POS_UBIQUITOUS_IS = "ubiquitous_is";
     public static final String QUIRK_POS_UBIQUITOUS_CLAN = "ubiquitous_clan";
+    public static final String QUIRK_POS_VAR_RNG_TARG = "variable_range_targeting";
+    /** @deprecated Use {@link #QUIRK_POS_VAR_RNG_TARG} instead. Kept for backward compatibility. */
+    @Deprecated(since = "0.50.06", forRemoval = true)
     public static final String QUIRK_POS_VAR_RNG_TARG_L = "variable_range_long";
+    /** @deprecated Use {@link #QUIRK_POS_VAR_RNG_TARG} instead. Kept for backward compatibility. */
+    @Deprecated(since = "0.50.06", forRemoval = true)
     public static final String QUIRK_POS_VAR_RNG_TARG_S = "variable_range_short";
     // TODO Game Rules
     public static final String QUIRK_POS_VESTIGIAL_HANDS_LA = "vestigial_hands_la";
@@ -425,9 +430,6 @@ public class OptionsConstants {
     public static final String ADVANCED_COMBAT_TAC_OPS_COOLANT_FAILURE = "tacops_coolant_failure";
     public static final String ADVANCED_COMBAT_TAC_OPS_BA_VS_BA = "tacops_ba_vs_ba";
     public static final String ADVANCED_COMBAT_NO_TAC = "no_tac";
-    public static final String ADVANCED_COMBAT_VEHICLES_THRESHOLD = "vehicles_threshold";
-    public static final String ADVANCED_COMBAT_VEHICLES_THRESHOLD_VARIABLE = "vehicles_threshold_variable";
-    public static final String ADVANCED_COMBAT_VEHICLES_THRESHOLD_DIVISOR = "vehicles_threshold_divisor";
     public static final String ADVANCED_COMBAT_VTOL_STRAFING = "vtol_strafing";
     public static final String ADVANCED_COMBAT_VEHICLES_SAFE_FROM_INFERNOS = "vehicles_safe_from_infernos";
     public static final String ADVANCED_COMBAT_PROTOMEKS_SAFE_FROM_INFERNOS = "protos_safe_from_infernos";

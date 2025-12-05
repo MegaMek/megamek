@@ -213,7 +213,7 @@ public class MekFileParser {
                     // Do not remove <50.0 compatibility handler 'ProtoMech' as this will break our cross-version
                     // compatibility promise
                     case "ProtoMech", "ProtoMek" -> new BLKProtoMekFile(bb);
-                    // Do not remove <50.0 compatibility handler 'ProtoMech' as this will break our cross-version
+                    // Do not remove <50.0 compatibility handler 'Mech' as this will break our cross-version
                     // compatibility promise
                     case "Mek", "Mech" -> new BLKMekFile(bb);
                     case "VTOL" -> new BLKVTOLFile(bb);

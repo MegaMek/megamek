@@ -2329,4 +2329,192 @@ class BasicPathRankerTest {
         assertEquals(4.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
     }
 
+    /**
+     * Tests for the countAlliesWhoCanEngage method used in allied damage discount calculation.
+     */
+    @Nested
+    class AlliedDamageDiscountTests {
+
+        @Test
+        void testCountAlliesWhoCanEngage_NoAllies() {
+            // Setup
+            BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+
+            Entity mockEnemy = mock(BipedMek.class);
+            when(mockEnemy.getPosition()).thenReturn(new Coords(10, 10));
+            when(mockEnemy.isAirborne()).thenReturn(false);
+
+            Entity mockMovingUnit = mock(BipedMek.class);
+            when(mockMovingUnit.getId()).thenReturn(1);
+
+            // Empty friends list
+            when(mockPrincess.getFriendEntities()).thenReturn(new ArrayList<>());
+
+            // Execute
+            int result = testRanker.countAlliesWhoCanEngage(mockEnemy, mockMovingUnit);
+
+            // Verify
+            assertEquals(0, result);
+        }
+
+        @Test
+        void testCountAlliesWhoCanEngage_OneAllyInRange() {
+            // Setup
+            BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+
+            Entity mockEnemy = mock(BipedMek.class);
+            when(mockEnemy.getPosition()).thenReturn(new Coords(10, 10));
+            when(mockEnemy.isAirborne()).thenReturn(false);
+
+            Entity mockMovingUnit = mock(BipedMek.class);
+            when(mockMovingUnit.getId()).thenReturn(1);
+
+            Entity mockAlly = mock(BipedMek.class);
+            when(mockAlly.getId()).thenReturn(2);
+            when(mockAlly.getPosition()).thenReturn(new Coords(10, 12)); // 2 hexes away
+            when(mockAlly.isOffBoard()).thenReturn(false);
+
+            List<Entity> friends = new ArrayList<>();
+            friends.add(mockAlly);
+            when(mockPrincess.getFriendEntities()).thenReturn(friends);
+            when(mockPrincess.getMaxWeaponRange(mockAlly, false)).thenReturn(15); // In range
+
+            // Execute
+            int result = testRanker.countAlliesWhoCanEngage(mockEnemy, mockMovingUnit);
+
+            // Verify
+            assertEquals(1, result);
+        }
+
+        @Test
+        void testCountAlliesWhoCanEngage_AllyOutOfRange() {
+            // Setup
+            BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+
+            Entity mockEnemy = mock(BipedMek.class);
+            when(mockEnemy.getPosition()).thenReturn(new Coords(10, 10));
+            when(mockEnemy.isAirborne()).thenReturn(false);
+
+            Entity mockMovingUnit = mock(BipedMek.class);
+            when(mockMovingUnit.getId()).thenReturn(1);
+
+            Entity mockAlly = mock(BipedMek.class);
+            when(mockAlly.getId()).thenReturn(2);
+            when(mockAlly.getPosition()).thenReturn(new Coords(10, 25)); // 15 hexes away
+            when(mockAlly.isOffBoard()).thenReturn(false);
+
+            List<Entity> friends = new ArrayList<>();
+            friends.add(mockAlly);
+            when(mockPrincess.getFriendEntities()).thenReturn(friends);
+            when(mockPrincess.getMaxWeaponRange(mockAlly, false)).thenReturn(10); // Out of range
+
+            // Execute
+            int result = testRanker.countAlliesWhoCanEngage(mockEnemy, mockMovingUnit);
+
+            // Verify
+            assertEquals(0, result);
+        }
+
+        @Test
+        void testCountAlliesWhoCanEngage_ExcludesMovingUnit() {
+            // Setup
+            BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+
+            Entity mockEnemy = mock(BipedMek.class);
+            when(mockEnemy.getPosition()).thenReturn(new Coords(10, 10));
+            when(mockEnemy.isAirborne()).thenReturn(false);
+
+            Entity mockMovingUnit = mock(BipedMek.class);
+            when(mockMovingUnit.getId()).thenReturn(1);
+            when(mockMovingUnit.getPosition()).thenReturn(new Coords(10, 11));
+            when(mockMovingUnit.isOffBoard()).thenReturn(false);
+
+            // Friends list includes the moving unit
+            List<Entity> friends = new ArrayList<>();
+            friends.add(mockMovingUnit);
+            when(mockPrincess.getFriendEntities()).thenReturn(friends);
+            when(mockPrincess.getMaxWeaponRange(mockMovingUnit, false)).thenReturn(15);
+
+            // Execute
+            int result = testRanker.countAlliesWhoCanEngage(mockEnemy, mockMovingUnit);
+
+            // Verify - should be 0 because moving unit is excluded
+            assertEquals(0, result);
+        }
+
+        @Test
+        void testCountAlliesWhoCanEngage_SkipsOffBoardAllies() {
+            // Setup
+            BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+
+            Entity mockEnemy = mock(BipedMek.class);
+            when(mockEnemy.getPosition()).thenReturn(new Coords(10, 10));
+            when(mockEnemy.isAirborne()).thenReturn(false);
+
+            Entity mockMovingUnit = mock(BipedMek.class);
+            when(mockMovingUnit.getId()).thenReturn(1);
+
+            Entity mockAlly = mock(BipedMek.class);
+            when(mockAlly.getId()).thenReturn(2);
+            when(mockAlly.getPosition()).thenReturn(new Coords(10, 12));
+            when(mockAlly.isOffBoard()).thenReturn(true); // Off-board
+
+            List<Entity> friends = new ArrayList<>();
+            friends.add(mockAlly);
+            when(mockPrincess.getFriendEntities()).thenReturn(friends);
+
+            // Execute
+            int result = testRanker.countAlliesWhoCanEngage(mockEnemy, mockMovingUnit);
+
+            // Verify
+            assertEquals(0, result);
+        }
+
+        @Test
+        void testCountAlliesWhoCanEngage_SkipsNullPositionAllies() {
+            // Setup
+            BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+
+            Entity mockEnemy = mock(BipedMek.class);
+            when(mockEnemy.getPosition()).thenReturn(new Coords(10, 10));
+            when(mockEnemy.isAirborne()).thenReturn(false);
+
+            Entity mockMovingUnit = mock(BipedMek.class);
+            when(mockMovingUnit.getId()).thenReturn(1);
+
+            Entity mockAlly = mock(BipedMek.class);
+            when(mockAlly.getId()).thenReturn(2);
+            when(mockAlly.getPosition()).thenReturn(null); // No position
+            when(mockAlly.isOffBoard()).thenReturn(false);
+
+            List<Entity> friends = new ArrayList<>();
+            friends.add(mockAlly);
+            when(mockPrincess.getFriendEntities()).thenReturn(friends);
+
+            // Execute
+            int result = testRanker.countAlliesWhoCanEngage(mockEnemy, mockMovingUnit);
+
+            // Verify
+            assertEquals(0, result);
+        }
+
+        @Test
+        void testCountAlliesWhoCanEngage_EnemyNullPosition() {
+            // Setup
+            BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+
+            Entity mockEnemy = mock(BipedMek.class);
+            when(mockEnemy.getPosition()).thenReturn(null); // Enemy has no position
+
+            Entity mockMovingUnit = mock(BipedMek.class);
+            when(mockMovingUnit.getId()).thenReturn(1);
+
+            // Execute
+            int result = testRanker.countAlliesWhoCanEngage(mockEnemy, mockMovingUnit);
+
+            // Verify - should return 0 immediately
+            assertEquals(0, result);
+        }
+    }
+
 }

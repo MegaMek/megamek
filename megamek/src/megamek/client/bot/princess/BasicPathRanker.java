@@ -825,7 +825,7 @@ public class BasicPathRanker extends PathRanker {
             // the threat is reduced proportionally
             double enemyDamage = eval.getEstimatedEnemyDamage();
             if (getOwner().getBehaviorSettings().isConsiderAlliedDamage()) {
-                int alliesEngaging = countAlliesWhoCanEngage(enemy, path.getFinalCoords());
+                int alliesEngaging = countAlliesWhoCanEngage(enemy, movingUnit);
                 if (alliesEngaging > 0) {
                     double allyFactor = alliesEngaging + 1.0;  // +1 for self
                     double originalDamage = enemyDamage;
@@ -2074,17 +2074,16 @@ public class BasicPathRanker extends PathRanker {
     }
 
     /**
-     * Count friendly units who can potentially engage the given enemy from the given position. Used for allied damage
-     * discount calculation - when multiple allies can engage an enemy, the threat from that enemy is reduced
-     * proportionally.
+     * Count friendly units (excluding the moving unit) who can potentially engage the given enemy.
+     * Used for allied damage discount calculation - when multiple allies can engage an enemy,
+     * the threat from that enemy is reduced proportionally.
      *
-     * @param enemy         The enemy entity to check engagement range against
-     * @param myFinalCoords The final coordinates of the unit being evaluated (not used for ally checks, but included
-     *                      for potential future enhancements)
+     * @param enemy      The enemy entity to check engagement range against
+     * @param movingUnit The unit currently being evaluated (excluded from count to avoid double-counting)
      *
      * @return The number of allied units (excluding the moving unit) who are in weapon range of the enemy
      */
-    protected int countAlliesWhoCanEngage(Entity enemy, Coords myFinalCoords) {
+    protected int countAlliesWhoCanEngage(Entity enemy, Entity movingUnit) {
         if (enemy.getPosition() == null) {
             return 0;
         }
@@ -2093,6 +2092,11 @@ public class BasicPathRanker extends PathRanker {
         List<Entity> friends = getOwner().getFriendEntities();
 
         for (Entity ally : friends) {
+            // Skip the moving unit to avoid double-counting (we add +1 for self in the caller)
+            if (ally.getId() == movingUnit.getId()) {
+                continue;
+            }
+
             // Skip if ally has no position or is off-board
             if (ally.getPosition() == null || ally.isOffBoard()) {
                 continue;

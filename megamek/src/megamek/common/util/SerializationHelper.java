@@ -41,6 +41,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import megamek.common.TargetRollModifier;
 import megamek.common.board.Coords;
+import megamek.common.board.CubeCoords;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.NarcPod;
 import megamek.common.equipment.Sensor;
@@ -294,6 +295,42 @@ public class SerializationHelper {
                     }
                 }
                 return (value > Integer.MIN_VALUE) ? new TargetRollModifier(value, description, cumulative) : null;
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here
+            }
+        });
+
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class cls) {
+                return (cls == CubeCoords.class);
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                double q = Double.NaN;
+                double r = Double.NaN;
+                double s = Double.NaN;
+
+                while (reader.hasMoreChildren()) {
+                    reader.moveDown();
+                    try {
+                        switch (reader.getNodeName()) {
+                            case "q" -> q = Double.parseDouble(reader.getValue());
+                            case "r" -> r = Double.parseDouble(reader.getValue());
+                            case "s" -> s = Double.parseDouble(reader.getValue());
+                        }
+                        reader.moveUp();
+                    } catch (NumberFormatException e) {
+                        // CubeCoords with malformed entries will be silently ignored
+                        return null;
+                    }
+                }
+                return (!Double.isNaN(q) && !Double.isNaN(r) && !Double.isNaN(s))
+                    ? new CubeCoords(q, r, s) : null;
             }
 
             @Override

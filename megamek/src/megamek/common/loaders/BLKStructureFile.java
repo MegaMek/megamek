@@ -33,10 +33,11 @@
 
 package megamek.common.loaders;
 
+import megamek.common.board.CubeCoords;
+import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.Entity;
-import megamek.common.units.IBuilding;
 import megamek.common.util.BuildingBlock;
 
 public class BLKStructureFile extends BLKFile implements IMekLoader {
@@ -51,21 +52,26 @@ public class BLKStructureFile extends BLKFile implements IMekLoader {
      */
     @Override
     public Entity getEntity() throws Exception {
-        BuildingEntity be = new BuildingEntity(BuildingType.MEDIUM, IBuilding.STANDARD);
+        if (!dataFile.exists("building_type")) {
+            throw new EntityLoadingException("Could not find building_type block.");
+        }
+        BuildingType buildingType = BuildingType.getType(dataFile.getDataAsInt("building_type")[0]);
 
+
+        if (!dataFile.exists("building_class")) {
+            throw new EntityLoadingException("Could not find building_class block.");
+        }
+        int buildingClass = dataFile.getDataAsInt("building_class")[0];
+
+
+        BuildingEntity be = new BuildingEntity(buildingType, buildingClass);
         setBasicEntityData(be);
 
-        if (!dataFile.exists("year")) {
-            throw new EntityLoadingException("Could not find year block.");
+
+        if (!dataFile.exists("height")) {
+            throw new EntityLoadingException("Could not find height block.");
         }
-        be.setYear(dataFile.getDataAsInt("year")[0]);
-
-        loadEquipment(be, "Base", 0);
-
-        //if (!dataFile.exists("tonnage")) {
-        //    throw new EntityLoadingException("Could not find weight block.");
-        //}
-        //be.setWeight(dataFile.getDataAsDouble("tonnage")[0]);
+        be.getInternalBuilding().setBuildingHeight(dataFile.getDataAsInt("height")[0]);
 
         if (!dataFile.exists("cf")) {
             throw new EntityLoadingException("Could not find cf block.");
@@ -80,7 +86,40 @@ public class BLKStructureFile extends BLKFile implements IMekLoader {
         int armor = dataFile.getDataAsInt("armor")[0];
         be.initializeArmor(armor, 0);
 
+        if (!dataFile.exists("coords")) {
+            throw new EntityLoadingException("Could not find coords block.");
+        }
+        for (CubeCoords coords : dataFile.getDataAsCubeCoords("coords")) {
+            be.getInternalBuilding().addHex(coords, cf, armor, BasementType.NONE, false);
+        }
+
+
+
+        if (!dataFile.exists("year")) {
+            throw new EntityLoadingException("Could not find year block.");
+        }
+        be.setYear(dataFile.getDataAsInt("year")[0]);
+
+
+        be.refreshLocations();
+
+        // Once all coords - which correspond to locations - are loaded, we can start loading equipment.
+        // Building doesn't need to have any equipment though.
+        for (CubeCoords coords : be.getInternalBuilding().getCoordsList()) {
+            int index = be.getInternalBuilding().getCoordsList().indexOf(coords);
+            be.initializeInternal(cf, index);
+            be.initializeArmor(armor,index);
+
+
+            String equipmentBlockName = "(" + coords.q() + "," + coords.r() + "," + coords.s() + ")";
+            loadEquipment(be, equipmentBlockName, be.getInternalBuilding().getCoordsList().indexOf(coords));
+
+        }
+
+        // Reset our armor type & tech level now that we have all our locations set up
         be.recalculateTechAdvancement();
+
+
         return be;
     }
 }

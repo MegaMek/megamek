@@ -34,7 +34,9 @@
 package megamek.common.units;
 
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
@@ -48,6 +50,7 @@ import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.board.CubeCoords;
 import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.AvailabilityValue;
@@ -55,23 +58,32 @@ import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
+import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.Mounted;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.rolls.PilotingRollData;
 import megamek.logging.MMLogger;
 
+/**
+ * BuildingEntity represents a mobile building (e.g., a moving fortress).
+ *
+ * It contains a Building (which stores data in relative coordinates) and handles
+ * translation between board coordinates and the Building's relative coordinate space.
+ * Unlike BuildingTerrain, the translation is dynamic based on Entity's current position/facing.
+ */
 public class BuildingEntity extends Entity implements IBuilding {
 
     private static final MMLogger logger = MMLogger.create(BuildingEntity.class);
 
-    private Building building;
+    private final Building building;
+    private final Map<CubeCoords, Coords> relativeLayout = new HashMap<>();  // Relative CubeCoords -> actual board coords
 
     private static final int LOC_BASE = 0;
 
     public static final String[] HIT_LOCATION_NAMES = { "building" };
 
-    private static final String[] LOCATION_ABBREVIATIONS = { "BLDG" };
-    private static final String[] LOCATION_NAMES = { "BLDG" };
+    private static final String LOCATION_ABBREVIATIONS_PREFIX = "BLDG";
+    private static final String LOCATION_NAMES_PREFIX = "BLDG";
 
     private static final int[] CRITICAL_SLOTS = new int[] { 100 };
 
@@ -80,6 +92,87 @@ public class BuildingEntity extends Entity implements IBuilding {
         building = new Building(type, bldgClass, getId(), Terrains.BUILDING);
 
         initializeInternal(0, LOC_BASE);
+    }
+
+    // ========== IBuilding Coordinate Translation Overrides ==========
+
+    @Override
+    public Coords getBoardOrigin() {
+        return getPosition();  // Entity's current position
+    }
+
+    @Override
+    public int getBoardFacing() {
+        return getFacing();  // Entity's current facing
+    }
+
+    @Override
+    public Building getInternalBuilding() {
+        return building;
+    }
+
+    @Override
+    public CubeCoords boardToRelative(Coords boardCoords) {
+        // Find which relative CubeCoord maps to this board coordinate
+        return relativeLayout.entrySet().stream()
+            .filter(e -> e.getValue().equals(boardCoords))
+            .map(Map.Entry::getKey)
+            .findFirst()
+            .orElse(boardCoords.toCube());
+    }
+
+    @Override
+    public Coords relativeToBoard(CubeCoords relativeCoords) {
+        // Return the board coordinate this relative CubeCoord maps to
+        return relativeLayout.get(relativeCoords);
+    }
+
+    /**
+     * Override setPosition to populate the relativeLayout map when the entity is placed.
+     * This establishes the mapping between the building's internal relative coordinates
+     * and their actual board coordinates.
+     */
+    @Override
+    public void setPosition(Coords position) {
+        super.setPosition(position);
+        updateRelativeLayout();
+    }
+
+    @Override
+    public void setPosition(Coords position, boolean gameUpdate) {
+        super.setPosition(position, gameUpdate);
+        updateRelativeLayout();
+    }
+
+    /**
+     * Updates the relativeLayout map to reflect the current building configuration.
+     * Maps each relative CubeCoord in the building to its actual board position.
+     */
+    private void updateRelativeLayout() {
+        relativeLayout.clear();
+
+        if (getPosition() == null) {
+            return;
+        }
+
+        secondaryPositions.put(0, getPosition());
+        relativeLayout.put(CubeCoords.ZERO, getPosition());
+
+        // Map each relative CubeCoord to its actual board coordinate
+        int position = 1;
+        for (CubeCoords relCoord : building.getCoordsList()) {
+            // We add the origin manually
+            if (!relCoord.equals(CubeCoords.ZERO)) {
+                // TODO: When rotation is implemented, rotate by facing before adding to entity position
+                // For now, with no rotation, convert CubeCoord to offset and add to entity position
+                CubeCoords positionCubeCoords = getPosition().toCube();
+                Coords boardCoord = positionCubeCoords.add(relCoord).toOffset();
+
+                relativeLayout.put(relCoord, boardCoord);
+                secondaryPositions.put(position, boardCoord);
+                position++;
+            }
+        }
     }
 
     // FIXME: IDK if this is right, just needed something to pass tests
@@ -140,7 +233,10 @@ public class BuildingEntity extends Entity implements IBuilding {
      */
     @Override
     public int locations() {
-        return 1;
+        if (getInternalBuilding() == null || getInternalBuilding().getCoordsList() == null) {
+            return 1;
+        }
+        return getInternalBuilding().getCoordsList().size();
     }
 
     /**
@@ -195,12 +291,18 @@ public class BuildingEntity extends Entity implements IBuilding {
 
     @Override
     public String[] getLocationNames() {
-        return LOCATION_NAMES;
+        return getInternalBuilding().getCoordsList()
+              .stream()
+              .map(c -> LOCATION_NAMES_PREFIX + ' ' + c.toOffset().getBoardNum())
+              .toArray(String[]::new);
     }
 
     @Override
     public String[] getLocationAbbreviations() {
-        return LOCATION_ABBREVIATIONS;
+        return getInternalBuilding().getCoordsList()
+              .stream()
+              .map(c -> LOCATION_ABBREVIATIONS_PREFIX + ' ' + c.toOffset().getBoardNum())
+              .toArray(String[]::new);
     }
 
     @Override
@@ -489,19 +591,43 @@ public class BuildingEntity extends Entity implements IBuilding {
         return Entity.ETYPE_BUILDING_ENTITY;
     }
 
+    /**
+     * Returns the amount of armor in the location specified, or IArmorState.ARMOR_NA, or IArmorState.ARMOR_DESTROYED.
+     *
+     * @param loc
+     * @param rear
+     */
+    @Override
+    public int getArmor(int loc, boolean rear) {
+        return IArmorState.ARMOR_NA;
+    }
+
     @Override
     public boolean hasCFIn(Coords coords) {
-        return building.hasCFIn(coords);
+        CubeCoords relative = boardToRelative(coords);
+        return relative != null && building.hasCFIn(relative);
     }
 
     @Override
     public Enumeration<Coords> getCoords() {
-        return building.getCoords();
+        // Return board coords by translating all relative coords
+        Vector<Coords> boardCoords = new Vector<>();
+        for (CubeCoords relCoord : building.getCoordsList()) {
+            Coords boardCoord = relativeToBoard(relCoord);
+            if (boardCoord != null) {
+                boardCoords.add(boardCoord);
+            }
+        }
+        return boardCoords.elements();
     }
 
     @Override
     public List<Coords> getCoordsList() {
-        return building.getCoordsList();
+        // Return board coords by translating all relative coords
+        return building.getCoordsList().stream()
+            .map(this::relativeToBoard)
+            .filter(c -> c != null)
+            .toList();
     }
 
     @Override
@@ -516,47 +642,67 @@ public class BuildingEntity extends Entity implements IBuilding {
 
     @Override
     public boolean getBasementCollapsed(Coords coords) {
-        return building.getBasementCollapsed(coords);
+        return building.getBasementCollapsed(boardToRelative(coords));
     }
 
     @Override
     public void collapseBasement(Coords coords, Board board, Vector<Report> vPhaseReport) {
-        building.collapseBasement(coords, board, vPhaseReport);
+        CubeCoords relative = boardToRelative(coords);
+        building.collapseBasement(relative, board, vPhaseReport);
+        // Update the board hex
+        board.getHex(coords).addTerrain(new Terrain(Terrains.BLDG_BASE_COLLAPSED, 1));
     }
 
     @Override
     public boolean rollBasement(Coords coords, Board board, Vector<Report> vPhaseReport) {
-        return building.rollBasement(coords, board, vPhaseReport);
+        CubeCoords relative = boardToRelative(coords);
+        boolean changed = building.rollBasement(relative, board, vPhaseReport);
+        if (changed) {
+            // Update the board hex with the rolled basement type
+            BasementType rolledType = building.getBasement(relative);
+            board.getHex(coords).addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, rolledType.ordinal()));
+        }
+        return changed;
     }
 
     @Override
     public int getCurrentCF(Coords coords) {
-        return building.getCurrentCF(coords);
+        return building.getCurrentCF(boardToRelative(coords));
     }
 
     @Override
     public int getPhaseCF(Coords coords) {
-        return building.getPhaseCF(coords);
+        return building.getPhaseCF(boardToRelative(coords));
     }
 
     @Override
     public int getArmor(Coords coords) {
-        return building.getArmor(coords);
+        return building.getArmor(boardToRelative(coords));
     }
 
     @Override
     public void setCurrentCF(int cf, Coords coords) {
-        building.setCurrentCF(cf, coords);
+        building.setCurrentCF(cf, boardToRelative(coords));
     }
 
     @Override
     public void setPhaseCF(int cf, Coords coords) {
-        building.setPhaseCF(cf, coords);
+        building.setPhaseCF(cf, boardToRelative(coords));
     }
 
     @Override
     public void setArmor(int a, Coords coords) {
-        building.setArmor(a, coords);
+        building.setArmor(a, boardToRelative(coords));
+    }
+
+    @Override
+    public int getHeight(Coords coords) {
+        return building.getHeight(boardToRelative(coords));
+    }
+
+    @Override
+    public void setHeight(int h, Coords coords) {
+        building.setHeight(h, boardToRelative(coords));
     }
 
     @Override
@@ -566,17 +712,17 @@ public class BuildingEntity extends Entity implements IBuilding {
 
     @Override
     public boolean isBurning(Coords coords) {
-        return building.isBurning(coords);
+        return building.isBurning(boardToRelative(coords));
     }
 
     @Override
     public void setBurning(boolean onFire, Coords coords) {
-        building.setBurning(onFire, coords);
+        building.setBurning(onFire, boardToRelative(coords));
     }
 
     @Override
     public void addDemolitionCharge(int playerId, int damage, Coords pos) {
-        building.addDemolitionCharge(playerId, damage, pos);
+        building.addDemolitionCharge(playerId, damage, boardToRelative(pos));
     }
 
     @Override
@@ -596,7 +742,10 @@ public class BuildingEntity extends Entity implements IBuilding {
 
     @Override
     public void removeHex(Coords coords) {
-        building.removeHex(coords);
+        CubeCoords relative = boardToRelative(coords);
+        building.removeHex(relative);
+        // Remove from layout
+        relativeLayout.remove(relative);
     }
 
     @Override
@@ -611,21 +760,16 @@ public class BuildingEntity extends Entity implements IBuilding {
 
     @Override
     public BasementType getBasement(Coords coords) {
-        return building.getBasement(coords);
+        return building.getBasement(boardToRelative(coords));
     }
 
     @Override
     public void setBasement(Coords coords, BasementType basement) {
-        building.setBasement(coords, basement);
+        building.setBasement(boardToRelative(coords), basement);
     }
 
     @Override
     public void setBasementCollapsed(Coords coords, boolean collapsed) {
-        building.setBasementCollapsed(coords, collapsed);
-    }
-
-    @Override
-    public IBuilding getBuilding() {
-        return building;
+        building.setBasementCollapsed(boardToRelative(coords), collapsed);
     }
 }

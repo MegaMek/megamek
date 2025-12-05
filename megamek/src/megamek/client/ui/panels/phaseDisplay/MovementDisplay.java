@@ -2086,6 +2086,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 // check if it's a valid DFA
                 ToHitData toHit = DfaAttackAction.toHit(game, currentEntity, target, cmd);
                 if (toHit != null && toHit.getValue() != TargetRoll.IMPOSSIBLE) {
+                    // Calculate piloting roll to stay standing after DFA
+                    PilotingRollData pilotRoll = currentlySelectedEntity.getBasePilotingRoll(
+                          EntityMovementType.MOVE_JUMP);
+                    pilotRoll.addModifier(4, Messages.getString("MovementDisplay.DFADialog.dfaModifier"));
+
                     // if yes, ask them if they want to DFA
                     if (currentlySelectedEntity != null &&
                           clientgui.doYesNoDialog(Messages.getString("MovementDisplay.DFADialog.title",
@@ -2097,7 +2102,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                       DfaAttackAction.getDamageFor(currentlySelectedEntity,
                                             target.isConventionalInfantry()),
                                       toHit.getTableDesc(),
-                                      DfaAttackAction.getDamageTakenBy(currentlySelectedEntity)))) {
+                                      DfaAttackAction.getDamageTakenBy(currentlySelectedEntity),
+                                      pilotRoll.getValueAsString(),
+                                      Compute.oddsAbove(pilotRoll.getValue()),
+                                      pilotRoll.getDesc()))) {
                         // if they answer yes, DFA the target
                         cmd.getLastStep().setTarget(target);
                         ready();

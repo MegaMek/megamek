@@ -759,7 +759,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     return;
                 }
                 // is this a mek dumping ammo being hit in the rear torso?
-                if (List.of(Mek.LOC_CENTER_TORSO, Mek.LOC_RIGHT_TORSO, Mek.LOC_LEFT_TORSO)
+                if (hit.isRear() && List.of(Mek.LOC_CENTER_TORSO, Mek.LOC_RIGHT_TORSO, Mek.LOC_LEFT_TORSO)
                       .contains(hit.getLocation())) {
                     for (Mounted<?> mAmmo : mek.getAmmo()) {
                         if (mAmmo.isDumping() && !mAmmo.isDestroyed() && !mAmmo.isHit()) {

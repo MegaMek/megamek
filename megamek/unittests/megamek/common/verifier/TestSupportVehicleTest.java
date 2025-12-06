@@ -46,8 +46,10 @@ import megamek.common.equipment.MiscType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.SupportTank;
+import megamek.common.util.RoundWeight;
 import megamek.common.verifier.TestSupportVehicle.ChassisModification;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -316,5 +318,57 @@ class TestSupportVehicleTest {
         boolean result = testEntity.correctEntity(sb, supportTank.getTechLevel());
         assertFalse(sb.toString().isEmpty());
         assertFalse(result);
+    }
+
+    /**
+     * Test for GitHub issue #7350: Support Vehicle Engine Weight Rounding
+     *
+     * Per TM p.133, support vehicle engine weight should round to the nearest half-ton
+     * (for vehicles 5+ tons) or nearest kg (for small SVs), not round UP.
+     *
+     * Test case: 5-ton WiGE with 5/8 movement, ICE engine, tech rating D
+     * - baseEngineValue = 0.005 (WiGE, 5+ tons)
+     * - movementFactor = 4 + 5*5 = 29
+     * - engineWeightMultiplier = 1.5 (ICE at tech rating D)
+     * - raw weight = 0.005 * 29 * 1.5 * 5 = 1.0875 tons
+     *
+     * Expected: 1.0 ton (nearest half-ton)
+     * Bug behavior: 1.5 tons (ceiling to next half-ton)
+     */
+    @Test
+    @DisplayName("Issue #7350: SV engine weight rounds to nearest half-ton, not ceiling")
+    void testSupportVehicleEngineWeightRoundsToNearestHalfTon() {
+        // Create a 5-ton WiGE support vehicle
+        SupportTank wige = new SupportTank();
+        wige.setMovementMode(EntityMovementMode.WIGE);
+        wige.setWeight(5.0);
+        wige.setOriginalWalkMP(5); // 5/8 movement
+
+        // Set up ICE engine with tech rating D
+        int engineFlags = Engine.TANK_ENGINE | Engine.SUPPORT_VEE_ENGINE;
+        Engine iceEngine = new Engine(0, Engine.COMBUSTION_ENGINE, engineFlags);
+        wige.setEngine(iceEngine);
+        wige.setEngineTechRating(TechRating.D);
+
+        // Calculate expected raw weight: baseEngineValue * movementFactor * multiplier * tonnage
+        // baseEngineValue for WiGE 5+ tons = 0.005
+        // movementFactor = 4 + 5*5 = 29
+        // ICE multiplier at tech rating D = 1.5
+        // raw weight = 0.005 * 29 * 1.5 * 5.0 = 1.0875 tons
+        double expectedRawWeight = 0.005 * 29 * 1.5 * 5.0;
+        assertEquals(1.0875, expectedRawWeight, 0.0001, "Raw engine weight calculation");
+
+        // Engine weight should round to nearest half-ton (1.0), not ceiling (1.5)
+        double engineWeight = iceEngine.getWeightEngine(wige);
+        assertEquals(1.0, engineWeight, 0.0001,
+              "Engine weight should round to nearest half-ton per TM p.133");
+
+        // Also verify that RoundWeight.SV_ENGINE gives the correct result
+        assertEquals(1.0, RoundWeight.SV_ENGINE.round(expectedRawWeight, wige), 0.0001,
+              "SV_ENGINE rounding should use nearest half-ton");
+
+        // And verify NEXT_HALF_TON would give the wrong (old) result
+        assertEquals(1.5, RoundWeight.NEXT_HALF_TON.round(expectedRawWeight, wige), 0.0001,
+              "NEXT_HALF_TON (ceiling) would incorrectly give 1.5 tons");
     }
 }

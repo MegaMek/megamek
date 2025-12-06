@@ -298,7 +298,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
             }
         } else {
             IBuilding bld = getGame().getBoard(boardId).getBuildingAt(entity.getPosition());
-            if ((bld != null) && (bld.getType() == BuildingType.WALL)) {
+            if ((bld != null) && (bld.getBuildingType() == BuildingType.WALL)) {
                 entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
             }
 

@@ -610,7 +610,7 @@ public class MoveStep implements Serializable {
                     maxElevation++;
                 }
 
-                if (bld.getType() == BuildingType.WALL) {
+                if (bld.getBuildingType() == BuildingType.WALL) {
                     if (maxElevation >= hex.terrainLevel(Terrains.BLDG_ELEV)) {
                         setElevation(Math.max(getElevation(), hex.terrainLevel(Terrains.BLDG_ELEV)));
                     } else {
@@ -2870,7 +2870,7 @@ public class MoveStep implements Serializable {
             if (!isInfantry && !isSuperHeavyMek) {
                 if (!isProto) {
                     // non-ProtoMeks pay extra according to the building type
-                    mp += bldg.getType().getTypeValue();
+                    mp += bldg.getBuildingType().getTypeValue();
                     if (bldg.getBldgClass() == IBuilding.HANGAR) {
                         mp--;
                     }
@@ -3018,7 +3018,7 @@ public class MoveStep implements Serializable {
                   .getLevel()) -
                   hex.getLevel();
 
-            if ((bld.getType() == BuildingType.WALL) && (maxElevation < hex.terrainLevel(Terrains.BLDG_ELEV))) {
+            if ((bld.getBuildingType() == BuildingType.WALL) && (maxElevation < hex.terrainLevel(Terrains.BLDG_ELEV))) {
                 return false;
             }
 

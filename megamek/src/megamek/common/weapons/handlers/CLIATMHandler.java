@@ -86,6 +86,9 @@ public class CLIATMHandler extends ATMHandler {
     @Override
     protected int calcDamagePerHit() {
         double toReturn;
+        if (ammo == null) {
+            return 0;
+        }
         AmmoType ammoType = ammo.getType();
         if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
             sSalvoType = " high-explosive missile(s) ";
@@ -124,6 +127,9 @@ public class CLIATMHandler extends ATMHandler {
         // conventional infantry gets hit in one lump - gets calculated in the sub
         // functions
         // don't need to check for BAs, because BA can't mount ATMs
+        if (ammo == null) {
+            return 0;
+        }
         AmmoType ammoType = ammo.getType();
         // TacOPs p.84 Cluster Hit Penalties will only affect ATM HE
         // I'm doing my own hit calculations here. Special ammo gets its own method.
@@ -159,6 +165,9 @@ public class CLIATMHandler extends ATMHandler {
     }
 
     protected int calcMissileHits(Vector<Report> vPhaseReport) {
+        if (ammo == null) {
+            return 0;
+        }
         AmmoType ammoType = ammo.getType();
 
         // conventional infantry gets hit in one lump
@@ -466,6 +475,11 @@ public class CLIATMHandler extends ATMHandler {
 
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
+        // Can't handle attack without ammo
+        if (ammo == null) {
+            return false;
+        }
+
         AmmoType ammoType = ammo.getType();
         if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW)) {
             if (!cares(phase)) {

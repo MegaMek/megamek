@@ -691,7 +691,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         r.subject = subjectId;
         r.add(weaponType.getName() + number);
         if (entityTarget != null) {
-            if (weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.NA) {
+            if ((ammo != null) && (weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.NA)) {
                 AmmoType ammoType = ammo.getType();
                 if (!ammoType.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)
                       || ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML
@@ -1071,6 +1071,11 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
     protected boolean isNemesisConfusable() {
         // Are we iNarc Nemesis Confusable?
+        // Can't be nemesis confusable without ammo
+        if (ammo == null) {
+            return false;
+        }
+
         boolean isNemesisConfusable = false;
         AmmoType ammoType = ammo.getType();
         Mounted<?> mLinker = weapon.getLinkedBy();

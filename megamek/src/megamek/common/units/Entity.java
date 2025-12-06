@@ -9029,6 +9029,10 @@ public abstract class Entity extends TurnOrdered
         pickedUpMekWarriors.addElement(mw.getId());
     }
 
+    /**
+     *  Clear the Vector of picked-up MekWarrior IDs so that MegaMek issue #3191 does not recur.
+     *  Called when units are initially added to the game (as they should have no carried pilots then).
+     */
     public void resetPickedUpMekWarriors() {
         pickedUpMekWarriors.clear();
     }

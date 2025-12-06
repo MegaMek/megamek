@@ -378,7 +378,8 @@ public class Engine implements Serializable, ITechnology {
               && isValidEngine()) {
             double weight = getWeight(entity);
 
-            return roundWeight.round(weight, entity);
+            // SV engine weight rounds to nearest half-ton (or kg for small SVs) per TM p.133
+            return RoundWeight.SV_ENGINE.round(weight, entity);
         } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMEK) && (engineRating < 40)) {
             // ProtoMek engines with rating < 40 use a special calculation
             return roundWeight.round(engineRating * 0.025, entity);

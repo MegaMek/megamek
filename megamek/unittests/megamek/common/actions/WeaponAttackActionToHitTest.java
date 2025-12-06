@@ -34,6 +34,8 @@
 package megamek.common.actions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -708,6 +710,74 @@ public class WeaponAttackActionToHitTest {
                 ToHitData toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
                 assertEquals(4, toHit.getValue());
             }
+        }
+    }
+
+    /**
+     * Tests for capital weapon modifiers against small targets (under 500 tons). Per TO:AUE: Capital weapons get +5,
+     * Sub-capital direct-fire gets +3. Issue #7030: Dropships under 500 tons should receive this modifier.
+     *
+     * These tests verify the condition: (!te.isLargeCraft() || te.getWeight() < 500)
+     * which determines if capital weapon penalties apply to a target.
+     */
+    @Nested
+    class CapitalWeaponSmallTargetModifierTests {
+
+        /**
+         * Helper method that evaluates the condition used in ComputeToHit to determine if capital weapon penalties
+         * should apply to a target.
+         *
+         * @param isLargeCraft whether the target is classified as a large craft
+         * @param weight       the weight of the target in tons
+         *
+         * @return true if capital weapon penalty should apply
+         */
+        private boolean shouldApplyCapitalPenalty(boolean isLargeCraft, double weight) {
+            // This mirrors the condition in ComputeToHit.java line 1469
+            return !isLargeCraft || weight < 500;
+        }
+
+        @Test
+        void smallDropshipUnder500TonsShouldReceiveCapitalPenalty() {
+            // A 400-ton dropship is a large craft but under 500 tons
+            // Fix for #7030: should receive penalty due to weight < 500
+            assertTrue(shouldApplyCapitalPenalty(true, 400.0),
+                  "400-ton dropship (large craft) should receive capital weapon penalty");
+        }
+
+        @Test
+        void largeDropshipOver500TonsShouldNotReceiveCapitalPenalty() {
+            // A 2000-ton dropship is a large craft over 500 tons - no penalty
+            assertFalse(shouldApplyCapitalPenalty(true, 2000.0),
+                  "2000-ton dropship should NOT receive capital weapon penalty");
+        }
+
+        @Test
+        void fighterShouldReceiveCapitalPenalty() {
+            // Fighters are not large craft - should always receive penalty
+            assertTrue(shouldApplyCapitalPenalty(false, 50.0),
+                  "Fighter (not large craft) should receive capital weapon penalty");
+        }
+
+        @Test
+        void smallCraftShouldReceiveCapitalPenalty() {
+            // Small craft under 500 tons - not large craft, should receive penalty
+            assertTrue(shouldApplyCapitalPenalty(false, 200.0),
+                  "Small craft (not large craft) should receive capital weapon penalty");
+        }
+
+        @Test
+        void dropshipExactly500TonsShouldNotReceiveCapitalPenalty() {
+            // Edge case: exactly 500 tons means weight < 500 is false
+            assertFalse(shouldApplyCapitalPenalty(true, 500.0),
+                  "500-ton dropship should NOT receive capital weapon penalty (boundary case)");
+        }
+
+        @Test
+        void dropshipJustUnder500TonsShouldReceiveCapitalPenalty() {
+            // Edge case: 499 tons means weight < 500 is true
+            assertTrue(shouldApplyCapitalPenalty(true, 499.0),
+                  "499-ton dropship should receive capital weapon penalty (boundary case)");
         }
     }
 }

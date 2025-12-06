@@ -70,12 +70,11 @@ import megamek.common.weapons.attacks.InfantryAttack;
 import megamek.common.weapons.battleArmor.clan.CLBALBX;
 import megamek.common.weapons.bayWeapons.ScreenLauncherBayWeapon;
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
+import megamek.common.weapons.handlers.ARADEquipmentDetector;
 import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.lasers.innerSphere.ISBombastLaser;
 import megamek.common.weapons.lrms.LRTWeapon;
 import megamek.common.weapons.srms.SRTWeapon;
-import megamek.common.weapons.missiles.MRMWeapon;
-import megamek.common.weapons.handlers.ARADEquipmentDetector;
 import megamek.logging.MMLogger;
 
 public class ComputeToHit {
@@ -1461,12 +1460,13 @@ public class ComputeToHit {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.WaypointLaunch"));
         }
 
-        // Capital weapon (except missiles) penalties at small targets
+        // Capital weapon (except missiles) penalties at small targets (under 500 tons)
+        // Per TO:AUE: +5 for capital, +3 for sub-capital direct-fire weapons
         if (weaponType.isCapital() &&
               (weaponType.getAtClass() != WeaponType.CLASS_CAPITAL_MISSILE) &&
               (weaponType.getAtClass() != WeaponType.CLASS_AR10) &&
               te != null &&
-              !te.isLargeCraft()) {
+              (!te.isLargeCraft() || te.getWeight() < 500)) {
             // Capital Lasers have an AAA mode for shooting at small targets
             int aaaMod = 0;
             if (weapon.hasModes() && weapon.curMode().equals(Weapon.MODE_CAP_LASER_AAA)) {

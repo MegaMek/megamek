@@ -1544,7 +1544,7 @@ public class TestSupportVehicle extends TestEntity {
                 buff.append("1\n");
                 troopSpaceFound = true;
             } else if ((transport instanceof Bay transportBay) && !transportBay.isQuarters()) {
-                buff.append(StringUtil.makeLength(transportBay.getType(), 30))
+                buff.append(StringUtil.makeLength(transportBay.getTransporterType(), 30))
                       .append("1\n");
             }
         }

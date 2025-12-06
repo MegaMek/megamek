@@ -126,7 +126,7 @@ public final class BattleArmorBay extends Bay implements InfantryTransporter {
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         return "Battle Armor";
     }
 

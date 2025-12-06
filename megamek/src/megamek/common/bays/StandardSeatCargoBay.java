@@ -85,7 +85,7 @@ public class StandardSeatCargoBay extends Bay {
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         return "Standard Seats";
     }
 

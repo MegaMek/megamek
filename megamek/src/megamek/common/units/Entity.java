@@ -3217,7 +3217,7 @@ public abstract class Entity extends TurnOrdered
                 if (externalCargo.canLoad(cargoEntity)) {
                     // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly
                     //  load into that transporter.
-                    locationMap.put(transporter.getType() + " " + getTransports().indexOf(transporter),
+                    locationMap.put(transporter.getTransporterType() + " " + getTransports().indexOf(transporter),
                           Integer.MAX_VALUE - getTransports().indexOf(transporter));
 
                 }
@@ -3249,7 +3249,9 @@ public abstract class Entity extends TurnOrdered
                   && !externalCargo.getCarryables().isEmpty()) {
                 // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly load into
                 //  that transporter.
-                locationMap.put(transporter.getType() + " " + externalCargo.getCarryables().get(0).toString(),
+                locationMap.put(transporter.getTransporterType() + " " + externalCargo.getCarryables()
+                            .get(0)
+                            .toString(),
                       Integer.MAX_VALUE - getTransports().indexOf(transporter));
 
             }
@@ -8982,7 +8984,7 @@ public abstract class Entity extends TurnOrdered
             Bay chosenBay = potential.elementAt(Compute.randomInt(potential.size()));
             chosenBay.destroyDoor();
             chosenBay.resetDoors();
-            bayType = String.format("%s bay #%s", chosenBay.getType(), chosenBay.getBayNumber());
+            bayType = String.format("%s bay #%s", chosenBay.getTransporterType(), chosenBay.getBayNumber());
         }
 
         return bayType;

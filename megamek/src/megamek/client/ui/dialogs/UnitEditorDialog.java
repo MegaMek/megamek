@@ -1167,7 +1167,7 @@ public class UnitEditorDialog extends JDialog {
                 gridBagConstraints.weightx = 0.0;
                 panSystem.add(new JLabel("<html><b>" +
                       String.format(Messages.getString("UnitEditorDialog.bayCrit"),
-                            nextbay.getType(),
+                            nextbay.getTransporterType(),
                             nextbay.getBayNumber()) +
                       "</b><br></html>"), gridBagConstraints);
 

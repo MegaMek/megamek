@@ -112,7 +112,7 @@ public final class ASFBay extends AbstractSmallCraftASFBay {
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         return hasARTS() ? "ARTS Fighter" : "Fighter";
     }
 

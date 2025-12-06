@@ -489,6 +489,22 @@ public class MovePath implements Cloneable, Serializable {
             }
         }
 
+        // Check if jumping entity has enough MPs to reach building elevation
+        if (isJumping() && !(entity instanceof Infantry)) {
+            Hex destHex = game.getBoard(step.getBoardId()).getHex(step.getPosition());
+            int building = destHex.terrainLevel(Terrains.BLDG_ELEV);
+            if (building > 0) {
+                int maxElevation = (entity.getJumpMP() +
+                      entity.getElevation() +
+                      game.getBoard(entity.getBoardId()).getHex(entity.getPosition()).getLevel()) -
+                      destHex.getLevel();
+                if (building > maxElevation) {
+                    step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                    return;
+                }
+            }
+        }
+
         // Can't move backwards and Evade
         if (!entity.isAirborne() && contains(MoveStepType.BACKWARDS) && contains(MoveStepType.EVADE)) {
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);

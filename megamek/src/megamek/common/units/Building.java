@@ -476,12 +476,12 @@ public class Building implements Serializable {
      *
      * @return True if this and the given other are considered equal
      */
-    
+    @Override
     public boolean equals(Object other) {
         return (this == other) || ((other instanceof IBuilding otherBuilding) && (getId() == otherBuilding.getId()));
     }
 
-    
+    @Override
     public int hashCode() {
         return id;
     }
@@ -498,7 +498,7 @@ public class Building implements Serializable {
         };
     }
 
-    
+    @Override
     public String toString() {
         return getBuildingType().toString() + " " + className(getBldgClass()) + " " + name;
     }

@@ -15,22 +15,21 @@
 # <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
 # affiliated with Microsoft.
 
-#Saved from version 0.50.06 on 2025-04-25
+#Saved from version 0.69.69 on 2025-12-05
 <UnitType>
 BuildingEntity
 </UnitType>
 
-
 <building_class>
-0
+2
 </building_class>
 
 <building_type>
-1
+2
 </building_type>
 
 <Name>
-Simple Building Entity
+Simple Large Building Entity
 </Name>
 
 <Model>
@@ -66,33 +65,63 @@ IS Level 4
 </internal_type>
 
 <armor>
-0
+10
 </armor>
 
 <cf>
 15
 </cf>
 
+<0(0.0,0.0,0.0) Equipment>
+IS Vehicle Flamer Ammo:Shots20#
+IS Machine Gun Ammo - Half:Shots100#
+</0(0.0,0.0,0.0) Equipment>
+
+<2(1.0,-1.0,0.0) Equipment>
+Machine Gun
+Machine Gun
+</2(1.0,-1.0,0.0) Equipment>
+
+<2(1.0,0.0,-1.0) Equipment>
+Flamer (Vehicle)
+Flamer (Vehicle)
+</2(1.0,0.0,-1.0) Equipment>
+
+<2(0.0,1.0,-1.0) Equipment>
+Machine Gun
+Machine Gun
+</2(0.0,1.0,-1.0) Equipment>
+
+<2(-1.0,1.0,0.0) Equipment>
+Flamer (Vehicle)
+Flamer (Vehicle)
+</2(-1.0,1.0,0.0) Equipment>
+
+<2(-1.0,0.0,1.0) Equipment>
+Machine Gun
+Machine Gun
+</2(-1.0,0.0,1.0) Equipment>
+
+<2(0.0,-1.0,1.0) Equipment>
+Flamer (Vehicle)
+Flamer (Vehicle)
+</2(0.0,-1.0,1.0) Equipment>
+
 <coords>
 0,0,0
+1,-1,0
+1,0,-1
+0,1,-1
+-1,1,0
+-1,0,1
+0,-1,1
 </coords>
 
 <height>
-4
+3
 </height>
 
-<3(0,0,0) Equipment>
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-Flamer (Vehicle)
-IS Vehicle Flamer Ammo:Shots20#
-IS Machine Gun Ammo - Half:Shots100#
-</3(0,0,0) Equipment>
 
 <source>
 Psi
 </source>
-

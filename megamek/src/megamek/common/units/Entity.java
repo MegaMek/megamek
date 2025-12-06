@@ -3939,11 +3939,6 @@ public abstract class Entity extends TurnOrdered
         for (int i = 0; i < locations(); i++) {
             crits[i] = new CriticalSlot[getNumberOfCriticalSlots(i)];
         }
-        armorType = new int[locations()];
-        armorTechLevel = new int[locations()];
-        hardenedArmorDamaged = new boolean[locations()];
-        locationBlownOff = new boolean[locations()];
-        locationBlownOffThisPhase = new boolean[locations()];
     }
 
     /**

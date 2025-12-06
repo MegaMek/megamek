@@ -714,6 +714,12 @@ public class Client extends AbstractClient {
         }
     }
 
+    protected void receiveBuildingAdd(Packet packet) throws InvalidPacketDataException {
+        for (IBuilding building : packet.getBuildingList(0)) {
+            game.getBoard(building.getBoardId()).addBuildingToBoard(building);
+        }
+    }
+
     protected void receiveBuildingUpdate(Packet packet) throws InvalidPacketDataException {
         for (IBuilding building : packet.getBuildingList(0)) {
             game.getBoard(building.getBoardId()).updateBuilding(building);
@@ -1022,6 +1028,9 @@ public class Client extends AbstractClient {
                 case CHANGE_HEXES:
                     var changedHexes = packet.getBoardLocationHexMap(0);
                     game.getBoards().values().forEach(board -> board.setHexes(changedHexes));
+                    break;
+                case BLDG_ADD:
+                    receiveBuildingAdd(packet);
                     break;
                 case BLDG_UPDATE:
                     receiveBuildingUpdate(packet);

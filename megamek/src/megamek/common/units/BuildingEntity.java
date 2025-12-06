@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,6 +34,7 @@
 
 package megamek.common.units;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -82,8 +84,8 @@ public class BuildingEntity extends Entity implements IBuilding {
 
     public static final String[] HIT_LOCATION_NAMES = { "building" };
 
-    private static final String LOCATION_ABBREVIATIONS_PREFIX = "BLDG";
-    private static final String LOCATION_NAMES_PREFIX = "BLDG";
+    private static final String LOCATION_ABBREVIATIONS_PREFIX = "FLR";
+    private static final String LOCATION_NAMES_PREFIX = "Floor";
 
     private static final int[] CRITICAL_SLOTS = new int[] { 100 };
 
@@ -236,7 +238,15 @@ public class BuildingEntity extends Entity implements IBuilding {
         if (getInternalBuilding() == null || getInternalBuilding().getCoordsList() == null) {
             return 1;
         }
-        return getInternalBuilding().getCoordsList().size();
+        return getInternalBuilding().getCoordsList().size() * getInternalBuilding().getBuildingHeight();
+    }
+
+    public void refreshAdditionalLocations() {
+        armorType = new int[locations()];
+        armorTechLevel = new int[locations()];
+        hardenedArmorDamaged = new boolean[locations()];
+        locationBlownOff = new boolean[locations()];
+        locationBlownOffThisPhase = new boolean[locations()];
     }
 
     /**
@@ -291,18 +301,31 @@ public class BuildingEntity extends Entity implements IBuilding {
 
     @Override
     public String[] getLocationNames() {
-        return getInternalBuilding().getCoordsList()
-              .stream()
-              .map(c -> LOCATION_NAMES_PREFIX + ' ' + c.toOffset().getBoardNum())
-              .toArray(String[]::new);
+        ArrayList<String> locationNames = new ArrayList<String>();
+        if (getInternalBuilding() == null || getInternalBuilding().getCoordsList() == null) {
+            return new String[] { LOCATION_NAMES_PREFIX + ' ' + LOC_BASE };
+        }
+        for (CubeCoords coord : getInternalBuilding().getCoordsList()) {
+            // Do we start with "1st floor" or "0 floor?" This is "1st floor"
+            for (int level = 1; level <= getInternalBuilding().getBuildingHeight(); level++) {
+                locationNames.add(LOCATION_NAMES_PREFIX + ' ' + level + ' ' + coord.toOffset().getBoardNum());
+            }
+        }
+        return locationNames.toArray(new String[0]);
     }
 
     @Override
     public String[] getLocationAbbreviations() {
-        return getInternalBuilding().getCoordsList()
-              .stream()
-              .map(c -> LOCATION_ABBREVIATIONS_PREFIX + ' ' + c.toOffset().getBoardNum())
-              .toArray(String[]::new);
+        ArrayList<String> locationAbbrvNames = new ArrayList<String>();
+        if (getInternalBuilding() == null || getInternalBuilding().getCoordsList() == null) {
+            return new String[] { LOCATION_ABBREVIATIONS_PREFIX + ' ' + LOC_BASE };
+        }
+        for (CubeCoords coord : getInternalBuilding().getCoordsList()) {
+            for (int level = 0; level < getInternalBuilding().getBuildingHeight(); level++) {
+                locationAbbrvNames.add(LOCATION_ABBREVIATIONS_PREFIX + ' ' + level + ' ' + coord.toOffset().getBoardNum());
+            }
+        }
+        return locationAbbrvNames.toArray(new String[0]);
     }
 
     @Override

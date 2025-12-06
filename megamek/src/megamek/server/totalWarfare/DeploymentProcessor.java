@@ -33,9 +33,12 @@
 
 package megamek.server.totalWarfare;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.Hex;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.BuildingType;
@@ -335,8 +338,9 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
 
         // If deploying a BuildingEntity, add building terrain to all hexes it occupies
         if (entity instanceof BuildingEntity buildingEntity) {
+            Board board = getGame().getBoard(boardId);
             for (Coords buildingCoords : buildingEntity.getCoordsList()) {
-                Hex targetHex = getGame().getBoard(boardId).getHex(buildingCoords);
+                Hex targetHex = board.getHex(buildingCoords);
                 if (targetHex != null) {
                     // Add building terrain with the building type
                     targetHex.addTerrain(new Terrain(Terrains.BUILDING,
@@ -366,6 +370,10 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
                     }
                 }
             }
+
+            board.addBuildingToBoard(buildingEntity);
+
+            gameManager.sendNewBuildings(new Vector<IBuilding>(List.of(buildingEntity)));
 
             // Do this as a separate loop - All building terrains need added before we can initialize building exits
             for (Coords buildingCoords : buildingEntity.getCoordsList()) {

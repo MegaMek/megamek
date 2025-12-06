@@ -102,18 +102,24 @@ public class BLKStructureFile extends BLKFile implements IMekLoader {
 
 
         be.refreshLocations();
+        be.refreshAdditionalLocations();
 
-        // Once all coords - which correspond to locations - are loaded, we can start loading equipment.
+        // Once all coords are loaded, we can start loading equipment.
+        // Origin, ground floor will be the first location. We then iterate through the rest of the floors for the
+        // origin, then continue from there.
         // Building doesn't need to have any equipment though.
         for (CubeCoords coords : be.getInternalBuilding().getCoordsList()) {
             int index = be.getInternalBuilding().getCoordsList().indexOf(coords);
-            be.initializeInternal(cf, index);
-            be.initializeArmor(armor,index);
+            int height = be.getInternalBuilding().getBuildingHeight();
+            for (int floor = 0; floor < height; floor++) {
+                int loc = floor + (index * height);
+                // The entity doesn't use entity armor/internal
+                be.initializeInternal(1, loc);
+                be.initializeArmor(0, loc);
 
-
-            String equipmentBlockName = "(" + coords.q() + "," + coords.r() + "," + coords.s() + ")";
-            loadEquipment(be, equipmentBlockName, be.getInternalBuilding().getCoordsList().indexOf(coords));
-
+                String equipmentBlockName = floor + "(" + coords.q() + "," + coords.r() + "," + coords.s() + ")";
+                loadEquipment(be, equipmentBlockName, loc);
+            }
         }
 
         // Reset our armor type & tech level now that we have all our locations set up

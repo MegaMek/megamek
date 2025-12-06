@@ -15,26 +15,25 @@
 # <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
 # affiliated with Microsoft.
 
-#Saved from version 0.50.06 on 2025-04-25
+#Saved from version 0.69.69 on 2025-12-05
 <UnitType>
 BuildingEntity
 </UnitType>
 
-
 <building_class>
-0
+3
 </building_class>
 
 <building_type>
-1
+3
 </building_type>
 
 <Name>
-Simple Building Entity
+Simple Gun Emplacement
 </Name>
 
 <Model>
-
+(Gauss)
 </Model>
 
 <year>
@@ -70,29 +69,26 @@ IS Level 4
 </armor>
 
 <cf>
-15
+90
 </cf>
+
+<0(0.0,0.0,0.0) Equipment>
+IS Gauss Rifle (ST)
+IS Gauss Rifle (ST)
+IS Gauss Rifle Ammo:Shots8#
+IS Gauss Rifle Ammo:Shots8#
+IS Gauss Rifle Ammo:Shots8#
+</0(0.0,0.0,0.0) Equipment>
 
 <coords>
 0,0,0
 </coords>
 
 <height>
-4
+1
 </height>
 
-<3(0,0,0) Equipment>
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-Flamer (Vehicle)
-IS Vehicle Flamer Ammo:Shots20#
-IS Machine Gun Ammo - Half:Shots100#
-</3(0,0,0) Equipment>
 
 <source>
 Psi
 </source>
-

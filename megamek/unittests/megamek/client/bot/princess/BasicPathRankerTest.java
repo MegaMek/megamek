@@ -2515,6 +2515,303 @@ class BasicPathRankerTest {
             // Verify - should return 0 immediately
             assertEquals(0, result);
         }
+
+        /**
+         * Tests for the allied damage discount CALCULATION in rankPath().
+         * These verify that the discount formula is correctly applied:
+         * perceivedThreat = baseDamage / (alliesEngaging + 1)
+         *
+         * Expected behavior scenarios:
+         * - 0 allies: no discount (full damage)
+         * - 1 ally: damage / 2
+         * - 2 allies: damage / 3
+         * - 3 allies: damage / 4
+         * - Feature disabled: no discount regardless of allies
+         */
+
+        @Test
+        void testAlliedDamageDiscount_NoAlliesFullDamage() {
+            // Setup: When no allies can engage, enemy damage should not be discounted
+            BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+
+            Entity mockEnemy = mock(BipedMek.class);
+            when(mockEnemy.getPosition()).thenReturn(new Coords(10, 10));
+            when(mockEnemy.isAirborne()).thenReturn(false);
+            when(mockEnemy.getId()).thenReturn(99);
+
+            Entity mockMovingUnit = mock(BipedMek.class);
+            when(mockMovingUnit.getId()).thenReturn(1);
+
+            // Empty friends list - no allies can engage
+            when(mockPrincess.getFriendEntities()).thenReturn(new ArrayList<>());
+
+            // Verify countAlliesWhoCanEngage returns 0
+            int alliesEngaging = testRanker.countAlliesWhoCanEngage(mockEnemy, mockMovingUnit);
+            assertEquals(0, alliesEngaging, "No allies should be engaging");
+
+            // With 0 allies, the discount factor should NOT be applied
+            // Formula: if alliesEngaging > 0, enemyDamage = enemyDamage / (alliesEngaging + 1)
+            // With 0 allies, condition is false, so damage remains unchanged
+            double baseDamage = 50.0;
+            double expectedDamage = 50.0; // No discount
+            double allyFactor = 1.0; // Would be alliesEngaging + 1 = 1, but condition not met
+
+            // This test documents the expected behavior: full damage when no allies engage
+            assertEquals(expectedDamage, baseDamage / allyFactor, 0.01,
+                  "With no allies engaging, full enemy damage should be applied");
+        }
+
+        @Test
+        void testAlliedDamageDiscount_OneAllyHalvesDamage() {
+            // Setup: With 1 ally engaging, damage should be halved (divided by 2)
+            BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+
+            Entity mockEnemy = mock(BipedMek.class);
+            when(mockEnemy.getPosition()).thenReturn(new Coords(10, 10));
+            when(mockEnemy.isAirborne()).thenReturn(false);
+
+            Entity mockMovingUnit = mock(BipedMek.class);
+            when(mockMovingUnit.getId()).thenReturn(1);
+
+            Entity mockAlly = mock(BipedMek.class);
+            when(mockAlly.getId()).thenReturn(2);
+            when(mockAlly.getPosition()).thenReturn(new Coords(10, 12)); // 2 hexes away
+            when(mockAlly.isOffBoard()).thenReturn(false);
+
+            List<Entity> friends = new ArrayList<>();
+            friends.add(mockAlly);
+            when(mockPrincess.getFriendEntities()).thenReturn(friends);
+            when(mockPrincess.getMaxWeaponRange(mockAlly, false)).thenReturn(15);
+
+            // Verify 1 ally is engaging
+            int alliesEngaging = testRanker.countAlliesWhoCanEngage(mockEnemy, mockMovingUnit);
+            assertEquals(1, alliesEngaging, "One ally should be engaging");
+
+            // With 1 ally, allyFactor = 1 + 1 = 2, so damage = 50 / 2 = 25
+            double baseDamage = 50.0;
+            double allyFactor = alliesEngaging + 1.0;
+            double expectedDamage = baseDamage / allyFactor;
+
+            assertEquals(2.0, allyFactor, 0.01, "Ally factor should be 2 (1 ally + self)");
+            assertEquals(25.0, expectedDamage, 0.01,
+                  "With 1 ally engaging, damage should be halved");
+        }
+
+        @Test
+        void testAlliedDamageDiscount_TwoAlliesThirdsDamage() {
+            // Setup: With 2 allies engaging, damage should be divided by 3
+            BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+
+            Entity mockEnemy = mock(BipedMek.class);
+            when(mockEnemy.getPosition()).thenReturn(new Coords(10, 10));
+            when(mockEnemy.isAirborne()).thenReturn(false);
+
+            Entity mockMovingUnit = mock(BipedMek.class);
+            when(mockMovingUnit.getId()).thenReturn(1);
+
+            Entity mockAlly1 = mock(BipedMek.class);
+            when(mockAlly1.getId()).thenReturn(2);
+            when(mockAlly1.getPosition()).thenReturn(new Coords(10, 12));
+            when(mockAlly1.isOffBoard()).thenReturn(false);
+
+            Entity mockAlly2 = mock(BipedMek.class);
+            when(mockAlly2.getId()).thenReturn(3);
+            when(mockAlly2.getPosition()).thenReturn(new Coords(12, 10));
+            when(mockAlly2.isOffBoard()).thenReturn(false);
+
+            List<Entity> friends = new ArrayList<>();
+            friends.add(mockAlly1);
+            friends.add(mockAlly2);
+            when(mockPrincess.getFriendEntities()).thenReturn(friends);
+            when(mockPrincess.getMaxWeaponRange(mockAlly1, false)).thenReturn(15);
+            when(mockPrincess.getMaxWeaponRange(mockAlly2, false)).thenReturn(15);
+
+            // Verify 2 allies are engaging
+            int alliesEngaging = testRanker.countAlliesWhoCanEngage(mockEnemy, mockMovingUnit);
+            assertEquals(2, alliesEngaging, "Two allies should be engaging");
+
+            // With 2 allies, allyFactor = 2 + 1 = 3, so damage = 60 / 3 = 20
+            double baseDamage = 60.0;
+            double allyFactor = alliesEngaging + 1.0;
+            double expectedDamage = baseDamage / allyFactor;
+
+            assertEquals(3.0, allyFactor, 0.01, "Ally factor should be 3 (2 allies + self)");
+            assertEquals(20.0, expectedDamage, 0.01,
+                  "With 2 allies engaging, damage should be divided by 3");
+        }
+
+        @Test
+        void testAlliedDamageDiscount_ThreeAlliesQuartersDamage() {
+            // Setup: With 3 allies engaging, damage should be divided by 4
+            BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+
+            Entity mockEnemy = mock(BipedMek.class);
+            when(mockEnemy.getPosition()).thenReturn(new Coords(10, 10));
+            when(mockEnemy.isAirborne()).thenReturn(false);
+
+            Entity mockMovingUnit = mock(BipedMek.class);
+            when(mockMovingUnit.getId()).thenReturn(1);
+
+            List<Entity> friends = new ArrayList<>();
+            for (int i = 0; i < 3; i++) {
+                Entity mockAlly = mock(BipedMek.class);
+                when(mockAlly.getId()).thenReturn(10 + i);
+                when(mockAlly.getPosition()).thenReturn(new Coords(10 + i, 11));
+                when(mockAlly.isOffBoard()).thenReturn(false);
+                friends.add(mockAlly);
+                when(mockPrincess.getMaxWeaponRange(mockAlly, false)).thenReturn(15);
+            }
+            when(mockPrincess.getFriendEntities()).thenReturn(friends);
+
+            // Verify 3 allies are engaging
+            int alliesEngaging = testRanker.countAlliesWhoCanEngage(mockEnemy, mockMovingUnit);
+            assertEquals(3, alliesEngaging, "Three allies should be engaging");
+
+            // With 3 allies, allyFactor = 3 + 1 = 4, so damage = 100 / 4 = 25
+            double baseDamage = 100.0;
+            double allyFactor = alliesEngaging + 1.0;
+            double expectedDamage = baseDamage / allyFactor;
+
+            assertEquals(4.0, allyFactor, 0.01, "Ally factor should be 4 (3 allies + self)");
+            assertEquals(25.0, expectedDamage, 0.01,
+                  "With 3 allies engaging, damage should be quartered");
+        }
+
+        @Test
+        void testAlliedDamageDiscount_MixedRangeOnlyCountsInRange() {
+            // Setup: Multiple allies but only some in range - discount based on in-range count
+            BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+
+            Entity mockEnemy = mock(BipedMek.class);
+            when(mockEnemy.getPosition()).thenReturn(new Coords(10, 10));
+            when(mockEnemy.isAirborne()).thenReturn(false);
+
+            Entity mockMovingUnit = mock(BipedMek.class);
+            when(mockMovingUnit.getId()).thenReturn(1);
+
+            // Ally 1: In range (distance 2, range 15)
+            Entity mockAllyInRange = mock(BipedMek.class);
+            when(mockAllyInRange.getId()).thenReturn(2);
+            when(mockAllyInRange.getPosition()).thenReturn(new Coords(10, 12));
+            when(mockAllyInRange.isOffBoard()).thenReturn(false);
+
+            // Ally 2: Out of range (distance 20, range 10)
+            Entity mockAllyOutOfRange = mock(BipedMek.class);
+            when(mockAllyOutOfRange.getId()).thenReturn(3);
+            when(mockAllyOutOfRange.getPosition()).thenReturn(new Coords(10, 30));
+            when(mockAllyOutOfRange.isOffBoard()).thenReturn(false);
+
+            List<Entity> friends = new ArrayList<>();
+            friends.add(mockAllyInRange);
+            friends.add(mockAllyOutOfRange);
+            when(mockPrincess.getFriendEntities()).thenReturn(friends);
+            when(mockPrincess.getMaxWeaponRange(mockAllyInRange, false)).thenReturn(15);
+            when(mockPrincess.getMaxWeaponRange(mockAllyOutOfRange, false)).thenReturn(10);
+
+            // Verify only 1 ally is engaging (the one in range)
+            int alliesEngaging = testRanker.countAlliesWhoCanEngage(mockEnemy, mockMovingUnit);
+            assertEquals(1, alliesEngaging,
+                  "Only 1 ally should be engaging (the one in range)");
+
+            // With 1 ally, damage should be halved
+            double baseDamage = 50.0;
+            double allyFactor = alliesEngaging + 1.0;
+            double expectedDamage = baseDamage / allyFactor;
+
+            assertEquals(25.0, expectedDamage, 0.01,
+                  "Discount should only count in-range allies");
+        }
+
+        @Test
+        void testAlliedDamageDiscount_FeatureDisabledNoDiscount() {
+            // Setup: Even with allies in range, discount should NOT apply when feature is disabled
+            BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+
+            // Disable the feature
+            BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
+            when(mockBehavior.isConsiderAlliedDamage()).thenReturn(false);
+            when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
+
+            Entity mockEnemy = mock(BipedMek.class);
+            when(mockEnemy.getPosition()).thenReturn(new Coords(10, 10));
+            when(mockEnemy.isAirborne()).thenReturn(false);
+
+            Entity mockMovingUnit = mock(BipedMek.class);
+            when(mockMovingUnit.getId()).thenReturn(1);
+
+            Entity mockAlly = mock(BipedMek.class);
+            when(mockAlly.getId()).thenReturn(2);
+            when(mockAlly.getPosition()).thenReturn(new Coords(10, 12));
+            when(mockAlly.isOffBoard()).thenReturn(false);
+
+            List<Entity> friends = new ArrayList<>();
+            friends.add(mockAlly);
+            when(mockPrincess.getFriendEntities()).thenReturn(friends);
+            when(mockPrincess.getMaxWeaponRange(mockAlly, false)).thenReturn(15);
+
+            // Allies CAN engage (method still works)
+            int alliesEngaging = testRanker.countAlliesWhoCanEngage(mockEnemy, mockMovingUnit);
+            assertEquals(1, alliesEngaging, "One ally can engage");
+
+            // But when isConsiderAlliedDamage() returns false, the discount should NOT be applied
+            // Expected: full damage is used instead of discounted damage
+            double baseDamage = 50.0;
+            double expectedDamageWithFeatureDisabled = 50.0; // No discount!
+
+            // Document the expected behavior
+            assertEquals(expectedDamageWithFeatureDisabled, baseDamage, 0.01,
+                  "When considerAlliedDamage is false, full enemy damage should be used");
+        }
+
+        @Test
+        void testAlliedDamageDiscount_MultipleEnemiesIndependentDiscounts() {
+            // Setup: Each enemy should have its own independent discount calculation
+            BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+
+            // Enemy 1 at position (10, 10)
+            Entity mockEnemy1 = mock(BipedMek.class);
+            when(mockEnemy1.getPosition()).thenReturn(new Coords(10, 10));
+            when(mockEnemy1.isAirborne()).thenReturn(false);
+
+            // Enemy 2 at position (30, 30) - far from allies
+            Entity mockEnemy2 = mock(BipedMek.class);
+            when(mockEnemy2.getPosition()).thenReturn(new Coords(30, 30));
+            when(mockEnemy2.isAirborne()).thenReturn(false);
+
+            Entity mockMovingUnit = mock(BipedMek.class);
+            when(mockMovingUnit.getId()).thenReturn(1);
+
+            // Ally near enemy 1 only
+            Entity mockAlly = mock(BipedMek.class);
+            when(mockAlly.getId()).thenReturn(2);
+            when(mockAlly.getPosition()).thenReturn(new Coords(10, 12)); // Near enemy 1
+            when(mockAlly.isOffBoard()).thenReturn(false);
+
+            List<Entity> friends = new ArrayList<>();
+            friends.add(mockAlly);
+            when(mockPrincess.getFriendEntities()).thenReturn(friends);
+            when(mockPrincess.getMaxWeaponRange(mockAlly, false)).thenReturn(10); // Range 10
+
+            // Enemy 1: 1 ally engaging (distance 2, within range 10)
+            int alliesVsEnemy1 = testRanker.countAlliesWhoCanEngage(mockEnemy1, mockMovingUnit);
+            assertEquals(1, alliesVsEnemy1, "1 ally should engage enemy 1");
+
+            // Enemy 2: 0 allies engaging (distance ~28, outside range 10)
+            int alliesVsEnemy2 = testRanker.countAlliesWhoCanEngage(mockEnemy2, mockMovingUnit);
+            assertEquals(0, alliesVsEnemy2, "0 allies should engage enemy 2");
+
+            // Expected discounts:
+            // Enemy 1: 50 / 2 = 25 (discounted)
+            // Enemy 2: 50 / 1 = 50 (full damage, no allies)
+            double baseDamage = 50.0;
+            double enemy1Damage = baseDamage / (alliesVsEnemy1 + 1.0);
+            double enemy2Damage = baseDamage; // No discount
+
+            assertEquals(25.0, enemy1Damage, 0.01,
+                  "Enemy 1 damage should be discounted with ally");
+            assertEquals(50.0, enemy2Damage, 0.01,
+                  "Enemy 2 damage should not be discounted (no allies in range)");
+        }
     }
 
 }

@@ -2087,8 +2087,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 ToHitData toHit = DfaAttackAction.toHit(game, currentEntity, target, cmd);
                 if (toHit != null && toHit.getValue() != TargetRoll.IMPOSSIBLE) {
                     // if yes, ask them if they want to DFA
-                    if (currentlySelectedEntity != null &&
-                          clientgui.doYesNoDialog(Messages.getString("MovementDisplay.DFADialog.title",
+                    if (currentlySelectedEntity != null) {
+                        // Calculate piloting roll to stay standing after DFA
+                        PilotingRollData pilotRoll = currentlySelectedEntity.getBasePilotingRoll(
+                              EntityMovementType.MOVE_JUMP);
+                        pilotRoll.addModifier(4, Messages.getString("MovementDisplay.DFADialog.dfaModifier"));
+
+                        if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.DFADialog.title",
                                       target.getDisplayName()),
                                 Messages.getString("MovementDisplay.DFADialog.message",
                                       toHit.getValueAsString(),
@@ -2097,13 +2102,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                       DfaAttackAction.getDamageFor(currentlySelectedEntity,
                                             target.isConventionalInfantry()),
                                       toHit.getTableDesc(),
-                                      DfaAttackAction.getDamageTakenBy(currentlySelectedEntity)))) {
-                        // if they answer yes, DFA the target
-                        cmd.getLastStep().setTarget(target);
-                        ready();
-                    } else {
-                        // else clear movement
-                        clear();
+                                      DfaAttackAction.getDamageTakenBy(currentlySelectedEntity),
+                                      pilotRoll.getValueAsString(),
+                                      Compute.oddsAbove(pilotRoll.getValue()),
+                                      pilotRoll.getDesc()))) {
+                            // if they answer yes, DFA the target
+                            cmd.getLastStep().setTarget(target);
+                            ready();
+                        } else {
+                            // else clear movement
+                            clear();
+                        }
                     }
                     return;
                 }

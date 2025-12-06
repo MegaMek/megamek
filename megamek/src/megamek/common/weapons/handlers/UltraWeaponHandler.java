@@ -50,6 +50,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.Roll;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.weapons.Weapon;
@@ -172,6 +173,29 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
                     r.messageId = 3160;
                 } else {
                     r.messageId = 3170;
+                }
+                vPhaseReport.addElement(r);
+            }
+        } else {
+            // PLAYTEST3 Caseless ammo support for RAC
+            // Will potentially explode when rolling a 2. Can still jam if not blowing up.
+            // The check above will only get to this if playtest3 is enabled
+            if ((roll.getIntValue() <= 2) && !attackingEntity.isConventionalInfantry() 
+                  && ammoType.getMunitionType().contains(AmmoType.Munitions.M_CASELESS)) {
+                Roll diceRoll = Compute.rollD6(2);
+
+                Report r = new Report(3164);
+                r.subject = subjectId;
+                r.add(diceRoll);
+
+                if (diceRoll.getIntValue() >= 8) {
+                    // Round explodes destroying weapon
+                    weapon.setDestroyed(true);
+                    r.choose(false);
+                } else {
+                    // Just a jam
+                    weapon.setJammed(true);
+                    r.choose(true);
                 }
                 vPhaseReport.addElement(r);
             }

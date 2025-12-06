@@ -50,6 +50,7 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.HandheldWeapon;
 import megamek.common.units.*;
 
 /**
@@ -542,7 +543,7 @@ public class EntitySprite extends Sprite {
         boolean isTank = (entity instanceof Tank);
         boolean isInfantry = (entity instanceof Infantry);
         boolean isAero = entity.isAero();
-        boolean isGunEmplacement = entity instanceof GunEmplacement;
+        boolean isGunEmplacement = entity instanceof GunEmplacement || entity instanceof HandheldWeapon || entity instanceof BuildingEntity;
         boolean isSquadron = entity instanceof FighterSquadron;
 
         if ((isAero && ((IAero) entity).isSpheroid() && !board.isSpace()) && (secondaryPos == 1)) {

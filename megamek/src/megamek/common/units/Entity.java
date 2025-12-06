@@ -9029,6 +9029,10 @@ public abstract class Entity extends TurnOrdered
         pickedUpMekWarriors.addElement(mw.getId());
     }
 
+    public void resetPickedUpMekWarriors() {
+        pickedUpMekWarriors.clear();
+    }
+
     /**
      * Get a <code>List</code> of the units currently loaded into this payload.
      *

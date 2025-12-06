@@ -2330,11 +2330,42 @@ class BasicPathRankerTest {
     }
 
     /**
-     * Tests for the countAlliesWhoCanEngage method used in allied damage discount calculation.
+     * Tests for the allied damage discount feature (RFE-7109).
+     *
+     * <p>This feature makes Princess less cautious when friendly units can also engage the same
+     * enemy. The rationale is that if multiple allies are threatening an enemy, that enemy's
+     * attention is divided - they can't focus all their firepower on just one unit.</p>
+     *
+     * <h2>Core Formula</h2>
+     * <pre>
+     * perceivedThreat = baseDamage / (alliesEngaging + 1)
+     * </pre>
+     *
+     * <p>The "+1" represents the moving unit itself. So with 1 ally, the divisor is 2 (halved
+     * damage); with 2 allies, divisor is 3 (one-third damage), etc.</p>
+     *
+     * <h2>Test Categories</h2>
+     * <ul>
+     *   <li><b>countAlliesWhoCanEngage tests:</b> Verify the ally counting logic handles edge
+     *       cases (null positions, off-board units, range checks, excluding the moving unit)</li>
+     *   <li><b>Discount calculation tests:</b> Verify the formula produces correct discounts
+     *       for different ally counts</li>
+     *   <li><b>Feature toggle tests:</b> Verify the discount is skipped when disabled</li>
+     * </ul>
      */
     @Nested
     class AlliedDamageDiscountTests {
 
+        /**
+         * Verifies that countAlliesWhoCanEngage returns 0 when Princess has no friendly units.
+         *
+         * <p><b>Scenario:</b> Princess is controlling a single unit with no allies on the field.</p>
+         *
+         * <p><b>Expected behavior:</b> Returns 0 - no allies means no discount will be applied.</p>
+         *
+         * <p><b>Why this matters:</b> This is the baseline case. A lone unit facing an enemy
+         * should receive the full threat assessment with no reduction.</p>
+         */
         @Test
         void testCountAlliesWhoCanEngage_NoAllies() {
             // Setup
@@ -2357,6 +2388,18 @@ class BasicPathRankerTest {
             assertEquals(0, result);
         }
 
+        /**
+         * Verifies that an ally within weapon range of the enemy is counted.
+         *
+         * <p><b>Scenario:</b> One friendly Mek is 2 hexes from an enemy, with weapons that
+         * have range 15. The ally can clearly engage the enemy.</p>
+         *
+         * <p><b>Expected behavior:</b> Returns 1 - the ally is counted because
+         * distance (2) <= maxWeaponRange (15).</p>
+         *
+         * <p><b>Why this matters:</b> This is the core positive case. When allies CAN shoot
+         * at an enemy, they should be counted for the discount calculation.</p>
+         */
         @Test
         void testCountAlliesWhoCanEngage_OneAllyInRange() {
             // Setup
@@ -2386,6 +2429,18 @@ class BasicPathRankerTest {
             assertEquals(1, result);
         }
 
+        /**
+         * Verifies that an ally outside weapon range is NOT counted.
+         *
+         * <p><b>Scenario:</b> One friendly Mek is 15 hexes from an enemy, but only has
+         * weapons with range 10. The ally cannot engage the enemy.</p>
+         *
+         * <p><b>Expected behavior:</b> Returns 0 - the ally is not counted because
+         * distance (15) > maxWeaponRange (10).</p>
+         *
+         * <p><b>Why this matters:</b> An ally that can't actually shoot at the enemy provides
+         * no threat division benefit. Only allies who can realistically engage should count.</p>
+         */
         @Test
         void testCountAlliesWhoCanEngage_AllyOutOfRange() {
             // Setup
@@ -2415,6 +2470,19 @@ class BasicPathRankerTest {
             assertEquals(0, result);
         }
 
+        /**
+         * Verifies that the unit currently being moved is excluded from the ally count.
+         *
+         * <p><b>Scenario:</b> The friends list includes the unit that Princess is currently
+         * deciding a move for. That unit is right next to the enemy.</p>
+         *
+         * <p><b>Expected behavior:</b> Returns 0 - the moving unit should not count itself
+         * as an ally for discount purposes.</p>
+         *
+         * <p><b>Why this matters:</b> The discount represents OTHER units who can engage.
+         * The moving unit's own threat is handled separately in the path ranking formula.
+         * Counting itself would double-count its contribution.</p>
+         */
         @Test
         void testCountAlliesWhoCanEngage_ExcludesMovingUnit() {
             // Setup
@@ -2442,6 +2510,18 @@ class BasicPathRankerTest {
             assertEquals(0, result);
         }
 
+        /**
+         * Verifies that off-board allies (e.g., artillery units) are not counted.
+         *
+         * <p><b>Scenario:</b> A friendly artillery unit is off-board providing fire support.
+         * It technically has range to hit the enemy.</p>
+         *
+         * <p><b>Expected behavior:</b> Returns 0 - off-board units are skipped entirely.</p>
+         *
+         * <p><b>Why this matters:</b> Off-board units operate differently (indirect fire,
+         * different targeting rules). They don't provide the same kind of direct engagement
+         * threat that would divide an enemy's attention in the normal sense.</p>
+         */
         @Test
         void testCountAlliesWhoCanEngage_SkipsOffBoardAllies() {
             // Setup
@@ -2470,6 +2550,19 @@ class BasicPathRankerTest {
             assertEquals(0, result);
         }
 
+        /**
+         * Verifies that allies with null position are safely skipped.
+         *
+         * <p><b>Scenario:</b> A friendly unit exists in the friends list but has no position
+         * set (perhaps it's being transported, or there's a data inconsistency).</p>
+         *
+         * <p><b>Expected behavior:</b> Returns 0 - units without positions are skipped
+         * without causing a NullPointerException.</p>
+         *
+         * <p><b>Why this matters:</b> Defensive programming. The game state can have units
+         * in various conditions. The method should handle edge cases gracefully rather than
+         * crashing.</p>
+         */
         @Test
         void testCountAlliesWhoCanEngage_SkipsNullPositionAllies() {
             // Setup
@@ -2498,6 +2591,19 @@ class BasicPathRankerTest {
             assertEquals(0, result);
         }
 
+        /**
+         * Verifies that the method handles enemies with null position gracefully.
+         *
+         * <p><b>Scenario:</b> An enemy unit has no position set (perhaps it's being transported,
+         * just spawned, or there's a data inconsistency).</p>
+         *
+         * <p><b>Expected behavior:</b> Returns 0 immediately - can't calculate range to an
+         * enemy with no position.</p>
+         *
+         * <p><b>Why this matters:</b> Defensive programming. If we can't determine where the
+         * enemy is, we can't determine if allies can engage it. Returning 0 is the safe default
+         * (no discount applied).</p>
+         */
         @Test
         void testCountAlliesWhoCanEngage_EnemyNullPosition() {
             // Setup
@@ -2516,19 +2622,25 @@ class BasicPathRankerTest {
             assertEquals(0, result);
         }
 
-        /**
-         * Tests for the allied damage discount CALCULATION in rankPath().
-         * These verify that the discount formula is correctly applied:
-         * perceivedThreat = baseDamage / (alliesEngaging + 1)
-         *
-         * Expected behavior scenarios:
-         * - 0 allies: no discount (full damage)
-         * - 1 ally: damage / 2
-         * - 2 allies: damage / 3
-         * - 3 allies: damage / 4
-         * - Feature disabled: no discount regardless of allies
-         */
+        // ========================================================================
+        // DISCOUNT CALCULATION TESTS
+        // These verify the formula: perceivedThreat = baseDamage / (alliesEngaging + 1)
+        // ========================================================================
 
+        /**
+         * Verifies that no discount is applied when zero allies can engage.
+         *
+         * <p><b>Scenario:</b> A Princess unit is evaluating a path where it will face an enemy.
+         * No other friendly units are in range to engage that enemy.</p>
+         *
+         * <p><b>Expected behavior:</b> The enemy's full estimated damage (50) is used in the
+         * threat calculation. The discount formula condition (alliesEngaging > 0) is false,
+         * so no division occurs.</p>
+         *
+         * <p><b>Why this matters:</b> Baseline behavior verification. When a unit faces an
+         * enemy alone, it should consider the full threat - no "false confidence" from
+         * non-existent support.</p>
+         */
         @Test
         void testAlliedDamageDiscount_NoAlliesFullDamage() {
             // Setup: When no allies can engage, enemy damage should not be discounted
@@ -2561,6 +2673,18 @@ class BasicPathRankerTest {
                   "With no allies engaging, full enemy damage should be applied");
         }
 
+        /**
+         * Verifies that one ally engaging halves the perceived threat.
+         *
+         * <p><b>Scenario:</b> A Princess unit evaluates a path while one friendly unit is in
+         * weapon range of the same enemy. The enemy could shoot at either unit.</p>
+         *
+         * <p><b>Expected behavior:</b> Enemy damage 50 / (1 ally + 1 self) = 50 / 2 = 25</p>
+         *
+         * <p><b>Why this matters:</b> The "+1" in the formula represents the moving unit itself.
+         * With one ally, there are 2 total units threatening the enemy, so each unit bears half
+         * the expected return fire. This makes Princess more willing to advance when supported.</p>
+         */
         @Test
         void testAlliedDamageDiscount_OneAllyHalvesDamage() {
             // Setup: With 1 ally engaging, damage should be halved (divided by 2)
@@ -2597,6 +2721,18 @@ class BasicPathRankerTest {
                   "With 1 ally engaging, damage should be halved");
         }
 
+        /**
+         * Verifies that two allies engaging reduces threat to one-third.
+         *
+         * <p><b>Scenario:</b> A Princess unit evaluates a path while two friendly units are
+         * in weapon range of the same enemy. Three total units are threatening the enemy.</p>
+         *
+         * <p><b>Expected behavior:</b> Enemy damage 60 / (2 allies + 1 self) = 60 / 3 = 20</p>
+         *
+         * <p><b>Why this matters:</b> Demonstrates linear scaling of the discount. More allies
+         * = more distributed threat = more aggressive Princess behavior. The formula ensures
+         * diminishing returns (going from 1 to 2 allies is less impactful than 0 to 1).</p>
+         */
         @Test
         void testAlliedDamageDiscount_TwoAlliesThirdsDamage() {
             // Setup: With 2 allies engaging, damage should be divided by 3
@@ -2640,6 +2776,18 @@ class BasicPathRankerTest {
                   "With 2 allies engaging, damage should be divided by 3");
         }
 
+        /**
+         * Verifies that three allies engaging reduces threat to one-quarter.
+         *
+         * <p><b>Scenario:</b> A Princess unit evaluates a path while three friendly units are
+         * all in weapon range of the same enemy. Four total units are threatening the enemy.</p>
+         *
+         * <p><b>Expected behavior:</b> Enemy damage 100 / (3 allies + 1 self) = 100 / 4 = 25</p>
+         *
+         * <p><b>Why this matters:</b> Tests the upper range of typical scenarios. With a full
+         * lance (4 units) all engaging one enemy, each unit only considers 1/4 of the threat.
+         * This represents maximum coordinated aggression.</p>
+         */
         @Test
         void testAlliedDamageDiscount_ThreeAlliesQuartersDamage() {
             // Setup: With 3 allies engaging, damage should be divided by 4
@@ -2677,6 +2825,20 @@ class BasicPathRankerTest {
                   "With 3 allies engaging, damage should be quartered");
         }
 
+        /**
+         * Verifies that only in-range allies count toward the discount.
+         *
+         * <p><b>Scenario:</b> Two friendly units exist, but only one is within weapon range
+         * of the enemy. The other ally is too far away to engage.</p>
+         *
+         * <p><b>Expected behavior:</b> Only 1 ally counted, so damage 50 / 2 = 25.
+         * The out-of-range ally is ignored.</p>
+         *
+         * <p><b>Why this matters:</b> The discount should only reflect ACTUAL tactical support.
+         * An ally on the other side of the map provides no real threat division benefit.
+         * This prevents over-optimistic aggression when allies are technically present but
+         * unable to contribute.</p>
+         */
         @Test
         void testAlliedDamageDiscount_MixedRangeOnlyCountsInRange() {
             // Setup: Multiple allies but only some in range - discount based on in-range count
@@ -2722,6 +2884,20 @@ class BasicPathRankerTest {
                   "Discount should only count in-range allies");
         }
 
+        /**
+         * Verifies that no discount is applied when the feature is disabled.
+         *
+         * <p><b>Scenario:</b> The "Consider Allied Damage" setting is turned OFF in Princess's
+         * behavior settings. An ally IS in range to engage the enemy.</p>
+         *
+         * <p><b>Expected behavior:</b> Full enemy damage (50) is used despite having an ally
+         * in range. The feature toggle completely bypasses the discount logic.</p>
+         *
+         * <p><b>Why this matters:</b> Users may want Princess to behave more cautiously even
+         * when allies are present (e.g., for specific tactical situations or personal preference).
+         * The setting must be respected - when disabled, Princess should use traditional
+         * threat assessment.</p>
+         */
         @Test
         void testAlliedDamageDiscount_FeatureDisabledNoDiscount() {
             // Setup: Even with allies in range, discount should NOT apply when feature is disabled
@@ -2763,6 +2939,24 @@ class BasicPathRankerTest {
                   "When considerAlliedDamage is false, full enemy damage should be used");
         }
 
+        /**
+         * Verifies that each enemy's discount is calculated independently.
+         *
+         * <p><b>Scenario:</b> Two enemies are on the field. One enemy is close to a friendly
+         * ally (within range 10), while the other enemy is far from all allies (distance ~28).</p>
+         *
+         * <p><b>Expected behavior:</b>
+         * <ul>
+         *   <li>Enemy 1 (near ally): 50 / 2 = 25 (discounted)</li>
+         *   <li>Enemy 2 (far from ally): 50 / 1 = 50 (no discount)</li>
+         * </ul>
+         * </p>
+         *
+         * <p><b>Why this matters:</b> The discount must be calculated per-enemy, not globally.
+         * An ally covering one enemy doesn't reduce the threat from a completely different
+         * enemy elsewhere on the battlefield. This ensures tactical accuracy - Princess will
+         * still be appropriately cautious about enemies that her allies can't engage.</p>
+         */
         @Test
         void testAlliedDamageDiscount_MultipleEnemiesIndependentDiscounts() {
             // Setup: Each enemy should have its own independent discount calculation

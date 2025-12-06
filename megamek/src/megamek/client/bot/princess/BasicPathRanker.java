@@ -821,7 +821,31 @@ public class BasicPathRanker extends PathRanker {
                 }
             }
 
-            expectedDamageTaken += eval.getEstimatedEnemyDamage();
+            // Apply allied damage discount if enabled - when allies can also engage this enemy,
+            // the threat is reduced proportionally
+            double enemyDamage = eval.getEstimatedEnemyDamage();
+
+            // Damage Source Pool takes precedence: check if pool is enabled and initialized
+            PathRankerState state = getOwner().getPathRankerState();
+            if (getOwner().getBehaviorSettings().isUseDamageSourcePool() && state.isDamagePoolInitialized()) {
+                double remainingThreat = state.getRemainingThreat(enemy.getId());
+                if (remainingThreat < enemyDamage) {
+                    logger.debug("Damage pool for {}: remaining threat {} < estimated {}, using pool value",
+                          enemy.getDisplayName(), remainingThreat, enemyDamage);
+                    enemyDamage = remainingThreat;
+                }
+            } else if (getOwner().getBehaviorSettings().isConsiderAlliedDamage()) {
+                // Fall back to ally counting heuristic
+                int alliesEngaging = countAlliesWhoCanEngage(enemy, movingUnit);
+                if (alliesEngaging > 0) {
+                    double allyFactor = alliesEngaging + 1.0;  // +1 for self
+                    double originalDamage = enemyDamage;
+                    enemyDamage = enemyDamage / allyFactor;
+                    logger.debug("Allied discount for {}: {} allies engaging, damage {} -> {} (factor {})",
+                          enemy.getDisplayName(), alliesEngaging, originalDamage, enemyDamage, allyFactor);
+                }
+            }
+            expectedDamageTaken += enemyDamage;
         }
 
         // if we're not in the air, we may get hit by friendly artillery
@@ -2058,6 +2082,47 @@ public class BasicPathRanker extends PathRanker {
         }
         logger.trace("Total Hazard = {}", hazard);
         return Math.round(hazard);
+    }
+
+    /**
+     * Count friendly units (excluding the moving unit) who can potentially engage the given enemy.
+     * Used for allied damage discount calculation - when multiple allies can engage an enemy,
+     * the threat from that enemy is reduced proportionally.
+     *
+     * @param enemy      The enemy entity to check engagement range against
+     * @param movingUnit The unit currently being evaluated (excluded from count to avoid double-counting)
+     *
+     * @return The number of allied units (excluding the moving unit) who are in weapon range of the enemy
+     */
+    protected int countAlliesWhoCanEngage(Entity enemy, Entity movingUnit) {
+        if (enemy.getPosition() == null) {
+            return 0;
+        }
+
+        int count = 0;
+        List<Entity> friends = getOwner().getFriendEntities();
+
+        for (Entity ally : friends) {
+            // Skip the moving unit to avoid double-counting (we add +1 for self in the caller)
+            if (ally.getId() == movingUnit.getId()) {
+                continue;
+            }
+
+            // Skip if ally has no position or is off-board
+            if (ally.getPosition() == null || ally.isOffBoard()) {
+                continue;
+            }
+
+            // Check if ally is in weapon range of the enemy
+            int distance = ally.getPosition().distance(enemy.getPosition());
+            int allyMaxRange = getOwner().getMaxWeaponRange(ally, enemy.isAirborne());
+
+            if (distance <= allyMaxRange) {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     /**

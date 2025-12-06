@@ -71,6 +71,8 @@ public class EntityViewPane extends EnhancedTabbedPane {
      * don't want to remember the selected tab between the different locations.
      */
     protected void initialize() {
+        setName("EntityViewPane");
+
         JButton menuButton = new MenuButton();
         menuButton.setToolTipText("Show/hide menus");
         menuButton.addActionListener(ev -> toggleMenus());

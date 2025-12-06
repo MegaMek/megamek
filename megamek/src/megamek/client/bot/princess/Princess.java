@@ -2394,6 +2394,11 @@ public class Princess extends BotClient {
             final RankedPath bestPath = getPathRanker(entity).getBestPath(rankedPaths);
             LOGGER.info("Best Path: {}  Rank: {}", bestPath.getPath(), bestPath.getRank());
 
+            // Update damage source pool after path selection
+            if (getBehaviorSettings().isUseDamageSourcePool()) {
+                updateDamagePoolAfterMove(entity, bestPath.getPath());
+            }
+
             return performPathPostProcessing(bestPath);
         } catch (Exception e) {
             LOGGER.error("MP is now null!", e);
@@ -2414,6 +2419,42 @@ public class Princess extends BotClient {
               Long.toString(paths.size()) +
               " paths to consider.  Estimated time to completion: " +
               timeEstimate;
+    }
+
+    /**
+     * Update the damage source pool after a unit commits to a move. Reduces threat from enemies that this unit can
+     * engage from its final position.
+     *
+     * @param entity The entity that just moved
+     * @param path   The movement path chosen
+     */
+    private void updateDamagePoolAfterMove(Entity entity, MovePath path) {
+        if (path == null || path.getFinalCoords() == null) {
+            return;
+        }
+
+        Coords finalPos = path.getFinalCoords();
+        int maxRange = getMaxWeaponRange(entity, false);
+
+        for (Entity enemy : getEnemyEntities()) {
+            if (enemy.getPosition() == null || enemy.isOffBoard()) {
+                continue;
+            }
+
+            int distance = finalPos.distance(enemy.getPosition());
+            if (distance <= maxRange) {
+                // This unit can engage this enemy - allocate threat proportional to damage potential
+                double myDamage = FireControl.getMaxDamageAtRange(entity, distance, false, false);
+                double enemyHealth = enemy.getTotalArmor() + enemy.getTotalInternal();
+
+                if (enemyHealth > 0) {
+                    double allocationFactor = Math.min(myDamage / enemyHealth, 1.0);
+                    pathRankerState.allocateDamageSource(enemy.getId(), allocationFactor);
+                    LOGGER.debug("Unit {} engaging enemy {} at range {}, allocating {}",
+                          entity.getDisplayName(), enemy.getDisplayName(), distance, allocationFactor);
+                }
+            }
+        }
     }
 
     @Override
@@ -2731,6 +2772,11 @@ public class Princess extends BotClient {
                   fireControlState);
             for (final Targetable target : potentialTargets) {
                 damageMap.put(target.getId(), 0d);
+            }
+
+            // Initialize damage source pool if enabled
+            if (getBehaviorSettings().isUseDamageSourcePool()) {
+                pathRankerState.initializeDamagePool(getEnemyEntities(), this);
             }
         } catch (Exception ignored) {
 

@@ -130,6 +130,8 @@ public class BotConfigDialog extends AbstractButtonDialog
           new TipMMToggleButton(Messages.getString("BotConfigDialog.experimentalCheck"));
     private final MMToggleButton considerAlliedDamageCheck =
           new TipMMToggleButton(Messages.getString("BotConfigDialog.considerAlliedDamageCheck"));
+    private final MMToggleButton useDamageSourcePoolCheck =
+          new TipMMToggleButton(Messages.getString("BotConfigDialog.useDamageSourcePoolCheck"));
 
     private final JLabel withdrawEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
     private final MMComboBox<CardinalEdge> withdrawEdgeCombo = new TipCombo<>("EdgeToWithdraw", CardinalEdge.values());
@@ -427,6 +429,10 @@ public class BotConfigDialog extends AbstractButtonDialog
         considerAlliedDamageCheck.addActionListener(this);
         panContent.add(considerAlliedDamageCheck);
 
+        useDamageSourcePoolCheck.setToolTipText(Messages.getString("BotConfigDialog.useDamageSourcePoolCheckToolTip"));
+        useDamageSourcePoolCheck.addActionListener(this);
+        panContent.add(useDamageSourcePoolCheck);
+
         var buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         buttonPanel.setAlignmentX(SwingConstants.CENTER);
         result.add(buttonPanel);
@@ -547,6 +553,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         iAmAPirateCheck.setSelected(princessBehavior.iAmAPirate());
         experimentalCheck.setSelected(princessBehavior.isExperimental());
         considerAlliedDamageCheck.setSelected(princessBehavior.isConsiderAlliedDamage());
+        useDamageSourcePoolCheck.setSelected(princessBehavior.isUseDamageSourcePool());
         numberOfEnemiesToConsiderFacingSlidebar.setValue(princessBehavior.getNumberOfEnemiesToConsiderFacing());
         allowFacingToleranceSlidebar.setValue(princessBehavior.getAllowFacingTolerance());
         ignoreDamageOutputCheck.setSelected(princessBehavior.isIgnoreDamageOutput());
@@ -609,7 +616,8 @@ public class BotConfigDialog extends AbstractButtonDialog
                     chosenPreset.getAllowFacingTolerance() != allowFacingToleranceSlidebar.getValue() ||
                     chosenPreset.isIgnoreDamageOutput() != ignoreDamageOutputCheck.isSelected() ||
                     chosenPreset.isExperimental() != experimentalCheck.isSelected() ||
-                    chosenPreset.isConsiderAlliedDamage() != considerAlliedDamageCheck.isSelected());
+                    chosenPreset.isConsiderAlliedDamage() != considerAlliedDamageCheck.isSelected() ||
+                    chosenPreset.isUseDamageSourcePool() != useDamageSourcePoolCheck.isSelected());
     }
 
     /**
@@ -796,6 +804,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         newBehavior.setExperimental(experimentalCheck.isSelected());
         newBehavior.setIgnoreDamageOutput(ignoreDamageOutputCheck.isSelected());
         newBehavior.setConsiderAlliedDamage(considerAlliedDamageCheck.isSelected());
+        newBehavior.setUseDamageSourcePool(useDamageSourcePoolCheck.isSelected());
 
         behaviorSettingsFactory.addBehavior(newBehavior);
         behaviorSettingsFactory.saveBehaviorSettings(false);
@@ -846,6 +855,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         tempBehavior.setExperimental(experimentalCheck.isSelected());
         tempBehavior.setIgnoreDamageOutput(ignoreDamageOutputCheck.isSelected());
         tempBehavior.setConsiderAlliedDamage(considerAlliedDamageCheck.isSelected());
+        tempBehavior.setUseDamageSourcePool(useDamageSourcePoolCheck.isSelected());
 
         for (int i = 0; i < targetsListModel.getSize(); i++) {
             if (targetsListModel.get(i) instanceof Coords) {

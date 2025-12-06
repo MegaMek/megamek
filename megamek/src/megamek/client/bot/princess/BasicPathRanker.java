@@ -824,7 +824,18 @@ public class BasicPathRanker extends PathRanker {
             // Apply allied damage discount if enabled - when allies can also engage this enemy,
             // the threat is reduced proportionally
             double enemyDamage = eval.getEstimatedEnemyDamage();
-            if (getOwner().getBehaviorSettings().isConsiderAlliedDamage()) {
+
+            // Damage Source Pool takes precedence: check if pool is enabled and initialized
+            PathRankerState state = getOwner().getPathRankerState();
+            if (getOwner().getBehaviorSettings().isUseDamageSourcePool() && state.isDamagePoolInitialized()) {
+                double remainingThreat = state.getRemainingThreat(enemy.getId());
+                if (remainingThreat < enemyDamage) {
+                    logger.debug("Damage pool for {}: remaining threat {} < estimated {}, using pool value",
+                          enemy.getDisplayName(), remainingThreat, enemyDamage);
+                    enemyDamage = remainingThreat;
+                }
+            } else if (getOwner().getBehaviorSettings().isConsiderAlliedDamage()) {
+                // Fall back to ally counting heuristic
                 int alliesEngaging = countAlliesWhoCanEngage(enemy, movingUnit);
                 if (alliesEngaging > 0) {
                     double allyFactor = alliesEngaging + 1.0;  // +1 for self

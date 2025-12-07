@@ -106,6 +106,11 @@ public class PathRankerState {
     public static final int OPTIMAL_RANGE_MEDIUM = 12;  // 7-24 hexes
     public static final int OPTIMAL_RANGE_LONG = 21;    // 25-42 hexes
 
+    // Gunnery skill thresholds for range adjustment
+    public static final int GUNNERY_ELITE = 3;    // Gunnery 2-3: can afford longer range
+    public static final int GUNNERY_STANDARD = 4; // Gunnery 4: baseline
+    public static final int GUNNERY_GREEN = 5;    // Gunnery 5+: needs to close in
+
     // ========== End Constants ==========
 
     private final Map<Key, Double> pathSuccessProbabilities = new HashMap<>();
@@ -282,8 +287,9 @@ public class PathRankerState {
     }
 
     /**
-     * Calculate optimal range using Alpha Strike damage values.
-     * Returns the range bracket (S/M/L) where the unit deals highest damage.
+     * Calculate optimal range using Alpha Strike damage values and gunnery skill.
+     * Returns the range bracket (S/M/L) where the unit deals highest expected damage,
+     * adjusted for the pilot's gunnery skill.
      *
      * @param entity The entity to calculate for
      * @return Optimal range in hexes (3, 12, or 21)
@@ -307,21 +313,77 @@ public class PathRankerState {
         int mDamage = damage.M().damage + (damage.M().minimal ? 1 : 0);
         int lDamage = damage.L().damage + (damage.L().minimal ? 1 : 0);
 
-        // Log for debugging
-        logger.info("{}: AS damage S={} M={} L={}", entity.getDisplayName(), sDamage, mDamage, lDamage);
-
-        // Return the representative range for the highest damage bracket
-        // Ties favor closer range (more aggressive positioning)
-        if (lDamage > mDamage && lDamage > sDamage) {
-            logger.info("{}: Optimal range = {} hexes (Long)", entity.getDisplayName(), OPTIMAL_RANGE_LONG);
-            return OPTIMAL_RANGE_LONG;
-        } else if (mDamage > sDamage) {
-            logger.info("{}: Optimal range = {} hexes (Medium)", entity.getDisplayName(), OPTIMAL_RANGE_MEDIUM);
-            return OPTIMAL_RANGE_MEDIUM;
-        } else {
-            logger.info("{}: Optimal range = {} hexes (Short)", entity.getDisplayName(), OPTIMAL_RANGE_SHORT);
-            return OPTIMAL_RANGE_SHORT;
+        // Get gunnery skill (default to 4 if no crew)
+        int gunnery = GUNNERY_STANDARD;
+        if (entity.getCrew() != null) {
+            gunnery = entity.getCrew().getGunnery();
         }
+
+        // Log for debugging
+        logger.info("{}: AS damage S={} M={} L={}, Gunnery={}",
+            entity.getDisplayName(), sDamage, mDamage, lDamage, gunnery);
+
+        // Determine base optimal range from damage profile
+        int baseRange = determineBaseOptimalRange(sDamage, mDamage, lDamage);
+
+        // Adjust for gunnery skill
+        int adjustedRange = adjustRangeForGunnery(baseRange, gunnery, sDamage, mDamage, lDamage);
+
+        logger.info("{}: Base range={}, Adjusted range={} hexes (Gunnery {})",
+            entity.getDisplayName(), baseRange, adjustedRange, gunnery);
+
+        return adjustedRange;
+    }
+
+    /**
+     * Determine the base optimal range from damage values alone.
+     * For flat profiles (S=M=L), returns MEDIUM as a safe default.
+     */
+    private int determineBaseOptimalRange(int sDamage, int mDamage, int lDamage) {
+        // Flat damage profile - prefer medium range (safe positioning, same damage)
+        if (sDamage == mDamage && mDamage == lDamage) {
+            return OPTIMAL_RANGE_MEDIUM;
+        }
+
+        // Clear winner at long range
+        if (lDamage > mDamage && lDamage > sDamage) {
+            return OPTIMAL_RANGE_LONG;
+        }
+
+        // Medium is best (or tied with long but better than short)
+        if (mDamage > sDamage) {
+            return OPTIMAL_RANGE_MEDIUM;
+        }
+
+        // Short range dominant (or tied - aggressive default)
+        return OPTIMAL_RANGE_SHORT;
+    }
+
+    /**
+     * Adjust optimal range based on gunnery skill.
+     * Elite gunners can afford longer range, green gunners need to close in.
+     */
+    private int adjustRangeForGunnery(int baseRange, int gunnery, int sDamage, int mDamage, int lDamage) {
+        // Elite gunners (2-3): shift UP one bracket if damage supports it
+        if (gunnery <= GUNNERY_ELITE) {
+            if (baseRange == OPTIMAL_RANGE_SHORT && mDamage >= sDamage) {
+                return OPTIMAL_RANGE_MEDIUM;
+            } else if (baseRange == OPTIMAL_RANGE_MEDIUM && lDamage >= mDamage) {
+                return OPTIMAL_RANGE_LONG;
+            }
+        }
+
+        // Green gunners (5+): shift DOWN one bracket if damage supports it
+        if (gunnery >= GUNNERY_GREEN) {
+            if (baseRange == OPTIMAL_RANGE_LONG && mDamage >= lDamage) {
+                return OPTIMAL_RANGE_MEDIUM;
+            } else if (baseRange == OPTIMAL_RANGE_MEDIUM && sDamage >= mDamage) {
+                return OPTIMAL_RANGE_SHORT;
+            }
+        }
+
+        // Standard gunnery (4) or no adjustment needed
+        return baseRange;
     }
 
     /**
@@ -558,7 +620,7 @@ public class PathRankerState {
     }
 
     /**
-     * Calculate optimal range using Alpha Strike damage values.
+     * Calculate optimal range using Alpha Strike damage values and gunnery skill.
      * Static version for use by TSV logging (UnitAction/UnitState).
      *
      * @param entity The entity to calculate for
@@ -583,15 +645,68 @@ public class PathRankerState {
         int mDamage = damage.M().damage + (damage.M().minimal ? 1 : 0);
         int lDamage = damage.L().damage + (damage.L().minimal ? 1 : 0);
 
-        // Return the representative range for the highest damage bracket
-        // Ties favor closer range (more aggressive positioning)
+        // Get gunnery skill (default to 4 if no crew)
+        int gunnery = GUNNERY_STANDARD;
+        if (entity.getCrew() != null) {
+            gunnery = entity.getCrew().getGunnery();
+        }
+
+        // Determine base optimal range from damage profile
+        int baseRange = determineBaseOptimalRangeStatic(sDamage, mDamage, lDamage);
+
+        // Adjust for gunnery skill
+        return adjustRangeForGunneryStatic(baseRange, gunnery, sDamage, mDamage, lDamage);
+    }
+
+    /**
+     * Determine the base optimal range from damage values alone.
+     * Static version for use by static methods.
+     */
+    private static int determineBaseOptimalRangeStatic(int sDamage, int mDamage, int lDamage) {
+        // Flat damage profile - prefer medium range (safe positioning, same damage)
+        if (sDamage == mDamage && mDamage == lDamage) {
+            return OPTIMAL_RANGE_MEDIUM;
+        }
+
+        // Clear winner at long range
         if (lDamage > mDamage && lDamage > sDamage) {
             return OPTIMAL_RANGE_LONG;
-        } else if (mDamage > sDamage) {
-            return OPTIMAL_RANGE_MEDIUM;
-        } else {
-            return OPTIMAL_RANGE_SHORT;
         }
+
+        // Medium is best (or tied with long but better than short)
+        if (mDamage > sDamage) {
+            return OPTIMAL_RANGE_MEDIUM;
+        }
+
+        // Short range dominant (or tied - aggressive default)
+        return OPTIMAL_RANGE_SHORT;
+    }
+
+    /**
+     * Adjust optimal range based on gunnery skill.
+     * Static version for use by static methods.
+     */
+    private static int adjustRangeForGunneryStatic(int baseRange, int gunnery, int sDamage, int mDamage, int lDamage) {
+        // Elite gunners (2-3): shift UP one bracket if damage supports it
+        if (gunnery <= GUNNERY_ELITE) {
+            if (baseRange == OPTIMAL_RANGE_SHORT && mDamage >= sDamage) {
+                return OPTIMAL_RANGE_MEDIUM;
+            } else if (baseRange == OPTIMAL_RANGE_MEDIUM && lDamage >= mDamage) {
+                return OPTIMAL_RANGE_LONG;
+            }
+        }
+
+        // Green gunners (5+): shift DOWN one bracket if damage supports it
+        if (gunnery >= GUNNERY_GREEN) {
+            if (baseRange == OPTIMAL_RANGE_LONG && mDamage >= lDamage) {
+                return OPTIMAL_RANGE_MEDIUM;
+            } else if (baseRange == OPTIMAL_RANGE_MEDIUM && sDamage >= mDamage) {
+                return OPTIMAL_RANGE_SHORT;
+            }
+        }
+
+        // Standard gunnery (4) or no adjustment needed
+        return baseRange;
     }
 
     /**

@@ -109,7 +109,6 @@ import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeECM;
 import megamek.common.enums.MoveStepType;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
@@ -638,7 +637,7 @@ public final class BoardView extends AbstractBoardView
                 }
                 for (Entity entity : game.getEntitiesVector()) {
                     if ((entity.getDamageLevel() != Entity.DMG_NONE) && ((entity.damageThisRound != 0)
-                          || (entity instanceof GunEmplacement))) {
+                          || (entity.isBuildingEntityOrGunEmplacement()))) {
                         tileManager.reloadImage(entity);
                     }
                 }

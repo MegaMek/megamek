@@ -1605,7 +1605,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Return a Vector of gun emplacements at Coords <code>c</code>
+     * Return a Vector of gun emplacements at Coords <code>c</code>.
      *
      * @param c The coordinates to check
      *
@@ -1614,7 +1614,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public List<GunEmplacement> getGunEmplacements(Coords c, int boardId) {
         List<GunEmplacement> result = new ArrayList<>();
 
-        // Only build the list if the coords are on the board.
+        // Only build the list if the coords are on the board. // TODO Ensure this works w/ BuildingEntity
         if (hasBoardLocation(c, boardId)) {
             for (Entity entity : getEntitiesVector(c, boardId, true)) {
                 if (entity instanceof GunEmplacement gunEmplacement) {
@@ -1634,7 +1634,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public boolean hasRooftopGunEmplacement(Coords c, int boardId) {
         if (!hasBoardLocation(c, boardId)) {
             return false;
-        }
+        } // TODO Ensure this works with BuildingEntity
         Board board = getBoard(boardId);
         IBuilding building = board.getBuildingAt(c);
         if (building == null) {

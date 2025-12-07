@@ -2791,7 +2791,7 @@ public class Compute {
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_STANDING_STILL)
               && (entity.mpUsed == 0)
               && !entity.isImmobile()
-              && !((entity instanceof Infantry) || (entity instanceof VTOL) || (entity instanceof GunEmplacement))) {
+              && !((entity instanceof Infantry) || (entity instanceof VTOL) || (entity.isBuildingEntityOrGunEmplacement()))) {
             ToHitData toHit = new ToHitData();
             toHit.addModifier(-1, "target did not move");
             return toHit;
@@ -3174,7 +3174,7 @@ public class Compute {
 
             if (targetEntity == null) {
                 return 0;
-            } else if (targetEntity instanceof GunEmplacement) {
+            } else if (targetEntity.isBuildingEntityOrGunEmplacement()) {
                 // If this is a gun emplacement, handle it as the building hex it is in.
                 final IBuilding parentBuilding = game.getBoard().getBuildingAt(position);
                 return (parentBuilding == null) ? 0

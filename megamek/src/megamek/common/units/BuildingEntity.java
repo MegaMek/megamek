@@ -60,6 +60,7 @@ import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
+import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.Mounted;
 import megamek.common.exceptions.LocationFullException;
@@ -799,5 +800,14 @@ public class BuildingEntity extends Entity implements IBuilding {
     @Override
     public void setBasementCollapsed(Coords coords, boolean collapsed) {
         building.setBasementCollapsed(boardToRelative(coords), collapsed);
+    }
+
+    /**
+     * Replaced most instances of `instanceof GunEmplacement` to support {@link BuildingEntity}
+     * @return true if this unit is a {@link BuildingEntity} or {@link GunEmplacement}, false otherwise
+     */
+    @Override
+    public boolean isBuildingEntityOrGunEmplacement() {
+        return true;
     }
 }

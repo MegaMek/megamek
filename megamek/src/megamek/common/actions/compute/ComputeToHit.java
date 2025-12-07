@@ -996,7 +996,7 @@ public class ComputeToHit {
               (targetType == Targetable.TYPE_BLDG_IGNITE) ||
               (targetType == Targetable.TYPE_FUEL_TANK) ||
               (targetType == Targetable.TYPE_FUEL_TANK_IGNITE) ||
-              (target instanceof GunEmplacement);
+              (target.isBuildingEntityOrGunEmplacement());
 
         if ((distance == 1) && isBuilding) {
             return Messages.getString("WeaponAttackAction.AdjBuilding");

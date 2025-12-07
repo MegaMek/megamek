@@ -2711,6 +2711,13 @@ public class Princess extends BotClient {
                                       coords.toFriendlyString() +
                                       " designated target due to Gun Emplacement.", Level.INFO);
                             }
+
+                            if (isEnemyBuildingEntity(entity, coords)) {
+                                fireControlState.getAdditionalTargets().add(bt);
+                                sendChat("Building in Hex " +
+                                      coords.toFriendlyString() +
+                                      " designated target due to Building Entity.", Level.INFO);
+                            }
                         }
                     }
                 }
@@ -2773,6 +2780,14 @@ public class Princess extends BotClient {
                                 sendChat("Building in Hex " +
                                       coords.toFriendlyString() +
                                       " designated target due to Gun Emplacement.", Level.INFO);
+                            }
+
+
+                            if (isEnemyBuildingEntity(entity, coords)) {
+                                getStrategicBuildingTargets().add(coords);
+                                sendChat("Building in Hex " +
+                                      coords.toFriendlyString() +
+                                      " designated target due to Building Entity.", Level.INFO);
                             }
                         }
                     }
@@ -2950,6 +2965,14 @@ public class Princess extends BotClient {
 
     private boolean isEnemyGunEmplacement(final Entity entity, final Coords coords) {
         return entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT) &&
+              !getBehaviorSettings().getIgnoredUnitTargets().contains(entity.getId()) &&
+              entity.getOwner().isEnemyOf(getLocalPlayer()) &&
+              !getStrategicBuildingTargets().contains(coords) &&
+              !entity.isCrippled();
+    }
+
+    private boolean isEnemyBuildingEntity(final Entity entity, final Coords coords) {
+        return entity.hasETypeFlag(Entity.ETYPE_BUILDING_ENTITY) &&
               !getBehaviorSettings().getIgnoredUnitTargets().contains(entity.getId()) &&
               entity.getOwner().isEnemyOf(getLocalPlayer()) &&
               !getStrategicBuildingTargets().contains(coords) &&

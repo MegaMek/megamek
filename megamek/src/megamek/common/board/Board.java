@@ -2131,8 +2131,8 @@ public class Board implements Serializable {
 
     /**
      * Add a building and all of its coordinates to the board. {@link BuildingTerrain} should be added when
-     * iniitalizing, this method is public so {@link megamek.common.units.BuildingEntity} can register buildings when deploying buildings.
-     * @param bldg {@link IBuilding} to add to the board`
+     * initializing, this method is public so {@link megamek.common.units.BuildingEntity} can register buildings when deploying buildings.
+     * @param bldg {@link IBuilding} to add to the board
      */
     public void addBuildingToBoard(IBuilding bldg) {
         buildings.addElement(bldg);

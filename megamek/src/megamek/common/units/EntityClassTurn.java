@@ -85,7 +85,7 @@ public class EntityClassTurn extends GameTurn {
     /** The constant to represent handheld weapon entities. */
     public static final int CLASS_HANDHELD_WEAPON = 2048;
 
-    /** The constant to represent handheld weapon entities. */
+    /** The constant to represent building entities. */
     public static final int CLASS_BUILDING_ENTITY = 4096;
 
     /**

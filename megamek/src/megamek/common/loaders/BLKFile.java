@@ -1023,7 +1023,6 @@ public class BLKFile {
             blk.writeBlockData("building_type", buildingEntity.getBuildingType().getTypeValue());
             blk.writeBlockData("height", buildingEntity.getInternalBuilding().getBuildingHeight());
             blk.writeBlockData("cf", buildingEntity.getInternalBuilding().getCurrentCF(CubeCoords.ZERO));
-            blk.writeBlockData("building_class", buildingEntity.getBldgClass());
 
             blk.writeBlockData("coords",
                   buildingEntity.getInternalBuilding().getCoordsList().toArray(new CubeCoords[0]));
@@ -1190,7 +1189,7 @@ public class BLKFile {
     private static String encodeEquipmentLine(Mounted<?> m) {
         String name = m.getType().getInternalName();
         if (m.getEntity() instanceof BuildingEntity) {
-            // Append the facing for VGLs or if mounted on a BuildingEntity{
+            // Append the facing for VGLs or if mounted on a BuildingEntity
                 switch (m.getFacing()) {
                     case 0:
                         name = name + (" (F)");

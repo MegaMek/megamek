@@ -155,8 +155,8 @@ public class BehaviorSettings implements Serializable {
     private boolean ignoreDamageOutput = false;
     private boolean experimental = false; // running experimental features?
     private boolean considerAlliedDamage = true; // factor in allied firepower when evaluating threats?
-    private boolean useDamageSourcePool = false; // use damage source pool tracking for threat calculation?
-    private boolean useRoleAwarePositioning = false; // position units at optimal range for their weapons?
+    private boolean useDamageSourcePool = true; // use damage source pool tracking for threat calculation?
+    private boolean useRoleAwarePositioning = true; // position units at optimal range for their weapons?
     private final Set<Integer> ignoredUnitTargets = new HashSet<>();
     // endregion Variable Declarations
 

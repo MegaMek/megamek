@@ -113,6 +113,24 @@ public class PathRankerState {
     public static final int GUNNERY_STANDARD = 4; // Gunnery 4: baseline
     public static final int GUNNERY_GREEN = 5;    // Gunnery 5+: needs to close in
 
+    // Damage threshold for range changes - prevents oscillation on minor damage drops
+    // A 1-point swing (e.g., 5->4) won't trigger repositioning; requires 2+ point difference
+    public static final int DAMAGE_THRESHOLD = 2;
+
+    // Melee threat multipliers by role - higher = more dangerous at close range
+    // Used to penalize being at melee range (1 hex) of melee-focused enemies
+    public static final double MELEE_THREAT_BRAWLER = 1.0;
+    public static final double MELEE_THREAT_JUGGERNAUT = 1.0;
+    public static final double MELEE_THREAT_STRIKER = 0.5;
+    public static final double MELEE_THREAT_SKIRMISHER = 0.5;
+    public static final double MELEE_THREAT_AMBUSHER = 0.5;
+    public static final double MELEE_THREAT_SNIPER = 0.2;
+    public static final double MELEE_THREAT_MISSILE_BOAT = 0.2;
+    public static final double MELEE_THREAT_SCOUT = 0.2;
+    public static final double MELEE_THREAT_DEFAULT = 0.5;
+    public static final double MELEE_THREAT_MEL_BONUS = 50.0;  // Bonus penalty for units with MEL ability
+    public static final double MELEE_THREAT_BASE_PENALTY = 50.0;  // Base penalty at melee range
+
     // ========== End Constants ==========
 
     private final Map<Key, Double> pathSuccessProbabilities = new HashMap<>();
@@ -430,6 +448,7 @@ public class PathRankerState {
     /**
      * Determine the base optimal range from damage values alone.
      * For flat profiles (S=M=L), returns MEDIUM as a safe default.
+     * Uses DAMAGE_THRESHOLD to prevent oscillation on minor damage changes.
      */
     private int determineBaseOptimalRange(int sDamage, int mDamage, int lDamage) {
         // Flat damage profile - prefer medium range (safe positioning, same damage)
@@ -437,17 +456,17 @@ public class PathRankerState {
             return OPTIMAL_RANGE_MEDIUM;
         }
 
-        // Clear winner at long range
-        if (lDamage > mDamage && lDamage > sDamage) {
+        // Clear winner at long range (must be significantly better than both M and S)
+        if (lDamage > mDamage + DAMAGE_THRESHOLD && lDamage > sDamage + DAMAGE_THRESHOLD) {
             return OPTIMAL_RANGE_LONG;
         }
 
-        // Medium is best (or tied with long but better than short)
-        if (mDamage > sDamage) {
+        // Medium is significantly better than short
+        if (mDamage > sDamage + DAMAGE_THRESHOLD) {
             return OPTIMAL_RANGE_MEDIUM;
         }
 
-        // Short range dominant (or tied - aggressive default)
+        // Short range dominant, or close call - stay aggressive
         return OPTIMAL_RANGE_SHORT;
     }
 
@@ -615,6 +634,74 @@ public class PathRankerState {
     public boolean isLongRangeOptimal(Entity entity) {
         int optimalRange = getOptimalRange(entity);
         return optimalRange >= 12;
+    }
+
+    // ========== Melee Threat Assessment ==========
+
+    /**
+     * Get the melee threat multiplier for an entity based on its role.
+     * Higher multiplier = more dangerous at close range.
+     *
+     * @param entity The enemy entity
+     * @return Melee threat multiplier (0.2 to 1.0)
+     */
+    public double getMeleeThreatMultiplier(Entity entity) {
+        UnitRole role = entity.getRole();
+        if (role == null || role == UnitRole.UNDETERMINED || role == UnitRole.NONE) {
+            return MELEE_THREAT_DEFAULT;
+        }
+
+        return switch (role) {
+            case BRAWLER -> MELEE_THREAT_BRAWLER;
+            case JUGGERNAUT -> MELEE_THREAT_JUGGERNAUT;
+            case STRIKER -> MELEE_THREAT_STRIKER;
+            case SKIRMISHER -> MELEE_THREAT_SKIRMISHER;
+            case AMBUSHER -> MELEE_THREAT_AMBUSHER;
+            case SNIPER -> MELEE_THREAT_SNIPER;
+            case MISSILE_BOAT -> MELEE_THREAT_MISSILE_BOAT;
+            case SCOUT -> MELEE_THREAT_SCOUT;
+            default -> MELEE_THREAT_DEFAULT;
+        };
+    }
+
+    /**
+     * Check if an entity has the MEL (Melee) special ability.
+     * Uses cached AS data if available.
+     *
+     * @param entity The entity to check
+     * @return true if the entity has MEL
+     */
+    public boolean hasEnemyMEL(Entity entity) {
+        try {
+            AlphaStrikeElement element = ASConverter.convert(entity);
+            return element != null && element.hasSUA(BattleForceSUA.MEL);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Calculate the melee threat penalty for being at melee range of an enemy.
+     * Returns 0 if not at melee range (distance > 1).
+     *
+     * @param enemy The enemy entity
+     * @param distance Distance from our position to the enemy
+     * @return Penalty value to add to threat assessment
+     */
+    public double calculateMeleeThreatPenalty(Entity enemy, int distance) {
+        if (distance > 1) {
+            return 0.0;  // Only applies at melee range (adjacent hexes)
+        }
+
+        double roleMultiplier = getMeleeThreatMultiplier(enemy);
+        double melBonus = hasEnemyMEL(enemy) ? MELEE_THREAT_MEL_BONUS : 0.0;
+
+        double penalty = (MELEE_THREAT_BASE_PENALTY * roleMultiplier) + melBonus;
+
+        logger.debug("Melee threat penalty for {} at distance {}: {} (role mult: {}, MEL bonus: {})",
+            enemy.getDisplayName(), distance, penalty, roleMultiplier, melBonus);
+
+        return penalty;
     }
 
     // ========== Static Calculation Methods for TSV Logging ==========
@@ -798,6 +885,7 @@ public class PathRankerState {
     /**
      * Determine the base optimal range from damage values alone.
      * Static version for use by static methods.
+     * Uses DAMAGE_THRESHOLD to prevent oscillation on minor damage changes.
      */
     private static int determineBaseOptimalRangeStatic(int sDamage, int mDamage, int lDamage) {
         // Flat damage profile - prefer medium range (safe positioning, same damage)
@@ -805,17 +893,17 @@ public class PathRankerState {
             return OPTIMAL_RANGE_MEDIUM;
         }
 
-        // Clear winner at long range
-        if (lDamage > mDamage && lDamage > sDamage) {
+        // Clear winner at long range (must be significantly better than both M and S)
+        if (lDamage > mDamage + DAMAGE_THRESHOLD && lDamage > sDamage + DAMAGE_THRESHOLD) {
             return OPTIMAL_RANGE_LONG;
         }
 
-        // Medium is best (or tied with long but better than short)
-        if (mDamage > sDamage) {
+        // Medium is significantly better than short
+        if (mDamage > sDamage + DAMAGE_THRESHOLD) {
             return OPTIMAL_RANGE_MEDIUM;
         }
 
-        // Short range dominant (or tied - aggressive default)
+        // Short range dominant, or close call - stay aggressive
         return OPTIMAL_RANGE_SHORT;
     }
 

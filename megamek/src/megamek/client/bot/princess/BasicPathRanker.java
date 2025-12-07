@@ -464,6 +464,13 @@ public class BasicPathRanker extends PathRanker {
             theirDamagePotential += calculateKickDamagePotential(enemy, path, game);
         }
 
+        // Role-aware melee threat: penalize being at melee range of melee-focused enemies
+        // This encourages staying at range 2-3 from Brawlers/Juggernauts
+        if (getOwner().getBehaviorSettings().isUseRoleAwarePositioning()) {
+            double meleeThreatPenalty = getOwner().getPathRankerState().calculateMeleeThreatPenalty(enemy, distance);
+            theirDamagePotential += meleeThreatPenalty;
+        }
+
         returnResponse.setEstimatedEnemyDamage(theirDamagePotential);
 
         // How much damage can I do to them?

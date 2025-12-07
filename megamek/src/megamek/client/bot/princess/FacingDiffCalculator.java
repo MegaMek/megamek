@@ -83,7 +83,7 @@ record FacingDiffCalculator(int allowFacingTolerance) {
      * Calculates the optimal facing direction for a unit toward a target coordinate.
      * <p>
      * This method accounts for armor distribution biases that may make it advantageous to face slightly off-center from
-     * the target.
+     * the target. The bias is applied so that the stronger armor side faces the enemy.
      * </p>
      *
      * @param unit   The entity making the movement
@@ -95,8 +95,14 @@ record FacingDiffCalculator(int allowFacingTolerance) {
     private int getDesiredFacing(Entity unit, MovePath path, Coords toFace) {
         int desiredFacing = path.getFinalCoords().direction(toFace);
 
-        // -1 is bias towards facing left, 1 is bias towards facing right
-        desiredFacing += getBiasTowardsFacing(unit);
+        // Get armor bias: positive means left side has more armor, negative means right side
+        int armorBias = getArmorBias(unit);
+
+        // Apply bias to expose the stronger side to the enemy
+        // If left armor > right (armorBias > 0), we want the left side facing the enemy
+        // Turning left (+1) from facing the enemy directly exposes our LEFT side to them
+        // Turning right (-1) from facing the enemy directly exposes our RIGHT side to them
+        desiredFacing += armorBias;
         if (desiredFacing < 0) {
             desiredFacing += 6;
         }
@@ -166,33 +172,46 @@ record FacingDiffCalculator(int allowFacingTolerance) {
     }
 
     /**
-     * Determines if a unit should bias its facing direction based on armor distribution.
+     * Determines the armor bias for a unit based on left vs right armor distribution.
      * <p>
-     * For Meks, this method checks the armor on the left versus right side and returns a bias value to encourage facing
-     * the more heavily armored side toward the enemy.
+     * For Meks, this method compares the total armor on the left side (arm, leg, torso)
+     * versus the right side and returns a bias value. This bias is used to adjust the
+     * desired facing direction so the unit exposes its stronger armor side to the enemy.
+     * </p>
+     * <p>
+     * When facing direction D toward an enemy:
+     * <ul>
+     *   <li>Turning left (D+1) exposes the LEFT side to the enemy</li>
+     *   <li>Turning right (D-1) exposes the RIGHT side to the enemy</li>
+     * </ul>
+     * So if left armor is stronger, we want to turn left (+1) to expose it.
      * </p>
      *
      * @param unit The entity being evaluated
      *
-     * @return -1 for right-side bias, 1 for left-side bias, 0 for no bias
+     * @return +1 if left side has more armor (turn left to expose it),
+     *         -1 if right side has more armor (turn right to expose it),
+     *         0 if armor is equal (face enemy directly)
      */
-    private int getBiasTowardsFacing(Entity unit) {
-        int biasTowardsFacing = 0;
+    private int getArmorBias(Entity unit) {
+        int armorBias = 0;
         if (unit.isMek()) {
-            // if we're a mek, we want to face the enemy towards the side that has more armor left
+            // Calculate total armor on each side
             int leftArmor = unit.getArmor(Mek.LOC_LEFT_ARM)
                   + unit.getArmor(Mek.LOC_LEFT_LEG)
                   + unit.getArmor(Mek.LOC_LEFT_TORSO);
             int rightArmor = unit.getArmor(Mek.LOC_RIGHT_ARM)
                   + unit.getArmor(Mek.LOC_RIGHT_LEG)
                   + unit.getArmor(Mek.LOC_RIGHT_TORSO);
+
+            // Bias toward exposing the stronger side to the enemy
             if (leftArmor > rightArmor) {
-                biasTowardsFacing = 1;
+                armorBias = 1;  // Turn left to expose left side
             } else if (rightArmor > leftArmor) {
-                biasTowardsFacing = -1;
+                armorBias = -1; // Turn right to expose right side
             }
         }
-        return biasTowardsFacing;
+        return armorBias;
     }
 
 }

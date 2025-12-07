@@ -520,7 +520,7 @@ public class BasicPathRanker extends PathRanker {
             if (optimalRange == Integer.MAX_VALUE) {
                 // Invert: higher distance = lower penalty (negative aggression effect)
                 double civilianMod = -distToEnemy * aggression;
-                logger.trace("aggression mod (civilian flee) [ {} = -{} * {}]", civilianMod, distToEnemy, aggression);
+                logger.debug("aggression mod (civilian flee) [ {} = -{} * {}]", civilianMod, distToEnemy, aggression);
                 return civilianMod;
             }
 
@@ -534,14 +534,14 @@ public class BasicPathRanker extends PathRanker {
             }
 
             double aggressionMod = distanceFromOptimal * aggression;
-            logger.trace("aggression mod (role-aware) [ -{} = |{} - {}| * {} ]",
+            logger.debug("aggression mod (role-aware) [ -{} = |{} - {}| * {} ]",
                 aggressionMod, distToEnemy, optimalRange, aggression);
             return aggressionMod;
         }
 
         // Classic behavior: penalize distance to enemy
         double aggressionMod = distToEnemy * aggression;
-        logger.trace("aggression mod [ -{} = {} * {}]", aggressionMod, distToEnemy, aggression);
+        logger.debug("aggression mod [ -{} = {} * {}]", aggressionMod, distToEnemy, aggression);
         return aggressionMod;
     }
 

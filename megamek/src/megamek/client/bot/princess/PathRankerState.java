@@ -292,7 +292,7 @@ public class PathRankerState {
             // If role and weapons disagree significantly, trust weapons
             // (handles custom variants or misclassified units)
             if (Math.abs(roleRange - weaponOptimalRange) > ROLE_RANGE_MISMATCH_THRESHOLD) {
-                logger.debug("{}: Role {} suggests range {}, but weapons suggest {}. Using weapons.",
+                logger.info("{}: Role {} suggests range {}, but weapons suggest {}. Using weapons.",
                     entity.getDisplayName(), role, roleRange, weaponOptimalRange);
                 return weaponOptimalRange;
             }
@@ -330,8 +330,8 @@ public class PathRankerState {
             }
         }
 
-        logger.debug("{}: Optimal weapon range = {} hexes (expected damage {})",
-            entity.getDisplayName(), bestRange, bestExpectedDamage);
+        logger.info("{}: Optimal weapon range = {} hexes (expected damage {})",
+            entity.getDisplayName(), bestRange, String.format("%.1f", bestExpectedDamage));
 
         return bestRange;
     }

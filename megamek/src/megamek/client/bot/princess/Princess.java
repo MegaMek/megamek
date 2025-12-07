@@ -2328,6 +2328,12 @@ public class Princess extends BotClient {
 
             // moves this entity during movement phase
             LOGGER.debug("Moving {} (ID {})", entity.getDisplayName(), entity.getId());
+
+            // Log role-aware positioning info if enabled
+            if (getBehaviorSettings().isUseRoleAwarePositioning()) {
+                logRoleAwareInfo(entity);
+            }
+
             getPrecognition().ensureUpToDate();
 
             if (isFallingBack(entity)) {
@@ -3847,6 +3853,45 @@ public class Princess extends BotClient {
         if (LOGGER.getLevel().isLessSpecificThan(logLevel)) {
             super.sendChat(message);
         }
+    }
+
+    /**
+     * Logs role-aware positioning information for a unit about to move.
+     * Outputs to both debug log and game chat for monitoring.
+     *
+     * @param entity The entity about to move
+     */
+    private void logRoleAwareInfo(Entity entity) {
+        PathRankerState state = getPathRankerState();
+
+        // Get role info
+        UnitRole role = entity.getRole();
+        String roleName = (role != null) ? role.toString() : "NONE";
+
+        // Get optimal range
+        int optimalRange = state.getOptimalRange(entity);
+        String rangeStr = (optimalRange == Integer.MAX_VALUE) ? "MAX (flee)" : String.valueOf(optimalRange);
+
+        // Get threat weight and move order
+        double threatWeight = state.getRoleThreatWeight(entity);
+        double moveOrder = state.getRoleMoveOrderMultiplier(entity);
+
+        // Check if long-range unit
+        boolean isLongRange = state.isLongRangeOptimal(entity);
+
+        // Build log message
+        String logMsg = String.format("[Role-Aware] %s: Role=%s, OptRange=%s, ThreatWt=%.2f, MoveOrder=%.1f%s",
+            entity.getDisplayName(),
+            roleName,
+            rangeStr,
+            threatWeight,
+            moveOrder,
+            isLongRange ? " (Long-Range)" : "");
+
+        LOGGER.debug(logMsg);
+
+        // Also send to game chat for in-game monitoring
+        sendChat(logMsg, Level.DEBUG);
     }
 
     /**

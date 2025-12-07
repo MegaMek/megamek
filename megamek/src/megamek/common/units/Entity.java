@@ -9032,6 +9032,14 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     *  Clear the Vector of picked-up MekWarrior IDs so that MegaMek issue #3191 does not recur.
+     *  Called when units are initially added to the game (as they should have no carried pilots then).
+     */
+    public void resetPickedUpMekWarriors() {
+        pickedUpMekWarriors.clear();
+    }
+
+    /**
      * Get a <code>List</code> of the units currently loaded into this payload.
      *
      * @return A <code>List</code> of loaded <code>Entity</code> units. This list will never be <code>null</code>, but

@@ -37,6 +37,7 @@ import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import java.util.List;
 
 import megamek.ai.utility.EntityFeatureUtils;
+import megamek.client.bot.princess.PathRankerState;
 import megamek.common.compute.Compute;
 import megamek.common.units.Entity;
 import megamek.common.game.Game;
@@ -63,6 +64,9 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
         MODEL,
         TYPE,
         ROLE,
+        OPTIMAL_RANGE,
+        THREAT_WEIGHT,
+        MOVE_ORDER_MULT,
         X,
         Y,
         FACING,
@@ -118,6 +122,11 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
               .put(Field.MODEL, entity.getModel())
               .put(Field.TYPE, entity.getClass().getSimpleName())
               .put(Field.ROLE, firstNonNull(entity.getRole(), UnitRole.NONE));
+
+        // Role-aware positioning data
+        map.put(Field.OPTIMAL_RANGE, PathRankerState.calculateOptimalRangeForEntity(entity))
+              .put(Field.THREAT_WEIGHT, PathRankerState.calculateThreatWeightForEntity(entity))
+              .put(Field.MOVE_ORDER_MULT, PathRankerState.calculateMoveOrderMultiplierForEntity(entity));
 
         // Position and movement
         if (entity.getPosition() != null) {

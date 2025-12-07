@@ -534,8 +534,8 @@ public class BasicPathRanker extends PathRanker {
             }
 
             double aggressionMod = distanceFromOptimal * aggression;
-            logger.debug("aggression mod (role-aware) [ -{} = |{} - {}| * {} ]",
-                aggressionMod, distToEnemy, optimalRange, aggression);
+            logger.debug("{} aggression mod (role-aware) [ -{} = |{} - {}| * {} ]",
+                movingUnit.getDisplayName(), aggressionMod, distToEnemy, optimalRange, aggression);
             return aggressionMod;
         }
 

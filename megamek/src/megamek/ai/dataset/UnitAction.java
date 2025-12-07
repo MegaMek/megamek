@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import megamek.ai.utility.EntityFeatureUtils;
+import megamek.client.bot.princess.PathRankerState;
 import megamek.client.ui.SharedUtility;
 import megamek.common.compute.Compute;
 import megamek.common.units.Entity;
@@ -92,6 +93,9 @@ public class UnitAction extends EntityDataMap<UnitAction.Field> {
         ARMOR_RIGHT_P,
         ARMOR_BACK_P,
         ROLE,
+        OPTIMAL_RANGE,
+        THREAT_WEIGHT,
+        MOVE_ORDER_MULT,
         WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE
     }
 
@@ -121,6 +125,11 @@ public class UnitAction extends EntityDataMap<UnitAction.Field> {
               .put(Field.MODEL, entity.getModel())
               .put(Field.FACING, movePath.getFinalFacing())
               .put(Field.ROLE, firstNonNull(entity.getRole(), UnitRole.NONE));
+
+        // Role-aware positioning data
+        map.put(Field.OPTIMAL_RANGE, PathRankerState.calculateOptimalRangeForEntity(entity))
+              .put(Field.THREAT_WEIGHT, PathRankerState.calculateThreatWeightForEntity(entity))
+              .put(Field.MOVE_ORDER_MULT, PathRankerState.calculateMoveOrderMultiplierForEntity(entity));
 
         // Position information
         if (movePath.getStartCoords() != null) {

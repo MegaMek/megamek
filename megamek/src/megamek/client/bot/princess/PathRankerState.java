@@ -298,6 +298,7 @@ public class PathRankerState {
             }
 
             // Use role's preferred range
+            logger.debug("{}: Using role {} optimal range = {}", entity.getDisplayName(), role, roleRange);
             return roleRange;
         }
 
@@ -558,5 +559,249 @@ public class PathRankerState {
     public boolean isLongRangeOptimal(Entity entity) {
         int optimalRange = getOptimalRange(entity);
         return optimalRange >= 12;
+    }
+
+    // ========== Static Calculation Methods for TSV Logging ==========
+    // These methods allow UnitAction/UnitState to calculate role-aware values
+    // without needing a PathRankerState instance.
+
+    /**
+     * Calculate the optimal engagement range for an entity based on its role.
+     * Static version for use by TSV logging (UnitAction/UnitState).
+     *
+     * @param entity The entity to calculate for
+     * @return Optimal engagement range in hexes, or Integer.MAX_VALUE for civilians
+     */
+    public static int calculateOptimalRangeForEntity(Entity entity) {
+        // Civilians should flee - maximum distance
+        if (isEntityCivilian(entity)) {
+            return Integer.MAX_VALUE;
+        }
+
+        // For units with defined roles, use role's preferred range
+        UnitRole role = entity.getRole();
+        if (role != null && role != UnitRole.UNDETERMINED && role != UnitRole.NONE) {
+            return getPreferredRangeForRole(role);
+        }
+
+        // No role or undetermined - use weapon-based calculation
+        return calculateWeaponOptimalRange(entity);
+    }
+
+    /**
+     * Calculate threat weight for an entity based on its role.
+     * Static version for use by TSV logging (UnitAction/UnitState).
+     * Higher weight = more threat absorbed (e.g., Juggernauts draw fire).
+     *
+     * @param entity The entity
+     * @return Threat weight multiplier
+     */
+    public static double calculateThreatWeightForEntity(Entity entity) {
+        // Civilians absorb zero threat
+        if (isEntityCivilian(entity)) {
+            return THREAT_WEIGHT_CIVILIAN;
+        }
+
+        UnitRole role = entity.getRole();
+
+        // Units without roles: estimate from armor
+        if (role == null || role == UnitRole.UNDETERMINED || role == UnitRole.NONE) {
+            return estimateArmorThreatWeight(entity);
+        }
+
+        return switch (role) {
+            case JUGGERNAUT -> THREAT_WEIGHT_JUGGERNAUT;
+            case BRAWLER -> THREAT_WEIGHT_BRAWLER;
+            case SKIRMISHER -> THREAT_WEIGHT_SKIRMISHER;
+            case STRIKER -> THREAT_WEIGHT_STRIKER;
+            case SCOUT -> THREAT_WEIGHT_SCOUT;
+            case AMBUSHER -> THREAT_WEIGHT_AMBUSHER;
+            case SNIPER -> THREAT_WEIGHT_SNIPER;
+            case MISSILE_BOAT -> THREAT_WEIGHT_MISSILE_BOAT;
+            default -> THREAT_WEIGHT_DEFAULT;
+        };
+    }
+
+    /**
+     * Calculate movement order multiplier for an entity based on its role.
+     * Static version for use by TSV logging (UnitAction/UnitState).
+     * Higher multiplier = moves earlier in the phase.
+     *
+     * @param entity The entity
+     * @return Movement order multiplier
+     */
+    public static double calculateMoveOrderMultiplierForEntity(Entity entity) {
+        // Civilians move last
+        if (isEntityCivilian(entity)) {
+            return MOVE_ORDER_CIVILIAN;
+        }
+
+        UnitRole role = entity.getRole();
+
+        // Units without roles: estimate from speed
+        if (role == null || role == UnitRole.UNDETERMINED || role == UnitRole.NONE) {
+            return estimateSpeedMoveOrder(entity);
+        }
+
+        return switch (role) {
+            case SCOUT -> MOVE_ORDER_SCOUT;
+            case SNIPER -> MOVE_ORDER_SNIPER;
+            case MISSILE_BOAT -> MOVE_ORDER_MISSILE_BOAT;
+            case SKIRMISHER -> MOVE_ORDER_SKIRMISHER;
+            case STRIKER -> MOVE_ORDER_STRIKER;
+            case AMBUSHER -> MOVE_ORDER_AMBUSHER;
+            case BRAWLER -> MOVE_ORDER_BRAWLER;
+            case JUGGERNAUT -> MOVE_ORDER_JUGGERNAUT;
+            default -> MOVE_ORDER_DEFAULT;
+        };
+    }
+
+    // ========== Static Helper Methods ==========
+
+    /**
+     * Static version of civilian check for use by static methods.
+     */
+    private static boolean isEntityCivilian(Entity entity) {
+        return entity.getWeaponList().isEmpty();
+    }
+
+    /**
+     * Get the preferred engagement range for a unit role.
+     * Static version for use by static methods.
+     */
+    private static int getPreferredRangeForRole(UnitRole role) {
+        if (role == null) {
+            return 9; // Default medium range
+        }
+
+        return switch (role) {
+            case BRAWLER, JUGGERNAUT -> 3;     // Close range fighters
+            case STRIKER, AMBUSHER -> 6;       // Short-medium range
+            case SKIRMISHER -> 9;               // Medium range, mobile
+            case SNIPER, MISSILE_BOAT -> 15;   // Long range
+            case SCOUT -> 12;                   // Medium-long, stay back but observe
+            default -> 9;                       // Default medium range
+        };
+    }
+
+    /**
+     * Calculate optimal range based purely on weapon loadout.
+     * Static version for use by static methods.
+     */
+    private static int calculateWeaponOptimalRange(Entity entity) {
+        List<WeaponMounted> weapons = entity.getWeaponList();
+        if (weapons.isEmpty()) {
+            return Integer.MAX_VALUE; // No weapons = flee
+        }
+
+        int bestRange = SAMPLE_RANGES[0];
+        double bestExpectedDamage = 0.0;
+
+        for (int range : SAMPLE_RANGES) {
+            double expectedDamage = calculateStaticExpectedDamageAtRange(entity, weapons, range);
+
+            if (expectedDamage > bestExpectedDamage) {
+                bestExpectedDamage = expectedDamage;
+                bestRange = range;
+            }
+        }
+
+        return bestRange;
+    }
+
+    /**
+     * Calculate total expected damage at a given range for all weapons.
+     * Static version for use by static methods.
+     */
+    private static double calculateStaticExpectedDamageAtRange(Entity entity, List<WeaponMounted> weapons, int range) {
+        double totalExpected = 0.0;
+
+        for (WeaponMounted weapon : weapons) {
+            if (weapon.isDestroyed() || weapon.isJammed() || !weapon.isReady()) {
+                continue;
+            }
+
+            WeaponType weaponType = weapon.getType();
+            if (weaponType == null) {
+                continue;
+            }
+
+            // Check if weapon can fire at this range
+            int longRange = weaponType.getLongRange();
+            int minRange = weaponType.getMinimumRange();
+
+            if (range > longRange) {
+                continue; // Out of range
+            }
+
+            // Calculate base to-hit number (simplified: range modifiers + gunnery)
+            int toHit = BASELINE_GUNNERY;
+
+            // Add range modifier
+            if (range <= weaponType.getShortRange()) {
+                toHit += 0; // Short range
+            } else if (range <= weaponType.getMediumRange()) {
+                toHit += 2; // Medium range
+            } else {
+                toHit += 4; // Long range
+            }
+
+            // Add minimum range penalty
+            if (minRange > 0 && range <= minRange) {
+                toHit += (minRange - range + 1);
+            }
+
+            // Get probability (0-100)
+            double hitProbability = Compute.oddsAbove(toHit) / 100.0;
+
+            // Get damage
+            double damage = weaponType.getDamage(range);
+            if (damage == WeaponType.DAMAGE_BY_CLUSTER_TABLE) {
+                // Use rack size / 2 as expected hits for cluster weapons
+                damage = weaponType.getRackSize() / 2.0;
+            } else if (damage <= 0) {
+                continue; // Skip weapons with no damage
+            }
+
+            totalExpected += damage * hitProbability;
+        }
+
+        return totalExpected;
+    }
+
+    /**
+     * Estimate threat weight from armor for units without defined roles.
+     * Static version for use by static methods.
+     */
+    private static double estimateArmorThreatWeight(Entity entity) {
+        int armor = entity.getTotalArmor();
+        if (armor > ARMOR_THRESHOLD_ASSAULT) {
+            return THREAT_WEIGHT_ARMOR_ASSAULT;
+        }
+        if (armor > ARMOR_THRESHOLD_HEAVY) {
+            return THREAT_WEIGHT_ARMOR_HEAVY;
+        }
+        if (armor > ARMOR_THRESHOLD_MEDIUM) {
+            return THREAT_WEIGHT_ARMOR_MEDIUM;
+        }
+        return THREAT_WEIGHT_ARMOR_LIGHT;
+    }
+
+    /**
+     * Estimate movement order from speed for units without defined roles.
+     * Static version for use by static methods.
+     */
+    private static double estimateSpeedMoveOrder(Entity entity) {
+        int walkMP = entity.getWalkMP();
+        if (walkMP >= SPEED_THRESHOLD_FAST) {
+            return MOVE_ORDER_SPEED_FAST;
+        }
+        if (walkMP >= SPEED_THRESHOLD_MEDIUM) {
+            return MOVE_ORDER_SPEED_MEDIUM;
+        }
+        if (walkMP >= SPEED_THRESHOLD_SLOW) {
+            return MOVE_ORDER_SPEED_SLOW;
+        }
+        return MOVE_ORDER_SPEED_VERY_SLOW;
     }
 }

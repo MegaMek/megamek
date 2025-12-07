@@ -39,6 +39,7 @@ import java.util.Map;
 
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.board.Coords;
 import megamek.common.moves.Key;
@@ -102,6 +103,7 @@ public class PathRankerState {
     public static final double MOVE_ORDER_SPEED_VERY_SLOW = 0.5;
 
     // Optimal range target hexes (midpoints of Alpha Strike range brackets)
+    public static final int OPTIMAL_RANGE_MELEE = 1;    // Adjacent hex for physical attacks
     public static final int OPTIMAL_RANGE_SHORT = 3;    // 0-6 hexes
     public static final int OPTIMAL_RANGE_MEDIUM = 12;  // 7-24 hexes
     public static final int OPTIMAL_RANGE_LONG = 21;    // 25-42 hexes
@@ -347,28 +349,53 @@ public class PathRankerState {
      * @return Optimal range in hexes (3, 12, or 21)
      */
     private int calculateOptimalRangeFromWeapons(Entity entity) {
-        // No weapons = flee
+        // No weapons = flee (basic check before AS conversion)
         if (entity.getWeaponList().isEmpty()) {
             return Integer.MAX_VALUE;
         }
+
+        // Try to get Alpha Strike element for damage values
+        AlphaStrikeElement element;
+        try {
+            element = ASConverter.convert(entity);
+        } catch (Exception e) {
+            // ASConverter can fail on mock entities in tests - return flee
+            return Integer.MAX_VALUE;
+        }
+
+        if (element == null) {
+            return Integer.MAX_VALUE;
+        }
+
+        boolean hasMEL = element.hasSUA(BattleForceSUA.MEL);
 
         // Try to get cached AS damage values first (populated at phase start)
         ASDamageVector damage = asDamageCache.get(entity.getId());
 
         // Fall back to fresh conversion if not cached
         if (damage == null) {
-            AlphaStrikeElement element = ASConverter.convert(entity);
             damage = element.getStandardDamage();
         }
 
-        if (damage == null || !damage.hasDamage()) {
-            return Integer.MAX_VALUE;  // No damage capability
+        // Get damage values (minimal damage counts as having some damage value)
+        int sDamage = (damage != null) ? damage.S().damage + (damage.S().minimal ? 1 : 0) : 0;
+        int mDamage = (damage != null) ? damage.M().damage + (damage.M().minimal ? 1 : 0) : 0;
+        int lDamage = (damage != null) ? damage.L().damage + (damage.L().minimal ? 1 : 0) : 0;
+
+        // MEL (Melee) ability: Add physical attack damage to short range
+        // In Alpha Strike, melee damage = Size + 1 (for MEL bonus)
+        // This makes dedicated melee units want to close to engagement range
+        if (hasMEL) {
+            int melDamage = element.getSize() + 1;  // Size (1-4) + MEL bonus
+            sDamage += melDamage;
+            logger.info("{}: MEL ability adds {} damage to short range (Size {} + 1)",
+                entity.getDisplayName(), melDamage, element.getSize());
         }
 
-        // Get damage values (minimal damage counts as having some damage value)
-        int sDamage = damage.S().damage + (damage.S().minimal ? 1 : 0);
-        int mDamage = damage.M().damage + (damage.M().minimal ? 1 : 0);
-        int lDamage = damage.L().damage + (damage.L().minimal ? 1 : 0);
+        // No damage capability at all
+        if (sDamage == 0 && mDamage == 0 && lDamage == 0) {
+            return Integer.MAX_VALUE;
+        }
 
         // Get gunnery skill (default to 4 if no crew)
         int gunnery = GUNNERY_STANDARD;
@@ -377,14 +404,22 @@ public class PathRankerState {
         }
 
         // Log for debugging
-        logger.info("{}: AS damage S={} M={} L={}, Gunnery={}",
-            entity.getDisplayName(), sDamage, mDamage, lDamage, gunnery);
+        logger.info("{}: AS damage S={} M={} L={}, Gunnery={}, MEL={}",
+            entity.getDisplayName(), sDamage, mDamage, lDamage, gunnery, hasMEL);
 
         // Determine base optimal range from damage profile
         int baseRange = determineBaseOptimalRange(sDamage, mDamage, lDamage);
 
         // Adjust for gunnery skill
         int adjustedRange = adjustRangeForGunnery(baseRange, gunnery, sDamage, mDamage, lDamage);
+
+        // MEL units with short-range optimal should close to melee range (1 hex)
+        // Otherwise they'll stop at 3 hexes and never use their melee weapons
+        if (hasMEL && adjustedRange == OPTIMAL_RANGE_SHORT) {
+            adjustedRange = OPTIMAL_RANGE_MELEE;
+            logger.info("{}: MEL unit - adjusting optimal from {} to {} (melee range)",
+                entity.getDisplayName(), OPTIMAL_RANGE_SHORT, OPTIMAL_RANGE_MELEE);
+        }
 
         logger.info("{}: Base range={}, Adjusted range={} hexes (Gunnery {})",
             entity.getDisplayName(), baseRange, adjustedRange, gunnery);
@@ -672,9 +707,22 @@ public class PathRankerState {
 
     /**
      * Static version of civilian check for use by static methods.
+     * Units with MEL (dedicated melee weapons) are not considered civilians even without ranged weapons.
      */
     private static boolean isEntityCivilian(Entity entity) {
-        return entity.getWeaponList().isEmpty();
+        if (!entity.getWeaponList().isEmpty()) {
+            return false;  // Has ranged weapons
+        }
+        // Check for MEL - dedicated melee units without ranged weapons are still combatants
+        try {
+            AlphaStrikeElement element = ASConverter.convert(entity);
+            if (element != null && element.hasSUA(BattleForceSUA.MEL)) {
+                return false;  // Has dedicated melee weapons
+            }
+        } catch (Exception e) {
+            // ASConverter can fail on mock entities in tests - treat as civilian
+        }
+        return true;  // No ranged weapons and no MEL = civilian
     }
 
     /**
@@ -685,23 +733,46 @@ public class PathRankerState {
      * @return Optimal range in hexes (3, 12, or 21), or Integer.MAX_VALUE for unarmed
      */
     private static int calculateWeaponOptimalRange(Entity entity) {
-        // No weapons = flee
+        // No weapons = flee (basic check before AS conversion)
         if (entity.getWeaponList().isEmpty()) {
             return Integer.MAX_VALUE;
         }
 
-        // Get Alpha Strike damage values
-        AlphaStrikeElement element = ASConverter.convert(entity);
-        ASDamageVector damage = element.getStandardDamage();
-
-        if (damage == null || !damage.hasDamage()) {
-            return Integer.MAX_VALUE;  // No damage capability
+        // Try to get Alpha Strike element for damage values
+        AlphaStrikeElement element;
+        try {
+            element = ASConverter.convert(entity);
+        } catch (Exception e) {
+            // ASConverter can fail on mock entities in tests - return flee
+            return Integer.MAX_VALUE;
         }
 
+        if (element == null) {
+            return Integer.MAX_VALUE;
+        }
+
+        boolean hasMEL = element.hasSUA(BattleForceSUA.MEL);
+
+        // Get Alpha Strike damage values
+        ASDamageVector damage = element.getStandardDamage();
+
         // Get damage values (minimal damage counts as having some damage value)
-        int sDamage = damage.S().damage + (damage.S().minimal ? 1 : 0);
-        int mDamage = damage.M().damage + (damage.M().minimal ? 1 : 0);
-        int lDamage = damage.L().damage + (damage.L().minimal ? 1 : 0);
+        int sDamage = (damage != null) ? damage.S().damage + (damage.S().minimal ? 1 : 0) : 0;
+        int mDamage = (damage != null) ? damage.M().damage + (damage.M().minimal ? 1 : 0) : 0;
+        int lDamage = (damage != null) ? damage.L().damage + (damage.L().minimal ? 1 : 0) : 0;
+
+        // MEL (Melee) ability: Add physical attack damage to short range
+        // In Alpha Strike, melee damage = Size + 1 (for MEL bonus)
+        // This makes dedicated melee units want to close to engagement range
+        if (hasMEL) {
+            int melDamage = element.getSize() + 1;  // Size (1-4) + MEL bonus
+            sDamage += melDamage;
+        }
+
+        // No damage capability at all
+        if (sDamage == 0 && mDamage == 0 && lDamage == 0) {
+            return Integer.MAX_VALUE;
+        }
 
         // Get gunnery skill (default to 4 if no crew)
         int gunnery = GUNNERY_STANDARD;
@@ -713,7 +784,15 @@ public class PathRankerState {
         int baseRange = determineBaseOptimalRangeStatic(sDamage, mDamage, lDamage);
 
         // Adjust for gunnery skill
-        return adjustRangeForGunneryStatic(baseRange, gunnery, sDamage, mDamage, lDamage);
+        int adjustedRange = adjustRangeForGunneryStatic(baseRange, gunnery, sDamage, mDamage, lDamage);
+
+        // MEL units with short-range optimal should close to melee range (1 hex)
+        // Otherwise they'll stop at 3 hexes and never use their melee weapons
+        if (hasMEL && adjustedRange == OPTIMAL_RANGE_SHORT) {
+            adjustedRange = OPTIMAL_RANGE_MELEE;
+        }
+
+        return adjustedRange;
     }
 
     /**

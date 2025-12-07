@@ -40,6 +40,7 @@ import megamek.ai.utility.EntityFeatureUtils;
 import megamek.client.bot.princess.PathRankerState;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.compute.Compute;
 import megamek.common.units.Entity;
@@ -98,6 +99,7 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
         AS_DMG_S,
         AS_DMG_M,
         AS_DMG_L,
+        HAS_MEL,
         WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE
     }
 
@@ -182,6 +184,7 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
         try {
             AlphaStrikeElement asElement = ASConverter.convert(entity);
             map.put(Field.AS_SIZE, asElement.getSize());
+            map.put(Field.HAS_MEL, asElement.hasSUA(BattleForceSUA.MEL));
             ASDamageVector damage = asElement.getStandardDamage();
             if (damage != null) {
                 // Include minimal damage indicator in the value (e.g., 2 or 0 with minimal flag)
@@ -194,6 +197,7 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
         } catch (Exception e) {
             // AS conversion failed - use defaults
             map.put(Field.AS_SIZE, 0).put(Field.AS_DMG_S, 0).put(Field.AS_DMG_M, 0).put(Field.AS_DMG_L, 0);
+            map.put(Field.HAS_MEL, false);
         }
 
         // Equipment and capabilities

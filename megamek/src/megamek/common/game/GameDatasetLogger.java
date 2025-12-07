@@ -39,6 +39,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import megamek.ai.dataset.*;
 import megamek.common.actions.AbstractAttackAction;
@@ -48,7 +49,6 @@ import megamek.common.loaders.MapSettings;
 import megamek.common.moves.MovePath;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 
 /**
@@ -60,6 +60,7 @@ import megamek.logging.MMLogger;
 public class GameDatasetLogger {
     private static final MMLogger logger = MMLogger.create(GameDatasetLogger.class);
     public static final String LOG_DIR = PreferenceManager.getClientPreferences().getLogDirectory();
+    private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
     private final UnitActionSerializer unitActionSerializer = new UnitActionSerializer();
     private final UnitAttackSerializer unitAttackSerializer = new UnitAttackSerializer();
@@ -71,7 +72,6 @@ public class GameDatasetLogger {
     private final String prefix;
     private BufferedWriter writer;
     private boolean createNewFile = true;
-    private int counter = 0;
 
     /**
      * Creates Game Dataset Log named
@@ -91,26 +91,17 @@ public class GameDatasetLogger {
      */
     public void requestNewLogFile() {
         createNewFile = true;
-        counter++;
     }
 
     /**
-     * Creates a new log file. If there is already a logfile with the same name, it will delete it and create a new
-     * one.
+     * Creates a new log file with a unique timestamp-based filename.
+     * Each game will get its own unique TSV file.
      */
     private void newLogFile() {
         try {
-            boolean timestampFilenames = PreferenceManager.getClientPreferences().stampFilenames();
-            String filename = timestampFilenames ? StringUtil.addDateTimeStamp(prefix) : prefix + "_" + counter;
+            String timestamp = LocalDateTime.now().format(TIMESTAMP_FORMAT);
+            String filename = prefix + "_" + timestamp;
             File logfile = new File(LOG_DIR + File.separator + filename + ".tsv");
-            // if a file with the same name already exists, delete it.
-            if (logfile.exists()) {
-                if (!logfile.delete()) {
-                    logger.error("Failed to delete existing log file, GameDatasetLogger wont log anything");
-                    writer = null;
-                    return;
-                }
-            }
             writer = new BufferedWriter(new FileWriter(logfile));
             initialize();
         } catch (Exception ex) {

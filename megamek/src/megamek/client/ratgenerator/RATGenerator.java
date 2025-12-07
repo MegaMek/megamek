@@ -1575,14 +1575,23 @@ public class RATGenerator {
                 for (String code : codes) {
 
                     AvailabilityRating ar = new AvailabilityRating(chassisKey, era, code);
-                    // If it provides availability values based on equipment ratings,
-                    // generate index values in addition to letter values
-                    if (ar.hasMultipleRatings()) {
-                        ar.setRatingByNumericLevel(factions.get(ar.getFaction()));
-                    }
+                    FactionRecord chassisFaction = factions.get(ar.getFaction());
+                    if (null != chassisFaction) {
 
-                    cr.getIncludedFactions().add(ar.getFaction());
-                    chassisIndex.get(era).get(chassisKey).put(ar.getFactionCode(), ar);
+                        // If it provides availability values based on equipment ratings,
+                        // generate index values in addition to letter values
+                        if (ar.hasMultipleRatings()) {
+                            ar.setRatingByNumericLevel(factions.get(ar.getFaction()));
+                        }
+
+                        cr.getIncludedFactions().add(ar.getFaction());
+                        chassisIndex.get(era).get(chassisKey).put(ar.getFactionCode(), ar);
+
+                    } else {
+                        LOGGER.error("{} not a valid faction code in year {}.",
+                              ar.getFaction(),
+                              ar.era);
+                    }
 
                 }
             } else if (wn2.getNodeName().equalsIgnoreCase("model")) {

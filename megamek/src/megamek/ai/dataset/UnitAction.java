@@ -40,6 +40,9 @@ import java.util.stream.Collectors;
 import megamek.ai.utility.EntityFeatureUtils;
 import megamek.client.bot.princess.PathRankerState;
 import megamek.client.ui.SharedUtility;
+import megamek.common.alphaStrike.ASDamageVector;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.compute.Compute;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
@@ -99,6 +102,10 @@ public class UnitAction extends EntityDataMap<UnitAction.Field> {
         THREAT_WEIGHT,
         MOVE_ORDER_MULT,
         DIST_TO_CLOSEST_ENEMY,
+        AS_SIZE,
+        AS_DMG_S,
+        AS_DMG_M,
+        AS_DMG_L,
         WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE
     }
 
@@ -137,6 +144,24 @@ public class UnitAction extends EntityDataMap<UnitAction.Field> {
         // Distance to closest enemy (after move)
         int distToEnemy = calculateDistanceToClosestEnemy(movePath.getGame(), entity, movePath.getFinalCoords());
         map.put(Field.DIST_TO_CLOSEST_ENEMY, distToEnemy);
+
+        // Alpha Strike damage values (reflects current weapon/ammo state)
+        try {
+            AlphaStrikeElement asElement = ASConverter.convert(entity);
+            map.put(Field.AS_SIZE, asElement.getSize());
+            ASDamageVector damage = asElement.getStandardDamage();
+            if (damage != null) {
+                // Include minimal damage indicator in the value (e.g., 2 or 0 with minimal flag)
+                map.put(Field.AS_DMG_S, damage.S().damage + (damage.S().minimal ? 0.5 : 0));
+                map.put(Field.AS_DMG_M, damage.M().damage + (damage.M().minimal ? 0.5 : 0));
+                map.put(Field.AS_DMG_L, damage.L().damage + (damage.L().minimal ? 0.5 : 0));
+            } else {
+                map.put(Field.AS_DMG_S, 0).put(Field.AS_DMG_M, 0).put(Field.AS_DMG_L, 0);
+            }
+        } catch (Exception e) {
+            // AS conversion failed - use defaults
+            map.put(Field.AS_SIZE, 0).put(Field.AS_DMG_S, 0).put(Field.AS_DMG_M, 0).put(Field.AS_DMG_L, 0);
+        }
 
         // Position information
         if (movePath.getStartCoords() != null) {

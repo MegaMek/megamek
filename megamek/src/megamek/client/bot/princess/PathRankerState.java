@@ -123,6 +123,10 @@ public class PathRankerState {
     // Optimal range cache: entity ID -> optimal engagement range
     private final Map<Integer, Integer> optimalRangeCache = new HashMap<>();
 
+    // Alpha Strike damage cache: entity ID -> AS damage vector (S/M/L values)
+    // Populated once at phase start to reflect current weapon/ammo state
+    private final Map<Integer, ASDamageVector> asDamageCache = new HashMap<>();
+
     /**
      * The map of success probabilities for given move paths. The calculation of a move success probability is pretty
      * complex, so we can cache them here.
@@ -150,6 +154,7 @@ public class PathRankerState {
         incomingFriendlyArtilleryDamage.clear();
         damageSourcePool.clear();
         optimalRangeCache.clear();
+        asDamageCache.clear();
     }
 
     /**
@@ -170,6 +175,50 @@ public class PathRankerState {
             logger.debug("Damage pool initialized: {} with threat {}", enemy.getDisplayName(), damagePotential);
         }
         logger.info("Damage source pool initialized with {} enemies", damageSourcePool.size());
+    }
+
+    /**
+     * Initialize Alpha Strike damage cache for all units at the start of movement phase.
+     * This performs the full AS conversion once per unit, reflecting current weapon/ammo state.
+     * Must be called before getOptimalRange() to get accurate values for damaged units.
+     *
+     * @param allUnits List of all entities (friendly and enemy) to cache AS values for
+     */
+    public void initializeASDamageCache(List<Entity> allUnits) {
+        asDamageCache.clear();
+        optimalRangeCache.clear();  // Clear optimal range cache too - will be recalculated from fresh AS values
+
+        for (Entity entity : allUnits) {
+            if (entity.isDestroyed() || entity.isOffBoard()) {
+                continue;
+            }
+            try {
+                AlphaStrikeElement element = ASConverter.convert(entity);
+                ASDamageVector damage = element.getStandardDamage();
+                if (damage != null) {
+                    asDamageCache.put(entity.getId(), damage);
+                    logger.debug("AS damage cached for {}: S={} M={} L={}",
+                        entity.getDisplayName(),
+                        damage.S().damage + (damage.S().minimal ? "*" : ""),
+                        damage.M().damage + (damage.M().minimal ? "*" : ""),
+                        damage.L().damage + (damage.L().minimal ? "*" : ""));
+                }
+            } catch (Exception e) {
+                logger.warn("Failed to convert {} to Alpha Strike: {}", entity.getDisplayName(), e.getMessage());
+            }
+        }
+        logger.info("AS damage cache initialized for {} units", asDamageCache.size());
+    }
+
+    /**
+     * Get cached AS damage vector for an entity.
+     * Returns null if not cached (call initializeASDamageCache first).
+     *
+     * @param entityId The entity ID
+     * @return Cached ASDamageVector, or null if not found
+     */
+    public ASDamageVector getCachedASDamage(int entityId) {
+        return asDamageCache.get(entityId);
     }
 
     /**
@@ -291,6 +340,9 @@ public class PathRankerState {
      * Returns the range bracket (S/M/L) where the unit deals highest expected damage,
      * adjusted for the pilot's gunnery skill.
      *
+     * Uses cached AS damage values if available (from initializeASDamageCache),
+     * otherwise falls back to fresh AS conversion.
+     *
      * @param entity The entity to calculate for
      * @return Optimal range in hexes (3, 12, or 21)
      */
@@ -300,9 +352,14 @@ public class PathRankerState {
             return Integer.MAX_VALUE;
         }
 
-        // Get Alpha Strike damage values
-        AlphaStrikeElement element = ASConverter.convert(entity);
-        ASDamageVector damage = element.getStandardDamage();
+        // Try to get cached AS damage values first (populated at phase start)
+        ASDamageVector damage = asDamageCache.get(entity.getId());
+
+        // Fall back to fresh conversion if not cached
+        if (damage == null) {
+            AlphaStrikeElement element = ASConverter.convert(entity);
+            damage = element.getStandardDamage();
+        }
 
         if (damage == null || !damage.hasDamage()) {
             return Integer.MAX_VALUE;  // No damage capability
@@ -362,18 +419,19 @@ public class PathRankerState {
     /**
      * Adjust optimal range based on gunnery skill.
      * Elite gunners can afford longer range, green gunners need to close in.
+     * Only shifts if the longer range has BETTER damage (not just equal).
      */
     private int adjustRangeForGunnery(int baseRange, int gunnery, int sDamage, int mDamage, int lDamage) {
-        // Elite gunners (2-3): shift UP one bracket if damage supports it
+        // Elite gunners (2-3): shift UP one bracket if damage is BETTER at longer range
         if (gunnery <= GUNNERY_ELITE) {
-            if (baseRange == OPTIMAL_RANGE_SHORT && mDamage >= sDamage) {
+            if (baseRange == OPTIMAL_RANGE_SHORT && mDamage > sDamage) {
                 return OPTIMAL_RANGE_MEDIUM;
-            } else if (baseRange == OPTIMAL_RANGE_MEDIUM && lDamage >= mDamage) {
+            } else if (baseRange == OPTIMAL_RANGE_MEDIUM && lDamage > mDamage) {
                 return OPTIMAL_RANGE_LONG;
             }
         }
 
-        // Green gunners (5+): shift DOWN one bracket if damage supports it
+        // Green gunners (5+): shift DOWN one bracket if damage is at least equal at closer range
         if (gunnery >= GUNNERY_GREEN) {
             if (baseRange == OPTIMAL_RANGE_LONG && mDamage >= lDamage) {
                 return OPTIMAL_RANGE_MEDIUM;
@@ -685,18 +743,19 @@ public class PathRankerState {
     /**
      * Adjust optimal range based on gunnery skill.
      * Static version for use by static methods.
+     * Only shifts if the longer range has BETTER damage (not just equal).
      */
     private static int adjustRangeForGunneryStatic(int baseRange, int gunnery, int sDamage, int mDamage, int lDamage) {
-        // Elite gunners (2-3): shift UP one bracket if damage supports it
+        // Elite gunners (2-3): shift UP one bracket if damage is BETTER at longer range
         if (gunnery <= GUNNERY_ELITE) {
-            if (baseRange == OPTIMAL_RANGE_SHORT && mDamage >= sDamage) {
+            if (baseRange == OPTIMAL_RANGE_SHORT && mDamage > sDamage) {
                 return OPTIMAL_RANGE_MEDIUM;
-            } else if (baseRange == OPTIMAL_RANGE_MEDIUM && lDamage >= mDamage) {
+            } else if (baseRange == OPTIMAL_RANGE_MEDIUM && lDamage > mDamage) {
                 return OPTIMAL_RANGE_LONG;
             }
         }
 
-        // Green gunners (5+): shift DOWN one bracket if damage supports it
+        // Green gunners (5+): shift DOWN one bracket if damage is at least equal at closer range
         if (gunnery >= GUNNERY_GREEN) {
             if (baseRange == OPTIMAL_RANGE_LONG && mDamage >= lDamage) {
                 return OPTIMAL_RANGE_MEDIUM;

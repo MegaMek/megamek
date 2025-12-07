@@ -2795,6 +2795,14 @@ public class Princess extends BotClient {
             if (getBehaviorSettings().isUseDamageSourcePool()) {
                 pathRankerState.initializeDamagePool(getEnemyEntities(), this);
             }
+
+            // Initialize Alpha Strike damage cache for optimal range calculations
+            // This captures current weapon/ammo state at phase start
+            if (getBehaviorSettings().isUseRoleAwarePositioning()) {
+                List<Entity> allUnits = new ArrayList<>(getEntitiesOwned());
+                allUnits.addAll(getEnemyEntities());
+                pathRankerState.initializeASDamageCache(allUnits);
+            }
         } catch (Exception ignored) {
 
         }

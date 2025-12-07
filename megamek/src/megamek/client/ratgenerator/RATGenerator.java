@@ -1576,7 +1576,7 @@ public class RATGenerator {
 
                     AvailabilityRating ar = new AvailabilityRating(chassisKey, era, code);
                     FactionRecord chassisFaction = factions.get(ar.getFaction());
-                    if (null != chassisFaction) {
+                    if (null != chassisFaction || code.startsWith("General")) {
 
                         // If it provides availability values based on equipment ratings,
                         // generate index values in addition to letter values
@@ -1588,9 +1588,10 @@ public class RATGenerator {
                         chassisIndex.get(era).get(chassisKey).put(ar.getFactionCode(), ar);
 
                     } else {
-                        LOGGER.error("{} not a valid faction code in year {}.",
+                        LOGGER.warn("{} not a valid faction code in year {}. See {}.",
                               ar.getFaction(),
-                              ar.era);
+                              ar.era,
+                              ar.getUnitName());
                     }
 
                 }

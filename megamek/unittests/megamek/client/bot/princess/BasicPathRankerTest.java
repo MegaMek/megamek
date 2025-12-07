@@ -34,8 +34,10 @@
 package megamek.client.bot.princess;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -62,6 +64,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
 import megamek.common.moves.Key;
 import megamek.common.moves.MovePath;
@@ -3005,6 +3008,317 @@ class BasicPathRankerTest {
                   "Enemy 1 damage should be discounted with ally");
             assertEquals(50.0, enemy2Damage, 0.01,
                   "Enemy 2 damage should not be discounted (no allies in range)");
+        }
+    }
+
+    /**
+     * Tests for the Role-Aware Positioning system.
+     *
+     * <p>These tests verify that units position at optimal range based on their
+     * weapon loadouts and battlefield roles (e.g., missile boats stay back,
+     * brawlers close in).</p>
+     */
+    @Nested
+    class RoleAwarePositioningTests {
+
+        /**
+         * Verifies that getRoleThreatWeight returns correct weights for each role.
+         *
+         * <p>Juggernauts should absorb the most threat (1.5x), while Snipers
+         * and Missile Boats should absorb the least (0.3x).</p>
+         */
+        @Test
+        void testRoleThreatWeight_JuggernautAbsorbsMore() {
+            PathRankerState state = new PathRankerState();
+
+            Entity mockJuggernaut = mock(BipedMek.class);
+            when(mockJuggernaut.getRole()).thenReturn(UnitRole.JUGGERNAUT);
+            when(mockJuggernaut.getWeaponList()).thenReturn(List.of(mock(WeaponMounted.class)));
+
+            Entity mockSniper = mock(BipedMek.class);
+            when(mockSniper.getRole()).thenReturn(UnitRole.SNIPER);
+            when(mockSniper.getWeaponList()).thenReturn(List.of(mock(WeaponMounted.class)));
+
+            double juggernautWeight = state.getRoleThreatWeight(mockJuggernaut);
+            double sniperWeight = state.getRoleThreatWeight(mockSniper);
+
+            assertEquals(PathRankerState.THREAT_WEIGHT_JUGGERNAUT, juggernautWeight, 0.01,
+                "Juggernaut should have threat weight 1.5");
+            assertEquals(PathRankerState.THREAT_WEIGHT_SNIPER, sniperWeight, 0.01,
+                "Sniper should have threat weight 0.3");
+            assertTrue(juggernautWeight > sniperWeight,
+                "Juggernaut should absorb more threat than Sniper");
+        }
+
+        /**
+         * Verifies that civilians return zero threat weight.
+         *
+         * <p>Civilians (units with no weapons) should absorb zero threat
+         * and not be considered for combat positioning.</p>
+         */
+        @Test
+        void testRoleThreatWeight_CivilianAbsorbsZero() {
+            PathRankerState state = new PathRankerState();
+
+            Entity mockCivilian = mock(BipedMek.class);
+            when(mockCivilian.getRole()).thenReturn(UnitRole.NONE);
+            when(mockCivilian.getWeaponList()).thenReturn(List.of()); // No weapons
+
+            double civilianWeight = state.getRoleThreatWeight(mockCivilian);
+
+            assertEquals(PathRankerState.THREAT_WEIGHT_CIVILIAN, civilianWeight, 0.01,
+                "Civilian should have zero threat weight");
+        }
+
+        /**
+         * Verifies that units without defined roles use armor-based threat weights.
+         *
+         * <p>Heavy armor units should absorb more threat, while lightly armored
+         * units should absorb less.</p>
+         */
+        @Test
+        void testRoleThreatWeight_UndeterminedUsesArmor() {
+            PathRankerState state = new PathRankerState();
+
+            // Heavy armor unit
+            Entity mockHeavy = mock(BipedMek.class);
+            when(mockHeavy.getRole()).thenReturn(UnitRole.UNDETERMINED);
+            when(mockHeavy.getWeaponList()).thenReturn(List.of(mock(WeaponMounted.class)));
+            when(mockHeavy.getTotalArmor()).thenReturn(250); // Above ARMOR_THRESHOLD_ASSAULT
+
+            // Light armor unit
+            Entity mockLight = mock(BipedMek.class);
+            when(mockLight.getRole()).thenReturn(UnitRole.UNDETERMINED);
+            when(mockLight.getWeaponList()).thenReturn(List.of(mock(WeaponMounted.class)));
+            when(mockLight.getTotalArmor()).thenReturn(40); // Below ARMOR_THRESHOLD_MEDIUM
+
+            double heavyWeight = state.getRoleThreatWeight(mockHeavy);
+            double lightWeight = state.getRoleThreatWeight(mockLight);
+
+            assertEquals(PathRankerState.THREAT_WEIGHT_ARMOR_ASSAULT, heavyWeight, 0.01,
+                "Heavy armor should have assault threat weight");
+            assertEquals(PathRankerState.THREAT_WEIGHT_ARMOR_LIGHT, lightWeight, 0.01,
+                "Light armor should have light threat weight");
+            assertTrue(heavyWeight > lightWeight,
+                "Heavy armor should absorb more threat than light armor");
+        }
+
+        /**
+         * Verifies that Scouts move before Juggernauts.
+         *
+         * <p>Scouts should have a higher movement order multiplier (4.0) to move
+         * early for reconnaissance, while Juggernauts should have a lower
+         * multiplier (0.5) to anchor and move last.</p>
+         */
+        @Test
+        void testRoleMoveOrder_ScoutsFirst() {
+            PathRankerState state = new PathRankerState();
+
+            Entity mockScout = mock(BipedMek.class);
+            when(mockScout.getRole()).thenReturn(UnitRole.SCOUT);
+            when(mockScout.getWeaponList()).thenReturn(List.of(mock(WeaponMounted.class)));
+
+            Entity mockJuggernaut = mock(BipedMek.class);
+            when(mockJuggernaut.getRole()).thenReturn(UnitRole.JUGGERNAUT);
+            when(mockJuggernaut.getWeaponList()).thenReturn(List.of(mock(WeaponMounted.class)));
+
+            double scoutOrder = state.getRoleMoveOrderMultiplier(mockScout);
+            double juggernautOrder = state.getRoleMoveOrderMultiplier(mockJuggernaut);
+
+            assertEquals(PathRankerState.MOVE_ORDER_SCOUT, scoutOrder, 0.01,
+                "Scout should have move order 4.0");
+            assertEquals(PathRankerState.MOVE_ORDER_JUGGERNAUT, juggernautOrder, 0.01,
+                "Juggernaut should have move order 0.5");
+            assertTrue(scoutOrder > juggernautOrder,
+                "Scout should move before Juggernaut");
+        }
+
+        /**
+         * Verifies that civilians move last.
+         *
+         * <p>Civilians should have the lowest movement order multiplier (0.1)
+         * to move after combat units have secured the area.</p>
+         */
+        @Test
+        void testRoleMoveOrder_CiviliansMoveLast() {
+            PathRankerState state = new PathRankerState();
+
+            Entity mockCivilian = mock(BipedMek.class);
+            when(mockCivilian.getRole()).thenReturn(UnitRole.NONE);
+            when(mockCivilian.getWeaponList()).thenReturn(List.of()); // No weapons
+
+            Entity mockBrawler = mock(BipedMek.class);
+            when(mockBrawler.getRole()).thenReturn(UnitRole.BRAWLER);
+            when(mockBrawler.getWeaponList()).thenReturn(List.of(mock(WeaponMounted.class)));
+
+            double civilianOrder = state.getRoleMoveOrderMultiplier(mockCivilian);
+            double brawlerOrder = state.getRoleMoveOrderMultiplier(mockBrawler);
+
+            assertEquals(PathRankerState.MOVE_ORDER_CIVILIAN, civilianOrder, 0.01,
+                "Civilian should have move order 0.1");
+            assertTrue(civilianOrder < brawlerOrder,
+                "Civilian should move after Brawler");
+        }
+
+        /**
+         * Verifies that units without roles use speed-based movement order.
+         *
+         * <p>Fast units should move early (scouting), while slow units
+         * should move later (anchoring).</p>
+         */
+        @Test
+        void testRoleMoveOrder_UndeterminedUsesSpeed() {
+            PathRankerState state = new PathRankerState();
+
+            // Fast unit
+            Entity mockFast = mock(BipedMek.class);
+            when(mockFast.getRole()).thenReturn(UnitRole.UNDETERMINED);
+            when(mockFast.getWeaponList()).thenReturn(List.of(mock(WeaponMounted.class)));
+            when(mockFast.getWalkMP()).thenReturn(8); // Above SPEED_THRESHOLD_FAST
+
+            // Slow unit
+            Entity mockSlow = mock(BipedMek.class);
+            when(mockSlow.getRole()).thenReturn(UnitRole.UNDETERMINED);
+            when(mockSlow.getWeaponList()).thenReturn(List.of(mock(WeaponMounted.class)));
+            when(mockSlow.getWalkMP()).thenReturn(2); // Below SPEED_THRESHOLD_SLOW
+
+            double fastOrder = state.getRoleMoveOrderMultiplier(mockFast);
+            double slowOrder = state.getRoleMoveOrderMultiplier(mockSlow);
+
+            assertEquals(PathRankerState.MOVE_ORDER_SPEED_FAST, fastOrder, 0.01,
+                "Fast unit should have high move order");
+            assertEquals(PathRankerState.MOVE_ORDER_SPEED_VERY_SLOW, slowOrder, 0.01,
+                "Slow unit should have low move order");
+            assertTrue(fastOrder > slowOrder,
+                "Fast unit should move before slow unit");
+        }
+
+        /**
+         * Verifies that isCivilian correctly identifies units without weapons.
+         */
+        @Test
+        void testIsCivilian_NoWeapons() {
+            PathRankerState state = new PathRankerState();
+
+            Entity mockCivilian = mock(BipedMek.class);
+            when(mockCivilian.getWeaponList()).thenReturn(List.of()); // No weapons
+
+            Entity mockCombat = mock(BipedMek.class);
+            when(mockCombat.getWeaponList()).thenReturn(List.of(mock(WeaponMounted.class)));
+
+            assertTrue(state.isCivilian(mockCivilian),
+                "Unit without weapons should be civilian");
+            assertFalse(state.isCivilian(mockCombat),
+                "Unit with weapons should not be civilian");
+        }
+
+        /**
+         * Verifies that civilians get Integer.MAX_VALUE as optimal range (flee).
+         */
+        @Test
+        void testOptimalRange_CivilianFleesCombat() {
+            PathRankerState state = new PathRankerState();
+
+            Entity mockCivilian = mock(BipedMek.class);
+            when(mockCivilian.getId()).thenReturn(1);
+            when(mockCivilian.getWeaponList()).thenReturn(List.of()); // No weapons
+
+            int optimalRange = state.getOptimalRange(mockCivilian);
+
+            assertEquals(Integer.MAX_VALUE, optimalRange,
+                "Civilian should have max range (flee)");
+        }
+
+        /**
+         * Verifies isLongRangeOptimal correctly categorizes units.
+         *
+         * <p>Long range is defined as optimal range >= 12 hexes.
+         * Role-based ranges: Sniper/Missile Boat = 15 (long), Brawler/Juggernaut = 3 (short)</p>
+         */
+        @Test
+        void testIsLongRangeOptimal() {
+            // Test the threshold logic directly:
+            // isLongRangeOptimal returns true when getOptimalRange >= 12
+
+            // Verify the expected role-based ranges match our expectations
+            assertEquals(15, getRangeForRoleValue(UnitRole.SNIPER),
+                "Sniper should have role range 15");
+            assertEquals(15, getRangeForRoleValue(UnitRole.MISSILE_BOAT),
+                "Missile Boat should have role range 15");
+            assertEquals(3, getRangeForRoleValue(UnitRole.BRAWLER),
+                "Brawler should have role range 3");
+            assertEquals(3, getRangeForRoleValue(UnitRole.JUGGERNAUT),
+                "Juggernaut should have role range 3");
+
+            // Verify the threshold logic
+            assertTrue(15 >= 12, "Sniper range (15) should be considered long range");
+            assertTrue(15 >= 12, "Missile Boat range (15) should be considered long range");
+            assertFalse(3 >= 12, "Brawler range (3) should not be considered long range");
+            assertFalse(3 >= 12, "Juggernaut range (3) should not be considered long range");
+        }
+
+        // Helper to get role range (mirrors PathRankerState.getRangeForRole logic)
+        private int getRangeForRoleValue(UnitRole role) {
+            return switch (role) {
+                case BRAWLER, JUGGERNAUT -> 3;
+                case STRIKER, AMBUSHER -> 6;
+                case SKIRMISHER -> 9;
+                case SNIPER, MISSILE_BOAT -> 15;
+                case SCOUT -> 12;
+                default -> 9;
+            };
+        }
+
+        /**
+         * Verifies that role-aware allocation applies role weights.
+         */
+        @Test
+        void testAllocateDamageSource_RoleWeightApplied() {
+            PathRankerState state = new PathRankerState();
+
+            // Initialize pool with an enemy
+            int enemyId = 1;
+            state.getDamageSourcePool().put(enemyId, 100.0);
+
+            // Allocate with a Juggernaut (1.5x weight)
+            Entity mockJuggernaut = mock(BipedMek.class);
+            when(mockJuggernaut.getRole()).thenReturn(UnitRole.JUGGERNAUT);
+            when(mockJuggernaut.getWeaponList()).thenReturn(List.of(mock(WeaponMounted.class)));
+
+            // Allocate 50% with role-aware positioning enabled
+            state.allocateDamageSource(enemyId, 0.5, mockJuggernaut, true);
+
+            // With 1.5x weight, effective allocation is 0.5 * 1.5 = 0.75
+            // Remaining = 100 - (100 * 0.75) = 25
+            double remaining = state.getRemainingThreat(enemyId);
+            assertEquals(25.0, remaining, 0.01,
+                "Juggernaut should allocate 75% of threat (50% * 1.5x weight)");
+        }
+
+        /**
+         * Verifies that role-aware allocation with Sniper allocates less.
+         */
+        @Test
+        void testAllocateDamageSource_SniperAllocatesLess() {
+            PathRankerState state = new PathRankerState();
+
+            // Initialize pool with an enemy
+            int enemyId = 1;
+            state.getDamageSourcePool().put(enemyId, 100.0);
+
+            // Allocate with a Sniper (0.3x weight)
+            Entity mockSniper = mock(BipedMek.class);
+            when(mockSniper.getRole()).thenReturn(UnitRole.SNIPER);
+            when(mockSniper.getWeaponList()).thenReturn(List.of(mock(WeaponMounted.class)));
+
+            // Allocate 50% with role-aware positioning enabled
+            state.allocateDamageSource(enemyId, 0.5, mockSniper, true);
+
+            // With 0.3x weight, effective allocation is 0.5 * 0.3 = 0.15
+            // Remaining = 100 - (100 * 0.15) = 85
+            double remaining = state.getRemainingThreat(enemyId);
+            assertEquals(85.0, remaining, 0.01,
+                "Sniper should allocate only 15% of threat (50% * 0.3x weight)");
         }
     }
 

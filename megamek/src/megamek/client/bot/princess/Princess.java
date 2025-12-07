@@ -1371,6 +1371,15 @@ public class Princess extends BotClient {
                 modifiers.append("\tx1/3 (is Stealth-ed)");
             }
 
+            // Role-Aware Positioning: apply role-based movement order
+            // Scouts move first, Juggernauts anchor and move last
+            if (getBehaviorSettings().isUseRoleAwarePositioning()) {
+                double roleMultiplier = pathRankerState.getRoleMoveOrderMultiplier(entity);
+                total *= roleMultiplier;
+                modifiers.append("\tx").append(numberFormat.format(roleMultiplier)).append(" (Role: ")
+                    .append(entity.getRole() != null ? entity.getRole() : "none").append(")");
+            }
+
             return total;
         } finally {
             msg.append("\n\t\tModifiers:").append(modifiers);
@@ -2449,9 +2458,11 @@ public class Princess extends BotClient {
 
                 if (enemyHealth > 0) {
                     double allocationFactor = Math.min(myDamage / enemyHealth, 1.0);
-                    pathRankerState.allocateDamageSource(enemy.getId(), allocationFactor);
-                    LOGGER.debug("Unit {} engaging enemy {} at range {}, allocating {}",
-                          entity.getDisplayName(), enemy.getDisplayName(), distance, allocationFactor);
+                    boolean useRoleAware = getBehaviorSettings().isUseRoleAwarePositioning();
+                    pathRankerState.allocateDamageSource(enemy.getId(), allocationFactor, entity, useRoleAware);
+                    LOGGER.debug("Unit {} engaging enemy {} at range {}, allocating {}{}",
+                          entity.getDisplayName(), enemy.getDisplayName(), distance, allocationFactor,
+                          useRoleAware ? " (role-weighted)" : "");
                 }
             }
         }

@@ -510,6 +510,36 @@ public class BasicPathRanker extends PathRanker {
         }
 
         double aggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
+
+        // Role-Aware Positioning: penalize distance from optimal range, not just distance to enemy
+        if (getOwner().getBehaviorSettings().isUseRoleAwarePositioning()) {
+            PathRankerState state = getOwner().getPathRankerState();
+            int optimalRange = state.getOptimalRange(movingUnit);
+
+            // Civilians should maximize distance from enemies
+            if (optimalRange == Integer.MAX_VALUE) {
+                // Invert: higher distance = lower penalty (negative aggression effect)
+                double civilianMod = -distToEnemy * aggression;
+                logger.trace("aggression mod (civilian flee) [ {} = -{} * {}]", civilianMod, distToEnemy, aggression);
+                return civilianMod;
+            }
+
+            // Calculate distance from optimal range
+            double distanceFromOptimal = Math.abs(distToEnemy - optimalRange);
+
+            // Asymmetric penalty: being too close is worse for long-range units
+            // (they lose their range advantage and may have minimum range penalties)
+            if (state.isLongRangeOptimal(movingUnit) && distToEnemy < optimalRange) {
+                distanceFromOptimal *= 1.5;
+            }
+
+            double aggressionMod = distanceFromOptimal * aggression;
+            logger.trace("aggression mod (role-aware) [ -{} = |{} - {}| * {} ]",
+                aggressionMod, distToEnemy, optimalRange, aggression);
+            return aggressionMod;
+        }
+
+        // Classic behavior: penalize distance to enemy
         double aggressionMod = distToEnemy * aggression;
         logger.trace("aggression mod [ -{} = {} * {}]", aggressionMod, distToEnemy, aggression);
         return aggressionMod;

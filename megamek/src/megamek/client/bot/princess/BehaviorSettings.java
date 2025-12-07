@@ -156,6 +156,7 @@ public class BehaviorSettings implements Serializable {
     private boolean experimental = false; // running experimental features?
     private boolean considerAlliedDamage = true; // factor in allied firepower when evaluating threats?
     private boolean useDamageSourcePool = false; // use damage source pool tracking for threat calculation?
+    private boolean useRoleAwarePositioning = false; // position units at optimal range for their weapons?
     private final Set<Integer> ignoredUnitTargets = new HashSet<>();
     // endregion Variable Declarations
 
@@ -189,6 +190,7 @@ public class BehaviorSettings implements Serializable {
         copy.setExperimental(isExperimental());
         copy.setConsiderAlliedDamage(isConsiderAlliedDamage());
         copy.setUseDamageSourcePool(isUseDamageSourcePool());
+        copy.setUseRoleAwarePositioning(isUseRoleAwarePositioning());
         getStrategicBuildingTargets().forEach(copy::addStrategicTarget);
         getPriorityUnitTargets().forEach(copy::addPriorityUnit);
         getIgnoredUnitTargets().forEach(copy::addIgnoredUnitTarget);
@@ -271,6 +273,34 @@ public class BehaviorSettings implements Serializable {
      */
     public void setUseDamageSourcePool(String useDamageSourcePool) {
         setUseDamageSourcePool(Boolean.parseBoolean(useDamageSourcePool));
+    }
+
+    /**
+     * @return TRUE if Princess should use role-aware positioning to keep units at optimal weapon ranges.
+     */
+    public boolean isUseRoleAwarePositioning() {
+        return useRoleAwarePositioning;
+    }
+
+    /**
+     * Set TRUE to use role-aware positioning, keeping units at optimal weapon ranges.
+     * Enabling this will also enable useDamageSourcePool (required dependency).
+     *
+     * @param useRoleAwarePositioning TRUE to enable role-aware positioning
+     */
+    public void setUseRoleAwarePositioning(boolean useRoleAwarePositioning) {
+        this.useRoleAwarePositioning = useRoleAwarePositioning;
+        if (useRoleAwarePositioning) {
+            // Role-aware positioning requires damage source pool tracking
+            setUseDamageSourcePool(true);
+        }
+    }
+
+    /**
+     * @param useRoleAwarePositioning Set TRUE to use role-aware positioning.
+     */
+    public void setUseRoleAwarePositioning(String useRoleAwarePositioning) {
+        setUseRoleAwarePositioning(Boolean.parseBoolean(useRoleAwarePositioning));
     }
 
     /**
@@ -964,6 +994,8 @@ public class BehaviorSettings implements Serializable {
                 setConsiderAlliedDamage(child.getTextContent());
             } else if ("useDamageSourcePool".equalsIgnoreCase(child.getNodeName())) {
                 setUseDamageSourcePool(child.getTextContent());
+            } else if ("useRoleAwarePositioning".equalsIgnoreCase(child.getNodeName())) {
+                setUseRoleAwarePositioning(child.getTextContent());
             } else if ("strategicTargets".equalsIgnoreCase(child.getNodeName())) {
                 final NodeList targets = child.getChildNodes();
                 for (int j = 0; j < targets.getLength(); j++) {
@@ -1083,6 +1115,10 @@ public class BehaviorSettings implements Serializable {
             useDamageSourcePoolNode.setTextContent("" + isUseDamageSourcePool());
             behavior.appendChild(useDamageSourcePoolNode);
 
+            final Element useRoleAwarePositioningNode = doc.createElement("useRoleAwarePositioning");
+            useRoleAwarePositioningNode.setTextContent("" + isUseRoleAwarePositioning());
+            behavior.appendChild(useRoleAwarePositioningNode);
+
             final Element targetsNode = doc.createElement("strategicBuildingTargets");
             if (includeTargets) {
                 for (final String t : getStrategicBuildingTargets()) {
@@ -1139,6 +1175,7 @@ public class BehaviorSettings implements Serializable {
         out.append("\n\t Experimental: ").append(isExperimental());
         out.append("\n\t Consider Allied Damage: ").append(isConsiderAlliedDamage());
         out.append("\n\t Use Damage Source Pool: ").append(isUseDamageSourcePool());
+        out.append("\n\t Use Role-Aware Positioning: ").append(isUseRoleAwarePositioning());
         out.append("\n\t Targets:");
         out.append("\n\t\t Priority Coords: ");
         for (final String t : getStrategicBuildingTargets()) {
@@ -1208,8 +1245,10 @@ public class BehaviorSettings implements Serializable {
             return false;
         } else if (considerAlliedDamage != that.considerAlliedDamage) {
             return false;
+        } else if (useDamageSourcePool != that.useDamageSourcePool) {
+            return false;
         }
-        return useDamageSourcePool == that.useDamageSourcePool;
+        return useRoleAwarePositioning == that.useRoleAwarePositioning;
     }
 
     @Override
@@ -1237,6 +1276,7 @@ public class BehaviorSettings implements Serializable {
         result = 31 * result + (ignoreDamageOutput ? 1 : 0);
         result = 31 * result + (considerAlliedDamage ? 1 : 0);
         result = 31 * result + (useDamageSourcePool ? 1 : 0);
+        result = 31 * result + (useRoleAwarePositioning ? 1 : 0);
         return result;
     }
 }

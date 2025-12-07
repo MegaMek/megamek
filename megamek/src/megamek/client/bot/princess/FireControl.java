@@ -100,6 +100,7 @@ public class FireControl {
     static final double SUB_COMMANDER_UTILITY = 0.25;
     static final double STRATEGIC_TARGET_UTILITY = 0.5;
     static final double PRIORITY_TARGET_UTILITY = 0.25;
+    static final double ROLE_PREFERRED_TARGET_MULTIPLIER = 1.15; // 15% bonus for preferred role matchups
 
     static final String TH_WOODS = "woods";
     static final String TH_SMOKE = "smoke";
@@ -1395,6 +1396,13 @@ public class FireControl {
         utility *= modifier;
         utility -= (shooterIsAero ? OVERHEAT_DISUTILITY_AERO : OVERHEAT_DISUTILITY) * overheat;
         utility -= (firingPlan.getTarget() instanceof EjectedCrew) ? EJECTED_PILOT_DISUTILITY : 0;
+
+        // Apply role-aware target preference multiplier
+        if (!firingPlan.isEmpty()) {
+            Entity shooter = firingPlan.get(0).getShooter();
+            utility *= calcRolePreferredTargetMultiplier(shooter, firingPlan.getTarget());
+        }
+
         firingPlan.setUtility(utility);
     }
 
@@ -1439,6 +1447,62 @@ public class FireControl {
             return 0;
         }
         return CIVILIAN_TARGET_DISUTILITY;
+    }
+
+    /**
+     * Calculate role-aware target preference multiplier.
+     * When role-aware positioning is enabled, units prefer targets that match their role's strengths.
+     * For example, Juggernauts prefer other heavy/assault targets, Scouts prefer light/fast targets.
+     *
+     * @param shooter The shooting entity
+     * @param target  The target
+     * @return Multiplier to apply to utility (1.0 = no change, > 1.0 = preferred target)
+     */
+    protected double calcRolePreferredTargetMultiplier(final Entity shooter, final Targetable target) {
+        if (!owner.getBehaviorSettings().isUseRoleAwarePositioning()) {
+            return 1.0;
+        }
+
+        if (!(target instanceof Entity targetEntity)) {
+            return 1.0;
+        }
+
+        UnitRole shooterRole = shooter.getRole();
+        UnitRole targetRole = targetEntity.getRole();
+
+        if (shooterRole == null || targetRole == null) {
+            return 1.0;
+        }
+
+        // Preferred matchups based on role
+        boolean isPreferred = switch (shooterRole) {
+            // Heavy hitters prefer other heavy hitters (fair fight mentality)
+            case JUGGERNAUT, BRAWLER -> targetRole == UnitRole.JUGGERNAUT ||
+                                        targetRole == UnitRole.BRAWLER ||
+                                        targetRole == UnitRole.SNIPER ||
+                                        targetRole == UnitRole.MISSILE_BOAT;
+
+            // Fast units prefer other fast units or support units
+            case SCOUT, SKIRMISHER, STRIKER -> targetRole == UnitRole.SCOUT ||
+                                                targetRole == UnitRole.SKIRMISHER ||
+                                                targetRole == UnitRole.STRIKER ||
+                                                targetRole == UnitRole.MISSILE_BOAT;
+
+            // Long-range units prefer high-value targets
+            case SNIPER, MISSILE_BOAT -> targetRole == UnitRole.JUGGERNAUT ||
+                                          targetRole == UnitRole.BRAWLER ||
+                                          targetRole == UnitRole.SNIPER ||
+                                          targetRole == UnitRole.MISSILE_BOAT;
+
+            // Ambushers prefer isolated or vulnerable targets
+            case AMBUSHER -> targetRole == UnitRole.SCOUT ||
+                             targetRole == UnitRole.SNIPER ||
+                             targetRole == UnitRole.MISSILE_BOAT;
+
+            default -> false;
+        };
+
+        return isPreferred ? ROLE_PREFERRED_TARGET_MULTIPLIER : 1.0;
     }
 
     protected double calcCommandUtility(final Targetable target) {

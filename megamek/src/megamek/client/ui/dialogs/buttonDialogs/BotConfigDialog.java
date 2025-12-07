@@ -132,6 +132,8 @@ public class BotConfigDialog extends AbstractButtonDialog
           new TipMMToggleButton(Messages.getString("BotConfigDialog.considerAlliedDamageCheck"));
     private final MMToggleButton useDamageSourcePoolCheck =
           new TipMMToggleButton(Messages.getString("BotConfigDialog.useDamageSourcePoolCheck"));
+    private final MMToggleButton useRoleAwarePositioningCheck =
+          new TipMMToggleButton(Messages.getString("BotConfigDialog.useRoleAwarePositioningCheck"));
 
     private final JLabel withdrawEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
     private final MMComboBox<CardinalEdge> withdrawEdgeCombo = new TipCombo<>("EdgeToWithdraw", CardinalEdge.values());
@@ -433,6 +435,10 @@ public class BotConfigDialog extends AbstractButtonDialog
         useDamageSourcePoolCheck.addActionListener(this);
         panContent.add(useDamageSourcePoolCheck);
 
+        useRoleAwarePositioningCheck.setToolTipText(Messages.getString("BotConfigDialog.useRoleAwarePositioningCheckToolTip"));
+        useRoleAwarePositioningCheck.addActionListener(this);
+        panContent.add(useRoleAwarePositioningCheck);
+
         var buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         buttonPanel.setAlignmentX(SwingConstants.CENTER);
         result.add(buttonPanel);
@@ -554,6 +560,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         experimentalCheck.setSelected(princessBehavior.isExperimental());
         considerAlliedDamageCheck.setSelected(princessBehavior.isConsiderAlliedDamage());
         useDamageSourcePoolCheck.setSelected(princessBehavior.isUseDamageSourcePool());
+        useRoleAwarePositioningCheck.setSelected(princessBehavior.isUseRoleAwarePositioning());
         numberOfEnemiesToConsiderFacingSlidebar.setValue(princessBehavior.getNumberOfEnemiesToConsiderFacing());
         allowFacingToleranceSlidebar.setValue(princessBehavior.getAllowFacingTolerance());
         ignoreDamageOutputCheck.setSelected(princessBehavior.isIgnoreDamageOutput());
@@ -617,7 +624,8 @@ public class BotConfigDialog extends AbstractButtonDialog
                     chosenPreset.isIgnoreDamageOutput() != ignoreDamageOutputCheck.isSelected() ||
                     chosenPreset.isExperimental() != experimentalCheck.isSelected() ||
                     chosenPreset.isConsiderAlliedDamage() != considerAlliedDamageCheck.isSelected() ||
-                    chosenPreset.isUseDamageSourcePool() != useDamageSourcePoolCheck.isSelected());
+                    chosenPreset.isUseDamageSourcePool() != useDamageSourcePoolCheck.isSelected() ||
+                    chosenPreset.isUseRoleAwarePositioning() != useRoleAwarePositioningCheck.isSelected());
     }
 
     /**
@@ -805,6 +813,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         newBehavior.setIgnoreDamageOutput(ignoreDamageOutputCheck.isSelected());
         newBehavior.setConsiderAlliedDamage(considerAlliedDamageCheck.isSelected());
         newBehavior.setUseDamageSourcePool(useDamageSourcePoolCheck.isSelected());
+        newBehavior.setUseRoleAwarePositioning(useRoleAwarePositioningCheck.isSelected());
 
         behaviorSettingsFactory.addBehavior(newBehavior);
         behaviorSettingsFactory.saveBehaviorSettings(false);
@@ -856,6 +865,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         tempBehavior.setIgnoreDamageOutput(ignoreDamageOutputCheck.isSelected());
         tempBehavior.setConsiderAlliedDamage(considerAlliedDamageCheck.isSelected());
         tempBehavior.setUseDamageSourcePool(useDamageSourcePoolCheck.isSelected());
+        tempBehavior.setUseRoleAwarePositioning(useRoleAwarePositioningCheck.isSelected());
 
         for (int i = 0; i < targetsListModel.getSize(); i++) {
             if (targetsListModel.get(i) instanceof Coords) {

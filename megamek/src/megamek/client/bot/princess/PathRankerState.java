@@ -448,7 +448,7 @@ public class PathRankerState {
     /**
      * Determine the base optimal range from damage values alone.
      * For flat profiles (S=M=L), returns MEDIUM as a safe default.
-     * Uses DAMAGE_THRESHOLD to prevent oscillation on minor damage changes.
+     * Ties favor longer range for ranged units, shorter range for brawlers.
      */
     private int determineBaseOptimalRange(int sDamage, int mDamage, int lDamage) {
         // Flat damage profile - prefer medium range (safe positioning, same damage)
@@ -456,36 +456,42 @@ public class PathRankerState {
             return OPTIMAL_RANGE_MEDIUM;
         }
 
-        // Clear winner at long range (must be significantly better than both M and S)
-        if (lDamage > mDamage + DAMAGE_THRESHOLD && lDamage > sDamage + DAMAGE_THRESHOLD) {
+        // Long range is best or tied for best (and better than short)
+        // This handles profiles like 3-3-4 (Pillager) and 2-3-3 (Longbow)
+        if (lDamage >= mDamage && lDamage > sDamage) {
             return OPTIMAL_RANGE_LONG;
         }
 
-        // Medium is significantly better than short
-        if (mDamage > sDamage + DAMAGE_THRESHOLD) {
+        // Medium is strictly better than short (regardless of long)
+        // This handles profiles like 2-4-2
+        if (mDamage > sDamage) {
             return OPTIMAL_RANGE_MEDIUM;
         }
 
-        // Short range dominant, or close call - stay aggressive
+        // Short range is best or tied with medium - stay aggressive
+        // This handles profiles like 5-5-2 (Atlas) and 6-6-4 (Daishi)
         return OPTIMAL_RANGE_SHORT;
     }
 
     /**
      * Adjust optimal range based on gunnery skill.
-     * Elite gunners can afford longer range, green gunners need to close in.
-     * Only shifts if the longer range has BETTER damage (not just equal).
+     * Elite gunners can afford longer range (where their skill advantage matters more),
+     * green gunners need to close in (to compensate for poor accuracy).
      */
     private int adjustRangeForGunnery(int baseRange, int gunnery, int sDamage, int mDamage, int lDamage) {
-        // Elite gunners (2-3): shift UP one bracket if damage is BETTER at longer range
+        // Elite gunners (2-3): shift UP one bracket if damage is at least equal at longer range
+        // Elite pilots prefer range because their skill advantage is more impactful when
+        // base hit chances are lower (a +2 skill edge matters more at 8+ than at 4+)
         if (gunnery <= GUNNERY_ELITE) {
-            if (baseRange == OPTIMAL_RANGE_SHORT && mDamage > sDamage) {
+            if (baseRange == OPTIMAL_RANGE_SHORT && mDamage >= sDamage) {
                 return OPTIMAL_RANGE_MEDIUM;
-            } else if (baseRange == OPTIMAL_RANGE_MEDIUM && lDamage > mDamage) {
+            } else if (baseRange == OPTIMAL_RANGE_MEDIUM && lDamage >= mDamage) {
                 return OPTIMAL_RANGE_LONG;
             }
         }
 
         // Green gunners (5+): shift DOWN one bracket if damage is at least equal at closer range
+        // Green pilots need to close in because they need all the hit bonuses they can get
         if (gunnery >= GUNNERY_GREEN) {
             if (baseRange == OPTIMAL_RANGE_LONG && mDamage >= lDamage) {
                 return OPTIMAL_RANGE_MEDIUM;
@@ -885,7 +891,7 @@ public class PathRankerState {
     /**
      * Determine the base optimal range from damage values alone.
      * Static version for use by static methods.
-     * Uses DAMAGE_THRESHOLD to prevent oscillation on minor damage changes.
+     * Ties favor longer range for ranged units, shorter range for brawlers.
      */
     private static int determineBaseOptimalRangeStatic(int sDamage, int mDamage, int lDamage) {
         // Flat damage profile - prefer medium range (safe positioning, same damage)
@@ -893,36 +899,43 @@ public class PathRankerState {
             return OPTIMAL_RANGE_MEDIUM;
         }
 
-        // Clear winner at long range (must be significantly better than both M and S)
-        if (lDamage > mDamage + DAMAGE_THRESHOLD && lDamage > sDamage + DAMAGE_THRESHOLD) {
+        // Long range is best or tied for best (and better than short)
+        // This handles profiles like 3-3-4 (Pillager) and 2-3-3 (Longbow)
+        if (lDamage >= mDamage && lDamage > sDamage) {
             return OPTIMAL_RANGE_LONG;
         }
 
-        // Medium is significantly better than short
-        if (mDamage > sDamage + DAMAGE_THRESHOLD) {
+        // Medium is strictly better than short (regardless of long)
+        // This handles profiles like 2-4-2
+        if (mDamage > sDamage) {
             return OPTIMAL_RANGE_MEDIUM;
         }
 
-        // Short range dominant, or close call - stay aggressive
+        // Short range is best or tied with medium - stay aggressive
+        // This handles profiles like 5-5-2 (Atlas) and 6-6-4 (Daishi)
         return OPTIMAL_RANGE_SHORT;
     }
 
     /**
      * Adjust optimal range based on gunnery skill.
      * Static version for use by static methods.
-     * Only shifts if the longer range has BETTER damage (not just equal).
+     * Elite gunners can afford longer range (where their skill advantage matters more),
+     * green gunners need to close in (to compensate for poor accuracy).
      */
     private static int adjustRangeForGunneryStatic(int baseRange, int gunnery, int sDamage, int mDamage, int lDamage) {
-        // Elite gunners (2-3): shift UP one bracket if damage is BETTER at longer range
+        // Elite gunners (2-3): shift UP one bracket if damage is at least equal at longer range
+        // Elite pilots prefer range because their skill advantage is more impactful when
+        // base hit chances are lower (a +2 skill edge matters more at 8+ than at 4+)
         if (gunnery <= GUNNERY_ELITE) {
-            if (baseRange == OPTIMAL_RANGE_SHORT && mDamage > sDamage) {
+            if (baseRange == OPTIMAL_RANGE_SHORT && mDamage >= sDamage) {
                 return OPTIMAL_RANGE_MEDIUM;
-            } else if (baseRange == OPTIMAL_RANGE_MEDIUM && lDamage > mDamage) {
+            } else if (baseRange == OPTIMAL_RANGE_MEDIUM && lDamage >= mDamage) {
                 return OPTIMAL_RANGE_LONG;
             }
         }
 
         // Green gunners (5+): shift DOWN one bracket if damage is at least equal at closer range
+        // Green pilots need to close in because they need all the hit bonuses they can get
         if (gunnery >= GUNNERY_GREEN) {
             if (baseRange == OPTIMAL_RANGE_LONG && mDamage >= lDamage) {
                 return OPTIMAL_RANGE_MEDIUM;

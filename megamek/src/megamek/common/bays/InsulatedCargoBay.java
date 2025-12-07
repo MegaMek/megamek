@@ -99,7 +99,7 @@ public final class InsulatedCargoBay extends Bay {
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         return "Insulated Cargo";
     }
 

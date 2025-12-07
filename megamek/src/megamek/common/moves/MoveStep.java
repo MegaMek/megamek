@@ -610,7 +610,7 @@ public class MoveStep implements Serializable {
                     maxElevation++;
                 }
 
-                if (bld.getType() == BuildingType.WALL) {
+                if (bld.getBuildingType() == BuildingType.WALL) {
                     if (maxElevation >= hex.terrainLevel(Terrains.BLDG_ELEV)) {
                         setElevation(Math.max(getElevation(), hex.terrainLevel(Terrains.BLDG_ELEV)));
                     } else {
@@ -2439,6 +2439,31 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
+        // Check elevation change when climbing onto a building
+        if (climbMode && !isJumping()) {
+            Hex curHex = game.getBoard(boardId).getHex(curPos);
+            if (curHex.containsTerrain(Terrains.BUILDING)) {
+                Hex prevHex = game.getBoard(boardId).getHex(lastPos);
+                // Check if we're climbing from outside/below onto the building top
+                if (!prevHex.containsTerrain(Terrains.BUILDING) ||
+                    prevHex.terrainLevel(Terrains.BLDG_ELEV) < curHex.terrainLevel(Terrains.BLDG_ELEV)) {
+                    int prevAbsoluteElev = prevHex.getLevel() + prev.getElevation();
+                    int curAbsoluteElev = curHex.getLevel() + getElevation();
+                    int elevChange = curAbsoluteElev - prevAbsoluteElev;
+
+                    int maxAllowed = entity.getMaxElevationChange();
+                    // Infantry changing terrain levels can exceed their normal max by 1
+                    if (entity instanceof Infantry && curHex.getLevel() != prevHex.getLevel()) {
+                        maxAllowed += 1;
+                    }
+
+                    if (elevChange > maxAllowed) {
+                        movementType = EntityMovementType.MOVE_ILLEGAL;
+                    }
+                }
+            }
+        }
+
         // TO p.325 - Mine dispensers
         if ((type == MoveStepType.LAY_MINE) && !entity.canLayMine()) {
             movementType = EntityMovementType.MOVE_ILLEGAL;
@@ -2870,7 +2895,7 @@ public class MoveStep implements Serializable {
             if (!isInfantry && !isSuperHeavyMek) {
                 if (!isProto) {
                     // non-ProtoMeks pay extra according to the building type
-                    mp += bldg.getType().getTypeValue();
+                    mp += bldg.getBuildingType().getTypeValue();
                     if (bldg.getBldgClass() == IBuilding.HANGAR) {
                         mp--;
                     }
@@ -3018,7 +3043,7 @@ public class MoveStep implements Serializable {
                   .getLevel()) -
                   hex.getLevel();
 
-            if ((bld.getType() == BuildingType.WALL) && (maxElevation < hex.terrainLevel(Terrains.BLDG_ELEV))) {
+            if ((bld.getBuildingType() == BuildingType.WALL) && (maxElevation < hex.terrainLevel(Terrains.BLDG_ELEV))) {
                 return false;
             }
 

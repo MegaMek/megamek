@@ -287,7 +287,7 @@ public final class InfantryCompartment implements Transporter, InfantryTransport
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         return "Infantry Compartment";
     }
 

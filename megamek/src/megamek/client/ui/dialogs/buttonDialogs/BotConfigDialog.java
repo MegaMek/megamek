@@ -1053,7 +1053,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         String content = "";
         if (hex.containsTerrain(BUILDING)) {
             content += Messages.getString("BotConfigDialog.hexListBldg",
-                  bldg.getType().toString(),
+                  bldg.getBuildingType().toString(),
                   IBuilding.className(bldg.getBldgClass()),
                   hex.terrainLevel(BLDG_ELEV),
                   hex.terrainLevel(BLDG_CF));
@@ -1063,7 +1063,7 @@ public class BotConfigDialog extends AbstractButtonDialog
                   hex.terrainLevel(FUEL_TANK_MAGN));
         } else {
             content += Messages.getString("BotConfigDialog.hexListBrdg",
-                  bldg.getType().toString(),
+                  bldg.getBuildingType().toString(),
                   hex.terrainLevel(BRIDGE_ELEV),
                   hex.terrainLevel(BRIDGE_CF));
         }

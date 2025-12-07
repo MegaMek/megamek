@@ -307,8 +307,11 @@ public class BuildingEntity extends Entity implements IBuilding {
         }
         for (CubeCoords coord : getInternalBuilding().getCoordsList()) {
             // Do we start with "1st floor" or "0 floor?" This is "1st floor"
+            // Can't use boardNum when unit isn't deployed or negative hexes break
+            String coordString = getPosition() != null ? coord.toOffset().getBoardNum() :
+                  coord.q() + "," + coord.r() + "," + coord.s();
             for (int level = 1; level <= getInternalBuilding().getBuildingHeight(); level++) {
-                locationNames.add(LOCATION_NAMES_PREFIX + ' ' + level + ' ' + coord.toOffset().getBoardNum());
+                locationNames.add(LOCATION_NAMES_PREFIX + ' ' + level + ' ' + coordString);
             }
         }
         return locationNames.toArray(new String[0]);
@@ -321,8 +324,10 @@ public class BuildingEntity extends Entity implements IBuilding {
             return new String[] { LOCATION_ABBREVIATIONS_PREFIX + ' ' + LOC_BASE };
         }
         for (CubeCoords coord : getInternalBuilding().getCoordsList()) {
+            String coordString = getPosition() != null ? coord.toOffset().getBoardNum() :
+                  coord.q() + "," + coord.r() + "," + coord.s();
             for (int level = 0; level < getInternalBuilding().getBuildingHeight(); level++) {
-                locationAbbrvNames.add(LOCATION_ABBREVIATIONS_PREFIX + ' ' + level + ' ' + coord.toOffset().getBoardNum());
+                locationAbbrvNames.add(LOCATION_ABBREVIATIONS_PREFIX + ' ' + level + ' ' + coordString);
             }
         }
         return locationAbbrvNames.toArray(new String[0]);

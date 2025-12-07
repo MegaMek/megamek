@@ -117,7 +117,7 @@ public class BLKStructureFile extends BLKFile implements IMekLoader {
                 be.initializeInternal(1, loc);
                 be.initializeArmor(0, loc);
 
-                String equipmentBlockName = floor + "(" + coords.q() + "," + coords.r() + "," + coords.s() + ")";
+                String equipmentBlockName = be.getLocationName(loc);
                 loadEquipment(be, equipmentBlockName, loc);
             }
         }

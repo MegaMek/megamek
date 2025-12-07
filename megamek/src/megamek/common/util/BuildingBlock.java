@@ -395,9 +395,9 @@ public class BuildingBlock {
                 String rawString = rawData.get(rawRecord);
                 String[] parts = rawString.split(",");
                 if (parts.length == 3) {
-                    int q = Integer.parseInt(parts[0].trim());
-                    int r = Integer.parseInt(parts[1].trim());
-                    int s = Integer.parseInt(parts[2].trim());
+                    double q = Double.parseDouble(parts[0].trim());
+                    double r = Double.parseDouble(parts[1].trim());
+                    double s = Double.parseDouble(parts[2].trim());
                     data[dataRecord] = new CubeCoords(q, r, s);
                     dataRecord++;
                 } else {

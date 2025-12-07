@@ -1591,7 +1591,7 @@ public class RATGenerator {
                         LOGGER.warn("{} not a valid faction code in year {}. See {}.",
                               ar.getFaction(),
                               ar.era,
-                              ar.getUnitName());
+                              ar.unitName);
                     }
 
                 }
@@ -1643,14 +1643,23 @@ public class RATGenerator {
                 for (String code : codes) {
 
                     AvailabilityRating ar = new AvailabilityRating(modelRecord.getKey(), era, code);
-                    // If it provides availability values based on equipment ratings,
-                    // generate index values in addition to letter values
-                    if (ar.hasMultipleRatings()) {
-                        ar.setRatingByNumericLevel(factions.get(ar.getFaction()));
-                    }
+                    FactionRecord modelFaction = factions.get(ar.getFaction());
+                    if (null != modelFaction || code.startsWith("General")) {
+                        // If it provides availability values based on equipment ratings,
+                        // generate index values in addition to letter values
+                        if (ar.hasMultipleRatings()) {
+                            ar.setRatingByNumericLevel(factions.get(ar.getFaction()));
+                        }
 
-                    modelRecord.getIncludedFactions().add(ar.getFaction());
-                    modelIndex.get(era).get(modelRecord.getKey()).put(ar.getFactionCode(), ar);
+                        modelRecord.getIncludedFactions().add(ar.getFaction());
+                        modelIndex.get(era).get(modelRecord.getKey()).put(ar.getFactionCode(), ar);
+
+                    } else {
+                        LOGGER.warn("{} not a valid faction code in year {}. See model {}.",
+                              ar.getFaction(),
+                              ar.era,
+                              ar.unitName);
+                    }
 
                 }
             }

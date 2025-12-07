@@ -61,6 +61,10 @@ public class JTextAreaWithCharacterLimit {
      * @since 0.50.11
      */
     public static JTextArea createLimitedTextArea(int maxChars, int columns) {
+        if (maxChars <= 0) {
+            throw new IllegalArgumentException("maxChars must be positive");
+        }
+
         JTextArea area = new JTextArea(1, columns);
         area.setLineWrap(true);
         area.setWrapStyleWord(true);
@@ -107,7 +111,9 @@ public class JTextAreaWithCharacterLimit {
          */
         @Override
         public void insertString(int offset, String string, AttributeSet attributeSet) throws BadLocationException {
-            if (string == null) {return;}
+            if (string == null) {
+                return;
+            }
             if ((getLength() + string.length()) <= maxChars) {
                 super.insertString(offset, string, attributeSet);
             } else {

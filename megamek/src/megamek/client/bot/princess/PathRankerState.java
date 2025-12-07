@@ -37,10 +37,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import megamek.common.alphaStrike.ASDamageVector;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.board.Coords;
-import megamek.common.compute.Compute;
-import megamek.common.equipment.WeaponMounted;
-import megamek.common.equipment.WeaponType;
 import megamek.common.moves.Key;
 import megamek.common.units.Entity;
 import megamek.common.units.UnitRole;
@@ -101,9 +101,10 @@ public class PathRankerState {
     public static final double MOVE_ORDER_SPEED_SLOW = 1.0;
     public static final double MOVE_ORDER_SPEED_VERY_SLOW = 0.5;
 
-    // Optimal range calculation constants
-    public static final int[] SAMPLE_RANGES = {1, 3, 6, 9, 12, 15, 18, 21, 24, 30};
-    public static final int BASELINE_GUNNERY = 4;
+    // Optimal range target hexes (midpoints of Alpha Strike range brackets)
+    public static final int OPTIMAL_RANGE_SHORT = 3;    // 0-6 hexes
+    public static final int OPTIMAL_RANGE_MEDIUM = 12;  // 7-24 hexes
+    public static final int OPTIMAL_RANGE_LONG = 21;    // 25-42 hexes
 
     // ========== End Constants ==========
 
@@ -281,99 +282,46 @@ public class PathRankerState {
     }
 
     /**
-     * Calculate optimal range based purely on weapon loadout.
-     * Finds the range where expected damage (damage x hit probability) is maximized.
+     * Calculate optimal range using Alpha Strike damage values.
+     * Returns the range bracket (S/M/L) where the unit deals highest damage.
      *
      * @param entity The entity to calculate for
-     * @return Optimal range based on weapon analysis
+     * @return Optimal range in hexes (3, 12, or 21)
      */
     private int calculateOptimalRangeFromWeapons(Entity entity) {
-        List<WeaponMounted> weapons = entity.getWeaponList();
-        if (weapons.isEmpty()) {
-            return Integer.MAX_VALUE; // No weapons = flee
+        // No weapons = flee
+        if (entity.getWeaponList().isEmpty()) {
+            return Integer.MAX_VALUE;
         }
 
-        int bestRange = SAMPLE_RANGES[0];
-        double bestExpectedDamage = 0.0;
+        // Get Alpha Strike damage values
+        AlphaStrikeElement element = ASConverter.convert(entity);
+        ASDamageVector damage = element.getStandardDamage();
 
-        for (int range : SAMPLE_RANGES) {
-            double expectedDamage = calculateExpectedDamageAtRange(entity, weapons, range);
-
-            if (expectedDamage > bestExpectedDamage) {
-                bestExpectedDamage = expectedDamage;
-                bestRange = range;
-            }
+        if (damage == null || !damage.hasDamage()) {
+            return Integer.MAX_VALUE;  // No damage capability
         }
 
-        logger.info("{}: Optimal weapon range = {} hexes (expected damage {})",
-            entity.getDisplayName(), bestRange, String.format("%.1f", bestExpectedDamage));
+        // Get damage values (minimal damage counts as having some damage value)
+        int sDamage = damage.S().damage + (damage.S().minimal ? 1 : 0);
+        int mDamage = damage.M().damage + (damage.M().minimal ? 1 : 0);
+        int lDamage = damage.L().damage + (damage.L().minimal ? 1 : 0);
 
-        return bestRange;
-    }
+        // Log for debugging
+        logger.info("{}: AS damage S={} M={} L={}", entity.getDisplayName(), sDamage, mDamage, lDamage);
 
-    /**
-     * Calculate total expected damage at a given range for all weapons.
-     * Expected damage = sum of (weapon damage x probability to hit)
-     *
-     * @param entity  The entity
-     * @param weapons List of weapons
-     * @param range   Range to evaluate
-     * @return Total expected damage
-     */
-    private double calculateExpectedDamageAtRange(Entity entity, List<WeaponMounted> weapons, int range) {
-        double totalExpected = 0.0;
-
-        for (WeaponMounted weapon : weapons) {
-            if (weapon.isDestroyed() || weapon.isJammed() || !weapon.isReady()) {
-                continue;
-            }
-
-            WeaponType weaponType = weapon.getType();
-            if (weaponType == null) {
-                continue;
-            }
-
-            // Check if weapon can fire at this range
-            int longRange = weaponType.getLongRange();
-            int minRange = weaponType.getMinimumRange();
-
-            if (range > longRange) {
-                continue; // Out of range
-            }
-
-            // Calculate base to-hit number (simplified: range modifiers + gunnery)
-            int toHit = BASELINE_GUNNERY;
-
-            // Add range modifier
-            if (range <= weaponType.getShortRange()) {
-                toHit += 0; // Short range
-            } else if (range <= weaponType.getMediumRange()) {
-                toHit += 2; // Medium range
-            } else {
-                toHit += 4; // Long range
-            }
-
-            // Add minimum range penalty
-            if (minRange > 0 && range <= minRange) {
-                toHit += (minRange - range + 1);
-            }
-
-            // Get probability (0-100)
-            double hitProbability = Compute.oddsAbove(toHit) / 100.0;
-
-            // Get damage
-            double damage = weaponType.getDamage(range);
-            if (damage == WeaponType.DAMAGE_BY_CLUSTER_TABLE) {
-                // Use rack size / 2 as expected hits for cluster weapons
-                damage = weaponType.getRackSize() / 2.0;
-            } else if (damage <= 0) {
-                continue; // Skip weapons with no damage
-            }
-
-            totalExpected += damage * hitProbability;
+        // Return the representative range for the highest damage bracket
+        // Ties favor closer range (more aggressive positioning)
+        if (lDamage > mDamage && lDamage > sDamage) {
+            logger.info("{}: Optimal range = {} hexes (Long)", entity.getDisplayName(), OPTIMAL_RANGE_LONG);
+            return OPTIMAL_RANGE_LONG;
+        } else if (mDamage > sDamage) {
+            logger.info("{}: Optimal range = {} hexes (Medium)", entity.getDisplayName(), OPTIMAL_RANGE_MEDIUM);
+            return OPTIMAL_RANGE_MEDIUM;
+        } else {
+            logger.info("{}: Optimal range = {} hexes (Short)", entity.getDisplayName(), OPTIMAL_RANGE_SHORT);
+            return OPTIMAL_RANGE_SHORT;
         }
-
-        return totalExpected;
     }
 
     /**
@@ -610,88 +558,40 @@ public class PathRankerState {
     }
 
     /**
-     * Calculate optimal range based purely on weapon loadout.
-     * Static version for use by static methods.
+     * Calculate optimal range using Alpha Strike damage values.
+     * Static version for use by TSV logging (UnitAction/UnitState).
+     *
+     * @param entity The entity to calculate for
+     * @return Optimal range in hexes (3, 12, or 21), or Integer.MAX_VALUE for unarmed
      */
     private static int calculateWeaponOptimalRange(Entity entity) {
-        List<WeaponMounted> weapons = entity.getWeaponList();
-        if (weapons.isEmpty()) {
-            return Integer.MAX_VALUE; // No weapons = flee
+        // No weapons = flee
+        if (entity.getWeaponList().isEmpty()) {
+            return Integer.MAX_VALUE;
         }
 
-        int bestRange = SAMPLE_RANGES[0];
-        double bestExpectedDamage = 0.0;
+        // Get Alpha Strike damage values
+        AlphaStrikeElement element = ASConverter.convert(entity);
+        ASDamageVector damage = element.getStandardDamage();
 
-        for (int range : SAMPLE_RANGES) {
-            double expectedDamage = calculateStaticExpectedDamageAtRange(entity, weapons, range);
-
-            if (expectedDamage > bestExpectedDamage) {
-                bestExpectedDamage = expectedDamage;
-                bestRange = range;
-            }
+        if (damage == null || !damage.hasDamage()) {
+            return Integer.MAX_VALUE;  // No damage capability
         }
 
-        return bestRange;
-    }
+        // Get damage values (minimal damage counts as having some damage value)
+        int sDamage = damage.S().damage + (damage.S().minimal ? 1 : 0);
+        int mDamage = damage.M().damage + (damage.M().minimal ? 1 : 0);
+        int lDamage = damage.L().damage + (damage.L().minimal ? 1 : 0);
 
-    /**
-     * Calculate total expected damage at a given range for all weapons.
-     * Static version for use by static methods.
-     */
-    private static double calculateStaticExpectedDamageAtRange(Entity entity, List<WeaponMounted> weapons, int range) {
-        double totalExpected = 0.0;
-
-        for (WeaponMounted weapon : weapons) {
-            if (weapon.isDestroyed() || weapon.isJammed() || !weapon.isReady()) {
-                continue;
-            }
-
-            WeaponType weaponType = weapon.getType();
-            if (weaponType == null) {
-                continue;
-            }
-
-            // Check if weapon can fire at this range
-            int longRange = weaponType.getLongRange();
-            int minRange = weaponType.getMinimumRange();
-
-            if (range > longRange) {
-                continue; // Out of range
-            }
-
-            // Calculate base to-hit number (simplified: range modifiers + gunnery)
-            int toHit = BASELINE_GUNNERY;
-
-            // Add range modifier
-            if (range <= weaponType.getShortRange()) {
-                toHit += 0; // Short range
-            } else if (range <= weaponType.getMediumRange()) {
-                toHit += 2; // Medium range
-            } else {
-                toHit += 4; // Long range
-            }
-
-            // Add minimum range penalty
-            if (minRange > 0 && range <= minRange) {
-                toHit += (minRange - range + 1);
-            }
-
-            // Get probability (0-100)
-            double hitProbability = Compute.oddsAbove(toHit) / 100.0;
-
-            // Get damage
-            double damage = weaponType.getDamage(range);
-            if (damage == WeaponType.DAMAGE_BY_CLUSTER_TABLE) {
-                // Use rack size / 2 as expected hits for cluster weapons
-                damage = weaponType.getRackSize() / 2.0;
-            } else if (damage <= 0) {
-                continue; // Skip weapons with no damage
-            }
-
-            totalExpected += damage * hitProbability;
+        // Return the representative range for the highest damage bracket
+        // Ties favor closer range (more aggressive positioning)
+        if (lDamage > mDamage && lDamage > sDamage) {
+            return OPTIMAL_RANGE_LONG;
+        } else if (mDamage > sDamage) {
+            return OPTIMAL_RANGE_MEDIUM;
+        } else {
+            return OPTIMAL_RANGE_SHORT;
         }
-
-        return totalExpected;
     }
 
     /**

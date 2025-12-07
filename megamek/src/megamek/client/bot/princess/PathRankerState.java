@@ -104,7 +104,6 @@ public class PathRankerState {
     // Optimal range calculation constants
     public static final int[] SAMPLE_RANGES = {1, 3, 6, 9, 12, 15, 18, 21, 24, 30};
     public static final int BASELINE_GUNNERY = 4;
-    public static final int ROLE_RANGE_MISMATCH_THRESHOLD = 12;
 
     // ========== End Constants ==========
 
@@ -270,40 +269,15 @@ public class PathRankerState {
 
     /**
      * Calculate the optimal range for a unit based on expected damage output.
-     * Takes into account weapon loadout, minimum ranges, and to-hit probabilities.
+     * Uses weapon loadout analysis (expected damage at each range bracket) to find
+     * where the unit deals maximum damage.
      *
      * @param entity The entity to calculate for
      * @return Optimal engagement range in hexes
      */
     private int calculateOptimalRange(Entity entity) {
-        // Civilians should flee - maximum distance
-        if (isCivilian(entity)) {
-            return Integer.MAX_VALUE;
-        }
-
-        // Calculate optimal range from weapons (expected damage)
-        int weaponOptimalRange = calculateOptimalRangeFromWeapons(entity);
-
-        // For units with defined roles, check if role's preferred range makes sense
-        UnitRole role = entity.getRole();
-        if (role != null && role != UnitRole.UNDETERMINED && role != UnitRole.NONE) {
-            int roleRange = getRangeForRole(role);
-
-            // If role and weapons disagree significantly, trust weapons
-            // (handles custom variants or misclassified units)
-            if (Math.abs(roleRange - weaponOptimalRange) > ROLE_RANGE_MISMATCH_THRESHOLD) {
-                logger.info("{}: Role {} suggests range {}, but weapons suggest {}. Using weapons.",
-                    entity.getDisplayName(), role, roleRange, weaponOptimalRange);
-                return weaponOptimalRange;
-            }
-
-            // Use role's preferred range
-            logger.debug("{}: Using role {} optimal range = {}", entity.getDisplayName(), role, roleRange);
-            return roleRange;
-        }
-
-        // No role or undetermined - use weapon-based calculation
-        return weaponOptimalRange;
+        // Always calculate from actual weapon loadout for accuracy
+        return calculateOptimalRangeFromWeapons(entity);
     }
 
     /**
@@ -400,27 +374,6 @@ public class PathRankerState {
         }
 
         return totalExpected;
-    }
-
-    /**
-     * Get the preferred engagement range for a unit role.
-     *
-     * @param role The unit role
-     * @return Preferred range in hexes
-     */
-    private int getRangeForRole(UnitRole role) {
-        if (role == null) {
-            return 9; // Default medium range
-        }
-
-        return switch (role) {
-            case BRAWLER, JUGGERNAUT -> 3;     // Close range fighters
-            case STRIKER, AMBUSHER -> 6;       // Short-medium range
-            case SKIRMISHER -> 9;               // Medium range, mobile
-            case SNIPER, MISSILE_BOAT -> 15;   // Long range
-            case SCOUT -> 12;                   // Medium-long, stay back but observe
-            default -> 9;                       // Default medium range
-        };
     }
 
     /**
@@ -566,25 +519,16 @@ public class PathRankerState {
     // without needing a PathRankerState instance.
 
     /**
-     * Calculate the optimal engagement range for an entity based on its role.
+     * Calculate the optimal engagement range for an entity based on weapon loadout.
+     * Uses expected damage calculation (damage x probability to hit) at each range bracket
+     * to find where the unit deals maximum damage.
      * Static version for use by TSV logging (UnitAction/UnitState).
      *
      * @param entity The entity to calculate for
-     * @return Optimal engagement range in hexes, or Integer.MAX_VALUE for civilians
+     * @return Optimal engagement range in hexes, or Integer.MAX_VALUE for civilians/unarmed
      */
     public static int calculateOptimalRangeForEntity(Entity entity) {
-        // Civilians should flee - maximum distance
-        if (isEntityCivilian(entity)) {
-            return Integer.MAX_VALUE;
-        }
-
-        // For units with defined roles, use role's preferred range
-        UnitRole role = entity.getRole();
-        if (role != null && role != UnitRole.UNDETERMINED && role != UnitRole.NONE) {
-            return getPreferredRangeForRole(role);
-        }
-
-        // No role or undetermined - use weapon-based calculation
+        // Always calculate from actual weapon loadout for accuracy
         return calculateWeaponOptimalRange(entity);
     }
 
@@ -663,25 +607,6 @@ public class PathRankerState {
      */
     private static boolean isEntityCivilian(Entity entity) {
         return entity.getWeaponList().isEmpty();
-    }
-
-    /**
-     * Get the preferred engagement range for a unit role.
-     * Static version for use by static methods.
-     */
-    private static int getPreferredRangeForRole(UnitRole role) {
-        if (role == null) {
-            return 9; // Default medium range
-        }
-
-        return switch (role) {
-            case BRAWLER, JUGGERNAUT -> 3;     // Close range fighters
-            case STRIKER, AMBUSHER -> 6;       // Short-medium range
-            case SKIRMISHER -> 9;               // Medium range, mobile
-            case SNIPER, MISSILE_BOAT -> 15;   // Long range
-            case SCOUT -> 12;                   // Medium-long, stay back but observe
-            default -> 9;                       // Default medium range
-        };
     }
 
     /**

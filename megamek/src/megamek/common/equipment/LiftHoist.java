@@ -105,7 +105,7 @@ public class LiftHoist extends ExternalCargo {
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         return "Lift Hoist";
     }
 

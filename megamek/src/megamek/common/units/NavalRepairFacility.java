@@ -132,7 +132,7 @@ public class NavalRepairFacility extends UnitBay {
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         StringBuilder sb = new StringBuilder();
         if (arts) {
             sb.append("ARTS ");

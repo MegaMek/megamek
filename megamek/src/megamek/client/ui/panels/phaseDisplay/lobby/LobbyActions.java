@@ -64,6 +64,7 @@ import megamek.client.ui.dialogs.iconChooser.CamoChooserDialog;
 import megamek.common.Player;
 import megamek.common.bays.Bay;
 import megamek.common.enums.Gender;
+import megamek.common.enums.VariableRangeTargetingMode;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.Transporter;
 import megamek.common.equipment.WeaponType;
@@ -609,6 +610,30 @@ public class LobbyActions {
                 } else if (m.hasModeType("HotLoad")) {
                     m.setMode("");
                 }
+                updateCandidates.add(entity);
+            }
+        }
+        sendUpdates(updateCandidates);
+    }
+
+    /**
+     * Sets Variable Range Targeting mode for the given entities. Only affects entities that have the Variable Range
+     * Targeting quirk.
+     *
+     * @param entities the entities to update
+     * @param longMode true for LONG mode, false for SHORT mode
+     */
+    void setVRTMode(Collection<Entity> entities, boolean longMode) {
+        if (!validateUpdate(entities)) {
+            return;
+        }
+        Set<Entity> updateCandidates = new HashSet<>();
+        VariableRangeTargetingMode mode = longMode
+              ? VariableRangeTargetingMode.LONG
+              : VariableRangeTargetingMode.SHORT;
+        for (Entity entity : entities) {
+            if (entity.hasVariableRangeTargeting()) {
+                entity.setVariableRangeTargetingMode(mode);
                 updateCandidates.add(entity);
             }
         }

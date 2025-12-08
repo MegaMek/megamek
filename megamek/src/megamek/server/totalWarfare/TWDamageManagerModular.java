@@ -759,7 +759,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     return;
                 }
                 // is this a mek dumping ammo being hit in the rear torso?
-                if (List.of(Mek.LOC_CENTER_TORSO, Mek.LOC_RIGHT_TORSO, Mek.LOC_LEFT_TORSO)
+                if (hit.isRear() && List.of(Mek.LOC_CENTER_TORSO, Mek.LOC_RIGHT_TORSO, Mek.LOC_LEFT_TORSO)
                       .contains(hit.getLocation())) {
                     for (Mounted<?> mAmmo : mek.getAmmo()) {
                         if (mAmmo.isDumping() && !mAmmo.isDestroyed() && !mAmmo.isHit()) {
@@ -2115,6 +2115,9 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             reportVec.addElement(report);
         }
 
+        // Handle damage type effects (flechette, fragmentation, etc.) before situational modifiers
+        damage = manageDamageTypeReports(infantry, reportVec, damage, damageType, hit, true, mods);
+
         // Is the infantry in the open?
         if (ServerHelper.infantryInOpen(infantry,
               te_hex,
@@ -2141,8 +2144,6 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             report.indent(2);
             reportVec.addElement(report);
         }
-
-        damage = manageDamageTypeReports(infantry, reportVec, damage, damageType, hit, true, mods);
 
         // infantry armor can reduce damage
         if (infantry.calcDamageDivisor() != 1.0) {
@@ -3046,15 +3047,18 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 entity.damageThisPhase += damage;
 
                 damage = 0;
-                if (!entity.isHardenedArmorDamaged(hit)) {
-                    report = new Report(6085);
+                // Use trooper-specific messages for Battle Armor
+                if (entity instanceof BattleArmor) {
+                    report = new Report(entity.isHardenedArmorDamaged(hit) ? 6097 : 6096);
+                    report.add(entity.getLocationAbbr(hit));
+                    report.add(entity.getArmor(hit));
                 } else {
-                    report = new Report(6086);
+                    report = new Report(entity.isHardenedArmorDamaged(hit) ? 6086 : 6085);
+                    report.add(entity.getArmor(hit));
                 }
 
                 report.subject = entityId;
                 report.indent(3);
-                report.add(entity.getArmor(hit));
                 reportVec.addElement(report);
 
                 // teleMissiles are destroyed if they lose all armor

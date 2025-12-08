@@ -72,7 +72,6 @@ import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TagInfo;
-import megamek.common.util.C3Util;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -86,6 +85,7 @@ import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.VariableRangeTargetingMode;
 import megamek.common.equipment.Flare;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
@@ -120,6 +120,7 @@ import megamek.common.units.EntitySelector;
 import megamek.common.units.FighterSquadron;
 import megamek.common.units.IBuilding;
 import megamek.common.units.UnitLocation;
+import megamek.common.util.C3Util;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
@@ -927,6 +928,17 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.ENTITY_NOVA_NETWORK_CHANGE, id, net));
     }
 
+    /**
+     * Send a Variable Range Targeting mode change packet (BMM pg. 86). Mode changes are applied at the start of the
+     * next round.
+     *
+     * @param entityId the ID of the entity changing modes
+     * @param mode     the new VariableRangeTargetingMode to apply next round
+     */
+    public void sendVariableRangeTargetingModeChange(int entityId, VariableRangeTargetingMode mode) {
+        send(new Packet(PacketCommand.ENTITY_VARIABLE_RANGE_MODE_CHANGE, entityId, mode));
+    }
+
     public void sendSpecialHexDisplayAppend(Coords c, int boardId, SpecialHexDisplay shd) {
         send(new Packet(PacketCommand.SPECIAL_HEX_DISPLAY_APPEND, c, boardId, shd));
     }
@@ -1031,7 +1043,7 @@ public class Client extends AbstractClient {
                             initGameLog();
                         }
                         if (log != null) {
-                            log.append(phaseReport);
+                            log.appendRaw(phaseReport);
                         }
                     }
                     game.addReports(packet.getReportList(0));
@@ -1051,7 +1063,7 @@ public class Client extends AbstractClient {
                         initGameLog();
                         if (log != null) {
                             for (List<Report> allReport : allReports) {
-                                log.append(receiveReport(allReport));
+                                log.appendRaw(receiveReport(allReport));
                             }
                         }
                     }

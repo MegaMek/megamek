@@ -68,6 +68,7 @@ import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.MoveStepType;
+import megamek.common.enums.VariableRangeTargetingMode;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.equipment.*;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
@@ -828,6 +829,9 @@ public class TWGameManager extends AbstractGameManager {
                     break;
                 case ENTITY_NOVA_NETWORK_CHANGE:
                     receiveEntityNovaNetworkModeChange(packet, connId);
+                    break;
+                case ENTITY_VARIABLE_RANGE_MODE_CHANGE:
+                    receiveEntityVariableRangeModeChange(packet, connId);
                     break;
                 case ENTITY_MOUNTED_FACING_CHANGE:
                     receiveEntityMountedFacingChange(packet, connId);
@@ -4233,7 +4237,7 @@ public class TWGameManager extends AbstractGameManager {
             if (nextHex.containsTerrain(Terrains.BLDG_ELEV)) {
                 IBuilding bldg = board.getBuildingAt(nextPos);
 
-                if (bldg.getType() == BuildingType.WALL) {
+                if (bldg.getBuildingType() == BuildingType.WALL) {
                     crashedIntoTerrain = true;
                 }
 
@@ -4274,7 +4278,7 @@ public class TWGameManager extends AbstractGameManager {
                     // If you crash into a wall you want to stop in the hex
                     // before the wall not in the wall
                     // Like a building.
-                    if (bldg.getType() == BuildingType.WALL) {
+                    if (bldg.getBuildingType() == BuildingType.WALL) {
                         r = new Report(2047);
                     } else if (bldg.getBldgClass() == IBuilding.GUN_EMPLACEMENT) {
                         r = new Report(2049);
@@ -4309,7 +4313,7 @@ public class TWGameManager extends AbstractGameManager {
                         // If you crash into a wall you want to stop in the hex
                         // before the wall not in the wall
                         // Like a building.
-                        if (bldg.getType() == BuildingType.WALL) {
+                        if (bldg.getBuildingType() == BuildingType.WALL) {
                             addReport(destroyEntity(entity, "crashed into a wall"));
                             break;
                         }
@@ -5366,7 +5370,7 @@ public class TWGameManager extends AbstractGameManager {
             int direction = entity.getFacing();
             // first check for buildings
             IBuilding bldg = game.getBoard(entity.getBoardId()).getBuildingAt(hitCoords);
-            if ((null != bldg) && (bldg.getType() == BuildingType.HARDENED)) {
+            if ((null != bldg) && (bldg.getBuildingType() == BuildingType.HARDENED)) {
                 crash_damage *= 2;
             }
             if (null != bldg) {
@@ -11013,7 +11017,7 @@ public class TWGameManager extends AbstractGameManager {
         // building modifiers
         IBuilding bldg = game.getBuildingAt(c, boardId).orElse(null);
         if (null != bldg) {
-            nTargetRoll.addModifier(bldg.getType().getTypeValue() - 3, "building");
+            nTargetRoll.addModifier(bldg.getBuildingType().getTypeValue() - 3, "building");
         }
 
         // add in any modifiers for planetary conditions
@@ -24411,7 +24415,10 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
 
-            // If we're adding a ProtoMek, calculate it's unit number.
+            // Remove any carried pilot IDs (does not apply to other carried entities)
+            entity.resetPickedUpMekWarriors();
+
+            // If we're adding a ProtoMek, calculate its unit number.
             if (entity instanceof ProtoMek) {
                 // How many ProtoMeks does the player already have?
                 int numPlayerProtoMeks = game.getSelectedEntityCount(new EntitySelector() {
@@ -24956,6 +24963,34 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Receive and process a Variable Range Targeting mode change packet (BMM pg. 86). Sets the pending mode on the
+     * entity, which will be applied at the start of the next round.
+     *
+     * @param packet    the packet to be processed
+     * @param connIndex the id for connection that received the packet
+     */
+    private void receiveEntityVariableRangeModeChange(Packet packet, int connIndex) {
+        try {
+            int entityId = packet.getIntValue(0);
+            VariableRangeTargetingMode mode = (VariableRangeTargetingMode) packet.getObject(1);
+            Entity entity = game.getEntity(entityId);
+
+            if (entity == null || entity.getOwner() != game.getPlayer(connIndex)) {
+                return;
+            }
+
+            if (!entity.hasVariableRangeTargeting()) {
+                return;
+            }
+
+            entity.setPendingVariableRangeTargetingMode(mode);
+            entityUpdate(entityId);
+        } catch (Exception ex) {
+            LOGGER.error("Error processing Variable Range Targeting mode change", ex);
+        }
+    }
+
+    /**
      * receive and process an entity mounted facing change packet
      *
      * @param c         the packet to be processed
@@ -25380,7 +25415,7 @@ public class TWGameManager extends AbstractGameManager {
                         sb.append(entity.getNC3NextUUIDAsString(i)).append(", ");
                     }
                     LOGGER.debug("[SERVER] createFullEntitiesPacket: Entity {} ({}), c3NetIdString: {}, NC3UUIDs: [{}]",
-                        entity.getId(), entity.getShortName(), entity.getC3NetId(), sb.toString());
+                          entity.getId(), entity.getShortName(), entity.getC3NetId(), sb.toString());
                 }
             }
         }
@@ -25901,7 +25936,7 @@ public class TWGameManager extends AbstractGameManager {
                 // Infantry and Battle armor take different amounts of damage
                 // then Meks and vehicles.
                 if (entity instanceof Infantry) {
-                    damage = bldg.getType().getTypeValue() + 1;
+                    damage = bldg.getBuildingType().getTypeValue() + 1;
                 }
                 // It is possible that the unit takes no damage.
                 if (damage == 0) {
@@ -26307,7 +26342,7 @@ public class TWGameManager extends AbstractGameManager {
                         vPhaseReport.addAll(vRep);
                         return vPhaseReport;
                     }
-                    if (bldg.getType() == BuildingType.WALL) {
+                    if (bldg.getBuildingType() == BuildingType.WALL) {
                         r = new Report(3442);
                     } else {
                         r = new Report(3440);
@@ -26504,7 +26539,7 @@ public class TWGameManager extends AbstractGameManager {
                     vDesc.addAll(vRep);
                     return mainPhaseReport;
                 }
-                if (bldg.getType() == BuildingType.WALL) {
+                if (bldg.getBuildingType() == BuildingType.WALL) {
                     r = new Report(3442);
                 } else {
                     r = new Report(3440);
@@ -28773,7 +28808,7 @@ public class TWGameManager extends AbstractGameManager {
 
                     if (isFuelAirBomb) {
                         // light buildings take 1.5x damage from fuel-air bombs
-                        if (bldg.getType() == BuildingType.LIGHT) {
+                        if (bldg.getBuildingType() == BuildingType.LIGHT) {
                             buildingDamage = (int) Math.ceil(buildingDamage * 1.5);
 
                             r = new Report(9991);
@@ -29169,7 +29204,9 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Phase-agnostic attack handler that returns a Vector of reports generated from its handled attacks.
-     * @param pointblankShot    should attacks be handled as PBS?  Changes some report verbiage.
+     *
+     * @param pointblankShot should attacks be handled as PBS?  Changes some report verbiage.
+     *
      * @return Vector           reports (caller is responsible for displaying)
      */
     private Vector<Report> handleAttacks(boolean pointblankShot) {

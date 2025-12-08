@@ -967,7 +967,7 @@ public class TestAdvancedAerospace extends TestAero {
         for (Bay bay : vessel.getTransportBays()) {
             if (bay.hardpointCost() > 0) {
                 if ((bay.getFacing() < 0) || (bay.getFacing() >= Warship.LOC_LBS)) {
-                    buffer.append(bay.getType()).append(" is not assigned a legal armor facing.\n");
+                    buffer.append(bay.getTransporterType()).append(" is not assigned a legal armor facing.\n");
                     legal = false;
                 } else if (facings.contains(bay.getFacing())) {
                     buffer.append("Exceeds maximum of one repair facility or drop shuttle bay per armor facing.\n");

@@ -512,6 +512,17 @@ public abstract class Entity extends TurnOrdered
     private final String[] c3iUUIDs = new String[MAX_C3i_NODES];
     private final String[] NC3UUIDs = new String[MAX_C3i_NODES];
 
+    /**
+     * Current Variable Range Targeting mode (BMM pg. 86). Determines whether unit gets bonus at short range (SHORT
+     * mode) or long range (LONG mode).
+     */
+    private VariableRangeTargetingMode variableRangeTargetingMode = VariableRangeTargetingMode.LONG;
+
+    /**
+     * Pending Variable Range Targeting mode to be applied at start of next round. null means no change pending.
+     */
+    private VariableRangeTargetingMode pendingVariableRangeTargetingMode = null;
+
     protected int structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
     protected int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
 
@@ -3206,7 +3217,7 @@ public abstract class Entity extends TurnOrdered
                 if (externalCargo.canLoad(cargoEntity)) {
                     // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly
                     //  load into that transporter.
-                    locationMap.put(transporter.getType() + " " + getTransports().indexOf(transporter),
+                    locationMap.put(transporter.getTransporterType() + " " + getTransports().indexOf(transporter),
                           Integer.MAX_VALUE - getTransports().indexOf(transporter));
 
                 }
@@ -3238,7 +3249,9 @@ public abstract class Entity extends TurnOrdered
                   && !externalCargo.getCarryables().isEmpty()) {
                 // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly load into
                 //  that transporter.
-                locationMap.put(transporter.getType() + " " + externalCargo.getCarryables().get(0).toString(),
+                locationMap.put(transporter.getTransporterType() + " " + externalCargo.getCarryables()
+                            .get(0)
+                            .toString(),
                       Integer.MAX_VALUE - getTransports().indexOf(transporter));
 
             }
@@ -6383,6 +6396,81 @@ public abstract class Entity extends TurnOrdered
         return newC3NetIdString;
     }
 
+    //region Variable Range Targeting (BMM pg. 86)
+
+    /**
+     * Checks if this entity has the Variable Range Targeting quirk. Supports both the new unified quirk and legacy
+     * quirks for backward compatibility.
+     *
+     * @return true if this entity has Variable Range Targeting capability
+     */
+    public boolean hasVariableRangeTargeting() {
+        return hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG) ||
+              hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L) ||
+              hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S);
+    }
+
+    /**
+     * Returns the current Variable Range Targeting mode. For legacy quirks, the mode is determined by which quirk is
+     * set.
+     *
+     * @return the current VariableRangeTargetingMode
+     */
+    public VariableRangeTargetingMode getVariableRangeTargetingMode() {
+        // Legacy quirk support: if using old SHORT quirk, return SHORT mode
+        if (hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S) &&
+              !hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG)) {
+            return VariableRangeTargetingMode.SHORT;
+        }
+        // Handle null from old save files that don't have this field
+        if (variableRangeTargetingMode == null) {
+            return VariableRangeTargetingMode.LONG;
+        }
+        return variableRangeTargetingMode;
+    }
+
+    /**
+     * Sets the current Variable Range Targeting mode. Only applies to units with the new unified Variable Range
+     * Targeting quirk.
+     *
+     * @param mode the new VariableRangeTargetingMode
+     */
+    public void setVariableRangeTargetingMode(VariableRangeTargetingMode mode) {
+        if (mode != null) {
+            variableRangeTargetingMode = mode;
+        }
+    }
+
+    /**
+     * Returns the pending Variable Range Targeting mode to be applied next round.
+     *
+     * @return the pending mode, or null if no change is pending
+     */
+    public VariableRangeTargetingMode getPendingVariableRangeTargetingMode() {
+        return pendingVariableRangeTargetingMode;
+    }
+
+    /**
+     * Sets the pending Variable Range Targeting mode to be applied at the start of the next round.
+     *
+     * @param mode the mode to apply next round, or null to cancel pending change
+     */
+    public void setPendingVariableRangeTargetingMode(VariableRangeTargetingMode mode) {
+        pendingVariableRangeTargetingMode = mode;
+    }
+
+    /**
+     * Applies pending Variable Range Targeting mode change at the start of a new round. Called from newRound().
+     */
+    public void newRoundVariableRangeSwitch() {
+        if (hasVariableRangeTargeting() && (pendingVariableRangeTargetingMode != null)) {
+            variableRangeTargetingMode = pendingVariableRangeTargetingMode;
+            pendingVariableRangeTargetingMode = null;
+        }
+    }
+
+    //endregion Variable Range Targeting
+
     public void setC3NetId(Entity e) {
         if ((e == null) || isEnemyOf(e)) {
             return;
@@ -6891,6 +6979,7 @@ public abstract class Entity extends TurnOrdered
         }
 
         newRoundNovaNetSwitch();
+        newRoundVariableRangeSwitch();
         doNewRoundIMP();
 
         // reset hexes passed through
@@ -8357,7 +8446,7 @@ public abstract class Entity extends TurnOrdered
         if (rv > 1) {
             IBuilding bldgEntered;
             bldgEntered = board.getBuildingAt(curPos);
-            if (bldgEntered.getType() == BuildingType.WALL) {
+            if (bldgEntered.getBuildingType() == BuildingType.WALL) {
                 return 4;
             }
         }
@@ -8405,7 +8494,7 @@ public abstract class Entity extends TurnOrdered
             desc = why + " ";
         }
 
-        switch (bldg.getType()) {
+        switch (bldg.getBuildingType()) {
             case LIGHT:
                 desc = "Light";
                 break;
@@ -8895,7 +8984,7 @@ public abstract class Entity extends TurnOrdered
             Bay chosenBay = potential.elementAt(Compute.randomInt(potential.size()));
             chosenBay.destroyDoor();
             chosenBay.resetDoors();
-            bayType = String.format("%s bay #%s", chosenBay.getType(), chosenBay.getBayNumber());
+            bayType = String.format("%s bay #%s", chosenBay.getTransporterType(), chosenBay.getBayNumber());
         }
 
         return bayType;
@@ -8938,6 +9027,14 @@ public abstract class Entity extends TurnOrdered
 
     public void pickUp(MekWarrior mw) {
         pickedUpMekWarriors.addElement(mw.getId());
+    }
+
+    /**
+     *  Clear the Vector of picked-up MekWarrior IDs so that MegaMek issue #3191 does not recur.
+     *  Called when units are initially added to the game (as they should have no carried pilots then).
+     */
+    public void resetPickedUpMekWarriors() {
+        pickedUpMekWarriors.clear();
     }
 
     /**
@@ -10905,12 +11002,8 @@ public abstract class Entity extends TurnOrdered
         if (hasQuirk(OptionsConstants.QUIRK_NEG_POOR_TARG_S)) {
             mod++;
         }
-        if (hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L)) {
-            mod++;
-        }
-        if (hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S)) {
-            mod--;
-        }
+        // Note: Variable Range Targeting modifier is applied separately in Compute.java
+        // to ensure it appears as a distinct line item in the to-hit breakdown
         return mod;
     }
 
@@ -10945,13 +11038,32 @@ public abstract class Entity extends TurnOrdered
         if (hasQuirk(OptionsConstants.QUIRK_NEG_POOR_TARG_L)) {
             mod++;
         }
-        if (hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L)) {
-            mod--;
-        }
-        if (hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S)) {
-            mod++;
-        }
+        // Note: Variable Range Targeting modifier is applied separately in Compute.java
+        // to ensure it appears as a distinct line item in the to-hit breakdown
         return mod;
+    }
+
+    /**
+     * Returns the Variable Range Targeting modifier for the specified range type. Used by Compute.java to add a
+     * separate line item in the to-hit breakdown.
+     *
+     * @param rangeType the range type constant from {@link RangeType}
+     *
+     * @return the modifier value, or 0 if the entity doesn't have Variable Range Targeting or the range type doesn't
+     *       apply
+     */
+    public int getVariableRangeTargetingModifier(int rangeType) {
+        if (!hasVariableRangeTargeting()) {
+            return 0;
+        }
+        VariableRangeTargetingMode mode = getVariableRangeTargetingMode();
+        if ((rangeType == RangeType.RANGE_SHORT) || (rangeType == RangeType.RANGE_MINIMUM)) {
+            return mode.getShortRangeModifier();
+        } else if (rangeType == RangeType.RANGE_LONG) {
+            return mode.getLongRangeModifier();
+        }
+        // Medium, Extreme, and LOS ranges are not affected
+        return 0;
     }
 
     public int getExtremeRangeModifier() {

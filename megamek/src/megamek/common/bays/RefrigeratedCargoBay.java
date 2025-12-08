@@ -99,7 +99,7 @@ public final class RefrigeratedCargoBay extends Bay {
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         return "Reefer";
     }
 

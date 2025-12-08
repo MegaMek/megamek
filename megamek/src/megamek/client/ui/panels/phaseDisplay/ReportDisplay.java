@@ -43,6 +43,7 @@ import java.util.Map;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkDialog;
+import megamek.client.ui.dialogs.phaseDisplay.VariableRangeTargetingDialog;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.common.enums.GamePhase;
@@ -60,7 +61,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
         REPORT_REPORT("reportReport"),
         REPORT_PLAYER_LIST("reportPlayerList"),
         REPORT_REROLL_INITIATIVE("reportRerollInitiative"),
-        REPORT_NOVA_NETWORK("reportNovaNetwork");
+        REPORT_NOVA_NETWORK("reportNovaNetwork"),
+        REPORT_VAR_RANGE_TARGETING("reportVarRangeTargeting");
 
         final String cmd;
 
@@ -229,6 +231,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
             GUIP.togglePlayerListEnabled();
         } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_NOVA_NETWORK.getCmd()))) {
             showNovaNetworkDialog();
+        } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_VAR_RANGE_TARGETING.getCmd()))) {
+            showVariableRangeTargetingDialog();
         }
     }
 
@@ -248,8 +252,11 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
         GamePhase currentPhase = clientgui.getClient().getGame().getPhase();
         if (currentPhase == GamePhase.END || currentPhase == GamePhase.END_REPORT) {
             setNovaNetworkEnabled(hasNovaUnits());
+            // Enable Variable Range Targeting button (BMM pg. 86: player chooses mode during End Phase)
+            setVariableRangeTargetingEnabled(hasVariableRangeUnits());
         } else {
             setNovaNetworkEnabled(false);
+            setVariableRangeTargetingEnabled(false);
         }
     }
 
@@ -312,6 +319,36 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
      */
     private void setNovaNetworkEnabled(boolean enabled) {
         MegaMekButton button = buttons.get(ReportCommand.REPORT_NOVA_NETWORK);
+        if (button != null) {
+            button.setEnabled(enabled);
+        }
+    }
+
+    /**
+     * Shows the Variable Range Targeting mode selection dialog (BMM pg. 86).
+     */
+    private void showVariableRangeTargetingDialog() {
+        VariableRangeTargetingDialog dialog = new VariableRangeTargetingDialog(clientgui.getFrame(), clientgui);
+        dialog.setVisible(true);
+        // Clear focus from the button after dialog closes to reset highlight state
+        buttons.get(ReportCommand.REPORT_VAR_RANGE_TARGETING).transferFocus();
+    }
+
+    /**
+     * Checks if the local player has any units with Variable Range Targeting quirk.
+     */
+    private boolean hasVariableRangeUnits() {
+        int localPlayerId = clientgui.getClient().getLocalPlayer().getId();
+        return clientgui.getClient().getGame().getEntitiesVector().stream()
+              .filter(e -> e.getOwnerId() == localPlayerId)
+              .anyMatch(Entity::hasVariableRangeTargeting);
+    }
+
+    /**
+     * Enables or disables the Variable Range Targeting button.
+     */
+    private void setVariableRangeTargetingEnabled(boolean enabled) {
+        MegaMekButton button = buttons.get(ReportCommand.REPORT_VAR_RANGE_TARGETING);
         if (button != null) {
             button.setEnabled(enabled);
         }

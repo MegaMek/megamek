@@ -88,7 +88,7 @@ public class DropShuttleBay extends UnitBay {
 
     // Type is DropShuttle Bay
     @Override
-    public String getType() {
+    public String getTransporterType() {
         return "DropShuttle Bay";
     }
 

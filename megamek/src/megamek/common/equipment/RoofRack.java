@@ -113,7 +113,7 @@ public class RoofRack extends ExternalCargo {
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         return "Roof Rack";
     }
 

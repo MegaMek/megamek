@@ -576,17 +576,17 @@ public class CustomMekDialog extends AbstractButtonDialog
         txtDeploymentOffset.setText(Integer.toString(entity.getStartingOffset(false)));
         txtDeploymentWidth.setText(Integer.toString(entity.getStartingWidth(false)));
 
-        MapSettings ms = clientGUI.getClient().getMapSettings();
-        int bh = ms.getBoardHeight() * ms.getMapHeight();
-        int bw = ms.getBoardWidth() * ms.getMapWidth();
+        MapSettings mapSettings = clientGUI.getClient().getMapSettings();
+        int boardHeight = mapSettings.getBoardHeight() * mapSettings.getMapHeight();
+        int boardWidth = mapSettings.getBoardWidth() * mapSettings.getMapWidth();
 
-        int x = Math.min(entity.getStartingAnyNWx(false) + 1, bw);
+        int x = Math.min(entity.getStartingAnyNWx(false) + 1, boardWidth);
         spinStartingAnyNWx.setValue(x);
-        int y = Math.min(entity.getStartingAnyNWy(false) + 1, bh);
+        int y = Math.min(entity.getStartingAnyNWy(false) + 1, boardHeight);
         spinStartingAnyNWy.setValue(y);
-        x = Math.min(entity.getStartingAnySEx(false) + 1, bw);
-        spinStartingAnySEy.setValue(x);
-        y = Math.min(entity.getStartingAnySEy(false) + 1, bh);
+        x = Math.min(entity.getStartingAnySEx(false) + 1, boardWidth);
+        spinStartingAnySEx.setValue(x);
+        y = Math.min(entity.getStartingAnySEy(false) + 1, boardHeight);
         spinStartingAnySEy.setValue(y);
 
         boolean enableDeploymentZoneControls = choDeploymentZone.isEnabled() &&
@@ -1192,30 +1192,35 @@ public class CustomMekDialog extends AbstractButtonDialog
 
         boolean eligibleForOffBoard = true;
         int boardHeight;
-        int boardWeight;
+        int boardWidth;
+        MapSettings mapSettings;
+
         if (this.clientGUI != null) {
-            boardHeight = clientGUI.getClient().getMapSettings().getBoardHeight();
-            boardWeight = clientGUI.getClient().getMapSettings().getBoardWidth();
+            mapSettings = clientGUI.getClient().getMapSettings();
         } else {
-            boardHeight = client.getMapSettings().getBoardHeight();
-            boardWeight = client.getMapSettings().getBoardWidth();
+            mapSettings = client.getMapSettings();
         }
-        int x = Math.min(entity.getStartingAnyNWx(false) + 1, boardWeight);
-        SpinnerNumberModel mStartingAnyNWx = new SpinnerNumberModel(x, 0, boardWeight, 1);
+
+        boardHeight = mapSettings.getMapHeight() * mapSettings.getBoardHeight();
+        boardWidth = mapSettings.getMapWidth() * mapSettings.getBoardWidth();
+
+        int x = Math.min(entity.getStartingAnyNWx(false) + 1, boardWidth);
+        SpinnerNumberModel mStartingAnyNWx = new SpinnerNumberModel(x, 0, boardWidth, 1);
         spinStartingAnyNWx = new JSpinner(mStartingAnyNWx);
         spinStartingAnyNWx.setValue(x);
         int y = Math.min(entity.getStartingAnyNWy(false) + 1, boardHeight);
         SpinnerNumberModel mStartingAnyNWy = new SpinnerNumberModel(y, 0, boardHeight, 1);
         spinStartingAnyNWy = new JSpinner(mStartingAnyNWy);
         spinStartingAnyNWy.setValue(y);
-        x = Math.min(entity.getStartingAnySEx(false) + 1, boardWeight);
-        SpinnerNumberModel mStartingAnySEx = new SpinnerNumberModel(x, 0, boardWeight, 1);
+        x = Math.min(entity.getStartingAnySEx(false) + 1, boardWidth);
+        SpinnerNumberModel mStartingAnySEx = new SpinnerNumberModel(x, 0, boardWidth, 1);
         spinStartingAnySEx = new JSpinner(mStartingAnySEx);
         spinStartingAnySEx.setValue(x);
         y = Math.min(entity.getStartingAnySEy(false) + 1, boardHeight);
         SpinnerNumberModel mStartingAnySEy = new SpinnerNumberModel(y, 0, boardHeight, 1);
         spinStartingAnySEy = new JSpinner(mStartingAnySEy);
         spinStartingAnySEy.setValue(y);
+
         for (Entity e : entities) {
             // TODO : This check is good for now, but at some point we want atmospheric flying droppers to be able to
             //  lob offboard missiles and we could use it in space for extreme range bearings-only fights, plus

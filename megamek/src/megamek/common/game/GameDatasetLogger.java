@@ -72,6 +72,7 @@ public class GameDatasetLogger {
     private final String prefix;
     private BufferedWriter writer;
     private boolean createNewFile = true;
+    private String nextTimestamp = null;
 
     /**
      * Creates Game Dataset Log named
@@ -91,6 +92,17 @@ public class GameDatasetLogger {
      */
     public void requestNewLogFile() {
         createNewFile = true;
+        nextTimestamp = null;
+    }
+
+    /**
+     * Sets the timestamp to use for the next log file.
+     * This allows the TSV file to use the same timestamp as the game's GIF summary.
+     *
+     * @param timestamp the timestamp string (format: yyyyMMdd_HHmmss)
+     */
+    public void setNextTimestamp(String timestamp) {
+        this.nextTimestamp = timestamp;
     }
 
     /**
@@ -99,7 +111,7 @@ public class GameDatasetLogger {
      */
     private void newLogFile() {
         try {
-            String timestamp = LocalDateTime.now().format(TIMESTAMP_FORMAT);
+            String timestamp = (nextTimestamp != null) ? nextTimestamp : LocalDateTime.now().format(TIMESTAMP_FORMAT);
             String filename = prefix + "_" + timestamp;
             File logfile = new File(LOG_DIR + File.separator + filename + ".tsv");
             writer = new BufferedWriter(new FileWriter(logfile));

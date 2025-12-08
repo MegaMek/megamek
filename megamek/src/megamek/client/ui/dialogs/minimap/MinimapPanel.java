@@ -328,7 +328,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
                       || e.getOldPhase().isPreFiring() || e.getOldPhase().isFiring()
                       || e.getOldPhase().isPhysical())) {
 
-                    File dir = new File(Configuration.gameSummaryImagesMMDir(), game.getUUIDString());
+                    File dir = new File(Configuration.gameSummaryImagesMMDir(), game.getTimestampString());
                     if (!dir.exists()) {
                         dir.mkdirs();
                     }
@@ -344,7 +344,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
                         }
                         if (GUIP.getGifGameSummaryMinimap()) {
                             if (gifWriterThread == null || !gifWriterThread.isAlive()) {
-                                gifWriterThread = new GifWriterThread(new GifWriter(game.getUUIDString()),
+                                gifWriterThread = new GifWriterThread(new GifWriter(game.getTimestampString()),
                                       "GifWriterThread");
                                 gifWriterThread.start();
                             }

@@ -1479,7 +1479,7 @@ public class Compute {
         }
 
         // determine base distance & range bracket
-        int distance = effectiveDistance(game, attackingEntity, target, false);
+        int distance = effectiveWeaponDistance(game, attackingEntity, weapon, target);
         int range = RangeType.rangeBracket(distance, weaponRanges, useExtremeRange, useLOSRange);
 
         // Additional checks for LOS range and some weapon types, TO 85
@@ -1909,6 +1909,64 @@ public class Compute {
      *
      * @return the effective distance
      */
+    /**
+     * Calculates effective distance from a weapon's firing position to a target,
+     * accounting for altitude differences and same-building elevation modifiers.
+     * This is used for entities with multiple firing positions like BuildingEntity.
+     *
+     * @param game The current game
+     * @param weaponEntity The entity with the weapon
+     * @param weapon The weapon being fired
+     * @param target The target being attacked
+     * @return The effective distance from the weapon's firing position to the target
+     */
+    public static int effectiveWeaponDistance(final Game game, final Entity weaponEntity,
+          final WeaponMounted weapon, final Targetable target) {
+        Coords weaponFiringPos = weaponEntity.getWeaponFiringPosition(weapon);
+
+        if (weaponFiringPos != null && !weaponFiringPos.equals(weaponEntity.getPosition())) {
+            // For entities with multiple firing positions (BuildingEntity, etc.),
+            // calculate distance from the weapon's actual firing position
+            int distance = weaponFiringPos.distance(target.getPosition());
+
+            // If attack is inside same building, add elevation difference
+            if (isInSameBuilding(game, weaponEntity, target)) {
+                int aElev = weaponEntity.getElevation();
+                int tElev = target.getElevation();
+                distance += Math.abs(aElev - tElev);
+            }
+
+            // Air-to-air altitude differences
+            if (isAirToAir(game, weaponEntity, target) && !weaponEntity.isSpaceborne()) {
+                int aAlt = weaponEntity.getAltitude();
+                int tAlt = target.getAltitude();
+                if (target.isAirborneVTOLorWIGE()) {
+                    tAlt++;
+                }
+                distance += Math.abs(aAlt - tAlt);
+            }
+
+            // Ground-to-air altitude adjustments
+            if (isGroundToAir(weaponEntity, target)) {
+                if (weaponEntity.usesWeaponBays() && game.getBoard().isGround()) {
+                    distance += target.getAltitude();
+                } else {
+                    distance += (2 * target.getAltitude());
+                }
+            }
+
+            // Attacking ground unit while dropping
+            if (weaponEntity.isDropping() && target.getAltitude() == 0) {
+                distance += (2 * weaponEntity.getAltitude());
+            }
+
+            return distance;
+        } else {
+            // Use standard effective distance calculation
+            return effectiveDistance(game, weaponEntity, target, false);
+        }
+    }
+
     public static int effectiveDistance(final Game game, final Entity attacker,
           final @Nullable Targetable target) {
         return Compute.effectiveDistance(game, attacker, target, false);

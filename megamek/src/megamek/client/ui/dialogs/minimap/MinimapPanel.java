@@ -180,6 +180,20 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final ClientPreferences CLIENT_PREFERENCES = PreferenceManager.getClientPreferences();
+
+    /**
+     * Colors for distinguishing different enemy teams on the minimap.
+     * Index 0 is the default enemy color (red), subsequent indices are for additional enemy teams.
+     */
+    private static final Color[] ENEMY_TEAM_COLORS = {
+        new Color(200, 40, 40),   // Red (default enemy)
+        new Color(200, 120, 40),  // Orange
+        new Color(160, 40, 200),  // Purple
+        new Color(200, 200, 40),  // Yellow
+        new Color(40, 180, 180),  // Cyan
+        new Color(200, 80, 120)   // Pink
+    };
+
     private BufferedImage mapImage;
     private final BoardView bv;
     private final Game game;
@@ -452,6 +466,64 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
             return clientGui.getClient().getLocalPlayer();
         }
         return null;
+    }
+
+    /**
+     * Determines the minimap icon color for an entity based on team coloring preferences.
+     * When team coloring is enabled and there's a local player:
+     * - Local player's units: My Unit Color (green)
+     * - Same team as local player: Ally Unit Color (blue)
+     * - Different teams: Distinct colors from ENEMY_TEAM_COLORS palette
+     *
+     * @param entity the entity to get the color for
+     * @return the color to use for the entity's minimap icon
+     */
+    private Color getTeamColor(Entity entity) {
+        // Fall back to player's chosen color if team coloring is disabled or no client
+        if (!GUIP.getTeamColoring() || client == null) {
+            return entity.getOwner().getColour().getColour(false);
+        }
+
+        Player localPlayer = getLocalPlayer();
+        Player owner = entity.getOwner();
+
+        if (localPlayer == null) {
+            // No local player - use team-based coloring for all units
+            // Assign colors based on team number
+            int team = owner.getTeam();
+            if (team <= Player.TEAM_NONE) {
+                // No team - use player's color
+                return owner.getColour().getColour(false);
+            }
+            // Use team number to index into colors (wrapping if needed)
+            return ENEMY_TEAM_COLORS[(team - 1) % ENEMY_TEAM_COLORS.length];
+        }
+
+        // Local player exists - use my/ally/enemy coloring
+        if (owner.equals(localPlayer)) {
+            return GUIP.getMyUnitColor();
+        }
+
+        int localTeam = localPlayer.getTeam();
+        int ownerTeam = owner.getTeam();
+
+        if (localTeam > Player.TEAM_NONE && localTeam == ownerTeam) {
+            return GUIP.getAllyUnitColor();
+        }
+
+        // Enemy - assign color based on their team number to distinguish different enemy teams
+        if (ownerTeam > Player.TEAM_NONE) {
+            // Get a distinct index for this enemy team relative to the local player's team
+            // Skip the local team's index to avoid color collision
+            int colorIndex = ownerTeam - 1;
+            if (localTeam > Player.TEAM_NONE && ownerTeam > localTeam) {
+                colorIndex--;  // Adjust index since we skip local team
+            }
+            return ENEMY_TEAM_COLORS[colorIndex % ENEMY_TEAM_COLORS.length];
+        }
+
+        // Default to standard enemy color
+        return GUIP.getEnemyUnitColor();
     }
 
     @Override
@@ -1365,19 +1437,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         boolean stratOpsSymbols = GUIP.getMmSymbol();
 
         // Choose player or team color depending on preferences
-        Color iconColor = entity.getOwner().getColour().getColour(false);
-        if (GUIP.getTeamColoring() && (client != null)) {
-            boolean isLocalTeam = (getLocalPlayer() != null) && (entity.getOwner().getTeam()
-                  == getLocalPlayer().getTeam());
-            boolean isLocalPlayer = entity.getOwner().equals(getLocalPlayer());
-            if (isLocalPlayer) {
-                iconColor = GUIP.getMyUnitColor();
-            } else if (isLocalTeam) {
-                iconColor = GUIP.getAllyUnitColor();
-            } else {
-                iconColor = GUIP.getEnemyUnitColor();
-            }
-        }
+        Color iconColor = getTeamColor(entity);
 
         if (removedFromGame) {
             iconColor = changeColorForDestroyedUnit(iconColor.brighter(), DESTROYED_UNIT_ALPHA);
@@ -1576,19 +1636,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
 
         // Choose player or team color depending on preferences
-        Color iconColor = entity.getOwner().getColour().getColour(false);
-        if (GUIP.getTeamColoring() && (client != null)) {
-            boolean isLocalTeam = (getLocalPlayer() != null) && (entity.getOwner().getTeam()
-                  == getLocalPlayer().getTeam());
-            boolean isLocalPlayer = entity.getOwner().equals(getLocalPlayer());
-            if (isLocalPlayer) {
-                iconColor = GUIP.getMyUnitColor();
-            } else if (isLocalTeam) {
-                iconColor = GUIP.getAllyUnitColor();
-            } else {
-                iconColor = GUIP.getEnemyUnitColor();
-            }
-        }
+        Color iconColor = getTeamColor(entity);
         Graphics2D g2 = (Graphics2D) g;
         Stroke saveStroke = g2.getStroke();
 

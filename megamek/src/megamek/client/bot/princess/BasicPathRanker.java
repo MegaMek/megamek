@@ -531,6 +531,26 @@ public class BasicPathRanker extends PathRanker {
                 return civilianMod;
             }
 
+            // AM units: dynamically choose melee vs short range based on distance
+            // If the enemy is close enough to reach in 1-2 turns, close for swarm attack
+            // Otherwise, wait in ambush position at short range (avoid reckless charge)
+            if (state.hasAntiMech(movingUnit)) {
+                int mp = movingUnit.getWalkMP();
+                int strikingDistance = mp * 2;  // Can reach enemy in ~2 turns
+
+                if (distToEnemy <= strikingDistance) {
+                    // Enemy within striking distance - close aggressively for swarm
+                    optimalRange = PathRankerState.OPTIMAL_RANGE_MELEE;
+                    logger.debug("{} AM unit - enemy at {} within striking distance ({}), closing to melee",
+                        movingUnit.getDisplayName(), (int) distToEnemy, strikingDistance);
+                } else {
+                    // Enemy too far - wait in ambush position instead of charging across open ground
+                    optimalRange = PathRankerState.OPTIMAL_RANGE_SHORT;
+                    logger.debug("{} AM unit - enemy at {} beyond striking distance ({}), waiting in ambush",
+                        movingUnit.getDisplayName(), (int) distToEnemy, strikingDistance);
+                }
+            }
+
             // Calculate distance from optimal range
             double distanceFromOptimal = Math.abs(distToEnemy - optimalRange);
 

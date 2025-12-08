@@ -687,6 +687,21 @@ public class PathRankerState {
     }
 
     /**
+     * Check if an entity has the AM special ability (Battle Armor and infantry capable of swarming).
+     *
+     * @param entity The entity to check
+     * @return true if the entity has AM
+     */
+    public boolean hasAntiMech(Entity entity) {
+        try {
+            AlphaStrikeElement element = ASConverter.convert(entity);
+            return element != null && element.hasSUA(BattleForceSUA.AM);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
      * Calculate the melee threat penalty for being at melee range of an enemy.
      * Returns 0 if not at melee range (distance > 1).
      *

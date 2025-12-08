@@ -2333,7 +2333,7 @@ class BasicPathRankerTest {
     }
 
     /**
-     * Tests for the allied damage discount feature (RFE-7109).
+     * Tests for the allied damage discount feature (RFE #7109).
      *
      * <p>This feature makes Princess less cautious when friendly units can also engage the same
      * enemy. The rationale is that if multiple allies are threatening an enemy, that enemy's
@@ -3233,7 +3233,8 @@ class BasicPathRankerTest {
          * Verifies isLongRangeOptimal correctly categorizes units.
          *
          * <p>Long range is defined as optimal range >= 12 hexes.
-         * Role-based ranges: Sniper/Missile Boat = 15 (long), Brawler/Juggernaut = 3 (short)</p>
+         * Expected ranges for role-based positioning: Sniper/Missile Boat = 15 hexes (long range),
+         * Brawler/Juggernaut = 3 hexes (short range)</p>
          */
         @Test
         void testIsLongRangeOptimal() {
@@ -3250,11 +3251,9 @@ class BasicPathRankerTest {
             assertEquals(3, getRangeForRoleValue(UnitRole.JUGGERNAUT),
                 "Juggernaut should have role range 3");
 
-            // Verify the threshold logic
-            assertTrue(15 >= 12, "Sniper range (15) should be considered long range");
-            assertTrue(15 >= 12, "Missile Boat range (15) should be considered long range");
-            assertFalse(3 >= 12, "Brawler range (3) should not be considered long range");
-            assertFalse(3 >= 12, "Juggernaut range (3) should not be considered long range");
+            // Threshold for "long range" is >= 12 hexes
+            // Sniper/Missile Boat (15) qualify, Brawler/Juggernaut (3) do not
+            // The assertions above verify these ranges, so the threshold classification follows mathematically
         }
 
         // Helper to get role range (mirrors PathRankerState.getRangeForRole logic)

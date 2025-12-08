@@ -33,6 +33,7 @@
 
 package megamek.client.bot.princess;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -327,7 +328,7 @@ public class PathRankerState {
      * @return Map of enemy IDs to remaining threat values
      */
     public Map<Integer, Double> getDamageSourcePool() {
-        return damageSourcePool;
+        return Collections.unmodifiableMap(damageSourcePool);
     }
 
     // ========== Optimal Range Calculation ==========

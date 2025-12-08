@@ -532,8 +532,9 @@ public class BasicPathRanker extends PathRanker {
             }
 
             // AM units: dynamically choose melee vs short range based on distance
-            // If the enemy is close enough to reach in 1-2 turns, close for swarm attack
-            // Otherwise, wait in ambush position at short range (avoid reckless charge)
+            // This is a TACTICAL OVERRIDE of the cached optimal range (from getOptimalRange).
+            // If the enemy is close enough to reach in 1-2 turns, close for swarm attack.
+            // Otherwise, wait in ambush position at short range (avoid reckless charge).
             if (state.hasAntiMech(movingUnit)) {
                 int mp = movingUnit.getWalkMP();
                 int strikingDistance = mp * 2;  // Can reach enemy in ~2 turns
@@ -569,7 +570,7 @@ public class BasicPathRanker extends PathRanker {
 
         // Classic behavior: penalize distance to enemy
         double aggressionMod = distToEnemy * aggression;
-        logger.debug("aggression mod [ -{} = {} * {}]", aggressionMod, distToEnemy, aggression);
+        logger.trace("aggression mod [ -{} = {} * {}]", aggressionMod, distToEnemy, aggression);
         return aggressionMod;
     }
 

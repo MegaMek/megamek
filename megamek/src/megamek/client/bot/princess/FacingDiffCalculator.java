@@ -189,9 +189,9 @@ record FacingDiffCalculator(int allowFacingTolerance) {
      *
      * @param unit The entity being evaluated
      *
-     * @return +1 if left side has more armor (turn left to expose it),
-     *         -1 if right side has more armor (turn right to expose it),
-     *         0 if armor is equal (face enemy directly)
+     * @return +1 if left side has more armor (prefer exposing left),
+     *         -1 if right side has more armor (prefer exposing right),
+     *         0 if armor is equal (no preference)
      */
     private int getArmorBias(Entity unit) {
         int armorBias = 0;
@@ -206,9 +206,9 @@ record FacingDiffCalculator(int allowFacingTolerance) {
 
             // Bias toward exposing the stronger side to the enemy
             if (leftArmor > rightArmor) {
-                armorBias = 1;  // Turn left to expose left side
+                armorBias = 1;  // Prefer exposing stronger left side
             } else if (rightArmor > leftArmor) {
-                armorBias = -1; // Turn right to expose right side
+                armorBias = -1; // Prefer exposing stronger right side
             }
         }
         return armorBias;

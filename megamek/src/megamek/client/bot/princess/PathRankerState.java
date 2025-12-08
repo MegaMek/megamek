@@ -325,10 +325,20 @@ public class PathRankerState {
     /**
      * Get the full damage source pool map (for testing/debugging).
      *
-     * @return Map of enemy IDs to remaining threat values
+     * @return Unmodifiable view of enemy IDs to remaining threat values
      */
     public Map<Integer, Double> getDamageSourcePool() {
         return Collections.unmodifiableMap(damageSourcePool);
+    }
+
+    /**
+     * Directly set a damage source value (for testing).
+     *
+     * @param enemyId The enemy entity ID
+     * @param threat  The threat value to set
+     */
+    public void setDamageSource(int enemyId, double threat) {
+        damageSourcePool.put(enemyId, threat);
     }
 
     // ========== Optimal Range Calculation ==========

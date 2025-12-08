@@ -3277,7 +3277,7 @@ class BasicPathRankerTest {
 
             // Initialize pool with an enemy
             int enemyId = 1;
-            state.getDamageSourcePool().put(enemyId, 100.0);
+            state.setDamageSource(enemyId, 100.0);
 
             // Allocate with a Juggernaut (1.5x weight)
             Entity mockJuggernaut = mock(BipedMek.class);
@@ -3303,7 +3303,7 @@ class BasicPathRankerTest {
 
             // Initialize pool with an enemy
             int enemyId = 1;
-            state.getDamageSourcePool().put(enemyId, 100.0);
+            state.setDamageSource(enemyId, 100.0);
 
             // Allocate with a Sniper (0.3x weight)
             Entity mockSniper = mock(BipedMek.class);

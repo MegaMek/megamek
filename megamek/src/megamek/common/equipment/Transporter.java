@@ -176,12 +176,12 @@ public interface Transporter extends Serializable {
     }
 
 
-    default String getType() {
+    default String getTransporterType() {
         return "Unknown";
     }
 
     default String getNameForRecordSheets() {
-        return getType();
+        return getTransporterType();
     }
 
     /**

@@ -114,7 +114,7 @@ public class MekArms extends ExternalCargo {
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         return "Arms";
     }
 }

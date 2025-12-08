@@ -63,7 +63,7 @@ public interface InfantryTransporter extends Serializable {
 
     double getUnusedSlots();
 
-    String getType();
+    String getTransporterType();
 
     void load(Entity unit);
 

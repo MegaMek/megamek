@@ -67,7 +67,7 @@ public final class PillionSeatCargoBay extends StandardSeatCargoBay {
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         return "Pillion Seats";
     }
 

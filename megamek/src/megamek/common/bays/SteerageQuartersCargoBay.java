@@ -99,7 +99,7 @@ public final class SteerageQuartersCargoBay extends Bay {
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         return "Steerage Quarters";
     }
 

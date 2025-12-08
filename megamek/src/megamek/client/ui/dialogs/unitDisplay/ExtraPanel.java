@@ -534,6 +534,14 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
                 carriesR.append("\n");
             }
 
+            // We may not be saving captured pilots correctly on game save; some valid pilots don't have
+            // entities.
+            for (int pickedUpID : en.getPickedUpMekWarriors()) {
+                Entity carried = game.getEntity(pickedUpID);
+                carriesR.append((carried == null) ? "(ID " + pickedUpID + ")" : carried.getShortName());
+                carriesR.append("\n");
+            }
+
             // Show searchlight
             if (en.hasSearchlight()) {
                 if (en.isUsingSearchlight()) {

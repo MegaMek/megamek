@@ -99,7 +99,7 @@ public final class SecondClassQuartersCargoBay extends Bay {
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         return "2nd Class Quarters";
     }
 

@@ -714,70 +714,93 @@ public class WeaponAttackActionToHitTest {
     }
 
     /**
-     * Tests for capital weapon modifiers against small targets (under 500 tons). Per TO:AUE: Capital weapons get +5,
-     * Sub-capital direct-fire gets +3. Issue #7030: Dropships under 500 tons should receive this modifier.
+     * Tests for capital weapon modifiers against small targets (under 500 tons).
+     * Per TO:AUE: Capital weapons get +5, Sub-capital direct-fire gets +3.
+     * Issue #7030: Dropships under 500 tons should receive this modifier.
      *
-     * These tests verify the condition: (!te.isLargeCraft() || te.getWeight() < 500)
-     * which determines if capital weapon penalties apply to a target.
+     * <p>These tests verify the target selection condition in ComputeToHit.java (around line 1469):
+     * {@code (!te.isLargeCraft() || te.getWeight() < 500)}
+     *
+     * <p>The condition determines if capital weapon penalties apply:
+     * <ul>
+     *   <li>Capital weapons: +5 modifier against small targets</li>
+     *   <li>Sub-capital weapons: +3 modifier against small targets</li>
+     *   <li>Capital missiles: exempt from this penalty</li>
+     * </ul>
+     *
+     * @see megamek.common.actions.compute.ComputeToHit
      */
     @Nested
     class CapitalWeaponSmallTargetModifierTests {
 
         /**
-         * Helper method that evaluates the condition used in ComputeToHit to determine if capital weapon penalties
-         * should apply to a target.
+         * Evaluates the condition from ComputeToHit.java that determines if capital weapon
+         * penalties should apply to a target. This must match the actual implementation.
          *
-         * @param isLargeCraft whether the target is classified as a large craft
+         * @param isLargeCraft whether the target is classified as a large craft (dropship, warship, etc.)
          * @param weight       the weight of the target in tons
-         *
          * @return true if capital weapon penalty should apply
+         *
+         * @see megamek.common.actions.compute.ComputeToHit - line ~1469
          */
         private boolean shouldApplyCapitalPenalty(boolean isLargeCraft, double weight) {
-            // This mirrors the condition in ComputeToHit.java line 1469
+            // This condition MUST match ComputeToHit.java line ~1469:
+            // (!te.isLargeCraft() || te.getWeight() < 500)
             return !isLargeCraft || weight < 500;
         }
 
+        // === Core functionality tests ===
+
         @Test
-        void smallDropshipUnder500TonsShouldReceiveCapitalPenalty() {
-            // A 400-ton dropship is a large craft but under 500 tons
-            // Fix for #7030: should receive penalty due to weight < 500
+        void capitalWeaponVsSmallDropship_shouldApplyPenalty() {
+            // Fix for #7030: A 400-ton dropship is a large craft but under 500 tons
+            // Should receive penalty due to weight < 500
             assertTrue(shouldApplyCapitalPenalty(true, 400.0),
                   "400-ton dropship (large craft) should receive capital weapon penalty");
         }
 
         @Test
-        void largeDropshipOver500TonsShouldNotReceiveCapitalPenalty() {
+        void capitalWeaponVsLargeDropship_shouldNotApplyPenalty() {
             // A 2000-ton dropship is a large craft over 500 tons - no penalty
             assertFalse(shouldApplyCapitalPenalty(true, 2000.0),
                   "2000-ton dropship should NOT receive capital weapon penalty");
         }
 
         @Test
-        void fighterShouldReceiveCapitalPenalty() {
+        void capitalWeaponVsFighter_shouldApplyPenalty() {
             // Fighters are not large craft - should always receive penalty
             assertTrue(shouldApplyCapitalPenalty(false, 50.0),
                   "Fighter (not large craft) should receive capital weapon penalty");
         }
 
         @Test
-        void smallCraftShouldReceiveCapitalPenalty() {
+        void capitalWeaponVsSmallCraft_shouldApplyPenalty() {
             // Small craft under 500 tons - not large craft, should receive penalty
             assertTrue(shouldApplyCapitalPenalty(false, 200.0),
                   "Small craft (not large craft) should receive capital weapon penalty");
         }
 
+        // === Boundary condition tests ===
+
         @Test
-        void dropshipExactly500TonsShouldNotReceiveCapitalPenalty() {
+        void capitalWeaponVsDropshipExactly500Tons_shouldNotApplyPenalty() {
             // Edge case: exactly 500 tons means weight < 500 is false
             assertFalse(shouldApplyCapitalPenalty(true, 500.0),
-                  "500-ton dropship should NOT receive capital weapon penalty (boundary case)");
+                  "500-ton dropship should NOT receive penalty (boundary case)");
         }
 
         @Test
-        void dropshipJustUnder500TonsShouldReceiveCapitalPenalty() {
+        void capitalWeaponVsDropship499Tons_shouldApplyPenalty() {
             // Edge case: 499 tons means weight < 500 is true
             assertTrue(shouldApplyCapitalPenalty(true, 499.0),
-                  "499-ton dropship should receive capital weapon penalty (boundary case)");
+                  "499-ton dropship should receive penalty (boundary case)");
+        }
+
+        @Test
+        void capitalWeaponVsDropship501Tons_shouldNotApplyPenalty() {
+            // Edge case: 501 tons - just over the threshold
+            assertFalse(shouldApplyCapitalPenalty(true, 501.0),
+                  "501-ton dropship should NOT receive penalty");
         }
     }
 }

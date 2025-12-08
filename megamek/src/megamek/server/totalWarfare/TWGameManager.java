@@ -7505,6 +7505,11 @@ public class TWGameManager extends AbstractGameManager {
                 if (entity.hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
                     target += 2;
                 }
+                // Comm implant makes it easier for infantry to avoid mines
+                if ((entity instanceof Infantry) &&
+                      entity.hasAbility(OptionsConstants.MD_COMM_IMPLANT)) {
+                    target += 1;
+                }
                 if ((entity.getMovementMode() == EntityMovementMode.HOVER) ||
                       (entity.getMovementMode() == EntityMovementMode.WIGE)) {
                     target = Minefield.HOVER_WIGE_DETONATION_TARGET;
@@ -9744,9 +9749,14 @@ public class TWGameManager extends AbstractGameManager {
                     });
                     Vector<Integer> spotterIds = new Vector<>();
                     while (spotters.hasNext()) {
-                        Integer id = spotters.next().getId();
+                        Entity spotter = spotters.next();
+                        Integer id = spotter.getId();
                         spotterIds.addElement(id);
+                        LOGGER.debug("Artillery attack declaration: found spotter {} (id={})",
+                              spotter.getDisplayName(), id);
                     }
+                    LOGGER.debug("Artillery attack declaration: setting {} spotters on action",
+                          spotterIds.size());
                     aaa.setSpotterIds(spotterIds);
                 }
             }

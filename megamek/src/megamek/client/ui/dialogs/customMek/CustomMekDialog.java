@@ -577,16 +577,16 @@ public class CustomMekDialog extends AbstractButtonDialog
         txtDeploymentWidth.setText(Integer.toString(entity.getStartingWidth(false)));
 
         MapSettings ms = clientGUI.getClient().getMapSettings();
-        int bh = ms.getBoardHeight() * ms.getMapHeight();
-        int bw = ms.getBoardWidth() * ms.getMapWidth();
+        int boardHeight = ms.getBoardHeight() * ms.getMapHeight();
+        int boardWeight = ms.getBoardWidth() * ms.getMapWidth();
 
-        int x = Math.min(entity.getStartingAnyNWx(false) + 1, bw);
+        int x = Math.min(entity.getStartingAnyNWx(false) + 1, boardWeight);
         spinStartingAnyNWx.setValue(x);
-        int y = Math.min(entity.getStartingAnyNWy(false) + 1, bh);
+        int y = Math.min(entity.getStartingAnyNWy(false) + 1, boardHeight);
         spinStartingAnyNWy.setValue(y);
-        x = Math.min(entity.getStartingAnySEx(false) + 1, bw);
-        spinStartingAnySEy.setValue(x);
-        y = Math.min(entity.getStartingAnySEy(false) + 1, bh);
+        x = Math.min(entity.getStartingAnySEx(false) + 1, boardWeight);
+        spinStartingAnySEx.setValue(x);
+        y = Math.min(entity.getStartingAnySEy(false) + 1, boardHeight);
         spinStartingAnySEy.setValue(y);
 
         boolean enableDeploymentZoneControls = choDeploymentZone.isEnabled() &&
@@ -1193,13 +1193,17 @@ public class CustomMekDialog extends AbstractButtonDialog
         boolean eligibleForOffBoard = true;
         int boardHeight;
         int boardWeight;
+        MapSettings mapSettings;
+
         if (this.clientGUI != null) {
-            boardHeight = clientGUI.getClient().getMapSettings().getBoardHeight();
-            boardWeight = clientGUI.getClient().getMapSettings().getBoardWidth();
+            mapSettings = clientGUI.getClient().getMapSettings();
         } else {
-            boardHeight = client.getMapSettings().getBoardHeight();
-            boardWeight = client.getMapSettings().getBoardWidth();
+            mapSettings = client.getMapSettings();
         }
+
+        boardHeight = mapSettings.getMapHeight() * mapSettings.getBoardHeight();
+        boardWeight = mapSettings.getMapWidth() * mapSettings.getBoardWidth();
+
         int x = Math.min(entity.getStartingAnyNWx(false) + 1, boardWeight);
         SpinnerNumberModel mStartingAnyNWx = new SpinnerNumberModel(x, 0, boardWeight, 1);
         spinStartingAnyNWx = new JSpinner(mStartingAnyNWx);
@@ -1216,6 +1220,7 @@ public class CustomMekDialog extends AbstractButtonDialog
         SpinnerNumberModel mStartingAnySEy = new SpinnerNumberModel(y, 0, boardHeight, 1);
         spinStartingAnySEy = new JSpinner(mStartingAnySEy);
         spinStartingAnySEy.setValue(y);
+
         for (Entity e : entities) {
             // TODO : This check is good for now, but at some point we want atmospheric flying droppers to be able to
             //  lob offboard missiles and we could use it in space for extreme range bearings-only fights, plus

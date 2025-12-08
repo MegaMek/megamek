@@ -102,7 +102,7 @@ public final class LiquidCargoBay extends Bay {
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         return "Liquid Cargo";
     }
 

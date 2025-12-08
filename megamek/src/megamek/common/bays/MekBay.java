@@ -85,7 +85,7 @@ public final class MekBay extends UnitBay {
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         return "Mek";
     }
 

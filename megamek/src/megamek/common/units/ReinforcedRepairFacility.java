@@ -81,7 +81,7 @@ public class ReinforcedRepairFacility extends NavalRepairFacility {
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         return "Naval Repair Facility (Reinforced)";
     }
 

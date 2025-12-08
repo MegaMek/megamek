@@ -65,6 +65,14 @@ public enum RoundWeight {
         } else {
             return RoundWeight.NEXT_HALF_TON.round(w, e);
         }
+    }),
+    /** Round kg standard to nearest kg, ton-standard to nearest half ton (used for SV engine weight per TM p.133) */
+    SV_ENGINE((w, e) -> {
+        if (null != e && usesKilogramStandard(e)) {
+            return RoundWeight.NEAREST_KG.round(w, e);
+        } else {
+            return RoundWeight.NEAREST_HALF_TON.round(w, e);
+        }
     });
 
     private final BiFunction<Double, Entity, Double> calc;

@@ -101,7 +101,7 @@ public final class LivestockCargoBay extends Bay {
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         return "Livestock Cargo";
     }
 

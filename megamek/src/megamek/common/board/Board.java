@@ -1446,7 +1446,7 @@ public class Board implements Serializable {
 
         // Add rubble terrain that matches the building type.
         if (type > 0) {
-            int rubbleLevel = bldg.getType().getTypeValue();
+            int rubbleLevel = bldg.getBuildingType().getTypeValue();
             curHex.addTerrain(new Terrain(Terrains.RUBBLE, rubbleLevel));
         }
 

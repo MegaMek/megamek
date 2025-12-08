@@ -576,15 +576,15 @@ public class CustomMekDialog extends AbstractButtonDialog
         txtDeploymentOffset.setText(Integer.toString(entity.getStartingOffset(false)));
         txtDeploymentWidth.setText(Integer.toString(entity.getStartingWidth(false)));
 
-        MapSettings ms = clientGUI.getClient().getMapSettings();
-        int boardHeight = ms.getBoardHeight() * ms.getMapHeight();
-        int boardWeight = ms.getBoardWidth() * ms.getMapWidth();
+        MapSettings mapSettings = clientGUI.getClient().getMapSettings();
+        int boardHeight = mapSettings.getBoardHeight() * mapSettings.getMapHeight();
+        int boardWidth = mapSettings.getBoardWidth() * mapSettings.getMapWidth();
 
-        int x = Math.min(entity.getStartingAnyNWx(false) + 1, boardWeight);
+        int x = Math.min(entity.getStartingAnyNWx(false) + 1, boardWidth);
         spinStartingAnyNWx.setValue(x);
         int y = Math.min(entity.getStartingAnyNWy(false) + 1, boardHeight);
         spinStartingAnyNWy.setValue(y);
-        x = Math.min(entity.getStartingAnySEx(false) + 1, boardWeight);
+        x = Math.min(entity.getStartingAnySEx(false) + 1, boardWidth);
         spinStartingAnySEx.setValue(x);
         y = Math.min(entity.getStartingAnySEy(false) + 1, boardHeight);
         spinStartingAnySEy.setValue(y);
@@ -1192,7 +1192,7 @@ public class CustomMekDialog extends AbstractButtonDialog
 
         boolean eligibleForOffBoard = true;
         int boardHeight;
-        int boardWeight;
+        int boardWidth;
         MapSettings mapSettings;
 
         if (this.clientGUI != null) {
@@ -1202,18 +1202,18 @@ public class CustomMekDialog extends AbstractButtonDialog
         }
 
         boardHeight = mapSettings.getMapHeight() * mapSettings.getBoardHeight();
-        boardWeight = mapSettings.getMapWidth() * mapSettings.getBoardWidth();
+        boardWidth = mapSettings.getMapWidth() * mapSettings.getBoardWidth();
 
-        int x = Math.min(entity.getStartingAnyNWx(false) + 1, boardWeight);
-        SpinnerNumberModel mStartingAnyNWx = new SpinnerNumberModel(x, 0, boardWeight, 1);
+        int x = Math.min(entity.getStartingAnyNWx(false) + 1, boardWidth);
+        SpinnerNumberModel mStartingAnyNWx = new SpinnerNumberModel(x, 0, boardWidth, 1);
         spinStartingAnyNWx = new JSpinner(mStartingAnyNWx);
         spinStartingAnyNWx.setValue(x);
         int y = Math.min(entity.getStartingAnyNWy(false) + 1, boardHeight);
         SpinnerNumberModel mStartingAnyNWy = new SpinnerNumberModel(y, 0, boardHeight, 1);
         spinStartingAnyNWy = new JSpinner(mStartingAnyNWy);
         spinStartingAnyNWy.setValue(y);
-        x = Math.min(entity.getStartingAnySEx(false) + 1, boardWeight);
-        SpinnerNumberModel mStartingAnySEx = new SpinnerNumberModel(x, 0, boardWeight, 1);
+        x = Math.min(entity.getStartingAnySEx(false) + 1, boardWidth);
+        SpinnerNumberModel mStartingAnySEx = new SpinnerNumberModel(x, 0, boardWidth, 1);
         spinStartingAnySEx = new JSpinner(mStartingAnySEx);
         spinStartingAnySEx.setValue(x);
         y = Math.min(entity.getStartingAnySEy(false) + 1, boardHeight);

@@ -42,6 +42,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import megamek.ai.dataset.*;
+import megamek.common.Configuration;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.board.Board;
@@ -59,7 +60,8 @@ import megamek.logging.MMLogger;
  */
 public class GameDatasetLogger {
     private static final MMLogger logger = MMLogger.create(GameDatasetLogger.class);
-    public static final String LOG_DIR = PreferenceManager.getClientPreferences().getLogDirectory();
+    // TSV files are written to the same directory as GIF minimap summaries
+    public static final String LOG_DIR = Configuration.gameSummaryImagesMMDir().getAbsolutePath();
     private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
     private final UnitActionSerializer unitActionSerializer = new UnitActionSerializer();
@@ -81,7 +83,7 @@ public class GameDatasetLogger {
         this.prefix = prefix;
         File logDir = new File(LOG_DIR);
         if (!logDir.exists()) {
-            if (!logDir.mkdir()) {
+            if (!logDir.mkdirs()) {
                 logger.error("Failed to create log directory, GameDatasetLogger wont log anything");
             }
         }

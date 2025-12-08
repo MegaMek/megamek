@@ -554,10 +554,11 @@ public class BasicPathRanker extends PathRanker {
             // Calculate distance from optimal range
             double distanceFromOptimal = Math.abs(distToEnemy - optimalRange);
 
-            // Asymmetric penalty: being too close is worse for long-range units
+            // Asymmetric penalty: being too close is significantly worse for long-range units
             // (they lose their range advantage and may have minimum range penalties)
+            // 2.0x multiplier ensures long-range units strongly prefer backing away
             if (state.isLongRangeOptimal(movingUnit) && distToEnemy < optimalRange) {
-                distanceFromOptimal *= 1.5;
+                distanceFromOptimal *= 2.0;
             }
 
             double aggressionMod = distanceFromOptimal * aggression;
@@ -574,35 +575,76 @@ public class BasicPathRanker extends PathRanker {
 
     /**
      * Calculates a herding modifier that penalizes paths taking the unit away from friendly forces.
-     *
-     * <p>This method implements the tactical preference for maintaining formation with friendly units based on:
-     * <ul>
-     *   <li>The distance from the path's final position to the center of friendly forces</li>
-     *   <li>The AI's configured herd mentality value</li>
-     * </ul>
-     *
-     * <p>The herding modifier follows this formula:
-     * <pre>
-     * herdingMod = distanceToFriends * herdMentalityValue
-     * </pre>
-     *
-     * <p>Since this value is subtracted in the final utility calculation, higher values represent
-     * stronger penalties for straying from the friendly force. If no friendly forces are present
-     * (friendsCoords is null), the method returns 0, applying no penalty.
+     * This is a simplified version that does not consider role-aware overwatch positioning.
      *
      * @param friendsCoords The coordinate representing the center of friendly forces, or null if no friends
      * @param path          The movement path being evaluated
      *
      * @return A herding modifier value (higher is worse) to be used in path ranking
+     *
+     * @see #calculateHerdingMod(Coords, MovePath, Entity, Coords)
      */
     protected double calculateHerdingMod(Coords friendsCoords, MovePath path) {
+        return calculateHerdingMod(friendsCoords, path, null, null);
+    }
+
+    /**
+     * Calculates a herding modifier that penalizes paths taking the unit away from friendly forces.
+     *
+     * <p>This method implements the tactical preference for maintaining formation with friendly units based on:
+     * <ul>
+     *   <li>The distance from the path's final position to the center of friendly forces</li>
+     *   <li>The AI's configured herd mentality value</li>
+     *   <li>For long-range units: an offset toward an "overwatch" position behind friendly lines</li>
+     * </ul>
+     *
+     * <p>The herding modifier follows this formula:
+     * <pre>
+     * herdingMod = distanceToHerdTarget * herdMentalityValue
+     * </pre>
+     *
+     * <p>For long-range units (snipers, missile boats), the herd target is offset away from enemies
+     * by the unit's optimal range. This allows them to "move with" advancing friendlies while maintaining
+     * their preferred standoff distance - providing overwatch rather than joining the melee.
+     *
+     * <p>Since this value is subtracted in the final utility calculation, higher values represent
+     * stronger penalties for straying from the friendly force. If no friendly forces are present
+     * (friendsCoords is null), the method returns 0, applying no penalty.
+     *
+     * @param friendsCoords       The coordinate representing the center of friendly forces, or null if no friends
+     * @param path                The movement path being evaluated
+     * @param movingUnit          The entity being moved, or null to skip role-aware positioning
+     * @param medianEnemyPosition The median position of enemy forces, or null if no enemies
+     *
+     * @return A herding modifier value (higher is worse) to be used in path ranking
+     */
+    protected double calculateHerdingMod(Coords friendsCoords, MovePath path, @Nullable Entity movingUnit,
+          @Nullable Coords medianEnemyPosition) {
         if (friendsCoords == null) {
             logger.trace(" herdingMod [-0 no friends]");
             return 0;
         }
 
-        double finalDistance = friendsCoords.distance(path.getFinalCoords());
+        Coords herdTarget = friendsCoords;
         double herding = getOwner().getBehaviorSettings().getHerdMentalityValue();
+
+        // Long-range units herd to an "overwatch" position behind friendly lines
+        if (movingUnit != null && getOwner().getBehaviorSettings().isUseRoleAwarePositioning() && medianEnemyPosition != null) {
+            PathRankerState state = getOwner().getPathRankerState();
+            if (state.isLongRangeOptimal(movingUnit)) {
+                int optimalRange = state.getOptimalRange(movingUnit);
+                // Calculate direction from enemies to friends (the "retreat" direction)
+                int direction = medianEnemyPosition.direction(friendsCoords);
+                // Offset herd target away from enemies by half the optimal range
+                // (full range would put them too far back; half keeps them supporting)
+                int overwatchOffset = optimalRange / 2;
+                herdTarget = friendsCoords.translated(direction, overwatchOffset);
+                logger.trace("Long-range unit {} herding to overwatch position {} hexes behind friends",
+                    movingUnit.getDisplayName(), overwatchOffset);
+            }
+        }
+
+        double finalDistance = herdTarget.distance(path.getFinalCoords());
         double herdingMod = finalDistance * herding;
 
         logger.trace("herding mod [-{} = {} * {}]", herdingMod, finalDistance, herding);
@@ -959,9 +1001,14 @@ public class BasicPathRanker extends PathRanker {
         scores.put("aggressionIndex", (double) getOwner().getBehaviorSettings().getHyperAggressionIndex());
         scores.put("aggressionMod", aggressionMod);
 
+        // Calculate median enemy position early - needed for both herding and facing calculations
+        Coords medianEnemyPosition = unitsMedianCoordinateCalculator.getEnemiesMedianCoordinate(enemies,
+              path.getFinalCoords(), path.getFinalBoardId());
+
         // The further I am from my teammates, the lower this path
         // ranks (weighted by Herd Mentality).
-        double herdingMod = isNotAirborne ? calculateHerdingMod(friendsCoords, pathCopy) : 0;
+        // Long-range units herd to an "overwatch" position offset from friends, away from enemies
+        double herdingMod = isNotAirborne ? calculateHerdingMod(friendsCoords, pathCopy, movingUnit, medianEnemyPosition) : 0;
 
         // Movement is good, it gives defense and extends a player power in the game.
         if (movingUnit.getPosition() != null && friendsCoords != null) {
@@ -979,8 +1026,6 @@ public class BasicPathRanker extends PathRanker {
         scores.put("selfPreservationIndex", (double) getOwner().getBehaviorSettings().getSelfPreservationIndex());
         scores.put("movementMod", movementMod);
         // Try to face the enemy.
-        Coords medianEnemyPosition = unitsMedianCoordinateCalculator.getEnemiesMedianCoordinate(enemies,
-              path.getFinalCoords(), path.getFinalBoardId());
         Coords closestEnemyPositionNotZeroDistance = Optional.ofNullable(findClosestEnemy(movingUnit,
               pathCopy.getFinalCoords(),
               game,

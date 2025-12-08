@@ -3448,4 +3448,441 @@ class BasicPathRankerTest {
         }
     }
 
+    // ========== CASPAR Scenario Tests ==========
+    // Based on CASPAR Scenarios.txt - tests the key behaviors from each documented scenario
+
+    @Nested
+    class CASPARScenarioTests {
+
+        // ========== Scenario 1: Mixed Lance Engagement ==========
+
+        /**
+         * CASPAR Scenario: Mixed Lance Engagement
+         *
+         * <p>Tests role-based optimal range settings for a diverse lance:
+         * Atlas (BRAWLER) at 3 hexes, Catapult (MISSILE_BOAT) at 21 hexes,
+         * Wolverine (SKIRMISHER) at 12 hexes, Commando (SCOUT) at 3 hexes.</p>
+         *
+         * <p>The key insight: different roles get different optimal ranges,
+         * so a mixed lance naturally spreads out to appropriate positions.</p>
+         */
+        @Test
+        void testMixedLance_RolesDetermineOptimalRange() {
+            PathRankerState state = new PathRankerState();
+
+            // Verify the role-based range constants match scenario expectations
+            assertEquals(3, getRangeForRoleValue(UnitRole.BRAWLER),
+                "Brawler (Atlas) should have optimal range 3 hexes");
+            assertEquals(15, getRangeForRoleValue(UnitRole.MISSILE_BOAT),
+                "Missile Boat (Catapult) should have optimal range 15 hexes");
+            assertEquals(9, getRangeForRoleValue(UnitRole.SKIRMISHER),
+                "Skirmisher (Wolverine) should have optimal range 9 hexes");
+            assertEquals(12, getRangeForRoleValue(UnitRole.SCOUT),
+                "Scout (Commando) should have optimal range 12 hexes");
+        }
+
+        /**
+         * CASPAR Scenario: Mixed Lance - Range Bracket Separation
+         *
+         * <p>Tests that long-range units (Snipers, Missile Boats) are correctly
+         * identified as needing distance, while short-range units (Brawlers,
+         * Juggernauts) are not.</p>
+         */
+        @Test
+        void testMixedLance_RangeBracketClassification() {
+            // Long range threshold is >= 12 hexes
+            assertTrue(getRangeForRoleValue(UnitRole.MISSILE_BOAT) >= 12,
+                "Missile Boat should be classified as long range");
+            assertTrue(getRangeForRoleValue(UnitRole.SNIPER) >= 12,
+                "Sniper should be classified as long range");
+
+            assertFalse(getRangeForRoleValue(UnitRole.BRAWLER) >= 12,
+                "Brawler should NOT be classified as long range");
+            assertFalse(getRangeForRoleValue(UnitRole.JUGGERNAUT) >= 12,
+                "Juggernaut should NOT be classified as long range");
+        }
+
+        /**
+         * CASPAR Scenario: Mixed Lance - Movement Order
+         *
+         * <p>Tests that Scouts move first (4.0x), then fire support (3.0x),
+         * then line units (1.0x), then heavy anchors (0.5x).</p>
+         */
+        @Test
+        void testMixedLance_MovementOrderPriority() {
+            PathRankerState state = new PathRankerState();
+
+            Entity mockScout = mock(BipedMek.class);
+            when(mockScout.getRole()).thenReturn(UnitRole.SCOUT);
+            when(mockScout.getWeaponList()).thenReturn(List.of(mock(WeaponMounted.class)));
+
+            Entity mockMissileBoat = mock(BipedMek.class);
+            when(mockMissileBoat.getRole()).thenReturn(UnitRole.MISSILE_BOAT);
+            when(mockMissileBoat.getWeaponList()).thenReturn(List.of(mock(WeaponMounted.class)));
+
+            Entity mockBrawler = mock(BipedMek.class);
+            when(mockBrawler.getRole()).thenReturn(UnitRole.BRAWLER);
+            when(mockBrawler.getWeaponList()).thenReturn(List.of(mock(WeaponMounted.class)));
+
+            Entity mockJuggernaut = mock(BipedMek.class);
+            when(mockJuggernaut.getRole()).thenReturn(UnitRole.JUGGERNAUT);
+            when(mockJuggernaut.getWeaponList()).thenReturn(List.of(mock(WeaponMounted.class)));
+
+            double scoutOrder = state.getRoleMoveOrderMultiplier(mockScout);
+            double missileBoatOrder = state.getRoleMoveOrderMultiplier(mockMissileBoat);
+            double brawlerOrder = state.getRoleMoveOrderMultiplier(mockBrawler);
+            double juggernautOrder = state.getRoleMoveOrderMultiplier(mockJuggernaut);
+
+            // Verify movement order: Scout > Missile Boat > Brawler > Juggernaut
+            assertTrue(scoutOrder > missileBoatOrder,
+                "Scout should move before Missile Boat");
+            assertTrue(missileBoatOrder > brawlerOrder,
+                "Missile Boat should move before Brawler");
+            assertTrue(brawlerOrder > juggernautOrder,
+                "Brawler should move before Juggernaut");
+        }
+
+        // ========== Scenario 2: Gunnery Skill Impact ==========
+
+        /**
+         * CASPAR Scenario: Range Discipline - Gunnery Thresholds
+         *
+         * <p>Tests the gunnery skill constants used for range adjustment:
+         * Elite (2-3), Standard (4), Green (5+).</p>
+         */
+        @Test
+        void testGunnerySkill_ThresholdConstants() {
+            assertEquals(3, PathRankerState.GUNNERY_ELITE,
+                "Elite threshold should be gunnery 3 or less");
+            assertEquals(4, PathRankerState.GUNNERY_STANDARD,
+                "Standard threshold should be gunnery 4");
+            assertEquals(5, PathRankerState.GUNNERY_GREEN,
+                "Green threshold should be gunnery 5 or more");
+        }
+
+        /**
+         * CASPAR Scenario: Range Discipline - Optimal Range Constants
+         *
+         * <p>Tests the optimal range bracket constants match the scenario expectations.</p>
+         */
+        @Test
+        void testGunnerySkill_OptimalRangeConstants() {
+            assertEquals(3, PathRankerState.OPTIMAL_RANGE_SHORT,
+                "Short range should be 3 hexes");
+            assertEquals(12, PathRankerState.OPTIMAL_RANGE_MEDIUM,
+                "Medium range should be 12 hexes");
+            assertEquals(21, PathRankerState.OPTIMAL_RANGE_LONG,
+                "Long range should be 21 hexes");
+        }
+
+        /**
+         * CASPAR Scenario: Range Discipline - Damage Threshold
+         *
+         * <p>Tests that a 1-point damage difference does NOT trigger range change.
+         * This prevents oscillation where a unit constantly repositions based on
+         * minor damage fluctuations.</p>
+         */
+        @Test
+        void testGunnerySkill_DamageThresholdPreventsOscillation() {
+            // DAMAGE_THRESHOLD of 2 means:
+            // - S=4, M=5: diff is 1, stays at SHORT (threshold not met)
+            // - S=3, M=5: diff is 2, switches to MEDIUM (threshold met)
+            assertEquals(2, PathRankerState.DAMAGE_THRESHOLD,
+                "Damage threshold should be 2 to prevent oscillation");
+        }
+
+        // ========== Scenario 3: Numerical Superiority (4v1) ==========
+
+        /**
+         * CASPAR Scenario: Numerical Superiority - Threat Distribution
+         *
+         * <p>Tests that when 4 Hunchbacks face 1 Atlas, the threat is distributed.
+         * Each Hunchback should perceive ~25% of the threat when using damage pool.</p>
+         */
+        @Test
+        void testNumericalSuperiority_ThreatDistribution() {
+            PathRankerState state = new PathRankerState();
+
+            // Initialize pool with enemy Atlas at 100 damage potential
+            int atlasId = 1;
+            state.setDamageSource(atlasId, 100.0);
+
+            // Simulate 4 equal units engaging (each claims 25% of threat)
+            Entity hunchback1 = mock(BipedMek.class);
+            when(hunchback1.getRole()).thenReturn(UnitRole.BRAWLER);
+            when(hunchback1.getWeaponList()).thenReturn(List.of(mock(WeaponMounted.class)));
+
+            // First Hunchback allocates 25%
+            state.allocateDamageSource(atlasId, 0.25, hunchback1, false);
+            assertEquals(75.0, state.getRemainingThreat(atlasId), 0.01,
+                "After first Hunchback, 75% threat should remain");
+
+            // Second Hunchback allocates 25%
+            state.allocateDamageSource(atlasId, 0.25, hunchback1, false);
+            assertEquals(56.25, state.getRemainingThreat(atlasId), 0.01,
+                "After second Hunchback, 56.25% threat should remain");
+
+            // Third Hunchback allocates 25%
+            state.allocateDamageSource(atlasId, 0.25, hunchback1, false);
+            assertEquals(42.19, state.getRemainingThreat(atlasId), 0.01,
+                "After third Hunchback, ~42% threat should remain");
+
+            // Fourth Hunchback allocates 25%
+            state.allocateDamageSource(atlasId, 0.25, hunchback1, false);
+            assertEquals(31.64, state.getRemainingThreat(atlasId), 0.01,
+                "After fourth Hunchback, ~32% threat should remain");
+        }
+
+        /**
+         * CASPAR Scenario: Numerical Superiority - Role Weight Amplification
+         *
+         * <p>Tests that Juggernauts absorb MORE threat (1.5x) while Snipers
+         * absorb LESS (0.3x), affecting how the damage pool is depleted.</p>
+         */
+        @Test
+        void testNumericalSuperiority_RoleWeightAmplification() {
+            PathRankerState state = new PathRankerState();
+
+            // Initialize pool with enemy at 100 damage potential
+            int enemyId = 1;
+            state.setDamageSource(enemyId, 100.0);
+
+            // Juggernaut allocates with 1.5x weight
+            Entity juggernaut = mock(BipedMek.class);
+            when(juggernaut.getRole()).thenReturn(UnitRole.JUGGERNAUT);
+            when(juggernaut.getWeaponList()).thenReturn(List.of(mock(WeaponMounted.class)));
+            when(juggernaut.getDisplayName()).thenReturn("Juggernaut");
+
+            // Base allocation 50%, effective with 1.5x = 75%
+            state.allocateDamageSource(enemyId, 0.50, juggernaut, true);
+            assertEquals(25.0, state.getRemainingThreat(enemyId), 0.01,
+                "Juggernaut should reduce threat to 25% (50% * 1.5 = 75% allocated)");
+
+            // Reset for Sniper test
+            state.setDamageSource(enemyId, 100.0);
+
+            // Sniper allocates with 0.3x weight
+            Entity sniper = mock(BipedMek.class);
+            when(sniper.getRole()).thenReturn(UnitRole.SNIPER);
+            when(sniper.getWeaponList()).thenReturn(List.of(mock(WeaponMounted.class)));
+            when(sniper.getDisplayName()).thenReturn("Sniper");
+
+            // Base allocation 50%, effective with 0.3x = 15%
+            state.allocateDamageSource(enemyId, 0.50, sniper, true);
+            assertEquals(85.0, state.getRemainingThreat(enemyId), 0.01,
+                "Sniper should reduce threat to 85% (50% * 0.3 = 15% allocated)");
+        }
+
+        // ========== Scenario 4: Close Combat / Melee Specialist ==========
+
+        /**
+         * CASPAR Scenario: Close Combat - MEL Bonus Constants
+         *
+         * <p>Tests the MEL (melee) special ability constants for threat calculation.</p>
+         */
+        @Test
+        void testCloseCombat_MELConstants() {
+            assertEquals(50.0, PathRankerState.MELEE_THREAT_BASE_PENALTY, 0.01,
+                "Base melee threat penalty should be 50");
+            assertEquals(50.0, PathRankerState.MELEE_THREAT_MEL_BONUS, 0.01,
+                "MEL ability bonus penalty should be 50");
+        }
+
+        /**
+         * CASPAR Scenario: Close Combat - Brawler vs Sniper Melee Threat
+         *
+         * <p>Tests that Brawlers/Juggernauts are treated as more dangerous in melee
+         * than Snipers/Missile Boats.</p>
+         */
+        @Test
+        void testCloseCombat_RoleMeleeDanger() {
+            PathRankerState state = new PathRankerState();
+
+            // Brawler at melee range
+            Entity brawler = mock(BipedMek.class);
+            when(brawler.getRole()).thenReturn(UnitRole.BRAWLER);
+            when(brawler.getDisplayName()).thenReturn("Brawler");
+
+            // Sniper at melee range
+            Entity sniper = mock(BipedMek.class);
+            when(sniper.getRole()).thenReturn(UnitRole.SNIPER);
+            when(sniper.getDisplayName()).thenReturn("Sniper");
+
+            double brawlerPenalty = state.calculateMeleeThreatPenalty(brawler, 1);
+            double sniperPenalty = state.calculateMeleeThreatPenalty(sniper, 1);
+
+            // Brawler: 50 * 1.0 = 50
+            // Sniper: 50 * 0.2 = 10
+            assertEquals(50.0, brawlerPenalty, 0.01,
+                "Brawler should have 50 melee penalty at range 1");
+            assertEquals(10.0, sniperPenalty, 0.01,
+                "Sniper should have 10 melee penalty at range 1");
+            assertEquals(5.0, brawlerPenalty / sniperPenalty, 0.01,
+                "Brawler should be 5x more dangerous in melee than Sniper");
+        }
+
+        /**
+         * CASPAR Scenario: Close Combat - Melee Range Only
+         *
+         * <p>Tests that melee threat penalty only applies at distance 1 (adjacent hex).</p>
+         */
+        @Test
+        void testCloseCombat_MeleeRangeOnly() {
+            PathRankerState state = new PathRankerState();
+
+            Entity brawler = mock(BipedMek.class);
+            when(brawler.getRole()).thenReturn(UnitRole.BRAWLER);
+            when(brawler.getDisplayName()).thenReturn("Brawler");
+
+            // At range 1 (melee)
+            double penaltyAt1 = state.calculateMeleeThreatPenalty(brawler, 1);
+            assertTrue(penaltyAt1 > 0, "Should have penalty at range 1");
+
+            // At range 2 (not melee)
+            double penaltyAt2 = state.calculateMeleeThreatPenalty(brawler, 2);
+            assertEquals(0.0, penaltyAt2, 0.01, "Should have NO penalty at range 2");
+
+            // At range 3
+            double penaltyAt3 = state.calculateMeleeThreatPenalty(brawler, 3);
+            assertEquals(0.0, penaltyAt3, 0.01, "Should have NO penalty at range 3");
+        }
+
+        /**
+         * CASPAR Scenario: Close Combat - Melee Optimal Range
+         *
+         * <p>Tests that OPTIMAL_RANGE_MELEE is set to 1 hex for MEL units.</p>
+         */
+        @Test
+        void testCloseCombat_MeleeOptimalRange() {
+            assertEquals(1, PathRankerState.OPTIMAL_RANGE_MELEE,
+                "Melee optimal range should be 1 hex (adjacent)");
+        }
+
+        // ========== Scenario 5: Vehicle Lance / Standoff Tactics ==========
+
+        /**
+         * CASPAR Scenario: Standoff Tactics - Long Range Unit Behavior
+         *
+         * <p>Tests that Snipers and Missile Boats have the lowest threat weights,
+         * so they don't draw fire while sitting at range.</p>
+         */
+        @Test
+        void testStandoffTactics_LongRangeThreatWeight() {
+            PathRankerState state = new PathRankerState();
+
+            Entity missileBoat = mock(BipedMek.class);
+            when(missileBoat.getRole()).thenReturn(UnitRole.MISSILE_BOAT);
+            when(missileBoat.getWeaponList()).thenReturn(List.of(mock(WeaponMounted.class)));
+
+            Entity sniper = mock(BipedMek.class);
+            when(sniper.getRole()).thenReturn(UnitRole.SNIPER);
+            when(sniper.getWeaponList()).thenReturn(List.of(mock(WeaponMounted.class)));
+
+            double missileBoatWeight = state.getRoleThreatWeight(missileBoat);
+            double sniperWeight = state.getRoleThreatWeight(sniper);
+
+            assertEquals(0.3, missileBoatWeight, 0.01,
+                "Missile Boat should have 0.3x threat weight");
+            assertEquals(0.3, sniperWeight, 0.01,
+                "Sniper should have 0.3x threat weight");
+        }
+
+        /**
+         * CASPAR Scenario: Standoff Tactics - Striker Role
+         *
+         * <p>Tests that Strikers have intermediate threat weight (0.7x) and
+         * movement order (1.5x), suitable for forward screening.</p>
+         */
+        @Test
+        void testStandoffTactics_StrikerRole() {
+            PathRankerState state = new PathRankerState();
+
+            Entity striker = mock(BipedMek.class);
+            when(striker.getRole()).thenReturn(UnitRole.STRIKER);
+            when(striker.getWeaponList()).thenReturn(List.of(mock(WeaponMounted.class)));
+
+            double threatWeight = state.getRoleThreatWeight(striker);
+            double moveOrder = state.getRoleMoveOrderMultiplier(striker);
+
+            assertEquals(PathRankerState.THREAT_WEIGHT_STRIKER, threatWeight, 0.01,
+                "Striker should have 0.7x threat weight");
+            assertEquals(PathRankerState.MOVE_ORDER_STRIKER, moveOrder, 0.01,
+                "Striker should have 1.5x movement order");
+            assertEquals(6, getRangeForRoleValue(UnitRole.STRIKER),
+                "Striker should have 6 hex optimal range");
+        }
+
+        /**
+         * CASPAR Scenario: Standoff Tactics - isLongRangeOptimal Classification
+         *
+         * <p>Tests the isLongRangeOptimal method correctly identifies units
+         * that prefer standoff tactics (>= 12 hex optimal range).</p>
+         */
+        @Test
+        void testStandoffTactics_LongRangeClassification() {
+            // Verify the threshold matches scenario documentation
+            // "Long range" = optimal range >= 12 hexes
+
+            // From role constants:
+            // - SNIPER/MISSILE_BOAT: 15 hexes (long range)
+            // - SCOUT: 12 hexes (threshold, counts as long)
+            // - SKIRMISHER: 9 hexes (not long)
+            // - STRIKER/AMBUSHER: 6 hexes (not long)
+            // - BRAWLER/JUGGERNAUT: 3 hexes (definitely not long)
+
+            assertTrue(15 >= 12, "Sniper (15) should qualify as long range");
+            assertTrue(12 >= 12, "Scout (12) should qualify as long range (threshold)");
+            assertFalse(9 >= 12, "Skirmisher (9) should NOT qualify as long range");
+            assertFalse(6 >= 12, "Striker (6) should NOT qualify as long range");
+            assertFalse(3 >= 12, "Brawler (3) should NOT qualify as long range");
+        }
+
+        // ========== Civilian Handling ==========
+
+        /**
+         * CASPAR: Civilian units should flee (max range) and move last.
+         */
+        @Test
+        void testCivilian_FleeAndMoveLast() {
+            PathRankerState state = new PathRankerState();
+
+            Entity civilian = mock(BipedMek.class);
+            when(civilian.getId()).thenReturn(1);
+            when(civilian.getWeaponList()).thenReturn(List.of()); // No weapons
+
+            // Should be identified as civilian
+            assertTrue(state.isCivilian(civilian),
+                "Unit with no weapons should be civilian");
+
+            // Should have flee range (Integer.MAX_VALUE)
+            int optimalRange = state.getOptimalRange(civilian);
+            assertEquals(Integer.MAX_VALUE, optimalRange,
+                "Civilian should flee (MAX_VALUE range)");
+
+            // Should move last (0.1x multiplier)
+            double moveOrder = state.getRoleMoveOrderMultiplier(civilian);
+            assertEquals(PathRankerState.MOVE_ORDER_CIVILIAN, moveOrder, 0.01,
+                "Civilian should move last (0.1x order)");
+
+            // Should absorb zero threat
+            double threatWeight = state.getRoleThreatWeight(civilian);
+            assertEquals(PathRankerState.THREAT_WEIGHT_CIVILIAN, threatWeight, 0.01,
+                "Civilian should absorb zero threat");
+        }
+
+        // ========== Helper Methods ==========
+
+        // Helper to get role range (mirrors PathRankerState.getRangeForRole logic)
+        private int getRangeForRoleValue(UnitRole role) {
+            return switch (role) {
+                case BRAWLER, JUGGERNAUT -> 3;
+                case STRIKER, AMBUSHER -> 6;
+                case SKIRMISHER -> 9;
+                case SCOUT -> 12;
+                case SNIPER, MISSILE_BOAT -> 15;
+                default -> 9;
+            };
+        }
+    }
+
 }

@@ -154,9 +154,14 @@ public class BehaviorSettings implements Serializable {
     private boolean iAmAPirate = false; // Am I a pirate?
     private boolean ignoreDamageOutput = false;
     private boolean experimental = false; // running experimental features?
-    private boolean considerAlliedDamage = true; // factor in allied firepower when evaluating threats?
-    private boolean useDamageSourcePool = true; // use damage source pool tracking for threat calculation?
-    private boolean useRoleAwarePositioning = true; // position units at optimal range for their weapons?
+    /**
+     * CASPAR Protocol: Combined Advanced Situational Positioning And Response
+     * Enables all advanced Princess AI features:
+     * - Allied damage consideration (factor in friendly firepower when evaluating threats)
+     * - Damage source pool tracking (track which enemies are being engaged as units move)
+     * - Role-aware positioning (position units at optimal range for their weapons)
+     */
+    private boolean useCasparProtocol = true;
     private final Set<Integer> ignoredUnitTargets = new HashSet<>();
     // endregion Variable Declarations
 
@@ -188,9 +193,7 @@ public class BehaviorSettings implements Serializable {
         copy.setIAmAPirate(iAmAPirate());
         copy.setIgnoreDamageOutput(isIgnoreDamageOutput());
         copy.setExperimental(isExperimental());
-        copy.setConsiderAlliedDamage(isConsiderAlliedDamage());
-        copy.setUseDamageSourcePool(isUseDamageSourcePool());
-        copy.setUseRoleAwarePositioning(isUseRoleAwarePositioning());
+        copy.setUseCasparProtocol(isUseCasparProtocol());
         getStrategicBuildingTargets().forEach(copy::addStrategicTarget);
         getPriorityUnitTargets().forEach(copy::addPriorityUnit);
         getIgnoredUnitTargets().forEach(copy::addIgnoredUnitTarget);
@@ -234,73 +237,30 @@ public class BehaviorSettings implements Serializable {
     }
 
     /**
-     * @return TRUE if Princess should factor in allied firepower when evaluating threats.
+     * @return TRUE if CASPAR Protocol is enabled (Combined Advanced Situational Positioning And Response).
      */
-    public boolean isConsiderAlliedDamage() {
-        return considerAlliedDamage;
+    public boolean isUseCasparProtocol() {
+        return useCasparProtocol;
     }
 
     /**
-     * @param considerAlliedDamage Set TRUE to factor in allied firepower when evaluating threats.
-     */
-    public void setConsiderAlliedDamage(boolean considerAlliedDamage) {
-        this.considerAlliedDamage = considerAlliedDamage;
-    }
-
-    /**
-     * @param considerAlliedDamage Set TRUE to factor in allied firepower when evaluating threats.
-     */
-    public void setConsiderAlliedDamage(String considerAlliedDamage) {
-        setConsiderAlliedDamage(Boolean.parseBoolean(considerAlliedDamage));
-    }
-
-    /**
-     * @return TRUE if Princess should use damage source pool tracking for threat calculation.
-     */
-    public boolean isUseDamageSourcePool() {
-        return useDamageSourcePool;
-    }
-
-    /**
-     * @param useDamageSourcePool Set TRUE to use damage source pool tracking for threat calculation.
-     */
-    public void setUseDamageSourcePool(boolean useDamageSourcePool) {
-        this.useDamageSourcePool = useDamageSourcePool;
-    }
-
-    /**
-     * @param useDamageSourcePool Set TRUE to use damage source pool tracking for threat calculation.
-     */
-    public void setUseDamageSourcePool(String useDamageSourcePool) {
-        setUseDamageSourcePool(Boolean.parseBoolean(useDamageSourcePool));
-    }
-
-    /**
-     * @return TRUE if Princess should use role-aware positioning to keep units at optimal weapon ranges.
-     */
-    public boolean isUseRoleAwarePositioning() {
-        return useRoleAwarePositioning;
-    }
-
-    /**
-     * Set TRUE to use role-aware positioning, keeping units at optimal weapon ranges.
-     * Enabling this will also enable useDamageSourcePool (required dependency).
+     * Set TRUE to enable CASPAR Protocol (Combined Advanced Situational Positioning And Response).
+     * This enables all advanced Princess AI features:
+     * - Allied damage consideration
+     * - Damage source pool tracking
+     * - Role-aware positioning
      *
-     * @param useRoleAwarePositioning TRUE to enable role-aware positioning
+     * @param useCasparProtocol TRUE to enable CASPAR Protocol
      */
-    public void setUseRoleAwarePositioning(boolean useRoleAwarePositioning) {
-        this.useRoleAwarePositioning = useRoleAwarePositioning;
-        if (useRoleAwarePositioning) {
-            // Role-aware positioning requires damage source pool tracking
-            setUseDamageSourcePool(true);
-        }
+    public void setUseCasparProtocol(boolean useCasparProtocol) {
+        this.useCasparProtocol = useCasparProtocol;
     }
 
     /**
-     * @param useRoleAwarePositioning Set TRUE to use role-aware positioning.
+     * @param useCasparProtocol Set TRUE to enable CASPAR Protocol.
      */
-    public void setUseRoleAwarePositioning(String useRoleAwarePositioning) {
-        setUseRoleAwarePositioning(Boolean.parseBoolean(useRoleAwarePositioning));
+    public void setUseCasparProtocol(String useCasparProtocol) {
+        setUseCasparProtocol(Boolean.parseBoolean(useCasparProtocol));
     }
 
     /**
@@ -990,12 +950,16 @@ public class BehaviorSettings implements Serializable {
                 setIgnoreDamageOutput(Boolean.parseBoolean(child.getTextContent()));
             } else if ("experimental".equalsIgnoreCase(child.getNodeName())) {
                 setExperimental(child.getTextContent());
-            } else if ("considerAlliedDamage".equalsIgnoreCase(child.getNodeName())) {
-                setConsiderAlliedDamage(child.getTextContent());
-            } else if ("useDamageSourcePool".equalsIgnoreCase(child.getNodeName())) {
-                setUseDamageSourcePool(child.getTextContent());
-            } else if ("useRoleAwarePositioning".equalsIgnoreCase(child.getNodeName())) {
-                setUseRoleAwarePositioning(child.getTextContent());
+            } else if ("useCasparProtocol".equalsIgnoreCase(child.getNodeName())) {
+                setUseCasparProtocol(child.getTextContent());
+            // Legacy XML support - old save files may have these separate fields
+            // Any of these being true enables CASPAR Protocol
+            } else if ("considerAlliedDamage".equalsIgnoreCase(child.getNodeName()) ||
+                       "useDamageSourcePool".equalsIgnoreCase(child.getNodeName()) ||
+                       "useRoleAwarePositioning".equalsIgnoreCase(child.getNodeName())) {
+                if (Boolean.parseBoolean(child.getTextContent())) {
+                    setUseCasparProtocol(true);
+                }
             } else if ("strategicTargets".equalsIgnoreCase(child.getNodeName())) {
                 final NodeList targets = child.getChildNodes();
                 for (int j = 0; j < targets.getLength(); j++) {
@@ -1107,17 +1071,9 @@ public class BehaviorSettings implements Serializable {
             ignoreDamageOutput.setTextContent("" + isIgnoreDamageOutput());
             behavior.appendChild(ignoreDamageOutput);
 
-            final Element considerAlliedDamageNode = doc.createElement("considerAlliedDamage");
-            considerAlliedDamageNode.setTextContent("" + isConsiderAlliedDamage());
-            behavior.appendChild(considerAlliedDamageNode);
-
-            final Element useDamageSourcePoolNode = doc.createElement("useDamageSourcePool");
-            useDamageSourcePoolNode.setTextContent("" + isUseDamageSourcePool());
-            behavior.appendChild(useDamageSourcePoolNode);
-
-            final Element useRoleAwarePositioningNode = doc.createElement("useRoleAwarePositioning");
-            useRoleAwarePositioningNode.setTextContent("" + isUseRoleAwarePositioning());
-            behavior.appendChild(useRoleAwarePositioningNode);
+            final Element useCasparProtocolNode = doc.createElement("useCasparProtocol");
+            useCasparProtocolNode.setTextContent("" + isUseCasparProtocol());
+            behavior.appendChild(useCasparProtocolNode);
 
             final Element targetsNode = doc.createElement("strategicBuildingTargets");
             if (includeTargets) {
@@ -1173,9 +1129,7 @@ public class BehaviorSettings implements Serializable {
         out.append("\n\t I am a Pirate: ").append(iAmAPirate());
         out.append("\n\t I Ignore Damage Output: ").append(isIgnoreDamageOutput());
         out.append("\n\t Experimental: ").append(isExperimental());
-        out.append("\n\t Consider Allied Damage: ").append(isConsiderAlliedDamage());
-        out.append("\n\t Use Damage Source Pool: ").append(isUseDamageSourcePool());
-        out.append("\n\t Use Role-Aware Positioning: ").append(isUseRoleAwarePositioning());
+        out.append("\n\t CASPAR Protocol: ").append(isUseCasparProtocol());
         out.append("\n\t Targets:");
         out.append("\n\t\t Priority Coords: ");
         for (final String t : getStrategicBuildingTargets()) {
@@ -1243,12 +1197,8 @@ public class BehaviorSettings implements Serializable {
             return false;
         } else if (experimental != that.experimental) {
             return false;
-        } else if (considerAlliedDamage != that.considerAlliedDamage) {
-            return false;
-        } else if (useDamageSourcePool != that.useDamageSourcePool) {
-            return false;
         }
-        return useRoleAwarePositioning == that.useRoleAwarePositioning;
+        return useCasparProtocol == that.useCasparProtocol;
     }
 
     @Override
@@ -1274,9 +1224,7 @@ public class BehaviorSettings implements Serializable {
         result = 31 * result + (iAmAPirate ? 1 : 0);
         result = 31 * result + (experimental ? 1 : 0);
         result = 31 * result + (ignoreDamageOutput ? 1 : 0);
-        result = 31 * result + (considerAlliedDamage ? 1 : 0);
-        result = 31 * result + (useDamageSourcePool ? 1 : 0);
-        result = 31 * result + (useRoleAwarePositioning ? 1 : 0);
+        result = 31 * result + (useCasparProtocol ? 1 : 0);
         return result;
     }
 }

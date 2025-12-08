@@ -466,7 +466,7 @@ public class BasicPathRanker extends PathRanker {
 
         // Role-aware melee threat: penalize being at melee range of melee-focused enemies
         // This encourages staying at range 2-3 from Brawlers/Juggernauts
-        if (getOwner().getBehaviorSettings().isUseRoleAwarePositioning()) {
+        if (getOwner().getBehaviorSettings().isUseCasparProtocol()) {
             double meleeThreatPenalty = getOwner().getPathRankerState().calculateMeleeThreatPenalty(enemy, distance);
             theirDamagePotential += meleeThreatPenalty;
         }
@@ -519,7 +519,7 @@ public class BasicPathRanker extends PathRanker {
         double aggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
 
         // Role-Aware Positioning: penalize distance from optimal range, not just distance to enemy
-        if (getOwner().getBehaviorSettings().isUseRoleAwarePositioning()) {
+        if (getOwner().getBehaviorSettings().isUseCasparProtocol()) {
             PathRankerState state = getOwner().getPathRankerState();
             int optimalRange = state.getOptimalRange(movingUnit);
 
@@ -629,7 +629,7 @@ public class BasicPathRanker extends PathRanker {
         double herding = getOwner().getBehaviorSettings().getHerdMentalityValue();
 
         // Long-range units herd to an "overwatch" position behind friendly lines
-        if (movingUnit != null && getOwner().getBehaviorSettings().isUseRoleAwarePositioning() && medianEnemyPosition != null) {
+        if (movingUnit != null && getOwner().getBehaviorSettings().isUseCasparProtocol() && medianEnemyPosition != null) {
             PathRankerState state = getOwner().getPathRankerState();
             if (state.isLongRangeOptimal(movingUnit)) {
                 int optimalRange = state.getOptimalRange(movingUnit);
@@ -926,15 +926,15 @@ public class BasicPathRanker extends PathRanker {
 
             // Damage Source Pool takes precedence: check if pool is enabled and initialized
             PathRankerState state = getOwner().getPathRankerState();
-            if (getOwner().getBehaviorSettings().isUseDamageSourcePool() && state.isDamagePoolInitialized()) {
+            if (getOwner().getBehaviorSettings().isUseCasparProtocol() && state.isDamagePoolInitialized()) {
                 double remainingThreat = state.getRemainingThreat(enemy.getId());
                 if (remainingThreat < enemyDamage) {
                     logger.debug("Damage pool for {}: remaining threat {} < estimated {}, using pool value",
                           enemy.getDisplayName(), remainingThreat, enemyDamage);
                     enemyDamage = remainingThreat;
                 }
-            } else if (getOwner().getBehaviorSettings().isConsiderAlliedDamage()) {
-                // Fall back to ally counting heuristic
+            } else if (getOwner().getBehaviorSettings().isUseCasparProtocol()) {
+                // Fall back to ally counting heuristic (pool not initialized yet)
                 int alliesEngaging = countAlliesWhoCanEngage(enemy, movingUnit);
                 if (alliesEngaging > 0) {
                     double allyFactor = alliesEngaging + 1.0;  // +1 for self

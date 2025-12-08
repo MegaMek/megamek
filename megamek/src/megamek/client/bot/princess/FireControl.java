@@ -1459,7 +1459,7 @@ public class FireControl {
      * @return Multiplier to apply to utility (1.0 = no change, > 1.0 = preferred target)
      */
     protected double calcRolePreferredTargetMultiplier(final Entity shooter, final Targetable target) {
-        if (!owner.getBehaviorSettings().isUseRoleAwarePositioning()) {
+        if (!owner.getBehaviorSettings().isUseCasparProtocol()) {
             return 1.0;
         }
 

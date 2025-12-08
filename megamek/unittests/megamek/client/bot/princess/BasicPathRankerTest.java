@@ -2906,9 +2906,9 @@ class BasicPathRankerTest {
             // Setup: Even with allies in range, discount should NOT apply when feature is disabled
             BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
 
-            // Disable the feature
+            // Disable the feature (CASPAR Protocol off)
             BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
-            when(mockBehavior.isConsiderAlliedDamage()).thenReturn(false);
+            when(mockBehavior.isUseCasparProtocol()).thenReturn(false);
             when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
 
             Entity mockEnemy = mock(BipedMek.class);
@@ -2932,14 +2932,14 @@ class BasicPathRankerTest {
             int alliesEngaging = testRanker.countAlliesWhoCanEngage(mockEnemy, mockMovingUnit);
             assertEquals(1, alliesEngaging, "One ally can engage");
 
-            // But when isConsiderAlliedDamage() returns false, the discount should NOT be applied
+            // But when isUseCasparProtocol() returns false, the discount should NOT be applied
             // Expected: full damage is used instead of discounted damage
             double baseDamage = 50.0;
             double expectedDamageWithFeatureDisabled = 50.0; // No discount!
 
             // Document the expected behavior
             assertEquals(expectedDamageWithFeatureDisabled, baseDamage, 0.01,
-                  "When considerAlliedDamage is false, full enemy damage should be used");
+                  "When CASPAR Protocol is disabled, full enemy damage should be used");
         }
 
         /**

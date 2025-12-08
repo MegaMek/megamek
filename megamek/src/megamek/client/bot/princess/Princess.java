@@ -1373,7 +1373,7 @@ public class Princess extends BotClient {
 
             // Role-Aware Positioning: apply role-based movement order
             // Scouts move first, Juggernauts anchor and move last
-            if (getBehaviorSettings().isUseRoleAwarePositioning()) {
+            if (getBehaviorSettings().isUseCasparProtocol()) {
                 double roleMultiplier = pathRankerState.getRoleMoveOrderMultiplier(entity);
                 total *= roleMultiplier;
                 modifiers.append("\tx").append(numberFormat.format(roleMultiplier)).append(" (Role: ")
@@ -2330,7 +2330,7 @@ public class Princess extends BotClient {
             LOGGER.debug("Moving {} (ID {})", entity.getDisplayName(), entity.getId());
 
             // Log role-aware positioning info if enabled
-            if (getBehaviorSettings().isUseRoleAwarePositioning()) {
+            if (getBehaviorSettings().isUseCasparProtocol()) {
                 logRoleAwareInfo(entity);
             }
 
@@ -2410,7 +2410,7 @@ public class Princess extends BotClient {
             LOGGER.info("Best Path: {}  Rank: {}", bestPath.getPath(), bestPath.getRank());
 
             // Update damage source pool after path selection
-            if (getBehaviorSettings().isUseDamageSourcePool()) {
+            if (getBehaviorSettings().isUseCasparProtocol()) {
                 updateDamagePoolAfterMove(entity, bestPath.getPath());
             }
 
@@ -2464,7 +2464,7 @@ public class Princess extends BotClient {
 
                 if (enemyHealth > 0) {
                     double allocationFactor = Math.min(myDamage / enemyHealth, 1.0);
-                    boolean useRoleAware = getBehaviorSettings().isUseRoleAwarePositioning();
+                    boolean useRoleAware = getBehaviorSettings().isUseCasparProtocol();
                     pathRankerState.allocateDamageSource(enemy.getId(), allocationFactor, entity, useRoleAware);
                     LOGGER.debug("Unit {} engaging enemy {} at range {}, allocating {}{}",
                           entity.getDisplayName(), enemy.getDisplayName(), distance, allocationFactor,
@@ -2792,13 +2792,13 @@ public class Princess extends BotClient {
             }
 
             // Initialize damage source pool if enabled
-            if (getBehaviorSettings().isUseDamageSourcePool()) {
+            if (getBehaviorSettings().isUseCasparProtocol()) {
                 pathRankerState.initializeDamagePool(getEnemyEntities(), this);
             }
 
             // Initialize Alpha Strike damage cache for optimal range calculations
             // This captures current weapon/ammo state at phase start
-            if (getBehaviorSettings().isUseRoleAwarePositioning()) {
+            if (getBehaviorSettings().isUseCasparProtocol()) {
                 List<Entity> allUnits = new ArrayList<>(getEntitiesOwned());
                 allUnits.addAll(getEnemyEntities());
                 pathRankerState.initializeASDamageCache(allUnits);

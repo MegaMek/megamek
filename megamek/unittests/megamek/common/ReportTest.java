@@ -33,15 +33,11 @@
 package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import megamek.common.units.Crew;
+import megamek.common.units.Mek;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import megamek.common.Report;
-import megamek.common.units.Crew;
-import megamek.common.units.Entity;
-import megamek.common.units.Mek;
 
 public class ReportTest {
 
@@ -53,10 +49,10 @@ public class ReportTest {
         report.add("1");
 
         String text = report.text();
-        // Check for wrapping div
-        assertTrue(text.startsWith("<div class='report-entry'>"),
-                "Report should be wrapped in a div with class report-entry");
-        assertTrue(text.endsWith("</div>"), "Report should end with closing div");
+        // Check for wrapping span (using span instead of div to keep reports inline)
+        assertTrue(text.startsWith("<span class='report-entry'>"),
+              "Report should be wrapped in a span with class report-entry");
+        assertTrue(text.endsWith("</span>"), "Report should end with closing span");
 
         // Check for Bold tag
         assertTrue(text.contains("<B>"), "Report should use bold tag");

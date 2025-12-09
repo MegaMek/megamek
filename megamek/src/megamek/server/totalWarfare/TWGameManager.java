@@ -14588,7 +14588,6 @@ public class TWGameManager extends AbstractGameManager {
 
         r = new Report(4230);
         r.subject = te.getId();
-        r.addDesc(te);
         r.add(damage);
         r.add(toHit.getTableDesc());
         r.indent();
@@ -14757,7 +14756,6 @@ public class TWGameManager extends AbstractGameManager {
         r = new Report(4230);
         if (te != null) {
             r.subject = te.getId();
-            r.addDesc(te);
         } else {
             r.subject = ae.getId();
         }
@@ -15315,7 +15313,6 @@ public class TWGameManager extends AbstractGameManager {
             r = new Report(4230);
             if (targetEntity != null) {
                 r.subject = targetEntity.getId();
-                r.addDesc(targetEntity);
             } else {
                 r.subject = ae.getId();
             }

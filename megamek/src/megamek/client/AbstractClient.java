@@ -177,7 +177,6 @@ public abstract class AbstractClient implements IClient {
 
         if (log != null) {
             try {
-                log.appendRaw("</BODY></HTML>");
                 log.close();
             } catch (Exception ex) {
                 logger.error(ex, "Failed to close the client game log file.");
@@ -203,7 +202,7 @@ public abstract class AbstractClient implements IClient {
 
     protected void initGameLog() {
         log = new GameLog(PreferenceManager.getClientPreferences().getGameLogFilename());
-        log.appendRaw("<HTML><HEAD><LINK rel=\"stylesheet\" type=\"text/css\" href=\"megamek-gamelog.css\"></HEAD><BODY>");
+        log.append("<HTML><BODY>");
     }
 
     /**

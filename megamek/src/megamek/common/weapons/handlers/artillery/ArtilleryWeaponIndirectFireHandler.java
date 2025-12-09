@@ -223,8 +223,10 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 }
 
                 // Comm implant bonus only applies to non-infantry spotters
+                // Boosted comm implant provides same benefit as regular comm implant
                 boolean isInfantry = bestSpotter.get() instanceof Infantry;
-                boolean hasCommImplant = bestSpotter.get().hasAbility(OptionsConstants.MD_COMM_IMPLANT);
+                boolean hasCommImplant = bestSpotter.get().hasAbility(OptionsConstants.MD_COMM_IMPLANT) ||
+                      bestSpotter.get().hasAbility(OptionsConstants.MD_BOOST_COMM_IMPLANT);
                 int commImplantMod = (!isInfantry && hasCommImplant) ? -1 : 0;
                 logger.debug("  Spotter comm implant check: isInfantry={}, hasCommImplant={}, modifier={}",
                       isInfantry, hasCommImplant, commImplantMod);
@@ -260,8 +262,10 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                         attackingEntity.aTracker.setSpotterHasForwardObs(true);
                     }
                     // Comm implant bonus only applies to non-infantry spotters
+                    // Boosted comm implant provides same benefit as regular comm implant
                     if (!(bestSpotter.get() instanceof Infantry) &&
-                          bestSpotter.get().hasAbility(OptionsConstants.MD_COMM_IMPLANT)) {
+                          (bestSpotter.get().hasAbility(OptionsConstants.MD_COMM_IMPLANT) ||
+                                bestSpotter.get().hasAbility(OptionsConstants.MD_BOOST_COMM_IMPLANT))) {
                         attackingEntity.aTracker.setSpotterHasCommImplant(true);
                     }
                     int newMod = attackingEntity.aTracker.getModifier(weapon, targetPos) - 1;

@@ -1542,7 +1542,9 @@ public class ComputeToHit {
                     toHit.addModifier(1, Messages.getString("WeaponAttackAction.SpotterAttacking"));
                 }
                 // Comm implant provides -1 bonus when spotting for indirect LRM
-                if (spotter.hasAbility(OptionsConstants.MD_COMM_IMPLANT)) {
+                // Boosted comm implant provides same benefit as regular comm implant
+                if (spotter.hasAbility(OptionsConstants.MD_COMM_IMPLANT) ||
+                      spotter.hasAbility(OptionsConstants.MD_BOOST_COMM_IMPLANT)) {
                     toHit.addModifier(-1, Messages.getString("WeaponAttackAction.CommImplantSpotter"));
                 }
             }

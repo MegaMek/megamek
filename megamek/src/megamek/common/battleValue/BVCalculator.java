@@ -1329,13 +1329,21 @@ public abstract class BVCalculator {
             gunnery = Math.max(0, gunnery - 1);
             pilotModifiers.add("Buf. VDNI");
         }
-        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS) ||
-              entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_ENH_MM_IMPLANTS) ||
-              entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_LASER) ||
-              entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_AUDIO) ||
-              entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_VISUAL)) {
+        // Multi-Modal implants affect gunnery for all unit types
+        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS)
+              || entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_ENH_MM_IMPLANTS)) {
             gunnery = Math.max(0, gunnery - 1);
-            pilotModifiers.add("Sensory Implants");
+            pilotModifiers.add("MM Implants");
+        }
+        // Sensory implants: Only laser-sight/telescopic affect gunnery (provides -1 to-hit)
+        // IR/EM optical and audio only provide active probe, no gunnery bonus
+        // Benefits don't stack - having both laser and tele still only gives -1
+        // Only applies to conventional infantry
+        if (entity.isConventionalInfantry()
+              && (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_LASER)
+              || entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_TELE))) {
+            gunnery = Math.max(0, gunnery - 1);
+            pilotModifiers.add("Targeting Implants");
         }
         if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_PROTO_DNI) &&
               entity.hasMisc(MiscType.F_BATTLEMEK_NIU)) {

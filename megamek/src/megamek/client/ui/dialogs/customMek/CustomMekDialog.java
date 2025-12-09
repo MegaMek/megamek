@@ -345,11 +345,14 @@ public class CustomMekDialog extends AbstractButtonDialog
                 }
 
                 // a bunch of stuff should get disabled for all but conventional infantry
-                if (!entity.isConventionalInfantry() &&
-                      (option.getName().equals(OptionsConstants.MD_PL_ENHANCED) ||
-                            option.getName().equals(OptionsConstants.MD_PL_MASC) ||
-                            option.getName().equals(OptionsConstants.MD_CYBER_IMP_AUDIO) ||
-                            option.getName().equals(OptionsConstants.MD_CYBER_IMP_VISUAL))) {
+                // Sensory implants (audio, visual, laser, tele) are infantry-only
+                if (!entity.isConventionalInfantry()
+                      && (option.getName().equals(OptionsConstants.MD_PL_ENHANCED)
+                      || option.getName().equals(OptionsConstants.MD_PL_MASC)
+                      || option.getName().equals(OptionsConstants.MD_CYBER_IMP_AUDIO)
+                      || option.getName().equals(OptionsConstants.MD_CYBER_IMP_VISUAL)
+                      || option.getName().equals(OptionsConstants.MD_CYBER_IMP_LASER)
+                      || option.getName().equals(OptionsConstants.MD_CYBER_IMP_TELE))) {
                     continue;
                 }
 

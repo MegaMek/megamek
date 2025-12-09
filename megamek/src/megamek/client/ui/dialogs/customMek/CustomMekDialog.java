@@ -475,6 +475,45 @@ public class CustomMekDialog extends AbstractButtonDialog
 
     @Override
     public void optionClicked(DialogOptionComponentYPanel comp, IOption option, boolean state) {
+        // Enforce max 2 sensory implants rule for infantry
+        if (state && isSensoryImplant(option.getName())) {
+            int count = countSelectedSensoryImplants(comp);
+            if (count >= 2) {
+                // Revert the selection
+                comp.setSelected(false);
+                JOptionPane.showMessageDialog(this,
+                      Messages.getString("CustomMekDialog.MaxSensoryImplants"),
+                      Messages.getString("CustomMekDialog.MaxSensoryImplantsTitle"),
+                      JOptionPane.WARNING_MESSAGE);
+            }
+        }
+    }
+
+    /**
+     * Checks if the given option name is a sensory implant.
+     */
+    private boolean isSensoryImplant(String optionName) {
+        return optionName.equals(OptionsConstants.MD_CYBER_IMP_AUDIO)
+              || optionName.equals(OptionsConstants.MD_CYBER_IMP_VISUAL)
+              || optionName.equals(OptionsConstants.MD_CYBER_IMP_LASER)
+              || optionName.equals(OptionsConstants.MD_CYBER_IMP_TELE);
+    }
+
+    /**
+     * Counts the number of sensory implants currently selected, excluding the given component.
+     */
+    private int countSelectedSensoryImplants(DialogOptionComponentYPanel excludeComp) {
+        int count = 0;
+        for (DialogOptionComponentYPanel optComp : optionComps) {
+            if (optComp == excludeComp) {
+                continue;
+            }
+            if (isSensoryImplant(optComp.getOption().getName())
+                  && Boolean.TRUE.equals(optComp.getValue())) {
+                count++;
+            }
+        }
+        return count;
     }
 
     @Override

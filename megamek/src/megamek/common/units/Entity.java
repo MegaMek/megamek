@@ -6304,13 +6304,8 @@ public abstract class Entity extends TurnOrdered
                 return true;
             }
         }
-        // check for Manei Domini implants
-        return (this instanceof Infantry) &&
-              (null != crew)
-              // Fix for Bug Report #1194
-              &&
-              hasAbility(OptionsConstants.MD_ENH_MM_IMPLANTS) &&
-              hasAbility(OptionsConstants.MD_BOOST_COMM_IMPLANT);
+        // Boosted Comm Implant grants C3i access for any unit (pilots/crew/troops)
+        return (null != crew) && hasAbility(OptionsConstants.MD_BOOST_COMM_IMPLANT);
     }
 
     /**

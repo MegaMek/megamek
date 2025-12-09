@@ -3241,6 +3241,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Fed Suns/Fed Commonwealth Infantry Kit (3030-3066)";
+        misc.addLookupName("Fed Suns/Fed Commonweath Infantry Kit (3030-3066)");
         misc.damageDivisor = 1.0;
         misc.setInternalName(misc.name);
         misc.addLookupName("DavionKit3030");

@@ -476,7 +476,9 @@ public class CustomMekDialog extends AbstractButtonDialog
     @Override
     public void optionClicked(DialogOptionComponentYPanel comp, IOption option, boolean state) {
         // Enforce max 2 sensory implants rule for infantry
-        if (state && isSensoryImplant(option.getName())) {
+        // Defensive check for isConventionalInfantry in case options are set through other means
+        Entity entity = entities.get(0);
+        if (state && entity.isConventionalInfantry() && isSensoryImplant(option.getName())) {
             int count = countSelectedSensoryImplants(comp);
             if (count >= 2) {
                 // Revert the selection

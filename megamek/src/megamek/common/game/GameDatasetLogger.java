@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -40,6 +40,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.EnumMap;
+import java.util.Map;
 
 import megamek.ai.dataset.*;
 import megamek.common.Configuration;
@@ -53,8 +55,14 @@ import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 
 /**
- * The GameDatasetLogger class is used to log game data to a file in the log directory with TSV format. It contains
- * every action taken by  every unit in the game and the result of the game state after those actions.
+ * The GameDatasetLogger class is used to log game data to separate TSV files in the log directory.
+ * Each file type contains a specific category of data for easier parsing and analysis:
+ * <ul>
+ *   <li>board - Board terrain, map settings, and planetary conditions (static game setup)</li>
+ *   <li>actions - Unit movement actions (UnitAction records)</li>
+ *   <li>states - Game state snapshots (UnitState records)</li>
+ *   <li>attacks - Attack actions (UnitAttack records)</li>
+ * </ul>
  *
  * @author Luana Coppio
  */
@@ -64,20 +72,44 @@ public class GameDatasetLogger {
     public static final String LOG_DIR = Configuration.gameSummaryImagesMMDir().getAbsolutePath();
     private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
+    /**
+     * Enum defining the different log file types.
+     */
+    public enum LogFileType {
+        BOARD("board"),
+        ACTIONS("actions"),
+        STATES("states"),
+        ATTACKS("attacks");
+
+        private final String suffix;
+
+        LogFileType(String suffix) {
+            this.suffix = suffix;
+        }
+
+        public String getSuffix() {
+            return suffix;
+        }
+    }
+
     private final UnitActionSerializer unitActionSerializer = new UnitActionSerializer();
     private final UnitAttackSerializer unitAttackSerializer = new UnitAttackSerializer();
     private final BoardDataSerializer boardDataSerializer = new BoardDataSerializer();
     private final MapSettingsDataSerializer mapSettingsDataSerializer = new MapSettingsDataSerializer();
     private final PlanetaryConditionsDataSerializer planetaryConditionsDataSerializer = new PlanetaryConditionsDataSerializer();
-    private final GameDataSerializer gameDataSerializer = new GameDataSerializer();
+    private final UnitStateSerializer unitStateSerializer = new UnitStateSerializer();
 
     private final String prefix;
-    private BufferedWriter writer;
-    private boolean createNewFile = true;
+    private final Map<LogFileType, BufferedWriter> writers = new EnumMap<>(LogFileType.class);
+    private final Map<LogFileType, Boolean> headerWritten = new EnumMap<>(LogFileType.class);
+    private boolean createNewFiles = true;
     private String nextTimestamp = null;
+    private String currentTimestamp = null;
 
     /**
-     * Creates Game Dataset Log named
+     * Creates Game Dataset Logger with the given prefix.
+     *
+     * @param prefix the prefix for log file names
      */
     public GameDatasetLogger(String prefix) {
         this.prefix = prefix;
@@ -87,19 +119,27 @@ public class GameDatasetLogger {
                 logger.error("Failed to create log directory, GameDatasetLogger wont log anything");
             }
         }
+        // Initialize header tracking
+        for (LogFileType type : LogFileType.values()) {
+            headerWritten.put(type, false);
+        }
     }
 
     /**
-     * When called, the next log entry will be written to a new file.
+     * When called, the next log entry will be written to new files.
      */
     public void requestNewLogFile() {
-        createNewFile = true;
+        createNewFiles = true;
         nextTimestamp = null;
+        // Reset header tracking for new files
+        for (LogFileType type : LogFileType.values()) {
+            headerWritten.put(type, false);
+        }
     }
 
     /**
-     * Sets the timestamp to use for the next log file.
-     * This allows the TSV file to use the same timestamp as the game's GIF summary.
+     * Sets the timestamp to use for the next log files.
+     * This allows the TSV files to use the same timestamp as the game's GIF summary.
      *
      * @param timestamp the timestamp string (format: yyyyMMdd_HHmmss)
      */
@@ -108,31 +148,53 @@ public class GameDatasetLogger {
     }
 
     /**
-     * Creates a new log file with a unique timestamp-based filename.
-     * Each game will get its own unique TSV file.
+     * Creates new log files with a unique timestamp-based filename.
+     * Each game will get its own set of TSV files.
      */
-    private void newLogFile() {
-        try {
-            String timestamp = (nextTimestamp != null) ? nextTimestamp : LocalDateTime.now().format(TIMESTAMP_FORMAT);
-            String filename = prefix + "_" + timestamp;
-            File logfile = new File(LOG_DIR + File.separator + filename + ".tsv");
-            writer = new BufferedWriter(new FileWriter(logfile));
-            initialize();
-        } catch (Exception ex) {
-            logger.error("An error happened while setting up a new log file, writer is being shut down", ex);
-            writer = null;
+    private void createNewLogFiles() {
+        closeAllWriters();
+        currentTimestamp = (nextTimestamp != null) ? nextTimestamp : LocalDateTime.now().format(TIMESTAMP_FORMAT);
+
+        for (LogFileType type : LogFileType.values()) {
+            try {
+                String filename = prefix + "_" + type.getSuffix() + "_" + currentTimestamp + ".tsv";
+                File logfile = new File(LOG_DIR + File.separator + filename);
+                BufferedWriter writer = new BufferedWriter(new FileWriter(logfile));
+                writers.put(type, writer);
+                // Write file header comment
+                writer.write("# " + type.name() + " log file created at " + LocalDateTime.now());
+                writer.newLine();
+                writer.flush();
+                headerWritten.put(type, false);
+            } catch (Exception ex) {
+                logger.error("Failed to create log file for type " + type, ex);
+                writers.put(type, null);
+            }
         }
     }
 
-    private void initialize() {
-        appendToFile("# Log file created at " + LocalDateTime.now());
+    /**
+     * Closes all open writers.
+     */
+    private void closeAllWriters() {
+        for (LogFileType type : LogFileType.values()) {
+            BufferedWriter writer = writers.get(type);
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException ex) {
+                    logger.error("Error closing writer for " + type, ex);
+                }
+            }
+        }
+        writers.clear();
     }
 
     /**
-     * Append a planetary conditions to the log file
+     * Append planetary conditions to the board log file.
      *
      * @param planetaryConditions the planetary conditions to log
-     * @param withHeader          whether to include the header in the log file
+     * @param withHeader          whether to include the header in the log file (ignored, headers auto-managed)
      */
     public void append(PlanetaryConditions planetaryConditions, boolean withHeader) {
         try {
@@ -142,21 +204,21 @@ public class GameDatasetLogger {
 
             PlanetaryConditionsData data = PlanetaryConditionsData.fromPlanetaryConditions(planetaryConditions);
 
-            if (withHeader) {
-                appendToFile(planetaryConditionsDataSerializer.getHeaderLine());
+            if (!headerWritten.get(LogFileType.BOARD)) {
+                appendToFile(LogFileType.BOARD, planetaryConditionsDataSerializer.getHeaderLine());
             }
 
-            appendToFile(planetaryConditionsDataSerializer.serialize(data));
+            appendToFile(LogFileType.BOARD, planetaryConditionsDataSerializer.serialize(data));
         } catch (Exception ex) {
             logger.error("Error logging planetary conditions", ex);
         }
     }
 
     /**
-     * Append a board to the log file
+     * Append board data to the board log file.
      *
      * @param board      the board to log
-     * @param withHeader whether to include the header in the log file
+     * @param withHeader whether to include the header in the log file (ignored, headers auto-managed)
      */
     public void append(Board board, boolean withHeader) {
         try {
@@ -166,17 +228,17 @@ public class GameDatasetLogger {
 
             BoardData data = BoardData.fromBoard(board);
             String lines = boardDataSerializer.serialize(data);
-            appendToFile(lines);
+            appendToFile(LogFileType.BOARD, lines);
         } catch (Exception ex) {
             logger.error("Error logging board", ex);
         }
     }
 
     /**
-     * Append a map settings to the log file
+     * Append map settings to the board log file.
      *
      * @param mapSettings the map settings to log
-     * @param withHeader  whether to include the header in the log file
+     * @param withHeader  whether to include the header in the log file (ignored, headers auto-managed)
      */
     public void append(MapSettings mapSettings, boolean withHeader) {
         try {
@@ -185,29 +247,24 @@ public class GameDatasetLogger {
             }
 
             MapSettingsData data = MapSettingsData.fromMapSettings(mapSettings);
-
-            if (withHeader) {
-                appendToFile(mapSettingsDataSerializer.getHeaderLine());
-            }
-
-            appendToFile(mapSettingsDataSerializer.serialize(data));
-
+            appendToFile(LogFileType.BOARD, mapSettingsDataSerializer.getHeaderLine());
+            appendToFile(LogFileType.BOARD, mapSettingsDataSerializer.serialize(data));
         } catch (Exception ex) {
             logger.error("Error logging map settings", ex);
         }
     }
 
     /**
-     * Append an entity action to the log file
+     * Append an entity action to the appropriate log file.
      *
      * @param game         the game
      * @param entityAction the entity action to log
-     * @param withHeader   whether to include the header in the log file
+     * @param withHeader   whether to include the header in the log file (ignored, headers auto-managed)
      */
     public void append(Game game, EntityAction entityAction, boolean withHeader) {
         try {
             if (entityAction instanceof AbstractAttackAction abstractAttackAction) {
-                append(game, abstractAttackAction, withHeader);
+                appendAttack(game, abstractAttackAction);
             }
         } catch (Exception ex) {
             logger.error(ex, "Error logging entity action");
@@ -215,48 +272,56 @@ public class GameDatasetLogger {
     }
 
     /**
-     * Append an attack action to the log file
+     * Append an attack action to the attacks log file.
      *
      * @param game         the game
      * @param attackAction the attack action to log
-     * @param withHeader   whether to include the header in the log file
      */
-    private void append(Game game, AbstractAttackAction attackAction, boolean withHeader) {
-        // To be changed in the near future by a proper parser for the attack action
-        // as soon as it become necessary
+    private void appendAttack(Game game, AbstractAttackAction attackAction) {
         if (attackAction == null) {
             return;
         }
         try {
             UnitAttack unitAttackAction = UnitAttack.fromAttackAction(attackAction, game);
-            if (withHeader) {
-                appendToFile(unitAttackSerializer.getHeaderLine());
+
+            if (!headerWritten.get(LogFileType.ATTACKS)) {
+                appendToFile(LogFileType.ATTACKS, unitAttackSerializer.getHeaderLine());
+                headerWritten.put(LogFileType.ATTACKS, true);
             }
-            appendToFile(unitAttackSerializer.serialize(unitAttackAction));
+
+            appendToFile(LogFileType.ATTACKS, unitAttackSerializer.serialize(unitAttackAction));
         } catch (Exception ex) {
             logger.error(ex, "Error logging Attack unit action");
         }
     }
 
-
     /**
-     * Appends a game state to the log file.
+     * Appends game state (all unit states) to the states log file.
      *
      * @param game       The game
-     * @param withHeader Whether to include the header in the log file
+     * @param withHeader Whether to include the header in the log file (ignored, headers auto-managed)
      */
     public void append(Game game, boolean withHeader) {
         try {
             GameData gameData = GameData.fromGame(game);
-            String lines = gameDataSerializer.serialize(gameData);
-            appendToFile(lines);
+
+            // Write header if not already written
+            if (!headerWritten.get(LogFileType.STATES)) {
+                appendToFile(LogFileType.STATES, unitStateSerializer.getHeaderLine());
+                headerWritten.put(LogFileType.STATES, true);
+            }
+
+            // Write each unit state as a separate line
+            for (UnitState unitState : gameData.getUnitStates()) {
+                appendToFile(LogFileType.STATES, unitStateSerializer.serialize(unitState));
+            }
         } catch (Exception ex) {
             logger.error("Error logging game state", ex);
         }
     }
 
     /**
-     * Appends a move path to the log file
+     * Appends a move path to the actions log file.
      *
      * @param movePath the move path to log
      */
@@ -265,36 +330,41 @@ public class GameDatasetLogger {
     }
 
     /**
-     * Appends a move path to the log file
+     * Appends a move path to the actions log file.
      *
      * @param movePath   the move path to log
-     * @param withHeader whether to include the header in the log file
+     * @param withHeader whether to include the header in the log file (ignored, headers auto-managed)
      */
     public void append(MovePath movePath, boolean withHeader) {
         try {
             UnitAction unitAction = UnitAction.fromMovePath(movePath);
-            if (withHeader) {
-                appendToFile(unitActionSerializer.getHeaderLine());
+
+            if (!headerWritten.get(LogFileType.ACTIONS)) {
+                appendToFile(LogFileType.ACTIONS, unitActionSerializer.getHeaderLine());
+                headerWritten.put(LogFileType.ACTIONS, true);
             }
-            appendToFile(unitActionSerializer.serialize(unitAction));
+
+            appendToFile(LogFileType.ACTIONS, unitActionSerializer.serialize(unitAction));
         } catch (Exception ex) {
             logger.error(ex, "Error logging MovePath unit action");
         }
     }
 
     /**
-     * Appends the text to the log
+     * Appends the text to the specified log file.
      *
-     * @param toLog the text to log
+     * @param fileType the type of log file to write to
+     * @param toLog    the text to log
      */
-    private void appendToFile(String toLog) {
+    private void appendToFile(LogFileType fileType, String toLog) {
         if (!PreferenceManager.getClientPreferences().dataLoggingEnabled()) {
             return;
         }
-        if (createNewFile) {
-            createNewFile = false;
-            newLogFile();
+        if (createNewFiles) {
+            createNewFiles = false;
+            createNewLogFiles();
         }
+        BufferedWriter writer = writers.get(fileType);
         if (writer == null) {
             return;
         }
@@ -303,19 +373,26 @@ public class GameDatasetLogger {
             writer.newLine();
             writer.flush();
         } catch (Exception ex) {
-            logger.error("", ex);
-            writer = null;
+            logger.error("Error writing to " + fileType + " log", ex);
+            writers.put(fileType, null);
         }
     }
 
     /**
-     * Closes the log file
+     * Closes all log files.
      *
-     * @throws IOException if an error occurs while closing the log file
+     * @throws IOException if an error occurs while closing the log files
      */
     public void close() throws IOException {
-        if (writer != null) {
-            writer.close();
-        }
+        closeAllWriters();
+    }
+
+    /**
+     * Gets the current timestamp being used for log files.
+     *
+     * @return the current timestamp string, or null if no files have been created yet
+     */
+    public String getCurrentTimestamp() {
+        return currentTimestamp;
     }
 }

@@ -44,14 +44,14 @@ import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.alphaStrike.conversion.ASConverter;
-import megamek.common.compute.Compute;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.UnitRole;
-import megamek.common.moves.MovePath;
-import megamek.common.moves.MoveStep;
 
 /**
  * Flexible container for unit action data using a map-based approach with enum keys.
@@ -80,6 +80,8 @@ public class UnitAction extends EntityDataMap<UnitAction.Field> {
         MAX_MP,
         MP_P,
         HEAT_P,
+        GUNNERY,
+        PILOTING,
         ARMOR_P,
         INTERNAL_P,
         JUMPING,
@@ -188,6 +190,15 @@ public class UnitAction extends EntityDataMap<UnitAction.Field> {
               .put(Field.MP_P, movePath.getMaxMP() > 0 ? (double) movePath.getMpUsed() / movePath.getMaxMP() : 0.0)
               .put(Field.HEAT_P,
                     entity.getHeatCapacity() > 0 ? entity.getHeat() / (double) entity.getHeatCapacity() : 0.0);
+
+        // Crew skills (for analyzing gunnery-based range adjustments)
+        if (entity.getCrew() != null) {
+            map.put(Field.GUNNERY, entity.getCrew().getGunnery())
+                  .put(Field.PILOTING, entity.getCrew().getPiloting());
+        } else {
+            map.put(Field.GUNNERY, 4)
+                  .put(Field.PILOTING, 5);
+        }
 
         // Status information
         map.put(Field.ARMOR_P, entity.getArmorRemainingPercent())

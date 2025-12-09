@@ -43,8 +43,8 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.compute.Compute;
-import megamek.common.units.Entity;
 import megamek.common.game.Game;
+import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.UnitRole;
 
@@ -76,6 +76,8 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
         FACING,
         MP,
         HEAT,
+        GUNNERY,
+        PILOTING,
         PRONE,
         AIRBORNE,
         OFF_BOARD,
@@ -149,6 +151,15 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
         map.put(Field.FACING, entity.getFacing())
               .put(Field.MP, entity.getMpUsedLastRound())
               .put(Field.HEAT, entity.getHeat());
+
+        // Crew skills (for analyzing gunnery-based range adjustments)
+        if (entity.getCrew() != null) {
+            map.put(Field.GUNNERY, entity.getCrew().getGunnery())
+                  .put(Field.PILOTING, entity.getCrew().getPiloting());
+        } else {
+            map.put(Field.GUNNERY, 4)
+                  .put(Field.PILOTING, 5);
+        }
 
         // Status flags
         map.put(Field.PRONE, entity.isProne())

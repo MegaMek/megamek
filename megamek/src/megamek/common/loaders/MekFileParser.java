@@ -887,6 +887,25 @@ public class MekFileParser {
                         }
                     }
                 }
+
+                // Fallback for entities that don't use critical slots (e.g., ProtoMeks)
+                // If no MGs were linked via critical slots, search the weapon list directly
+                if (mga.getBayWeapons().isEmpty()) {
+                    for (WeaponMounted weapon : entity.getWeaponList()) {
+                        if (weapon.getLocation() == mga.getLocation() &&
+                              weapon.getType().hasFlag(WeaponType.F_MG) &&
+                              mga.getType().getRackSize() == weapon.getType().getRackSize()) {
+                            int eqNum = entity.getEquipmentNum(weapon);
+                            if (!usedMG.contains(eqNum)) {
+                                mga.addWeaponToBay(eqNum);
+                                usedMG.add(eqNum);
+                                if (mga.getBayWeapons().size() >= 4) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

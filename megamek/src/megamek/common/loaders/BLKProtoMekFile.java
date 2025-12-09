@@ -144,6 +144,10 @@ public class BLKProtoMekFile extends BLKFile implements IMekLoader {
             loadEquipment(t, abbreviations[loop], loop);
         }
         t.setArmorTonnage(t.getArmorWeight());
+
+        // Link MG Arrays to their MGs
+        MekFileParser.linkMGAs(t);
+
         loadQuirks(t);
         return t;
     }

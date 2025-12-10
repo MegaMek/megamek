@@ -53,6 +53,7 @@ public class BLKStructureFileTest {
     static final String FILENAME_SIMPLE_BUILDING_ENTITY = "Simple Building Entity.blk";
     static final String FILENAME_SIMPLE_GUN_EMPLACEMENT_BUILDING_ENTITY = "Simple Gun Emplacement (Gauss).blk";
     static final String FILENAME_SIMPLE_LARGE_BUILDING_ENTITY = "Simple Large Building Entity.blk";
+    static final String FILENAME_HARDENED_COMMAND_FORT = "Hardened Command Fort (Clan Invasion).blk";
 
     @BeforeAll
     static void initialize() {
@@ -68,44 +69,47 @@ public class BLKStructureFileTest {
 
     static Stream<Arguments> buildingTestData() {
         return Stream.of(
-            // filename, chassis, model, year, buildingClass, buildingType, height, cf, armor, hexCount
-            Arguments.of(
-                FILENAME_SIMPLE_BUILDING_ENTITY,
-                "Simple Building Entity",
-                "",
-                3025,
-                0,
-                BuildingType.LIGHT,
-                4,
-                15,
-                0,
-                1
-            ),
-            Arguments.of(
-                FILENAME_SIMPLE_GUN_EMPLACEMENT_BUILDING_ENTITY,
-                "Simple Gun Emplacement",
-                "(Gauss)",
-                3025,
-                3,
-                BuildingType.HEAVY,
-                1,
-                90,
-                0,
-                1
-            ),
-            Arguments.of(
-                FILENAME_SIMPLE_LARGE_BUILDING_ENTITY,
-                "Simple Large Building Entity",
-                "",
-                3025,
-                2,
-                BuildingType.MEDIUM,
-                3,
-                15,
-                10,
-                7
-            )
-        );
+              // filename, chassis, model, year, buildingClass, buildingType, height, cf, armor, hexCount
+              Arguments.of(FILENAME_SIMPLE_BUILDING_ENTITY,
+                    "Simple Building Entity",
+                    "",
+                    3025,
+                    0,
+                    BuildingType.LIGHT,
+                    4,
+                    15,
+                    0,
+                    1),
+              Arguments.of(FILENAME_SIMPLE_GUN_EMPLACEMENT_BUILDING_ENTITY,
+                    "Simple Gun Emplacement",
+                    "(Gauss)",
+                    3025,
+                    3,
+                    BuildingType.HEAVY,
+                    1,
+                    90,
+                    0,
+                    1),
+              Arguments.of(FILENAME_SIMPLE_LARGE_BUILDING_ENTITY,
+                    "Simple Large Building Entity",
+                    "",
+                    3025,
+                    2,
+                    BuildingType.MEDIUM,
+                    3,
+                    15,
+                    10,
+                    7),
+              Arguments.of(FILENAME_HARDENED_COMMAND_FORT,
+                    "Hardened Command Fort",
+                    "(Clan Invasion)",
+                    3052,
+                    3,
+                    BuildingType.HARDENED,
+                    2,
+                    150,
+                    144,
+                    2));
     }
 
     @ParameterizedTest(name = "{1}")

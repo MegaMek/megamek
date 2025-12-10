@@ -148,14 +148,14 @@ public class BuildingEntityTest extends GameBoardTestCase {
     void testGetLocationNames() {
         String[] names = building.getLocationNames();
         assertEquals(3, names.length);
-        assertTrue(names[0].startsWith("Floor"));
+        assertTrue(names[0].startsWith("Level"));
     }
 
     @Test
     void testGetLocationAbbreviations() {
         String[] abbrs = building.getLocationAbbreviations();
         assertEquals(3, abbrs.length);
-        assertTrue(abbrs[0].startsWith("FLR"));
+        assertTrue(abbrs[0].startsWith("LVL"));
     }
 
     @Test

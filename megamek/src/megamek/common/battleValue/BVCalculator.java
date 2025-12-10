@@ -1314,6 +1314,8 @@ public abstract class BVCalculator {
             piloting = Math.max(0, piloting - 1);
             pilotModifiers.add("Pain Shunt");
         }
+        // Comm Implant: Piloting -1 for BV purposes
+        // Note: Boosted Comm Implant does NOT get piloting -1; it's treated as C3 slave instead
         if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_COMM_IMPLANT)) {
             piloting = Math.max(0, piloting - 1);
             pilotModifiers.add("Comm. Implant");

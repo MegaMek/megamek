@@ -256,25 +256,27 @@ public class AvailabilityRating {
      * @param fRec faction-specific record, for equipment levels (typically A/B/C/D/F)
      */
     public void setRatingByNumericLevel(FactionRecord fRec) {
-        if (hasMultipleRatings()) {
-            Collection<String> levelNames = ratingByLevel.keySet();
+        if (null != fRec) {
+            if (hasMultipleRatings()) {
+                Collection<String> levelNames = ratingByLevel.keySet();
 
-            int ratingLevel = -1;
-            ArrayList<String> factionRatings = fRec.getRatingLevelSystem();
-            int numRatingLevels = factionRatings.size();
+                int ratingLevel = -1;
+                ArrayList<String> factionRatings = fRec.getRatingLevelSystem();
+                int numRatingLevels = factionRatings.size();
 
-            for (String curLevel : levelNames) {
+                for (String curLevel : levelNames) {
 
-                if (curLevel == null && fRec.getRatingLevels().size() == 1) {
-                    ratingLevel = factionRatings.indexOf(fRec.getRatingLevels().get(0));
+                    if (curLevel == null && fRec.getRatingLevels().size() == 1) {
+                        ratingLevel = factionRatings.indexOf(fRec.getRatingLevels().get(0));
+                    }
+
+                    if (curLevel != null && numRatingLevels > 1) {
+                        ratingLevel = factionRatings.indexOf(curLevel);
+                    }
+
+                    ratingByNumericLevel.put(ratingLevel, ratingByLevel.get(curLevel));
+
                 }
-
-                if (curLevel != null && numRatingLevels > 1) {
-                    ratingLevel = factionRatings.indexOf(curLevel);
-                }
-
-                ratingByNumericLevel.put(ratingLevel, ratingByLevel.get(curLevel));
-
             }
         }
     }

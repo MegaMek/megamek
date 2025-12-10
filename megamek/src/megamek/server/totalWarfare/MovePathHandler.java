@@ -3294,10 +3294,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 Bay currentBay = (unloaded instanceof Entity ulEntity) ? entity.getBay(ulEntity) : null;
                 Coords unloadPos = curPos;
                 int unloadFacing = curFacing;
+
+                // If the step has a targetPosition, use that
                 if (null != step.getTargetPosition()) {
                     unloadPos = step.getTargetPosition();
                     unloadFacing = curPos.direction(unloadPos);
                 }
+
                 if (!gameManager.unloadUnit(entity, unloaded, unloadPos, unloadFacing,
                       step.getElevation())) {
                     logger.error("Server was told to unload {} from {} into {}",
@@ -3313,6 +3316,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     report.add(unloadPos.toFriendlyString());
                     addReport(report);
                 }
+
                 // some additional stuff to take care of for small
                 // craft/DropShip unloading
                 if ((entity instanceof SmallCraft) && (unloaded instanceof Entity)) {

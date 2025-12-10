@@ -3566,14 +3566,26 @@ public class MovementDisplay extends ActionPhaseDisplay {
         Entity ce = currentEntity();
         // we need to allow the user to select a hex for offloading
         Coords pos = ce.getPosition();
+        int elev = game.getBoard(ce).getHex(pos).getLevel() + ce.getElevation();
+        int altitude = 0;
+
+        // Special handling for unloading on the move
         if (null != cmd) {
             pos = cmd.getFinalCoords();
+            elev = (ce.isAirborne()) ? 999 : cmd.getFinalElevation();
+            altitude = (ce.isAirborne()) ? cmd.getFinalAltitude() : 0;
         }
-        int elev = game.getBoard(ce).getHex(pos).getLevel() + ce.getElevation();
-        List<Coords> ring = pos.allAdjacent();
+        // Flying units can unload under themselves or in their hex; note that dropships ignore this.
+        List<Coords> ring = new ArrayList<>();
+        if (elev > 0 || altitude > 0) {
+            ring.add(pos);
+        }
+        ring.addAll(pos.allAdjacent());
+
         if (ce instanceof Dropship) {
             ring = pos.allAtDistance(2);
         }
+
         // ok, now we need to go through the ring and identify available Positions
         ring = Compute.getAcceptableUnloadPositions(ring, finalBoardId(), unloaded, game, elev);
 

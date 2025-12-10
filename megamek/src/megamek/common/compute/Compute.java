@@ -6821,9 +6821,17 @@ public class Compute {
     public static boolean isAcceptableUnloadPosition(Coords position, int boardId, Entity unitToUnload,
           Game game, int elev) {
         Hex hex = game.getHex(position, boardId);
+        // Prohibited terrain is any that the unit cannot move into or through, or would cause a stacking violation, or
+        // is 0, 1, or 2 elevations up or down from the hex elevation - but ignore that last if the unloading unit has
+        // Jump MP or VTOL movement.
         return (hex != null) && !unitToUnload.isLocationProhibited(position, boardId, unitToUnload.getElevation())
               && (null == stackingViolation(game, unitToUnload.getId(), position, unitToUnload.climbMode()))
-              && (Math.abs(hex.getLevel() - elev) < 3);
+              && ((Math.abs(hex.getLevel() - elev) < 3) ||
+              (unitToUnload.getMovementMode() == EntityMovementMode.VTOL ||
+                    unitToUnload.getMovementMode() == EntityMovementMode.INF_JUMP ||
+                    ((unitToUnload.getAnyTypeMaxJumpMP() > 0) && !unitToUnload.isImmobileForJump())
+              )
+        );
     }
 
     /**
@@ -7669,7 +7677,7 @@ public class Compute {
     }
 
     /**
-     * Fast log2 implementation; throws if number &le; 0 
+     * Fast log2 implementation; throws if number &le; 0
      * @param number        positive int to get the log2 of
      * @return int          approximate log2 of number; functionally (Math.floor(log10(10)/log10(2))
      */

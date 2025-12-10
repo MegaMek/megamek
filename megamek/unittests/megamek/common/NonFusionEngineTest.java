@@ -259,7 +259,6 @@ class NonFusionEngineTest {
         @DisplayName("XXL engine generates 4 heat when walking (2x normal)")
         void xxlEngineWalkHeatIsDoubled() {
             Mek mek = mock(Mek.class);
-            when(mek.hasWorkingSCM()).thenReturn(false);
             Engine engine = new Engine(200, Engine.XXL_ENGINE, 0);
 
             assertEquals(4, engine.getWalkHeat(mek),
@@ -270,7 +269,6 @@ class NonFusionEngineTest {
         @DisplayName("XXL engine generates 6 heat when running (2x normal)")
         void xxlEngineRunHeatIsDoubled() {
             Mek mek = mock(Mek.class);
-            when(mek.hasWorkingSCM()).thenReturn(false);
             Engine engine = new Engine(200, Engine.XXL_ENGINE, 0);
 
             assertEquals(6, engine.getRunHeat(mek),
@@ -281,7 +279,6 @@ class NonFusionEngineTest {
         @DisplayName("XXL engine generates 9 heat when sprinting (3x normal)")
         void xxlEngineSprintHeatIsTripled() {
             Mek mek = mock(Mek.class);
-            when(mek.hasWorkingSCM()).thenReturn(false);
             Engine engine = new Engine(200, Engine.XXL_ENGINE, 0);
 
             assertEquals(9, engine.getSprintHeat(mek),

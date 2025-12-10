@@ -84,8 +84,8 @@ public class BuildingEntity extends Entity implements IBuilding {
 
     public static final String[] HIT_LOCATION_NAMES = { "building" };
 
-    private static final String LOCATION_ABBREVIATIONS_PREFIX = "FLR";
-    private static final String LOCATION_NAMES_PREFIX = "Floor";
+    private static final String LOCATION_ABBREVIATIONS_PREFIX = "LVL";
+    private static final String LOCATION_NAMES_PREFIX = "Level";
 
     private static final int[] CRITICAL_SLOTS = new int[] { 100 };
 

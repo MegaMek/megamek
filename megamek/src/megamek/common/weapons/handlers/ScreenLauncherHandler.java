@@ -132,6 +132,14 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
             if (entity instanceof FighterSquadron) {
                 entity.getSubEntities().forEach(
                       ent -> {
+                          // Add summary report for this fighter
+                          Report summary = new Report(6175);
+                          summary.subject = ent.getId();
+                          summary.indent(2);
+                          summary.addDesc(ent);
+                          summary.add(attackValue);
+                          vPhaseReport.addElement(summary);
+
                           ToHitData squadronToHit = new ToHitData();
                           squadronToHit.setHitTable(ToHitData.HIT_NORMAL);
                           HitData hit = ent.rollHitLocation(squadronToHit.getHitTable(), ToHitData.SIDE_FRONT);
@@ -140,6 +148,14 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
                           gameManager.creditKill(ent, attackingEntity);
                       });
             } else {
+                // Add summary report for this entity
+                Report summary = new Report(6175);
+                summary.subject = entity.getId();
+                summary.indent(2);
+                summary.addDesc(entity);
+                summary.add(attackValue);
+                vPhaseReport.addElement(summary);
+
                 ToHitData hexToHit = new ToHitData();
                 hexToHit.setHitTable(ToHitData.HIT_NORMAL);
 

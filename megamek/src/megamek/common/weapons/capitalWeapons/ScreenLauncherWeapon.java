@@ -78,7 +78,9 @@ public class ScreenLauncherWeapon extends AmmoWeapon {
         this.cost = 250000;
         this.shortAV = 15;
         this.maxRange = RANGE_SHORT;
-        this.capital = true;
+        // Per errata: Screen Launchers use standard aerospace range, not capital scale
+        // See: https://battletech.com/forums/index.php?topic=77239
+        this.capital = false;
         this.atClass = CLASS_SCREEN;
         rulesRefs = "237, TM";
         techAdvancement.setTechBase(TechBase.IS)

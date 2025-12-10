@@ -60,6 +60,7 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.GameOptions;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Crew;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
 import megamek.common.units.Targetable;
@@ -151,6 +152,19 @@ public class ScreenLauncherHandlerTest {
     }
 
     /**
+     * Helper to configure an entity mock with the methods needed for Report.addDesc().
+     */
+    private void configureEntityForReporting(Entity entity) {
+        doReturn(100).when(entity).getId();
+        doReturn("Test Entity").when(entity).getShortName();
+        doReturn(null).when(entity).getOwner();
+        Crew mockCrew = mock(Crew.class);
+        doReturn(mockCrew).when(entity).getCrew();
+        doReturn(1).when(mockCrew).getSize();
+        doReturn("").when(mockCrew).getNickname();
+    }
+
+    /**
      * Test that calcAttackValue() returns 15 damage. Per Screen Launcher rules, damage is always 15 standard-scale
      * points.
      */
@@ -175,6 +189,7 @@ public class ScreenLauncherHandlerTest {
         Entity smallCraft = mock(Entity.class);
         doReturn(false).when(smallCraft).isLargeCraft();
         doReturn(new HitData(0)).when(smallCraft).rollHitLocation(anyInt(), anyInt());
+        configureEntityForReporting(smallCraft);
 
         // Configure game to return small craft in target hex
         List<Entity> entitiesInHex = new ArrayList<>();
@@ -200,6 +215,7 @@ public class ScreenLauncherHandlerTest {
         Entity largeCraft = mock(Entity.class);
         doReturn(true).when(largeCraft).isLargeCraft();
         doReturn(new HitData(0)).when(largeCraft).rollHitLocation(anyInt(), anyInt());
+        configureEntityForReporting(largeCraft);
 
         // Configure game to return large craft in target hex
         List<Entity> entitiesInHex = new ArrayList<>();
@@ -230,6 +246,9 @@ public class ScreenLauncherHandlerTest {
         doReturn(new HitData(0)).when(fighter1).rollHitLocation(anyInt(), anyInt());
         doReturn(new HitData(0)).when(fighter2).rollHitLocation(anyInt(), anyInt());
         doReturn(new HitData(0)).when(fighter3).rollHitLocation(anyInt(), anyInt());
+        configureEntityForReporting(fighter1);
+        configureEntityForReporting(fighter2);
+        configureEntityForReporting(fighter3);
 
         List<Entity> subEntities = List.of(fighter1, fighter2, fighter3);
         doReturn(subEntities).when(squadron).getSubEntities();

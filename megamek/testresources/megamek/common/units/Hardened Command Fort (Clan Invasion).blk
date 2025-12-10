@@ -55,7 +55,7 @@ cargobay:70.0:2:3
 </cruiseMP>
 
 <building_class>
-3
+2
 </building_class>
 
 <building_type>
@@ -105,7 +105,7 @@ Searchlight (FL)
 ISGuardianECMSuite
 </Level 2 0.0,0.0,0.0 Equipment>
 
-<Level 1 1.0,0.0,-1.0 Equipment>
+<Level 1 0.0,1.0,-1.0 Equipment>
 IS Gauss Ammo
 IS Gauss Ammo
 IS Gauss Ammo
@@ -116,9 +116,9 @@ IS Machine Gun Ammo - Half
 IS Machine Gun Ammo - Half
 Cargo:SIZE:50.0
 Communications Equipment:SIZE:7.0
-</Level 1 1.0,0.0,-1.0 Equipment>
+</Level 1 0.0,1.0,-1.0 Equipment>
 
-<Level 2 1.0,0.0,-1.0 Equipment>
+<Level 2 0.0,1.0,-1.0 Equipment>
 ISGaussRifle (ST)
 ISERLargeLaser (ST)
 ISMediumPulseLaser (RR)
@@ -139,11 +139,11 @@ Searchlight (RL)
 ISMobileFieldBase
 FieldKitchen
 FieldKitchen
-</Level 2 1.0,0.0,-1.0 Equipment>
+</Level 2 0.0,1.0,-1.0 Equipment>
 
 <coords>
 0.0,0.0,0.0
-1.0,0.0,-1.0
+0.0,1.0,-1.0
 </coords>
 
 <height>

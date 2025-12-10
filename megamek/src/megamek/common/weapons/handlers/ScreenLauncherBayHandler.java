@@ -55,10 +55,6 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
 
-    /**
-     *
-     */
-
     @Serial
     private static final long serialVersionUID = -1618484541772117621L;
 
@@ -71,6 +67,15 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
     }
 
     /**
+     * Screen Launchers always deal 15 damage per launcher. Override parent's calcAttackValue which sums all weapons in
+     * bay. Each launcher in the bay fires independently in the handle() loop.
+     */
+    @Override
+    protected int calcAttackValue() {
+        return 15;
+    }
+
+    /**
      * handle this weapons firing
      *
      * @return a <code>boolean</code> value indicating whether this should be kept or not
@@ -80,6 +85,9 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
         if (!this.cares(phase)) {
             return true;
         }
+
+        // Calculate attack value (damage) - must be done before applying damage
+        attackValue = calcAttackValue();
 
         // same as ScreenLauncher handler, except run multiple times depending
         // on
@@ -127,6 +135,14 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
                 if (entity instanceof FighterSquadron) {
                     entity.getSubEntities().forEach(
                           ent -> {
+                              // Add summary report for this fighter
+                              Report summary = new Report(6175);
+                              summary.subject = ent.getId();
+                              summary.indent(2);
+                              summary.addDesc(ent);
+                              summary.add(attackValue);
+                              vPhaseReport.addElement(summary);
+
                               ToHitData squadronToHit = new ToHitData();
                               squadronToHit.setHitTable(ToHitData.HIT_NORMAL);
                               HitData hit = ent.rollHitLocation(squadronToHit.getHitTable(), ToHitData.SIDE_FRONT);
@@ -135,11 +151,34 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
                               gameManager.creditKill(ent, attackingEntity);
                           });
                 } else {
+                    // Add summary report for this entity
+                    Report summary = new Report(6175);
+                    summary.subject = entity.getId();
+                    summary.indent(2);
+                    summary.addDesc(entity);
+                    summary.add(attackValue);
+                    vPhaseReport.addElement(summary);
+
                     ToHitData hexToHit = new ToHitData();
                     hexToHit.setHitTable(ToHitData.HIT_NORMAL);
-                    HitData hit = entity.rollHitLocation(hexToHit.getHitTable(), ToHitData.SIDE_FRONT);
-                    hit.setCapital(false);
-                    vPhaseReport.addAll(gameManager.damageEntity(entity, hit, attackValue));
+
+                    if (entity.isLargeCraft()) {
+                        // Large craft (500+ tons): single hit
+                        HitData hit = entity.rollHitLocation(hexToHit.getHitTable(), ToHitData.SIDE_FRONT);
+                        hit.setCapital(false);
+                        vPhaseReport.addAll(gameManager.damageEntity(entity, hit, attackValue));
+                    } else {
+                        // Individual craft: 5-point clusters per official ruling
+                        // See: https://battletech.com/forums/index.php?topic=77239
+                        int remainingDamage = attackValue;
+                        while (remainingDamage > 0) {
+                            int clusterDamage = Math.min(5, remainingDamage);
+                            HitData hit = entity.rollHitLocation(hexToHit.getHitTable(), ToHitData.SIDE_FRONT);
+                            hit.setCapital(false);
+                            vPhaseReport.addAll(gameManager.damageEntity(entity, hit, clusterDamage));
+                            remainingDamage -= clusterDamage;
+                        }
+                    }
                     gameManager.creditKill(entity, attackingEntity);
                 }
             }

@@ -263,6 +263,7 @@ public class OptionsConstants {
     public static final String MD_CYBER_IMP_AUDIO = "cyber_imp_audio";
     public static final String MD_CYBER_IMP_VISUAL = "cyber_imp_visual";
     public static final String MD_CYBER_IMP_LASER = "cyber_imp_laser";
+    public static final String MD_CYBER_IMP_TELE = "cyber_imp_tele";
     public static final String MD_MM_IMPLANTS = "mm_implants";
     public static final String MD_ENH_MM_IMPLANTS = "enh_mm_implants";
     public static final String MD_COMM_IMPLANT = "comm_implant";

@@ -1331,11 +1331,18 @@ public abstract class BVCalculator {
             gunnery = Math.max(0, gunnery - 1);
             pilotModifiers.add("Buf. VDNI");
         }
-        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS) ||
-              entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_ENH_MM_IMPLANTS) ||
-              entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_LASER) ||
-              entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_AUDIO) ||
-              entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_VISUAL)) {
+        // Sensory Implants (All Types): For BV purposes, any unit with sensory implants
+        // of any kind applies -1 gunnery modifier. Benefits don't stack.
+        // MM/Enhanced MM implants work for any unit type.
+        // Basic sensory implants (audio, visual, laser, tele) only apply to infantry.
+        boolean hasMmImplants = entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS)
+              || entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_ENH_MM_IMPLANTS);
+        boolean hasBasicSensoryImplants = entity.isConventionalInfantry()
+              && (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_AUDIO)
+              || entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_VISUAL)
+              || entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_LASER)
+              || entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_TELE));
+        if (hasMmImplants || hasBasicSensoryImplants) {
             gunnery = Math.max(0, gunnery - 1);
             pilotModifiers.add("Sensory Implants");
         }

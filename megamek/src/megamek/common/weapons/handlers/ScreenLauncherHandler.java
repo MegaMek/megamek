@@ -70,6 +70,14 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
     }
 
     /**
+     * Screen Launchers always deal 15 damage.
+     */
+    @Override
+    protected int calcAttackValue() {
+        return 15;
+    }
+
+    /**
      * handle this weapons firing
      *
      * @return a <code>boolean</code> value indicating whether this should be kept or not
@@ -79,6 +87,9 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
         if (!this.cares(phase)) {
             return true;
         }
+
+        // Calculate attack value (damage) - must be done before applying damage
+        attackValue = calcAttackValue();
 
         // Report weapon attack and its to-hit value.
         Report r = new Report(3115);
@@ -121,6 +132,14 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
             if (entity instanceof FighterSquadron) {
                 entity.getSubEntities().forEach(
                       ent -> {
+                          // Add summary report for this fighter
+                          Report summary = new Report(6175);
+                          summary.subject = ent.getId();
+                          summary.indent(2);
+                          summary.addDesc(ent);
+                          summary.add(attackValue);
+                          vPhaseReport.addElement(summary);
+
                           ToHitData squadronToHit = new ToHitData();
                           squadronToHit.setHitTable(ToHitData.HIT_NORMAL);
                           HitData hit = ent.rollHitLocation(squadronToHit.getHitTable(), ToHitData.SIDE_FRONT);
@@ -129,11 +148,35 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
                           gameManager.creditKill(ent, attackingEntity);
                       });
             } else {
+                // Add summary report for this entity
+                Report summary = new Report(6175);
+                summary.subject = entity.getId();
+                summary.indent(2);
+                summary.addDesc(entity);
+                summary.add(attackValue);
+                vPhaseReport.addElement(summary);
+
                 ToHitData hexToHit = new ToHitData();
                 hexToHit.setHitTable(ToHitData.HIT_NORMAL);
-                HitData hit = entity.rollHitLocation(hexToHit.getHitTable(), ToHitData.SIDE_FRONT);
-                hit.setCapital(false);
-                vPhaseReport.addAll(gameManager.damageEntity(entity, hit, attackValue));
+
+                if (entity.isLargeCraft()) {
+                    // Large craft (500+ tons): single hit
+                    HitData hit = entity.rollHitLocation(hexToHit.getHitTable(), ToHitData.SIDE_FRONT);
+                    hit.setCapital(false);
+                    vPhaseReport.addAll(gameManager.damageEntity(entity, hit, attackValue));
+                } else {
+                    // Individual craft: 5-point clusters per official ruling
+                    // See: https://battletech.com/forums/index.php?topic=77239
+                    int clusterSize = 5;
+                    int remainingDamage = attackValue;
+                    while (remainingDamage > 0) {
+                        int clusterDamage = Math.min(clusterSize, remainingDamage);
+                        HitData hit = entity.rollHitLocation(hexToHit.getHitTable(), ToHitData.SIDE_FRONT);
+                        hit.setCapital(false);
+                        vPhaseReport.addAll(gameManager.damageEntity(entity, hit, clusterDamage));
+                        remainingDamage -= clusterDamage;
+                    }
+                }
                 gameManager.creditKill(entity, attackingEntity);
             }
         }

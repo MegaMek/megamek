@@ -727,8 +727,9 @@ public class Report implements ReportEntry {
         } else {
             finalReport = text.toString();
         }
-        
-        return "<div class='report-entry'>" + finalReport + "</div>";
+
+        // Use span to keep reports inline - <br> tags handle line breaks
+        return "<span class='report-entry'>" + finalReport + "</span>";
     }
 
     @Override

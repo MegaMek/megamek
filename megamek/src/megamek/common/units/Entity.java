@@ -5984,12 +5984,14 @@ public abstract class Entity extends TurnOrdered
             }
         }
 
-        // check for Manei Domini implants
-        if (((hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO) ||
-              hasAbility(OptionsConstants.MD_CYBER_IMP_VISUAL) ||
-              hasAbility(OptionsConstants.MD_MM_IMPLANTS)) && isConventionalInfantry()) ||
-              (hasAbility(OptionsConstants.MD_MM_IMPLANTS) &&
-                    (hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI)))) {
+        // Sensory implants: IR/EM optical OR enhanced audio = 2-hex active probe (infantry only)
+        // Benefits don't stack - having both still only gives one probe
+        // MM implants also provide probe capability for infantry or for units with VDNI/BVDNI
+        if (((hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO)
+              || hasAbility(OptionsConstants.MD_CYBER_IMP_VISUAL)
+              || hasAbility(OptionsConstants.MD_MM_IMPLANTS)) && isConventionalInfantry())
+              || (hasAbility(OptionsConstants.MD_MM_IMPLANTS)
+              && (hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI)))) {
             return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
         }
         // check for quirk
@@ -6015,12 +6017,15 @@ public abstract class Entity extends TurnOrdered
         if (conditions.getEMI().isEMI() || isShutDown()) {
             return Entity.NONE;
         }
-        // check for Manei Domini implants
+        // Sensory implants: IR/EM optical OR enhanced audio = 2-hex probe (infantry only)
+        // Benefits don't stack - cyberBonus is 2, not cumulative
+        // MM implants also provide probe capability for infantry or for units with VDNI/BVDNI
         int cyberBonus = 0;
-        if (((hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO) || hasAbility(OptionsConstants.MD_MM_IMPLANTS)) ||
-              hasAbility(OptionsConstants.MD_CYBER_IMP_VISUAL) && isConventionalInfantry()) ||
-              (hasAbility(OptionsConstants.MD_MM_IMPLANTS) &&
-                    (hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI)))) {
+        if (((hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO)
+              || hasAbility(OptionsConstants.MD_CYBER_IMP_VISUAL)
+              || hasAbility(OptionsConstants.MD_MM_IMPLANTS)) && isConventionalInfantry())
+              || (hasAbility(OptionsConstants.MD_MM_IMPLANTS)
+              && (hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI)))) {
             cyberBonus = 2;
         }
 

@@ -390,12 +390,20 @@ public class ComputeAttackerToHitMods {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Vdni"));
         }
 
-        // check for cyber eye laser sighting on ranged attacks
+        // Sensory implants: laser-sight OR telescopic = -1 to-hit (infantry only)
+        // Benefits don't stack - having both still only gives -1
         if (attacker.isConventionalInfantry()
-              && attacker.hasAbility(OptionsConstants.MD_CYBER_IMP_LASER)
               && (weapon != null)
               && !(weapon.getType() instanceof InfantryAttack)) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.MdEye"));
+            boolean hasLaser = attacker.hasAbility(OptionsConstants.MD_CYBER_IMP_LASER);
+            boolean hasTele = attacker.hasAbility(OptionsConstants.MD_CYBER_IMP_TELE);
+            if (hasLaser && hasTele) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.MdTargeting"));
+            } else if (hasLaser) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.MdLaser"));
+            } else if (hasTele) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.MdTele"));
+            }
         }
 
         return toHit;

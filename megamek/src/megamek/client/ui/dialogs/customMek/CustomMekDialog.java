@@ -345,11 +345,14 @@ public class CustomMekDialog extends AbstractButtonDialog
                 }
 
                 // a bunch of stuff should get disabled for all but conventional infantry
-                if (!entity.isConventionalInfantry() &&
-                      (option.getName().equals(OptionsConstants.MD_PL_ENHANCED) ||
-                            option.getName().equals(OptionsConstants.MD_PL_MASC) ||
-                            option.getName().equals(OptionsConstants.MD_CYBER_IMP_AUDIO) ||
-                            option.getName().equals(OptionsConstants.MD_CYBER_IMP_VISUAL))) {
+                // Sensory implants (audio, visual, laser, tele) are infantry-only
+                if (!entity.isConventionalInfantry()
+                      && (option.getName().equals(OptionsConstants.MD_PL_ENHANCED)
+                      || option.getName().equals(OptionsConstants.MD_PL_MASC)
+                      || option.getName().equals(OptionsConstants.MD_CYBER_IMP_AUDIO)
+                      || option.getName().equals(OptionsConstants.MD_CYBER_IMP_VISUAL)
+                      || option.getName().equals(OptionsConstants.MD_CYBER_IMP_LASER)
+                      || option.getName().equals(OptionsConstants.MD_CYBER_IMP_TELE))) {
                     continue;
                 }
 
@@ -472,6 +475,47 @@ public class CustomMekDialog extends AbstractButtonDialog
 
     @Override
     public void optionClicked(DialogOptionComponentYPanel comp, IOption option, boolean state) {
+        // Enforce max 2 sensory implants rule for infantry
+        // Defensive check for isConventionalInfantry in case options are set through other means
+        Entity entity = entities.get(0);
+        if (state && entity.isConventionalInfantry() && isSensoryImplant(option.getName())) {
+            int count = countSelectedSensoryImplants(comp);
+            if (count >= 2) {
+                // Revert the selection
+                comp.setSelected(false);
+                JOptionPane.showMessageDialog(this,
+                      Messages.getString("CustomMekDialog.MaxSensoryImplants"),
+                      Messages.getString("CustomMekDialog.MaxSensoryImplantsTitle"),
+                      JOptionPane.WARNING_MESSAGE);
+            }
+        }
+    }
+
+    /**
+     * Checks if the given option name is a sensory implant.
+     */
+    private boolean isSensoryImplant(String optionName) {
+        return optionName.equals(OptionsConstants.MD_CYBER_IMP_AUDIO)
+              || optionName.equals(OptionsConstants.MD_CYBER_IMP_VISUAL)
+              || optionName.equals(OptionsConstants.MD_CYBER_IMP_LASER)
+              || optionName.equals(OptionsConstants.MD_CYBER_IMP_TELE);
+    }
+
+    /**
+     * Counts the number of sensory implants currently selected, excluding the given component.
+     */
+    private int countSelectedSensoryImplants(DialogOptionComponentYPanel excludeComp) {
+        int count = 0;
+        for (DialogOptionComponentYPanel optComp : optionComps) {
+            if (optComp == excludeComp) {
+                continue;
+            }
+            if (isSensoryImplant(optComp.getOption().getName())
+                  && Boolean.TRUE.equals(optComp.getValue())) {
+                count++;
+            }
+        }
+        return count;
     }
 
     @Override

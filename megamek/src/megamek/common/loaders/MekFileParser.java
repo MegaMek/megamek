@@ -857,33 +857,52 @@ public class MekFileParser {
      */
     public static void linkMGAs(Entity entity) {
         List<Integer> usedMG = new ArrayList<>();
-        for (WeaponMounted mga : entity.getWeaponList()) {
-            if (mga.getType().hasFlag(WeaponType.F_MGA)) {
+        for (WeaponMounted machineGunArray : entity.getWeaponList()) {
+            if (machineGunArray.getType().hasFlag(WeaponType.F_MGA)) {
                 // This may be called from MML after changing equipment location, so there may be old data that needs
                 // to be cleared
-                mga.clearBayWeapons();
-                for (int i = 0; i < entity.getNumberOfCriticalSlots(mga.getLocation()); i++) {
-                    CriticalSlot slot = entity.getCritical(mga.getLocation(), i);
+                machineGunArray.clearBayWeapons();
+                for (int i = 0; i < entity.getNumberOfCriticalSlots(machineGunArray.getLocation()); i++) {
+                    CriticalSlot slot = entity.getCritical(machineGunArray.getLocation(), i);
                     if ((slot != null) &&
                           (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) &&
                           (slot.getMount().getType() instanceof WeaponType weaponType)) {
                         int eqNum = entity.getEquipmentNum(slot.getMount());
                         if (!usedMG.contains(eqNum) &&
                               weaponType.hasFlag(WeaponType.F_MG) &&
-                              (mga.getType().getRackSize() == weaponType.getRackSize())) {
-                            mga.addWeaponToBay(eqNum);
+                              (machineGunArray.getType().getRackSize() == weaponType.getRackSize())) {
+                            machineGunArray.addWeaponToBay(eqNum);
                             usedMG.add(eqNum);
-                            if (mga.getBayWeapons().size() >= 4) {
+                            if (machineGunArray.getBayWeapons().size() >= 4) {
                                 break;
                             }
                         } else {
-                            if (!mga.getBayWeapons().isEmpty()) {
+                            if (!machineGunArray.getBayWeapons().isEmpty()) {
                                 break;
                             }
                         }
                     } else {
-                        if (!mga.getBayWeapons().isEmpty()) {
+                        if (!machineGunArray.getBayWeapons().isEmpty()) {
                             break;
+                        }
+                    }
+                }
+
+                // Fallback for entities that don't use critical slots (e.g., ProtoMeks)
+                // If no MGs were linked via critical slots, search the weapon list directly
+                if (machineGunArray.getBayWeapons().isEmpty()) {
+                    for (WeaponMounted weapon : entity.getWeaponList()) {
+                        if (weapon.getLocation() == machineGunArray.getLocation() &&
+                              weapon.getType().hasFlag(WeaponType.F_MG) &&
+                              machineGunArray.getType().getRackSize() == weapon.getType().getRackSize()) {
+                            int eqNum = entity.getEquipmentNum(weapon);
+                            if (!usedMG.contains(eqNum)) {
+                                machineGunArray.addWeaponToBay(eqNum);
+                                usedMG.add(eqNum);
+                                if (machineGunArray.getBayWeapons().size() >= 4) {
+                                    break;
+                                }
+                            }
                         }
                     }
                 }

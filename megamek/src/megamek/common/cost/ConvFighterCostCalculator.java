@@ -1,25 +1,40 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.cost;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.ConvFighter;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.units.ConvFighter;
 import megamek.common.equipment.ArmorType;
 import megamek.common.verifier.TestEntity;
 
@@ -47,7 +62,8 @@ public class ConvFighterCostCalculator {
 
         // Engine
         if (fighter.hasEngine()) {
-            costs[idx++] = (fighter.getEngine().getBaseCost() * fighter.getEngine().getRating() * fighter.getWeight()) / 75.0;
+            costs[idx++] = (fighter.getEngine().getBaseCost() * fighter.getEngine().getRating() * fighter.getWeight()) /
+                  75.0;
         }
 
         // Fuel tanks
@@ -55,11 +71,11 @@ public class ConvFighterCostCalculator {
 
         // Armor
         if (fighter.hasPatchworkArmor()) {
-            int armorcost = 0;
+            double armorCost = 0;
             for (int loc = 0; loc < fighter.locations(); loc++) {
-                armorcost += fighter.getArmorWeight(loc) * ArmorType.forEntity(fighter, loc).getCost();
+                armorCost += fighter.getArmorWeight(loc) * ArmorType.forEntity(fighter, loc).getCost();
             }
-            costs[idx++] = armorcost;
+            costs[idx++] = armorCost;
         } else {
             costs[idx++] = fighter.getArmorWeight() * ArmorType.forEntity(fighter).getCost();
         }
@@ -73,10 +89,13 @@ public class ConvFighterCostCalculator {
         // Power amplifiers
         costs[idx++] = 20000 * fighter.getPowerAmplifierWeight();
 
+        // For all additive costs - replace negatives with 0 to separate from multipliers
+        CostCalculator.removeNegativeAdditiveCosts(costs);
+
         costs[idx] = -fighter.getPriceMultiplier();
         double cost = CostCalculator.calculateCost(costs);
-        String[] systemNames = { "Avionics", "VSTOL Gear", "Structure", "Flight Systems", "Engine",
-                "Fuel Tanks", "Armor", "Heat Sinks", "Equipment", "Power Amplifiers", "Weight Multiplier" };
+        String[] systemNames = { "Avionics", "VSTOL Gear", "Structure", "Flight Systems", "Engine", "Fuel Tanks",
+                                 "Armor", "Heat Sinks", "Equipment", "Power Amplifiers", "Weight Multiplier" };
         CostCalculator.fillInReport(costReport, fighter, ignoreAmmo, systemNames, 8, cost, costs);
 
         return Math.round(cost);

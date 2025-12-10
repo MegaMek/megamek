@@ -1,33 +1,64 @@
 /*
- * MegaMek -
  * Copyright (C) 2000-2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons.primitive;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
+import static megamek.common.game.IGame.LOGGER;
+
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.LRMHandler;
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.lrm.LRMHandler;
 import megamek.common.weapons.lrms.LRMWeapon;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  */
 public class ISLRM5Primitive extends LRMWeapon {
+    @Serial
     private static final long serialVersionUID = 176095314320974740L;
 
     public ISLRM5Primitive() {
@@ -45,32 +76,38 @@ public class ISLRM5Primitive extends LRMWeapon {
         rackSize = 5;
         minimumRange = 6;
         tonnage = 2.0;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 45;
         cost = 30000;
         shortAV = 3;
         medAV = 3;
         longAV = 3;
         maxRange = RANGE_LONG;
-        ammoType = AmmoType.T_LRM_PRIMITIVE;
+        ammoType = AmmoType.AmmoTypeEnum.LRM_PRIMITIVE;
         // IO Doesn't strictly define when these weapons stop production. Checked with Herb, and
         // they would always be around. This to cover some of the back worlds in the Periphery.
         rulesRefs = "118, IO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-                .setIntroLevel(false)
-                .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
-                .setISAdvancement(2295, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_TA)
-                .setProductionFactions(F_TA)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        techAdvancement.setTechBase(TechBase.IS)
+              .setIntroLevel(false)
+              .setUnofficial(false)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
+              .setISAdvancement(2295, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setISApproximate(false, false, false, false, false)
+              .setPrototypeFactions(Faction.TA)
+              .setProductionFactions(Faction.TA)
+              .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              TWGameManager manager) {
-        return new LRMHandler(toHit, waa, game, manager, -2);
+    @Nullable
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+          TWGameManager manager) {
+        try {
+            return new LRMHandler(toHit, waa, game, manager, -2);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
     }
 }

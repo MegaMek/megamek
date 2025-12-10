@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2000-2016 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2016 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.util;
 
 /*
@@ -31,23 +52,42 @@ package megamek.common.util;
  */
 
 public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
-    private static Grad[] grad3 = { new Grad(1, 1, 0), new Grad(-1, 1, 0), new Grad(1, -1, 0), new Grad(-1, -1, 0), new Grad(1, 0, 1), new Grad(-1, 0, 1), new Grad(1, 0, -1), new Grad(-1, 0, -1), new Grad(0, 1, 1), new Grad(0, -1, 1),
-        new Grad(0, 1, -1), new Grad(0, -1, -1) };
+    private static final Grad[] grad3 = { new Grad(1, 1, 0), new Grad(-1, 1, 0), new Grad(1, -1, 0),
+                                          new Grad(-1, -1, 0), new Grad(1, 0, 1), new Grad(-1, 0, 1),
+                                          new Grad(1, 0, -1), new Grad(-1, 0, -1), new Grad(0, 1, 1),
+                                          new Grad(0, -1, 1), new Grad(0, 1, -1), new Grad(0, -1, -1) };
 
-    private static Grad[] grad4 = { new Grad(0, 1, 1, 1), new Grad(0, 1, 1, -1), new Grad(0, 1, -1, 1), new Grad(0, 1, -1, -1), new Grad(0, -1, 1, 1), new Grad(0, -1, 1, -1), new Grad(0, -1, -1, 1), new Grad(0, -1, -1, -1), new Grad(1, 0, 1, 1),
-        new Grad(1, 0, 1, -1), new Grad(1, 0, -1, 1), new Grad(1, 0, -1, -1), new Grad(-1, 0, 1, 1), new Grad(-1, 0, 1, -1), new Grad(-1, 0, -1, 1), new Grad(-1, 0, -1, -1), new Grad(1, 1, 0, 1), new Grad(1, 1, 0, -1), new Grad(1, -1, 0, 1),
-        new Grad(1, -1, 0, -1), new Grad(-1, 1, 0, 1), new Grad(-1, 1, 0, -1), new Grad(-1, -1, 0, 1), new Grad(-1, -1, 0, -1), new Grad(1, 1, 1, 0), new Grad(1, 1, -1, 0), new Grad(1, -1, 1, 0), new Grad(1, -1, -1, 0), new Grad(-1, 1, 1, 0),
-        new Grad(-1, 1, -1, 0), new Grad(-1, -1, 1, 0), new Grad(-1, -1, -1, 0) };
+    private static final Grad[] grad4 = { new Grad(0, 1, 1, 1), new Grad(0, 1, 1, -1), new Grad(0, 1, -1, 1),
+                                          new Grad(0, 1, -1, -1), new Grad(0, -1, 1, 1), new Grad(0, -1, 1, -1),
+                                          new Grad(0, -1, -1, 1), new Grad(0, -1, -1, -1), new Grad(1, 0, 1, 1),
+                                          new Grad(1, 0, 1, -1), new Grad(1, 0, -1, 1), new Grad(1, 0, -1, -1),
+                                          new Grad(-1, 0, 1, 1), new Grad(-1, 0, 1, -1), new Grad(-1, 0, -1, 1),
+                                          new Grad(-1, 0, -1, -1), new Grad(1, 1, 0, 1), new Grad(1, 1, 0, -1),
+                                          new Grad(1, -1, 0, 1), new Grad(1, -1, 0, -1), new Grad(-1, 1, 0, 1),
+                                          new Grad(-1, 1, 0, -1), new Grad(-1, -1, 0, 1), new Grad(-1, -1, 0, -1),
+                                          new Grad(1, 1, 1, 0), new Grad(1, 1, -1, 0), new Grad(1, -1, 1, 0),
+                                          new Grad(1, -1, -1, 0), new Grad(-1, 1, 1, 0), new Grad(-1, 1, -1, 0),
+                                          new Grad(-1, -1, 1, 0), new Grad(-1, -1, -1, 0) };
 
-    private static short[] p = { 151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23, 190, 6, 148, 247, 120, 234, 75, 0, 26, 197, 62, 94, 252, 219, 203, 117, 35, 11, 32, 57,
-        177, 33, 88, 237, 149, 56, 87, 174, 20, 125, 136, 171, 168, 68, 175, 74, 165, 71, 134, 139, 48, 27, 166, 77, 146, 158, 231, 83, 111, 229, 122, 60, 211, 133, 230, 220, 105, 92, 41, 55, 46, 245, 40, 244, 102, 143, 54, 65, 25, 63, 161, 1, 216,
-        80, 73, 209, 76, 132, 187, 208, 89, 18, 169, 200, 196, 135, 130, 116, 188, 159, 86, 164, 100, 109, 198, 173, 186, 3, 64, 52, 217, 226, 250, 124, 123, 5, 202, 38, 147, 118, 126, 255, 82, 85, 212, 207, 206, 59, 227, 47, 16, 58, 17, 182, 189,
-        28, 42, 223, 183, 170, 213, 119, 248, 152, 2, 44, 154, 163, 70, 221, 153, 101, 155, 167, 43, 172, 9, 129, 22, 39, 253, 19, 98, 108, 110, 79, 113, 224, 232, 178, 185, 112, 104, 218, 246, 97, 228, 251, 34, 242, 193, 238, 210, 144, 12, 191, 179,
-        162, 241, 81, 51, 145, 235, 249, 14, 239, 107, 49, 192, 214, 31, 181, 199, 106, 157, 184, 84, 204, 176, 115, 121, 50, 45, 127, 4, 150, 254, 138, 236, 205, 93, 222, 114, 67, 29, 24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180 };
+    private static final short[] p = { 151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36,
+                                       103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23, 190, 6, 148, 247, 120, 234, 75, 0,
+                                       26, 197, 62, 94, 252, 219, 203, 117, 35, 11, 32, 57, 177, 33, 88, 237, 149, 56,
+                                       87, 174, 20, 125, 136, 171, 168, 68, 175, 74, 165, 71, 134, 139, 48, 27, 166, 77,
+                                       146, 158, 231, 83, 111, 229, 122, 60, 211, 133, 230, 220, 105, 92, 41, 55, 46,
+                                       245, 40, 244, 102, 143, 54, 65, 25, 63, 161, 1, 216, 80, 73, 209, 76, 132, 187,
+                                       208, 89, 18, 169, 200, 196, 135, 130, 116, 188, 159, 86, 164, 100, 109, 198, 173,
+                                       186, 3, 64, 52, 217, 226, 250, 124, 123, 5, 202, 38, 147, 118, 126, 255, 82, 85,
+                                       212, 207, 206, 59, 227, 47, 16, 58, 17, 182, 189, 28, 42, 223, 183, 170, 213,
+                                       119, 248, 152, 2, 44, 154, 163, 70, 221, 153, 101, 155, 167, 43, 172, 9, 129, 22,
+                                       39, 253, 19, 98, 108, 110, 79, 113, 224, 232, 178, 185, 112, 104, 218, 246, 97,
+                                       228, 251, 34, 242, 193, 238, 210, 144, 12, 191, 179, 162, 241, 81, 51, 145, 235,
+                                       249, 14, 239, 107, 49, 192, 214, 31, 181, 199, 106, 157, 184, 84, 204, 176, 115,
+                                       121, 50, 45, 127, 4, 150, 254, 138, 236, 205, 93, 222, 114, 67, 29, 24, 72, 243,
+                                       141, 128, 195, 78, 66, 215, 61, 156, 180 };
 
     // To remove the need for index wrapping, double the permutation table length
-    private static short[] perm = new short[512];
-    private static short[] permMod12 = new short[512];
+    private static final short[] perm = new short[512];
+    private static final short[] permMod12 = new short[512];
 
     static {
         for (int i = 0; i < 512; i++) {
@@ -65,7 +105,7 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
     private static final double G4 = (5.0 - Math.sqrt(5.0)) / 20.0;
 
     // This method is a *lot* faster than using (int) Math.floor(x)
-    private static int fastfloor(double x) {
+    private static int fastFloor(double x) {
         int xi = (int) x;
         return (x < xi) ? xi - 1 : xi;
     }
@@ -108,14 +148,14 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
     /**
      * 2D simplex noise, returns values in the range [-1.0, +1.0]
      * <p>
-     * Mostly linear within the range of [-4/9 sqrt(2), +4/9 sqrt(2)], strong falloff afterwards.
+     * Mostly linear within the range of [-4/9 sqrt(2), +4/9 sqrt(2)], strong falloff afterward.
      */
     public static double noise(double xin, double yin) {
         double n0, n1, n2; // Noise contributions from the three corners
         // Skew the input space to determine which simplex cell we're in
         double s = (xin + yin) * F2; // Hairy factor for 2D
-        int i = fastfloor(xin + s);
-        int j = fastfloor(yin + s);
+        int i = fastFloor(xin + s);
+        int j = fastFloor(yin + s);
         double t = (i + j) * G2;
         double X0 = i - t; // Unskew the cell origin back to (x, y) space
         double Y0 = j - t;
@@ -132,9 +172,9 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
             i1 = 0;
             j1 = 1;
         } // upper triangle, YX order: (0, 0)->(0, 1)->(1, 1)
-          // A step of (1, 0) in (i, j) means a step of (1 - c, -c) in (x, y), and
-          // a step of (0, 1) in (i, j) means a step of (-c, 1 - c) in (x, y), where
-          // c = (3 - sqrt(3)) / 6
+        // A step of (1, 0) in (i, j) means a step of (1 - c, -c) in (x, y), and
+        // a step of (0, 1) in (i, j) means a step of (-c, 1 - c) in (x, y), where
+        // c = (3 - sqrt(3)) / 6
         double x1 = x0 - i1 + G2; // Offsets for middle corner in (x, y) unskewed coords
         double y1 = y0 - j1 + G2;
         double x2 = x0 - 1.0 + 2.0 * G2; // Offsets for last corner in (x, y) unskewed coords
@@ -177,9 +217,9 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
         double n0, n1, n2, n3; // Noise contributions from the four corners
         // Skew the input space to determine which simplex cell we're in
         double s = (xin + yin + zin) * F3; // Very nice and simple skew factor for 3D
-        int i = fastfloor(xin + s);
-        int j = fastfloor(yin + s);
-        int k = fastfloor(zin + s);
+        int i = fastFloor(xin + s);
+        int j = fastFloor(yin + s);
+        int k = fastFloor(zin + s);
         double t = (i + j + k) * G3;
         double X0 = i - t; // Unskew the cell origin back to (x, y, z) space
         double Y0 = j - t;
@@ -307,10 +347,10 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
         double n0, n1, n2, n3, n4; // Noise contributions from the five corners
         // Skew the (x, y, z, w) space to determine which cell of 24 simplices we're in
         double s = (x + y + z + w) * F4; // Factor for 4D skewing
-        int i = fastfloor(x + s);
-        int j = fastfloor(y + s);
-        int k = fastfloor(z + s);
-        int l = fastfloor(w + s);
+        int i = fastFloor(x + s);
+        int j = fastFloor(y + s);
+        int k = fastFloor(z + s);
+        int l = fastFloor(w + s);
         double t = (i + j + k + l) * G4; // Factor for 4D unskewing
         double X0 = i - t; // Unskew the cell origin back to (x, y, z, w) space
         double Y0 = j - t;
@@ -325,39 +365,39 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
         // determine the magnitude ordering of x0, y0, z0 and w0.
         // Six pair-wise comparisons are performed between each possible pair
         // of the four coordinates, and the results are used to rank the numbers.
-        int rankx = 0;
-        int ranky = 0;
-        int rankz = 0;
-        int rankw = 0;
+        int rankX = 0;
+        int rankY = 0;
+        int rankZ = 0;
+        int rankW = 0;
         if (x0 > y0) {
-            rankx++;
+            rankX++;
         } else {
-            ranky++;
+            rankY++;
         }
         if (x0 > z0) {
-            rankx++;
+            rankX++;
         } else {
-            rankz++;
+            rankZ++;
         }
         if (x0 > w0) {
-            rankx++;
+            rankX++;
         } else {
-            rankw++;
+            rankW++;
         }
         if (y0 > z0) {
-            ranky++;
+            rankY++;
         } else {
-            rankz++;
+            rankZ++;
         }
         if (y0 > w0) {
-            ranky++;
+            rankY++;
         } else {
-            rankw++;
+            rankW++;
         }
         if (z0 > w0) {
-            rankz++;
+            rankZ++;
         } else {
-            rankw++;
+            rankW++;
         }
         int i1, j1, k1, l1; // The integer offsets for the second simplex corner
         int i2, j2, k2, l2; // The integer offsets for the third simplex corner
@@ -367,20 +407,20 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
         // impossible. Only the 24 indices which have non-zero entries make any sense.
         // We use a thresholding to set the coordinates in turn from the largest magnitude.
         // Rank 3 denotes the largest coordinate.
-        i1 = rankx >= 3 ? 1 : 0;
-        j1 = ranky >= 3 ? 1 : 0;
-        k1 = rankz >= 3 ? 1 : 0;
-        l1 = rankw >= 3 ? 1 : 0;
-        // Rank 2 denotes the second largest coordinate.
-        i2 = rankx >= 2 ? 1 : 0;
-        j2 = ranky >= 2 ? 1 : 0;
-        k2 = rankz >= 2 ? 1 : 0;
-        l2 = rankw >= 2 ? 1 : 0;
-        // Rank 1 denotes the second smallest coordinate.
-        i3 = rankx >= 1 ? 1 : 0;
-        j3 = ranky >= 1 ? 1 : 0;
-        k3 = rankz >= 1 ? 1 : 0;
-        l3 = rankw >= 1 ? 1 : 0;
+        i1 = rankX >= 3 ? 1 : 0;
+        j1 = rankY >= 3 ? 1 : 0;
+        k1 = rankZ >= 3 ? 1 : 0;
+        l1 = rankW >= 3 ? 1 : 0;
+        // Rank 2 denotes the second-largest coordinate.
+        i2 = rankX >= 2 ? 1 : 0;
+        j2 = rankY >= 2 ? 1 : 0;
+        k2 = rankZ >= 2 ? 1 : 0;
+        l2 = rankW >= 2 ? 1 : 0;
+        // Rank 1 denotes the second-smallest coordinate.
+        i3 = rankX >= 1 ? 1 : 0;
+        j3 = rankY >= 1 ? 1 : 0;
+        k3 = rankZ >= 1 ? 1 : 0;
+        l3 = rankW >= 1 ? 1 : 0;
         // The fifth corner has all coordinate offsets = 1, so no need to compute that.
         double x1 = x0 - i1 + G4; // Offsets for second corner in (x, y, z, w) coords
         double y1 = y0 - j1 + G4;
@@ -449,7 +489,7 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
     }
 
     private SimplexNoise() {}
-    
+
     // Inner class to speed upp gradient computations
     // (array access is a lot slower than member access)
     private static class Grad {

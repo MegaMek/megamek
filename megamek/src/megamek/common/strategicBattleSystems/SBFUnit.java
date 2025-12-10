@@ -1,47 +1,71 @@
 /*
- * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.strategicBattleSystems;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonRootName;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import megamek.common.alphaStrike.*;
-import megamek.common.jacksonadapters.SBFUnitDeserializer;
-import megamek.common.jacksonadapters.SBFUnitSerializer;
+import static megamek.common.alphaStrike.BattleForceSUA.CAP;
+import static megamek.common.alphaStrike.BattleForceSUA.FLK;
+import static megamek.common.alphaStrike.BattleForceSUA.MSL;
+import static megamek.common.alphaStrike.BattleForceSUA.SCAP;
+import static megamek.common.alphaStrike.BattleForceSUA.SOA;
+import static megamek.common.alphaStrike.BattleForceSUA.SRCH;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static megamek.common.alphaStrike.BattleForceSUA.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import megamek.common.alphaStrike.ASDamageVector;
+import megamek.common.alphaStrike.ASSpecialAbilityCollection;
+import megamek.common.alphaStrike.ASSpecialAbilityCollector;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.jacksonAdapters.SBFUnitDeserializer;
+import megamek.common.jacksonAdapters.SBFUnitSerializer;
 
 /**
- * Represents an SBF Unit (Ground SBF Unit or Aerospace Flight) which contains between 1 and 6 AlphaStrike
- * elements and is the building block of SBF Formations.
+ * Represents an SBF Unit (Ground SBF Unit or Aerospace Flight) which contains between 1 and 6 AlphaStrike elements and
+ * is the building block of SBF Formations.
  */
 @JsonRootName(value = "SBFUnit")
 @JsonSerialize(using = SBFUnitSerializer.class)
 @JsonDeserialize(using = SBFUnitDeserializer.class)
-public class SBFUnit implements  ASSpecialAbilityCollector, BattleForceSUAFormatter,
-        Serializable {
+public class SBFUnit implements ASSpecialAbilityCollector, BattleForceSUAFormatter,
+                                Serializable {
 
     private String name = "Unknown";
     private SBFElementType type = SBFElementType.UNKNOWN;
@@ -62,7 +86,7 @@ public class SBFUnit implements  ASSpecialAbilityCollector, BattleForceSUAFormat
     private final ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
     private List<AlphaStrikeElement> elements = new ArrayList<>();
 
-    // ingame values
+    // in game values
     private int currentArmor;
     private int damageCrits = 0;
     private int targetingCrits = 0;
@@ -257,10 +281,7 @@ public class SBFUnit implements  ASSpecialAbilityCollector, BattleForceSUAFormat
         if ((type == SBFElementType.BM) && (sua == SOA || sua == SRCH)) {
             return false;
         }
-        if ((type == SBFElementType.V) && (sua == SRCH)) {
-            return false;
-        }
-        return true;
+        return (type != SBFElementType.V) || (sua != SRCH);
     }
 
     @Override
@@ -279,12 +300,12 @@ public class SBFUnit implements  ASSpecialAbilityCollector, BattleForceSUAFormat
             return sua.toString();
         } else if (sua == FLK) {
             ASDamageVector flkDamage = specialAbilities.getFLK();
-            return sua.toString() + flkDamage.M.damage + "/" + flkDamage.L.damage;
+            return sua.toString() + flkDamage.M().damage + "/" + flkDamage.L().damage;
         } else if (sua.isTransport()) {
             String result = sua + suaObject.toString();
             BattleForceSUA door = sua.getDoor();
             if (isType(SBFElementType.LA)
-                    && specialAbilities.hasSUA(door) && ((int) specialAbilities.getSUA(door) > 0)) {
+                  && specialAbilities.hasSUA(door) && ((int) specialAbilities.getSUA(door) > 0)) {
                 result += door.toString() + specialAbilities.getSUA(door);
             }
             return result;
@@ -296,10 +317,12 @@ public class SBFUnit implements  ASSpecialAbilityCollector, BattleForceSUAFormat
     @Override
     public String toString() {
         return "[SBFUnit] " + name + ": " + type + "; SZ" + size + "; TMM" + tmm + "; MV" + movement + movementMode.code
-                + (jumpMove > 0 ? "/" + jumpMove + "j" : "")
-                + (trspMovement != movement || trspMovementMode != movementMode ? "; TRSP" + trspMovement + trspMovementMode.code : "")
-                + "; A" + armor + "; " + damage + "; " + pointValue + "@" + skill + "; " + elements.size() + " elements"
-                + "; " + specialAbilities.getSpecialsDisplayString(this);
+              + (jumpMove > 0 ? "/" + jumpMove + "j" : "")
+              + (trspMovement != movement || trspMovementMode != movementMode ?
+              "; TRSP" + trspMovement + trspMovementMode.code :
+              "")
+              + "; A" + armor + "; " + damage + "; " + pointValue + "@" + skill + "; " + elements.size() + " elements"
+              + "; " + specialAbilities.getSpecialsDisplayString(this);
     }
 
     public void addTargetingCrit() {

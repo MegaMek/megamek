@@ -1,27 +1,43 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.server;
 
-import megamek.common.IGame;
+import megamek.common.game.IGame;
 import megamek.common.Player;
 import megamek.common.enums.GamePhase;
 import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
@@ -57,10 +73,14 @@ public abstract class AbstractGameManager implements IGameManager {
 
     @Override
     public void handlePacket(int connId, Packet packet) {
-        if (packet.getCommand() == PacketCommand.PLAYER_READY) {
-            receivePlayerDone(packet, connId);
-            send(packetHelper.createPlayerDonePacket(connId));
-            checkReady();
+        if (packet.command() == PacketCommand.PLAYER_READY) {
+            try {
+                receivePlayerDone(packet, connId);
+                send(packetHelper.createPlayerDonePacket(connId));
+                checkReady();
+            } catch (InvalidPacketDataException e) {
+                logger.error("Invalid packet data:", e);
+            }
         }
     }
 
@@ -70,21 +90,18 @@ public abstract class AbstractGameManager implements IGameManager {
     protected abstract void endCurrentPhase();
 
     /**
-     * Do anything we need to work through the current phase, such as give a turn to
-     * the first player to play.
+     * Do anything we need to work through the current phase, such as give a turn to the first player to play.
      */
     protected abstract void executeCurrentPhase();
 
     /**
-     * Prepares for the game's current phase. This typically involves resetting the
-     * states of units in the game and making sure the clients have the information
-     * they need for the new phase.
+     * Prepares for the game's current phase. This typically involves resetting the states of units in the game and
+     * making sure the clients have the information they need for the new phase.
      */
     protected abstract void prepareForCurrentPhase();
 
     /**
-     * Switches to the given new Phase and preforms preparation, checks if it should
-     * be skipped and executes it.
+     * Switches to the given new Phase and preforms preparation, checks if it should be skipped and executes it.
      */
     public final void changePhase(GamePhase newPhase) {
         if (getGame().getPhase().isExchange() || getGame().getPhase().isStartingScenario()) {
@@ -122,8 +139,7 @@ public abstract class AbstractGameManager implements IGameManager {
     }
 
     /**
-     * Called when a player declares that they are "done". By default, this method
-     * advances to the next phase, if
+     * Called when a player declares that they are "done". By default, this method advances to the next phase, if
      * <BR>
      * - all non-ghost, non-observer players are done,
      * <BR>
@@ -131,9 +147,9 @@ public abstract class AbstractGameManager implements IGameManager {
      * <BR>
      * - we are not in an empty lobby (= no units at all).
      * <BR>
-     * In other circumstances, ending the current phase is triggered elsewhere. Note
-     * that specifically, ghost players are not checked for their status here so the
-     * game can advance through non-turn (report) phases even with ghost players.
+     * In other circumstances, ending the current phase is triggered elsewhere. Note that specifically, ghost players
+     * are not checked for their status here so the game can advance through non-turn (report) phases even with ghost
+     * players.
      */
     protected void checkReady() {
         for (Player player : getGame().getPlayersList()) {
@@ -155,18 +171,16 @@ public abstract class AbstractGameManager implements IGameManager {
     }
 
     /**
-     * @return True when the game is in the lobby phase and is empty (no units
-     *         present).
+     * @return True when the game is in the lobby phase and is empty (no units present).
      */
     protected boolean isEmptyLobby() {
         return getGame().getPhase().isLounge() && getGame().getInGameObjects().isEmpty();
     }
 
     /**
-     * Sets a player's ready status as received from the Client. This method does
-     * not perform any follow-up actions.
+     * Sets a player's ready status as received from the Client. This method does not perform any follow-up actions.
      */
-    private void receivePlayerDone(Packet packet, int connIndex) {
+    private void receivePlayerDone(Packet packet, int connIndex) throws InvalidPacketDataException {
         boolean ready = packet.getBooleanValue(0);
         Player player = getGame().getPlayer(connIndex);
         if (null != player) {
@@ -177,10 +191,11 @@ public abstract class AbstractGameManager implements IGameManager {
     }
 
     /**
-     * Sends out the player object to all players. Private info of the given player
-     * is redacted before being sent to other players.
+     * Sends out the player object to all players. Private info of the given player is redacted before being sent to
+     * other players.
      *
      * @param player The player whose information is to be shared
+     *
      * @see #transmitAllPlayerUpdates()
      */
     protected void transmitPlayerUpdate(Player player) {
@@ -188,8 +203,7 @@ public abstract class AbstractGameManager implements IGameManager {
     }
 
     /**
-     * Shares all player objects with all players. Private info is redacted before
-     * being sent to other players.
+     * Shares all player objects with all players. Private info is redacted before being sent to other players.
      *
      * @see #transmitPlayerUpdate(Player)
      */
@@ -198,10 +212,9 @@ public abstract class AbstractGameManager implements IGameManager {
     }
 
     /**
-     * Performs an automatic save (does not check the autosave settings - the
-     * autosave will simply be done). Depending on the settings, the "autosave"
-     * filename is appended with a timestamp and/or a chat message is sent
-     * announcing the autosave.
+     * Performs an automatic save (does not check the autosave settings - the autosave will simply be done). Depending
+     * on the settings, the "autosave" filename is appended with a timestamp and/or a chat message is sent announcing
+     * the autosave.
      */
     public void autoSave() {
         String fileName = "autosave";
@@ -240,8 +253,7 @@ public abstract class AbstractGameManager implements IGameManager {
     }
 
     /**
-     * Sends the current list of player turns as stored in the game's turn list to
-     * the Clients.
+     * Sends the current list of player turns as stored in the game's turn list to the Clients.
      *
      * @see IGame#getTurnsList()
      */
@@ -266,15 +278,14 @@ public abstract class AbstractGameManager implements IGameManager {
     }
 
     /**
-     * Sends out a notification message indicating that a ghost player's turn may be
-     * skipped with the /skip command.
+     * Sends out a notification message indicating that a ghost player's turn may be skipped with the /skip command.
      *
      * @param ghost the Player who is ghosted. This value must not be null.
      */
     protected void sendGhostSkipMessage(Player ghost) {
         String message = String.format(
-                "Player '%s' is disconnected. You may skip their current turn with the /skip command.",
-                ghost.getName());
+              "Player '%s' is disconnected. You may skip their current turn with the /skip command.",
+              ghost.getName());
         sendServerChat(message);
     }
 }

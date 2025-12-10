@@ -1,33 +1,60 @@
 /*
  * Copyright (c) 2000-2004 - Ben Mazur (bmazur@sev.org).
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.actions;
 
-import megamek.client.Client;
-import megamek.common.*;
-import megamek.common.annotations.Nullable;
-import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.IlluminationLevel;
-import megamek.common.planetaryconditions.PlanetaryConditions;
-
+import java.io.Serial;
 import java.util.Enumeration;
 
+import megamek.client.Client;
+import megamek.common.ToHitData;
+import megamek.common.annotations.Nullable;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryConditions.IlluminationLevel;
+import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.Targetable;
+
 /**
- * Abstract superclass for any action where an entity is attacking another
- * entity.
+ * Abstract superclass for any action where an entity is attacking another entity.
  */
 public abstract class AbstractAttackAction extends AbstractEntityAction implements AttackAction {
+    @Serial
     private static final long serialVersionUID = -897197664652217134L;
     private int targetType;
     private int targetId;
@@ -70,9 +97,8 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
     }
 
     /**
-     * Gets the entity associated with this attack action, using the passed-in game
-     * object.
-     * 
+     * Gets the entity associated with this attack action, using the passed-in game object.
+     *
      * @return the entity even if it was destroyed or fled.
      */
     public @Nullable Entity getEntity(Game g) {
@@ -81,24 +107,23 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
 
     /**
      * Gets an entity with the given ID, using the passed-in game object.
-     * 
+     *
      * @return the entity even if it was destroyed or fled.
      */
     public @Nullable Entity getEntity(Game g, int entityID) {
         Entity e = g.getEntity(entityID);
-        // if we have an artyattack, we might need to get an out-of-game entity if it
+        // if we have an arty attack, we might need to get an out-of-game entity if it
         // died or fled
         return (e == null) ? g.getOutOfGameEntity(entityID) : e;
     }
 
     /**
-     * used by the toHit of derived classes atype may be null if not using an
-     * ammo based weapon
+     * used by the toHit of derived classes ammoType may be null if not using an ammo based weapon
      *
      * @param game The current {@link Game}
      */
-    public static ToHitData nightModifiers(Game game, Targetable target, AmmoType atype,
-            Entity attacker, boolean isWeapon) {
+    public static ToHitData nightModifiers(Game game, Targetable target, AmmoType ammoType, Entity attacker,
+          boolean isWeapon) {
         Entity te = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target : null;
         ToHitData toHit = new ToHitData();
 
@@ -109,8 +134,9 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
         }
 
         // The base night penalty
-        final IlluminationLevel hexIllumLvl = IlluminationLevel.determineIlluminationLevel(game,
-                target.getPosition());
+        final IlluminationLevel hexIlluminationLvl = IlluminationLevel.determineIlluminationLevel(game,
+              target.getBoardId(),
+              target.getPosition());
         int night_modifier = conditions.getLightHitPenalty(isWeapon);
         toHit.addModifier(night_modifier, conditions.getLight().toString());
 
@@ -119,11 +145,10 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
             illuminated = te.isIlluminated();
             // hack for unresolved actions so client shows right BTH
             if (!illuminated) {
-                for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements();) {
-                    EntityAction a = actions.nextElement();
-                    if (a instanceof SearchlightAttackAction) {
-                        SearchlightAttackAction saa = (SearchlightAttackAction) a;
-                        if (saa.willIlluminate(game, te)) {
+                for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements(); ) {
+                    EntityAction entityAction = actions.nextElement();
+                    if (entityAction instanceof SearchlightAttackAction searchlightAttackAction) {
+                        if (searchlightAttackAction.willIlluminate(game, te)) {
                             illuminated = true;
                             break;
                         }
@@ -138,7 +163,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
         boolean isUsingSearchlight = (te != null) && te.isUsingSearchlight();
         boolean lighted = isUsingSearchlight || illuminated;
         if (conditions.getLight().isFullMoonOrMoonlessOrPitchBack()
-                && lighted) {
+              && lighted) {
             if (isUsingSearchlight) {
                 toHit.addModifier(-searchlightMod, "target using searchlight");
                 night_modifier = night_modifier - searchlightMod;
@@ -146,51 +171,50 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
                 toHit.addModifier(-searchlightMod, "target illuminated by searchlight");
                 night_modifier = night_modifier - searchlightMod;
             }
-        } else if (hexIllumLvl.isFlare()) {
+        } else if (hexIlluminationLvl.isFlare()) {
             // Flares reduce the night modifier to zero
             toHit.addModifier(-night_modifier, "target illuminated by flare");
             night_modifier = 0;
-        } else if (hexIllumLvl.isFire()) {
+        } else if (hexIlluminationLvl.isFire()) {
             int fireMod = Math.min(2, night_modifier);
             toHit.addModifier(-fireMod, "target illuminated by fire");
             night_modifier -= fireMod;
-        } else if ((conditions.getLight().isFullMoonOrMoonlessOrPitchBack()) && (hexIllumLvl.isSearchlight())) {
+        } else if ((conditions.getLight().isFullMoonOrMoonlessOrPitchBack()) && (hexIlluminationLvl.isSearchlight())) {
             toHit.addModifier(-searchlightMod, "target illuminated by searchlight");
             night_modifier -= searchlightMod;
-        } else if (atype != null) {
-            // Certain ammunitions reduce the penalty
-            if (((atype.getAmmoType() == AmmoType.T_AC)
-                    || (atype.getAmmoType() == AmmoType.T_LAC)
-                    || (atype.getAmmoType() == AmmoType.T_AC_IMP)
-                    || (atype.getAmmoType() == AmmoType.T_PAC))
-                    && ((atype.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_AC))
-                            || (atype.getMunitionType().contains(AmmoType.Munitions.M_TRACER)))) {
+        } else if (ammoType != null) {
+            // Certain ammunition reduce the penalty
+            if (((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AC)
+                  || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LAC)
+                  || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP)
+                  || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.PAC))
+                  && ((ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_AC))
+                  || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_TRACER)))) {
                 toHit.addModifier(-1, "incendiary/tracer ammo");
                 night_modifier--;
             }
         }
 
-        // Laser heatsinks
+        // Laser heats inks
         if ((night_modifier > 0) && (te instanceof Mek) && ((Mek) te).hasLaserHeatSinks()) {
-            boolean lhsused = false;
+            boolean lhsUsed = false;
             if (te.heat > 0) {
-                toHit.addModifier(-night_modifier, "target overheated with laser heatsinks");
+                toHit.addModifier(-night_modifier, "target overheated with laser heat sinks");
             } else if ((te.heatBuildup > 0) || te.isStealthActive()) {
                 // actions that generate heat give a -1 modifier
-                lhsused = true;
+                lhsUsed = true;
             } else {
                 // Unfortunately, we can't just check weapons fired by the target
                 // because isUsedThisRound() is not valid if the attacker declared first.
                 // therefore, enumerate WeaponAttackActions...
-                for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements();) {
+                for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements(); ) {
                     EntityAction a = actions.nextElement();
-                    if (a instanceof WeaponAttackAction) {
-                        WeaponAttackAction waa = (WeaponAttackAction) a;
-                        if (waa.getEntityId() == te.getId()) {
-                            Mounted<?> weapon = te.getEquipment(waa.getWeaponId());
-                            if ((weapon.getCurrentHeat() != 0) || weapon.isRapidfire()) {
+                    if (a instanceof WeaponAttackAction weaponAttackAction) {
+                        if (weaponAttackAction.getEntityId() == te.getId()) {
+                            Mounted<?> weapon = te.getEquipment(weaponAttackAction.getWeaponId());
+                            if ((weapon.getCurrentHeat() != 0) || weapon.isRapidFire()) {
                                 // target fired a weapon that generates heat
-                                lhsused = true;
+                                lhsUsed = true;
                                 break;
                             }
                         }
@@ -198,8 +222,8 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
                 }
             }
 
-            if (lhsused) {
-                toHit.addModifier(-1, "target uses laser heatsinks");
+            if (lhsUsed) {
+                toHit.addModifier(-1, "target uses laser heat sinks");
             }
         }
 
@@ -212,7 +236,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
         }
 
         if ((toHit.getValue() > 0) && (null != attacker.getCrew())
-                && attacker.hasAbility(OptionsConstants.UNOFF_BLIND_FIGHTER)) {
+              && attacker.hasAbility(OptionsConstants.UNOFFICIAL_BLIND_FIGHTER)) {
             toHit.addModifier(-1, "blind fighter");
         }
 
@@ -223,7 +247,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
     public String toAccessibilityDescription(final Client client) {
         final Targetable target = getTarget(client.getGame());
         return (target == null) ? "Attacking Null Target with id " + getTargetId()
-                : "Attacking " + target.getDisplayName();
+              : "Attacking " + target.getDisplayName();
     }
 
     @Override

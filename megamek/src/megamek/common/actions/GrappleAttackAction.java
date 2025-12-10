@@ -1,25 +1,61 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2006-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.actions;
 
-import megamek.common.*;
+import java.io.Serial;
+
+import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.ToHitData;
+import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeArc;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Targetable;
 
 /**
  * The attacker grapples the target.
  */
 public class GrappleAttackAction extends PhysicalAttackAction {
+    @Serial
     private static final long serialVersionUID = -4178252788550426489L;
 
     public GrappleAttackAction(int entityId, int targetId) {
@@ -38,6 +74,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
      * @param game       The current {@link Game}
      * @param attackerId the attacking entity id
      * @param target     the attack's target
+     *
      * @return the to hit number for the current grapple attack
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target) {
@@ -48,148 +85,144 @@ public class GrappleAttackAction extends PhysicalAttackAction {
      * Calculates ToHitData for a grapple attack.
      *
      * @param game        The current {@link Game}
-     * @param attackerId
-     * @param target
-     * @param grappleSide
-     * @param isChainWhip
-     *                    Flag that determines if the attack is coming from a chain
-     *                    whip. If true, ignore illegal cases, as this comes from a
-     *                    bonus attack for a chain whip, and the attack should never
-     *                    be
-     *                    illegal. See TO pg 289.
-     * @return
+     * @param isChainWhip Flag that determines if the attack is coming from a chain whip. If true, ignore illegal cases,
+     *                    as this comes from a bonus attack for a chain whip, and the attack should never be illegal.
+     *                    See TO pg 289.
+     *
      */
-    public static ToHitData toHit(Game game, int attackerId, Targetable target, int grappleSide,
-            boolean isChainWhip) {
-        final Entity ae = game.getEntity(attackerId);
+    public static ToHitData toHit(Game game, int attackerId, Targetable target, int grappleSide, boolean isChainWhip) {
+        final Entity attackingEntity = game.getEntity(attackerId);
 
-        ToHitData toHit = checkIllegal(game, ae, target, grappleSide);
+        if (attackingEntity == null) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
+        }
+
+        ToHitData toHit = checkIllegal(game, attackingEntity, target, grappleSide);
 
         if ((toHit != null) && !isChainWhip) {
             return toHit;
         }
 
-        Entity te = (Entity) target;
+        Entity targetEntity = (Entity) target;
 
         // Set the base BTH
-        int base = ae.getCrew().getPiloting();
+        int base = attackingEntity.getCrew().getPiloting();
 
         // Start the To-Hit
         toHit = new ToHitData(base, "base");
 
-        setCommonModifiers(toHit, game, ae, target);
+        setCommonModifiers(toHit, game, attackingEntity, target);
 
-        if ((ae instanceof Mek) && grappleSide == Entity.GRAPPLE_BOTH) {
+        if ((attackingEntity instanceof Mek) && grappleSide == Entity.GRAPPLE_BOTH) {
             // damaged or missing actuators
-            if (!ae.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_LARM)) {
+            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_LEFT_ARM)) {
                 toHit.addModifier(2, "Left upper arm actuator destroyed");
             }
 
-            if (!ae.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LARM)) {
+            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LEFT_ARM)) {
                 toHit.addModifier(2, "Left lower arm actuator destroyed");
             }
 
-            if (!ae.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM)) {
+            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM)) {
                 toHit.addModifier(1, "Left hand actuator destroyed");
             }
 
-            if (!ae.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_RARM)) {
+            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_RIGHT_ARM)) {
                 toHit.addModifier(2, "Right upper arm actuator destroyed");
             }
 
-            if (!ae.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RARM)) {
+            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RIGHT_ARM)) {
                 toHit.addModifier(2, "Right lower arm actuator destroyed");
             }
 
-            if (!ae.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM)) {
+            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM)) {
                 toHit.addModifier(1, "Right hand actuator destroyed");
             }
 
-            if (ae.hasFunctionalArmAES(Mek.LOC_RARM) && ae.hasFunctionalArmAES(Mek.LOC_LARM)) {
-                toHit.addModifier(-1, "AES modifer");
+            if (attackingEntity.hasFunctionalArmAES(Mek.LOC_RIGHT_ARM)
+                  && attackingEntity.hasFunctionalArmAES(Mek.LOC_LEFT_ARM)) {
+                toHit.addModifier(-1, "AES modifier");
             }
 
-        } else if (ae instanceof Mek && grappleSide == Entity.GRAPPLE_RIGHT) {
+        } else if (attackingEntity instanceof Mek && grappleSide == Entity.GRAPPLE_RIGHT) {
             // damaged or missing actuators
-            if (!ae.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_RARM)) {
+            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_RIGHT_ARM)) {
                 toHit.addModifier(2, "Right upper arm actuator destroyed");
             }
 
-            if (!ae.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RARM)) {
+            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RIGHT_ARM)) {
                 toHit.addModifier(2, "Right lower arm actuator destroyed");
             }
 
-            if (!ae.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM)) {
+            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM)) {
                 toHit.addModifier(1, "Right hand actuator destroyed");
             }
 
-            if (ae.hasFunctionalArmAES(Mek.LOC_RARM)) {
-                toHit.addModifier(-1, "AES modifer");
+            if (attackingEntity.hasFunctionalArmAES(Mek.LOC_RIGHT_ARM)) {
+                toHit.addModifier(-1, "AES modifier");
             }
 
         } else {
             // damaged or missing actuators
-            if (!ae.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_LARM)) {
+            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_LEFT_ARM)) {
                 toHit.addModifier(2, "Left upper arm actuator destroyed");
             }
 
-            if (!ae.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LARM)) {
+            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LEFT_ARM)) {
                 toHit.addModifier(2, "Left lower arm actuator destroyed");
             }
 
-            if (!ae.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM)) {
+            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM)) {
                 toHit.addModifier(1, "Left hand actuator destroyed");
             }
 
-            if (ae.hasFunctionalArmAES(Mek.LOC_LARM)) {
-                toHit.addModifier(-1, "AES modifer");
+            if (attackingEntity.hasFunctionalArmAES(Mek.LOC_LEFT_ARM)) {
+                toHit.addModifier(-1, "AES modifier");
             }
 
         }
 
-        if ((grappleSide != Entity.GRAPPLE_BOTH) && (ae instanceof Mek)) {
-            Mek attacker = (Mek) ae;
-            Mek teMek = (te instanceof Mek) ? (Mek) te : null;
+        if ((grappleSide != Entity.GRAPPLE_BOTH) && (attackingEntity instanceof Mek attacker)) {
+            Mek teMek = (targetEntity instanceof Mek) ? (Mek) targetEntity : null;
             if (attacker.hasActiveTSM(false)
-                    && ((teMek == null) || !teMek.hasActiveTSM(false)
-                            || teMek.hasActiveTSM(false))) {
+                  && ((teMek == null) || !teMek.hasActiveTSM(false)
+                  || teMek.hasActiveTSM(false))) {
                 toHit.addModifier(-2, "TSM Active Bonus");
             }
         }
 
         // Weight class difference
-        int wmod = te.getWeightClass() - ae.getWeightClass();
-
-        if ((te instanceof ProtoMek) && !(ae instanceof ProtoMek)) {
-            wmod = ae.getWeightClass() * -1;
-        } else if ((ae instanceof ProtoMek) && !(te instanceof ProtoMek)) {
-            wmod = te.getWeightClass();
-        } else if ((te instanceof ProtoMek) && (ae instanceof ProtoMek)) {
-            wmod = 0;
-        }
-
-        if (wmod != 0) {
-            toHit.addModifier(wmod, "Weight class difference");
+        int weaponMod = getWeaponMod(attackingEntity, targetEntity);
+        if (weaponMod != 0) {
+            toHit.addModifier(weaponMod, "Weight class difference");
         }
         // done!
         return toHit;
     }
 
+    static int getWeaponMod(Entity attackingEntity, Entity targetEntity) {
+        if ((targetEntity instanceof ProtoMek) && !(attackingEntity instanceof ProtoMek)) {
+            return attackingEntity.getWeightClass() * -1;
+        } else if ((attackingEntity instanceof ProtoMek) && !(targetEntity instanceof ProtoMek)) {
+            return targetEntity.getWeightClass();
+        } else if (targetEntity instanceof ProtoMek) {
+            return 0;
+        } else {
+            return targetEntity.getWeightClass() - attackingEntity.getWeightClass();
+        }
+    }
+
     /**
      * Various modifiers to check to see if the grapple attack is illegal.
      *
-     * @param game        The current {@link Game}
-     * @param ae
-     * @param target
-     * @param grappleSide
-     * @return
+     * @param game The current {@link Game}
      */
     public static ToHitData checkIllegal(Game game, Entity ae, Targetable target, int grappleSide) {
         if (ae == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
         }
 
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GRAPPLING)) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GRAPPLING)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "grappling attack not allowed");
         }
 
@@ -206,32 +239,32 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                    && ((((Entity) target).getOwnerId() == ae.getOwnerId())
-                            || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
-                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
-                                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
+                  && ((target.getOwnerId() == ae.getOwnerId())
+                  || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                  && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                  && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "A friendly unit can never be the target of a direct attack.");
+                      "A friendly unit can never be the target of a direct attack.");
             }
         }
 
         Hex attHex = game.getBoard().getHex(ae.getPosition());
         Hex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerElevation = ae.getElevation() + attHex.getLevel();
-        // final int attackerHeight = attackerElevation + ae.getHeight();
+        // final int attackerHeight = attackerElevation + attackingEntity.getHeight();
         final int targetElevation = target.getElevation() + targHex.getLevel();
         // final int targetHeight = targetElevation + target.getHeight();
 
         // non-meks can't grapple or be grappled
         if ((!(ae instanceof BipedMek) && !(ae instanceof ProtoMek))
-                || (!(target instanceof Mek) && !(target instanceof ProtoMek))) {
+              || (!(target instanceof Mek) && !(target instanceof ProtoMek))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Only biped meks can grapple 'Meks and ProtoMeks");
+                  "Only biped meks can grapple 'Meks and ProtoMeks");
         }
 
         Entity te = (Entity) target;
         final boolean counter = ae.getGrappled() != Entity.NONE
-                && !ae.isGrappleAttacker();
+              && !ae.isGrappleAttacker();
 
         // check for no/minimal arms quirk
         if (ae.hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
@@ -240,29 +273,29 @@ public class GrappleAttackAction extends PhysicalAttackAction {
 
         // requires 2 good arms
         if (grappleSide == Entity.GRAPPLE_BOTH) {
-            if (ae.isLocationBad(Mek.LOC_LARM)
-                    || ae.isLocationBad(Mek.LOC_RARM)) {
+            if (ae.isLocationBad(Mek.LOC_LEFT_ARM)
+                  || ae.isLocationBad(Mek.LOC_RIGHT_ARM)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
             }
 
-            if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RARM)
-                    || !ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RIGHT_ARM)
+                  || !ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LEFT_ARM)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Shoulder missing/destroyed");
             }
         } else if (grappleSide == Entity.GRAPPLE_LEFT) {
-            if (ae.isLocationBad(Mek.LOC_LARM)) {
+            if (ae.isLocationBad(Mek.LOC_LEFT_ARM)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
             }
 
-            if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LEFT_ARM)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Shoulder missing/destroyed");
             }
         } else {
-            if (ae.isLocationBad(Mek.LOC_RARM)) {
+            if (ae.isLocationBad(Mek.LOC_RIGHT_ARM)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
             }
 
-            if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RIGHT_ARM)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Shoulder missing/destroyed");
             }
         }
@@ -279,7 +312,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         }
 
         // check facing
-        if (!counter && !Compute.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_FORWARD)) {
+        if (!counter && !ComputeArc.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_FORWARD)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 
@@ -305,7 +338,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         int atGr = ae.getGrappled();
         int deGr = te.getGrappled();
         if ((atGr != Entity.NONE || deGr != Entity.NONE)
-                && atGr != target.getId() && te.isGrappleAttacker()) {
+              && atGr != target.getId() && te.isGrappleAttacker()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Already grappled");
         }
 

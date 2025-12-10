@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2019-2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.common.pathfinder;
@@ -26,28 +40,27 @@ import java.util.List;
 import java.util.Set;
 
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.common.Coords;
-import megamek.common.Game;
-import megamek.common.IAero;
-import megamek.common.MovePath;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.board.Coords;
+import megamek.common.enums.MoveStepType;
+import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
+import megamek.common.units.IAero;
 import megamek.logging.MMLogger;
 
 /**
- * This set of classes is intended to be used by AI players to generate paths
- * for units behaving like spheroid DropShips in atmosphere. Remarkably similar
- * to a jumping infantry unit.
+ * This set of classes is intended to be used by AI players to generate paths for units behaving like spheroid DropShips
+ * in atmosphere. Remarkably similar to a jumping infantry unit.
  *
  * @author NickAragua
  */
 public class SpheroidPathFinder {
     private static final MMLogger logger = MMLogger.create(SpheroidPathFinder.class);
 
-    private Game game;
+    private final Game game;
     private int direction;
     private List<MovePath> spheroidPaths;
 
-    private Set<Coords> visitedCoords = new HashSet<>();
+    private final Set<Coords> visitedCoords = new HashSet<>();
 
     private SpheroidPathFinder(Game game) {
         // Default to heading north
@@ -62,7 +75,6 @@ public class SpheroidPathFinder {
     /**
      * We want to be able to set the direction the entity should turn to face
      *
-     * @param direction
      */
     public void setDirection(int direction) {
         this.direction = direction;
@@ -77,16 +89,11 @@ public class SpheroidPathFinder {
     }
 
     /**
-     * Computes paths to nodes in the graph.
-     * This is an incredibly compute- and memory-intensive process, so we are
-     * trimming it down:
-     * 1) A Princess spheroid on the ground map can face any direction if it hovers
-     * in place.
-     * 2) A Princess spheroid on the ground map must choose one facing per path
-     * endpoint.
-     *
-     * The facing will either be the current facing, or a direction determined by
-     * the unit's state.
+     * Computes paths to nodes in the graph. This is an incredibly compute- and memory-intensive process, so we are
+     * trimming it down: 1) A Princess spheroid on the ground map can face any direction if it hovers in place. 2) A
+     * Princess spheroid on the ground map must choose one facing per path endpoint.
+     * <p>
+     * The facing will either be the current facing, or a direction determined by the unit's state.
      *
      * @param startingEdge the starting node. Should be empty.
      */
@@ -124,10 +131,8 @@ public class SpheroidPathFinder {
             spheroidPaths.addAll(altitudePaths);
             spheroidPaths.add(hoverPath);
 
-            List<MovePath> validRotations = new ArrayList<>();
-
             // Allow the entity to rotate any direction if it hovers.
-            validRotations.addAll(AeroPathUtil.generateValidRotations(hoverPath));
+            List<MovePath> validRotations = new ArrayList<>(AeroPathUtil.generateValidRotations(hoverPath));
 
             spheroidPaths.addAll(validRotations);
 
@@ -135,7 +140,7 @@ public class SpheroidPathFinder {
 
             // add "flee" option if we haven't done anything else
             if (game.getBoard().isOnBoardEdge(startingEdge.getFinalCoords())
-                    && startingEdge.getStepVector().isEmpty()) {
+                  && startingEdge.getStepVector().isEmpty()) {
                 MovePath fleePath = startingEdge.clone();
                 fleePath.addStep(MoveStepType.FLEE);
                 spheroidPaths.add(fleePath);
@@ -145,8 +150,8 @@ public class SpheroidPathFinder {
             // memory too many paths. Usually we can recover from this by ending prematurely
             // while preserving already computed results.
             final String memoryMessage = "Not enough memory to analyze all options."
-                    + " Try setting time limit to lower value, or "
-                    + "increase java memory limit.";
+                  + " Try setting time limit to lower value, or "
+                  + "increase java memory limit.";
 
             logger.error(memoryMessage, ex);
         } catch (Exception ex) {
@@ -172,23 +177,20 @@ public class SpheroidPathFinder {
     }
 
     /**
-     * Recursive method that generates the possible child paths from the given path.
-     * Eliminates paths to hexes we've already visited. Generates *shortest* paths
-     * to destination hexes
+     * Recursive method that generates the possible child paths from the given path. Eliminates paths to hexes we've
+     * already visited. Generates *shortest* paths to destination hexes
      *
-     * @param startingPath
-     * @return
      */
     private List<MovePath> generateChildren(MovePath startingPath) {
-        List<MovePath> retval = new ArrayList<>();
+        List<MovePath> retVal = new ArrayList<>();
 
         // terminator conditions:
         // - we've visited this hex already
-        // - we've moved further than 1 hex on a low-atmo map
+        // - we've moved further than 1 hex on a low-atmosphere map
         // - we've moved further than 8 hexes on a ground map
         if (visitedCoords.contains(startingPath.getFinalCoords()) ||
-                (startingPath.getMpUsed() > startingPath.getEntity().getRunMP())) {
-            return retval;
+              (startingPath.getMpUsed() > startingPath.getEntity().getRunMP())) {
+            return retVal;
         }
 
         visitedCoords.add(startingPath.getFinalCoords());
@@ -226,10 +228,10 @@ public class SpheroidPathFinder {
                 continue;
             }
 
-            retval.add(childPath.clone());
-            retval.addAll(generateChildren(childPath));
+            retVal.add(childPath.clone());
+            retVal.addAll(generateChildren(childPath));
         }
 
-        return retval;
+        return retVal;
     }
 }

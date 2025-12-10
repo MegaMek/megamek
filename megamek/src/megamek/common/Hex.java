@@ -1,41 +1,81 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
-import megamek.common.annotations.Nullable;
-import megamek.common.enums.BasementType;
-
+import java.io.Serial;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.stream.Collectors;
+
+import megamek.common.annotations.Nullable;
+import megamek.common.board.Coords;
+import megamek.common.enums.BasementType;
+import megamek.common.rolls.PilotingRollData;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.IBuilding;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
 
 /**
  * Hex represents a single hex on the board.
+ *
  * @author Ben
  */
 public class Hex implements Serializable {
     //region Variable Declarations
+    @Serial
     private static final long serialVersionUID = 82483704768044698L;
     private Coords coords;
     private int level;
-    private Map<Integer, Terrain> terrains = new HashMap<>(1);
+    private final Map<Integer, Terrain> terrains = new HashMap<>(1);
     private String theme;
-    private String originalTheme;
+    private final String originalTheme;
     private int fireTurn;
     //endregion Variable Declarations
 
     //region Constructors
+
     /**
      * Constructs a clear, plain hex at level 0.
      */
@@ -83,13 +123,14 @@ public class Hex implements Serializable {
      */
     public Hex(int level, String terrain, String theme, Coords c) {
         this(level, new Terrain[Terrains.SIZE], theme, c);
-        for (StringTokenizer st = new StringTokenizer(terrain, ";", false); st.hasMoreTokens();) {
+        for (StringTokenizer st = new StringTokenizer(terrain, ";", false); st.hasMoreTokens(); ) {
             addTerrain(new Terrain(st.nextToken()));
         }
     }
     //endregion Constructors
 
     //region Getters/Setters
+
     /**
      * @return The level of a hex, as defined in TW. This refers to the height of the ground terrain.
      */
@@ -103,6 +144,7 @@ public class Hex implements Serializable {
 
     /**
      * The theme is intended as a tag for the tileset file to indicate a special graphic for the hex
+     *
      * @return the theme name
      */
     public String getTheme() {
@@ -118,7 +160,12 @@ public class Hex implements Serializable {
      * @return An array that contains an id for each terrain present in this hex.
      */
     public int[] getTerrainTypes() {
-        return terrains.keySet().stream().mapToInt(Integer::intValue).toArray();
+        int[] result = new int[terrains.size()];
+        int i = 0;
+        for (Integer key : terrains.keySet()) {
+            result[i++] = key;
+        }
+        return result;
     }
 
     /**
@@ -148,13 +195,13 @@ public class Hex implements Serializable {
     }
 
     /**
-     * Sets the "exits" flag appropriately for the neighbouring hex in the provided direction. Does
-     * not reset connects in other directions. All <code>Terrain.ROAD</code>s will automatically
-     * connect to <code>Terrain.PAVEMENT</code> hexes.
+     * Sets the "exits" flag appropriately for the neighbouring hex in the provided direction. Does not reset connects
+     * in other directions. All <code>Terrain.ROAD</code>s will automatically connect to <code>Terrain.PAVEMENT</code>
+     * hexes.
      *
-     * @param other the neighbouring hex in the specified direction
-     * @param direction the <code>int</code> direction of the exit. This value should be between 0
-     *                  and 5 (inclusive).
+     * @param other     the neighbouring hex in the specified direction
+     * @param direction the <code>int</code> direction of the exit. This value should be between 0 and 5 (inclusive).
+     *
      * @see Hex#setExits(Hex, int, boolean)
      */
     public void setExits(Hex other, int direction) {
@@ -162,13 +209,14 @@ public class Hex implements Serializable {
     }
 
     /**
-     * Sets the "exits" flag appropriately for the neighbouring hex in the provided direction. Does
-     * not reset connects in other directions.
+     * Sets the "exits" flag appropriately for the neighbouring hex in the provided direction. Does not reset connects
+     * in other directions.
      *
-     * @param other the neighbouring hex in the specified direction
-     * @param direction the <code>int</code> direction of the exit. This value should be between 0
-     *                  and 5 (inclusive).
+     * @param other         the neighbouring hex in the specified direction
+     * @param direction     the <code>int</code> direction of the exit. This value should be between 0 and 5
+     *                      (inclusive).
      * @param roadsAutoExit if to automatically exit onto Pavement hexes
+     *
      * @see Hex#setExits(Hex, int)
      */
     public void setExits(Hex other, int direction, boolean roadsAutoExit) {
@@ -197,19 +245,19 @@ public class Hex implements Serializable {
 
             // Roads exit into pavement, too.
             if ((other != null) && roadsAutoExit && (cTerr.getType() == Terrains.ROAD)
-                    && other.containsTerrain(Terrains.PAVEMENT)) {
+                  && other.containsTerrain(Terrains.PAVEMENT)) {
                 cTerr.setExit(direction, true);
             }
 
             // buildings must have the same building class
             if ((other != null) && (cTerr.getType() == Terrains.BUILDING)
-                    && (terrainLevel(Terrains.BLDG_CLASS) != other.terrainLevel(Terrains.BLDG_CLASS))) {
+                  && (terrainLevel(Terrains.BLDG_CLASS) != other.terrainLevel(Terrains.BLDG_CLASS))) {
                 cTerr.setExit(direction, false);
             }
 
             // gun emplacements can only be single hex buildings
             if ((cTerr.getType() == Terrains.BUILDING)
-                    && (terrainLevel(Terrains.BLDG_CLASS) == Building.GUN_EMPLACEMENT)) {
+                  && (terrainLevel(Terrains.BLDG_CLASS) == IBuilding.GUN_EMPLACEMENT)) {
                 cTerr.setExit(direction, false);
             }
 
@@ -217,15 +265,15 @@ public class Hex implements Serializable {
     }
 
     /**
-     * Determine if this <code>Hex</code> contains the indicated terrain that exits in the specified
-     * direction.
+     * Determine if this <code>Hex</code> contains the indicated terrain that exits in the specified direction.
      *
-     * @param terrType the <code>int</code> type of the terrain.
-     * @param direction the <code>int</code> direction of the exit. This value should be between 0
-     *                  and 5 (inclusive).
+     * @param terrType  the <code>int</code> type of the terrain.
+     * @param direction the <code>int</code> direction of the exit. This value should be between 0 and 5 (inclusive).
+     *
      * @return <code>true</code> if this Hex contains the indicated terrain that exits in the
-     * specified direction, or <code>false</code> if bad input is supplied, if no such terrain
-     * exists, or if it doesn't exit in that direction.
+     *       specified direction, or <code>false</code> if bad input is supplied, if no such terrain exists, or if it
+     *       doesn't exit in that direction.
+     *
      * @see Hex#setExits(Hex, int, boolean)
      */
     public boolean containsTerrainExit(int terrType, int direction) {
@@ -248,11 +296,11 @@ public class Hex implements Serializable {
     /**
      * Determines if this Hex contains any exists in the specified direction.
      *
-     * @param direction the <code>int</code> direction of the exit. This value should be between 0
-     *                  and 5 (inclusive).
+     * @param direction the <code>int</code> direction of the exit. This value should be between 0 and 5 (inclusive).
+     *
      * @return <code>true</code> if this <code>Hex</code> contains any terrain that exits in the
-     * specified direction. <code>false</code> if bad input is supplied or if no terrain exits in
-     * that direction.
+     *       specified direction. <code>false</code> if bad input is supplied or if no terrain exits in that direction.
+     *
      * @see Hex#setExits(Hex, int, boolean)
      */
     public boolean containsExit(int direction) {
@@ -275,29 +323,45 @@ public class Hex implements Serializable {
     }
 
     /**
-     * @return the highest level that features in this hex extend to. Above this level is assumed
-     * to be air. This assumes a ground map.
+     * @return the highest level that features in this hex extend to. Above this level is assumed to be air. This
+     *       assumes a ground map.
      */
     public int ceiling() {
         return ceiling(false);
     }
 
     /**
-     * @param inAtmosphere Determines if the ceiling should be determined for an atmospheric map
-     *                     (eg, altitudes) or ground map (eg, levels)
-     * @return the highest level or altitude (depending on flag) that features in this hex extend
-     * to. Above this level is assumed to be air.
+     * @param inAtmosphere Determines if the ceiling should be determined for an atmospheric map (eg, altitudes) or
+     *                     ground map (eg, levels)
+     *
+     * @return the highest level or altitude (depending on flag) that features in this hex extend to. Above this level
+     *       is assumed to be air.
      */
     public int ceiling(boolean inAtmosphere) {
         return level + maxTerrainFeatureElevation(inAtmosphere);
     }
 
     /**
-     * @param inAtmosphere Determines if the ceiling should be determined for an atmospheric map
-     *                     (eg, altitudes) or ground map (eg, levels)
-     * @return the elevation or altitude of the terrain feature that rises the highest above the
-     * surface of the hex. For example, if the hex is on the ground map and contains woods, this
-     * would return 2.
+     * Returns the altitude ceiling, i.e. highest terrain feature influencing aero movement, of this hex. If
+     * inAtmosphere is false, the hex is assumed to be a ground map hex and the return value is 0, as airborne aero
+     * movement ignores all terrain features of a ground map (TW p.92). Otherwise, the hex is assumed to be on a low
+     * altitude map and the hex level and a few terrains set an altitude of this hex. Note that the returned value is
+     * never below 0 to avoid having to deal with negative altitudes.
+     *
+     * @param inAtmosphere True if the ceiling should be determined for an atmospheric or ground map
+     *
+     * @return the altitude ceiling, i.e. highest terrain feature influencing aero movement, of this hex
+     */
+    public int ceilingAltitude(boolean inAtmosphere) {
+        return inAtmosphere ? Math.max(0, level + maxTerrainFeatureElevation(true)) : 0;
+    }
+
+    /**
+     * @param inAtmosphere Determines if the ceiling should be determined for an atmospheric map (eg, altitudes) or
+     *                     ground map (eg, levels)
+     *
+     * @return the elevation or altitude of the terrain feature that rises the highest above the surface of the hex. For
+     *       example, if the hex is on the ground map and contains woods, this would return 2.
      */
     public int maxTerrainFeatureElevation(boolean inAtmosphere) {
         int maxFeature = 0;
@@ -312,13 +376,11 @@ public class Hex implements Serializable {
     }
 
     /**
-     * Returns the lowest reachable point of this hex, used for terrain types
-     * that can extend below the surface of the hex, such as water and
-     * basements. Unrevealed basements will not affect this value.
+     * Returns the lowest reachable point of this hex, used for terrain types that can extend below the surface of the
+     * hex, such as water and basements. Unrevealed basements will not affect this value.
      *
-     * @return the lowest level that revealed features in this hex extend to.
-     *         Below this level is assumed to be bedrock and/or basement.
-     *         Unrevealed basements will not affect this value.
+     * @return the lowest level that revealed features in this hex extend to. Below this level is assumed to be bedrock
+     *       and/or basement. Unrevealed basements will not affect this value.
      */
     public int floor() {
         return level - depth();
@@ -363,7 +425,9 @@ public class Hex implements Serializable {
 
     /**
      * @param type the terrain type to check
+     *
      * @return <code>true</code> if the specified terrain is represented in the hex at any level.
+     *
      * @see Hex#containsTerrain(int, int)
      * @see Hex#containsAllTerrainsOf(int...)
      * @see Hex#containsAnyTerrainOf(int...)
@@ -373,9 +437,11 @@ public class Hex implements Serializable {
     }
 
     /**
-     * @param type the terrain type to check
+     * @param type  the terrain type to check
      * @param level level to check the presence of the given terrain at
+     *
      * @return if the specified terrain is represented in the hex at given level.
+     *
      * @see Hex#containsTerrain(int)
      * @see Hex#containsAllTerrainsOf(int...)
      * @see Hex#containsAnyTerrainOf(int...)
@@ -390,13 +456,15 @@ public class Hex implements Serializable {
 
     /**
      * @param types the terrains to check
+     *
      * @return if at least one of the specified terrains are represented in the hex at any level.
+     *
      * @see Hex#containsTerrain(int, int)
      * @see Hex#containsTerrain(int)
      * @see Hex#containsAllTerrainsOf(int...)
      */
     public boolean containsAnyTerrainOf(int... types) {
-        for (int type: types) {
+        for (int type : types) {
             if (containsTerrain(type)) {
                 return true;
             }
@@ -406,7 +474,9 @@ public class Hex implements Serializable {
 
     /**
      * @param types the terrains to check
+     *
      * @return if at least one of the specified terrains are represented in the hex at any level.
+     *
      * @see Hex#containsTerrain(int, int)
      * @see Hex#containsTerrain(int)
      * @see Hex#containsAllTerrainsOf(int...)
@@ -419,13 +489,15 @@ public class Hex implements Serializable {
 
     /**
      * @param types the terrains to check
+     *
      * @return <code>true</code> if all the specified terrains are represented in the hex at any level.
+     *
      * @see Hex#containsTerrain(int, int)
      * @see Hex#containsAllTerrainsOf(int...)
      * @see Hex#containsAnyTerrainOf(int...)
      */
     public boolean containsAllTerrainsOf(int... types) {
-        for (int type: types) {
+        for (int type : types) {
             if (!containsTerrain(type)) {
                 return false;
             }
@@ -437,21 +509,20 @@ public class Hex implements Serializable {
      * @return True if there is pavement, a paved road or a bridge in the hex.
      */
     public boolean hasPavement() {
-        if (containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.BRIDGE)){
+        if (containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.BRIDGE)) {
             return true;
-        }
-        else {
+        } else {
             return hasPavedRoad();
         }
     }
 
     /**
-     * If there's a road on this tile and it's paved, return true
-     * @return
+     * If there's a road on this tile, and it's paved, return true
      */
     public boolean hasPavedRoad() {
-        if (containsTerrain(Terrains.ROAD)){
-            return !Arrays.asList(Terrains.ROAD_LVL_DIRT, Terrains.ROAD_LVL_GRAVEL).contains(terrainLevel(Terrains.ROAD));
+        if (containsTerrain(Terrains.ROAD)) {
+            return !Arrays.asList(Terrains.ROAD_LVL_DIRT, Terrains.ROAD_LVL_GRAVEL)
+                  .contains(terrainLevel(Terrains.ROAD));
             //Return false if the road is dirt or gravel
         }
         return false;
@@ -486,8 +557,7 @@ public class Hex implements Serializable {
     }
 
     /**
-     * @return the level of the terrain specified, or Terrain.LEVEL_NONE if the
-     *         terrain is not present in the hex
+     * @return the level of the terrain specified, or Terrain.LEVEL_NONE if the terrain is not present in the hex
      */
     public int terrainLevel(int type) {
         Terrain terrain = getTerrain(type);
@@ -499,18 +569,19 @@ public class Hex implements Serializable {
 
     /**
      * @param type the specified type
-     * @return the terrain of the specified type, or <code>null</code> if the terrain is not present
-     * in the hex
+     *
+     * @return the terrain of the specified type, or <code>null</code> if the terrain is not present in the hex
      */
     public @Nullable Terrain getTerrain(int type) {
         return terrains.get(type);
     }
 
     /**
-     * @param type the preferred type to get
+     * @param type  the preferred type to get
      * @param types the terrain types to check
-     * @return Returns the Terrain for the preferred type, then an unspecified one of the given
-     * types of Terrain, or null if none are preset.
+     *
+     * @return Returns the Terrain for the preferred type, then an unspecified one of the given types of Terrain, or
+     *       null if none are preset.
      */
     public @Nullable Terrain getAnyTerrainOf(int type, int... types) {
         if (containsTerrain(type)) {
@@ -556,20 +627,22 @@ public class Hex implements Serializable {
 
     /**
      * FIXME : I should be a clone implementation, not this
+     *
      * @return new hex which is equal to this
      */
     public Hex duplicate() {
-        Terrain[] tcopy = new Terrain[Terrains.SIZE];
+        Terrain[] terrainCopy = new Terrain[Terrains.SIZE];
         for (Integer i : terrains.keySet()) {
-            tcopy[i] = new Terrain(terrains.get(i));
+            terrainCopy[i] = new Terrain(terrains.get(i));
         }
-        return new Hex(level, tcopy, theme, coords);
+        return new Hex(level, terrainCopy, theme, coords);
     }
 
     /**
      * Adds terrain modifiers to PSRs made in this hex
      */
-    public void applyTerrainPilotingModifiers(EntityMovementMode moveMode, PilotingRollData roll, boolean enteringRubble) {
+    public void applyTerrainPilotingModifiers(EntityMovementMode moveMode, PilotingRollData roll,
+          boolean enteringRubble) {
         terrains.values().forEach(t -> t.applyPilotingModifier(moveMode, roll, enteringRubble));
     }
 
@@ -602,13 +675,12 @@ public class Hex implements Serializable {
      */
     public boolean isIgnitable() {
         return (containsTerrain(Terrains.WOODS) || containsTerrain(Terrains.JUNGLE)
-                || containsTerrain(Terrains.BUILDING) || containsTerrain(Terrains.FUEL_TANK)
-                || containsTerrain(Terrains.FIELDS) || containsTerrain(Terrains.INDUSTRIAL));
+              || containsTerrain(Terrains.BUILDING) || containsTerrain(Terrains.FUEL_TANK)
+              || containsTerrain(Terrains.FIELDS) || containsTerrain(Terrains.INDUSTRIAL));
     }
 
     /**
      * Returns true if the hex is valid for takeoff - either clear, has pavement, or a road
-     * @return
      */
     public boolean isClearForTakeoff() {
         if (hasPavementOrRoad()) {
@@ -623,7 +695,6 @@ public class Hex implements Serializable {
 
     /**
      * Returns the "Base Terrain" for the hex, or 0 if it is clear
-     * @return
      */
     public int getBaseTerrainType() {
         for (int terrain : terrains.keySet()) {
@@ -647,9 +718,8 @@ public class Hex implements Serializable {
     }
 
     /**
-     * get any modifiers to a bog-down roll in this hex. Takes the worst
-     * modifier. If there is no bog-down chance in this hex, then it returns
-     * TargetRoll.AUTOMATIC_SUCCESS
+     * get any modifiers to a bog-down roll in this hex. Takes the worst modifier. If there is no bog-down chance in
+     * this hex, then it returns TargetRoll.AUTOMATIC_SUCCESS
      */
     public int getBogDownModifier(EntityMovementMode moveMode, boolean largeVee) {
         int mod = TargetRoll.AUTOMATIC_SUCCESS;
@@ -671,15 +741,13 @@ public class Hex implements Serializable {
     }
 
     /**
-     * True if this hex has a clifftop towards otherHex. This hex
-     * must have the terrain CLIFF_TOP, it must have exits
-     * specified (exits set to active) for the CLIFF_TOP terrain,
-     * and must have an exit in the direction of otherHex.
+     * True if this hex has a clifftop towards otherHex. This hex must have the terrain CLIFF_TOP, it must have exits
+     * specified (exits set to active) for the CLIFF_TOP terrain, and must have an exit in the direction of otherHex.
      */
     public boolean hasCliffTopTowards(Hex otherHex) {
         return containsTerrain(Terrains.CLIFF_TOP)
-            && getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
-            && ((getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << coords.direction(otherHex.getCoords()))) != 0);
+              && getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
+              && ((getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << coords.direction(otherHex.getCoords()))) != 0);
     }
 
     /** Returns the position of this hex on the board. */
@@ -688,9 +756,8 @@ public class Hex implements Serializable {
     }
 
     /**
-     * Sets the coords of this hex. DO NOT USE outside board.java!
-     * WILL NOT MOVE THE HEX. Only the position of the hex in the
-     * board's data[] determines the actual location of the hex.
+     * Sets the coords of this hex. DO NOT USE outside board.java! WILL NOT MOVE THE HEX. Only the position of the hex
+     * in the board's data[] determines the actual location of the hex.
      */
     public void setCoords(Coords c) {
         coords = c;
@@ -714,10 +781,11 @@ public class Hex implements Serializable {
     }
 
     /**
-     * Returns true when the hex has no invalid terrain. When the given list of errors is not null,
-     * any error reports from this hex are added to it.
+     * Returns true when the hex has no invalid terrain. When the given list of errors is not null, any error reports
+     * from this hex are added to it.
      *
      * @param errors A list to add error messages to
+     *
      * @return True if the hex is valid
      */
     public boolean isValid(@Nullable List<String> errors) {
@@ -749,7 +817,7 @@ public class Hex implements Serializable {
         }
 
         if ((containsTerrain(Terrains.WOODS) || containsTerrain(Terrains.JUNGLE))
-                && containsTerrain(Terrains.FOLIAGE_ELEV)) {
+              && containsTerrain(Terrains.FOLIAGE_ELEV)) {
             int wl = terrainLevel(Terrains.WOODS);
             int jl = terrainLevel(Terrains.JUNGLE);
             int el = terrainLevel(Terrains.FOLIAGE_ELEV);
@@ -757,37 +825,38 @@ public class Hex implements Serializable {
             boolean isLightOrHeavy = wl == 1 || jl == 1 || wl == 2 || jl == 2;
             boolean isUltra = wl == 3 || jl == 3;
 
-            if (! ((el == 1) || (isLightOrHeavy && el == 2) || (isUltra && el == 3))) {
-                newErrors.add("Foliage elevation is wrong, must be 1 or 2 for Light/Heavy and 1 or 3 for Ultra Woods/Jungle.");
+            if (!((el == 1) || (isLightOrHeavy && el == 2) || (isUltra && el == 3))) {
+                newErrors.add(
+                      "Foliage elevation is wrong, must be 1 or 2 for Light/Heavy and 1 or 3 for Ultra Woods/Jungle.");
             }
         }
         if (!(containsTerrain(Terrains.WOODS) || containsTerrain(Terrains.JUNGLE))
-                && containsTerrain(Terrains.FOLIAGE_ELEV)) {
+              && containsTerrain(Terrains.FOLIAGE_ELEV)) {
             newErrors.add("Woods and Jungle Elevation terrain present without Woods or Jungle.");
         }
 
         // Buildings must have at least BUILDING, BLDG_ELEV and BLDG_CF
         if (containsAnyTerrainOf(Terrains.BUILDING, Terrains.BLDG_ELEV, Terrains.BLDG_CF, Terrains.BLDG_FLUFF,
-                Terrains.BLDG_ARMOR, Terrains.BLDG_CLASS, Terrains.BLDG_BASE_COLLAPSED, Terrains.BLDG_BASEMENT_TYPE)
-                && !containsAllTerrainsOf(Terrains.BUILDING, Terrains.BLDG_ELEV, Terrains.BLDG_CF)) {
+              Terrains.BLDG_ARMOR, Terrains.BLDG_CLASS, Terrains.BLDG_BASE_COLLAPSED, Terrains.BLDG_BASEMENT_TYPE)
+              && !containsAllTerrainsOf(Terrains.BUILDING, Terrains.BLDG_ELEV, Terrains.BLDG_CF)) {
             newErrors.add("Incomplete Building! A hex with any building terrain must at least contain "
-                    + "a building type, building elevation and building CF.");
+                  + "a building type, building elevation and building CF.");
         }
 
-        // Bridges must have all of BRIDGE, BRIDGE_ELEV and BRIDGE_CF
+        // Bridges must have all BRIDGE, BRIDGE_ELEV and BRIDGE_CF
         if (containsAnyTerrainOf(Terrains.BRIDGE, Terrains.BRIDGE_ELEV, Terrains.BRIDGE_CF)
-                && !containsAllTerrainsOf(Terrains.BRIDGE, Terrains.BRIDGE_ELEV, Terrains.BRIDGE_CF)) {
+              && !containsAllTerrainsOf(Terrains.BRIDGE, Terrains.BRIDGE_ELEV, Terrains.BRIDGE_CF)) {
             newErrors.add("Incomplete Bridge! A hex with any bridge terrain must contain "
-                    + "the bridge type, bridge elevation and the bridge CF.");
+                  + "the bridge type, bridge elevation and the bridge CF.");
         }
 
         // Fuel Tanks must have all of FUEL_TANK, _ELEV, _CF and _MAGN
         if (containsAnyTerrainOf(Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF,
-                Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAGN)
-                && !containsAllTerrainsOf(Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF,
-                        Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAGN)) {
+              Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAGN)
+              && !containsAllTerrainsOf(Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF,
+              Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAGN)) {
             newErrors.add("Incomplete Fuel Tank! A hex with any fuel tank terrain must contain "
-                    + "the fuel tank type, elevation, CF and the fuel tank magnitude.");
+                  + "the fuel tank type, elevation, CF and the fuel tank magnitude.");
         }
 
         if (containsAllTerrainsOf(Terrains.FUEL_TANK, Terrains.BUILDING)) {
@@ -839,8 +908,8 @@ public class Hex implements Serializable {
                         break;
                     default:
                         sb.append(Terrains.getName(terrain.getType())).append("(")
-                                .append(terrain.getLevel()).append(", ")
-                                .append(terrain.getTerrainFactor()).append(")");
+                              .append(terrain.getLevel()).append(", ")
+                              .append(terrain.getTerrainFactor()).append(")");
                 }
                 sb.append("; ");
             }
@@ -850,9 +919,9 @@ public class Hex implements Serializable {
     }
 
     /**
-     * Returns a string representation of this Hex to use for copy/paste actions. The string contains
-     * the elevation, theme and terrains of this Hex except automatic terrains (such as inclines). The
-     * generated string can be parsed to generate a copy of the hex using {@link #parseClipboardString(String)}.
+     * Returns a string representation of this Hex to use for copy/paste actions. The string contains the elevation,
+     * theme and terrains of this Hex except automatic terrains (such as inclines). The generated string can be parsed
+     * to generate a copy of the hex using {@link #parseClipboardString(String)}.
      *
      * @return A string representation to use when copying a hex to the clipboard.
      */
@@ -862,18 +931,18 @@ public class Hex implements Serializable {
         hexString.append("Theme###").append(getTheme()).append("///");
         hexString.append("Terrain###");
         List<String> terrains = Arrays.stream(getTerrainTypes())
-                .filter(t -> !Terrains.AUTOMATIC.contains(t))
-                .mapToObj(t -> getTerrain(t).toString()).collect(Collectors.toList());
+              .filter(t -> !Terrains.AUTOMATIC.contains(t))
+              .mapToObj(t -> getTerrain(t).toString()).collect(Collectors.toList());
         hexString.append(String.join(";", terrains));
         return hexString.toString();
     }
 
     /**
-     * Returns a new Hex parsed from a clipboard string representation.
-     * Returns null when the clipboard String is not created by {@link #getClipboardString()}
-     * (i.e., when it does not at least start with "MegaMek Hex").
+     * Returns a new Hex parsed from a clipboard string representation. Returns null when the clipboard String is not
+     * created by {@link #getClipboardString()} (i.e., when it does not at least start with "MegaMek Hex").
      *
      * @param clipboardString The string representation of the Hex to parse
+     *
      * @return A hex containing any features that could be parsed from clipboardString
      */
     public static @Nullable Hex parseClipboardString(String clipboardString) {

@@ -1,39 +1,59 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.alphaStrike.conversion;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
-import megamek.common.*;
+import java.util.Objects;
+
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
 import megamek.common.alphaStrike.ASArcs;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.annotations.Nullable;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.EscapePods;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
+import megamek.common.units.*;
+import megamek.common.weapons.TeleMissile;
 import megamek.logging.MMLogger;
 
-import java.util.Objects;
-
 /**
- * Static AlphaStrike Conversion class; contains all information for conversion
- * except for some weapon specifics
- * handled in WeaponType/AmmoType/MiscType.
+ * Static AlphaStrike Conversion class; contains all information for conversion except for some weapon specifics handled
+ * in WeaponType/AmmoType/MiscType.
  *
  * @author neoancient
  * @author Simon (Juliez)
@@ -44,70 +64,43 @@ public final class ASConverter {
     // TODO: LG, SLG, VLG support vehicles, MS
 
     /**
-     * Performs Alpha Strike conversion for the MekSummaryCache (without trying to
-     * get a clean unit first,
-     * without storing a conversion report and without considering pilot skill).
+     * Performs Alpha Strike conversion for the MekSummaryCache (without trying to get a clean unit first, without
+     * storing a conversion report and without considering pilot skill).
      */
     public static AlphaStrikeElement convertForMekCache(Entity entity) {
         return performConversion(entity, false, new DummyCalculationReport(), entity.getCrew());
     }
 
     /**
-     * Performs Alpha Strike conversion for use in MML (without trying to get a
-     * clean unit first,
-     * without considering pilot skill but with storing a conversion report).
+     * Performs Alpha Strike conversion for use in MML (without trying to get a clean unit first, without considering
+     * pilot skill but with storing a conversion report).
      */
     public static AlphaStrikeElement convertInMML(Entity entity, CalculationReport report) {
         return performConversion(entity, false, report, entity.getCrew());
     }
 
     public static AlphaStrikeElement convert(Entity entity, CalculationReport conversionReport) {
-        return standardConversion(entity, false, true, conversionReport);
+        return performConversion(entity, true, conversionReport, entity.getCrew());
     }
 
     public static AlphaStrikeElement convert(Entity entity) {
-        return standardConversion(entity, false, true, new DummyCalculationReport());
+        return performConversion(entity, true, new DummyCalculationReport(), entity.getCrew());
     }
 
     public static AlphaStrikeElement convert(Entity entity, boolean includePilot) {
-        return standardConversion(entity, false, includePilot, new DummyCalculationReport());
+        return performConversion(entity, includePilot, new DummyCalculationReport(), entity.getCrew());
     }
 
     public static AlphaStrikeElement convert(Entity entity, boolean includePilot, CalculationReport conversionReport) {
-        return standardConversion(entity, false, includePilot, conversionReport);
-    }
-
-    /**
-     * Converts the given entity to Alpha Strike, keeping the references to the original Entity
-     * @param entity The entity to convert
-     * @return The converted Alpha Strike element
-     */
-    public static AlphaStrikeElement convertAndKeepRefs(Entity entity) {
-        return standardConversion(entity, true, true, new DummyCalculationReport());
-    }
-
-    private static AlphaStrikeElement standardConversion(Entity entity, boolean keepRefs, boolean includePilot,
-            CalculationReport conversionReport) {
-        Entity undamagedEntity = getUndamagedEntity(entity);
-        if (undamagedEntity == null) {
-            logger.error("Could not obtain clean Entity for AlphaStrike conversion.");
-            return null;
-        }
-        if (entity.getGame() != null) {
-            undamagedEntity.setGame(entity.getGame());
-        }
-        if (keepRefs) {
-            undamagedEntity.setId(entity.getId());
-            undamagedEntity.setOwner(entity.getOwner());
-        }
-        return performConversion(undamagedEntity, includePilot, conversionReport, entity.getCrew());
+        return performConversion(entity, includePilot, conversionReport, entity.getCrew());
     }
 
     private static AlphaStrikeElement performConversion(Entity entity, boolean includePilot,
-            CalculationReport conversionReport, Crew originalCrew) {
+          CalculationReport conversionReport, Crew originalCrew) {
+
         Objects.requireNonNull(entity);
         if (!canConvert(entity)) {
-            logger.error("Cannot convert this type of Entity: " + entity.getShortName());
+            logger.error("Cannot convert this type of Entity: {}", entity.getShortName());
             return null;
         }
 
@@ -168,8 +161,10 @@ public final class ASConverter {
             element.setPrimaryMovementMode(element.getMovementModes().iterator().next());
         }
         element.setTMM(ASMovementConverter.convertTMM(conversionData));
-        element.setFullArmor(ASArmStrConverter.convertArmor(conversionData));
-        element.setFullStructure(ASArmStrConverter.convertStructure(conversionData));
+        element.setFullArmor(ASArmStrConverter.convertArmor(conversionData, false));
+        element.setCurrentArmor(ASArmStrConverter.convertArmor(conversionData, true));
+        element.setFullStructure(ASArmStrConverter.convertStructure(conversionData, false));
+        element.setCurrentStructure(ASArmStrConverter.convertStructure(conversionData, true));
         element.setThreshold(ASArmStrConverter.convertThreshold(conversionData));
         ASDamageConverter.getASDamageConverter(entity, element, conversionReport).convert();
         ASSpecialAbilityConverter.getConverter(entity, element, conversionReport).processAbilities();
@@ -181,47 +176,32 @@ public final class ASConverter {
             element.getSpecialAbilities().setSUA(BattleForceSUA.AERODYNESC);
         }
         ASPointValueConverter pvConverter = ASPointValueConverter.getPointValueConverter(element, conversionReport);
-        element.setPointValue(pvConverter.getSkillAdjustedPointValue());
         element.setBasePointValue(pvConverter.getBasePointValue());
+        element.setPointValue(pvConverter.getSkillAdjustedPointValue(element.getBasePointValue()));
         element.setConversionReport(conversionReport);
         return element;
     }
 
     /**
-     * A helper class that stores the entity to be converted, the resulting
-     * ASElement and the conversion report.
+     * A helper class that stores the entity to be converted, the resulting ASElement and the conversion report.
      */
-    static class ConversionData {
-        final Entity entity;
-        final AlphaStrikeElement element;
-        final CalculationReport conversionReport;
-
-        public ConversionData(Entity entity, AlphaStrikeElement element, CalculationReport conversionReport) {
-            this.entity = entity;
-            this.element = element;
-            this.conversionReport = conversionReport;
-        }
+    record ConversionData(Entity entity, AlphaStrikeElement element, CalculationReport conversionReport) {
     }
 
     /**
-     * Returns true if the given entity can be converted to AlphaStrike. This is
-     * only
-     * false for entities of some special types such as TeleMissile.
-     * GunEmplacement is being allowed conversion as of 50.02 even though its not
-     * currently officially supported in rules as written, but it generates a valid unit that can be used in
-     * auto-resolution and other parts of the game. (Luana Coppio)
-     * Also returns false if entity is null.
+     * Returns true if the given entity can be converted to AlphaStrike. This is only false for entities of some special
+     * types such as TeleMissile. GunEmplacement is being allowed conversion as of 50.02 even though it's not currently
+     * officially supported in rules as written, but it generates a valid unit that can be used in auto-resolution and
+     * other parts of the game. (Luana Coppio) Also returns false if entity is null.
      */
     public static boolean canConvert(@Nullable Entity entity) {
-        return !(entity == null) && !((entity instanceof TeleMissile) || (entity instanceof FighterSquadron)
-                || (entity instanceof EscapePods) || (entity instanceof EjectedCrew)
-                || (entity instanceof ArmlessMek));
+        return (entity != null) && !((entity instanceof TeleMissile) || (entity instanceof FighterSquadron)
+              || (entity instanceof EscapePods) || (entity instanceof EjectedCrew));
     }
 
     /**
-     * Returns the TMM for the given movement value in inches. Writes report
-     * entries.
-     * AlphaStrike Companion Errata v1.4, p.8
+     * Returns the TMM for the given movement value in inches. Writes report entries. AlphaStrike Companion Errata v1.4,
+     * p.8
      */
     static int tmmForMovement(int movement, CalculationReport report) {
         if (movement > 34) {
@@ -246,8 +226,7 @@ public final class ASConverter {
     }
 
     /**
-     * Returns the TMM for the given movement value in inches.
-     * AlphaStrike Companion Errata v1.4, p.8
+     * Returns the TMM for the given movement value in inches. AlphaStrike Companion Errata v1.4, p.8
      */
     static int tmmForMovement(int movement) {
         return tmmForMovement(movement, new DummyCalculationReport());
@@ -267,8 +246,7 @@ public final class ASConverter {
     }
 
     /**
-     * Returns the given number, rounded up to the nearest integer, based on the
-     * first decimal only.
+     * Returns the given number, rounded up to the nearest integer, based on the first decimal only.
      */
     public static int roundUp(double number) {
         return (int) Math.round(number + 0.4);
@@ -284,12 +262,9 @@ public final class ASConverter {
     }
 
     /**
-     * Re-calculates those values of the element that are purely calculated from its
-     * other values without
-     * needing the original TW unit. These are TMM, threshold and PV. This means
-     * that the conversion methods
-     * called herein do not need the entity and this, entity in conversionData may
-     * be null.
+     * Re-calculates those values of the element that are purely calculated from its other values without needing the
+     * original TW unit. These are TMM, threshold and PV. This means that the conversion methods called herein do not
+     * need the entity and this, entity in conversionData may be null.
      */
     static void updateCalculatedValues(ConversionData conversionData) {
         CalculationReport report = conversionData.conversionReport;
@@ -297,14 +272,13 @@ public final class ASConverter {
         element.setTMM(ASMovementConverter.convertTMM(conversionData));
         element.setThreshold(ASArmStrConverter.convertThreshold(conversionData));
         ASPointValueConverter pvConverter = ASPointValueConverter.getPointValueConverter(element, report);
-        element.setPointValue(pvConverter.getSkillAdjustedPointValue());
+        element.setBasePointValue(pvConverter.getBasePointValue());
+        element.setPointValue(pvConverter.getSkillAdjustedPointValue(element.getBasePointValue()));
     }
 
     /**
-     * Re-calculates those values of the element that are purely calculated from its
-     * other values without
-     * needing the original TW unit. These are TMM, threshold and PV. May be used
-     * e.g. after deserialization.
+     * Re-calculates those values of the element that are purely calculated from its other values without needing the
+     * original TW unit. These are TMM, threshold and PV. May be used e.g. after deserialization.
      */
     public static void updateCalculatedValues(AlphaStrikeElement element) {
         updateCalculatedValues(new ConversionData(null, element, new DummyCalculationReport()));

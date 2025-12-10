@@ -1,28 +1,43 @@
 /*
- * Copyright (c) 2021, 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.enums;
 
-import megamek.MegaMek;
-import megamek.common.*;
-import megamek.common.options.OptionsConstants;
-
 import java.util.ResourceBundle;
+
+import megamek.MegaMek;
+import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
 
 public enum GamePhase {
     UNKNOWN("GamePhase.UNKNOWN.text"),
@@ -42,7 +57,7 @@ public enum GamePhase {
     OFFBOARD("GamePhase.OFFBOARD.text"),
     OFFBOARD_REPORT("GamePhase.OFFBOARD_REPORT.text"),
     POINTBLANK_SHOT("GamePhase.POINTBLANK_SHOT.text"), // Fake phase only reached through hidden units
-    PREFIRING("GamePhase.PREFIRING.text"),
+    PRE_FIRING("GamePhase.PREFIRING.text"),
     FIRING("GamePhase.FIRING.text"),
     FIRING_REPORT("GamePhase.FIRING_REPORT.text"),
     PHYSICAL("GamePhase.PHYSICAL.text"),
@@ -52,13 +67,13 @@ public enum GamePhase {
     VICTORY("GamePhase.VICTORY.text"),
     DEPLOY_MINEFIELDS("GamePhase.DEPLOY_MINEFIELDS.text"),
     STARTING_SCENARIO("GamePhase.STARTING_SCENARIO.text"),
-    SET_ARTILLERY_AUTOHIT_HEXES("GamePhase.SET_ARTILLERY_AUTOHIT_HEXES.text");
+    SET_ARTILLERY_AUTO_HIT_HEXES("GamePhase.SET_ARTILLERY_AUTOHIT_HEXES.text");
 
     private final String name;
 
     GamePhase(final String name) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
-                MegaMek.getMMOptions().getLocale());
+              MegaMek.getMMOptions().getLocale());
         this.name = resources.getString(name);
     }
 
@@ -123,8 +138,8 @@ public enum GamePhase {
         return this == POINTBLANK_SHOT;
     }
 
-    public boolean isPrefiring() {
-        return this == PREFIRING;
+    public boolean isPreFiring() {
+        return this == PRE_FIRING;
     }
 
     public boolean isFiring() {
@@ -163,8 +178,8 @@ public enum GamePhase {
         return this == STARTING_SCENARIO;
     }
 
-    public boolean isSetArtilleryAutohitHexes() {
-        return this == SET_ARTILLERY_AUTOHIT_HEXES;
+    public boolean isSetArtilleryAutoHitHexes() {
+        return this == SET_ARTILLERY_AUTO_HIT_HEXES;
     }
 
     // endregion
@@ -188,12 +203,11 @@ public enum GamePhase {
     }
 
     /**
-     * @return true if this phase has turns. If false, the phase is simply waiting for everybody
-     * to declare "done".
+     * @return true if this phase has turns. If false, the phase is simply waiting for everybody to declare "done".
      */
     public boolean usesTurns() {
         return switch (this) {
-            case SET_ARTILLERY_AUTOHIT_HEXES, DEPLOY_MINEFIELDS, DEPLOYMENT, PREMOVEMENT, MOVEMENT, PREFIRING, FIRING,
+            case SET_ARTILLERY_AUTO_HIT_HEXES, DEPLOY_MINEFIELDS, DEPLOYMENT, PREMOVEMENT, MOVEMENT, PRE_FIRING, FIRING,
                  PHYSICAL, TARGETING, OFFBOARD -> true;
             default -> false;
         };
@@ -201,6 +215,7 @@ public enum GamePhase {
 
     /**
      * @param game The current {@link Game}
+     *
      * @return true if this phase is simultaneous
      */
     public boolean isSimultaneous(final Game game) {
@@ -210,7 +225,7 @@ public enum GamePhase {
             case FIRING -> game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_FIRING);
             case PHYSICAL -> game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_PHYSICAL);
             case TARGETING, OFFBOARD -> game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_TARGETING);
-            case PREMOVEMENT, PREFIRING -> true;
+            case PREMOVEMENT, PRE_FIRING -> true;
             default -> false;
         };
     }

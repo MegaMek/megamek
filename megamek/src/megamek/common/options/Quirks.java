@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2009-2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.options;
 
 import static java.util.stream.Collectors.toList;
@@ -19,11 +40,22 @@ import static megamek.common.options.OptionsConstants.*;
 import java.io.Serial;
 import java.util.List;
 
-import megamek.common.*;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.units.Aero;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.units.Jumpship;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Tank;
+import megamek.common.units.VTOL;
+import megamek.common.units.Warship;
 
 /**
- * Contains the options determining Unit Quirks of a unit (but not weapon quirks). When changing this, note
- * that all options should remain boolean options.
+ * Contains the options determining Unit Quirks of a unit (but not weapon quirks). When changing this, note that all
+ * options should remain boolean options.
  *
  * @author Taharqa (Jay Lawson)
  */
@@ -38,7 +70,7 @@ public class Quirks extends AbstractOptions {
         IBasicOptionGroup posQuirk = addGroup("pos_quirks", POS_QUIRKS);
         addOption(posQuirk, QUIRK_POS_ANIMALISTIC, false);
         addOption(posQuirk, QUIRK_POS_ANTI_AIR, false);
-        addOption(posQuirk, QUIRK_POS_ATMO_FLYER, false);
+        addOption(posQuirk, QUIRK_POS_ATMOSPHERE_FLYER, false);
         addOption(posQuirk, QUIRK_POS_BATTLE_COMP, false);
         addOption(posQuirk, QUIRK_POS_BARREL_FIST_LA, false);
         addOption(posQuirk, QUIRK_POS_BARREL_FIST_RA, false);
@@ -82,6 +114,8 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, QUIRK_POS_TRAILER_HITCH, false);
         addOption(posQuirk, QUIRK_POS_UBIQUITOUS_IS, false);
         addOption(posQuirk, QUIRK_POS_UBIQUITOUS_CLAN, false);
+        addOption(posQuirk, QUIRK_POS_VAR_RNG_TARG, false);
+        // Legacy Variable Range Targeting quirks - kept for backward compatibility
         addOption(posQuirk, QUIRK_POS_VAR_RNG_TARG_L, false);
         addOption(posQuirk, QUIRK_POS_VAR_RNG_TARG_S, false);
         addOption(posQuirk, QUIRK_POS_VESTIGIAL_HANDS_LA, false);
@@ -90,13 +124,14 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, QUIRK_POS_VTOL_ROTOR_DUAL, false);
 
 
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 7 LINES
         //not yet implemented
         //Docking Arms (docking unimplemented)
         //Fast Reload (no game effect at present)
         //Improved Communications
         //Variable Range Targeting
         //VTOL Rotor Arrangement (no vee adv move rules)
-        //Compact Mek
+        //Compact Mech
 
         IBasicOptionGroup negQuirk = addGroup("neg_quirks", NEG_QUIRKS);
         addOption(negQuirk, QUIRK_NEG_BAD_REP_IS, false);
@@ -138,7 +173,7 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, QUIRK_NEG_WEAK_HEAD_5, false);
         addOption(negQuirk, QUIRK_NEG_WEAK_LEGS, false);
         addOption(negQuirk, QUIRK_NEG_WEAK_UNDERCARRIAGE, false);
-        addOption(negQuirk, QUIRK_NEG_ATMO_INSTABILITY, false);
+        addOption(negQuirk, QUIRK_NEG_ATMOSPHERE_INSTABILITY, false);
         addOption(negQuirk, QUIRK_NEG_OVERSIZED, false);
 
         //quirks not implemented yet
@@ -168,27 +203,49 @@ public class Quirks extends AbstractOptions {
     public static boolean isQuirkLegalFor(IOption quirk, Entity en) {
         String qName = quirk.getName();
 
+        // Variable Range Targeting cannot be combined with Improved Targeting quirks (BMM pg. 86)
+        if (qName.equals(QUIRK_POS_VAR_RNG_TARG) ||
+              qName.equals(QUIRK_POS_VAR_RNG_TARG_L) ||
+              qName.equals(QUIRK_POS_VAR_RNG_TARG_S)) {
+            if (en.hasQuirk(QUIRK_POS_IMP_TARG_S) ||
+                  en.hasQuirk(QUIRK_POS_IMP_TARG_M) ||
+                  en.hasQuirk(QUIRK_POS_IMP_TARG_L)) {
+                return false;
+            }
+        }
+
+        // Improved Targeting cannot be combined with Variable Range Targeting (BMM pg. 86)
+        if (qName.equals(QUIRK_POS_IMP_TARG_S) ||
+              qName.equals(QUIRK_POS_IMP_TARG_M) ||
+              qName.equals(QUIRK_POS_IMP_TARG_L)) {
+            if (en.hasQuirk(QUIRK_POS_VAR_RNG_TARG) ||
+                  en.hasQuirk(QUIRK_POS_VAR_RNG_TARG_L) ||
+                  en.hasQuirk(QUIRK_POS_VAR_RNG_TARG_S)) {
+                return false;
+            }
+        }
+
         if (qName.equals(QUIRK_NEG_GAS_HOG)) {
             return en.hasEngine() &&
-                    ((en.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
-                            || (en.getEngine().getEngineType() == Engine.FUEL_CELL));
+                  ((en.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
+                        || (en.getEngine().getEngineType() == Engine.FUEL_CELL));
         }
 
         if (en instanceof Mek) {
             return switch (qName) {
-                case QUIRK_POS_BATTLE_FIST_LA -> en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM);
-                case QUIRK_POS_BATTLE_FIST_RA -> en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM);
-                case QUIRK_POS_BARREL_FIST_RA -> en.hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RARM)
-                    && !en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM);
-                case QUIRK_POS_BARREL_FIST_LA -> en.hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LARM)
-                    && !en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM);
+                case QUIRK_POS_BATTLE_FIST_LA -> en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM);
+                case QUIRK_POS_BATTLE_FIST_RA -> en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM);
+                case QUIRK_POS_BARREL_FIST_RA -> en.hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RIGHT_ARM)
+                      && !en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM);
+                case QUIRK_POS_BARREL_FIST_LA -> en.hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LEFT_ARM)
+                      && !en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM);
                 case QUIRK_NEG_OVERSIZED -> en.getWeight() >= 60;
                 case QUIRK_POS_COMPACT -> en.getWeight() <= 55;
-                default -> quirk.isNoneOf(
-                    QUIRK_POS_ATMO_FLYER, QUIRK_NEG_ATMO_INSTABILITY, QUIRK_POS_DOCKING_ARMS,
-                    QUIRK_NEG_FRAGILE_FUEL, QUIRK_POS_INTERNAL_BOMB, QUIRK_POS_TRAILER_HITCH,
-                    QUIRK_NEG_LARGE_DROPPER, QUIRK_NEG_WEAK_UNDERCARRIAGE, QUIRK_POS_VTOL_ROTOR_COAXIAL,
-                    QUIRK_POS_VTOL_ROTOR_DUAL, QUIRK_POS_POWER_REVERSE, QUIRK_NEG_UNSTREAMLINED);
+                default -> quirk.isNoneOf(QUIRK_POS_ATMOSPHERE_FLYER,
+                      QUIRK_NEG_ATMOSPHERE_INSTABILITY, QUIRK_POS_DOCKING_ARMS,
+                      QUIRK_NEG_FRAGILE_FUEL, QUIRK_POS_INTERNAL_BOMB, QUIRK_POS_TRAILER_HITCH,
+                      QUIRK_NEG_LARGE_DROPPER, QUIRK_NEG_WEAK_UNDERCARRIAGE, QUIRK_POS_VTOL_ROTOR_COAXIAL,
+                      QUIRK_POS_VTOL_ROTOR_DUAL, QUIRK_POS_POWER_REVERSE, QUIRK_NEG_UNSTREAMLINED);
             };
         }
 
@@ -198,11 +255,11 @@ public class Quirks extends AbstractOptions {
                 // made sense to him. Uncertain at this time if CGL would adopt them but
                 // including them since Quirks is already an option. Hammer
                 return quirk.isAnyOf(
-                        QUIRK_POS_ANTI_AIR, QUIRK_POS_IMP_COM, QUIRK_POS_IMPROVED_SENSORS,
-                        QUIRK_POS_IMP_TARG_S, QUIRK_POS_IMP_TARG_M, QUIRK_POS_IMP_TARG_L,
-                        QUIRK_POS_LOW_PROFILE, QUIRK_NEG_POOR_SEALING, QUIRK_NEG_POOR_TARG_M,
-                        QUIRK_NEG_EM_INTERFERENCE_WHOLE, QUIRK_NEG_POOR_TARG_S, QUIRK_NEG_POOR_TARG_L,
-                        QUIRK_NEG_POOR_WORK,QUIRK_NEG_SENSOR_GHOSTS);
+                      QUIRK_POS_ANTI_AIR, QUIRK_POS_IMP_COM, QUIRK_POS_IMPROVED_SENSORS,
+                      QUIRK_POS_IMP_TARG_S, QUIRK_POS_IMP_TARG_M, QUIRK_POS_IMP_TARG_L,
+                      QUIRK_POS_LOW_PROFILE, QUIRK_NEG_POOR_SEALING, QUIRK_NEG_POOR_TARG_M,
+                      QUIRK_NEG_EM_INTERFERENCE_WHOLE, QUIRK_NEG_POOR_TARG_S, QUIRK_NEG_POOR_TARG_L,
+                      QUIRK_NEG_POOR_WORK, QUIRK_NEG_SENSOR_GHOSTS);
             }
 
             return switch (qName) {
@@ -210,50 +267,49 @@ public class Quirks extends AbstractOptions {
                 case QUIRK_NEG_FRAGILE_FUEL -> (en.hasEngine() && en.getEngine().isICE());
                 case QUIRK_POS_TRAILER_HITCH -> !(en.getMovementMode().isHover() || en.getMovementMode().isVTOL());
                 case QUIRK_POS_SCOUT_BIKE -> (en.getMovementMode().isHover() || en.getMovementMode().isWheeled())
-                    && (en.getWeight() <= 10.0);
+                      && (en.getWeight() <= 10.0);
                 case QUIRK_POS_VTOL_ROTOR_COAXIAL, QUIRK_POS_VTOL_ROTOR_DUAL -> en instanceof VTOL;
                 default -> quirk.isAnyOf(
-                    QUIRK_POS_ANTI_AIR, QUIRK_POS_BATTLE_COMP, QUIRK_POS_EASY_MAINTAIN,
-                    QUIRK_POS_FAST_RELOAD, QUIRK_POS_GOOD_REP_1, QUIRK_POS_GOOD_REP_2,
-                    QUIRK_POS_IMP_COM, QUIRK_POS_IMPROVED_SENSORS,
-                    QUIRK_POS_IMP_TARG_S, QUIRK_POS_SEARCHLIGHT,
-                    QUIRK_POS_IMP_TARG_M, QUIRK_POS_IMP_TARG_L, QUIRK_POS_LOW_PROFILE,
-                    QUIRK_NEG_BAD_REP_IS, QUIRK_NEG_BAD_REP_CLAN, QUIRK_NEG_DIFFICULT_MAINTAIN,
-                    QUIRK_NEG_NON_STANDARD, QUIRK_NEG_POOR_PERFORMANCE, QUIRK_NEG_POOR_SEALING,
-                    QUIRK_NEG_HARD_PILOT, QUIRK_NEG_POOR_TARG_S, QUIRK_NEG_POOR_TARG_M, QUIRK_NEG_POOR_TARG_L,
-                    QUIRK_NEG_POOR_WORK, QUIRK_NEG_PROTOTYPE, QUIRK_NEG_SENSOR_GHOSTS,
-                    QUIRK_POS_UBIQUITOUS_IS, QUIRK_POS_UBIQUITOUS_CLAN);
+                      QUIRK_POS_ANTI_AIR, QUIRK_POS_BATTLE_COMP, QUIRK_POS_EASY_MAINTAIN,
+                      QUIRK_POS_FAST_RELOAD, QUIRK_POS_GOOD_REP_1, QUIRK_POS_GOOD_REP_2,
+                      QUIRK_POS_IMP_COM, QUIRK_POS_IMPROVED_SENSORS,
+                      QUIRK_POS_IMP_TARG_S, QUIRK_POS_SEARCHLIGHT,
+                      QUIRK_POS_IMP_TARG_M, QUIRK_POS_IMP_TARG_L, QUIRK_POS_LOW_PROFILE,
+                      QUIRK_NEG_BAD_REP_IS, QUIRK_NEG_BAD_REP_CLAN, QUIRK_NEG_DIFFICULT_MAINTAIN,
+                      QUIRK_NEG_NON_STANDARD, QUIRK_NEG_POOR_PERFORMANCE, QUIRK_NEG_POOR_SEALING,
+                      QUIRK_NEG_HARD_PILOT, QUIRK_NEG_POOR_TARG_S, QUIRK_NEG_POOR_TARG_M, QUIRK_NEG_POOR_TARG_L,
+                      QUIRK_NEG_POOR_WORK, QUIRK_NEG_PROTOTYPE, QUIRK_NEG_SENSOR_GHOSTS,
+                      QUIRK_POS_UBIQUITOUS_IS, QUIRK_POS_UBIQUITOUS_CLAN);
             };
         }
 
         if (en instanceof BattleArmor) {
             return quirk.isAnyOf(
-                    QUIRK_POS_EASY_MAINTAIN, QUIRK_POS_EASY_PILOT, QUIRK_POS_GOOD_REP_1,
-                    QUIRK_POS_GOOD_REP_2, QUIRK_POS_IMP_COM, QUIRK_POS_RUGGED_1,
-                    QUIRK_POS_RUGGED_2, QUIRK_POS_UBIQUITOUS_IS, QUIRK_POS_UBIQUITOUS_CLAN,
-                    QUIRK_NEG_BAD_REP_IS, QUIRK_NEG_BAD_REP_CLAN, QUIRK_NEG_DIFFICULT_MAINTAIN,
-                    QUIRK_NEG_HARD_PILOT, QUIRK_NEG_ILLEGAL_DESIGN, QUIRK_NEG_NON_STANDARD,
-                    QUIRK_NEG_OBSOLETE, QUIRK_NEG_POOR_SEALING, QUIRK_NEG_POOR_TARG_S,
-                    QUIRK_NEG_POOR_TARG_M, QUIRK_NEG_POOR_TARG_L, QUIRK_NEG_POOR_WORK,
-                    QUIRK_NEG_PROTOTYPE, QUIRK_NEG_SENSOR_GHOSTS);
+                  QUIRK_POS_EASY_MAINTAIN, QUIRK_POS_EASY_PILOT, QUIRK_POS_GOOD_REP_1,
+                  QUIRK_POS_GOOD_REP_2, QUIRK_POS_IMP_COM, QUIRK_POS_RUGGED_1,
+                  QUIRK_POS_RUGGED_2, QUIRK_POS_UBIQUITOUS_IS, QUIRK_POS_UBIQUITOUS_CLAN,
+                  QUIRK_NEG_BAD_REP_IS, QUIRK_NEG_BAD_REP_CLAN, QUIRK_NEG_DIFFICULT_MAINTAIN,
+                  QUIRK_NEG_HARD_PILOT, QUIRK_NEG_ILLEGAL_DESIGN, QUIRK_NEG_NON_STANDARD,
+                  QUIRK_NEG_OBSOLETE, QUIRK_NEG_POOR_SEALING, QUIRK_NEG_POOR_TARG_S,
+                  QUIRK_NEG_POOR_TARG_M, QUIRK_NEG_POOR_TARG_L, QUIRK_NEG_POOR_WORK,
+                  QUIRK_NEG_PROTOTYPE, QUIRK_NEG_SENSOR_GHOSTS);
         }
 
         if (en instanceof Aero) {
-            if (quirk.isAnyOf(
-                    QUIRK_POS_ATMO_FLYER, QUIRK_POS_COMBAT_COMPUTER, QUIRK_POS_EASY_MAINTAIN,
-                    QUIRK_POS_EASY_PILOT, QUIRK_POS_GOOD_REP_1, QUIRK_POS_GOOD_REP_2,
-                    QUIRK_POS_IMP_COM, QUIRK_POS_IMP_LIFE_SUPPORT, QUIRK_POS_IMP_TARG_L,
-                    QUIRK_POS_IMP_TARG_M, QUIRK_POS_IMP_TARG_S, QUIRK_POS_INTERNAL_BOMB,
-                    QUIRK_POS_RUGGED_1, QUIRK_POS_RUGGED_2, QUIRK_POS_RUMBLE_SEAT,
-                    QUIRK_POS_UBIQUITOUS_IS, QUIRK_POS_UBIQUITOUS_CLAN, QUIRK_NEG_ATMO_INSTABILITY,
-                    QUIRK_NEG_BAD_REP_IS, QUIRK_NEG_BAD_REP_CLAN, QUIRK_NEG_CRAMPED_COCKPIT,
-                    QUIRK_NEG_DIFFICULT_EJECT, QUIRK_NEG_DIFFICULT_MAINTAIN, QUIRK_NEG_FRAGILE_FUEL,
-                    QUIRK_NEG_HARD_PILOT, QUIRK_NEG_ILLEGAL_DESIGN, QUIRK_NEG_NO_EJECT,
-                    QUIRK_NEG_NON_STANDARD, QUIRK_NEG_OBSOLETE, QUIRK_NEG_POOR_LIFE_SUPPORT,
-                    QUIRK_NEG_POOR_PERFORMANCE, QUIRK_NEG_POOR_TARG_S, QUIRK_NEG_POOR_TARG_M,
-                    QUIRK_NEG_POOR_TARG_L, QUIRK_NEG_POOR_WORK, QUIRK_NEG_PROTOTYPE,
-                    QUIRK_NEG_RAMSHACKLE, QUIRK_NEG_SENSOR_GHOSTS, QUIRK_NEG_UNSTREAMLINED,
-                    QUIRK_NEG_WEAK_UNDERCARRIAGE)) {
+            if (quirk.isAnyOf(QUIRK_POS_ATMOSPHERE_FLYER, QUIRK_POS_COMBAT_COMPUTER, QUIRK_POS_EASY_MAINTAIN,
+                  QUIRK_POS_EASY_PILOT, QUIRK_POS_GOOD_REP_1, QUIRK_POS_GOOD_REP_2,
+                  QUIRK_POS_IMP_COM, QUIRK_POS_IMP_LIFE_SUPPORT, QUIRK_POS_IMP_TARG_L,
+                  QUIRK_POS_IMP_TARG_M, QUIRK_POS_IMP_TARG_S, QUIRK_POS_INTERNAL_BOMB,
+                  QUIRK_POS_RUGGED_1, QUIRK_POS_RUGGED_2, QUIRK_POS_RUMBLE_SEAT,
+                  QUIRK_POS_UBIQUITOUS_IS, QUIRK_POS_UBIQUITOUS_CLAN, QUIRK_NEG_ATMOSPHERE_INSTABILITY,
+                  QUIRK_NEG_BAD_REP_IS, QUIRK_NEG_BAD_REP_CLAN, QUIRK_NEG_CRAMPED_COCKPIT,
+                  QUIRK_NEG_DIFFICULT_EJECT, QUIRK_NEG_DIFFICULT_MAINTAIN, QUIRK_NEG_FRAGILE_FUEL,
+                  QUIRK_NEG_HARD_PILOT, QUIRK_NEG_ILLEGAL_DESIGN, QUIRK_NEG_NO_EJECT,
+                  QUIRK_NEG_NON_STANDARD, QUIRK_NEG_OBSOLETE, QUIRK_NEG_POOR_LIFE_SUPPORT,
+                  QUIRK_NEG_POOR_PERFORMANCE, QUIRK_NEG_POOR_TARG_S, QUIRK_NEG_POOR_TARG_M,
+                  QUIRK_NEG_POOR_TARG_L, QUIRK_NEG_POOR_WORK, QUIRK_NEG_PROTOTYPE,
+                  QUIRK_NEG_RAMSHACKLE, QUIRK_NEG_SENSOR_GHOSTS, QUIRK_NEG_UNSTREAMLINED,
+                  QUIRK_NEG_WEAK_UNDERCARRIAGE)) {
                 return true;
             }
 
@@ -263,44 +319,46 @@ public class Quirks extends AbstractOptions {
                 return quirk.is(QUIRK_POS_DOCKING_ARMS);
             } else if (en instanceof Dropship) {
                 return quirk.isAnyOf(
-                        QUIRK_NEG_ATMO_INSTABILITY, QUIRK_NEG_EM_INTERFERENCE_WHOLE,
-                        QUIRK_NEG_LARGE_DROPPER, QUIRK_NEG_UNSTREAMLINED, QUIRK_NEG_WEAK_UNDERCARRIAGE,
-                        QUIRK_POS_ATMO_FLYER, QUIRK_POS_INTERNAL_BOMB, QUIRK_NEG_POOR_PERFORMANCE);
+                      QUIRK_NEG_ATMOSPHERE_INSTABILITY, QUIRK_NEG_EM_INTERFERENCE_WHOLE,
+                      QUIRK_NEG_LARGE_DROPPER, QUIRK_NEG_UNSTREAMLINED, QUIRK_NEG_WEAK_UNDERCARRIAGE,
+                      QUIRK_POS_ATMOSPHERE_FLYER, QUIRK_POS_INTERNAL_BOMB, QUIRK_NEG_POOR_PERFORMANCE);
             } else { // Fighter/SmallCraft
                 return quirk.isAnyOf(
-                        QUIRK_NEG_ATMO_INSTABILITY, QUIRK_NEG_CRAMPED_COCKPIT, QUIRK_NEG_DIFFICULT_EJECT,
-                        QUIRK_NEG_EM_INTERFERENCE_WHOLE, QUIRK_NEG_POOR_LIFE_SUPPORT,
-                        QUIRK_NEG_POOR_PERFORMANCE, QUIRK_NEG_UNSTREAMLINED, QUIRK_NEG_WEAK_UNDERCARRIAGE,
-                        QUIRK_POS_ATMO_FLYER, QUIRK_POS_COMBAT_COMPUTER, QUIRK_POS_FAST_RELOAD,
-                        QUIRK_POS_IMP_LIFE_SUPPORT, QUIRK_POS_INTERNAL_BOMB, QUIRK_NEG_NO_EJECT);
+                      QUIRK_NEG_ATMOSPHERE_INSTABILITY, QUIRK_NEG_CRAMPED_COCKPIT, QUIRK_NEG_DIFFICULT_EJECT,
+                      QUIRK_NEG_EM_INTERFERENCE_WHOLE, QUIRK_NEG_POOR_LIFE_SUPPORT,
+                      QUIRK_NEG_POOR_PERFORMANCE, QUIRK_NEG_UNSTREAMLINED, QUIRK_NEG_WEAK_UNDERCARRIAGE,
+                      QUIRK_POS_ATMOSPHERE_FLYER, QUIRK_POS_COMBAT_COMPUTER, QUIRK_POS_FAST_RELOAD,
+                      QUIRK_POS_IMP_LIFE_SUPPORT, QUIRK_POS_INTERNAL_BOMB, QUIRK_NEG_NO_EJECT);
             }
         }
 
         if (en instanceof ProtoMek) {
             return quirk.isAnyOf(
-                    QUIRK_POS_EASY_MAINTAIN, QUIRK_POS_EASY_PILOT, QUIRK_POS_GOOD_REP_1,
-                    QUIRK_POS_GOOD_REP_2, QUIRK_POS_IMP_COM, QUIRK_POS_RUGGED_1,
-                    QUIRK_POS_RUGGED_2, QUIRK_POS_UBIQUITOUS_IS, QUIRK_POS_UBIQUITOUS_CLAN,
-                    QUIRK_NEG_BAD_REP_IS, QUIRK_NEG_BAD_REP_CLAN, QUIRK_NEG_DIFFICULT_MAINTAIN,
-                    QUIRK_NEG_HARD_PILOT, QUIRK_NEG_ILLEGAL_DESIGN, QUIRK_NEG_NON_STANDARD,
-                    QUIRK_NEG_OBSOLETE, QUIRK_NEG_POOR_SEALING, QUIRK_NEG_POOR_TARG_S,
-                    QUIRK_NEG_POOR_TARG_M, QUIRK_NEG_POOR_TARG_L, QUIRK_NEG_POOR_WORK,
-                    QUIRK_NEG_PROTOTYPE, QUIRK_NEG_SENSOR_GHOSTS);
+                  QUIRK_POS_EASY_MAINTAIN, QUIRK_POS_EASY_PILOT, QUIRK_POS_GOOD_REP_1,
+                  QUIRK_POS_GOOD_REP_2, QUIRK_POS_IMP_COM, QUIRK_POS_RUGGED_1,
+                  QUIRK_POS_RUGGED_2, QUIRK_POS_UBIQUITOUS_IS, QUIRK_POS_UBIQUITOUS_CLAN,
+                  QUIRK_NEG_BAD_REP_IS, QUIRK_NEG_BAD_REP_CLAN, QUIRK_NEG_DIFFICULT_MAINTAIN,
+                  QUIRK_NEG_HARD_PILOT, QUIRK_NEG_ILLEGAL_DESIGN, QUIRK_NEG_NON_STANDARD,
+                  QUIRK_NEG_OBSOLETE, QUIRK_NEG_POOR_SEALING, QUIRK_NEG_POOR_TARG_S,
+                  QUIRK_NEG_POOR_TARG_M, QUIRK_NEG_POOR_TARG_L, QUIRK_NEG_POOR_WORK,
+                  QUIRK_NEG_PROTOTYPE, QUIRK_NEG_SENSOR_GHOSTS);
         }
 
         return false;
     }
 
     private static class QuirksInfo extends AbstractOptionsInfo {
-        private static boolean initialized = false;
-        private static final AbstractOptionsInfo instance = new QuirksInfo();
+        private static volatile QuirksInfo instance;
+        private static final Object lock = new Object();
 
-        public static AbstractOptionsInfo getInstance() {
-            if (!initialized) {
-                initialized = true;
-                // Create a new dummy Quirks; ensures values initialized
-                // Otherwise, could have issues when loading saved games
-                new Quirks();
+        public static QuirksInfo getInstance() {
+            if (instance == null) {
+                synchronized (lock) {
+                    if (instance == null) {
+                        instance = new QuirksInfo();
+                        new Quirks();
+                    }
+                }
             }
             return instance;
         }

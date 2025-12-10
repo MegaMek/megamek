@@ -1,21 +1,35 @@
 /*
  * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.common;
 
@@ -26,10 +40,14 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.jupiter.api.Test;
-
-import megamek.common.battlevalue.BVCalculator;
+import megamek.common.battleValue.BVCalculator;
+import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
+import megamek.common.units.Crew;
+import megamek.common.units.CrewType;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -42,17 +60,17 @@ class CrewTest {
         Infantry inf = mock(Infantry.class);
         Crew crew = getInfantryCrewWithCombatTurns(17);
         when(inf.getCrew()).thenReturn(crew);
-        inf.getCrew().setGunnery(5);
-        inf.getCrew().setPiloting(8);
+        inf.getCrew().setGunnery(5, crew.getCrewType().getGunnerPos());
+        inf.getCrew().setPiloting(8, crew.getCrewType().getPilotPos());
         assertTrue(inf.getCrew().isPilotingFatigued());
         assertTrue(inf.getCrew().isGunneryFatigued());
 
-        inf.getCrew().setGunnery(4);
-        inf.getCrew().setPiloting(2);
+        inf.getCrew().setGunnery(4, crew.getCrewType().getGunnerPos());
+        inf.getCrew().setPiloting(2, crew.getCrewType().getPilotPos());
         assertTrue(inf.getCrew().isPilotingFatigued());
         assertFalse(inf.getCrew().isGunneryFatigued());
 
-        inf.getCrew().setGunnery(1);
+        inf.getCrew().setGunnery(1, crew.getCrewType().getGunnerPos());
         assertFalse(inf.getCrew().isPilotingFatigued());
 
         inf.getCrew().setCrewFatigue(15, 0);
@@ -60,8 +78,8 @@ class CrewTest {
 
         crew = getInfantryCrewWithCombatTurns(16);
         when(inf.getCrew()).thenReturn(crew);
-        inf.getCrew().setGunnery(2);
-        inf.getCrew().setPiloting(8);
+        inf.getCrew().setGunnery(2, crew.getCrewType().getGunnerPos());
+        inf.getCrew().setPiloting(8, crew.getCrewType().getPilotPos());
         assertFalse(inf.getCrew().isPilotingFatigued());
 
         inf.getCrew().setCrewFatigue(4, 0);
@@ -76,17 +94,17 @@ class CrewTest {
         Mek inf = mock(Mek.class);
         Crew crew = getMekCrewWithCombatTurns(17);
         when(inf.getCrew()).thenReturn(crew);
-        inf.getCrew().setGunnery(5);
-        inf.getCrew().setPiloting(8);
+        inf.getCrew().setGunnery(5, crew.getCrewType().getGunnerPos());
+        inf.getCrew().setPiloting(8, crew.getCrewType().getPilotPos());
         assertTrue(inf.getCrew().isPilotingFatigued());
         assertTrue(inf.getCrew().isGunneryFatigued());
 
-        inf.getCrew().setGunnery(4);
-        inf.getCrew().setPiloting(2);
+        inf.getCrew().setGunnery(4, crew.getCrewType().getGunnerPos());
+        inf.getCrew().setPiloting(2, crew.getCrewType().getPilotPos());
         assertTrue(inf.getCrew().isPilotingFatigued());
         assertFalse(inf.getCrew().isGunneryFatigued());
 
-        inf.getCrew().setGunnery(1);
+        inf.getCrew().setGunnery(1, crew.getCrewType().getGunnerPos());
         assertTrue(inf.getCrew().isPilotingFatigued());
 
         inf.getCrew().setCrewFatigue(15, 0);
@@ -94,8 +112,8 @@ class CrewTest {
 
         crew = getMekCrewWithCombatTurns(16);
         when(inf.getCrew()).thenReturn(crew);
-        inf.getCrew().setGunnery(2);
-        inf.getCrew().setPiloting(8);
+        inf.getCrew().setGunnery(2, crew.getCrewType().getGunnerPos());
+        inf.getCrew().setPiloting(8, crew.getCrewType().getPilotPos());
         assertTrue(inf.getCrew().isPilotingFatigued());
 
         inf.getCrew().setCrewFatigue(4, 0);
@@ -127,7 +145,7 @@ class CrewTest {
         int piloting = 5;
 
         // Test the default case.
-        Game mockGame = null;
+        Game mockGame;
         double expected = 1.0;
         double actual = BVCalculator.bvSkillMultiplier(gunnery, piloting);
         assertEquals(expected, actual, 0.001);
@@ -135,7 +153,6 @@ class CrewTest {
         mockGame = mock(Game.class);
         GameOptions mockOptions = mock(GameOptions.class);
         when(mockGame.getOptions()).thenReturn(mockOptions);
-        expected = 1.0;
         actual = BVCalculator.bvSkillMultiplier(gunnery, piloting);
         assertEquals(expected, actual, 0.001);
 
@@ -157,7 +174,6 @@ class CrewTest {
 
         // Test a 2/6 pilot.
         gunnery = 2;
-        piloting = 6;
         when(mockOptions.booleanOption(eq("alternate_pilot_bv_mod"))).thenReturn(false);
         expected = 1.35;
         actual = BVCalculator.bvSkillMultiplier(gunnery, piloting);

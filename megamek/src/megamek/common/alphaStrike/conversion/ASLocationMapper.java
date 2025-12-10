@@ -1,35 +1,49 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.alphaStrike.conversion;
 
-import static megamek.common.MiscType.F_HEAD_TURRET;
-import static megamek.common.MiscType.F_QUAD_TURRET;
-import static megamek.common.MiscType.F_SHOULDER_TURRET;
+import static megamek.common.equipment.MiscType.F_HEAD_TURRET;
+import static megamek.common.equipment.MiscType.F_QUAD_TURRET;
+import static megamek.common.equipment.MiscType.F_SHOULDER_TURRET;
 
-import megamek.common.*;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.*;
 
 /**
- * This class provides AlphaStrike conversion utilities for converting all sorts
- * of locations
- * of TW units to the damage conversion location index. Not useful for anything
- * outside
- * of AlphaStrike conversion.
+ * This class provides AlphaStrike conversion utilities for converting all sorts of locations of TW units to the damage
+ * conversion location index. Not useful for anything outside AlphaStrike conversion.
  */
 public class ASLocationMapper {
 
@@ -99,22 +113,16 @@ public class ASLocationMapper {
     }
 
     /**
-     * Returns the value multiplier for the given Mounted of the given entity in the
-     * AS conversion location loc.
-     * The AS conversion location is an
-     * {@link megamek.common.alphaStrike.ASSpecialAbilityCollection} assembling
-     * the specials for the unit, a TUR ability, REAR and the arcs of large units,
-     * not the
-     * mounted's location on the entity. This multiplier is only correct for
-     * weapon-based special abilities
-     * like MHQ, C3M, NARC or ART-x abilities.
+     * Returns the value multiplier for the given Mounted of the given entity in the AS conversion location loc. The AS
+     * conversion location is an {@link megamek.common.alphaStrike.ASSpecialAbilityCollection} assembling the specials
+     * for the unit, a TUR ability, REAR and the arcs of large units, not the mounted's location on the entity. This
+     * multiplier is only correct for weapon-based special abilities like MHQ, C3M, NARC or ART-x abilities.
      *
      * @param en    The entity
-     * @param loc   The conversion location index, see locations[] in
-     *              ASDamageConverter
+     * @param loc   The conversion location index, see locations[] in ASDamageConverter
      * @param mount the weapon
-     * @return The value multiplier, 1 meaning "counts for this location", 0 meaning
-     *         "doesnt count"
+     *
+     * @return The value multiplier, 1 meaning "counts for this location", 0 meaning "doesn't count"
      */
     public static double damageLocationMultiplierForSpecials(Entity en, int loc, Mounted<?> mount) {
         if (en.isFighter() || en.isProtoMek() || en.isMek()) {
@@ -132,10 +140,10 @@ public class ASLocationMapper {
 
     public static String locationName(Entity en, int index) {
         if ((en instanceof Warship) || (en instanceof SmallCraft)) {
-            return en.getLocationAbbrs()[index];
+            return en.getLocationAbbreviations()[index];
         } else if (en instanceof Jumpship) {
             // Remove leading F from FLS and FRS
-            String retVal = en.getLocationAbbrs()[index];
+            String retVal = en.getLocationAbbreviations()[index];
             if (retVal.charAt(0) == 'F') {
                 return retVal.substring(1);
             }
@@ -162,7 +170,7 @@ public class ASLocationMapper {
             if (index == 0) {
                 return "";
             }
-            return en.getLocationAbbrs()[index];
+            return en.getLocationAbbreviations()[index];
         } else if ((en instanceof Mek) || (en instanceof Tank)) {
             if (index == 1) {
                 return "REAR";
@@ -178,25 +186,17 @@ public class ASLocationMapper {
 
     private static double getWarShipLocationMultiplier(int index, int location) {
         // ASC p. 103
-        switch (location) {
-            case Warship.LOC_NOSE:
-            case Warship.LOC_FLS:
-            case Warship.LOC_FRS:
-                return (index == 0) ? 1 : 0;
-            case Warship.LOC_LBS:
-            case Warship.LOC_ALS:
-                return (index == 1) ? 1 : 0;
-            case Warship.LOC_RBS:
-            case Warship.LOC_ARS:
-                return (index == 2) ? 1 : 0;
-            case Warship.LOC_AFT:
-                return (index == 3) ? 1 : 0;
-            default:
-                return 0;
-        }
+        return switch (location) {
+            case Warship.LOC_NOSE, Warship.LOC_FLS, Warship.LOC_FRS -> (index == 0) ? 1 : 0;
+            case Warship.LOC_LBS, Warship.LOC_ALS -> (index == 1) ? 1 : 0;
+            case Warship.LOC_RBS, Warship.LOC_ARS -> (index == 2) ? 1 : 0;
+            case Warship.LOC_AFT -> (index == 3) ? 1 : 0;
+            default -> 0;
+        };
     }
 
-    private static double getJumpShipLocationMultiplier(Jumpship en, int index, int location, boolean rearMounted) {
+    private static double getJumpShipLocationMultiplier(Jumpship jumpship, int index, int location,
+          boolean rearMounted) {
         switch (index) {
             case 0:
                 if (location == Jumpship.LOC_NOSE) {
@@ -224,8 +224,8 @@ public class ASLocationMapper {
                 if (location == SmallCraft.LOC_NOSE) {
                     return 1;
                 }
-                if (en.isSpheroid() && (location == SmallCraft.LOC_LWING || location == SmallCraft.LOC_RWING)
-                        && !rearMounted) {
+                if (en.isSpheroid() && (location == SmallCraft.LOC_LEFT_WING || location == SmallCraft.LOC_RIGHT_WING)
+                      && !rearMounted) {
                     return 0.5;
                 }
                 break;
@@ -244,7 +244,7 @@ public class ASLocationMapper {
                 if (location == SmallCraft.LOC_AFT) {
                     return 1;
                 }
-                if (rearMounted && (location == SmallCraft.LOC_LWING || location == SmallCraft.LOC_RWING)) {
+                if (rearMounted && (location == SmallCraft.LOC_LEFT_WING || location == SmallCraft.LOC_RIGHT_WING)) {
                     return en.isSpheroid() ? 0.5 : 1.0;
                 }
                 break;
@@ -265,7 +265,7 @@ public class ASLocationMapper {
 
     private static double getAeroLocationMultiplier(int index, int location, boolean rearMounted) {
         if ((index == 0 && location != Aero.LOC_AFT && !rearMounted)
-                || (index == 1 && (location == Aero.LOC_AFT || rearMounted))) {
+              || (index == 1 && (location == Aero.LOC_AFT || rearMounted))) {
             return 1;
         }
         return 0;
@@ -273,8 +273,8 @@ public class ASLocationMapper {
 
     private static double getSupportTankLocationMultiplier(int index, int location) {
         if ((index == 0) && ((location == SupportTank.LOC_FRONT) || (location == SupportTank.LOC_LEFT)
-                || (location == SupportTank.LOC_RIGHT)
-                || (location == SupportTank.LOC_TURRET) || (location == SupportTank.LOC_TURRET_2))) {
+              || (location == SupportTank.LOC_RIGHT)
+              || (location == SupportTank.LOC_TURRET) || (location == SupportTank.LOC_TURRET_2))) {
             return 1;
         } else if (index == 1 && (location == SupportTank.LOC_REAR)) {
             return 1;
@@ -310,7 +310,9 @@ public class ASLocationMapper {
         if ((index == 0 && !rearMounted || (index == 1) && rearMounted)) {
             return 1;
         } else if (index == 2) {
-            if (location != TripodMek.LOC_CLEG && location != TripodMek.LOC_RLEG && location != TripodMek.LOC_LLEG) {
+            if (location != TripodMek.LOC_CENTER_LEG
+                  && location != TripodMek.LOC_RIGHT_LEG
+                  && location != TripodMek.LOC_LEFT_LEG) {
                 return 1;
             }
         }
@@ -333,7 +335,7 @@ public class ASLocationMapper {
         } else if ((index == 1) && (location == SuperHeavyTank.LOC_REAR)) {
             return 1;
         } else if ((index == 2)
-                && ((location == SuperHeavyTank.LOC_TURRET) || (location == SuperHeavyTank.LOC_TURRET_2))) {
+              && ((location == SuperHeavyTank.LOC_TURRET) || (location == SuperHeavyTank.LOC_TURRET_2))) {
             return 1;
         }
         return 0;

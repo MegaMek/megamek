@@ -1,0 +1,70 @@
+/*
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+package megamek.client.bot.princess.commands;
+
+import java.util.List;
+
+import megamek.client.bot.Messages;
+import megamek.client.bot.princess.Princess;
+import megamek.common.Player;
+import megamek.server.commands.arguments.Argument;
+import megamek.server.commands.arguments.Arguments;
+import megamek.server.commands.arguments.PlayerArgument;
+
+/**
+ * Command to set a player as a dishonored enemy of the bot.
+ *
+ * @author Luana Coppio
+ */
+public class BloodFeudCommand implements ChatCommand {
+    private static final String PLAYER_ID = "playerId";
+
+    @Override
+    public List<Argument<?>> defineArguments() {
+        return List.of(
+              new PlayerArgument(PLAYER_ID, Messages.getString("Princess.command.bloodFeud.playerId"))
+        );
+    }
+
+    @Override
+    public void execute(Princess princess, Arguments arguments) {
+        PlayerArgument playerArg = arguments.get(PLAYER_ID, PlayerArgument.class);
+        Player player = princess.getGame().getPlayer(playerArg.getValue());
+        if (player != null) {
+            princess.getHonorUtil().setEnemyDishonored(playerArg.getValue());
+            princess.sendChat(Messages.getString("Princess.command.bloodFeud.playerAdded", playerArg.getValue()));
+        } else {
+            princess.sendChat(Messages.getString("Princess.command.bloodFeud.playerNotFound", playerArg.getValue()));
+        }
+    }
+}

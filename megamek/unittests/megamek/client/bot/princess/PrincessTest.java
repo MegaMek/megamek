@@ -1,21 +1,35 @@
 /*
  * Copyright (c) 2000-2011 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.bot.princess;
 
@@ -25,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doReturn;
@@ -36,17 +49,33 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import megamek.client.bot.princess.PathRanker.PathRankerType;
+import megamek.common.Facing;
+import megamek.common.Hex;
+import megamek.common.MPCalculationSetting;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.IArmorState;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
+import megamek.common.game.GameTurn;
+import megamek.common.moves.MoveStep;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.rolls.PilotingRollData;
+import megamek.common.units.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import megamek.client.bot.princess.PathRanker.PathRankerType;
-import megamek.common.*;
-import megamek.common.enums.GamePhase;
-import megamek.common.equipment.WeaponMounted;
-import megamek.common.options.GameOptions;
-import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.PlanetaryConditions;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -76,51 +105,53 @@ class PrincessTest {
         when(mockPrincess.getPathRanker(any(Entity.class))).thenReturn(mockPathRanker);
         when(mockPrincess.getMoraleUtil()).thenReturn(mockMoralUtil);
         when(mockPrincess.calcAmmoConservation(any(Entity.class))).thenCallRealMethod();
+        when(mockPrincess.shouldAbandon(any(Entity.class))).thenCallRealMethod();
     }
 
     @Test
     void testCalculateAdjustment() {
-        when(mockPrincess.calculateAdjustment(anyString())).thenCallRealMethod();
-
         // Test a +3 adjustment.
-        assertEquals(3, mockPrincess.calculateAdjustment("+++"));
+        assertEquals(3, Princess.calculateAdjustment("+++"));
+        assertEquals(2, Princess.calculateAdjustment("++3"));
+        assertEquals(2, Princess.calculateAdjustment("3++"));
 
         // Test a -2 adjustment.
-        assertEquals(-2, mockPrincess.calculateAdjustment("--"));
+        assertEquals(-2, Princess.calculateAdjustment("--"));
 
         // Test an adjustment with some bad characters.
-        assertEquals(1, mockPrincess.calculateAdjustment("+p"));
+        assertEquals(1, Princess.calculateAdjustment("+p"));
 
         // Test an adjustment with a number should set the value to the number.
-        assertEquals(5, mockPrincess.calculateAdjustment("5"));
+        assertEquals(5, Princess.calculateAdjustment("5"));
 
         // Test an adjustment with a number should set the value to the number.
-        assertEquals(-5, mockPrincess.calculateAdjustment("-5"));
+        assertEquals(-5, Princess.calculateAdjustment("-5"));
 
         // Test an adjustment with a number should set the value to the number.
-        assertEquals(22, mockPrincess.calculateAdjustment("+22"));
+        assertEquals(22, Princess.calculateAdjustment("+22"));
 
         // Test an empty ticks argument.
-        assertEquals(0, mockPrincess.calculateAdjustment(""));
+        assertEquals(0, Princess.calculateAdjustment(""));
 
         // Test a null ticks argument.
-        assertEquals(0, mockPrincess.calculateAdjustment(null));
+        assertEquals(0, Princess.calculateAdjustment(null));
     }
 
     @Test
     void testCalculateMoveIndex() {
         final double TOLERANCE = 0.001;
-        when(mockPrincess.calculateMoveIndex(any(Entity.class), any(StringBuilder.class)))
-                .thenCallRealMethod();
+        when(mockPrincess.calculateMoveIndex(any(Entity.class), any(StringBuilder.class))).thenCallRealMethod();
         when(mockPrincess.isFallingBack(any(Entity.class))).thenReturn(false);
 
-        when(mockPathRanker.distanceToClosestEnemy(any(Entity.class), nullable(Coords.class),
-                nullable(Game.class))).thenReturn(10.0);
+        when(mockPathRanker.distanceToClosestEnemy(any(Entity.class),
+              nullable(Coords.class),
+              nullable(Game.class))).thenReturn(10.0);
 
         // Test a 6/9/6 regular mek.
         Entity mockMek = mock(BipedMek.class);
         when(mockMek.getRunMP(MPCalculationSetting.STANDARD)).thenReturn(9);
         when(mockMek.getJumpMP(MPCalculationSetting.STANDARD)).thenReturn(6);
+        when(mockMek.getAnyTypeMaxJumpMP()).thenReturn(0);
         when(mockMek.isProne()).thenReturn(false);
         when(mockMek.isCommander()).thenReturn(false);
         when(mockMek.isMilitary()).thenReturn(true);
@@ -175,7 +206,7 @@ class PrincessTest {
         // Test a BA unit.
         Entity mockBA = mock(BattleArmor.class);
         when(mockBA.getRunMP()).thenReturn(1);
-        when(mockBA.getJumpMP()).thenReturn(3);
+        when(mockBA.getAnyTypeMaxJumpMP()).thenReturn(3);
         when(mockBA.isProne()).thenReturn(false);
         when(mockBA.isCommander()).thenReturn(false);
         when(mockBA.isMilitary()).thenReturn(true);
@@ -189,6 +220,7 @@ class PrincessTest {
         // Test an Inf unit.
         Entity mockInf = mock(Infantry.class);
         when(mockInf.getRunMP(MPCalculationSetting.STANDARD)).thenReturn(1);
+        when(mockInf.getAnyTypeMaxJumpMP()).thenReturn(0);
         when(mockInf.getJumpMP(MPCalculationSetting.STANDARD)).thenReturn(0);
         when(mockInf.isProne()).thenReturn(false);
         when(mockInf.isCommander()).thenReturn(false);
@@ -203,6 +235,7 @@ class PrincessTest {
         // Test a Tank.
         Entity mockTank = mock(Tank.class);
         when(mockTank.getRunMP(MPCalculationSetting.STANDARD)).thenReturn(6);
+        when(mockInf.getAnyTypeMaxJumpMP()).thenReturn(0);
         when(mockTank.getJumpMP(MPCalculationSetting.STANDARD)).thenReturn(0);
         when(mockTank.isProne()).thenReturn(false);
         when(mockTank.isCommander()).thenReturn(false);
@@ -286,7 +319,7 @@ class PrincessTest {
         Entity pickedEntity = mockPrincess.getEntityToMove();
         assertEquals(mockBA, pickedEntity);
 
-        // Add the off-board artillery, which should be ignored. Otherwise it would be
+        // Add the off-board artillery, which should be ignored. Otherwise, it would be
         // picked as the next to move.
         testEntityList.add(mockOffBoardArty);
         pickedEntity = mockPrincess.getEntityToMove();
@@ -415,8 +448,10 @@ class PrincessTest {
 
         // Unit is on home edge.
         BasicPathRanker mockRanker = mock(BasicPathRanker.class);
-        when(mockRanker.distanceToHomeEdge(any(Coords.class), any(CardinalEdge.class),
-                any(Game.class))).thenReturn(0);
+        when(mockRanker.distanceToHomeEdge(any(Coords.class),
+              anyInt(),
+              any(CardinalEdge.class),
+              any(Game.class))).thenReturn(0);
         when(mockPrincess.getPathRanker(any(Entity.class))).thenReturn(mockRanker);
 
         // Mock objects so we don't have nulls.
@@ -459,8 +494,10 @@ class PrincessTest {
 
         // The unit can flee, but is no longer on the board edge.
         when(mockMek.canFlee(mockMek.getPosition())).thenReturn(true);
-        when(mockRanker.distanceToHomeEdge(any(Coords.class), any(CardinalEdge.class),
-                any(Game.class))).thenReturn(1);
+        when(mockRanker.distanceToHomeEdge(any(Coords.class),
+              anyInt(),
+              any(CardinalEdge.class),
+              any(Game.class))).thenReturn(1);
         assertFalse(mockPrincess.mustFleeBoard(mockMek));
     }
 
@@ -471,13 +508,13 @@ class PrincessTest {
 
         Hex mockHex = mock(Hex.class);
         when(mockHex.getLevel()).thenReturn(0);
-        when(mockPrincess.getHex(any(Coords.class))).thenReturn(mockHex);
 
         Game mockGame = mock(Game.class);
         PlanetaryConditions mockPC = new PlanetaryConditions();
         mockPC.setGravity(1.0f);
         when(mockGame.getPlanetaryConditions()).thenReturn(mockPC);
         doReturn(mockGame).when(mockPrincess).getGame();
+        when(mockGame.getHexOf(any(Targetable.class))).thenReturn(mockHex);
 
         BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
         when(mockBehavior.getFallShameIndex()).thenReturn(5);
@@ -502,9 +539,13 @@ class PrincessTest {
         when(mockMek.checkGetUp(any(MoveStep.class), any(EntityMovementType.class))).thenReturn(mockPilotingRollData);
         when(mockMek.getPosition()).thenReturn(mockPosition);
         when(mockMek.getPriorPosition()).thenReturn(mockPriorPosition);
-        when(mockMek.checkBogDown(any(MoveStep.class), any(EntityMovementType.class), eq(mockHex),
-                eq(mockPriorPosition), eq(mockPosition), anyInt(), anyBoolean()))
-                .thenReturn(mockPilotingRollData);
+        when(mockMek.checkBogDown(any(MoveStep.class),
+              any(EntityMovementType.class),
+              eq(mockHex),
+              eq(mockPriorPosition),
+              eq(mockPosition),
+              anyInt(),
+              anyBoolean())).thenReturn(mockPilotingRollData);
         assertFalse(mockPrincess.isImmobilized(mockMek));
 
         // Test a shutdown mek.
@@ -574,7 +615,7 @@ class PrincessTest {
     }
 
     @Test
-    void testCalcAmmoForDefaultAggressionLevel() throws megamek.common.LocationFullException {
+    void testCalcAmmoForDefaultAggressionLevel() throws LocationFullException {
         // Expected toHitThresholds should equate to a TN of 12, 11, and 10 for ammo
         // values
         // of 7+, 3+, 1.
@@ -586,8 +627,8 @@ class PrincessTest {
 
         // Set up unit
         Mek mek1 = new BipedMek();
-        Mounted<?> bin1 = mek1.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
-        Mounted<?> wpn1 = mek1.addEquipment(mockAC5, Mek.LOC_RT);
+        Mounted<?> bin1 = mek1.addEquipment(mockAC5AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> wpn1 = mek1.addEquipment(mockAC5, Mek.LOC_RIGHT_TORSO);
 
         // Check default toHitThresholds
         // Default toHitThreshold for 7+ rounds for this level should allow firing on
@@ -595,7 +636,7 @@ class PrincessTest {
         double target = Compute.oddsAbove(12) / 100.0;
         bin1.setShotsLeft(7);
         Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mek1);
-        assertTrue(conserveMap.get(wpn1) <= target);
+        assertTrue(conserveMap.get((WeaponMounted) wpn1) <= target);
 
         // Default toHitThreshold for 3+ rounds for this level should allow firing on
         // 11s
@@ -612,7 +653,7 @@ class PrincessTest {
     }
 
     @Test
-    void testCalcAmmoForMaxAggressionLevel() throws megamek.common.LocationFullException {
+    void testCalcAmmoForMaxAggressionLevel() throws LocationFullException {
         // Expected toHitThresholds should equate to a TN of 12, 12, and 10 for ammo
         // values
         // of 7+, 3+, 1.
@@ -624,8 +665,8 @@ class PrincessTest {
 
         // Set up unit
         Mek mek1 = new BipedMek();
-        Mounted<?> bin1 = mek1.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
-        Mounted<?> wpn1 = mek1.addEquipment(mockAC5, Mek.LOC_RT);
+        Mounted<?> bin1 = mek1.addEquipment(mockAC5AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> wpn1 = mek1.addEquipment(mockAC5, Mek.LOC_RIGHT_TORSO);
 
         // Check default toHitThresholds
         // Default toHitThreshold for 7+ rounds for this level should allow firing on
@@ -633,7 +674,7 @@ class PrincessTest {
         double target = Compute.oddsAbove(12) / 100.0;
         bin1.setShotsLeft(7);
         Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mek1);
-        assertTrue(conserveMap.get(wpn1) <= target);
+        assertTrue(conserveMap.get((WeaponMounted) wpn1) <= target);
 
         // Default toHitThreshold for 3+ rounds for this level should allow firing on
         // 12s
@@ -649,7 +690,7 @@ class PrincessTest {
     }
 
     @Test
-    void testCalcAmmoForZeroAggressionLevel() throws megamek.common.LocationFullException {
+    void testCalcAmmoForZeroAggressionLevel() throws LocationFullException {
         // Expected toHitThresholds should equate to a TN of 10, 9, and 7 for ammo
         // values
         // of 7+, 3+, 1.
@@ -661,8 +702,8 @@ class PrincessTest {
 
         // Set up unit
         Mek mek1 = new BipedMek();
-        Mounted<?> bin1 = mek1.addEquipment(mockAC5AmmoType, Mek.LOC_LT);
-        Mounted<?> wpn1 = mek1.addEquipment(mockAC5, Mek.LOC_RT);
+        Mounted<?> bin1 = mek1.addEquipment(mockAC5AmmoType, Mek.LOC_LEFT_TORSO);
+        Mounted<?> wpn1 = mek1.addEquipment(mockAC5, Mek.LOC_RIGHT_TORSO);
 
         // Check default toHitThresholds
         // Default toHitThreshold for 7+ rounds for this level should allow firing on
@@ -670,7 +711,7 @@ class PrincessTest {
         double target = Compute.oddsAbove(10) / 100.0;
         bin1.setShotsLeft(7);
         Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mek1);
-        assertTrue(conserveMap.get(wpn1) <= target);
+        assertTrue(conserveMap.get((WeaponMounted) wpn1) <= target);
 
         // Default toHitThreshold for 3+ rounds for this level should allow firing on
         // 11s
@@ -687,7 +728,7 @@ class PrincessTest {
     }
 
     @Test
-    void testCalcAmmoForOneShotWeapons() throws megamek.common.LocationFullException {
+    void testCalcAmmoForOneShotWeapons() throws LocationFullException {
         // Set aggression to the lowest level first
         BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
         when(mockBehavior.getHyperAggressionIndex()).thenReturn(0);
@@ -695,13 +736,13 @@ class PrincessTest {
 
         // Set up unit
         Mek mek1 = new BipedMek();
-        Mounted<?> wpn1 = mek1.addEquipment(mockRL20, Mek.LOC_LT);
+        Mounted<?> wpn1 = mek1.addEquipment(mockRL20, Mek.LOC_LEFT_TORSO);
 
         // Check default toHitThresholds
         // For max aggro, shoot OS weapons at TN 10 or better
         double target = Compute.oddsAbove(8) / 100.0;
         Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mek1);
-        assertTrue(conserveMap.get(wpn1) <= target);
+        assertTrue(conserveMap.get((WeaponMounted) wpn1) <= target);
 
         // For default aggro, shoot OS weapons at TN 9 or better
         when(mockBehavior.getHyperAggressionIndex()).thenReturn(5);
@@ -714,5 +755,209 @@ class PrincessTest {
         target = Compute.oddsAbove(10) / 100.0;
         conserveMap = mockPrincess.calcAmmoConservation(mek1);
         assertTrue(conserveMap.get(wpn1) <= target);
+    }
+
+    @Test
+    void testShouldAbandonShouldNotAbandon() {
+        // Tank is working fine
+        Tank tank = new Tank();
+        assertFalse(tank.isPermanentlyImmobilized(true));
+        assertFalse(tank.isCrippled());
+        assertFalse(tank.isShutDown());
+        assertFalse(tank.isDoomed());
+        assertFalse(mockPrincess.shouldAbandon(tank));
+    }
+
+    @Test
+    void testShouldAbandonShouldAbandonTankCrewDead() {
+        // Tank is crew kill
+        Tank tank = new Tank();
+        Crew crew = new Crew(CrewType.CREW);
+        tank.setCrew(crew);
+        crew.setDead(true);
+        assertTrue(tank.isPermanentlyImmobilized(true));
+        // Per TW Errata v11.01 p.54, immobilized units are NOT automatically crippled
+        assertFalse(tank.isCrippled());
+        assertFalse(tank.isShutDown());
+        assertFalse(tank.isDoomed());
+        assertTrue(mockPrincess.shouldAbandon(tank));
+    }
+
+    @Test
+    void testShouldAbandonShouldAbandonTankImmobilized() {
+        // Tank is mobility killed
+        Tank tank = new Tank();
+        Crew crew = new Crew(CrewType.CREW);
+        tank.setCrew(crew);
+        tank.setOriginalWalkMP(4);
+        tank.setMotiveDamage(4);
+        assertTrue(tank.isPermanentlyImmobilized(true));
+        // Per TW Errata v11.01 p.54, immobilized units are NOT automatically crippled
+        assertFalse(tank.isCrippled());
+        assertFalse(tank.isShutDown());
+        assertFalse(tank.isDoomed());
+        assertTrue(mockPrincess.shouldAbandon(tank));
+    }
+
+    @Test
+    void testShouldAbandonShouldAbandonTankArmorCrippled() {
+        // Tank is nearly dead so hop off
+        Tank tank = new Tank();
+        Crew crew = new Crew(CrewType.CREW);
+        tank.setCrew(crew);
+        tank.initializeArmor(10, Tank.LOC_FRONT);
+        tank.setArmor(0, Tank.LOC_FRONT);
+        assertFalse(tank.isPermanentlyImmobilized(true));
+        assertTrue(tank.isCrippled());
+        assertFalse(tank.isShutDown());
+        assertFalse(tank.isDoomed());
+        assertTrue(mockPrincess.shouldAbandon(tank));
+    }
+
+    @Test
+    void testShouldAbandonShouldAbandonVTOLNoFlying() {
+        // VTOL with rotor blown off
+        VTOL vtol = new VTOL();
+        // Non-turreted VTOL
+        vtol.setOriginalWalkMP(5);
+        vtol.setHasNoTurret(true);
+        vtol.setHasNoDualTurret(true);
+        for (int loc = 0; loc <= 6; loc++) {
+            vtol.initializeArmor(5, loc);
+        }
+        vtol.setInternal(IArmorState.ARMOR_DESTROYED, VTOL.LOC_ROTOR);
+        vtol.setElevation(0);
+        Crew crew = new Crew(CrewType.CREW);
+        vtol.setCrew(crew);
+
+        assertTrue(vtol.isPermanentlyImmobilized(true));
+        // Per TW Errata v11.01 p.54, immobilized units are NOT automatically crippled
+        assertFalse(vtol.isCrippled());
+        assertFalse(vtol.isShutDown());
+        assertFalse(vtol.isDoomed());
+        assertTrue(mockPrincess.shouldAbandon(vtol));
+    }
+
+    Board createLevelBoard(int width, int height, int level) {
+        Board board = new Board(width, height);
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
+                Coords c = new Coords(x, y);
+                board.setHex(c, new Hex(level));
+            }
+        }
+        return board;
+    }
+
+    @Test
+    void testShouldAbandonShouldAbandonAeroSpaceFighterNotMoving() {
+        // Aerospace carrier, likely cargo-bay-mounted Infantry transport
+        Aero aero = new AeroSpaceFighter();
+        Game game = new Game();
+        aero.setGame(game);
+        game.setBoard(createLevelBoard(32, 34, 0));
+        aero.setPosition(new Coords(5, 5));
+        aero.setFacing(Facing.SE.getIntValue());
+
+        aero.setOriginalWalkMP(5);
+        aero.setElevation(0);
+        aero.setAltitude(0);
+        Crew crew = new Crew(CrewType.CREW);
+        aero.setCrew(crew);
+
+        // Aero unit has been grounded two turns
+        aero.moved = EntityMovementType.MOVE_NONE;
+        aero.movedLastRound = EntityMovementType.MOVE_NONE;
+
+        assertFalse(aero.isPermanentlyImmobilized(true));
+        assertFalse(aero.isCrippled());
+        assertFalse(aero.isShutDown());
+        assertFalse(aero.isDoomed());
+        assertTrue(mockPrincess.shouldAbandon(aero));
+    }
+
+    @Test
+    void testShouldAbandonShouldAbandonDropShipEngineHits() {
+        // Spheroid DS is crippled by engine hits
+        Aero aero = new Dropship();
+        aero.setSpheroid(true);
+        Game game = new Game();
+        aero.setGame(game);
+        game.setBoard(createLevelBoard(32, 34, 0));
+        aero.setPosition(new Coords(5, 5));
+        aero.setFacing(Facing.SE.getIntValue());
+
+        aero.setOriginalWalkMP(5);
+        aero.setEngineHits(aero.getMaxEngineHits() - 2);
+        aero.setElevation(0);
+        aero.setAltitude(0);
+        Crew crew = new Crew(CrewType.CREW);
+        aero.setCrew(crew);
+
+        assertFalse(aero.isPermanentlyImmobilized(true));
+        assertTrue(aero.isCrippled());
+        assertFalse(aero.isShutDown());
+        assertFalse(aero.isDoomed());
+        assertTrue(mockPrincess.shouldAbandon(aero));
+    }
+
+    @Test
+    void testShouldAbandonDoNotAbandonDropShipCanFly() {
+        // Aerodyne DS has maneuvered to clear its runway for liftoff
+        Aero aero = new Dropship();
+        aero.setSpheroid(false);
+        Game game = new Game();
+        aero.setGame(game);
+        game.setBoard(createLevelBoard(32, 34, 0));
+        aero.setPosition(new Coords(5, 5));
+        aero.setFacing(Facing.SE.getIntValue());
+
+        aero.setOriginalWalkMP(3);
+        aero.setElevation(0);
+        aero.setAltitude(0);
+        Crew crew = new Crew(CrewType.CREW);
+        aero.setCrew(crew);
+
+        // Aero unit has been mobile for last two turns
+        aero.moved = EntityMovementType.MOVE_WALK;
+        aero.movedLastRound = EntityMovementType.MOVE_WALK;
+
+        assertFalse(aero.isPermanentlyImmobilized(true));
+        assertFalse(aero.isCrippled());
+        assertFalse(aero.isShutDown());
+        assertFalse(aero.isDoomed());
+        assertFalse(mockPrincess.shouldAbandon(aero));
+    }
+
+    @Test
+    void testShouldAbandonShouldAbandonDropShipCannotLiftOff() {
+        // Aerodyne DS has a wall in the middle of its takeoff run: go ahead and abandon
+        Aero aero = new Dropship();
+        aero.setSpheroid(false);
+        Game game = new Game();
+        aero.setGame(game);
+        game.setBoard(createLevelBoard(32, 34, 0));
+        // Add blockage
+        game.getBoard().setHex(12, 7, new Hex(4));
+        game.getBoard().setHex(12, 8, new Hex(4));
+        game.getBoard().setHex(12, 9, new Hex(4));
+        aero.setPosition(new Coords(5, 5));
+        aero.setFacing(Facing.SE.getIntValue());
+
+        aero.setOriginalWalkMP(3);
+        aero.setElevation(0);
+        aero.setAltitude(0);
+        Crew crew = new Crew(CrewType.CREW);
+        aero.setCrew(crew);
+
+        // Aero unit has been mobile for last two turns
+        aero.moved = EntityMovementType.MOVE_WALK;
+        aero.movedLastRound = EntityMovementType.MOVE_WALK;
+
+        assertFalse(aero.isPermanentlyImmobilized(true));
+        assertFalse(aero.isCrippled());
+        assertFalse(aero.isShutDown());
+        assertFalse(aero.isDoomed());
+        assertTrue(mockPrincess.shouldAbandon(aero));
     }
 }

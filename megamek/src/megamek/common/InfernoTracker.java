@@ -1,56 +1,53 @@
 /*
- * MegaMek - Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
+import java.io.Serial;
 import java.io.Serializable;
 
+import megamek.common.interfaces.RoundUpdated;
+
 /**
- * This class records and defines the effects of hits by Inferno rounds on units
- * and hexes. It does not *apply* the effect, it just defines it. <p> It makes
- * use of an inner class to define an Inferno round. This inner class should not
- * be directly accessed, but instead referred to by the constants:
+ * This class records and defines the effects of hits by Inferno rounds on units and hexes. It does not *apply* the
+ * effect, it just defines it. <p> It makes use of an inner class to define an Inferno round. This inner class should
+ * not be directly accessed, but instead referred to by the constants:
  * <code>STANDARD_ROUND</code> and <code>INFERNO_IV_ROUND</code>.
  */
 public class InfernoTracker implements Serializable, RoundUpdated {
+    @Serial
     private static final long serialVersionUID = -5256053831078922473L;
-
-    /**
-     * This class defines the effects of a single hit by an Inferno round.
-     */
-    static class Inferno implements Serializable {
-        private static final long serialVersionUID = 1799687411697517801L;
-        private int heatPerRound;
-        private int burnRoundsPerHit;
-
-        public Inferno() {
-            heatPerRound = 6;
-            burnRoundsPerHit = 3;
-        }
-
-        public Inferno(int heat, int rounds) {
-            this.heatPerRound = heat;
-            this.burnRoundsPerHit = rounds;
-        }
-
-        public int getHeatPerRound() {
-            return heatPerRound;
-        }
-
-        public int getBurnRoundsPerHit() {
-            return burnRoundsPerHit;
-        }
-    }
 
     /**
      * The number of turns of standard Inferno burn remaining.
@@ -68,7 +65,7 @@ public class InfernoTracker implements Serializable, RoundUpdated {
     public static final Inferno STANDARD_ROUND = new Inferno(6, 3);
 
     /**
-     * The hit from a Inferno IV round.
+     * The hit from an Inferno IV round.
      */
     public static final Inferno INFERNO_IV_ROUND = new Inferno(10, 3);
 
@@ -91,14 +88,12 @@ public class InfernoTracker implements Serializable, RoundUpdated {
 
     /**
      * Add the number of hits with the given inferno round to the tracker.
-     * 
-     * @param round - the <code>Inferno</code> round that hits. If this value
-     *            is not <code>STANDARD_ROUND</code> or
-     *            <code>INFERNO_IV_ROUND</code>, then an
-     *            <code>IllegalArgumentException</code> will be thrown.
-     * @param hits - the <code>int</code> number of rounds that hit. If a
-     *            negative number is passed, then an
-     *            <code>IllegalArgumentException</code> will be thrown.
+     *
+     * @param round - the <code>Inferno</code> round that hits. If this value is not <code>STANDARD_ROUND</code> or
+     *              <code>INFERNO_IV_ROUND</code>, then an
+     *              <code>IllegalArgumentException</code> will be thrown.
+     * @param hits  - the <code>int</code> number of rounds that hit. If a negative number is passed, then an
+     *              <code>IllegalArgumentException</code> will be thrown.
      */
     public void add(Inferno round, int hits) {
         // Make sure the # of hits is valid.
@@ -107,12 +102,12 @@ public class InfernoTracker implements Serializable, RoundUpdated {
         }
 
         // Add a number of turns to the appropriate track, based on the round that hit.
-        switch (round.getHeatPerRound()) {
+        switch (round.heatPerRound()) {
             case 6:
-                this.turnsLeftToBurn += round.getBurnRoundsPerHit() * hits;
+                this.turnsLeftToBurn += round.burnRoundsPerHit() * hits;
                 break;
             case 10:
-                this.turnsIVLeftToBurn += round.getBurnRoundsPerHit() * hits;
+                this.turnsIVLeftToBurn += round.burnRoundsPerHit() * hits;
                 break;
             default:
                 throw new IllegalArgumentException("Unknown Inferno round added to the InfernoTracker.");
@@ -129,9 +124,9 @@ public class InfernoTracker implements Serializable, RoundUpdated {
 
     /**
      * Determine if the unit or hex still has inferno rounds that are burning.
-     * 
+     *
      * @return <code>true</code> if there are inferno rounds that are still burning.
-     * <code>false</code> if no inferno rounds have hit yet, or if they have burned out.
+     *       <code>false</code> if no inferno rounds have hit yet, or if they have burned out.
      */
     public boolean isStillBurning() {
         return (turnsLeftToBurn > 0) || (turnsIVLeftToBurn > 0);
@@ -154,30 +149,23 @@ public class InfernoTracker implements Serializable, RoundUpdated {
 
     /**
      * Determine the total number of turns left for the Infernos to burn.
-     * 
-     * @return The <code>int</code> number of turns that this unit or hex will
-     *         suffer the effects of an Inferno round (either standard <b>or</b>
-     *         Inferno IV). This number will be positive when the
-     *         <code>isStillBurning()</code> method returns <code>true</code>.
-     *         It will not be negative.
+     *
+     * @return The <code>int</code> number of turns that this unit or hex will suffer the effects of an Inferno round
+     *       (either standard <b>or</b> Inferno IV). This number will be positive when the
+     *       <code>isStillBurning()</code> method returns <code>true</code>.
+     *       It will not be negative.
      */
     public int getTurnsLeftToBurn() {
-        int result = 0;
-
-        // Add the number of standard burn turns to Inferno IV turns.
-        result = turnsLeftToBurn + turnsIVLeftToBurn;
-
-        return result;
+        return turnsLeftToBurn + turnsIVLeftToBurn;
     }
 
     /**
      * Determine just the number of turns left for Arrow IV Infernos to burn.
-     * 
-     * @return The <code>int</code> number of turns that this unit or hex will
-     *         suffer the effects of an Inferno IV round (ignore any standard
-     *         inferno rounds). This number will be positive when the
-     *         <code>isStillBurning()</code> method returns <code>true</code>.
-     *         It will not be negative.
+     *
+     * @return The <code>int</code> number of turns that this unit or hex will suffer the effects of an Inferno IV round
+     *       (ignore any standard inferno rounds). This number will be positive when the
+     *       <code>isStillBurning()</code> method returns <code>true</code>.
+     *       It will not be negative.
      */
     public int getArrowIVTurnsLeftToBurn() {
         // Add the number of standard burn turns to Inferno IV turns.
@@ -186,10 +174,9 @@ public class InfernoTracker implements Serializable, RoundUpdated {
 
     /**
      * Determine the number of heat points generated in the current turn.
-     * 
-     * @return the <code>int</code> number of heat points added this turn.
-     *         This value will be positive when <code>isStillBurning()</code>
-     *         returns <code>true</code>. It will not be negative.
+     *
+     * @return the <code>int</code> number of heat points added this turn. This value will be positive when
+     *       <code>isStillBurning()</code> returns <code>true</code>. It will not be negative.
      */
     public int getHeat() {
         int result = 0;

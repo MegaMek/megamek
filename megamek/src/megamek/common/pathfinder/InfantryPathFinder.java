@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.common.pathfinder;
@@ -27,27 +41,27 @@ import java.util.Set;
 
 import megamek.client.bot.princess.AeroPathUtil;
 import megamek.client.bot.princess.FireControl;
-import megamek.common.Coords;
-import megamek.common.Game;
 import megamek.common.Hex;
-import megamek.common.MovePath;
-import megamek.common.MovePath.MoveStepType;
-import megamek.common.Terrains;
+import megamek.common.board.Coords;
+import megamek.common.enums.MoveStepType;
+import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
+import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 
 /**
- * This set of classes is intended to be used by AI players to generate paths
- * for infantry units. This includes both foot and jump paths.
+ * This set of classes is intended to be used by AI players to generate paths for infantry units. This includes both
+ * foot and jump paths.
  *
  * @author NickAragua
  */
 public class InfantryPathFinder {
     private static final MMLogger logger = MMLogger.create(InfantryPathFinder.class);
 
-    private Game game;
+    private final Game game;
     private List<MovePath> infantryPaths;
 
-    private Set<Coords> visitedCoords = new HashSet<>();
+    private final Set<Coords> visitedCoords = new HashSet<>();
 
     private InfantryPathFinder(Game game) {
         this.game = game;
@@ -98,7 +112,7 @@ public class InfantryPathFinder {
 
             // add "flee" option if we haven't done anything else
             if (game.getBoard().isOnBoardEdge(startingEdge.getFinalCoords())
-                    && startingEdge.getStepVector().isEmpty()) {
+                  && startingEdge.getStepVector().isEmpty()) {
                 MovePath fleePath = startingEdge.clone();
                 fleePath.addStep(MoveStepType.FLEE);
                 infantryPaths.add(fleePath);
@@ -110,8 +124,8 @@ public class InfantryPathFinder {
              * while preserving already computed results.
              */
             final String memoryMessage = "Not enough memory to analyze all options."
-                    + " Try setting time limit to lower value, or "
-                    + "increase java memory limit.";
+                  + " Try setting time limit to lower value, or "
+                  + "increase java memory limit.";
 
             logger.error(memoryMessage, e);
         } catch (Exception e) {
@@ -125,16 +139,13 @@ public class InfantryPathFinder {
     }
 
     /**
-     * Recursive method that generates the possible child paths from the given path.
-     * Eliminates paths to hexes we've already visited. Generates *shortest* paths
-     * to destination hexes, because, look, infantry isn't going to get beyond a
-     * move 1 mod anyway.
+     * Recursive method that generates the possible child paths from the given path. Eliminates paths to hexes we've
+     * already visited. Generates *shortest* paths to destination hexes, because, look, infantry isn't going to get
+     * beyond a move 1 mod anyway.
      *
-     * @param startingPath
-     * @return
      */
     private List<MovePath> generateChildren(MovePath startingPath) {
-        List<MovePath> retval = new ArrayList<>();
+        List<MovePath> retVal = new ArrayList<>();
 
         // terminator conditions:
         // - we've visited this hex already
@@ -149,7 +160,7 @@ public class InfantryPathFinder {
             mp = startingPath.getEntity().getRunMP();
         }
         if (visitedCoords.contains(startingPath.getFinalCoords()) || (startingPath.getMpUsed() >= mp)) {
-            return retval;
+            return retVal;
         }
 
         visitedCoords.add(startingPath.getFinalCoords());
@@ -166,16 +177,16 @@ public class InfantryPathFinder {
             // - are we going onto a bridge?
             // - make sure we're adjusting facing relative to the unit's current facing
             Hex destinationHex = game.getBoard().getHexInDir(startingPath.getFinalCoords(),
-                    FireControl.correctFacing(startingPath.getFinalFacing() + direction));
+                  FireControl.correctFacing(startingPath.getFinalFacing() + direction));
 
             // if we're going off board, we may as well not bother continuing additionally,
             // if we're definitely going to collapse a bridge we're stepping on let's just
             // stop right here. we're walking *through* buildings, so collapsing them isn't
             // going to be a problem
             if (destinationHex == null ||
-                    destinationHex.containsTerrain(Terrains.BRIDGE_CF) &&
-                            (destinationHex.getTerrain(Terrains.BRIDGE_CF).getLevel() < startingPath.getEntity()
-                                    .getWeight())) {
+                  destinationHex.containsTerrain(Terrains.BRIDGE_CF) &&
+                        (destinationHex.getTerrain(Terrains.BRIDGE_CF).getLevel() < startingPath.getEntity()
+                              .getWeight())) {
                 continue;
             }
 
@@ -206,10 +217,10 @@ public class InfantryPathFinder {
                 continue;
             }
 
-            retval.add(childPath.clone());
-            retval.addAll(generateChildren(childPath));
+            retVal.add(childPath.clone());
+            retVal.addAll(generateChildren(childPath));
         }
 
-        return retval;
+        return retVal;
     }
 }

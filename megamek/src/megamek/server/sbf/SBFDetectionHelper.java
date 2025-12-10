@@ -1,57 +1,69 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.server.sbf;
 
 import java.util.List;
 
 import megamek.codeUtilities.MathUtility;
-import megamek.common.Compute;
 import megamek.common.Player;
-import megamek.common.Roll;
-import megamek.common.TargetRoll;
 import megamek.common.alphaStrike.BattleForceSUA;
-import megamek.common.planetaryconditions.Fog;
-import megamek.common.planetaryconditions.Light;
-import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.common.planetaryconditions.Weather;
+import megamek.common.compute.Compute;
+import megamek.common.planetaryConditions.Fog;
+import megamek.common.planetaryConditions.Light;
+import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.Weather;
+import megamek.common.rolls.Roll;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.strategicBattleSystems.SBFElementType;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFVisibilityStatus;
 import megamek.logging.MMLogger;
 
 /**
- * This class performs detection of formations in the Detection and Recon phase,
- * IO:BF p.195 for the
- * SBFGameManager.
+ * This class performs detection of formations in the Detection and Recon phase, IO:BF p.195 for the SBFGameManager.
  */
 record SBFDetectionHelper(SBFGameManager gameManager) implements SBFGameManagerHelper {
     private static final MMLogger logger = MMLogger.create(SBFDetectionHelper.class);
 
     /**
-     * Performs sensor detection for all formations of all players and updates the
-     * visibility status in the
-     * game accordingly. Does not send anything.
+     * Performs sensor detection for all formations of all players and updates the visibility status in the game
+     * accordingly. Does not send anything.
      */
     void performSensorDetection() {
         if (game().usesDoubleBlind()) {
             for (Player player : game().getPlayersList()) {
-                logger.info("Detection for " + player.getName()); // TODO remove or move to protocol
+                logger.info("Detection for {}", player.getName()); // TODO remove or move to protocol
                 performSensorDetection(player);
             }
         }
@@ -59,14 +71,14 @@ record SBFDetectionHelper(SBFGameManager gameManager) implements SBFGameManagerH
 
     private void performSensorDetection(Player viewingPlayer) {
         List<SBFFormation> viewingFormations = game().getActiveFormations().stream()
-                .filter(u -> u.getOwnerId() == viewingPlayer.getId())
-                .filter(this::canDetect)
-                .toList();
+              .filter(u -> u.getOwnerId() == viewingPlayer.getId())
+              .filter(this::canDetect)
+              .toList();
 
         List<SBFFormation> hostileFormations = game().getActiveFormations().stream()
-                .filter(u -> game().areHostile(u, viewingPlayer))
-                .filter(this::canBeDetected)
-                .toList();
+              .filter(u -> game().areHostile(u, viewingPlayer))
+              .filter(this::canBeDetected)
+              .toList();
 
         for (SBFFormation hostileFormation : hostileFormations) {
             SBFVisibilityStatus visibilityStatus = SBFVisibilityStatus.INVISIBLE;
@@ -81,8 +93,10 @@ record SBFDetectionHelper(SBFGameManager gameManager) implements SBFGameManagerH
                     int rollResult = diceRoll.getIntValue() + detectionModifiers.getValue();
                     SBFVisibilityStatus detectionResult = sensorDetectionResult(rollResult);
                     // TODO remove or move to protocol:
-                    logger.info("Detected from " + viewingFormation.getId() + " to "
-                            + hostileFormation.getId() + " result " + detectionResult);
+                    logger.info("Detected from {} to {} result {}",
+                          viewingFormation.getId(),
+                          hostileFormation.getId(),
+                          detectionResult);
                     visibilityStatus = visibilityStatus.bestOf(detectionResult);
                 }
             }
@@ -92,18 +106,19 @@ record SBFDetectionHelper(SBFGameManager gameManager) implements SBFGameManagerH
 
     private boolean canDetect(SBFFormation formation) {
         return formation.isDeployed() && (formation.getPosition() != null)
-                && (formation.getPosition().coords() != null);
+              && (formation.getPosition().coords() != null);
     }
 
     private boolean canBeDetected(SBFFormation formation) {
         return formation.isDeployed() && (formation.getPosition() != null)
-                && (formation.getPosition().coords() != null);
+              && (formation.getPosition().coords() != null);
     }
 
     /**
      * IO:BF p.197
      *
-     * @param rollWithModifiers The 2d6 roll inlcuding modifiers
+     * @param rollWithModifiers The 2d6 roll including modifiers
+     *
      * @return The visibility status from sensor scan
      */
     private SBFVisibilityStatus sensorDetectionResult(int rollWithModifiers) {
@@ -119,7 +134,7 @@ record SBFDetectionHelper(SBFGameManager gameManager) implements SBFGameManagerH
 
     private int visualRange(SBFFormation formation) {
         int srchModifier = (formation.hasSUA(BattleForceSUA.SRCH) &&
-                game().getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) ? 1 : 0;
+              game().getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) ? 1 : 0;
         return switch (visualLevel()) {
             case 4 -> srchModifier;
             case 3 -> 1 + srchModifier;

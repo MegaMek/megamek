@@ -1,22 +1,45 @@
 /*
- * Copyright (c) 2020 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.icons;
+
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.PrintWriter;
+import java.io.Serial;
+import java.io.Serializable;
+import javax.swing.ImageIcon;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.util.ImageUtil;
@@ -24,20 +47,15 @@ import megamek.utilities.xml.MMXMLUtility;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.PrintWriter;
-import java.io.Serializable;
-
 /**
- * An AbstractIcon is an abstract class that ensures standardized and isolated image code for icons
- * across the suite. It handles creating the images and image icons, scaling and centering them,
- * handles base comparisons and object overrides, and implements basic File I/O. It also gracefully
- * handles any failures to prevent a hard crash when an image or icon cannot be created.
+ * An AbstractIcon is an abstract class that ensures standardized and isolated image code for icons across the suite. It
+ * handles creating the images and image icons, scaling and centering them, handles base comparisons and object
+ * overrides, and implements basic File I/O. It also gracefully handles any failures to prevent a hard crash when an
+ * image or icon cannot be created.
  */
 public abstract class AbstractIcon implements Serializable {
     //region Variable Declarations
+    @Serial
     private static final long serialVersionUID = 870271199001476289L;
 
     public static final String ROOT_CATEGORY = "-- General --";
@@ -95,8 +113,9 @@ public abstract class AbstractIcon implements Serializable {
     //endregion Boolean Methods
 
     /**
-     * This is used to determine whether the created image should be scaled or not by checking the
-     * Height and Width values. If either is -1, then we need to scale the produced image
+     * This is used to determine whether the created image should be scaled or not by checking the Height and Width
+     * values. If either is -1, then we need to scale the produced image
+     *
      * @return whether to scale the image or not
      */
     protected boolean isScaled(final int width, final int height) {
@@ -104,8 +123,7 @@ public abstract class AbstractIcon implements Serializable {
     }
 
     /**
-     * @return the ImageIcon for the Image stored by the AbstractIcon. May be null for non-existent
-     * files
+     * @return the ImageIcon for the Image stored by the AbstractIcon. May be null for non-existent files
      */
     public @Nullable ImageIcon getImageIcon() {
         final Image image = getImage();
@@ -114,8 +132,8 @@ public abstract class AbstractIcon implements Serializable {
 
     /**
      * @param size the width to scale and center the ImageIcon to
-     * @return the created ImageIcon, scaled and centered to size width. This may be null for
-     * non-existent files
+     *
+     * @return the created ImageIcon, scaled and centered to size width. This may be null for non-existent files
      */
     public @Nullable ImageIcon getImageIcon(final int size) {
         final Image image = getImage(size);
@@ -131,26 +149,29 @@ public abstract class AbstractIcon implements Serializable {
 
     /**
      * @param size the width to scale and center the image to
-     * @return the created image, scaled and centered to size width. This may only be null for a
-     * UnitIcon with no icon selected
+     *
+     * @return the created image, scaled and centered to size width. This may only be null for a UnitIcon with no icon
+     *       selected
      */
     public @Nullable Image getImage(final int size) {
         return getImage(size, -1);
     }
 
     /**
-     * @param width the width of the image, or -1 if this is the non-scaling factor
+     * @param width  the width of the image, or -1 if this is the non-scaling factor
      * @param height the height of the image, or -1 if this is the non-scaling factor
-     * @return the image, scaled and centered if either the width or height are -1. This may only be
-     * null for a UnitIcon with no icon selected
+     *
+     * @return the image, scaled and centered if either the width or height are -1. This may only be null for a UnitIcon
+     *       with no icon selected
      */
     public @Nullable Image getImage(final int width, final int height) {
         return getImage(getBaseImage(), width, height);
     }
 
     /**
-     * This is used to create the proper image and scale it if required. It also handles null
-     * protection by creating a blank image if required.
+     * This is used to create the proper image and scale it if required. It also handles null protection by creating a
+     * blank image if required.
+     *
      * @return the created image
      */
     protected Image getImage(final @Nullable Image image, final int width, final int height) {
@@ -164,8 +185,8 @@ public abstract class AbstractIcon implements Serializable {
     }
 
     /**
-     * @return a square BufferedImage of the given size. Scales the given image to fit into the
-     * square and centers it on a transparent background.
+     * @return a square BufferedImage of the given size. Scales the given image to fit into the square and centers it on
+     *       a transparent background.
      */
     public static BufferedImage scaleAndCenter(Image image, final int size) {
         final BufferedImage result = ImageUtil.createAcceleratedImage(size, size);
@@ -182,6 +203,7 @@ public abstract class AbstractIcon implements Serializable {
 
     /**
      * This is abstract to allow for different formats for determining the image in question
+     *
      * @return the Image stored by the AbstractIcon
      */
     public abstract Image getBaseImage();
@@ -223,21 +245,28 @@ public abstract class AbstractIcon implements Serializable {
     protected void parseNode(final Node workingNode) {
         switch (workingNode.getNodeName()) {
             case "category":
-                // setCategory(MMXMLUtility.unEscape(workingNode.getTextContent().trim()));
-
-                //start <50.01 compatibility handlers, the above-commented code can be uncommented
-                // when the below handlers are removed
                 String category = MMXMLUtility.unEscape(workingNode.getTextContent().trim());
-                category = category.replaceAll("Aero ", "Aerospace ");
-                category = category.replaceAll("Mech ", "Mek ");
-                category = category.replaceAll("MechWarrior", "MekWarrior");
-                category = category.replaceAll("ProtoMech", "ProtoMek");
+
+                // <50.07 compatibility handlers
+                category = category.replaceAll("Mek Tech", "MekTech");
+                // <50.10 compatibility handlers
+                category = category.replace("Vehicle Gunner", "Vehicle Crew Ground");
+                category = category.replace("Vehicle Driver", "Vehicle Crew Ground");
+                category = category.replace("Naval Driver", "Vehicle Crew Naval");
+                category = category.replace("VTOL Pilot", "Vehicle Crew VTOL");
+                category = category.replace("Vehicle Crewmember", "Vehicle Crew/Generic");
+                category = category.replace("Combat Technician", "Vehicle Crew/Generic");
+                category = category.replace("Conventional Aircraft Pilot", "Conventional Aircraft Crew");
 
                 setCategory(category);
-                //end <50.01 compatibility handlers
                 break;
             case "filename":
-                setFilename(MMXMLUtility.unEscape(workingNode.getTextContent().trim()));
+                filename = MMXMLUtility.unEscape(workingNode.getTextContent().trim());
+
+                // <50.07 compatibility handlers
+                filename = filename.replaceAll("MekTek", "MekTech");
+
+                setFilename(filename);
                 break;
             default:
                 break;

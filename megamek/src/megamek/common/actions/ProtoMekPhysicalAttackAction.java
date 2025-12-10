@@ -1,30 +1,65 @@
 /*
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 
 package megamek.common.actions;
 
+import java.io.Serial;
+
 import megamek.client.ui.Messages;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.ToHitData;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.MiscType;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
 
 /**
  * The attacking ProtoMek makes its combo physical attack action.
  */
 public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
-    private static final MMLogger logger = MMLogger.create(ProtoMekPhysicalAttackAction.class);
+    private static final MMLogger LOGGER = MMLogger.create(ProtoMekPhysicalAttackAction.class);
 
+    @Serial
     private static final long serialVersionUID = 1432011536091665084L;
 
     public ProtoMekPhysicalAttackAction(int entityId, int targetId) {
@@ -32,12 +67,12 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
     }
 
     public ProtoMekPhysicalAttackAction(int entityId, int targetType,
-            int targetId) {
+          int targetId) {
         super(entityId, targetType, targetId);
     }
 
     /**
-     * Damage a ProtoMek does with its Combo-physicalattack.
+     * Damage a ProtoMek does with its Combo-physical attack.
      */
     public static int getDamageFor(Entity entity, Targetable target) {
         int toReturn;
@@ -67,7 +102,7 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
         }
 
         if ((null != entity.getCrew())
-                && entity.hasAbility(OptionsConstants.PILOT_MELEE_MASTER)) {
+              && entity.hasAbility(OptionsConstants.PILOT_MELEE_MASTER)) {
             toReturn *= 2;
         }
         return toReturn;
@@ -75,7 +110,7 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
 
     public ToHitData toHit(Game game) {
         return toHit(game, getEntityId(), game.getTarget(getTargetType(),
-                getTargetId()));
+              getTargetId()));
     }
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target) {
@@ -84,11 +119,11 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
         Entity te = null;
         // arguments legal?
         if (ae == null) {
-            logger.error("Attacker not valid");
+            LOGGER.error("Attacker not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
         }
         if (target == null) {
-            logger.error("target not valid");
+            LOGGER.error("target not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
         }
 
@@ -100,17 +135,17 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                    && ((((Entity) target).getOwnerId() == ae.getOwnerId())
-                            || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
-                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
-                                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
+                  && ((target.getOwnerId() == ae.getOwnerId())
+                  || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                  && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                  && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "A friendly unit "
-                        + "can never be the target of a direct attack.");
+                      + "can never be the target of a direct attack.");
             }
         }
 
-        final Hex attHex = game.getBoard().getHex(ae.getPosition());
-        final Hex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getHexOf(ae);
+        Hex targHex = game.getHexOf(target);
         if ((attHex == null) || (targHex == null)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "off board");
         }
@@ -125,12 +160,12 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
         // can't target yourself
         if (ae.equals(te)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "You can't target yourself");
+                  "You can't target yourself");
         }
 
-        // non-protos can't make protomek-physicalattacks
+        // non-proto's can't make protomek-physical attacks
         if (!(ae instanceof ProtoMek)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-protos can't make proto-physicalattacks");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-ProtoMeks can't make proto-physical attacks");
         }
 
         // Can't target a transported entity.
@@ -138,7 +173,7 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is a passenger.");
         }
 
-        // Can't target a entity conducting a swarm attack.
+        // Can't target an entity conducting a swarm attack.
         if ((te != null) && (Entity.NONE != te.getSwarmTargetId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is swarming a Mek.");
         }
@@ -161,8 +196,8 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
 
         // Can't target woods or ignite a building with a physical.
         if ((target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)
-                || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
-                || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)) {
+              || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
+              || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid attack");
         }
 

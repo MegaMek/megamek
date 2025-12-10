@@ -1,43 +1,73 @@
 /*
  * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.common;
 
+import static megamek.testUtilities.MMTestUtilities.getEntityForUnitTesting;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.compute.ComputeECM;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.INarcPod;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
+import megamek.common.options.GameOptions;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.Tank;
+import megamek.common.units.Targetable;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import megamek.common.options.GameOptions;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -56,7 +86,9 @@ class ComputeECMTest {
 
         // Mock the board
         Board mockBoard = mock(Board.class);
-        when(mockBoard.inSpace()).thenReturn(false);
+        when(mockBoard.isSpace()).thenReturn(false);
+        when(mockBoard.contains(any(Coords.class))).thenReturn(true);
+        when(mockBoard.contains(anyInt(), anyInt())).thenReturn(true);
 
         // Mock Options
         GameOptions mockOptions = mock(GameOptions.class);
@@ -69,19 +101,15 @@ class ComputeECMTest {
         when(mockGame.getSmokeCloudList()).thenReturn(new ArrayList<>());
         when(mockGame.getOptions()).thenReturn(mockOptions);
         when(mockGame.getPlayer(anyInt())).thenReturn(mockPlayer);
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
+        when(mockGame.hasBoard(0)).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(Coords.class), anyInt())).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(BoardLocation.class))).thenReturn(true);
+        when(mockGame.getHex(any(Coords.class), anyInt())).thenCallRealMethod();
+        when(mockGame.getBoard(any(Targetable.class))).thenReturn(mockBoard);
 
-        File f;
-        MekFileParser mfp;
-        Entity archer;
-
-        try {
-            f = new File("data/mekfiles/meks/3039u/Archer ARC-2R.mtf");
-            mfp = new MekFileParser(f);
-            archer = mfp.getEntity();
-        } catch (Exception exc) {
-            fail(exc.getMessage());
-            return;
-        }
+        Entity archer = getEntityForUnitTesting("Archer ARC-2R", false);
+        assertNotNull(archer, "Archer ARC-2R not found");
 
         MiscType.initializeTypes();
 
@@ -94,7 +122,7 @@ class ComputeECMTest {
         // Add ECM
         EquipmentType eType = EquipmentType.get("ISGuardianECMSuite");
         try {
-            archer.addEquipment(eType, Mek.LOC_RT);
+            archer.addEquipment(eType, Mek.LOC_RIGHT_TORSO);
         } catch (LocationFullException e) {
             fail(e.getMessage());
         }
@@ -132,7 +160,7 @@ class ComputeECMTest {
 
         // Add a second ECM
         try {
-            archer.addEquipment(eType, Mek.LOC_RT);
+            archer.addEquipment(eType, Mek.LOC_RIGHT_TORSO);
         } catch (LocationFullException e) {
             fail(e.getMessage());
         }
@@ -144,7 +172,7 @@ class ComputeECMTest {
         // Add an Angel ECM
         eType = EquipmentType.get("ISAngelECMSuite");
         try {
-            archer.addEquipment(eType, Mek.LOC_LT);
+            archer.addEquipment(eType, Mek.LOC_LEFT_TORSO);
         } catch (LocationFullException e) {
             fail(e.getMessage());
         }
@@ -157,7 +185,7 @@ class ComputeECMTest {
         // Add a second Angel ECM (adding a second Angel ECM shouldn't have
         // any effect)
         try {
-            archer.addEquipment(eType, Mek.LOC_LARM);
+            archer.addEquipment(eType, Mek.LOC_LEFT_ARM);
         } catch (LocationFullException e) {
             fail(e.getMessage());
         }
@@ -186,8 +214,7 @@ class ComputeECMTest {
     }
 
     /**
-     * Basic tests for ECM on ground maps, includes single enemy single ally single
-     * hex.
+     * Basic tests for ECM on ground maps, includes single enemy single ally single hex.
      */
     @Test
     void testBasicECM() {
@@ -205,7 +232,9 @@ class ComputeECMTest {
 
         // Mock the board
         Board mockBoard = mock(Board.class);
-        when(mockBoard.inSpace()).thenReturn(false);
+        when(mockBoard.isSpace()).thenReturn(false);
+        when(mockBoard.contains(any(Coords.class))).thenReturn(true);
+        when(mockBoard.contains(anyInt(), anyInt())).thenReturn(true);
 
         // Mock Options
         GameOptions mockOptions = mock(GameOptions.class);
@@ -217,6 +246,12 @@ class ComputeECMTest {
         when(mockGame.getBoard()).thenReturn(mockBoard);
         when(mockGame.getSmokeCloudList()).thenReturn(new ArrayList<>());
         when(mockGame.getOptions()).thenReturn(mockOptions);
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
+        when(mockGame.hasBoard(0)).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(Coords.class), anyInt())).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(BoardLocation.class))).thenReturn(true);
+        when(mockGame.getHex(any(Coords.class), anyInt())).thenCallRealMethod();
+        when(mockGame.getBoard(any(Targetable.class))).thenReturn(mockBoard);
 
         // Create a list of enemies, owned by the mockEnemy
         Vector<Entity> entitiesVector = createECMEnemy(mockEnemy, mockGame);
@@ -247,6 +282,7 @@ class ComputeECMTest {
         Entity ae = mock(Mek.class);
         entitiesVector.add(ae);
         when(ae.getPosition()).thenReturn(aePos);
+        when(ae.getBoardLocation()).thenReturn(BoardLocation.of(aePos, 0));
         when(ae.getGame()).thenReturn(mockGame);
         when(ae.isINarcedWith(INarcPod.ECM)).thenReturn(false);
         when(ae.getOwner()).thenReturn(mockPlayer);
@@ -420,8 +456,7 @@ class ComputeECMTest {
     }
 
     /**
-     * Basic tests for ECM on ground maps, includes single enemy single ally
-     * multiple hexes.
+     * Basic tests for ECM on ground maps, includes single enemy single ally multiple hexes.
      */
     @Test
     void testBasicECMMultiHex() {
@@ -439,7 +474,9 @@ class ComputeECMTest {
 
         // Mock the board
         Board mockBoard = mock(Board.class);
-        when(mockBoard.inSpace()).thenReturn(false);
+        when(mockBoard.isSpace()).thenReturn(false);
+        when(mockBoard.contains(any(Coords.class))).thenReturn(true);
+        when(mockBoard.contains(anyInt(), anyInt())).thenReturn(true);
 
         // Mock Options
         GameOptions mockOptions = mock(GameOptions.class);
@@ -451,6 +488,12 @@ class ComputeECMTest {
         when(mockGame.getBoard()).thenReturn(mockBoard);
         when(mockGame.getSmokeCloudList()).thenReturn(new ArrayList<>());
         when(mockGame.getOptions()).thenReturn(mockOptions);
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
+        when(mockGame.hasBoard(0)).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(Coords.class), anyInt())).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(BoardLocation.class))).thenReturn(true);
+        when(mockGame.getHex(any(Coords.class), anyInt())).thenCallRealMethod();
+        when(mockGame.getBoard(any(Targetable.class))).thenReturn(mockBoard);
 
         // Create a list of enemies, owned by the mockEnemy
         Vector<Entity> entitiesVector = createECMEnemy(mockEnemy, mockGame);
@@ -667,12 +710,9 @@ class ComputeECMTest {
     }
 
     /**
-     * Creates a single enemy with basic ECM owned by the supplied owner and
-     * returning the supplied game. Other enemies are created without ECM.
+     * Creates a single enemy with basic ECM owned by the supplied owner and returning the supplied game. Other enemies
+     * are created without ECM.
      *
-     * @param owner
-     * @param mockGame
-     * @return
      */
     private static Vector<Entity> createECMEnemy(Player owner, Game mockGame) {
         Vector<Entity> entitiesVector = new Vector<>();
@@ -684,6 +724,7 @@ class ComputeECMTest {
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(ecm1);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(ecm1Pos, 0));
         entitiesVector.add(enemy1);
 
         // Add Entity with ECM out of range
@@ -693,6 +734,7 @@ class ComputeECMTest {
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(ecm1);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(ecm1Pos, 0));
         entitiesVector.add(enemy1);
 
         // Add several non-ECM enemies
@@ -700,36 +742,37 @@ class ComputeECMTest {
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(null);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(ecm1Pos, 0));
         entitiesVector.add(enemy1);
 
         enemy1 = mock(Aero.class);
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(null);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(ecm1Pos, 0));
         entitiesVector.add(enemy1);
 
         enemy1 = mock(BattleArmor.class);
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(null);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(ecm1Pos, 0));
         entitiesVector.add(enemy1);
 
         enemy1 = mock(Mek.class);
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(null);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(ecm1Pos, 0));
         entitiesVector.add(enemy1);
 
         return entitiesVector;
     }
 
     /**
-     * Creates a single enemy with Angel ECM owned by the supplied owner and
-     * returning the supplied game. Other enemies are created without ECM.
+     * Creates a single enemy with Angel ECM owned by the supplied owner and returning the supplied game. Other enemies
+     * are created without ECM.
      *
-     * @param owner
-     * @param mockGame
-     * @return
      */
     private static Vector<Entity> createAngelEnemy(Player owner, Game mockGame) {
         Vector<Entity> entitiesVector = new Vector<>();
@@ -741,6 +784,7 @@ class ComputeECMTest {
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(ecm1);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(new Coords(1, 1), 0));
         entitiesVector.add(enemy1);
 
         // Add Entity with ECM out of range
@@ -750,6 +794,7 @@ class ComputeECMTest {
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(ecm1);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(new Coords(1, 1), 0));
         entitiesVector.add(enemy1);
 
         // Add several non-ECM enemies
@@ -757,24 +802,28 @@ class ComputeECMTest {
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(null);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(new Coords(1, 1), 0));
         entitiesVector.add(enemy1);
 
         enemy1 = mock(Aero.class);
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(null);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(new Coords(1, 1), 0));
         entitiesVector.add(enemy1);
 
         enemy1 = mock(BattleArmor.class);
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(null);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(new Coords(1, 1), 0));
         entitiesVector.add(enemy1);
 
         enemy1 = mock(Mek.class);
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(null);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(new Coords(1, 1), 0));
         entitiesVector.add(enemy1);
 
         return entitiesVector;

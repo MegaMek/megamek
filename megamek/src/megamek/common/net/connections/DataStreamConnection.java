@@ -1,22 +1,37 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.net.connections;
 
 import java.io.BufferedInputStream;
@@ -31,11 +46,10 @@ import megamek.common.net.enums.PacketReadState;
 import megamek.logging.MMLogger;
 
 /**
- * Implementation of the AbstractConnection that uses the DataInputStream and
- * DataOutputStream to send/receive data.
+ * Implementation of the AbstractConnection that uses the DataInputStream and DataOutputStream to send/receive data.
  */
 public class DataStreamConnection extends AbstractConnection {
-    private static final MMLogger logger = MMLogger.create(DataStreamConnection.class);
+    private static final MMLogger LOGGER = MMLogger.create(DataStreamConnection.class);
 
     private DataInputStream in;
     private DataOutputStream out;
@@ -98,21 +112,21 @@ public class DataStreamConnection extends AbstractConnection {
     }
 
     @Override
-    protected void sendNetworkPacket(byte[] data, boolean iszipped) throws Exception {
+    protected void sendNetworkPacket(byte[] data, boolean isZipped) throws Exception {
         if (out == null) {
             out = new DataOutputStream(new BufferedOutputStream(getOutputStream(), getSendBufferSize()));
         }
 
         synchronized (out) {
-            out.writeBoolean(iszipped);
+            out.writeBoolean(isZipped);
             out.writeInt(marshallingType);
-            out.writeInt(data.length);
+            out.writeInt((data != null) ? data.length : 0);
             out.write(data);
         }
     }
 
     /**
-     * override flush to flush the datastream after flushing packetqueue
+     * override flush to flush the data stream after flushing packet queue
      */
     @Override
     public synchronized void flush() {
@@ -126,13 +140,11 @@ public class DataStreamConnection extends AbstractConnection {
                 }
             }
         } catch (SocketException ignored) {
-            // close this connection, because it's broken. This can happen if the connection
-            // is closed while
-            // being written to, and it's not a big deal, since the connection is being
-            // broken anyway
+            // close this connection, because it's broken. This can happen if the connection is closed while being
+            // written to, and it's not a big deal, since the connection is being broken anyway
             close();
         } catch (IOException ex) {
-            logger.error("", ex);
+            LOGGER.error("", ex);
             // close this connection, because it's broken
             close();
         }

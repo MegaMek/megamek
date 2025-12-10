@@ -1,46 +1,66 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.alphaStrike;
 
-import com.fasterxml.jackson.annotation.JsonRootName;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
-import megamek.common.*;
-import megamek.common.annotations.Nullable;
-import megamek.common.force.Force;
-import megamek.common.jacksonadapters.ASElementDeserializer;
-import megamek.common.jacksonadapters.ASElementSerializer;
-import megamek.common.options.Quirks;
-import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
-
-import java.awt.*;
+import java.awt.Image;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
+import megamek.common.Player;
+import megamek.common.annotations.Nullable;
+import megamek.common.force.Force;
+import megamek.common.interfaces.ForceAssignable;
+import megamek.common.jacksonAdapters.ASElementDeserializer;
+import megamek.common.jacksonAdapters.ASElementSerializer;
+import megamek.common.options.Quirks;
+import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
+import megamek.common.units.Deployable;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityFluff;
+import megamek.common.units.UnitRole;
+
 /**
- * This class represents an AlphaStrike Element which is a single unit such as a Mek with
- * AlphaStrike values such as S, M, L damage and a single Armor and Structure value.
+ * This class represents an AlphaStrike Element which is a single unit such as a Mek with AlphaStrike values such as S,
+ * M, L damage and a single Armor and Structure value.
  *
  * @author Neoancient
  * @author Simon (Juliez)
@@ -49,17 +69,17 @@ import java.util.Set;
 @JsonSerialize(using = ASElementSerializer.class)
 @JsonDeserialize(using = ASElementDeserializer.class)
 public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSpecialAbilityCollector,
-        BattleForceSUAFormatter, ForceAssignable, Deployable {
+                                           BattleForceSUAFormatter, ForceAssignable, Deployable {
 
-    static final int RANGEBANDS_SML = 3;
-    static final int RANGEBANDS_SMLE = 4;
+    static final int RANGE_BANDS_SML = 3;
+    static final int RANGE_BANDS_SMLE = 4;
     public static final int RANGE_BAND_SHORT = 0;
     public static final int RANGE_BAND_MEDIUM = 1;
     public static final int RANGE_BAND_LONG = 2;
     public static final int RANGE_BAND_EXTREME = 3;
 
-    public static final int[] STANDARD_RANGES = {0, 4, 16, 24};
-    public static final int[] CAPITAL_RANGES = {0, 13, 25, 41};
+    public static final int[] STANDARD_RANGES = { 0, 4, 16, 24 };
+    public static final int[] CAPITAL_RANGES = { 0, 13, 25, 41 };
 
     public static final int SHORT_RANGE = STANDARD_RANGES[RANGE_BAND_SHORT];
     public static final int MEDIUM_RANGE = STANDARD_RANGES[RANGE_BAND_MEDIUM];
@@ -94,8 +114,8 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     private int skill = 4;
 
     /**
-     * The normal damage values of a ground unit (S/M/L) or fighter (S/M/L/E).
-     * Large Aerospace and large SV use the arcs field instead.
+     * The normal damage values of a ground unit (S/M/L) or fighter (S/M/L/E). Large Aerospace and large SV use the arcs
+     * field instead.
      */
     private ASDamageVector standardDamage = ASDamageVector.ZERO;
     private int overheat = 0;
@@ -121,9 +141,8 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     private ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
 
     /**
-     * AlphaStrike Quirks.
-     * Ideally these would be converted/filtered according to AS Companion, p. 59, but
-     * currently, the TW quirks are just reproduced here.
+     * AlphaStrike Quirks. Ideally these would be converted/filtered according to AS Companion, p. 59, but currently,
+     * the TW quirks are just reproduced here.
      */
     private Quirks quirks = new Quirks();
 
@@ -223,7 +242,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     }
 
     public double getHealthPercentage() {
-        return (getArmorPercentage() + getStructurePercentage()) / 2;
+        return (getArmorPercentage() + getStructurePercentage()) / 2.0;
     }
 
     @Override
@@ -248,7 +267,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
 
     /**
      * @return The movement value (in inches where applicable) for the given movement mode key such as "" or "j".
-     * Returns 0 when the unit does not have the given movement mode.
+     *       Returns 0 when the unit does not have the given movement mode.
      */
     public int getMovement(String mode) {
         return movement.getOrDefault(mode, 0);
@@ -258,7 +277,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
      * @return The number of damage range bands this element uses, 3 (SML) for ground units, 4 (SMLE) for aero.
      */
     public int getRangeBands() {
-        return usesSML() ? RANGEBANDS_SML : RANGEBANDS_SMLE;
+        return usesSML() ? RANGE_BANDS_SML : RANGE_BANDS_SMLE;
     }
 
     @Override
@@ -297,7 +316,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     }
 
     /**
-     * @return The conversion report for this unit. May be a DummyCalculationReport without information.
+     * @return The conversion report for this unit. Maybe a DummyCalculationReport without information.
      */
     public CalculationReport getConversionReport() {
         return conversionReport;
@@ -319,16 +338,12 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
      * @return The ASSpecialAbilityCollection object holding the damage and specials info for the given arc.
      */
     public ASSpecialAbilityCollection getArc(ASArcs arc) {
-        switch (arc) {
-            case FRONT:
-                return frontArc;
-            case LEFT:
-                return leftArc;
-            case REAR:
-                return rearArc;
-            default:
-                return rightArc;
-        }
+        return switch (arc) {
+            case FRONT -> frontArc;
+            case LEFT -> leftArc;
+            case REAR -> rearArc;
+            default -> rightArc;
+        };
     }
 
     public void setQuirks(Quirks quirks) {
@@ -539,10 +554,9 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     }
 
     /**
-     * Returns a formatted String for the standard movement capability of this AS element, e.g. 4"/6"j. This
-     * includes all movement modes of the element that are typically printed as MV on an AS card.
-     * As the only exception, this does not include the a and g movement modes of LandAirMeks, which are
-     * printed as special unit abilities.
+     * Returns a formatted String for the standard movement capability of this AS element, e.g. 4"/6"j. This includes
+     * all movement modes of the element that are typically printed as MV on an AS card. As the only exception, this
+     * does not include the a and g movement modes of LandAirMeks, which are printed as special unit abilities.
      *
      * @return A formatted standard movement string, e.g. 4"/6"j.
      */
@@ -570,8 +584,8 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     }
 
     /**
-     * Sets this AS element's MUL ID to the given mulId. The MUL ID should be > 0 when this AS element
-     * has a MUL entry and -1 otherwise.
+     * Sets this AS element's MUL ID to the given mulId. The MUL ID should be > 0 when this AS element has a MUL entry
+     * and -1 otherwise.
      */
     public void setMulId(int mulId) {
         this.mulId = mulId;
@@ -590,8 +604,8 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     }
 
     /**
-     * Returns all movement modes available to this unit. For LandAirMeks, this includes one or both of aero
-     * and Wige movement modes a and g!
+     * Returns all movement modes available to this unit. For LandAirMeks, this includes one or both of aero and Wige
+     * movement modes a and g!
      *
      * @return All movement mode Strings of this AS element, such as ["", "j"].
      */
@@ -678,20 +692,20 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     public String toString() {
         if (!usesArcs()) {
             return (chassis + " " + model).trim() + ": " + asUnitType + "; SZ" + size + "; MV" + getMovementAsString()
-                    + (isGround() ? "; TMM" + tmm : "; Th" + threshold) + "; "
-                    + getStandardDamage() + ((overheat > 0) ? "+" + overheat : "")
-                    + "; A" + fullArmor + "S" + fullStructure + "; PV" + pointValue + "@" + skill
-                    + "; " + specialAbilities.getSpecialsDisplayString(this);
+                  + (isGround() ? "; TMM" + tmm : "; Th" + threshold) + "; "
+                  + getStandardDamage() + ((overheat > 0) ? "+" + overheat : "")
+                  + "; A" + fullArmor + "S" + fullStructure + "; PV" + pointValue + "@" + skill
+                  + "; " + specialAbilities.getSpecialsDisplayString(this);
         } else {
             return (chassis + " " + model).trim() + ": " + asUnitType + "; SZ" + size + "; THR" + getMovementAsString()
-                    + "; A" + fullArmor + "S" + fullStructure + "; PV" + pointValue + "@" + skill
-                    + "; " + AlphaStrikeHelper.getSpecialsExportString(", ", this);
+                  + "; A" + fullArmor + "S" + fullStructure + "; PV" + pointValue + "@" + skill
+                  + "; " + AlphaStrikeHelper.getSpecialsExportString(", ", this);
         }
     }
 
     /**
-     * Returns the game round that this element is to be deployed in. Note that deployment technically
-     * counts as happening at the end of that round.
+     * Returns the game round that this element is to be deployed in. Note that deployment technically counts as
+     * happening at the end of that round.
      *
      * @param deployRound The round this element deploys in
      */

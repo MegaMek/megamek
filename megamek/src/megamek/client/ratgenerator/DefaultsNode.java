@@ -1,15 +1,34 @@
 /*
- * MegaMek - Copyright (C) 2016 The MegaMek Team
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.client.ratgenerator;
@@ -20,11 +39,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * The Defaults node is at the beginning of a ruleset file and provides the default values for
- * that faction.
- * 
- * @author Neoancient
+ * The Defaults node is at the beginning of a ruleset file and provides the default values for that faction.
  *
+ * @author Neoancient
  */
 public class DefaultsNode extends RulesetNode {
     protected ArrayList<ValueNode> unitTypeNodes;
@@ -46,28 +63,28 @@ public class DefaultsNode extends RulesetNode {
         ValueNode r = null;
         for (ValueNode n : unitTypeNodes) {
             if ((fd.getUnitType() == null || n.predicates.containsKey("ifUnitType"))
-                    && n.matches(fd)) {
+                  && n.matches(fd)) {
                 ut = n;
                 break;
             }
         }
         for (ValueNode n : eschelonNodes) {
-            if ((fd.getEschelon() == null || n.predicates.containsKey("ifEschelon"))
-                    && n.matches(fd)) {
+            if ((fd.getEchelon() == null || n.predicates.containsKey("ifEschelon"))
+                  && n.matches(fd)) {
                 e = n;
                 break;
             }
         }
         for (ValueNode n : rankSystemNodes) {
             if ((fd.getRankSystem() == null || n.predicates.containsKey("ifRankSystem"))
-                    && n.matches(fd)) {
+                  && n.matches(fd)) {
                 rs = n;
                 break;
             }
         }
         for (ValueNode n : ratingNodes) {
             if ((fd.getRating() == null || n.predicates.containsKey("ifRating"))
-                    && n.matches(fd)) {
+                  && n.matches(fd)) {
                 r = n;
                 break;
             }
@@ -76,7 +93,7 @@ public class DefaultsNode extends RulesetNode {
             fd.setUnitType(ModelRecord.parseUnitType(ut.getContent()));
         }
         if (e != null) {
-            fd.setEschelon(Integer.parseInt(e.getContent()));
+            fd.setEchelon(Integer.parseInt(e.getContent()));
         }
         if (rs != null) {
             fd.setRankSystem(Integer.parseInt(rs.getContent()));
@@ -131,7 +148,7 @@ public class DefaultsNode extends RulesetNode {
                 case "unitType":
                     unitTypeNodes.add(ValueNode.createFromXml(wn));
                     break;
-                case "eschelon":
+                case "echelon":
                     eschelonNodes.add(ValueNode.createFromXml(wn));
                     break;
                 case "rankSystem":

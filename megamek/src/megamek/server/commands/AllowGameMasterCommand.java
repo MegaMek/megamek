@@ -1,30 +1,44 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.server.commands;
 
 import megamek.common.Player;
-import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.Server;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
- * This command votes to allow another player to assume the elevated Game Master
- * role
+ * This command votes to allow another player to assume the elevated Game Master role
  *
  * @author pakfront
  */
@@ -34,9 +48,9 @@ public class AllowGameMasterCommand extends ServerCommand {
 
     public AllowGameMasterCommand(Server server, TWGameManager gameManager) {
         super(server, "allowGM", "Allows a player become Game Master "
-                + "Usage: /allowGM used in respond to another " +
-                "Player's request to become Game Master.  All players assigned to" +
-                " a team must allow the change.");
+              + "Usage: /allowGM used in respond to another " +
+              "Player's request to become Game Master.  All players assigned to" +
+              " a team must allow the change.");
         this.gameManager = gameManager;
     }
 
@@ -50,7 +64,7 @@ public class AllowGameMasterCommand extends ServerCommand {
         Player player = server.getPlayer(connId);
 
         if (!gameManager.isGameMasterRequestInProgress()) {
-            server.sendServerChat(connId, "No vote to for Game Master is progess!");
+            server.sendServerChat(connId, "No vote to for Game Master is process!");
             return;
         }
         voteYes(server, player);
@@ -77,17 +91,17 @@ public class AllowGameMasterCommand extends ServerCommand {
 
         // Inform all players about the vote
         server.sendServerChat(player.getName() + " has voted to allow "
-                + gameManager.getPlayerRequestingGameMaster().getName()
-                + " to become Game Master"
-                + ", " + voteCount
-                + " vote(s) received out of " + eligiblePlayerCount
-                + " vote(s) needed");
+              + gameManager.getPlayerRequestingGameMaster().getName()
+              + " to become Game Master"
+              + ", " + voteCount
+              + " vote(s) received out of " + eligiblePlayerCount
+              + " vote(s) needed");
 
         // If all votes are received, perform team change
         if (allowGameMaster) {
             server.sendServerChat("All votes received, "
-                    + gameManager.getPlayerRequestingGameMaster().getName()
-                    + " will become Game Master.");
+                  + gameManager.getPlayerRequestingGameMaster().getName()
+                  + " will become Game Master.");
             gameManager.processGameMasterRequest();
         }
     }

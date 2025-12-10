@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2018-2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.common.verifier;
 
@@ -28,19 +42,17 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import megamek.common.BipedMek;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.Mounted;
-import megamek.common.ProtoMek;
-import megamek.common.RoundWeight;
 import megamek.common.TechConstants;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.verifier.TestEntity.Ceil;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.ProtoMek;
+import megamek.common.util.RoundWeight;
+import org.junit.jupiter.api.Test;
 
 public class TestProtoMekTest {
 
@@ -116,7 +128,7 @@ public class TestProtoMekTest {
         }
 
         @Override
-        public boolean showUnderweightedEntity() {
+        public boolean showUnderweightEntity() {
             return false;
         }
 
@@ -161,7 +173,7 @@ public class TestProtoMekTest {
         }
 
         @Override
-        public int getTargCompCrits() {
+        public int getTargetingComputerCrits() {
             return 0;
         }
 
@@ -178,7 +190,7 @@ public class TestProtoMekTest {
         // walking 6
         when(mockProtoMek.getOriginalWalkMP()).thenReturn(4);
 
-        assertEquals(TestProtoMek.calcEngineRating(mockProtoMek), 36);
+        assertEquals(36, TestProtoMek.calcEngineRating(mockProtoMek));
     }
 
     @Test
@@ -189,7 +201,7 @@ public class TestProtoMekTest {
         // running 6, engine rating calculated as running - 2
         when(mockProtoMek.getOriginalWalkMP()).thenReturn(4);
 
-        assertEquals(TestProtoMek.calcEngineRating(mockProtoMek), 24);
+        assertEquals(24, TestProtoMek.calcEngineRating(mockProtoMek));
     }
 
     @Test
@@ -200,7 +212,7 @@ public class TestProtoMekTest {
         // running 6, engine rating calculated as running - 2
         when(mockProtoMek.getOriginalWalkMP()).thenReturn(4);
 
-        assertEquals(TestProtoMek.calcEngineRating(mockProtoMek), 24);
+        assertEquals(24, TestProtoMek.calcEngineRating(mockProtoMek));
     }
 
     @Test
@@ -213,27 +225,27 @@ public class TestProtoMekTest {
         Engine engine35 = new Engine(35, Engine.NORMAL_ENGINE, Engine.CLAN_ENGINE);
 
         assertEquals(engine42.getWeightEngine(proto, RoundWeight.STANDARD),
-                engine45.getWeightEngine(nonProto), 0.001);
+              engine45.getWeightEngine(nonProto), 0.001);
         assertEquals(engine40.getWeightEngine(proto, RoundWeight.STANDARD),
-                engine40.getWeightEngine(nonProto), 0.001);
+              engine40.getWeightEngine(nonProto), 0.001);
         assertTrue(engine35.getWeightEngine(proto,
-                RoundWeight.STANDARD) < engine35.getWeightEngine(nonProto));
+              RoundWeight.STANDARD) < engine35.getWeightEngine(nonProto));
     }
 
     @Test
     public void testMaxArmorFactor() {
         // Beginning of non-ultra range
-        assertEquals(TestProtoMek.maxArmorFactor(2.0, false), 15);
-        assertEquals(TestProtoMek.maxArmorFactor(2.0, true), 18);
+        assertEquals(15, TestProtoMek.maxArmorFactor(2.0, false));
+        assertEquals(18, TestProtoMek.maxArmorFactor(2.0, true));
         // End of non-ultra range
-        assertEquals(TestProtoMek.maxArmorFactor(9.0, false), 42);
-        assertEquals(TestProtoMek.maxArmorFactor(9.0, true), 45);
+        assertEquals(42, TestProtoMek.maxArmorFactor(9.0, false));
+        assertEquals(45, TestProtoMek.maxArmorFactor(9.0, true));
         // Beginning of ultra range
-        assertEquals(TestProtoMek.maxArmorFactor(10.0, false), 51);
-        assertEquals(TestProtoMek.maxArmorFactor(10.0, true), 57);
+        assertEquals(51, TestProtoMek.maxArmorFactor(10.0, false));
+        assertEquals(57, TestProtoMek.maxArmorFactor(10.0, true));
         // End of ultra range
-        assertEquals(TestProtoMek.maxArmorFactor(15.0, false), 67);
-        assertEquals(TestProtoMek.maxArmorFactor(15.0, true), 73);
+        assertEquals(67, TestProtoMek.maxArmorFactor(15.0, false));
+        assertEquals(73, TestProtoMek.maxArmorFactor(15.0, true));
     }
 
     @Test
@@ -254,7 +266,7 @@ public class TestProtoMekTest {
         when(mockProtoMek.getWeight()).thenReturn(5.0);
         when(mockProtoMek.hasMainGun()).thenReturn(false);
         when(mockProtoMek.getOArmor(anyInt()))
-                .thenAnswer(inv -> TestProtoMek.maxArmorFactor(mockProtoMek, inv.getArgument(0)) + 1);
+              .thenAnswer(inv -> TestProtoMek.maxArmorFactor(mockProtoMek, inv.getArgument(0)) + 1);
         when(mockProtoMek.locations()).thenReturn(ProtoMek.NUM_PROTOMEK_LOCATIONS);
         TestProtoMek test = new TestProtoMek(mockProtoMek, option, null);
 
@@ -335,7 +347,7 @@ public class TestProtoMekTest {
         ProtoMek mockProtoMek = createGenericMockProtoMek();
         when(mockProtoMek.isQuad()).thenReturn(true);
         Mounted<?> m = Mounted.createMounted(mockProtoMek, EquipmentType.get("CLERSmallLaser"));
-        m.setLocation(ProtoMek.LOC_LARM);
+        m.setLocation(ProtoMek.LOC_LEFT_ARM);
         List<Mounted<?>> eqList = new ArrayList<>();
         eqList.add(m);
         when(mockProtoMek.getEquipment()).thenReturn(eqList);
@@ -374,11 +386,11 @@ public class TestProtoMekTest {
 
         m.setLocation(ProtoMek.LOC_TORSO, true);
         assertFalse(test.hasIllegalEquipmentCombinations(new StringBuffer()));
-        m.setLocation(ProtoMek.LOC_LARM, true);
+        m.setLocation(ProtoMek.LOC_LEFT_ARM, true);
         assertTrue(test.hasIllegalEquipmentCombinations(new StringBuffer()));
-        m.setLocation(ProtoMek.LOC_RARM, true);
+        m.setLocation(ProtoMek.LOC_RIGHT_ARM, true);
         assertTrue(test.hasIllegalEquipmentCombinations(new StringBuffer()));
-        m.setLocation(ProtoMek.LOC_MAINGUN, true);
+        m.setLocation(ProtoMek.LOC_MAIN_GUN, true);
         assertTrue(test.hasIllegalEquipmentCombinations(new StringBuffer()));
     }
 

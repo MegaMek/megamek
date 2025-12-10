@@ -1,57 +1,74 @@
 /*
- * MegaMek - Copyright (C) 2016 The MegaMek Team
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+import megamek.common.units.EntityMovementMode;
+import megamek.logging.MMLogger;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import megamek.common.EntityMovementMode;
-import megamek.logging.MMLogger;
-
 /**
- * A force node contains the rules for generating a force when the
- * ForceDescriptor matches the
- * characteristics defined by the force node.
+ * A force node contains the rules for generating a force when the ForceDescriptor matches the characteristics defined
+ * by the force node.
  *
  * @author Neoancient
  */
 public class ForceNode extends RulesetNode {
     private final static MMLogger logger = MMLogger.create(ForceNode.class);
 
-    protected Integer eschelon;
-    protected String eschelonName;
+    protected Integer echelon;
+    protected String echelonName;
     protected ArrayList<ValueNode> nameNodes;
     protected ArrayList<CommanderNode> coNodes;
     protected ArrayList<CommanderNode> xoNodes;
     protected ArrayList<ArrayList<OptionGroupNode>> ruleGroups;
-    protected ArrayList<SubforcesNode> subforces;
-    protected ArrayList<SubforcesNode> attached;
+    protected ArrayList<SubForcesNode> subForces;
+    protected ArrayList<SubForcesNode> attached;
 
     protected String desc;
 
     private ForceNode() {
         super();
-        eschelon = null;
-        eschelonName = null;
+        echelon = null;
+        echelonName = null;
         nameNodes = new ArrayList<>();
         coNodes = new ArrayList<>();
         xoNodes = new ArrayList<>();
         ruleGroups = new ArrayList<>();
-        subforces = new ArrayList<>();
+        subForces = new ArrayList<>();
         attached = new ArrayList<>();
     }
 
@@ -64,31 +81,34 @@ public class ForceNode extends RulesetNode {
                 }
             }
             for (OptionGroupNode rule : toApply) {
+                ValueNode valueNode;
+                String content;
+
                 switch (rule.getName()) {
                     case "weightClass":
                         if (fd.getWeightClass() == null
-                                || rule.predicates.containsKey("ifWeightClass")) {
-                            ValueNode n = rule.selectOption(fd, true);
-                            if (n != null) {
-                                fd.setWeightClass(ForceDescriptor.decodeWeightClass(n.getContent()));
+                              || rule.predicates.containsKey("ifWeightClass")) {
+                            valueNode = rule.selectOption(fd, true);
+                            if (valueNode != null) {
+                                fd.setWeightClass(ForceDescriptor.decodeWeightClass(valueNode.getContent()));
                             }
                         }
                         break;
                     case "unitType":
                         if (fd.getUnitType() == null
-                                || rule.predicates.containsKey("ifUnitType")) {
-                            ValueNode n = rule.selectOption(fd, true);
-                            if (n != null) {
-                                fd.setUnitType(ModelRecord.parseUnitType(n.getContent()));
+                              || rule.predicates.containsKey("ifUnitType")) {
+                            valueNode = rule.selectOption(fd, true);
+                            if (valueNode != null) {
+                                fd.setUnitType(ModelRecord.parseUnitType(valueNode.getContent()));
                             }
                         }
                         break;
                     case "chassis":
                         if (fd.getChassis().isEmpty()
-                                || rule.predicates.containsKey("ifChassis")) {
-                            ValueNode n = rule.selectOption(fd, true);
-                            if (n != null) {
-                                for (String c : n.getContent().split(",")) {
+                              || rule.predicates.containsKey("ifChassis")) {
+                            valueNode = rule.selectOption(fd, true);
+                            if (valueNode != null) {
+                                for (String c : valueNode.getContent().split(",")) {
                                     fd.getChassis().add(c);
                                 }
                             }
@@ -96,22 +116,22 @@ public class ForceNode extends RulesetNode {
                         break;
                     case "variant":
                         if (fd.getVariants().isEmpty() || rule.predicates.containsKey("ifVariant")) {
-                            ValueNode n = rule.selectOption(fd, true);
-                            if (n != null) {
-                                for (String c : n.getContent().split(",")) {
+                            valueNode = rule.selectOption(fd, true);
+                            if (valueNode != null) {
+                                for (String c : valueNode.getContent().split(",")) {
                                     fd.getVariants().add(c);
                                 }
                             }
                         }
                         break;
                     case "motive":
-                        ValueNode n = rule.selectOption(fd, true);
-                        if (n == null) {
+                        valueNode = rule.selectOption(fd, true);
+                        if (valueNode == null) {
                             break;
                         }
-                        String content = n.getContent();
+                        content = valueNode.getContent();
                         if (content.startsWith("-")) {
-                            for (String p : content.replaceFirst("\\-", "").split(",")) {
+                            for (String p : content.replaceFirst("-", "").split(",")) {
                                 fd.getMovementModes().remove(EntityMovementMode.parseFromString(p));
                             }
                             break;
@@ -127,32 +147,32 @@ public class ForceNode extends RulesetNode {
                         break;
                     case "formation":
                         if (null == fd.getFormation()
-                                || rule.predicates.containsKey("ifFormation")) {
-                            n = rule.selectOption(fd, true);
-                            if (n == null) {
+                              || rule.predicates.containsKey("ifFormation")) {
+                            valueNode = rule.selectOption(fd, true);
+                            if (valueNode == null) {
                                 break;
                             }
-                            content = n.getContent();
+                            content = valueNode.getContent();
                             if (content != null) {
                                 FormationType ft = FormationType.getFormationType(content);
                                 if (null == ft) {
-                                    logger.error("Could not parse formation type " + content);
+                                    logger.error("Could not parse formation type {}", content);
                                 }
                                 fd.setFormationType(ft);
                             }
                         }
                         break;
                     case "role":
-                        n = rule.selectOption(fd, true);
-                        if (n == null) {
+                        valueNode = rule.selectOption(fd, true);
+                        if (valueNode == null) {
                             break;
                         }
-                        content = n.getContent();
+                        content = valueNode.getContent();
                         if (content == null) {
                             break;
                         }
                         if (content.startsWith("-")) {
-                            for (String p : content.replaceFirst("\\-", "").split(",")) {
+                            for (String p : content.replaceFirst("-", "").split(",")) {
                                 fd.getRoles().remove(MissionRole.parseRole(p));
                             }
                             break;
@@ -167,21 +187,21 @@ public class ForceNode extends RulesetNode {
                             if (role != null) {
                                 fd.getRoles().add(role);
                             } else {
-                                logger.error("Force generator could not parse mission role " + p);
+                                logger.error("Force generator could not parse mission role {}", p);
                             }
                         }
                         break;
                     case "flags":
-                        n = rule.selectOption(fd, true);
-                        if (n == null) {
+                        valueNode = rule.selectOption(fd, true);
+                        if (valueNode == null) {
                             break;
                         }
-                        content = n.getContent();
+                        content = valueNode.getContent();
                         if (content == null) {
                             break;
                         }
                         if (content.startsWith("-")) {
-                            for (String p : content.replaceFirst("\\-", "").split(",")) {
+                            for (String p : content.replaceFirst("-", "").split(",")) {
                                 fd.getFlags().remove(p);
                             }
                             break;
@@ -196,11 +216,11 @@ public class ForceNode extends RulesetNode {
                         }
                         break;
                     case "changeEschelon":
-                        n = rule.selectOption(fd, true);
-                        if (n == null) {
+                        valueNode = rule.selectOption(fd, true);
+                        if (valueNode == null) {
                             break;
                         }
-                        content = n.getContent();
+                        content = valueNode.getContent();
                         if (content == null) {
                             break;
                         }
@@ -209,7 +229,7 @@ public class ForceNode extends RulesetNode {
                         } else if (content.endsWith("-")) {
                             fd.setSizeMod(ForceDescriptor.UNDERSTRENGTH);
                         }
-                        fd.setEschelon(Integer.parseInt(n.getContent().replaceAll("[\\+\\-]", "")));
+                        fd.setEchelon(Integer.parseInt(valueNode.getContent().replaceAll("[+\\-]", "")));
                         return false;
                 }
             }
@@ -220,16 +240,16 @@ public class ForceNode extends RulesetNode {
         }
 
         String generate = assertions.getProperty("generate");
-        if (subforces.isEmpty()) {
+        if (subForces.isEmpty()) {
             generate = "model";
         }
 
-        processSubforces(fd, generate);
+        processSubForces(fd, generate);
 
         if (fd.shouldGenerateAttachments()) {
-            for (SubforcesNode n : attached) {
+            for (SubForcesNode n : attached) {
                 if (n.matches(fd)) {
-                    ArrayList<ForceDescriptor> subs = n.generateSubforces(fd, true);
+                    ArrayList<ForceDescriptor> subs = n.generateSubForces(fd, true);
                     if (subs != null) {
                         for (ForceDescriptor sub : subs) {
                             fd.addAttached(sub);
@@ -241,54 +261,54 @@ public class ForceNode extends RulesetNode {
         return true;
     }
 
-    public void processSubforces(ForceDescriptor fd, String generate) {
-        processSubforces(fd, generate, Ruleset.findRuleset(fd.getFaction()));
+    public void processSubForces(ForceDescriptor forceDescriptor, String generate) {
+        processSubForces(forceDescriptor, generate, Ruleset.findRuleset(forceDescriptor.getFaction()));
     }
 
-    public void processSubforces(ForceDescriptor fd, String generate, Ruleset ruleset) {
-        for (SubforcesNode n : subforces) {
-            if (n.matches(fd)) {
+    public void processSubForces(ForceDescriptor forceDescriptor, String generate, Ruleset ruleset) {
+        for (SubForcesNode subforcesNode : subForces) {
+            if (subforcesNode.matches(forceDescriptor)) {
                 ArrayList<ForceDescriptor> subs = null;
-                if (n.getAltFaction() != null || n.useParentFaction()) {
-                    String faction = n.getAltFaction();
-                    if (n.useParentFaction()) {
+                if (subforcesNode.getAltFaction() != null || subforcesNode.useParentFaction()) {
+                    String faction = subforcesNode.getAltFaction();
+                    if (subforcesNode.useParentFaction()) {
                         faction = ruleset.getParent();
                     }
                     if (faction != null) {
-                        Ruleset rs = null;
+                        Ruleset rs;
                         ForceNode fn = null;
                         do {
                             rs = Ruleset.findRuleset(faction);
                             if (rs != null) {
-                                fn = rs.findForceNode(fd);
+                                fn = rs.findForceNode(forceDescriptor);
                                 if (fn == null) {
                                     faction = rs.getParent();
                                 } else {
-                                    fn.processSubforces(fd, generate, rs);
+                                    fn.processSubForces(forceDescriptor, generate, rs);
                                 }
                             }
                         } while (rs != null && fn == null);
                     }
                 } else {
-                    subs = n.generateSubforces(fd, false);
+                    subs = subforcesNode.generateSubForces(forceDescriptor, false);
                 }
                 if (subs != null) {
                     for (ForceDescriptor sub : subs) {
-                        fd.addSubforce(sub);
+                        forceDescriptor.addSubForce(sub);
                     }
                 }
             }
         }
     }
 
-    public Integer getEschelon() {
-        return eschelon;
+    public Integer getEchelon() {
+        return echelon;
     }
 
-    public String getEschelonCode() {
-        String retVal = eschelon.toString();
+    public String getEchelonCode() {
+        String retVal = echelon.toString();
         if (predicates.containsKey("ifAugmented")
-                && predicates.getProperty("ifAugmented").equals("1")) {
+              && predicates.getProperty("ifAugmented").equals("1")) {
             retVal += "*";
         }
         return retVal;
@@ -311,12 +331,12 @@ public class ForceNode extends RulesetNode {
         return null;
     }
 
-    public void setEschelon(Integer eschelon) {
-        this.eschelon = eschelon;
+    public void setEchelon(Integer echelon) {
+        this.echelon = echelon;
     }
 
-    public String getEschelonName() {
-        return eschelonName;
+    public String getEchelonName() {
+        return echelonName;
     }
 
     public static ForceNode createFromXml(Node node) {
@@ -330,14 +350,14 @@ public class ForceNode extends RulesetNode {
         super.loadFromXml(node);
 
         try {
-            eschelon = Integer.parseInt(assertions.getProperty("eschelon"));
-            assertions.remove("eschelon");
+            echelon = Integer.parseInt(assertions.getProperty("echelon"));
+            assertions.remove("echelon");
         } catch (Exception ex) {
-            throw new IllegalArgumentException("Force Generator: force node is missing eschelon attribute.");
+            throw new IllegalArgumentException("Force Generator: force node is missing echelon attribute.");
         }
 
         if (assertions.containsKey("eschName")) {
-            eschelonName = assertions.getProperty("eschName");
+            echelonName = assertions.getProperty("eschName");
             assertions.remove("eschName");
         }
         ArrayList<OptionGroupNode> currentRuleGroup = null;
@@ -376,23 +396,23 @@ public class ForceNode extends RulesetNode {
                     for (int y = 0; y < wn.getChildNodes().getLength(); y++) {
                         Node wn2 = wn.getChildNodes().item(y);
                         if (wn2.getNodeName().equals("weightClass")
-                                || wn2.getNodeName().equals("unitType")
-                                || wn2.getNodeName().equals("chassis")
-                                || wn2.getNodeName().equals("variant")
-                                || wn2.getNodeName().equals("motive")
-                                || wn2.getNodeName().equals("formation")
-                                || wn2.getNodeName().equals("role")
-                                || wn2.getNodeName().equals("flags")
-                                || wn2.getNodeName().equals("changeEschelon")) {
+                              || wn2.getNodeName().equals("unitType")
+                              || wn2.getNodeName().equals("chassis")
+                              || wn2.getNodeName().equals("variant")
+                              || wn2.getNodeName().equals("motive")
+                              || wn2.getNodeName().equals("formation")
+                              || wn2.getNodeName().equals("role")
+                              || wn2.getNodeName().equals("flags")
+                              || wn2.getNodeName().equals("changeEschelon")) {
                             currentRuleGroup.add(OptionGroupNode.createFromXml(wn2));
                         }
                     }
                     break;
                 case "subforces":
-                    subforces.add(SubforcesNode.createFromXml(wn));
+                    subForces.add(SubForcesNode.createFromXml(wn));
                     break;
                 case "attachedForces":
-                    attached.add(SubforcesNode.createFromXml(wn));
+                    attached.add(SubForcesNode.createFromXml(wn));
                     break;
             }
         }
@@ -405,15 +425,13 @@ public class ForceNode extends RulesetNode {
      */
     public String show() {
         if (null == desc) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("Force Node [eschelon:").append(eschelon).append(" predicates:");
-            sb.append(predicates.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
-                    .collect(Collectors.joining(",")));
-            sb.append(" assertions:");
-            sb.append(assertions.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
-                    .collect(Collectors.joining(",")));
-            sb.append("]");
-            desc = sb.toString();
+            desc = "Force Node [echelon:" + echelon + " predicates:"
+                  + predicates.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
+                  .collect(Collectors.joining(","))
+                  + " assertions:"
+                  + assertions.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
+                  .collect(Collectors.joining(","))
+                  + "]";
         }
         return desc;
     }

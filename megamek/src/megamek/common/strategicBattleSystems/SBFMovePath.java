@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.strategicBattleSystems;
 
 import static java.util.stream.Collectors.toSet;
@@ -25,11 +40,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import megamek.common.BoardLocation;
 import megamek.common.Player;
 import megamek.common.actions.EntityAction;
+import megamek.common.board.BoardLocation;
 import megamek.logging.MMLogger;
 
 public class SBFMovePath implements EntityAction, Serializable {
@@ -41,7 +55,7 @@ public class SBFMovePath implements EntityAction, Serializable {
     private boolean isIllegal;
     private int jumpUsed = 0;
 
-    // The game is used mainly durinng creation of the movepath and shouldn't be
+    // The game is used mainly during creation of the move path and shouldn't be
     // sent in packets
     private transient SBFGame game;
 
@@ -52,11 +66,11 @@ public class SBFMovePath implements EntityAction, Serializable {
     }
 
     /**
-     * Creates a new move path that is a copy of the given original. Note that the
-     * steps are not copied,
-     * i.e. the step list is only a shallow copy!
+     * Creates a new move path that is a copy of the given original. Note that the steps are not copied, i.e. the step
+     * list is only a shallow copy!
      *
      * @param original The move path to copy
+     *
      * @return A new move path that is equal to the original
      */
     public static SBFMovePath createMovePathShallow(SBFMovePath original) {
@@ -66,18 +80,16 @@ public class SBFMovePath implements EntityAction, Serializable {
     }
 
     /**
-     * Creates a new move path that is a copy of the given original. Note that the
-     * steps are copied,
-     * i.e. the step list is a deep copy. The returned move path is completely
-     * independent from the
-     * original.
+     * Creates a new move path that is a copy of the given original. Note that the steps are copied, i.e. the step list
+     * is a deep copy. The returned move path is completely independent of the original.
      *
      * @param original The move path to copy
+     *
      * @return A new move path that is equal to the original
      */
     public static SBFMovePath createMovePathDeep(SBFMovePath original) {
         SBFMovePath newPath = new SBFMovePath(original.formationId, original.startLocation, original.game);
-        newPath.steps.addAll(original.steps.stream().map(SBFMoveStep::copy).collect(Collectors.toList()));
+        newPath.steps.addAll(original.steps.stream().map(SBFMoveStep::copy).toList());
         return newPath;
     }
 
@@ -108,8 +120,7 @@ public class SBFMovePath implements EntityAction, Serializable {
     }
 
     /**
-     * Assembles and computes all data for this move path, especially if it is
-     * legal.
+     * Assembles and computes all data for this move path, especially if it is legal.
      */
     private void compile() {
         if (game == null) {
@@ -124,8 +135,8 @@ public class SBFMovePath implements EntityAction, Serializable {
         // may not leave after entering hostile hex
         for (SBFMoveStep step : steps) {
             if (game.isHostileActiveFormationAt(step.startingPoint, formation)
-                    && !step.startingPoint.equals(step.destination)
-                    && !startLocation.equals(step.startingPoint)) {
+                  && !step.startingPoint.equals(step.destination)
+                  && !startLocation.equals(step.startingPoint)) {
                 isIllegal = true;
             }
         }
@@ -133,20 +144,18 @@ public class SBFMovePath implements EntityAction, Serializable {
         // stacking friendly at end of turn
         Player owner = game.getPlayer(formation.getOwnerId());
         List<SBFFormation> friendliesAtDestination = game.getActiveFormationsAt(getLastPosition()).stream()
-                .filter(f -> !game.areHostile(f, owner))
-                .toList();
+              .filter(f -> !game.areHostile(f, owner))
+              .toList();
 
         Set<SBFElementType> friendliesTypes = friendliesAtDestination.stream()
-                .map(SBFFormation::getType).collect(toSet());
+              .map(SBFFormation::getType).collect(toSet());
         isIllegal |= friendliesAtDestination.size() > 2;
         isIllegal |= (friendliesAtDestination.size() == 2) && !friendliesTypes.contains(SBFElementType.CI)
-                && !friendliesTypes.contains(SBFElementType.BA);
+              && !friendliesTypes.contains(SBFElementType.BA);
     }
 
     /**
-     * Restores the move path after serialization. This is unnecessary unless the
-     * {@link #compile()}
-     * method is used.
+     * Restores the move path after serialization. This is unnecessary unless the {@link #compile()} method is used.
      *
      * @param game The SBFGame
      */
@@ -178,11 +187,11 @@ public class SBFMovePath implements EntityAction, Serializable {
     }
 
     /**
-     * Returns the number of mp used up to and including the given step. Returns -1
-     * if the step is
-     * not part of this move path.
+     * Returns the number of mp used up to and including the given step. Returns -1 if the step is not part of this move
+     * path.
      *
      * @param step The last step to include in the cost
+     *
      * @return The total mp up to the given step
      */
     public int getMpUpTo(SBFMoveStep step) {

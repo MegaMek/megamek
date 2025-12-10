@@ -1,28 +1,62 @@
 /*
- * MegaMek - Copyright (C) 2008 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.actions;
 
-import megamek.common.*;
+import java.io.Serial;
+
+import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.ToHitData;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeSideTable;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
 
 /**
  * A BattleArmor uses its vibroclaws
  */
 public class BAVibroClawAttackAction extends AbstractAttackAction {
-    private static final MMLogger logger = MMLogger.create(BAVibroClawAttackAction.class);
+    private static final MMLogger LOGGER = MMLogger.create(BAVibroClawAttackAction.class);
 
+    @Serial
     private static final long serialVersionUID = 1432011536091665084L;
 
     public BAVibroClawAttackAction(int entityId, int targetId) {
@@ -30,7 +64,7 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
     }
 
     public BAVibroClawAttackAction(int entityId, int targetType,
-            int targetId) {
+          int targetId) {
         super(entityId, targetType, targetId);
     }
 
@@ -43,101 +77,102 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
 
     public ToHitData toHit(Game game) {
         return toHit(game, getEntityId(), game.getTarget(getTargetType(),
-                getTargetId()));
+              getTargetId()));
     }
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target) {
-        final Entity ae = game.getEntity(attackerId);
+        final Entity attackingEntity = game.getEntity(attackerId);
         int targetId = Entity.NONE;
-        Entity te = null;
+        Entity targetEntity = null;
         // arguments legal?
-        if (ae == null) {
-            logger.error("Attacker not valid");
+        if (attackingEntity == null) {
+            LOGGER.error("Attacker not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
         }
+
         if (target == null) {
-            logger.error("target not valid");
+            LOGGER.error("target not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
         }
 
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
-            te = (Entity) target;
+            targetEntity = (Entity) target;
             targetId = target.getId();
         }
 
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                    && ((((Entity) target).getOwnerId() == ae.getOwnerId())
-                            || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
-                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
-                                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
+                  && ((target.getOwnerId() == attackingEntity.getOwnerId())
+                  || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                  && (attackingEntity.getOwner().getTeam() != Player.TEAM_NONE)
+                  && (attackingEntity.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "A friendly unit can never be the target of a direct attack.");
+                      "A friendly unit can never be the target of a direct attack.");
             }
         }
 
-        final Hex attHex = game.getBoard().getHex(ae.getPosition());
-        final Hex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getHexOf(attackingEntity);
+        Hex targHex = game.getHexOf(target);
         if ((attHex == null) || (targHex == null)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "off board");
         }
 
-        boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
+        boolean inSameBuilding = Compute.isInSameBuilding(game, attackingEntity, targetEntity);
 
         ToHitData toHit;
 
         // can't target yourself
-        if ((te != null) && ae.equals(te)) {
+        if (attackingEntity.equals(targetEntity)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "You can't target yourself");
+                  "You can't target yourself");
         }
 
         // only BA can make this attack
-        if (!(ae instanceof BattleArmor)) {
+        if (!(attackingEntity instanceof BattleArmor)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Non-BA can't make vibroclaw-physicalattacks");
+                  "Non-BA can't make vibroclaw-physicalAttacks");
         }
 
-        if ((te != null) && !((te instanceof Infantry))) {
+        if ((targetEntity != null) && !((targetEntity instanceof Infantry))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "can't target non-infantry");
+                  "can't target non-infantry");
         }
 
         // need to have vibroclaws to make this attack
-        if (ae.getVibroClaws() == 0) {
+        if (attackingEntity.getVibroClaws() == 0) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "no vibro claws mounted");
+                  "no vibro claws mounted");
         }
 
         // Can't target a transported entity.
-        if ((te != null) && (Entity.NONE != te.getTransportId())) {
+        if ((targetEntity != null) && (Entity.NONE != targetEntity.getTransportId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is a passenger.");
+                  "Target is a passenger.");
         }
 
-        // Can't target a entity conducting a swarm attack.
-        if ((te != null) && (Entity.NONE != te.getSwarmTargetId())) {
+        // Can't target an entity conducting a swarm attack.
+        if ((targetEntity != null) && (Entity.NONE != targetEntity.getSwarmTargetId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is swarming a Mek.");
+                  "Target is swarming a Mek.");
         }
 
         // check range
-        final int range = ae.getPosition().distance(target.getPosition());
+        final int range = attackingEntity.getPosition().distance(target.getPosition());
         if (range > 0) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in range");
         }
 
         // check elevation
-        if ((te != null) && (te.getElevation() > 0)) {
+        if ((targetEntity != null) && (targetEntity.getElevation() > 0)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target elevation not in range");
+                  "Target elevation not in range");
         }
 
         // can't physically attack meks making dfa attacks
-        if ((te != null) && te.isMakingDfa()) {
+        if ((targetEntity != null) && targetEntity.isMakingDfa()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is making a DFA attack");
+                  "Target is making a DFA attack");
         }
 
         // Can only attack other entities
@@ -146,7 +181,7 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
         }
 
         // Set the base BTH
-        int base = ae.getCrew().getGunnery();
+        int base = attackingEntity.getCrew().getGunnery();
 
         // Start the To-Hit
         toHit = new ToHitData(base, "base");
@@ -161,27 +196,27 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
         toHit.append(Compute.getAttackerTerrainModifier(game, attackerId));
 
         // target terrain
-        toHit.append(Compute.getTargetTerrainModifier(game, te, 0, inSameBuilding));
+        toHit.append(Compute.getTargetTerrainModifier(game, targetEntity, 0, inSameBuilding));
 
         // attacker is spotting
-        if (ae.isSpotting()) {
+        if (attackingEntity.isSpotting()) {
             toHit.addModifier(+1, "attacker is spotting");
         }
 
         // taser feedback
-        if (ae.getTaserFeedBackRounds() > 0) {
+        if (attackingEntity.getTaserFeedBackRounds() > 0) {
             toHit.addModifier(1, "Taser feedback");
         }
 
         // target immobile
-        toHit.append(Compute.getImmobileMod(te));
+        toHit.append(Compute.getImmobileMod(targetEntity));
 
-        toHit.append(nightModifiers(game, target, null, ae, false));
+        toHit.append(nightModifiers(game, target, null, attackingEntity, false));
 
-        Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
+        Compute.modifyPhysicalBTHForAdvantages(attackingEntity, targetEntity, toHit, game);
 
         // factor in target side
-        toHit.setSideTable(Compute.targetSideTable(ae, te));
+        toHit.setSideTable(ComputeSideTable.sideTable(attackingEntity, targetEntity));
 
         // done!
         return toHit;

@@ -1,22 +1,35 @@
 /*
- * MegaMek
  * Copyright (c) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.bot.princess;
 
@@ -26,12 +39,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Infantry;
+import megamek.common.compute.Compute;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
+import megamek.common.units.Infantry;
 import megamek.common.Player;
-import megamek.common.ProtoMek;
+import megamek.common.units.ProtoMek;
 import megamek.logging.MMLogger;
 
 /**
@@ -53,8 +66,8 @@ public class MoraleUtil {
     /**
      * If a unit's morale is broken, this method should return TRUE.
      *
-     * @param unitId The ID of the {@link Entity} being checked (from
-     *               {@link Entity#getId()}).
+     * @param unitId The ID of the {@link Entity} being checked (from {@link Entity#getId()}).
+     *
      * @return TRUE if the unit is broken.
      */
     public boolean isUnitBroken(int unitId) {
@@ -62,19 +75,16 @@ public class MoraleUtil {
     }
 
     /**
-     * Triggers the morale check for all units controlled by the Princess bot
-     * player.
+     * Triggers the morale check for all units controlled by the Princess bot player.
      *
      * @param forcedWithdrawal Set TRUE if Forced Withdrawal is in effect.
-     * @param bravery          The index of the bravery setting in
-     *                         {@link BehaviorSettings}.
-     * @param selfPreservation The index of the selfPreservation setting in
-     *                         {@link BehaviorSettings}.
+     * @param bravery          The index of the bravery setting in {@link BehaviorSettings}.
+     * @param selfPreservation The index of the selfPreservation setting in {@link BehaviorSettings}.
      * @param player           The {@link Player} of the Princess bot.
      * @param game             The current {@link Game}
      */
     public void checkMorale(boolean forcedWithdrawal, int bravery, int selfPreservation,
-            Player player, Game game) {
+          Player player, Game game) {
         StringBuilder logMsg = new StringBuilder("Starting morale checks for ").append(player.getName());
 
         try {
@@ -84,11 +94,11 @@ public class MoraleUtil {
 
             int braveryMod = calcBehaviorMod(bravery);
             logMsg.append("\n\tBravery ").append(bravery).append(" (").append(braveryMod >= 0 ? "+" : "")
-                    .append(braveryMod).append(")");
+                  .append(braveryMod).append(")");
 
             int selfPreservationMod = -calcBehaviorMod(selfPreservation);
             logMsg.append("\n\tSelf Preservation ").append(selfPreservation).append(" (")
-                    .append(selfPreservationMod >= 0 ? "+" : "").append(selfPreservationMod).append(")");
+                  .append(selfPreservationMod >= 0 ? "+" : "").append(selfPreservationMod).append(")");
 
             // Loop through all the units controlled by this player.
             for (Entity unit : game.getPlayerEntities(player, true)) {
@@ -155,16 +165,14 @@ public class MoraleUtil {
     }
 
     /**
-     * @param unitId The ID of the {@link Entity} to be added to the broken units
-     *               list.
+     * @param unitId The ID of the {@link Entity} to be added to the broken units list.
      */
     protected void addBrokenUnit(int unitId) {
         BROKEN_UNITS.add(unitId);
     }
 
     /**
-     * @param unitId The ID of the {@link Entity} to be removed from the broken
-     *               units list.
+     * @param unitId The ID of the {@link Entity} to be removed from the broken units list.
      */
     protected void removeBrokenUnit(int unitId) {
         BROKEN_UNITS.remove(unitId);
@@ -203,7 +211,7 @@ public class MoraleUtil {
         // The target number mod is based on the friendly : enemy BV ratio.
         float ratio = (float) friendlyBv / enemyBv;
         logMsg.append("\n\tBV Ratio = ").append(friendlyBv).append(" / ").append(enemyBv).append(" = ")
-                .append(DEC_FORMAT.format(ratio));
+              .append(DEC_FORMAT.format(ratio));
 
         if (ratio >= 3.0) {
             return -4;

@@ -1,39 +1,51 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.displayWrappers;
 
-import megamek.client.ui.swing.util.FontHandler;
-import megamek.common.annotations.Nullable;
-
-import java.awt.*;
+import java.awt.Font;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import megamek.client.ui.util.FontHandler;
+import megamek.common.annotations.Nullable;
+
 /**
- * FontDisplay is a display wrapper around a Font, primarily to be used in ComboBoxes. This is
- * largely for performance reasons, as it doesn't require recalculating the font and/ or proper
- * name each time.
+ * FontDisplay is a display wrapper around a Font, primarily to be used in ComboBoxes. This is largely for performance
+ * reasons, as it doesn't require recalculating the font and/ or proper name each time.
+ *
+ * @param font region Variable Declarations
  */
-public class FontDisplay {
-    //region Variable Declarations
-    private final Font font;
-    private final String displayName;
+public record FontDisplay(Font font, String displayName) {
     //endregion Variable Declarations
 
     //region Constructors
@@ -41,16 +53,7 @@ public class FontDisplay {
         this(Font.decode(familyName).deriveFont(Font.PLAIN, 12f), familyName);
     }
 
-    public FontDisplay(final Font font, final String displayName) {
-        this.font = font;
-        this.displayName = displayName;
-    }
     //endregion Constructors
-
-    //region Getters/Setters
-    public Font getFont() {
-        return font;
-    }
     //endregion Getters/Setters
 
     public static List<FontDisplay> getSortedFontDisplays() {
@@ -69,7 +72,7 @@ public class FontDisplay {
         } else if (this == other) {
             return true;
         } else if (other instanceof FontDisplay) {
-            return getFont().equals(((FontDisplay) other).getFont());
+            return font().equals(((FontDisplay) other).font());
         } else {
             return false;
         }

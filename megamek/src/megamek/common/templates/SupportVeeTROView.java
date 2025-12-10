@@ -1,16 +1,34 @@
 /*
- * MegaMek -
- * Copyright (C) 2020 The MegaMek Team
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.common.templates;
@@ -21,7 +39,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.*;
+import megamek.common.Messages;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.LargeSupportTank;
+import megamek.common.units.Tank;
+import megamek.common.units.VTOL;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -30,7 +57,6 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  * Creates a TRO template model for support vehicles.
  *
  * @author Neoancient
- *
  */
 public class SupportVeeTROView extends TROView {
 
@@ -61,15 +87,18 @@ public class SupportVeeTROView extends TROView {
     @Override
     protected void initModel(EntityVerifier verifier) {
         setModelData("formatArmorRow", new FormatTableRowMethod(new int[] { 20, 10, 10 },
-                new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER }));
+              new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER }));
         addBasicData(tank);
         addArmorAndStructure();
         final int nameWidth = addEquipment(tank);
         setModelData("formatEquipmentRow",
-                new FormatTableRowMethod(new int[] { nameWidth, 12, 12 }, new Justification[] { Justification.LEFT,
-                        Justification.CENTER, Justification.CENTER, Justification.CENTER, Justification.CENTER }));
+              new FormatTableRowMethod(new int[] { nameWidth, 12, 12 }, new Justification[] { Justification.LEFT,
+                                                                                              Justification.CENTER,
+                                                                                              Justification.CENTER,
+                                                                                              Justification.CENTER,
+                                                                                              Justification.CENTER }));
         setModelData("formatBayRow", new FormatTableRowMethod(new int[] { 8, 24, 10 },
-                new Justification[] { Justification.LEFT, Justification.LEFT, Justification.LEFT }));
+              new Justification[] { Justification.LEFT, Justification.LEFT, Justification.LEFT }));
         addFluff();
         addTransportBays(tank);
         final TestSupportVehicle testTank = new TestSupportVehicle(tank, verifier.tankOption, null);
@@ -83,14 +112,14 @@ public class SupportVeeTROView extends TROView {
         setModelData("moveType", Messages.getString("MovementType." + tank.getMovementModeAsString()));
         setModelData("mass", adjustWeight(tank.getWeight()));
         setModelData("weightClass", EntityWeightClass
-                .getClassName(EntityWeightClass.getWeightClass(tank.getWeight(), tank)).replaceAll("\\s.*", ""));
+              .getClassName(EntityWeightClass.getWeightClass(tank.getWeight(), tank)).replaceAll("\\s.*", ""));
         setModelData("chassisControlMass", adjustWeight(testTank.getWeightStructure() + testTank.getWeightControls()));
         setModelData("engineName", stripNotes(tank.getEngine().getEngineName()));
         setModelData("engineMass", adjustWeight(testTank.getWeightEngine()));
         setModelData("walkMP", tank.getWalkMP());
         setModelData("runMP", tank.getRunMPasString());
         setModelData("hsCount",
-                Math.max(testTank.getCountHeatSinks(), tank.getEngine().getWeightFreeEngineHeatSinks()));
+              Math.max(testTank.getCountHeatSinks(), tank.getEngine().getWeightFreeEngineHeatSinks()));
         setModelData("hsMass", adjustWeight(testTank.getWeightHeatSinks()));
         setModelData("amplifierMass", adjustWeight(testTank.getWeightPowerAmp()));
         setModelData("turretMass", adjustWeight(testTank.getTankWeightTurret()));
@@ -110,24 +139,29 @@ public class SupportVeeTROView extends TROView {
     }
 
     private static final int[][] TANK_ARMOR_LOCS = { { Tank.LOC_FRONT }, { Tank.LOC_RIGHT, Tank.LOC_LEFT },
-            { Tank.LOC_REAR }, { Tank.LOC_TURRET }, { Tank.LOC_TURRET_2 }, { VTOL.LOC_ROTOR } };
+                                                     { Tank.LOC_REAR }, { Tank.LOC_TURRET }, { Tank.LOC_TURRET_2 },
+                                                     { VTOL.LOC_ROTOR } };
 
     private static final int[][] LARGE_SUPPORT_ARMOR_LOCS = { { LargeSupportTank.LOC_FRONT },
-            { LargeSupportTank.LOC_FRONTRIGHT, LargeSupportTank.LOC_FRONTLEFT },
-            { LargeSupportTank.LOC_REARRIGHT, LargeSupportTank.LOC_REARLEFT }, { LargeSupportTank.LOC_REAR },
-            { LargeSupportTank.LOC_TURRET }, { LargeSupportTank.LOC_TURRET_2 } };
+                                                              { LargeSupportTank.LOC_FRONT_RIGHT,
+                                                                LargeSupportTank.LOC_FRONT_LEFT },
+                                                              { LargeSupportTank.LOC_REAR_RIGHT,
+                                                                LargeSupportTank.LOC_REAR_LEFT },
+                                                              { LargeSupportTank.LOC_REAR },
+                                                              { LargeSupportTank.LOC_TURRET },
+                                                              { LargeSupportTank.LOC_TURRET_2 } };
 
     private void addArmorAndStructure() {
         if (tank.hasETypeFlag(Entity.ETYPE_LARGE_SUPPORT_TANK)) {
             setModelData("structureValues",
-                    addArmorStructureEntries(tank, Entity::getOInternal, LARGE_SUPPORT_ARMOR_LOCS));
+                  addArmorStructureEntries(tank, Entity::getOInternal, LARGE_SUPPORT_ARMOR_LOCS));
             setModelData("armorValues",
-                    addArmorStructureEntries(tank, Entity::getOArmor, LARGE_SUPPORT_ARMOR_LOCS));
+                  addArmorStructureEntries(tank, Entity::getOArmor, LARGE_SUPPORT_ARMOR_LOCS));
         } else {
             setModelData("structureValues",
-                    addArmorStructureEntries(tank, Entity::getOInternal, TANK_ARMOR_LOCS));
+                  addArmorStructureEntries(tank, Entity::getOInternal, TANK_ARMOR_LOCS));
             setModelData("armorValues",
-                    addArmorStructureEntries(tank, Entity::getOArmor, TANK_ARMOR_LOCS));
+                  addArmorStructureEntries(tank, Entity::getOArmor, TANK_ARMOR_LOCS));
         }
     }
 
@@ -181,7 +215,7 @@ public class SupportVeeTROView extends TROView {
                 if (name.length() >= nameWidth) {
                     nameWidth = name.length() + 1;
                 }
-                fields.put("tonnage", adjustWeight(eq.getTonnage(entity, entry.getKey().getSize()) * count));
+                fields.put("tonnage", adjustWeight(eq.getTonnage(entity, entry.getKey().size()) * count));
                 fields.put("location", loc);
                 fields.put("slots", eq.getSupportVeeSlots(entity) * count);
                 weaponList.add(fields);
@@ -193,7 +227,7 @@ public class SupportVeeTROView extends TROView {
                         nameWidth = name.length() + 1;
                     }
                     ammoFields.put("tonnage",
-                            Math.ceil(((InfantryWeapon) eq).getAmmoWeight() * entry.getValue() * 1000));
+                          Math.ceil(((InfantryWeapon) eq).getAmmoWeight() * entry.getValue() * 1000));
                     ammoFields.put("location", loc);
                     ammoFields.put("slots", 0);
                     weaponList.add(ammoFields);
@@ -206,7 +240,7 @@ public class SupportVeeTROView extends TROView {
         for (final Map.Entry<EquipmentKey, Integer> entry : miscCount.entrySet()) {
             final EquipmentType eq = entry.getKey().getType();
             final int count = entry.getValue();
-            final double tonnage = eq.getTonnage(tank, entry.getKey().getSize());
+            final double tonnage = eq.getTonnage(tank, entry.getKey().size());
             final StringBuilder sb = new StringBuilder(stripNotes(entry.getKey().name()));
             if (tonnage > 0) {
                 sb.append("(");

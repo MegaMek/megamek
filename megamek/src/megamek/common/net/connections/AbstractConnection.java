@@ -1,18 +1,37 @@
 /*
-* MegaMek -
-* Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
 package megamek.common.net.connections;
 
 import java.io.ByteArrayInputStream;
@@ -40,7 +59,7 @@ import megamek.logging.MMLogger;
  * Generic bidirectional connection between client and server
  */
 public abstract class AbstractConnection {
-    private static final MMLogger logger = MMLogger.create(AbstractConnection.class);
+    private static final MMLogger LOGGER = MMLogger.create(AbstractConnection.class);
 
     private static final PacketMarshallerFactory marshallerFactory = PacketMarshallerFactory.getInstance();
     private static final int DEFAULT_MARSHALLING = PacketMarshaller.NATIVE_SERIALIZATION_MARSHALING;
@@ -48,7 +67,7 @@ public abstract class AbstractConnection {
     private Socket socket;
     private int connectionId;
 
-    /** Peer Host Non null in case if it's a client connection */
+    /** Peer Host Non-null in case if it's a client connection */
     private String host;
 
     /** Peer port != 0 in case if it's a client connection */
@@ -148,7 +167,7 @@ public abstract class AbstractConnection {
     /** Closes the socket and shuts down the receiver and sender threads. */
     public void close() {
         synchronized (this) {
-            logger.info("Starting to close " + getConnectionTypeText());
+            LOGGER.info("Starting to close {}", getConnectionTypeText());
             sendQueue.reportContents();
             sendQueue.finish();
             try {
@@ -156,7 +175,7 @@ public abstract class AbstractConnection {
                     socket.close();
                 }
             } catch (Exception e) {
-                logger.error("Failed closing connection " + getId(), e);
+                LOGGER.error("Failed closing connection {}", getId(), e);
             }
             socket = null;
         }
@@ -176,8 +195,7 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * Sets the connection ID
-     * Note: Be careful with using this method
+     * Sets the connection ID Note: Be careful with using this method
      *
      * @param id new connection ID
      */
@@ -209,17 +227,21 @@ public abstract class AbstractConnection {
 
     /** Adds a packet to the send queue to be sent on a separate thread. */
     public synchronized void send(Packet packet) {
-        sendQueue.addPacket(new SendPacket(packet, this));
-        // Send right now
-        flush();
+        try {
+            sendQueue.addPacket(new SendPacket(packet, this));
+            // Send right now
+            flush();
+        } catch (Exception e) {
+            LOGGER.error("Failed to send packet {}", packet, e);
+        }
     }
 
     /** Send the packet now, on a separate thread; This is the blocking call. */
     public void sendNow(SendPacket packet) {
         try {
-            sendNetworkPacket(packet.getData(), packet.isCompressed());
+            sendNetworkPacket(packet.data(), packet.isCompressed());
         } catch (Exception ex) {
-            logger.error("", ex);
+            LOGGER.error("", ex);
         }
     }
 
@@ -239,8 +261,7 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * Adds the specified connection listener to receive connection events from
-     * connection.
+     * Adds the specified connection listener to receive connection events from connection.
      *
      * @param listener the connection listener.
      */
@@ -258,8 +279,7 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * @return The connection type ("Client" / "Server") that is used in the debug
-     *         messages and so on.
+     * @return The connection type ("Client" / "Server") that is used in the debug messages and so on.
      */
     protected String getConnectionTypeText() {
         return isServer() ? "Server" : "Client";
@@ -284,39 +304,30 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * Process all incoming data, blocking on the input stream until new input is
-     * available. This
-     * method should not be synchronized as it should only deal with the input side
-     * of things.
-     * Without creating separate read/write locks, making this method synchronized
-     * would not allow
-     * synchronous reads and writes.
+     * Process all incoming data, blocking on the input stream until new input is available. This method should not be
+     * synchronized as it should only deal with the input side of things. Without creating separate read/write locks,
+     * making this method synchronized would not allow synchronous reads and writes.
      */
     public void update() {
         try {
-            INetworkPacket np;
-            while ((np = readNetworkPacket()) != null) {
-                processPacket(np);
+            INetworkPacket networkPacket;
+            while ((networkPacket = readNetworkPacket()) != null) {
+                processPacket(networkPacket);
             }
-        } catch (java.io.InvalidClassException ex) {
-            logger.error(getConnectionTypeText(), ex);
-            close();
         } catch (SocketException | EOFException ignored) {
             // Do nothing, happens when the socket closes
             close();
         } catch (IOException ex) {
-            logger.error(getConnectionTypeText(), ex);
+            LOGGER.error(getConnectionTypeText(), ex);
             close();
         } catch (Exception ex) {
-            logger.error(getConnectionTypeText() + " had an error receiving a packet", ex);
+            LOGGER.error("{} had an error receiving a packet", getConnectionTypeText(), ex);
             close();
         }
     }
 
     /**
-     * Send all queued packets. This method is synchronized since it deals with the
-     * non-thread-safe
-     * send queue.
+     * Send all queued packets. This method is synchronized since it deals with the non-thread-safe send queue.
      */
     public synchronized void flush() {
         SendPacket packet = null;
@@ -326,11 +337,12 @@ public abstract class AbstractConnection {
             }
         } catch (Exception ex) {
             if (packet == null) {
-                logger.error(String.format("%s had an error sending a null packet",
-                        getConnectionTypeText()), ex);
+                LOGGER.error(ex, "{} had an error sending a null packet", getConnectionTypeText());
             } else {
-                logger.error(String.format("%s had an error sending command %s",
-                        getConnectionTypeText(), packet.getCommand().name()), ex);
+                LOGGER.error(ex,
+                      "{} had an error sending command {}",
+                      getConnectionTypeText(),
+                      packet.getCommand().name());
             }
             close();
         }
@@ -338,9 +350,9 @@ public abstract class AbstractConnection {
 
     /** Processes a received packet. */
     protected void processPacket(INetworkPacket np) throws Exception {
-        PacketMarshaller pm = marshallerFactory.getMarshaller(np.getMarshallingType());
+        PacketMarshaller pm = marshallerFactory.getMarshaller(np.marshallingType());
         Objects.requireNonNull(pm);
-        byte[] data = np.getData();
+        byte[] data = np.data();
         bytesReceived += data.length;
         ByteArrayInputStream bis = new ByteArrayInputStream(data);
         InputStream in = np.isCompressed() ? new GZIPInputStream(bis) : bis;
@@ -356,8 +368,7 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * Reads a complete NetworkPacket. This method must not block, must return null
-     * instead.
+     * Reads a complete NetworkPacket. This method must not block, must return null instead.
      *
      * @return the NetworkPacket that was sent.
      */
@@ -368,13 +379,13 @@ public abstract class AbstractConnection {
      *
      * @param data   data to send
      * @param zipped should the data be compressed
+     *
      * @throws Exception if there's an issue with sending the packet
      */
     protected abstract void sendNetworkPacket(byte[] data, boolean zipped) throws Exception;
 
     /**
-     * Processes game events occurring on this connection by dispatching them to
-     * any registered GameListener objects.
+     * Processes game events occurring on this connection by dispatching them to any registered GameListener objects.
      *
      * @param event the game event.
      */

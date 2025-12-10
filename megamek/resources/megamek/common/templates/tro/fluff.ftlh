@@ -6,9 +6,12 @@
 <b>Power Plant: </b>${engineDesc}<br/>
 <#if cruisingSpeed??><b>Cruising Speed: </b>${cruisingSpeed} kph<br/></#if>
 <#if cruisingSpeed??><b>Maximum Speed: </b>${maxSpeed} kph<br/></#if>
-<#if jumpDesc??>
+<#if jjDesc??>
 <b>Jump Jets: </b>${jjDesc}<br/>
 <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jump Capacity: </b>${jumpCapacity} meters<br/>
+</#if>
+<#if jumpBoosterCapacity??>
+    <b>Jump Booster: </b>${jumpBoosterCapacity} meters<br/>
 </#if>
 <b>Armor: </b>${armorDesc}</b><br/>
 <b>Armament:</b><br/>

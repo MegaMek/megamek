@@ -1,28 +1,48 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.server.sbf;
 
-import megamek.common.InGameObject;
+import megamek.common.game.InGameObject;
 import megamek.common.Player;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
-import megamek.common.strategicBattleSystems.*;
+import megamek.common.strategicBattleSystems.SBFFormation;
+import megamek.common.strategicBattleSystems.SBFIGotSomethingUnitPlaceholder;
+import megamek.common.strategicBattleSystems.SBFPartialScanUnitPlaceHolder;
+import megamek.common.strategicBattleSystems.SBFSomethingOutThereUnitPlaceHolder;
+import megamek.common.strategicBattleSystems.SBFUnitPlaceHolder;
+import megamek.common.strategicBattleSystems.SBFVisibilityStatus;
 
 record SBFUnitUpdateHelper(SBFGameManager gameManager) implements SBFGameManagerHelper {
 
@@ -37,9 +57,10 @@ record SBFUnitUpdateHelper(SBFGameManager gameManager) implements SBFGameManager
 
     /**
      * Updates all units to the given recipient, taking into account visibility.
-     * 
+     *
      * @param player The recipient of the update
-     * @see #sendUnitUpdate(Player, InGameObject) 
+     *
+     * @see #sendUnitUpdate(Player, InGameObject)
      */
     void sendAllUnitUpdate(Player player) {
         for (InGameObject unit : game().getInGameObjects()) {
@@ -62,14 +83,13 @@ record SBFUnitUpdateHelper(SBFGameManager gameManager) implements SBFGameManager
     }
 
     /**
-     * Sends the given unit to the given Player, considering the unit's visibility, if it is
-     * a formation. If it is visible, the formation is sent as is. If it is less than visible,
-     * a replacement object is sent instead. If the formation is invisible to the player, the
-     * client is sent a packet instead that instructs it to remove this id.
+     * Sends the given unit to the given Player, considering the unit's visibility, if it is a formation. If it is
+     * visible, the formation is sent as is. If it is less than visible, a replacement object is sent instead. If the
+     * formation is invisible to the player, the client is sent a packet instead that instructs it to remove this id.
      * Units other than formations are not checked for visibility but sent as is.
      *
      * @param player The recipient of the update
-     * @param unit The unit to send
+     * @param unit   The unit to send
      */
     void sendUnitUpdate(Player player, InGameObject unit) {
         if (unit instanceof SBFFormation formation) {
@@ -86,11 +106,10 @@ record SBFUnitUpdateHelper(SBFGameManager gameManager) implements SBFGameManager
     }
 
     /**
-     * Sends the given unit to all players, considering the unit's visibility, if it is
-     * a formation. If it is visible, the formation is sent as is. If it is less than visible,
-     * a replacement object is sent instead. If the formation is invisible to the player, the
-     * client is sent a packet instead that instructs it to remove this id.
-     * Units other than formations are not checked for visibility but sent as is.
+     * Sends the given unit to all players, considering the unit's visibility, if it is a formation. If it is visible,
+     * the formation is sent as is. If it is less than visible, a replacement object is sent instead. If the formation
+     * is invisible to the player, the client is sent a packet instead that instructs it to remove this id. Units other
+     * than formations are not checked for visibility but sent as is.
      *
      * @param unit The unit to send
      */

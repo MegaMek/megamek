@@ -1,37 +1,71 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons.bombs;
 
-import megamek.common.*;
+import static megamek.common.game.IGame.LOGGER;
+
+import java.io.Serial;
+
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.PrototypeRLHandler;
-import megamek.common.weapons.RLHandler;
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
+import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.RLHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.server.totalwarfare.TWGameManager;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Jay Lawson
  */
 public class BombISRL10 extends MissileWeapon {
+    @Serial
     private static final long serialVersionUID = 5763858241912399084L;
 
     public BombISRL10() {
         super();
 
         this.name = "Rocket Launcher Pod";
-        this.setInternalName(BombType.getBombWeaponName(BombType.B_RL));
+        this.setInternalName(BombTypeEnum.RL.getWeaponName());
         addLookupName("RL 10 (Bomb)");
         this.heat = 0;
         this.rackSize = 10;
@@ -40,7 +74,7 @@ public class BombISRL10 extends MissileWeapon {
         this.longRange = 18;
         this.extremeRange = 22;
         this.tonnage = 1;
-        this.criticals = 0;
+        this.criticalSlots = 0;
         this.hittable = false;
         this.bv = 0;
         this.cost = 0;
@@ -49,22 +83,27 @@ public class BombISRL10 extends MissileWeapon {
         this.medAV = 6;
         this.maxRange = RANGE_MED;
         this.toHitModifier = 1;
-        this.ammoType = AmmoType.T_RL_BOMB;
+        this.ammoType = AmmoType.AmmoTypeEnum.RL_BOMB;
         rulesRefs = "229, TM";
-        new TechAdvancement(TECH_BASE_IS)
-            .setIntroLevel(false)
-            .setUnofficial(false)
-            .setTechRating(RATING_B)
-            .setAvailability(RATING_X, RATING_X, RATING_B, RATING_B)
-            .setISAdvancement(3060, 3064, 3067, DATE_NONE, DATE_NONE)
-            .setISApproximate(true, false, false, false, false)
-            .setPrototypeFactions(F_MH)
-            .setProductionFactions(F_MH);
+        this.techAdvancement.setTechBase(TechBase.IS)
+              .setIntroLevel(false)
+              .setUnofficial(false)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
+              .setISAdvancement(3060, 3064, 3067, DATE_NONE, DATE_NONE)
+              .setISApproximate(true, false, false, false, false)
+              .setPrototypeFactions(Faction.MH)
+              .setProductionFactions(Faction.MH);
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-                                              WeaponAttackAction waa, Game game, TWGameManager manager) {
-        return new RLHandler(toHit, waa, game, manager);
+    @Nullable
+    public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
+        try {
+            return new RLHandler(toHit, waa, game, manager);
+        } catch (EntityLoadingException ignored) {
+            LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
+        }
+        return null;
     }
 }

@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2022, 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.net.enums;
 
 public enum PacketCommand {
@@ -33,8 +48,8 @@ public enum PacketCommand {
     PLAYER_TEAM_CHANGE,
 
     /**
-     * A packet replacing a Client's knowledge of all bot settings (S -> C) or updating the Server on a single
-     * bot's settings (C -> S). Does not invoke any actual changes to bots.
+     * A packet replacing a Client's knowledge of all bot settings (S -> C) or updating the Server on a single bot's
+     * settings (C -> S). Does not invoke any actual changes to bots.
      */
     PRINCESS_SETTINGS,
 
@@ -55,7 +70,10 @@ public enum PacketCommand {
     ENTITY_DEPLOY,
     ENTITY_DEPLOY_UNLOAD,
 
-    /** A packet informing the receiver of one or more actions of units (both directions; using different packet builds). */
+    /**
+     * A packet informing the receiver of one or more actions of units (both directions; using different packet
+     * builds).
+     */
     ENTITY_ATTACK,
 
     ENTITY_PREPHASE,
@@ -67,15 +85,15 @@ public enum PacketCommand {
     /** A packet instructing the Client to forget the unit of the given id as it is / has become invisible (SBF). */
     UNIT_INVISIBLE,
 
-    ENTITY_MULTIUPDATE,
+    ENTITY_MULTI_UPDATE,
     ENTITY_WORDER_UPDATE,
     ENTITY_ASSIGN,
-    ENTITY_MODECHANGE,
-    ENTITY_AMMOCHANGE,
-    ENTITY_SENSORCHANGE,
-    ENTITY_SINKSCHANGE,
+    ENTITY_MODE_CHANGE,
+    ENTITY_AMMO_CHANGE,
+    ENTITY_SENSOR_CHANGE,
+    ENTITY_SINKS_CHANGE,
     ENTITY_ACTIVATE_HIDDEN,
-    ENTITY_SYSTEMMODECHANGE,
+    ENTITY_SYSTEM_MODE_CHANGE,
     FORCE_UPDATE,
     FORCE_ADD,
     FORCE_DELETE,
@@ -104,8 +122,8 @@ public enum PacketCommand {
     /** A Server to Client packet instructing the Client to replace all boards with the newly sent ones. */
     SENDING_BOARD,
 
-    SENDING_ILLUM_HEXES,
-    CLEAR_ILLUM_HEXES,
+    SENDING_ILLUMINATED_HEXES,
+    CLEAR_ILLUMINATED_HEXES,
     SENDING_ENTITIES,
     SENDING_PLAYERS,
 
@@ -119,7 +137,7 @@ public enum PacketCommand {
     /** A packet transmitting the entire game's accumulated reports to the Client, possibly obscured. */
     SENDING_REPORTS_ALL,
 
-    /** A packet having a options to share with other Clients (C -> S) or implement on the receiving Client (S -> C). */
+    /** A packet having an options to share with other Clients (C -> S) or implement on the receiving Client (S -> C). */
     SENDING_GAME_SETTINGS,
 
     SENDING_MAP_DIMENSIONS,
@@ -133,25 +151,33 @@ public enum PacketCommand {
     UPDATE_GROUND_OBJECTS,
     REROLL_INITIATIVE,
     UNLOAD_STRANDED,
-    SET_ARTILLERY_AUTOHIT_HEXES,
+    SET_ARTILLERY_AUTO_HIT_HEXES,
     SENDING_ARTILLERY_ATTACKS,
     SENDING_FLARES,
     SERVER_CORRECT_NAME,
     SEND_SAVEGAME,
     LOAD_SAVEGAME,
     LOAD_GAME,
+
+    /** A Server to Client packet transmitting SpecialHexDisplays for a board (filtered for visibility) */
     SENDING_SPECIAL_HEX_DISPLAY,
+
+    /** A Client to Server packet adding a new SpecialHexDisplay */
     SPECIAL_HEX_DISPLAY_APPEND,
+
+    /** A Client to Server packet removing a SpecialHexDisplay */
     SPECIAL_HEX_DISPLAY_DELETE,
     CUSTOM_INITIATIVE,
     FORWARD_INITIATIVE,
     SENDING_PLANETARY_CONDITIONS,
     SQUADRON_ADD,
-    ENTITY_CALLEDSHOTCHANGE,
+    ENTITY_CALLED_SHOT_CHANGE,
     ENTITY_MOUNTED_FACING_CHANGE,
     SENDING_AVAILABLE_MAP_SIZES,
     ENTITY_LOAD,
+    ENTITY_TOW,
     ENTITY_NOVA_NETWORK_CHANGE,
+    ENTITY_VARIABLE_RANGE_MODE_CHANGE,
     RESET_ROUND_DEPLOYMENT,
     SENDING_TAG_INFO,
     RESET_TAG_INFO,
@@ -210,7 +236,7 @@ public enum PacketCommand {
 
     public boolean isCFR() {
         return isCFRDominoEffect() || isCFRAMSAssign() || isCFRAPDSAssign() || isCFRHiddenPBS()
-                || isCFRTeleguidedTarget() || isCFRTagTarget();
+              || isCFRTeleguidedTarget() || isCFRTagTarget();
     }
     //endregion Boolean Comparison Methods
 }

@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2022-2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.eras;
 
 import static megamek.common.eras.EraFlag.EARLY_REPUBLIC;
@@ -31,7 +46,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
-
 import javax.swing.ImageIcon;
 
 import megamek.codeUtilities.StringUtility;
@@ -42,17 +56,16 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 
 /**
- * This class represents an Era of the BT Universe such as the Civil War or Star
- * League eras. The eras are read from the XML definition file located at
- * {@link megamek.MMConstants#ERAS_FILE_PATH}.
- *
+ * This class represents an Era of the BT Universe such as the Civil War or Star League eras. The eras are read from the
+ * XML definition file located at {@link megamek.MMConstants#ERAS_FILE_PATH}.
+ * <p>
  * This class is immutable.
  *
  * @author Justin "Windchild" Bowen
  * @author Simon (Juliez)
  */
 public final class Era {
-    private static final MMLogger logger = MMLogger.create(Era.class);
+    private static final MMLogger LOGGER = MMLogger.create(Era.class);
 
     /** @return The full name of the Era, e.g. "Clan Invasion". */
     public String name() {
@@ -65,16 +78,14 @@ public final class Era {
     }
 
     /**
-     * @return The end date of this Era. Note that the end date is e.g. 3052 when
-     *         the era ends on 31 Dec 3051.
+     * @return The end date of this Era. Note that the end date is e.g. 3052 when the era ends on 31 Dec 3051.
      */
     public LocalDate end() {
         return end;
     }
 
     /**
-     * @return All {@link EraFlag}s of this era. Returns a copy that may be safely
-     *         modified.
+     * @return All {@link EraFlag}s of this era. Returns a copy that may be safely modified.
      */
     public Set<EraFlag> flags() {
         return Collections.unmodifiableSet(flags);
@@ -97,8 +108,8 @@ public final class Era {
 
     public ImageIcon getIcon() {
         try {
-            MegaMekFile iconfile = new MegaMekFile(Configuration.universeImagesDir(), iconFilePath);
-            return new ImageIcon(iconfile.getFile().getPath());
+            MegaMekFile iconFile = new MegaMekFile(Configuration.universeImagesDir(), iconFilePath);
+            return new ImageIcon(iconFile.getFile().getPath());
         } catch (Exception exception) {
             return new ImageIcon(ImageUtil.failStandardImage());
         }
@@ -173,23 +184,18 @@ public final class Era {
     private final String iconFilePath;
 
     /**
-     * Constructs a new Era. The code and name cannot be empty or null. The code is
-     * the database key and must
-     * be unique.
+     * Constructs a new Era. The code and name cannot be empty or null. The code is the database key and must be unique.
      * This constructor is for use from {@link Eras} only.
      *
      * @param code         The code (short name) of the Era, such as CW or ILC.
      * @param name         The full name of the Era, such as "Civil War".
-     * @param end          The inclusive end date of the Era, such as 3051-31-12
-     *                     (next Era starts 3052-1-1)
+     * @param end          The inclusive end date of the Era, such as 3051-31-12 (next Era starts 3052-1-1)
      * @param flags        {@link EraFlag}s of this Era
-     * @param mulId        The MUL ID for this Era; used to create hyperlinks to the
-     *                     MUL website, set to -1 if negative
-     * @param iconFilePath The file path of the icon, if any, relative to
-     *                     {@link Configuration#universeImagesDir()}
+     * @param mulId        The MUL ID for this Era; used to create hyperlinks to the MUL website, set to -1 if negative
+     * @param iconFilePath The file path of the icon, if any, relative to {@link Configuration#universeImagesDir()}
      */
     Era(String code, String name, @Nullable LocalDate end, @Nullable Collection<EraFlag> flags,
-            int mulId, @Nullable String iconFilePath) {
+          int mulId, @Nullable String iconFilePath) {
 
         if (StringUtility.isNullOrBlank(code) || StringUtility.isNullOrBlank(name)) {
             throw new IllegalArgumentException("The code and name for a new Era must not be null or empty.");
@@ -206,7 +212,7 @@ public final class Era {
         if (iconFilePath != null) {
             File iconFile = new File(Configuration.universeImagesDir(), iconFilePath);
             if (!iconFile.exists()) {
-                logger.warn("Icon file at " + iconFilePath + " not found.");
+                LOGGER.warn("Icon file at {} not found.", iconFilePath);
                 this.iconFilePath = "";
             } else {
                 this.iconFilePath = iconFilePath;

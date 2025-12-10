@@ -1,46 +1,60 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.server;
 
-import megamek.common.IGame;
-import megamek.common.PlanetaryConditionsUsing;
-import megamek.common.actions.EntityAction;
-import megamek.common.net.enums.PacketCommand;
-import megamek.common.net.packets.Packet;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import static megamek.common.net.enums.PacketCommand.PHASE_CHANGE;
+import static megamek.common.net.enums.PacketCommand.ROUND_UPDATE;
+import static megamek.common.net.enums.PacketCommand.SENDING_BOARD;
+import static megamek.common.net.enums.PacketCommand.SENDING_GAME_SETTINGS;
+import static megamek.common.net.enums.PacketCommand.SENDING_PLANETARY_CONDITIONS;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static megamek.common.net.enums.PacketCommand.*;
+import megamek.common.Player;
+import megamek.common.actions.EntityAction;
+import megamek.common.game.IGame;
+import megamek.common.interfaces.PlanetaryConditionsUsing;
+import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.Packet;
+import megamek.common.planetaryConditions.PlanetaryConditions;
 
 /**
  * This is a helper class used by GameManagers (not Clients) to create packets to send to the Clients.
  */
-public class GameManagerPacketHelper {
-
-    private final AbstractGameManager gameManager;
-
-    GameManagerPacketHelper(AbstractGameManager gameManager) {
-        this.gameManager = gameManager;
-    }
+public record GameManagerPacketHelper(AbstractGameManager gameManager) {
 
     /** @return A Packet containing information about a list of actions (not limited to Entity!). */
     public Packet createAttackPacket(List<? extends EntityAction> actions, boolean isChargeAttacks) {
@@ -70,13 +84,13 @@ public class GameManagerPacketHelper {
 
     /**
      * @return A Packet containing the game's planetary conditions, if it uses them, a newly created PlC otherwise.
-     *
-     * This method avoids throwing an IllegalArgumentException if the game doesn't use PlC as, in that case, the
-     * sent packet is likely going to be ignored anyway and not cause the game to break.
+     *       <p>
+     *       This method avoids throwing an IllegalArgumentException if the game doesn't use PlC as, in that case, the
+     *       sent packet is likely going to be ignored anyway and not cause the game to break.
      */
     public Packet createPlanetaryConditionsPacket() {
         return new Packet(SENDING_PLANETARY_CONDITIONS, game() instanceof PlanetaryConditionsUsing
-                ? ((PlanetaryConditionsUsing) game()).getPlanetaryConditions() : new PlanetaryConditions());
+              ? ((PlanetaryConditionsUsing) game()).getPlanetaryConditions() : new PlanetaryConditions());
     }
 
     /** @return A Packet containing the complete Map of boards and IDs to send from Server to Client. */
@@ -87,8 +101,8 @@ public class GameManagerPacketHelper {
     }
 
     /**
-     * @return A packet containing the game settings. Note that this packet differs from the one sent by the
-     * Client in that the Client's packet will also contain a password
+     * @return A packet containing the game settings. Note that this packet differs from the one sent by the Client in
+     *       that the Client's packet will also contain a password
      */
     public Packet createGameSettingsPacket() {
         return new Packet(SENDING_GAME_SETTINGS, game().getOptions());
@@ -102,10 +116,10 @@ public class GameManagerPacketHelper {
     }
 
     /**
-     * @return A packet containing the current player turn index. The ID of the previous player may be
-     * {@link megamek.common.Player#PLAYER_NONE}.
-     *
      * @param previousPlayerId The ID of the player who triggered the turn change
+     *
+     * @return A packet containing the current player turn index. The ID of the previous player may be
+     *       {@link Player#PLAYER_NONE}.
      */
     public Packet createTurnIndexPacket(int previousPlayerId) {
         return new Packet(PacketCommand.TURN, game().getTurnIndex(), previousPlayerId);

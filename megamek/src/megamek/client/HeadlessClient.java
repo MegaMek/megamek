@@ -1,45 +1,59 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.client;
 
-import megamek.common.Entity;
-import megamek.common.EntityListFile;
-import megamek.common.Game;
-import megamek.common.actions.AttackAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.enums.GamePhase;
-import megamek.common.event.GameEndEvent;
-import megamek.common.event.GameListener;
-import megamek.common.event.GameListenerAdapter;
-import megamek.common.event.GameNewActionEvent;
-import megamek.common.net.packets.Packet;
-import megamek.common.preference.ClientPreferences;
-import megamek.common.preference.PreferenceManager;
-import megamek.common.util.StringUtil;
-import megamek.logging.MMLogger;
+import static megamek.client.ui.clientGUI.ClientGUI.CG_FILENAME_SALVAGE;
+import static megamek.client.ui.clientGUI.ClientGUI.CG_FILE_EXTENSION_MUL;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-import static megamek.client.ui.swing.ClientGUI.CG_FILEEXTENTIONMUL;
-import static megamek.client.ui.swing.ClientGUI.CG_FILENAMESALVAGE;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityListFile;
+import megamek.common.enums.GamePhase;
+import megamek.common.event.GameEndEvent;
+import megamek.common.event.GameListenerAdapter;
+import megamek.common.preference.ClientPreferences;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.util.StringUtil;
+import megamek.logging.MMLogger;
 
 /**
  * This class is instantiated for the player. It allows to communicate with the server with no GUI attached.
+ *
  * @author Luana Coppio
  */
 public class HeadlessClient extends Client {
@@ -91,7 +105,7 @@ public class HeadlessClient extends Client {
                             return;
                         }
                     }
-                    String fileName = CG_FILENAMESALVAGE + CG_FILEEXTENTIONMUL;
+                    String fileName = CG_FILENAME_SALVAGE + CG_FILE_EXTENSION_MUL;
                     if (PREFERENCES.stampFilenames()) {
                         fileName = StringUtil.addDateTimeStamp(fileName);
                     }

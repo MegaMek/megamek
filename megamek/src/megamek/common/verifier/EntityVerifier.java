@@ -1,25 +1,38 @@
 /*
- * MegaMek -
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- *
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.verifier;
 
 import java.io.File;
@@ -37,11 +50,11 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import megamek.common.Configuration;
-import megamek.common.Entity;
-import megamek.common.MekFileParser;
-import megamek.common.MekSummary;
-import megamek.common.MekSummaryCache;
-import megamek.common.UnitType;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
+import megamek.common.units.Entity;
+import megamek.common.units.UnitType;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 
@@ -94,8 +107,8 @@ public class EntityVerifier implements MekSummaryCache.Listener {
     /**
      * Creates and return a new instance of EntityVerifier.
      *
-     * @param config a File that contains an XML representation of the configuration
-     *               settings
+     * @param config a File that contains an XML representation of the configuration settings
+     *
      * @return an EntityVerifier with the configuration loaded from XML
      */
     public static EntityVerifier getInstance(final File config) {
@@ -131,16 +144,15 @@ public class EntityVerifier implements MekSummaryCache.Listener {
         final NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.getDefault());
         boolean retVal = false;
         TestEntity testEntity = TestEntity.getEntityVerifier(entity);
-        String message = "";
+        String message;
 
         if (testEntity == null) {
-            message = String.format("Unknown Type: %s%nFound in: %s", entity.getDisplayName(), fileString);
-            logger.error(message);
+            logger.error("Unknown Type: {}\nFound in: {}", entity.getDisplayName(), fileString);
             return false;
         }
 
+        StringBuffer buff = new StringBuffer();
         if (verbose) {
-            StringBuffer buff = new StringBuffer();
             boolean valid = testEntity.correctEntity(buff, ammoTechLvl);
 
             if (!valid || !failsOnly) {
@@ -150,28 +162,26 @@ public class EntityVerifier implements MekSummaryCache.Listener {
                     logger.info("---Entity INVALID---");
                 }
                 message = String.format("%s%nBV: %s    Cost: %s", testEntity.printEntity(),
-                        entity.calculateBattleValue(), numberFormat.format(entity.getCost(false)));
+                      entity.calculateBattleValue(), numberFormat.format(entity.getCost(false)));
                 logger.info(message);
             }
         } else {
-            StringBuffer buff = new StringBuffer();
             if (testEntity.correctEntity(buff, ammoTechLvl)) {
                 retVal = true;
             } else {
-                message = String.format("""
-                        %s
-                        Found in: %s
-                        Intro year: %d
-                        BV: %d    Cost: %s
-                        %s
-                        """,
-                        testEntity.getName(),
-                        testEntity.fileString,
-                        entity.getYear(),
-                        entity.calculateBattleValue(),
-                        numberFormat.format(entity.getCost(false)),
-                        buff.toString());
-                logger.info(message);
+                logger.info("""
+                            {}
+                            Found in: {}
+                            Intro year: {}
+                            BV: {}    Cost: {}
+                            {}
+                            """,
+                      testEntity.getName(),
+                      testEntity.fileString,
+                      entity.getYear(),
+                      entity.calculateBattleValue(),
+                      numberFormat.format(entity.getCost(false)),
+                      buff);
             }
         }
 
@@ -196,39 +206,38 @@ public class EntityVerifier implements MekSummaryCache.Listener {
     // MegaMek normally runs should be checked).
     @Override
     public void doneLoading() {
-        String message = "";
+        String message;
         MekSummary[] ms = mekSummaryCache.getAllMeks();
 
-        message = String.format("""
-
-                Mek Options: %s
-                Protomek Options: %s
-                Tank Options: %s
-                Aero Options: %s
-                BattleArmor Options: %s
-                Infantry Options: %s
-                        """,
-                mekOption.printOptions(),
-                protomekOption.printOptions(),
-                tankOption.printOptions(),
-                aeroOption.printOptions(),
-                baOption.printOptions(),
-                infOption.printOptions());
-        logger.info(message);
+        logger.info("""
+                    
+                    Mek Options: {}
+                    Protomek Options: {}
+                    Tank Options: {}
+                    Aero Options: {}
+                    BattleArmor Options: {}
+                    Infantry Options: {}
+                    """,
+              mekOption.printOptions(),
+              protomekOption.printOptions(),
+              tankOption.printOptions(),
+              aeroOption.printOptions(),
+              baOption.printOptions(),
+              infOption.printOptions());
 
         int failures = 0;
         Map<Integer, Integer> failedByType = new HashMap<>();
 
-        for (int i = 0; i < ms.length; i++) {
-            int unitType = UnitType.determineUnitTypeCode(ms[i].getUnitType());
+        for (MekSummary m : ms) {
+            int unitType = UnitType.determineUnitTypeCode(m.getUnitType());
             if (unitType != UnitType.GUN_EMPLACEMENT) {
-                Entity entity = loadEntity(ms[i].getSourceFile(), ms[i].getEntryName());
+                Entity entity = loadEntity(m.getSourceFile(), m.getEntryName());
                 if (entity == null) {
                     continue;
                 }
 
-                if (!checkEntity(entity, ms[i].getSourceFile().toString(), loadingVerbosity, entity.getTechLevel(),
-                        failsOnly)) {
+                if (!checkEntity(entity, m.getSourceFile().toString(), loadingVerbosity, entity.getTechLevel(),
+                      failsOnly)) {
                     failures++;
                     failedByType.merge(unitType, 1, Integer::sum);
                 }
@@ -236,39 +245,39 @@ public class EntityVerifier implements MekSummaryCache.Listener {
         }
 
         message = String.format("""
-                Total Failures: %d
-                    Failed Meks: %d
-                    Failed ProtoMeks: %d
-                    Failed Tanks: %d
-                    Failed VTOLs: %d
-                    Failed Naval: %d
-                    Failed ASFs: %d
-                    Failed AeroSpaces: %d
-                    Failed CFs: %d
-                    Failed Small Craft: %d
-                    Failed DropShips: %d
-                    Failed JumpShips: %d
-                    Failed WarShips: %d
-                    Failed Space Stations: %d
-                    Failed BA: %d
-                    Failed Infantry: %d
-                """,
-                failures,
-                failedByType.getOrDefault(UnitType.MEK, 0),
-                failedByType.getOrDefault(UnitType.PROTOMEK, 0),
-                failedByType.getOrDefault(UnitType.TANK, 0),
-                failedByType.getOrDefault(UnitType.VTOL, 0),
-                failedByType.getOrDefault(UnitType.NAVAL, 0),
-                failedByType.getOrDefault(UnitType.AEROSPACEFIGHTER, 0),
-                failedByType.getOrDefault(UnitType.AERO, 0),
-                failedByType.getOrDefault(UnitType.CONV_FIGHTER, 0),
-                failedByType.getOrDefault(UnitType.SMALL_CRAFT, 0),
-                failedByType.getOrDefault(UnitType.DROPSHIP, 0),
-                failedByType.getOrDefault(UnitType.JUMPSHIP, 0),
-                failedByType.getOrDefault(UnitType.WARSHIP, 0),
-                failedByType.getOrDefault(UnitType.SPACE_STATION, 0),
-                failedByType.getOrDefault(UnitType.BATTLE_ARMOR, 0),
-                failedByType.getOrDefault(UnitType.INFANTRY, 0));
+                    Total Failures: %d
+                        Failed Meks: %d
+                        Failed ProtoMeks: %d
+                        Failed Tanks: %d
+                        Failed VTOLs: %d
+                        Failed Naval: %d
+                        Failed ASFs: %d
+                        Failed AeroSpaces: %d
+                        Failed CFs: %d
+                        Failed Small Craft: %d
+                        Failed DropShips: %d
+                        Failed JumpShips: %d
+                        Failed WarShips: %d
+                        Failed Space Stations: %d
+                        Failed BA: %d
+                        Failed Infantry: %d
+                    """,
+              failures,
+              failedByType.getOrDefault(UnitType.MEK, 0),
+              failedByType.getOrDefault(UnitType.PROTOMEK, 0),
+              failedByType.getOrDefault(UnitType.TANK, 0),
+              failedByType.getOrDefault(UnitType.VTOL, 0),
+              failedByType.getOrDefault(UnitType.NAVAL, 0),
+              failedByType.getOrDefault(UnitType.AEROSPACE_FIGHTER, 0),
+              failedByType.getOrDefault(UnitType.AERO, 0),
+              failedByType.getOrDefault(UnitType.CONV_FIGHTER, 0),
+              failedByType.getOrDefault(UnitType.SMALL_CRAFT, 0),
+              failedByType.getOrDefault(UnitType.DROPSHIP, 0),
+              failedByType.getOrDefault(UnitType.JUMPSHIP, 0),
+              failedByType.getOrDefault(UnitType.WARSHIP, 0),
+              failedByType.getOrDefault(UnitType.SPACE_STATION, 0),
+              failedByType.getOrDefault(UnitType.BATTLE_ARMOR, 0),
+              failedByType.getOrDefault(UnitType.INFANTRY, 0));
         logger.info(message);
     }
 
@@ -281,50 +290,50 @@ public class EntityVerifier implements MekSummaryCache.Listener {
         boolean failsOnly = true;
 
         for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-file")) {
-                i++;
-                if (i >= args.length) {
-                    logger.error("Missing argument filename!");
-                    return;
-                }
-
-                f = new File(args[i]);
-
-                if (!f.exists()) {
-                    String message = String.format("Can't find %s!", args[i]);
-                    logger.info(message);
-                    return;
-                }
-
-                if (args[i].endsWith(".zip")) {
+            switch (args[i]) {
+                case "-file" -> {
                     i++;
                     if (i >= args.length) {
-                        logger.info("Missing Entity Name!");
+                        logger.error("Missing argument filename!");
                         return;
                     }
-                    entityName = args[i];
+
+                    f = new File(args[i]);
+
+                    if (!f.exists()) {
+                        String message = String.format("Can't find %s!", args[i]);
+                        logger.info(message);
+                        return;
+                    }
+
+                    if (args[i].endsWith(".zip")) {
+                        i++;
+                        if (i >= args.length) {
+                            logger.info("Missing Entity Name!");
+                            return;
+                        }
+                        entityName = args[i];
+                    }
                 }
-            } else if (args[i].equals("-v") || args[i].equals("-verbose")) {
-                verbose = true;
-            } else if (args[i].equals("-valid")) {
-                failsOnly = false;
-            } else if (args[i].equals("-unofficial")) {
-                ignoreUnofficial = false;
-            } else {
-                logger.error("""
-                        Error: Invalid argument.
-                        Usage:
-
-                        EntityVerifier [flags]
-
-                        Valid Flags:
-                            -file <FILENAME> Specify a file to validate,
-                                            else the data directory is checked
-                            -v              Verbose -- print detailed report
-                            -unofficial      Consider unofficial units in data dir
-                            -valid          Print verbose reports for valid units
-                        """);
-                return;
+                case "-v", "-verbose" -> verbose = true;
+                case "-valid" -> failsOnly = false;
+                case "-unofficial" -> ignoreUnofficial = false;
+                default -> {
+                    logger.error("""
+                          Error: Invalid argument.
+                          Usage:
+                          
+                          EntityVerifier [flags]
+                          
+                          Valid Flags:
+                              -file <FILENAME> Specify a file to validate,
+                                              else the data directory is checked
+                              -v              Verbose -- print detailed report
+                              -unofficial      Consider unofficial units in data dir
+                              -valid          Print verbose reports for valid units
+                          """);
+                    return;
+                }
             }
         }
 

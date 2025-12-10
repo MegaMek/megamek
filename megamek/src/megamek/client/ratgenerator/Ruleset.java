@@ -1,15 +1,34 @@
 /*
- * MegaMek - Copyright (c) 2016-2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ratgenerator;
 
@@ -23,23 +42,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.xml.parsers.DocumentBuilder;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import megamek.client.generator.RandomNameGenerator;
 import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
- * Container for all the rule nodes for a faction. Has methods for processing
- * the rules to
- * fill out a ForceDescriptor.
+ * Container for all the rule nodes for a faction. Has methods for processing the rules to fill out a ForceDescriptor.
  *
  * @author Neoancient
  */
@@ -53,7 +68,7 @@ public class Ruleset {
         ROS("TP", "PG", "HS", "SB"),
         NONE();
 
-        String[] vals;
+        final String[] vals;
 
         RatingSystem(String... vals) {
             this.vals = vals;
@@ -73,7 +88,7 @@ public class Ruleset {
     private static final String CONSTANTS_FILE = "constants.txt";
 
     private static HashMap<String, String> constants;
-    private static Pattern constantPattern = Pattern.compile("%(.*?)%");
+    private static final Pattern constantPattern = Pattern.compile("%(.*?)%");
     private static HashMap<String, Ruleset> rulesets;
     private static boolean initialized;
     private static boolean initializing;
@@ -83,8 +98,8 @@ public class Ruleset {
     private DefaultsNode defaults;
     private TOCNode toc;
     private int customRankBase;
-    private HashMap<Integer, String> customRanks;
-    private ArrayList<ForceNode> forceNodes;
+    private final HashMap<Integer, String> customRanks;
+    private final ArrayList<ForceNode> forceNodes;
     private String parent;
 
     private Ruleset() {
@@ -156,10 +171,8 @@ public class Ruleset {
         /**
          * Notifies listener of progress in generating force.
          *
-         * @param progress The fraction of the task that has been completed in this
-         *                 step.
+         * @param progress The fraction of the task that has been completed in this step.
          * @param message  A message that describes the current step.
-         *
          */
         void updateProgress(double progress, String message);
     }
@@ -198,50 +211,46 @@ public class Ruleset {
     }
 
     /**
-     * Recursively build the force structure by assigning appropriate values to the
-     * current node,
-     * including number and type of subforce and attached force nodes, and process
-     * those as well.
+     * Recursively build the force structure by assigning appropriate values to the current node, including number and
+     * type of subforce and attached force nodes, and process those as well.
      *
-     * @param fd
      */
     private void buildForceTree(ForceDescriptor fd, ProgressListener l, double progress) {
         // Find the most specific ruleset for this faction.
-        Ruleset rs = findRuleset(fd.getFaction());
+        Ruleset ruleset = findRuleset(fd.getFaction());
         boolean applied = false;
-        ForceNode fn = null;
+        ForceNode forceNode;
         // Find the first node matching node in the ruleset and apply the options to the
         // current force descriptor.
         // If no matching node is found in the ruleset, move to the parent ruleset.
         do {
-            fn = rs.findForceNode(fd);
-            if (fn == null) {
-                if (rs.getParent() == null) {
-                    rs = null;
+            forceNode = ruleset.findForceNode(fd);
+            if (forceNode == null) {
+                if (ruleset.getParent() == null) {
+                    ruleset = null;
                 } else {
-                    rs = rulesets.get(rs.getParent());
+                    ruleset = rulesets.get(ruleset.getParent());
                 }
             } else {
-                applied = fn.apply(fd);
-                logger.debug("Selecting force node " + fn.show()
-                        + " from ruleset " + rs.getFaction());
+                applied = forceNode.apply(fd);
+                logger.debug("Selecting force node {} from ruleset {}", forceNode.show(), ruleset.getFaction());
             }
-        } while (rs != null && (fn == null || !applied));
+        } while (ruleset != null && (forceNode == null || !applied));
 
-        int count = fd.getSubforces().size() + fd.getAttached().size();
+        int count = fd.getSubForces().size() + fd.getAttached().size();
 
-        // Process subforces recursively. It is possible that the subforce has
+        // Process subForces recursively. It is possible that the subforce has
         // a different faction, in which case the ruleset appropriate to that faction is
         // used.
-        for (ForceDescriptor sub : fd.getSubforces()) {
-            rs = this;
+        for (ForceDescriptor sub : fd.getSubForces()) {
+            ruleset = this;
             if (!fd.getFaction().equals(sub.getFaction())) {
-                rs = findRuleset(sub.getFaction());
+                ruleset = findRuleset(sub.getFaction());
             }
-            if (rs == null) {
+            if (ruleset == null) {
                 buildForceTree(sub, l, progress / count);
             } else {
-                rs.buildForceTree(sub, l, progress / count);
+                ruleset.buildForceTree(sub, l, progress / count);
             }
         }
 
@@ -290,7 +299,7 @@ public class Ruleset {
 
     public ForceNode findForceNode(ForceDescriptor fd) {
         for (ForceNode n : forceNodes) {
-            if (n.getEschelon().equals(fd.getEschelon()) && n.matches(fd)) {
+            if (n.getEchelon().equals(fd.getEchelon()) && n.matches(fd)) {
                 return n;
             }
         }
@@ -299,7 +308,7 @@ public class Ruleset {
 
     public ForceNode findForceNode(ForceDescriptor fd, int eschelon, boolean augmented) {
         for (ForceNode n : forceNodes) {
-            if (n.getEschelon() == eschelon && n.matches(fd, augmented)) {
+            if (n.getEchelon() == eschelon && n.matches(fd, augmented)) {
                 return n;
             }
         }
@@ -310,7 +319,7 @@ public class Ruleset {
         HashMap<String, String> retVal = new HashMap<>();
         for (ForceNode n : forceNodes) {
             if (n.matchesPredicate(unitType, "ifUnitType")) {
-                retVal.put(n.getEschelonCode(), n.getEschelonName());
+                retVal.put(n.getEchelonCode(), n.getEchelonName());
             }
         }
         return retVal;
@@ -318,8 +327,8 @@ public class Ruleset {
 
     public String getEschelonName(ForceDescriptor fd) {
         for (ForceNode fn : forceNodes) {
-            if (fn.matches(fd) && fn.getEschelon().equals(fd.getEschelon())) {
-                return fn.getEschelonName();
+            if (fn.matches(fd) && fn.getEchelon().equals(fd.getEchelon())) {
+                return fn.getEchelonName();
             }
         }
         return null;
@@ -327,7 +336,7 @@ public class Ruleset {
 
     public CommanderNode getCoNode(ForceDescriptor fd) {
         for (ForceNode fn : forceNodes) {
-            if (fn.getEschelon().equals(fd.getEschelon()) && fn.matches(fd)) {
+            if (fn.getEchelon().equals(fd.getEchelon()) && fn.matches(fd)) {
                 for (CommanderNode rn : fn.getCoNodes()) {
                     if (rn.matches(fd)) {
                         return rn;
@@ -340,7 +349,7 @@ public class Ruleset {
 
     public CommanderNode getXoNode(ForceDescriptor fd) {
         for (ForceNode fn : forceNodes) {
-            if (fn.getEschelon().equals(fd.getEschelon()) && fn.matches(fd)) {
+            if (fn.getEchelon().equals(fd.getEchelon()) && fn.matches(fd)) {
                 for (CommanderNode rn : fn.getXoNodes()) {
                     if (rn.matches(fd)) {
                         return rn;
@@ -368,7 +377,7 @@ public class Ruleset {
                     try {
                         constants.put(fields[0], fields[1]);
                     } catch (NumberFormatException e) {
-                        logger.error(e, "Malformed line in force generator constants file: " + line);
+                        logger.error(e, "Malformed line in force generator constants file: {}", line);
                     }
                 }
             }
@@ -401,19 +410,24 @@ public class Ruleset {
             }
         }
 
-        for (File f : dir.listFiles()) {
-            if (!f.getPath().endsWith(".xml")) {
-                continue;
-            }
-            try {
-                Ruleset rs = createFromFile(f);
-                if (rs != null) {
-                    rulesets.put(rs.getFaction(), rs);
+        File[] files = dir.listFiles();
+
+        if (files != null) {
+            for (File file : files) {
+                if (!file.getPath().endsWith(".xml")) {
+                    continue;
                 }
-            } catch (Exception ex) {
-                logger.error(ex, "Failed while parsing file " + f);
+                try {
+                    Ruleset ruleset = createFromFile(file);
+                    if (ruleset != null) {
+                        rulesets.put(ruleset.getFaction(), ruleset);
+                    }
+                } catch (Exception ex) {
+                    logger.error(ex, "Failed while parsing file {}", file);
+                }
             }
         }
+
         initialized = true;
         initializing = false;
     }
@@ -426,7 +440,7 @@ public class Ruleset {
             db = MMXMLUtility.newSafeDocumentBuilder();
             xmlDoc = db.parse(fis);
         } catch (Exception ex) {
-            logger.error(ex, "Failed loading force template from file " + f.getName());
+            logger.error(ex, "Failed loading force template from file {}", f.getName());
             return null;
         }
 
@@ -434,14 +448,14 @@ public class Ruleset {
 
         Element elem = xmlDoc.getDocumentElement();
         if (!elem.getNodeName().equals("ruleset")) {
-            logger.error("Could not find ruleset element in file " + f.getName());
+            logger.error("Could not find ruleset element in file {}", f.getName());
             return null;
         }
 
         if (!elem.getAttribute("faction").isBlank()) {
             retVal.faction = elem.getAttribute("faction");
         } else {
-            logger.error("Faction is not declared in ruleset file " + f.getName());
+            logger.error("Faction is not declared in ruleset file {}", f.getName());
             return null;
         }
         if (!elem.getAttribute("parent").isBlank()) {
@@ -521,11 +535,12 @@ public class Ruleset {
                     try {
                         fn = ForceNode.createFromXml(wn);
                     } catch (IllegalArgumentException ex) {
-                        logger.error(ex, "In file " + f.getName() + " while processing force node"
-                                + ((wn.getAttributes().getNamedItem("eschName") == null) ? ""
-                                        : " "
-                                                + wn.getAttributes().getNamedItem("eschName"))
-                                + ": " + ex.getMessage());
+                        logger.error(ex, "In file {} while processing force node{}: {}",
+                              f.getName(),
+                              (wn.getAttributes().getNamedItem("eschName") == null) ? ""
+                                    : " "
+                                    + wn.getAttributes().getNamedItem("eschName"),
+                              ex.getMessage());
                     }
                     if (fn != null) {
                         retVal.forceNodes.add(fn);

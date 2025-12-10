@@ -1,18 +1,60 @@
+/*
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
 package megamek.client.ui;
-
-import megamek.client.Client;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.common.*;
-import megamek.common.options.GameOptions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import static megamek.client.ui.SharedUtility.predictLeapDamage;
 import static megamek.client.ui.SharedUtility.predictLeapFallDamage;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import megamek.client.Client;
+import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.game.Game;
+import megamek.common.options.GameOptions;
+import megamek.common.rolls.PilotingRollData;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Crew;
+import megamek.common.units.CrewType;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadMek;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class SharedUtilityTest {
     static GameOptions mockGameOptions = mock(GameOptions.class);
@@ -40,38 +82,40 @@ class SharedUtilityTest {
         quadMek = new QuadMek();
         quadMek.setGame(game);
         quadPilot = new Crew(CrewType.SINGLE);
-        bipedPilot.setPiloting(5);
+        bipedPilot.setPiloting(5, bipedPilot.getCrewType().getPilotPos());
         bipedMek.setCrew(bipedPilot);
         bipedMek.setId(1);
-        quadPilot.setPiloting(5);
+        quadPilot.setPiloting(5, quadPilot.getCrewType().getPilotPos());
         quadMek.setCrew(quadPilot);
         quadMek.setId(2);
     }
 
     @BeforeEach
     void setUp() {
-        bipedMek.setArmor(10, Mek.LOC_LLEG);
-        bipedMek.setArmor(10, Mek.LOC_RLEG);
+        bipedMek.setArmor(10, Mek.LOC_LEFT_LEG);
+        bipedMek.setArmor(10, Mek.LOC_RIGHT_LEG);
         bipedMek.setWeight(50.0);
 
-        quadMek.setArmor(10, Mek.LOC_LLEG);
-        quadMek.setArmor(10, Mek.LOC_RLEG);
-        quadMek.setArmor(10, Mek.LOC_LARM);
-        quadMek.setArmor(10, Mek.LOC_RARM);
+        quadMek.setArmor(10, Mek.LOC_LEFT_LEG);
+        quadMek.setArmor(10, Mek.LOC_RIGHT_LEG);
+        quadMek.setArmor(10, Mek.LOC_LEFT_ARM);
+        quadMek.setArmor(10, Mek.LOC_RIGHT_ARM);
         quadMek.setWeight(85.0);
     }
 
     TargetRoll generateLeapRoll(Entity entity, int leapDistance) {
         TargetRoll rollTarget = entity.getBasePilotingRoll(moveType);
         rollTarget.append(new PilotingRollData(entity.getId(),
-            2 * leapDistance, Messages.getString("TacOps.leaping.leg_damage")));
+              2 * leapDistance,
+              Messages.getString("TacOps.leaping.leg_damage")));
         return rollTarget;
     }
 
     TargetRoll generateLeapFallRoll(Entity entity, int leapDistance) {
         TargetRoll rollTarget = entity.getBasePilotingRoll(moveType);
         rollTarget.append(new PilotingRollData(entity.getId(),
-            leapDistance, Messages.getString("TacOps.leaping.fall_damage")));
+              leapDistance,
+              Messages.getString("TacOps.leaping.fall_damage")));
         return rollTarget;
     }
 

@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2019-2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.preferences;
 
@@ -25,21 +39,16 @@ import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.lang.ref.WeakReference;
-
 import javax.swing.JFrame;
 
 import megamek.codeUtilities.StringUtility;
 import megamek.logging.MMLogger;
 
 /**
- * JWindowPreference monitors the size (width and height), location, and
- * maximization state of a Window.
- * It sets the saved values when a dialog is loaded and changes them as they
- * change.
- *
- * Call preferences.manage(new JWindowPreference(Window)) to use this
- * preference, on a Window that
- * has called setName
+ * JWindowPreference monitors the size (width and height), location, and maximization state of a Window. It sets the
+ * saved values when a dialog is loaded and changes them as they change.
+ * <p>
+ * Call preferences.manage(new JWindowPreference(Window)) to use this preference, on a Window that has called setName
  */
 public class JWindowPreference extends PreferenceElement implements ComponentListener, WindowStateListener {
     private final static MMLogger logger = MMLogger.create(JWindowPreference.class);
@@ -64,7 +73,7 @@ public class JWindowPreference extends PreferenceElement implements ComponentLis
             setScreenY(window.getLocationOnScreen().y);
         }
         setMaximized((window instanceof JFrame)
-                && ((((JFrame) window).getExtendedState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH));
+              && ((((JFrame) window).getExtendedState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH));
 
         weakReference = new WeakReference<>(window);
         window.addComponentListener(this);

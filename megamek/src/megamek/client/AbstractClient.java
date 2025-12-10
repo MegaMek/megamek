@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.client;
 
 import java.util.HashMap;
@@ -23,37 +38,36 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
-
 import javax.swing.SwingUtilities;
 
 import megamek.MMConstants;
-import megamek.MegaMek;
 import megamek.SuiteConstants;
 import megamek.Version;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ui.Base64Image;
-import megamek.common.Board;
-import megamek.common.Entity;
-import megamek.common.GameLog;
-import megamek.common.InGameObject;
-import megamek.common.MekFileParser;
-import megamek.common.MekSummaryCache;
 import megamek.common.Player;
-import megamek.common.UnitNameTracker;
+import megamek.common.board.Board;
 import megamek.common.enums.GamePhase;
-import megamek.common.event.GamePlayerChangeEvent;
-import megamek.common.event.GamePlayerChatEvent;
-import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameScriptedMessageEvent;
+import megamek.common.event.player.GamePlayerChangeEvent;
+import megamek.common.event.player.GamePlayerChatEvent;
+import megamek.common.event.player.GamePlayerDisconnectedEvent;
 import megamek.common.force.Force;
+import megamek.common.game.GameLog;
+import megamek.common.game.InGameObject;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.loaders.MekSummaryCache;
 import megamek.common.net.connections.AbstractConnection;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.events.DisconnectedEvent;
 import megamek.common.net.events.PacketReceivedEvent;
 import megamek.common.net.factories.ConnectionFactory;
 import megamek.common.net.listeners.ConnectionListener;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.units.Entity;
+import megamek.common.units.UnitNameTracker;
 import megamek.logging.MMLogger;
 
 /**
@@ -69,6 +83,7 @@ public abstract class AbstractClient implements IClient {
     protected String name;
     protected boolean connected = false;
     protected boolean disconnectFlag = false;
+    protected boolean awaitingSave = false;
     protected final String host;
     protected final int port;
     private ConnectionHandler packetUpdate;
@@ -84,8 +99,7 @@ public abstract class AbstractClient implements IClient {
     protected final UnitNameTracker unitNameTracker = new UnitNameTracker();
 
     /**
-     * The bots controlled by the local player; maps a bot's name String to a bot's
-     * client.
+     * The bots controlled by the local player; maps a bot's name String to a bot's client.
      */
     protected Map<String, AbstractClient> bots = new TreeMap<>(String::compareTo);
 
@@ -93,8 +107,8 @@ public abstract class AbstractClient implements IClient {
     protected Map<Integer, String> iconCache = new HashMap<>();
 
     /**
-     * Construct a client which will try to connect. If the connection fails, it
-     * will alert the player, free resources and hide the frame.
+     * Construct a client which will try to connect. If the connection fails, it will alert the player, free resources
+     * and hide the frame.
      *
      * @param name the player name for this client
      * @param host the hostname
@@ -143,7 +157,6 @@ public abstract class AbstractClient implements IClient {
     /** Shuts down threads and sockets */
     @Override
     public synchronized void die() {
-        // If we're still connected, tell the server that we're going down.
         if (connected) {
             // Stop listening for in coming packets, this should be done before
             // sending the close connection command
@@ -164,6 +177,7 @@ public abstract class AbstractClient implements IClient {
 
         if (log != null) {
             try {
+                log.appendRaw("</BODY></HTML>");
                 log.close();
             } catch (Exception ex) {
                 logger.error(ex, "Failed to close the client game log file.");
@@ -189,12 +203,12 @@ public abstract class AbstractClient implements IClient {
 
     protected void initGameLog() {
         log = new GameLog(PreferenceManager.getClientPreferences().getGameLogFilename());
-        log.append("<HTML><BODY>");
+        log.appendRaw("<HTML><HEAD><LINK rel=\"stylesheet\" type=\"text/css\" href=\"megamek-gamelog.css\"></HEAD><BODY>");
     }
 
     /**
-     * Called to determine whether the game log should be kept. Default
-     * implementation delegates to {@link PreferenceManager#getClientPreferences()}.
+     * Called to determine whether the game log should be kept. Default implementation delegates to
+     * {@link PreferenceManager#getClientPreferences()}.
      *
      * @return True/False if the game log is to be kept.
      */
@@ -213,7 +227,16 @@ public abstract class AbstractClient implements IClient {
      * Sends the info associated with the local player.
      */
     public void sendPlayerInfo() {
-        send(new Packet(PacketCommand.PLAYER_UPDATE, getGame().getPlayer(localPlayerNumber)));
+        sendPlayerInfo(getGame().getPlayer(localPlayerNumber));
+    }
+
+    /**
+     * Sends the info associated with a player, usually the local game's local player but sometimes the modified version
+     * of that player.
+     * @param player Player instance regarding which to send the update.
+     */
+    public void sendPlayerInfo(Player player) {
+        send(new Packet(PacketCommand.PLAYER_UPDATE, player));
     }
 
     @Override
@@ -254,7 +277,7 @@ public abstract class AbstractClient implements IClient {
      *
      * @param packet The packet we received.
      */
-    protected void receivePlayerInfo(Packet packet) {
+    protected void receivePlayerInfo(Packet packet) throws InvalidPacketDataException {
         int packetIndex = packet.getIntValue(0);
 
         Player newPlayer = (Player) packet.getObject(1);
@@ -266,8 +289,7 @@ public abstract class AbstractClient implements IClient {
     }
 
     /**
-     * Sends the packet to the server, if this client is connected. Otherwise, does
-     * nothing.
+     * Sends the packet to the server, if this client is connected. Otherwise, does nothing.
      *
      * @param packet Packet to send over the connection.
      */
@@ -278,10 +300,9 @@ public abstract class AbstractClient implements IClient {
     }
 
     /**
-     * send all buffered packets on their way this should be called after
-     * everything which causes us to wait for a reply. For example "done" button
-     * presses etc. to make stuff more efficient, this should only be called
-     * after a batch of packets is sent, not separately for each packet
+     * send all buffered packets on their way this should be called after everything which causes us to wait for a
+     * reply. For example "done" button presses etc. to make stuff more efficient, this should only be called after a
+     * batch of packets is sent, not separately for each packet
      */
     protected void flushConn() {
         if (connection != null) {
@@ -290,9 +311,9 @@ public abstract class AbstractClient implements IClient {
     }
 
     /**
-     * Perform a dump of the current memory usage. This method is useful in tracking
-     * performance issues on various player's systems. You can activate it by
-     * changing the "memorydumpon" setting to "true" in the clientsettings.xml file.
+     * Perform a dump of the current memory usage. This method is useful in tracking performance issues on various
+     * player's systems. You can activate it by changing the "memorydumpon" setting to "true" in the clientsettings.xml
+     * file.
      *
      * @param where A String indicating which part of the game is making this call.
      */
@@ -301,9 +322,12 @@ public abstract class AbstractClient implements IClient {
             final long total = Runtime.getRuntime().totalMemory();
             final long free = Runtime.getRuntime().freeMemory();
             final long used = total - free;
-            String message = String.format("Memory dump %s%s : used(%d) + free(%d) = %d", where,
-                    " ".repeat(Math.max(0, 25 - where.length())), used, free, total);
-            logger.error(message);
+            logger.error("Memory dump {}{} : used({}) + free({}) = {}",
+                  where,
+                  " ".repeat(Math.max(0, 25 - where.length())),
+                  used,
+                  free,
+                  total);
         }
     }
 
@@ -326,7 +350,7 @@ public abstract class AbstractClient implements IClient {
         return host;
     }
 
-    protected void correctName(Packet inP) {
+    protected void correctName(Packet inP) throws InvalidPacketDataException {
         setName((String) (inP.getObject(0)));
     }
 
@@ -335,9 +359,8 @@ public abstract class AbstractClient implements IClient {
     }
 
     /**
-     * Before we officially "add" this unit to the game, check and see if this
-     * client (player) already has a unit in the game with the same name. If so,
-     * add an identifier to the units name.
+     * Before we officially "add" this unit to the game, check and see if this client (player) already has a unit in the
+     * game with the same name. If so, add an identifier to the units name.
      *
      * @param entity The entity to check if it is duplicated.
      */
@@ -347,31 +370,27 @@ public abstract class AbstractClient implements IClient {
         }
     }
 
-    protected void receiveUnitReplace(Packet packet) {
-        @SuppressWarnings(value = "unchecked")
-        List<Force> forces = (List<Force>) packet.getObject(1);
+    protected void receiveUnitReplace(Packet packet) throws InvalidPacketDataException {
+        List<Force> forces = packet.getForceList(1);
         forces.forEach(force -> getGame().getForces().replace(force.getId(), force));
 
-        @SuppressWarnings(value = "unchecked")
-        List<InGameObject> units = (List<InGameObject>) packet.getObject(0);
+        List<InGameObject> units = packet.getInGameObjectList(0);
         getGame().replaceUnits(units);
     }
 
     /**
-     * Adds the specified close client listener to receive close client events.
-     * This is used by external programs running megamek
+     * Adds the specified close client listener to receive close client events. This is used by external programs
+     * running megamek
      *
-     * @param l
-     *          the game listener.
+     * @param l the game listener.
      */
     public void addCloseClientListener(CloseClientListener l) {
         closeClientListeners.addElement(l);
     }
 
     /**
-     * This method is the starting point that handles all received Packets. This
-     * method should only
-     * be overridden in very special cases such as in Princess to call Precognition.
+     * This method is the starting point that handles all received Packets. This method should only be overridden in
+     * very special cases such as in Princess to call Precognition.
      *
      * @param packet The packet to handle
      */
@@ -381,11 +400,10 @@ public abstract class AbstractClient implements IClient {
             return;
         }
         try {
-            if (packet.getCommand() == PacketCommand.MULTI_PACKET) {
+            if (packet.command() == PacketCommand.MULTI_PACKET) {
                 // TODO gather any fired events and fire them only at the end of the packets,
                 // possibly only for SBF
-                @SuppressWarnings("unchecked")
-                var includedPackets = (List<Packet>) packet.getObject(0);
+                @SuppressWarnings("unchecked") var includedPackets = (List<Packet>) packet.getObject(0);
                 for (Packet includedPacket : includedPackets) {
                     handlePacket(includedPacket);
                 }
@@ -393,27 +411,30 @@ public abstract class AbstractClient implements IClient {
                 boolean isHandled = handleGameIndependentPacket(packet);
                 isHandled |= handleGameSpecificPacket(packet);
                 if (!isHandled) {
-                    String message = String.format("Unknown PacketCommand of %s", packet.getCommand().name());
+                    String message = String.format("Unknown PacketCommand of %s", packet.command().name());
                     logger.error(message);
                 }
             }
+        } catch (InvalidPacketDataException e) {
+            logger.error("Invalid packet data:", e);
         } catch (Exception ex) {
-            String message = String.format("Failed to parse Packet command of %s", packet.getCommand());
+            String message = String.format("Failed to parse Packet command of %s", packet.command());
             logger.error(ex, message);
         }
     }
 
     /**
-     * Handles any Packets that are specific to the game type (TW, AS...). When
-     * implementing this, make sure that this doesn't do duplicate actions with
-     * {@link #handleGameIndependentPacket(Packet)} - but packets may be handled in
+     * Handles any Packets that are specific to the game type (TW, AS...). When implementing this, make sure that this
+     * doesn't do duplicate actions with {@link #handleGameIndependentPacket(Packet)} - but packets may be handled in
      * both methods (all packets traverse both methods).
-     *
-     * When making changes, do not forget to update Precognition which is a Client
-     * clone but unfortunately not a subclass.
+     * <p>
+     * When making changes, do not forget to update Precognition which is a Client clone but unfortunately not a
+     * subclass.
      *
      * @param packet The packet to handle
+     *
      * @return True when the packet has been handled
+     *
      * @throws Exception If some error occurred.
      */
     protected abstract boolean handleGameSpecificPacket(Packet packet) throws Exception;
@@ -422,77 +443,91 @@ public abstract class AbstractClient implements IClient {
      * Handles any Packets that are independent of the game type (TW, AS...).
      *
      * @param packet The packet to handle
+     *
      * @return True when the packet has been handled
      */
     @SuppressWarnings("unchecked")
     protected boolean handleGameIndependentPacket(Packet packet) {
-        switch (packet.getCommand()) {
-            case SERVER_GREETING:
-                connected = true;
-                send(new Packet(PacketCommand.CLIENT_NAME, name, isBot()));
-                break;
-            case SERVER_CORRECT_NAME:
-                correctName(packet);
-                break;
-            case CLOSE_CONNECTION:
-                disconnected();
-                break;
-            case SERVER_VERSION_CHECK:
-                send(new Packet(PacketCommand.CLIENT_VERSIONS, SuiteConstants.VERSION, MegaMek.getMegaMekSHA256()));
-                break;
-            case ILLEGAL_CLIENT_VERSION:
-                final Version serverVersion = (Version) packet.getObject(0);
-                final String message = String.format(
-                        "Failed to connect to the server at %s because of version differences. " +
-                                "Cannot connect to a server running %s with a %s install.",
-                        getHost(), serverVersion, SuiteConstants.VERSION);
-                logger.error(message, "Connection Failure: Version Difference");
-                disconnected();
-                break;
-            case LOCAL_PN:
-                localPlayerNumber = packet.getIntValue(0);
-                break;
-            case PLAYER_UPDATE:
-            case PLAYER_ADD:
-                receivePlayerInfo(packet);
-                break;
-            case PLAYER_READY:
-                Player player = getPlayer(packet.getIntValue(0));
-                if (player != null) {
-                    player.setDone(packet.getBooleanValue(1));
-                    getGame().fireGameEvent(new GamePlayerChangeEvent(player, player));
-                }
-                break;
-            case PLAYER_REMOVE:
-                bots.values().removeIf(bot -> bot.localPlayerNumber == packet.getIntValue(0));
-                getGame().removePlayer(packet.getIntValue(0));
-                break;
-            case CHAT:
-                possiblyWriteToLog((String) packet.getObject(0));
-                getGame().fireGameEvent(new GamePlayerChatEvent(this, null, (String) packet.getObject(0)));
-                break;
-            case ENTITY_ADD:
-                receiveUnitReplace(packet);
-                break;
-            case SENDING_BOARD:
-                getGame().receiveBoards((Map<Integer, Board>) packet.getObject(0));
-                break;
-            case ROUND_UPDATE:
-                getGame().setCurrentRound(packet.getIntValue(0));
-                break;
-            case PHASE_CHANGE:
-                changePhase((GamePhase) packet.getObject(0));
-                break;
-            case SCRIPTED_MESSAGE:
-                getGame().fireGameEvent(new GameScriptedMessageEvent(this,
-                        (String) packet.getObject(0),
-                        (String) packet.getObject(1),
-                        (Base64Image) packet.getObject(2)));
-                break;
-            default:
-                return false;
+        try {
+            switch (packet.command()) {
+                case SERVER_GREETING:
+                    connected = true;
+                    send(new Packet(PacketCommand.CLIENT_NAME, name, isBot()));
+                    break;
+                case SERVER_CORRECT_NAME:
+                    correctName(packet);
+                    break;
+                case CLOSE_CONNECTION:
+                    disconnected();
+                    break;
+                case SERVER_VERSION_CHECK:
+                    send(new Packet(PacketCommand.CLIENT_VERSIONS, SuiteConstants.VERSION));
+                    break;
+                case ILLEGAL_CLIENT_VERSION:
+                    final Version serverVersion = (Version) packet.getObject(0);
+                    logger.errorDialog("Connection Failure: Version Difference",
+                          "Failed to connect to the server at {} because of version differences. " +
+                                "Cannot connect to a server running {} with a {} install.",
+                          getHost(),
+                          serverVersion,
+                          SuiteConstants.VERSION);
+                    disconnected();
+                    break;
+                case LOCAL_PN:
+                    localPlayerNumber = packet.getIntValue(0);
+                    break;
+                case PLAYER_UPDATE:
+                case PLAYER_ADD:
+                    receivePlayerInfo(packet);
+                    break;
+                case PLAYER_READY:
+                    Player player = getPlayer(packet.getIntValue(0));
+                    if (player != null) {
+                        player.setDone(packet.getBooleanValue(1));
+                        getGame().fireGameEvent(new GamePlayerChangeEvent(player, player));
+                    }
+                    break;
+                case PLAYER_REMOVE:
+                    bots.values()
+                          .removeIf(bot -> {
+                              try {
+                                  return bot.localPlayerNumber == packet.getIntValue(0);
+                              } catch (InvalidPacketDataException e) {
+                                  throw new RuntimeException(e);
+                              }
+                          });
+                    getGame().removePlayer(packet.getIntValue(0));
+                    break;
+                case CHAT:
+                    possiblyWriteToLog((String) packet.getObject(0));
+                    getGame().fireGameEvent(new GamePlayerChatEvent(this, null, (String) packet.getObject(0)));
+                    break;
+                case ENTITY_ADD:
+                    receiveUnitReplace(packet);
+                    break;
+                case SENDING_BOARD:
+                    getGame().receiveBoards((Map<Integer, Board>) packet.getObject(0));
+                    break;
+                case ROUND_UPDATE:
+                    getGame().setCurrentRound(packet.getIntValue(0));
+                    break;
+                case PHASE_CHANGE:
+                    changePhase((GamePhase) packet.getObject(0));
+                    break;
+                case SCRIPTED_MESSAGE:
+                    getGame().fireGameEvent(new GameScriptedMessageEvent(this,
+                          (String) packet.getObject(0),
+                          (String) packet.getObject(1),
+                          (Base64Image) packet.getObject(2)));
+                    break;
+                default:
+                    return false;
+            }
+            return true;
+        } catch (InvalidPacketDataException e) {
+            logger.error("Invalid packet data:", e);
+            return false;
         }
-        return true;
     }
 
     protected void possiblyWriteToLog(String message) {
@@ -545,6 +580,13 @@ public abstract class AbstractClient implements IClient {
         return bots;
     }
 
+    public void setAwaitingSave(boolean awaitingSave) {
+        this.awaitingSave = awaitingSave;
+    }
+
+    public boolean isAwaitingSave() {
+        return awaitingSave;
+    }
     /**
      * Custom connection Listener for AbstractClient
      *

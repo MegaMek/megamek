@@ -1,34 +1,52 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.junit.jupiter.api.Disabled;
+import megamek.common.board.Coords;
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 
 class CoordsTest {
     //========================================================
@@ -86,13 +104,13 @@ class CoordsTest {
 
     @Test
     void testDistance() {
-        assertEquals(new Coords(13, 6).distance(new Coords(15, 1)), 6);
-        assertEquals(new Coords(12, 2).distance(new Coords(9, 2)), 3);
+        assertEquals(6, new Coords(13, 6).distance(new Coords(15, 1)));
+        assertEquals(3, new Coords(12, 2).distance(new Coords(9, 2)));
     }
 
     @Test
     void testAdjacent() {
-        assertEquals(new Coords(5, -5).allAtDistance(0).size(), 1);
+        assertEquals(1, new Coords(5, -5).allAtDistance(0).size());
 
         final List<Coords> expectedAdjacent = new ArrayList<>();
         expectedAdjacent.add(new Coords(0, -1));
@@ -101,7 +119,7 @@ class CoordsTest {
         expectedAdjacent.add(new Coords(0, 1));
         expectedAdjacent.add(new Coords(-1, 0));
         expectedAdjacent.add(new Coords(-1, -1));
-        assertEquals(new Coords(0, 0).allAdjacent().size(), 6);
+        assertEquals(6, new Coords(0, 0).allAdjacent().size());
         new Coords(0, 0).allAdjacent().forEach(coords -> assertTrue(expectedAdjacent.contains(coords)));
 
         // for a radius 2 donut we expect to see 12 hexes.
@@ -119,75 +137,75 @@ class CoordsTest {
         expectedAtDistance2.add(new Coords(-2, -1));
         expectedAtDistance2.add(new Coords(-1, -2));
 
-        assertEquals(new Coords(0, 0).allAtDistance(2).size(), 12);
+        assertEquals(12, new Coords(0, 0).allAtDistance(2).size());
         new Coords(0, 0).allAtDistance(2).forEach(coords -> assertTrue(expectedAtDistance2.contains(coords)));
     }
 
     @Test
     void testAllAtDistance() {
-        assertEquals(new Coords(10, 10).allAtDistanceOrLess(1).size(), 7);
-        assertEquals(new Coords(10, 10).allLessThanDistance(1).size(), 1);
-        assertEquals(new Coords(10, 10).allAtDistanceOrLess(0).size(), 1);
+        assertEquals(7, new Coords(10, 10).allAtDistanceOrLess(1).size());
+        assertEquals(1, new Coords(10, 10).allLessThanDistance(1).size());
+        assertEquals(1, new Coords(10, 10).allAtDistanceOrLess(0).size());
     }
 
-    List<Coords> generateLevel2NeighborsEvenX(Coords centroid){
+    List<Coords> generateLevel2NeighborsEvenX(Coords centroid) {
         // Manually computed kernel based on map offsets; only for even-X coords
         return Arrays.asList(
-            new Coords(centroid.getX(), centroid.getY()),
-            // immediate neighbors
-            new Coords(centroid.getX(), centroid.getY() - 1),
-            new Coords(centroid.getX() + 1, centroid.getY() - 1),
-            new Coords(centroid.getX() + 1, centroid.getY()),
-            new Coords(centroid.getX(), centroid.getY() + 1),
-            new Coords(centroid.getX() - 1, centroid.getY()),
-            new Coords(centroid.getX() - 1, centroid.getY() - 1),
-            // neighbors + 1
-            new Coords(centroid.getX(), centroid.getY() - 2),
-            new Coords(centroid.getX() + 1, centroid.getY() - 2),
-            new Coords(centroid.getX() + 2, centroid.getY() - 1),
-            new Coords(centroid.getX() + 2, centroid.getY()),
-            new Coords(centroid.getX() + 2, centroid.getY() + 1),
-            new Coords(centroid.getX() + 1, centroid.getY() + 1),
-            new Coords(centroid.getX(), centroid.getY() + 2),
-            new Coords(centroid.getX() - 1, centroid.getY() + 1),
-            new Coords(centroid.getX() - 2, centroid.getY() + 1),
-            new Coords(centroid.getX() - 2, centroid.getY()),
-            new Coords(centroid.getX() - 2, centroid.getY() - 1),
-            new Coords(centroid.getX() - 1, centroid.getY() - 2)
+              new Coords(centroid.getX(), centroid.getY()),
+              // immediate neighbors
+              new Coords(centroid.getX(), centroid.getY() - 1),
+              new Coords(centroid.getX() + 1, centroid.getY() - 1),
+              new Coords(centroid.getX() + 1, centroid.getY()),
+              new Coords(centroid.getX(), centroid.getY() + 1),
+              new Coords(centroid.getX() - 1, centroid.getY()),
+              new Coords(centroid.getX() - 1, centroid.getY() - 1),
+              // neighbors + 1
+              new Coords(centroid.getX(), centroid.getY() - 2),
+              new Coords(centroid.getX() + 1, centroid.getY() - 2),
+              new Coords(centroid.getX() + 2, centroid.getY() - 1),
+              new Coords(centroid.getX() + 2, centroid.getY()),
+              new Coords(centroid.getX() + 2, centroid.getY() + 1),
+              new Coords(centroid.getX() + 1, centroid.getY() + 1),
+              new Coords(centroid.getX(), centroid.getY() + 2),
+              new Coords(centroid.getX() - 1, centroid.getY() + 1),
+              new Coords(centroid.getX() - 2, centroid.getY() + 1),
+              new Coords(centroid.getX() - 2, centroid.getY()),
+              new Coords(centroid.getX() - 2, centroid.getY() - 1),
+              new Coords(centroid.getX() - 1, centroid.getY() - 2)
         );
     }
 
-    List<Coords> generateLevel2NeighborsOddX(Coords centroid){
+    List<Coords> generateLevel2NeighborsOddX(Coords centroid) {
         // Manually computed kernel based on map offsets; only for even-X coords
         return Arrays.asList(
-            new Coords(centroid.getX(), centroid.getY()),
-            // immediate neighbors
-            new Coords(centroid.getX(), centroid.getY() - 1),
-            new Coords(centroid.getX() + 1, centroid.getY()),
-            new Coords(centroid.getX() + 1, centroid.getY() + 1),
-            new Coords(centroid.getX(), centroid.getY() + 1),
-            new Coords(centroid.getX() - 1, centroid.getY() + 1),
-            new Coords(centroid.getX() - 1, centroid.getY()),
-            // neighbors + 1
-            new Coords(centroid.getX(), centroid.getY() - 2),
-            new Coords(centroid.getX() + 1, centroid.getY() - 1),
-            new Coords(centroid.getX() + 2, centroid.getY() - 1),
-            new Coords(centroid.getX() + 2, centroid.getY()),
-            new Coords(centroid.getX() + 2, centroid.getY() + 1),
-            new Coords(centroid.getX() + 1, centroid.getY() + 2),
-            new Coords(centroid.getX(), centroid.getY() + 2),
-            new Coords(centroid.getX() - 1, centroid.getY() + 2),
-            new Coords(centroid.getX() - 2, centroid.getY() + 1),
-            new Coords(centroid.getX() - 2, centroid.getY()),
-            new Coords(centroid.getX() - 2, centroid.getY() - 1),
-            new Coords(centroid.getX() - 1, centroid.getY() - 1)
+              new Coords(centroid.getX(), centroid.getY()),
+              // immediate neighbors
+              new Coords(centroid.getX(), centroid.getY() - 1),
+              new Coords(centroid.getX() + 1, centroid.getY()),
+              new Coords(centroid.getX() + 1, centroid.getY() + 1),
+              new Coords(centroid.getX(), centroid.getY() + 1),
+              new Coords(centroid.getX() - 1, centroid.getY() + 1),
+              new Coords(centroid.getX() - 1, centroid.getY()),
+              // neighbors + 1
+              new Coords(centroid.getX(), centroid.getY() - 2),
+              new Coords(centroid.getX() + 1, centroid.getY() - 1),
+              new Coords(centroid.getX() + 2, centroid.getY() - 1),
+              new Coords(centroid.getX() + 2, centroid.getY()),
+              new Coords(centroid.getX() + 2, centroid.getY() + 1),
+              new Coords(centroid.getX() + 1, centroid.getY() + 2),
+              new Coords(centroid.getX(), centroid.getY() + 2),
+              new Coords(centroid.getX() - 1, centroid.getY() + 2),
+              new Coords(centroid.getX() - 2, centroid.getY() + 1),
+              new Coords(centroid.getX() - 2, centroid.getY()),
+              new Coords(centroid.getX() - 2, centroid.getY() - 1),
+              new Coords(centroid.getX() - 1, centroid.getY() - 1)
         );
     }
 
     void testAllAtDistanceOrLessAlignedCorrectly(Coords centroid) {
         List<Coords> neighbors = centroid.allAtDistanceOrLess(2);
         List<Coords> expectedNeighbors = ((centroid.getX() & 1) == 1) ?
-            generateLevel2NeighborsOddX(centroid) : generateLevel2NeighborsEvenX(centroid);
+              generateLevel2NeighborsOddX(centroid) : generateLevel2NeighborsEvenX(centroid);
         assertEquals(19, neighbors.size());
         assertEquals(19, expectedNeighbors.size());
 
@@ -205,7 +223,6 @@ class CoordsTest {
         assertTrue(allMatch, mismatchString);
 
         // All generated expectedNeighbors must be in neighbors
-        allMatch = true;
         mismatches = new ArrayList<>();
         for (Coords coords : expectedNeighbors) {
             if (neighbors.stream().anyMatch(coords::equals)) {
@@ -330,6 +347,24 @@ class CoordsTest {
         assertEquals(Math.PI / 2, source.radian(target5), 0.1);
         assertEquals(2, source.direction(target5));
 
+    }
+
+    @TestFactory
+    Stream<DynamicTest> testCoordsToCubeToOffset() {
+        return generateCoords().map(target -> dynamicTest(
+              "Test Coords(" + target.getX() + ", " + target.getY() + ") to Cube to Offset",
+              () -> assertEquals(target, target.toCube().toOffset())
+        ));
+    }
+
+    private Stream<Coords> generateCoords() {
+        List<Coords> coordsList = new ArrayList<>();
+        for (int x = 0; x < 100; x++) {
+            for (int y = 0; y < 100; y++) {
+                coordsList.add(new Coords(x, y));
+            }
+        }
+        return coordsList.stream();
     }
 
     @Test

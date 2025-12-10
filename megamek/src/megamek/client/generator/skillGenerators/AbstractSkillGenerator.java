@@ -1,28 +1,42 @@
 /*
- * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.generator.skillGenerators;
 
 import megamek.client.generator.enums.SkillGeneratorMethod;
 import megamek.client.generator.enums.SkillGeneratorType;
-import megamek.common.Entity;
-import megamek.common.Infantry;
-import megamek.common.LAMPilot;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.LAMPilot;
 import megamek.common.enums.SkillLevel;
 
 public abstract class AbstractSkillGenerator {
@@ -73,8 +87,9 @@ public abstract class AbstractSkillGenerator {
     //endregion Getters/Setters
 
     /**
-     * Generates random skills based on an entity crewmember by crewmember, and then assigns the
-     * values to the crew before sorting them.
+     * Generates random skills based on an entity crewmember by crewmember, and then assigns the values to the crew
+     * before sorting them.
+     *
      * @param entity the Entity whose skills are to be randomly set
      */
     public void setRandomSkills(final Entity entity) {
@@ -82,9 +97,10 @@ public abstract class AbstractSkillGenerator {
     }
 
     /**
-     * Generates random skills based on an entity crewmember by crewmember, and then assigns the
-     * values to the crew before sorting them.
-     * @param entity the Entity whose skills are to be randomly set
+     * Generates random skills based on an entity crewmember by crewmember, and then assigns the values to the crew
+     * before sorting them.
+     *
+     * @param entity    the Entity whose skills are to be randomly set
      * @param forceClan forces the type to be clan if the crew are led by a clan pilot
      */
     public void setRandomSkills(final Entity entity, final boolean forceClan) {
@@ -105,49 +121,56 @@ public abstract class AbstractSkillGenerator {
     }
 
     /**
-     * Generates random skills for an entity based on the current settings of the random skill
-     * generator, but does not assign those new skills to that entity
+     * Generates random skills for an entity based on the current settings of the random skill generator, but does not
+     * assign those new skills to that entity
+     *
      * @param entity the Entity to generate a random skill array for
-     * @return an integer array containing the (Gunnery, Piloting) skill values, or an alternative
-     * pairing if applicable [(Gunnery, Anti-'Mek) for infantry]
+     *
+     * @return an integer array containing the (Gunnery, Piloting) skill values, or an alternative pairing if applicable
+     *       [(Gunnery, Anti-'Mek) for infantry]
      */
     public int[] generateRandomSkills(final Entity entity) {
         return generateRandomSkills(entity, false);
     }
 
     /**
-     * Generates random skills for an entity based on the current settings of the random skill
-     * generator, but does not assign those new skills to that entity. The return value MUST be
-     * cleaned with cleanReturn for this setup to work properly.
-     * @param entity the Entity to generate a random skill array for
+     * Generates random skills for an entity based on the current settings of the random skill generator, but does not
+     * assign those new skills to that entity. The return value MUST be cleaned with cleanReturn for this setup to work
+     * properly.
+     *
+     * @param entity    the Entity to generate a random skill array for
      * @param forceClan forces the type to be clan if the entity is a clan unit
-     * @return an integer array containing the (Gunnery, Piloting) skill values, or an alternative
-     * pairing if applicable [(Gunnery, Anti-'Mek) for infantry]
+     *
+     * @return an integer array containing the (Gunnery, Piloting) skill values, or an alternative pairing if applicable
+     *       [(Gunnery, Anti-'Mek) for infantry]
      */
     public int[] generateRandomSkills(final Entity entity, final boolean forceClan) {
         return generateRandomSkills(entity, entity.getCrew().isClanPilot(), forceClan);
     }
 
     /**
-     * Generates random skills for an entity based on the current settings of the random skill
-     * generator, but does not assign those new skills to that entity. The return value MUST be
-     * cleaned with cleanReturn for this setup to work properly.
-     * @param entity the Entity to generate a random skill array for
+     * Generates random skills for an entity based on the current settings of the random skill generator, but does not
+     * assign those new skills to that entity. The return value MUST be cleaned with cleanReturn for this setup to work
+     * properly.
+     *
+     * @param entity    the Entity to generate a random skill array for
      * @param clanPilot if the crew to generate a random skills array for are a clan crew
      * @param forceClan forces the type to be clan if the crew are a clan crew
-     * @return an integer array containing the (Gunnery, Piloting) skill values, or an alternative
-     * pairing if applicable [(Gunnery, Anti-'Mek) for infantry]
+     *
+     * @return an integer array containing the (Gunnery, Piloting) skill values, or an alternative pairing if applicable
+     *       [(Gunnery, Anti-'Mek) for infantry]
      */
     public abstract int[] generateRandomSkills(final Entity entity, final boolean clanPilot,
-                                               final boolean forceClan);
+          final boolean forceClan);
 
     /**
-     * This cleans up the return value before the final return, and by doing so to handling two
-     * specific use cases. The first is handling Infantry Anti-'Mek skill generation properly by
-     * directly tying it into entity being Anti-'Mek trained. The second is the force close option,
-     * which forces piloting to be gunnery plus one
+     * This cleans up the return value before the final return, and by doing so to handling two specific use cases. The
+     * first is handling Infantry Anti-'Mek skill generation properly by directly tying it into entity being Anti-'Mek
+     * trained. The second is the force close option, which forces piloting to be gunnery plus one
+     *
      * @param entity the entity the skill is being generated for
      * @param skills the skill array to cleanup before the final return
+     *
      * @return the modified skill array
      */
     protected int[] cleanReturn(final Entity entity, final int... skills) {

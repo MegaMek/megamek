@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2023, 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.utilities;
 
 import java.io.BufferedReader;
@@ -29,23 +44,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.common.Configuration;
-import megamek.common.MekSummaryCache;
+import megamek.common.loaders.MekSummaryCache;
 import megamek.logging.MMLogger;
 
 /**
- * This tool goes through the name_changes.txt file and performs various tests:
- * - it finds all lines where the left and right side are equal (i.e. are
- * useless and should be deleted)
- * - it finds all lines where the left side (the out-of-date unit name that is
- * no longer an active cache entry) is, in fact, an existing cache unit name and
- * the line is unnecessary (it should be turned around or deleted)
- * - it finds all lines where the right-side entry (the real and existing unit
- * name) does not actually exist in the cache (those lines should probably be
- * kept and the right side entry corrected)
- *
- * To perform the second test, the name-changes.txt file is renamed (to
- * deactivate it - otherwise the left sides would always be found because of the
- * name-changes function itself). After the test, the rename is reversed.
+ * This tool goes through the name_changes.txt file and performs various tests: - it finds all lines where the left and
+ * right side are equal (i.e. are useless and should be deleted) - it finds all lines where the left side (the
+ * out-of-date unit name that is no longer an active cache entry) is, in fact, an existing cache unit name and the line
+ * is unnecessary (it should be turned around or deleted) - it finds all lines where the right-side entry (the real and
+ * existing unit name) does not actually exist in the cache (those lines should probably be kept and the right side
+ * entry corrected)
+ * <p>
+ * To perform the second test, the name-changes.txt file is renamed (to deactivate it - otherwise the left sides would
+ * always be found because of the name-changes function itself). After the test, the rename is reversed.
  */
 public class NameChangesValidator {
     private static final MMLogger logger = MMLogger.create(NameChangesValidator.class);
@@ -56,7 +67,7 @@ public class NameChangesValidator {
     private int errors;
     private final File lookupNames = new File(Configuration.unitsDir(), MekSummaryCache.FILENAME_LOOKUP);
     private final File lookupNamesHidden = new File(Configuration.unitsDir(),
-            MekSummaryCache.FILENAME_LOOKUP + ".xxx");
+          MekSummaryCache.FILENAME_LOOKUP + ".xxx");
 
     public static void main(String... args) {
         NameChangesValidator validator = new NameChangesValidator();
@@ -76,7 +87,7 @@ public class NameChangesValidator {
             InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
             BufferedReader br = new BufferedReader(isr);
 
-            String line = "";
+            String line;
 
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("#")) {

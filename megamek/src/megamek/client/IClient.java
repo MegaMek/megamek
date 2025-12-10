@@ -1,29 +1,44 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.client;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import megamek.common.IGame;
-import megamek.common.InGameObject;
+import megamek.common.game.IGame;
+import megamek.common.game.InGameObject;
 import megamek.common.Player;
 
 public interface IClient {
@@ -61,9 +76,8 @@ public interface IClient {
     // region Game Content
 
     /**
-     * Returns the game of this client as a game-type independent IGame. Note that
-     * the game object is only updated, not replaced and a reference to it can
-     * therefore be kept.
+     * Returns the game of this client as a game-type independent IGame. Note that the game object is only updated, not
+     * replaced and a reference to it can therefore be kept.
      *
      * @return The game of this client
      */
@@ -71,6 +85,7 @@ public interface IClient {
 
     /**
      * @param id The in-game object associated with the given ID.
+     *
      * @return An Optional of {@link InGameObject} if it exists.
      */
     default Optional<InGameObject> getInGameObject(int id) {
@@ -78,8 +93,7 @@ public interface IClient {
     }
 
     /**
-     * @return A list of all in-game objects of the game. This list is copied and
-     *         may be safely modified.
+     * @return A list of all in-game objects of the game. This list is copied and may be safely modified.
      */
     default List<InGameObject> getInGameObjects() {
         return getGame().getInGameObjects();
@@ -87,6 +101,7 @@ public interface IClient {
 
     /**
      * @param id The player with the given ID, or null if there is no such player.
+     *
      * @return The player object.
      */
     default Player getPlayer(int id) {
@@ -121,8 +136,8 @@ public interface IClient {
 
     /**
      * @param id ID of player
-     * @return True when there is a player (incl. bot) with the given ID in the
-     *         game.
+     *
+     * @return True when there is a player (incl. bot) with the given ID in the game.
      */
     default boolean playerExists(int id) {
         return getPlayer(id) != null;
@@ -133,8 +148,8 @@ public interface IClient {
     // region Bots
 
     /**
-     * Returns the map containing this Client's local bots, wherein the key is the
-     * bot's player name and the value the Client.
+     * Returns the map containing this Client's local bots, wherein the key is the bot's player name and the value the
+     * Client.
      *
      * @return This Client's local bots mapped to their player name
      */
@@ -142,6 +157,7 @@ public interface IClient {
 
     /**
      * @param player the {@link Player} that we need to know is a bot or not.
+     *
      * @return True when the given player is a bot added/controlled by this Client.
      */
     default boolean isLocalBot(Player player) {
@@ -149,10 +165,10 @@ public interface IClient {
     }
 
     /**
-     * Returns the Client associated with the given local bot player. If
-     * the player is not a local bot, returns null.
+     * Returns the Client associated with the given local bot player. If the player is not a local bot, returns null.
      *
      * @param player The player whose client we're looking for.
+     *
      * @return The Client for the given player if it's a bot, null otherwise
      */
     default AbstractClient getBotClient(Player player) {

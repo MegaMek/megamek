@@ -1,33 +1,60 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.alphaStrike.conversion;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.alphaStrike.*;
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
+import static megamek.common.alphaStrike.ASUnitType.AF;
+import static megamek.common.alphaStrike.ASUnitType.BA;
+import static megamek.common.alphaStrike.ASUnitType.CF;
+import static megamek.common.alphaStrike.ASUnitType.CV;
+import static megamek.common.alphaStrike.ASUnitType.DA;
+import static megamek.common.alphaStrike.ASUnitType.DS;
+import static megamek.common.alphaStrike.ASUnitType.IM;
+import static megamek.common.alphaStrike.ASUnitType.PM;
+import static megamek.common.alphaStrike.ASUnitType.SV;
+import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
-import static megamek.common.alphaStrike.ASUnitType.*;
-import static megamek.common.alphaStrike.BattleForceSUA.*;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.alphaStrike.ASDamage;
+import megamek.common.alphaStrike.ASDamageVector;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.AlphaStrikeHelper;
+import megamek.common.alphaStrike.BattleForceSUA;
 
 public class ASPointValueConverter {
 
@@ -64,6 +91,7 @@ public class ASPointValueConverter {
         processSize();
         processOffensiveSUAMods();
         processOffensiveBlanketMod();
+        processUnitTypeDamageDivisors();
 
         // Defensive Value
         report.addEmptyLine();
@@ -72,13 +100,15 @@ public class ASPointValueConverter {
         processDefensiveSUAMods();
         processDefensiveFactors();
         report.addLine("Defensive Value:",
-                formatForReport(defensiveValue) + " + " + formatForReport(dir),
-                "= " + formatForReport(defensiveValue + dir));
+              formatForReport(defensiveValue) + " + " + formatForReport(dir),
+              "= " + formatForReport(defensiveValue + dir));
         defensiveValue += dir;
 
         subTotal = offensiveValue + defensiveValue;
         report.addEmptyLine();
-        report.addLine("Subtotal", formatForReport(offensiveValue) + " + " + formatForReport(defensiveValue), formatForReport(subTotal));
+        report.addLine("Subtotal",
+              formatForReport(offensiveValue) + " + " + formatForReport(defensiveValue),
+              formatForReport(subTotal));
 
         processGroundCapabilities();
         processForceBonus();
@@ -94,7 +124,9 @@ public class ASPointValueConverter {
         double dmgM = pointValueMDamage(element);
         double dmgL = pointValueLDamage(element);
         offensiveValue = dmgS + dmgM * 2 + dmgL;
-        report.addLine("Damage", formatForReport(dmgS) + " + 2 x " + formatForReport(dmgM) + " + " + formatForReport(dmgL), formatForReport(offensiveValue));
+        report.addLine("Damage",
+              formatForReport(dmgS) + " + 2 x " + formatForReport(dmgM) + " + " + formatForReport(dmgL),
+              formatForReport(offensiveValue));
 
         if (element.getOV() >= 1) {
             double overheatFactor = 1 + 0.5 * (element.getOV() - 1);
@@ -121,8 +153,8 @@ public class ASPointValueConverter {
             }
             defensiveValue += 0.25 * element.getMovement("a");
             report.addLine("Aero Movement",
-                    element.getMovement("a") + " / 4",
-                    "+ " + 0.25 * element.getMovement("a"));
+                  element.getMovement("a") + " / 4",
+                  "+ " + 0.25 * element.getMovement("a"));
         }
 
         if (element.isJumpCapable()) {
@@ -131,27 +163,29 @@ public class ASPointValueConverter {
         }
     }
 
-    int getSkillAdjustedPointValue() {
-        int basePointValue = getBasePointValue();
+    int getSkillAdjustedPointValue(int basePointValue) {
         if (element.getSkill() == 4) {
             return basePointValue;
         }
 
         int multiplier = 1;
         int newPointValue = basePointValue;
+        String calculation = "";
         if (element.getSkill() > 4) {
             if (basePointValue > 14) {
                 multiplier += (basePointValue - 5) / 10;
             }
-            newPointValue = basePointValue - (element.getSkill() - 4) * multiplier;
+            newPointValue -= (element.getSkill() - 4) * multiplier;
+            calculation = "- (%d - 4) x (1 + %d)".formatted(element.getSkill(), multiplier - 1);
         } else if (element.getSkill() < 4) {
             if (basePointValue > 7) {
                 multiplier += (basePointValue - 3) / 5;
             }
-            newPointValue = basePointValue + (4 - element.getSkill()) * multiplier;
+            newPointValue += (4 - element.getSkill()) * multiplier;
+            calculation = "+ (4 - %d) x (1 + %d)".formatted(element.getSkill(), multiplier - 1);
         }
         newPointValue = Math.max(newPointValue, 1);
-        report.addLine("Skill-adjusted Point Value", "", "" + newPointValue);
+        report.addLine("Skill-adjusted Point Value", calculation, "" + newPointValue);
         return newPointValue;
     }
 
@@ -171,15 +205,15 @@ public class ASPointValueConverter {
         processOffensiveSUAMod(TSEMP, e -> 5 * (double) (int) element.getSUA(TSEMP));
         processOffensiveSUAMod(TSEMPO, e -> Math.min(5.0, (int) element.getSUA(TSEMPO)));
         processOffensiveBT();
-        processOffensiveSUAMod(IATM, e -> (double) ((ASDamageVector) element.getSUA(IATM)).L.damage);
+        processOffensiveSUAMod(IATM, e -> (double) ((ASDamageVector) element.getSUA(IATM)).L().damage);
         processOffensiveSUAMod(OVL, e -> 0.25 * element.getOV());
         processOffensiveSUAMod(BOMB, e -> (double) (int) element.getSUA(BOMB));
         processOffensiveSUAMod(HT, e -> {
             ASDamageVector ht = element.getHT();
-            return Math.max(ht.S.damage, Math.max(ht.M.damage, ht.L.damage)) + ((ht.M.damage > 0) ? 0.5 : 0);
+            return Math.max(ht.S().damage, Math.max(ht.M().damage, ht.L().damage)) + ((ht.M().damage > 0) ? 0.5 : 0);
         });
         processOffensiveSUAMod(IF,
-                e -> (element.getIF().minimal ? 0.5 : element.getIF().damage));
+              e -> (element.getIF().minimal ? 0.5 : element.getIF().damage));
         if (element.hasSUA(RHS)) {
             if (element.hasSUA(OVL)) {
                 offensiveValue += 1;
@@ -217,10 +251,9 @@ public class ASPointValueConverter {
     }
 
     /**
-     * A helper method for SUA modifiers of various types. Returns the modifier (or 0)
-     * and adds a line to the report.
+     * A helper method for SUA modifiers of various types. Returns the modifier (or 0) and adds a line to the report.
      *
-     * @param sua The SUA to be checked
+     * @param sua    The SUA to be checked
      * @param suaMod A Function object that returns the modifier for the element and SUA. This is
      */
     protected void processOffensiveSUAMod(BattleForceSUA sua, Function<AlphaStrikeElement, Double> suaMod) {
@@ -228,15 +261,16 @@ public class ASPointValueConverter {
             double modifier = suaMod.apply(element);
             String suaString = AlphaStrikeHelper.formatAbility(sua, element.getSpecialAbilities(), element, ", ");
             offensiveValue += modifier;
-            report.addLine("Offensive SUA", "+ " + formatForReport(modifier) + " (" + suaString + ")", "= " + formatForReport(offensiveValue));
+            report.addLine("Offensive SUA",
+                  "+ " + formatForReport(modifier) + " (" + suaString + ")",
+                  "= " + formatForReport(offensiveValue));
         }
     }
 
     /**
-     * A helper method for SUA modifiers of various types. Returns the modifier (or 0)
-     * and adds a line to the report.
+     * A helper method for SUA modifiers of various types. Returns the modifier (or 0) and adds a line to the report.
      *
-     * @param sua The SUA to be checked
+     * @param sua    The SUA to be checked
      * @param suaMod A Function object that returns the modifier for the element and SUA. This is
      */
     protected void processDefensiveSUAMod(BattleForceSUA sua, Function<AlphaStrikeElement, Double> suaMod) {
@@ -244,7 +278,9 @@ public class ASPointValueConverter {
             double modifier = suaMod.apply(element);
             String suaString = AlphaStrikeHelper.formatAbility(sua, element.getSpecialAbilities(), element, ", ");
             defensiveValue += modifier;
-            report.addLine("Defensive SUA", "+ " + formatForReport(modifier) + " (" + suaString + ")", "= " + formatForReport(defensiveValue));
+            report.addLine("Defensive SUA",
+                  "+ " + formatForReport(modifier) + " (" + suaString + ")",
+                  "= " + formatForReport(defensiveValue));
         }
     }
 
@@ -275,13 +311,17 @@ public class ASPointValueConverter {
         }
         String modifiers = modifierList.isEmpty() ? "" : " (" + String.join(", ", modifierList) + ")";
         report.addLine("Offensive Value:",
-                formatForReport(offensiveValue) + " x " + formatForReport(blanketMod) + modifiers,
-                "= " + formatForReport(offensiveValue * blanketMod));
+              formatForReport(offensiveValue) + " x " + formatForReport(blanketMod) + modifiers,
+              "= " + formatForReport(offensiveValue * blanketMod));
         offensiveValue *= blanketMod;
     }
 
+    protected void processUnitTypeDamageDivisors() {
+        // only on large craft, the offensive value is divided based on unit type
+    }
+
     protected void processDefensiveSUAMods() {
-        double armorThird = Math.floor((double)element.getFullArmor() / 3);
+        double armorThird = Math.floor((double) element.getFullArmor() / 3);
         double barFactor = element.hasSUA(BAR) ? 0.5 : 1;
 
         processDefensiveSUAMod(ABA, e -> 0.5);
@@ -310,8 +350,8 @@ public class ASPointValueConverter {
         processStructure();
         double defFactor = getDefenseFactor();
         report.addLine("- DIR:",
-                formatForReport(dir) + " x " + formatForReport(defFactor) + ", round to half",
-                "= " + formatForReport(0.5 * Math.round(dir * defFactor * 2)));
+              formatForReport(dir) + " x " + formatForReport(defFactor) + ", round to half",
+              "= " + formatForReport(0.5 * Math.round(dir * defFactor * 2)));
         dir = 0.5 * Math.round(dir * defFactor * 2);
     }
 
@@ -321,7 +361,7 @@ public class ASPointValueConverter {
         if (element.isType(CV, SV)) {
             modifierList.add("MV " + element.getPrimaryMovementMode());
             if (element.getMovementModes().contains("t") || element.getMovementModes().contains("n")
-                    || element.getMovementModes().contains("s")) {
+                  || element.getMovementModes().contains("s")) {
                 armorMultiplier = 1.8;
             } else if (element.getMovementModes().contains("h") || element.getMovementModes().contains("w")) {
                 armorMultiplier = 1.7;
@@ -340,43 +380,43 @@ public class ASPointValueConverter {
         dir = element.getFullArmor() * armorMultiplier;
         String modifiers = modifierList.isEmpty() ? "" : " (" + String.join(", ", modifierList) + ")";
         report.addLine("- Armor",
-                element.getFullArmor() + " x " + formatForReport(armorMultiplier) + modifiers,
-                "= " + formatForReport(dir));
+              element.getFullArmor() + " x " + formatForReport(armorMultiplier) + modifiers,
+              "= " + formatForReport(dir));
     }
 
     protected void processStructure() {
-        double strucMultiplier = 1;
+        double structureMultiplier = 1;
         String modifiers = "";
         if (element.isInfantry()) {
             modifiers = " (Infantry)";
-            strucMultiplier = 2;
-        } else  if (element.isType(IM) || element.hasSUA(BAR)) {
+            structureMultiplier = 2;
+        } else if (element.isType(IM) || element.hasSUA(BAR)) {
             modifiers = element.isType(IM) ? " (IM)" : " (BAR)";
-            strucMultiplier = 0.5;
+            structureMultiplier = 0.5;
         }
-        dir += element.getFullStructure() * strucMultiplier;
+        dir += element.getFullStructure() * structureMultiplier;
         report.addLine("- Structure",
-                "+ " + element.getFullStructure() + " x " + formatForReport(strucMultiplier) + modifiers,
-                "= " + formatForReport(dir));
+              "+ " + element.getFullStructure() + " x " + formatForReport(structureMultiplier) + modifiers,
+              "= " + formatForReport(dir));
     }
 
     private double getDefenseFactor() {
         double result = 0;
-        double movemod = element.getTMM();
+        double movementMod = element.getTMM();
         if (element.isJumpCapable() && (element.isInfantry()
-                || (!element.getStandardDamage().hasDamage() && !element.hasAnySUAOf(TSEMP, ARTS,
-                ARTAC, ARTAIS, ARTBA, ARTCM12, ARTCM5, ARTCM7, ARTCM9, ARTLT, ARTLTC, ARTSC, ARTT, ARTTC)))) {
-            movemod += 1;
+              || (!element.getStandardDamage().hasDamage() && !element.hasAnySUAOf(TSEMP, ARTS,
+              ARTAC, ARTAIS, ARTBA, ARTCM12, ARTCM5, ARTCM7, ARTCM9, ARTLT, ARTLTC, ARTSC, ARTT, ARTTC)))) {
+            movementMod += 1;
         }
         List<String> modifierList = new ArrayList<>();
-        if (element.hasSUA(MAS) && (3 > movemod)) {
+        if (element.hasSUA(MAS) && (3 > movementMod)) {
             result += 3;
             modifierList.add("MAS");
-        } else if (element.hasSUA(LMAS) && (2 > movemod)) {
+        } else if (element.hasSUA(LMAS) && (2 > movementMod)) {
             result += 2;
             modifierList.add("LMAS");
         } else {
-            result += movemod;
+            result += movementMod;
             modifierList.add("TMM");
         }
         if (element.isAerospace()) {
@@ -392,7 +432,7 @@ public class ASPointValueConverter {
             modifierList.add(element.getASUnitType().toString());
         }
         if (!element.isMek() && (element.getMovementModes().contains("g")
-                || element.getMovementModes().contains("v"))) {
+              || element.getMovementModes().contains("v"))) {
             result++;
             modifierList.add("VTOL/WiGE");
         }
@@ -417,8 +457,8 @@ public class ASPointValueConverter {
         double defFactor = 1 + multiplier * result;
         String modifiers = " (" + String.join(", ", modifierList) + ")";
         report.addLine("- Defense Factor",
-                "1 + " + formatForReport(multiplier) + " x " + formatForReport(result) + modifiers,
-                "");
+              "1 + " + formatForReport(multiplier) + " x " + formatForReport(result) + modifiers,
+              "");
         return defFactor;
     }
 
@@ -430,16 +470,15 @@ public class ASPointValueConverter {
     }
 
     /**
-     * Determines the Brawler Malus, AlphaStrike Companion Errata v1.4, p.17
-     * This is 0 if not applicable.
+     * Determines the Brawler Malus, AlphaStrike Companion Errata v1.4, p.17 This is 0 if not applicable.
      */
     private double brawlerMalus() {
         int move = getHighestMove(element);
         double multiplier = 0;
         if (move >= 2 && !element.hasAnySUAOf(BT, ARTS, C3BSM, C3BSS, C3EM,
-                C3I, C3M, C3S, AC3, NC3, NOVA, C3RS, ECM, AECM, ARTAC, ARTAIS, ARTBA, ARTCM12, ARTCM5, ARTCM7,
-                ARTCM9, ARTLT, ARTLTC, ARTSC, ARTT, ARTTC, MEC, XMEC)
-                && !(element.hasSUA(CAR) && (element.getCAR() <= 8))) {
+              C3I, C3M, C3S, AC3, NC3, NOVA, C3RS, ECM, AECM, ARTAC, ARTAIS, ARTBA, ARTCM12, ARTCM5, ARTCM7,
+              ARTCM9, ARTLT, ARTLTC, ARTSC, ARTT, ARTTC, MEC, XMEC)
+              && !(element.hasSUA(CAR) && (element.getCAR() <= 8))) {
             double dmgS = pointValueSDamage(element);
             double dmgM = pointValueMDamage(element);
             double dmgL = pointValueLDamage(element);
@@ -469,8 +508,8 @@ public class ASPointValueConverter {
         double result = 0;
         double modifiedTMM = element.getTMM() + 0.5 * element.getJMPS() + 0.5 * element.getSUBS();
         if (modifiedTMM > 1) {
-            double dmgS = element.getStandardDamage().S.minimal ? 0.5 : element.getStandardDamage().S.damage;
-            double dmgM = element.getStandardDamage().M.minimal ? 0.5 : element.getStandardDamage().M.damage;
+            double dmgS = element.getStandardDamage().S().minimal ? 0.5 : element.getStandardDamage().S().damage;
+            double dmgM = element.getStandardDamage().M().minimal ? 0.5 : element.getStandardDamage().M().damage;
             if (dmgM > 0) {
                 result = (modifiedTMM - 1) * dmgM;
             } else if (element.getTMM() >= 3) {
@@ -547,23 +586,23 @@ public class ASPointValueConverter {
             String modifiers = " (" + String.join(", ", modifierList) + ")";
             subTotal += bonus;
             report.addLine("Force Bonus", "+ " + bonus + modifiers,
-                    "= " + formatForReport(subTotal));
+                  "= " + formatForReport(subTotal));
         }
     }
 
     /** @return The Short Range damage value with minimal damage represented as 0.5 (including TOR). */
     private double pointValueSDamage(AlphaStrikeElement element) {
-        return pointValueDamage(element.getStandardDamage().S) + pointValueDamage(element.getTOR().S);
+        return pointValueDamage(element.getStandardDamage().S()) + pointValueDamage(element.getTOR().S());
     }
 
     /** @return The Medium Range damage value with minimal damage represented as 0.5 (including TOR). */
     private double pointValueMDamage(AlphaStrikeElement element) {
-        return pointValueDamage(element.getStandardDamage().M) + pointValueDamage(element.getTOR().M);
+        return pointValueDamage(element.getStandardDamage().M()) + pointValueDamage(element.getTOR().M());
     }
 
     /** @return The Long Range damage value with minimal damage represented as 0.5 (including TOR). */
     private double pointValueLDamage(AlphaStrikeElement element) {
-        return pointValueDamage(element.getStandardDamage().L) + pointValueDamage(element.getTOR().L);
+        return pointValueDamage(element.getStandardDamage().L()) + pointValueDamage(element.getTOR().L());
     }
 
     /** @return The damage value of the given ASDamage or 0.5 when it's minimal damage. */
@@ -571,7 +610,7 @@ public class ASPointValueConverter {
         return asDamage.minimal ? 0.5 : asDamage.damage;
     }
 
-    /** @return The highest movement capability of any of the element's movement modes. */
+    /** @return The highest movement capability of the element's movement modes. */
     protected int getHighestMove(AlphaStrikeElement element) {
         return element.getMovement().values().stream().mapToInt(m -> m).max().orElse(0);
     }

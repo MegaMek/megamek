@@ -1,41 +1,63 @@
 /*
- * MegaMek -
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2012-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.verifier;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
-import megamek.client.ui.swing.calculationReport.TextCalculationReport;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.EquipmentTypeLookup;
-import megamek.common.Infantry;
-import megamek.common.InfantryMount;
-import megamek.common.LocationFullException;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.TextCalculationReport;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.exceptions.LocationFullException;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Infantry;
+import megamek.common.units.InfantryMount;
+import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
+import megamek.common.weapons.artillery.ArtilleryWeapon;
 
 /**
  * @author Jay Lawson (Taharqa)
  */
 public class TestInfantry extends TestEntity {
-    private Infantry infantry;
+    private final Infantry infantry;
 
     public TestInfantry(Infantry infantry, TestEntityOption option, String fileString) {
         super(option, null, null);
@@ -150,7 +172,7 @@ public class TestInfantry extends TestEntity {
 
         int max = maxSecondaryWeapons(inf);
         if (inf.getSecondaryWeaponsPerSquad() > max) {
-            buff.append("Number of secondary weapons exceeds maximum of " + max).append("\n\n");
+            buff.append("Number of secondary weapons exceeds maximum of ").append(max).append("\n\n");
             correct = false;
         }
 
@@ -177,14 +199,20 @@ public class TestInfantry extends TestEntity {
 
         max = maxSquadSize(inf.getMovementMode(), inf.hasMicrolite() || (inf.getAllUMUCount() > 1), inf.getMount());
         if (inf.getSquadSize() > max) {
-            buff.append("Maximum squad size is " + max + "\n\n");
+            buff.append("Maximum squad size is ").append(max).append("\n\n");
             correct = false;
         }
 
+        max = maxSquadCount(inf.getMovementMode(), inf.hasMicrolite() || (inf.getAllUMUCount() > 1),
+              inf.getSpecializations(), inf.getMount());
+        if (inf.getSquadCount() > max) {
+            buff.append("Maximum squad count is ").append(max).append("\n\n");
+        }
+
         max = maxUnitSize(inf.getMovementMode(), inf.hasMicrolite() || (inf.getAllUMUCount() > 1),
-                inf.hasSpecialization(Infantry.COMBAT_ENGINEERS | Infantry.MOUNTAIN_TROOPS), inf.getMount());
+              inf.hasSpecialization(Infantry.COMBAT_ENGINEERS | Infantry.MOUNTAIN_TROOPS), inf.getMount());
         if (inf.getShootingStrength() > max) {
-            buff.append("Maximum platoon size is " + max + "\n\n");
+            buff.append("Maximum platoon size is ").append(max).append("\n\n");
             correct = false;
         }
 
@@ -197,16 +225,73 @@ public class TestInfantry extends TestEntity {
             buff.append("Infantry may not have more than one armor kit!\n");
             correct = false;
         }
-        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
+
+        if (infantry.hasFieldWeapon()) {
+            // These tests include field artillery
+            Mounted<?> firstFieldGun = infantry.originalFieldWeapons().get(0);
+            EquipmentType fieldGunType = firstFieldGun.getType();
+            int fieldGunCount = infantry.originalFieldWeapons().size();
+
+            if (fieldGunCount > 1) {
+                if (isFieldArtilleryWeapon(firstFieldGun)) {
+                    buff.append("Infantry may only use a single field artillery weapon!\n");
+                    correct = false;
+                }
+                for (Mounted<?> fieldGun : infantry.originalFieldWeapons()) {
+                    if (fieldGun.getType() != fieldGunType) {
+                        buff.append("All field guns must be of the same type and size!\n");
+                        correct = false;
+                    }
+                }
+            }
+
+            int troopersRequired = fieldGunCount * fieldGunCrewRequirement(fieldGunType, infantry);
+            if (troopersRequired > infantry.getOriginalTrooperCount()) {
+                buff.append("Insufficient troopers to operate the field guns!\n");
+                correct = false;
+            }
+        }
+
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)
+              || getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
         return correct;
     }
 
+    /**
+     * @return True if the given equipment type is suitable as a field artillery weapon for a conventional infantry
+     *       unit; false for a null equipment type.
+     */
+    public static boolean isFieldArtilleryType(@Nullable EquipmentType equipmentType) {
+        return (equipmentType instanceof ArtilleryWeapon) || (equipmentType instanceof ArtilleryCannonWeapon);
+    }
+
+    /**
+     * @return True if the given equipment is suitable as a field artillery weapon for a conventional infantry unit;
+     *       false for a null equipment.
+     */
+    public static boolean isFieldArtilleryWeapon(@Nullable Mounted<?> mounted) {
+        return (mounted != null) && isFieldArtilleryType(mounted.getType());
+    }
+
+    /**
+     * Returns the number of troopers of the given infantry required to operate each of the given field gun equipment.
+     * Neither parameter is checked for correctness. The returned result is never 0.
+     *
+     * @param equip    The weapon type to be used as a field gun
+     * @param infantry The infantry unit
+     *
+     * @return The troopers required to operate the field gun
+     */
+    public static int fieldGunCrewRequirement(EquipmentType equip, Infantry infantry) {
+        return Math.max(2, (int) Math.ceil(equip.getTonnage(infantry)));
+    }
+
     public static int maxSecondaryWeapons(Infantry inf) {
         int max;
         if (inf.getMount() != null) {
-            max = inf.getMount().getSize().supportWeaponsPerCreature;
+            max = inf.getMount().size().supportWeaponsPerCreature;
         } else if (inf.getMovementMode() == EntityMovementMode.VTOL) {
             max = inf.hasMicrolite() ? 0 : 1;
         } else if (inf.getMovementMode() == EntityMovementMode.INF_UMU) {
@@ -235,37 +320,74 @@ public class TestInfantry extends TestEntity {
     /**
      * Maximum squad size based on motive type
      *
-     * @param movementMode  The platoon's movement mode
-     * @param alt           True indicates that VTOL is microlite and INF_UMU is motorized.
-     * @param mount         The mount if the unit is beast-mounted, otherwise null.
-     * @return              The maximum size of a squad.
+     * @param movementMode The platoon's movement mode
+     * @param alt          True indicates that VTOL is microlite and INF_UMU is motorized.
+     * @param mount        The mount if the unit is beast-mounted, otherwise null.
+     *
+     * @return The maximum size of a squad.
      */
     public static int maxSquadSize(EntityMovementMode movementMode, boolean alt, @Nullable InfantryMount mount) {
         if (mount == null) {
-            switch (movementMode) {
-                case HOVER:
-                case SUBMARINE:
-                    return 5;
-                case WHEELED:
-                    return 6;
-                case TRACKED:
-                    return 7;
-                case INF_UMU:
-                    return alt ? 6 : 10;
-                case VTOL:
-                    return alt ? 2 : 4;
-                default:
-                    return 10;
-            }
-        } else if (mount.getSize().troopsPerCreature == 1) {
+            return switch (movementMode) {
+                case HOVER, SUBMARINE -> 5;
+                case WHEELED -> 6;
+                case TRACKED -> 7;
+                case INF_UMU -> alt ? 6 : 10;
+                case VTOL -> alt ? 2 : 4;
+                default -> 10;
+            };
+        } else if (mount.size().troopsPerCreature == 1) {
             return 10; // use foot infantry limit
         } else {
-            return mount.getSize().troopsPerCreature;
+            return mount.size().troopsPerCreature;
+        }
+    }
+
+    /**
+     * The maximum number of squads in a platoon based on its movement mode.
+     *
+     * @param movementMode   The platoon's movement mode
+     * @param alt            True indicates that VTOL is microlite and INF_UMU is motorized.
+     * @param specialization The infantry's specialization, if any.
+     * @param mount          The mount if the unit is beast-mounted, otherwise null.
+     *
+     * @return The maximum number of squads/creatures per platoon.
+     */
+    public static int maxSquadCount(EntityMovementMode movementMode, boolean alt,
+          int specialization, @Nullable InfantryMount mount) {
+
+        if (mount == null) {
+            int squads = switch (movementMode) {
+                case VTOL, HOVER, WHEELED, TRACKED, SUBMARINE -> 4;
+                case INF_UMU -> alt ? 2 : 4;
+                default -> 5;
+            };
+
+            if ((specialization & (Infantry.COMBAT_ENGINEERS | Infantry.MOUNTAIN_TROOPS)) > 0) {
+                squads = Math.min(squads, 2);
+            }
+
+            if ((specialization & Infantry.PARATROOPS) > 0) {
+                squads = Math.min(squads, 3);
+            }
+
+            if ((specialization & Infantry.MARINES) > 0) {
+                squads = Math.min(squads, 4);
+            }
+
+            return squads;
+
+        } else {
+            // For Very Large and Monstrous (but not Large) creatures, each creature is one squad.
+            if (mount.size() == InfantryMount.BeastSize.LARGE) {
+                return 5;
+            }
+            return mount.size().creaturesPerPlatoon;
         }
     }
 
     public static int maxUnitSize(EntityMovementMode movementMode, boolean alt, boolean engOrMountain,
-                                  InfantryMount mount) {
+          InfantryMount mount) {
         int max;
         if (mount == null) {
             switch (movementMode) {
@@ -287,14 +409,14 @@ public class TestInfantry extends TestEntity {
                     max = 28;
                     break;
                 case VTOL:
-                    max = maxSquadSize(movementMode, alt, mount) * 4;
+                    max = maxSquadSize(movementMode, alt, null) * 4;
                     break;
                 default:
                     max = 30;
                     break;
             }
         } else {
-            max = mount.getSize().creaturesPerPlatoon * mount.getSize().troopsPerCreature;
+            max = mount.size().creaturesPerPlatoon * mount.size().troopsPerCreature;
         }
         if (engOrMountain) {
             max = Math.min(max, 20);
@@ -342,25 +464,26 @@ public class TestInfantry extends TestEntity {
     }
 
     /**
-     * Calculates the weight of the given Conventional Infantry unit. Infantry weight
-     * is not fixed as in Meks and Vehicles but calculated from the infantry configuration.
+     * Calculates the weight of the given Conventional Infantry unit. Infantry weight is not fixed as in Meks and
+     * Vehicles but calculated from the infantry configuration.
      *
      * @param infantry The conventional infantry
+     *
      * @return The rounded weight in tons
      */
     public static double getWeight(Infantry infantry) {
         double weight = getWeightExact(infantry, new DummyCalculationReport());
-        return ceil(weight, Ceil.HALFTON);
+        return ceil(weight, Ceil.HALF_TON);
     }
 
     /**
-     * Calculates the weight of the given Conventional Infantry unit. Infantry weight
-     * is not fixed as in Meks and Vehicles but calculated from the infantry configuration.
-     * The given CalculationReport will be filled in with the weight calculation (the
-     * report includes the final rounding step but the returned result does not).
+     * Calculates the weight of the given Conventional Infantry unit. Infantry weight is not fixed as in Meks and
+     * Vehicles but calculated from the infantry configuration. The given CalculationReport will be filled in with the
+     * weight calculation (the report includes the final rounding step but the returned result does not).
      *
      * @param infantry The conventional infantry
-     * @param report A CalculationReport to fill in
+     * @param report   A CalculationReport to fill in
+     *
      * @return The exact weight in tons
      */
     public static double getWeightExact(Infantry infantry, CalculationReport report) {
@@ -384,92 +507,92 @@ public class TestInfantry extends TestEntity {
 
         if (mount != null) {
             String calculation;
-            report.addLine("Mounted: " + mount.getName() + ", "
-                    + mount.getSize().troopsPerCreature + " trooper(s) per mount", "");
-            if (mount.getSize().troopsPerCreature > 1) {
-                weight = (mount.getWeight() + 0.2 * infantry.getSquadSize()) * infantry.getSquadCount();
-                calculation = "(" + formatForReport(mount.getWeight()) + " + 0.2 x "
-                        + infantry.getSquadSize() + ") x " + infantry.getSquadCount();
+            report.addLine("Mounted: " + mount.name() + ", "
+                  + mount.size().troopsPerCreature + " trooper(s) per mount", "");
+            if (mount.size().troopsPerCreature > 1) {
+                weight = (mount.weight() + 0.2 * infantry.getSquadSize()) * infantry.getSquadCount();
+                calculation = "(" + formatForReport(mount.weight()) + " + 0.2 x "
+                      + infantry.getSquadSize() + ") x " + infantry.getSquadCount();
             } else {
-                weight = (mount.getWeight() + 0.2) * activeTroopers;
-                calculation = "(" + formatForReport(mount.getWeight()) + " + 0.2) x " + activeTroopers;
+                weight = (mount.weight() + 0.2) * activeTroopers;
+                calculation = "(" + formatForReport(mount.weight()) + " + 0.2) x " + activeTroopers;
             }
             report.addLine("", calculation, formatForReport(weight) + " t");
 
         } else { // not beast-mounted
-            double mult;
+            double multiplier;
             switch (infantry.getMovementMode()) {
                 case INF_MOTORIZED:
-                    mult = 0.195;
+                    multiplier = 0.195;
                     break;
                 case HOVER:
                 case TRACKED:
                 case WHEELED:
-                    mult = 1.0;
+                    multiplier = 1.0;
                     break;
                 case VTOL:
-                    mult = infantry.hasMicrolite() ? 1.4 : 1.9;
+                    multiplier = infantry.hasMicrolite() ? 1.4 : 1.9;
                     break;
                 case INF_JUMP:
-                    mult = 0.165;
+                    multiplier = 0.165;
                     break;
                 case INF_UMU:
                     if (infantry.getActiveUMUCount() > 1) {
-                        mult = 0.295; // motorized + 0.1 for motorized scuba
+                        multiplier = 0.295; // motorized + 0.1 for motorized scuba
                     } else {
-                        mult = 0.135; // foot + 0.05 for scuba
+                        multiplier = 0.135; // foot + 0.05 for scuba
                     }
                     break;
                 case SUBMARINE:
-                    mult = 0.9;
+                    multiplier = 0.9;
                     break;
                 case INF_LEG:
                 default:
-                    mult = 0.085;
+                    multiplier = 0.085;
             }
-            report.addLine("Base Weight: ", infantry.getMovementModeAsString(), formatForReport(mult) + " t");
+            report.addLine("Base Weight: ", infantry.getMovementModeAsString(), formatForReport(multiplier) + " t");
 
             if (infantry.hasSpecialization(Infantry.COMBAT_ENGINEERS)) {
-                mult += 0.1;
+                multiplier += 0.1;
                 report.addLine("", "Combat Engineers", "+ 0.1 t");
 
             }
 
             if (infantry.hasSpecialization(Infantry.PARATROOPS)) {
-                mult += 0.05;
+                multiplier += 0.05;
                 report.addLine("", "Paratroopers", "+ 0.05 t");
             }
 
             if (infantry.hasSpecialization(Infantry.PARAMEDICS)) {
-                mult += 0.05;
+                multiplier += 0.05;
                 report.addLine("", "Paramedics", "+ 0.05 t");
             }
 
             if (infantry.hasAntiMekGear()) {
-                mult += .015;
+                multiplier += .015;
                 report.addLine("", "Anti-Mek Gear", "+ 0.015 t");
             }
 
-            weight = activeTroopers * mult;
-            report.addLine("Trooper Weight:", activeTroopers + " x " + formatForReport(mult) + " t",
-                    formatForReport(weight) + " t");
+            weight = activeTroopers * multiplier;
+            report.addLine("Trooper Weight:", activeTroopers + " x " + formatForReport(multiplier) + " t",
+                  formatForReport(weight) + " t");
 
             weight += infantry.activeFieldWeapons().stream().mapToDouble(Mounted::getTonnage).sum();
             weight += infantry.getAmmo().stream().mapToDouble(Mounted::getTonnage).sum();
 
             infantry.activeFieldWeapons().forEach(mounted ->
-                    report.addLine(mounted.getName(), "",
-                            "+ " + formatForReport(mounted.getTonnage()) + " t"));
+                  report.addLine(mounted.getName(), "",
+                        "+ " + formatForReport(mounted.getTonnage()) + " t"));
             infantry.getAmmo().forEach(mounted ->
-                    report.addLine(mounted.getName(), "",
-                            "+ " + formatForReport(mounted.getTonnage()) + " t"));
+                  report.addLine(mounted.getName(), "",
+                        "+ " + formatForReport(mounted.getTonnage()) + " t"));
         }
 
         report.addEmptyLine();
         // Intentional: Add the final rounding to the report, but return the exact weight
-        double roundedWeight = ceil(weight, Ceil.HALFTON);
+        double roundedWeight = ceil(weight, Ceil.HALF_TON);
         report.addLine("Final Weight:", "round up to nearest half ton",
-                formatForReport(roundedWeight) + " t");
+              formatForReport(roundedWeight) + " t");
         return weight;
     }
 
@@ -478,11 +601,11 @@ public class TestInfantry extends TestEntity {
             removeAntiMekAttacks(infantry);
             if (infantry.canMakeAntiMekAttacks()) {
                 InfantryMount mount = infantry.getMount();
-                if ((mount == null) || mount.getSize().canMakeSwarmAttacks) {
+                if ((mount == null) || mount.size().canMakeSwarmAttacks) {
                     infantry.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), Infantry.LOC_INFANTRY);
                     infantry.addEquipment(EquipmentType.get(Infantry.STOP_SWARM), Infantry.LOC_INFANTRY);
                 }
-                if ((mount == null) || mount.getSize().canMakeLegAttacks) {
+                if ((mount == null) || mount.size().canMakeLegAttacks) {
                     infantry.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK), Infantry.LOC_INFANTRY);
                 }
             }

@@ -1,35 +1,53 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
-package megamek.common.equipment;
 
-import megamek.common.*;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.WeaponHandler;
-import megamek.common.weapons.gaussrifles.GaussWeapon;
+package megamek.common.equipment;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
 import java.util.stream.Collectors;
+
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeArc;
+import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.weapons.gaussRifles.GaussWeapon;
+import megamek.common.weapons.handlers.WeaponHandler;
 
 public class WeaponMounted extends Mounted<WeaponType> {
 
@@ -48,17 +66,17 @@ public class WeaponMounted extends Mounted<WeaponType> {
     public int getExplosionDamage() {
         // TacOps Gauss Weapon rule p. 102
         if ((getType() instanceof GaussWeapon) && getType().hasModes()
-                && curMode().equals("Powered Down")) {
+              && curMode().equals("Powered Down")) {
             return 0;
         }
-        if ((isHotLoaded() || hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS))
-                && (getLinked() != null) && (getLinked().getUsableShotsLeft() > 0)) {
+        if ((isHotLoaded() || hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_AMMO_FEED_PROBLEMS))
+              && (getLinked() != null) && (getLinked().getUsableShotsLeft() > 0)) {
             Mounted<?> link = getLinked();
-            AmmoType atype = ((AmmoType) link.getType());
-            int damagePerShot = atype.getDamagePerShot();
+            AmmoType ammoType = ((AmmoType) link.getType());
+            int damagePerShot = ammoType.getDamagePerShot();
             // Launchers with Dead-Fire missiles in them do an extra point of
             // damage per shot when critted
-            if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
+            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
                 damagePerShot++;
             }
 
@@ -78,7 +96,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
             return 15;
         }
 
-        if ((getType().getAmmoType() == AmmoType.T_MPOD) && isFired()) {
+        if ((getType().getAmmoType() == AmmoType.AmmoTypeEnum.MPOD) && isFired()) {
             return 0;
         }
 
@@ -104,15 +122,22 @@ public class WeaponMounted extends Mounted<WeaponType> {
         if (getType().hasFlag(WeaponType.F_ENERGY) && getType().hasModes()) {
             heat = Compute.dialDownHeat(this, getType());
         }
+
+        // Apply Gothic Dazzle Mode heat reduction
+        if (curMode().getName().contains("Dazzle")) {
+            // Half heat (rounded down, min 0)
+            heat = Math.max(0, heat / 2);
+        }
+
         // multiply by number of shots and number of weapons
         heat = heat * getCurrentShots() * getNWeapons();
-        if (hasQuirk(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)) {
+        if (hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_IMP_COOLING)) {
             heat = Math.max(1, heat - 1);
         }
-        if (hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)) {
+        if (hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_POOR_COOLING)) {
             heat += 1;
         }
-        if (hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)) {
+        if (hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_NO_COOLING)) {
             heat += 2;
         }
         if (hasChargedCapacitor() == 2) {
@@ -122,10 +147,10 @@ public class WeaponMounted extends Mounted<WeaponType> {
             heat += 5;
         }
         if ((getLinkedBy() != null)
-                && !getLinkedBy().isInoperable()
-                && (getLinkedBy().getType() instanceof MiscType)
-                && getLinkedBy().getType().hasFlag(
-                MiscType.F_LASER_INSULATOR)) {
+              && !getLinkedBy().isInoperable()
+              && (getLinkedBy().getType() instanceof MiscType)
+              && getLinkedBy().getType().hasFlag(
+              MiscType.F_LASER_INSULATOR)) {
             heat -= 1;
             if (heat == 0) {
                 heat++;
@@ -155,11 +180,11 @@ public class WeaponMounted extends Mounted<WeaponType> {
             nShots = 0;
             for (WeaponMounted m : getBayWeapons()) {
                 if ((m.getLocation() == getLocation())
-                        && !m.isDestroyed()
-                        && !m.isBreached()
-                        && m.getType().hasFlag(WeaponType.F_MG)
-                        && (((WeaponType) m.getType()).getRackSize() == ((WeaponType) getType())
-                        .getRackSize())) {
+                      && !m.isDestroyed()
+                      && !m.isBreached()
+                      && m.getType().hasFlag(WeaponType.F_MG)
+                      && (m.getType().getRackSize() == getType()
+                      .getRackSize())) {
                     nShots++;
                 }
             }
@@ -169,12 +194,14 @@ public class WeaponMounted extends Mounted<WeaponType> {
 
     @Override
     public boolean isOneShot() {
-        return getType().hasFlag(WeaponType.F_ONESHOT);
+        return getType().hasFlag(WeaponType.F_ONE_SHOT);
     }
 
     /**
      * Adds the weapon with the given equipment number to the bay.
+     *
      * @param equipmentNum The equipment number of the weapon to add
+     *
      * @see Entity#getEquipmentNum(Mounted)
      */
     public void addWeaponToBay(int equipmentNum) {
@@ -187,7 +214,9 @@ public class WeaponMounted extends Mounted<WeaponType> {
 
     /**
      * Removes the weapon with the given equipment number from the bay.
+     *
      * @param equipmentNum The equipment number of the weapon to remove.
+     *
      * @see Entity#getEquipmentNum(Mounted)
      */
     public void removeWeaponFromBay(int equipmentNum) {
@@ -196,6 +225,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
 
     /**
      * Removes a weapon from the bay.
+     *
      * @param weapon The weapon to remove.
      */
     public void removeWeaponFromBay(WeaponMounted weapon) {
@@ -214,15 +244,17 @@ public class WeaponMounted extends Mounted<WeaponType> {
      */
     public List<WeaponMounted> getBayWeapons() {
         return bayWeapons.stream()
-                .map(i -> getEntity().getWeapon(i))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+              .map(i -> getEntity().getWeapon(i))
+              .filter(Objects::nonNull)
+              .collect(Collectors.toList());
     }
 
     /**
      * Fetches the bay weapon at a given index in the bay weapons list.
+     *
      * @param index The index
-     * @return      The weapon mount at that
+     *
+     * @return The weapon mount at that
      */
     public WeaponMounted getBayWeapon(int index) {
         if ((index >= 0) && (index < bayWeapons.size())) {
@@ -234,7 +266,9 @@ public class WeaponMounted extends Mounted<WeaponType> {
 
     /**
      * Adds the ammo with the given equipment number to the bay.
+     *
      * @param equipmentNum The equipment number of the ammo
+     *
      * @see Entity#getEquipmentNum(Mounted)
      */
     public void addAmmoToBay(int equipmentNum) {
@@ -247,7 +281,9 @@ public class WeaponMounted extends Mounted<WeaponType> {
 
     /**
      * Removes the ammo with the given equipment number from the bay.
+     *
      * @param equipmentNum The equipment number of the ammo.
+     *
      * @see Entity#getEquipmentNum(Mounted)
      */
     public void removeAmmoFromBay(int equipmentNum) {
@@ -263,15 +299,15 @@ public class WeaponMounted extends Mounted<WeaponType> {
 
     public List<AmmoMounted> getBayAmmo() {
         return bayAmmo.stream()
-                .map(i -> getEntity().getAmmo(i))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+              .map(i -> getEntity().getAmmo(i))
+              .filter(Objects::nonNull)
+              .collect(Collectors.toList());
     }
 
     /**
-     *
      * @param mAmmoId equipment number of ammo
-     * @return        whether the ammo is in this weapon's bay
+     *
+     * @return whether the ammo is in this weapon's bay
      */
     public boolean ammoInBay(int mAmmoId) {
         return bayAmmo.contains(mAmmoId);
@@ -279,7 +315,9 @@ public class WeaponMounted extends Mounted<WeaponType> {
 
     /**
      * Removes the weapon or ammo with the given equipment number from the bay.
+     *
      * @param equipmentNum The weapon or ammo equipment number
+     *
      * @see Entity#getEquipmentNum(Mounted)
      */
     public void removeFromBay(int equipmentNum) {
@@ -289,6 +327,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
 
     /**
      * Removes the weapon or ammo from the bay.
+     *
      * @param mounted The weapon or ammo to remove.
      */
     public void removeFromBay(Mounted<?> mounted) {
@@ -297,8 +336,11 @@ public class WeaponMounted extends Mounted<WeaponType> {
 
     /**
      * Checks whether the bay contains the given weapon or ammo.
+     *
      * @param equipmentNum The equipment number of the weapon or ammo.
+     *
      * @return Whether the bay contains the equipment.
+     *
      * @see Entity#getEquipmentNum(Mounted)
      */
     public boolean bayContains(int equipmentNum) {
@@ -307,8 +349,10 @@ public class WeaponMounted extends Mounted<WeaponType> {
 
     /**
      * Checks whether the bay contains the given weapon or ammo.
+     *
      * @param mounted The weapon or ammo.
-     * @return Wehther the bay contains the equipment.
+     *
+     * @return Whether the bay contains the equipment.
      */
     public boolean bayContains(Mounted<?> mounted) {
         return bayContains(mounted.getEquipmentNum());
@@ -330,8 +374,8 @@ public class WeaponMounted extends Mounted<WeaponType> {
 
 
     /**
-     * Assign APDS systems to the most dangerous incoming missile attacks. This
-     * should only be called once per turn, or AMS will get extra attacks
+     * Assign APDS systems to the most dangerous incoming missile attacks. This should only be called once per turn, or
+     * AMS will get extra attacks
      */
     public WeaponAttackAction assignAPDS(List<WeaponHandler> vAttacks) {
         // Shouldn't have null entity, but if we do...
@@ -342,18 +386,18 @@ public class WeaponMounted extends Mounted<WeaponType> {
         // Ensure we only target attacks in our arc & range
         List<WeaponAttackAction> vAttacksInArc = new Vector<>(vAttacks.size());
         for (WeaponHandler wr : vAttacks) {
-            boolean isInArc = Compute.isInArc(getEntity().getGame(),
-                    getEntity().getId(), getEntity().getEquipmentNum(this),
-                    getEntity().getGame().getEntity(wr.waa.getEntityId()));
+            boolean isInArc = ComputeArc.isInArc(getEntity().getGame(),
+                  getEntity().getId(), getEntity().getEquipmentNum(this),
+                  getEntity().getGame().getEntity(wr.weaponAttackAction.getEntityId()));
             boolean isInRange = getEntity().getPosition().distance(
-                    wr.getWaa().getTarget(getEntity().getGame()).getPosition()) <= 3;
+                  wr.getWeaponAttackAction().getTarget(getEntity().getGame()).getPosition()) <= 3;
             if (isInArc && isInRange) {
-                vAttacksInArc.add(wr.waa);
+                vAttacksInArc.add(wr.weaponAttackAction);
             }
         }
         // find the most dangerous salvo by expected damage
         WeaponAttackAction waa = Compute.getHighestExpectedDamage(getEntity()
-                .getGame(), vAttacksInArc, true);
+              .getGame(), vAttacksInArc, true);
         if (waa != null) {
             waa.addCounterEquipment(this);
             return waa;
@@ -366,10 +410,10 @@ public class WeaponMounted extends Mounted<WeaponType> {
      */
     public boolean isAPDS() {
         if ((getEntity() instanceof BattleArmor)
-                && getType().getInternalName().equals("ISBAAPDS")) {
+              && getType().getInternalName().equals("ISBAAPDS")) {
             return true;
         } else {
-            return getType().getAmmoType() == AmmoType.T_APDS;
+            return getType().getAmmoType() == AmmoType.AmmoTypeEnum.APDS;
         }
     }
 
@@ -380,10 +424,14 @@ public class WeaponMounted extends Mounted<WeaponType> {
         int heat = 0;
         if (!getBayWeapons().isEmpty()) {
             heat = getBayWeapons().stream().mapToInt(WeaponMounted::getCurrentHeat).sum();
-        }
-        else {
+        } else {
             heat += getCurrentHeat();
         }
         return heat;
+    }
+
+    @Override
+    public boolean isGroundBomb() {
+        return getType().hasFlag(WeaponType.F_DIVE_BOMB) || getType().hasFlag(WeaponType.F_ALT_BOMB);
     }
 }

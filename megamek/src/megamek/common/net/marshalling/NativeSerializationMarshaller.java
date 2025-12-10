@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.net.marshalling;
 
 import java.io.InputStream;
@@ -22,23 +43,31 @@ import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 
 /**
- * Marshaller that Java native serialization for <code>Packet</code>
- * representation.
+ * Marshaller that Java native serialization for <code>Packet</code> representation.
  */
 class NativeSerializationMarshaller extends PacketMarshaller {
     protected static final PacketCommand[] PACKET_COMMANDS = PacketCommand.values();
+    private static final SanityInputFilter SANITY_INPUT_FILTER = new SanityInputFilter();
 
     @Override
     public void marshall(final Packet packet, final OutputStream stream) throws Exception {
         ObjectOutputStream out = new ObjectOutputStream(stream);
-        out.writeInt(packet.getCommand().ordinal());
-        out.writeObject(packet.getData());
+        out.writeInt(packet.command().ordinal());
+        out.writeObject(packet.data());
         out.flush();
     }
 
     @Override
     public Packet unmarshall(final InputStream stream) throws Exception {
         final ObjectInputStream in = new ObjectInputStream(stream);
-        return new Packet(PACKET_COMMANDS[in.readInt()], (Object[]) in.readObject());
+        in.setObjectInputFilter(SANITY_INPUT_FILTER);
+
+        final int command = in.readInt();
+
+        if (command >= 0 && command < PACKET_COMMANDS.length) {
+            return new Packet(PACKET_COMMANDS[command], (Object[]) in.readObject());
+        } else {
+            throw new InvalidPacketCommandReceivedException(command);
+        }
     }
 }

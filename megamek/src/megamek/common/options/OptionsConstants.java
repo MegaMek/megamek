@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.options;
 
 /**
@@ -21,7 +42,7 @@ public class OptionsConstants {
 
     public static final String QUIRK_POS_ANIMALISTIC = "animalistic";
     public static final String QUIRK_POS_ANTI_AIR = "anti_air";
-    public static final String QUIRK_POS_ATMO_FLYER = "atmo_flyer";
+    public static final String QUIRK_POS_ATMOSPHERE_FLYER = "atmo_flyer";
     public static final String QUIRK_POS_BARREL_FIST_LA = "barrel_fists_la";
     public static final String QUIRK_POS_BARREL_FIST_RA = "barrel_fists_ra";
     public static final String QUIRK_POS_BATTLE_COMP = "battle_computer";
@@ -60,8 +81,8 @@ public class OptionsConstants {
     public static final String QUIRK_POS_POWER_REVERSE = "power_reverse";
     public static final String QUIRK_POS_PRO_ACTUATOR = "pro_actuator";
     public static final String QUIRK_POS_REINFORCED_LEGS = "reinforced_legs";
-    public static final String QUIRK_POS_RUGGED_1 = "rugged_1" ;
-    public static final String QUIRK_POS_RUGGED_2 = "rugged_2" ;
+    public static final String QUIRK_POS_RUGGED_1 = "rugged_1";
+    public static final String QUIRK_POS_RUGGED_2 = "rugged_2";
     public static final String QUIRK_POS_RUMBLE_SEAT = "rumble_seat";
     public static final String QUIRK_POS_SCOUT_BIKE = "scout_bike";
     public static final String QUIRK_POS_SEARCHLIGHT = "searchlight";
@@ -69,7 +90,12 @@ public class OptionsConstants {
     public static final String QUIRK_POS_TRAILER_HITCH = "trailer_hitch";
     public static final String QUIRK_POS_UBIQUITOUS_IS = "ubiquitous_is";
     public static final String QUIRK_POS_UBIQUITOUS_CLAN = "ubiquitous_clan";
+    public static final String QUIRK_POS_VAR_RNG_TARG = "variable_range_targeting";
+    /** @deprecated Use {@link #QUIRK_POS_VAR_RNG_TARG} instead. Kept for backward compatibility. */
+    @Deprecated(since = "0.50.06", forRemoval = true)
     public static final String QUIRK_POS_VAR_RNG_TARG_L = "variable_range_long";
+    /** @deprecated Use {@link #QUIRK_POS_VAR_RNG_TARG} instead. Kept for backward compatibility. */
+    @Deprecated(since = "0.50.06", forRemoval = true)
     public static final String QUIRK_POS_VAR_RNG_TARG_S = "variable_range_short";
     // TODO Game Rules
     public static final String QUIRK_POS_VESTIGIAL_HANDS_LA = "vestigial_hands_la";
@@ -77,16 +103,16 @@ public class OptionsConstants {
     public static final String QUIRK_POS_VTOL_ROTOR_COAXIAL = "vtol_rotor_coaxial";
     public static final String QUIRK_POS_VTOL_ROTOR_DUAL = "vtol_rotor_dual";
 
-    public static final String QUIRK_WEAP_POS_ACCURATE = "accurate";
-    public static final String QUIRK_WEAP_POS_IMP_COOLING = "imp_cooling";
-    public static final String QUIRK_WEAP_POS_JETTISON_CAPABLE = "jettison_capable";
-    public static final String QUIRK_WEAP_POS_STABLE_WEAPON = "stable_weapon";
-    public static final String QUIRK_WEAP_POS_DIRECT_TORSO_MOUNT = "direct_torso_mount";
+    public static final String QUIRK_WEAPON_POS_ACCURATE = "accurate";
+    public static final String QUIRK_WEAPON_POS_IMP_COOLING = "imp_cooling";
+    public static final String QUIRK_WEAPON_POS_JETTISON_CAPABLE = "jettison_capable";
+    public static final String QUIRK_WEAPON_POS_STABLE_WEAPON = "stable_weapon";
+    public static final String QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT = "direct_torso_mount";
     //These have been made specific to weapons.
-    public static final String QUIRK_WEAP_POS_MOD_WEAPONS = "mod_weapons";
-    public static final String QUIRK_WEAP_POS_FAST_RELOAD = "fast_reload";
+    public static final String QUIRK_WEAPON_POS_MOD_WEAPONS = "mod_weapons";
+    public static final String QUIRK_WEAPON_POS_FAST_RELOAD = "fast_reload";
 
-    public static final String QUIRK_NEG_ATMO_INSTABILITY = "atmo_instability";
+    public static final String QUIRK_NEG_ATMOSPHERE_INSTABILITY = "atmo_instability";
     public static final String QUIRK_NEG_BAD_REP_IS = "bad_rep_is";
     public static final String QUIRK_NEG_BAD_REP_CLAN = "bad_rep_clan";
     public static final String QUIRK_NEG_CRAMPED_COCKPIT = "cramped_cockpit";
@@ -127,18 +153,18 @@ public class OptionsConstants {
     public static final String QUIRK_NEG_WEAK_LEGS = "weak_legs";
     public static final String QUIRK_NEG_WEAK_UNDERCARRIAGE = "weak_undercarriage";
     public static final String QUIRK_NEG_NO_ARMS = "no_arms";
-    public static final String QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS = "ammo_feed_problems";
-    public static final String QUIRK_WEAP_NEG_EM_INTERFERENCE = "em_interference";
-    public static final String QUIRK_WEAP_NEG_EXPOSED_LINKAGE = "exposed_linkage";
-    public static final String QUIRK_WEAP_NEG_INACCURATE = "inaccurate";
-    public static final String QUIRK_WEAP_NEG_NO_COOLING = "no_cooling";
-    public static final String QUIRK_WEAP_NEG_NON_FUNCTIONAL = "non_functional";
-    public static final String QUIRK_WEAP_NEG_POOR_COOLING = "poor_cooling";
-    public static final String QUIRK_WEAP_NEG_STATIC_FEED = "static_feed";
+    public static final String QUIRK_WEAPON_NEG_AMMO_FEED_PROBLEMS = "ammo_feed_problems";
+    public static final String QUIRK_WEAPON_NEG_EM_INTERFERENCE = "em_interference";
+    public static final String QUIRK_WEAPON_NEG_EXPOSED_LINKAGE = "exposed_linkage";
+    public static final String QUIRK_WEAPON_NEG_INACCURATE = "inaccurate";
+    public static final String QUIRK_WEAPON_NEG_NO_COOLING = "no_cooling";
+    public static final String QUIRK_WEAPON_NEG_NON_FUNCTIONAL = "non_functional";
+    public static final String QUIRK_WEAPON_NEG_POOR_COOLING = "poor_cooling";
+    public static final String QUIRK_WEAPON_NEG_STATIC_FEED = "static_feed";
     // Technically, these are partial repairs, not quirks, but I don't think we need to iterate
     // through all the weapons on both the quirk and partial repairs tabs just to add these.
-    public static final String QUIRK_WEAP_NEG_MISREPAIRED = "misrepaired_weapon";
-    public static final String QUIRK_WEAP_NEG_MISREPLACED = "misreplaced_weapon";
+    public static final String QUIRK_WEAPON_NEG_MISREPAIRED = "misrepaired_weapon";
+    public static final String QUIRK_WEAPON_NEG_MIS_REPLACED = "misreplaced_weapon";
 
     // PILOTING SKILLS
     public static final String PILOT_APTITUDE_GUNNERY = "aptitude_gunnery";
@@ -146,41 +172,28 @@ public class OptionsConstants {
     public static final String PILOT_ANIMAL_MIMIC = "animal_mimic";
     public static final String PILOT_CROSS_COUNTRY = "cross_country";
     public static final String PILOT_DODGE_MANEUVER = "dodge_maneuver";
-    // public static final String PILOT_DUST_OFF = "dust_off";
     public static final String PILOT_HVY_LIFTER = "hvy_lifter";
-    // public static final String PILOT_HOPPER = "hopper";
     public static final String PILOT_HOPPING_JACK = "hopping_jack";
     public static final String PILOT_HOT_DOG = "hot_dog";
     public static final String PILOT_JUMPING_JACK = "jumping_jack";
     public static final String PILOT_MANEUVERING_ACE = "maneuvering_ace";
     public static final String PILOT_MELEE_MASTER = "melee_master";
     public static final String PILOT_MELEE_SPECIALIST = "melee_specialist";
-    // public static final String PILOT_NATURAL_GRACE = "natural_grace";
-    // public static final String PILOT_RIDE_WASH = "ride_wash";
     public static final String PILOT_SHAKY_STICK = "shaky_stick";
-    // public static final String PILOT_SLUGGER = "slugger";
-    // public static final String PILOT_SPEED_DEMON = "speed_demon";
-    // public static final String PILOT_STAND_ASIDE = "stand_aside";
-    // public static final String PILOT_SWORDSMAN = "swordsman";
-    // public static final String PILOT_TM_ = "tm_";
     public static final String PILOT_TM_FOREST_RANGER = "tm_forest_ranger";
     public static final String PILOT_TM_FROGMAN = "tm_frogman";
     public static final String PILOT_TM_MOUNTAINEER = "tm_mountaineer";
     public static final String PILOT_TM_NIGHTWALKER = "tm_nightwalker";
     public static final String PILOT_TM_SWAMP_BEAST = "tm_swamp_beast";
-    // public static final String PILOT_WIND_WALKER = "wind_walker";
     public static final String PILOT_ZWEIHANDER = "zweihander";
-
+    public static final String PILOT_ATOW_G_TOLERANCE = "atow_g_tolerance";
 
     // GUNNERY SKILLS
     public static final String GUNNERY_BLOOD_STALKER = "blood_stalker";
     public static final String GUNNERY_CLUSTER_HITTER = "cluster_hitter";
     public static final String GUNNERY_CLUSTER_MASTER = "cluster_master";
-    // public static final String GUNNERY_FIST_FIRE = "fist_fire";
     public static final String GUNNERY_GOLDEN_GOOSE = "golden_goose";
-    // public static final String GUNNERY_GROUND_HUGGER = "ground_hugger";
     public static final String GUNNERY_SPECIALIST = "specialist";
-    // public static final String GUNNERY_MARKSMAN = "marksman";
     public static final String GUNNERY_MULTI_TASKER = "multi_tasker";
     public static final String GUNNERY_OBLIQUE_ARTILLERY = "oblique_artillery";
     public static final String GUNNERY_OBLIQUE_ATTACKER = "oblique_attacker";
@@ -191,9 +204,6 @@ public class OptionsConstants {
     public static final String GUNNERY_WEAPON_SPECIALIST = "weapon_specialist";
 
     // MISC ABILITIES
-    // public static final String MISC_ANTAGONIZER = "antagonizer";
-    // public static final String MISC_COMBAT_INTUITION = "combat_intuition";
-    // public static final String MISC_DEMORALIZER = "demoralizer";
     public static final String MISC_EAGLE_EYES = "eagle_eyes";
     public static final String MISC_ENV_SPECIALIST = "env_specialist";
     public static final String MISC_FORWARD_OBSERVER = "forward_observer";
@@ -201,30 +211,32 @@ public class OptionsConstants {
     public static final String MISC_IRON_MAN = "iron_man";
     public static final String MISC_PAIN_RESISTANCE = "pain_resistance";
     public static final String MISC_TACTICAL_GENIUS = "tactical_genius";
+    public static final String ATOW_COMBAT_SENSE = "atow_combat_sense";
+    public static final String ATOW_COMBAT_PARALYSIS = "atow_combat_paralysis";
 
     // INFANTRY ABILITIES
     public static final String INFANTRY_FOOT_CAV = "foot_cav";
     public static final String INFANTRY_URBAN_GUERRILLA = "urban_guerrilla";
 
     // UNOFFICIAL
-    public static final String UNOFF_EI_IMPLANT = "ei_implant";
-    public static final String UNOFF_GUNNERY_LASER = "gunnery_laser";
-    public static final String UNOFF_GUNNERY_MISSILE = "gunnery_missile";
-    public static final String UNOFF_GUNNERY_BALLISTIC = "gunnery_ballistic";
-    public static final String UNOFF_CLAN_PILOT_TRAINING = "clan_pilot_training";
-    public static final String UNOFF_SOME_LIKE_IT_HOT = "some_like_it_hot";
-    public static final String UNOFF_WEATHERED = "weathered";
-    public static final String UNOFF_ALLWEATHER = "allweather";
-    public static final String UNOFF_BLIND_FIGHTER = "blind_fighter";
-    public static final String UNOFF_SENSOR_GEEK = "sensor_geek";
-    public static final String UNOFF_SMALL_PILOT = "small_pilot";
-    public static final String UNOFF_ADV_ATMOSPHERIC_CONTROL = "unoff_adv_atmospheric_control";
+    public static final String UNOFFICIAL_EI_IMPLANT = "ei_implant";
+    public static final String UNOFFICIAL_GUNNERY_LASER = "gunnery_laser";
+    public static final String UNOFFICIAL_GUNNERY_MISSILE = "gunnery_missile";
+    public static final String UNOFFICIAL_GUNNERY_BALLISTIC = "gunnery_ballistic";
+    public static final String UNOFFICIAL_CLAN_PILOT_TRAINING = "clan_pilot_training";
+    public static final String UNOFFICIAL_SOME_LIKE_IT_HOT = "some_like_it_hot";
+    public static final String UNOFFICIAL_WEATHERED = "weathered";
+    public static final String UNOFFICIAL_ALL_WEATHER = "allweather";
+    public static final String UNOFFICIAL_BLIND_FIGHTER = "blind_fighter";
+    public static final String UNOFFICIAL_SENSOR_GEEK = "sensor_geek";
+    public static final String UNOFFICIAL_SMALL_PILOT = "small_pilot";
+    public static final String UNOFFICIAL_ADV_ATMOSPHERIC_CONTROL = "unoff_adv_atmospheric_control";
 
     // EDGE
     public static final String EDGE = "edge";
     // different edge triggers
     // Mek Triggers
-    public static final String EDGE_WHEN_HEADHIT = "edge_when_headhit";
+    public static final String EDGE_WHEN_HEAD_HIT = "edge_when_headhit";
     public static final String EDGE_WHEN_TAC = "edge_when_tac";
     public static final String EDGE_WHEN_KO = "edge_when_ko";
     public static final String EDGE_WHEN_EXPLOSION = "edge_when_explosion";
@@ -242,7 +254,7 @@ public class OptionsConstants {
     public static final String MD_VDNI = "vdni";
     public static final String MD_BVDNI = "bvdni";
     public static final String MD_PL_ENHANCED = "pl_enhanced";
-    public static final String MD_PL_IENHANCED = "pl_ienhanced";
+    public static final String MD_PL_I_ENHANCED = "pl_ienhanced";
     public static final String MD_PL_MASC = "pl_masc";
     public static final String MD_PL_EXTRA_LIMBS = "pl_extra_limbs";
     public static final String MD_PL_TAIL = "pl_tail";
@@ -251,6 +263,7 @@ public class OptionsConstants {
     public static final String MD_CYBER_IMP_AUDIO = "cyber_imp_audio";
     public static final String MD_CYBER_IMP_VISUAL = "cyber_imp_visual";
     public static final String MD_CYBER_IMP_LASER = "cyber_imp_laser";
+    public static final String MD_CYBER_IMP_TELE = "cyber_imp_tele";
     public static final String MD_MM_IMPLANTS = "mm_implants";
     public static final String MD_ENH_MM_IMPLANTS = "enh_mm_implants";
     public static final String MD_COMM_IMPLANT = "comm_implant";
@@ -258,7 +271,7 @@ public class OptionsConstants {
     public static final String MD_DERMAL_ARMOR = "dermal_armor";
     public static final String MD_TSM_IMPLANT = "tsm_implant";
     public static final String MD_FILTRATION = "filtration_implants";
-    public static final String MD_GAS_EFFUSER_PHERO = "gas_effuser_pheromone";
+    public static final String MD_GAS_EFFUSER_PHEROMONE = "gas_effuser_pheromone";
     public static final String MD_GAS_EFFUSER_TOXIN = "gas_effuser_toxin";
     public static final String MD_DERMAL_CAMO_ARMOR = "dermal_camo_armor";
     public static final String MD_TRIPLE_CORE_PROCESSOR = "triple_core_processor";
@@ -274,9 +287,9 @@ public class OptionsConstants {
     public static final String BASE_TURN_TIMER_FIRING = "turn_timer_firing";
     public static final String BASE_TURN_TIMER_PHYSICAL = "turn_timer_physical";
     public static final String BASE_TURN_TIMER_ALLOW_EXTENSION = "turn_timer_allow_extension";
-    public static final String BASE_SKIP_INELIGIBLE_MOVEMENT = "skip_ineligable_movement";
-    public static final String BASE_SKIP_INELIGIBLE_FIRING = "skip_ineligable_firing";
-    public static final String BASE_SKIP_INELIGIBLE_PHYSICAL = "skip_ineligable_physical";
+    public static final String BASE_SKIP_INELIGIBLE_MOVEMENT = "skip_ineligible_movement";
+    public static final String BASE_SKIP_INELIGIBLE_FIRING = "skip_ineligible_firing";
+    public static final String BASE_SKIP_INELIGIBLE_PHYSICAL = "skip_ineligible_physical";
     public static final String BASE_PUSH_OFF_BOARD = "push_off_board";
     public static final String BASE_TEAM_INITIATIVE = "team_initiative";
     public static final String BASE_AUTOSAVE_MSG = "autosave_msg";
@@ -287,12 +300,12 @@ public class OptionsConstants {
     public static final String BASE_REAL_BLIND_DROP = "real_blind_drop";
     public static final String BASE_LOBBY_AMMO_DUMP = "lobby_ammo_dump";
     public static final String BASE_DUMPING_FROM_ROUND = "dumping_from_round";
-    public static final String BASE_SET_ARTY_PLAYER_HOMEEDGE = "set_arty_player_homeedge";
+    public static final String BASE_SET_ARTY_PLAYER_HOME_EDGE = "set_arty_player_homeedge";
     public static final String BASE_SET_DEFAULT_TEAM_1 = "set_default_team_1";
     public static final String BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER_0 = "set_player_deployment_to_player0";
     public static final String BASE_RESTRICT_GAME_COMMANDS = "restrict_game_commands";
     public static final String BASE_DISABLE_LOCAL_SAVE = "disable_local_save";
-    public static final String BASE_BRIDGECF = "bridgeCF";
+    public static final String BASE_BRIDGE_CF = "bridgeCF";
     public static final String BASE_SHOW_BAY_DETAIL = "show_bay_detail";
     public static final String BASE_RNG_TYPE = "rng_type";
     public static final String BASE_RNG_LOG = "rng_log";
@@ -306,6 +319,7 @@ public class OptionsConstants {
     public static final String BASE_GM_CONTROLS_DONE_REPORT_PHASE = "gm_controls_done_report_phase";
     public static final String BASE_HIDE_UNOFFICIAL = "hide_unofficial";
     public static final String BASE_HIDE_LEGACY = "hide_legacy";
+    public static final String BASE_NEW_DAMAGE_MANAGER = "new_damage_manager";
 
     public static final String VICTORY_SKIP_FORCED_VICTORY = "skip_forced_victory";
     public static final String VICTORY_CHECK_VICTORY = "check_victory";
@@ -322,46 +336,46 @@ public class OptionsConstants {
 
     public static final String ALLOWED_CANON_ONLY = "canon_only";
     public static final String ALLOWED_YEAR = "year";
-    public static final String ALLOWED_TECHLEVEL = "techlevel";
+    public static final String ALLOWED_TECH_LEVEL = "techlevel";
     public static final String ALLOWED_ERA_BASED = "era_based";
     public static final String ALLOWED_ALLOW_ILLEGAL_UNITS = "allow_illegal_units";
     public static final String ALLOWED_SHOW_EXTINCT = "show_extinct";
-    public static final String ALLOWED_CLAN_IGNORE_EQ_LIMITS = "clan_ignore_eq_limits";
+    public static final String ALLOWED_ALL_AMMO_MIXED_TECH = "clan_ignore_eq_limits";
     public static final String ALLOWED_NO_CLAN_PHYSICAL = "no_clan_physical";
     public static final String ALLOWED_ALLOW_NUKES = "allow_nukes";
     public static final String ALLOWED_REALLY_ALLOW_NUKES = "really_allow_nukes";
     public static final String ADVANCED_MINEFIELDS = "minefields";
     public static final String ADVANCED_HIDDEN_UNITS = "hidden_units";
-    public static final String ADVANCED_BLACK_ICE= "black_ice";
-    public static final String ADVANCED_LIGHTNING_STORM_TARGETS_UNITS= "lightning_storm_targets_units";
+    public static final String ADVANCED_BLACK_ICE = "black_ice";
+    public static final String ADVANCED_LIGHTNING_STORM_TARGETS_UNITS = "lightning_storm_targets_units";
     public static final String ADVANCED_DOUBLE_BLIND = "double_blind";
     public static final String ADVANCED_SINGLE_BLIND_BOTS = "single_blind_bots";
-    public static final String ADVANCED_TACOPS_SENSORS = "tacops_sensors";
-    public static final String ADVANCED_SUPRESS_ALL_DB_MESSAGES = "supress_all_double_blind_messages";
+    public static final String ADVANCED_TAC_OPS_SENSORS = "tacops_sensors";
+    public static final String ADVANCED_SUPPRESS_ALL_DB_MESSAGES = "suppress_all_double_blind_messages";
     public static final String ADVANCED_SUPPRESS_DB_BV = "suppress_double_blind_bv";
     public static final String ADVANCED_TEAM_VISION = "team_vision";
-    public static final String ADVANCED_TACOPS_BAP = "tacops_bap";
-    public static final String ADVANCED_TACOPS_ECCM = "tacops_eccm";
-    public static final String ADVANCED_TACOPS_GHOST_TARGET = "tacops_ghost_target";
+    public static final String ADVANCED_TAC_OPS_BAP = "tacops_bap";
+    public static final String ADVANCED_TAC_OPS_ECCM = "tacops_eccm";
+    public static final String ADVANCED_TAC_OPS_GHOST_TARGET = "tacops_ghost_target";
     public static final String ADVANCED_GHOST_TARGET_MAX = "ghost_target_max";
-    public static final String ADVANCED_TACOPS_DIG_IN = "tacops_dig_in";
-    public static final String ADVANCED_TACOPS_BA_WEIGHT = "tacops_ba_weight";
-    public static final String ADVANCED_TACOPS_TAKE_COVER = "tacops_take_cover";
-    public static final String ADVANCED_TACOPS_ANGEL_ECM = "tacops_angel_ecm";
-    public static final String ADVANCED_TACOPS_BATTLE_WRECK = "tacops_battle_wreck";
-    public static final String ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION = "tacops_skin_of_the_teeth_ejection";
-    public static final String ADVANCED_TACOPS_MOBILE_HQS = "tacops_mobile_hqs";
-    public static final String ADVANCED_TACOPS_FATIGUE = "tacops_fatigue";
-    public static final String ADVANCED_TACOPS_FUMBLES = "tacops_fumbles";
-    public static final String ADVANCED_TACOPS_SELF_DESTRUCT = "tacops_self_destruct";
-    public static final String ADVANCED_TACOPS_TANK_CREWS = "tacops_tank_crews";
+    public static final String ADVANCED_TAC_OPS_DIG_IN = "tacops_dig_in";
+    public static final String ADVANCED_TAC_OPS_BA_WEIGHT = "tacops_ba_weight";
+    public static final String ADVANCED_TAC_OPS_TAKE_COVER = "tacops_take_cover";
+    public static final String ADVANCED_TAC_OPS_ANGEL_ECM = "tacops_angel_ecm";
+    public static final String ADVANCED_TAC_OPS_BATTLE_WRECK = "tacops_battle_wreck";
+    public static final String ADVANCED_TAC_OPS_SKIN_OF_THE_TEETH_EJECTION = "tacops_skin_of_the_teeth_ejection";
+    public static final String ADVANCED_TAC_OPS_MOBILE_HQS = "tacops_mobile_hqs";
+    public static final String ADVANCED_TAC_OPS_FATIGUE = "tacops_fatigue";
+    public static final String ADVANCED_TAC_OPS_FUMBLES = "tacops_fumbles";
+    public static final String ADVANCED_TAC_OPS_SELF_DESTRUCT = "tacops_self_destruct";
+    public static final String ADVANCED_TAC_OPS_TANK_CREWS = "tacops_tank_crews";
     public static final String ADVANCED_STRATOPS_QUIRKS = "stratops_quirks";
-    public static final String ADVANCED_STRATOPS_PARTIALREPAIRS = "stratops_partialrepairs";
+    public static final String ADVANCED_STRATOPS_PARTIAL_REPAIRS = "stratops_partial_repairs";
     public static final String ADVANCED_ASSAULT_DROP = "assault_drop";
     public static final String ADVANCED_PARATROOPERS = "paratroopers";
     public static final String ADVANCED_INCLUSIVE_SENSOR_RANGE = "inclusive_sensor_range";
     public static final String ADVANCED_SENSORS_DETECT_ALL = "sensors_detect_all";
-    public static final String ADVANCED_MAGSCAN_NOHILLS = "magscan_nohills";
+    public static final String ADVANCED_MAG_SCAN_NO_HILLS = "magscan_nohills";
     public static final String ADVANCED_WOODS_BURN_DOWN = "woods_burn_down";
     public static final String ADVANCED_WOODS_BURN_DOWN_AMOUNT = "woods_burn_down_amount";
     public static final String ADVANCED_NO_IGNITE_CLEAR = "no_ignite_clear";
@@ -372,144 +386,143 @@ public class OptionsConstants {
     public static final String ADVANCED_PILOTS_CANNOT_SPOT = "pilots_cannot_spot";
     public static final String ADVANCED_METAL_CONTENT = "metal_content";
     public static final String ADVANCED_BA_GRAB_BARS = "ba_grab_bars";
-    public static final String ADVANCED_MAXTECH_MOVEMENT_MODS = "maxtech_movement_mods";
+    public static final String ADVANCED_MAX_TECH_MOVEMENT_MODS = "maxtech_movement_mods";
     public static final String ADVANCED_ALTERNATE_MASC = "alternate_masc";
     public static final String ADVANCED_ALTERNATE_MASC_ENHANCED = "alternate_masc_enhanced";
-    public static final String ADVCOMBAT_TACOPS_AMS = "tacops_ams";
-    public static final String ADVCOMBAT_TACOPS_MANUAL_AMS = "tacops_manual_ams";
-    public static final String ADVCOMBAT_FLOATING_CRITS = "floating_crits";
-    public static final String ADVCOMBAT_TACOPS_CRIT_ROLL = "tacops_crit_roll";
-    public static final String ADVCOMBAT_TACOPS_ENGINE_EXPLOSIONS = "tacops_engine_explosions";
-    public static final String ADVCOMBAT_TACOPS_CALLED_SHOTS = "tacops_called_shots";
-    public static final String ADVCOMBAT_TACOPS_PRONE_FIRE = "tacops_prone_fire";
-    public static final String ADVCOMBAT_TACOPS_START_FIRE = "tacops_start_fire";
-    public static final String ADVCOMBAT_TACOPS_RANGE = "tacops_range";
-    public static final String ADVCOMBAT_TACOPS_LOS_RANGE = "tacops_los_range";
-    public static final String ADVCOMBAT_TACOPS_DEAD_ZONES = "tacops_dead_zones";
-    public static final String ADVCOMBAT_TACOPS_LOS1 = "tacops_LOS1";
-    public static final String ADVCOMBAT_TACOPS_ALTDMG = "tacops_altdmg";
-    public static final String ADVCOMBAT_TACOPS_CLUSTERHITPEN = "tacops_clusterhitpen";
-    public static final String ADVCOMBAT_TACOPS_PPC_INHIBITORS = "tacops_ppc_inhibitors";
-    public static final String ADVCOMBAT_TACOPS_CHARGE_DAMAGE = "tacops_charge_damage";
-    public static final String ADVCOMBAT_TACOPS_GLANCING_BLOWS = "tacops_glancing_blows";
-    public static final String ADVCOMBAT_TACOPS_DIRECT_BLOW = "tacops_direct_blow";
-    public static final String ADVCOMBAT_TACOPS_BURST = "tacops_burst";
-    public static final String ADVCOMBAT_TACOPS_HEAT = "tacops_heat";
-    public static final String ADVCOMBAT_TACOPS_PARTIAL_COVER = "tacops_partial_cover";
-    public static final String ADVCOMBAT_TACOPS_BA_CRITICALS = "tacops_ba_criticals";
-    public static final String ADVCOMBAT_TACOPS_HOTLOAD = "tacops_hotload";
-    public static final String ADVCOMBAT_TACOPS_RAPID_AC = "tacops_rapid_ac";
-    public static final String ADVCOMBAT_KIND_RAPID_AC = "kind_rapid_ac";
-    public static final String ADVCOMBAT_TACOPS_GRAPPLING = "tacops_grappling";
-    public static final String ADVCOMBAT_TACOPS_JUMP_JET_ATTACK = "tacops_jump_jet_attack";
-    public static final String ADVCOMBAT_TACOPS_TRIP_ATTACK = "tacops_trip_attack";
-    public static final String ADVCOMBAT_TACOPS_ENERGY_WEAPONS = "tacops_energy_weapons";
-    public static final String ADVCOMBAT_TACOPS_GAUSS_WEAPONS = "tacops_gauss_weapons";
-    public static final String ADVCOMBAT_TACOPS_RETRACTABLE_BLADES = "tacops_retractable_blades";
-    public static final String ADVCOMBAT_TACOPS_AMMUNITION = "tacops_ammunition";
-    public static final String ADVCOMBAT_TACOPS_WOODS_COVER = "tacops_woods_cover";
-    public static final String ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE = "tacops_vehicle_effective";
-    public static final String ADVCOMBAT_TACOPS_VEHICLE_ARCS = "tacops_vehicle_arcs";
+    public static final String ADVANCED_COMBAT_TAC_OPS_AMS = "tacops_ams";
+    public static final String ADVANCED_COMBAT_TAC_OPS_MANUAL_AMS = "tacops_manual_ams";
+    public static final String ADVANCED_COMBAT_FLOATING_CRITS = "floating_crits";
+    public static final String ADVANCED_COMBAT_TAC_OPS_CRIT_ROLL = "tacops_crit_roll";
+    public static final String ADVANCED_COMBAT_TAC_OPS_ENGINE_EXPLOSIONS = "tacops_engine_explosions";
+    public static final String ADVANCED_COMBAT_TAC_OPS_CALLED_SHOTS = "tacops_called_shots";
+    public static final String ADVANCED_COMBAT_TAC_OPS_PRONE_FIRE = "tacops_prone_fire";
+    public static final String ADVANCED_COMBAT_TAC_OPS_START_FIRE = "tacops_start_fire";
+    public static final String ADVANCED_COMBAT_TAC_OPS_RANGE = "tacops_range";
+    public static final String ADVANCED_COMBAT_TAC_OPS_LOS_RANGE = "tacops_los_range";
+    public static final String ADVANCED_COMBAT_TAC_OPS_DEAD_ZONES = "tacops_dead_zones";
+    public static final String ADVANCED_COMBAT_TAC_OPS_LOS1 = "tacops_LOS1";
+    public static final String ADVANCED_COMBAT_TAC_OPS_ALTERNATIVE_DAMAGE = "tacops_altdmg";
+    public static final String ADVANCED_COMBAT_TAC_OPS_CLUSTER_HIT_PEN = "tacops_clusterhitpen";
+    public static final String ADVANCED_COMBAT_TAC_OPS_PPC_INHIBITORS = "tacops_ppc_inhibitors";
+    public static final String ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE = "tacops_charge_damage";
+    public static final String ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS = "tacops_glancing_blows";
+    public static final String ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW = "tacops_direct_blow";
+    public static final String ADVANCED_COMBAT_TAC_OPS_BURST = "tacops_burst";
+    public static final String ADVANCED_COMBAT_TAC_OPS_HEAT = "tacops_heat";
+    public static final String ADVANCED_COMBAT_TAC_OPS_PARTIAL_COVER = "tacops_partial_cover";
+    public static final String ADVANCED_COMBAT_TAC_OPS_BA_CRITICAL_SLOTS = "tacops_ba_criticals";
+    public static final String ADVANCED_COMBAT_TAC_OPS_HOT_LOAD = "tacops_hotload";
+    public static final String ADVANCED_COMBAT_TAC_OPS_RAPID_AC = "tacops_rapid_ac";
+    public static final String ADVANCED_COMBAT_KIND_RAPID_AC = "kind_rapid_ac";
+    public static final String ADVANCED_COMBAT_TAC_OPS_GRAPPLING = "tacops_grappling";
+    public static final String ADVANCED_COMBAT_TAC_OPS_JUMP_JET_ATTACK = "tacops_jump_jet_attack";
+    public static final String ADVANCED_COMBAT_TAC_OPS_TRIP_ATTACK = "tacops_trip_attack";
+    public static final String ADVANCED_COMBAT_TAC_OPS_ENERGY_WEAPONS = "tacops_energy_weapons";
+    public static final String ADVANCED_COMBAT_GOTHIC_DAZZLE_MODE = "gothic_dazzle_mode";
+    public static final String ADVANCED_COMBAT_TAC_OPS_GAUSS_WEAPONS = "tacops_gauss_weapons";
+    public static final String ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES = "tacops_retractable_blades";
+    public static final String ADVANCED_COMBAT_TAC_OPS_AMMUNITION = "tacops_ammunition";
+    public static final String ADVANCED_COMBAT_TAC_OPS_WOODS_COVER = "tacops_woods_cover";
+    public static final String ADVANCED_COMBAT_TAC_OPS_VEHICLE_EFFECTIVE = "tacops_vehicle_effective";
+    public static final String ADVANCED_COMBAT_TAC_OPS_VEHICLE_ARCS = "tacops_vehicle_arcs";
 
-    public static final String ADVCOMBAT_TACOPS_VTOL_ATTACKS = "tacops_vtol_attacks";
-    public static final String ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS = "tacops_advanced_mek_hit_locations";
-    public static final String ADVCOMBAT_TACOPS_COOLANT_FAILURE = "tacops_coolant_failure";
-    public static final String ADVCOMBAT_TACOPS_BA_VS_BA = "tacops_ba_vs_ba";
-    public static final String ADVCOMBAT_NO_TAC = "no_tac";
-    public static final String ADVCOMBAT_VEHICLES_THRESHOLD = "vehicles_threshold";
-    public static final String ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE = "vehicles_threshold_variable";
-    public static final String ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR = "vehicles_threshold_divisor";
-    public static final String ADVCOMBAT_VTOL_STRAFING = "vtol_strafing";
-    public static final String ADVCOMBAT_VEHICLES_SAFE_FROM_INFERNOS = "vehicles_safe_from_infernos";
-    public static final String ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS = "protos_safe_from_infernos";
-    public static final String ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE = "indirect_always_possible";
-    public static final String ADVCOMBAT_INCREASED_AC_DMG = "increased_ac_dmg";
-    public static final String ADVCOMBAT_UNJAM_UAC = "unjam_uac";
-    public static final String ADVCOMBAT_UAC_TWOROLLS = "uac_tworolls";
-    public static final String ADVCOMBAT_CLUBS_PUNCH = "clubs_punch";
-    public static final String ADVCOMBAT_ON_MAP_PREDESIGNATE = "on_map_predesignate";
-    public static final String ADVCOMBAT_NUM_HEXES_PREDESIGNATE = "num_hexes_predesignate";
-    public static final String ADVCOMBAT_MAP_AREA_PREDESIGNATE = "map_area_predesignate";
-    public static final String ADVCOMBAT_MAX_EXTERNAL_HEAT = "max_external_heat";
-    public static final String ADVCOMBAT_CASE_PILOT_DAMAGE = "case_pilot_damage";
-    public static final String ADVCOMBAT_NO_FORCED_PRIMARY_TARGETS = "no_forced_primary_targets";
-    public static final String ADVCOMBAT_FULL_ROTOR_HITS = "full_rotor_hits";
-    public static final String ADVCOMBAT_FOREST_FIRES_NO_SMOKE = "forest_fires_no_smoke";
-    public static final String ADVCOMBAT_HOTLOAD_IN_GAME = "hotload_in_game";
-    public static final String ADVCOMBAT_MULTI_USE_AMS = "multiuse_ams";
-    public static final String ADVGRNDMOV_TACOPS_SPRINT = "tacops_sprint";
-    public static final String ADVGRNDMOV_TACOPS_STANDING_STILL = "tacops_standing_still";
-    public static final String ADVGRNDMOV_TACOPS_EVADE = "tacops_evade";
-    public static final String ADVGRNDMOV_TACOPS_SKILLED_EVASION = "tacops_skilled_evasion";
-    public static final String ADVGRNDMOV_TACOPS_LEAPING = "tacops_leaping";
-    public static final String ADVGRNDMOV_TACOPS_PHYSICAL_PSR = "tacops_physical_psr";
-    public static final String ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR = "tacops_attack_physical_psr";
-    public static final String ADVGRNDMOV_TACOPS_TAKING_DAMAGE = "tacops_taking_damage";
-    public static final String ADVGRNDMOV_TACOPS_LEG_DAMAGE = "tacops_leg_damage";
-    public static final String ADVGRNDMOV_TACOPS_WALK_BACKWARDS = "tacops_walk_backwards";
-    public static final String ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE = "tacops_fast_infantry_move";
-    public static final String ADVANCED_TACOPS_INF_PAVE_BONUS = "tacops_inf_pave_bonus";
-    public static final String ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT = "vehicle_lance_movement";
-    public static final String ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER = "vehicle_lance_movement_number";
-    public static final String ADVGRNDMOV_TURN_MODE = "vehicle_turn_mode";
-    public static final String ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS = "vehicle_advanced_maneuvers";
-    public static final String ADVGRNDMOV_VEHICLE_ACCELERATION = "vehicle_acceleration";
-    public static final String ADVGRNDMOV_REVERSE_GEAR = "reverse_gear";
-    public static final String ADVGRNDMOV_TACOPS_HULL_DOWN = "tacops_hull_down";
-    public static final String ADVGRNDMOV_TACOPS_FALLING_EXPANDED = "tacops_falling_expanded";
-    public static final String ADVGRNDMOV_TACOPS_ATTEMPTING_STAND = "tacops_attempting_stand";
-    public static final String ADVGRNDMOV_TACOPS_CAREFUL_STAND = "tacops_careful_stand";
-    public static final String ADVGRNDMOV_TACOPS_ZIPLINES = "tacops_ziplines";
-    public static final String ADVGRNDMOV_MEK_LANCE_MOVEMENT = "mek_lance_movement";
-    public static final String ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER = "mek_lance_movement_number";
-    public static final String ADVGRNDMOV_NO_IMMOBILE_VEHICLES = "no_immobile_vehicles";
-    public static final String ADVGRNDMOV_VEHICLES_CAN_EJECT = "vehicles_can_eject";
-    public static final String ADVGRNDMOV_EJECTED_PILOTS_FLEE = "ejected_pilots_flee";
-    public static final String ADVGRNDMOV_AUTO_ABANDON_UNIT = "auto_abandon_unit";
-    public static final String ADVGRNDMOV_NO_HOVER_CHARGE = "no_hover_charge";
-    public static final String ADVGRNDMOV_NO_PREMOVE_VIBRA = "no_premove_vibra";
-    public static final String ADVGRNDMOV_FALLS_END_MOVEMENT = "falls_end_movement";
-    public static final String ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS = "psr_jump_heavy_woods";
-    public static final String ADVGRNDMOV_NO_NIGHT_MOVE_PEN = "no_night_move_pen";
-    public static final String ADVAERORULES_AERO_GROUND_MOVE = "aero_ground_move";
-    public static final String ADVAERORULES_STRATOPS_CAPITAL_FIGHTER = "stratops_capital_fighter";
-    public static final String ADVAERORULES_FUEL_CONSUMPTION = "fuel_consumption";
-    public static final String ADVAERORULES_STRATOPS_CONV_FUSION_BONUS = "stratops_conv_fusion_bonus";
-    public static final String ADVAERORULES_STRATOPS_HARJEL = "stratops_harjel";
-    public static final String ADVAERORULES_STRATOPS_GRAV_EFFECTS = "stratops_grav_effects";
-    public static final String ADVAERORULES_ADVANCED_MOVEMENT = "advanced_movement";
-    public static final String ADVAERORULES_HEAT_BY_BAY = "heat_by_bay";
-    public static final String ADVAERORULES_ATMOSPHERIC_CONTROL = "atmospheric_control";
-    public static final String ADVAERORULES_STRATOPS_AMMO_EXPLOSIONS = "ammo_explosions";
-    public static final String ADVAERORULES_STRATOPS_AA_FIRE = "stratops_aa_fire";
-    public static final String ADVAERORULES_STRATOPS_AAA_LASER = "stratops_aaa_laser";
-    public static final String ADVAERORULES_STRATOPS_ADV_POINTDEF = "stratops_adv_pointdef";
-    public static final String ADVAERORULES_STRATOPS_BRACKET_FIRE = "stratops_bracket_fire";
-    public static final String ADVAERORULES_STRATOPS_ECM = "stratops_ecm";
-    public static final String ADVAERORULES_STRATOPS_SENSOR_SHADOW = "stratops_sensor_shadow";
-    public static final String ADVAERORULES_STRATOPS_OVER_PENETRATE = "stratops_over_penetrate";
-    public static final String ADVAERORULES_STRATOPS_SPACE_BOMB = "stratops_space_bomb";
-    public static final String ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH = "stratops_bearings_only";
-    public static final String ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY = "stratops_bearings_only_velocity";
-    public static final String ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH = "stratops_waypoint_launch";
-    public static final String ADVAERORULES_STRATOPS_ADVANCED_SENSORS = "stratops_advanced_sensors";
-    public static final String ADVAERORULES_VARIABLE_DAMAGE_THRESH = "variable_damage_thresh";
-    public static final String ADVAERORULES_AT2_NUKES = "at2_nukes";
-    public static final String ADVAERORULES_AERO_SANITY = "aero_sanity";
-    public static final String ADVAERORULES_RETURN_FLYOVER = "return_flyover";
-    public static final String ADVAERORULES_AA_MOVE_MOD = "aa_move_mod";
-    public static final String ADVAERORULES_ALLOW_LARGE_SQUADRONS = "allow_large_squadrons";
-    public static final String ADVAERORULES_SINGLE_NO_CAP = "single_no_cap";
-    public static final String ADVAERORULES_AERO_ARTILLERY_MUNITIONS = "aero_artillery_munitions";
-    public static final String ADVAERORULES_CRASHED_DROPSHIPS_SURVIVE = "crashed_dropships_survive";
-    public static final String ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE = "expanded_kf_drive_damage";
+    public static final String ADVANCED_COMBAT_TAC_OPS_VTOL_ATTACKS = "tacops_vtol_attacks";
+    public static final String ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS = "tacops_advanced_mek_hit_locations";
+    public static final String ADVANCED_COMBAT_TAC_OPS_COOLANT_FAILURE = "tacops_coolant_failure";
+    public static final String ADVANCED_COMBAT_TAC_OPS_BA_VS_BA = "tacops_ba_vs_ba";
+    public static final String ADVANCED_COMBAT_NO_TAC = "no_tac";
+    public static final String ADVANCED_COMBAT_VTOL_STRAFING = "vtol_strafing";
+    public static final String ADVANCED_COMBAT_VEHICLES_SAFE_FROM_INFERNOS = "vehicles_safe_from_infernos";
+    public static final String ADVANCED_COMBAT_PROTOMEKS_SAFE_FROM_INFERNOS = "protos_safe_from_infernos";
+    public static final String ADVANCED_COMBAT_INDIRECT_ALWAYS_POSSIBLE = "indirect_always_possible";
+    public static final String ADVANCED_COMBAT_INCREASED_AC_DMG = "increased_ac_dmg";
+    public static final String ADVANCED_COMBAT_UNJAM_UAC = "unjam_uac";
+    public static final String ADVANCED_COMBAT_TAC_OPS_UAC_TWO_ROLLS = "uac_tworolls";
+    public static final String ADVANCED_COMBAT_CLUBS_PUNCH = "clubs_punch";
+    public static final String ADVANCED_COMBAT_ON_MAP_PREDESIGNATE = "on_map_predesignate";
+    public static final String ADVANCED_COMBAT_NUM_HEXES_PREDESIGNATE = "num_hexes_predesignate";
+    public static final String ADVANCED_COMBAT_MAP_AREA_PREDESIGNATE = "map_area_predesignate";
+    public static final String ADVANCED_COMBAT_MAX_EXTERNAL_HEAT = "max_external_heat";
+    public static final String ADVANCED_COMBAT_CASE_PILOT_DAMAGE = "case_pilot_damage";
+    public static final String ADVANCED_COMBAT_NO_FORCED_PRIMARY_TARGETS = "no_forced_primary_targets";
+    public static final String ADVANCED_COMBAT_FULL_ROTOR_HITS = "full_rotor_hits";
+    public static final String ADVANCED_COMBAT_FOREST_FIRES_NO_SMOKE = "forest_fires_no_smoke";
+    public static final String ADVANCED_COMBAT_HOT_LOAD_IN_GAME = "hotload_in_game";
+    public static final String ADVANCED_COMBAT_MULTI_USE_AMS = "multiuse_ams";
+    public static final String ADVANCED_COMBAT_PICKING_UP_AND_THROWING_UNITS = "picking_up_and_throwing_units";
+    public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_SPRINT = "tacops_sprint";
+    public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_STANDING_STILL = "tacops_standing_still";
+    public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_EVADE = "tacops_evade";
+    public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_SKILLED_EVASION = "tacops_skilled_evasion";
+    public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING = "tacops_leaping";
+    public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_PHYSICAL_PSR = "tacops_physical_psr";
+    public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_PHYSICAL_ATTACK_PSR = "tacops_attack_physical_psr";
+    public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_TAKING_DAMAGE = "tacops_taking_damage";
+    public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE = "tacops_leg_damage";
+    public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS = "tacops_walk_backwards";
+    public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_FAST_INFANTRY_MOVE = "tacops_fast_infantry_move";
+    public static final String ADVANCED_TAC_OPS_INF_PAVE_BONUS = "tacops_inf_pave_bonus";
+    public static final String ADVANCED_GROUND_MOVEMENT_VEHICLE_LANCE_MOVEMENT = "vehicle_lance_movement";
+    public static final String ADVANCED_GROUND_MOVEMENT_VEHICLE_LANCE_MOVEMENT_NUMBER = "vehicle_lance_movement_number";
+    public static final String ADVANCED_GROUND_MOVEMENT_TURN_MODE = "vehicle_turn_mode";
+    public static final String ADVANCED_GROUND_MOVEMENT_VEHICLE_ADVANCED_MANEUVERS = "vehicle_advanced_maneuvers";
+    public static final String ADVANCED_GROUND_MOVEMENT_VEHICLE_ACCELERATION = "vehicle_acceleration";
+    public static final String ADVANCED_GROUND_MOVEMENT_REVERSE_GEAR = "reverse_gear";
+    public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN = "tacops_hull_down";
+    public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_FALLING_EXPANDED = "tacops_falling_expanded";
+    public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_ATTEMPTING_STAND = "tacops_attempting_stand";
+    public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_CAREFUL_STAND = "tacops_careful_stand";
+    public static final String ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES = "tacops_ziplines";
+    public static final String ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT = "mek_lance_movement";
+    public static final String ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT_NUMBER = "mek_lance_movement_number";
+    public static final String ADVANCED_GROUND_MOVEMENT_UNOFF_NO_IMMOBILE_VEHICLES = "no_immobile_vehicles";
+    public static final String ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT = "vehicles_can_eject";
+    public static final String ADVANCED_GROUND_MOVEMENT_EJECTED_PILOTS_FLEE = "ejected_pilots_flee";
+    public static final String ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT = "auto_abandon_unit";
+    public static final String ADVANCED_GROUND_MOVEMENT_NO_HOVER_CHARGE = "no_hover_charge";
+    public static final String ADVANCED_GROUND_MOVEMENT_NO_PRE_MOVE_VIBRA = "no_premove_vibra";
+    public static final String ADVANCED_GROUND_MOVEMENT_FALLS_END_MOVEMENT = "falls_end_movement";
+    public static final String ADVANCED_GROUND_MOVEMENT_PSR_JUMP_HEAVY_WOODS = "psr_jump_heavy_woods";
+    public static final String ADVANCED_GROUND_MOVEMENT_NO_NIGHT_MOVE_PEN = "no_night_move_pen";
+    public static final String ADVANCED_AERO_RULES_AERO_GROUND_MOVE = "aero_ground_move";
+    public static final String ADVANCED_AERO_RULES_STRATOPS_CAPITAL_FIGHTER = "stratops_capital_fighter";
+    public static final String ADVANCED_AERO_RULES_FUEL_CONSUMPTION = "fuel_consumption";
+    public static final String ADVANCED_AERO_RULES_STRATOPS_CONV_FUSION_BONUS = "stratops_conv_fusion_bonus";
+    public static final String ADVANCED_AERO_RULES_STRATOPS_HARJEL = "stratops_harjel";
+    public static final String ADVANCED_AERO_RULES_STRATOPS_GRAV_EFFECTS = "stratops_grav_effects";
+    public static final String ADVANCED_AERO_RULES_ADVANCED_MOVEMENT = "advanced_movement";
+    public static final String ADVANCED_AERO_RULES_HEAT_BY_BAY = "heat_by_bay";
+    public static final String ADVANCED_AERO_RULES_ATMOSPHERIC_CONTROL = "atmospheric_control";
+    public static final String ADVANCED_AERO_RULES_STRATOPS_AMMO_EXPLOSIONS = "ammo_explosions";
+    public static final String ADVANCED_AERO_RULES_STRATOPS_AA_FIRE = "stratops_aa_fire";
+    public static final String ADVANCED_AERO_RULES_STRATOPS_AAA_LASER = "stratops_aaa_laser";
+    public static final String ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE = "stratops_adv_pointdef";
+    public static final String ADVANCED_AERO_RULES_STRATOPS_BRACKET_FIRE = "stratops_bracket_fire";
+    public static final String ADVANCED_AERO_RULES_STRATOPS_ECM = "stratops_ecm";
+    public static final String ADVANCED_AERO_RULES_STRATOPS_SENSOR_SHADOW = "stratops_sensor_shadow";
+    public static final String ADVANCED_AERO_RULES_STRATOPS_OVER_PENETRATE = "stratops_over_penetrate";
+    public static final String ADVANCED_AERO_RULES_STRATOPS_SPACE_BOMB = "stratops_space_bomb";
+    public static final String ADVANCED_AERO_RULES_STRATOPS_BEARINGS_ONLY_LAUNCH = "stratops_bearings_only";
+    public static final String ADVANCED_AERO_RULES_STRATOPS_BEARINGS_ONLY_VELOCITY = "stratops_bearings_only_velocity";
+    public static final String ADVANCED_AERO_RULES_STRATOPS_WAYPOINT_LAUNCH = "stratops_waypoint_launch";
+    public static final String ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS = "stratops_advanced_sensors";
+    public static final String ADVANCED_AERO_RULES_VARIABLE_DAMAGE_THRESH = "variable_damage_thresh";
+    public static final String ADVANCED_AERO_RULES_AT2_NUKES = "at2_nukes";
+    public static final String ADVANCED_AERO_RULES_AERO_SANITY = "aero_sanity";
+    public static final String ADVANCED_AERO_RULES_RETURN_FLYOVER = "return_flyover";
+    public static final String ADVANCED_AERO_RULES_AA_MOVE_MOD = "aa_move_mod";
+    public static final String ADVANCED_AERO_RULES_ALLOW_LARGE_SQUADRONS = "allow_large_squadrons";
+    public static final String ADVANCED_AERO_RULES_SINGLE_NO_CAP = "single_no_cap";
+    public static final String ADVANCED_AERO_RULES_AERO_ARTILLERY_MUNITIONS = "aero_artillery_munitions";
+    public static final String ADVANCED_AERO_RULES_CRASHED_DROPSHIPS_SURVIVE = "crashed_dropships_survive";
+    public static final String ADVANCED_AERO_RULES_EXPANDED_KF_DRIVE_DAMAGE = "expanded_kf_drive_damage";
     public static final String INIT_INF_MOVE_EVEN = "inf_move_even";
     public static final String INIT_INF_DEPLOY_EVEN = "inf_deploy_even";
     public static final String INIT_INF_MOVE_LATER = "inf_move_later";
     public static final String INIT_INF_MOVE_MULTI = "inf_move_multi";
-    public static final String INIT_PROTOS_MOVE_EVEN = "protos_move_even";
-    public static final String INIT_PROTOS_MOVE_LATER = "protos_move_later";
-    public static final String INIT_PROTOS_MOVE_MULTI = "protos_move_multi";
+    public static final String INIT_PROTOMEKS_MOVE_EVEN = "protos_move_even";
+    public static final String INIT_PROTOMEKS_MOVE_LATER = "protos_move_later";
+    public static final String INIT_PROTOMEKS_MOVE_MULTI = "protos_move_multi";
     public static final String INIT_INF_PROTO_MOVE_MULTI = "inf_proto_move_multi";
     public static final String INIT_SIMULTANEOUS_DEPLOYMENT = "simultaneous_deployment";
     public static final String INIT_SIMULTANEOUS_MOVEMENT = "simultaneous_movement";
@@ -528,5 +541,10 @@ public class OptionsConstants {
     public static final String RPG_CONDITIONAL_EJECTION = "conditional_ejection";
     public static final String RPG_BEGIN_SHUTDOWN = "begin_shutdown";
 
-    private OptionsConstants() { }
+    public static final String PLAYTEST_1 = "playtest_1";
+    public static final String PLAYTEST_2 = "playtest_2";
+    public static final String PLAYTEST_3 = "playtest_3";
+
+    private OptionsConstants() {
+    }
 }

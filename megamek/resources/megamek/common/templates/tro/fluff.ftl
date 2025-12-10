@@ -19,6 +19,9 @@ Maximum Speed: ${maxSpeed} kph
 Jump Jets: ${jjDesc}
      Jump Capacity: ${jumpCapacity} meters
 </#if>
+<#if jumpBoosterCapacity??>
+Jump Booster Capacity: ${jumpBoosterCapacity} meters
+</#if>
 Armor: ${armorDesc}
 Armament:
 <#list armamentList as armament>

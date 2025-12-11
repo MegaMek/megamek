@@ -599,11 +599,11 @@ public class AreaEffectHelper {
         // Reveal hidden entity caught in the blast (per TW pg. 259)
         if (entity.isHidden()) {
             entity.setHidden(false);
+            report = new Report(9963);
+            report.subject = entity.getId();
+            report.addDesc(entity);
+            vPhaseReport.add(report);
         }
-        report = new Report(9963);
-        report.subject = entity.getId();
-        report.addDesc(entity);
-        vPhaseReport.add(report);
 
         if (entity instanceof BattleArmor) {
             // BA take full damage to each trooper, ouch!

@@ -151,7 +151,7 @@ public class BuildingEntity extends AbstractBuildingEntity {
     }
 
     /**
-     * A {@link BuildngEntiy} needs power to function.
+     * A {@link BuildingEntity} needs power to function.
      * @return true if the unit has power, otherwise false
      */
     public boolean hasPower() {

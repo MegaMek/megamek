@@ -59,6 +59,7 @@ import megamek.common.event.board.BoardEvent;
 import megamek.common.event.board.BoardListener;
 import megamek.common.hexArea.HexArea;
 import megamek.common.loaders.MapSettings;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.BuildingTerrain;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
@@ -2131,7 +2132,7 @@ public class Board implements Serializable {
 
     /**
      * Add a building and all of its coordinates to the board. {@link BuildingTerrain} should be added when
-     * initializing, this method is public so {@link megamek.common.units.BuildingEntity} can register buildings when deploying buildings.
+     * initializing, this method is public so {@link AbstractBuildingEntity} can register buildings when deploying buildings.
      * @param bldg {@link IBuilding} to add to the board
      */
     public void addBuildingToBoard(IBuilding bldg) {

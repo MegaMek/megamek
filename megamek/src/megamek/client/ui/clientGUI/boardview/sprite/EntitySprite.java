@@ -543,7 +543,7 @@ public class EntitySprite extends Sprite {
         boolean isTank = (entity instanceof Tank);
         boolean isInfantry = (entity instanceof Infantry);
         boolean isAero = entity.isAero();
-        boolean isGunEmplacement = entity instanceof GunEmplacement || entity instanceof HandheldWeapon || entity instanceof BuildingEntity;
+        boolean isGunEmplacement = entity instanceof GunEmplacement || entity instanceof HandheldWeapon || entity instanceof AbstractBuildingEntity;
         boolean isSquadron = entity instanceof FighterSquadron;
 
         if ((isAero && ((IAero) entity).isSpheroid() && !board.isSpace()) && (secondaryPos == 1)) {

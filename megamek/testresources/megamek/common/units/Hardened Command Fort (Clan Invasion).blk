@@ -116,6 +116,7 @@ IS Machine Gun Ammo - Half
 IS Machine Gun Ammo - Half
 Cargo:SIZE:50.0
 Communications Equipment:SIZE:7.0
+FUSION PowerGenerator:SIZE:9.5
 </Level 1 0.0,1.0,-1.0 Equipment>
 
 <Level 2 0.0,1.0,-1.0 Equipment>

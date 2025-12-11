@@ -33,7 +33,6 @@
 
 package megamek.server.totalWarfare;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
@@ -48,7 +47,7 @@ import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.turns.SpecificEntityTurn;
-import megamek.common.units.BuildingEntity;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.IAero;
@@ -336,47 +335,47 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
             }
         }
 
-        // If deploying a BuildingEntity, add building terrain to all hexes it occupies
-        if (entity instanceof BuildingEntity buildingEntity) {
+        // If deploying a AbstractBuildingEntity, add building terrain to all hexes it occupies
+        if (entity instanceof AbstractBuildingEntity abstractBuildingEntity) {
             Board board = getGame().getBoard(boardId);
-            for (Coords buildingCoords : buildingEntity.getCoordsList()) {
+            for (Coords buildingCoords : abstractBuildingEntity.getCoordsList()) {
                 Hex targetHex = board.getHex(buildingCoords);
                 if (targetHex != null) {
                     // Add building terrain with the building type
                     targetHex.addTerrain(new Terrain(Terrains.BUILDING,
-                          buildingEntity.getBuildingType().getTypeValue()));
+                          abstractBuildingEntity.getBuildingType().getTypeValue()));
 
                     // Add building class
-                    targetHex.addTerrain(new Terrain(Terrains.BLDG_CLASS, buildingEntity.getBldgClass()));
+                    targetHex.addTerrain(new Terrain(Terrains.BLDG_CLASS, abstractBuildingEntity.getBldgClass()));
 
                     // Add CF value
-                    int cf = buildingEntity.getCurrentCF(buildingCoords);
+                    int cf = abstractBuildingEntity.getCurrentCF(buildingCoords);
                     targetHex.addTerrain(new Terrain(Terrains.BLDG_CF, cf));
 
                     // Add armor if present
-                    int armor = buildingEntity.getArmor(buildingCoords);
+                    int armor = abstractBuildingEntity.getArmor(buildingCoords);
                     if (armor > 0) {
                         targetHex.addTerrain(new Terrain(Terrains.BLDG_ARMOR, armor));
                     }
 
                     // Add height (BLDG_ELEV)
-                    int height = buildingEntity.getHeight(buildingCoords);
+                    int height = abstractBuildingEntity.getHeight(buildingCoords);
                     targetHex.addTerrain(new Terrain(Terrains.BLDG_ELEV, height));
 
                     // Add basement type if present
-                    if (buildingEntity.getBasement(buildingCoords) != null) {
+                    if (abstractBuildingEntity.getBasement(buildingCoords) != null) {
                         targetHex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE,
-                              buildingEntity.getBasement(buildingCoords).ordinal()));
+                              abstractBuildingEntity.getBasement(buildingCoords).ordinal()));
                     }
                 }
             }
 
-            board.addBuildingToBoard(buildingEntity);
+            board.addBuildingToBoard(abstractBuildingEntity);
 
-            gameManager.sendNewBuildings(new Vector<IBuilding>(List.of(buildingEntity)));
+            gameManager.sendNewBuildings(new Vector<IBuilding>(List.of(abstractBuildingEntity)));
 
             // Do this as a separate loop - All building terrains need added before we can initialize building exits
-            for (Coords buildingCoords : buildingEntity.getCoordsList()) {
+            for (Coords buildingCoords : abstractBuildingEntity.getCoordsList()) {
                 // Set up building exits to adjacent hexes with matching building type and class
                 initializeBuildingExits(buildingCoords, boardId);
 

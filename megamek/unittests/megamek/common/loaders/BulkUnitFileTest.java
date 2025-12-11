@@ -53,8 +53,8 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.BombType;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Aero;
-import megamek.common.units.BuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.Jumpship;
@@ -189,7 +189,7 @@ public class BulkUnitFileTest {
         } else if (unit.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
             testEntity = new TestInfantry((Infantry) unit, entityVerifier.infOption, null);
         } else if (unit.hasETypeFlag(Entity.ETYPE_BUILDING_ENTITY)) {
-            testEntity = new TestBuilding((BuildingEntity) unit, entityVerifier.tankOption, null);
+            testEntity = new TestBuilding((AbstractBuildingEntity) unit, entityVerifier.tankOption, null);
         }
         return testEntity;
     }

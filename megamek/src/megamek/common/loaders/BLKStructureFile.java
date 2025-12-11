@@ -36,6 +36,8 @@ package megamek.common.loaders;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
+import megamek.common.units.AbstractBuildingEntity;
+import megamek.common.units.Building;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.util.BuildingBlock;
@@ -64,7 +66,7 @@ public class BLKStructureFile extends BLKFile implements IMekLoader {
         int buildingClass = dataFile.getDataAsInt("building_class")[0];
 
 
-        BuildingEntity be = new BuildingEntity(buildingType, buildingClass);
+        AbstractBuildingEntity be = new BuildingEntity(buildingType, buildingClass);
         setBasicEntityData(be);
 
 

@@ -55,6 +55,7 @@ None
 <Level 1 0.0,0.0,0.0 Equipment>
 IS Vehicle Flamer Ammo
 IS Machine Gun Ammo - Half
+FUSION PowerGenerator:SIZE:22
 </Level 1 0.0,0.0,0.0 Equipment>
 
 <Level 2 0.0,0.0,0.0 Equipment>

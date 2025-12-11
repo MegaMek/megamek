@@ -44,11 +44,13 @@ import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Building;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.BuildingTerrain;
 import megamek.common.units.DemolitionCharge;
 import megamek.common.units.IBuilding;
+import megamek.common.units.MobileStructure;
 import megamek.common.units.Terrains;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -56,7 +58,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Parameterized tests for {@link IBuilding} interface.
- * Tests implementations: {@link BuildingTerrain}, {@link BuildingEntity}.
+ * Tests implementations: {@link BuildingTerrain}, {@link BuildingEntity}, and eventually {@link MobileStructure}.
  */
 public class IBuildingTests extends GameBoardTestCase {
 
@@ -74,16 +76,26 @@ public class IBuildingTests extends GameBoardTestCase {
         BuildingTerrain terrain = new BuildingTerrain(new Coords(0, 0), getBoard("TEST_BUILDING"), Terrains.BUILDING,
               BasementType.UNKNOWN);
 
-        // BuildingEntity starts empty, so we need to add a hex manually
-        BuildingEntity entity = new BuildingEntity(BuildingType.MEDIUM, 1);
-        entity.getInternalBuilding().setBuildingHeight(3);
-        entity.getInternalBuilding().addHex(new CubeCoords(0, 0, 0), 50, 10, BasementType.UNKNOWN, false);
+        // AbstractBuildingEntity starts empty, so we need to add a hex manually
+        BuildingEntity buildingEntity = new BuildingEntity(BuildingType.MEDIUM, 1);
+        buildingEntity.getInternalBuilding().setBuildingHeight(3);
+        buildingEntity.getInternalBuilding().addHex(new CubeCoords(0, 0, 0), 50, 10, BasementType.UNKNOWN, false);
         // IMPORTANT: Set position to populate the relativeLayout map for coordinate translation
-        entity.setPosition(new Coords(0, 0));
+        buildingEntity.setPosition(new Coords(0, 0));
+
+        /*
+        MobileStructure mobileStructure = new MobileStructure(BuildingType.MEDIUM, 1);
+        buildingEntity.getInternalBuilding().setBuildingHeight(3);
+        buildingEntity.getInternalBuilding().addHex(new CubeCoords(0, 0, 0), 50, 10, BasementType.UNKNOWN, false);
+        // IMPORTANT: Set position to populate the relativeLayout map for coordinate translation
+        buildingEntity.setPosition(new Coords(0, 0));
+        */
 
         return Stream.of(
             Arguments.of("BuildingTerrain", terrain),
-            Arguments.of("BuildingEntity", entity)
+            Arguments.of("BuildingEntity", buildingEntity)/*,
+            Arguments.of(MobileStructure, mobileStructure)
+            */
         );
     }
 

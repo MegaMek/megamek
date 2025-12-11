@@ -353,6 +353,8 @@ public class EquipmentTypeLookup {
     public static final String LAM_BOMB_BAY = "Bomb Bay";
     @EquipmentName
     public static final String CARGO = "Cargo";
+    @EquipmentName
+    public static final String POWER_GENERATOR = "PowerGenerator";
 
     @EquipmentName
     public static final String CL_BA_MORTAR_HEAVY = "CLBAHeavyMortar";

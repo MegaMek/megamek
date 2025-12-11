@@ -301,14 +301,14 @@ public class BLKFile {
                               isTurreted,
                               isPintleTurreted,
                               isOmniMounted);
-                        // Need to set facing for VGLs & BuildingEntitys
+                        // Need to set facing for VGLs & AbstractBuildingEntitys
                         if ((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_VGL)) {
                             if (facing == -1) {
                                 mount.setFacing(defaultVGLFacing(nLoc, false));
                             } else {
                                 mount.setFacing(facing);
                             }
-                        } else if (t instanceof BuildingEntity) {
+                        } else if (t instanceof AbstractBuildingEntity) {
                             mount.setFacing(facing);
                         }
                         if (shots > 0) {
@@ -644,7 +644,7 @@ public class BLKFile {
             blk.writeBlockData("UnitType", "Aero");
         } else if (t instanceof HandheldWeapon) {
             blk.writeBlockData("UnitType", "HandheldWeapon");
-        } else if (t instanceof BuildingEntity) {
+        } else if (t instanceof AbstractBuildingEntity) {
             blk.writeBlockData("UnitType", "BuildingEntity");
         }
 
@@ -725,7 +725,7 @@ public class BLKFile {
         }
 
         int numLocs = t.locations();
-        if (!(t instanceof Infantry || t instanceof GunEmplacement || t instanceof BuildingEntity)) {
+        if (!(t instanceof Infantry || t instanceof GunEmplacement || t instanceof AbstractBuildingEntity)) {
             if (t instanceof Aero) {
                 if (t.isFighter()) {
                     blk.writeBlockData("cockpit_type", ((Aero) t).getCockpitType());
@@ -800,8 +800,8 @@ public class BLKFile {
                 }
             }
             blk.writeBlockData("armor", armor_array);
-        } else if (t instanceof BuildingEntity buildingEntity) {
-            blk.writeBlockData("armor", buildingEntity.getInternalBuilding().getArmor(CubeCoords.ZERO));
+        } else if (t instanceof AbstractBuildingEntity abstractBuildingEntity) {
+            blk.writeBlockData("armor", abstractBuildingEntity.getInternalBuilding().getArmor(CubeCoords.ZERO));
         }
 
         // Write out armor_type and armor_tech entries for BA
@@ -1018,14 +1018,14 @@ public class BLKFile {
             if (!gunEmplacement.hasNoTurret()) {
                 blk.writeBlockData("turret", 1);
             }
-        } else if (t instanceof BuildingEntity buildingEntity) {
-            blk.writeBlockData("building_class", buildingEntity.getBldgClass());
-            blk.writeBlockData("building_type", buildingEntity.getBuildingType().getTypeValue());
-            blk.writeBlockData("height", buildingEntity.getInternalBuilding().getBuildingHeight());
-            blk.writeBlockData("cf", buildingEntity.getInternalBuilding().getCurrentCF(CubeCoords.ZERO));
+        } else if (t instanceof AbstractBuildingEntity abstractBuildingEntity) {
+            blk.writeBlockData("building_class", abstractBuildingEntity.getBldgClass());
+            blk.writeBlockData("building_type", abstractBuildingEntity.getBuildingType().getTypeValue());
+            blk.writeBlockData("height", abstractBuildingEntity.getInternalBuilding().getBuildingHeight());
+            blk.writeBlockData("cf", abstractBuildingEntity.getInternalBuilding().getCurrentCF(CubeCoords.ZERO));
 
             blk.writeBlockData("coords",
-                  buildingEntity.getInternalBuilding().getCoordsList().toArray(new CubeCoords[0]));
+                  abstractBuildingEntity.getInternalBuilding().getCoordsList().toArray(new CubeCoords[0]));
         } else {
             blk.writeBlockData("tonnage", t.getWeight());
         }
@@ -1188,8 +1188,8 @@ public class BLKFile {
 
     private static String encodeEquipmentLine(Mounted<?> m) {
         String name = m.getType().getInternalName();
-        if (m.getEntity() instanceof BuildingEntity) {
-            // Append the facing for VGLs or if mounted on a BuildingEntity
+        if (m.getEntity() instanceof AbstractBuildingEntity) {
+            // Append the facing for VGLs or if mounted on an AbstractBuildingEntity
                 switch (m.getFacing()) {
                     case 0:
                         name = name + (" (F)");

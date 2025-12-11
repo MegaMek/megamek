@@ -34,6 +34,7 @@
 package megamek.common.loaders;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.List;
@@ -42,6 +43,7 @@ import java.util.stream.Stream;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.BuildingEntity;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -62,7 +64,7 @@ public class BLKStructureFileTest {
 
     @Test
     void testLoadStructureBLK() throws Exception {
-        BuildingEntity e = getBuildingEntity(FILENAME_SIMPLE_BUILDING_ENTITY);
+        AbstractBuildingEntity e = getBuildingEntity(FILENAME_SIMPLE_BUILDING_ENTITY);
         assertEquals(0, e.getOArmor(0), "Failed to load tonnage");
         assertEquals(9, e.getEquipment().size(), "Failed to load equipment");
     }
@@ -117,7 +119,7 @@ public class BLKStructureFileTest {
     void testBuildingProperties(String filename, String expectedChassis, String expectedModel,
                                 int expectedYear, int expectedBuildingClass, BuildingType expectedBuildingType,
                                 int expectedHeight, int expectedCF, int expectedArmor, int expectedHexCount) throws Exception {
-        BuildingEntity building = getBuildingEntity(filename);
+        AbstractBuildingEntity building = getBuildingEntity(filename);
 
         assertEquals(expectedChassis, building.getChassis(),
             String.format("Chassis: expected '%s', got '%s'", expectedChassis, building.getChassis()));
@@ -141,7 +143,7 @@ public class BLKStructureFileTest {
 
     @Test
     void testLargeBuilding_SpecificCoordinates() throws Exception {
-        BuildingEntity building = getBuildingEntity(FILENAME_SIMPLE_LARGE_BUILDING_ENTITY);
+        AbstractBuildingEntity building = getBuildingEntity(FILENAME_SIMPLE_LARGE_BUILDING_ENTITY);
 
         List<CubeCoords> expectedCoords = List.of(
             new CubeCoords(0, 0, 0),
@@ -164,7 +166,7 @@ public class BLKStructureFileTest {
 
     @Test
     void testLargeBuilding_AllHexesHaveSameCFAndArmor() throws Exception {
-        BuildingEntity building = getBuildingEntity(FILENAME_SIMPLE_LARGE_BUILDING_ENTITY);
+        AbstractBuildingEntity building = getBuildingEntity(FILENAME_SIMPLE_LARGE_BUILDING_ENTITY);
 
         for (CubeCoords coord : building.getInternalBuilding().getCoordsList()) {
             assertEquals(15, building.getInternalBuilding().getCurrentCF(coord),
@@ -176,7 +178,7 @@ public class BLKStructureFileTest {
 
     @Test
     void testLargeBuilding_EquipmentLocations() throws Exception {
-        BuildingEntity building = getBuildingEntity(FILENAME_SIMPLE_LARGE_BUILDING_ENTITY);
+        AbstractBuildingEntity building = getBuildingEntity(FILENAME_SIMPLE_LARGE_BUILDING_ENTITY);
 
         int height = building.getInternalBuilding().getBuildingHeight();
         int hexCount = building.getInternalBuilding().getCoordsList().size();
@@ -187,8 +189,8 @@ public class BLKStructureFileTest {
         // When building is not deployed, location names use cube coordinates instead of board numbers
         int[] expectedEquipmentCount = new int[totalLocations];
 
-        // <Level 1 0.0,0.0,0.0 Equipment> - 2 pieces of ammo
-        expectedEquipmentCount[getLocationByName(building, "Level 1 0.0,0.0,0.0")] = 2;
+        // <Level 1 0.0,0.0,0.0 Equipment> - 2 pieces of ammo & Power Generator
+        expectedEquipmentCount[getLocationByName(building, "Level 1 0.0,0.0,0.0")] = 3;
 
         // <Level 3 1.0,-1.0,0.0 Equipment> - 2 Machine Guns (FR)
         expectedEquipmentCount[getLocationByName(building, "Level 3 1.0,-1.0,0.0")] = 2;
@@ -277,6 +279,8 @@ public class BLKStructureFileTest {
             .forEach(mounted -> assertEquals(0, mounted.getFacing(),
                 String.format("Level 3 0.0,-1.0,1.0 equipment '%s' should have facing 0 (F)",
                     mounted.getType().getName())));
+
+        assertTrue(((BuildingEntity) building).hasPower());
     }
 
     /**
@@ -287,7 +291,7 @@ public class BLKStructureFileTest {
      * @param locationName The name of the location (e.g., "Level 1 0.0,0.0,0.0" or "Level 3 1.0,-1.0,0.0")
      * @return The location index, or -1 if not found
      */
-    private int getLocationByName(BuildingEntity building, String locationName) {
+    private int getLocationByName(AbstractBuildingEntity building, String locationName) {
         String[] locationNames = building.getLocationNames();
         for (int i = 0; i < locationNames.length; i++) {
             if (locationNames[i].equals(locationName)) {
@@ -297,9 +301,9 @@ public class BLKStructureFileTest {
         return -1;
     }
 
-    BuildingEntity getBuildingEntity(String filename) throws Exception {
+    AbstractBuildingEntity getBuildingEntity(String filename) throws Exception {
         File f = new File("testresources/megamek/common/units/" + filename);
         MekFileParser mfp = new MekFileParser(f);
-        return (BuildingEntity) mfp.getEntity();
+        return (AbstractBuildingEntity) mfp.getEntity();
     }
 }

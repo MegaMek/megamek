@@ -310,6 +310,7 @@ public class BattleArmor extends Infantry {
 
     public static final String[] MOUNT_LOC_NAMES = { "Body", "Right Arm",
                                                      "Left Arm", "Turret" };
+    private static final String[] MOUNT_LOC_ABBREVIATIONS = { "Body", "Arms", "Arms", "Turret" };
 
     /**
      * How many mount locations are possible?
@@ -336,15 +337,18 @@ public class BattleArmor extends Infantry {
         return IS_LOCATION_ABBREVIATIONS;
     }
 
-    public String[] getBaMountLocAbbr() {
-        return MOUNT_LOC_NAMES;
-    }
-
-    public static String getBaMountLocAbbr(int loc) {
+    public static String getBaMountLocName(int loc) {
         if (loc == MOUNT_LOC_NONE) {
             return "None";
         }
         return MOUNT_LOC_NAMES[loc];
+    }
+
+    public static String getBaMountLocAbbr(int loc) {
+        if (loc == MOUNT_LOC_NONE) {
+            return "-";
+        }
+        return MOUNT_LOC_ABBREVIATIONS[loc];
     }
 
     @Override

@@ -221,7 +221,7 @@ public class ArmorType extends MiscType {
     private final EnumMap<TechRating, Double> weightPerPointSV = new EnumMap<>(TechRating.class);
     private int bar = 10;
 
-    private ArmorType() {
+    public ArmorType() {
         hittable = false;
         omniFixedOnly = true;
         spreadable = true;
@@ -273,7 +273,7 @@ public class ArmorType extends MiscType {
     @Override
     public int getSupportVeeSlots(Entity entity) {
         // Support vehicle armor takes slots like CV ferro-fibrous at BAR 10/TL E/F
-        if (getArmorType() == T_ARMOR_SV_BAR_10) {
+        if ((entity != null) && (getArmorType() == T_ARMOR_SV_BAR_10)) {
             if (entity.getArmorTechRating() == TechRating.E) {
                 return ArmorType.of(T_ARMOR_FERRO_FIBROUS, false).svSlots;
             } else if (entity.getArmorTechRating() == TechRating.F) {

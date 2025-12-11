@@ -35,11 +35,13 @@
 package megamek.common.equipment;
 
 import java.util.List;
+import java.util.Map;
 
 import megamek.common.RangeType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.weapons.AlamoMissileWeapon;
@@ -2520,5 +2522,11 @@ public class WeaponType extends EquipmentType {
     @Override
     public String toString() {
         return "[Weapon] " + internalName;
+    }
+
+    @Override
+    public Map<String, Object> getYamlData() {
+        Map<String, Object> data = super.getYamlData();
+        return data;
     }
 }

@@ -46,6 +46,7 @@ import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.enums.AmmoTypeFlag;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
@@ -16265,10 +16266,6 @@ public class AmmoType extends EquipmentType {
     @Override
     public Map<String, Object> getYamlData() {
         Map<String, Object> data = super.getYamlData();
-        data.put("type", "ammo");
-        if (kgPerShot > 0) {
-            data.put("kgPerShot", this.getKgPerShot());
-        }
         return data;
     }
 }

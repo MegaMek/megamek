@@ -63,6 +63,7 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ITechnology;
@@ -637,7 +638,8 @@ public class Infantry extends Entity {
         }
         EquipmentType armorKit = getArmorKit();
         return (armorKit == null) ||
-              !armorKit.hasSubType(MiscType.S_SPACE_SUIT | MiscType.S_XCT_VACUUM | MiscType.S_TOXIC_ATMOSPHERE);
+              !armorKit.hasAnyFlag(MiscTypeFlag.S_SPACE_SUIT, MiscTypeFlag.S_XCT_VACUUM,
+                    MiscTypeFlag.S_TOXIC_ATMOSPHERE);
     }
 
     @Override
@@ -1184,13 +1186,13 @@ public class Infantry extends Entity {
     public boolean doomedInExtremeTemp() {
         // If there is no game object, count any temperature protection.
         if (getArmorKit() != null) {
-            if (getArmorKit().hasSubType(MiscType.S_XCT_VACUUM)) {
+            if (getArmorKit().hasFlag(MiscTypeFlag.S_XCT_VACUUM)) {
                 return false;
-            } else if (getArmorKit().hasSubType(MiscType.S_COLD_WEATHER) &&
+            } else if (getArmorKit().hasFlag(MiscTypeFlag.S_COLD_WEATHER) &&
                   ((game == null) || game.getPlanetaryConditions().getTemperature() < -30)) {
                 return false;
             } else {
-                return !getArmorKit().hasSubType(MiscType.S_HOT_WEATHER) ||
+                return !getArmorKit().hasFlag(MiscTypeFlag.S_HOT_WEATHER) ||
                       ((game != null) && game.getPlanetaryConditions().getTemperature() <= 50);
             }
         }
@@ -1326,12 +1328,12 @@ public class Infantry extends Entity {
             } catch (LocationFullException ex) {
                 logger.error("", ex);
             }
-            encumbering = (armorKit.getSubType() & MiscType.S_ENCUMBERING) != 0;
-            spaceSuit = (armorKit.getSubType() & MiscType.S_SPACE_SUIT) != 0;
-            dest = (armorKit.getSubType() & MiscType.S_DEST) != 0;
-            sneak_camo = (armorKit.getSubType() & MiscType.S_SNEAK_CAMO) != 0;
-            sneak_ir = (armorKit.getSubType() & MiscType.S_SNEAK_IR) != 0;
-            sneak_ecm = (armorKit.getSubType() & MiscType.S_SNEAK_ECM) != 0;
+            encumbering = armorKit.hasFlag(MiscTypeFlag.S_ENCUMBERING);
+            spaceSuit = armorKit.hasFlag(MiscTypeFlag.S_SPACE_SUIT);
+            dest = armorKit.hasFlag(MiscTypeFlag.S_DEST);
+            sneak_camo = armorKit.hasFlag(MiscTypeFlag.S_SNEAK_CAMO);
+            sneak_ir = armorKit.hasFlag(MiscTypeFlag.S_SNEAK_IR);
+            sneak_ecm = armorKit.hasFlag(MiscTypeFlag.S_SNEAK_ECM);
         }
         calcDamageDivisor();
     }
@@ -1453,7 +1455,7 @@ public class Infantry extends Entity {
             // Need to remove vibro shovels
             List<Mounted<?>> eqToRemove = new ArrayList<>();
             for (Mounted<?> eq : getEquipment()) {
-                if (eq.getType().hasFlag(MiscType.F_TOOLS) && eq.getType().hasSubType(MiscType.S_VIBRO_SHOVEL)) {
+                if (eq.getType().hasFlag(MiscType.F_TOOLS) && eq.getType().hasFlag(MiscTypeFlag.S_VIBRO_SHOVEL)) {
                     eqToRemove.add(eq);
                 }
             }
@@ -1479,7 +1481,7 @@ public class Infantry extends Entity {
             // Need to remove vibro shovels
             List<Mounted<?>> eqToRemove = new ArrayList<>();
             for (Mounted<?> eq : getEquipment()) {
-                if (eq.getType().hasFlag(MiscType.F_TOOLS) && eq.getType().hasSubType(MiscType.S_DEMOLITION_CHARGE)) {
+                if (eq.getType().hasFlag(MiscType.F_TOOLS) && eq.getType().hasFlag(MiscTypeFlag.S_DEMOLITION_CHARGE)) {
                     eqToRemove.add(eq);
                 }
             }

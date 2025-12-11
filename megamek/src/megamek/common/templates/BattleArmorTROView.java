@@ -129,7 +129,7 @@ public class BattleArmorTROView extends TROView {
             final Map<String, Object> modularMount = new HashMap<>();
             modularMount.put("name", ba.hasModularTurretMount() ? Messages.getString("TROView.BAModularTurret")
                   : Messages.getString("TROView.BATurret"));
-            modularMount.put("location", BattleArmor.getBaMountLocAbbr(BattleArmor.MOUNT_LOC_TURRET));
+            modularMount.put("location", BattleArmor.getBaMountLocName(BattleArmor.MOUNT_LOC_TURRET));
             int turretSlots = ba.getTurretCapacity();
             if (ba.hasModularTurretMount()) {
                 turretSlots += 2;
@@ -142,7 +142,7 @@ public class BattleArmorTROView extends TROView {
 
     private Map<String, Object> formatManipulatorRow(int mountLoc, Mounted<?> manipulator) {
         final Map<String, Object> retVal = new HashMap<>();
-        retVal.put("locName", BattleArmor.getBaMountLocAbbr(mountLoc));
+        retVal.put("locName", BattleArmor.getBaMountLocName(mountLoc));
         if (null == manipulator) {
             retVal.put("eqName", Messages.getString("TROView.None"));
             retVal.put("eqMass", 0);
@@ -180,7 +180,7 @@ public class BattleArmorTROView extends TROView {
             } else {
                 row.put("name", stripNotes(m.getName()));
             }
-            row.put("location", BattleArmor.getBaMountLocAbbr(m.getBaMountLoc()));
+            row.put("location", BattleArmor.getBaMountLocName(m.getBaMountLoc()));
             if (name.length() >= nameWidth) {
                 nameWidth = name.length() + 1;
             }

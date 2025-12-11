@@ -185,8 +185,6 @@ public class EquipmentType implements ITechnology {
 
     protected EquipmentBitSet flags = new EquipmentBitSet();
 
-    protected long subType = 0;
-
     public double bv = 0; // battle value point system
     protected double cost = 0; // The C-Bill cost of the item.
 
@@ -226,26 +224,6 @@ public class EquipmentType implements ITechnology {
         this.flags = flags;
     }
 
-    public long getSubType() {
-        return subType;
-    }
-
-    public void setSubType(int newFlags) {
-        subType = newFlags;
-    }
-
-    public void addSubType(int newFlag) {
-        subType |= newFlag;
-    }
-
-    public boolean hasAnySubType(long... testFlags) {
-        return Arrays.stream(testFlags).anyMatch(this::hasSubType);
-    }
-
-    public boolean hasSubType(long testFlag) {
-        return (subType & testFlag) != 0;
-    }
-
     public String getName() {
         return name;
     }
@@ -261,6 +239,23 @@ public class EquipmentType implements ITechnology {
         }
         return name;
     }
+
+    public double getBaseCost() {
+        return cost;
+    }
+
+    public double getBaseBV() {
+        return bv;
+    }
+
+    public double getBaseTonnage() {
+        return tonnage;
+    }
+
+    public double getBaseCriticalSlots() {
+        return criticalSlots;
+    }
+
 
     public String getDesc(double size) {
         return getDesc();
@@ -546,7 +541,19 @@ public class EquipmentType implements ITechnology {
      * @return True when the equipment has at least one of the given flags.
      */
     public boolean hasAnyFlag(EquipmentFlag... flags) {
-        return Arrays.stream(flags).anyMatch(this::hasFlag);
+        for (EquipmentFlag flag : flags) {
+            if (this.flags.get(flag)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return True when the equipment has at least one of the given flags.
+     */
+    public boolean hasAnyFlag(EquipmentBitSet mask) {
+        return flags.intersects(mask);
     }
 
     /**

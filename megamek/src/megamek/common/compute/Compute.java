@@ -4199,7 +4199,7 @@ public class Compute {
             // check for camo and null sig on the target
             if (targetedEntity.isVoidSigActive()) {
                 visualRange = visualRange / 4;
-            } else if (targetedEntity.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
+            } else if (targetedEntity.hasWorkingMisc(MiscType.F_VISUAL_CAMO)) {
                 visualRange = visualRange / 2;
             } else if (targetedEntity.isChameleonShieldActive()) {
                 visualRange = visualRange / 2;

@@ -1049,7 +1049,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
               Compute.oddsAbove(toHit.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
               toHit.getDesc());
 
-        // Give the user to cancel the attack.
+        // Give the user a chance to cancel the attack.
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
             addAttack(act);

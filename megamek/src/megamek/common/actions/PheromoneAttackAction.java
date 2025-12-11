@@ -86,18 +86,20 @@ public class PheromoneAttackAction extends AbstractAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not valid");
         }
 
-        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
-            targetEntity = (Entity) target;
-            targetId = target.getId();
+        // Can only attack entities
+        if (target.getTargetType() != Targetable.TYPE_ENTITY) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target must be an entity");
         }
+
+        targetEntity = (Entity) target;
+        targetId = target.getId();
 
         // Check friendly fire
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
-            if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                  && ((target.getOwnerId() == attackingEntity.getOwnerId())
-                  || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+            if ((target.getOwnerId() == attackingEntity.getOwnerId())
+                  || ((targetEntity.getOwner().getTeam() != Player.TEAM_NONE)
                   && (attackingEntity.getOwner().getTeam() != Player.TEAM_NONE)
-                  && (attackingEntity.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
+                  && (attackingEntity.getOwner().getTeam() == targetEntity.getOwner().getTeam()))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                       "A friendly unit can never be the target of a direct attack.");
             }
@@ -127,7 +129,7 @@ public class PheromoneAttackAction extends AbstractAttackAction {
         }
 
         // Target must be conventional infantry
-        if ((targetEntity == null) || !targetEntity.isConventionalInfantry()) {
+        if (!targetEntity.isConventionalInfantry()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target must be conventional infantry");
         }
 
@@ -140,11 +142,6 @@ public class PheromoneAttackAction extends AbstractAttackAction {
         // Target already impaired - attack does nothing (no stacking)
         if (targetInfantry.isPheromoneImpaired()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is already pheromone impaired");
-        }
-
-        // Can only attack entities
-        if (target.getTargetType() != Targetable.TYPE_ENTITY) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid attack");
         }
 
         // Can't target a transported entity

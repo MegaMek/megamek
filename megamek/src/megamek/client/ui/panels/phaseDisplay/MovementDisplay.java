@@ -2984,16 +2984,23 @@ public class MovementDisplay extends ActionPhaseDisplay {
     /** Updates the status of the Load button. */
     private void updateLoadButton() {
         final Entity ce = currentEntity();
-        if ((ce == null) || (ce instanceof SmallCraft) || (ce.getWalkMP() <= 0)) {
+        if ((ce == null) || (ce.getWalkMP() <= 0 && !ce.isAerospace()) || (ce.isAerospace() && ce.isAirborne())) {
             setLoadEnabled(false);
             return;
         }
 
-        final boolean canLoad = game.getEntitiesVector(finalPosition(), finalBoardId())
+        // Different vehicles can load from different areas
+        Vector<Entity> candidates = new Vector<Entity>();
+        for (Coords coords: Compute.getLoadableCoords(ce, finalPosition(), finalBoardId())) {
+            candidates.addAll(game.getEntitiesVector(coords, finalBoardId()));
+        }
+
+        final boolean canLoad = candidates
               .stream()
               .filter(other -> !ce.canTow(other.getId()))
               .filter(Entity::isLoadableThisTurn)
-              .anyMatch(other -> ce.canLoad(other, true, cmd.getFinalElevation()));
+              .anyMatch(other -> ce.canLoad(other, true, cmd.getFinalElevation()) &&
+                    other.getTargetBay() == UNSET_BAY);
         setLoadEnabled(canLoad);
     }
 
@@ -3193,12 +3200,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
         Entity choice;
 
         Vector<Entity> choices = new Vector<>();
-        for (Entity other : game.getEntitiesVector(cmd.getFinalCoords())) {
-            // Only allow selecting units that aren't already getting loaded
-            if (other.isLoadableThisTurn() && (currentEntity() != null) && currentEntity().canLoad(other, true,
-                  cmd.getFinalElevation()) && (other.getTargetBay() == UNSET_BAY)) {
-
-                choices.addElement(other);
+        for (Coords coords: Compute.getLoadableCoords(currentEntity(), finalPosition(), finalBoardId())) {
+            for (Entity other : game.getEntitiesVector(coords)) {
+                // Only allow selecting units that aren't already getting loaded
+                if (other.isLoadableThisTurn() && (currentEntity() != null) && currentEntity().canLoad(other, true,
+                      cmd.getFinalElevation()) && (other.getTargetBay() == UNSET_BAY))
+                {
+                    choices.addElement(other);
+                }
             }
         }
 
@@ -3534,6 +3543,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (unloadableUnits.isEmpty()) {
             LOGGER.error("No loaded units");
         } else if (unloadableUnits.size() > 1) {
+            // Only show the units we are not already planning to unload
+            List<Entity> filteredUnits = unloadableUnits
+                  .stream()
+                  .filter(entity -> entity.getTargetBay() == UNSET_BAY).collect(Collectors.toList());
             // If we have multiple choices, display a selection dialog.
             String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
                   Messages.getString("MovementDisplay.UnloadUnitDialog.message",
@@ -3542,9 +3555,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                   Messages.getString("MovementDisplay.UnloadUnitDialog.title"),
                   JOptionPane.QUESTION_MESSAGE,
                   null,
-                  SharedUtility.getDisplayArray(unloadableUnits),
+                  SharedUtility.getDisplayArray(filteredUnits),
                   null);
-            choice = (Entity) SharedUtility.getTargetPicked(unloadableUnits, input);
+            choice = (Entity) SharedUtility.getTargetPicked(filteredUnits, input);
         } else {
             // Only one choice.
             choice = unloadableUnits.get(0);
@@ -3566,14 +3579,26 @@ public class MovementDisplay extends ActionPhaseDisplay {
         Entity ce = currentEntity();
         // we need to allow the user to select a hex for offloading
         Coords pos = ce.getPosition();
+        int elev = game.getBoard(ce).getHex(pos).getLevel() + ce.getElevation();
+        int altitude = 0;
+
+        // Special handling for unloading on the move
         if (null != cmd) {
             pos = cmd.getFinalCoords();
+            elev = (ce.isAirborne()) ? 999 : cmd.getFinalElevation();
+            altitude = (ce.isAirborne()) ? cmd.getFinalAltitude() : 0;
         }
-        int elev = game.getBoard(ce).getHex(pos).getLevel() + ce.getElevation();
-        List<Coords> ring = pos.allAdjacent();
+        // Flying units can unload under themselves or in their hex; note that dropships ignore this.
+        List<Coords> ring = new ArrayList<>();
+        if (elev > 0 || altitude > 0) {
+            ring.add(pos);
+        }
+        ring.addAll(pos.allAdjacent());
+
         if (ce instanceof Dropship) {
             ring = pos.allAtDistance(2);
         }
+
         // ok, now we need to go through the ring and identify available Positions
         ring = Compute.getAcceptableUnloadPositions(ring, finalBoardId(), unloaded, game, elev);
 
@@ -5194,7 +5219,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // to our local list of loaded units, and then stop.
             Entity other = getLoadedUnit();
             if (other != null) {
-                addStepToMovePath(MoveStepType.LOAD);
+                int length = cmd.length();
+                addStepToMovePath(MoveStepType.LOAD, other, other.getPosition());
+                if (cmd.length() == length || cmd.getLastStepMovementType() == EntityMovementType.MOVE_ILLEGAL) {
+                    // Load step failed to add or was illegal; unset other's loading flag
+                    other.setTargetBay(UNSET_BAY);
+                }
                 gear = MovementDisplay.GEAR_LAND;
             } // else - didn't find a unit to load
         } else if (actionCmd.equals(MoveCommand.MOVE_TOW.getCmd())) {
@@ -5232,8 +5262,26 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     if (null != pos) {
                         // set other's position and end this turn - the unloading unit will get
                         // another turn for further unloading later
+                        // Also mark the chosen unit as planning to unload this turn.
+                        int length = cmd.length();
                         addStepToMovePath(MoveStepType.UNLOAD, other, pos);
-                        ready();
+                        if (!(length == cmd.length() || cmd.getLastStepMovementType() == EntityMovementType.MOVE_ILLEGAL)) {
+                            // Record the hashcode of the target hex temporarily, for filtering.
+                            other.setTargetBay(pos.hashCode());
+                        }
+                        // We give SmallCraft and DropShips extra unloading turns, so ready them now.
+                        // Also ready other craft that have unloaded but don't have any more units to unload.
+                        if (entity.isSmallCraft() || entity.isDropShip()) {
+                            ready();
+                        } else {
+                            List<Entity> filteredUnits = unloadableUnits
+                                  .stream()
+                                  .filter(unloadable -> unloadable.getTargetBay() == UNSET_BAY)
+                                  .collect(Collectors.toList());
+                            if (filteredUnits.isEmpty()) {
+                                ready();
+                            }
+                        }
                     }
                 } else {
                     // unload into the same hex

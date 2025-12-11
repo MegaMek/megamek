@@ -32,29 +32,45 @@
  */
 package megamek.server.totalWarfare;
 
+import static megamek.common.CargoBayTest.createInfantry;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
 import megamek.common.CriticalSlot;
+import megamek.common.Hex;
 import megamek.common.Player;
+import megamek.common.bays.CargoBay;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.BipedMek;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Infantry;
 import megamek.common.units.LandAirMek;
 import megamek.common.units.Mek;
+import megamek.common.units.VTOL;
+import megamek.server.Server;
+import megamek.utils.ServerFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 class TWGameManagerTest {
     private TWGameManager gameManager;
     private Game game;
+    private Server server;
 
     @BeforeAll
     static void before() {
@@ -62,10 +78,11 @@ class TWGameManagerTest {
     }
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         Player player = new Player(0, "Test");
         gameManager = new TWGameManager();
         game = gameManager.getGame();
+        server = ServerFactory.createServer(gameManager);
         game.addPlayer(0, player);
     }
 
@@ -255,5 +272,59 @@ class TWGameManagerTest {
         assertEquals(1, psrs.size(), "HD gyro third hit should trigger auto-fail PSR");
         assertEquals(PilotingRollData.AUTOMATIC_FAIL, psrs.get(0).getValue(), "PSR should be automatic fail");
         assertTrue(psrs.get(0).getDesc().contains("gyro destroyed"), "PSR description should mention gyro destroyed");
+    }
+
+    void initializeBoard(Board board) {
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
+                board.setHex(x, y, new Hex());
+            }
+        }
+    }
+
+    /**
+     *  Tests for unloading in specific states
+     *  We want to make positively sure that these _specific_ unloading ops work.
+     *  However, other unloading ops are only disallowed via the UI, because we call the same
+     *  code for both "unloading", e.g., infantry dismounting mid-air, and for "dropping", that is,
+     *  combat drops from DropShips and SmallCraft.
+     */
+    @ParameterizedTest()
+    @EnumSource(names = { "INF_JUMP", "VTOL"})
+    void testLargeSVVTOLCargoBayCanUnLoadValidInfantry(EntityMovementMode mode) {
+        // Only Jump and VTOL infantry should be allowed to unload (not drop, that's for SC and DropShips)
+        Player player = new Player(1, "Griffin Mill");
+        VTOL carrier = new VTOL();
+        carrier.setMovementMode(EntityMovementMode.VTOL);
+        Coords position = new Coords(1, 1);
+        carrier.setPosition(position);
+        carrier.setElevation(5);
+        carrier.setOwner(player);
+        carrier.setId(1);
+        game.addEntity(carrier);
+
+        Infantry unit = createInfantry(mode.name(), "", "John Q. Test", game);
+        unit.setOwner(player);
+        unit.setMovementMode(mode);
+        unit.setId(2);
+        game.addEntity(unit);
+
+        CargoBay bay = new CargoBay(100.0, 1, 0);
+        carrier.addTransporter(bay);
+        gameManager.loadUnit(carrier, unit, 0);
+
+        // Create map for elevation and stacking checks.
+        Board board = new Board(3, 3);
+        initializeBoard(board);
+        game.setBoard(board);
+
+        // Create MovePath
+        MovePath movePath = new MovePath(game, carrier);
+        movePath.addStep(MoveStepType.UNLOAD, unit, position);
+        MovePathHandler handler = new MovePathHandler(gameManager, carrier, movePath, null);
+        handler.processMovement();
+
+        assertTrue(unit.isDeployed());
+        assertTrue(unit.getPosition().equals(position));
     }
 }

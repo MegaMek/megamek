@@ -228,4 +228,174 @@ class SensoryImplantToHitModsTest {
             assertEquals(0, toHit.getValue(), "Visual implant provides probe, not to-hit bonus");
         }
     }
+
+    @Nested
+    @DisplayName("Multi-Modal Implant Tests")
+    class MultiModalImplantTests {
+
+        @Test
+        @DisplayName("Infantry with MM implant gets -1 to-hit")
+        void infantryWithMmImplant_getsMinusOneModifier() {
+            when(mockInfantry.hasAbility(anyString())).thenAnswer(invocation -> {
+                String arg = invocation.getArgument(0);
+                return OptionsConstants.MD_MM_IMPLANTS.equals(arg);
+            });
+
+            ToHitData toHit = new ToHitData();
+            toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockInfantry, toHit, mockWeapon);
+
+            assertEquals(-1, toHit.getValue());
+            assertTrue(toHit.getDesc().contains("MD multi-modal implants"),
+                  "Should show multi-modal implants message");
+        }
+
+        @Test
+        @DisplayName("Non-infantry with MM implant only (no VDNI) gets no modifier")
+        void nonInfantryWithMmImplantOnly_getsNoModifier() {
+            Entity mockMek = mock(Entity.class);
+            when(mockMek.isConventionalInfantry()).thenReturn(false);
+            when(mockMek.getCrew()).thenReturn(mockCrew);
+            when(mockMek.hasAbility(anyString())).thenAnswer(invocation -> {
+                String arg = invocation.getArgument(0);
+                return OptionsConstants.MD_MM_IMPLANTS.equals(arg);
+            });
+
+            ToHitData toHit = new ToHitData();
+            toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockMek, toHit, mockWeapon);
+
+            assertEquals(0, toHit.getValue(),
+                  "Non-infantry with MM implants but no VDNI should not get implant bonus");
+        }
+
+        @Test
+        @DisplayName("Non-infantry with MM implant + VDNI gets -1 to-hit from implants")
+        void nonInfantryWithMmImplantAndVdni_getsMinusOneFromImplants() {
+            Entity mockMek = mock(Entity.class);
+            when(mockMek.isConventionalInfantry()).thenReturn(false);
+            when(mockMek.getCrew()).thenReturn(mockCrew);
+            when(mockMek.hasAbility(anyString())).thenAnswer(invocation -> {
+                String arg = invocation.getArgument(0);
+                return OptionsConstants.MD_MM_IMPLANTS.equals(arg)
+                      || OptionsConstants.MD_VDNI.equals(arg);
+            });
+
+            ToHitData toHit = new ToHitData();
+            toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockMek, toHit, mockWeapon);
+
+            // VDNI gives -1, MM implants with VDNI also gives -1 = -2 total
+            assertEquals(-2, toHit.getValue(),
+                  "VDNI (-1) + MM implants synced via VDNI (-1) = -2 total");
+        }
+
+        @Test
+        @DisplayName("Non-infantry with MM implant + BVDNI gets -1 to-hit from implants")
+        void nonInfantryWithMmImplantAndBvdni_getsMinusOneFromImplants() {
+            Entity mockMek = mock(Entity.class);
+            when(mockMek.isConventionalInfantry()).thenReturn(false);
+            when(mockMek.getCrew()).thenReturn(mockCrew);
+            when(mockMek.hasAbility(anyString())).thenAnswer(invocation -> {
+                String arg = invocation.getArgument(0);
+                return OptionsConstants.MD_MM_IMPLANTS.equals(arg)
+                      || OptionsConstants.MD_BVDNI.equals(arg);
+            });
+
+            ToHitData toHit = new ToHitData();
+            toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockMek, toHit, mockWeapon);
+
+            // BVDNI gives -1, MM implants with BVDNI also gives -1 = -2 total
+            assertEquals(-2, toHit.getValue(),
+                  "BVDNI (-1) + MM implants synced via BVDNI (-1) = -2 total");
+        }
+
+        @Test
+        @DisplayName("MM implants don't stack with laser/tele for infantry (still -1)")
+        void infantryWithMmAndLaserImplants_getsOnlyMinusOne() {
+            when(mockInfantry.hasAbility(anyString())).thenAnswer(invocation -> {
+                String arg = invocation.getArgument(0);
+                return OptionsConstants.MD_MM_IMPLANTS.equals(arg)
+                      || OptionsConstants.MD_CYBER_IMP_LASER.equals(arg);
+            });
+
+            ToHitData toHit = new ToHitData();
+            toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockInfantry, toHit, mockWeapon);
+
+            assertEquals(-1, toHit.getValue(),
+                  "MM implants and laser implants should not stack - still only -1");
+        }
+    }
+
+    @Nested
+    @DisplayName("Enhanced Multi-Modal Implant Tests")
+    class EnhancedMultiModalImplantTests {
+
+        @Test
+        @DisplayName("Infantry with Enhanced MM implant gets -1 to-hit")
+        void infantryWithEnhMmImplant_getsMinusOneModifier() {
+            when(mockInfantry.hasAbility(anyString())).thenAnswer(invocation -> {
+                String arg = invocation.getArgument(0);
+                return OptionsConstants.MD_ENH_MM_IMPLANTS.equals(arg);
+            });
+
+            ToHitData toHit = new ToHitData();
+            toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockInfantry, toHit, mockWeapon);
+
+            assertEquals(-1, toHit.getValue());
+            assertTrue(toHit.getDesc().contains("MD multi-modal implants"),
+                  "Should show multi-modal implants message");
+        }
+
+        @Test
+        @DisplayName("Non-infantry with Enhanced MM implant only (no VDNI) gets no modifier")
+        void nonInfantryWithEnhMmImplantOnly_getsNoModifier() {
+            Entity mockMek = mock(Entity.class);
+            when(mockMek.isConventionalInfantry()).thenReturn(false);
+            when(mockMek.getCrew()).thenReturn(mockCrew);
+            when(mockMek.hasAbility(anyString())).thenAnswer(invocation -> {
+                String arg = invocation.getArgument(0);
+                return OptionsConstants.MD_ENH_MM_IMPLANTS.equals(arg);
+            });
+
+            ToHitData toHit = new ToHitData();
+            toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockMek, toHit, mockWeapon);
+
+            assertEquals(0, toHit.getValue(),
+                  "Non-infantry with Enhanced MM implants but no VDNI should not get implant bonus");
+        }
+
+        @Test
+        @DisplayName("Non-infantry with Enhanced MM implant + VDNI gets -1 to-hit from implants")
+        void nonInfantryWithEnhMmImplantAndVdni_getsMinusOneFromImplants() {
+            Entity mockMek = mock(Entity.class);
+            when(mockMek.isConventionalInfantry()).thenReturn(false);
+            when(mockMek.getCrew()).thenReturn(mockCrew);
+            when(mockMek.hasAbility(anyString())).thenAnswer(invocation -> {
+                String arg = invocation.getArgument(0);
+                return OptionsConstants.MD_ENH_MM_IMPLANTS.equals(arg)
+                      || OptionsConstants.MD_VDNI.equals(arg);
+            });
+
+            ToHitData toHit = new ToHitData();
+            toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockMek, toHit, mockWeapon);
+
+            // VDNI gives -1, Enhanced MM implants with VDNI also gives -1 = -2 total
+            assertEquals(-2, toHit.getValue(),
+                  "VDNI (-1) + Enhanced MM implants synced via VDNI (-1) = -2 total");
+        }
+
+        @Test
+        @DisplayName("Enhanced MM implants don't stack with basic MM for infantry (still -1)")
+        void infantryWithEnhMmAndBasicMmImplants_getsOnlyMinusOne() {
+            when(mockInfantry.hasAbility(anyString())).thenAnswer(invocation -> {
+                String arg = invocation.getArgument(0);
+                return OptionsConstants.MD_ENH_MM_IMPLANTS.equals(arg)
+                      || OptionsConstants.MD_MM_IMPLANTS.equals(arg);
+            });
+
+            ToHitData toHit = new ToHitData();
+            toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockInfantry, toHit, mockWeapon);
+
+            assertEquals(-1, toHit.getValue(),
+                  "Enhanced MM and basic MM implants should not stack - still only -1");
+        }
+    }
 }

@@ -574,10 +574,10 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         fd.setDropshipPct(dropShipPCT);
         txtDropshipPct.setText(String.valueOf(dropShipPCT));
 
-        double jumpShipPCT = MathUtility.parseDouble(txtJumpshipPct.getText(), 0) * 0.01;
+        double jumpShipPCT = MathUtility.parseDouble(txtJumpshipPct.getText(), 0.0) * 0.01;
         txtJumpshipPct.setText(String.valueOf(jumpShipPCT));
 
-        double cargo = MathUtility.parseDouble(txtCargo.getText(), 0);
+        double cargo = MathUtility.parseDouble(txtCargo.getText(), 0.0);
         txtCargo.setText(String.valueOf(cargo));
 
         ProgressMonitor monitor = new ProgressMonitor(this,

@@ -7506,8 +7506,10 @@ public class TWGameManager extends AbstractGameManager {
                     target += 2;
                 }
                 // Comm implant makes it easier for infantry to avoid mines
+                // Boosted comm implant provides same benefit as regular comm implant
                 if ((entity instanceof Infantry) &&
-                      entity.hasAbility(OptionsConstants.MD_COMM_IMPLANT)) {
+                      (entity.hasAbility(OptionsConstants.MD_COMM_IMPLANT) ||
+                            entity.hasAbility(OptionsConstants.MD_BOOST_COMM_IMPLANT))) {
                     target += 1;
                 }
                 if ((entity.getMovementMode() == EntityMovementMode.HOVER) ||

@@ -6879,9 +6879,17 @@ public class Compute {
     public static boolean isAcceptableUnloadPosition(Coords position, int boardId, Entity unitToUnload,
           Game game, int elev) {
         Hex hex = game.getHex(position, boardId);
+        // Prohibited terrain is any that the unit cannot move into or through, or would cause a stacking violation, or
+        // is not 0, 1, or 2 elevations up or down from the hex elevation - but ignore that last if the unloading unit
+        // has Jump MP or VTOL movement.
         return (hex != null) && !unitToUnload.isLocationProhibited(position, boardId, unitToUnload.getElevation())
               && (null == stackingViolation(game, unitToUnload.getId(), position, unitToUnload.climbMode()))
-              && (Math.abs(hex.getLevel() - elev) < 3);
+              && ((Math.abs(hex.getLevel() - elev) < 3) ||
+              (unitToUnload.getMovementMode() == EntityMovementMode.VTOL ||
+                    unitToUnload.getMovementMode() == EntityMovementMode.INF_JUMP ||
+                    ((unitToUnload.getAnyTypeMaxJumpMP() > 0) && !unitToUnload.isImmobileForJump())
+              )
+        );
     }
 
     /**
@@ -7727,7 +7735,7 @@ public class Compute {
     }
 
     /**
-     * Fast log2 implementation; throws if number &le; 0 
+     * Fast log2 implementation; throws if number &le; 0
      * @param number        positive int to get the log2 of
      * @return int          approximate log2 of number; functionally (Math.floor(log10(10)/log10(2))
      */
@@ -7736,6 +7744,41 @@ public class Compute {
             throw new IllegalArgumentException();
         }
         return 31 - Integer.numberOfLeadingZeros(number);
+    }
+
+    /**
+     * Helper to get the coordinates from which a unit can load other units.  Not in Entity to avoid bloat.
+     * May need extension for different map types but unlikely.
+     * @param carrier   Entity that will be doing the loading
+     * @param position  Coords of hex to use as the center of the carrier; may not match carrier's current position
+     *                  value.
+     * @param boardId   For future use, e.g. low-altitude or multi-board maps
+     * @return ArrayList of Coords that the carrier entity can legally load units from
+     */
+    public static ArrayList<Coords> getLoadableCoords(Entity carrier, Coords position, int boardId) {
+        ArrayList<Coords> list = new ArrayList<Coords>();
+        // No coords for no carrier
+        if (carrier == null) {
+            return list;
+        }
+
+        // Landed DropShip occupies 7 hexes, loads from the adjacent ring of hexes
+        if (carrier.isDropShip() && carrier.isAeroLandedOnGroundMap()) {
+            list.addAll(position.allAtDistance(2));
+        } else if (
+              // SmallCraft, Large Support Vehicles, flying DropShips, and presumably spaceborne WarShips load from
+              // directly adjacent hexes
+              carrier instanceof SmallCraft ||
+              (carrier.isSupportVehicle() && (carrier.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT)) ||
+              (carrier.isDropShip() && carrier.isAirborne()) ||
+              (carrier.isWarShip())
+        ) {
+            list.addAll(position.allAtDistance(1));
+        } else {
+            list.add(position);
+        }
+
+        return list;
     }
 
     private Compute() {}

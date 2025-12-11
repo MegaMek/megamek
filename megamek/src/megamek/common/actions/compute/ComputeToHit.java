@@ -1461,12 +1461,13 @@ public class ComputeToHit {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.WaypointLaunch"));
         }
 
-        // Capital weapon (except missiles) penalties at small targets
+        // Capital weapon (except missiles) penalties at small targets (under 500 tons)
+        // Per TO:AUE: +5 for capital, +3 for sub-capital direct-fire weapons
         if (weaponType.isCapital() &&
               (weaponType.getAtClass() != WeaponType.CLASS_CAPITAL_MISSILE) &&
               (weaponType.getAtClass() != WeaponType.CLASS_AR10) &&
               te != null &&
-              !te.isLargeCraft()) {
+              (!te.isLargeCraft() || te.getWeight() < 500)) {
             // Capital Lasers have an AAA mode for shooting at small targets
             int aaaMod = 0;
             if (weapon.hasModes() && weapon.curMode().equals(Weapon.MODE_CAP_LASER_AAA)) {
@@ -1543,7 +1544,9 @@ public class ComputeToHit {
                     toHit.addModifier(1, Messages.getString("WeaponAttackAction.SpotterAttacking"));
                 }
                 // Comm implant provides -1 bonus when spotting for indirect LRM
-                if (spotter.hasAbility(OptionsConstants.MD_COMM_IMPLANT)) {
+                // Boosted comm implant provides same benefit as regular comm implant
+                if (spotter.hasAbility(OptionsConstants.MD_COMM_IMPLANT) ||
+                      spotter.hasAbility(OptionsConstants.MD_BOOST_COMM_IMPLANT)) {
                     toHit.addModifier(-1, Messages.getString("WeaponAttackAction.CommImplantSpotter"));
                 }
             }

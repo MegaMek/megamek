@@ -6004,12 +6004,16 @@ public abstract class Entity extends TurnOrdered
             }
         }
 
-        // check for Manei Domini implants
-        if (((hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO) ||
-              hasAbility(OptionsConstants.MD_CYBER_IMP_VISUAL) ||
-              hasAbility(OptionsConstants.MD_MM_IMPLANTS)) && isConventionalInfantry()) ||
-              (hasAbility(OptionsConstants.MD_MM_IMPLANTS) &&
-                    (hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI)))) {
+        // Sensory implants: IR/EM optical OR enhanced audio = 2-hex active probe (infantry only)
+        // Benefits don't stack - having both still only gives one probe
+        // MM/Enhanced MM implants also provide probe capability for infantry or for units with VDNI/BVDNI
+        boolean hasMmImplants = hasAbility(OptionsConstants.MD_MM_IMPLANTS)
+              || hasAbility(OptionsConstants.MD_ENH_MM_IMPLANTS);
+        if (((hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO)
+              || hasAbility(OptionsConstants.MD_CYBER_IMP_VISUAL)
+              || hasMmImplants) && isConventionalInfantry())
+              || (hasMmImplants
+              && (hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI)))) {
             return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
         }
         // check for quirk
@@ -6035,13 +6039,33 @@ public abstract class Entity extends TurnOrdered
         if (conditions.getEMI().isEMI() || isShutDown()) {
             return Entity.NONE;
         }
-        // check for Manei Domini implants
-        int cyberBonus = 0;
-        if (((hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO) || hasAbility(OptionsConstants.MD_MM_IMPLANTS)) ||
-              hasAbility(OptionsConstants.MD_CYBER_IMP_VISUAL) && isConventionalInfantry()) ||
-              (hasAbility(OptionsConstants.MD_MM_IMPLANTS) &&
-                    (hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI)))) {
-            cyberBonus = 2;
+        // Sensory implants provide active probe capability:
+        // - Basic implants (audio/visual): 2-hex probe for infantry only
+        // - MM implants: 2-hex probe for infantry, or non-infantry with VDNI/BVDNI; +1 to existing BAP
+        // - Enhanced MM implants: 3-hex probe for infantry, or non-infantry with VDNI/BVDNI; +2 to existing BAP
+        // Benefits don't stack within category
+        boolean hasMmImplants = hasAbility(OptionsConstants.MD_MM_IMPLANTS)
+              || hasAbility(OptionsConstants.MD_ENH_MM_IMPLANTS);
+        boolean hasEnhancedMm = hasAbility(OptionsConstants.MD_ENH_MM_IMPLANTS);
+        boolean hasBasicImplants = hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO)
+              || hasAbility(OptionsConstants.MD_CYBER_IMP_VISUAL);
+        boolean hasVdni = hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI);
+
+        // Check if sensory implants are active (infantry, or non-infantry with VDNI for MM implants)
+        boolean sensoryImplantsActive = ((hasBasicImplants || hasMmImplants) && isConventionalInfantry())
+              || (hasMmImplants && hasVdni);
+
+        // Base probe range from implants alone (no BAP): Enhanced=3, others=2
+        int cyberBaseProbe = sensoryImplantsActive ? (hasEnhancedMm ? 3 : 2) : 0;
+        // Bonus to existing BAP range: Enhanced=+2, MM=+1, basic=0
+        int cyberProbeBonus = 0;
+        if (sensoryImplantsActive) {
+            if (hasEnhancedMm) {
+                cyberProbeBonus = 2;
+            } else if (hasMmImplants) {
+                cyberProbeBonus = 1;
+            }
+            // Basic implants (audio/visual) don't add to existing BAP range
         }
 
         // check for quirks
@@ -6070,28 +6094,29 @@ public abstract class Entity extends TurnOrdered
                 }
 
                 if (m.getName().equals("Bloodhound Active Probe (THB)") || m.getName().equals(Sensor.BAP)) {
-                    return 8 + cyberBonus + quirkBonus + spaBonus;
+                    return 8 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
                 if ((m.getType()).getInternalName().equals(Sensor.CLAN_AP) ||
                       (m.getType()).getInternalName().equals(Sensor.WATCHDOG) ||
                       (m.getType()).getInternalName().equals(Sensor.NOVA)) {
-                    return 5 + cyberBonus + quirkBonus + spaBonus;
+                    return 5 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
                 if ((m.getType()).getInternalName().equals(Sensor.LIGHT_AP) ||
                       (m.getType().getInternalName().equals(Sensor.CL_BA_LIGHT_AP)) ||
                       (m.getType().getInternalName().equals(Sensor.IS_BA_LIGHT_AP))) {
-                    return 3 + cyberBonus + quirkBonus + spaBonus;
+                    return 3 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
                 if (m.getType().getInternalName().equals(Sensor.IS_IMPROVED) ||
                       (m.getType().getInternalName().equals(Sensor.CL_IMPROVED))) {
-                    return 2 + cyberBonus + quirkBonus + spaBonus;
+                    return 2 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
-                return 4 + cyberBonus + quirkBonus + spaBonus;// everything else should be
+                return 4 + cyberProbeBonus + quirkBonus + spaBonus;// everything else should be
                 // range 4
             }
         }
-        if ((cyberBonus + quirkBonus + spaBonus) > 0) {
-            return cyberBonus + quirkBonus + spaBonus;
+        // No BAP equipped - return base probe from implants/quirks/SPA
+        if ((cyberBaseProbe + quirkBonus + spaBonus) > 0) {
+            return cyberBaseProbe + quirkBonus + spaBonus;
         }
 
         return Entity.NONE;
@@ -6324,13 +6349,8 @@ public abstract class Entity extends TurnOrdered
                 return true;
             }
         }
-        // check for Manei Domini implants
-        return (this instanceof Infantry) &&
-              (null != crew)
-              // Fix for Bug Report #1194
-              &&
-              hasAbility(OptionsConstants.MD_ENH_MM_IMPLANTS) &&
-              hasAbility(OptionsConstants.MD_BOOST_COMM_IMPLANT);
+        // Boosted Comm Implant grants C3i access for any unit (pilots/crew/troops)
+        return (null != crew) && hasAbility(OptionsConstants.MD_BOOST_COMM_IMPLANT);
     }
 
     /**

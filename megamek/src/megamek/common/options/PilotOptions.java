@@ -161,6 +161,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(md, OptionsConstants.MD_CYBER_IMP_AUDIO, false);
         addOption(md, OptionsConstants.MD_CYBER_IMP_VISUAL, false);
         addOption(md, OptionsConstants.MD_CYBER_IMP_LASER, false);
+        addOption(md, OptionsConstants.MD_CYBER_IMP_TELE, false);
         addOption(md, OptionsConstants.MD_MM_IMPLANTS, false);
         addOption(md, OptionsConstants.MD_ENH_MM_IMPLANTS, false);
         addOption(md, OptionsConstants.MD_FILTRATION, false);

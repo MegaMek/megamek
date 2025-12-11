@@ -43,6 +43,7 @@ import java.util.Vector;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.CriticalSlot;
+import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.TechConstants;
@@ -56,9 +57,11 @@ import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.rolls.PilotingRollData;
 import megamek.logging.MMLogger;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * AbstractBuildingEntity represents a non-terrain building (e.g., a moving fortress).
@@ -73,8 +76,14 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     private static final MMLogger logger = MMLogger.create(AbstractBuildingEntity.class);
 
     private final Building building;
-    private final Map<CubeCoords, Coords> relativeLayout = new HashMap<>();  // Relative CubeCoords -> actual board coords
-
+    /**
+     * Relative {@link CubeCoords} -> actual board {@link Coords}
+     */
+    private final Map<CubeCoords, Coords> relativeLayout = new HashMap<>();
+    /**
+     *  Entity location -> relative {@link CubeCoords}
+     */
+    private final Map<Integer, CubeCoords> locationToRelativeCoordsMap = new HashMap<>();
     private static final int LOC_BASE = 0;
 
     public static final String[] HIT_LOCATION_NAMES = { "building" };
@@ -122,6 +131,19 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     public Coords relativeToBoard(CubeCoords relativeCoords) {
         // Return the board coordinate this relative CubeCoord maps to
         return relativeLayout.get(relativeCoords);
+    }
+
+    @Override
+    public Coords getWeaponFiringPosition(WeaponMounted weapon) {
+        if (weapon == null) {
+            return super.getWeaponFiringPosition(weapon);
+        }
+        int location = weapon.getLocation();
+        Coords firingPos = relativeToBoard(locationToRelativeCoordsMap.get(location));
+        if (firingPos == null) {
+            return super.getWeaponFiringPosition(weapon);
+        }
+        return firingPos;
     }
 
     /**
@@ -177,10 +199,11 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     @Override
     public int locations() {
-        if (getInternalBuilding() == null || getInternalBuilding().getCoordsList() == null) {
+        // Map can be null during construction
+        if (locationToRelativeCoordsMap == null || locationToRelativeCoordsMap.isEmpty()) {
             return 1;
         }
-        return getInternalBuilding().getOriginalHexCount() * getInternalBuilding().getBuildingHeight();
+        return locationToRelativeCoordsMap.size();
     }
 
     public void refreshAdditionalLocations() {
@@ -223,34 +246,25 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
 
     @Override
     public String[] getLocationNames() {
-        ArrayList<String> locationNames = new ArrayList<String>();
-        if (getInternalBuilding() == null || getInternalBuilding().getCoordsList() == null) {
-            return new String[] { LOCATION_NAMES_PREFIX + ' ' + LOC_BASE };
-        }
-        for (CubeCoords coord : getInternalBuilding().getCoordsList()) {
-            // Starts at Level 0 for ground floor
-            // Can't use boardNum when unit isn't deployed or negative hexes break
-            String coordString = getPosition() != null ? coord.toOffset().getBoardNum() :
-                  coord.q() + "," + coord.r() + "," + coord.s();
-            for (int level = 0; level < getInternalBuilding().getBuildingHeight(); level++) {
-                locationNames.add(LOCATION_NAMES_PREFIX + ' ' + level + ' ' + coordString);
-            }
-        }
-        return locationNames.toArray(new String[0]);
+        return getLocationStrings(LOCATION_NAMES_PREFIX);
     }
 
     @Override
     public String[] getLocationAbbreviations() {
+        return getLocationStrings(LOCATION_ABBREVIATIONS_PREFIX);
+    }
+
+    private String[] getLocationStrings(String locationPrefix) {
         ArrayList<String> locationAbbrvNames = new ArrayList<String>();
-        if (getInternalBuilding() == null || getInternalBuilding().getCoordsList() == null) {
-            return new String[] { LOCATION_ABBREVIATIONS_PREFIX + ' ' + LOC_BASE };
+        if (getInternalBuilding() == null || getInternalBuilding().getOriginalCoordsList() == null) {
+            return new String[] { locationPrefix + ' ' + LOC_BASE };
         }
-        for (CubeCoords coord : getInternalBuilding().getCoordsList()) {
-            String coordString = getPosition() != null ? coord.toOffset().getBoardNum() :
-                  coord.q() + "," + coord.r() + "," + coord.s();
-            for (int level = 0; level < getInternalBuilding().getBuildingHeight(); level++) {
-                locationAbbrvNames.add(LOCATION_ABBREVIATIONS_PREFIX + ' ' + level + ' ' + coordString);
-            }
+        for (int location : locationToRelativeCoordsMap.keySet()) {
+            CubeCoords cubeCoords = locationToRelativeCoordsMap.get(location);
+            String coordString = getPosition() != null ? relativeToBoard(cubeCoords).getBoardNum() : cubeCoords.q() + "," + cubeCoords.r() + "," + cubeCoords.s();
+            // Result is 0 indexed
+            int level = (location % getInternalBuilding().getBuildingHeight());
+            locationAbbrvNames.add(locationPrefix + ' ' + level + ' ' + coordString);
         }
         return locationAbbrvNames.toArray(new String[0]);
     }
@@ -693,5 +707,127 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     @Override
     public void setBasementCollapsed(Coords coords, boolean collapsed) {
         building.setBasementCollapsed(boardToRelative(coords), collapsed);
+    }
+
+    /**
+     * Once a building entity has set its position, we need to update the board itself and share that with the clients
+     * @param boardId
+     * @param gameManager
+     */
+    public void updateBuildingEntityHexes(int boardId, TWGameManager gameManager) {
+        Board board = getGame().getBoard(boardId);
+        for (Coords buildingCoords : getCoordsList()) {
+            Hex targetHex = board.getHex(buildingCoords);
+            if (targetHex != null) {
+                // Add building terrain with the building type
+                targetHex.addTerrain(new Terrain(Terrains.BUILDING,
+                      getBuildingType().getTypeValue()));
+
+                // Add building class
+                targetHex.addTerrain(new Terrain(Terrains.BLDG_CLASS, getBldgClass()));
+
+                // Add CF value
+                int cf = getCurrentCF(buildingCoords);
+                targetHex.addTerrain(new Terrain(Terrains.BLDG_CF, cf));
+
+                // Add armor if present
+                int armor = getArmor(buildingCoords);
+                if (armor > 0) {
+                    targetHex.addTerrain(new Terrain(Terrains.BLDG_ARMOR, armor));
+                }
+
+                // Add height (BLDG_ELEV)
+                int height = getHeight(buildingCoords);
+                targetHex.addTerrain(new Terrain(Terrains.BLDG_ELEV, height));
+
+                // Add basement type if present
+                if (getBasement(buildingCoords) != null) {
+                    targetHex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE,
+                          getBasement(buildingCoords).ordinal()));
+                }
+            }
+        }
+
+        board.addBuildingToBoard(this);
+
+        gameManager.sendNewBuildings(new Vector<IBuilding>(List.of(this)));
+
+        // Do this as a separate loop - All building terrains need added before we can initialize building exits
+        for (Coords buildingCoords : getCoordsList()) {
+            // Set up building exits to adjacent hexes with matching building type and class
+            initializeBuildingExits(buildingCoords, boardId);
+
+            // Notify clients of hex changes
+            gameManager.sendChangedHex(buildingCoords, boardId);
+        }
+    }
+
+    /**
+     * Initializes building exits for a hex containing building terrain. This ensures that building hexes properly
+     * connect to adjacent building hexes with matching building type and building class.
+     *
+     * @param buildingCoords the coordinates of the building hex
+     * @param boardId        the board ID where the building is located
+     */
+    private void initializeBuildingExits(Coords buildingCoords, int boardId) {
+        Hex hex = getGame().getBoard(boardId).getHex(buildingCoords);
+        if (hex == null || !hex.containsTerrain(Terrains.BUILDING)) {
+            return;
+        }
+
+        Terrain buildingTerrain = hex.getTerrain(Terrains.BUILDING);
+        if (buildingTerrain == null) {
+            return;
+        }
+
+        // Check each of the 6 directions
+        for (int direction = 0; direction < 6; direction++) {
+            Coords adjacentCoords = buildingCoords.translated(direction);
+            Hex adjacentHex = getGame().getBoard(boardId).getHex(adjacentCoords);
+
+            if (adjacentHex != null && adjacentHex.containsTerrain(Terrains.BUILDING)) {
+                Terrain adjacentBuilding = adjacentHex.getTerrain(Terrains.BUILDING);
+
+                // Buildings connect if they have the same building type (level)
+                // and the same building class
+                boolean sameType = (buildingTerrain.getLevel() == adjacentBuilding.getLevel());
+                boolean sameClass = (hex.terrainLevel(Terrains.BLDG_CLASS)
+                      == adjacentHex.terrainLevel(Terrains.BLDG_CLASS));
+
+                // Gun emplacements never connect (single hex buildings)
+                boolean isGunEmplacement = (hex.terrainLevel(Terrains.BLDG_CLASS) == IBuilding.GUN_EMPLACEMENT);
+
+                if (sameType && sameClass && !isGunEmplacement) {
+                    buildingTerrain.setExit(direction, true);
+                } else {
+                    buildingTerrain.setExit(direction, false);
+                }
+            } else {
+                // No building adjacent in this direction
+                buildingTerrain.setExit(direction, false);
+            }
+        }
+    }
+
+    public void applyCollapsedHexLocationDamage(Coords coords) {
+        for (int floor = 0; floor < getInternalBuilding().getBuildingHeight(); floor++) {
+            applyCollapseFloorLocationDamage(coords, floor);
+        }
+    }
+
+    /**
+     *
+     * @param coords
+     * @param floor
+     */
+    public void applyCollapseFloorLocationDamage(Coords coords, int floor) {
+        for (int location : locationToRelativeCoordsMap.keySet()) {
+            if (coords.equals(relativeToBoard(locationToRelativeCoordsMap.get(location)))) {
+                if (location % getInternalBuilding().getBuildingHeight() == floor) {
+                    setInternal(0, location);
+                    destroyLocation(location, true);
+                }
+            }
+        }
     }
 }

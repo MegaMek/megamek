@@ -49,6 +49,7 @@ import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.net.packets.Packet;
 import megamek.common.rolls.PilotingRollData;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.BuildingTerrain;
 import megamek.common.units.Entity;
@@ -127,8 +128,8 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
     }
 
     private void initializeBuildingToGameAndBoard(IBuilding building, Coords position) {
-        if (building instanceof BuildingEntity buildingEntity) {
-            // For BuildingEntity, we need to add it to the game and set position
+        if (building instanceof AbstractBuildingEntity buildingEntity) {
+            // For AbstractBuildingEntity, we need to add it to the game and set position
             buildingEntity.setOwner(game.getPlayer(0));
             buildingEntity.refreshLocations();
             buildingEntity.refreshAdditionalLocations();
@@ -232,8 +233,8 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
 
         @Test
         void testCollapseBuildingEntity_BuildingInPositionMap() {
-            // Create a BuildingEntity
-            BuildingEntity buildingEntity = new BuildingEntity(BuildingType.MEDIUM, IBuilding.STANDARD);
+            // Create a AbstractBuildingEntity
+            AbstractBuildingEntity buildingEntity = new BuildingEntity(BuildingType.MEDIUM, IBuilding.STANDARD);
             buildingEntity.setOwner(game.getPlayer(0));
             buildingEntity.getInternalBuilding().setBuildingHeight(3);
             buildingEntity.getInternalBuilding().addHex(new CubeCoords(0, 0, 0), 50, 10, BasementType.NONE, false);
@@ -286,7 +287,7 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
         @Test
         void testCollapseBuildingEntity_WithOtherEntitiesInSameHex() {
             // Create a BuildingEntity
-            BuildingEntity buildingEntity = new BuildingEntity(BuildingType.HEAVY, IBuilding.FORTRESS);
+            AbstractBuildingEntity buildingEntity = new BuildingEntity(BuildingType.HEAVY, IBuilding.FORTRESS);
             buildingEntity.setOwner(game.getPlayer(0));
             buildingEntity.getInternalBuilding().setBuildingHeight(4);
             buildingEntity.getInternalBuilding().addHex(new CubeCoords(0, 0, 0), 80, 15, BasementType.NONE, false);

@@ -121,17 +121,6 @@ public class BuildingEntity extends AbstractBuildingEntity {
         return TA_BUILDING_ENTITY;
     }
 
-    /**
-     * Returns the number of locations in the entity
-     */
-    @Override
-    public int locations() {
-        // Map can be null during construction
-        if (locationToRelativeCoordsMap == null || locationToRelativeCoordsMap.isEmpty()) {
-            return 1;
-        }
-        return locationToRelativeCoordsMap.size();
-    }
 
     public void refreshAdditionalLocations() {
         armorType = new int[locations()];
@@ -191,79 +180,6 @@ public class BuildingEntity extends AbstractBuildingEntity {
         return "!";
     }
 
-    @Override
-    public String[] getLocationNames() {
-        return getLocationStrings(LOCATION_NAMES_PREFIX);
-    }
-
-    @Override
-    public String[] getLocationAbbreviations() {
-        return getLocationStrings(LOCATION_ABBREVIATIONS_PREFIX);
-    }
-
-    private String[] getLocationStrings(String locationPrefix) {
-        ArrayList<String> locationAbbrvNames = new ArrayList<String>();
-        if (getInternalBuilding() == null || getInternalBuilding().getOriginalCoordsList() == null) {
-            return new String[] { locationPrefix + ' ' + LOC_BASE };
-        }
-        for (int location : locationToRelativeCoordsMap.keySet()) {
-            CubeCoords cubeCoords = locationToRelativeCoordsMap.get(location);
-            String coordString = getPosition() != null ? relativeToBoard(cubeCoords).getBoardNum() : cubeCoords.q() + "," + cubeCoords.r() + "," + cubeCoords.s();
-            // Result is 0 indexed, let's make it 1 indexed so it makes more sense to players
-            int level = (location % getInternalBuilding().getBuildingHeight()) + 1;
-            locationAbbrvNames.add(locationPrefix + ' ' + level + ' ' + coordString);
-        }
-        return locationAbbrvNames.toArray(new String[0]);
-    }
-
-    @Override
-    public int sideTable(Coords src) {
-        return ToHitData.SIDE_FRONT;
-    }
-
-    /**
-     * Rolls the to-hit number
-     *
-     * @param table
-     * @param side
-     * @param aimedLocation
-     * @param aimingMode
-     * @param cover
-     */
-    @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode, int cover) {
-        return rollHitLocation(table, side);
-    }
-
-    /**
-     * Rolls up a hit location
-     *
-     * @param table
-     * @param side
-     */
-    @Override
-    public HitData rollHitLocation(int table, int side) {
-        return new HitData(LOC_BASE, false, HitData.EFFECT_NONE);
-    }
-
-    /**
-     * Gets the location that excess damage transfers to. That is, one location inwards.
-     *
-     * @param hit
-     */
-    @Override
-    public HitData getTransferLocation(HitData hit) {
-        return hit;
-    }
-
-    /**
-     * Sets the internal structure for every location to appropriate undamaged values for the unit and location.
-     */
-    @Override
-    public void autoSetInternal() {
-        initializeInternal(0, LOC_BASE);
-    }
-
     /**
      * Returns the Rules.ARC that the weapon, specified by number, fires into.
      *
@@ -277,7 +193,7 @@ public class BuildingEntity extends AbstractBuildingEntity {
         if (weapon.isTurret()) {
             return 0;
         }
-        switch(weapon.getFacing()) {
+        switch (weapon.getFacing()) {
             case 0:
                 return 1;
             case 1:
@@ -290,37 +206,16 @@ public class BuildingEntity extends AbstractBuildingEntity {
                 return 53;
             case 5:
                 return 54;
-            default: return 0;
+            default:
+                return 0;
         }
-    }
-
-    /**
-     * Returns true if this weapon fires into the secondary facing arc. If false, assume it fires into the primary.
-     *
-     * @param weaponId
-     */
-    @Override
-    public boolean isSecondaryArcWeapon(int weaponId) {
-        return false;
-    }
-
-    @Override
-    public Coords getWeaponFiringPosition(WeaponMounted weapon) {
-        if (weapon == null) {
-            return super.getWeaponFiringPosition(weapon);
-        }
-        int location = weapon.getLocation();
-        Coords firingPos = relativeToBoard(locationToRelativeCoordsMap.get(location));
-        if (firingPos == null) {
-            return super.getWeaponFiringPosition(weapon);
-        }
-        return firingPos;
     }
 
     /**
      * What height is this weapon physically firing from?
      *
      * @param weapon {@link WeaponMounted}
+     *
      * @return int
      */
     @Override
@@ -332,10 +227,6 @@ public class BuildingEntity extends AbstractBuildingEntity {
         return location % getInternalBuilding().getBuildingHeight();
     }
 
-    @Override
-    public int[] getNoOfSlots() {
-        return CRITICAL_SLOTS;
-    }
     /**
      * Calculates a "generic" Battle Value that is based on the average of all units of this type and tonnage. The
      * purpose of this generic Battle Value is to allow a comparison of this unit's actual BV to that for units of its
@@ -361,6 +252,7 @@ public class BuildingEntity extends AbstractBuildingEntity {
 
     /**
      * A {@link BuildingEntity} needs power to function.
+     *
      * @return true if the unit has power, otherwise false
      */
     public boolean hasPower() {
@@ -387,13 +279,11 @@ public class BuildingEntity extends AbstractBuildingEntity {
     /**
      * Calculates the base generator weight for an advanced building.
      * <p>
-     * To find the Base Generator Weight for an advanced building (or a complex of buildings):
-     * 1. Add up the total number of hexes for all advanced buildings intended to receive power
-     * 2. Exclude Tent-, Fence-, Wall- and Bridge-class buildings
-     * 3. For multi-level buildings: multiply the building's hex-count by its height in levels
-     *    (plus any basement levels) before adding it to the sum
-     * 4. Add to this sum 10 percent of the total tonnage for all Heavy-class energy weapons
-     *    used by any of these buildings
+     * To find the Base Generator Weight for an advanced building (or a complex of buildings): 1. Add up the total
+     * number of hexes for all advanced buildings intended to receive power 2. Exclude Tent-, Fence-, Wall- and
+     * Bridge-class buildings 3. For multi-level buildings: multiply the building's hex-count by its height in levels
+     * (plus any basement levels) before adding it to the sum 4. Add to this sum 10 percent of the total tonnage for all
+     * Heavy-class energy weapons used by any of these buildings
      *
      * @return The base generator weight in tons
      */
@@ -447,106 +337,5 @@ public class BuildingEntity extends AbstractBuildingEntity {
           .setTechRating(TechRating.B)
           .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
           .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-}
-
-    /**
-     * Once a building entity has set its position, we need to update the board itself and share that with the clients
-     * @param boardId
-     * @param gameManager
-     */
-    public void updateBuildingEntityHexes(int boardId, TWGameManager gameManager) {
-        Board board = getGame().getBoard(boardId);
-        for (Coords buildingCoords : getCoordsList()) {
-            Hex targetHex = board.getHex(buildingCoords);
-            if (targetHex != null) {
-                // Add building terrain with the building type
-                targetHex.addTerrain(new Terrain(Terrains.BUILDING,
-                      getBuildingType().getTypeValue()));
-
-                // Add building class
-                targetHex.addTerrain(new Terrain(Terrains.BLDG_CLASS, getBldgClass()));
-
-                // Add CF value
-                int cf = getCurrentCF(buildingCoords);
-                targetHex.addTerrain(new Terrain(Terrains.BLDG_CF, cf));
-
-                // Add armor if present
-                int armor = getArmor(buildingCoords);
-                if (armor > 0) {
-                    targetHex.addTerrain(new Terrain(Terrains.BLDG_ARMOR, armor));
-                }
-
-                // Add height (BLDG_ELEV)
-                int height = getHeight(buildingCoords);
-                targetHex.addTerrain(new Terrain(Terrains.BLDG_ELEV, height));
-
-                // Add basement type if present
-                if (getBasement(buildingCoords) != null) {
-                    targetHex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE,
-                          getBasement(buildingCoords).ordinal()));
-                }
-            }
-        }
-
-        board.addBuildingToBoard(this);
-
-        gameManager.sendNewBuildings(new Vector<IBuilding>(List.of(this)));
-
-        // Do this as a separate loop - All building terrains need added before we can initialize building exits
-        for (Coords buildingCoords : getCoordsList()) {
-            // Set up building exits to adjacent hexes with matching building type and class
-            initializeBuildingExits(buildingCoords, boardId);
-
-            // Notify clients of hex changes
-            gameManager.sendChangedHex(buildingCoords, boardId);
-        }
-    }
-
-    /**
-     * Initializes building exits for a hex containing building terrain. This ensures that building hexes properly
-     * connect to adjacent building hexes with matching building type and building class.
-     *
-     * @param buildingCoords the coordinates of the building hex
-     * @param boardId        the board ID where the building is located
-     */
-    private void initializeBuildingExits(Coords buildingCoords, int boardId) {
-        Hex hex = getGame().getBoard(boardId).getHex(buildingCoords);
-        if (hex == null || !hex.containsTerrain(Terrains.BUILDING)) {
-            return;
-        }
-
-        Terrain buildingTerrain = hex.getTerrain(Terrains.BUILDING);
-        if (buildingTerrain == null) {
-            return;
-        }
-
-        // Check each of the 6 directions
-        for (int direction = 0; direction < 6; direction++) {
-            Coords adjacentCoords = buildingCoords.translated(direction);
-            Hex adjacentHex = getGame().getBoard(boardId).getHex(adjacentCoords);
-
-            if (adjacentHex != null && adjacentHex.containsTerrain(Terrains.BUILDING)) {
-                Terrain adjacentBuilding = adjacentHex.getTerrain(Terrains.BUILDING);
-
-                // Buildings connect if they have the same building type (level)
-                // and the same building class
-                boolean sameType = (buildingTerrain.getLevel() == adjacentBuilding.getLevel());
-                boolean sameClass = (hex.terrainLevel(Terrains.BLDG_CLASS)
-                      == adjacentHex.terrainLevel(Terrains.BLDG_CLASS));
-
-                // Gun emplacements never connect (single hex buildings)
-                boolean isGunEmplacement = (hex.terrainLevel(Terrains.BLDG_CLASS) == IBuilding.GUN_EMPLACEMENT);
-
-                if (sameType && sameClass && !isGunEmplacement) {
-                    buildingTerrain.setExit(direction, true);
-                } else {
-                    buildingTerrain.setExit(direction, false);
-                }
-            } else {
-                // No building adjacent in this direction
-                buildingTerrain.setExit(direction, false);
-            }
-        }
-    }
 }
 

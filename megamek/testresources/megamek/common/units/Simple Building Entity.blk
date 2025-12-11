@@ -81,7 +81,7 @@ IS Level 4
 4
 </height>
 
-<Level 4 0.0,0.0,0.0 Equipment>
+<Level 3 0.0,0.0,0.0 Equipment>
 Machine Gun
 Machine Gun (FR)
 Machine Gun (RR)
@@ -91,7 +91,7 @@ Machine Gun (FL)
 Flamer (Vehicle) (ST)
 IS Vehicle Flamer Ammo:Shots20#
 IS Machine Gun Ammo - Half:Shots100#
-</Level 4 0.0,0.0,0.0 Equipment>
+</Level 3 0.0,0.0,0.0 Equipment>
 
 <source>
 Psi

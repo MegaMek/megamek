@@ -11871,7 +11871,7 @@ public class MiscType extends EquipmentType {
         misc.name =
               Messages.getString("EquipmentType.StructureEngine." + engineType.name()) + " " + Messages.getString(
                     "EquipmentType.PowerGenerator");
-        misc.setInternalName(engineType.name() + " " + EquipmentTypeLookup.POWER_GENERATOR);
+        misc.setInternalName(engineType.name() + " PowerGenerator");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         misc.cost = COST_VARIABLE;

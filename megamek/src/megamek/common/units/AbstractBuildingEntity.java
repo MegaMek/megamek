@@ -180,7 +180,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         if (getInternalBuilding() == null || getInternalBuilding().getCoordsList() == null) {
             return 1;
         }
-        return getInternalBuilding().getCoordsList().size() * getInternalBuilding().getBuildingHeight();
+        return getInternalBuilding().getOriginalHexCount() * getInternalBuilding().getBuildingHeight();
     }
 
     public void refreshAdditionalLocations() {
@@ -228,11 +228,11 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
             return new String[] { LOCATION_NAMES_PREFIX + ' ' + LOC_BASE };
         }
         for (CubeCoords coord : getInternalBuilding().getCoordsList()) {
-            // Do we start with "1st floor" or "0 floor?" This is "1st floor"
+            // Starts at Level 0 for ground floor
             // Can't use boardNum when unit isn't deployed or negative hexes break
             String coordString = getPosition() != null ? coord.toOffset().getBoardNum() :
                   coord.q() + "," + coord.r() + "," + coord.s();
-            for (int level = 1; level <= getInternalBuilding().getBuildingHeight(); level++) {
+            for (int level = 0; level < getInternalBuilding().getBuildingHeight(); level++) {
                 locationNames.add(LOCATION_NAMES_PREFIX + ' ' + level + ' ' + coordString);
             }
         }

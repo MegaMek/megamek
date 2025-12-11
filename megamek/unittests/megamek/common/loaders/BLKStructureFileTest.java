@@ -189,26 +189,26 @@ public class BLKStructureFileTest {
         // When building is not deployed, location names use cube coordinates instead of board numbers
         int[] expectedEquipmentCount = new int[totalLocations];
 
-        // <Level 1 0.0,0.0,0.0 Equipment> - 2 pieces of ammo & Power Generator
-        expectedEquipmentCount[getLocationByName(building, "Level 1 0.0,0.0,0.0")] = 3;
+        // <Level 0 0.0,0.0,0.0 Equipment> - 2 pieces of ammo & Power Generator
+        expectedEquipmentCount[getLocationByName(building, "Level 0 0.0,0.0,0.0")] = 3;
 
-        // <Level 3 1.0,-1.0,0.0 Equipment> - 2 Machine Guns (FR)
-        expectedEquipmentCount[getLocationByName(building, "Level 3 1.0,-1.0,0.0")] = 2;
+        // <Level 2 1.0,-1.0,0.0 Equipment> - 2 Machine Guns (FR)
+        expectedEquipmentCount[getLocationByName(building, "Level 2 1.0,-1.0,0.0")] = 2;
 
-        // <Level 3 1.0,0.0,-1.0 Equipment> - 2 Flamers (RR)
-        expectedEquipmentCount[getLocationByName(building, "Level 3 1.0,0.0,-1.0")] = 2;
+        // <Level 2 1.0,0.0,-1.0 Equipment> - 2 Flamers (RR)
+        expectedEquipmentCount[getLocationByName(building, "Level 2 1.0,0.0,-1.0")] = 2;
 
-        // <Level 3 0.0,1.0,-1.0 Equipment> - 2 Machine Guns (R)
-        expectedEquipmentCount[getLocationByName(building, "Level 3 0.0,1.0,-1.0")] = 2;
+        // <Level 2 0.0,1.0,-1.0 Equipment> - 2 Machine Guns (R)
+        expectedEquipmentCount[getLocationByName(building, "Level 2 0.0,1.0,-1.0")] = 2;
 
-        // <Level 3 -1.0,1.0,0.0 Equipment> - 2 Flamers (RL)
-        expectedEquipmentCount[getLocationByName(building, "Level 3 -1.0,1.0,0.0")] = 2;
+        // <Level 2 -1.0,1.0,0.0 Equipment> - 2 Flamers (RL)
+        expectedEquipmentCount[getLocationByName(building, "Level 2 -1.0,1.0,0.0")] = 2;
 
-        // <Level 3 -1.0,0.0,1.0 Equipment> - 2 Machine Guns (FL)
-        expectedEquipmentCount[getLocationByName(building, "Level 3 -1.0,0.0,1.0")] = 2;
+        // <Level 2 -1.0,0.0,1.0 Equipment> - 2 Machine Guns (FL)
+        expectedEquipmentCount[getLocationByName(building, "Level 2 -1.0,0.0,1.0")] = 2;
 
-        // <Level 3 0.0,-1.0,1.0 Equipment> - 2 Flamers (F)
-        expectedEquipmentCount[getLocationByName(building, "Level 3 0.0,-1.0,1.0")] = 2;
+        // <Level 2 0.0,-1.0,1.0 Equipment> - 2 Flamers (F)
+        expectedEquipmentCount[getLocationByName(building, "Level 2 0.0,-1.0,1.0")] = 2;
 
         // Verify equipment at each location
         for (int loc = 0; loc < totalLocations; loc++) {
@@ -224,60 +224,60 @@ public class BLKStructureFileTest {
         }
 
         // Verify equipment facings for locations with equipment
-        // Level 1 0.0,0.0,0.0: Ammo equipment (no facing expected, should be -1)
-        int floor1_000 = getLocationByName(building, "Level 1 0.0,0.0,0.0");
+        // Level 0 0.0,0.0,0.0: Ammo equipment (no facing expected, should be -1)
+        int floor1_000 = getLocationByName(building, "Level 0 0.0,0.0,0.0");
         building.getEquipment().stream()
             .filter(mounted -> mounted.getLocation() == floor1_000)
             .forEach(mounted -> assertEquals(-1, mounted.getFacing(),
-                String.format("Level 1 0.0,0.0,0.0 equipment '%s' should have no facing (-1)",
+                String.format("Level 0 0.0,0.0,0.0 equipment '%s' should have no facing (-1)",
                     mounted.getType().getName())));
 
-        // Level 3 1.0,-1.0,0.0: Machine Gun (FR) - facing should be 1
-        int floor3_1m10 = getLocationByName(building, "Level 3 1.0,-1.0,0.0");
+        // Level 2 1.0,-1.0,0.0: Machine Gun (FR) - facing should be 1
+        int floor3_1m10 = getLocationByName(building, "Level 2 1.0,-1.0,0.0");
         building.getEquipment().stream()
             .filter(mounted -> mounted.getLocation() == floor3_1m10)
             .forEach(mounted -> assertEquals(1, mounted.getFacing(),
-                String.format("Level 3 1.0,-1.0,0.0 equipment '%s' should have facing 1 (FR)",
+                String.format("Level 2 1.0,-1.0,0.0 equipment '%s' should have facing 1 (FR)",
                     mounted.getType().getName())));
 
-        // Level 3 1.0,0.0,-1.0: Flamer (Vehicle) (RR) - facing should be 2
-        int floor3_10m1 = getLocationByName(building, "Level 3 1.0,0.0,-1.0");
+        // Level 2 1.0,0.0,-1.0: Flamer (Vehicle) (RR) - facing should be 2
+        int floor3_10m1 = getLocationByName(building, "Level 2 1.0,0.0,-1.0");
         building.getEquipment().stream()
             .filter(mounted -> mounted.getLocation() == floor3_10m1)
             .forEach(mounted -> assertEquals(2, mounted.getFacing(),
-                String.format("Level 3 1.0,0.0,-1.0 equipment '%s' should have facing 2 (RR)",
+                String.format("Level 2 1.0,0.0,-1.0 equipment '%s' should have facing 2 (RR)",
                     mounted.getType().getName())));
 
-        // Level 3 0.0,1.0,-1.0: Machine Gun (R) - facing should be 3
-        int floor3_01m1 = getLocationByName(building, "Level 3 0.0,1.0,-1.0");
+        // Level 2 0.0,1.0,-1.0: Machine Gun (R) - facing should be 3
+        int floor3_01m1 = getLocationByName(building, "Level 2 0.0,1.0,-1.0");
         building.getEquipment().stream()
             .filter(mounted -> mounted.getLocation() == floor3_01m1)
             .forEach(mounted -> assertEquals(3, mounted.getFacing(),
-                String.format("Level 3 0.0,1.0,-1.0 equipment '%s' should have facing 3 (R)",
+                String.format("Level 2 0.0,1.0,-1.0 equipment '%s' should have facing 3 (R)",
                     mounted.getType().getName())));
 
-        // Level 3 -1.0,1.0,0.0: Flamer (Vehicle) (RL) - facing should be 4
-        int floor3_m110 = getLocationByName(building, "Level 3 -1.0,1.0,0.0");
+        // Level 2 -1.0,1.0,0.0: Flamer (Vehicle) (RL) - facing should be 4
+        int floor3_m110 = getLocationByName(building, "Level 2 -1.0,1.0,0.0");
         building.getEquipment().stream()
             .filter(mounted -> mounted.getLocation() == floor3_m110)
             .forEach(mounted -> assertEquals(4, mounted.getFacing(),
-                String.format("Level 3 -1.0,1.0,0.0 equipment '%s' should have facing 4 (RL)",
+                String.format("Level 2 -1.0,1.0,0.0 equipment '%s' should have facing 4 (RL)",
                     mounted.getType().getName())));
 
-        // Level 3 -1.0,0.0,1.0: Machine Gun (FL) - facing should be 5
-        int floor3_m101 = getLocationByName(building, "Level 3 -1.0,0.0,1.0");
+        // Level 2 -1.0,0.0,1.0: Machine Gun (FL) - facing should be 5
+        int floor3_m101 = getLocationByName(building, "Level 2 -1.0,0.0,1.0");
         building.getEquipment().stream()
             .filter(mounted -> mounted.getLocation() == floor3_m101)
             .forEach(mounted -> assertEquals(5, mounted.getFacing(),
-                String.format("Level 3 -1.0,0.0,1.0 equipment '%s' should have facing 5 (FL)",
+                String.format("Level 2 -1.0,0.0,1.0 equipment '%s' should have facing 5 (FL)",
                     mounted.getType().getName())));
 
-        // Level 3 0.0,-1.0,1.0: Flamer (Vehicle) (F) - facing should be 0
-        int floor3_0m11 = getLocationByName(building, "Level 3 0.0,-1.0,1.0");
+        // Level 2 0.0,-1.0,1.0: Flamer (Vehicle) (F) - facing should be 0
+        int floor3_0m11 = getLocationByName(building, "Level 2 0.0,-1.0,1.0");
         building.getEquipment().stream()
             .filter(mounted -> mounted.getLocation() == floor3_0m11)
             .forEach(mounted -> assertEquals(0, mounted.getFacing(),
-                String.format("Level 3 0.0,-1.0,1.0 equipment '%s' should have facing 0 (F)",
+                String.format("Level 2 0.0,-1.0,1.0 equipment '%s' should have facing 0 (F)",
                     mounted.getType().getName())));
 
         assertTrue(((BuildingEntity) building).hasPower());
@@ -288,7 +288,7 @@ public class BLKStructureFileTest {
      * Location names follow the format: "Level <level> <q>,<r>,<s>" when building is not deployed,
      * where q, r, s are cube coordinates as doubles.
      * @param building The building entity
-     * @param locationName The name of the location (e.g., "Level 1 0.0,0.0,0.0" or "Level 3 1.0,-1.0,0.0")
+     * @param locationName The name of the location (e.g., "Level 0 0.0,0.0,0.0" or "Level 2 1.0,-1.0,0.0")
      * @return The location index, or -1 if not found
      */
     private int getLocationByName(AbstractBuildingEntity building, String locationName) {

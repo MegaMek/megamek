@@ -33,15 +33,28 @@
 
 package megamek.common.enums;
 
+import static megamek.common.internationalization.I18n.getTextAt;
+
 import java.util.HashMap;
 import java.util.Map;
 
 // --- Availability Enum ---
 public enum AvailabilityValue {
-    A(0, "A"), B(1, "B"), C(2, "C"), D(3, "D"), E(4, "E"), F(5, "F"), F_STAR(6, "F*"), X(7, "X");
+    A("A", 0),
+    B("B", 1),
+    C("C", 2),
+    D("D", 3),
+    E("E", 4),
+    F("F", 5),
+    F_STAR("F_STAR", 6),
+    X("X", 7);
 
+    private static final String RESOURCE_BUNDLE = "megamek.common.AvailabilityValue";
+
+    private final String lookupName;
     private final int index;
     private final String name;
+    private final String description;
     private static final Map<Integer, AvailabilityValue> INDEX_LOOKUP = new HashMap<>();
     private static final Map<String, AvailabilityValue> NAME_LOOKUP = new HashMap<>();
 
@@ -52,14 +65,32 @@ public enum AvailabilityValue {
         }
     }
 
-    AvailabilityValue(int idx, String name) {
-        this.index = idx;
-        this.name = name;
+    AvailabilityValue(String lookupName, int index) {
+        this.lookupName = lookupName;
+        this.index = index;
+        this.name = generateLabel();
+        this.description = generateDescription();
     }
 
-    public int getIndex() {return index;}
+    private String generateLabel() {
+        return getTextAt(RESOURCE_BUNDLE, "AvailabilityValue." + lookupName + ".label");
+    }
 
-    public String getName() {return name;}
+    private String generateDescription() {
+        return getTextAt(RESOURCE_BUNDLE, "AvailabilityValue." + lookupName + ".description");
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 
     public boolean isBetterThan(AvailabilityValue other) {
         return this.index > other.index;

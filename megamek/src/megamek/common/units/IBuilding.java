@@ -364,7 +364,7 @@ public interface IBuilding extends Serializable {
     /**
      * Get the board coordinates of this building's origin (where relative 0,0 maps to).
      * For BuildingTerrain: the static placement coords
-     * For BuildingEntity: the entity's current position
+     * For AbstractBuildingEntity: the entity's current position
      *
      * @return the board coordinates of the origin, or null if not placed
      */

@@ -70,7 +70,7 @@ cargobay:70.0:2:3
 144
 </armor>
 
-<Level 1 0.0,0.0,0.0 Equipment>
+<Level 0 0.0,0.0,0.0 Equipment>
 IS Arrow IV Ammo
 IS Arrow IV Ammo
 IS Arrow IV Ammo
@@ -83,9 +83,9 @@ IS Machine Gun Ammo - Half
 MASH Equipment:SIZE:2.0
 Cargo:SIZE:20.0
 ISCASE
-</Level 1 0.0,0.0,0.0 Equipment>
+</Level 0 0.0,0.0,0.0 Equipment>
 
-<Level 2 0.0,0.0,0.0 Equipment>
+<Level 1 0.0,0.0,0.0 Equipment>
 ISArrowIVSystem (ST)
 ISMediumPulseLaser (F)
 ISMediumPulseLaser (FR)
@@ -103,9 +103,9 @@ Searchlight (F)
 Searchlight (FR)
 Searchlight (FL)
 ISGuardianECMSuite
-</Level 2 0.0,0.0,0.0 Equipment>
+</Level 1 0.0,0.0,0.0 Equipment>
 
-<Level 1 0.0,1.0,-1.0 Equipment>
+<Level 0 0.0,1.0,-1.0 Equipment>
 IS Gauss Ammo
 IS Gauss Ammo
 IS Gauss Ammo
@@ -116,9 +116,10 @@ IS Machine Gun Ammo - Half
 IS Machine Gun Ammo - Half
 Cargo:SIZE:50.0
 Communications Equipment:SIZE:7.0
-</Level 1 0.0,1.0,-1.0 Equipment>
+FUSION PowerGenerator:SIZE:9.5
+</Level 0 0.0,1.0,-1.0 Equipment>
 
-<Level 2 0.0,1.0,-1.0 Equipment>
+<Level 1 0.0,1.0,-1.0 Equipment>
 ISGaussRifle (ST)
 ISERLargeLaser (ST)
 ISMediumPulseLaser (RR)
@@ -139,7 +140,7 @@ Searchlight (RL)
 ISMobileFieldBase
 FieldKitchen
 FieldKitchen
-</Level 2 0.0,1.0,-1.0 Equipment>
+</Level 1 0.0,1.0,-1.0 Equipment>
 
 <coords>
 0.0,0.0,0.0

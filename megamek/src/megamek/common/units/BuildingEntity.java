@@ -46,161 +46,41 @@ import megamek.common.CriticalSlot;
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.MPCalculationSetting;
-import megamek.common.Report;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
-import megamek.common.TechConstants;
-import megamek.common.ToHitData;
-import megamek.common.board.Board;
-import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
-import megamek.common.cost.CostCalculator;
-import megamek.common.enums.AimingMode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.GunEmplacement;
-import megamek.common.equipment.IArmorState;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.exceptions.LocationFullException;
-import megamek.common.rolls.PilotingRollData;
-import megamek.logging.MMLogger;
+import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.equipment.enums.StructureEngine;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
- * BuildingEntity represents a mobile building (e.g., a moving fortress).
- *
- * It contains a Building (which stores data in relative coordinates) and handles
- * translation between board coordinates and the Building's relative coordinate space.
- * Unlike BuildingTerrain, the translation is dynamic based on Entity's current position/facing.
+ * Implementation of TO:AR's Advanced Buildings.
+ * <br>
+ * Extends {@link AbstractBuildingEntity}
  */
-public class BuildingEntity extends Entity implements IBuilding {
-
-    private static final MMLogger logger = MMLogger.create(BuildingEntity.class);
-
-    private final Building building;
-    /**
-     * Relative {@link CubeCoords} -> actual board {@link Coords}
-     */
-    private final Map<CubeCoords, Coords> relativeLayout = new HashMap<>();
-    /**
-     *  Entity location -> relative {@link CubeCoords}
-     */
-    private final Map<Integer, CubeCoords> locationToRelativeCoordsMap = new HashMap<>();
-
-    private static final int LOC_BASE = 0;
-
-    public static final String[] HIT_LOCATION_NAMES = { "building" };
-
-    private static final String LOCATION_ABBREVIATIONS_PREFIX = "LVL";
-    private static final String LOCATION_NAMES_PREFIX = "Level";
-
-    private static final int[] CRITICAL_SLOTS = new int[] { 100 };
+public class BuildingEntity extends AbstractBuildingEntity {
 
     public BuildingEntity(BuildingType type, int bldgClass) {
-        super();
-        building = new Building(type, bldgClass, getId(), Terrains.BUILDING);
-
-        initializeInternal(0, LOC_BASE);
+        super(type, bldgClass);
     }
-
-    // ========== IBuilding Coordinate Translation Overrides ==========
-
-    @Override
-    public Coords getBoardOrigin() {
-        return getPosition();  // Entity's current position
-    }
-
-    @Override
-    public int getBoardFacing() {
-        return getFacing();  // Entity's current facing
-    }
-
-    @Override
-    public Building getInternalBuilding() {
-        return building;
-    }
-
-    @Override
-    public CubeCoords boardToRelative(Coords boardCoords) {
-        // Find which relative CubeCoord maps to this board coordinate
-        return relativeLayout.entrySet().stream()
-            .filter(e -> e.getValue().equals(boardCoords))
-            .map(Map.Entry::getKey)
-            .findFirst()
-            .orElse(boardCoords.toCube());
-    }
-
-    @Override
-    public Coords relativeToBoard(CubeCoords relativeCoords) {
-        // Return the board coordinate this relative CubeCoord maps to
-        return relativeLayout.get(relativeCoords);
-    }
-
-    /**
-     * Override setPosition to populate the relativeLayout map when the entity is placed.
-     * This establishes the mapping between the building's internal relative coordinates
-     * and their actual board coordinates.
-     */
-    @Override
-    public void setPosition(Coords position) {
-        super.setPosition(position);
-        updateRelativeLayout();
-    }
-
-    @Override
-    public void setPosition(Coords position, boolean gameUpdate) {
-        super.setPosition(position, gameUpdate);
-        updateRelativeLayout();
-    }
-
-    /**
-     * Updates the relativeLayout map to reflect the current building configuration.
-     * Maps each relative CubeCoord in the building to its actual board position.
-     */
-    private void updateRelativeLayout() {
-        relativeLayout.clear();
-
-        if (getPosition() == null) {
-            return;
-        }
-
-        secondaryPositions.put(0, getPosition());
-        relativeLayout.put(CubeCoords.ZERO, getPosition());
-
-        // Map each relative CubeCoord to its actual board coordinate
-        int position = 1;
-        for (CubeCoords relCoord : getInternalBuilding().getOriginalCoordsList()) {
-            // We add the origin manually
-            if (!relCoord.equals(CubeCoords.ZERO)) {
-                // TODO: When rotation is implemented, rotate by facing before adding to entity position
-                // For now, with no rotation, convert CubeCoord to offset and add to entity position
-                CubeCoords positionCubeCoords = getPosition().toCube();
-                Coords boardCoord = positionCubeCoords.add(relCoord).toOffset();
-
-                relativeLayout.put(relCoord, boardCoord);
-                secondaryPositions.put(position, boardCoord);
-                position++;
-            }
-        }
-    }
-
-    // FIXME: IDK if this is right, just needed something to pass tests
-    private static final TechAdvancement TA_BUILDING_ENTITY = new TechAdvancement(TechBase.ALL)
-          .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-          .setTechRating(TechRating.B)
-          .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
-          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     /**
      * @see UnitType
      */
     @Override
     public int getUnitType() {
-        return 0;
+        return UnitType.ADVANCED_BUILDING;
     }
 
     @Override
@@ -471,37 +351,6 @@ public class BuildingEntity extends Entity implements IBuilding {
         return 0;
     }
 
-    @Override
-    public void addEquipment(Mounted<?> mounted, int loc, boolean rearMounted)
-          throws LocationFullException {
-        super.addEquipment(mounted, loc, rearMounted);
-        // Add the piece equipment to our slots.
-        addCritical(loc, new CriticalSlot(mounted));
-    }
-
-    /**
-     * Calculates a "generic" Battle Value that is based on the average of all units of this type and tonnage. The
-     * purpose of this generic Battle Value is to allow a comparison of this unit's actual BV to that for units of its
-     * class. This can be used to balance forces without respect to unit or pilot quality.
-     * <p>
-     * <p>
-     * /** Generates a vector containing reports on all useful information about this entity.
-     */
-    @Override
-    public Vector<Report> victoryReport() {
-        return null;
-    }
-
-    /**
-     * Add in any piloting skill mods
-     *
-     * @param roll
-     */
-    @Override
-    public PilotingRollData addEntityBonuses(PilotingRollData roll) {
-        return roll;
-    }
-
     /**
      * The maximum elevation change the entity can cross
      */
@@ -510,391 +359,95 @@ public class BuildingEntity extends Entity implements IBuilding {
         return 0;
     }
 
-    @Override
-    public boolean isRepairable() {
-        return isSalvage();
-    }
-
-    @Override
-    public boolean isTargetable() {
-        return false;
-    }
-
-    @Override
-    public boolean canCharge() {
-        return false;
-    }
-
-    @Override
-    public boolean canFlee(Coords position) {
-        return false;
-    }
-
-    @Override
-    public boolean canGoDown() {
-        return false;
-    }
-
-    @Override
-    public boolean canGoDown(int assumed, Coords coords, int boardId) {
-        return false;
-    }
-
     /**
-     * Calculates and returns the C-bill cost of the unit. The parameter ignoreAmmo can be used to include or exclude
-     * ("dry cost") the cost of ammunition on the unit. A report for the cost calculation will be written to the given
-     * calcReport.
-     *
-     * @param calcReport A CalculationReport to write the report for the cost calculation to
-     * @param ignoreAmmo When true, the cost of ammo on the unit will be excluded from the cost
-     *
-     * @return The cost in C-Bills of the 'Mek in question.
+     * A {@link BuildingEntity} needs power to function.
+     * @return true if the unit has power, otherwise false
      */
-    @Override
-    public double getCost(CalculationReport calcReport, boolean ignoreAmmo) {
-        CostCalculator.addNoReportNote(calcReport, this);
-        return 0;
-    }
+    public boolean hasPower() {
+        // Return true if we have enough power - calculate the base generator weight and compare it to all the
+        // generators we have that're working
+        double powerNeeded = getBaseGeneratorWeight();
+        double effectivePower = 0.0;
 
-    /**
-     * Checks if the unit is hardened against nuclear strikes.
-     *
-     * @return true if this is a hardened unit.
-     */
-    @Override
-    public boolean isNuclearHardened() {
-        return false;
-    }
-
-    @Override
-    public boolean doomedInVacuum() {
-        return false;
-    }
-
-    /**
-     * @return the total tonnage of communications gear in this entity
-     */
-    @Override
-    public int getTotalCommGearTons() {
-        return getExtraCommGearTons();
-    }
-
-    @Override
-    public int getEngineHits() {
-        return 0;
-    }
-
-    @Override
-    public String getLocationDamage(int loc) {
-        return "";
-    }
-
-    /**
-     * Returns TRUE if the entity meets the requirements for crippling damage as detailed in TW pg 258.
-     *
-     * @return boolean
-     */
-    @Override
-    public boolean isCrippled() {
-        return false;
-    }
-
-    /**
-     * Returns TRUE if the entity meets the requirements for crippling damage as detailed in TW pg 258. Excepting dead
-     * or non-existing crew issues
-     *
-     * @param checkCrew
-     *
-     * @return boolean
-     */
-    @Override
-    public boolean isCrippled(boolean checkCrew) {
-        return false;
-    }
-
-    /**
-     * Returns TRUE if the entity has been heavily damaged.
-     *
-     * @return boolean
-     */
-    @Override
-    public boolean isDmgHeavy() {
-        return false;
-    }
-
-    /**
-     * Returns TRUE if the entity has been moderately damaged.
-     *
-     * @return boolean
-     */
-    @Override
-    public boolean isDmgModerate() {
-        return false;
-    }
-
-    /**
-     * Returns TRUE if the entity has been lightly damaged.
-     *
-     * @return boolean
-     */
-    @Override
-    public boolean isDmgLight() {
-        return false;
-    }
-
-    @Override
-    public boolean hasEngine() {
-        return false;
-    }
-
-    @Override
-    public int getArmorType(int loc) {
-        return 0;
-    }
-
-    @Override
-    public int getArmorTechLevel(int loc) {
-        return TechConstants.T_INTRO_BOX_SET;
-    }
-
-    @Override
-    public boolean hasStealth() {
-        return false;
-    }
-
-    @Override
-    public long getEntityType() {
-        return Entity.ETYPE_BUILDING_ENTITY;
-    }
-
-    /**
-     * Returns the amount of armor in the location specified, or IArmorState.ARMOR_NA, or IArmorState.ARMOR_DESTROYED.
-     *
-     * @param loc
-     * @param rear
-     */
-    @Override
-    public int getArmor(int loc, boolean rear) {
-        return IArmorState.ARMOR_NA;
-    }
-
-    @Override
-    public boolean hasCFIn(Coords coords) {
-        CubeCoords relative = boardToRelative(coords);
-        return relative != null && building.hasCFIn(relative);
-    }
-
-    @Override
-    public Enumeration<Coords> getCoords() {
-        // Return board coords by translating all relative coords
-        Vector<Coords> boardCoords = new Vector<>();
-        for (CubeCoords relCoord : getInternalBuilding().getCoordsList()) {
-            Coords boardCoord = relativeToBoard(relCoord);
-            if (boardCoord != null) {
-                boardCoords.add(boardCoord);
+        for (MiscMounted powerGenerator : getMiscEquipment(MiscTypeFlag.F_POWER_GENERATOR)) {
+            if (powerGenerator.isOperable()) {
+                StructureEngine engineType = StructureEngine.getStructureEngineBySubTypeFlag(powerGenerator.getType()
+                      .getSubType());
+                effectivePower += powerGenerator.getSize() / engineType.getBuildingWeightMultiplier();
             }
         }
-        return boardCoords.elements();
-    }
 
-    @Override
-    public List<Coords> getCoordsList() {
-        // Return board coords by translating all relative coords
-        return getInternalBuilding().getCoordsList().stream()
-            .map(this::relativeToBoard)
-            .filter(c -> c != null)
-            .toList();
-    }
+        // TODO: Support `External` power properly
+        // TODO: Fuel?
+        // TODO: Make sure if this is false the BuildingEntity cannot attack
 
-    @Override
-    public BuildingType getBuildingType() {
-        return building.getBuildingType();
-    }
-
-    @Override
-    public int getBldgClass() {
-        return building.getBldgClass();
-    }
-
-    @Override
-    public boolean getBasementCollapsed(Coords coords) {
-        return building.getBasementCollapsed(boardToRelative(coords));
-    }
-
-    @Override
-    public void collapseBasement(Coords coords, Board board, Vector<Report> vPhaseReport) {
-        CubeCoords relative = boardToRelative(coords);
-        building.collapseBasement(relative, board, vPhaseReport);
-        // Update the board hex
-        board.getHex(coords).addTerrain(new Terrain(Terrains.BLDG_BASE_COLLAPSED, 1));
-    }
-
-    @Override
-    public boolean rollBasement(Coords coords, Board board, Vector<Report> vPhaseReport) {
-        CubeCoords relative = boardToRelative(coords);
-        boolean changed = building.rollBasement(relative, board, vPhaseReport);
-        if (changed) {
-            // Update the board hex with the rolled basement type
-            BasementType rolledType = building.getBasement(relative);
-            board.getHex(coords).addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, rolledType.ordinal()));
-        }
-        return changed;
-    }
-
-    @Override
-    public int getCurrentCF(Coords coords) {
-        return building.getCurrentCF(boardToRelative(coords));
-    }
-
-    @Override
-    public int getPhaseCF(Coords coords) {
-        return building.getPhaseCF(boardToRelative(coords));
-    }
-
-    @Override
-    public int getArmor(Coords coords) {
-        return building.getArmor(boardToRelative(coords));
-    }
-
-    @Override
-    public void setCurrentCF(int cf, Coords coords) {
-        building.setCurrentCF(cf, boardToRelative(coords));
-    }
-
-    @Override
-    public void setPhaseCF(int cf, Coords coords) {
-        building.setPhaseCF(cf, boardToRelative(coords));
-    }
-
-    @Override
-    public void setArmor(int a, Coords coords) {
-        building.setArmor(a, boardToRelative(coords));
-    }
-
-    @Override
-    public int getHeight(Coords coords) {
-        return building.getHeight(boardToRelative(coords));
-    }
-
-    @Override
-    public void setHeight(int h, Coords coords) {
-        building.setHeight(h, boardToRelative(coords));
-    }
-
-    @Override
-    public String getName() {
-        return building.getName();
-    }
-
-    @Override
-    public boolean isBurning(Coords coords) {
-        return building.isBurning(boardToRelative(coords));
-    }
-
-    @Override
-    public void setBurning(boolean onFire, Coords coords) {
-        building.setBurning(onFire, boardToRelative(coords));
-    }
-
-    @Override
-    public void addDemolitionCharge(int playerId, int damage, Coords pos) {
-        building.addDemolitionCharge(playerId, damage, boardToRelative(pos));
-    }
-
-    @Override
-    public void removeDemolitionCharge(DemolitionCharge charge) {
-        building.removeDemolitionCharge(charge);
-    }
-
-    @Override
-    public List<DemolitionCharge> getDemolitionCharges() {
-        return building.getDemolitionCharges();
-    }
-
-    @Override
-    public void setDemolitionCharges(List<DemolitionCharge> charges) {
-        building.setDemolitionCharges(charges);
-    }
-
-    @Override
-    public void removeHex(Coords coords) {
-        CubeCoords relative = boardToRelative(coords);
-        building.removeHex(relative);
-        // Remove from layout
-        //relativeLayout.remove(relative);
-    }
-
-    @Override
-    public int getOriginalHexCount() {
-        return building.getOriginalHexCount();
-    }
-
-    @Override
-    public int getCollapsedHexCount() {
-        return building.getCollapsedHexCount();
-    }
-
-    @Override
-    public BasementType getBasement(Coords coords) {
-        return building.getBasement(boardToRelative(coords));
-    }
-
-    @Override
-    public void setBasement(Coords coords, BasementType basement) {
-        building.setBasement(boardToRelative(coords), basement);
-    }
-
-    @Override
-    public void setBasementCollapsed(Coords coords, boolean collapsed) {
-        building.setBasementCollapsed(boardToRelative(coords), collapsed);
+        return effectivePower >= powerNeeded;
     }
 
     /**
-     * Replaced most instances of `instanceof GunEmplacement` to support {@link BuildingEntity}
-     * @return true if this unit is a {@link BuildingEntity} or {@link GunEmplacement}, false otherwise
+     * Calculates the base generator weight for an advanced building.
+     * <p>
+     * To find the Base Generator Weight for an advanced building (or a complex of buildings):
+     * 1. Add up the total number of hexes for all advanced buildings intended to receive power
+     * 2. Exclude Tent-, Fence-, Wall- and Bridge-class buildings
+     * 3. For multi-level buildings: multiply the building's hex-count by its height in levels
+     *    (plus any basement levels) before adding it to the sum
+     * 4. Add to this sum 10 percent of the total tonnage for all Heavy-class energy weapons
+     *    used by any of these buildings
+     *
+     * @return The base generator weight in tons
      */
-    @Override
-    public boolean isBuildingEntityOrGunEmplacement() {
-        return true;
-    }
+    private double getBaseGeneratorWeight() {
+        if (getInternalBuilding() == null) {
+            return 0.0;
+        }
+        // Exclude Wall-type buildings (Tent, Fence, and Bridge are not implemented yet)
+        if (getBuildingType() == BuildingType.WALL) {
+            return 0.0;
+        }
 
-    @Override
-    public void refreshLocations() {
-        // We do not remove locations when the internal building removes a hex - we need to track the destroyed
-        // locations!
-        if (!(getInternalBuilding() == null || getInternalBuilding().getOriginalCoordsList() == null)) {
-            int location = 0;
-            for (CubeCoords coords : getInternalBuilding().getOriginalCoordsList()) {
-                for (int level = 0; level < getInternalBuilding().getBuildingHeight(); level++) {
-                    locationToRelativeCoordsMap.put(location, coords);
-                    location++;
+        Building building = getInternalBuilding();
+        if (building == null) {
+            return 0.0;
+        }
+
+        // Calculate base hex count multiplied by height + basement levels
+        int hexCount = building.getCoordsList().size();
+        int buildingHeight = building.getBuildingHeight();
+
+        // Find the maximum basement depth across all hexes
+        int maxBasementDepth = 0;
+        for (CubeCoords coords : building.getCoordsList()) {
+            BasementType basement = building.getBasement(coords);
+            if (basement != null) {
+                maxBasementDepth = Math.max(maxBasementDepth, basement.getDepth());
+            }
+        }
+
+        // Calculate effective hex count (hex count * (height + basement levels))
+        double baseHexWeight = hexCount * (buildingHeight + maxBasementDepth);
+
+        // Calculate 10% of total tonnage for all energy weapons
+        double energyWeaponTonnage = 0.0;
+        for (Mounted<?> equipment : getEquipment()) {
+            if (equipment.getType() instanceof WeaponType weaponType && equipment.getTonnage() >= .25) {
+                if (weaponType.hasFlag(WeaponType.F_ENERGY)) {
+                    energyWeaponTonnage += weaponType.getTonnage(this);
                 }
             }
         }
-        super.refreshLocations();
+
+        // Base Generator Weight = base hex weight + 10% of energy weapon tonnage
+        return baseHexWeight + (energyWeaponTonnage * 0.1);
     }
 
-    public void applyCollapsedHexLocationDamage(Coords coords) {
-        for (int floor = 0; floor < getInternalBuilding().getBuildingHeight(); floor++) {
-            applyCollapseFloorLocationDamage(coords, floor);
-        }
-    }
-
-    /**
-     *
-     * @param coords
-     * @param floor
-     */
-    public void applyCollapseFloorLocationDamage(Coords coords, int floor) {
-        for (int location : locationToRelativeCoordsMap.keySet()) {
-            if (coords.equals(relativeToBoard(locationToRelativeCoordsMap.get(location)))) {
-                if (location % getInternalBuilding().getBuildingHeight() == floor) {
-                    setInternal(0, location);
-                    destroyLocation(location, true);
-                }
-            }
-        }
-    }
+    // FIXME: IDK if this is right, just needed something to pass tests
+    private static final TechAdvancement TA_BUILDING_ENTITY = new TechAdvancement(TechBase.ALL)
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+          .setTechRating(TechRating.B)
+          .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
+          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+}
 
     /**
      * Once a building entity has set its position, we need to update the board itself and share that with the clients

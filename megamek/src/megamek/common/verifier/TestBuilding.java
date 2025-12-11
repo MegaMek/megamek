@@ -32,19 +32,19 @@
  */
 package megamek.common.verifier;
 
-import megamek.common.units.BuildingEntity;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
 
 public class TestBuilding extends TestEntity {
-    BuildingEntity building;
+    AbstractBuildingEntity building;
 
-    public TestBuilding(BuildingEntity building, TestEntityOption option, String fs) {
+    public TestBuilding(AbstractBuildingEntity building, TestEntityOption option, String fs) {
         super(option, building.getEngine(), getStructure(building));
         this.building = building;
         fileString = fs;
     }
 
-    private static Structure getStructure(BuildingEntity building) {
+    private static Structure getStructure(AbstractBuildingEntity building) {
         int type = building.getStructureType();
         return new Structure(type, false, building.getMovementMode());
     }

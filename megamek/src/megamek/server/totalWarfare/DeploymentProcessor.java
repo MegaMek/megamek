@@ -33,7 +33,6 @@
 
 package megamek.server.totalWarfare;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
@@ -48,7 +47,7 @@ import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.turns.SpecificEntityTurn;
-import megamek.common.units.BuildingEntity;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.IAero;
@@ -337,7 +336,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
         }
 
         // If deploying a BuildingEntity, add building terrain to all hexes it occupies
-        if (entity instanceof BuildingEntity buildingEntity) {
+        if (entity instanceof AbstractBuildingEntity buildingEntity) {
             buildingEntity.updateBuildingEntityHexes(boardId, gameManager);
         }
 

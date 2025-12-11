@@ -175,7 +175,7 @@ public class EntityClassTurn extends GameTurn {
             return CLASS_MEK;
         } else if (entity instanceof HandheldWeapon) {
             return CLASS_HANDHELD_WEAPON;
-        } else if (entity instanceof BuildingEntity) {
+        } else if (entity instanceof AbstractBuildingEntity) {
             return CLASS_BUILDING_ENTITY;
         } else {
             return 0;

@@ -165,7 +165,7 @@ public class Building implements Serializable {
      * All coordinates are relative to the building's origin (0,0,0).
      *
      * Building stores everything in its own local coordinate space using CubeCoords.
-     * BuildingTerrain and BuildingEntity handle translation between board Coords and relative CubeCoords.
+     * BuildingTerrain and AbstractBuildingEntity handle translation between board Coords and relative CubeCoords.
      *
      * @param relativeCoords the relative <code>CubeCoords</code> of the hex within the building
      * @param cf the construction factor for this hex

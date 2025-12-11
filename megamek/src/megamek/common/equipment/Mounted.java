@@ -53,6 +53,7 @@ import megamek.common.interfaces.RoundUpdated;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.Tank;
 import megamek.common.util.RoundWeight;
@@ -480,8 +481,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         if (pintleTurretMounted) {
             desc.append(" (PT)");
         }
-        // Append the facing for VGLs
-        if ((getType() instanceof WeaponType) && getType().hasFlag(WeaponType.F_VGL)) {
+        // Append the facing for VGLs or if mounted on an AbstractBuildingEntity
+        if (((getType() instanceof WeaponType) && getType().hasFlag(WeaponType.F_VGL))
+              || getEntity() instanceof AbstractBuildingEntity) {
             switch (facing) {
                 case 0:
                     desc.append(" (F)");

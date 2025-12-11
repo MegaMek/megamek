@@ -32,6 +32,7 @@
  */
 package megamek.common.board;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -46,7 +47,7 @@ import java.util.StringJoiner;
  *
  * @author Luana Coppio
  */
-public record CubeCoords(double q, double r, double s) {
+public record CubeCoords(double q, double r, double s) implements Serializable {
 
     public static final CubeCoords ZERO = new CubeCoords(0, 0, 0);
 

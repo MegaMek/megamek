@@ -85,7 +85,10 @@ public class ImageCache<K, V> {
         return cache.getOrDefault(key, null);
     }
 
-    public void remove(K key) {
+    public synchronized void remove(K key) {
+        if (key == null) {
+            return;
+        }
         cache.remove(key);
     }
 

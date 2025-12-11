@@ -3020,44 +3020,53 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // Handle loading units.
             if (step.getType() == MoveStepType.LOAD) {
 
-                // Find the unit being loaded.
+                // Find the unit being loaded.  We will _try_ to use the one selected by the player.
+                Targetable target = step.getTarget(getGame());
                 Entity loaded = null;
-                Iterator<Entity> entities = getGame().getEntities(curPos);
-                while (entities.hasNext()) {
+                if (target != null) {
+                    // Load designated target entity; checks should have already been done in UI.
+                    loaded = (Entity) target;
+                } else {
+                    // Randomly select a likely-looking entity from those in the allowed loading area
+                    Iterator<Entity> entities = getGame().getEntities(
+                          Compute.getLoadableCoords(entity, curPos, curBoardId)
+                    );
+                    while (entities.hasNext()) {
 
-                    // Is the other unit friendly and not the current entity?
-                    loaded = entities.next();
+                        // Is the other unit friendly and not the current entity?
+                        loaded = entities.next();
 
-                    // This should never ever happen, but just in case...
-                    if (loaded == null) {
-                        continue;
-                    }
-
-                    if (!entity.isEnemyOf(loaded) && !entity.equals(loaded)) {
-                        // The moving unit should be able to load the other
-                        // unit and the other should be able to have a turn.
-                        if (!entity.canLoad(loaded) || !loaded.isLoadableThisTurn()) {
-                            // Something is fishy in Denmark.
-                            logger.error("{} can not load {}", entity.getShortName(), loaded.getShortName());
-                            loaded = null;
-                        } else {
-                            // Have the deployed unit load the indicated unit.
-                            gameManager.loadUnit(entity, loaded, loaded.getTargetBay());
-
-                            // Stop looking.
-                            break;
+                        // This should never ever happen, but just in case...
+                        if (loaded == null) {
+                            continue;
                         }
 
-                    } else {
-                        // Nope. Discard it.
-                        loaded = null;
-                    }
+                        if (!entity.isEnemyOf(loaded) && !entity.equals(loaded)) {
+                            // The moving unit should be able to load the other
+                            // unit and the other should be able to have a turn.
+                            break;
 
-                } // Handle the next entity in this hex.
+                        } else {
+                            // Nope. Discard it.
+                            loaded = null;
+                        }
+
+                    } // Move to the next entity in the loading area.
+                }
 
                 // We were supposed to find someone to load.
                 if (loaded == null) {
                     logger.error("Could not find unit for {} to load in {}", entity.getShortName(), curPos);
+                } else {
+                    // We did!  But things might have changed since choosing them.  Double-check validity.
+                    if (!entity.canLoad(loaded) || !loaded.isLoadableThisTurn()) {
+                        // Something is fishy in Denmark.
+                        logger.error("{} can not load {}", entity.getShortName(), loaded.getShortName());
+                        loaded = null;
+                    } else {
+                        // Have the deployed unit load the indicated unit.
+                        gameManager.loadUnit(entity, loaded, loaded.getTargetBay());
+                    }
                 }
 
             } // End STEP_LOAD
@@ -3295,10 +3304,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 Bay currentBay = (unloaded instanceof Entity ulEntity) ? entity.getBay(ulEntity) : null;
                 Coords unloadPos = curPos;
                 int unloadFacing = curFacing;
+
+                // If the step has a targetPosition, use that
                 if (null != step.getTargetPosition()) {
                     unloadPos = step.getTargetPosition();
                     unloadFacing = curPos.direction(unloadPos);
                 }
+
                 if (!gameManager.unloadUnit(entity, unloaded, unloadPos, unloadFacing,
                       step.getElevation())) {
                     logger.error("Server was told to unload {} from {} into {}",
@@ -3314,6 +3326,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     report.add(unloadPos.toFriendlyString());
                     addReport(report);
                 }
+
                 // some additional stuff to take care of for small
                 // craft/DropShip unloading
                 if ((entity instanceof SmallCraft) && (unloaded instanceof Entity)) {

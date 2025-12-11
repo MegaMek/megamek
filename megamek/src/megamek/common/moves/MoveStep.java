@@ -2325,6 +2325,26 @@ public class MoveStep implements Serializable {
             }
         }
 
+        // Handle loading steps for various unit types.
+        // Eventually MoveStepType.LOAD will get a target and position passed to it, so we will always load the right
+        // entities in the right order, and from the right place.
+        if (stepType == MoveStepType.LOAD) {
+            if (entity instanceof Aero) {
+                movementType = EntityMovementType.MOVE_NONE;
+            } else {
+                if (isFirstStep()) {
+                    if (getMpUsed() <= cachedEntityState.getRunMP()) {
+                        movementType = EntityMovementType.MOVE_RUN;
+                        if (getMpUsed() <= cachedEntityState.getWalkMP()) {
+                            movementType = EntityMovementType.MOVE_WALK;
+                        }
+                    }
+                } else {
+                    movementType = prev.getMovementType(false);
+                }
+            }
+        }
+
         // Is the entity trying to drop a trailer?
         if (stepType == MoveStepType.DISCONNECT) {
 
@@ -2516,8 +2536,10 @@ public class MoveStep implements Serializable {
         }
 
         // check if this movement is illegal for reasons other than points
+        // Only a CHAFF step or another unloading step can follow an existing unloading step
         if (!isMovementPossible(game, lastPos, prev.getElevation(), cachedEntityState) ||
-              (isUnloaded && type != MoveStepType.CHAFF)) {
+              (isUnloaded && !(type == MoveStepType.CHAFF || type == MoveStepType.UNLOAD))
+        ) {
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
@@ -3093,10 +3115,12 @@ public class MoveStep implements Serializable {
         }
 
         // The entity is trying to load. Check for a valid move.
+        // In the future, we need to record the target of a LOAD step in the same way we do UNLOAD targets, and
+        // remove the loop below completely.
         if (type == MoveStepType.LOAD) {
             // Find the unit being loaded.
             Entity other = null;
-            Iterator<Entity> entities = game.getEntities(src);
+            Iterator<Entity> entities = game.getEntities(Compute.getLoadableCoords(entity, src, boardId));
             while (entities.hasNext()) {
 
                 // Is the other unit friendly and not the current entity?
@@ -3105,12 +3129,12 @@ public class MoveStep implements Serializable {
 
                     // The moving unit should be able to load the other unit.
                     if (!entity.canLoad(other, true, getElevation())) {
-                        return false;
+                        continue;
                     }
 
                     // The other unit should be able to have a turn.
                     if (!other.isLoadableThisTurn()) {
-                        return false;
+                        continue;
                     }
 
                     // We can stop looking.

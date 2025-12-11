@@ -171,8 +171,9 @@ public class ScreenLauncherHandlerTest {
      */
     @Test
     void testSmallCraftReceivesClusterDamage() throws EntityLoadingException {
-        // Create mock small craft
+        // Create mock small craft - explicitly mock both conditions for test isolation
         Entity smallCraft = mock(Entity.class);
+        doReturn(false).when(smallCraft).isCapitalScale();
         doReturn(false).when(smallCraft).isLargeCraft();
         doReturn(new HitData(0)).when(smallCraft).rollHitLocation(anyInt(), anyInt());
 
@@ -196,9 +197,10 @@ public class ScreenLauncherHandlerTest {
      */
     @Test
     void testCapitalScaleCraftReceivesSingleHit() throws EntityLoadingException {
-        // Create mock capital-scale craft
+        // Create mock capital-scale craft - explicitly mock both conditions for test isolation
         Entity capitalCraft = mock(Entity.class);
         doReturn(true).when(capitalCraft).isCapitalScale();
+        doReturn(false).when(capitalCraft).isLargeCraft();
         doReturn(new HitData(0)).when(capitalCraft).rollHitLocation(anyInt(), anyInt());
 
         // Configure game to return capital craft in target hex

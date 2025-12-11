@@ -61,7 +61,7 @@ public enum AvailabilityValue {
     static {
         for (AvailabilityValue tr : values()) {
             INDEX_LOOKUP.put(tr.index, tr);
-            NAME_LOOKUP.put(tr.name, tr);
+            NAME_LOOKUP.put(tr.lookupName, tr);
         }
     }
 
@@ -106,9 +106,12 @@ public enum AvailabilityValue {
         return tr;
     }
 
-    public static AvailabilityValue fromName(String name) {
-        AvailabilityValue tr = NAME_LOOKUP.get(name);
-        if (tr == null) {throw new IllegalArgumentException("Invalid AvailabilityValue name: " + name);}
-        return tr;
+    public static AvailabilityValue fromName(String lookupName) {
+        AvailabilityValue availabilityValue = NAME_LOOKUP.get(lookupName);
+        if (availabilityValue == null) {
+            throw new IllegalArgumentException("Invalid AvailabilityValue name: " + lookupName);
+        }
+
+        return availabilityValue;
     }
 }

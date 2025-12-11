@@ -7691,9 +7691,10 @@ public class Compute {
     /**
      * Helper to get the coordinates from which a unit can load other units.  Not in Entity to avoid bloat.
      * May need extension for different map types but unlikely.
-     * @param carrier
-     * @param position
-     * @param boardId
+     * @param carrier   Entity that will be doing the loading
+     * @param position  Coords of hex to use as the center of the carrier; may not match carrier's current position
+     *                  value.
+     * @param boardId   For future use, e.g. low-altitude or multi-board maps
      * @return ArrayList of Coords that the carrier entity can legally load units from
      */
     public static ArrayList<Coords> getLoadableCoords(Entity carrier, Coords position, int boardId) {

@@ -1504,10 +1504,18 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return getEntities(c, false);
     }
 
+    /**
+     * Returns an Iterator for all entities in _all_ of the coordinates provided.
+     * Coords must not be null.
+     * @param coordList     ArrayList of coordinates to check.
+     * @return Iterator over the vector of entities.  The vector must exist to get the iterator.
+     */
     public Iterator<Entity> getEntities(ArrayList<Coords> coordList) {
         Vector<Entity> entities = new Vector<>();
         for (Coords coords : coordList) {
-            entities.addAll(getEntitiesVector(coords));
+            if (coords != null) {
+                entities.addAll(getEntitiesVector(coords));
+            }
         }
         return entities.iterator();
     }

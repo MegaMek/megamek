@@ -60,7 +60,6 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.GameOptions;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Crew;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
 import megamek.common.units.Targetable;
@@ -152,19 +151,6 @@ public class ScreenLauncherHandlerTest {
     }
 
     /**
-     * Helper to configure an entity mock with the methods needed for Report.addDesc().
-     */
-    private void configureEntityForReporting(Entity entity) {
-        doReturn(100).when(entity).getId();
-        doReturn("Test Entity").when(entity).getShortName();
-        doReturn(null).when(entity).getOwner();
-        Crew mockCrew = mock(Crew.class);
-        doReturn(mockCrew).when(entity).getCrew();
-        doReturn(1).when(mockCrew).getSize();
-        doReturn("").when(mockCrew).getNickname();
-    }
-
-    /**
      * Test that calcAttackValue() returns 15 damage. Per Screen Launcher rules, damage is always 15 standard-scale
      * points.
      */
@@ -189,7 +175,6 @@ public class ScreenLauncherHandlerTest {
         Entity smallCraft = mock(Entity.class);
         doReturn(false).when(smallCraft).isLargeCraft();
         doReturn(new HitData(0)).when(smallCraft).rollHitLocation(anyInt(), anyInt());
-        configureEntityForReporting(smallCraft);
 
         // Configure game to return small craft in target hex
         List<Entity> entitiesInHex = new ArrayList<>();
@@ -206,20 +191,19 @@ public class ScreenLauncherHandlerTest {
     }
 
     /**
-     * Test that large craft (500+ tons) receives damage as a single hit. Per official errata, large craft receive one
-     * 15-point hit.
+     * Test that capital-scale craft receives damage as a single hit. Per official errata, capital-scale targets
+     * receive one 15-point hit (which gets converted to 2 damage by the damage system).
      */
     @Test
-    void testLargeCraftReceivesSingleHit() throws EntityLoadingException {
-        // Create mock large craft
-        Entity largeCraft = mock(Entity.class);
-        doReturn(true).when(largeCraft).isLargeCraft();
-        doReturn(new HitData(0)).when(largeCraft).rollHitLocation(anyInt(), anyInt());
-        configureEntityForReporting(largeCraft);
+    void testCapitalScaleCraftReceivesSingleHit() throws EntityLoadingException {
+        // Create mock capital-scale craft
+        Entity capitalCraft = mock(Entity.class);
+        doReturn(true).when(capitalCraft).isCapitalScale();
+        doReturn(new HitData(0)).when(capitalCraft).rollHitLocation(anyInt(), anyInt());
 
-        // Configure game to return large craft in target hex
+        // Configure game to return capital craft in target hex
         List<Entity> entitiesInHex = new ArrayList<>();
-        entitiesInHex.add(largeCraft);
+        entitiesInHex.add(capitalCraft);
         doReturn(entitiesInHex).when(mockGame).getEntitiesVector(targetCoords);
 
         ScreenLauncherHandler handler = new ScreenLauncherHandler(
@@ -228,7 +212,7 @@ public class ScreenLauncherHandlerTest {
         handler.handle(GamePhase.FIRING, new Vector<>());
 
         // Verify damageEntity called once with 15 damage
-        verify(mockGameManager, times(1)).damageEntity(eq(largeCraft), any(HitData.class), eq(15));
+        verify(mockGameManager, times(1)).damageEntity(eq(capitalCraft), any(HitData.class), eq(15));
     }
 
     /**
@@ -246,9 +230,6 @@ public class ScreenLauncherHandlerTest {
         doReturn(new HitData(0)).when(fighter1).rollHitLocation(anyInt(), anyInt());
         doReturn(new HitData(0)).when(fighter2).rollHitLocation(anyInt(), anyInt());
         doReturn(new HitData(0)).when(fighter3).rollHitLocation(anyInt(), anyInt());
-        configureEntityForReporting(fighter1);
-        configureEntityForReporting(fighter2);
-        configureEntityForReporting(fighter3);
 
         List<Entity> subEntities = List.of(fighter1, fighter2, fighter3);
         doReturn(subEntities).when(squadron).getSubEntities();

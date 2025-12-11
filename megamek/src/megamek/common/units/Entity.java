@@ -5986,11 +5986,13 @@ public abstract class Entity extends TurnOrdered
 
         // Sensory implants: IR/EM optical OR enhanced audio = 2-hex active probe (infantry only)
         // Benefits don't stack - having both still only gives one probe
-        // MM implants also provide probe capability for infantry or for units with VDNI/BVDNI
+        // MM/Enhanced MM implants also provide probe capability for infantry or for units with VDNI/BVDNI
+        boolean hasMmImplants = hasAbility(OptionsConstants.MD_MM_IMPLANTS)
+              || hasAbility(OptionsConstants.MD_ENH_MM_IMPLANTS);
         if (((hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO)
               || hasAbility(OptionsConstants.MD_CYBER_IMP_VISUAL)
-              || hasAbility(OptionsConstants.MD_MM_IMPLANTS)) && isConventionalInfantry())
-              || (hasAbility(OptionsConstants.MD_MM_IMPLANTS)
+              || hasMmImplants) && isConventionalInfantry())
+              || (hasMmImplants
               && (hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI)))) {
             return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
         }
@@ -6017,18 +6019,34 @@ public abstract class Entity extends TurnOrdered
         if (conditions.getEMI().isEMI() || isShutDown()) {
             return Entity.NONE;
         }
-        // Sensory implants: IR/EM optical OR enhanced audio = 2-hex probe (infantry only)
-        // MM implants also provide probe capability for infantry or for units with VDNI/BVDNI
-        // Per IO pg 78-79: Base probe is 2 hexes, but when combined with integral BAP adds only +1 hex
-        boolean hasSensoryImplants = ((hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO)
-              || hasAbility(OptionsConstants.MD_CYBER_IMP_VISUAL)
-              || hasAbility(OptionsConstants.MD_MM_IMPLANTS)) && isConventionalInfantry())
-              || (hasAbility(OptionsConstants.MD_MM_IMPLANTS)
-              && (hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI)));
-        // Base probe range from implants alone (no BAP)
-        int cyberBaseProbe = hasSensoryImplants ? 2 : 0;
-        // Bonus to existing BAP range from implants (+1 per rules, not +2)
-        int cyberProbeBonus = hasSensoryImplants ? 1 : 0;
+        // Sensory implants provide active probe capability:
+        // - Basic implants (audio/visual): 2-hex probe for infantry only
+        // - MM implants: 2-hex probe for infantry, or non-infantry with VDNI/BVDNI; +1 to existing BAP
+        // - Enhanced MM implants: 3-hex probe for infantry, or non-infantry with VDNI/BVDNI; +2 to existing BAP
+        // Benefits don't stack within category
+        boolean hasMmImplants = hasAbility(OptionsConstants.MD_MM_IMPLANTS)
+              || hasAbility(OptionsConstants.MD_ENH_MM_IMPLANTS);
+        boolean hasEnhancedMm = hasAbility(OptionsConstants.MD_ENH_MM_IMPLANTS);
+        boolean hasBasicImplants = hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO)
+              || hasAbility(OptionsConstants.MD_CYBER_IMP_VISUAL);
+        boolean hasVdni = hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI);
+
+        // Check if sensory implants are active (infantry, or non-infantry with VDNI for MM implants)
+        boolean sensoryImplantsActive = ((hasBasicImplants || hasMmImplants) && isConventionalInfantry())
+              || (hasMmImplants && hasVdni);
+
+        // Base probe range from implants alone (no BAP): Enhanced=3, others=2
+        int cyberBaseProbe = sensoryImplantsActive ? (hasEnhancedMm ? 3 : 2) : 0;
+        // Bonus to existing BAP range: Enhanced=+2, MM=+1, basic=0
+        int cyberProbeBonus = 0;
+        if (sensoryImplantsActive) {
+            if (hasEnhancedMm) {
+                cyberProbeBonus = 2;
+            } else if (hasMmImplants) {
+                cyberProbeBonus = 1;
+            }
+            // Basic implants (audio/visual) don't add to existing BAP range
+        }
 
         // check for quirks
         int quirkBonus = 0;
@@ -6076,6 +6094,7 @@ public abstract class Entity extends TurnOrdered
                 // range 4
             }
         }
+        // No BAP equipped - return base probe from implants/quirks/SPA
         if ((cyberBaseProbe + quirkBonus + spaBonus) > 0) {
             return cyberBaseProbe + quirkBonus + spaBonus;
         }

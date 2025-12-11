@@ -7688,5 +7688,39 @@ public class Compute {
         return 31 - Integer.numberOfLeadingZeros(number);
     }
 
+    /**
+     * Helper to get the coordinates from which a unit can load other units.  Not in Entity to avoid bloat.
+     * May need extension for different map types but unlikely.
+     * @param carrier
+     * @param position
+     * @param boardId
+     * @return ArrayList of Coords that the carrier entity can legally load units from
+     */
+    public static ArrayList<Coords> getLoadableCoords(Entity carrier, Coords position, int boardId) {
+        ArrayList<Coords> list = new ArrayList<Coords>();
+        // No coords for no carrier
+        if (carrier == null) {
+            return list;
+        }
+
+        // Landed DropShip occupies 7 hexes, loads from the adjacent ring of hexes
+        if (carrier.isDropShip() && carrier.isAeroLandedOnGroundMap()) {
+            list.addAll(position.allAtDistance(2));
+        } else if (
+              // SmallCraft, Large Support Vehicles, flying DropShips, and presumably spaceborne WarShips load from
+              // directly adjacent hexes
+              carrier instanceof SmallCraft ||
+              (carrier.isSupportVehicle() && (carrier.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT)) ||
+              (carrier.isDropShip() && carrier.isAirborne()) ||
+              (carrier.isWarShip())
+        ) {
+            list.addAll(position.allAtDistance(1));
+        } else {
+            list.add(position);
+        }
+
+        return list;
+    }
+
     private Compute() {}
 }

@@ -468,6 +468,11 @@ public class MovePath implements Cloneable, Serializable {
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             return;
         }
+        // can't do anything after unloading except loading again (if MPs exist)
+        if (contains(MoveStepType.UNLOAD) && !(getLastStep().getType() == MoveStepType.UNLOAD)) {
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            return;
+        }
 
         // check for illegal jumps
         if ((start == null) || (land == null)) {

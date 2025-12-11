@@ -1504,6 +1504,14 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return getEntities(c, false);
     }
 
+    public Iterator<Entity> getEntities(ArrayList<Coords> coordList) {
+        Vector<Entity> entities = new Vector<>();
+        for (Coords coords : coordList) {
+            entities.addAll(getEntitiesVector(coords));
+        }
+        return entities.iterator();
+    }
+
     /**
      * Returns an Enumeration of the active entities at the given coordinates.
      */

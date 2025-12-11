@@ -86,6 +86,9 @@ public class ImageCache<K, V> {
     }
 
     public void remove(K key) {
+        if (key == null) {
+            return;
+        }
         cache.remove(key);
     }
 

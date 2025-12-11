@@ -6018,16 +6018,17 @@ public abstract class Entity extends TurnOrdered
             return Entity.NONE;
         }
         // Sensory implants: IR/EM optical OR enhanced audio = 2-hex probe (infantry only)
-        // Benefits don't stack - cyberBonus is 2, not cumulative
         // MM implants also provide probe capability for infantry or for units with VDNI/BVDNI
-        int cyberBonus = 0;
-        if (((hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO)
+        // Per IO pg 78-79: Base probe is 2 hexes, but when combined with integral BAP adds only +1 hex
+        boolean hasSensoryImplants = ((hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO)
               || hasAbility(OptionsConstants.MD_CYBER_IMP_VISUAL)
               || hasAbility(OptionsConstants.MD_MM_IMPLANTS)) && isConventionalInfantry())
               || (hasAbility(OptionsConstants.MD_MM_IMPLANTS)
-              && (hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI)))) {
-            cyberBonus = 2;
-        }
+              && (hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI)));
+        // Base probe range from implants alone (no BAP)
+        int cyberBaseProbe = hasSensoryImplants ? 2 : 0;
+        // Bonus to existing BAP range from implants (+1 per rules, not +2)
+        int cyberProbeBonus = hasSensoryImplants ? 1 : 0;
 
         // check for quirks
         int quirkBonus = 0;
@@ -6055,28 +6056,28 @@ public abstract class Entity extends TurnOrdered
                 }
 
                 if (m.getName().equals("Bloodhound Active Probe (THB)") || m.getName().equals(Sensor.BAP)) {
-                    return 8 + cyberBonus + quirkBonus + spaBonus;
+                    return 8 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
                 if ((m.getType()).getInternalName().equals(Sensor.CLAN_AP) ||
                       (m.getType()).getInternalName().equals(Sensor.WATCHDOG) ||
                       (m.getType()).getInternalName().equals(Sensor.NOVA)) {
-                    return 5 + cyberBonus + quirkBonus + spaBonus;
+                    return 5 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
                 if ((m.getType()).getInternalName().equals(Sensor.LIGHT_AP) ||
                       (m.getType().getInternalName().equals(Sensor.CL_BA_LIGHT_AP)) ||
                       (m.getType().getInternalName().equals(Sensor.IS_BA_LIGHT_AP))) {
-                    return 3 + cyberBonus + quirkBonus + spaBonus;
+                    return 3 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
                 if (m.getType().getInternalName().equals(Sensor.IS_IMPROVED) ||
                       (m.getType().getInternalName().equals(Sensor.CL_IMPROVED))) {
-                    return 2 + cyberBonus + quirkBonus + spaBonus;
+                    return 2 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
-                return 4 + cyberBonus + quirkBonus + spaBonus;// everything else should be
+                return 4 + cyberProbeBonus + quirkBonus + spaBonus;// everything else should be
                 // range 4
             }
         }
-        if ((cyberBonus + quirkBonus + spaBonus) > 0) {
-            return cyberBonus + quirkBonus + spaBonus;
+        if ((cyberBaseProbe + quirkBonus + spaBonus) > 0) {
+            return cyberBaseProbe + quirkBonus + spaBonus;
         }
 
         return Entity.NONE;

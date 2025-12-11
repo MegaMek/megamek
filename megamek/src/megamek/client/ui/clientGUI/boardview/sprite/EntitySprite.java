@@ -50,6 +50,7 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.HandheldWeapon;
 import megamek.common.units.*;
 
 /**
@@ -542,7 +543,7 @@ public class EntitySprite extends Sprite {
         boolean isTank = (entity instanceof Tank);
         boolean isInfantry = (entity instanceof Infantry);
         boolean isAero = entity.isAero();
-        boolean isGunEmplacement = entity instanceof GunEmplacement;
+        boolean isStaticEntity = entity instanceof GunEmplacement || entity instanceof HandheldWeapon || entity instanceof AbstractBuildingEntity;
         boolean isSquadron = entity instanceof FighterSquadron;
 
         if ((isAero && ((IAero) entity).isSpheroid() && !board.isSpace()) && (secondaryPos == 1)) {
@@ -605,7 +606,7 @@ public class EntitySprite extends Sprite {
                 stStr.add(new Status(GUIP.getCautionColor(), "STUCK"));
             }
 
-            if (!isGunEmplacement && entity.isImmobile()) {
+            if (!isStaticEntity && entity.isImmobile()) {
                 stStr.add(new Status(GUIP.getWarningColor(), "IMMOBILE"));
             }
 
@@ -867,7 +868,7 @@ public class EntitySprite extends Sprite {
             graph.setColor(getStatusBarColor(percentRemaining));
             graph.fillRect(STATUS_BAR_X, 6, barLength, 3);
 
-            if (!isGunEmplacement && !isSquadron) {
+            if (!isStaticEntity && !isSquadron) {
                 // Gun emplacements and squadrons don't use internal structure nor SI damage
                 percentRemaining = entity.getInternalRemainingPercent();
                 barLength = (int) (STATUS_BAR_LENGTH * percentRemaining);
@@ -888,7 +889,7 @@ public class EntitySprite extends Sprite {
                 pipScaleFactor = BIGGER_PIP_SCALE;
                 pipOffset = BIGGER_PIP_OFFSET;
             }
-            if ((pipOption != 0) && !isGunEmplacement && !entity.isAero() && ((entity.isDone() && bv.game.getPhase()
+            if ((pipOption != 0) && !isStaticEntity && !entity.isAero() && ((entity.isDone() && bv.game.getPhase()
                   .isMovement()) || bv.game.getPhase().isFiring())) {
                 int tmm = Compute.getTargetMovementModifier(bv.game, entity.getId()).getValue();
                 Color tmmColor = (pipOption == 1 || pipOption == 3) ? Color.WHITE :

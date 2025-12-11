@@ -390,12 +390,41 @@ public class ComputeAttackerToHitMods {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Vdni"));
         }
 
-        // check for cyber eye laser sighting on ranged attacks
-        if (attacker.isConventionalInfantry()
-              && attacker.hasAbility(OptionsConstants.MD_CYBER_IMP_LASER)
-              && (weapon != null)
-              && !(weapon.getType() instanceof InfantryAttack)) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.MdEye"));
+        // Sensory implants: laser-sight, telescopic, or multi-modal = -1 to-hit
+        // Benefits don't stack - having multiple still only gives -1
+        // Basic implants (laser/tele): infantry only
+        // MM/Enhanced MM implants: infantry, OR non-infantry with VDNI/BVDNI (syncs with vehicle sensors)
+        if ((weapon != null) && !(weapon.getType() instanceof InfantryAttack)) {
+            boolean hasLaser = attacker.hasAbility(OptionsConstants.MD_CYBER_IMP_LASER);
+            boolean hasTele = attacker.hasAbility(OptionsConstants.MD_CYBER_IMP_TELE);
+            boolean hasMmImplants = attacker.hasAbility(OptionsConstants.MD_MM_IMPLANTS)
+                  || attacker.hasAbility(OptionsConstants.MD_ENH_MM_IMPLANTS);
+            boolean hasVdni = attacker.hasAbility(OptionsConstants.MD_VDNI)
+                  || attacker.hasAbility(OptionsConstants.MD_BVDNI);
+
+            // MM implants work for infantry OR for any unit type when combined with VDNI
+            boolean mmImplantsApply = hasMmImplants
+                  && (attacker.isConventionalInfantry() || hasVdni);
+
+            // Basic implants (laser/tele) only work for infantry
+            boolean basicImplantsApply = attacker.isConventionalInfantry() && (hasLaser || hasTele);
+
+            if (mmImplantsApply || basicImplantsApply) {
+                // Determine the appropriate message based on what implants are active
+                String message;
+                if (mmImplantsApply && basicImplantsApply) {
+                    message = Messages.getString("WeaponAttackAction.MdTargeting");
+                } else if (mmImplantsApply) {
+                    message = Messages.getString("WeaponAttackAction.MdMmImplants");
+                } else if (hasLaser && hasTele) {
+                    message = Messages.getString("WeaponAttackAction.MdTargeting");
+                } else if (hasLaser) {
+                    message = Messages.getString("WeaponAttackAction.MdLaser");
+                } else {
+                    message = Messages.getString("WeaponAttackAction.MdTele");
+                }
+                toHit.addModifier(-1, message);
+            }
         }
 
         return toHit;

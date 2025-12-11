@@ -57,6 +57,7 @@ import megamek.common.units.Crew;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
+import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,12 +65,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-class CargoBayTest {
+public class CargoBayTest {
 
     static GameOptions mockGameOptions = mock(GameOptions.class);
     static ClientGUI cg = mock(ClientGUI.class);
     static Client client = mock(Client.class);
     static Game game = new Game();
+    static TWGameManager manager = new TWGameManager();
 
     static Team team1 = new Team(0);
     static Team team2 = new Team(1);
@@ -80,6 +82,7 @@ class CargoBayTest {
     static void setUpAll() {
         // Need equipment initialized
         EquipmentType.initializeTypes();
+        manager.setGame(game);
     }
 
     @BeforeEach
@@ -109,7 +112,7 @@ class CargoBayTest {
     void tearDown() {
     }
 
-    Mek createMek(String chassis, String model, String crewName) {
+    static public Mek createMek(String chassis, String model, String crewName, Game game) {
         // Create a real Mek with some mocked fields
         Mek mockMek = new BipedMek();
         mockMek.setGame(game);
@@ -126,7 +129,7 @@ class CargoBayTest {
         return mockMek;
     }
 
-    Infantry createInfantry(String chassis, String model, String crewName) {
+    static public Infantry createInfantry(String chassis, String model, String crewName, Game game) {
         // Create a real Infantry unit with some mocked fields
         Infantry mockInfantry = new Infantry();
         mockInfantry.setGame(game);
@@ -143,7 +146,7 @@ class CargoBayTest {
         return mockInfantry;
     }
 
-    AeroSpaceFighter createASF(String chassis, String model, String crewName) {
+    static public AeroSpaceFighter createASF(String chassis, String model, String crewName, Game game) {
         // Create a real AeroSpaceFighter unit with some mocked fields
         AeroSpaceFighter mockAeroSpaceFighter = new AeroSpaceFighter();
         mockAeroSpaceFighter.setGame(game);
@@ -165,7 +168,7 @@ class CargoBayTest {
                           "WHEELED" })
     void testCargoBayCanLoadInfantry(EntityMovementMode mode) {
         CargoBay bay = new CargoBay(100.0, 1, 1);
-        Infantry unit = createInfantry(mode.name(), "", "John Q. Test");
+        Infantry unit = createInfantry(mode.name(), "", "John Q. Test", game);
         unit.setMovementMode(mode);
         assertTrue(bay.canLoad(unit));
     }
@@ -175,7 +178,7 @@ class CargoBayTest {
                           "WHEELED" })
     void testCargoBayCanUnLoadInfantry(EntityMovementMode mode) {
         CargoBay bay = new CargoBay(100.0, 1, 1);
-        Infantry unit = createInfantry(mode.name(), "", "John Q. Test");
+        Infantry unit = createInfantry(mode.name(), "", "John Q. Test", game);
         unit.setMovementMode(mode);
         assertTrue(bay.canUnloadUnits());
     }
@@ -184,7 +187,7 @@ class CargoBayTest {
     @EnumSource(names = { "INF_LEG", "INF_MOTORIZED", "INF_JUMP", "INF_UMU", "HOVER", "SUBMARINE", "TRACKED", "VTOL",
                           "WHEELED" })
     void testCargoBaySpaceUsage(EntityMovementMode mode) {
-        Infantry unit = createInfantry(mode.name(), "", "John Q. Test");
+        Infantry unit = createInfantry(mode.name(), "", "John Q. Test", game);
         unit.setMovementMode(mode);
         unit.setSquadSize(7);
         unit.setSquadCount(4);
@@ -197,14 +200,14 @@ class CargoBayTest {
     @Test
     void testCargoBayCannotLoadMek() {
         CargoBay bay = new CargoBay(100.0, 1, 1);
-        Mek mek = createMek("TST-01", "Testor", "Alyce B. Carlos");
+        Mek mek = createMek("TST-01", "Testor", "Alyce B. Carlos", game);
         assertFalse(bay.canLoad(mek));
     }
 
     @Test
     void testCargoBayCannotLoadASF() {
         CargoBay bay = new CargoBay(100.0, 1, 1);
-        AeroSpaceFighter asf = createASF("TST-02", "Testor", "Alyce B. Carlos");
+        AeroSpaceFighter asf = createASF("TST-02", "Testor", "Alyce B. Carlos", game);
         assertFalse(bay.canLoad(asf));
     }
 }

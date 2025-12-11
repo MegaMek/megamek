@@ -71,7 +71,9 @@ public class ScreenLauncherBayWeapon extends AmmoBayWeapon {
         this.bv = 0;
         this.cost = 0;
         this.atClass = CLASS_SCREEN;
-        this.capital = true;
+        // Per errata: Screen Launchers use standard aerospace range, not capital scale
+        // See: https://battletech.com/forums/index.php?topic=77239
+        this.capital = false;
         rulesRefs = "237, TM";
     }
 

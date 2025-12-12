@@ -450,8 +450,17 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
 
     @Override
     public void optionClicked(DialogOptionComponentYPanel comp, IOption option, boolean state) {
-        option.setValue(state);
-        updateQuirkFontStyle(comp, state);
+        if (option.getType() == IOption.BOOLEAN) {
+            option.setValue(state);
+            updateQuirkFontStyle(comp, state);
+        } else {
+            // For non-boolean options (INTEGER, STRING, etc.), don't set value here.
+            // The actual value is saved in setQuirks() using comp.getValue().
+            // Just update the font style based on whether value differs from default.
+            Object value = comp.getValue();
+            boolean isSet = value != null && !value.equals(option.getDefault());
+            updateQuirkFontStyle(comp, isSet);
+        }
         if (parent != null) {
             parent.optionClicked(comp, option, state);
         }

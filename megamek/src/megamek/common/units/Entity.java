@@ -14567,8 +14567,15 @@ public abstract class Entity extends TurnOrdered
                         option.setValue(quirkEntry.value());
                     }
                 } else {
-                    // Boolean quirk - just set to true
-                    option.setValue(true);
+                    // No value provided - handle based on option type
+                    if (option.getType() == IOption.BOOLEAN) {
+                        option.setValue(true);
+                    } else if (option.getType() == IOption.INTEGER) {
+                        // Old unit files may have integer quirks without values - use default
+                        LOGGER.warn("Quirk {} for {} {} has no value, using default",
+                              quirkEntry.getQuirk(), getChassis(), getModel());
+                        option.setValue(option.getDefault());
+                    }
                 }
             } else {
                 assignWeaponQuirk(quirkEntry);

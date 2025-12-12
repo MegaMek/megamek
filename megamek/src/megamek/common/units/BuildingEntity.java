@@ -162,9 +162,9 @@ public class BuildingEntity extends AbstractBuildingEntity {
 
         for (MiscMounted powerGenerator : getMiscEquipment(MiscTypeFlag.F_POWER_GENERATOR)) {
             if (powerGenerator.isOperable()) {
-                StructureEngine engineType = StructureEngine.getStructureEngineBySubTypeFlag(powerGenerator.getType()
-                      .getSubType());
-                effectivePower += powerGenerator.getSize() / engineType.getBuildingWeightMultiplier();
+//                StructureEngine engineType = StructureEngine.getStructureEngineBySubTypeFlag(powerGenerator.getType()
+//                      .getSubType());
+//                effectivePower += powerGenerator.getSize() / engineType.getBuildingWeightMultiplier();
             }
         }
 

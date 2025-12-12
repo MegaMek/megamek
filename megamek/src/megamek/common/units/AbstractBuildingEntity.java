@@ -165,6 +165,30 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
+     * Rotates a cube coordinate clockwise around the origin by the given facing.
+     * Facing 0 is UP (no rotation), and each facing increment is 60° clockwise.
+     *
+     * @param coord  the CubeCoords to rotate
+     * @param facing the facing direction (0-5), where 0 is UP and increments are 60° clockwise
+     *
+     * @return a new CubeCoords rotated by the given facing
+     */
+    private CubeCoords rotateCoordByFacing(CubeCoords coord, int facing) {
+        // Normalize facing to 0-5 range
+        int normalizedFacing = ((facing % 6) + 6) % 6;
+
+        return switch (normalizedFacing) {
+            case 0 -> coord; // No rotation
+            case 1 -> new CubeCoords(-coord.r(), -coord.s(), -coord.q()); // 60° clockwise
+            case 2 -> new CubeCoords(coord.s(), coord.q(), coord.r()); // 120° clockwise
+            case 3 -> new CubeCoords(-coord.q(), -coord.r(), -coord.s()); // 180°
+            case 4 -> new CubeCoords(coord.r(), coord.s(), coord.q()); // 240° clockwise
+            case 5 -> new CubeCoords(-coord.s(), -coord.q(), -coord.r()); // 300° clockwise
+            default -> coord; // Should never happen due to normalization
+        };
+    }
+
+    /**
      * Updates the relativeLayout map to reflect the current building configuration.
      * Maps each relative CubeCoord in the building to its actual board position.
      */
@@ -185,10 +209,10 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         for (CubeCoords relCoord : building.getCoordsList()) {
             // We add the origin manually
             if (!relCoord.equals(CubeCoords.ZERO)) {
-                // TODO: When rotation is implemented, rotate by facing before adding to entity position
-                // For now, with no rotation, convert CubeCoord to offset and add to entity position
+                // Rotate the relative coordinate by the entity's facing before adding to position
+                CubeCoords rotatedRelCoord = rotateCoordByFacing(relCoord, getFacing());
                 CubeCoords positionCubeCoords = getPosition().toCube();
-                Coords boardCoord = positionCubeCoords.add(relCoord).toOffset();
+                Coords boardCoord = positionCubeCoords.add(rotatedRelCoord).toOffset();
 
                 relativeLayout.put(relCoord, boardCoord);
                 if (getInternalBuilding() != null && getInternalBuilding().getHeight(relCoord) > 0) {
@@ -216,6 +240,17 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         hardenedArmorDamaged = new boolean[locations()];
         locationBlownOff = new boolean[locations()];
         locationBlownOffThisPhase = new boolean[locations()];
+    }
+
+    /**
+     * Sets the primary facing.
+     *
+     * @param facing
+     */
+    @Override
+    public void setFacing(int facing) {
+        super.setFacing(facing);
+        updateRelativeLayout();
     }
 
     /**

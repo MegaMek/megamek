@@ -504,6 +504,10 @@ public class Princess extends BotClient {
         return strategicBuildingTargets;
     }
 
+    public boolean hasStrategicBuildingTargets(final Coords coords) {
+        return getStrategicBuildingTargets().contains(coords);
+    }
+
     public void addStrategicBuildingTarget(final Coords coords) {
         if (null == coords) {
             throw new NullPointerException("Coords is null.");
@@ -513,6 +517,23 @@ public class Princess extends BotClient {
             return;
         }
         getStrategicBuildingTargets().add(coords);
+    }
+
+    public void removeStrategicBuildingTarget(final Coords coords) {
+        if (null == coords) {
+            throw new NullPointerException("Coords is null.");
+        }
+        if (!getGame().getBoard().contains(coords)) {
+            LOGGER.warn("Board does not contain {}", coords.toFriendlyString());
+            return;
+        }
+        if (!hasStrategicBuildingTargets(coords)) {
+            LOGGER.warn("Strategic Building Targets does not contain {}", coords.toFriendlyString());
+            return;
+        }
+
+        getStrategicBuildingTargets().remove(coords);
+
     }
 
     public Set<Integer> getPriorityUnitTargets() {

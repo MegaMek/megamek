@@ -237,6 +237,11 @@ public class BuildingEntity extends AbstractBuildingEntity {
         return effectivePower >= powerNeeded;
     }
 
+    @Override
+    public boolean isBuildingEntityOrGunEmplacement() {
+        return true;
+    }
+
     /**
      * Calculates the base generator weight for an advanced building.
      * <p>

@@ -1995,7 +1995,12 @@ public class Compute {
         Vector<Coords> attackPos = new Vector<>();
         attackPos.add(attacker.getPosition());
         Vector<Coords> targetPos = new Vector<>();
-        targetPos.add(target.getPosition());
+
+        if (target instanceof BuildingEntity) {
+            targetPos.addAll(target.getSecondaryPositions().values());
+        } else {
+            targetPos.add(target.getPosition());
+        }
 
         if (CrossBoardAttackHelper.isOrbitToSurface(game, attacker, target)) {
             // The effective position of the target is the ground map position on the ground hex row of the high

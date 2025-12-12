@@ -157,7 +157,7 @@ public class MathUtility {
     /**
      * Calculates a Gaussian-weighted average from a list of integer values.
      *
-     * <p>This method computes a “soft” average that down-weights statistical outliers using a Gaussian
+     * <p>This method computes a "soft" average that down-weights statistical outliers using a Gaussian
      * (normal-distribution) weighting function. This is useful when a handful of extreme values should not influence
      * the final result as strongly as values clustered near the center of the distribution.</p>
      *

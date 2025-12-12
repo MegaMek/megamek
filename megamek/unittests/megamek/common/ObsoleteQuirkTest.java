@@ -223,8 +223,8 @@ class ObsoleteQuirkTest {
             String extinctionRange = ctl.getExtinctionRange();
             assertTrue(extinctionRange.contains("2950"), "Should contain obsolete year");
             // The reintro year is 3146, so extinction ends at 3145
-            assertTrue(extinctionRange.contains("3145") || extinctionRange.contains("3146"),
-                  "Should show end of obsolete period");
+            assertTrue(extinctionRange.contains("3145"), "Should show end of obsolete period (year before reintro)");
+            assertFalse(extinctionRange.contains("3146"), "Should not include reintroduction year in extinction range");
         }
 
         @Test

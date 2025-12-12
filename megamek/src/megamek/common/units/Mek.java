@@ -34,6 +34,8 @@
 
 package megamek.common.units;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
 import java.io.PrintWriter;
 import java.io.Serial;
 import java.time.LocalDate;
@@ -68,7 +70,6 @@ import megamek.common.exceptions.LocationFullException;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.loaders.MtfFile;
-import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
@@ -81,8 +82,6 @@ import megamek.common.weapons.autoCannons.UACWeapon;
 import megamek.common.weapons.gaussRifles.GaussWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.logging.MMLogger;
-
-import static megamek.common.bays.Bay.UNSET_BAY;
 
 /**
  * You know what Meks are, silly.
@@ -4306,6 +4305,11 @@ public abstract class Mek extends Entity {
             if (quirk.getType() == IOption.INTEGER) {
                 int value = quirk.intValue();
                 if (value != 0) {
+                    sb.append(MtfFile.QUIRK).append(quirk.getName()).append(":").append(value).append(newLine);
+                }
+            } else if (quirk.getType() == IOption.STRING) {
+                String value = quirk.stringValue();
+                if (value != null && !value.isEmpty()) {
                     sb.append(MtfFile.QUIRK).append(quirk.getName()).append(":").append(value).append(newLine);
                 }
             } else if (quirk.booleanValue()) {

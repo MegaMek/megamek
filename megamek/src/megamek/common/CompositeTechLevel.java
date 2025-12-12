@@ -376,9 +376,10 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         // Process pairs of years
         for (int i = 0; i < years.size(); i += 2) {
             int obsoleteYear = years.get(i);
-            int reintroYear = (i + 1 < years.size()) ? years.get(i + 1) : DATE_NONE;
+            // Extinction ends the year before reintroduction (e.g., reintro 3146 means extinct until 3145)
+            int extinctionEnd = (i + 1 < years.size()) ? years.get(i + 1) - 1 : DATE_NONE;
             if (obsoleteYear > 0) {
-                addExtinctionRange(obsoleteYear, reintroYear);
+                addExtinctionRange(obsoleteYear, extinctionEnd);
             }
         }
     }

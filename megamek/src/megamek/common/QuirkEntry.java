@@ -63,11 +63,7 @@ public record QuirkEntry(String code, String value, String location, int slot, S
      * @param quirkString The quirk string, optionally with a colon-separated value (e.g., "obsolete:2750")
      */
     public QuirkEntry(String quirkString) {
-        this(parseCode(quirkString), parseValue(quirkString), "", -1, "");
-
-        if (StringUtility.isNullOrBlank(quirkString)) {
-            throw new IllegalArgumentException("Invalid quirk code!");
-        }
+        this(validateAndParseCode(quirkString), parseValue(quirkString), "", -1, "");
     }
 
     /**
@@ -113,9 +109,9 @@ public record QuirkEntry(String code, String value, String location, int slot, S
         }
     }
 
-    private static String parseCode(String quirkString) {
-        if (quirkString == null) {
-            return "";
+    private static String validateAndParseCode(String quirkString) {
+        if (StringUtility.isNullOrBlank(quirkString)) {
+            throw new IllegalArgumentException("Invalid quirk string!");
         }
         int colonIndex = quirkString.indexOf(':');
         return colonIndex >= 0 ? quirkString.substring(0, colonIndex) : quirkString;

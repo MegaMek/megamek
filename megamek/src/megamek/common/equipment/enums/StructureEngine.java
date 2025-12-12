@@ -39,11 +39,12 @@ import megamek.common.equipment.Engine;
 import java.io.Serializable;
 
 /**
- * {@link megamek.common.units.MobileStructure} and {@link megamek.common.units.BuildingEntity} both have some unique & shared rules for Engines.
+ * {@link megamek.common.units.MobileStructure} and {@link megamek.common.units.BuildingEntity} both have some unique
+ * and shared rules for Engines.
  * <ul>
  *     <li>Building Entity weight multiplier and daily fuel weight from TO:AR 132</li>
- *     <li>Base Cost for Mobile Structure & Building Entity engine/generator from TO:AUE 208</li>
- *     <li>Mobile Structure power & motive system multipliers & fuel multiplier from TO:AUE 78</li>
+ *     <li>Base Cost for Mobile Structure and Building Entity engine/generator from TO:AUE 208</li>
+ *     <li>Mobile Structure power and motive system multipliers and fuel multiplier from TO:AUE 78</li>
  * </ul>
  */
 public enum StructureEngine implements Serializable {

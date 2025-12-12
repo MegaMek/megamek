@@ -668,7 +668,7 @@ public class BLKFile {
               .getOptionsList()
               .stream()
               .filter(IOption::booleanValue)
-              .map(IBasicOption::getName)
+              .map(BLKFile::formatQuirkForSave)
               .collect(Collectors.toList());
 
         if (!quirkList.isEmpty()) {
@@ -1184,6 +1184,20 @@ public class BLKFile {
             default -> engineCode;
         };
         return engineCode;
+    }
+
+    /**
+     * Formats a quirk for saving to a unit file. Boolean quirks are saved as just their name,
+     * while integer quirks (like obsolete) are saved as "name:value".
+     *
+     * @param quirk The quirk option to format
+     * @return The formatted string for saving
+     */
+    private static String formatQuirkForSave(IOption quirk) {
+        if (quirk.getType() == IOption.INTEGER) {
+            return quirk.getName() + ":" + quirk.intValue();
+        }
+        return quirk.getName();
     }
 
     private static String encodeEquipmentLine(Mounted<?> m) {

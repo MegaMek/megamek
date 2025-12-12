@@ -152,7 +152,7 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, QUIRK_NEG_NO_EJECT, false);
         addOption(negQuirk, QUIRK_NEG_NO_TWIST, false);
         addOption(negQuirk, QUIRK_NEG_NON_STANDARD, false);
-        addOption(negQuirk, QUIRK_NEG_OBSOLETE, false);
+        addOption(negQuirk, QUIRK_NEG_OBSOLETE, 0); // Year production ceased, 0 = not obsolete
         addOption(negQuirk, QUIRK_NEG_POOR_LIFE_SUPPORT, false);
         addOption(negQuirk, QUIRK_NEG_POOR_PERFORMANCE, false);
         addOption(negQuirk, QUIRK_NEG_POOR_SEALING, false);

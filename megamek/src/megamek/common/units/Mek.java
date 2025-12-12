@@ -4302,10 +4302,16 @@ public abstract class Mek extends Entity {
         }
         sb.append(newLine);
 
-        getQuirks().getOptionsList().stream()
-              .filter(IOption::booleanValue)
-              .map(IBasicOption::getName)
-              .forEach(quirk -> sb.append(MtfFile.QUIRK).append(quirk).append(newLine));
+        for (IOption quirk : getQuirks().getOptionsList()) {
+            if (quirk.getType() == IOption.INTEGER) {
+                int value = quirk.intValue();
+                if (value != 0) {
+                    sb.append(MtfFile.QUIRK).append(quirk.getName()).append(":").append(value).append(newLine);
+                }
+            } else if (quirk.booleanValue()) {
+                sb.append(MtfFile.QUIRK).append(quirk.getName()).append(newLine);
+            }
+        }
 
         for (Mounted<?> equipment : getEquipment()) {
             for (IOption weaponQuirk : equipment.getQuirks().activeQuirks()) {

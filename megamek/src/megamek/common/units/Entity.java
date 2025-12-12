@@ -13196,6 +13196,54 @@ public abstract class Entity extends TurnOrdered
         return quirks.booleanOption(name);
     }
 
+    /**
+     * Gets the year when production of this obsolete unit ceased.
+     *
+     * @return The year production ceased, or 0 if the unit doesn't have the Obsolete quirk
+     */
+    public int getObsoleteYear() {
+        if (!hasQuirk(OptionsConstants.QUIRK_NEG_OBSOLETE)) {
+            return 0;
+        }
+        IOption option = quirks.getOption(OptionsConstants.QUIRK_NEG_OBSOLETE);
+        return option != null ? option.intValue() : 0;
+    }
+
+    /**
+     * Calculates the repair/parts target number modifier for an obsolete unit.
+     * Per the rules: +1 TN per 15 years after production ceased, maximum +5.
+     *
+     * @param gameYear The current game year
+     * @return The TN modifier (0 to +5), or 0 if not obsolete
+     */
+    public int getObsoleteRepairModifier(int gameYear) {
+        int obsoleteYear = getObsoleteYear();
+        if (obsoleteYear <= 0 || gameYear <= obsoleteYear) {
+            return 0;
+        }
+        int yearsObsolete = gameYear - obsoleteYear;
+        int modifier = yearsObsolete / 15;
+        return Math.min(modifier, 5);
+    }
+
+    /**
+     * Calculates the resale price modifier for an obsolete unit.
+     * Per the rules: -10% per 20 years after production ceased, minimum 50%.
+     *
+     * @param gameYear The current game year
+     * @return The resale multiplier (0.5 to 1.0), or 1.0 if not obsolete
+     */
+    public double getObsoleteResaleModifier(int gameYear) {
+        int obsoleteYear = getObsoleteYear();
+        if (obsoleteYear <= 0 || gameYear <= obsoleteYear) {
+            return 1.0;
+        }
+        int yearsObsolete = gameYear - obsoleteYear;
+        int reductions = yearsObsolete / 20;
+        double modifier = 1.0 - (reductions * 0.10);
+        return Math.max(modifier, 0.5);
+    }
+
     public PartialRepairs getPartialRepairs() {
         return partReps;
     }
@@ -14499,12 +14547,29 @@ public abstract class Entity extends TurnOrdered
             // If the quirk doesn't have a location, then it is a unit quirk, not a weapon quirk.
             if (StringUtility.isNullOrBlank(quirkEntry.location())) {
                 // Activate the unit quirk.
-                if (getQuirks().getOption(quirkEntry.getQuirk()) == null) {
+                IOption option = getQuirks().getOption(quirkEntry.getQuirk());
+                if (option == null) {
                     LOGGER.warn("{} failed to load quirk for {} {} - Invalid quirk!", quirkEntry, getChassis(),
                           getModel());
                     continue;
                 }
-                getQuirks().getOption(quirkEntry.getQuirk()).setValue(true);
+                // Handle quirks with values (e.g., obsolete:2750)
+                if (quirkEntry.hasValue()) {
+                    if (option.getType() == IOption.INTEGER) {
+                        try {
+                            option.setValue(Integer.parseInt(quirkEntry.value()));
+                        } catch (NumberFormatException e) {
+                            LOGGER.warn("{} failed to parse quirk value for {} {} - Invalid number: {}",
+                                  quirkEntry, getChassis(), getModel(), quirkEntry.value());
+                        }
+                    } else {
+                        // For non-integer quirks with values, store as string
+                        option.setValue(quirkEntry.value());
+                    }
+                } else {
+                    // Boolean quirk - just set to true
+                    option.setValue(true);
+                }
             } else {
                 assignWeaponQuirk(quirkEntry);
             }

@@ -130,6 +130,11 @@ public class CompositeTechLevel implements ITechnology, Serializable {
               entity.isMixedTech(),
               entity.getYear(),
               techFaction);
+        // If the entity has the Obsolete quirk, add an extinction at the obsolete year
+        int obsoleteYear = entity.getObsoleteYear();
+        if (obsoleteYear > 0) {
+            addExtinctionRange(obsoleteYear, DATE_NONE);
+        }
     }
 
     /**

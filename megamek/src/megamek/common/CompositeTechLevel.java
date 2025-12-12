@@ -350,6 +350,18 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     }
 
     /**
+     * Sets the obsolete year for this unit, adding an extinction range from that year onwards. This should be called
+     * after quirks are loaded if the unit has the Obsolete quirk.
+     *
+     * @param obsoleteYear - the year when production of this obsolete unit ceased
+     */
+    public void setObsoleteYear(int obsoleteYear) {
+        if (obsoleteYear > 0) {
+            addExtinctionRange(obsoleteYear, DATE_NONE);
+        }
+    }
+
+    /**
      * Adds new range to collection of extinction ranges then checks for overlapping ranges and merges them.
      *
      * @param start - first year of new extinction range

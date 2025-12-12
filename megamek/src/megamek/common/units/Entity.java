@@ -14581,6 +14581,12 @@ public abstract class Entity extends TurnOrdered
                 assignWeaponQuirk(quirkEntry);
             }
         }
+
+        // After loading quirks, check if the Obsolete quirk was loaded and update tech advancement
+        int obsoleteYear = getObsoleteYear();
+        if (obsoleteYear > 0) {
+            compositeTechLevel.setObsoleteYear(obsoleteYear);
+        }
     }
 
     /**

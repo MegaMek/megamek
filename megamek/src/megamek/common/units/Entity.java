@@ -233,6 +233,8 @@ public abstract class Entity extends TurnOrdered
 
     public static final long ETYPE_HANDHELD_WEAPON = 1L << 29;
 
+    public static final long ETYPE_BUILDING_ENTITY = 1L << 30;
+
     public static final int BLOOD_STALKER_TARGET_CLEARED = -2;
 
     public static final int LOC_NONE = -1;
@@ -14675,6 +14677,8 @@ public abstract class Entity extends TurnOrdered
             return "ProtoMek";
         } else if ((typeId & ETYPE_HANDHELD_WEAPON) == ETYPE_HANDHELD_WEAPON) {
             return "Handheld Weapon";
+        } else if ((typeId & ETYPE_BUILDING_ENTITY) == ETYPE_BUILDING_ENTITY) {
+            return "Building Entity";
         } else {
             return "Unknown";
         }
@@ -14746,6 +14750,8 @@ public abstract class Entity extends TurnOrdered
             return "Tank";
         } else if ((typeId & ETYPE_HANDHELD_WEAPON) == ETYPE_HANDHELD_WEAPON) {
             return "Handheld Weapon";
+        } else if ((typeId & ETYPE_BUILDING_ENTITY) == ETYPE_BUILDING_ENTITY) {
+            return "Building Entity";
         } else {
             return "Unknown";
         }

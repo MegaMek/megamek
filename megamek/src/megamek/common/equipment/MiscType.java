@@ -45,6 +45,7 @@ import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.equipment.enums.StructureEngine;
 import megamek.common.miscGear.AntiMekGear;
 import megamek.common.units.*;
 import megamek.common.util.RoundWeight;
@@ -329,6 +330,7 @@ public class MiscType extends EquipmentType {
     public static final MiscTypeFlag F_CHAIN_DRAPE_PONCHO = MiscTypeFlag.F_CHAIN_DRAPE_PONCHO;
 
     public static final MiscTypeFlag F_WEAPON_ENHANCEMENT = MiscTypeFlag.F_WEAPON_ENHANCEMENT;
+    public static final MiscTypeFlag F_POWER_GENERATOR = MiscTypeFlag.F_POWER_GENERATOR;
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L; // BMR - Indicates an Improvised Club
@@ -1932,6 +1934,10 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createChainDrape("Cape", F_CHAIN_DRAPE_CAPE));
         EquipmentType.addType(MiscType.createChainDrape("Apron", F_CHAIN_DRAPE_APRON));
         EquipmentType.addType(MiscType.createChainDrape("Poncho", F_CHAIN_DRAPE_PONCHO));
+
+        for (StructureEngine engineType : StructureEngine.values()) {
+            EquipmentType.addType(MiscType.createPowerGenerator(engineType));
+        }
     }
 
     // Advanced Mek/ProtoMek/Vehicular Motive Systems
@@ -11857,6 +11863,30 @@ public class MiscType extends EquipmentType {
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+
+    public static MiscType createPowerGenerator(StructureEngine engineType) {
+        MiscType misc = new MiscType();
+        misc.name =
+              Messages.getString("EquipmentType.StructureEngine." + engineType.name()) + " " + Messages.getString(
+                    "EquipmentType.PowerGenerator");
+        misc.setInternalName(engineType.name() + " PowerGenerator");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticalSlots = CRITICAL_SLOTS_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.bv = BV_VARIABLE;
+        misc.spreadable = true;
+        misc.flags = misc.flags.or(F_POWER_GENERATOR).or(F_VARIABLE_SIZE);
+        misc.subType |= (engineType.getSubTypeFlag());
+        misc.rulesRefs = "131-133, TO:AR";
+
+        // Let's create a dummy engine to get the tech advancement
+        Engine engine = new Engine(0, engineType.getEngineType(), 0);
+
+        // TODO: Fix tech advancement, I have no clue how this is supposed to work
+        misc.techAdvancement = engine.getTechAdvancement();
+
         return misc;
     }
 

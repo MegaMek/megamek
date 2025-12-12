@@ -26282,6 +26282,17 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Tell the clients to add new buildings to the board.
+     *
+     * @param buildings - a <code>Vector</code> of <code>Building</code>s that need to be added.
+     *
+     * @return a <code>Packet</code> for the command.
+     */
+    private Packet createAddBuildingPacket(Vector<IBuilding> buildings) {
+        return new Packet(PacketCommand.BLDG_ADD, buildings);
+    }
+
+    /**
      * Tell the clients to update the CFs of the given buildings.
      *
      * @param buildings - a <code>Vector</code> of <code>Building</code>s that need to be updated.
@@ -26732,6 +26743,10 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         return vDesc;
+    }
+
+    public void sendNewBuildings(Vector<IBuilding> buildings) {
+        send(createAddBuildingPacket(buildings));
     }
 
     public void sendChangedBuildings(Vector<IBuilding> buildings) {

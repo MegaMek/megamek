@@ -12910,6 +12910,88 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Handle a toxin gas attack (IO pg 79). Conventional Infantry with Gas Effuser (Toxin) implant releases toxin gas
+     * to damage enemy conventional infantry. On success, target takes 0.25 damage per attacking trooper.
+     */
+    private void resolveToxinAttack(PhysicalResult physicalResult, int lastEntityId) {
+        final ToxinAttackAction toxinAttackAction = (ToxinAttackAction) physicalResult.aaa;
+        final Entity attackingEntity = game.getEntity(toxinAttackAction.getEntityId());
+
+        if (attackingEntity == null) {
+            LOGGER.error("Attacking entity is null for Toxin Attack");
+            return;
+        }
+
+        // Get ToHitData, damage, and roll from the PhysicalResult
+        final ToHitData toHit = physicalResult.toHit;
+        int damage = physicalResult.damage;
+        int rollValue = physicalResult.roll.getIntValue();
+
+        // Get target entity
+        final Entity targetEntity = game.getEntity(toxinAttackAction.getTargetId());
+        Report report;
+
+        if (lastEntityId != toxinAttackAction.getEntityId()) {
+            // Who is making the attack
+            report = new Report(4005);
+            report.subject = attackingEntity.getId();
+            report.addDesc(attackingEntity);
+            addReport(report);
+        }
+
+        // Report the toxin attack attempt
+        report = new Report(4560);
+        report.subject = attackingEntity.getId();
+        report.indent();
+        report.addDesc(targetEntity);
+        report.newlines = 0;
+        addReport(report);
+
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
+            report = new Report(4561);
+            report.subject = attackingEntity.getId();
+            report.add(toHit.getDesc());
+            addReport(report);
+            return;
+        }
+
+        // Report the roll
+        report = new Report(4025);
+        report.subject = attackingEntity.getId();
+        report.add(toHit);
+        report.add(physicalResult.roll);
+        report.newlines = 0;
+        addReport(report);
+
+        // Check hit
+        if (rollValue < toHit.getValue()) {
+            // Miss
+            report = new Report(4562);
+            report.subject = attackingEntity.getId();
+            addReport(report);
+            return;
+        }
+
+        // Hit! Apply toxin damage
+        if (targetEntity != null) {
+            // Report hit with flavor text
+            report = new Report(4563);
+            report.subject = attackingEntity.getId();
+            report.addDesc(targetEntity);
+            report.add(damage);
+            addReport(report);
+
+            // Apply damage to conventional infantry
+            // Toxin gas is area-effect - no terrain modifiers (IO pg 79)
+            HitData hit = targetEntity.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+            hit.setIgnoreInfantryDoubleDamage(true);
+            addReport(damageEntity(targetEntity, hit, damage));
+        }
+        addNewLines();
+    }
+
+    /**
      * Handle a club attack
      */
     private void resolveClubAttack(PhysicalResult pr, int lastEntityId) {
@@ -27007,6 +27089,9 @@ public class TWGameManager extends AbstractGameManager {
         } else if (aaa instanceof PheromoneAttackAction pheromoneAttackAction) {
             toHit = pheromoneAttackAction.toHit(game);
             damage = 0; // Pheromone attack causes no damage, only impairment
+        } else if (aaa instanceof ToxinAttackAction toxinAttackAction) {
+            toHit = toxinAttackAction.toHit(game);
+            damage = ToxinAttackAction.getDamageFor((Infantry) ae);
         }
         pr.toHit = toHit;
         pr.damage = damage;
@@ -27097,6 +27182,9 @@ public class TWGameManager extends AbstractGameManager {
             cen = aaa.getEntityId();
         } else if (aaa instanceof PheromoneAttackAction) {
             resolvePheromoneAttack(pr, cen);
+            cen = aaa.getEntityId();
+        } else if (aaa instanceof ToxinAttackAction) {
+            resolveToxinAttack(pr, cen);
             cen = aaa.getEntityId();
         } else {
             LOGGER.error("Unknown attack action declared.");

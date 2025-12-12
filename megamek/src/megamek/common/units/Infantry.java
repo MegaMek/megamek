@@ -1620,8 +1620,8 @@ public class Infantry extends Entity {
     }
 
     /**
-     * @return True if this infantry has Dermal Camo Armor and can benefit from its mimetic stealth properties (foot or
-     *       jump infantry only, not wearing other armor).
+     * @return True if this infantry has Dermal Camo Armor and can benefit from its mimetic
+     *         stealth properties (leg or jump infantry only, not wearing other armor).
      */
     public boolean hasDermalCamoStealth() {
         return hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)

@@ -826,7 +826,9 @@ public class Crew implements Serializable {
             for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();
 
-                option.clearValue();
+                if (option != null) {
+                    option.clearValue();
+                }
             }
         }
 

@@ -130,10 +130,10 @@ public class CompositeTechLevel implements ITechnology, Serializable {
               entity.isMixedTech(),
               entity.getYear(),
               techFaction);
-        // If the entity has the Obsolete quirk, add an extinction at the obsolete year
-        int obsoleteYear = entity.getObsoleteYear();
-        if (obsoleteYear > 0) {
-            addExtinctionRange(obsoleteYear, DATE_NONE);
+        // If the entity has the Obsolete quirk, add extinction ranges for all obsolete periods
+        List<Integer> obsoleteYears = entity.getObsoleteYears();
+        if (!obsoleteYears.isEmpty()) {
+            setObsoleteYears(obsoleteYears);
         }
     }
 
@@ -358,6 +358,28 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     public void setObsoleteYear(int obsoleteYear) {
         if (obsoleteYear > 0) {
             addExtinctionRange(obsoleteYear, DATE_NONE);
+        }
+    }
+
+    /**
+     * Sets multiple obsolete/reintroduction cycles for this unit based on the Obsolete quirk. The years list should be
+     * in pairs: obsoleteYear, reintroYear, obsoleteYear2, reintroYear2, ... An odd number of years means the final
+     * obsolete period extends indefinitely.
+     *
+     * @param years - list of years in order: obsolete, reintro, obsolete, reintro, ...
+     */
+    public void setObsoleteYears(List<Integer> years) {
+        if (years == null || years.isEmpty()) {
+            return;
+        }
+
+        // Process pairs of years
+        for (int i = 0; i < years.size(); i += 2) {
+            int obsoleteYear = years.get(i);
+            int reintroYear = (i + 1 < years.size()) ? years.get(i + 1) : DATE_NONE;
+            if (obsoleteYear > 0) {
+                addExtinctionRange(obsoleteYear, reintroYear);
+            }
         }
     }
 

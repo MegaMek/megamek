@@ -13197,16 +13197,132 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Gets the year when production of this obsolete unit ceased.
+     * Gets the obsolete quirk value as a raw string.
+     * Format is comma-separated years: "obsoleteYear,reintroYear,obsoleteYear2,reintroYear2,..."
      *
-     * @return The year production ceased, or 0 if the unit doesn't have the Obsolete quirk
+     * @return The raw obsolete quirk string, or empty string if not set
+     */
+    public String getObsoleteQuirkValue() {
+        IOption option = quirks.getOption(OptionsConstants.QUIRK_NEG_OBSOLETE);
+        if (option == null) {
+            return "";
+        }
+        String value = option.stringValue();
+        return value != null ? value : "";
+    }
+
+    /** Marker value for legacy obsolete quirk with unknown year */
+    public static final String OBSOLETE_UNKNOWN_MARKER = "unknown";
+
+    /**
+     * Parses the obsolete quirk value into a list of years.
+     * Format: "obsoleteYear,reintroYear,obsoleteYear2,..." where pairs define obsolete periods.
+     *
+     * @return List of years parsed from the obsolete quirk, empty list if not set or if set to "unknown"
+     */
+    public List<Integer> getObsoleteYears() {
+        String value = getObsoleteQuirkValue();
+        if (value.isEmpty() || OBSOLETE_UNKNOWN_MARKER.equalsIgnoreCase(value)) {
+            return new ArrayList<>();
+        }
+
+        List<Integer> years = new ArrayList<>();
+        String[] parts = value.split(",");
+        for (String part : parts) {
+            try {
+                years.add(Integer.parseInt(part.trim()));
+            } catch (NumberFormatException e) {
+                LOGGER.warn("Invalid year in obsolete quirk for {} {}: {}", getChassis(), getModel(), part);
+            }
+        }
+        return years;
+    }
+
+    /**
+     * Checks if this unit has the Obsolete quirk set, regardless of whether the year is known. Use this to check if the
+     * quirk is active. Use isObsoleteInYear() to check if the unit is obsolete at a specific year.
+     *
+     * @return true if the Obsolete quirk is set (even if year is unknown)
+     */
+    public boolean hasObsoleteQuirk() {
+        String value = getObsoleteQuirkValue();
+        return !value.isEmpty();
+    }
+
+    /**
+     * Gets the first year when production of this obsolete unit ceased.
+     * Kept for backward compatibility - use isObsoleteInYear() for full cycle support.
+     *
+     * @return The first year production ceased, or 0 if the unit doesn't have the Obsolete quirk
      */
     public int getObsoleteYear() {
-        if (!hasQuirk(OptionsConstants.QUIRK_NEG_OBSOLETE)) {
+        List<Integer> years = getObsoleteYears();
+        return years.isEmpty() ? 0 : years.get(0);
+    }
+
+    /**
+     * Checks if the unit is obsolete in a given year. Handles multiple obsolete/reintroduction cycles. Format:
+     * "2950,3146,3200" means obsolete 2950-3145, available 3146-3199, obsolete 3200+
+     *
+     * @param checkYear The year to check
+     *
+     * @return true if the unit is obsolete in that year
+     */
+    public boolean isObsoleteInYear(int checkYear) {
+        List<Integer> years = getObsoleteYears();
+        if (years.isEmpty()) {
+            return false;
+        }
+
+        // Process pairs: obsoleteYear, reintroYear, obsoleteYear2, reintroYear2, ...
+        boolean obsolete = false;
+        for (int i = 0; i < years.size(); i++) {
+            int year = years.get(i);
+            if (i % 2 == 0) {
+                // Obsolete year
+                if (checkYear >= year) {
+                    obsolete = true;
+                }
+            } else {
+                // Reintroduction year
+                if (checkYear >= year) {
+                    obsolete = false;
+                }
+            }
+        }
+        return obsolete;
+    }
+
+    /**
+     * Gets the most recent obsolete period start year that applies to the given year. Used for calculating repair
+     * modifiers based on how long the unit has been obsolete.
+     *
+     * @param checkYear The year to check
+     *
+     * @return The start year of the current obsolete period, or 0 if not obsolete
+     */
+    public int getObsoleteYearForModifiers(int checkYear) {
+        List<Integer> years = getObsoleteYears();
+        if (years.isEmpty()) {
             return 0;
         }
-        IOption option = quirks.getOption(OptionsConstants.QUIRK_NEG_OBSOLETE);
-        return option != null ? option.intValue() : 0;
+
+        int currentObsoleteStart = 0;
+        for (int i = 0; i < years.size(); i++) {
+            int year = years.get(i);
+            if (i % 2 == 0) {
+                // Obsolete year
+                if (checkYear >= year) {
+                    currentObsoleteStart = year;
+                }
+            } else {
+                // Reintroduction year
+                if (checkYear >= year) {
+                    currentObsoleteStart = 0;
+                }
+            }
+        }
+        return currentObsoleteStart;
     }
 
     /**
@@ -13217,8 +13333,8 @@ public abstract class Entity extends TurnOrdered
      * @return The TN modifier (0 to +5), or 0 if not obsolete
      */
     public int getObsoleteRepairModifier(int gameYear) {
-        int obsoleteYear = getObsoleteYear();
-        if (obsoleteYear <= 0 || gameYear <= obsoleteYear) {
+        int obsoleteYear = getObsoleteYearForModifiers(gameYear);
+        if (obsoleteYear <= 0) {
             return 0;
         }
         int yearsObsolete = gameYear - obsoleteYear;
@@ -13234,8 +13350,8 @@ public abstract class Entity extends TurnOrdered
      * @return The resale multiplier (0.5 to 1.0), or 1.0 if not obsolete
      */
     public double getObsoleteResaleModifier(int gameYear) {
-        int obsoleteYear = getObsoleteYear();
-        if (obsoleteYear <= 0 || gameYear <= obsoleteYear) {
+        int obsoleteYear = getObsoleteYearForModifiers(gameYear);
+        if (obsoleteYear <= 0) {
             return 1.0;
         }
         int yearsObsolete = gameYear - obsoleteYear;
@@ -14553,7 +14669,7 @@ public abstract class Entity extends TurnOrdered
                           getModel());
                     continue;
                 }
-                // Handle quirks with values (e.g., obsolete:2750)
+                // Handle quirks with values (e.g., obsolete:2750 or obsolete:2950,3146)
                 if (quirkEntry.hasValue()) {
                     if (option.getType() == IOption.INTEGER) {
                         try {
@@ -14562,8 +14678,10 @@ public abstract class Entity extends TurnOrdered
                             LOGGER.warn("{} failed to parse quirk value for {} {} - Invalid number: {}",
                                   quirkEntry, getChassis(), getModel(), quirkEntry.value());
                         }
+                    } else if (option.getType() == IOption.STRING) {
+                        option.setValue(quirkEntry.value());
                     } else {
-                        // For non-integer quirks with values, store as string
+                        // For other quirks with values, store as string
                         option.setValue(quirkEntry.value());
                     }
                 } else {
@@ -14575,6 +14693,18 @@ public abstract class Entity extends TurnOrdered
                         LOGGER.warn("Quirk {} for {} {} has no value, using default",
                               quirkEntry.getQuirk(), getChassis(), getModel());
                         option.setValue(option.getDefault());
+                    } else if (option.getType() == IOption.STRING) {
+                        // Handle backward compatibility for old boolean-style obsolete quirk
+                        if (OptionsConstants.QUIRK_NEG_OBSOLETE.equals(quirkEntry.getQuirk())) {
+                            // Old format: just "obsolete" with no value means unit is obsolete
+                            // but we don't know when. Set to "unknown" as a marker value.
+                            // This marks the quirk as active but won't add invalid extinction dates.
+                            LOGGER.info("Legacy obsolete quirk found for {} {} - converting to 'unknown' marker",
+                                  getChassis(), getModel());
+                            option.setValue("unknown");
+                        } else {
+                            option.setValue("");
+                        }
                     }
                 }
             } else {
@@ -14583,9 +14713,9 @@ public abstract class Entity extends TurnOrdered
         }
 
         // After loading quirks, check if the Obsolete quirk was loaded and update tech advancement
-        int obsoleteYear = getObsoleteYear();
-        if (obsoleteYear > 0) {
-            compositeTechLevel.setObsoleteYear(obsoleteYear);
+        List<Integer> obsoleteYears = getObsoleteYears();
+        if (!obsoleteYears.isEmpty()) {
+            compositeTechLevel.setObsoleteYears(obsoleteYears);
         }
     }
 

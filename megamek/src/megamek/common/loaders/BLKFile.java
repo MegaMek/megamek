@@ -1186,8 +1186,9 @@ public class BLKFile {
     }
 
     /**
-     * Checks if a quirk is active and should be saved. Boolean quirks are active if true, integer quirks (like
-     * obsolete) are active if they have a non-zero value.
+     * Checks if a quirk is active and should be saved. Boolean quirks are active if true, integer quirks
+     * are active if they have a non-zero value, string quirks (like obsolete) are active if they have a
+     * non-empty value.
      *
      * @param quirk The quirk option to check
      *
@@ -1197,12 +1198,17 @@ public class BLKFile {
         if (quirk.getType() == IOption.INTEGER) {
             return quirk.intValue() != 0;
         }
+        if (quirk.getType() == IOption.STRING) {
+            String value = quirk.stringValue();
+            return value != null && !value.isEmpty();
+        }
         return quirk.booleanValue();
     }
 
     /**
      * Formats a quirk for saving to a unit file. Boolean quirks are saved as just their name,
-     * while integer quirks (like obsolete) are saved as "name:value".
+     * while integer quirks are saved as "name:value" and string quirks (like obsolete) are saved
+     * as "name:value" (e.g., "obsolete:2950,3146").
      *
      * @param quirk The quirk option to format
      * @return The formatted string for saving
@@ -1210,6 +1216,12 @@ public class BLKFile {
     private static String formatQuirkForSave(IOption quirk) {
         if (quirk.getType() == IOption.INTEGER) {
             return quirk.getName() + ":" + quirk.intValue();
+        }
+        if (quirk.getType() == IOption.STRING) {
+            String value = quirk.stringValue();
+            if (value != null && !value.isEmpty()) {
+                return quirk.getName() + ":" + value;
+            }
         }
         return quirk.getName();
     }

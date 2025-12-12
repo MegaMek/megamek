@@ -564,10 +564,10 @@ class TeamLoadOutGeneratorTest {
         // For other rounds, "Standard" should be first.
         HashMap<String, List<String>> topN = mwc.getTopN(3);
 
-        assertTrue(topN.get("LRM").get(1).contains("Dead-Fire"));
-        assertTrue(topN.get("LRM").get(0).contains("Standard"));
-        assertTrue(topN.get("SRM").get(1).contains("Dead-Fire"));
-        assertTrue(topN.get("SRM").get(0).contains("Standard"));
+        assertTrue(topN.get("LRM").get(0).contains("Dead-Fire"));
+        assertTrue(topN.get("LRM").get(1).contains("Standard"));
+        assertTrue(topN.get("SRM").get(0).contains("Dead-Fire"));
+        assertTrue(topN.get("SRM").get(1).contains("Standard"));
 
         assertTrue(topN.get("AC").get(0).contains("Standard"));
         assertTrue(topN.get("Arrow IV").get(0).contains("Standard"));
@@ -597,8 +597,8 @@ class TeamLoadOutGeneratorTest {
         mwc.increaseMunitions(tsmOnly);
         mwc.increaseMunitions(tsmOnly);
         mwc.increaseMunitions(tsmOnly);
-        assertEquals(15.0, mwc.getSrmWeights().get("Anti-TSM"));
-        assertEquals("Anti-TSM=15.0", mwc.getTopN(1).get("SRM").get(0));
+        assertEquals(7.0, mwc.getSrmWeights().get("Anti-TSM"));
+        assertEquals("Anti-TSM=7.0", mwc.getTopN(1).get("SRM").get(0));
     }
 
     @Test

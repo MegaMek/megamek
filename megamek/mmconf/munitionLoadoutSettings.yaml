@@ -21,7 +21,7 @@ Defaults:
     Weight: 1.0
     LRM:
       Dead-Fire:
-        IS: 2.0
+        IS: 3.0
         Clan: 1.0
       Standard:
         IS: 2.0
@@ -88,7 +88,7 @@ Defaults:
 
     SRM:
       Dead-Fire:
-        IS: 2.0
+        IS: 3.0
         Clan: 1.0
       Standard:
         IS: 2.0

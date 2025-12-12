@@ -219,6 +219,7 @@ public class TeamLoadOutGenerator {
           entry("SRM", MunitionTree.SRM_MUNITION_NAMES),
           entry("AC", MunitionTree.AC_MUNITION_NAMES),
           entry("ATM", MunitionTree.ATM_MUNITION_NAMES),
+          entry("iATM", MunitionTree.iATM_MUNITION_NAMES),
           entry("Arrow IV", MunitionTree.ARROW_MUNITION_NAMES),
           entry("Artillery", MunitionTree.ARTILLERY_MUNITION_NAMES),
           entry("Artillery Cannon", MunitionTree.MEK_MORTAR_MUNITION_NAMES),

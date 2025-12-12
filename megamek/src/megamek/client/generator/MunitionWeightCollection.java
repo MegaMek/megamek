@@ -50,6 +50,7 @@ class MunitionWeightCollection {
     private HashMap<String, Double> srmWeights;
     private HashMap<String, Double> acWeights;
     private HashMap<String, Double> atmWeights;
+    private HashMap<String, Double> iatmWeights;
     private HashMap<String, Double> arrowWeights;
     private HashMap<String, Double> artyWeights;
     private HashMap<String, Double> artyCannonWeights;
@@ -79,12 +80,13 @@ class MunitionWeightCollection {
         lrmWeights = initializeWeaponWeightsYAML("LRM", factionName, clan, MunitionTree.LRM_MUNITION_NAMES);
         srmWeights = initializeWeaponWeightsYAML("SRM", factionName, clan, MunitionTree.SRM_MUNITION_NAMES);
         acWeights = initializeWeaponWeightsYAML( "AC", factionName, clan, MunitionTree.AC_MUNITION_NAMES);
-        atmWeights = initializeWeaponWeightsYAML("ATM", factionName, clan, MunitionTree.ATM_MUNITION_NAMES);
         arrowWeights = initializeWeaponWeightsYAML("Arrow IV", factionName, clan, MunitionTree.ARROW_MUNITION_NAMES);
         artyWeights = initializeWeaponWeightsYAML("Artillery", factionName, clan,
               MunitionTree.ARTILLERY_MUNITION_NAMES);
         artyCannonWeights = initializeWeaponWeightsYAML("Artillery Cannon", factionName, clan,
               MunitionTree.ARTILLERY_CANNON_MUNITION_NAMES);
+        atmWeights = initializeWeaponWeightsYAML("ATM", factionName, clan, MunitionTree.ATM_MUNITION_NAMES);
+        iatmWeights = initializeWeaponWeightsYAML("iATM", factionName, clan, MunitionTree.iATM_MUNITION_NAMES);
         mekMortarWeights = initializeWeaponWeightsYAML("Mek Mortar", factionName, clan,
               MunitionTree.MEK_MORTAR_MUNITION_NAMES);
         narcWeights = initializeWeaponWeightsYAML("Narc", factionName, clan, MunitionTree.NARC_MUNITION_NAMES);
@@ -161,31 +163,6 @@ class MunitionWeightCollection {
             weights.put(name, weight);
         }
 
-        return weights;
-    }
-
-    private static HashMap<String, Double> initializeMissileWeaponWeights(String weapon, List<String> munitionsList) {
-        HashMap<String, Double> weights = new HashMap<>();
-        for (String name : munitionsList) {
-            weights.put(name, getPropDouble("Defaults.Munitions.Weight", 1.0));
-        }
-        // Every missile weight list should have a Standard set as weight 2.0
-        weights.put("Standard", getPropDouble(String.format("Defaults.Munitions.%s.Standard", weapon), 2.0));
-        // Dead-Fire should be even higher to start
-        weights.put("Dead-Fire", getPropDouble("defaultDeadFireMunitionWeight", 3.0));
-        // Artemis should be zeroed; Artemis-equipped launchers will be handled
-        // separately
-        weights.put("Artemis-capable", getPropDouble("defaultArtemisCapableMunitionWeight", 0.0));
-        return weights;
-    }
-
-    private static HashMap<String, Double> initializeATMWeights(List<String> munitionsList) {
-        HashMap<String, Double> weights = new HashMap<>();
-        for (String name : munitionsList) {
-            weights.put(name, getPropDouble("Defaults.Munitions.defaultATMMunitionWeight", 2.0));
-        }
-        // ATM Standard ammo is weighted lower due to overlap with HE and ER
-        weights.put("Standard", getPropDouble("Defaults.Munitions.defaultATMStandardWeight", 1.0));
         return weights;
     }
 

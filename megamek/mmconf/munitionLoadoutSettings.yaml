@@ -164,7 +164,7 @@ Defaults:
         IS: 1.0
         Clan: 1.0
 
-    Arrow:
+    Arrow IV:
       Fuel-Air:
         IS: 1.0
         Clan: 1.0
@@ -280,6 +280,15 @@ Defaults:
         IS: 1.0
         Clan: 1.0
       Standard:
+        IS: 1.0
+        Clan: 1.0
+
+    # Currently only used for nuclear munitions; other bomb settings live in the following section
+    Bomb:
+      Davy Crockett-M:
+        IS: 1.0
+        Clan: 1.0
+      AlamoMissile:
         IS: 1.0
         Clan: 1.0
 

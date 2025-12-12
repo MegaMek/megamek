@@ -106,6 +106,8 @@ public class MunitionTree {
           "Precision Playtest"));
 
     public static final List<String> ATM_MUNITION_NAMES = new ArrayList<>(List.of("HE", "ER", "Standard"));
+    public static final List<String> iATM_MUNITION_NAMES = new ArrayList<>(List.of("HE", "ER", "Standard", "IIW",
+          "IMP"));
 
     public static final List<String> ARROW_MUNITION_NAMES = new ArrayList<>(List.of("Fuel-Air",
           "Standard",

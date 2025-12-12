@@ -11200,7 +11200,6 @@ public class MiscType extends EquipmentType {
         misc.bv = BV_VARIABLE;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_POWER_GENERATOR).or(F_VARIABLE_SIZE);
-        misc.subType |= (engineType.getSubTypeFlag());
         misc.rulesRefs = "131-133, TO:AR";
 
         // Let's create a dummy engine to get the tech advancement

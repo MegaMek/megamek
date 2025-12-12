@@ -468,10 +468,12 @@ public class TeamLoadOutGenerator {
         Map<String, Object> node = map;
         Object value = null;
         for (String key : keys) {
-            if (node.containsKey(key)) {
+            if (node != null && node.containsKey(key)) {
                 value = node.get(key);
                 if (value instanceof Map) {
                     node = (Map<String, Object>) value;
+                } else {
+                    node = null;
                 }
             } else {
                 throw new Exception(String.format("Key '%s' not found!", keyPath));

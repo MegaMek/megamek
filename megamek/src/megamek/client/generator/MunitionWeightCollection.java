@@ -34,6 +34,7 @@
 package megamek.client.generator;
 
 import static java.util.Map.entry;
+import static megamek.client.generator.TeamLoadOutGenerator.searchMap;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,24 +57,38 @@ class MunitionWeightCollection {
     private HashMap<String, Double> narcWeights;
     private HashMap<String, Double> bombWeights;
     private Map<String, HashMap<String, Double>> mapTypeToWeights;
+    private final String factionName;
+    private final boolean clan;
 
+    // Default constructor, for backwards compatibility
     MunitionWeightCollection() {
+        factionName = "IS";
+        clan = false;
+        resetWeights();
+    }
+
+    // For new default handling
+    MunitionWeightCollection(String factionName, boolean clan) {
+        this.factionName = factionName;
+        this.clan = clan;
         resetWeights();
     }
 
     public void resetWeights() {
         // Initialize weights for all the weapon types using known munition names
-        lrmWeights = initializeMissileWeaponWeights(MunitionTree.LRM_MUNITION_NAMES);
-        srmWeights = initializeMissileWeaponWeights(MunitionTree.SRM_MUNITION_NAMES);
-        acWeights = initializeWeaponWeights(MunitionTree.AC_MUNITION_NAMES);
-        // ATMs are treated differently
-        atmWeights = initializeATMWeights(MunitionTree.ATM_MUNITION_NAMES);
-        arrowWeights = initializeWeaponWeights(MunitionTree.ARROW_MUNITION_NAMES);
-        artyWeights = initializeWeaponWeights(MunitionTree.ARTILLERY_MUNITION_NAMES);
-        artyCannonWeights = initializeWeaponWeights(MunitionTree.ARTILLERY_CANNON_MUNITION_NAMES);
-        mekMortarWeights = initializeWeaponWeights(MunitionTree.MEK_MORTAR_MUNITION_NAMES);
-        narcWeights = initializeWeaponWeights(MunitionTree.NARC_MUNITION_NAMES);
-        bombWeights = initializeWeaponWeights(MunitionTree.BOMB_MUNITION_NAMES);
+        lrmWeights = initializeWeaponWeightsYAML("LRM", factionName, clan, MunitionTree.LRM_MUNITION_NAMES);
+        srmWeights = initializeWeaponWeightsYAML("SRM", factionName, clan, MunitionTree.SRM_MUNITION_NAMES);
+        acWeights = initializeWeaponWeightsYAML( "AC", factionName, clan, MunitionTree.AC_MUNITION_NAMES);
+        atmWeights = initializeWeaponWeightsYAML("ATM", factionName, clan, MunitionTree.ATM_MUNITION_NAMES);
+        arrowWeights = initializeWeaponWeightsYAML("Arrow IV", factionName, clan, MunitionTree.ARROW_MUNITION_NAMES);
+        artyWeights = initializeWeaponWeightsYAML("Artillery", factionName, clan,
+              MunitionTree.ARTILLERY_MUNITION_NAMES);
+        artyCannonWeights = initializeWeaponWeightsYAML("Artillery Cannon", factionName, clan,
+              MunitionTree.ARTILLERY_CANNON_MUNITION_NAMES);
+        mekMortarWeights = initializeWeaponWeightsYAML("Mek Mortar", factionName, clan,
+              MunitionTree.MEK_MORTAR_MUNITION_NAMES);
+        narcWeights = initializeWeaponWeightsYAML("Narc", factionName, clan, MunitionTree.NARC_MUNITION_NAMES);
+        bombWeights = initializeWeaponWeightsYAML("Bomb", factionName, clan, MunitionTree.BOMB_MUNITION_NAMES);
 
         mapTypeToWeights = new HashMap<>(Map.ofEntries(entry("LRM", lrmWeights),
               entry("SRM", srmWeights),
@@ -91,7 +106,7 @@ class MunitionWeightCollection {
      * Use values from the Properties file defined in TeamLoadOutGenerator class if available; else use provided
      * default
      *
-     * @param field    Field name in property file
+     * @param field    Dotted field path in YAML file
      * @param defValue Default value to use
      *
      * @return Double read value or default
@@ -115,13 +130,47 @@ class MunitionWeightCollection {
         return weights;
     }
 
-    private static HashMap<String, Double> initializeMissileWeaponWeights(List<String> munitionsList) {
+    /**
+     *
+     * @param weapon        Weapon type name, matches YAML Defaults.Munitions.* keys
+     * @param factionName   The Faction for which this weight collection will be generated, or "IS" or "Clan"
+     * @param clan          Whether the Faction counts as a Clan faction (see YAML entries)
+     * @param munitionsList The list of munitions to create weight values over
+     * @return HashMap      A map of munition types to weights for this weapon
+     */
+    private static HashMap<String, Double> initializeWeaponWeightsYAML(String weapon,
+          String factionName, boolean clan, List<String> munitionsList) {
+        HashMap<String, Double> weights = new HashMap<>();
+        String basePath;
+
+        for (String name : munitionsList) {
+            basePath = String.format("Defaults.Munitions.%s.%s.%s", weapon, name, (clan) ? "Clan" : "IS");
+            double weight = getPropDouble(basePath, getPropDouble("Defaults.Munitions.Weight", 1.0));
+
+            try {
+                // Check for a faction-specific default value under the base path
+                  weight = (double) searchMap(String.format("%s.%s", basePath, factionName));
+            } catch (Exception e) {
+                // Not found; use Any as a fallback
+                try {
+                    weight = (double) searchMap(String.format("%s.%s", basePath, "Any"));
+                } catch (Exception e2) {
+                    // Ignore and use the default value
+                }
+            }
+            weights.put(name, weight);
+        }
+
+        return weights;
+    }
+
+    private static HashMap<String, Double> initializeMissileWeaponWeights(String weapon, List<String> munitionsList) {
         HashMap<String, Double> weights = new HashMap<>();
         for (String name : munitionsList) {
-            weights.put(name, getPropDouble("defaultWeaponWeight", 1.0));
+            weights.put(name, getPropDouble("Defaults.Munitions.Weight", 1.0));
         }
         // Every missile weight list should have a Standard set as weight 2.0
-        weights.put("Standard", getPropDouble("defaultMissileStandardMunitionWeight", 2.0));
+        weights.put("Standard", getPropDouble(String.format("Defaults.Munitions.%s.Standard", weapon), 2.0));
         // Dead-Fire should be even higher to start
         weights.put("Dead-Fire", getPropDouble("defaultDeadFireMunitionWeight", 3.0));
         // Artemis should be zeroed; Artemis-equipped launchers will be handled

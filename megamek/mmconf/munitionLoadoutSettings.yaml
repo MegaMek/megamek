@@ -18,215 +18,223 @@ Defaults:
   Munitions:
     # Default weights of all munitions; increase or decrease to change relative weights prior to
     # unit- and map-related autoconfiguration.
-    Weight: &DefaultWeight 1.0
+    Weight: 1.0
     LRM:
       Dead-Fire:
         IS: 2.0
-        Clan: *DefaultWeight
+        Clan: 1.0
       Standard:
         IS: 2.0
         Clan: 2.0
       Swarm-I:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Swarm:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Heat-Seeking:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Semi-guided:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Artemis-capable:
         # Never weight Artemis munitions above 0; they are assigned to Artemis-compatible launchers automatically
-        IS: &NegativeWeight -1.0
-        Clan: *NegativeWeight
+        IS: -1.0
+        Clan: -1.0
       Narc-capable:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Follow The Leader:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Fragmentation:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Thunder:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Thunder-Active:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Thunder-Augmented:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Thunder-Vibrabomb:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Thunder-Inferno:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Anti-TSM:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS:
+          # If IS or Clan is followed by a further level, any faction not explicitly listed must use the
+          # "Any" value, and "Any" must be present (unless every possible faction code is explicitly listed)
+          Any: 0.0
+          FS: 1.0
+        Clan: 0.0
       Listen-Kill:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Smoke:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Mine Clearance:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Anti-Radiation:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
 
     SRM:
       Dead-Fire:
         IS: 2.0
-        Clan: *DefaultWeight
+        Clan: 1.0
       Standard:
         IS: 2.0
         Clan: 2.0
       Tandem-Charge:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Inferno:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Heat-Seeking:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Artemis-capable:
         # Never weight Artemis munitions above 0; they are assigned to Artemis-compatible launchers automatically
-        IS: *NegativeWeight
-        Clan: *NegativeWeight
+        IS: -1.0
+        Clan: -1.0
       Narc-capable:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Fragmentation:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Acid:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Anti-TSM:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS:
+          # If IS or Clan is followed by a further level, any faction not explicitly listed must use the
+          # "Any" value, and "Any" must be present (unless every possible faction code is explicitly listed)
+          Any: 0.0
+          FS: 1.0
+        Clan: 0.0
       Listen-Kill:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Mine Clearance:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Smoke:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Anti-Radiation:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
 
     AC:
       Precision:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Standard:
         IS: 2.0
         Clan: 2.0
       Armor-Piercing:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Caseless:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Flak:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Tracer:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Flechette:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Armor-Piercing Playtest:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Precision Playtest:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
 
     Arrow:
       Fuel-Air:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Standard:
         IS: 2.0
         Clan: 2.0
       ADA:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Cluster:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Inferno-IV:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Homing:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Thunder:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Thunder Vibrabomb-IV:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Illumination:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Smoke:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Laser Inhibiting:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Davy Crockett-M:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
 
     Artillery:
       Fuel-Air:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Standard:
         IS: 2.0
         Clan: 2.0
       Cluster:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Copperhead:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       FASCAM:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Flechette:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Illumination:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Smoke:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Davy Crockett-M:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
 
     Artillery Cannon:
       Fuel-Air:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Standard:
         IS: 2.0
         Clan: 2.0
@@ -249,31 +257,31 @@ Defaults:
 
     Mek Mortar:
       Standard:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Semi-Guided:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Anti-personnel:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Airburst:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Flare:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Smoke:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
 
     Narc:
       Narc Explosive:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
       Standard:
-        IS: *DefaultWeight
-        Clan: *DefaultWeight
+        IS: 1.0
+        Clan: 1.0
 
   Bombs:
     # These values control the loadout spread, types, and percentages of various bomb roles and munition types

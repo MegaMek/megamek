@@ -428,7 +428,7 @@ public class Building implements Serializable {
      * @return the <code>int</code> value of the building hex's height. This value will be 0 if the hex is destroyed.
      */
     public int getHeight(CubeCoords coords) {
-        return height.get(coords);
+        return height.getOrDefault(coords, 0);
     }
 
     /**

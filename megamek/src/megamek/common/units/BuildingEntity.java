@@ -121,45 +121,6 @@ public class BuildingEntity extends AbstractBuildingEntity {
         return TA_BUILDING_ENTITY;
     }
 
-
-    public void refreshAdditionalLocations() {
-        armorType = new int[locations()];
-        armorTechLevel = new int[locations()];
-        hardenedArmorDamaged = new boolean[locations()];
-        locationBlownOff = new boolean[locations()];
-        locationBlownOffThisPhase = new boolean[locations()];
-    }
-
-    /**
-     * Can this entity change secondary facing at all?
-     */
-    @Override
-    public boolean canChangeSecondaryFacing() {
-        return false;
-    }
-
-    /**
-     * Can this entity torso/turret twist the given direction?
-     *
-     * @param dir
-     */
-    @Override
-    public boolean isValidSecondaryFacing(int dir) {
-        return false;
-    }
-
-    /**
-     * Returns the closest valid secondary facing to the given direction.
-     *
-     * @param dir
-     *
-     * @return the closest valid secondary facing.
-     */
-    @Override
-    public int clipSecondaryFacing(int dir) {
-        return 0;
-    }
-
     /**
      * Returns the name of the type of movement used.
      *

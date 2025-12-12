@@ -39,6 +39,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Vector;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
@@ -173,12 +174,14 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         if (getPosition() == null) {
             return;
         }
+        int position = 0;
 
-        secondaryPositions.put(0, getPosition());
+        if (getInternalBuilding() != null && getInternalBuilding().getHeight(CubeCoords.ZERO) > 0) {
+            secondaryPositions.put(position++, getPosition());
+        }
         relativeLayout.put(CubeCoords.ZERO, getPosition());
 
         // Map each relative CubeCoord to its actual board coordinate
-        int position = 1;
         for (CubeCoords relCoord : building.getCoordsList()) {
             // We add the origin manually
             if (!relCoord.equals(CubeCoords.ZERO)) {
@@ -188,8 +191,9 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
                 Coords boardCoord = positionCubeCoords.add(relCoord).toOffset();
 
                 relativeLayout.put(relCoord, boardCoord);
-                secondaryPositions.put(position, boardCoord);
-                position++;
+                if (getInternalBuilding() != null && getInternalBuilding().getHeight(relCoord) > 0) {
+                    secondaryPositions.put(position++, boardCoord);
+                }
             }
         }
     }
@@ -261,7 +265,14 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         }
         for (int location : locationToRelativeCoordsMap.keySet()) {
             CubeCoords cubeCoords = locationToRelativeCoordsMap.get(location);
-            String coordString = getPosition() != null ? relativeToBoard(cubeCoords).getBoardNum() : cubeCoords.q() + "," + cubeCoords.r() + "," + cubeCoords.s();
+            String coordString;
+            if (getPosition() == null) {
+                coordString = cubeCoords.q() + "," + cubeCoords.r() + "," + cubeCoords.s();
+            } else {
+                CubeCoords positionCubeCoords = getPosition().toCube();
+                coordString = positionCubeCoords.add(cubeCoords).toOffset().getBoardNum();
+            }
+
             // Result is 0 indexed
             int level = (location % getInternalBuilding().getBuildingHeight());
             locationAbbrvNames.add(locationPrefix + ' ' + level + ' ' + coordString);
@@ -549,6 +560,9 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         // Return board coords by translating all relative coords
         Vector<Coords> boardCoords = new Vector<>();
         for (CubeCoords relCoord : building.getCoordsList()) {
+            if (!building.hasCFIn(relCoord)) {
+                continue;
+            }
             Coords boardCoord = relativeToBoard(relCoord);
             if (boardCoord != null) {
                 boardCoords.add(boardCoord);
@@ -561,9 +575,10 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     public List<Coords> getCoordsList() {
         // Return board coords by translating all relative coords
         return building.getCoordsList().stream()
-            .map(this::relativeToBoard)
-            .filter(c -> c != null)
-            .toList();
+              .filter(building::hasCFIn)
+              .map(this::relativeToBoard)
+              .filter(Objects::nonNull)
+              .toList();
     }
 
     @Override
@@ -681,7 +696,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         CubeCoords relative = boardToRelative(coords);
         building.removeHex(relative);
         // Remove from layout
-        relativeLayout.remove(relative);
+        //relativeLayout.remove(relative);
     }
 
     @Override
@@ -809,7 +824,49 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         }
     }
 
-    public void applyCollapsedHexLocationDamage(Coords coords) {
+
+    @Override
+    public void refreshLocations() {
+        // We do not remove locations when the internal building removes a hex - we need to track the destroyed
+        // locations!
+        if (!(getInternalBuilding() == null || getInternalBuilding().getOriginalCoordsList() == null)) {
+            int location = 0;
+            for (CubeCoords coords : getInternalBuilding().getOriginalCoordsList()) {
+                for (int level = 0; level < getInternalBuilding().getBuildingHeight(); level++) {
+                    locationToRelativeCoordsMap.put(location, coords);
+                    location++;
+                }
+            }
+        }
+        super.refreshLocations();
+    }
+
+    /**
+     *
+     * @param coords Board {@link Coords} that contain this building and are collapsing
+     * @param numLevelsToCollapse number of floors to collapse, from the top
+     */
+    public void collapseFloorsOnHex(Coords coords, int numLevelsToCollapse) {
+        if (numLevelsToCollapse <= 0) {
+            return;
+        }
+        int startHexBuildingHeight = getHeight(coords);
+        if (startHexBuildingHeight <= 0) {
+            return;
+        }
+        for (int levelsRemoved = 1; levelsRemoved <= numLevelsToCollapse; levelsRemoved++) {
+            applyCollapseFloorLocationDamage(coords, startHexBuildingHeight - levelsRemoved);
+            setHeight(startHexBuildingHeight - levelsRemoved, coords);
+            if (startHexBuildingHeight - levelsRemoved <= 0) {
+                // Stop the for loop, hex is fully destroyed. If basements...
+                // I don't think we deal with basements like that yet
+                break;
+            }
+        }
+        updateRelativeLayout();
+    }
+
+    private void applyCollapsedHexLocationDamage(Coords coords) {
         for (int floor = 0; floor < getInternalBuilding().getBuildingHeight(); floor++) {
             applyCollapseFloorLocationDamage(coords, floor);
         }
@@ -820,7 +877,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      * @param coords
      * @param floor
      */
-    public void applyCollapseFloorLocationDamage(Coords coords, int floor) {
+    private void applyCollapseFloorLocationDamage(Coords coords, int floor) {
         for (int location : locationToRelativeCoordsMap.keySet()) {
             if (coords.equals(relativeToBoard(locationToRelativeCoordsMap.get(location)))) {
                 if (location % getInternalBuilding().getBuildingHeight() == floor) {

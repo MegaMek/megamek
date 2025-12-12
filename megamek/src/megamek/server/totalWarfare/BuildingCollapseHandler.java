@@ -441,11 +441,8 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                 }
 
                 if (bldg.equals(entity) && entity instanceof BuildingEntity buildingEntity) {
-                    if (topFloor) {
-                        buildingEntity.applyCollapseFloorLocationDamage(coords, numFloors - 1);
-                    } else {
-                        buildingEntity.applyCollapsedHexLocationDamage(coords);
-                    }
+                    int numFloorsToCollappse = topFloor ? 1 : numFloors;
+                    buildingEntity.collapseFloorsOnHex(coords, numFloorsToCollappse);
                     gameManager.entityUpdate(entity.getId());
                     continue;
                 }

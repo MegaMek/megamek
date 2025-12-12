@@ -458,9 +458,9 @@ public class TeamLoadOutGenerator {
 
     /**
      * For sub-tree search and testing purposes
-     * @param keyPath
-     * @param map
-     * @return
+     * @param keyPath   Dotted path (e.g. "Overrides.Tandem-Charge.Clan"; max depth of 3.
+     * @param map       Root-level map reference; can be passed a lower-level node to restrict searches
+     * @return entry    at the provided path (should be Map\<String, Object\> or String, Int, Double as Object)
      * @throws Exception
      */
     @Nullable
@@ -484,7 +484,7 @@ public class TeamLoadOutGenerator {
     }
 
     /**
-     * Use values from the Properties file defined in TeamLoadOutGenerator class if available; else use provided
+     * Use values from the YAML file defined in TeamLoadOutGenerator class if available; else use provided
      * default
      *
      * @param keyPath   dotted path to desired value, e.g. "Defaults.Dead-Fire.IS"

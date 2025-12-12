@@ -53,7 +53,6 @@ import megamek.common.bays.*;
 import megamek.common.board.CubeCoords;
 import megamek.common.equipment.*;
 import megamek.common.exceptions.LocationFullException;
-import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
 import megamek.common.units.*;
@@ -667,7 +666,7 @@ public class BLKFile {
         List<String> quirkList = t.getQuirks()
               .getOptionsList()
               .stream()
-              .filter(IOption::booleanValue)
+              .filter(BLKFile::isQuirkActive)
               .map(BLKFile::formatQuirkForSave)
               .collect(Collectors.toList());
 
@@ -1184,6 +1183,21 @@ public class BLKFile {
             default -> engineCode;
         };
         return engineCode;
+    }
+
+    /**
+     * Checks if a quirk is active and should be saved. Boolean quirks are active if true, integer quirks (like
+     * obsolete) are active if they have a non-zero value.
+     *
+     * @param quirk The quirk option to check
+     *
+     * @return true if the quirk should be saved
+     */
+    private static boolean isQuirkActive(IOption quirk) {
+        if (quirk.getType() == IOption.INTEGER) {
+            return quirk.intValue() != 0;
+        }
+        return quirk.booleanValue();
     }
 
     /**

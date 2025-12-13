@@ -562,7 +562,9 @@ public class Compute {
             return null;
         }
 
-        boolean isMek = (entering instanceof Mek)
+        // LAM in fighter mode shouldn't be treated as a Mek for all this
+        boolean isMek =
+              ((entering instanceof Mek) && !(entering instanceof LandAirMek lam && lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER))
               || (entering instanceof SmallCraft);
         boolean isLargeSupport = (entering instanceof LargeSupportTank)
               || (entering instanceof Dropship)
@@ -667,9 +669,10 @@ public class Compute {
 
                     // If the entering entity is a mek, then any other mek in the hex is a violation. Unless grappled
                     // (but chain whip grapples don't count) grounded small craft are treated as meks for purposes
-                    // of stacking
+                    // of stacking. A LAM in fighter mode is not treated like a mek for this.
                     if (isMek
-                          && (((inHex instanceof Mek) && (inHex
+                          && ((((inHex instanceof Mek && !(entering instanceof LandAirMek lam
+                          && lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER))) && (inHex
                           .getGrappled() != entering.getId() || inHex
                           .isChainWhipGrappled()))
                           || (inHex instanceof SmallCraft))) {
@@ -5902,6 +5905,14 @@ public class Compute {
             return toReturn;
         }
 
+        // Apply shared anti-mek modifiers (includes isBurdened check for BA)
+        if (attacker instanceof Infantry inf) {
+            toReturn = Compute.getAntiMekMods(toReturn, inf, defender);
+            if (toReturn.getValue() == TargetRoll.IMPOSSIBLE) {
+                return toReturn;
+            }
+        }
+
         // If the attacker has assault claws, give a -1 modifier.
         // We can stop looking when we find our first match.
         for (Mounted<?> mount : attacker.getMisc()) {
@@ -6010,7 +6021,15 @@ public class Compute {
             return true;
         }
 
-        return BAVibroClawAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE;
+        if (BAVibroClawAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE) {
+            return true;
+        }
+
+        if (PheromoneAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE) {
+            return true;
+        }
+
+        return ToxinAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE;
     }
 
     /**

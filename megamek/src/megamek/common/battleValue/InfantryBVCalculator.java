@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import megamek.common.equipment.Mounted;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -60,6 +61,15 @@ public class InfantryBVCalculator extends BVCalculator {
         String calculation = men + " x 1.5";
         calculation += dmgDivisor != 1 ? " x " + formatForReport(dmgDivisor) : "";
         bvReport.addLine("Troopers:", calculation, "= " + formatForReport(defensiveValue));
+
+        // Cybernetic Gas Effuser (Pheromone): +0.05 per trooper to Defensive BR (IO pg 79)
+        if (infantry.hasAbility(OptionsConstants.MD_GAS_EFFUSER_PHEROMONE)) {
+            double pheromoneBonus = men * 0.05;
+            defensiveValue += pheromoneBonus;
+            bvReport.addLine("Gas Effuser (Pheromone):",
+                  men + " x 0.05",
+                  "= +" + formatForReport(pheromoneBonus));
+        }
     }
 
     @Override
@@ -123,6 +133,15 @@ public class InfantryBVCalculator extends BVCalculator {
                 Mounted<?> secondaryWeaponMounted = Mounted.createMounted(infantry, secondaryWeapon);
                 processWeapon(secondaryWeaponMounted, true, true, secondaryShooterCount);
             }
+        }
+
+        // Cybernetic Gas Effuser (Toxin): +0.23 per trooper to Offensive BR (IO pg 79)
+        if (infantry.hasAbility(OptionsConstants.MD_GAS_EFFUSER_TOXIN)) {
+            double toxinBonus = originalTroopers * 0.23;
+            offensiveValue += toxinBonus;
+            bvReport.addLine("Gas Effuser (Toxin):",
+                  originalTroopers + " x 0.23",
+                  "= +" + formatForReport(toxinBonus));
         }
 
         int troopers = Math.max(0, infantry.getInternal(Infantry.LOC_INFANTRY));

@@ -59,6 +59,7 @@ import megamek.common.equipment.Engine;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.PowerGeneratorType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.equipment.enums.StructureEngine;
@@ -222,11 +223,10 @@ public class BuildingEntity extends AbstractBuildingEntity {
         double powerNeeded = getBaseGeneratorWeight();
         double effectivePower = 0.0;
 
-        for (MiscMounted powerGenerator : getMiscEquipment(MiscTypeFlag.F_POWER_GENERATOR)) {
-            if (powerGenerator.isOperable()) {
-                StructureEngine engineType = StructureEngine.getStructureEngineBySubTypeFlag(powerGenerator.getType()
-                      .getSubType());
-                effectivePower += powerGenerator.getSize() / engineType.getBuildingWeightMultiplier();
+        for (MiscMounted miscMountedPowerGenerator : getMiscEquipment(MiscTypeFlag.F_POWER_GENERATOR)) {
+            if (miscMountedPowerGenerator.getType() instanceof PowerGeneratorType powerGeneratorType && miscMountedPowerGenerator.isOperable()) {
+                StructureEngine engineType = powerGeneratorType.getStructureEngine();
+                effectivePower += miscMountedPowerGenerator.getSize() / engineType.getBuildingWeightMultiplier();
             }
         }
 

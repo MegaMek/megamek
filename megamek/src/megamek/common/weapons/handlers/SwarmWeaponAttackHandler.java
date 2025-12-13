@@ -67,17 +67,28 @@ public class SwarmWeaponAttackHandler extends WeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         int damage = 0;
+        int tsmBonusDamage = 0;
         if (attackingEntity instanceof BattleArmor ba) {
             damage = ba.calculateSwarmDamage();
             // TSM Implant adds +1 damage per trooper for same-hex attacks
             if (attackingEntity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
-                damage += ba.getTroopers();
+                tsmBonusDamage = ba.getTroopers();
+                damage += tsmBonusDamage;
             }
         }
         // should this be affected by direct blows?
         // assume so for now
         if (bDirect) {
             damage = Math.min(damage + (toHit.getMoS() / 3), damage * 2);
+        }
+        // Report TSM Implant bonus damage (after direct blow calculation for accurate base)
+        if (tsmBonusDamage > 0) {
+            int baseDamage = damage - tsmBonusDamage;
+            Report tsmReport = new Report(3418);
+            tsmReport.subject = subjectId;
+            tsmReport.add(baseDamage);
+            tsmReport.add(tsmBonusDamage);
+            calcDmgPerHitReport.addElement(tsmReport);
         }
         return damage;
     }

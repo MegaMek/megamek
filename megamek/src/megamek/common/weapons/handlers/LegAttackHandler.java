@@ -101,6 +101,7 @@ public class LegAttackHandler extends WeaponHandler {
         vPhaseReport.addElement(report);
 
         int damage = 4;
+        int tsmBonusDamage = 0;
         if (attackingEntity instanceof BattleArmor ba) {
             damage += attackingEntity.getVibroClaws();
             if (ba.hasMyomerBooster()) {
@@ -108,8 +109,19 @@ public class LegAttackHandler extends WeaponHandler {
             }
             // TSM Implant adds +1 damage per trooper for same-hex attacks
             if (attackingEntity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
-                damage += ba.getTroopers();
+                tsmBonusDamage = ba.getTroopers();
+                damage += tsmBonusDamage;
             }
+        }
+
+        // Report TSM Implant bonus damage
+        if (tsmBonusDamage > 0) {
+            int baseDamage = damage - tsmBonusDamage;
+            Report tsmReport = new Report(3418);
+            tsmReport.subject = subjectId;
+            tsmReport.add(baseDamage);
+            tsmReport.add(tsmBonusDamage);
+            vPhaseReport.addElement(tsmReport);
         }
 
         // ASSUMPTION: buildings CAN'T absorb *this* damage.

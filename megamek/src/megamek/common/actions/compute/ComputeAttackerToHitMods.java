@@ -152,6 +152,11 @@ public class ComputeAttackerToHitMods {
             }
         }
 
+        // Infantry impaired by pheromone gas suffer +1 to-hit (IO pg 79)
+        if ((attacker instanceof Infantry infantry) && infantry.isPheromoneImpaired()) {
+            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.PheromoneImpaired"));
+        }
+
         // Quadvee converting to a new mode
         if (attacker instanceof QuadVee && attacker.isConvertingNow()) {
             toHit.addModifier(+3, Messages.getString("WeaponAttackAction.QuadVeeConverting"));

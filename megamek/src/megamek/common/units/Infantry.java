@@ -1364,12 +1364,7 @@ public class Infantry extends Entity {
             // For custom armor kits, which aren't found by getArmorKit()
             divisor = getCustomArmorDamageDivisor();
         }
-        // TSM implant reduces divisor to 0.5 if no other armor is worn
-        if ((divisor == 1.0) && hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
-            divisor = 0.5;
-        }
-        // Dermal armor adds one to the divisor, cumulative with armor kit and TSM
-        // implant
+        // Dermal armor adds one to the divisor, cumulative with armor kit
         if (hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
             divisor += 1.0;
         }

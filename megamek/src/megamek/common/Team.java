@@ -234,6 +234,7 @@ public final class Team extends TurnOrdered {
     public int getTotalInitBonus(boolean bInitiativeCompensationBonus) {
         int dynamicBonus = Integer.MIN_VALUE;
         int constantBonus = Integer.MIN_VALUE;
+        int tcpBonus = 0;
 
         for (Player player : players) {
             dynamicBonus = Math.max(dynamicBonus, player.getTurnInitBonus());
@@ -241,9 +242,12 @@ public final class Team extends TurnOrdered {
 
             // this is a special case: it's an arbitrary bonus associated with a player
             constantBonus = Math.max(constantBonus, player.getConstantInitBonus());
+
+            // TCP bonus applies once per force (take max across all players)
+            tcpBonus = Math.max(tcpBonus, player.getTCPInitBonus());
         }
 
-        return constantBonus + dynamicBonus + getInitCompensationBonus(bInitiativeCompensationBonus);
+        return constantBonus + dynamicBonus + tcpBonus + getInitCompensationBonus(bInitiativeCompensationBonus);
     }
 
     @Override

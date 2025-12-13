@@ -44,8 +44,10 @@ import java.util.stream.Collectors;
 import megamek.client.ui.util.PlayerColour;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
+import megamek.common.compute.ComputeECM;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
+import megamek.common.equipment.MiscType;
 import megamek.common.game.IGame;
 import megamek.common.game.InGameObject;
 import megamek.common.hexArea.BorderHexArea;
@@ -706,6 +708,98 @@ public final class Player extends TurnOrdered {
             }
         }
         return bonus;
+    }
+
+    /**
+     * Calculate the Triple-Core Processor initiative bonus for this player's force. Per IO pg 81, a TCP-implanted
+     * warrior with VDNI/BVDNI provides: - +2 base initiative bonus - +1 additional if unit has CCM, C3/C3i, or >3 tons
+     * communications equipment - -1 if unit is shutdown or ECM-affected (unless unit has own ECM for counter-ECM)
+     *
+     * @return The TCP initiative bonus from the best qualifying entity
+     */
+    public int getTCPInitBonus() {
+        if (game == null) {
+            return 0;
+        }
+
+        int bestBonus = 0;
+        for (InGameObject object : game.getInGameObjects()) {
+            if (!(object instanceof Entity entity)) {
+                continue;
+            }
+            if (!entity.getOwner().equals(this)) {
+                continue;
+            }
+            // Must be deployed and active
+            if (entity.isDestroyed() || !entity.isDeployed() || entity.isOffBoard()) {
+                continue;
+            }
+            // Must have TCP + VDNI/BVDNI
+            if (!entity.hasAbility(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR)) {
+                continue;
+            }
+            if (!entity.hasAbility(OptionsConstants.MD_VDNI)
+                  && !entity.hasAbility(OptionsConstants.MD_BVDNI)) {
+                continue;
+            }
+            // Crew must be active
+            if (entity.getCrew() == null || !entity.getCrew().isActive()) {
+                continue;
+            }
+
+            // Base +2 bonus
+            int bonus = 2;
+
+            // +1 for Cockpit Command Module, C3/C3i, or >3 tons communications equipment
+            if (hasTCPCommandEquipment(entity)) {
+                bonus += 1;
+            }
+
+            // -1 if shutdown or ECM-affected, unless unit has own ECM
+            if (entity.isShutDown() || isEntityECMAffected(entity)) {
+                if (!entity.hasECM()) {
+                    bonus -= 1;
+                }
+            }
+
+            bestBonus = Math.max(bestBonus, bonus);
+        }
+        return bestBonus;
+    }
+
+    /**
+     * Check if an entity has command equipment that qualifies for TCP +1 initiative bonus. This includes: Cockpit
+     * Command Module, C3/C3i systems, or >3 tons of communications equipment.
+     */
+    private boolean hasTCPCommandEquipment(Entity entity) {
+        // Cockpit Command Module
+        if (entity.hasCommandConsoleBonus()) {
+            return true;
+        }
+
+        // C3 or C3i system
+        if (entity.hasAnyC3System()) {
+            return true;
+        }
+
+        // More than 3 tons of communications equipment
+        double commsTonnage = 0;
+        for (var m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+                commsTonnage += m.getTonnage();
+            }
+        }
+        return commsTonnage > 3;
+    }
+
+    /**
+     * Check if an entity is affected by hostile ECM for TCP initiative penalty purposes.
+     */
+    private boolean isEntityECMAffected(Entity entity) {
+        if (entity.getPosition() == null) {
+            return false;
+        }
+        return ComputeECM.isAffectedByECM(entity, entity.getPosition(), entity.getPosition());
     }
 
     public String getColorForPlayer() {

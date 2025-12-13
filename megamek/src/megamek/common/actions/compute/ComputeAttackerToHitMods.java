@@ -273,6 +273,9 @@ public class ComputeAttackerToHitMods {
                 } else {
                     toHit.addModifier(6, Messages.getString("WeaponAttackAction.AimWithEiOnly"));
                 }
+            } else if (attacker.hasTCPAimedShotCapability() && attacker.hasTargComp()) {
+                // TCP+VDNI with actual TC gets additional -1 per IO pg 81
+                toHit.addModifier(2, Messages.getString("WeaponAttackAction.AimWithTCPAndTC"));
             } else {
                 toHit.addModifier(3, Messages.getString("WeaponAttackAction.AimWithTCompOnly"));
             }

@@ -174,6 +174,7 @@ public class Infantry extends Entity {
     private boolean isTakingCover = false;
     private boolean canCallSupport = true;
     private boolean isCallingSupport = false;
+    private boolean pheromoneImpaired = false;
     private InfantryMount mount = null;
 
     /** The maximum number of troopers in an infantry platoon. */
@@ -1998,6 +1999,48 @@ public class Infantry extends Entity {
 
     public void setTakingCover(boolean isTakingCover) {
         this.isTakingCover = isTakingCover;
+    }
+
+    /**
+     * @return true if this unit is impaired by pheromone gas attack (IO pg 79)
+     */
+    public boolean isPheromoneImpaired() {
+        return pheromoneImpaired;
+    }
+
+    /**
+     * Sets whether this unit is impaired by pheromone gas attack. Impaired units suffer +1 to-hit on all actions for
+     * remainder of scenario.
+     *
+     * @param impaired true to mark as pheromone impaired
+     */
+    public void setPheromoneImpaired(boolean impaired) {
+        this.pheromoneImpaired = impaired;
+    }
+
+    /**
+     * Checks if this infantry unit is protected from pheromone gas attacks. Protection comes from MD_FILTRATION implant
+     * or hostile environment gear (space suit, XCT vacuum, or toxic atmosphere armor kits).
+     *
+     * @return true if protected from pheromone attacks
+     */
+    public boolean isProtectedFromPheromone() {
+        // Check for filtration implants
+        if (hasAbility(OptionsConstants.MD_FILTRATION)) {
+            return true;
+        }
+
+        // Check for hostile environment armor kit
+        EquipmentType armorKit = getArmorKit();
+        if (armorKit != null) {
+            if (armorKit.hasSubType(MiscType.S_SPACE_SUIT)
+                  || armorKit.hasSubType(MiscType.S_XCT_VACUUM)
+                  || armorKit.hasSubType(MiscType.S_TOXIC_ATMOSPHERE)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

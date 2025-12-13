@@ -346,7 +346,7 @@ public class CustomMekDialog extends AbstractButtonDialog
 
                 // a bunch of stuff should get disabled for all but conventional infantry
                 // Sensory implants (audio, visual, laser, tele) are infantry-only
-                // Gas Effuser (Pheromone) is infantry-only (IO pg 79)
+                // Gas Effuser (Pheromone/Toxin) is infantry-only (IO pg 79)
                 if (!entity.isConventionalInfantry()
                       && (option.getName().equals(OptionsConstants.MD_PL_ENHANCED)
                       || option.getName().equals(OptionsConstants.MD_PL_MASC)

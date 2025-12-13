@@ -135,6 +135,15 @@ public class InfantryBVCalculator extends BVCalculator {
             }
         }
 
+        // Cybernetic Gas Effuser (Toxin): +0.23 per trooper to Offensive BR (IO pg 79)
+        if (infantry.hasAbility(OptionsConstants.MD_GAS_EFFUSER_TOXIN)) {
+            double toxinBonus = originalTroopers * 0.23;
+            offensiveValue += toxinBonus;
+            bvReport.addLine("Gas Effuser (Toxin):",
+                  originalTroopers + " x 0.23",
+                  "= +" + formatForReport(toxinBonus));
+        }
+
         int troopers = Math.max(0, infantry.getInternal(Infantry.LOC_INFANTRY));
         if (troopers < originalTroopers) {
             bvReport.addLine("Surviving troopers:",

@@ -2019,12 +2019,12 @@ public class Infantry extends Entity {
     }
 
     /**
-     * Checks if this infantry unit is protected from pheromone gas attacks. Protection comes from MD_FILTRATION implant
-     * or hostile environment gear (space suit, XCT vacuum, or toxic atmosphere armor kits).
+     * Checks if this infantry unit is protected from gas attacks (including pheromone and toxin gas attacks).
+     * Protection comes from MD_FILTRATION implant or hostile environment gear (space suit, XCT vacuum, or toxic atmosphere armor kits).
      *
-     * @return true if protected from pheromone attacks
+     * @return true if protected from gas attacks
      */
-    public boolean isProtectedFromPheromone() {
+    public boolean isProtectedFromGasAttacks() {
         // Check for filtration implants
         if (hasAbility(OptionsConstants.MD_FILTRATION)) {
             return true;

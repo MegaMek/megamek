@@ -78,7 +78,17 @@ public class InfantryBVCalculator extends BVCalculator {
 
     @Override
     protected double tmmFactor(int tmmRunning, int tmmJumping, int tmmUmu) {
-        double tmmFactor = super.tmmFactor(tmmRunning, tmmJumping, tmmUmu);
+        // Dermal Camo provides +3 when stationary, use as potential max TMM
+        int maxTmm = Math.max(tmmRunning, Math.max(tmmJumping, tmmUmu));
+        if (infantry.hasDermalCamoStealth()) {
+            int dermalCamoTmm = 3; // +3 when stationary
+            if (dermalCamoTmm > maxTmm) {
+                maxTmm = dermalCamoTmm;
+                bvReport.addLine("Dermal Camo TMM:", "+3 (stationary)");
+            }
+        }
+        double tmmFactor = 1 + (maxTmm / 10.0);
+
         if (infantry.hasDEST()) {
             tmmFactor += 0.2;
             bvReport.addLine("DEST:", "+0.2");

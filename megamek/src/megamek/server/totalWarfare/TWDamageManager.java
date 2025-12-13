@@ -1810,9 +1810,16 @@ public class TWDamageManager implements IDamageManager {
                       nukeS2S);
             }
 
-            if (isHeadHit && !entity.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
-                Report.addNewline(reportVec);
-                reportVec.addAll(manager.damageCrew(entity, 1));
+            if (isHeadHit) {
+                if (entity.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
+                      || entity.hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)) {
+                    Report r = new Report(6651);
+                    r.subject = entity.getId();
+                    reportVec.add(r);
+                } else {
+                    Report.addNewline(reportVec);
+                    reportVec.addAll(manager.damageCrew(entity, 1));
+                }
             }
 
             // If the location has run out of internal structure, finally

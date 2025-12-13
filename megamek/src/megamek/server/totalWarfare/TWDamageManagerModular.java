@@ -1038,9 +1038,16 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             // Deal special effect damage and crits
             dealSpecialCritEffects(mek, reportVec, hit, mods, underWater, damageType);
 
-            if (mods.isHeadHit && !mek.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
-                Report.addNewline(reportVec);
-                reportVec.addAll(manager.damageCrew(mek, 1));
+            if (mods.isHeadHit) {
+                if (mek.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
+                      || mek.hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)) {
+                    Report r = new Report(6651);
+                    r.subject = mek.getId();
+                    reportVec.add(r);
+                } else {
+                    Report.addNewline(reportVec);
+                    reportVec.addAll(manager.damageCrew(mek, 1));
+                }
             }
 
             // If the location has run out of internal structure, finally

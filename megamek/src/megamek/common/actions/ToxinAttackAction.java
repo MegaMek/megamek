@@ -150,7 +150,7 @@ public class ToxinAttackAction extends AbstractAttackAction {
 
         // Target must not be protected from gas attacks
         Infantry targetInfantry = (Infantry) targetEntity;
-        if (targetInfantry.isProtectedFromPheromone()) {
+        if (targetInfantry.isProtectedFromGasAttacks()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is protected from gas attacks");
         }
 

@@ -135,7 +135,7 @@ public class PheromoneAttackAction extends AbstractAttackAction {
 
         // Target must not be protected from pheromones
         Infantry targetInfantry = (Infantry) targetEntity;
-        if (targetInfantry.isProtectedFromPheromone()) {
+        if (targetInfantry.isProtectedFromGasAttacks()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is protected from pheromone gas");
         }
 

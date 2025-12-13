@@ -289,7 +289,7 @@ class AntiMekAttackTest {
             assertEquals(TargetRoll.IMPOSSIBLE, toHit.getValue(),
                   "IS BA with body-mounted missiles should not be able to leg attack");
             assertTrue(toHit.getDesc().contains("jettison"),
-                  "Reason should mention launcher not jettisoned");
+                  "Reason should mention launcher not jettisonned");
         }
 
         @Test

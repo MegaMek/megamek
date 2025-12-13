@@ -346,13 +346,15 @@ public class CustomMekDialog extends AbstractButtonDialog
 
                 // a bunch of stuff should get disabled for all but conventional infantry
                 // Sensory implants (audio, visual, laser, tele) are infantry-only
+                // Gas Effuser (Pheromone) is infantry-only (IO pg 79)
                 if (!entity.isConventionalInfantry()
                       && (option.getName().equals(OptionsConstants.MD_PL_ENHANCED)
                       || option.getName().equals(OptionsConstants.MD_PL_MASC)
                       || option.getName().equals(OptionsConstants.MD_CYBER_IMP_AUDIO)
                       || option.getName().equals(OptionsConstants.MD_CYBER_IMP_VISUAL)
                       || option.getName().equals(OptionsConstants.MD_CYBER_IMP_LASER)
-                      || option.getName().equals(OptionsConstants.MD_CYBER_IMP_TELE))) {
+                      || option.getName().equals(OptionsConstants.MD_CYBER_IMP_TELE)
+                      || option.getName().equals(OptionsConstants.MD_GAS_EFFUSER_PHEROMONE))) {
                     continue;
                 }
 
@@ -488,6 +490,16 @@ public class CustomMekDialog extends AbstractButtonDialog
                       Messages.getString("CustomMekDialog.MaxSensoryImplantsTitle"),
                       JOptionPane.WARNING_MESSAGE);
             }
+        }
+
+        // Gas Effuser (Pheromone) is only for Conventional Infantry (IO pg 79)
+        if (state && !entity.isConventionalInfantry()
+              && option.getName().equals(OptionsConstants.MD_GAS_EFFUSER_PHEROMONE)) {
+            comp.setSelected(false);
+            JOptionPane.showMessageDialog(this,
+                  Messages.getString("CustomMekDialog.GasEffuserInfantryOnly"),
+                  Messages.getString("CustomMekDialog.GasEffuserInfantryOnlyTitle"),
+                  JOptionPane.WARNING_MESSAGE);
         }
     }
 

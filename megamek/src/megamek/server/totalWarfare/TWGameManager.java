@@ -12834,6 +12834,82 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Handle a pheromone gas attack (IO pg 79). Conventional Infantry with Gas Effuser (Pheromone) implant releases
+     * pheromone gas to impair enemy conventional infantry. On success, target suffers +1 to-hit on all actions for the
+     * remainder of the scenario.
+     */
+    private void resolvePheromoneAttack(PhysicalResult physicalResult, int lastEntityId) {
+        final PheromoneAttackAction pheromoneAttackAction = (PheromoneAttackAction) physicalResult.aaa;
+        final Entity attackingEntity = game.getEntity(pheromoneAttackAction.getEntityId());
+
+        if (attackingEntity == null) {
+            LOGGER.error("Attacking entity is null for Pheromone Attack");
+            return;
+        }
+
+        // Get ToHitData and roll from the PhysicalResult
+        final ToHitData toHit = physicalResult.toHit;
+        int rollValue = physicalResult.roll.getIntValue();
+
+        // Get target entity
+        final Entity targetEntity = game.getEntity(pheromoneAttackAction.getTargetId());
+        Report report;
+
+        if (lastEntityId != pheromoneAttackAction.getEntityId()) {
+            // Who is making the attack
+            report = new Report(4005);
+            report.subject = attackingEntity.getId();
+            report.addDesc(attackingEntity);
+            addReport(report);
+        }
+
+        // Report the pheromone attack attempt
+        report = new Report(4550);
+        report.subject = attackingEntity.getId();
+        report.indent();
+        report.addDesc(targetEntity);
+        report.newlines = 0;
+        addReport(report);
+
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
+            report = new Report(4551);
+            report.subject = attackingEntity.getId();
+            report.add(toHit.getDesc());
+            addReport(report);
+            return;
+        }
+
+        // Report the roll
+        report = new Report(4025);
+        report.subject = attackingEntity.getId();
+        report.add(toHit);
+        report.add(physicalResult.roll);
+        report.newlines = 0;
+        addReport(report);
+
+        // Check hit
+        if (rollValue < toHit.getValue()) {
+            // Miss
+            report = new Report(4552);
+            report.subject = attackingEntity.getId();
+            addReport(report);
+            return;
+        }
+
+        // Hit! Apply pheromone impairment
+        if ((targetEntity instanceof Infantry targetInfantry)) {
+            targetInfantry.setPheromoneImpaired(true);
+
+            // Report hit with flavor text
+            report = new Report(4553);
+            report.subject = attackingEntity.getId();
+            report.addDesc(targetEntity);
+            addReport(report);
+        }
+        addNewLines();
+    }
+
+    /**
      * Handle a club attack
      */
     private void resolveClubAttack(PhysicalResult pr, int lastEntityId) {
@@ -26943,6 +27019,9 @@ public class TWGameManager extends AbstractGameManager {
         } else if (aaa instanceof BAVibroClawAttackAction baVibroClawAttackAction) {
             toHit = baVibroClawAttackAction.toHit(game);
             damage = BAVibroClawAttackAction.getDamageFor(ae);
+        } else if (aaa instanceof PheromoneAttackAction pheromoneAttackAction) {
+            toHit = pheromoneAttackAction.toHit(game);
+            damage = 0; // Pheromone attack causes no damage, only impairment
         }
         pr.toHit = toHit;
         pr.damage = damage;
@@ -27030,6 +27109,9 @@ public class TWGameManager extends AbstractGameManager {
             cen = aaa.getEntityId();
         } else if (aaa instanceof BAVibroClawAttackAction) {
             resolveBAVibroClawAttack(pr, cen);
+            cen = aaa.getEntityId();
+        } else if (aaa instanceof PheromoneAttackAction) {
+            resolvePheromoneAttack(pr, cen);
             cen = aaa.getEntityId();
         } else {
             LOGGER.error("Unknown attack action declared.");

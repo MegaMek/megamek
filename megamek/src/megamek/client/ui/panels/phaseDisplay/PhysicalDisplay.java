@@ -123,6 +123,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         PHYSICAL_SEARCHLIGHT("fireSearchlight"),
         PHYSICAL_EXPLOSIVES("explosives"),
         PHYSICAL_VIBRO("vibro"),
+        PHYSICAL_PHEROMONE("pheromone"),
         PHYSICAL_MORE("more");
 
         final String cmd;
@@ -561,6 +562,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         setDodgeEnabled(false);
         setProtoEnabled(false);
         setVibroEnabled(false);
+        setPheromoneEnabled(false);
         setExplosivesEnabled(false);
         butDone.setEnabled(false);
         setNextEnabled(false);
@@ -1025,6 +1027,29 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
               currentEntity().getVibroClaws() + toHit.getTableDesc());
 
         // Give the user to cancel the attack.
+        if (clientgui.doYesNoDialog(title, message)) {
+            disableButtons();
+            addAttack(act);
+            ready();
+        }
+    }
+
+    /**
+     * Release pheromone gas to impair enemy conventional infantry (IO pg 79).
+     */
+    public void pheromoneAttack() {
+        PheromoneAttackAction act = new PheromoneAttackAction(currentEntity,
+              target.getTargetType(),
+              target.getId());
+        ToHitData toHit = act.toHit(game);
+
+        String title = Messages.getString("PhysicalDisplay.PheromoneDialog.title", target.getDisplayName());
+        String message = Messages.getString("PhysicalDisplay.PheromoneDialog.message",
+              toHit.getValueAsString(),
+              Compute.oddsAbove(toHit.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+              toHit.getDesc());
+
+        // Give the user a chance to cancel the attack.
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
             addAttack(act);
@@ -1622,6 +1647,12 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                 // vibro attack?
                 ToHitData vibro = BAVibroClawAttackAction.toHit(clientgui.getClient().getGame(), currentEntity, target);
                 setVibroEnabled(vibro.getValue() != TargetRoll.IMPOSSIBLE);
+
+                // pheromone attack?
+                ToHitData pheromone = PheromoneAttackAction.toHit(clientgui.getClient().getGame(),
+                      currentEntity,
+                      target);
+                setPheromoneEnabled(pheromone.getValue() != TargetRoll.IMPOSSIBLE);
             }
             // Brush off swarming infantry or iNarcPods?
             ToHitData brushRight = BrushOffAttackAction.toHit(clientgui.getClient().getGame(),
@@ -1647,6 +1678,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             setThrashEnabled(false);
             setProtoEnabled(false);
             setVibroEnabled(false);
+            setPheromoneEnabled(false);
         }
         setSearchlightEnabled((currentEntity() != null) && (target != null) && currentEntity().isUsingSearchlight());
     }
@@ -1869,6 +1901,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             explosives();
         } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_VIBRO.getCmd())) {
             vibroclawAttack();
+        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_PHEROMONE.getCmd())) {
+            pheromoneAttack();
         } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_NEXT.getCmd())) {
             selectEntity(clientgui.getClient().getNextEntityNum(currentEntity));
         } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_SEARCHLIGHT.getCmd())) {
@@ -1963,6 +1997,11 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     public void setVibroEnabled(boolean enabled) {
         buttons.get(PhysicalCommand.PHYSICAL_VIBRO).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(PhysicalCommand.PHYSICAL_VIBRO.getCmd(), enabled);
+    }
+
+    public void setPheromoneEnabled(boolean enabled) {
+        buttons.get(PhysicalCommand.PHYSICAL_PHEROMONE).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(PhysicalCommand.PHYSICAL_PHEROMONE.getCmd(), enabled);
     }
 
     public void setExplosivesEnabled(boolean enabled) {

@@ -635,9 +635,9 @@ public class TWDamageManager implements IDamageManager {
             }
 
             if (entity.isAero()) {
-                // chance of a critical if damage greater than threshold
+                // chance of a critical if damage exceeds threshold
                 IAero a = (IAero) entity;
-                if ((threshDamage > a.getThresh(hit.getLocation()))) {
+                if (threshDamage > a.getThresh(hit.getLocation())) {
                     critThresh = true;
                     a.setCritThresh(true);
                 }

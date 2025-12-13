@@ -1264,6 +1264,11 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     manager.creditKill(aero, game.getEntity(hit.getAttackerId()));
                 }
             }
+            // chance of critical hit if damage exceeds threshold
+            if (damage_orig > aero.getThresh(hit.getLocation())) {
+                critThresh = true;
+                aero.setCritThresh(true);
+            }
             // check for aero crits from natural 12 or threshold; LAMs take damage as meks
             manager.checkAeroCrits(reportVec, aero, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
 
@@ -1402,8 +1407,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         // Damage _applied_ by this attack should be original damageThisPhase minus current value
         damageThisAttack = aero.damageThisPhase - damageThisAttack;
 
-        // chance of critical hit if total suffered damage greater than a threshold
-        if ((damageThisAttack > aero.getThresh(hit.getLocation()))) {
+        // chance of critical hit if damage exceeds threshold
+        if (damageThisAttack > aero.getThresh(hit.getLocation())) {
             critThresh = true;
             aero.setCritThresh(true);
         }

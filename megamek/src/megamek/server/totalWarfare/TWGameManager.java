@@ -17568,12 +17568,14 @@ public class TWGameManager extends AbstractGameManager {
             }
             IAero ship = (IAero) en;
             int damage = ship.getCurrentDamage();
+            // Per SO p.116: "+1 for every full 2 points over the Fatal Threshold"
             double divisor = 2.0;
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
                 divisor = 20.0;
             }
             if (damage >= ship.getFatalThresh()) {
                 int roll = Compute.d6(2) + (int) Math.floor((damage - ship.getFatalThresh()) / divisor);
+                // Per SO p.116: "On a result of 10+, the fighter is considered destroyed"
                 if (roll > 9) {
                     // Lets auto-eject if we can!
                     if (ship instanceof LandAirMek lam) {

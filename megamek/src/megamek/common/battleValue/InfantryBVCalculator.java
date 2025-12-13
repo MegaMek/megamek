@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import megamek.common.equipment.Mounted;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -131,6 +132,13 @@ public class InfantryBVCalculator extends BVCalculator {
                   formatForReport(offensiveValue) + " x " + troopers + " / " + originalTroopers,
                   "= " + formatForReport(offensiveValue * troopers / originalTroopers));
             offensiveValue *= (double) troopers / originalTroopers;
+        }
+
+        // TSM Implant adds +0.1 per trooper to Weapon Battle Value
+        if (entity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+            double tsmBonus = troopers * 0.1;
+            offensiveValue += tsmBonus;
+            bvReport.addLine("TSM Implant:", troopers + " x 0.1", "= +" + formatForReport(tsmBonus));
         }
 
         bvReport.startTentativeSection();

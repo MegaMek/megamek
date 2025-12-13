@@ -54,6 +54,7 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 
 public class BattleArmorBVCalculator extends BVCalculator {
@@ -231,6 +232,12 @@ public class BattleArmorBVCalculator extends BVCalculator {
         bvReport.addLine("",
               formatForReport(defensiveValue) + " + " + formatForReport(offensiveValue) + ", rn",
               "= " + formatForReport(baseBV));
+
+        // TSM Implant adds +1 BV per trooper before skill modifiers
+        if (entity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+            baseBV += 1;
+            bvReport.addLine("TSM Implant:", "+1", "= " + formatForReport(baseBV));
+        }
     }
 
     @Override

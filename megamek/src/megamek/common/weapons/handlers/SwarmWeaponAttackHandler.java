@@ -44,6 +44,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.options.OptionsConstants;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -68,6 +69,10 @@ public class SwarmWeaponAttackHandler extends WeaponHandler {
         int damage = 0;
         if (attackingEntity instanceof BattleArmor ba) {
             damage = ba.calculateSwarmDamage();
+            // TSM Implant adds +1 damage per trooper for same-hex attacks
+            if (attackingEntity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+                damage += ba.getTroopers();
+            }
         }
         // should this be affected by direct blows?
         // assume so for now

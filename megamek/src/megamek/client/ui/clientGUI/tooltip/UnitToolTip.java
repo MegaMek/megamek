@@ -1832,6 +1832,13 @@ public final class UnitToolTip {
             result += UIUtil.tag("FONT", attr, sNarced);
         }
 
+        // Pheromone impaired (IO pg 79)
+        if ((entity instanceof Infantry infantry) && infantry.isPheromoneImpaired()) {
+            String sPheromone = addToTT("PheromoneImpaired", NOBR) + " ";
+            attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getWarningColor())));
+            result += UIUtil.tag("FONT", attr, sPheromone);
+        }
+
         // Towing
         if (!entity.getAllTowedUnits().isEmpty()) {
             String unitList = entity.getAllTowedUnits()

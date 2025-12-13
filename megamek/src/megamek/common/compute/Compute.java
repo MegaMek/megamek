@@ -5842,6 +5842,14 @@ public class Compute {
             return toReturn;
         }
 
+        // Apply shared anti-mek modifiers (includes isBurdened check for BA)
+        if (attacker instanceof Infantry inf) {
+            toReturn = Compute.getAntiMekMods(toReturn, inf, defender);
+            if (toReturn.getValue() == TargetRoll.IMPOSSIBLE) {
+                return toReturn;
+            }
+        }
+
         // If the attacker has assault claws, give a -1 modifier.
         // We can stop looking when we find our first match.
         for (Mounted<?> mount : attacker.getMisc()) {

@@ -101,10 +101,12 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.AllowedDeploymentHelper;
 import megamek.common.board.Board;
 import megamek.common.board.BoardHelper;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
+import megamek.common.board.FacingOption;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeECM;
@@ -136,6 +138,7 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.EntityVisibilityUtils;
@@ -1570,6 +1573,17 @@ public final class BoardView extends AbstractBoardView
                           boardId,
                           maxHeight) && !en_Deployer.isBoardProhibited(board)) {
                         drawHexBorder(graphics2D, getHexLocation(coords), Color.cyan);
+                    }
+                } else if (en_Deployer instanceof AbstractBuildingEntity) {
+                    AllowedDeploymentHelper deploymentHelper = new AllowedDeploymentHelper(en_Deployer, coords, board,
+                          board.getHex(coords), game);
+                    FacingOption facingOption = deploymentHelper.findAllowedFacings(0);
+                    if (facingOption != null && facingOption.hasValidFacings()) {
+                        if (board.isLegalDeployment(coords, en_Deployer)
+                              //Draw hexes that're legal if we rotate
+                              && !en_Deployer.isBoardProhibited(board)) {
+                            drawHexBorder(graphics2D, getHexLocation(coords), Color.yellow);
+                        }
                     }
                 }
 

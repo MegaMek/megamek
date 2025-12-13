@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Vector;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
@@ -52,6 +53,7 @@ import megamek.common.ToHitData;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
+import megamek.common.compute.Compute;
 import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
@@ -165,6 +167,79 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
+     * Returns true when the given location cannot legally be entered or deployed into by this unit at the given
+     * elevation or altitude. Also returns true when the location doesn't exist. Even when this method returns true, the
+     * location need not be deadly to the unit.
+     *
+     * @param testPosition  The position to test
+     * @param testBoardId   The board to test
+     * @param testElevation The elevation or altitude to test
+     * @return True when the location is illegal to be in for this unit, regardless of elevation
+     * @see #isLocationDeadly(Coords)
+     */
+    @Override
+    public boolean isLocationProhibited(Coords testPosition, int testBoardId, int testElevation) {
+        if (!game.hasBoardLocation(testPosition, testBoardId)) {
+            return true;
+        }
+
+        Hex hex = game.getHex(testPosition, testBoardId);
+        if (testElevation != 0) {
+            return hex.containsTerrain(Terrains.IMPASSABLE);
+        }
+
+        // Check prohibited terrain
+        boolean isProhibited = false;
+        // Check for other entities
+        var currentEntitiesIter = game.getEntities(testPosition);
+        while (currentEntitiesIter.hasNext()) {
+            Entity entity = currentEntitiesIter.next();
+            isProhibited = isProhibited || !this.equals(entity);
+            if (isProhibited) {
+                return true;
+            }
+        }
+
+        // Check for other buildings - we can't replace it if it's another AbstractBuildingEntity
+        Optional<IBuilding> otherBuilding = game.getBuildingAt(testPosition, getBoardId());
+        if (otherBuilding.isPresent() && !equals(otherBuilding.get()) && (otherBuilding.get() instanceof AbstractBuildingEntity)) {
+            return true;
+        }
+
+        boolean noInvalidPositions = true;
+        int elevation = hex.getLevel();
+        List<CubeCoords> allPositions = getInternalBuilding().getCoordsList();
+        for (CubeCoords cubeCoords : allPositions) {
+            boolean invalidPosition = false;
+            Coords secondaryCoords = testPosition.toCube().add(rotateCoordByFacing(cubeCoords, getFacing())).toOffset();
+            Hex secondaryHex = game.getBoard(testBoardId).getHex(secondaryCoords);
+            currentEntitiesIter = game.getEntities(secondaryCoords);
+            boolean secondaryHexPresent = secondaryHex != null;
+            // TODO: Secondary hex present for Mobile Structures has some kind of nuance
+            isProhibited = isProhibited || !secondaryHexPresent;
+            while (!isProhibited && currentEntitiesIter.hasNext()) {
+                Entity entity = currentEntitiesIter.next();
+                invalidPosition |= !this.equals(entity);
+            }
+
+            // Check for other buildings - we can't replace it if it's another AbstractBuildingEntity
+            Optional<IBuilding> otherBuildingSecondary = game.getBuildingAt(testPosition, getBoardId());
+            if (otherBuildingSecondary.isPresent() && !equals(otherBuildingSecondary.get()) && (otherBuildingSecondary.get() instanceof AbstractBuildingEntity)) {
+                return true;
+            }
+
+            if (secondaryHexPresent) {
+                invalidPosition |= secondaryHex.getLevel() != elevation;
+            }
+            if (invalidPosition) {
+                noInvalidPositions = false;
+            }
+        }
+
+        return isProhibited || !noInvalidPositions;
+    }
+
+    /**
      * Rotates a cube coordinate clockwise around the origin by the given facing.
      * Facing 0 is UP (no rotation), and each facing increment is 60° clockwise.
      *
@@ -186,6 +261,132 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
             case 5 -> new CubeCoords(-coord.s(), -coord.q(), -coord.r()); // 300° clockwise
             default -> coord; // Should never happen due to normalization
         };
+    }
+
+    /**
+     * Computes what the relative layout would be for a hypothetical position and facing
+     * WITHOUT modifying the entity's actual position or facing.
+     * This is a pure calculation method with no side effects.
+     *
+     * @param testPosition The position to test
+     * @param testFacing The facing to test (0-5)
+     * @return Map of relative CubeCoords to their board Coords at the given position/facing
+     */
+    public Map<CubeCoords, Coords> computeLayoutForPositionAndFacing(Coords testPosition, int testFacing) {
+        Map<CubeCoords, Coords> hypotheticalLayout = new HashMap<>();
+
+        if (testPosition == null || building == null) {
+            return hypotheticalLayout;
+        }
+
+        // Add origin
+        hypotheticalLayout.put(CubeCoords.ZERO, testPosition);
+
+        // Map each relative CubeCoord to its hypothetical board coordinate
+        for (CubeCoords relCoord : building.getCoordsList()) {
+            if (!relCoord.equals(CubeCoords.ZERO)) {
+                // Rotate by the TEST facing, not the entity's actual facing
+                CubeCoords rotatedRelCoord = rotateCoordByFacing(relCoord, testFacing);
+                CubeCoords positionCubeCoords = testPosition.toCube();
+                Coords boardCoord = positionCubeCoords.add(rotatedRelCoord).toOffset();
+
+                hypotheticalLayout.put(relCoord, boardCoord);
+            }
+        }
+
+        return hypotheticalLayout;
+    }
+
+    /**
+     * Checks if all hexes of this building would be valid at the given position and facing
+     * WITHOUT modifying the entity's state. This is a pure calculation method.
+     *
+     * @param testPosition The position to test
+     * @param testFacing The facing to test (0-5)
+     * @param testElevation The elevation to test
+     * @param testBoardId The board ID to test
+     * @return true if all building hexes would be valid at this position/facing
+     */
+    public boolean isPositionAndFacingValid(Coords testPosition, int testFacing, int testElevation, int testBoardId) {
+        if (!game.hasBoardLocation(testPosition, testBoardId)) {
+            return false;
+        }
+
+        Map<CubeCoords, Coords> hypotheticalLayout = computeLayoutForPositionAndFacing(testPosition, testFacing);
+        Board board = game.getBoard(testBoardId);
+
+        // All hexes must be at the same elevation
+        Hex originHex = board.getHex(testPosition);
+        if (originHex == null) {
+            return false;
+        }
+        int requiredElevation = originHex.getLevel();
+
+        // Check each hex in the hypothetical layout
+        for (Coords boardCoord : hypotheticalLayout.values()) {
+            if (!game.hasBoardLocation(boardCoord, testBoardId)) {
+                return false;
+            }
+
+            Hex hex = board.getHex(boardCoord);
+            if (hex == null) {
+                return false;
+            }
+
+            // Check elevation consistency
+            if (hex.getLevel() != requiredElevation) {
+                return false;
+            }
+
+            // Check impassable terrain at non-ground elevations
+            if (testElevation != 0 && hex.containsTerrain(Terrains.IMPASSABLE)) {
+                return false;
+            }
+
+            // Check for other entities at this hex
+            var entitiesAtHex = game.getEntities(boardCoord);
+            while (entitiesAtHex.hasNext()) {
+                Entity otherEntity = entitiesAtHex.next();
+                if (!this.equals(otherEntity)) {
+                    return false; // Another entity is blocking
+                }
+            }
+
+            // Check for other buildings - we can't replace it if it's another AbstractBuildingEntity
+            Optional<IBuilding> otherBuilding = game.getBuildingAt(boardCoord, getBoardId());
+            if (otherBuilding.isPresent() && !equals(otherBuilding.get()) && (otherBuilding.get() instanceof AbstractBuildingEntity)) {
+                return false;
+            }
+
+            // Check stacking violations
+            if (Compute.stackingViolation(game, this, testElevation, boardCoord,
+                  testBoardId, null, climbMode(), true) != null) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns all valid facings for this building at the given position and elevation.
+     * Does NOT modify the entity's facing - this is a pure calculation method.
+     *
+     * @param testPosition The position to test
+     * @param testElevation The elevation to test
+     * @param testBoardId The board ID to test
+     * @return List of valid facings (0-5), or empty list if none valid
+     */
+    public List<Integer> getValidFacingsAt(Coords testPosition, int testElevation, int testBoardId) {
+        List<Integer> validFacings = new ArrayList<>();
+
+        for (int facing = 0; facing < 6; facing++) {
+            if (isPositionAndFacingValid(testPosition, facing, testElevation, testBoardId)) {
+                validFacings.add(facing);
+            }
+        }
+
+        return validFacings;
     }
 
     /**

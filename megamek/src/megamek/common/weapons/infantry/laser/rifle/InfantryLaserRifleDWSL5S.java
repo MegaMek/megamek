@@ -69,7 +69,7 @@ public class InfantryLaserRifleDWSL5S extends InfantryWeapon {
 
         techAdvancement
               .setTechBase(TechBase.IS)
-              .setTechRating(TechRating.C) // Assuming X-C-C-C simplifies to C
+              .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, true, false, false)

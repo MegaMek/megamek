@@ -78,16 +78,6 @@ public class TripodPhysicalAttackArcTest {
             assertEquals(4, Compute.ARC_REAR, "ARC_REAR should be constant 4");
         }
 
-        @Test
-        @DisplayName("ARC_LEFT_ARM and ARC_RIGHT_ARM are distinct from ARC_FORWARD")
-        void armArcsDistinctFromForward() {
-            // Bipeds use arm-specific arcs for punches
-            // Tripods use ARC_FORWARD for all punches instead
-            assertTrue(Compute.ARC_LEFT_ARM != Compute.ARC_FORWARD,
-                  "ARC_LEFT_ARM should be different from ARC_FORWARD");
-            assertTrue(Compute.ARC_RIGHT_ARM != Compute.ARC_FORWARD,
-                  "ARC_RIGHT_ARM should be different from ARC_FORWARD");
-        }
     }
 
     /**
@@ -105,17 +95,6 @@ public class TripodPhysicalAttackArcTest {
             assertEquals(2, KickAttackAction.RIGHT, "RIGHT should be 2");
             assertEquals(3, KickAttackAction.LEFT_MULE, "LEFT_MULE should be 3");
             assertEquals(4, KickAttackAction.RIGHT_MULE, "RIGHT_MULE should be 4");
-        }
-
-        @Test
-        @DisplayName("Mule kick constants are distinct from regular kicks")
-        void muleKickConstantsDistinct() {
-            // Mule kicks (3 and 4) are greater than regular kicks (1 and 2)
-            // This matters because Tripods cannot perform mule kicks
-            assertTrue(KickAttackAction.LEFT_MULE > KickAttackAction.RIGHT,
-                  "LEFT_MULE should be greater than RIGHT");
-            assertTrue(KickAttackAction.RIGHT_MULE > KickAttackAction.RIGHT,
-                  "RIGHT_MULE should be greater than RIGHT");
         }
     }
 

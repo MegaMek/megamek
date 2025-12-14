@@ -58,7 +58,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.Jumpship;
-import megamek.common.units.NavalRepairFacility;
 import megamek.common.units.Warship;
 import megamek.common.util.RoundWeight;
 import megamek.common.util.StringUtil;
@@ -963,7 +962,6 @@ public class TestAdvancedAerospace extends TestAero {
         boolean legal = true;
 
         Set<Integer> facings = new HashSet<>();
-        int repairCount = 0;
         for (Bay bay : vessel.getTransportBays()) {
             if (bay.hardpointCost() > 0) {
                 if ((bay.getFacing() < 0) || (bay.getFacing() >= Warship.LOC_LBS)) {
@@ -974,11 +972,9 @@ public class TestAdvancedAerospace extends TestAero {
                     legal = false;
                 }
                 facings.add(bay.getFacing());
-                if (bay instanceof NavalRepairFacility) {
-                    repairCount++;
-                }
             }
         }
+        
 
         return legal;
     }

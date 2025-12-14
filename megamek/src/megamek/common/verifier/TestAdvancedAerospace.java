@@ -974,7 +974,7 @@ public class TestAdvancedAerospace extends TestAero {
                 facings.add(bay.getFacing());
             }
         }
-        
+
 
         return legal;
     }

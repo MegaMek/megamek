@@ -121,11 +121,10 @@ public class SwarmWeaponAttackHandler extends WeaponHandler {
         report.add(entityTarget.getLocationAbbr(hit));
         vPhaseReport.addElement(report);
 
-        // Report that there's no damage but checking for crits
-        Report noDamageReport = new Report(3400);
+        // Report zero damage
+        Report noDamageReport = new Report(3365);
         noDamageReport.subject = subjectId;
         noDamageReport.indent(2);
-        noDamageReport.add(0);
         vPhaseReport.addElement(noDamageReport);
 
         // Only Meks can take critical hits from swarm attacks

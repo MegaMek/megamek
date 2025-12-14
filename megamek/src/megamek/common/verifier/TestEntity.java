@@ -60,6 +60,7 @@ import megamek.common.enums.MPBoosters;
 import megamek.common.enums.TechBase;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.CeilNotProvidedForWeightException;
 import megamek.common.interfaces.ITechManager;
 import megamek.common.interfaces.ITechnology;
@@ -781,24 +782,22 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public int calcMiscCrits(MiscType mt, double size) {
-        if (mt.hasFlag(MiscType.F_CLUB)
-              && (mt.hasSubType(MiscType.S_HATCHET)
-              || mt.hasSubType(MiscType.S_SWORD)
-              || mt.hasSubType(MiscType.S_CHAIN_WHIP))) {
+        if (mt.hasFlag(MiscTypeFlag.F_CLUB)
+              && (mt.hasAnyFlag(MiscTypeFlag.S_HATCHET, MiscTypeFlag.S_SWORD, MiscTypeFlag.S_CHAIN_WHIP))) {
             return (int) Math.ceil(getWeight() / 15.0);
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_MACE)) {
+        } else if (mt.hasFlag(MiscTypeFlag.F_CLUB) && mt.hasFlag(MiscTypeFlag.S_MACE)) {
             return (int) Math.ceil(getWeight() / 10.0);
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
+        } else if (mt.hasFlag(MiscTypeFlag.F_CLUB) && mt.hasFlag(MiscTypeFlag.S_RETRACTABLE_BLADE)) {
             return 1 + (int) Math.ceil(getWeight() / 20.0);
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_PILE_DRIVER)) {
+        } else if (mt.hasFlag(MiscTypeFlag.F_CLUB) && mt.hasFlag(MiscTypeFlag.S_PILE_DRIVER)) {
             return 8;
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_CHAINSAW)) {
+        } else if (mt.hasFlag(MiscTypeFlag.F_CLUB) && mt.hasFlag(MiscTypeFlag.S_CHAINSAW)) {
             return 5;
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_DUAL_SAW)) {
+        } else if (mt.hasFlag(MiscTypeFlag.F_CLUB) && mt.hasFlag(MiscTypeFlag.S_DUAL_SAW)) {
             return 7;
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_BACKHOE)) {
+        } else if (mt.hasFlag(MiscTypeFlag.F_CLUB) && mt.hasFlag(MiscTypeFlag.S_BACKHOE)) {
             return 6;
-        } else if (mt.hasFlag(MiscType.F_MASC)) {
+        } else if (mt.hasFlag(MiscTypeFlag.F_MASC)) {
             if (mt.getInternalName().equals("ISMASC")) {
                 return (int) Math.round(getWeight() / 20.0);
             } else if (mt.getInternalName().equals("CLMASC")) {
@@ -921,14 +920,14 @@ public abstract class TestEntity implements TestEntityOption {
             }
 
             if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof MiscType)
-                  && m.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                  && m.getLinkedBy().getType().hasFlag(MiscTypeFlag.F_PPC_CAPACITOR)) {
                 heat += 5;
             }
         }
         for (Mounted<?> m : entity.getMisc()) {
             // Spot welders are treated as energy weapons on units that don't have a fusion
             // or fission engine
-            if (m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_SPOT_WELDER)
+            if (m.getType().hasFlag(MiscTypeFlag.F_CLUB) && m.getType().hasFlag(MiscTypeFlag.S_SPOT_WELDER)
                   && entity.hasEngine() && (entity.getEngine().isFusion()
                   || (entity.getEngine().getEngineType() == Engine.FISSION))) {
                 continue;

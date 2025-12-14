@@ -338,4 +338,91 @@ public enum MiscTypeFlag implements EquipmentFlag {
 
     F_WEAPON_ENHANCEMENT,
     F_POWER_GENERATOR,
+
+    // Secondary flags
+    S_CLUB,
+    S_TREE_CLUB,// BMR
+    S_HATCHET, // BMR
+    S_SWORD, // BMR
+    S_MACE_THB, // Unused and Unsupported
+    S_CLAW_THB, // Unused and Unsupported
+    S_MACE,
+    S_DUAL_SAW,
+    S_FLAIL,
+    S_PILE_DRIVER,
+    S_SHIELD_SMALL,
+    S_SHIELD_MEDIUM,
+    S_SHIELD_LARGE,
+    S_LANCE,
+    S_VIBRO_SMALL,
+    S_VIBRO_MEDIUM,
+    S_VIBRO_LARGE,
+    S_WRECKING_BALL,
+    S_BACKHOE,
+    S_COMBINE, // TODO
+    S_CHAINSAW,
+    S_ROCK_CUTTER, // TODO
+    S_BUZZSAW,
+    S_RETRACTABLE_BLADE,
+    S_CHAIN_WHIP,
+    S_SPOT_WELDER, // TODO: add game rules
+    S_MINING_DRILL, // Miniatures
+
+    // ProtoMek physical weapons
+    S_PROTOMEK_WEAPON,
+    S_PROTO_QMS,
+    // Secondary damage for hand weapons.
+    // These are differentiated from Physical Weapons using the F_CLUB flag
+    // because the following weapons are treated as a punch attack, while
+    // the above weapons are treated as club or hatchet attacks.
+    // these are subtypes of F_HAND_WEAPON
+    S_CLAW, // Solaris 7
+    // Rulebook; TODO
+
+    // Secondary flags for infantry tools
+    S_VIBRO_SHOVEL, // can fortify hexes
+    S_DEMOLITION_CHARGE, // can demolish
+    // buildings
+    S_BRIDGE_KIT, // can build a bridge
+    S_MINESWEEPER, // can clear mines
+    S_HEAVY_ARMOR,
+
+    // Secondary flags for MASC
+    S_SUPERCHARGER,
+    // this kind of works like MASC for the double cruise MP, so we will make it
+    // a subtype
+    S_JET_BOOSTER,
+
+    // Secondary flags for Jump Jets
+    S_STANDARD,
+    S_IMPROVED,
+    S_PROTOTYPE,
+
+    // Secondary flag for robotic control systems; standard and improved borrow jj
+    // flags
+    S_ELITE,
+
+    // Secondary flags for infantry armor kits
+    S_DEST,
+    S_SNEAK_CAMO,
+    S_SNEAK_IR,
+    S_SNEAK_ECM,
+    S_ENCUMBERING,
+    S_SPACE_SUIT,
+    S_XCT_VACUUM,
+    S_COLD_WEATHER,
+    S_HOT_WEATHER,
+    // Unimplemented atmospheric conditions
+    S_HAZARDOUS_LIQ,
+    S_TAINTED_ATMOSPHERE,
+    S_TOXIC_ATMOSPHERE,
+
+    // Secondary flag for tracks
+    S_QUADVEE_WHEELS,
+
+    // Secondary flags for escape pods and lifeboats
+    S_MARITIME_LIFEBOAT,
+    S_MARITIME_ESCAPE_POD,
+    S_ATMOSPHERIC_LIFEBOAT,
+
 }

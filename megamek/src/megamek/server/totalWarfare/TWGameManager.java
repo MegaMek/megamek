@@ -75,6 +75,7 @@ import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.AmmoType.Munitions;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
@@ -13071,8 +13072,7 @@ public class TWGameManager extends AbstractGameManager {
         addReport(r);
 
         // Flail/Wrecking Ball auto misses on a 2 and hits themselves.
-        if ((caa.getClub().getType().hasSubType(MiscType.S_FLAIL) ||
-              caa.getClub().getType().hasSubType(MiscType.S_WRECKING_BALL)) && (rollValue == 2)) {
+        if ((caa.getClub().getType().hasAnyFlag(MiscTypeFlag.S_FLAIL, MiscTypeFlag.S_WRECKING_BALL)) && (rollValue == 2)) {
             // miss
             r = new Report(4025);
             r.subject = ae.getId();
@@ -13106,7 +13106,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Need to compute 2d6 damage. and add +3 heat build up.
-        if (caa.getClub().getType().hasSubType(MiscType.S_BUZZSAW)) {
+        if (caa.getClub().getType().hasFlag(MiscTypeFlag.S_BUZZSAW)) {
             damage = Compute.d6(2);
             ae.heatBuildup += 3;
 
@@ -13117,8 +13117,8 @@ public class TWGameManager extends AbstractGameManager {
                 for (Mounted<?> eq : ae.getWeaponList()) {
                     if ((eq.getLocation() == club.getLocation()) &&
                           (eq.getType() instanceof MiscType) &&
-                          eq.getType().hasFlag(MiscType.F_CLUB) &&
-                          eq.getType().hasSubType(MiscType.S_BUZZSAW)) {
+                          eq.getType().hasFlag(MiscTypeFlag.F_CLUB) &&
+                          eq.getType().hasFlag(MiscTypeFlag.S_BUZZSAW)) {
                         eq.setHit(true);
                         break;
                     }
@@ -13138,7 +13138,7 @@ public class TWGameManager extends AbstractGameManager {
             r.subject = ae.getId();
             r.add(toHit.getDesc());
             addReport(r);
-            if (caa.getClub().getType().hasSubType(MiscType.S_MACE)) {
+            if (caa.getClub().getType().hasFlag(MiscTypeFlag.S_MACE)) {
                 if (ae instanceof LandAirMek && ae.isAirborneVTOLorWIGE()) {
                     game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed a mace attack"));
                 } else {
@@ -13147,7 +13147,7 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             if (caa.isZweihandering()) {
-                if (caa.getClub().getType().hasSubType(MiscType.S_CLUB)) {
+                if (caa.getClub().getType().hasFlag(MiscTypeFlag.S_CLUB)) {
                     applyZweihanderSelfDamage(ae, true, Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM);
                 } else {
                     applyZweihanderSelfDamage(ae, true, caa.getClub().getLocation());
@@ -13193,7 +13193,7 @@ public class TWGameManager extends AbstractGameManager {
 
             // PLAYTEST3 no more missed maces
             if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                if (caa.getClub().getType().hasSubType(MiscType.S_MACE)) {
+                if (caa.getClub().getType().hasFlag(MiscTypeFlag.S_MACE)) {
                     if (ae instanceof LandAirMek && ae.isAirborneVTOLorWIGE()) {
                         game.addControlRoll(new PilotingRollData(ae.getId(), 2, "missed a mace attack"));
                     } else {
@@ -13215,7 +13215,7 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             if (caa.isZweihandering()) {
-                if (caa.getClub().getType().hasSubType(MiscType.S_CLUB)) {
+                if (caa.getClub().getType().hasFlag(MiscTypeFlag.S_CLUB)) {
                     applyZweihanderSelfDamage(ae, true, Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM);
                 } else {
                     applyZweihanderSelfDamage(ae, true, caa.getClub().getLocation());
@@ -13241,7 +13241,7 @@ public class TWGameManager extends AbstractGameManager {
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
             if (caa.isZweihandering()) {
-                if (caa.getClub().getType().hasSubType(MiscType.S_CLUB)) {
+                if (caa.getClub().getType().hasFlag(MiscTypeFlag.S_CLUB)) {
                     applyZweihanderSelfDamage(ae, false, Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM);
 
                     // the club breaks
@@ -13332,7 +13332,7 @@ public class TWGameManager extends AbstractGameManager {
             // On a roll of 10+ a lance hitting a mek/Vehicle can cause 1 point of
             // internal damage
             // PLAYTEST3 Ferro-lam is no longer immune to AP. ABA/APA is.
-            if (caa.getClub().getType().hasSubType(MiscType.S_LANCE) &&
+            if (caa.getClub().getType().hasFlag(MiscTypeFlag.S_LANCE) &&
                   (te.getArmor(hit) > 0) &&
                   (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_HARDENED)) {
                 // PLAYTEST3 Ferro_Lam does not block the lance in playtest3, but APA/ABA does
@@ -13365,7 +13365,7 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             // TODO : Verify this is correct according to latest rules
-            if (caa.getClub().getType().hasSubType(MiscType.S_WRECKING_BALL) &&
+            if (caa.getClub().getType().hasFlag(MiscTypeFlag.S_WRECKING_BALL) &&
                   (ae instanceof SupportTank) &&
                   (te instanceof Mek)) {
                 // forces a PSR like a charge
@@ -13380,7 +13380,7 @@ public class TWGameManager extends AbstractGameManager {
             // implementation assumes that in order to do so the limb must still
             // have some structure left, so if the whip hits and destroys a
             // location in the same attack no special effects take place.
-            if (caa.getClub().getType().hasSubType(MiscType.S_CHAIN_WHIP) &&
+            if (caa.getClub().getType().hasFlag(MiscTypeFlag.S_CHAIN_WHIP) &&
                   ((te instanceof Mek) || (te instanceof ProtoMek))) {
                 addNewLines();
 
@@ -13468,7 +13468,7 @@ public class TWGameManager extends AbstractGameManager {
         addNewLines();
 
         if (caa.isZweihandering()) {
-            if (caa.getClub().getType().hasSubType(MiscType.S_CLUB)) {
+            if (caa.getClub().getType().hasFlag(MiscTypeFlag.S_CLUB)) {
                 applyZweihanderSelfDamage(ae, false, Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM);
             } else {
                 applyZweihanderSelfDamage(ae, false, caa.getClub().getLocation());
@@ -13478,8 +13478,7 @@ public class TWGameManager extends AbstractGameManager {
         // If the attacker is Zweihandering with an improvised club, it will break on
         // the attack.
         // Otherwise, only a tree club will break on the attack
-        if ((caa.isZweihandering() && caa.getClub().getType().hasSubType(MiscType.S_CLUB)) ||
-              caa.getClub().getType().hasSubType(MiscType.S_TREE_CLUB)) {
+        if (caa.isZweihandering() && caa.getClub().getType().hasAnyFlag(MiscTypeFlag.S_CLUB, MiscTypeFlag.S_TREE_CLUB)) {
             // the club breaks
             r = new Report(4150);
             r.subject = ae.getId();
@@ -14899,7 +14898,7 @@ public class TWGameManager extends AbstractGameManager {
         if (ae instanceof Mek) {
             int spikeDamage = 0;
             for (int loc = 0; loc < ae.locations(); loc++) {
-                if (((Mek) ae).locationIsTorso(loc) && ae.hasWorkingMisc(MiscType.F_SPIKES, -1, loc)) {
+                if (((Mek) ae).locationIsTorso(loc) && ae.hasWorkingMisc(MiscType.F_SPIKES, null, loc)) {
                     spikeDamage += 2;
                 }
             }
@@ -14987,7 +14986,7 @@ public class TWGameManager extends AbstractGameManager {
                     boolean hasLance = false;
                     boolean secondLance = false;
                     for (MiscMounted getClub : ae.getClubs()) {
-                        if (getClub.getType().hasSubType(MiscType.S_LANCE) &&
+                        if (getClub.getType().hasFlag(MiscTypeFlag.S_LANCE) &&
                               (te.getArmor(hit) > 0) &&
                               (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_HARDENED) &&
                               (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION)) {
@@ -15103,7 +15102,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     private int checkForSpikes(Entity target, int targetLocation, int damage, Entity attacker, int attackerLocation,
           int attackerLocation2) {
-        if (target.hasWorkingMisc(MiscType.F_SPIKES, -1, targetLocation)) {
+        if (target.hasWorkingMisc(MiscType.F_SPIKES, null, targetLocation)) {
             Report r;
             if (damage == 0) {
                 // Only show damage to attacker (push attack)
@@ -15122,7 +15121,7 @@ public class TWGameManager extends AbstractGameManager {
             // a push
             if (attackerLocation != Entity.LOC_NONE) {
                 // Spikes also protect from retaliatory spike damage
-                if (attacker.hasWorkingMisc(MiscType.F_SPIKES, -1, attackerLocation)) {
+                if (attacker.hasWorkingMisc(MiscType.F_SPIKES, null, attackerLocation)) {
                     r = new Report(4332);
                     r.indent(2);
                     r.subject = attacker.getId();
@@ -27021,16 +27020,16 @@ public class TWGameManager extends AbstractGameManager {
                   caa.isZweihandering());
             if (caa.getTargetType() == Targetable.TYPE_BUILDING) {
                 EquipmentType clubType = caa.getClub().getType();
-                if (clubType.hasSubType(MiscType.S_BACKHOE) ||
-                      clubType.hasSubType(MiscType.S_CHAINSAW) ||
-                      clubType.hasSubType(MiscType.S_MINING_DRILL) ||
-                      clubType.hasSubType(MiscType.S_PILE_DRIVER)) {
+                if (clubType.hasAnyFlag(MiscTypeFlag.S_BACKHOE,
+                      MiscTypeFlag.S_CHAINSAW,
+                      MiscTypeFlag.S_MINING_DRILL,
+                      MiscTypeFlag.S_PILE_DRIVER)) {
                     damage += Compute.d6(1);
-                } else if (clubType.hasSubType(MiscType.S_DUAL_SAW)) {
+                } else if (clubType.hasFlag(MiscTypeFlag.S_DUAL_SAW)) {
                     damage += Compute.d6(2);
-                } else if (clubType.hasSubType(MiscType.S_ROCK_CUTTER)) {
+                } else if (clubType.hasFlag(MiscTypeFlag.S_ROCK_CUTTER)) {
                     damage += Compute.d6(3);
-                } else if (clubType.hasSubType(MiscType.S_WRECKING_BALL)) {
+                } else if (clubType.hasFlag(MiscTypeFlag.S_WRECKING_BALL)) {
                     damage += Compute.d6(4);
                 }
             }

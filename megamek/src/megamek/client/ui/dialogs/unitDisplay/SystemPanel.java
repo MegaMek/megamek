@@ -70,6 +70,7 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
@@ -536,7 +537,7 @@ class SystemPanel extends PicMap
                         }
 
                         if ((m.getType() instanceof MiscType)
-                              && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)
+                              && m.getType().hasFlag(MiscTypeFlag.S_RETRACTABLE_BLADE)
                               && !clientgui.getClient().getGame().getPhase().isMovement()) {
                             clientgui.systemMessage(Messages.getString("MekDisplay.RetractableBladeModePhase"));
                             return;

@@ -42,6 +42,7 @@ import megamek.common.MPCalculationSetting;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.PilotingRollData;
@@ -222,8 +223,8 @@ public class BipedMek extends MekWithArms {
         }
 
         if (hasShield()) {
-            mp -= getNumberOfShields(MiscType.S_SHIELD_LARGE);
-            mp -= getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
+            mp -= getNumberOfShields(MiscTypeFlag.S_SHIELD_LARGE);
+            mp -= getNumberOfShields(MiscTypeFlag.S_SHIELD_MEDIUM);
         }
 
         if (!mpCalculationSetting.ignoreModularArmor() && hasModularArmor()) {

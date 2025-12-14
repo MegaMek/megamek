@@ -64,6 +64,8 @@ public class YamlSerializerEquipmentType {
     private static final MMLogger logger = MMLogger.create(YamlSerializerEquipmentType.class);
     public static final String VARIABLE = "variable";
     public static final String VERSION = "1.0";
+    private final Map<Class<? extends EquipmentType>, EquipmentType> defaultInstanceCache = new LinkedHashMap<>();
+
 
     public YamlSerializerEquipmentType() {
     }
@@ -192,7 +194,7 @@ public class YamlSerializerEquipmentType {
      * @return The field value cast to the expected type, or null if not accessible or wrong type
      */
     @SuppressWarnings("unchecked")
-    private static <T> T getTypedFieldValue(Object object, String fieldName, Class<T> expectedType) {
+    protected static <T> T getTypedFieldValue(Object object, String fieldName, Class<T> expectedType) {
         Object value = getFieldValue(object, fieldName);
 
         if (value == null) {
@@ -297,22 +299,38 @@ public class YamlSerializerEquipmentType {
 
     /**
      * Creates a default instance of the appropriate equipment type for comparison.
+     * Instances are cached to avoid redundant object creation.
      */
     private EquipmentType createDefaultInstance(EquipmentType equipment) {
+        Class<? extends EquipmentType> clazz = equipment.getClass();
+
+        // Return cached instance if available
+        if (defaultInstanceCache.containsKey(clazz)) {
+            return defaultInstanceCache.get(clazz);
+        }
+
+        EquipmentType defaultInstance;
         try {
             if (equipment instanceof WeaponType) {
-                return WeaponType.class.getDeclaredConstructor().newInstance();
+                defaultInstance = WeaponType.class.getDeclaredConstructor().newInstance();
             } else if (equipment instanceof AmmoType) {
-                return AmmoType.class.getDeclaredConstructor().newInstance();
+                defaultInstance = AmmoType.class.getDeclaredConstructor().newInstance();
             } else if (equipment instanceof MiscType) {
-                return MiscType.class.getDeclaredConstructor().newInstance();
+                defaultInstance = MiscType.class.getDeclaredConstructor().newInstance();
             } else {
                 // Fallback to generic EquipmentType
-                return new EquipmentType();
+                defaultInstance = new EquipmentType();
             }
+
+            // Cache the instance
+            defaultInstanceCache.put(clazz, defaultInstance);
+            return defaultInstance;
+
         } catch (Exception e) {
             logger.warn("Failed to create default instance for comparison: {}", e.getMessage());
-            return new EquipmentType();
+            defaultInstance = new EquipmentType();
+            defaultInstanceCache.put(clazz, defaultInstance);
+            return defaultInstance;
         }
     }
 

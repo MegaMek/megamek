@@ -51,6 +51,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.LandAirMek;
@@ -305,7 +306,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
 
     @Override
     protected void setUmuMP() {
-        if (entity.hasShield() && (entity.getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
+        if (entity.hasShield() && (entity.getNumberOfShields(MiscTypeFlag.S_SHIELD_LARGE) > 0)) {
             return;
         }
         umuMP = 0;

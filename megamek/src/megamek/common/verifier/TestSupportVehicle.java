@@ -890,7 +890,7 @@ public class TestSupportVehicle extends TestEntity {
 
             for (Mounted<?> mounted : supportVee.getMisc()) {
                 if (mounted.getType().hasFlag(MiscType.F_CLUB)
-                      && mounted.getType().hasSubType(MiscType.S_SPOT_WELDER)) {
+                      && mounted.getType().hasFlag(MiscTypeFlag.S_SPOT_WELDER)) {
                     weight += mounted.getTonnage();
                 }
             }
@@ -1105,7 +1105,7 @@ public class TestSupportVehicle extends TestEntity {
                 buff.append("Armored Motive system and incompatible movement mode!\n\n");
                 correct = false;
             } else if (mounted.getType().hasFlag(MiscType.F_LIFEBOAT)
-                  && mounted.getType().hasSubType(MiscType.S_MARITIME_ESCAPE_POD | MiscType.S_MARITIME_LIFEBOAT)
+                  && mounted.getType().hasAnyFlag(MiscTypeFlag.S_MARITIME_ESCAPE_POD, MiscTypeFlag.S_MARITIME_LIFEBOAT)
                   && !SVType.NAVAL.equals(SVType.getVehicleType(supportVee))
                   && !supportVee.hasWorkingMisc(MiscType.F_AMPHIBIOUS)) {
                 buff.append(mounted.getName())

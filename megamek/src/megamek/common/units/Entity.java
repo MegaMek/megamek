@@ -6126,6 +6126,8 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Returns whether this entity has a Targeting Computer that is in aimed shot mode.
+     * This also returns true for Triple-Core Processor + VDNI/BVDNI combinations,
+     * which grant aimed shot capability as if equipped with a Targeting Computer.
      */
     public boolean hasAimModeTargComp() {
         if (hasActiveEiCockpit()) {
@@ -6137,12 +6139,37 @@ public abstract class Entity extends TurnOrdered
                 return true;
             }
         }
+        // TCP + VDNI/BVDNI grants aimed shot capability for Meks, vehicles, and aerospace
+        if (hasTCPAimedShotCapability()) {
+            return true;
+        }
         for (MiscMounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_TARGETING_COMPUTER) && m.curMode().equals("Aimed shot")) {
                 return !m.isInoperable();
             }
         }
         return false;
+    }
+
+    /**
+     * Returns whether this entity has Triple-Core Processor aimed shot capability. Per IO pg 81, MechWarriors, vehicle
+     * commanders, and fighter pilots with TCP and VDNI/BVDNI may execute aimed shots as if equipped with a Targeting
+     * Computer.
+     *
+     * @return true if TCP + VDNI/BVDNI is active and unit type qualifies
+     */
+    public boolean hasTCPAimedShotCapability() {
+        if (crew == null) {
+            return false;
+        }
+        boolean hasTCP = hasAbility(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR);
+        boolean hasVdni = hasAbility(OptionsConstants.MD_VDNI)
+              || hasAbility(OptionsConstants.MD_BVDNI);
+        if (!hasTCP || !hasVdni) {
+            return false;
+        }
+        // Only MechWarriors, vehicle commanders, and fighter pilots qualify
+        return isMek() || isCombatVehicle() || isAerospaceFighter();
     }
 
     /**

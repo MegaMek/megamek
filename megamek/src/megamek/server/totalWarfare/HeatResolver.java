@@ -581,6 +581,13 @@ class HeatResolver extends AbstractTWRuleHandler {
                         report.addDesc(entity);
                         addReport(report);
                         entity.setShutDown(true);
+                    } else if (entity.hasAbility(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR)) {
+                        // TCP auto-succeeds shutdown avoidance per IO pg 81
+                        report = new Report(5057);
+                        report.subject = entity.getId();
+                        report.addDesc(entity);
+                        addReport(report);
+                        // No shutdown - TCP automatically avoids
                     } else {
                         int shutdown = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
                         TargetRoll target;
@@ -1136,6 +1143,13 @@ class HeatResolver extends AbstractTWRuleHandler {
                     report.addDesc(entity);
                     vPhaseReport.add(report);
                     entity.setShutDown(true);
+                } else if (entity.hasAbility(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR)) {
+                    // TCP auto-succeeds shutdown avoidance per IO pg 81
+                    report = new Report(5057);
+                    report.subject = entity.getId();
+                    report.addDesc(entity);
+                    vPhaseReport.add(report);
+                    // No shutdown - TCP automatically avoids
                 } else {
                     int shutdown = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
                     if (mtHeat) {

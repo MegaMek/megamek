@@ -114,12 +114,12 @@ import megamek.client.ui.dialogs.miniReport.MiniReportDisplayDialog;
 import megamek.client.ui.dialogs.miniReport.MiniReportDisplayPanel;
 import megamek.client.ui.dialogs.minimap.MinimapDialog;
 import megamek.client.ui.dialogs.minimap.MinimapPanel;
+import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkViewDialog;
 import megamek.client.ui.dialogs.randomArmy.RandomArmyDialog;
 import megamek.client.ui.dialogs.unitDisplay.IHasUnitDisplay;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayDialog;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.client.ui.dialogs.unitSelectorDialogs.MegaMekUnitSelectorDialog;
-import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkViewDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.ReceivingGameDataPanel;
 import megamek.client.ui.panels.StartingScenarioPanel;
@@ -625,10 +625,30 @@ public class ClientGUI extends AbstractClientGUI
      * Lays out the frame by setting this Client object to take up the full frame display area.
      */
     private void layoutFrame() {
-        frame.setTitle(client.getName() + Messages.getString("ClientGUI.clientTitleSuffix"));
+        updateFrameTitle();
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(clientGuiPanel, BorderLayout.CENTER);
         frame.validate();
+    }
+
+    /**
+     * Updates the frame title to show the current round and phase information. The title format is: "PlayerName - Round
+     * X - Phase phase - MegaMek" For phases before the game starts (lobby, selection, etc.), only shows: "PlayerName -
+     * MegaMek"
+     */
+    private void updateFrameTitle() {
+        StringBuilder title = new StringBuilder(client.getName());
+
+        GamePhase phase = client.getGame().getPhase();
+        int round = client.getGame().getCurrentRound();
+
+        // Only show round/phase info for in-game phases (after round 0)
+        if ((round > 0) && phase.isOnMap()) {
+            title.append(Messages.getString("ClientGUI.titleRoundPhase", round, phase.localizedName()));
+        }
+
+        title.append(Messages.getString("ClientGUI.clientTitleSuffix"));
+        frame.setTitle(title.toString());
     }
 
     private void initializeSpriteHandlers() {
@@ -2636,6 +2656,9 @@ public class ClientGUI extends AbstractClientGUI
             }
 
             menuBar.setPhase(phase);
+
+            // Update the frame title to show current round and phase
+            updateFrameTitle();
 
             // Update Nova Networks menu based on whether Nova CEWS units exist
             updateNovaNetworksMenu();

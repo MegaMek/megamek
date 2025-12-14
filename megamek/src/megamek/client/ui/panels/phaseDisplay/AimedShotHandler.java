@@ -84,7 +84,7 @@ public class AimedShotHandler implements ActionListener, ItemListener {
             String[] options;
             boolean[] enabled;
 
-            if (this.firingDisplay.getTarget() instanceof GunEmplacement) {
+            if (this.firingDisplay.getTarget().isBuildingEntityOrGunEmplacement()) {
                 return;
             }
             if (this.firingDisplay.getTarget() instanceof Entity) {
@@ -349,7 +349,7 @@ public class AimedShotHandler implements ActionListener, ItemListener {
     public String getAimingLocation() {
         if ((this.firingDisplay.getTarget() != null) && (aimingAt != Entity.LOC_NONE)
               && !getAimingMode().isNone()) {
-            if (this.firingDisplay.getTarget() instanceof GunEmplacement) {
+            if (this.firingDisplay.getTarget().isBuildingEntityOrGunEmplacement()) {
                 return GunEmplacement.HIT_LOCATION_NAMES[aimingAt];
             } else if (this.firingDisplay.getTarget() instanceof Entity) {
                 return ((Entity) this.firingDisplay.getTarget()).getLocationName(aimingAt);
@@ -382,7 +382,7 @@ public class AimedShotHandler implements ActionListener, ItemListener {
               && ((this.firingDisplay.getTarget().isImmobile()
               && ((this.firingDisplay.getTarget() instanceof Mek)
               || (this.firingDisplay.getTarget() instanceof Tank)))
-              || (this.firingDisplay.getTarget() instanceof GunEmplacement)));
+              || (this.firingDisplay.getTarget().isBuildingEntityOrGunEmplacement())));
         if (allowAim) {
             aimingMode = AimingMode.IMMOBILE;
             return;

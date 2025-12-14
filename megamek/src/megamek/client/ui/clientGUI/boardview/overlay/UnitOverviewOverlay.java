@@ -447,7 +447,7 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
         }
 
         // draw condition strings
-        if (entity.isImmobile() && !entity.isProne() && !(entity instanceof GunEmplacement)) {
+        if (entity.isImmobile() && !entity.isProne() && !(entity.isBuildingEntityOrGunEmplacement())) {
             // draw "IMMOB"
             graph.setColor(GUIP.getUnitOverviewConditionShadowColor());
             graph.drawString(Messages.getString("UnitOverview.IMMOB"), x + 11, y + 29);
@@ -544,7 +544,7 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
         } else if (e instanceof ProtoMek) {
             String iconName = e.getChassis() + " " + e.getModel();
             return adjustString(iconName, metrics);
-        } else if ((e instanceof Infantry) || (e instanceof Mek) || (e instanceof GunEmplacement)
+        } else if ((e instanceof Infantry) || (e instanceof Mek) || (e.isBuildingEntityOrGunEmplacement())
               || (e instanceof Aero)) {
             return adjustString(e.getModel(), metrics);
         } else if (e instanceof Tank) {

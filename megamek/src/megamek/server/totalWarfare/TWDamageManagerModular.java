@@ -3132,7 +3132,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 report.subject = entityId;
                 report.indent(3);
                 reportVec.addElement(report);
-                if (entity instanceof GunEmplacement) {
+                if (entity.isBuildingEntityOrGunEmplacement()) {
                     // gun emplacements have no internal,
                     // destroy the section
                     entity.destroyLocation(hit.getLocation());

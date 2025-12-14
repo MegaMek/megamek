@@ -38,21 +38,28 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
+import megamek.common.net.packets.Packet;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.Building;
 import megamek.common.units.EntityMovementType;
 import megamek.common.weapons.lasers.innerSphere.medium.ISLaserMedium;
+import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 /**
  * Tests for {@link BuildingEntity} that aren't tested by {@link IBuildingTests}. If the method is from the
@@ -61,7 +68,21 @@ import org.junit.jupiter.api.Test;
  * Many of these tests do not have their final values - this class is not yet fully implemented.
  */
 public class BuildingEntityTest extends GameBoardTestCase {
+    static {
+        // Initialize a test board for BuildingEntity tests
+        initializeBoard("BUILDING_ENTITY_TEST_BOARD", """
+              size 16 17
+              hex 0101 0 "" ""
+              hex 0505 0 "" ""
+              hex 0506 0 "" ""
+              end"""
+        );
+    }
+
     private BuildingEntity building;
+    private TWGameManager gameManager;
+    private Game game;
+    private Board board;
 
     @BeforeAll
     static void beforeAll() {
@@ -69,11 +90,34 @@ public class BuildingEntityTest extends GameBoardTestCase {
     }
 
     @BeforeEach
-    void setUp() {
+    void beforeEach() {
+        Player player = new Player(0, "Test");
+        gameManager = Mockito.spy(new TWGameManager());
+
+        // Mock methods that require Server to avoid NullPointerException
+        Mockito.doNothing().when(gameManager).send(any(Packet.class));
+        Mockito.doNothing().when(gameManager).sendChangedHex(any(Coords.class), any(int.class));
+        Mockito.doNothing().when(gameManager).entityUpdate(any(int.class));
+        Mockito.doNothing().when(gameManager).sendChangedBuildings(any());
+
+        game = gameManager.getGame();
+        game.addPlayer(0, player);
+
+        // Use the test board
+        board = getBoard("BUILDING_ENTITY_TEST_BOARD");
+        game.setBoard(board);
+
+        // Create and initialize the building entity
         building = new BuildingEntity(BuildingType.MEDIUM, 1);
         building.getInternalBuilding().setBuildingHeight(3);
         building.getInternalBuilding().addHex(new CubeCoords(0, 0, 0), 50, 10, BasementType.UNKNOWN, false);
+        building.setOwner(game.getPlayer(0));
+        building.refreshLocations();
+        building.refreshAdditionalLocations();
+        building.setId(0);
+        game.addEntity(building);
         building.setPosition(new Coords(5, 5));
+        building.updateBuildingEntityHexes(board.getBoardId(), gameManager);
     }
 
     @Test

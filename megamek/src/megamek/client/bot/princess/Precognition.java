@@ -861,6 +861,12 @@ public class Precognition implements Runnable {
     private void receiveBuildingCollapse(Packet packet) throws InvalidPacketDataException {
         int boardId = packet.getIntValue(1);
         game.getBoard(boardId).collapseBuilding((Vector<Coords>) packet.getObject(0));
+        // If this is a strategic building target, we should probably remove it if it collapsed...
+        for(Coords coords : (Vector<Coords>) packet.getObject(0)) {
+            if (getOwner().hasStrategicBuildingTargets(coords)) {
+                getOwner().removeStrategicBuildingTarget(coords);
+            }
+        }
     }
 
     /**

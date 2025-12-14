@@ -53,7 +53,6 @@ import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
 import megamek.common.board.Board;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.force.Force;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ForceAssignable;
@@ -90,7 +89,7 @@ class ForceDisplayMekCellFormatter {
                 uType = Messages.getString("ChatLounge.0");
             } else if (entity instanceof ProtoMek) {
                 uType = Messages.getString("ChatLounge.1");
-            } else if (entity instanceof GunEmplacement) {
+            } else if (entity.isBuildingEntityOrGunEmplacement()) {
                 uType = Messages.getString("ChatLounge.2");
             } else if (entity.isSupportVehicle()) {
                 uType = entity.getWeightClassName();

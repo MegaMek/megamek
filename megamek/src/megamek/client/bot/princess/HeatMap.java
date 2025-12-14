@@ -415,7 +415,7 @@ public class HeatMap {
 
             // Immobile - once you know where it is, it's (hopefully!) not moving ... or
             // Non-combat - not worth tracking
-            if (curTracked instanceof GunEmplacement || curTracked instanceof EjectedCrew) {
+            if (curTracked.isBuildingEntityOrGunEmplacement() || curTracked instanceof EjectedCrew) {
                 continue;
             }
 
@@ -446,7 +446,7 @@ public class HeatMap {
 
         // Immobile - once you know where it is, it's (hopefully!) not moving ... or
         // Non-combat - not worth tracking
-        if (tracked instanceof GunEmplacement || tracked instanceof EjectedCrew) {
+        if (tracked.isBuildingEntityOrGunEmplacement() || tracked instanceof EjectedCrew) {
             return;
         }
 
@@ -755,7 +755,7 @@ public class HeatMap {
               !testEntity.isHidden() &&
               (isFriendlyTeam || testEntity.isVisibleToEnemy() || testEntity.isDetectedByEnemy()) &&
               !(testEntity instanceof EjectedCrew) &&
-              !(testEntity instanceof GunEmplacement);
+              !(testEntity.isBuildingEntityOrGunEmplacement());
     }
 
     /**
@@ -775,7 +775,7 @@ public class HeatMap {
               !testEntity.isCarcass() &&
               !testEntity.isHidden() &&
               !(testEntity instanceof EjectedCrew) &&
-              !(testEntity instanceof GunEmplacement);
+              !(testEntity.isBuildingEntityOrGunEmplacement());
     }
 
     /**

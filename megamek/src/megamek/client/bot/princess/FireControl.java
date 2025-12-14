@@ -377,7 +377,7 @@ public class FireControl {
               && (EntityMovementType.MOVE_NONE == targetState.getMovementType())
               && !targetState.isImmobile()
               && !((target instanceof Infantry) || (target instanceof VTOL) ||
-              (target instanceof GunEmplacement))) {
+              (target.isBuildingEntityOrGunEmplacement()))) {
             toHitData.addModifier(TH_TAR_NO_MOVE);
         }
 

@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 
 import java.util.stream.Stream;
 
@@ -47,29 +48,51 @@ import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.game.Game;
+import megamek.common.net.packets.Packet;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.Building;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.BuildingEntity;
-import megamek.common.units.EntityMovementType;
 import megamek.common.units.MobileStructure;
 import megamek.common.weapons.lasers.innerSphere.medium.ISLaserMedium;
+import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 
 /**
  * Tests for {@link AbstractBuildingEntity} that aren't tested by {@link IBuildingTests}. If the method is from the
  * {@link Building} interface, the test should probably be in {@code IBuildingTests}.
  *
- * Many of these tests do not have their final values - this class is not yet fully implemented.
+ * Many of these tests do not have their final values - this class is not yet fully implemented. Many of these
+ * method's'll be removed from this class as they're overriden.
  */
 public class AbstractBuildingEntityTest extends GameBoardTestCase {
+
+    TWGameManager gameManager;
+    private Game game;
 
     @BeforeAll
     static void beforeAll() {
         EquipmentType.initializeTypes();
+    }
+
+    @BeforeEach
+    void beforeEach() {
+        Player player = new Player(0, "Test");
+        gameManager = Mockito.spy(new TWGameManager());
+
+        // Mock methods that require Server to avoid NullPointerException
+        Mockito.doNothing().when(gameManager).send(any(Packet.class));
+        Mockito.doNothing().when(gameManager).sendChangedHex(any(Coords.class), any(int.class));
+        Mockito.doNothing().when(gameManager).entityUpdate(any(int.class));
+        Mockito.doNothing().when(gameManager).sendChangedBuildings(any());
+
+        game = gameManager.getGame();
+        game.addPlayer(0, player);
     }
 
     /**
@@ -102,24 +125,43 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
         return setupBuilding(building);
     }
 
-    private static AbstractBuildingEntity setupBuilding(AbstractBuildingEntity building) {
+    private static AbstractBuildingEntity setupBuilding(AbstractBuildingEntity building) {        // Initialize a test board for BuildingEntity tests
         building.getInternalBuilding().setBuildingHeight(3);
         building.getInternalBuilding().addHex(new CubeCoords(0, 0, 0), 50, 10, BasementType.UNKNOWN, false);
-        building.setPosition(new Coords(5, 5));
         return building;
     }
 
     @ParameterizedTest
     @MethodSource("buildingProvider")
     void testLocations(AbstractBuildingEntity building) {
+        initializeBuildingOnBoard(building);
         // 1 hex * 3 height = 3 locations
         assertEquals(3, building.locations());
 
         building.getInternalBuilding().addHex(new CubeCoords(1, -1, 0), 50, 10, BasementType.UNKNOWN, false);
+        building.refreshLocations();
         building.refreshAdditionalLocations();
 
         // 2 hexes * 3 height = 6 locations
         assertEquals(6, building.locations());
+    }
+
+    private void initializeBuildingOnBoard(AbstractBuildingEntity building) {
+        initializeBoard("BUILDING_ENTITY_TEST_BOARD", """
+              size 16 17
+              hex 0101 0 "" ""
+              hex 0505 0 "" ""
+              hex 0506 0 "" ""
+              end"""
+        );
+        building.setOwner(game.getPlayer(0));
+        building.refreshLocations();
+        building.refreshAdditionalLocations();
+        building.setId(0);
+        game.addEntity(building);
+        building.setPosition(new Coords(5, 5));
+        building.updateBuildingEntityHexes(getBoard("BUILDING_ENTITY_TEST_BOARD").getBoardId(), gameManager);
+
     }
 
     @ParameterizedTest
@@ -146,6 +188,7 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
     @ParameterizedTest
     @MethodSource("buildingProvider")
     void testGetLocationNames(AbstractBuildingEntity building) {
+        initializeBuildingOnBoard(building);
         String[] names = building.getLocationNames();
         assertEquals(3, names.length);
         assertTrue(names[0].startsWith("Level"));
@@ -154,6 +197,7 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
     @ParameterizedTest
     @MethodSource("buildingProvider")
     void testGetLocationAbbreviations(AbstractBuildingEntity building) {
+        initializeBuildingOnBoard(building);
         String[] abbrs = building.getLocationAbbreviations();
         assertEquals(3, abbrs.length);
         assertTrue(abbrs[0].startsWith("LVL"));
@@ -180,11 +224,6 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
         assertEquals(hit, building.getTransferLocation(hit));
     }
 
-    @ParameterizedTest
-    @MethodSource("buildingProvider")
-    void testGetWeaponArc(AbstractBuildingEntity building) {
-        assertEquals(0, building.getWeaponArc(0));
-    }
 
     @ParameterizedTest
     @MethodSource("buildingProvider")

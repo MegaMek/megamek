@@ -52,6 +52,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import megamek.client.ui.clientGUI.DialogOptionListener;
+import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.options.BasicOption;
@@ -103,7 +104,7 @@ public class DialogOptionComponentYPanel extends FixedYPanel
                         }
                     }
                 });
-                add(Box.createHorizontalStrut(10));
+                add(Box.createHorizontalStrut(UIUtil.scaleForGUI(10)));
                 add(checkbox);
                 add(label);
                 break;
@@ -141,11 +142,11 @@ public class DialogOptionComponentYPanel extends FixedYPanel
                 textField.addFocusListener(this);
                 textField.setEnabled(editable);
                 if (option.isLabelBeforeTextField()) {
-                    add(Box.createHorizontalStrut(10));
+                    add(Box.createHorizontalStrut(UIUtil.scaleForGUI(10)));
                     add(label);
                     add(textField);
                 } else {
-                    add(Box.createHorizontalStrut(2));
+                    add(Box.createHorizontalStrut(UIUtil.scaleForGUI(2)));
                     add(textField);
                     add(label);
                 }

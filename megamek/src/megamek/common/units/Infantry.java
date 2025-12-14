@@ -1374,8 +1374,7 @@ public class Infantry extends Entity {
         if ((divisor == 0.5) && hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)) {
             divisor = 1.0;
         }
-        // Dermal armor adds one to the divisor, cumulative with armor kit and TSM
-        // implant
+        // Dermal armor adds one to the divisor, cumulative with armor kit and TSM implant
         if (hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
             divisor += 1.0;
         }

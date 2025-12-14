@@ -162,6 +162,13 @@ public class InfantryBVCalculator extends BVCalculator {
             offensiveValue *= (double) troopers / originalTroopers;
         }
 
+        // TSM Implant adds +0.1 per trooper to Weapon Battle Value
+        if (entity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+            double tsmBonus = troopers * 0.1;
+            offensiveValue += tsmBonus;
+            bvReport.addLine("TSM Implant:", troopers + " x 0.1", "= +" + formatForReport(tsmBonus));
+        }
+
         bvReport.startTentativeSection();
         bvReport.addLine("Field Guns:", "", "");
         Predicate<Mounted<?>> weaponFilter = m -> countAsOffensiveWeapon(m)

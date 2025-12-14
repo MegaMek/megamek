@@ -33,18 +33,6 @@
  */
 package megamek.client.ui.clientGUI;
 
-import megamek.client.ui.clientGUI.boardview.BoardView;
-import megamek.client.ui.clientGUI.boardview.LabelDisplayStyle;
-import megamek.client.ui.util.PlayerColour;
-import megamek.common.Configuration;
-import megamek.common.units.EntityMovementType;
-import megamek.common.annotations.Nullable;
-import megamek.common.enums.WeaponSortOrder;
-import megamek.common.preference.PreferenceManager;
-import megamek.common.preference.PreferenceStoreProxy;
-
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -55,6 +43,18 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
+
+import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.LabelDisplayStyle;
+import megamek.client.ui.util.PlayerColour;
+import megamek.common.Configuration;
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.WeaponSortOrder;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.preference.PreferenceStoreProxy;
+import megamek.common.units.EntityMovementType;
 
 public class GUIPreferences extends PreferenceStoreProxy {
 
@@ -82,6 +82,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_KEY_REPEAT_RATE = "AdvancedKeyRepeatRate";
     public static final String ADVANCED_SHOW_FPS = "AdvancedShowFPS";
     public static final String ADVANCED_NO_SAVE_NAG = "AdvancedNoSaveNag";
+    public static final String ADVANCED_SAVE_LOBBY_ON_START = "AdvancedSaveLobbyOnStart";
 
     /* --End advanced settings-- */
     public static final String BOARD_MOVE_DEFAULT_CLIMB_MODE = "BoardMoveDefaultClimbMode";
@@ -518,6 +519,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store.setDefault(BOARD_EDIT_RANDOM_DIALOG_START, false);
         setDefault(ADVANCED_NO_SAVE_NAG, false);
+        store.setDefault(ADVANCED_SAVE_LOBBY_ON_START, false);
         store.setDefault(ADVANCED_MOVE_STEP_DELAY, 50);
         setDefault(ADVANCED_CHATBOX2_BACKCOLOR, DEFAULT_WHITE);
         store.setDefault(ADVANCED_CHATBOX2_TRANSPARENCY, 50);
@@ -1740,6 +1742,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getNoSaveNag() {
         return store.getBoolean(ADVANCED_NO_SAVE_NAG);
+    }
+
+    public boolean getSaveLobbyOnStart() {
+        return store.getBoolean(ADVANCED_SAVE_LOBBY_ON_START);
+    }
+
+    public void setSaveLobbyOnStart(boolean value) {
+        store.setValue(ADVANCED_SAVE_LOBBY_ON_START, value);
     }
 
     public boolean getChatbox2AutoSlideDown() {

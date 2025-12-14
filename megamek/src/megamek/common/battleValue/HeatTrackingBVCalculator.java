@@ -82,7 +82,7 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
         }
 
         List<WeaponBvHeatRecord> weaponRecords = new ArrayList<>();
-        for (WeaponMounted mounted : entity.getWeaponList()) {
+        for (WeaponMounted mounted : entity.getTotalWeaponList()) {
             if (!countAsOffensiveWeapon(mounted)) {
                 continue;
             }
@@ -228,7 +228,7 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
     }
 
     protected double totalWeaponHeat() {
-        return entity.getWeaponList().stream()
+        return entity.getTotalWeaponList().stream()
               .filter(this::countAsOffensiveWeapon)
               .mapToDouble(this::weaponHeat)
               .sum();

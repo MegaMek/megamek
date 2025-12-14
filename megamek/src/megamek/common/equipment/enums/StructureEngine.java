@@ -38,17 +38,35 @@ import megamek.common.equipment.Engine;
 
 import java.io.Serializable;
 
+/**
+ * {@link megamek.common.units.MobileStructure} and {@link megamek.common.units.BuildingEntity} both have some unique
+ * and shared rules for Engines.
+ * <ul>
+ *     <li>Building Entity weight multiplier and daily fuel weight from TO:AR 132</li>
+ *     <li>Base Cost for Mobile Structure and Building Entity engine/generator from TO:AUE 208</li>
+ *     <li>Mobile Structure power and motive system multipliers and fuel multiplier from TO:AUE 78</li>
+ * </ul>
+ */
 public enum StructureEngine implements Serializable {
 
-    STEAM(Engine.STEAM, 3.0, 1.5, 4000.0, 6.0, 6.0, 6.0, 7.0, 7.0, 7.0, 7.0, 8.0, 4.0, 1L),
-    SOLAR(Engine.SOLAR, 3.0, 0.0, 8000.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1L << 1),
-    FISSION(Engine.FISSION, 1.5, 0.0, 15000.0, 3.0, 3.0, 3.0, 3.0, 4.0, 4.0, 4.0, 4.0, 0.0, 1L << 2),
-    FUSION(Engine.NORMAL_ENGINE, 1.0, 0.0, 10000.0, 2.0, 2.0, 2.0, 2.2, 1.8, 1.8, 1.8, 2.0, 0.0, 1L << 3),
-    COMBUSTION_LIQUID(Engine.COMBUSTION_ENGINE, 1.5, 1.0, 5000.0, 3.0, 3.0, 3.0, 3.2, 3.0, 3.0, 3.0, 3.0, 2.0, 1L << 4),
-    COMBUSTION_SOLID(Engine.COMBUSTION_ENGINE, 2.0, 2.0, 5000.0, 3.0, 3.0, 3.0, 3.2, 3.0, 3.0, 3.0, 3.0, 2.0, 1L << 5),
-    FUEL_CELL(Engine.FUEL_CELL, 1.0, 1.2, 7000.0, 4.0, 4.4, 4.0, 5.0, 4.0, 4.2, 4.0, 4.4, 2.0, 1L << 6),
-    EXTERNAL_PCMT(Engine.EXTERNAL, 0.5, 0.0, 5000.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1L << 7),
-    EXTERNAL(Engine.EXTERNAL, 0.5, 0.0, 5000.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1L << 8);
+    STEAM(Engine.STEAM, 3.0, 1.5, 4000.0, 6.0, 6.0, 6.0, 7.0, 7.0, 7.0, 7.0, 8.0, 4.0),
+    /**
+     * {@link megamek.common.units.BuildingEntity} only, also prohibits mounting equipment on the roof
+     */
+    SOLAR(Engine.SOLAR, 3.0, 0.0, 8000.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0),
+    FISSION(Engine.FISSION, 1.5, 0.0, 15000.0, 3.0, 3.0, 3.0, 3.0, 4.0, 4.0, 4.0, 4.0, 0.0),
+    FUSION(Engine.NORMAL_ENGINE, 1.0, 0.0, 10000.0, 2.0, 2.0, 2.0, 2.2, 1.8, 1.8, 1.8, 2.0, 0.0),
+    COMBUSTION_LIQUID(Engine.COMBUSTION_ENGINE, 1.5, 1.0, 5000.0, 3.0, 3.0, 3.0, 3.2, 3.0, 3.0, 3.0, 3.0, 2.0),
+    COMBUSTION_SOLID(Engine.COMBUSTION_ENGINE, 2.0, 2.0, 5000.0, 3.0, 3.0, 3.0, 3.2, 3.0, 3.0, 3.0, 3.0, 2.0),
+    FUEL_CELL(Engine.FUEL_CELL, 1.0, 1.2, 7000.0, 4.0, 4.4, 4.0, 5.0, 4.0, 4.2, 4.0, 4.4, 2.0),
+    /**
+     * {@link megamek.common.units.BuildingEntity} only.
+     */
+    EXTERNAL_PCMT(Engine.EXTERNAL, 0.5, 0.0, 5000.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0),
+    /**
+     * {@link megamek.common.units.BuildingEntity} only.
+     */
+    EXTERNAL(Engine.EXTERNAL, 0.5, 0.0, 5000.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0);
 
 
     /**
@@ -107,21 +125,15 @@ public enum StructureEngine implements Serializable {
      */
     final double mobileStructureFuelMultiplier;
 
-    /**
-     * Secondary / subtype flag for {@link megamek.common.equipment.MiscType}
-     */
-    final long subTypeFlag;
-
     StructureEngine(int engineType, double buildingWeightMultiplier, double buildingDailyFuelWeight, double baseCost,
-            double groundMobileStructurePowerSystemWeightMultiplierIS,
-            double airMobileStructurePowerSystemWeightMultiplierIS,
-            double surfaceNavalMobileStructurePowerSystemWeightMultiplierIS,
-            double submarineNavalMobileStructurePowerSystemWeightMultiplierIS,
-            double groundMobileStructurePowerSystemWeightMultiplierClan,
-            double airMobileStructurePowerSystemWeightMultiplierClan,
-            double surfaceNavalMobileStructurePowerSystemWeightMultiplierClan,
-            double submarineNavalMobileStructurePowerSystemWeightMultiplierClan, double mobileStructureFuelMultiplier
-          , long subTypeFlag) {
+          double groundMobileStructurePowerSystemWeightMultiplierIS,
+          double airMobileStructurePowerSystemWeightMultiplierIS,
+          double surfaceNavalMobileStructurePowerSystemWeightMultiplierIS,
+          double submarineNavalMobileStructurePowerSystemWeightMultiplierIS,
+          double groundMobileStructurePowerSystemWeightMultiplierClan,
+          double airMobileStructurePowerSystemWeightMultiplierClan,
+          double surfaceNavalMobileStructurePowerSystemWeightMultiplierClan,
+          double submarineNavalMobileStructurePowerSystemWeightMultiplierClan, double mobileStructureFuelMultiplier) {
         this.engineType = engineType;
         this.buildingWeightMultiplier = buildingWeightMultiplier;
         this.buildingDailyFuelWeight = buildingDailyFuelWeight;
@@ -135,7 +147,6 @@ public enum StructureEngine implements Serializable {
         this.surfaceNavalMobileStructurePowerSystemWeightMultiplierClan =  surfaceNavalMobileStructurePowerSystemWeightMultiplierClan;
         this.submarineNavalMobileStructurePowerSystemWeightMultiplierClan =  submarineNavalMobileStructurePowerSystemWeightMultiplierClan;
         this.mobileStructureFuelMultiplier = mobileStructureFuelMultiplier;
-        this.subTypeFlag = subTypeFlag;
     }
 
     public int getEngineType() {
@@ -144,18 +155,5 @@ public enum StructureEngine implements Serializable {
 
     public double getBuildingWeightMultiplier() {
         return buildingWeightMultiplier;
-    }
-
-    public long getSubTypeFlag() {
-        return subTypeFlag;
-    }
-
-    public static StructureEngine getStructureEngineBySubTypeFlag(long subTypeFlag) {
-        for (StructureEngine structureEngine : values()) {
-            if ((structureEngine.getSubTypeFlag() & subTypeFlag) != 0) {
-                return structureEngine;
-            }
-        }
-        return null;
     }
 }

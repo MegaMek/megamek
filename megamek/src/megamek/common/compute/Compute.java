@@ -5962,7 +5962,11 @@ public class Compute {
             return true;
         }
 
-        return PheromoneAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE;
+        if (PheromoneAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE) {
+            return true;
+        }
+
+        return ToxinAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE;
     }
 
     /**

@@ -1369,6 +1369,11 @@ public class Infantry extends Entity {
         if ((divisor == 1.0) && hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             divisor = 0.5;
         }
+        // Dermal camo armor provides divisor of 1.0 (prevents 0.5 from TSM alone)
+        // but does NOT add to divisor like regular dermal armor
+        if ((divisor == 0.5) && hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)) {
+            divisor = 1.0;
+        }
         // Dermal armor adds one to the divisor, cumulative with armor kit and TSM
         // implant
         if (hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
@@ -1584,6 +1589,17 @@ public class Infantry extends Entity {
             }
         }
 
+        // Dermal camo armor provides mimetic stealth for foot/jump infantry only
+        // when not wearing other armor. Modifier based on movement: +3/+2/+1/+0
+        if (hasDermalCamoStealth() && (delta_distance < 3)) {
+            int mod = Math.max(3 - delta_distance, 0);
+            if (result == null) {
+                result = new TargetRoll(mod, "Dermal Camo");
+            } else {
+                result.append(new TargetRoll(mod, "Dermal Camo"));
+            }
+        }
+
         if (dest && (delta_distance == 0)) {
             if (result == null) {
                 result = new TargetRoll(1, "DEST suit");
@@ -1602,6 +1618,16 @@ public class Infantry extends Entity {
     /** @return True if this infantry has any type of stealth system. */
     public boolean isStealthy() {
         return dest || sneak_camo || sneak_ir || sneak_ecm;
+    }
+
+    /**
+     * @return True if this infantry has Dermal Camo Armor and can benefit from its mimetic
+     *         stealth properties (leg or jump infantry only, not wearing other armor).
+     */
+    public boolean hasDermalCamoStealth() {
+        return hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)
+              && (getMovementMode().isLegInfantry() || getMovementMode().isJumpInfantry())
+              && (getArmorKit() == null);
     }
 
     public boolean hasMicrolite() {
@@ -2019,12 +2045,12 @@ public class Infantry extends Entity {
     }
 
     /**
-     * Checks if this infantry unit is protected from pheromone gas attacks. Protection comes from MD_FILTRATION implant
-     * or hostile environment gear (space suit, XCT vacuum, or toxic atmosphere armor kits).
+     * Checks if this infantry unit is protected from gas attacks (including pheromone and toxin gas attacks).
+     * Protection comes from MD_FILTRATION implant or hostile environment gear (space suit, XCT vacuum, or toxic atmosphere armor kits).
      *
-     * @return true if protected from pheromone attacks
+     * @return true if protected from gas attacks
      */
-    public boolean isProtectedFromPheromone() {
+    public boolean isProtectedFromGasAttacks() {
         // Check for filtration implants
         if (hasAbility(OptionsConstants.MD_FILTRATION)) {
             return true;

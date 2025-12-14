@@ -585,25 +585,27 @@ class TWDamageManagerTest {
         String unit = "Slayer SL-CX1.blk";
         AeroSpaceFighter asf = loadASF(unit);
 
-        // Validate starting armor
+        // Validate starting armor (80) and threshold (ceiling(80/10) = 8)
         assertEquals(80, asf.getArmor(AeroSpaceFighter.LOC_NOSE));
 
-        // Deal "12" points of damage (should fill 8 circles)
+        // Deal 9 points of ballistic damage against Ferro-Lamellor (reduces ~20%)
+        // 9 * 0.8 = ~7 actual damage, below threshold of 8
         HitData hit = new HitData(AeroSpaceFighter.LOC_NOSE);
         hit.setGeneralDamageType(HitData.DAMAGE_BALLISTIC);
-        DamageInfo damageInfo = new DamageInfo(asf, hit, 10);
+        DamageInfo damageInfo = new DamageInfo(asf, hit, 9);
         newMan.damageEntity(damageInfo);
 
-        assertEquals(72, asf.getArmor(AeroSpaceFighter.LOC_NOSE));
+        assertEquals(73, asf.getArmor(AeroSpaceFighter.LOC_NOSE));
         assertFalse(asf.wasCritThresh());
 
-        // Show that new system does show a check is required for more damage than the threshold
+        // Show that damage exceeding threshold triggers a check
+        // Threshold is 8, need > 8 actual damage. 12 * 0.8 = ~9.6 actual > 8
         AeroSpaceFighter asf2 = loadASF(unit);
         HitData hit2 = new HitData(AeroSpaceFighter.LOC_NOSE);
         hit2.setGeneralDamageType(HitData.DAMAGE_BALLISTIC);
-        DamageInfo damageInfo2 = new DamageInfo(asf2, hit2, 12);
+        DamageInfo damageInfo2 = new DamageInfo(asf2, hit2, 12);  // ~9-10 actual, exceeds threshold
         newMan.damageEntity(damageInfo2);
-        assertTrue(gameMan.checkForPSRFromDamage(asf2));
+        assertTrue(asf2.wasCritThresh());
     }
 
     @Test
@@ -749,25 +751,27 @@ class TWDamageManagerTest {
         String unit = "Seydlitz C.blk";
         AeroSpaceFighter asf = loadASF(unit);
 
-        // Validate starting armor
+        // Validate starting armor (18) and threshold (ceiling(18/10) = 2)
         assertEquals(18, asf.getArmor(AeroSpaceFighter.LOC_NOSE));
 
-        // Deal "4" points of damage (should fill 2 circles)
+        // Deal 2 points of energy damage against Reflective (halves energy damage)
+        // 2 / 2 = 1 actual damage, below threshold of 2
         HitData hit = new HitData(AeroSpaceFighter.LOC_NOSE);
         hit.setGeneralDamageType(HitData.DAMAGE_ENERGY);
-        DamageInfo damageInfo = new DamageInfo(asf, hit, 4);
+        DamageInfo damageInfo = new DamageInfo(asf, hit, 2);
         newMan.damageEntity(damageInfo);
 
-        assertEquals(16, asf.getArmor(AeroSpaceFighter.LOC_NOSE));
+        assertEquals(17, asf.getArmor(AeroSpaceFighter.LOC_NOSE));
         assertFalse(asf.wasCritThresh());
 
-        // Show that new system does show a check is required for more damage than the threshold
+        // Show that damage exceeding threshold triggers a check
+        // Threshold is 2, need > 2 actual damage. 6 / 2 = 3 actual > 2
         AeroSpaceFighter asf2 = loadASF(unit);
         HitData hit2 = new HitData(AeroSpaceFighter.LOC_NOSE);
         hit2.setGeneralDamageType(HitData.DAMAGE_ENERGY);
-        DamageInfo damageInfo2 = new DamageInfo(asf2, hit2, 5);
+        DamageInfo damageInfo2 = new DamageInfo(asf2, hit2, 6);  // 3 actual, exceeds threshold
         newMan.damageEntity(damageInfo2);
-        assertTrue(gameMan.checkForPSRFromDamage(asf2));
+        assertTrue(asf2.wasCritThresh());
     }
 
     @Test

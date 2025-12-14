@@ -48,22 +48,37 @@ import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
 
 /**
- * Pheromone Gas Attack (IO pg 79) A Conventional Infantry unit with the Gas Effuser (Pheromone) cybernetic implant
- * releases pheromone gas to impair enemy conventional infantry in the same hex. On success, the target suffers +1
- * to-hit on all actions for the remainder of the scenario.
+ * Toxin Gas Attack (IO pg 79) A Conventional Infantry unit with the Gas Effuser (Toxin) cybernetic implant releases
+ * toxic gas to damage enemy conventional infantry in the same hex. On success, the target takes 0.25 points of damage
+ * per attacking trooper.
  */
-public class PheromoneAttackAction extends AbstractAttackAction {
-    private static final MMLogger LOGGER = MMLogger.create(PheromoneAttackAction.class);
+public class ToxinAttackAction extends AbstractAttackAction {
+    private static final MMLogger LOGGER = MMLogger.create(ToxinAttackAction.class);
 
     @Serial
-    private static final long serialVersionUID = -2847291834719283745L;
+    private static final long serialVersionUID = -3958472619384756123L;
 
-    public PheromoneAttackAction(int entityId, int targetId) {
+    /** Damage per attacking trooper */
+    private static final double DAMAGE_PER_TROOPER = 0.25;
+
+    public ToxinAttackAction(int entityId, int targetId) {
         super(entityId, targetId);
     }
 
-    public PheromoneAttackAction(int entityId, int targetType, int targetId) {
+    public ToxinAttackAction(int entityId, int targetType, int targetId) {
         super(entityId, targetType, targetId);
+    }
+
+    /**
+     * Calculate the damage dealt by a toxin attack.
+     *
+     * @param attacker the attacking infantry unit
+     *
+     * @return the damage dealt (0.25 per trooper, rounded normally)
+     */
+    public static int getDamageFor(Infantry attacker) {
+        int troopers = attacker.getShootingStrength();
+        return (int) Math.round(troopers * DAMAGE_PER_TROOPER);
     }
 
     public ToHitData toHit(Game game) {
@@ -120,12 +135,12 @@ public class PheromoneAttackAction extends AbstractAttackAction {
 
         // Only conventional infantry can make this attack
         if (!(attackingEntity instanceof Infantry) || !attackingEntity.isConventionalInfantry()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only conventional infantry can use pheromone gas");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only conventional infantry can use toxin gas");
         }
 
-        // Must have the Gas Effuser (Pheromone) implant
-        if (!attackingEntity.hasAbility(OptionsConstants.MD_GAS_EFFUSER_PHEROMONE)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker lacks Gas Effuser (Pheromone) implant");
+        // Must have the Gas Effuser (Toxin) implant
+        if (!attackingEntity.hasAbility(OptionsConstants.MD_GAS_EFFUSER_TOXIN)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker lacks Gas Effuser (Toxin) implant");
         }
 
         // Target must be conventional infantry
@@ -133,16 +148,13 @@ public class PheromoneAttackAction extends AbstractAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target must be conventional infantry");
         }
 
-        // Target must not be protected from pheromones
+        // Target must not be protected from gas attacks
         Infantry targetInfantry = (Infantry) targetEntity;
         if (targetInfantry.isProtectedFromGasAttacks()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is protected from pheromone gas");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is protected from gas attacks");
         }
 
-        // Target already impaired - attack does nothing (no stacking)
-        if (targetInfantry.isPheromoneImpaired()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is already pheromone impaired");
-        }
+        // NOTE: Unlike pheromone, toxin CAN be used repeatedly on the same target
 
         // Can't target a transported entity
         if (Entity.NONE != targetEntity.getTransportId()) {
@@ -205,7 +217,7 @@ public class PheromoneAttackAction extends AbstractAttackAction {
         // Factor in target side
         toHit.setSideTable(ComputeSideTable.sideTable(attackingEntity, targetEntity));
 
-        // NOTE: Per IO pg 79, area-effect weapons like pheromone gas have NO range modifier
+        // NOTE: Per IO pg 79, area-effect weapons like toxin gas have NO range modifier
         // Since we're in same hex (range 0), this is already satisfied
 
         return toHit;

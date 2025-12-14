@@ -264,6 +264,7 @@ public class NavalRepairFacility extends UnitBay {
      *
      * @return The amount of bay space taken up by the unit.
      */
+    @Override
     public double spaceForUnit(Entity unit) {
         return unit.getTonnage();
     }

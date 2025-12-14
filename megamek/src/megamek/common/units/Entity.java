@@ -133,7 +133,6 @@ import megamek.common.weapons.bombs.BombISRL10;
 import megamek.common.weapons.bombs.clan.CLAAAMissileWeapon;
 import megamek.common.weapons.bombs.clan.CLASEWMissileWeapon;
 import megamek.common.weapons.bombs.clan.CLASMissileWeapon;
-import megamek.common.weapons.bombs.clan.CLBombTAG;
 import megamek.common.weapons.bombs.clan.CLLAAMissileWeapon;
 import megamek.common.weapons.bombs.innerSphere.ISAAAMissileWeapon;
 import megamek.common.weapons.bombs.innerSphere.ISASEWMissileWeapon;

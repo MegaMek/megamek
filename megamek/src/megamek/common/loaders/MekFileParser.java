@@ -55,6 +55,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.Sensor;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
@@ -543,7 +544,7 @@ public class MekFileParser {
                 if (ent.hasTargComp() ||
                       ((Mek) ent).hasTSM(true) ||
                       (!ent.getMPBoosters().isNone() &&
-                            !ent.hasWorkingMisc(MiscType.F_MASC, MiscType.S_SUPERCHARGER))) {
+                            !ent.hasWorkingMisc(MiscType.F_MASC, MiscTypeFlag.S_SUPERCHARGER))) {
                     LOGGER.error("Loading AES with incompatible systems for {}", ent.getShortName());
                 }
 
@@ -575,7 +576,7 @@ public class MekFileParser {
                         throw new EntityLoadingException("Talons are only legal in the Legs for " + ent.getShortName());
                     }
                     for (int loc = 0; loc < ent.locations(); loc++) {
-                        if (ent.locationIsLeg(loc) && !ent.hasWorkingMisc(MiscType.F_TALON, -1, loc)) {
+                        if (ent.locationIsLeg(loc) && !ent.hasWorkingMisc(MiscType.F_TALON, null, loc)) {
                             throw new EntityLoadingException("Talons must be in all legs for " + ent.getShortName());
                         }
                     }

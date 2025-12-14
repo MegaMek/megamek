@@ -62,6 +62,7 @@ import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.FuelType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
@@ -2505,7 +2506,7 @@ public class Tank extends Entity {
                   !m.isBreached() &&
                   (m.getType() instanceof MiscType) &&
                   m.getType().hasFlag(MiscType.F_MASC) &&
-                  (m.curMode().equals("Armed") || m.getType().hasSubType(MiscType.S_JET_BOOSTER))) {
+                  (m.curMode().equals("Armed") || m.getType().hasFlag(MiscTypeFlag.S_JET_BOOSTER))) {
                 return true;
             }
         }

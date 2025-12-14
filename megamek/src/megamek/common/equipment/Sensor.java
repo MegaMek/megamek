@@ -329,7 +329,7 @@ public record Sensor(int type) implements Serializable {
                     mod += 1;
                 }
 
-                if (te.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
+                if (te.hasWorkingMisc(MiscType.F_VISUAL_CAMO)) {
                     mod += 1;
                 }
 
@@ -379,7 +379,7 @@ public record Sensor(int type) implements Serializable {
                     mod += 4;
                 }
 
-                if (te.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
+                if (te.hasWorkingMisc(MiscType.F_VISUAL_CAMO)) {
                     mod += 2;
                 }
 
@@ -409,7 +409,7 @@ public record Sensor(int type) implements Serializable {
                     mod += 5;
                 }
 
-                if (te.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
+                if (te.hasWorkingMisc(MiscType.F_VISUAL_CAMO)) {
                     mod += 3;
                 }
 

@@ -47,6 +47,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.enums.BombType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.interfaces.PhaseUpdated;
 import megamek.common.interfaces.RoundUpdated;
 import megamek.common.options.IGameOptions;
@@ -512,7 +513,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
         if (getEntity() instanceof BattleArmor) {
             if ((getBaMountLoc() >= BattleArmor.MOUNT_LOC_BODY) && (getBaMountLoc() <= BattleArmor.MOUNT_LOC_TURRET)) {
-                desc.append(" (%s)".formatted(BattleArmor.getBaMountLocAbbr(getBaMountLoc())));
+                desc.append(" (%s)".formatted(BattleArmor.getBaMountLocName(getBaMountLoc())));
             }
             if (isDWPMounted()) {
                 desc.append(" (DWP)");
@@ -1145,27 +1146,27 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     public int getExplosionDamage() {
         if (type instanceof MiscType miscType) {
-            if (miscType.hasFlag(MiscType.F_PPC_CAPACITOR)) {
+            if (miscType.hasFlag(MiscTypeFlag.F_PPC_CAPACITOR)) {
                 if (curMode().equals("Charge") && (linked != null) && !linked.isFired()) {
                     return 15;
                 }
             }
-            if (miscType.hasFlag(MiscType.F_FUEL)) {
+            if (miscType.hasFlag(MiscTypeFlag.F_FUEL)) {
                 return 20;
             }
-            if (miscType.hasFlag(MiscType.F_BLUE_SHIELD)) {
+            if (miscType.hasFlag(MiscTypeFlag.F_BLUE_SHIELD)) {
                 return 5;
             }
-            if (miscType.hasFlag(MiscType.F_JUMP_JET) &&
-                  miscType.hasSubType(MiscType.S_PROTOTYPE) &&
-                  miscType.hasSubType(MiscType.S_IMPROVED)) {
+            if (miscType.hasFlag(MiscTypeFlag.F_JUMP_JET) &&
+                  miscType.hasFlag(MiscTypeFlag.S_PROTOTYPE) &&
+                  miscType.hasFlag(MiscTypeFlag.S_IMPROVED)) {
                 return 10;
             }
             if (miscType.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
                 return 2;
             }
 
-            if (miscType.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+            if (miscType.hasFlag(MiscTypeFlag.F_EMERGENCY_COOLANT_SYSTEM)) {
                 return 5;
             }
             return 0;

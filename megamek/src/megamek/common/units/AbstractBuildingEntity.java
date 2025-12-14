@@ -149,6 +149,21 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         return firingPos;
     }
 
+    @Override
+    /**
+     * TODO: Duplicate of subclass {@link BuildingEntity}, remove one
+     */
+    public int getWeaponFiringHeight(WeaponMounted weapon) {
+        if (weapon == null || getInternalBuilding() == null) {
+            return super.getWeaponFiringHeight(weapon);
+        }
+        int location = weapon.getLocation();
+        // Extract the level from the location number (location % building height)
+        // Level 0 = ground floor, level 1 = first floor above ground, etc.
+        int level = location % getInternalBuilding().getBuildingHeight();
+        return level;
+    }
+
     /**
      * Override setPosition to populate the relativeLayout map when the entity is placed.
      * This establishes the mapping between the building's internal relative coordinates

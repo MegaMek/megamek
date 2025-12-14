@@ -422,7 +422,8 @@ public class ComputeToHit {
         } else if (!isIndirect || (spotter == null)) {
             if (!exchangeSwarmTarget) {
                 Coords firingPosition = weaponEntity.getWeaponFiringPosition(weapon);
-                los = LosEffects.calculateLOS(game, game.getEntity(ae.getId()), target, firingPosition, target.getPosition(), false);
+                int firingHeight = weaponEntity.getWeaponFiringHeight(weapon);
+                los = LosEffects.calculateLOS(game, game.getEntity(ae.getId()), target, firingPosition, target.getPosition(), firingHeight, ae.getBoardId(), false);
             } else {
                 // Swarm should draw LoS between targets, not attacker, since we don't want LoS to be blocked
                 if (oldTarget.getTargetType() == Targetable.TYPE_ENTITY) {

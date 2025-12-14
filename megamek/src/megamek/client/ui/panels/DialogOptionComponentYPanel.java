@@ -140,11 +140,15 @@ public class DialogOptionComponentYPanel extends FixedYPanel
                 });
                 textField.addFocusListener(this);
                 textField.setEnabled(editable);
-                if (!option.isLabelBeforeTextField()) {
+                if (option.isLabelBeforeTextField()) {
+                    add(Box.createHorizontalStrut(10));
+                    add(label);
+                    add(textField);
+                } else {
                     add(Box.createHorizontalStrut(2));
+                    add(textField);
+                    add(label);
                 }
-                add(textField);
-                add(label);
                 break;
         }
     }

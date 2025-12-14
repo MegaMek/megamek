@@ -44,7 +44,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.Serial;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -53,7 +52,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.BorderFactory;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -62,16 +60,14 @@ import javax.swing.JViewport;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.DialogOptionListener;
-import megamek.client.ui.util.UIUtil;
-import megamek.client.ui.util.VerticalGridLayout;
 import megamek.client.ui.panels.DialogOptionComponentYPanel;
-import megamek.common.units.Aero;
-import megamek.common.units.Entity;
 import megamek.common.equipment.Mounted;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
 import megamek.common.options.WeaponQuirks;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
 
 /**
  * This class loads the default quirks list from the mmconf/cannonUnitQuirks.xml file.
@@ -450,8 +446,17 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
 
     @Override
     public void optionClicked(DialogOptionComponentYPanel comp, IOption option, boolean state) {
-        option.setValue(state);
-        updateQuirkFontStyle(comp, state);
+        if (option.getType() == IOption.BOOLEAN) {
+            option.setValue(state);
+            updateQuirkFontStyle(comp, state);
+        } else {
+            // For non-boolean options (INTEGER, STRING, etc.), don't set value here.
+            // The actual value is saved in setQuirks() using comp.getValue().
+            // Just update the font style based on whether value differs from default.
+            Object value = comp.getValue();
+            boolean isSet = value != null && !value.equals(option.getDefault());
+            updateQuirkFontStyle(comp, isSet);
+        }
         if (parent != null) {
             parent.optionClicked(comp, option, state);
         }
@@ -481,6 +486,11 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
                 entity.getQuirks().getOption(option.getName()).setValue(newVar.getValue());
             }
         }
+
+        // Recalculate tech advancement to pick up any quirk changes that affect it
+        // (e.g., Obsolete quirk adds an extinction date)
+        entity.recalculateTechAdvancement();
+
         // now for weapon quirks
         Set<Integer> set = h_wpnQuirkComps.keySet();
         for (Integer key : set) {

@@ -19228,7 +19228,9 @@ public class TWGameManager extends AbstractGameManager {
         if (((secondaryEffects && eqType.isExplosive(mounted)) ||
               mounted.isHotLoaded() ||
               (mounted.hasChargedCapacitor() != 0)) && !hitBefore) {
-            reports.addAll(explodeEquipment(en, loc, mounted));
+            // Hot-loaded launchers must override the explosive check since the launcher itself
+            // isn't inherently explosive, but hot-loaded ammo makes it explode on crit (TO p.102-103)
+            reports.addAll(explodeEquipment(en, loc, mounted, mounted.isHotLoaded()));
         }
 
         // Make sure that ammo in this slot is exhausted.

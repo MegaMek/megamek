@@ -6169,7 +6169,8 @@ public abstract class Entity extends TurnOrdered
             return false;
         }
         // Only MechWarriors, vehicle commanders, and fighter pilots qualify
-        return isMek() || isCombatVehicle() || isAerospaceFighter();
+        // Use isFighter() to include both Aerospace and Conventional Fighters per IO pg 81
+        return isMek() || isCombatVehicle() || isFighter();
     }
 
     /**

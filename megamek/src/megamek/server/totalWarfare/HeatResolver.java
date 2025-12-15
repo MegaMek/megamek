@@ -581,11 +581,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                         report.addDesc(entity);
                         addReport(report);
                         entity.setShutDown(true);
-                    } else if (entity.hasAbility(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR)) {
-                        // TCP auto-succeeds shutdown avoidance per IO pg 81
-                        report = new Report(5057);
-                        report.subject = entity.getId();
-                        report.addDesc(entity);
+                    } else if ((report = createTCPShutdownAvoidanceReport(entity)) != null) {
                         addReport(report);
                         // No shutdown - TCP automatically avoids
                     } else {
@@ -1143,11 +1139,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                     report.addDesc(entity);
                     vPhaseReport.add(report);
                     entity.setShutDown(true);
-                } else if (entity.hasAbility(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR)) {
-                    // TCP auto-succeeds shutdown avoidance per IO pg 81
-                    report = new Report(5057);
-                    report.subject = entity.getId();
-                    report.addDesc(entity);
+                } else if ((report = createTCPShutdownAvoidanceReport(entity)) != null) {
                     vPhaseReport.add(report);
                     // No shutdown - TCP automatically avoids
                 } else {
@@ -1300,5 +1292,24 @@ class HeatResolver extends AbstractTWRuleHandler {
         }
     }
 
+    /**
+     * Creates a report for TCP automatic shutdown avoidance if the entity has a Triple-Core Processor. Per IO pg 81,
+     * TCP-implanted MechWarriors and fighter pilots automatically succeed at all shutdown-avoidance checks for extreme
+     * heat, except for those described as "automatic shutdown". Note: Unlike aimed shots, TCP heat shutdown avoidance
+     * does NOT require VDNI - the implant works standalone for this benefit.
+     *
+     * @param entity The entity to check
+     *
+     * @return A Report for TCP shutdown avoidance, or null if entity doesn't have TCP
+     */
+    private Report createTCPShutdownAvoidanceReport(Entity entity) {
+        if (!entity.hasAbility(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR)) {
+            return null;
+        }
+        Report report = new Report(5057);
+        report.subject = entity.getId();
+        report.addDesc(entity);
+        return report;
+    }
 
 }

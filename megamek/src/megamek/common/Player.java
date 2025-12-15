@@ -755,11 +755,13 @@ public final class Player extends TurnOrdered {
                 bonus += 1;
             }
 
-            // -1 if shutdown or ECM-affected, unless unit has own ECM
-            if (entity.isShutDown() || isEntityECMAffected(entity)) {
-                if (!entity.hasECM()) {
-                    bonus -= 1;
-                }
+            // -1 if shutdown (ECM doesn't help against shutdown)
+            if (entity.isShutDown()) {
+                bonus -= 1;
+            }
+            // -1 if ECM-affected, unless unit has own ECM (counter-ECM per IO pg 81)
+            else if (isEntityECMAffected(entity) && !entity.hasECM()) {
+                bonus -= 1;
             }
 
             bestBonus = Math.max(bestBonus, bonus);

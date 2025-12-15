@@ -248,17 +248,24 @@ public class KickAttackAction extends PhysicalAttackAction {
 
         // check facing
         // Don't check arc for stomping infantry or tanks.
-        if ((0 != range)
-              && (mule != 1)
-              && !ComputeArc.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_FORWARD)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
+        // Tripods use torso facing (secondary) for physical attacks per IO:AE p.158
+        if ((0 != range) && (mule != 1)) {
+            int facing = ae.isTripodMek() ? ae.getSecondaryFacing() : ae.getFacing();
+            if (!ComputeArc.isInArc(ae.getPosition(), facing, target, Compute.ARC_FORWARD)) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
+            }
         }
 
         // check facing, part 2: Mule kick
-        if ((0 != range)
-              && (mule == 1)
-              && !ComputeArc.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_REAR)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
+        // Tripods cannot perform mule kicks per IO:AE p.158
+        if (mule == 1) {
+            if (ae.isTripodMek()) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Tripods cannot perform mule kicks");
+            }
+            if ((0 != range)
+                  && !ComputeArc.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_REAR)) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
+            }
         }
 
         // can't kick while prone

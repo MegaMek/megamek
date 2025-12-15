@@ -17568,12 +17568,14 @@ public class TWGameManager extends AbstractGameManager {
             }
             IAero ship = (IAero) en;
             int damage = ship.getCurrentDamage();
+            // Per SO p.116: "+1 for every full 2 points over the Fatal Threshold"
             double divisor = 2.0;
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
                 divisor = 20.0;
             }
             if (damage >= ship.getFatalThresh()) {
                 int roll = Compute.d6(2) + (int) Math.floor((damage - ship.getFatalThresh()) / divisor);
+                // Per SO p.116: "On a result of 10+, the fighter is considered destroyed"
                 if (roll > 9) {
                     // Lets auto-eject if we can!
                     if (ship instanceof LandAirMek lam) {
@@ -19226,7 +19228,9 @@ public class TWGameManager extends AbstractGameManager {
         if (((secondaryEffects && eqType.isExplosive(mounted)) ||
               mounted.isHotLoaded() ||
               (mounted.hasChargedCapacitor() != 0)) && !hitBefore) {
-            reports.addAll(explodeEquipment(en, loc, mounted));
+            // Hot-loaded launchers must override the explosive check since the launcher itself
+            // isn't inherently explosive, but hot-loaded ammo makes it explode on crit (TO p.102-103)
+            reports.addAll(explodeEquipment(en, loc, mounted, mounted.isHotLoaded()));
         }
 
         // Make sure that ammo in this slot is exhausted.
@@ -19802,7 +19806,8 @@ public class TWGameManager extends AbstractGameManager {
             case Aero.CRIT_CREW:
                 // pilot hit
                 r = new Report(6650);
-                if (aero.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
+                if (aero.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
+                      || aero.hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)) {
                     r = new Report(6651);
                     r.subject = aero.getId();
                     reports.add(r);
@@ -20720,8 +20725,10 @@ public class TWGameManager extends AbstractGameManager {
                     reports.add(r);
                     reports.addAll(damageCrew(tank, 1));
                 } else {
-                    if (tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT) ||
-                          tank.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
+                    if (tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)
+                          || tank.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
+                          || tank.hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)
+                          || tank.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
                         r = new Report(6186);
                     } else {
                         tank.stunCrew();
@@ -23468,7 +23475,21 @@ public class TWGameManager extends AbstractGameManager {
     private Vector<Report> checkPilotAvoidFallDamage(Entity entity, int fallHeight, PilotingRollData roll) {
         Vector<Report> reports = new Vector<>();
 
-        if (entity.hasAbility(OptionsConstants.MD_DERMAL_ARMOR) || entity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+        if (entity.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
+              || entity.hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)
+              || entity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+            // Report fall damage prevented for each crew member
+            for (int pos = 0; pos < entity.getCrew().getSlotCount(); pos++) {
+                if (entity.getCrew().isMissing(pos) || entity.getCrew().isDead(pos)) {
+                    continue;
+                }
+                Report r = new Report(2328);
+                r.subject = entity.getId();
+                r.add(entity.getCrew().getCrewType().getRoleName(pos));
+                r.addDesc(entity);
+                r.add(entity.getCrew().getName(pos));
+                reports.add(r);
+            }
             return reports;
         }
         // we want to be able to avoid pilot damage even when it was
@@ -26197,7 +26218,7 @@ public class TWGameManager extends AbstractGameManager {
             final Coords coords = entity.getPosition();
 
             // If the entity is infantry in the affected hex?
-            if ((entity instanceof Infantry) && bldg.isIn(coords) && coords.equals(hexCoords)) {
+            if ((entity instanceof Infantry) && coords.equals(hexCoords)) {
                 // Is the entity is inside the building
                 // (instead of just on top of it)?
                 if (Compute.isInBuilding(game, entity, coords)) {

@@ -5,11 +5,13 @@ Prohibited:
   - AlamoMissile Ammo
 Overrides:
   # Overrides will replace final generated values in the configurator.
-  # To prohibit a specific munition type for IS or Clans only, set its final weight override to below the value of
-  # "mtMunitionWeightThreshold" (see Defaults.Factors.mtMunitionWeightThreshold)
+  # These apply to the generated weights within TeamLoadOutGenerator, not to the base weights in
+  # MunitionWeightCollection.
+  # E.g. to force IS teams to always value Dead-Fire at weight 4.0:
+  # Munitions:
+  #   Dead-Fire:
+  #     IS: 4.0
   Munitions:
-    Dead-Fire:
-      IS: 4.0
   Bombs:
   Factors:
 
@@ -202,7 +204,7 @@ Defaults:
         IS: 1.0
         Clan: 1.0
 
-    Artillery:
+    Long Tom:
       Fuel-Air:
         IS: 1.0
         Clan: 1.0
@@ -231,7 +233,75 @@ Defaults:
         IS: 1.0
         Clan: 1.0
 
-    Artillery Cannon:
+    Sniper:
+      Fuel-Air:
+        IS: 1.0
+        Clan: 1.0
+      Standard:
+        IS: 2.0
+        Clan: 2.0
+      Cluster:
+        IS: 1.0
+        Clan: 1.0
+      Copperhead:
+        IS: 1.0
+        Clan: 1.0
+      FASCAM:
+        IS: 1.0
+        Clan: 1.0
+      Flechette:
+        IS: 1.0
+        Clan: 1.0
+      Illumination:
+        IS: 1.0
+        Clan: 1.0
+      Smoke:
+        IS: 1.0
+        Clan: 1.0
+
+    Thumper:
+      Fuel-Air:
+        IS: 1.0
+        Clan: 1.0
+      Standard:
+        IS: 2.0
+        Clan: 2.0
+      Cluster:
+        IS: 1.0
+        Clan: 1.0
+      Copperhead:
+        IS: 1.0
+        Clan: 1.0
+      FASCAM:
+        IS: 1.0
+        Clan: 1.0
+      Flechette:
+        IS: 1.0
+        Clan: 1.0
+      Illumination:
+        IS: 1.0
+        Clan: 1.0
+      Smoke:
+        IS: 1.0
+        Clan: 1.0
+
+    Long Tom Cannon:
+      Fuel-Air:
+        IS: 1.0
+        Clan: 1.0
+      Standard:
+        IS: 2.0
+        Clan: 2.0
+
+    Sniper Cannon:
+      Fuel-Air:
+        IS: 1.0
+        Clan: 1.0
+      Standard:
+        IS: 2.0
+        Clan: 2.0
+
+    Thumper Cannon:
       Fuel-Air:
         IS: 1.0
         Clan: 1.0
@@ -255,23 +325,30 @@ Defaults:
       HE:
         Clan: 2.0
 
-    Mek Mortar:
-      Standard:
+    # Mek Mortars specifically, but our Mek Mortar ammo doesn't use the word "Mek" anywhere
+    Mortar:
+      # Shaped-charge, standard ammo
+      SC:
+        IS: 2.0
+        Clan: 2.0
+      # Semi-guided
+      SG:
         IS: 1.0
         Clan: 1.0
-      Semi-Guided:
+      # Anti-personnel
+      AP:
         IS: 1.0
         Clan: 1.0
-      Anti-personnel:
+      # Air-burst
+      AB:
         IS: 1.0
         Clan: 1.0
-      Airburst:
+      # Flare
+      FL:
         IS: 1.0
         Clan: 1.0
-      Flare:
-        IS: 1.0
-        Clan: 1.0
-      Smoke:
+      # Smoke
+      SM:
         IS: 1.0
         Clan: 1.0
 
@@ -288,7 +365,7 @@ Defaults:
       Davy Crockett-M:
         IS: 1.0
         Clan: 1.0
-      AlamoMissile:
+      AlamoMissile Ammo:
         IS: 1.0
         Clan: 1.0
 
@@ -408,7 +485,7 @@ Defaults:
     # If enemy TSM-equipped units exceed this count, increase heat-seeking munition weight
     mtSeekingAmmoEnemyTSMExceedThreshold: 1.0
     # Weight cut-off beneath which to ignore munitions (final weights below this will never be equipped)
-    mtMunitionWeightThreshold: 1.0
+    mtMunitionWeightThreshold: 0.0
     # These factors determine how far up and down an "increase" or "decrease" step actually moves the weight
     # of a munition type.  The default values increase a weight by (2.0 x weight) + 1, and decrease by
     # (0.5 * weight), so no weight should end below 0 unless set there initially.

@@ -128,7 +128,9 @@ public class TeamLoadOutGenerator {
           "Acid",
           "FABombSmall Ammo",
           "ClusterBomb",
-          "HEBomb"));
+          "HEBomb",
+          "AB",
+          "AP"));
 
     public static final ArrayList<String> ANTI_BA_MUNITIONS = new ArrayList<>(List.of("Inferno",
           "Fuel-Air",
@@ -146,10 +148,12 @@ public class TeamLoadOutGenerator {
           "Inferno",
           "Incendiary",
           "Flare",
+          "FL",
           "InfernoBomb"));
 
     public static final ArrayList<String> UTILITY_MUNITIONS = new ArrayList<>(List.of("Illumination",
           "Smoke",
+          "SM",
           "Mine Clearance",
           "Anti-TSM",
           "Laser Inhibiting",
@@ -167,19 +171,21 @@ public class TeamLoadOutGenerator {
 
     // Guided munitions come in two main flavors
     public static final ArrayList<String> GUIDED_MUNITIONS = new ArrayList<>(List.of("Semi-Guided",
+          "SG",
           "Narc-capable",
           "Homing",
           "Copperhead",
           "LGBomb",
           "ArrowIVHomingMissile Ammo"));
     public static final ArrayList<String> TAG_GUIDED_MUNITIONS = new ArrayList<>(List.of("Semi-Guided",
+          "SG",
           "Homing",
           "Copperhead",
           "LGBomb",
           "ArrowIVHomingMissile Ammo"));
+
     public static final ArrayList<String> NARC_GUIDED_MUNITIONS = new ArrayList<>(List.of("Narc-capable"));
 
-    // TODO Anti-Radiation Missiles See IO pg 62 (TO 368)
     public static final ArrayList<String> SEEKING_MUNITIONS = new ArrayList<>(List.of("Heat-Seeking",
           "Listen-Kill",
           "Swarm",
@@ -207,10 +213,15 @@ public class TeamLoadOutGenerator {
           "SRM",
           "AC",
           "ATM",
+          "iATM",
           "Arrow IV",
-          "Artillery",
-          "Artillery Cannon",
-          "Mek Mortar",
+          "Long Tom",
+          "Sniper",
+          "Thumper",
+          "Long Tom Cannon",
+          "Sniper Cannon",
+          "Thumper Cannon",
+          "Mortar",
           "Narc",
           "Bomb"));
 
@@ -221,9 +232,13 @@ public class TeamLoadOutGenerator {
           entry("ATM", MunitionTree.ATM_MUNITION_NAMES),
           entry("iATM", MunitionTree.iATM_MUNITION_NAMES),
           entry("Arrow IV", MunitionTree.ARROW_MUNITION_NAMES),
-          entry("Artillery", MunitionTree.ARTILLERY_MUNITION_NAMES),
-          entry("Artillery Cannon", MunitionTree.MEK_MORTAR_MUNITION_NAMES),
-          entry("Mek Mortar", MunitionTree.MEK_MORTAR_MUNITION_NAMES),
+          entry("Long Tom", MunitionTree.ARTILLERY_MUNITION_NAMES),
+          entry("Sniper", MunitionTree.ARTILLERY_MUNITION_NAMES),
+          entry("Thumper", MunitionTree.ARTILLERY_MUNITION_NAMES),
+          entry("Long Tom Cannon", MunitionTree.ARTILLERY_CANNON_MUNITION_NAMES),
+          entry("Sniper Cannon", MunitionTree.ARTILLERY_CANNON_MUNITION_NAMES),
+          entry("Thumper Cannon", MunitionTree.ARTILLERY_CANNON_MUNITION_NAMES),
+          entry("Mortar", MunitionTree.MORTAR_MUNITION_NAMES),
           entry("Narc", MunitionTree.NARC_MUNITION_NAMES),
           entry("Bomb", MunitionTree.BOMB_MUNITION_NAMES));
 
@@ -619,6 +634,71 @@ public class TeamLoadOutGenerator {
         return el.stream().filter(e -> e.isMek() && ((Mek) e).hasTSM(false)).count();
     }
     // endregion Check for various unit types, armor types, etc.
+
+    // region generateValidMunitionsForFactionAndEra
+    public HashMap<String, Object> generateValidMunitionsForFactionAndEra(Team team) {
+        boolean allowNukes = gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AT2_NUKES);
+        return generateValidMunitionsForFactionAndEra(
+              EquipmentType.allTypes(), team.getFaction(), allowedYear, gameTechLevel,
+              legalLevel, eraBasedTechLevel, advAeroRules, showExtinct, allowNukes);
+    }
+
+    /**
+     *
+     allowedYear = gameOptions.intOption(OptionsConstants.ALLOWED_YEAR);
+     gameTechLevel = TechConstants.getSimpleLevel(gameOptions.stringOption(OptionsConstants.ALLOWED_TECH_LEVEL));
+     legalLevel = SimpleTechLevel.getGameTechLevel(game);
+     eraBasedTechLevel = gameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED);
+     advAeroRules = gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_ARTILLERY_MUNITIONS);
+     showExtinct = gameOptions.booleanOption((OptionsConstants.ALLOWED_SHOW_EXTINCT));
+     *
+     * @param faction
+     * @param dateRange
+     * @return
+     */
+    public static HashMap<String, Object> generateValidMunitionsForFactionAndEra(
+          List<EquipmentType> types,
+          String faction,
+          int year,
+          int techLevel,
+          SimpleTechLevel legalLevel,
+          boolean eraBased,
+          boolean advancedAero,
+          boolean showExtinct,
+          boolean allowNukes
+    ){
+        HashMap<String, Object> legalMunitions = new HashMap<>();
+        for (String weaponName : TYPE_LIST) {
+            HashMap<String, Integer> newEntry = new HashMap<>();
+            List<AmmoType> ammoTypes = types.stream()
+                  .filter(AmmoType.class::isInstance)
+                  .filter(eq -> eq.getName().contains(weaponName))
+                  .map(AmmoType.class::cast)
+                  .toList();
+
+            // Munitions must be named in one of the TYPE_MAP sub-maps to be utilized!
+            for (String munitionName: TYPE_MAP.get(weaponName)) {
+                // Get the first munition that matches; tube count or barrel size doesn't matter for validity checks
+                AmmoType exemplar = ammoTypes.stream()
+                      .filter(munition -> munition.matchesName(munitionName))
+                      .findFirst()
+                      .orElse(null);
+                if (exemplar != null) {
+                    // The count will be determined by rating, level, etc.
+                    // For now just use 1
+                    newEntry.put(munitionName, 1);
+                }
+            }
+            // Add "Standard" ammo with "unlimited" count; overrides values set in the loop if found
+            newEntry.put("Standard", Integer.MAX_VALUE);
+
+            legalMunitions.put(weaponName, newEntry);
+        }
+
+        return legalMunitions;
+    }
+
+    // endregion generateValidMunitionsForFactionAndEra
 
     // region generateParameters
     public ReconfigurationParameters generateParameters(Team team) {

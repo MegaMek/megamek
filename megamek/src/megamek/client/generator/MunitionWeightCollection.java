@@ -54,7 +54,7 @@ class MunitionWeightCollection {
     private HashMap<String, Double> arrowWeights;
     private HashMap<String, Double> artyWeights;
     private HashMap<String, Double> artyCannonWeights;
-    private HashMap<String, Double> mekMortarWeights;
+    private HashMap<String, Double> mortarWeights;
     private HashMap<String, Double> narcWeights;
     private HashMap<String, Double> bombWeights;
     private Map<String, HashMap<String, Double>> mapTypeToWeights;
@@ -87,8 +87,8 @@ class MunitionWeightCollection {
               MunitionTree.ARTILLERY_CANNON_MUNITION_NAMES);
         atmWeights = initializeWeaponWeightsYAML("ATM", factionName, clan, MunitionTree.ATM_MUNITION_NAMES);
         iatmWeights = initializeWeaponWeightsYAML("iATM", factionName, clan, MunitionTree.iATM_MUNITION_NAMES);
-        mekMortarWeights = initializeWeaponWeightsYAML("Mek Mortar", factionName, clan,
-              MunitionTree.MEK_MORTAR_MUNITION_NAMES);
+        mortarWeights = initializeWeaponWeightsYAML("Mek Mortar", factionName, clan,
+              MunitionTree.MORTAR_MUNITION_NAMES);
         narcWeights = initializeWeaponWeightsYAML("Narc", factionName, clan, MunitionTree.NARC_MUNITION_NAMES);
         bombWeights = initializeWeaponWeightsYAML("Bomb", factionName, clan, MunitionTree.BOMB_MUNITION_NAMES);
 
@@ -96,10 +96,11 @@ class MunitionWeightCollection {
               entry("SRM", srmWeights),
               entry("AC", acWeights),
               entry("ATM", atmWeights),
+              entry("iATM", iatmWeights),
               entry("Arrow IV", arrowWeights),
               entry("Artillery", artyWeights),
               entry("Artillery Cannon", artyCannonWeights),
-              entry("Mek Mortar", mekMortarWeights),
+              entry("Mek Mortar", mortarWeights),
               entry("Narc", narcWeights),
               entry("Bomb", bombWeights)));
     }
@@ -386,7 +387,7 @@ class MunitionWeightCollection {
         return artyCannonWeights;
     }
 
-    public HashMap<String, Double> getMekMortarWeights() {
-        return mekMortarWeights;
+    public HashMap<String, Double> getMortarWeights() {
+        return mortarWeights;
     }
 }

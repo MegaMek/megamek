@@ -54,7 +54,9 @@ import megamek.client.Client;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.common.Player;
+import megamek.common.SimpleTechLevel;
 import megamek.common.Team;
+import megamek.common.TechConstants;
 import megamek.common.containers.MunitionTree;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.AmmoType.Munitions;
@@ -77,6 +79,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class TeamLoadOutGeneratorTest {
 
@@ -601,6 +605,58 @@ class TeamLoadOutGeneratorTest {
         assertEquals("Anti-TSM=7.0", mwc.getTopN(1).get("SRM").get(0));
     }
 
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void testArtemisDefaultIsNegative(boolean clan) {
+        // We don't want to assign Artemis ammo based on weighting, we only want to
+        // consider if the launcher is suitable (within TeamLoadOutGenerator)
+        // Test for both IS and Clan
+        MunitionWeightCollection mwc = new MunitionWeightCollection("FakeFaction", clan);
+        assertTrue(mwc.getLrmWeights().containsKey("Artemis-capable"));
+        double weight = mwc.getLrmWeights().get("Artemis-capable");
+        assertTrue(weight < 0);
+    }
+
+    @Test
+    void testFedSunsAntiTSMWeightNotZero() {
+        // This does not check for era or tech, only default weights
+        MunitionWeightCollection mwc = new MunitionWeightCollection("FS", false);
+        assertTrue(mwc.getLrmWeights().containsKey("Anti-TSM"));
+        double weight = mwc.getLrmWeights().get("Anti-TSM");
+        assertTrue(weight > 0);
+
+        // Compare to Lyran Commonwealth weight, which should be 0
+        mwc = new MunitionWeightCollection("LC", false);
+        assertTrue(mwc.getLrmWeights().containsKey("Anti-TSM"));
+        weight = mwc.getLrmWeights().get("Anti-TSM");
+        assertTrue(weight <= 0);
+
+        // Compare to Jade Falcon default weight which should be 0
+        mwc = new MunitionWeightCollection("JF", true);
+        assertTrue(mwc.getLrmWeights().containsKey("Anti-TSM"));
+        weight = mwc.getLrmWeights().get("Anti-TSM");
+        assertTrue(weight <= 0);
+    }
+
+    @Test
+    void testUpdatedDeadFireOverride() throws Exception {
+        // Insert a new Overrides.Munitions.Dead-Fire entry that applies to all factions equally.
+        // We know we can cast this because every level of the map is either a ref to a HashMap,
+        // or a value.
+        HashMap<String, Object> overrideMap = (HashMap<String, Object>) TeamLoadOutGenerator.searchMap(
+              "Overrides");
+        HashMap<String, Object> newBranch = new HashMap<>();
+        newBranch.put("Dead-Fire", 4.0);
+        overrideMap.put("Munitions", newBranch);
+
+        // Now search through the complete tree to get the updated value
+        double dfOverride = (double) TeamLoadOutGenerator.searchMap("Overrides.Munitions.Dead-Fire");
+        double defaultWeight = (double) TeamLoadOutGenerator.searchMap("Defaults.Munitions.Weight");
+        assertTrue(dfOverride > 0);
+        assertTrue(defaultWeight > 0);
+        assertTrue(dfOverride > defaultWeight);
+    }
+
     @Test
     void testNukeToggleDecreasesNukeWeightToZero() {
         ReconfigurationParameters rp = new ReconfigurationParameters();
@@ -829,5 +885,35 @@ class TeamLoadOutGeneratorTest {
         assertTrue(prohibitedList.contains("AlamoMissile Ammo"));
     }
 
+    @Test
+    void testValidMunitionsGeneratorHasMaxStandardAmmos() {
+        String faction = "FS";
+        int year = 3025;
+        int techLevel = TechConstants.T_SIMPLE_STANDARD;
+        SimpleTechLevel legalLevel = SimpleTechLevel.parse(TechConstants.T_SIMPLE_NAMES[techLevel]);
+        boolean eraBased = false;
+        boolean advancedAero = false;
+        boolean showExtinct = false;
+        boolean allowNukes = false;
+
+        HashMap<String, Object> availMap = TeamLoadOutGenerator.generateValidMunitionsForFactionAndEra(
+              EquipmentType.allTypes(),
+              faction,
+              year,
+              techLevel,
+              legalLevel,
+              eraBased,
+              advancedAero,
+              showExtinct,
+              allowNukes
+        );
+
+        for (String weaponName: TeamLoadOutGenerator.TYPE_LIST) {
+            HashMap<String, Integer> entries = (HashMap<String, Integer>) availMap.getOrDefault(weaponName, null);
+            assertNotEquals(null, entries);
+            assertFalse(entries.isEmpty());
+            assertTrue(entries.getOrDefault("Standard", 0) > 0);
+        }
+    }
 
 }

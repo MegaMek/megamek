@@ -1242,10 +1242,13 @@ class ComputeToHitIsImpossible {
                 }
             }
 
-            // BA Mine launchers can not hit infantry
+            // BA Mine launchers can only target 'Mek, vehicle, or grounded fighter (TW p.229)
             if (BattleArmor.MINE_LAUNCHER.equals(weaponType.getInternalName())) {
-                if (entityTarget instanceof Infantry) {
-                    return Messages.getString("WeaponAttackAction.CantShootInfantry");
+                boolean isValidTarget = (entityTarget instanceof Mek)
+                      || (entityTarget instanceof Tank)
+                      || ((entityTarget instanceof Aero) && !entityTarget.isAirborne());
+                if (!isValidTarget) {
+                    return Messages.getString("WeaponAttackAction.PopUpMineInvalidTarget");
                 }
             }
 

@@ -183,6 +183,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
             int baseDamageDealt = damageDealt - tsmDamageDealt;
             Report tsmReport = new Report(3418);
             tsmReport.subject = subjectId;
+            tsmReport.indent(2);
             tsmReport.add(baseDamageDealt);
             tsmReport.add(tsmDamageDealt);
             vPhaseReport.addElement(tsmReport);

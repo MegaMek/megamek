@@ -89,6 +89,7 @@ public class SwarmWeaponAttackHandler extends WeaponHandler {
             int baseDamage = damage - tsmBonusDamage;
             Report tsmReport = new Report(3418);
             tsmReport.subject = subjectId;
+            tsmReport.indent(2);
             tsmReport.add(baseDamage);
             tsmReport.add(tsmBonusDamage);
             calcDmgPerHitReport.addElement(tsmReport);
@@ -113,12 +114,11 @@ public class SwarmWeaponAttackHandler extends WeaponHandler {
     @Override
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
           IBuilding bldg, int hits, int nCluster, int bldgAbsorbs) {
-        // Calculate damage - nDamPerHit is set by parent's handle() method, but we need
-        // to check the actual swarm damage here to handle the zero-damage case correctly
-        int swarmDamage = calcDamagePerHit();
+        // Use nDamPerHit which was already calculated by parent's handle() method
+        // Don't call calcDamagePerHit() again as it would add duplicate TSM reports
 
         // If we have damage, use normal handling which includes crit rolls
-        if (swarmDamage > 0) {
+        if (nDamPerHit > 0) {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
             return;
         }

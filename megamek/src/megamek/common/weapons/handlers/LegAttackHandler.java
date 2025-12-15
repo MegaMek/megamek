@@ -119,6 +119,7 @@ public class LegAttackHandler extends WeaponHandler {
             int baseDamage = damage - tsmBonusDamage;
             Report tsmReport = new Report(3418);
             tsmReport.subject = subjectId;
+            tsmReport.indent(2);
             tsmReport.add(baseDamage);
             tsmReport.add(tsmBonusDamage);
             vPhaseReport.addElement(tsmReport);

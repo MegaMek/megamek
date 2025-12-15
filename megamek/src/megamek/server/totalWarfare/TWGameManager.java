@@ -20727,7 +20727,8 @@ public class TWGameManager extends AbstractGameManager {
                 } else {
                     if (tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)
                           || tank.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
-                          || tank.hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)) {
+                          || tank.hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)
+                          || tank.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
                         r = new Report(6186);
                     } else {
                         tank.stunCrew();

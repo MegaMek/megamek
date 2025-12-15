@@ -53,7 +53,6 @@ import megamek.common.bays.*;
 import megamek.common.board.CubeCoords;
 import megamek.common.equipment.*;
 import megamek.common.exceptions.LocationFullException;
-import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
 import megamek.common.units.*;
@@ -667,8 +666,8 @@ public class BLKFile {
         List<String> quirkList = t.getQuirks()
               .getOptionsList()
               .stream()
-              .filter(IOption::booleanValue)
-              .map(IBasicOption::getName)
+              .filter(BLKFile::isQuirkActive)
+              .map(BLKFile::formatQuirkForSave)
               .collect(Collectors.toList());
 
         if (!quirkList.isEmpty()) {
@@ -1184,6 +1183,47 @@ public class BLKFile {
             default -> engineCode;
         };
         return engineCode;
+    }
+
+    /**
+     * Checks if a quirk is active and should be saved. Boolean quirks are active if true, integer quirks
+     * are active if they have a non-zero value, string quirks (like obsolete) are active if they have a
+     * non-empty value.
+     *
+     * @param quirk The quirk option to check
+     *
+     * @return true if the quirk should be saved
+     */
+    private static boolean isQuirkActive(IOption quirk) {
+        if (quirk.getType() == IOption.INTEGER) {
+            return quirk.intValue() != 0;
+        }
+        if (quirk.getType() == IOption.STRING) {
+            String value = quirk.stringValue();
+            return value != null && !value.isEmpty();
+        }
+        return quirk.booleanValue();
+    }
+
+    /**
+     * Formats a quirk for saving to a unit file. Boolean quirks are saved as just their name,
+     * while integer quirks are saved as "name:value" and string quirks (like obsolete) are saved
+     * as "name:value" (e.g., "obsolete:2950,3146").
+     *
+     * @param quirk The quirk option to format
+     * @return The formatted string for saving
+     */
+    private static String formatQuirkForSave(IOption quirk) {
+        if (quirk.getType() == IOption.INTEGER) {
+            return quirk.getName() + ":" + quirk.intValue();
+        }
+        if (quirk.getType() == IOption.STRING) {
+            String value = quirk.stringValue();
+            if (value != null && !value.isEmpty()) {
+                return quirk.getName() + ":" + value;
+            }
+        }
+        return quirk.getName();
     }
 
     private static String encodeEquipmentLine(Mounted<?> m) {

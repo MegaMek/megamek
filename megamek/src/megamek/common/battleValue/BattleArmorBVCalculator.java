@@ -43,6 +43,7 @@ import java.util.function.Predicate;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
 import megamek.common.MPCalculationSetting;
+import megamek.common.Messages;
 import megamek.common.TechConstants;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.AmmoMounted;
@@ -236,7 +237,7 @@ public class BattleArmorBVCalculator extends BVCalculator {
         // TSM Implant adds +1 BV per trooper before skill modifiers
         if (entity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             baseBV += 1;
-            bvReport.addLine("TSM Implant:", "+1", "= " + formatForReport(baseBV));
+            bvReport.addLine(Messages.getString("BV.TSMImplant"), "+1", "= " + formatForReport(baseBV));
         }
     }
 

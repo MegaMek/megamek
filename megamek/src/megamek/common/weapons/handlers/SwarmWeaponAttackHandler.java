@@ -71,11 +71,11 @@ public class SwarmWeaponAttackHandler extends WeaponHandler {
     protected int calcDamagePerHit() {
         int damage = 0;
         int tsmBonusDamage = 0;
-        if (attackingEntity instanceof BattleArmor ba) {
-            damage = ba.calculateSwarmDamage();
+        if (attackingEntity instanceof BattleArmor battleArmor) {
+            damage = battleArmor.calculateSwarmDamage();
             // TSM Implant adds +1 damage per trooper for same-hex attacks
             if (attackingEntity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
-                tsmBonusDamage = ba.getTroopers();
+                tsmBonusDamage = battleArmor.getTroopers();
                 damage += tsmBonusDamage;
             }
         }

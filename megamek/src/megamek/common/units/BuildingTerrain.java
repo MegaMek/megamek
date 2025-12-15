@@ -472,4 +472,9 @@ public class BuildingTerrain implements IBuilding {
     public String toString() {
         return getInternalBuilding().toString();
     }
+
+    @Override
+    public int hashCode() {
+        return getId();
+    }
 }

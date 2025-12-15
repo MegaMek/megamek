@@ -133,7 +133,6 @@ import megamek.common.weapons.bombs.BombISRL10;
 import megamek.common.weapons.bombs.clan.CLAAAMissileWeapon;
 import megamek.common.weapons.bombs.clan.CLASEWMissileWeapon;
 import megamek.common.weapons.bombs.clan.CLASMissileWeapon;
-import megamek.common.weapons.bombs.clan.CLBombTAG;
 import megamek.common.weapons.bombs.clan.CLLAAMissileWeapon;
 import megamek.common.weapons.bombs.innerSphere.ISAAAMissileWeapon;
 import megamek.common.weapons.bombs.innerSphere.ISASEWMissileWeapon;
@@ -4959,7 +4958,6 @@ public abstract class Entity extends TurnOrdered
               (m.getType() instanceof CLLAAMissileWeapon) ||
               (m.getType() instanceof BombArrowIV)
               /* || m.getType() instanceof CLBombArrowIV */ ||
-              (m.getType() instanceof CLBombTAG) ||
               (m.getType() instanceof ISBombTAG) ||
               (m.getType() instanceof BombISRL10) ||
               (m.getType() instanceof AlamoMissileWeapon));
@@ -4976,7 +4974,6 @@ public abstract class Entity extends TurnOrdered
               (m.getType() instanceof CLLAAMissileWeapon) ||
               (m.getType() instanceof BombArrowIV)
               /* || m.getType() instanceof CLBombArrowIV */ ||
-              (m.getType() instanceof CLBombTAG) ||
               (m.getType() instanceof ISBombTAG) ||
               (m.getType() instanceof BombISRL10) ||
               (m.getType() instanceof AlamoMissileWeapon));

@@ -114,11 +114,19 @@ public class SwarmWeaponAttackHandler extends WeaponHandler {
     @Override
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
           IBuilding bldg, int hits, int nCluster, int bldgAbsorbs) {
-        // Use nDamPerHit which was already calculated by parent's handle() method
-        // Don't call calcDamagePerHit() again as it would add duplicate TSM reports
+        // Determine if this is a positive damage attack.
+        // nDamPerHit is normally set by parent's handle() method. If called directly (e.g., in unit tests),
+        // we calculate from the BattleArmor to determine the correct code path without adding duplicate reports.
+        int damageForPathDecision = nDamPerHit;
+        if (damageForPathDecision == 0 && attackingEntity instanceof BattleArmor battleArmor) {
+            damageForPathDecision = battleArmor.calculateSwarmDamage();
+            if (attackingEntity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+                damageForPathDecision += battleArmor.getTroopers();
+            }
+        }
 
         // If we have damage, use normal handling which includes crit rolls
-        if (nDamPerHit > 0) {
+        if (damageForPathDecision > 0) {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
             return;
         }

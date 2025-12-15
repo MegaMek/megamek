@@ -1242,7 +1242,7 @@ class ComputeToHitIsImpossible {
                 }
             }
 
-            // BA Mine launchers can only target 'Mech, vehicle, or grounded fighter (TW p.229)
+            // BA Mine launchers can only target 'Mek, vehicle, or grounded fighter (TW p.229)
             if (BattleArmor.MINE_LAUNCHER.equals(weaponType.getInternalName())) {
                 boolean isValidTarget = (entityTarget instanceof Mek)
                       || (entityTarget instanceof Tank)

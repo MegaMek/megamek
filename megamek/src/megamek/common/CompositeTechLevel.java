@@ -130,6 +130,11 @@ public class CompositeTechLevel implements ITechnology, Serializable {
               entity.isMixedTech(),
               entity.getYear(),
               techFaction);
+        // If the entity has the Obsolete quirk, add extinction ranges for all obsolete periods
+        List<Integer> obsoleteYears = entity.getObsoleteYears();
+        if (!obsoleteYears.isEmpty()) {
+            setObsoleteYears(obsoleteYears);
+        }
     }
 
     /**
@@ -342,6 +347,41 @@ public class CompositeTechLevel implements ITechnology, Serializable {
             return clan ? TechConstants.T_CLAN_EXPERIMENTAL : TechConstants.T_IS_EXPERIMENTAL;
         }
         return TechConstants.T_TECH_UNKNOWN;
+    }
+
+    /**
+     * Sets the obsolete year for this unit, adding an extinction range from that year onwards. This should be called
+     * after quirks are loaded if the unit has the Obsolete quirk.
+     *
+     * @param obsoleteYear - the year when production of this obsolete unit ceased
+     */
+    public void setObsoleteYear(int obsoleteYear) {
+        if (obsoleteYear > 0) {
+            addExtinctionRange(obsoleteYear, DATE_NONE);
+        }
+    }
+
+    /**
+     * Sets multiple obsolete/reintroduction cycles for this unit based on the Obsolete quirk. The years list should be
+     * in pairs: obsoleteYear, reintroYear, obsoleteYear2, reintroYear2, ... An odd number of years means the final
+     * obsolete period extends indefinitely.
+     *
+     * @param years - list of years in order: obsolete, reintro, obsolete, reintro, ...
+     */
+    public void setObsoleteYears(List<Integer> years) {
+        if (years == null || years.isEmpty()) {
+            return;
+        }
+
+        // Process pairs of years
+        for (int i = 0; i < years.size(); i += 2) {
+            int obsoleteYear = years.get(i);
+            // Extinction ends the year before reintroduction (e.g., reintro 3146 means extinct until 3145)
+            int extinctionEnd = (i + 1 < years.size()) ? years.get(i + 1) - 1 : DATE_NONE;
+            if (obsoleteYear > 0) {
+                addExtinctionRange(obsoleteYear, extinctionEnd);
+            }
+        }
     }
 
     /**

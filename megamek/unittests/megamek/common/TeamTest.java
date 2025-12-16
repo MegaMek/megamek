@@ -259,7 +259,8 @@ class TeamTest {
         when(mockPlayer3.getCommandConsoleBonus()).thenReturn(3);
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
-        assertEquals(6, initBonus);  // max(1,2,3) + max(1,2,3) = 3 + 3 = 6
+        // Per Xotl ruling: only highest positive applies (across all types)
+        assertEquals(3, initBonus);
     }
 
     @Test
@@ -288,7 +289,8 @@ class TeamTest {
         when(mockPlayer3.getQuirkInitBonus()).thenReturn(3);
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
-        assertEquals(9, initBonus);  // 3 (constant) + 3 (console) + 3 (quirk)
+        // Per Xotl ruling: only highest positive applies (across all types)
+        assertEquals(3, initBonus);
     }
 
     @Test
@@ -315,7 +317,8 @@ class TeamTest {
         // Quirk bonus is 0 by default (not mocked)
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
-        assertEquals(6, initBonus);  // 3 (constant) + 3 (console)
+        // Per Xotl ruling: only highest positive applies (across all types)
+        assertEquals(3, initBonus);
     }
 
     @Test
@@ -342,7 +345,8 @@ class TeamTest {
         // Quirk bonus is 0 by default (not mocked)
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
-        assertEquals(6, initBonus);  // 3 (constant) + 3 (console)
+        // Per Xotl ruling: only highest positive applies (across all types)
+        assertEquals(3, initBonus);
     }
 
     @Test
@@ -372,7 +376,9 @@ class TeamTest {
         when(mockPlayer3.getInitCompensationBonus()).thenReturn(-3);
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
-        assertEquals(6, initBonus);  // 3 (constant) + 3 (console) + 0 (negative comp bonus is clamped to 0)
+        // Per Xotl ruling: only highest positive applies, negatives stack
+        // Highest positive is 3, negatives sum to -6, but comp bonus negative is clamped
+        assertEquals(3, initBonus);
     }
 
     @Test
@@ -402,7 +408,8 @@ class TeamTest {
         when(mockPlayer3.getInitCompensationBonus()).thenReturn(3);
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
-        assertEquals(9, initBonus);  // 3 (constant) + 3 (console) + 3 (compensation)
+        // Per Xotl ruling: only highest positive applies (across all types)
+        assertEquals(3, initBonus);
     }
 
     @Test
@@ -438,7 +445,8 @@ class TeamTest {
         when(mockPlayer4.getInitCompensationBonus()).thenReturn(0);
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
-        assertEquals(9, initBonus);  // max(1,2,3) + max(1,2,3) + max(1,2,3) = 3 + 3 + 3 = 9
+        // Per Xotl ruling: only highest positive applies (across all types)
+        assertEquals(3, initBonus);
     }
 
     @Test

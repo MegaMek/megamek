@@ -130,6 +130,12 @@ public class ComputeAeroAttackerToHitMods {
                 } else {
                     toHit.addModifier(6, Messages.getString("WeaponAttackAction.AimWithEiOnly"));
                 }
+            } else if (attacker.hasTCPAimedShotCapability() && attacker.hasTargComp()) {
+                // TCP+VDNI with actual TC gets additional -1 per IO pg 81
+                toHit.addModifier(2, Messages.getString("WeaponAttackAction.AimWithTCPAndTC"));
+            } else if (attacker.hasTCPAimedShotCapability()) {
+                // TCP+VDNI without TC acts as if equipped with TC per IO pg 81
+                toHit.addModifier(3, Messages.getString("WeaponAttackAction.AimWithTCPOnly"));
             } else {
                 toHit.addModifier(3, Messages.getString("WeaponAttackAction.AimWithTCompOnly"));
             }

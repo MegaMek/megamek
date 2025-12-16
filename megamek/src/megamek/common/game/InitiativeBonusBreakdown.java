@@ -75,6 +75,10 @@ public record InitiativeBonusBreakdown(
     /**
      * @return The total of all bonus components
      */
+    // TODO: Per Xotl ruling (https://battletech.com/forums/index.php?topic=85848.0):
+    //       - Negative modifiers stack cumulatively (no floor limit)
+    //       - Positive modifiers do NOT stack (only use the highest one)
+    //       Currently this sums all components. Fix before merge to main.
     public int total() {
         return hq + quirk + console + crewCommand + tcp + constant + compensation + crew;
     }
@@ -129,6 +133,9 @@ public record InitiativeBonusBreakdown(
     /**
      * Creates a new breakdown by adding another breakdown's values to this one. For quirk names, keeps the name
      * associated with the higher bonus value.
+     * <p>
+     * Note: This method combines all values for display purposes. The actual initiative calculation
+     * should use total() which applies the stacking rules (negatives stack, only highest positive applies).
      */
     public InitiativeBonusBreakdown add(InitiativeBonusBreakdown other) {
         // Use the quirk name from whichever has the higher quirk bonus

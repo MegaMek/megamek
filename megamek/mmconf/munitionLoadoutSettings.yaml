@@ -3,6 +3,7 @@ Prohibited:
   # Prohibited ammo will never be used by any faction
   - Tandem-Charge
   - AlamoMissile Ammo
+  - Davey Crockett-M
 Overrides:
   # Overrides will replace final generated values in the configurator.
   # These apply to the generated weights within TeamLoadOutGenerator, not to the base weights in
@@ -20,7 +21,8 @@ Defaults:
   Munitions:
     # Default weights of all munitions; increase or decrease to change relative weights prior to
     # unit- and map-related autoconfiguration.
-    Weight: 1.0
+    # Undefined values get the default value, below:
+    Weight: 0.0
     LRM:
       Dead-Fire:
         IS: 3.0
@@ -51,8 +53,8 @@ Defaults:
         IS: 1.0
         Clan: 1.0
       Fragmentation:
-        IS: 1.0
-        Clan: 1.0
+        IS: 0.5
+        Clan: 0.5
       Thunder:
         IS: 1.0
         Clan: 1.0
@@ -112,8 +114,8 @@ Defaults:
         IS: 1.0
         Clan: 1.0
       Fragmentation:
-        IS: 1.0
-        Clan: 1.0
+        IS: 0.5
+        Clan: 0.5
       Acid:
         IS: 1.0
         Clan: 1.0
@@ -157,8 +159,8 @@ Defaults:
         IS: 1.0
         Clan: 1.0
       Flechette:
-        IS: 1.0
-        Clan: 1.0
+        IS: 0.5
+        Clan: 0.5
       Armor-Piercing Playtest:
         IS: 1.0
         Clan: 1.0
@@ -221,8 +223,8 @@ Defaults:
         IS: 1.0
         Clan: 1.0
       Flechette:
-        IS: 1.0
-        Clan: 1.0
+        IS: 0.5
+        Clan: 0.5
       Illumination:
         IS: 1.0
         Clan: 1.0
@@ -250,8 +252,8 @@ Defaults:
         IS: 1.0
         Clan: 1.0
       Flechette:
-        IS: 1.0
-        Clan: 1.0
+        IS: 0.5
+        Clan: 0.5
       Illumination:
         IS: 1.0
         Clan: 1.0
@@ -276,8 +278,8 @@ Defaults:
         IS: 1.0
         Clan: 1.0
       Flechette:
-        IS: 1.0
-        Clan: 1.0
+        IS: 0.5
+        Clan: 0.5
       Illumination:
         IS: 1.0
         Clan: 1.0
@@ -324,6 +326,10 @@ Defaults:
         Clan: 2.0
       HE:
         Clan: 2.0
+      IMP:
+        Clan: 1.0
+      IIW:
+        Clan: 1.0
 
     # Mek Mortars specifically, but our Mek Mortar ammo doesn't use the word "Mek" anywhere
     Mortar:
@@ -492,7 +498,7 @@ Defaults:
     increaseWeightFactor: 2.0
     increaseWeightIncrement: 1.0
     decreaseWeightFactor: 0.5
-    decreaseWeightDecrement: 0.0
+    decreaseWeightDecrement: -1.0
     # These factors determine how Pirates and Rebels are penalized for their low quality
     # Pirates and Rebels get ammo bins filled at random ratios -
     # Min(maxAllowed, Max(minAllowed, random/rangeDivisor + quality/qualityDivisor))

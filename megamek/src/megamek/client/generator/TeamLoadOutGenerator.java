@@ -46,6 +46,7 @@ import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ui.dialogs.unitSelectorDialogs.AbstractUnitSelectorDialog;
 import megamek.common.SimpleTechLevel;
 import megamek.common.Team;
+import megamek.common.TechAdvancement;
 import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
@@ -58,6 +59,7 @@ import megamek.common.equipment.BombLoadout;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.SmallWeaponAmmoType;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.game.Game;
@@ -431,6 +433,14 @@ public class TeamLoadOutGenerator {
      * @return boolean true if legal for combination of inputs, false otherwise. Determines if an AmmoType is loaded.
      */
     public boolean checkLegality(AmmoType aType, String faction, String techBase, boolean mixedTech) {
+        boolean allowNukes = gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AT2_NUKES);
+        return checkLegality(aType, faction, techBase, mixedTech, allowedYear, legalLevel, eraBasedTechLevel,
+              showExtinct, allowNukes);
+    }
+
+    public static boolean checkLegality(AmmoType aType, String faction, String techBase, boolean mixedTech,
+          int allowedYear, SimpleTechLevel legalLevel, boolean eraBasedTechLevel, boolean showExtinct,
+          boolean allowNukes) {
         boolean clan = techBase.equals("CL");
 
         // Null-type is illegal!
@@ -454,14 +464,13 @@ public class TeamLoadOutGenerator {
         }
 
         // Nukes are not allowed... unless they are!
-        legal &= (!aType.hasFlag(AmmoType.F_NUCLEAR) ||
-              gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AT2_NUKES));
+        legal &= (!aType.hasFlag(AmmoType.F_NUCLEAR) || allowNukes);
 
         return legal;
     }
 
     /**
-     * Simple recursive Map search for new  Yaml-based config file
+     * Simple Map search for new  Yaml-based config file
      *
      * @param keyPath   Dotted path (e.g. "Overrides.Tandem-Charge.Clan"; max depth of 3.
      * @return entry    at the provided path (should be Map\<String, Object\> or String, Int, Double as Object)
@@ -472,7 +481,7 @@ public class TeamLoadOutGenerator {
     }
 
     /**
-     * For sub-tree search and testing purposes
+     * For sub-Map search and testing purposes
      * @param keyPath   Dotted path (e.g. "Overrides.Tandem-Charge.Clan"; max depth of 3.
      * @param map       Root-level map reference; can be passed a lower-level node to restrict searches
      * @return entry    at the provided path (should be Map\<String, Object\> or String, Int, Double as Object)
@@ -496,6 +505,28 @@ public class TeamLoadOutGenerator {
             }
         }
         return value;
+    }
+
+    @Nullable
+    protected static HashMap<String, Object> subMap(String key, HashMap<String, Object> map) {
+        HashMap<String, Object> subMap = null;
+        try {
+            subMap = (HashMap<String, Object>) searchMap(key, map);
+        } catch (Exception e) {
+            // ignore
+        }
+        return subMap;
+    }
+
+    @Nullable
+    protected static List<String> subList(String key, HashMap<String, Object> map) {
+        List<String> subList = null;
+        try {
+            subList = (List<String>) searchMap(key, map);
+        } catch (Exception e) {
+            // ignore
+        }
+        return subList;
     }
 
     /**
@@ -636,11 +667,12 @@ public class TeamLoadOutGenerator {
     // endregion Check for various unit types, armor types, etc.
 
     // region generateValidMunitionsForFactionAndEra
-    public HashMap<String, Object> generateValidMunitionsForFactionAndEra(Team team) {
+    public HashMap<String, Object> generateValidMunitionsForFactionAndEra(String faction) {
+        boolean allowMixed = gameOptions.booleanOption(OptionsConstants.ALLOWED_ALL_AMMO_MIXED_TECH);
         boolean allowNukes = gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AT2_NUKES);
         return generateValidMunitionsForFactionAndEra(
-              EquipmentType.allTypes(), team.getFaction(), allowedYear, gameTechLevel,
-              legalLevel, eraBasedTechLevel, advAeroRules, showExtinct, allowNukes);
+              EquipmentType.allTypes(), faction, allowedYear, gameTechLevel,
+              legalLevel, allowMixed, eraBasedTechLevel, advAeroRules, showExtinct, allowNukes);
     }
 
     /**
@@ -662,35 +694,77 @@ public class TeamLoadOutGenerator {
           int year,
           int techLevel,
           SimpleTechLevel legalLevel,
+          boolean allowMixed,
           boolean eraBased,
           boolean advancedAero,
           boolean showExtinct,
           boolean allowNukes
     ){
+        Faction factionEnum = Faction.fromMMAbbr(faction);
         HashMap<String, Object> legalMunitions = new HashMap<>();
         for (String weaponName : TYPE_LIST) {
+            int count = 0;
             HashMap<String, Integer> newEntry = new HashMap<>();
+
+            // Grab all AmmoTypes that contain the weapon type name but are not Small Weapon AmmoType
             List<AmmoType> ammoTypes = types.stream()
                   .filter(AmmoType.class::isInstance)
-                  .filter(eq -> eq.getName().contains(weaponName))
+                  .filter(eq -> eq.getName().contains(weaponName) && !(eq instanceof SmallWeaponAmmoType))
                   .map(AmmoType.class::cast)
                   .toList();
 
+            // "Standard" munitions usually don't include "Standard" in the name but we know they _are_ the base
+            // ammo type because they don't have a `base` ammo type set!
+            AmmoType standard = ammoTypes.stream()
+                  .filter(munition -> munition.getBaseAmmo() == null)
+                  .findFirst()
+                  .orElse(null);
+            if (standard != null) {
+                count = determineBinCount(standard,
+                      factionEnum,
+                      year,
+                      techLevel,
+                      legalLevel,
+                      allowMixed,
+                      eraBased,
+                      advancedAero,
+                      showExtinct,
+                      allowNukes);
+
+                newEntry.put("Standard", count);
+            }
+
             // Munitions must be named in one of the TYPE_MAP sub-maps to be utilized!
             for (String munitionName: TYPE_MAP.get(weaponName)) {
-                // Get the first munition that matches; tube count or barrel size doesn't matter for validity checks
+                // Get the first munition that matches; tube count or barrel size shouldn't matter for validity checks
+                // Munitions without a base ammo _are_ the base munition and will be marked as "Standard"
                 AmmoType exemplar = ammoTypes.stream()
                       .filter(munition -> munition.matchesName(munitionName))
                       .findFirst()
                       .orElse(null);
+
                 if (exemplar != null) {
+                    // If we found a matching munition in the AmmoTypes, decide how many bins could be available.
                     // The count will be determined by rating, level, etc.
-                    // For now just use 1
-                    newEntry.put(munitionName, 1);
+                    count = determineBinCount(exemplar,
+                          factionEnum,
+                          year,
+                          techLevel,
+                          legalLevel,
+                          allowMixed,
+                          eraBased,
+                          advancedAero,
+                          showExtinct,
+                          allowNukes);
+
+                    newEntry.put(munitionName, count);
                 }
             }
-            // Add "Standard" ammo with "unlimited" count; overrides values set in the loop if found
-            newEntry.put("Standard", Integer.MAX_VALUE);
+
+            // Ensure "Standard" ammo is "unlimited"
+            if (newEntry.get("Standard") > 0) {
+                newEntry.put("Standard", Integer.MAX_VALUE);
+            }
 
             legalMunitions.put(weaponName, newEntry);
         }
@@ -698,6 +772,25 @@ public class TeamLoadOutGenerator {
         return legalMunitions;
     }
 
+    protected static int determineBinCount(AmmoType exemplar, Faction faction, int year, int techLevel,
+          SimpleTechLevel legalLevel, boolean allowMixed, boolean eraBased, boolean advancedAero, boolean showExtinct,
+          boolean allowNukes) {
+        int count = 0;
+
+        String techBase = faction.isClan() ? "CL" : "IS";
+        // Is the ammo even legal for this combination of faction, era, tech level?
+        if (checkLegality(exemplar, faction.getCodeMM(), techBase, allowMixed, year, legalLevel, eraBased,
+              showExtinct, allowNukes)) {
+            count = 1;
+
+            // Simpler tech is more common
+            TechAdvancement techAdvancement = exemplar.getTechAdvancement();
+            int taMultiplier = (6 - techAdvancement.getTechRating().getIndex());
+            count = count * taMultiplier;
+        }
+
+        return count;
+    }
     // endregion generateValidMunitionsForFactionAndEra
 
     // region generateParameters
@@ -1147,29 +1240,8 @@ public class TeamLoadOutGenerator {
             munitionWeightCollection.decreaseUtilityMunitions();
         }
 
-        // Just for LOLs: when FS fights CC in 3028 ~ 3050, set Anti-TSM weight to 15.0
-        if ((reconfigurationParameters.friendlyFaction != null && reconfigurationParameters.enemyFactions != null) &&
-              reconfigurationParameters.friendlyFaction.equals("FS") &&
-              reconfigurationParameters.enemyFactions.contains("CC") &&
-              (3028 <= reconfigurationParameters.allowedYear && reconfigurationParameters.allowedYear <= 3050)) {
-            ArrayList<String> tsmOnly = new ArrayList<>(List.of("Anti-TSM"));
-            munitionWeightCollection.increaseMunitions(tsmOnly);
-            munitionWeightCollection.increaseMunitions(tsmOnly);
-            munitionWeightCollection.increaseMunitions(tsmOnly);
-        }
-
-        // Set nukes to the lowest possible weight if user has set them to unusable /for this team/ This is a separate
-        // mechanism from the legality check.
-        if (reconfigurationParameters.nukesBannedForMe) {
-            munitionWeightCollection.zeroMunitionsWeight(new ArrayList<>(List.of("Davy Crockett-M",
-                  "AlamoMissile Ammo")));
-        }
-
-        // L-K Missiles are essentially useless after 3042
-        // TODO: add more precise faction and year checks here so Wolf's Dragoons can have them before everybody else.
-        if (reconfigurationParameters.allowedYear < 3028 || reconfigurationParameters.allowedYear > 3042) {
-            munitionWeightCollection.zeroMunitionsWeight(new ArrayList<>(List.of("Listen-Kill")));
-        }
+        applyModifiersToWeights(reconfigurationParameters, munitionWeightCollection, subMap("Overrides", weightMap),
+              subList("Prohibited", weightMap));
 
         // The main event!
         // Convert MWC to MunitionsTree for loading
@@ -1188,6 +1260,75 @@ public class TeamLoadOutGenerator {
     }
 
     /**
+     * Apply global and specific modifiers to the generated weight values.
+     * This is where Overrides and Prohibitions are applied.
+     *
+     * @param reconfigurationParameters  Already Created ReconfigurationParameters instance
+     * @param munitionWeightCollection   Already Adjusted MunitionWeightCollection instance
+     * @param overrides                  From "Overides" section of YAML configuration file
+     * @param prohibited                 From "Prohibited" section of YAML configuration file
+     * @return modified MunitionWeightCollection with modifiers applied
+     */
+    public static void applyModifiersToWeights(ReconfigurationParameters reconfigurationParameters,
+          MunitionWeightCollection munitionWeightCollection, HashMap<String, Object> overrides,
+          List<String> prohibited) {
+
+        // Just for LOLs: when FS fights CC in 3028 ~ 3050, triple Anti-TSM weight!
+        if ((reconfigurationParameters.friendlyFaction != null && reconfigurationParameters.enemyFactions != null) &&
+              reconfigurationParameters.friendlyFaction.equals("FS") &&
+              reconfigurationParameters.enemyFactions.contains("CC") &&
+              (3028 <= reconfigurationParameters.allowedYear && reconfigurationParameters.allowedYear <= 3050)) {
+            ArrayList<String> tsmOnly = new ArrayList<>(List.of("Anti-TSM"));
+            munitionWeightCollection.increaseMunitions(tsmOnly);
+            munitionWeightCollection.increaseMunitions(tsmOnly);
+            munitionWeightCollection.increaseMunitions(tsmOnly);
+        }
+
+        // L-K Missiles are essentially useless after 3042
+        // TODO: add more precise faction and year checks here so Wolf's Dragoons can have them before everybody else.
+        if (reconfigurationParameters.allowedYear < 3028 || reconfigurationParameters.allowedYear > 3042) {
+            munitionWeightCollection.zeroMunitionsWeight(new ArrayList<>(List.of("Listen-Kill")));
+        }
+
+        // Apply overrides and prohibitions now
+        boolean clan = Faction.fromMMAbbr(reconfigurationParameters.friendlyFaction).isClan();
+        for (String weaponType: TeamLoadOutGenerator.TYPE_MAP.keySet()) {
+            HashMap<String, Double> weights = munitionWeightCollection.getMunitionWeights(weaponType);
+            for (String munition: weights.keySet()) {
+                String basePath = String.format("%s.%s.%s", weaponType, munition, (clan)? "Clan" : "IS");
+                String factionPath = String.format("%s.%s", basePath, reconfigurationParameters.friendlyFaction);
+                if (prohibited.contains(munition)) {
+                    // Impossible to use
+                    weights.put(munition, 0.0);
+                } else {
+                    // Check for overrides
+                    double newWeight = weights.get(munition);
+                    try {
+                        newWeight = (double) searchMap(factionPath, overrides);
+                    } catch (Exception e) {
+                        try {
+                            newWeight = (double) searchMap(basePath, overrides);
+                        } catch (Exception ignore) {
+                            // ignore
+                        }
+                    }
+                    if (newWeight != weights.get(munition)) {
+                        weights.put(munition, newWeight);
+                    }
+                }
+            }
+        }
+
+        // Set nukes to the lowest possible weight if user has set them to unusable /for this team/ This is a separate
+        // mechanism from the legality check.
+        if (reconfigurationParameters.nukesBannedForMe) {
+            munitionWeightCollection.zeroMunitionsWeight(new ArrayList<>(List.of("Davy Crockett-M",
+                  "AlamoMissile Ammo")));
+        }
+
+    }
+
+    /**
      * Turn a selection of the computed munition weights into imperatives to load in the MunitionTree
      *
      * @param mt  {@link MunitionTree} Object
@@ -1195,7 +1336,9 @@ public class TeamLoadOutGenerator {
      */
     public static void applyWeightsToMunitionTree(MunitionWeightCollection mwc, MunitionTree mt) {
         // Iterate over every entry in the set of top-weighted munitions for each category
-        HashMap<String, List<String>> topWeights = mwc.getTopN(castPropertyInt("Defaults.Factors.mtTopMunitionsSubsetCount", 8));
+        HashMap<String, List<String>> topWeights = mwc.getAboveCutoff(
+              castPropertyDouble("Defaults.Factors.mtMunitionWeightThreshold", 0.0)
+        );
 
         for (Map.Entry<String, List<String>> e : topWeights.entrySet()) {
             StringBuilder sb = new StringBuilder();
@@ -1232,7 +1375,7 @@ public class TeamLoadOutGenerator {
         entityIterator.forEachRemaining(updateEntities::add);
 
         MunitionTree mt = generateMunitionTree(reconfigurationParameters, updateEntities, adfFile);
-        reconfigureEntities(updateEntities, faction, mt, reconfigurationParameters);
+        reconfigureEntities(updateEntities, faction, mt, reconfigurationParameters, null);
     }
 
     /**
@@ -1243,7 +1386,17 @@ public class TeamLoadOutGenerator {
      * @param mt       MunitionTree defining all applicable load out imperatives
      */
     public void reconfigureEntities(ArrayList<Entity> entities, String faction, MunitionTree mt,
-          ReconfigurationParameters reconfigurationParameters) {
+          ReconfigurationParameters reconfigurationParameters, @Nullable HashMap<String, Object> availMap) {
+
+        // AvailMap lists how many bins of various munition types would be available to a given faction force at any
+        // given time.  If not provided, one will be generated.
+        // Pre-generating an availMap allows for modifying munition availability for one team/faction, e.g. for special
+        // missions.
+        if (availMap == null) {
+            availMap = generateValidMunitionsForFactionAndEra(faction);
+        }
+        // TODO: Multiply availMap values here, where entity count and faction ratings are available
+
         // For Pirate forces, assume fewer rounds per bin at lower quality levels, minimum 20%. If fill ratio is
         // already set, leave it.
         if (reconfigurationParameters.binFillPercent == UNSET_FILL_RATIO) {
@@ -1268,7 +1421,7 @@ public class TeamLoadOutGenerator {
                 // TODO: Will be used when A2G attack errata are implemented
                 //                aeroSpaceUnits.add(entity);
                 //           } else {
-                reconfigureEntity(entity, mt, faction, reconfigurationParameters.binFillPercent);
+                reconfigureEntity(entity, mt, availMap, faction, reconfigurationParameters.binFillPercent);
             }
         }
 
@@ -1293,7 +1446,7 @@ public class TeamLoadOutGenerator {
         ArrayList<Entity> updateEntities = new ArrayList<>();
         entityIterator.forEachRemaining(updateEntities::add);
 
-        reconfigureEntities(updateEntities, faction, generateRandomizedMT(), rp);
+        reconfigureEntities(updateEntities, faction, generateRandomizedMT(), rp, null);
     }
 
     public static MunitionTree generateRandomizedMT() {
@@ -1314,8 +1467,8 @@ public class TeamLoadOutGenerator {
      * @param mt      {@link MunitionTree} Ammo used
      * @param faction Related Faction
      */
-    public void reconfigureEntity(Entity e, MunitionTree mt, String faction) {
-        reconfigureEntity(e, mt, faction, 1.0f);
+    public void reconfigureEntity(Entity e, MunitionTree mt, HashMap<String, Object> availMap, String faction) {
+        reconfigureEntity(e, mt, availMap, faction, 1.0f);
     }
 
     /**
@@ -1326,7 +1479,8 @@ public class TeamLoadOutGenerator {
      * @param faction      Related Faction
      * @param binFillRatio float setting the max fill rate for all bins in this entity (mostly for Pirates)
      */
-    public void reconfigureEntity(Entity entity, MunitionTree mt, String faction, float binFillRatio) {
+    public void reconfigureEntity(Entity entity, MunitionTree mt, HashMap<String, Object> availMap, String faction,
+          float binFillRatio) {
         // Create map of bin counts in unit by type
         HashMap<String, List<AmmoMounted>> binLists = new HashMap<>();
 
@@ -1345,7 +1499,7 @@ public class TeamLoadOutGenerator {
 
         // Iterate over each type and fill it with the requested ammo (as much as possible)
         for (String binName : binLists.keySet()) {
-            iterativelyLoadAmmo(entity, mt, binLists.get(binName), binName, faction);
+            iterativelyLoadAmmo(entity, mt, availMap, binLists.get(binName), binName, faction);
         }
 
         // Apply requested fill ratio to all final bin loadouts (between max fill and 0)
@@ -1385,29 +1539,31 @@ public class TeamLoadOutGenerator {
     // endregion reconfigureAero
 
     // region iterativelyLoadAmmo
-    private void iterativelyLoadAmmo(Entity entity, MunitionTree munitionTree, List<AmmoMounted> binList,
-          String binName,
-          String faction) {
+    private void iterativelyLoadAmmo(Entity entity, MunitionTree munitionTree, HashMap<String, Object> availMap,
+          List<AmmoMounted> binList, String binName, String faction) {
         String techBase = (entity.isClan()) ? "CL" : "IS";
-        iterativelyLoadAmmo(entity, munitionTree, binList, binName, techBase, faction);
+        iterativelyLoadAmmo(entity, munitionTree, availMap, binList, binName, techBase, faction);
     }
 
     /**
-     * Manage loading ammo bins for a given type. Type can be designated by size (LRM-5) or generic (AC) Logic: Iterate
-     * over list of priorities and fill the first as many times as requested. Repeat for 2nd...Nth ammo types If more
-     * bins remain than desired types are specified, fill the remainder with the top priority type If more desired types
-     * remain than there are bins, oh well. If a requested ammo type is not available in the specified time frame or
-     * faction, skip it.
+     * Manage loading ammo bins for a given type. Type can be designated by size (LRM-5) or generic (AC)
+     * Logic: Iterate over list of priorities and fill the first as many times as requested.
+     *        Repeat for 2nd...Nth ammo types.
+     *        If more bins remain than desired types are specified, fill the remainder with the top priority type.
+     *        If more desired types remain than there are bins, oh well.
+     *        If a requested ammo type is not available in the specified time frame or faction, skip it.
      *
      * @param e        Entity to load
      * @param mt       MunitionTree, stores required munitions in desired loading order
+     * @param availMap Map of munition availabilities for each weapon type.  Generated for the specific faction, era,
+     *                 tech level, advancement, etc.
      * @param binList  List of actual mounted ammo bins matching this type
      * @param binName  String bin type we are loading now
      * @param techBase "CL" or "IS"
      * @param faction  Faction to outfit for, used in ammo validity checks (uses MM, not IO, faction codes)
      */
-    private void iterativelyLoadAmmo(Entity e, MunitionTree mt, List<AmmoMounted> binList, String binName,
-          String techBase, String faction) {
+    private void iterativelyLoadAmmo(Entity e, MunitionTree mt, HashMap<String, Object> availMap,
+          List<AmmoMounted> binList, String binName, String techBase, String faction) {
         // Copy counts that we will update, otherwise mt entry gets edited permanently.
         HashMap<String, Integer> counts = new HashMap<>(mt.getCountsOfAmmunitionForKey(e.getFullChassis(),
               e.getModel(),

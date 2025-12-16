@@ -41,7 +41,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.containers.MunitionTree;
 
 // region MunitionWeightCollection
@@ -52,8 +54,12 @@ class MunitionWeightCollection {
     private HashMap<String, Double> atmWeights;
     private HashMap<String, Double> iatmWeights;
     private HashMap<String, Double> arrowWeights;
-    private HashMap<String, Double> artyWeights;
-    private HashMap<String, Double> artyCannonWeights;
+    private HashMap<String, Double> longtomWeights;
+    private HashMap<String, Double> sniperWeights;
+    private HashMap<String, Double> thumperWeights;
+    private HashMap<String, Double> longtomCannonWeights;
+    private HashMap<String, Double> sniperCannonWeights;
+    private HashMap<String, Double> thumperCannonWeights;
     private HashMap<String, Double> mortarWeights;
     private HashMap<String, Double> narcWeights;
     private HashMap<String, Double> bombWeights;
@@ -81,13 +87,21 @@ class MunitionWeightCollection {
         srmWeights = initializeWeaponWeightsYAML("SRM", factionName, clan, MunitionTree.SRM_MUNITION_NAMES);
         acWeights = initializeWeaponWeightsYAML( "AC", factionName, clan, MunitionTree.AC_MUNITION_NAMES);
         arrowWeights = initializeWeaponWeightsYAML("Arrow IV", factionName, clan, MunitionTree.ARROW_MUNITION_NAMES);
-        artyWeights = initializeWeaponWeightsYAML("Artillery", factionName, clan,
+        longtomWeights = initializeWeaponWeightsYAML("Long Tom", factionName, clan,
               MunitionTree.ARTILLERY_MUNITION_NAMES);
-        artyCannonWeights = initializeWeaponWeightsYAML("Artillery Cannon", factionName, clan,
+        sniperWeights = initializeWeaponWeightsYAML("Sniper", factionName, clan,
+              MunitionTree.ARTILLERY_MUNITION_NAMES);
+        thumperWeights = initializeWeaponWeightsYAML("Thumper", factionName, clan,
+              MunitionTree.ARTILLERY_MUNITION_NAMES);
+        longtomCannonWeights = initializeWeaponWeightsYAML("Long Tom Cannon", factionName, clan,
+              MunitionTree.ARTILLERY_CANNON_MUNITION_NAMES);
+        sniperCannonWeights = initializeWeaponWeightsYAML("Sniper Cannon", factionName, clan,
+              MunitionTree.ARTILLERY_CANNON_MUNITION_NAMES);
+        thumperCannonWeights = initializeWeaponWeightsYAML("Thumper Cannon", factionName, clan,
               MunitionTree.ARTILLERY_CANNON_MUNITION_NAMES);
         atmWeights = initializeWeaponWeightsYAML("ATM", factionName, clan, MunitionTree.ATM_MUNITION_NAMES);
         iatmWeights = initializeWeaponWeightsYAML("iATM", factionName, clan, MunitionTree.iATM_MUNITION_NAMES);
-        mortarWeights = initializeWeaponWeightsYAML("Mek Mortar", factionName, clan,
+        mortarWeights = initializeWeaponWeightsYAML("Mortar", factionName, clan,
               MunitionTree.MORTAR_MUNITION_NAMES);
         narcWeights = initializeWeaponWeightsYAML("Narc", factionName, clan, MunitionTree.NARC_MUNITION_NAMES);
         bombWeights = initializeWeaponWeightsYAML("Bomb", factionName, clan, MunitionTree.BOMB_MUNITION_NAMES);
@@ -98,9 +112,13 @@ class MunitionWeightCollection {
               entry("ATM", atmWeights),
               entry("iATM", iatmWeights),
               entry("Arrow IV", arrowWeights),
-              entry("Artillery", artyWeights),
-              entry("Artillery Cannon", artyCannonWeights),
-              entry("Mek Mortar", mortarWeights),
+              entry("Long Tom", longtomWeights),
+              entry("Sniper", sniperWeights),
+              entry("Thumper", thumperWeights),
+              entry("Long Tom Cannon", longtomCannonWeights),
+              entry("Sniper Cannon", sniperCannonWeights),
+              entry("Thumper Cannon", thumperCannonWeights),
+              entry("Mortar", mortarWeights),
               entry("Narc", narcWeights),
               entry("Bomb", bombWeights)));
     }
@@ -252,17 +270,21 @@ class MunitionWeightCollection {
     }
 
     public void increaseArtilleryUtilityMunitions() {
-        modifyMatchingWeights(mapTypeToWeights.get("Artillery"),
-              TeamLoadOutGenerator.UTILITY_MUNITIONS,
-              getPropDouble("Defaults.Factors.increaseWeightFactor", 2.0),
-              getPropDouble("Defaults.Factors.increaseWeightDecrement", 1.0));
+        for (String weaponType: List.of("Long Tom", "Sniper", "Thumper")) {
+            modifyMatchingWeights(mapTypeToWeights.get(weaponType),
+                  TeamLoadOutGenerator.UTILITY_MUNITIONS,
+                  getPropDouble("Defaults.Factors.increaseWeightFactor", 2.0),
+                  getPropDouble("Defaults.Factors.increaseWeightDecrement", 1.0));
+        }
     }
 
     public void decreaseArtilleryUtilityMunitions() {
-        modifyMatchingWeights(mapTypeToWeights.get("Artillery"),
-              TeamLoadOutGenerator.UTILITY_MUNITIONS,
-              getPropDouble("Defaults.Factors.decreaseWeightFactor", 0.5),
-              getPropDouble("Defaults.Factors.decreaseWeightDecrement", 0.0));
+        for (String weaponType: List.of("Long Tom", "Sniper", "Thumper")) {
+            modifyMatchingWeights(mapTypeToWeights.get(weaponType),
+                  TeamLoadOutGenerator.UTILITY_MUNITIONS,
+                  getPropDouble("Defaults.Factors.decreaseWeightFactor", 0.5),
+                  getPropDouble("Defaults.Factors.decreaseWeightDecrement", 0.0));
+        }
     }
 
     public void increaseGuidedMunitions() {
@@ -346,6 +368,20 @@ class MunitionWeightCollection {
         return orderedTypes;
     }
 
+    public HashMap<String, List<String>> getAboveCutoff(double cutoff) {
+        HashMap<String, List<String>> topMunitionsMap = new HashMap<>();
+        for (String key : TeamLoadOutGenerator.TYPE_MAP.keySet()) {
+            List<String> orderedList = getMunitionTypesInWeightOrder(mapTypeToWeights.get(key));
+            topMunitionsMap.put(
+                  key,
+                  orderedList.stream()
+                        .filter(m -> Double.parseDouble(m.split("=")[1]) > cutoff)
+                        .collect(Collectors.toList())
+            );
+        }
+        return topMunitionsMap;
+    }
+
     public HashMap<String, List<String>> getTopN(int count) {
         HashMap<String, List<String>> topMunitionsMap = new HashMap<>();
         for (String key : TeamLoadOutGenerator.TYPE_MAP.keySet()) {
@@ -375,19 +411,57 @@ class MunitionWeightCollection {
         return arrowWeights;
     }
 
-    public HashMap<String, Double> getArtyWeights() {
-        return artyWeights;
+    public HashMap<String, Double> getLongTomWeights() {
+        return longtomWeights;
+    }
+
+    public HashMap<String, Double> getSniperWeights() {
+        return sniperWeights;
+    }
+
+    public HashMap<String, Double> getThumperWeights() {
+        return thumperWeights;
     }
 
     public HashMap<String, Double> getBombWeights() {
         return bombWeights;
     }
 
-    public HashMap<String, Double> getArtyCannonWeights() {
-        return artyCannonWeights;
+    public HashMap<String, Double> getLongTomCannonWeights() {
+        return longtomCannonWeights;
+    }
+
+    public HashMap<String, Double> getSniperCannonWeights() {
+        return sniperCannonWeights;
+    }
+
+    public HashMap<String, Double> getThumperCannonWeights() {
+        return thumperCannonWeights;
     }
 
     public HashMap<String, Double> getMortarWeights() {
         return mortarWeights;
+    }
+
+    @Nullable
+    public HashMap<String, Double> getMunitionWeights(String key) {
+        return switch(key) {
+            case "LRM" -> lrmWeights;
+            case "SRM" -> srmWeights;
+            case "AC" -> acWeights;
+            case "ATM" -> atmWeights;
+            case "iATM" -> iatmWeights;
+            case "Arrow IV" -> arrowWeights;
+            case "Long Tom" -> longtomWeights;
+            case "Sniper" -> sniperWeights;
+            case "Thumper" -> thumperWeights;
+            case "Long Tom Cannon" -> longtomCannonWeights;
+            case "Sniper Cannon" -> sniperCannonWeights;
+            case "Thumper Cannon" -> thumperCannonWeights;
+            case "Mortar" -> mortarWeights;
+            case "Narc" -> narcWeights;
+            case "Bomb" -> bombWeights;
+            default -> null;
+        };
     }
 }

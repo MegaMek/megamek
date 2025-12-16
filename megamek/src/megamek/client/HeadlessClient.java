@@ -147,17 +147,16 @@ public class HeadlessClient extends Client {
     private void saveVictoryList() {
         String filename = getLocalPlayer().getName();
 
-        // Did the we select a file?
+        // Did we select a file?
         File unitFile = new File(filename + CG_FILE_EXTENSION_MUL);
-        if (unitFile != null) {
-            if (!(unitFile.getName().toLowerCase().endsWith(CG_FILE_EXTENSION_MUL))) {
-                try {
-                    unitFile = new File(unitFile.getCanonicalPath() + CG_FILE_EXTENSION_MUL);
-                } catch (Exception ignored) {
-                    // nothing needs to be done here
-                    return;
-                }
+        if (!(unitFile.getName().toLowerCase().endsWith(CG_FILE_EXTENSION_MUL))) {
+            try {
+                unitFile = new File(unitFile.getCanonicalPath() + CG_FILE_EXTENSION_MUL);
+            } catch (Exception ignored) {
+                // nothing needs to be done here
+                return;
             }
+
 
             // What bot was this player? We need it to get the propper salvage MUL, just in case
             Player botPlayer =

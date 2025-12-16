@@ -591,7 +591,7 @@ public class EntityListFile {
 
     /**
      * Save the <code>Entity</code>s in the list to the given file.
-     * <p>
+     * <br><br>
      * The <code>Entity</code>'s pilots, damage, ammo loads, ammo usage, and other campaign-related information are
      * retained, but data specific to a particular game is ignored. This method is a simpler version of the overloaded
      * method {@code saveTo}, with a default generic battle value of 0 (this causes GBV to be ignored), and with unit
@@ -609,7 +609,7 @@ public class EntityListFile {
 
     /**
      * Save the <code>Entity</code>s in the list to the given file.
-     * <p>
+     * <br><br>
      * The <code>Entity</code>'s pilots, damage, ammo loads, ammo usage, and other campaign-related information are
      * retained, but data specific to a particular game is ignored. This method is a simpler version of the overloaded
      * method {@code saveTo}, with a default generic battle value of 0 (this causes GBV to be ignored).
@@ -629,7 +629,7 @@ public class EntityListFile {
 
     /**
      * Save the <code>Entity</code>s in the list to the given file.
-     * <p>
+     * <br><br>
      * The <code>Entity</code>'s pilots, damage, ammo loads, ammo usage, and other campaign-related information are
      * retained, but data specific to a particular game is ignored. Unit embedding is off, see
      * {@link #saveTo(File, ArrayList, int, boolean) the overloaded version of this function}
@@ -648,7 +648,7 @@ public class EntityListFile {
 
     /**
      * Save the <code>Entity</code>s in the list to the given file.
-     * <p>
+     * <br><br>
      * The <code>Entity</code>'s pilots, damage, ammo loads, ammo usage, and other campaign-related information are
      * retained, but data specific to a particular game is ignored.
      *
@@ -687,7 +687,7 @@ public class EntityListFile {
     /**
      * Save the entities from the game of client to the given file. This will create separate sections for salvage,
      * devastated, and ejected crews in addition to the surviving units
-     * <p>
+     * <br><br>
      * The <code>Entity</code>s pilots, damage, ammo loads, ammo usage, and other campaign-related information are
      * retained but data specific to a particular game is ignored.
      *
@@ -704,7 +704,7 @@ public class EntityListFile {
     /**
      * Save the entities from the game of client to the given file. This will create separate sections for salvage,
      * devastated, and ejected crews in addition to the surviving units
-     * <p>
+     * <br><br>
      * The <code>Entity</code>s pilots, damage, ammo loads, ammo usage, and other campaign-related information are
      * retained but data specific to a particular game is ignored.
      *

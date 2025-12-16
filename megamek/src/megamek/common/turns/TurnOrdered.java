@@ -433,6 +433,11 @@ public abstract class TurnOrdered implements ITurnOrdered {
             }
 
             // Individual entities are used here if we're using Individual Initiative
+            // TODO: TCP bonus is not currently applied in Individual Initiative mode.
+            //       Per IO pg 81, TCP provides "+2 Initiative modifier to his force's side."
+            //       With Individual Initiative, consider applying TCP bonus to the TCP-equipped
+            //       unit's individual roll (option 2), rather than ignoring it entirely.
+            //       Same applies to quirk bonuses (Command Mek, Battle Computer).
             if (initiativeCandidate instanceof Entity entity) {
                 if (entity.getGame() != null) {
                     boolean useCommandInit = entity.getGame()

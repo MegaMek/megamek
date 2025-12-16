@@ -73,53 +73,125 @@ public record InitiativeBonusBreakdown(
     }
 
     /**
-     * @return The total of all bonus components
+     * Returns the total initiative bonus applying proper stacking rules.
+     * <p>
+     * Per Xotl ruling (https://battletech.com/forums/index.php?topic=85848.0):
+     * <ul>
+     *   <li>Negative modifiers stack cumulatively (no floor limit)</li>
+     *   <li>Positive modifiers do NOT stack (only the highest one applies)</li>
+     * </ul>
+     *
+     * @return The total initiative bonus with stacking rules applied
      */
-    // TODO: Per Xotl ruling (https://battletech.com/forums/index.php?topic=85848.0):
-    //       - Negative modifiers stack cumulatively (no floor limit)
-    //       - Positive modifiers do NOT stack (only use the highest one)
-    //       Currently this sums all components. Fix before merge to main.
     public int total() {
+        int[] components = { hq, quirk, console, crewCommand, tcp, constant, compensation, crew };
+
+        int negativeSum = 0;
+        int highestPositive = 0;
+
+        for (int component : components) {
+            if (component < 0) {
+                negativeSum += component;
+            } else if (component > highestPositive) {
+                highestPositive = component;
+            }
+        }
+
+        return negativeSum + highestPositive;
+    }
+
+    /**
+     * Returns the simple sum of all components without stacking rules. Use this for display purposes where you want to
+     * show raw values.
+     *
+     * @return The raw sum of all bonus components
+     */
+    public int rawTotal() {
         return hq + quirk + console + crewCommand + tcp + constant + compensation + crew;
     }
 
     /**
-     * @return A formatted string showing the breakdown of bonuses, e.g., "+2 HQ, +1 TCP" Returns "0" if total is 0.
+     * Returns a formatted string showing all bonus components, e.g., "+3 TCP, +1 Command Mek".
+     * Components are sorted from highest to lowest value, so the applied positive modifier
+     * (the highest one) appears first. When multiple positive modifiers exist, appends
+     * "(using highest modifier only)" to clarify that only the highest positive is applied.
+     *
+     * @return A formatted breakdown string, or "0" if no components have values
      */
     public String toBreakdownString() {
-        if (total() == 0) {
+        // Collect all non-zero components with their values and labels
+        List<int[]> components = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
+
+        if (hq != 0) {
+            components.add(new int[] { hq, components.size() });
+            labels.add("HQ");
+        }
+        if (quirk != 0) {
+            components.add(new int[] { quirk, components.size() });
+            String quirkLabel = (quirkName != null && !quirkName.isEmpty()) ? quirkName : "Quirk";
+            labels.add(quirkLabel);
+        }
+        if (console != 0) {
+            components.add(new int[] { console, components.size() });
+            labels.add("Console");
+        }
+        if (crewCommand != 0) {
+            components.add(new int[] { crewCommand, components.size() });
+            labels.add("Cmd");
+        }
+        if (tcp != 0) {
+            components.add(new int[] { tcp, components.size() });
+            labels.add("TCP");
+        }
+        if (constant != 0) {
+            components.add(new int[] { constant, components.size() });
+            labels.add("Base");
+        }
+        if (compensation != 0) {
+            components.add(new int[] { compensation, components.size() });
+            labels.add("Comp");
+        }
+        if (crew != 0) {
+            components.add(new int[] { crew, components.size() });
+            labels.add("Crew");
+        }
+
+        if (components.isEmpty()) {
             return "0";
         }
 
+        // Sort by value descending (highest first)
+        components.sort((a, b) -> Integer.compare(b[0], a[0]));
+
+        // Count positive modifiers first
+        int positiveCount = 0;
+        for (int[] comp : components) {
+            if (comp[0] > 0) {
+                positiveCount++;
+            }
+        }
+
+        // Build the result string, bolding the highest positive when there are multiple
         List<String> parts = new ArrayList<>();
-
-        if (hq != 0) {
-            parts.add(formatComponent(hq, "HQ"));
-        }
-        if (quirk != 0) {
-            String quirkLabel = (quirkName != null && !quirkName.isEmpty()) ? quirkName : "Quirk";
-            parts.add(formatComponent(quirk, quirkLabel));
-        }
-        if (console != 0) {
-            parts.add(formatComponent(console, "Console"));
-        }
-        if (crewCommand != 0) {
-            parts.add(formatComponent(crewCommand, "Cmd"));
-        }
-        if (tcp != 0) {
-            parts.add(formatComponent(tcp, "TCP"));
-        }
-        if (constant != 0) {
-            parts.add(formatComponent(constant, "Base"));
-        }
-        if (compensation != 0) {
-            parts.add(formatComponent(compensation, "Comp"));
-        }
-        if (crew != 0) {
-            parts.add(formatComponent(crew, "Crew"));
+        boolean firstPositiveBolded = false;
+        for (int[] comp : components) {
+            int value = comp[0];
+            int index = comp[1];
+            String formatted = formatComponent(value, labels.get(index));
+            // Bold the first (highest) positive only when there are multiple positives
+            if (value > 0 && !firstPositiveBolded && positiveCount > 1) {
+                formatted = "<b>" + formatted + "</b>";
+                firstPositiveBolded = true;
+            }
+            parts.add(formatted);
         }
 
-        return String.join(", ", parts);
+        String result = String.join(", ", parts);
+        if (positiveCount > 1) {
+            result += " (using highest modifier only)";
+        }
+        return result;
     }
 
     private String formatComponent(int value, String label) {
@@ -134,8 +206,8 @@ public record InitiativeBonusBreakdown(
      * Creates a new breakdown by adding another breakdown's values to this one. For quirk names, keeps the name
      * associated with the higher bonus value.
      * <p>
-     * Note: This method combines all values for display purposes. The actual initiative calculation
-     * should use total() which applies the stacking rules (negatives stack, only highest positive applies).
+     * This method combines all raw values. The stacking rules (negatives stack cumulatively, only highest positive
+     * applies) are applied by {@link #total()} when calculating the actual initiative bonus.
      */
     public InitiativeBonusBreakdown add(InitiativeBonusBreakdown other) {
         // Use the quirk name from whichever has the higher quirk bonus

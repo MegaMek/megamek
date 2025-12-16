@@ -1323,7 +1323,7 @@ public class BattleArmor extends Infantry {
     }
 
     /**
-     * return if this BA has reactive armor (fix for #7794)
+     * return if this BA has reactive armor
      */
     public boolean isReactive() {
         return getArmorType(LOC_TROOPER_1) == EquipmentType.T_ARMOR_BA_REACTIVE;

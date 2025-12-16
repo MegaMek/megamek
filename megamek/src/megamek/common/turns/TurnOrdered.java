@@ -433,11 +433,6 @@ public abstract class TurnOrdered implements ITurnOrdered {
             }
 
             // Individual entities are used here if we're using Individual Initiative
-            // TODO: TCP bonus is not currently applied in Individual Initiative mode.
-            //       Per IO pg 81, TCP provides "+2 Initiative modifier to his force's side."
-            //       With Individual Initiative, consider applying TCP bonus to the TCP-equipped
-            //       unit's individual roll (option 2), rather than ignoring it entirely.
-            //       Same applies to quirk bonuses (Command Mek, Battle Computer).
             if (initiativeCandidate instanceof Entity entity) {
                 if (entity.getGame() != null) {
                     boolean useCommandInit = entity.getGame()
@@ -448,6 +443,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
                         // Break down individual initiative bonuses by source
                         int consoleBonus = 0;
                         int crewCommandBonus = 0;
+                        int tcpBonus = 0;
                         int crewBonus = entity.getCrew().getInitBonus();
 
                         // Check if entity is valid for command bonuses
@@ -465,6 +461,8 @@ public abstract class TurnOrdered implements ITurnOrdered {
                             if (useCommandInit) {
                                 crewCommandBonus = entity.getCrew().getCommandBonus();
                             }
+                            // TCP + VDNI/BVDNI initiative bonus (IO pg 81)
+                            tcpBonus = entity.getTCPInitiativeBonus();
                         }
 
                         breakdown = new InitiativeBonusBreakdown(
@@ -473,7 +471,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
                               null,  // quirkName
                               consoleBonus,
                               crewCommandBonus,
-                              0,  // tcp
+                              tcpBonus,
                               0,  // constant
                               0,  // compensation
                               crewBonus

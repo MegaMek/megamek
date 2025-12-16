@@ -19,7 +19,7 @@
 
             <DefaultRolloverStrategy max="10">
                 <Delete basePath="logs" maxDepth="1">
-                    <IfFileName regex="(unified_log|bot_path_ranker).*\.log(\.gz)?$" />
+                    <IfFileName regex="(unified_log|bot_path_ranker)_\d+\.log(\.gz)?$" />
                     <IfAccumulatedFileSize exceeds="15MB" />
                 </Delete>
             </DefaultRolloverStrategy>
@@ -37,7 +37,7 @@
 
             <DefaultRolloverStrategy max="5">
                 <Delete basePath="logs" maxDepth="1">
-                    <IfFileName regex="(unified_log|bot_path_ranker).*\.log(\.gz)?$" />
+                    <IfFileName regex="(unified_log|bot_path_ranker)_\d+\.log(\.gz)?$" />
                     <IfAccumulatedFileSize exceeds="15MB" />
                 </Delete>
             </DefaultRolloverStrategy>

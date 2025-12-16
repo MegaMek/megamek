@@ -6,21 +6,41 @@
     </Properties>
 
     <Appenders>
-        <RollingFile name="UnifiedLog" fileName="logs/unified_log.log" filePattern="logs/unified_log_%d{yyyyMMdd}_%i.log.gz" append="true" bufferedIO="false">
+        <RollingFile name="UnifiedLog"
+                     fileName="logs/unified_log.log"
+                     filePattern="logs/unified_log_%i.log.gz"
+                     append="true"
+                     bufferedIO="false">
             <PatternLayout pattern="${layout}" />
             <Policies>
                 <OnStartupTriggeringPolicy minSize="1" />
-                <SizeBasedTriggeringPolicy size="25MB" />
+                <SizeBasedTriggeringPolicy size="1MB" />
             </Policies>
-            <DefaultRolloverStrategy max="10" />
+
+            <DefaultRolloverStrategy max="10">
+                <Delete basePath="logs" maxDepth="1">
+                    <IfFileName regex="(unified_log|bot_path_ranker)_\d+\.log(\.gz)?$" />
+                    <IfAccumulatedFileSize exceeds="15MB" />
+                </Delete>
+            </DefaultRolloverStrategy>
         </RollingFile>
-        <RollingFile name="BotLog" fileName="logs/bot_path_ranker.log" filePattern="logs/bot_path_ranker_%d{yyyyMMdd}_%i.log.gz" append="true" bufferedIO="false">
+        <RollingFile name="BotLog"
+                     fileName="logs/bot_path_ranker.log"
+                     filePattern="logs/bot_path_ranker_%i.log.gz"
+                     append="true"
+                     bufferedIO="false">
             <PatternLayout pattern="${tsvLayout}" />
             <Policies>
                 <OnStartupTriggeringPolicy minSize="1" />
-                <SizeBasedTriggeringPolicy size="50MB" />
+                <SizeBasedTriggeringPolicy size="1MB" />
             </Policies>
-            <DefaultRolloverStrategy max="10" />
+
+            <DefaultRolloverStrategy max="5">
+                <Delete basePath="logs" maxDepth="1">
+                    <IfFileName regex="(unified_log|bot_path_ranker)_\d+\.log(\.gz)?$" />
+                    <IfAccumulatedFileSize exceeds="15MB" />
+                </Delete>
+            </DefaultRolloverStrategy>
         </RollingFile>
         <File name="MegaMekLog" fileName="logs/megamek.log" append="false">
             <PatternLayout pattern="${layout}" />

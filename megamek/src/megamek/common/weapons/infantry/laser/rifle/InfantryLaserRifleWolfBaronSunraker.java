@@ -69,7 +69,7 @@ public class InfantryLaserRifleWolfBaronSunraker extends InfantryWeapon {
 
         techAdvancement
               .setTechBase(TechBase.IS)
-              .setTechRating(TechRating.C) // Assuming C-C-C-C is just C
+              .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(DATE_NONE, DATE_NONE, DATE_ES, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, true, false, false)

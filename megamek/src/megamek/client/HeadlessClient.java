@@ -41,6 +41,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
+import megamek.client.ui.Messages;
+import megamek.common.Player;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityListFile;
 import megamek.common.enums.GamePhase;
@@ -50,6 +52,9 @@ import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
+
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * This class is instantiated for the player. It allows to communicate with the server with no GUI attached.
@@ -117,6 +122,7 @@ public class HeadlessClient extends Client {
                         logger.error(ex, "Failed to save entity list file");
                     }
                 }
+                saveVictoryList();
             }
         };
 
@@ -137,4 +143,34 @@ public class HeadlessClient extends Client {
         super.changePhase(phase);
     }
 
+
+    private void saveVictoryList() {
+        String filename = getLocalPlayer().getName();
+
+        // Did we select a file?
+        File unitFile = new File(filename + CG_FILE_EXTENSION_MUL);
+        if (!(unitFile.getName().toLowerCase().endsWith(CG_FILE_EXTENSION_MUL))) {
+            try {
+                unitFile = new File(unitFile.getCanonicalPath() + CG_FILE_EXTENSION_MUL);
+            } catch (Exception ignored) {
+                // nothing needs to be done here
+                return;
+            }
+
+
+            // What bot was this player? We need it to get the propper salvage MUL, just in case
+            Player botPlayer =
+                  getGame().getPlayersList().stream().filter(p -> p.isBot() && p.getName().equals(getLocalPlayer().getName() +
+                        "@AI")).findFirst().orElse(null);
+
+            if (botPlayer != null) {
+                try {
+                    // Save the player's entities to the file.
+                    EntityListFile.saveTo(unitFile, this, botPlayer);
+                } catch (Exception ex) {
+                    logger.error(ex, "saveVictoryList");
+                }
+            }
+        }
+    }
 }

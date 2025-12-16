@@ -159,15 +159,15 @@ public class TWDamageManager implements IDamageManager {
                 return reportVec;
             }
             Entity fighter = fighters.get(hit.getLocation());
-            HitData new_hit = fighter.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-            new_hit.setBoxCars(hit.rolledBoxCars());
-            new_hit.setGeneralDamageType(hit.getGeneralDamageType());
-            new_hit.setCapital(hit.isCapital());
-            new_hit.setCapMisCritMod(hit.getCapMisCritMod());
-            new_hit.setSingleAV(hit.getSingleAV());
-            new_hit.setAttackerId(hit.getAttackerId());
+            HitData newHit = fighter.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+            newHit.setBoxCars(hit.rolledBoxCars());
+            newHit.setGeneralDamageType(hit.getGeneralDamageType());
+            newHit.setCapital(hit.isCapital());
+            newHit.setCapMisCritMod(hit.getCapMisCritMod());
+            newHit.setSingleAV(hit.getSingleAV());
+            newHit.setAttackerId(hit.getAttackerId());
             return damageEntity(fighter,
-                  new_hit,
+                  newHit,
                   damage,
                   ammoExplosion,
                   damageType,
@@ -222,9 +222,11 @@ public class TWDamageManager implements IDamageManager {
         boolean critSI = false;
         boolean critThresh = false;
 
-        // get the relevant damage for damage thresholding
+        // Per SO p.116: For weapon groups/bays, threshold critical checks use only the
+        // damage of a SINGLE weapon (singleAV), not the combined damage from all weapons
+        // that hit. This prevents massed small weapons from always triggering threshold
+        // criticals. The full damage is still applied to the target.
         int threshDamage = damage;
-        // weapon groups only get the damage to one weapon
         if ((hit.getSingleAV() > -1) && !game.getOptions()
               .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             threshDamage = hit.getSingleAV();
@@ -634,9 +636,9 @@ public class TWDamageManager implements IDamageManager {
             }
 
             if (entity.isAero()) {
-                // chance of a critical if damage greater than threshold
+                // chance of a critical if damage exceeds threshold
                 IAero a = (IAero) entity;
-                if ((threshDamage > a.getThresh(hit.getLocation()))) {
+                if (threshDamage > a.getThresh(hit.getLocation())) {
                     critThresh = true;
                     a.setCritThresh(true);
                 }
@@ -1809,9 +1811,16 @@ public class TWDamageManager implements IDamageManager {
                       nukeS2S);
             }
 
-            if (isHeadHit && !entity.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
-                Report.addNewline(reportVec);
-                reportVec.addAll(manager.damageCrew(entity, 1));
+            if (isHeadHit) {
+                if (entity.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
+                      || entity.hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)) {
+                    Report r = new Report(6651);
+                    r.subject = entity.getId();
+                    reportVec.add(r);
+                } else {
+                    Report.addNewline(reportVec);
+                    reportVec.addAll(manager.damageCrew(entity, 1));
+                }
             }
 
             // If the location has run out of internal structure, finally

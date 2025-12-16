@@ -476,8 +476,9 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
 
         // check facing
+        // Tripods can only club targets in front arc per IO:AE p.158
         int clubArc;
-        if (bothArms) {
+        if (bothArms || ae.isTripodMek()) {
             clubArc = Compute.ARC_FORWARD;
         } else {
             if (club.getLocation() == Mek.LOC_LEFT_ARM) {

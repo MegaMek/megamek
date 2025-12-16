@@ -33,7 +33,6 @@
 
 package megamek.common.equipment;
 
-import megamek.common.Messages;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.equipment.enums.StructureEngine;
 
@@ -58,7 +57,7 @@ public class PowerGeneratorType extends MiscType {
     public static PowerGeneratorType createPowerGenerator(StructureEngine engineType) {
         PowerGeneratorType powerGeneratorType = new PowerGeneratorType(engineType);
         powerGeneratorType.name =
-              Messages.getString("EquipmentType.StructureEngine." + engineType.name()) + " " + Messages.getString(
+              EquipmentMessages.getString("EquipmentType.StructureEngine." + engineType.name()) + " " + EquipmentMessages.getString(
                     "EquipmentType.PowerGenerator");
         powerGeneratorType.setInternalName(engineType.name() + " PowerGenerator");
         powerGeneratorType.tonnage = TONNAGE_VARIABLE;

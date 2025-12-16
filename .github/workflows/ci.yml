@@ -57,7 +57,7 @@ jobs:
         run: ./gradlew test
 
       - name: Upload Test Logs on Failure
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: cd-failure-logs
@@ -75,7 +75,7 @@ jobs:
         run: ./gradlew build -x test -PextraVersion="PR-${{ github.event.number }}-${{ env.COMMIT_SHORT_SHA }}"
 
       - name: Upload TarGZ Release
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: mm-release-tar-gz-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
           path: ./megamek/megamek/build/distributions/*.tar.gz

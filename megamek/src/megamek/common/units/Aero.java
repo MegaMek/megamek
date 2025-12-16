@@ -1685,7 +1685,9 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                     return (int) Math.round(getCap0Armor() / 40.0) + 1;
                 }
             } else {
-                return 2;
+                // Return 1 so that "> 1" triggers on 2+ capital damage per SO p.116
+                // ("at least 15 points of standard-scale damage" = 2 capital)
+                return 1;
             }
         } else if (loc < damThresh.length) {
             return damThresh[loc];

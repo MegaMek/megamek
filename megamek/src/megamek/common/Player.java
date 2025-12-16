@@ -45,9 +45,11 @@ import megamek.client.ui.util.PlayerColour;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.compute.ComputeECM;
+import megamek.common.enums.GamePhase;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.MiscType;
+import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.game.InGameObject;
 import megamek.common.hexArea.BorderHexArea;
@@ -58,6 +60,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.turns.TurnOrdered;
 import megamek.common.units.Entity;
 import megamek.common.units.MekWarrior;
+import megamek.logging.MMLogger;
 
 /**
  * Represents a player in the game.
@@ -71,6 +74,7 @@ public final class Player extends TurnOrdered {
     //region Variable Declarations
     @Serial
     private static final long serialVersionUID = 6828849559007455761L;
+    private static final MMLogger LOGGER = MMLogger.create(Player.class);
 
     public static final int PLAYER_NONE = -1;
     public static final int TEAM_NONE = 0;
@@ -655,6 +659,122 @@ public final class Player extends TurnOrdered {
     }
 
     /**
+     * @return the best HQ initiative bonus from this player's units (TacOps Mobile HQs option)
+     */
+    public int getHQInitBonus() {
+        if (game == null) {
+            return 0;
+        }
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_MOBILE_HQS)) {
+            return 0;
+        }
+
+        int bonus = 0;
+        for (InGameObject object : game.getInGameObjects()) {
+            if (object instanceof Entity entity && entity.getOwner().equals(this)) {
+                bonus = Math.max(entity.getHQIniBonus(), bonus);
+            }
+        }
+        return bonus;
+    }
+
+    /**
+     * @return the best quirk initiative bonus from this player's units
+     */
+    public int getQuirkInitBonus() {
+        if (game == null) {
+            return 0;
+        }
+
+        int bonus = 0;
+        for (InGameObject object : game.getInGameObjects()) {
+            if (object instanceof Entity entity && entity.getOwner().equals(this)) {
+                bonus = Math.max(bonus, entity.getQuirkIniBonus());
+            }
+        }
+        return bonus;
+    }
+
+    /**
+     * @return the name of the quirk providing the best initiative bonus, or null if none
+     */
+    public String getQuirkInitBonusName() {
+        if (game == null) {
+            return null;
+        }
+
+        int bestBonus = 0;
+        String bestQuirkName = null;
+        for (InGameObject object : game.getInGameObjects()) {
+            if (object instanceof Entity entity && entity.getOwner().equals(this)) {
+                int entityBonus = entity.getQuirkIniBonus();
+                if (entityBonus > bestBonus) {
+                    bestBonus = entityBonus;
+                    // Determine which quirk is providing the bonus
+                    if (entity.hasQuirk(OptionsConstants.QUIRK_POS_BATTLE_COMP)) {
+                        bestQuirkName = "Battle Computer";
+                    } else if (entity.hasQuirk(OptionsConstants.QUIRK_POS_COMMAND_MEK)) {
+                        bestQuirkName = "Command Mek";
+                    }
+                }
+            }
+        }
+        return bestQuirkName;
+    }
+
+    /**
+     * @return the best command console/tech officer initiative bonus from this player's units (+2)
+     */
+    public int getCommandConsoleBonus() {
+        if (game == null) {
+            return 0;
+        }
+
+        for (InGameObject object : game.getInGameObjects()) {
+            if (object instanceof Entity entity && entity.getOwner().equals(this)) {
+                if (!entity.isDestroyed() &&
+                      entity.getCrew().isActive() &&
+                      !entity.isCaptured() &&
+                      !(entity instanceof MekWarrior) &&
+                      ((entity.isDeployed() && !entity.isOffBoard()) ||
+                            (entity.getDeployRound() == (game.getCurrentRound() + 1)))) {
+                    if (entity.hasCommandConsoleBonus() || entity.getCrew().hasActiveTechOfficer()) {
+                        return 2;
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * @return the best crew command skill initiative bonus from this player's units (RPG option)
+     */
+    public int getCrewCommandBonus() {
+        if (game == null) {
+            return 0;
+        }
+        if (!game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
+            return 0;
+        }
+
+        int bonus = 0;
+        for (InGameObject object : game.getInGameObjects()) {
+            if (object instanceof Entity entity && entity.getOwner().equals(this)) {
+                if (!entity.isDestroyed() &&
+                      entity.getCrew().isActive() &&
+                      !entity.isCaptured() &&
+                      !(entity instanceof MekWarrior) &&
+                      ((entity.isDeployed() && !entity.isOffBoard()) ||
+                            (entity.getDeployRound() == (game.getCurrentRound() + 1)))) {
+                    bonus = Math.max(bonus, entity.getCrew().getCommandBonus());
+                }
+            }
+        }
+        return bonus;
+    }
+
+    /**
      * @return the bonus to this player's initiative rolls for the highest value initiative (i.e. the 'commander')
      */
     public int getOverallCommandBonus() {
@@ -719,8 +839,19 @@ public final class Player extends TurnOrdered {
      */
     public int getTCPInitBonus() {
         if (game == null) {
+            LOGGER.debug("TCP: game is null for player {}", name);
             return 0;
         }
+
+        int currentRound = game.getCurrentRound();
+        GamePhase phase = game.getPhase();
+        LOGGER.debug("TCP: Checking for player {} in round {}, phase {}", name, currentRound, phase);
+
+        // During initial deployment phase (round 0), units deploying this round count
+        // even if not yet placed on the board (TCP applies to deployment initiative rolls per rules)
+        // After round 1 starts, only deployed units count (reinforcements must be on-board)
+        // Also applies during reinforcement deployment phases in later rounds
+        boolean isDeploymentPhase = phase.isDeployment() || phase.isInitiative() || phase.isInitiativeReport();
 
         int bestBonus = 0;
         for (InGameObject object : game.getInGameObjects()) {
@@ -730,20 +861,44 @@ public final class Player extends TurnOrdered {
             if (!entity.getOwner().equals(this)) {
                 continue;
             }
-            // Must be deployed and active
-            if (entity.isDestroyed() || !entity.isDeployed() || entity.isOffBoard()) {
+            // Must be deployed and on-board, OR about to deploy this round
+            if (entity.isDestroyed() || entity.isOffBoard()) {
+                LOGGER.debug("TCP: {} skipped - destroyed or off-board", entity.getDisplayName());
                 continue;
+            }
+            // For undeployed entities, only count them during deployment phase if they deploy this round
+            if (!entity.isDeployed()) {
+                // During initial deployment (round 0 or less), units with deployRound=0 count
+                // During reinforcement deployment phases, units with deployRound <= currentRound count
+                boolean isInitialDeployment = currentRound <= 0 && entity.getDeployRound() <= 0;
+                boolean deploysThisRound = currentRound > 0 && isDeploymentPhase &&
+                      entity.getDeployRound() <= currentRound;
+
+                if (!isInitialDeployment && !deploysThisRound) {
+                    LOGGER.debug(
+                          "TCP: {} skipped - not deployed (deployRound={}, currentRound={}, isDeploymentPhase={})",
+                          entity.getDisplayName(),
+                          entity.getDeployRound(),
+                          currentRound,
+                          isDeploymentPhase);
+                    continue;
+                }
+                LOGGER.debug("TCP: {} counts as deploying this round (deployRound={}, currentRound={}, initial={})",
+                      entity.getDisplayName(), entity.getDeployRound(), currentRound, isInitialDeployment);
             }
             // Must have TCP + VDNI/BVDNI
             if (!entity.hasAbility(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR)) {
+                LOGGER.debug("TCP: {} skipped - no TCP implant", entity.getDisplayName());
                 continue;
             }
             if (!entity.hasAbility(OptionsConstants.MD_VDNI)
                   && !entity.hasAbility(OptionsConstants.MD_BVDNI)) {
+                LOGGER.debug("TCP: {} skipped - no VDNI/BVDNI", entity.getDisplayName());
                 continue;
             }
             // Crew must be active
             if (entity.getCrew() == null || !entity.getCrew().isActive()) {
+                LOGGER.debug("TCP: {} skipped - crew not active", entity.getDisplayName());
                 continue;
             }
 
@@ -763,9 +918,16 @@ public final class Player extends TurnOrdered {
             else if (isEntityECMAffected(entity) && !entity.hasECM()) {
                 bonus -= 1;
             }
+            // -1 if EMI conditions are active (global effect, can't be countered)
+            else if (game instanceof Game twGame && twGame.getPlanetaryConditions().getEMI().isEMI()) {
+                bonus -= 1;
+            }
 
+            LOGGER.debug("TCP: {} qualifies with bonus {} (deployed={}, deployRound={})",
+                  entity.getDisplayName(), bonus, entity.isDeployed(), entity.getDeployRound());
             bestBonus = Math.max(bestBonus, bonus);
         }
+        LOGGER.debug("TCP: Final TCP bonus for player {}: {}", name, bestBonus);
         return bestBonus;
     }
 

@@ -52,11 +52,13 @@ import java.util.Vector;
 import megamek.common.Player;
 import megamek.common.Team;
 import megamek.common.game.IGame;
+import megamek.common.game.InitiativeBonusBreakdown;
 import megamek.common.game.InitiativeRoll;
 import megamek.common.interfaces.ITurnOrdered;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityClassTurn;
+import megamek.common.units.MekWarrior;
 
 public abstract class TurnOrdered implements ITurnOrdered {
     @Serial
@@ -410,12 +412,12 @@ public abstract class TurnOrdered implements ITurnOrdered {
                 initiativeCandidate.getInitiative().observerRoll();
             }
 
-            int bonus = 0;
+            InitiativeBonusBreakdown breakdown = InitiativeBonusBreakdown.zero();
             String initiativeAptitudeSPA = "";
 
             // If we're using team-based initiative, we just need to check whether the team commander has Combat Sense
-            if (initiativeCandidate instanceof Team) {
-                bonus = ((Team) initiativeCandidate).getTotalInitBonus(bInitCompBonus);
+            if (initiativeCandidate instanceof Team team) {
+                breakdown = team.getInitBonusBreakdown(bInitCompBonus);
 
                 if (!initiativeAptitude.isEmpty()) {
                     if (initiativeAptitude.containsKey(initiativeCandidate)) {
@@ -438,8 +440,40 @@ public abstract class TurnOrdered implements ITurnOrdered {
                           .booleanOption(OptionsConstants.RPG_COMMAND_INIT);
                     final Player player = entity.getOwner();
                     if (player != null) {
-                        bonus = player.getIndividualCommandBonus(entity, useCommandInit) + entity.getCrew()
-                              .getInitBonus();
+                        // Break down individual initiative bonuses by source
+                        int consoleBonus = 0;
+                        int crewCommandBonus = 0;
+                        int crewBonus = entity.getCrew().getInitBonus();
+
+                        // Check if entity is valid for command bonuses
+                        if (!entity.isDestroyed() &&
+                              entity.getCrew().isActive() &&
+                              !entity.isCaptured() &&
+                              !(entity instanceof MekWarrior) &&
+                              ((entity.isDeployed() && !entity.isOffBoard()) ||
+                                    (entity.getDeployRound() == (entity.getGame().getCurrentRound() + 1)))) {
+                            // Command console / tech officer bonus
+                            if (entity.hasCommandConsoleBonus() || entity.getCrew().hasActiveTechOfficer()) {
+                                consoleBonus = 2;
+                            }
+                            // Crew command skill bonus (RPG option)
+                            if (useCommandInit) {
+                                crewCommandBonus = entity.getCrew().getCommandBonus();
+                            }
+                        }
+
+                        breakdown = new InitiativeBonusBreakdown(
+                              0,  // hq
+                              0,  // quirk
+                              null,  // quirkName
+                              consoleBonus,
+                              crewCommandBonus,
+                              0,  // tcp
+                              0,  // constant
+                              0,  // compensation
+                              crewBonus
+                        );
+
                         if (entity.hasAbility(ATOW_COMBAT_SENSE)) {
                             initiativeAptitudeSPA = ATOW_COMBAT_SENSE;
                         } else if (entity.hasAbility(ATOW_COMBAT_PARALYSIS)) {
@@ -451,12 +485,12 @@ public abstract class TurnOrdered implements ITurnOrdered {
 
             if (rerollRequests == null) { // normal init roll
                 // add a roll for all teams
-                initiativeCandidate.getInitiative().addRoll(bonus, initiativeAptitudeSPA);
+                initiativeCandidate.getInitiative().addRoll(breakdown, initiativeAptitudeSPA);
             } else {
                 // Resolve Tactical Genius (lvl 3) pilot ability
                 for (ITurnOrdered rerollItem : rerollRequests) {
                     if (Objects.equals(initiativeCandidate, rerollItem)) { // this is the team re-rolling
-                        initiativeCandidate.getInitiative().replaceRoll(bonus, initiativeAptitudeSPA);
+                        initiativeCandidate.getInitiative().replaceRoll(breakdown, initiativeAptitudeSPA);
                         break; // each team only needs one reroll
                     }
                 }

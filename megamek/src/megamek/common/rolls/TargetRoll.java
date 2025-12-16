@@ -132,6 +132,9 @@ public class TargetRoll implements Serializable {
         StringBuilder allDesc = new StringBuilder();
 
         for (TargetRollModifier modifier : modifiers) {
+            if (modifier == null) {
+                continue; // Skip null modifiers (see GitHub issue #7791)
+            }
             if (isFinalizer(modifier.value())) {
                 return modifier.getDesc();
             }
@@ -166,7 +169,11 @@ public class TargetRoll implements Serializable {
      * Returns the first description found
      */
     public String getPlainDesc() {
-        return modifiers.get(0).getDesc();
+        if (modifiers.isEmpty()) {
+            return "";
+        }
+        TargetRollModifier first = modifiers.get(0);
+        return (first != null) ? first.getDesc() : "";
     }
 
     /**
@@ -174,7 +181,7 @@ public class TargetRoll implements Serializable {
      */
     public String getCumulativePlainDesc() {
         for (TargetRollModifier mod : modifiers) {
-            if (mod.cumulative()) {
+            if (mod != null && mod.cumulative()) {
                 return mod.getDesc();
             }
         }
@@ -185,8 +192,11 @@ public class TargetRoll implements Serializable {
      * Returns the last description found
      */
     public String getLastPlainDesc() {
+        if (modifiers.isEmpty()) {
+            return "";
+        }
         TargetRollModifier last = modifiers.get(modifiers.size() - 1);
-        return last.getDesc();
+        return (last != null) ? last.getDesc() : "";
     }
 
     /**
@@ -257,7 +267,7 @@ public class TargetRoll implements Serializable {
         for (String fragment : fragments) {
             Pattern pattern = Pattern.compile(fragment);
             int index = IntStream.range(0, modifiers.size())
-                  .filter(i -> pattern.matcher(modifiers.get(i).getDesc()).find())
+                  .filter(i -> modifiers.get(i) != null && pattern.matcher(modifiers.get(i).getDesc()).find())
                   .findFirst().orElse(-1);
             if (index != -1) {
                 mod = modifiers.get(index);
@@ -285,7 +295,7 @@ public class TargetRoll implements Serializable {
     public void append(TargetRoll other, boolean appendNonCumulative) {
         if (other != null) {
             for (TargetRollModifier modifier : other.modifiers) {
-                if (appendNonCumulative || modifier.cumulative()) {
+                if (modifier != null && (appendNonCumulative || modifier.cumulative())) {
                     addModifier(modifier);
                 }
             }
@@ -314,11 +324,11 @@ public class TargetRoll implements Serializable {
     }
 
     private boolean isAutomaticOrImpossible(TargetRollModifier modifier) {
-        return AUTOS_AND_IMPOSSIBLE.contains(modifier.value());
+        return modifier != null && AUTOS_AND_IMPOSSIBLE.contains(modifier.value());
     }
 
     private boolean isAutomatic(TargetRollModifier modifier) {
-        return AUTOS.contains(modifier.value());
+        return modifier != null && AUTOS.contains(modifier.value());
     }
 
     /**
@@ -327,6 +337,9 @@ public class TargetRoll implements Serializable {
     private void recalculate() {
         total = 0;
         for (TargetRollModifier modifier : modifiers) {
+            if (modifier == null) {
+                continue; // Skip null modifiers (see GitHub issue #7791)
+            }
             if (isFinalizer(modifier.value())) {
                 total = modifier.value();
                 return;
@@ -341,6 +354,9 @@ public class TargetRoll implements Serializable {
     }
 
     private void addModifierImpl(TargetRollModifier modifier) {
+        if (modifier == null) {
+            return; // Silently reject null modifiers (see GitHub issue #7791)
+        }
         if (modifier.value() == CHECK_FALSE) {
             // When the check is no longer necessary, remove other finalizers that would come first
             removeAutos(true);

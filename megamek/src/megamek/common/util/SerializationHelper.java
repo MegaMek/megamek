@@ -288,13 +288,17 @@ public class SerializationHelper {
                             case "description" -> description = reader.getValue();
                             case "cumulative" -> cumulative = Boolean.parseBoolean(reader.getValue());
                         }
-                        reader.moveUp();
                     } catch (NumberFormatException e) {
-                        // Narc Pods with malformed entries will be silently ignored
-                        return null;
+                        // Malformed value field - continue to try remaining fields
                     }
+                    reader.moveUp();
                 }
-                return (value > Integer.MIN_VALUE) ? new TargetRollModifier(value, description, cumulative) : null;
+                // Return a valid modifier even if corrupted - prevents null entries in lists
+                // which cause NPE when iterating (see GitHub issue #7791)
+                if (value <= Integer.MIN_VALUE) {
+                    return new TargetRollModifier(0, "corrupted save entry", false);
+                }
+                return new TargetRollModifier(value, description, cumulative);
             }
 
             @Override

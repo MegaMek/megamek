@@ -355,6 +355,11 @@ class MunitionWeightCollection {
         return orderedTypes;
     }
 
+    /**
+     * Select all munitions with weights above the cutoff value.
+     * @param cutoff    Double cutoff weight; munitions with this weight or lower are discarded
+     * @return  HashMap of lists of munitions, by weapon type, in weight order
+     */
     public HashMap<String, List<String>> getAboveCutoff(double cutoff) {
         HashMap<String, List<String>> topMunitionsMap = new HashMap<>();
         for (String key : TeamLoadOutGenerator.TYPE_MAP.keySet()) {
@@ -369,6 +374,11 @@ class MunitionWeightCollection {
         return topMunitionsMap;
     }
 
+    /**
+     * Select the top N weighted munitions of each type, where N is the count to include.
+     * @param count     Int count of top munition types to include.
+     * @return  HashMap of lists of munitions, by weapon type, in weight order
+     */
     public HashMap<String, List<String>> getTopN(int count) {
         HashMap<String, List<String>> topMunitionsMap = new HashMap<>();
         for (String key : TeamLoadOutGenerator.TYPE_MAP.keySet()) {

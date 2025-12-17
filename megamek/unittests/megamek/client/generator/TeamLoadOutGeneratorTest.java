@@ -584,20 +584,20 @@ class TeamLoadOutGeneratorTest {
     }
 
     @Test
-    void testAPMunitionWeightCollectionTopN() {
+    void testAPMunitionWeightCollectionCutoff() {
         MunitionWeightCollection mwc = new MunitionWeightCollection();
         // Assume we're up against reflective and heavy targets, not fliers
         mwc.increaseAPMunitions();
         mwc.decreaseFlakMunitions();
 
-        HashMap<String, List<String>> topN = mwc.getTopN(3);
-        assertEquals("Armor-Piercing=3.0", topN.get("AC").get(0));
-        assertEquals("Standard=2.0", topN.get("AC").get(1));
-        assertEquals("Caseless=1.0", topN.get("AC").get(2));
+        HashMap<String, List<String>> cutoff = mwc.getAboveCutoff(0.0);
+        assertEquals("Armor-Piercing=3.0", cutoff.get("AC").get(0));
+        assertEquals("Standard=2.0", cutoff.get("AC").get(1));
+        assertEquals("Caseless=1.0", cutoff.get("AC").get(2));
 
-        assertEquals("Tandem-Charge=3.0", topN.get("SRM").get(0));
-        assertEquals("Dead-Fire=3.0", topN.get("SRM").get(1));
-        assertEquals("Standard=2.0", topN.get("SRM").get(2));
+        assertEquals("Tandem-Charge=3.0", cutoff.get("SRM").get(0));
+        assertEquals("Dead-Fire=3.0", cutoff.get("SRM").get(1));
+        assertEquals("Standard=2.0", cutoff.get("SRM").get(2));
     }
 
     @Test
@@ -608,7 +608,7 @@ class TeamLoadOutGeneratorTest {
         mwc.increaseMunitions(tsmOnly);
         mwc.increaseMunitions(tsmOnly);
         assertEquals(7.0, mwc.getSrmWeights().get("Anti-TSM"));
-        assertEquals("Anti-TSM=7.0", mwc.getTopN(1).get("SRM").get(0));
+        assertEquals("Anti-TSM=7.0", mwc.getAboveCutoff(6.0).get("SRM").get(0));
     }
 
     @ParameterizedTest
@@ -908,11 +908,9 @@ class TeamLoadOutGeneratorTest {
               EquipmentType.allTypes(),
               faction,
               year,
-              techLevel,
               legalLevel,
               allowMixed,
               eraBased,
-              advancedAero,
               showExtinct,
               allowNukes
         );
@@ -947,11 +945,9 @@ class TeamLoadOutGeneratorTest {
               EquipmentType.allTypes(),
               faction,
               year,
-              techLevel,
               legalLevel,
               allowMixed,
               eraBased,
-              advancedAero,
               showExtinct,
               allowNukes
         );

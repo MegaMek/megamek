@@ -530,6 +530,12 @@ public class TeamLoadOutGenerator {
         return value;
     }
 
+    /**
+     * Return sub-map from the requested key
+     * @param key   String dotted path of the submap within the larger map, usually only a top-level key
+     * @param map   HashMap within which to search
+     * @return  HashMap\<String, Object\> sub-map found at the provided path, or null
+     */
     @Nullable
     protected static HashMap<String, Object> subMap(String key, HashMap<String, Object> map) {
         HashMap<String, Object> subMap = null;
@@ -541,6 +547,12 @@ public class TeamLoadOutGenerator {
         return subMap;
     }
 
+    /**
+     * Return list from provided key
+     * @param key   List of strings found at the provided dotted path, usually only a top-level key
+     * @param map   HashMap within which to search
+     * @return  List of strings, or null
+     */
     @Nullable
     protected static List<String> subList(String key, HashMap<String, Object> map) {
         List<String> subList = null;
@@ -556,7 +568,7 @@ public class TeamLoadOutGenerator {
      * Use values from the YAML file defined in TeamLoadOutGenerator class if available; else use provided
      * default
      *
-     * @param keyPath   dotted path to desired value, e.g. "Defaults.Dead-Fire.IS"
+     * @param keyPath   dotted path to desired value, e.g. "Defaults.Munitions.Dead-Fire.IS"
      * @param defValue  Default value to use
      *
      * @return Double read value or default
@@ -569,6 +581,15 @@ public class TeamLoadOutGenerator {
         }
     }
 
+    /**
+     * Use values from the YAML file defined in TeamLoadOutGenerator class if available; else use provided
+     * default
+     *
+     * @param keyPath   dotted path to desired value, e.g. "Defaults.Factors.pirateMaxAllowedBinFillRatio"
+     * @param defValue  Default value to use
+     *
+     * @return Int read value or default
+     */
     public static int castPropertyInt(String keyPath, int defValue) {
         try {
             return (int) searchMap(keyPath);
@@ -690,38 +711,44 @@ public class TeamLoadOutGenerator {
     // endregion Check for various unit types, armor types, etc.
 
     // region generateValidMunitionsForFactionAndEra
+    /**
+     * Creates a lookup table of weapon system type -> munition type -> available bins, for the average force
+     * This method requires configuring a TeamLoadOutGenerator instance; for other uses, see the static
+     * class method below this one.
+     *
+     * @param faction     Two-letter (MM) faction code of the force we are checking
+     *
+     * @return HashMap containing per-weapon entries, that contain per-munition entries of "bin counts"
+     */
     public HashMap<String, Object> generateValidMunitionsForFactionAndEra(String faction) {
         boolean allowMixed = gameOptions.booleanOption(OptionsConstants.ALLOWED_ALL_AMMO_MIXED_TECH);
         boolean allowNukes = gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AT2_NUKES);
         return generateValidMunitionsForFactionAndEra(
-              EquipmentType.allTypes(), faction, allowedYear, gameTechLevel,
-              legalLevel, allowMixed, eraBasedTechLevel, advAeroRules, showExtinct, allowNukes);
+              EquipmentType.allTypes(), faction, allowedYear,
+              legalLevel, allowMixed, eraBasedTechLevel, showExtinct, allowNukes);
     }
 
     /**
      * Creates a lookup table of weapon system type -> munition type -> available bins, for the average force
      *
-     * @param types         The set of all equipment types within which to search for AmmoTypes
-     * @param faction       Two-letter (MM) faction code of the force we are va
-     * @param year          Year in which the game will take place, for availability checks
-     * @param techLevel     Int representation of the tech level
-     * @param legalLevel    SimpleTechLevel representing the allowed technology for the game
-     * @param allowMixed    Whether all munitions are considered mixed tech for this game
-     * @param eraBased      Use era-based (year-based) validity checks, allowing some leeway on intro years
-     * @param advancedAero  Determines whether advanced aero munitions are available
-     * @param showExtinct   Flag setting whether extinct munitions should be considered available
-     * @param allowNukes    Set it to true, I dare you.
-     * @return  HashMap containing per-weapon entries, that contain per-munition entries of "bin counts"
+     * @param types       The set of all equipment types within which to search for AmmoTypes
+     * @param faction     Two-letter (MM) faction code of the force we are checking
+     * @param year        Year in which the game will take place, for availability checks
+     * @param legalLevel  SimpleTechLevel representing the allowed technology for the game
+     * @param allowMixed  Whether all munitions are considered mixed tech for this game
+     * @param eraBased    Use era-based (year-based) validity checks, allowing some leeway on intro years
+     * @param showExtinct Flag setting whether extinct munitions should be considered available
+     * @param allowNukes  Set it to true, I dare you.
+     *
+     * @return HashMap containing per-weapon entries, that contain per-munition entries of "bin counts"
      */
     public static HashMap<String, Object> generateValidMunitionsForFactionAndEra(
           List<EquipmentType> types,
           String faction,
           int year,
-          int techLevel,
           SimpleTechLevel legalLevel,
           boolean allowMixed,
           boolean eraBased,
-          boolean advancedAero,
           boolean showExtinct,
           boolean allowNukes
     ){
@@ -748,11 +775,9 @@ public class TeamLoadOutGenerator {
                 count = determineBinCount(standard,
                       factionEnum,
                       year,
-                      techLevel,
                       legalLevel,
                       allowMixed,
                       eraBased,
-                      advancedAero,
                       showExtinct,
                       allowNukes);
 
@@ -774,11 +799,9 @@ public class TeamLoadOutGenerator {
                     count = determineBinCount(exemplar,
                           factionEnum,
                           year,
-                          techLevel,
                           legalLevel,
                           allowMixed,
                           eraBased,
-                          advancedAero,
                           showExtinct,
                           allowNukes);
 
@@ -797,8 +820,21 @@ public class TeamLoadOutGenerator {
         return legalMunitions;
     }
 
-    protected static int determineBinCount(AmmoType exemplar, Faction faction, int year, int techLevel,
-          SimpleTechLevel legalLevel, boolean allowMixed, boolean eraBased, boolean advancedAero, boolean showExtinct,
+    /**
+     * Decides the number of bins a "typical force" would get, for a specific type of ammo.
+     * (This count will later be scaled by several factors to fit the actual forces provided)
+     * @param exemplar      AmmoType to check
+     * @param faction       Faction instance representing the force using this ammo
+     * @param year          int, year of the game / game options, for legality / availability checks
+     * @param legalLevel    SimpleTechLevel of the game; max tech level allowed.
+     * @param allowMixed    boolean, treat all ammo as mixed tech, so Clans can use IS ammo and vice-versa?
+     * @param eraBased      boolean, allow adjusting availability for year/faction/era/prototype period?
+     * @param showExtinct   boolean, allow extinct ammo?
+     * @param allowNukes    boolean, allow nukes for this specific player/bot/force?
+     * @return  int count of bins available for this ammo.
+     */
+    protected static int determineBinCount(AmmoType exemplar, Faction faction, int year,
+          SimpleTechLevel legalLevel, boolean allowMixed, boolean eraBased, boolean showExtinct,
           boolean allowNukes) {
         int count = 0;
 

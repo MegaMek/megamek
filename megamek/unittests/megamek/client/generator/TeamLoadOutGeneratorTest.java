@@ -174,7 +174,7 @@ class TeamLoadOutGeneratorTest {
         MunitionTree mt = new MunitionTree();
         mt.insertImperative("Mauler", "MAL-1K", "any", "AC/5", "Inferno:Standard:Smoke:Flak");
         HashMap<String, Object> availMap = tlg.generateValidMunitionsForFactionAndEra("IS");
-        tlg.reconfigureEntity(mockMek, mt, availMap, "IS");
+        tlg.reconfigureEntity(mockMek, mt, availMap);
 
         // First imperative entry is invalid, so bin1 should get second choice
         // (Standard)
@@ -198,7 +198,7 @@ class TeamLoadOutGeneratorTest {
 
         // We expect to see no change in loadouts
         HashMap<String, Object> availMap = tlg.generateValidMunitionsForFactionAndEra("IS");
-        tlg.reconfigureEntity(mockMek, mt, availMap, "IS");
+        tlg.reconfigureEntity(mockMek, mt, availMap);
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
         assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_STANDARD));
     }
@@ -217,7 +217,7 @@ class TeamLoadOutGeneratorTest {
         HashMap<String, Object> availMap = tlg.generateValidMunitionsForFactionAndEra("IS");
         // We expect that all bins are set to the desired munition type as only one type
         // is provided
-        tlg.reconfigureEntity(mockMek, mt, availMap, "IS");
+        tlg.reconfigureEntity(mockMek, mt, availMap);
         assertFalse(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_DEAD_FIRE));
         assertFalse(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_STANDARD));
@@ -225,7 +225,7 @@ class TeamLoadOutGeneratorTest {
 
         // Now reset the ammo
         mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Standard");
-        tlg.reconfigureEntity(mockMek, mt, availMap, "IS");
+        tlg.reconfigureEntity(mockMek, mt, availMap);
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
         assertFalse(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_DEAD_FIRE));
         assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_STANDARD));
@@ -246,7 +246,7 @@ class TeamLoadOutGeneratorTest {
         HashMap<String, Object> availMap = tlg.generateValidMunitionsForFactionAndEra("IS");
         // We expect that all bins are set to the desired munition type as only one type
         // is provided
-        tlg.reconfigureEntity(mockMek, mt, availMap, "IS");
+        tlg.reconfigureEntity(mockMek, mt, availMap);
         assertFalse(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_ARAD));
         assertFalse(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_STANDARD));
@@ -254,7 +254,7 @@ class TeamLoadOutGeneratorTest {
 
         // Now reset the ammo
         mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Standard");
-        tlg.reconfigureEntity(mockMek, mt, availMap, "IS");
+        tlg.reconfigureEntity(mockMek, mt, availMap);
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
         assertFalse(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_ARAD));
         assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_STANDARD));
@@ -275,7 +275,7 @@ class TeamLoadOutGeneratorTest {
         // First, set all bins to Smoke
         mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Smoke");
         HashMap<String, Object> availMap = tlg.generateValidMunitionsForFactionAndEra("IS");
-        tlg.reconfigureEntity(mockMek, mt, availMap, "IS");
+        tlg.reconfigureEntity(mockMek, mt, availMap);
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_SMOKE_WARHEAD));
 
         // Then reset bins with useful ammo
@@ -283,7 +283,7 @@ class TeamLoadOutGeneratorTest {
 
         // We expect that all bins are set to the desired munition type as only one type
         // is provided
-        tlg.reconfigureEntity(mockMek, mt, availMap, "IS");
+        tlg.reconfigureEntity(mockMek, mt, availMap);
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
         assertFalse(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_STANDARD));
         assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_DEAD_FIRE));
@@ -323,7 +323,7 @@ class TeamLoadOutGeneratorTest {
 
         HashMap<String, Object> availMap = tlg.generateValidMunitionsForFactionAndEra("IS");
         // J. Robert H. should get the first load out
-        tlg.reconfigureEntity(mockMek, mt, availMap, "IS");
+        tlg.reconfigureEntity(mockMek, mt, availMap);
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
         assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_DEAD_FIRE));
         assertTrue(((AmmoType) bin3.getType()).getMunitionType().contains(Munitions.M_HEAT_SEEKING));
@@ -331,7 +331,7 @@ class TeamLoadOutGeneratorTest {
 
         // John Q. should get the generalized load out; last bin should be set to
         // Standard
-        tlg.reconfigureEntity(mockMek2, mt, availMap, "IS");
+        tlg.reconfigureEntity(mockMek2, mt, availMap);
         assertTrue(((AmmoType) bin5.getType()).getMunitionType().contains(Munitions.M_STANDARD));
         assertTrue(((AmmoType) bin6.getType()).getMunitionType().contains(Munitions.M_SWARM));
         assertTrue(((AmmoType) bin7.getType()).getMunitionType().contains(Munitions.M_SEMIGUIDED));
@@ -900,7 +900,6 @@ class TeamLoadOutGeneratorTest {
         SimpleTechLevel legalLevel = SimpleTechLevel.parse(TechConstants.T_SIMPLE_NAMES[techLevel]);
         boolean allowMixed = true;
         boolean eraBased = true;
-        boolean advancedAero = false;
         boolean showExtinct = false;
         boolean allowNukes = false;
 
@@ -937,7 +936,6 @@ class TeamLoadOutGeneratorTest {
         SimpleTechLevel legalLevel = SimpleTechLevel.parse(TechConstants.T_SIMPLE_NAMES[techLevel]);
         boolean allowMixed = false;
         boolean eraBased = true;
-        boolean advancedAero = false;
         boolean showExtinct = false;
         boolean allowNukes = false;
 

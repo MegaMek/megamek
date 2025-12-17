@@ -177,7 +177,7 @@ public class TeamLoadOutGenerator {
           "Thunder-Vibrabomb",
           "Thunder-Inferno",
           "Flare",
-          "Thunder Vibrabomb IV",
+          "Thunder Vibrabomb-IV",
           "ThunderBomb",
           "TAGBomb",
           "TorpedoBomb",
@@ -191,7 +191,7 @@ public class TeamLoadOutGenerator {
           "Laser Inhibiting",
           "FASCAM",
           "Flare",
-          "Thunder Vibrabomb IV"
+          "Thunder Vibrabomb-IV"
           ));
 
     // Guided munitions come in two main flavors
@@ -364,20 +364,20 @@ public class TeamLoadOutGenerator {
      * Relative weight distribution of external ordnance choices for pirates. Low tech, high chaos factor.
      */
     private static final BombLoadout pirateBombLoad = new BombLoadout() {{
-        put(BombTypeEnum.HE, castPropertyInt("Defaults.Factors.pirateBombLoad_HE", 7));
-        put(BombTypeEnum.RL, castPropertyInt("Defaults.Factors.pirateBombLoad_RL", 45));
-        put(BombTypeEnum.INFERNO, castPropertyInt("Defaults.Factors.pirateBombLoad_INFERNO", 35));
-        put(BombTypeEnum.CLUSTER, castPropertyInt("Defaults.Factors.pirateBombLoad_CLUSTER", 5));
-        put(BombTypeEnum.FAE_SMALL, castPropertyInt("Defaults.Factors.pirateBombLoad_FAE_SMALL", 6));
-        put(BombTypeEnum.FAE_LARGE, castPropertyInt("Defaults.Factors.pirateBombLoad_FAE_LARGE", 2));
+        put(BombTypeEnum.HE, castPropertyInt("Defaults.Bombs.pirateBombLoad_HE", 7));
+        put(BombTypeEnum.RL, castPropertyInt("Defaults.Bombs.pirateBombLoad_RL", 45));
+        put(BombTypeEnum.INFERNO, castPropertyInt("Defaults.Bombs.pirateBombLoad_INFERNO", 35));
+        put(BombTypeEnum.CLUSTER, castPropertyInt("Defaults.Bombs.pirateBombLoad_CLUSTER", 5));
+        put(BombTypeEnum.FAE_SMALL, castPropertyInt("Defaults.Bombs.pirateBombLoad_FAE_SMALL", 6));
+        put(BombTypeEnum.FAE_LARGE, castPropertyInt("Defaults.Bombs.pirateBombLoad_FAE_LARGE", 2));
     }};
     /**
      * External ordnance choices for pirates to set things on fire
      */
     private static final BombLoadout pirateFirestormBombLoad = new BombLoadout() {{
-        put(BombTypeEnum.INFERNO, castPropertyInt("Defaults.Factors.pirateFirestormBombLoad_INFERNO", 60));
-        put(BombTypeEnum.FAE_SMALL, castPropertyInt("Defaults.Factors.pirateFirestormBombLoad_FAE_SMALL", 30));
-        put(BombTypeEnum.FAE_LARGE, castPropertyInt("Defaults.Factors.pirateFirestormBombLoad_FAE_LARGE", 10));
+        put(BombTypeEnum.INFERNO, castPropertyInt("Defaults.Bombs.pirateFirestormBombLoad_INFERNO", 60));
+        put(BombTypeEnum.FAE_SMALL, castPropertyInt("Defaults.Bombs.pirateFirestormBombLoad_FAE_SMALL", 30));
+        put(BombTypeEnum.FAE_LARGE, castPropertyInt("Defaults.Bombs.pirateFirestormBombLoad_FAE_LARGE", 10));
     }};
 
     /**
@@ -405,9 +405,9 @@ public class TeamLoadOutGenerator {
      * out.
      */
     private static final BombLoadout pirateAirBombLoad = new BombLoadout() {{
-        put(BombTypeEnum.RL, castPropertyInt("Defaults.Factors.pirateAntiBombLoad_RL", 60));
-        put(BombTypeEnum.LAA, castPropertyInt("Defaults.Factors.pirateAntiBombLoad_LAA", 30));
-        put(BombTypeEnum.AAA, castPropertyInt("Defaults.Factors.pirateAntiBombLoad_AAA", 10));
+        put(BombTypeEnum.RL, castPropertyInt("Defaults.Bombs.pirateAntiBombLoad_RL", 60));
+        put(BombTypeEnum.LAA, castPropertyInt("Defaults.Bombs.pirateAntiBombLoad_LAA", 30));
+        put(BombTypeEnum.AAA, castPropertyInt("Defaults.Bombs.pirateAntiBombLoad_AAA", 10));
     }};
 
     // end subregion Bombs
@@ -496,7 +496,7 @@ public class TeamLoadOutGenerator {
      * Simple Map search for new  Yaml-based config file
      *
      * @param keyPath   Dotted path (e.g. "Overrides.Tandem-Charge.Clan"; max depth of 3.
-     * @return entry    at the provided path (should be Map\<String, Object\> or String, Int, Double as Object)
+     * @return entry    at the provided path (should be Map of String, Object or String, Int, Double as Object)
      * @throws Exception if any part of path is not found.
      */
     public static Object searchMap(String keyPath) throws Exception {
@@ -507,7 +507,7 @@ public class TeamLoadOutGenerator {
      * For sub-Map search and testing purposes
      * @param keyPath   Dotted path (e.g. "Overrides.Tandem-Charge.Clan"; max depth of 3.
      * @param map       Root-level map reference; can be passed a lower-level node to restrict searches
-     * @return entry    at the provided path (should be Map\<String, Object\> or String, Int, Double as Object)
+     * @return entry    at the provided path (should be Map of String, Object or String, Int, Double as Object)
      * @throws Exception
      */
     @Nullable
@@ -534,7 +534,7 @@ public class TeamLoadOutGenerator {
      * Return sub-map from the requested key
      * @param key   String dotted path of the submap within the larger map, usually only a top-level key
      * @param map   HashMap within which to search
-     * @return  HashMap\<String, Object\> sub-map found at the provided path, or null
+     * @return  HashMap (of String, Object) sub-map found at the provided path, or null
      */
     @Nullable
     protected static HashMap<String, Object> subMap(String key, HashMap<String, Object> map) {
@@ -1354,7 +1354,6 @@ public class TeamLoadOutGenerator {
      * @param munitionWeightCollection   Already Adjusted MunitionWeightCollection instance
      * @param overrides                  From "Overides" section of YAML configuration file
      * @param prohibited                 From "Prohibited" section of YAML configuration file
-     * @return modified MunitionWeightCollection with modifiers applied
      */
     public static void applyModifiersToWeights(ReconfigurationParameters reconfigurationParameters,
           MunitionWeightCollection munitionWeightCollection, HashMap<String, Object> overrides,
@@ -1522,7 +1521,7 @@ public class TeamLoadOutGenerator {
                 // TODO: Will be used when A2G attack errata are implemented
                 //                aeroSpaceUnits.add(entity);
                 //           } else {
-                reconfigureEntity(entity, mt, availMap, faction, reconfigurationParameters.binFillPercent);
+                reconfigureEntity(entity, mt, availMap, reconfigurationParameters.binFillPercent);
             }
         }
 
@@ -1564,12 +1563,11 @@ public class TeamLoadOutGenerator {
     /**
      * Wrapper that assumes full bins, mostly for testing
      *
-     * @param e       {@link Entity} with Ammo Bins
-     * @param mt      {@link MunitionTree} Ammo used
-     * @param faction Related Faction
+     * @param e  {@link Entity} with Ammo Bins
+     * @param mt {@link MunitionTree} Ammo used
      */
-    public void reconfigureEntity(Entity e, MunitionTree mt, HashMap<String, Object> availMap, String faction) {
-        reconfigureEntity(e, mt, availMap, faction, 1.0f);
+    public void reconfigureEntity(Entity e, MunitionTree mt, HashMap<String, Object> availMap) {
+        reconfigureEntity(e, mt, availMap, 1.0f);
     }
 
     /**
@@ -1577,13 +1575,13 @@ public class TeamLoadOutGenerator {
      *
      * @param entity       {@link Entity} with Ammo Bins
      * @param mt           {@link MunitionTree} Ammo used
-     * @param faction      Related Faction
      * @param binFillRatio float setting the max fill rate for all bins in this entity (mostly for Pirates)
      */
-    public void reconfigureEntity(Entity entity, MunitionTree mt, HashMap<String, Object> availMap, String faction,
+    public void reconfigureEntity(Entity entity, MunitionTree mt, HashMap<String, Object> availMap,
           float binFillRatio) {
         // Create map of bin counts in unit by type
         HashMap<String, List<AmmoMounted>> binLists = new HashMap<>();
+        String techBase = (entity.isClan()) ? "CL" : "IS";
 
         // Populate map with _valid_, _available_ ammo
         for (AmmoMounted ammoBin : entity.getAmmo()) {
@@ -1600,7 +1598,7 @@ public class TeamLoadOutGenerator {
 
         // Iterate over each type and fill it with the requested ammo (as much as possible)
         for (String binName : binLists.keySet()) {
-            iterativelyLoadAmmo(entity, mt, availMap, binLists.get(binName), binName, faction);
+            iterativelyLoadAmmo(entity, mt, availMap, binLists.get(binName), binName, techBase);
         }
 
         // Apply requested fill ratio to all final bin loadouts (between max fill and 0)
@@ -1640,19 +1638,12 @@ public class TeamLoadOutGenerator {
     // endregion reconfigureAero
 
     // region iterativelyLoadAmmo
-    private void iterativelyLoadAmmo(Entity entity, MunitionTree munitionTree, HashMap<String, Object> availMap,
-          List<AmmoMounted> binList, String binName, String faction) {
-        String techBase = (entity.isClan()) ? "CL" : "IS";
-        iterativelyLoadAmmo(entity, munitionTree, availMap, binList, binName, techBase, faction);
-    }
-
     /**
-     * Manage loading ammo bins for a given type. Type can be designated by size (LRM-5) or generic (AC)
-     * Logic: Iterate over list of priorities and fill the first as many times as requested.
-     *        Repeat for 2nd...Nth ammo types.
-     *        If more bins remain than desired types are specified, fill the remainder with the top priority type.
-     *        If more desired types remain than there are bins, oh well.
-     *        If a requested ammo type is not available in the specified time frame or faction, skip it.
+     * Manage loading ammo bins for a given type. Type can be designated by size (LRM-5) or generic (AC) Logic: Iterate
+     * over list of priorities and fill the first as many times as requested. Repeat for 2nd...Nth ammo types. If more
+     * bins remain than desired types are specified, fill the remainder with the top priority type. If more desired
+     * types remain than there are bins, oh well. If a requested ammo type is not available in the specified time frame
+     * or faction, skip it.
      *
      * @param e        Entity to load
      * @param mt       MunitionTree, stores required munitions in desired loading order
@@ -1661,10 +1652,9 @@ public class TeamLoadOutGenerator {
      * @param binList  List of actual mounted ammo bins matching this type
      * @param binName  String bin type we are loading now
      * @param techBase "CL" or "IS"
-     * @param faction  Faction to outfit for, used in ammo validity checks (uses MM, not IO, faction codes)
      */
     private void iterativelyLoadAmmo(Entity e, MunitionTree mt, HashMap<String, Object> availMap,
-          List<AmmoMounted> binList, String binName, String techBase, String faction) {
+          List<AmmoMounted> binList, String binName, String techBase) {
         // Copy counts that we will update, otherwise mt entry gets edited permanently.
         HashMap<String, Integer> counts = new HashMap<>(mt.getCountsOfAmmunitionForKey(e.getFullChassis(),
               e.getModel(),

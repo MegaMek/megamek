@@ -185,7 +185,7 @@ class MunitionWeightCollection {
         mapTypeToWeights.forEach((key, value) -> modifyMatchingWeights(value,
               munitions,
               getPropDouble("Defaults.Factors.decreaseWeightFactor", 0.5),
-              getPropDouble("Defaults.Factors.decreaseWeightDecrement", 0.0)));
+              getPropDouble("Defaults.Factors.decreaseWeightDecrement", -1.0)));
     }
 
     public void zeroMunitionsWeight(List<String> munitions) {
@@ -261,7 +261,7 @@ class MunitionWeightCollection {
             modifyMatchingWeights(mapTypeToWeights.get(weaponType),
                   TeamLoadOutGenerator.ARTILLERY_UTILITY_MUNITIONS,
                   getPropDouble("Defaults.Factors.increaseWeightFactor", 2.0),
-                  getPropDouble("Defaults.Factors.increaseWeightDecrement", 1.0));
+                  getPropDouble("Defaults.Factors.increaseWeightIncrement", 1.0));
         }
     }
 

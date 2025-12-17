@@ -469,6 +469,7 @@ Defaults:
     antiMekBombLoad_HOMING: 10
     antiConvBombLoad_CLUSTER: 50
     antiConvBombLoad_INFERNO: 40
+    antiConvBombLoad_THUNDER: 8
     antiConvBombLoad_FAE_SMALL: 8
     standoffBombLoad_ARROW: 40
     standoffBombLoad_HOMING: 60
@@ -588,7 +589,8 @@ Defaults:
 
     ### These factors determine how far up and down an "increase" or "decrease" step actually moves the weight
     # of a munition type.  The default values increase a weight by (2.0 x weight) + 1, and decrease by
-    # (0.5 * weight), so no weight should end below 0 unless set there initially.
+    # (0.5 * weight) - 1.  Munitions whose weights equal or are below the weight threshold (above) after
+    # utility calculations will be ignored.
     increaseWeightFactor: 2.0
     increaseWeightIncrement: 1.0
     decreaseWeightFactor: 0.5

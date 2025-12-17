@@ -14652,6 +14652,8 @@ public abstract class Entity extends TurnOrdered
             if (StringUtility.isNullOrBlank(quirkEntry.location())) {
                 // Migrate legacy Variable Range Targeting quirks to the unified quirk
                 String quirkName = quirkEntry.getQuirk();
+                // These string literals are intentionally hardcoded for backward compatibility
+                // with old save files that contain these deprecated quirk names
                 boolean isLegacyVrtShort = "variable_range_short".equals(quirkName);
                 boolean isLegacyVrtLong = "variable_range_long".equals(quirkName);
                 if (isLegacyVrtShort || isLegacyVrtLong) {

@@ -45,7 +45,6 @@ import megamek.client.ui.util.PlayerColour;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.compute.ComputeECM;
-import megamek.common.enums.GamePhase;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.MiscType;
@@ -843,15 +842,7 @@ public final class Player extends TurnOrdered {
             return 0;
         }
 
-        int currentRound = game.getCurrentRound();
-        GamePhase phase = game.getPhase();
-        LOGGER.debug("TCP: Checking for player {} in round {}, phase {}", name, currentRound, phase);
-
-        // During initial deployment phase (round 0), units deploying this round count
-        // even if not yet placed on the board (TCP applies to deployment initiative rolls per rules)
-        // After round 1 starts, only deployed units count (reinforcements must be on-board)
-        // Also applies during reinforcement deployment phases in later rounds
-        boolean isDeploymentPhase = phase.isDeployment() || phase.isInitiative() || phase.isInitiativeReport();
+        LOGGER.debug("TCP: Checking for player {} in round {}", name, game.getCurrentRound());
 
         int bestBonus = 0;
         for (InGameObject object : game.getInGameObjects()) {
@@ -861,30 +852,17 @@ public final class Player extends TurnOrdered {
             if (!entity.getOwner().equals(this)) {
                 continue;
             }
-            // Must be deployed and on-board, OR about to deploy this round
-            if (entity.isDestroyed() || entity.isOffBoard()) {
-                LOGGER.debug("TCP: {} skipped - destroyed or off-board", entity.getDisplayName());
+            // Must be deployed and on-board, OR about to deploy next round
+            // Uses same pattern as getCommandConsoleBonus() and getCrewCommandBonus()
+            if (entity.isDestroyed()) {
+                LOGGER.debug("TCP: {} skipped - destroyed", entity.getDisplayName());
                 continue;
             }
-            // For undeployed entities, only count them during deployment phase if they deploy this round
-            if (!entity.isDeployed()) {
-                // During initial deployment (round 0 or less), units with deployRound=0 count
-                // During reinforcement deployment phases, units with deployRound <= currentRound count
-                boolean isInitialDeployment = currentRound <= 0 && entity.getDeployRound() <= 0;
-                boolean deploysThisRound = currentRound > 0 && isDeploymentPhase &&
-                      entity.getDeployRound() <= currentRound;
-
-                if (!isInitialDeployment && !deploysThisRound) {
-                    LOGGER.debug(
-                          "TCP: {} skipped - not deployed (deployRound={}, currentRound={}, isDeploymentPhase={})",
-                          entity.getDisplayName(),
-                          entity.getDeployRound(),
-                          currentRound,
-                          isDeploymentPhase);
-                    continue;
-                }
-                LOGGER.debug("TCP: {} counts as deploying this round (deployRound={}, currentRound={}, initial={})",
-                      entity.getDisplayName(), entity.getDeployRound(), currentRound, isInitialDeployment);
+            boolean eligibleForBonus = (entity.isDeployed() && !entity.isOffBoard()) ||
+                  (entity.getDeployRound() == (game.getCurrentRound() + 1));
+            if (!eligibleForBonus) {
+                LOGGER.debug("TCP: {} skipped - not deployed or deploying next round", entity.getDisplayName());
+                continue;
             }
             // Must have TCP + VDNI/BVDNI
             if (!entity.hasAbility(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR)) {
@@ -910,16 +888,17 @@ public final class Player extends TurnOrdered {
                 bonus += 1;
             }
 
-            // -1 if shutdown (ECM doesn't help against shutdown)
+            // Per Xotl ruling: negative modifiers stack cumulatively
+            // -1 if shutdown
             if (entity.isShutDown()) {
                 bonus -= 1;
             }
             // -1 if ECM-affected, unless unit has own ECM (counter-ECM per IO pg 81)
-            else if (isEntityECMAffected(entity) && !entity.hasECM()) {
+            if (isEntityECMAffected(entity) && !entity.hasECM()) {
                 bonus -= 1;
             }
             // -1 if EMI conditions are active (global effect, can't be countered)
-            else if (game instanceof Game twGame && twGame.getPlanetaryConditions().getEMI().isEMI()) {
+            if (game instanceof Game twGame && twGame.getPlanetaryConditions().getEMI().isEMI()) {
                 bonus -= 1;
             }
 

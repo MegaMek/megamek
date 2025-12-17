@@ -264,7 +264,7 @@ class TeamTest {
     }
 
     @Test
-    void testTeamWithAllPositiveInitAndAllCommandBonusAndTurnInitBonus() {
+    void testTeamWithConstantCommandAndQuirkBonuses() {
         Team testTeam = new Team(1);
         assertTrue(testTeam.isEmpty());
 
@@ -294,7 +294,7 @@ class TeamTest {
     }
 
     @Test
-    void testTeamWithAllPositiveInitAndAllCommandBonusAndNegativeTurnInitBonus() {
+    void testTeamWithConstantAndCommandBonusesNoQuirk() {
         Team testTeam = new Team(1);
         assertTrue(testTeam.isEmpty());
 
@@ -322,7 +322,7 @@ class TeamTest {
     }
 
     @Test
-    void testTeamWithAllPositiveInitAndAllCommandBonusAndNegativeTurnInitBonusAndCompensationBonus() {
+    void testTeamWithConstantAndCommandBonusesWithCompensation() {
         Team testTeam = new Team(1);
         assertTrue(testTeam.isEmpty());
 
@@ -350,7 +350,7 @@ class TeamTest {
     }
 
     @Test
-    void testTeamWithAllPositiveInitAndAllCommandBonusAndNegativeTurnInitBonusAndNegativeCompensationBonus() {
+    void testTeamWithConstantAndCommandBonusesWithNegativeCompensation() {
         Team testTeam = new Team(1);
         assertTrue(testTeam.isEmpty());
 
@@ -382,7 +382,7 @@ class TeamTest {
     }
 
     @Test
-    void testTeamWithAllPositiveInitAndAllCommandBonusAndNegativeTurnInitBonusAndPositiveCompensationBonus() {
+    void testTeamWithConstantAndCommandBonusesWithPositiveCompensation() {
         Team testTeam = new Team(1);
         assertTrue(testTeam.isEmpty());
 
@@ -413,7 +413,7 @@ class TeamTest {
     }
 
     @Test
-    void testTeamWithAllPositiveInitAndAllCommandBonusAndNegativeTurnInitBonusAndPositiveCompensationBonusAndObserver() {
+    void testTeamInitBonusIgnoresObserverPlayers() {
         Team testTeam = new Team(1);
         assertTrue(testTeam.isEmpty());
 

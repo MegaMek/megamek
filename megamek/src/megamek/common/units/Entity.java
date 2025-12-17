@@ -6202,16 +6202,19 @@ public abstract class Entity extends TurnOrdered
             bonus += 1;
         }
 
+        // Per Xotl ruling: negative modifiers stack cumulatively
         // -1 if shutdown
         if (isShutDown()) {
             bonus -= 1;
-        } else if (getPosition() != null
+        }
+        // -1 if ECM-affected, unless unit has own ECM (counter-ECM per IO pg 81)
+        if (getPosition() != null
               && ComputeECM.isAffectedByECM(this, getPosition(), getPosition())
               && !hasECM()) {
-            // -1 if ECM-affected, unless unit has own ECM (counter-ECM per IO pg 81)
             bonus -= 1;
-        } else if (game != null && game.getPlanetaryConditions().getEMI().isEMI()) {
-            // -1 if EMI conditions are active (global effect, can't be countered)
+        }
+        // -1 if EMI conditions are active (global effect, can't be countered)
+        if (game != null && game.getPlanetaryConditions().getEMI().isEMI()) {
             bonus -= 1;
         }
 

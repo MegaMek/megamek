@@ -3365,10 +3365,12 @@ public abstract class Mek extends Entity {
         }
 
         // Small/torso-mounted cockpit penalty?
-        if (((getCockpitType() == Mek.COCKPIT_SMALL) || (getCockpitType() == Mek.COCKPIT_SMALL_COMMAND_CONSOLE))
-              && (!hasAbility(OptionsConstants.MD_BVDNI)
-              && !hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT))) {
-            roll.addModifier(1, "Small Cockpit");
+        if ((getCockpitType() == Mek.COCKPIT_SMALL) || (getCockpitType() == Mek.COCKPIT_SMALL_COMMAND_CONSOLE)) {
+            if (hasAbility(OptionsConstants.MD_BVDNI)) {
+                roll.addModifier(0, "Small Cockpit (negated by BVDNI)");
+            } else if (!hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {
+                roll.addModifier(1, "Small Cockpit");
+            }
         } else if (getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
             roll.addModifier(1, "Torso-Mounted Cockpit");
             int sensorHits = getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM,

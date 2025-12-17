@@ -739,10 +739,12 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         }
 
         // Small/torso-mounted cockpit penalty?
-        if ((getCockpitType() == Mek.COCKPIT_SMALL) &&
-              !hasAbility(OptionsConstants.MD_BVDNI) &&
-              !hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {
-            roll.addModifier(1, "Small Cockpit");
+        if (getCockpitType() == Mek.COCKPIT_SMALL) {
+            if (hasAbility(OptionsConstants.MD_BVDNI)) {
+                roll.addModifier(0, "Small Cockpit (negated by BVDNI)");
+            } else if (!hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {
+                roll.addModifier(1, "Small Cockpit");
+            }
         }
 
         if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)

@@ -405,7 +405,7 @@ tasks.register('equipmentList', JavaExec) {
     group = 'database'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.MegaMek'
-    args = ['-eqdb', "${projectDir}/equipment.txt"]
+    args = ['-eq_db', "${projectDir}/equipment.txt"]
 }
 
 tasks.register('extendedEquipmentList', JavaExec) {
@@ -414,7 +414,7 @@ tasks.register('extendedEquipmentList', JavaExec) {
     group = 'database'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.MegaMek'
-    args = ['-eqedb', "${projectDir}/extended-equipment.txt"]
+    args = ['-eqe_db', "${projectDir}/extended-equipment.txt"]
 }
 
 tasks.register('yamlEquipment', JavaExec) {
@@ -423,7 +423,7 @@ tasks.register('yamlEquipment', JavaExec) {
     group = 'database'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.MegaMek'
-    args = ['-eqyamldb', "${projectDir}/yaml/"]
+    args = ['-eq_yaml_db', "${projectDir}/yaml/"]
 }
 
 tasks.register('weaponsList', JavaExec) {
@@ -432,7 +432,7 @@ tasks.register('weaponsList', JavaExec) {
     group = 'database'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.MegaMek'
-    args = ['-eqwdb', "${projectDir}/weapons.txt"]
+    args = ['-eqw_db', "${projectDir}/weapons.txt"]
 }
 
 tasks.register('ammoList', JavaExec) {
@@ -441,7 +441,7 @@ tasks.register('ammoList', JavaExec) {
     group = 'database'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.MegaMek'
-    args = ['-eqadb', "${projectDir}/ammo.txt"]
+    args = ['-eqa_db', "${projectDir}/ammo.txt"]
 }
 
 tasks.register('weaponsMiscList', JavaExec) {
@@ -450,7 +450,7 @@ tasks.register('weaponsMiscList', JavaExec) {
     group = 'database'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.MegaMek'
-    args = ['-eqmdb', "${projectDir}/misc-weapons.txt"]
+    args = ['-eqm_db', "${projectDir}/misc-weapons.txt"]
 }
 
 tasks.register('alphaStrikeMassConvert', JavaExec) {

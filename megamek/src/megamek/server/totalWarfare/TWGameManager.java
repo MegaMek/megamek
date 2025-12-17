@@ -1101,6 +1101,8 @@ public class TWGameManager extends AbstractGameManager {
             entity.damageThisPhase = 0;
             entity.engineHitsThisPhase = 0;
             entity.rolledForEngineExplosion = false;
+            entity.reportedVDNIFeedbackThisPhase = false;
+            entity.baVDNINeedsFeedbackMessage = false;
             entity.dodging = false;
             entity.setShutDownThisPhase(false);
             entity.setStartupThisPhase(false);
@@ -29574,6 +29576,20 @@ public class TWGameManager extends AbstractGameManager {
         // resolve standard to capital one more time
         handleAttackReports.addAll(checkFatalThresholds(lastAttackerId, lastAttackerId));
         Report.addNewline(handleAttackReports);
+
+        // BA VDNI/BVDNI immunity feedback - print at end of all attacks (IO pg 71)
+        for (Entity entity : game.getEntitiesVector()) {
+            if (entity.baVDNINeedsFeedbackMessage) {
+                r = new Report(3586);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                r.indent(2);
+                handleAttackReports.addElement(r);
+                entity.baVDNINeedsFeedbackMessage = false;
+                entity.reportedVDNIFeedbackThisPhase = true;
+            }
+        }
+
         // addReport(handleAttackReports);
         // HACK, but anything else seems to run into weird problems.
         game.setAttacksVector(keptAttacks);

@@ -150,6 +150,7 @@ public class TWDamageManager implements IDamageManager {
 
         Report report;
         int entityId = entity.getId();
+        boolean baTookCrit = false; // Track if BA took a crit for VDNI/BVDNI feedback
 
         // if this is a fighter squadron then pick an active fighter and pass on
         // the damage
@@ -395,6 +396,7 @@ public class TWDamageManager implements IDamageManager {
             report.subject = entityId;
             report.indent(2);
             reportVec.addElement(report);
+            baTookCrit = true;
 
             crits = 0;
             damage = Math.max(entity.getInternal(hit.getLocation()) + entity.getArmor(hit.getLocation()), damage);
@@ -2015,6 +2017,15 @@ public class TWDamageManager implements IDamageManager {
         if (wasDamageIS) {
             Report.addNewline(reportVec);
         }
+
+        // BA VDNI/BVDNI immunity feedback - track that crit happened (IO pg 71)
+        // Actual message is printed after all attacks complete in handleAttacks()
+        if (baTookCrit &&
+              (entity.hasAbility(OptionsConstants.MD_VDNI) || entity.hasAbility(OptionsConstants.MD_BVDNI)) &&
+              !entity.reportedVDNIFeedbackThisPhase) {
+            entity.baVDNINeedsFeedbackMessage = true;
+        }
+
         return reportVec;
     }
 

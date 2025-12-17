@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import megamek.codeUtilities.MathUtility;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.MunitionTree;
 
@@ -367,7 +368,7 @@ class MunitionWeightCollection {
             topMunitionsMap.put(
                   key,
                   orderedList.stream()
-                        .filter(m -> Double.parseDouble(m.split("=")[1]) > cutoff)
+                        .filter(m -> MathUtility.parseDouble(m.split("=")[1], 0.0) > cutoff)
                         .collect(Collectors.toList())
             );
         }

@@ -6431,29 +6431,20 @@ public abstract class Entity extends TurnOrdered
     //region Variable Range Targeting (BMM pg. 86)
 
     /**
-     * Checks if this entity has the Variable Range Targeting quirk. Supports both the new unified quirk and legacy
-     * quirks for backward compatibility.
+     * Checks if this entity has the Variable Range Targeting quirk.
      *
      * @return true if this entity has Variable Range Targeting capability
      */
     public boolean hasVariableRangeTargeting() {
-        return hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG) ||
-              hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L) ||
-              hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S);
+        return hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG);
     }
 
     /**
-     * Returns the current Variable Range Targeting mode. For legacy quirks, the mode is determined by which quirk is
-     * set.
+     * Returns the current Variable Range Targeting mode.
      *
      * @return the current VariableRangeTargetingMode
      */
     public VariableRangeTargetingMode getVariableRangeTargetingMode() {
-        // Legacy quirk support: if using old SHORT quirk, return SHORT mode
-        if (hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S) &&
-              !hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG)) {
-            return VariableRangeTargetingMode.SHORT;
-        }
         // Handle null from old save files that don't have this field
         if (variableRangeTargetingMode == null) {
             return VariableRangeTargetingMode.LONG;
@@ -14685,12 +14676,31 @@ public abstract class Entity extends TurnOrdered
         for (QuirkEntry quirkEntry : quirks) {
             // If the quirk doesn't have a location, then it is a unit quirk, not a weapon quirk.
             if (StringUtility.isNullOrBlank(quirkEntry.location())) {
+                // Migrate legacy Variable Range Targeting quirks to the unified quirk
+                String quirkName = quirkEntry.getQuirk();
+                // These string literals are intentionally hardcoded for backward compatibility
+                // with old save files that contain these deprecated quirk names
+                boolean isLegacyVrtShort = "variable_range_short".equals(quirkName);
+                boolean isLegacyVrtLong = "variable_range_long".equals(quirkName);
+                if (isLegacyVrtShort || isLegacyVrtLong) {
+                    quirkName = OptionsConstants.QUIRK_POS_VAR_RNG_TARG;
+                    LOGGER.info("Migrating legacy quirk '{}' to '{}' for {} {}",
+                          quirkEntry.getQuirk(), quirkName, getChassis(), getModel());
+                }
+
                 // Activate the unit quirk.
-                IOption option = getQuirks().getOption(quirkEntry.getQuirk());
+                IOption option = getQuirks().getOption(quirkName);
                 if (option == null) {
                     LOGGER.warn("{} failed to load quirk for {} {} - Invalid quirk!", quirkEntry, getChassis(),
                           getModel());
                     continue;
+                }
+
+                // Set the Variable Range Targeting mode based on which legacy quirk was used
+                if (isLegacyVrtShort) {
+                    setVariableRangeTargetingMode(VariableRangeTargetingMode.SHORT);
+                } else if (isLegacyVrtLong) {
+                    setVariableRangeTargetingMode(VariableRangeTargetingMode.LONG);
                 }
                 // Handle quirks with values (e.g., obsolete:2750 or obsolete:2950,3146)
                 if (quirkEntry.hasValue()) {

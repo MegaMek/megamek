@@ -1533,7 +1533,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         if (hasModularArmor()) {
             prd.addModifier(1, "Modular Armor");
         }
-        // VDNI bonus?
+        // VDNI bonus? (BVDNI does NOT get piloting bonus due to "neuro-lag" per IO pg 71)
         if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
             prd.addModifier(-1, "VDNI");
         }

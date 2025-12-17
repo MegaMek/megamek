@@ -19113,8 +19113,13 @@ public class TWGameManager extends AbstractGameManager {
             vDesc.addAll(applyEquipmentCritical(en, loc, cs, secondaryEffects));
         } // End crit-on-equipment-slot
 
-        // if using buffered VDNI then a possible pilot hit
-        if (en.hasAbility(OptionsConstants.MD_BVDNI) && !en.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+        // BVDNI critical hit feedback - Meks and Vehicles only (IO pg 71)
+        // Per BVDNI rules: "Fighters and battle armor operated via buffered VDNI do not have
+        // to check for feedback damage at all."
+        if (en.hasAbility(OptionsConstants.MD_BVDNI) &&
+              !en.hasAbility(OptionsConstants.MD_PAIN_SHUNT) &&
+              !(en instanceof Aero) &&
+              !(en instanceof BattleArmor)) {
             Report.addNewline(vDesc);
             Roll diceRoll = Compute.rollD6(2);
             r = new Report(3580);
@@ -20334,6 +20339,30 @@ public class TWGameManager extends AbstractGameManager {
                 reports.add(r);
                 break;
         }
+
+        // VDNI fighter critical hit feedback (IO pg 71)
+        // Per VDNI rules: "For Fighters: Every time a fighter takes a critical hit, make a
+        // feedback roll (2D6, TN 8+). On a failed roll, the pilot suffers 1 point of damage."
+        // BVDNI fighters get NO feedback at all per rules.
+        if (aero.isFighter() &&
+              aero.hasAbility(OptionsConstants.MD_VDNI) &&
+              !aero.hasAbility(OptionsConstants.MD_BVDNI) &&
+              !aero.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+            Report.addNewline(reports);
+            Roll diceRoll = Compute.rollD6(2);
+            r = new Report(3580);
+            r.subject = aero.getId();
+            r.addDesc(aero);
+            r.add(7);
+            r.add(diceRoll);
+            r.choose(diceRoll.getIntValue() >= 8);
+            r.indent(2);
+            reports.add(r);
+            if (diceRoll.getIntValue() >= 8) {
+                reports.addAll(damageCrew(aero, 1));
+            }
+        }
+
         return reports;
     }
 
@@ -20693,12 +20722,14 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 break;
             case Tank.CRIT_COMMANDER:
-                if (tank.hasAbility(OptionsConstants.MD_VDNI) || tank.hasAbility(OptionsConstants.MD_BVDNI)) {
+                // VDNI vehicles get 1 damage on Commander critical (IO pg 71)
+                // BVDNI is NOT handled here - uses generic BVDNI check in applyCriticalHit
+                if (tank.hasAbility(OptionsConstants.MD_VDNI) && !tank.hasAbility(OptionsConstants.MD_BVDNI)) {
                     r = new Report(6191);
                     r.subject = tank.getId();
                     reports.add(r);
                     reports.addAll(damageCrew(tank, 1));
-                } else {
+                } else if (!tank.hasAbility(OptionsConstants.MD_BVDNI)) {
                     if (tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT) && !tank.isCommanderHitPS()) {
                         r = new Report(6606);
                         r.subject = tank.getId();
@@ -20719,12 +20750,14 @@ public class TWGameManager extends AbstractGameManager {
                 // fall through here, because effects of crew stunned also
                 // apply
             case Tank.CRIT_CREW_STUNNED:
-                if (tank.hasAbility(OptionsConstants.MD_VDNI) || tank.hasAbility(OptionsConstants.MD_BVDNI)) {
+                // VDNI vehicles get 1 damage on Crew Stunned critical (IO pg 71)
+                // BVDNI is NOT handled here - uses generic BVDNI check in applyCriticalHit
+                if (tank.hasAbility(OptionsConstants.MD_VDNI) && !tank.hasAbility(OptionsConstants.MD_BVDNI)) {
                     r = new Report(6191);
                     r.subject = tank.getId();
                     reports.add(r);
                     reports.addAll(damageCrew(tank, 1));
-                } else {
+                } else if (!tank.hasAbility(OptionsConstants.MD_BVDNI)) {
                     if (tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)
                           || tank.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
                           || tank.hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)
@@ -20740,12 +20773,14 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 break;
             case Tank.CRIT_DRIVER:
-                if (tank.hasAbility(OptionsConstants.MD_VDNI) || tank.hasAbility(OptionsConstants.MD_BVDNI)) {
+                // VDNI vehicles get 1 damage on Driver critical (IO pg 71)
+                // BVDNI is NOT handled here - uses generic BVDNI check in applyCriticalHit
+                if (tank.hasAbility(OptionsConstants.MD_VDNI) && !tank.hasAbility(OptionsConstants.MD_BVDNI)) {
                     r = new Report(6191);
                     r.subject = tank.getId();
                     reports.add(r);
                     reports.addAll(damageCrew(tank, 1));
-                } else {
+                } else if (!tank.hasAbility(OptionsConstants.MD_BVDNI)) {
                     if (tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT) && !tank.isDriverHitPS()) {
                         r = new Report(6601);
                         r.subject = tank.getId();
@@ -20760,12 +20795,18 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 break;
             case Tank.CRIT_CREW_KILLED:
-                if (tank.hasAbility(OptionsConstants.MD_VDNI) || tank.hasAbility(OptionsConstants.MD_BVDNI)) {
-                    r = new Report(6191);
+                // VDNI Crew Killed kills the pilot outright (IO pg 71)
+                // BVDNI is NOT handled here - it uses the generic BVDNI critical check in applyCriticalHit
+                if (tank.hasAbility(OptionsConstants.MD_VDNI) && !tank.hasAbility(OptionsConstants.MD_BVDNI)) {
+                    r = new Report(6190);
                     r.subject = tank.getId();
                     reports.add(r);
-                    reports.addAll(damageCrew(tank, 1));
-                } else {
+                    tank.getCrew().setDoomed(true);
+                    if (tank.isAirborneVTOLorWIGE()) {
+                        reports.addAll(crashVTOLorWiGE(tank));
+                    }
+                } else if (!tank.hasAbility(OptionsConstants.MD_BVDNI)) {
+                    // Non-VDNI/BVDNI handling
                     if (tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT) && !tank.isCrewHitPS()) {
                         r = new Report(6191);
                         r.subject = tank.getId();
@@ -20781,6 +20822,8 @@ public class TWGameManager extends AbstractGameManager {
                         }
                     }
                 }
+                // BVDNI pilots: No special handling here - generic BVDNI check in applyCriticalHit
+                // will roll 2D6 for feedback damage on any critical hit
                 break;
             case Tank.CRIT_ENGINE:
                 r = new Report(6210);

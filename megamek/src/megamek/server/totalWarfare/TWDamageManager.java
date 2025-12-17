@@ -1934,8 +1934,13 @@ public class TWDamageManager implements IDamageManager {
             }
         }
 
-        // if using VDNI (but not buffered), check for damage on an internal hit
+        // VDNI feedback on internal damage - Meks only (IO pg 71)
+        // Per IO rules: Only Meks/IndustrialMeks get feedback on internal structure damage.
+        // Vehicles get feedback on specific critical hits only (handled in applyTankCritical).
+        // Fighters get feedback on any critical hit (handled in applyAeroCritical).
+        // Battle Armor gets no feedback at all.
         if (tookInternalDamage &&
+              (entity instanceof Mek) &&
               entity.hasAbility(OptionsConstants.MD_VDNI) &&
               !entity.hasAbility(OptionsConstants.MD_BVDNI) &&
               !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {

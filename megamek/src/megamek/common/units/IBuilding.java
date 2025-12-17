@@ -72,7 +72,10 @@ public interface IBuilding extends Serializable {
     // public static final int CASTLE_BRIAN = 3;
 
     static int currentId(Board board, Coords coords) {
-        return board.getBoardId() * 1_000_000 + coords.getX() * 1000 + coords.getY();
+        if (board != null && coords != null) {
+            return board.getBoardId() * 1_000_000 + coords.getX() * 1000 + coords.getY();
+        }
+        return UNKNOWN;
     }
 
     /**
@@ -92,7 +95,10 @@ public interface IBuilding extends Serializable {
      *       <code>false</code> otherwise.
      */
     default boolean isIn(Coords coords) {
-        return getCoordsList().contains(coords);
+        if (coords != null) {
+            return getCoordsList().contains(coords);
+        }
+        return false;
     }
 
     /**

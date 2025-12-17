@@ -390,8 +390,10 @@ public class ComputeAttackerToHitMods {
 
         // Manei Domini Upgrades
 
-        // VDNI
-        if (attacker.hasAbility(OptionsConstants.MD_VDNI) || attacker.hasAbility(OptionsConstants.MD_BVDNI)) {
+        // VDNI/BVDNI gunnery bonus (both give -1, IO pg 71)
+        if (attacker.hasAbility(OptionsConstants.MD_BVDNI)) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Bvdni"));
+        } else if (attacker.hasAbility(OptionsConstants.MD_VDNI)) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Vdni"));
         }
 

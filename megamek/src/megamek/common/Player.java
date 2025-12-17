@@ -653,6 +653,75 @@ public final class Player extends TurnOrdered {
     }
 
     /**
+     * Returns the Triple-Core Processor (TCP) initiative bonus for this player.
+     * <p>
+     * Per IO pg 81, a unit with TCP and VDNI/BVDNI provides a +2 base initiative bonus, with additional modifiers:
+     * <ul>
+     *   <li>+1 for Cockpit Command Console, C3/C3i, or >3 tons communications equipment</li>
+     *   <li>-1 if shutdown</li>
+     *   <li>-1 if under EMI conditions</li>
+     * </ul>
+     * Only the highest bonus from all qualifying units applies (once per force).
+     *
+     * @return the best TCP initiative bonus from this player's qualifying entities
+     */
+    public int getTCPInitBonus() {
+        if (game == null) {
+            return 0;
+        }
+
+        int maxBonus = 0;
+        for (InGameObject object : game.getInGameObjects()) {
+            if (!(object instanceof Entity entity)) {
+                continue;
+            }
+            if (entity.getOwner() == null || !entity.getOwner().equals(this)) {
+                continue;
+            }
+
+            // Skip ineligible entities
+            if (entity.isDestroyed()
+                  || !entity.getCrew().isActive()
+                  || entity instanceof MekWarrior
+                  || entity.isOffBoard()
+                  || (!entity.isDeployed() && entity.getDeployRound() != (game.getCurrentRound() + 1))) {
+                continue;
+            }
+
+            // Check for TCP + VDNI/BVDNI
+            boolean hasTcp = entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR);
+            boolean hasVdni = entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI);
+            boolean hasBvdni = entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI);
+
+            if (!hasTcp || (!hasVdni && !hasBvdni)) {
+                continue;
+            }
+
+            // Base +2 bonus for TCP+VDNI/BVDNI
+            int bonus = 2;
+
+            // +1 for command equipment (Cockpit Command Console, C3/C3i)
+            if (entity.hasCommandConsoleBonus() || entity.hasC3M() || entity.hasC3i()) {
+                bonus++;
+            }
+
+            // -1 if shutdown
+            if (entity.isShutDown()) {
+                bonus--;
+            }
+
+            // -1 if EMI conditions active
+            if ((game instanceof megamek.common.game.Game g) && g.getPlanetaryConditions().isEMI()) {
+                bonus--;
+            }
+
+            maxBonus = Math.max(maxBonus, bonus);
+        }
+
+        return Math.max(maxBonus, 0);
+    }
+
+    /**
      * @return the bonus to this player's initiative rolls for the highest value initiative (i.e. the 'commander')
      */
     public int getOverallCommandBonus() {

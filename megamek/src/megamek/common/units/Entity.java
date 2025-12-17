@@ -15899,6 +15899,28 @@ public abstract class Entity extends TurnOrdered
         return false;
     }
 
+    /**
+     * Returns true if this entity can execute aimed shots using the Triple-Core Processor (TCP).
+     * <p>
+     * Per IO pg 81, only MekWarriors, vehicle commanders, and fighter pilots with TCP and VDNI/BVDNI may execute aimed
+     * shots as if equipped with a Targeting Computer. Infantry and Battle Armor do NOT qualify for this capability.
+     *
+     * @return true if this entity has TCP aimed shot capability
+     */
+    public boolean hasTCPAimedShotCapability() {
+        // Infantry and Battle Armor never qualify per IO pg 81
+        if (isConventionalInfantry() || (this instanceof megamek.common.battleArmor.BattleArmor)) {
+            return false;
+        }
+
+        // Must have TCP + VDNI or BVDNI
+        boolean hasTcp = hasAbility(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR);
+        boolean hasVdni = hasAbility(OptionsConstants.MD_VDNI);
+        boolean hasBvdni = hasAbility(OptionsConstants.MD_BVDNI);
+
+        return hasTcp && (hasVdni || hasBvdni);
+    }
+
     public int modifyPhysicalDamageForMeleeSpecialist() {
         if (!hasAbility(OptionsConstants.PILOT_MELEE_SPECIALIST)) {
             return 0;

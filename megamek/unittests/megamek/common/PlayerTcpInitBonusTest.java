@@ -32,6 +32,8 @@
  */
 package megamek.common;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;

@@ -391,6 +391,7 @@ public class ComputeAttackerToHitMods {
         // Manei Domini Upgrades
 
         // VDNI/BVDNI gunnery bonus (both give -1, IO pg 71)
+        // Check BVDNI first - pilots with BVDNI also have VDNI, so use the more specific label
         if (attacker.hasAbility(OptionsConstants.MD_BVDNI)) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Bvdni"));
         } else if (attacker.hasAbility(OptionsConstants.MD_VDNI)) {

@@ -54,6 +54,7 @@ import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.CriticalSlot;
+import megamek.common.Player;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.Bay;
 import megamek.common.equipment.*;
@@ -590,7 +591,7 @@ public class EntityListFile {
 
     /**
      * Save the <code>Entity</code>s in the list to the given file.
-     * <p>
+     * <br><br>
      * The <code>Entity</code>'s pilots, damage, ammo loads, ammo usage, and other campaign-related information are
      * retained, but data specific to a particular game is ignored. This method is a simpler version of the overloaded
      * method {@code saveTo}, with a default generic battle value of 0 (this causes GBV to be ignored), and with unit
@@ -608,7 +609,7 @@ public class EntityListFile {
 
     /**
      * Save the <code>Entity</code>s in the list to the given file.
-     * <p>
+     * <br><br>
      * The <code>Entity</code>'s pilots, damage, ammo loads, ammo usage, and other campaign-related information are
      * retained, but data specific to a particular game is ignored. This method is a simpler version of the overloaded
      * method {@code saveTo}, with a default generic battle value of 0 (this causes GBV to be ignored).
@@ -628,7 +629,7 @@ public class EntityListFile {
 
     /**
      * Save the <code>Entity</code>s in the list to the given file.
-     * <p>
+     * <br><br>
      * The <code>Entity</code>'s pilots, damage, ammo loads, ammo usage, and other campaign-related information are
      * retained, but data specific to a particular game is ignored. Unit embedding is off, see
      * {@link #saveTo(File, ArrayList, int, boolean) the overloaded version of this function}
@@ -647,7 +648,7 @@ public class EntityListFile {
 
     /**
      * Save the <code>Entity</code>s in the list to the given file.
-     * <p>
+     * <br><br>
      * The <code>Entity</code>'s pilots, damage, ammo loads, ammo usage, and other campaign-related information are
      * retained, but data specific to a particular game is ignored.
      *
@@ -686,7 +687,7 @@ public class EntityListFile {
     /**
      * Save the entities from the game of client to the given file. This will create separate sections for salvage,
      * devastated, and ejected crews in addition to the surviving units
-     * <p>
+     * <br><br>
      * The <code>Entity</code>s pilots, damage, ammo loads, ammo usage, and other campaign-related information are
      * retained but data specific to a particular game is ignored.
      *
@@ -697,7 +698,25 @@ public class EntityListFile {
      * @throws IOException is thrown on any error.
      */
     public static void saveTo(File file, Client client) throws IOException {
-        if (null == client.getGame()) {
+        saveTo(file, client, client.getLocalPlayer());
+    }
+
+    /**
+     * Save the entities from the game of client to the given file. This will create separate sections for salvage,
+     * devastated, and ejected crews in addition to the surviving units
+     * <br><br>
+     * The <code>Entity</code>s pilots, damage, ammo loads, ammo usage, and other campaign-related information are
+     * retained but data specific to a particular game is ignored.
+     *
+     * @param file        - The current contents of the file will be discarded and all
+     *                    <code>Entity</code>s in the list will be written to the file.
+     * @param client      - a <code>Client</code> containing the <code>Game</code>s to be used
+     * @param localPlayer - What player should we treat as "the" player?
+     *
+     * @throws IOException is thrown on any error.
+     */
+    public static void saveTo(File file, Client client, Player localPlayer) throws IOException {
+        if (null == client.getGame() || !client.playerExists(localPlayer.getId())) {
             return;
         }
 
@@ -718,9 +737,9 @@ public class EntityListFile {
         // Sort entities into player's, enemies, and allies and add to survivors,
         // salvage, and allies.
         for (Entity entity : client.getGame().inGameTWEntities()) {
-            if (entity.getOwner().getId() == client.getLocalPlayer().getId()) {
+            if (entity.getOwner().getId() == localPlayer.getId()) {
                 living.add(entity);
-            } else if (entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
+            } else if (entity.getOwner().isEnemyOf(localPlayer)) {
                 if (!entity.canEscape()) {
                     kills.put(entity.getDisplayName(), MULParser.VALUE_NONE);
                 }
@@ -734,9 +753,9 @@ public class EntityListFile {
         // sections
         for (Enumeration<Entity> iter = client.getGame().getRetreatedEntities(); iter.hasMoreElements(); ) {
             Entity ent = iter.nextElement();
-            if (ent.getOwner().getId() == client.getLocalPlayer().getId()) {
+            if (ent.getOwner().getId() == localPlayer.getId()) {
                 living.add(ent);
-            } else if (!ent.getOwner().isEnemyOf(client.getLocalPlayer())) {
+            } else if (!ent.getOwner().isEnemyOf(localPlayer)) {
                 allied.add(ent);
             } else {
                 retreated.add(ent);
@@ -747,7 +766,7 @@ public class EntityListFile {
         Enumeration<Entity> graveyard = client.getGame().getGraveyardEntities();
         while (graveyard.hasMoreElements()) {
             Entity entity = graveyard.nextElement();
-            if (entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
+            if (entity.getOwner().isEnemyOf(localPlayer)) {
                 Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
                 if (null != killer && !killer.getExternalIdAsString().equals("-1")) {
                     kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
@@ -762,7 +781,7 @@ public class EntityListFile {
         Enumeration<Entity> devastation = client.getGame().getDevastatedEntities();
         while (devastation.hasMoreElements()) {
             Entity entity = devastation.nextElement();
-            if (entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
+            if (entity.getOwner().isEnemyOf(localPlayer)) {
                 Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
                 if (null != killer && !killer.getExternalIdAsString().equals("-1")) {
                     kills.put(entity.getDisplayName(), killer.getExternalIdAsString());

@@ -124,12 +124,15 @@ public class InfantryWeaponHandler extends WeaponHandler {
                   .getShootingStrength(), nHitMod);
         }
         double damage = calculateBaseDamage(attackingEntity, weapon, weaponType);
+        double tsmBonusDamage = 0;
 
         if ((attackingEntity instanceof Infantry) && (nRange == 0)
               && attackingEntity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
-            damage += 0.14;
+            tsmBonusDamage = 0.14;
+            damage += tsmBonusDamage;
         }
         int damageDealt = (int) Math.round(damage * troopersHit);
+        int tsmDamageDealt = (int) Math.round(tsmBonusDamage * troopersHit);
 
         // beast-mounted infantry get range 0 bonus damage per platoon
         if ((attackingEntity instanceof Infantry) && (nRange == 0)) {
@@ -174,6 +177,17 @@ public class InfantryWeaponHandler extends WeaponHandler {
               + " damage.");
         r.newlines = 0;
         vPhaseReport.addElement(r);
+
+        // Report TSM Implant bonus damage
+        if (tsmDamageDealt > 0) {
+            int baseDamageDealt = damageDealt - tsmDamageDealt;
+            Report tsmReport = new Report(3418);
+            tsmReport.subject = subjectId;
+            tsmReport.indent(2);
+            tsmReport.add(baseDamageDealt);
+            tsmReport.add(tsmDamageDealt);
+            vPhaseReport.addElement(tsmReport);
+        }
         if (target.isConventionalInfantry()) {
             // this is a little strange, but I can't just do this in calcDamagePerHit
             // because

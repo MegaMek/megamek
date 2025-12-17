@@ -44,6 +44,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
@@ -69,13 +70,29 @@ public class SwarmWeaponAttackHandler extends WeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         int damage = 0;
-        if (attackingEntity instanceof BattleArmor ba) {
-            damage = ba.calculateSwarmDamage();
+        int tsmBonusDamage = 0;
+        if (attackingEntity instanceof BattleArmor battleArmor) {
+            damage = battleArmor.calculateSwarmDamage();
+            // TSM Implant adds +1 damage per trooper for same-hex attacks
+            if (attackingEntity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+                tsmBonusDamage = battleArmor.getTroopers();
+                damage += tsmBonusDamage;
+            }
         }
         // should this be affected by direct blows?
         // assume so for now
         if (bDirect) {
             damage = Math.min(damage + (toHit.getMoS() / 3), damage * 2);
+        }
+        // Report TSM Implant bonus damage (after direct blow calculation for accurate base)
+        if (tsmBonusDamage > 0) {
+            int baseDamage = damage - tsmBonusDamage;
+            Report tsmReport = new Report(3418);
+            tsmReport.subject = subjectId;
+            tsmReport.indent(2);
+            tsmReport.add(baseDamage);
+            tsmReport.add(tsmBonusDamage);
+            calcDmgPerHitReport.addElement(tsmReport);
         }
         return damage;
     }
@@ -97,12 +114,19 @@ public class SwarmWeaponAttackHandler extends WeaponHandler {
     @Override
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
           IBuilding bldg, int hits, int nCluster, int bldgAbsorbs) {
-        // Calculate damage - nDamPerHit is set by parent's handle() method, but we need
-        // to check the actual swarm damage here to handle the zero-damage case correctly
-        int swarmDamage = calcDamagePerHit();
+        // Determine if this is a positive damage attack.
+        // nDamPerHit is normally set by parent's handle() method. If called directly (e.g., in unit tests),
+        // we calculate from the BattleArmor to determine the correct code path without adding duplicate reports.
+        int damageForPathDecision = nDamPerHit;
+        if (damageForPathDecision == 0 && attackingEntity instanceof BattleArmor battleArmor) {
+            damageForPathDecision = battleArmor.calculateSwarmDamage();
+            if (attackingEntity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+                damageForPathDecision += battleArmor.getTroopers();
+            }
+        }
 
         // If we have damage, use normal handling which includes crit rolls
-        if (swarmDamage > 0) {
+        if (damageForPathDecision > 0) {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
             return;
         }

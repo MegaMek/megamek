@@ -120,7 +120,8 @@ class HeatResolver extends AbstractTWRuleHandler {
                 rhsReports.add(report);
 
                 Roll diceRoll = Compute.rollD6(2);
-                // Increment consecutive uses for this turn's use, then look up target number
+                // Increment consecutive RHS uses for this activation attempt (success or failure),
+                // then look up the target number based on the updated count.
                 entity.setConsecutiveRHSUses(entity.getConsecutiveRHSUses() + 1);
                 int targetNumber = ServerHelper.radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses());
                 boolean rhsFailure = diceRoll.getIntValue() < targetNumber;
@@ -137,7 +138,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                 if (!rhsFailure) {
                     int nextTargetNumber = ServerHelper.radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses()
                           + 1);
-                    report = new Report(5544);
+                    report = new Report(5547);
                     report.indent(2);
                     report.subject = entity.getId();
                     report.add(entity.getConsecutiveRHSUses());
@@ -176,7 +177,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                 int reducedStress = Math.max(0, currentStress - decrement);
                 // If activated next turn, stress will increment from reduced level
                 int nextActivationTN = ServerHelper.radicalHeatSinkSuccessTarget(reducedStress + 1);
-                report = new Report(5546);
+                report = new Report(5548);
                 report.indent();
                 report.subject = entity.getId();
                 report.add(currentStress);

@@ -1958,6 +1958,18 @@ public class TWDamageManager implements IDamageManager {
             if (diceRoll.getIntValue() >= 8) {
                 reportVec.addAll(manager.damageCrew(entity, 1));
             }
+        } else if (tookInternalDamage &&
+              (entity instanceof Mek) &&
+              entity.hasAbility(OptionsConstants.MD_VDNI) &&
+              !entity.hasAbility(OptionsConstants.MD_BVDNI) &&
+              entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+            // Pain Shunt blocks VDNI feedback - show message for clarity
+            Report.addNewline(reportVec);
+            report = new Report(3585);
+            report.subject = entity.getId();
+            report.addDesc(entity);
+            report.indent(2);
+            reportVec.add(report);
         }
 
         // TacOps p.78 Ammo booms can hurt other units in same and adjacent hexes

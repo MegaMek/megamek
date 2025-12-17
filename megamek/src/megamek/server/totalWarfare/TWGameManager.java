@@ -19133,6 +19133,17 @@ public class TWGameManager extends AbstractGameManager {
             if (diceRoll.getIntValue() >= 8) {
                 vDesc.addAll(damageCrew(en, 1));
             }
+        } else if (en.hasAbility(OptionsConstants.MD_BVDNI) &&
+              en.hasAbility(OptionsConstants.MD_PAIN_SHUNT) &&
+              !(en instanceof Aero) &&
+              !(en instanceof BattleArmor)) {
+            // Pain Shunt blocks BVDNI feedback - show message for clarity
+            Report.addNewline(vDesc);
+            r = new Report(3585);
+            r.subject = en.getId();
+            r.addDesc(en);
+            r.indent(2);
+            vDesc.add(r);
         }
 
         // Return the results of the damage.
@@ -20364,6 +20375,18 @@ public class TWGameManager extends AbstractGameManager {
             if (diceRoll.getIntValue() >= 8) {
                 reports.addAll(damageCrew(aero, 1));
             }
+        } else if (cs.getIndex() != Aero.CRIT_NONE &&
+              aero.isFighter() &&
+              aero.hasAbility(OptionsConstants.MD_VDNI) &&
+              !aero.hasAbility(OptionsConstants.MD_BVDNI) &&
+              aero.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+            // Pain Shunt blocks VDNI feedback - show message for clarity
+            Report.addNewline(reports);
+            r = new Report(3585);
+            r.subject = aero.getId();
+            r.addDesc(aero);
+            r.indent(2);
+            reports.add(r);
         } else if (cs.getIndex() != Aero.CRIT_NONE &&
               aero.isFighter() &&
               aero.hasAbility(OptionsConstants.MD_BVDNI)) {

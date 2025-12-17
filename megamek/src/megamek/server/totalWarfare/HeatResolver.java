@@ -108,6 +108,9 @@ class HeatResolver extends AbstractTWRuleHandler {
                     LOGGER.error("Radical heat sinks mounted on non-mek, non-aero Entity!");
                 }
 
+                // Mark that RHS was used this turn (for tracking consecutive uses in newRound)
+                entity.setUsedRHSLastTurn(true);
+
                 // RHS activation report
                 report = new Report(5540);
                 report.subject = entity.getId();
@@ -117,6 +120,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                 rhsReports.add(report);
 
                 Roll diceRoll = Compute.rollD6(2);
+                // Increment consecutive uses for this turn's use, then look up target number
                 entity.setConsecutiveRHSUses(entity.getConsecutiveRHSUses() + 1);
                 int targetNumber = ServerHelper.radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses());
                 boolean rhsFailure = diceRoll.getIntValue() < targetNumber;
@@ -128,6 +132,18 @@ class HeatResolver extends AbstractTWRuleHandler {
                 report.add(diceRoll);
                 report.choose(rhsFailure);
                 rhsReports.add(report);
+
+                // Show RHS stress level and next activation TN (only if RHS didn't fail)
+                if (!rhsFailure) {
+                    int nextTargetNumber = ServerHelper.radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses()
+                          + 1);
+                    report = new Report(5544);
+                    report.indent(2);
+                    report.subject = entity.getId();
+                    report.add(entity.getConsecutiveRHSUses());
+                    report.add(nextTargetNumber);
+                    rhsReports.add(report);
+                }
 
                 if (rhsFailure) {
                     entity.setHasDamagedRHS(true);
@@ -152,6 +168,21 @@ class HeatResolver extends AbstractTWRuleHandler {
                         }
                     }
                 }
+            } else if (entity.hasWorkingRadicalHS() && (entity.getConsecutiveRHSUses() > 0)) {
+                // RHS not activated this turn, but has stress - show settling message
+                int currentStress = entity.getConsecutiveRHSUses();
+                // Calculate reduced stress: single decrement, plus extra if rhsWentUp (double decrement)
+                int decrement = entity.hasRHSWentUp() ? 2 : 1;
+                int reducedStress = Math.max(0, currentStress - decrement);
+                // If activated next turn, stress will increment from reduced level
+                int nextActivationTN = ServerHelper.radicalHeatSinkSuccessTarget(reducedStress + 1);
+                report = new Report(5546);
+                report.indent();
+                report.subject = entity.getId();
+                report.add(currentStress);
+                report.add(reducedStress);
+                report.add(nextActivationTN);
+                rhsReports.add(report);
             }
 
             Hex entityHex = getGame().getHex(entity.getPosition(), entity.getBoardId());

@@ -1685,8 +1685,8 @@ public class TeamLoadOutGenerator {
                           availInts.get(lookup) > 0;
                     if (available) {
                         availInts.put(lookup, availInts.get(lookup) - 1);
-                        break;
                     }
+                    break;
                 }
             }
 

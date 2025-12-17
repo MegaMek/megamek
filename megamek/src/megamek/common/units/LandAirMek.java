@@ -182,6 +182,9 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     // track leaving the ground map
     private OffBoardDirection flyingOff = OffBoardDirection.NONE;
 
+    // track altitude when climbing out (leaving map vertically at altitude 10)
+    private int exitAltitude = 0;
+
     public LandAirMek(int inGyroType, int inCockpitType, int inLAMType) {
         super(inGyroType, inCockpitType);
         lamType = inLAMType;
@@ -912,7 +915,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             resetAltLossThisRound();
         }
 
-        // Reset flying off dir
+        // Reset flying off direction (exitAltitude is preserved for returning units
+        // and cleared in DeploymentProcessor when deployed)
         flyingOff = OffBoardDirection.NONE;
     }
 
@@ -2205,5 +2209,15 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public OffBoardDirection getFlyingOffDirection() {
         return this.flyingOff;
+    }
+
+    @Override
+    public int getExitAltitude() {
+        return exitAltitude;
+    }
+
+    @Override
+    public void setExitAltitude(int altitude) {
+        this.exitAltitude = altitude;
     }
 }

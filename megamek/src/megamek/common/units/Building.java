@@ -478,7 +478,7 @@ public class Building implements Serializable {
      */
     @Override
     public boolean equals(Object other) {
-        return (this == other) || ((other instanceof IBuilding otherBuilding) && (getId() == otherBuilding.getId()));
+        return (this == other) || ((other instanceof Building otherBuilding) && (getId() == otherBuilding.getId()));
     }
 
     @Override

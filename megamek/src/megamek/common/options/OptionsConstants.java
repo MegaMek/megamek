@@ -504,6 +504,7 @@ public class OptionsConstants {
     public static final String ADVANCED_AERO_RULES_AT2_NUKES = "at2_nukes";
     public static final String ADVANCED_AERO_RULES_AERO_SANITY = "aero_sanity";
     public static final String ADVANCED_AERO_RULES_RETURN_FLYOVER = "return_flyover";
+    public static final String ADVANCED_AERO_RULES_CLIMB_OUT = "climb_out";
     public static final String ADVANCED_AERO_RULES_AA_MOVE_MOD = "aa_move_mod";
     public static final String ADVANCED_AERO_RULES_ALLOW_LARGE_SQUADRONS = "allow_large_squadrons";
     public static final String ADVANCED_AERO_RULES_SINGLE_NO_CAP = "single_no_cap";

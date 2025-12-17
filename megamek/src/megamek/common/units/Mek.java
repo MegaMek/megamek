@@ -3359,9 +3359,10 @@ public abstract class Mek extends Entity {
         }
 
         // VDNI bonus? (BVDNI does NOT get piloting bonus due to "neuro-lag" per IO pg 71)
-        if (hasAbility(OptionsConstants.MD_VDNI)
-              && !hasAbility(OptionsConstants.MD_BVDNI)) {
+        if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
             roll.addModifier(-1, "VDNI");
+        } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
+            roll.addModifier(0, "BVDNI (no piloting bonus)");
         }
 
         // Small/torso-mounted cockpit penalty?

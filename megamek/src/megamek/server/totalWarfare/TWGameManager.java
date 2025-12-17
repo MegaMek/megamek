@@ -16919,7 +16919,7 @@ public class TWGameManager extends AbstractGameManager {
                 r = new Report(2285);
                 r.indent();
                 r.subject = e.getId();
-                r.add(target);
+                r.add(target.getDesc());
                 vReport.add(r);
                 for (int j = 0; j < rolls.size(); j++) {
                     PilotingRollData modifier = rolls.elementAt(j);
@@ -19122,7 +19122,7 @@ public class TWGameManager extends AbstractGameManager {
               !(en instanceof BattleArmor)) {
             Report.addNewline(vDesc);
             Roll diceRoll = Compute.rollD6(2);
-            r = new Report(3580);
+            r = new Report(3584);
             r.subject = en.getId();
             r.addDesc(en);
             r.add(7);
@@ -20344,7 +20344,10 @@ public class TWGameManager extends AbstractGameManager {
         // Per VDNI rules: "For Fighters: Every time a fighter takes a critical hit, make a
         // feedback roll (2D6, TN 8+). On a failed roll, the pilot suffers 1 point of damage."
         // BVDNI fighters get NO feedback at all per rules.
-        if (aero.isFighter() &&
+        // Important: Only trigger on actual critical hits, not when threshold/SI damage rolls
+        // resulted in no effect (CRIT_NONE).
+        if (cs.getIndex() != Aero.CRIT_NONE &&
+              aero.isFighter() &&
               aero.hasAbility(OptionsConstants.MD_VDNI) &&
               !aero.hasAbility(OptionsConstants.MD_BVDNI) &&
               !aero.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
@@ -20361,6 +20364,16 @@ public class TWGameManager extends AbstractGameManager {
             if (diceRoll.getIntValue() >= 8) {
                 reports.addAll(damageCrew(aero, 1));
             }
+        } else if (cs.getIndex() != Aero.CRIT_NONE &&
+              aero.isFighter() &&
+              aero.hasAbility(OptionsConstants.MD_BVDNI)) {
+            // BVDNI fighters are immune to critical hit feedback - show message for clarity
+            Report.addNewline(reports);
+            r = new Report(3583);
+            r.subject = aero.getId();
+            r.addDesc(aero);
+            r.indent(2);
+            reports.add(r);
         }
 
         return reports;

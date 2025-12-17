@@ -2086,9 +2086,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         // Find the RHS equipment
         for (MiscMounted mounted : entity.getMisc()) {
             if (mounted.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
-                // Toggle: mode 0 = Off, mode 1 = On
-                int newMode = entity.hasActivatedRadicalHS() ? 0 : 1;
-                mounted.setMode(newMode);
+                String newModeStr = entity.hasActivatedRadicalHS() ? Weapon.MODE_AMS_OFF : Weapon.MODE_AMS_ON;
+                int newMode = mounted.setMode(newModeStr);
                 clientgui.getClient().sendModeChange(entity.getId(), mounted.getEquipmentNum(), newMode);
                 break;
             }

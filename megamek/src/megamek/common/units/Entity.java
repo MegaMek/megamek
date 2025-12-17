@@ -15159,9 +15159,9 @@ public abstract class Entity extends TurnOrdered
     }
 
     public void deactivateRadicalHS() {
-        for (MiscMounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
-                m.setMode("Off");
+        for (MiscMounted miscEquipment : getMisc()) {
+            if (miscEquipment.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+                miscEquipment.setMode(Weapon.MODE_AMS_OFF);
                 // Can only have one radical heat sink
                 break;
             }
@@ -15169,9 +15169,9 @@ public abstract class Entity extends TurnOrdered
     }
 
     public void activateRadicalHS() {
-        for (MiscMounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
-                m.setMode("On");
+        for (MiscMounted miscEquipment : getMisc()) {
+            if (miscEquipment.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+                miscEquipment.setMode(Weapon.MODE_AMS_ON);
                 // Can only have one radical heat sink
                 break;
             }

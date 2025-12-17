@@ -20723,13 +20723,14 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             case Tank.CRIT_COMMANDER:
                 // VDNI vehicles get 1 damage on Commander critical (IO pg 71)
-                // BVDNI is NOT handled here - uses generic BVDNI check in applyCriticalHit
                 if (tank.hasAbility(OptionsConstants.MD_VDNI) && !tank.hasAbility(OptionsConstants.MD_BVDNI)) {
                     r = new Report(6191);
                     r.subject = tank.getId();
                     reports.add(r);
                     reports.addAll(damageCrew(tank, 1));
-                } else if (!tank.hasAbility(OptionsConstants.MD_BVDNI)) {
+                } else {
+                    // Normal commander hit handling (applies to BVDNI and non-implant pilots)
+                    // BVDNI pilots also get generic feedback from applyCriticalHit
                     if (tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT) && !tank.isCommanderHitPS()) {
                         r = new Report(6606);
                         r.subject = tank.getId();
@@ -20751,13 +20752,14 @@ public class TWGameManager extends AbstractGameManager {
                 // apply
             case Tank.CRIT_CREW_STUNNED:
                 // VDNI vehicles get 1 damage on Crew Stunned critical (IO pg 71)
-                // BVDNI is NOT handled here - uses generic BVDNI check in applyCriticalHit
                 if (tank.hasAbility(OptionsConstants.MD_VDNI) && !tank.hasAbility(OptionsConstants.MD_BVDNI)) {
                     r = new Report(6191);
                     r.subject = tank.getId();
                     reports.add(r);
                     reports.addAll(damageCrew(tank, 1));
-                } else if (!tank.hasAbility(OptionsConstants.MD_BVDNI)) {
+                } else {
+                    // Normal crew stunned handling (applies to BVDNI and non-implant pilots)
+                    // BVDNI pilots also get generic feedback from applyCriticalHit
                     if (tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)
                           || tank.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
                           || tank.hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)
@@ -20774,13 +20776,14 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             case Tank.CRIT_DRIVER:
                 // VDNI vehicles get 1 damage on Driver critical (IO pg 71)
-                // BVDNI is NOT handled here - uses generic BVDNI check in applyCriticalHit
                 if (tank.hasAbility(OptionsConstants.MD_VDNI) && !tank.hasAbility(OptionsConstants.MD_BVDNI)) {
                     r = new Report(6191);
                     r.subject = tank.getId();
                     reports.add(r);
                     reports.addAll(damageCrew(tank, 1));
-                } else if (!tank.hasAbility(OptionsConstants.MD_BVDNI)) {
+                } else {
+                    // Normal driver hit handling (applies to BVDNI and non-implant pilots)
+                    // BVDNI pilots also get generic feedback from applyCriticalHit
                     if (tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT) && !tank.isDriverHitPS()) {
                         r = new Report(6601);
                         r.subject = tank.getId();
@@ -20796,7 +20799,6 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             case Tank.CRIT_CREW_KILLED:
                 // VDNI Crew Killed kills the pilot outright (IO pg 71)
-                // BVDNI is NOT handled here - it uses the generic BVDNI critical check in applyCriticalHit
                 if (tank.hasAbility(OptionsConstants.MD_VDNI) && !tank.hasAbility(OptionsConstants.MD_BVDNI)) {
                     r = new Report(6190);
                     r.subject = tank.getId();
@@ -20805,8 +20807,10 @@ public class TWGameManager extends AbstractGameManager {
                     if (tank.isAirborneVTOLorWIGE()) {
                         reports.addAll(crashVTOLorWiGE(tank));
                     }
-                } else if (!tank.hasAbility(OptionsConstants.MD_BVDNI)) {
-                    // Non-VDNI/BVDNI handling
+                } else {
+                    // Normal crew killed handling (applies to BVDNI and non-implant pilots)
+                    // BVDNI pilots also get generic feedback from applyCriticalHit, but the
+                    // base critical effect (crew death) still applies
                     if (tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT) && !tank.isCrewHitPS()) {
                         r = new Report(6191);
                         r.subject = tank.getId();
@@ -20822,8 +20826,6 @@ public class TWGameManager extends AbstractGameManager {
                         }
                     }
                 }
-                // BVDNI pilots: No special handling here - generic BVDNI check in applyCriticalHit
-                // will roll 2D6 for feedback damage on any critical hit
                 break;
             case Tank.CRIT_ENGINE:
                 r = new Report(6210);

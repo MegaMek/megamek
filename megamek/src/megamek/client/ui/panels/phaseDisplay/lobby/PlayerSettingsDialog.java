@@ -633,7 +633,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
                 rp.binFillPercent = (rp.isPirate) ? TeamLoadOutGenerator.UNSET_FILL_RATIO : 1.0f;
                 // Clear any bomb assignments
                 LobbyMekPopupActions.resetBombChoices(clientgui, client.getGame(), updateEntities);
-                tlg.reconfigureEntities(updateEntities, faction, munitionTree, rp);
+                tlg.reconfigureEntities(updateEntities, faction, munitionTree, rp, null);
                 // Use sendUpdate because we want the Game to allow us to change on Bot's
                 // behalf.
                 clientgui.chatlounge.sendProxyUpdates(updateEntities, client.getLocalPlayer());

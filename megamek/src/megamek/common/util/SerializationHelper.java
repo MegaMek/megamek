@@ -276,7 +276,7 @@ public class SerializationHelper {
 
             @Override
             public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-                int value = Integer.MIN_VALUE;
+                Integer value = null;
                 String description = "";
                 boolean cumulative = false;
 
@@ -294,7 +294,7 @@ public class SerializationHelper {
                         return null;
                     }
                 }
-                return (value > Integer.MIN_VALUE) ? new TargetRollModifier(value, description, cumulative) : null;
+                return (value != null) ? new TargetRollModifier(value, description, cumulative) : null;
             }
 
             @Override

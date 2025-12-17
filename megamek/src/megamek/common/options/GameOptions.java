@@ -290,6 +290,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_AT2_NUKES, false);
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY, false);
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER, true);
+        addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_CLIMB_OUT, true);
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_AA_FIRE, false);
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_AA_MOVE_MOD, false);
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_ALLOW_LARGE_SQUADRONS, false);

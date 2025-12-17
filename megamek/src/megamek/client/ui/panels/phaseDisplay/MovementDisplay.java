@@ -2557,8 +2557,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         final Board board = game.getBoard(currentEntity);
 
-        // Check if at altitude 10 - can climb out of atmosphere
-        boolean canClimbOut = altitude == 10 && board.isGround();
+        // Check if at altitude 10 - can climb out of atmosphere (requires both return flyover and climb out options)
+        boolean canClimbOut = altitude == 10 && board.isGround()
+              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER)
+              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_CLIMB_OUT);
 
         // Check if can fly off edge (calculate before using)
         boolean canFlyOffEdge = false;
@@ -6033,8 +6035,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         Board board = game.getBoard(entity);
         boolean isGroundBoard = board.isGround();
 
-        // Check if can climb out (altitude 10 on ground map)
-        boolean canClimbOut = (altitude == 10) && isGroundBoard;
+        // Check if can climb out (altitude 10 on ground map, requires both return flyover and climb out options)
+        boolean canClimbOut = (altitude == 10) && isGroundBoard
+              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER)
+              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_CLIMB_OUT);
 
         // Check if can fly off edge (same logic as updateFlyOffButton)
         boolean canFlyOffEdge = false;

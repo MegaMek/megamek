@@ -1165,9 +1165,9 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         // Reset usedInternalBombs
         setUsedInternalBombs(0);
 
-        // Reset flying off dir and exit altitude
+        // Reset flying off direction (exitAltitude is preserved for returning units
+        // and cleared in DeploymentProcessor when deployed)
         flyingOff = OffBoardDirection.NONE;
-        exitAltitude = 0;
     }
 
     /**

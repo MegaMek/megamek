@@ -5658,19 +5658,25 @@ public class TWGameManager extends AbstractGameManager {
         Vector<Report> vReport = new Vector<>();
         Report r;
 
-        // For climb out (vertical exit at altitude 10), use the player-selected edge
-        // instead of calculating from coordinates. The client sets startingPos and exitAltitude.
+        // For climb out (vertical exit at altitude 10), the client sets startingPos and exitAltitude.
+        // Climb out units with START_ANY can return anywhere on the map.
         OffBoardDirection fleeDirection;
+        String retreatEdge;
         IAero aeroUnit = entity.isAero() ? (IAero) entity : null;
         boolean isClimbOut = (aeroUnit != null) && (aeroUnit.getExitAltitude() > 0);
 
-        if (isClimbOut) {
-            // Use the player-selected edge from startingPos
+        if (isClimbOut && entity.getStartingPos() == Board.START_ANY) {
+            // Climb out to return anywhere - don't overwrite START_ANY with setRetreatEdge
+            fleeDirection = OffBoardDirection.NONE;
+            retreatEdge = "Above";
+        } else if (isClimbOut) {
+            // Climb out with specific edge selected
             fleeDirection = OffBoardDirection.fromBoardStart(entity.getStartingPos());
+            retreatEdge = setRetreatEdge(entity, fleeDirection);
         } else {
             fleeDirection = calculateEdge(movePath.getFinalCoords(), movePath.getFinalBoardId());
+            retreatEdge = setRetreatEdge(entity, fleeDirection);
         }
-        String retreatEdge = setRetreatEdge(entity, fleeDirection);
 
         // Aerospace that fly off to return in a later round must be handled
         // at the end of the round, but set some state here for simplicity

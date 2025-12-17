@@ -915,9 +915,9 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             resetAltLossThisRound();
         }
 
-        // Reset flying off dir and exit altitude
+        // Reset flying off direction (exitAltitude is preserved for returning units
+        // and cleared in DeploymentProcessor when deployed)
         flyingOff = OffBoardDirection.NONE;
-        exitAltitude = 0;
     }
 
     /**

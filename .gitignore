@@ -75,6 +75,7 @@ megamek/userdata/**
 OfficialUnitList.txt
 equipment.txt
 .github/copilot-instructions.md
+.github/workflows
 *.iml
 
 # Testing Temp Folder

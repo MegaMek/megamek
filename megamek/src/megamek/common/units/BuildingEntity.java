@@ -297,6 +297,56 @@ public class BuildingEntity extends AbstractBuildingEntity {
         return baseHexWeight + (energyWeaponTonnage * 0.1);
     }
 
+    /**
+     * Calculates the internal weight capacity for this building.
+     * <p>
+     * For each hex of area covered, advanced buildings may internally carry a total tonnage
+     * of equipment equal to their Construction Factor times the number of levels of structure height.
+     * <p>
+     * Hangar-type structures may triple this capacity, but are limited to a maximum of 600 tons
+     * per hex for every 4 levels of structural height (or fraction thereof).
+     *
+     * @return The total internal weight capacity in tons
+     */
+    @Override
+    public double getWeight() {
+        Building building = getInternalBuilding();
+        if (building == null) {
+            return 0.0;
+        }
+
+        double totalWeight = 0.0;
+        boolean isHangar = getBldgClass() == IBuilding.HANGAR;
+
+        // Calculate weight capacity for each hex
+        for (CubeCoords coords : building.getCoordsList()) {
+            int cf = building.getPhaseCF(coords);
+            int height = building.getHeight(coords);
+
+            if (height <= 0 || cf <= 0) {
+                continue;
+            }
+
+            // Base capacity: CF × height
+            double hexCapacity = cf * height;
+
+            if (isHangar) {
+                // Hangars triple the capacity
+                hexCapacity *= 3;
+
+                // But limited to 600 tons per hex for every 4 levels (or fraction)
+                int levelGroups = (int) Math.ceil(height / 4.0);
+                double maxCapacity = 600.0 * levelGroups;
+
+                hexCapacity = Math.min(hexCapacity, maxCapacity);
+            }
+
+            totalWeight += hexCapacity;
+        }
+
+        return totalWeight;
+    }
+
     // FIXME: IDK if this is right, just needed something to pass tests
     private static final TechAdvancement TA_BUILDING_ENTITY = new TechAdvancement(TechBase.ALL)
           .setAdvancement(DATE_PS, DATE_PS, DATE_PS)

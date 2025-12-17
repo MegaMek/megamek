@@ -136,6 +136,30 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         return relativeLayout.get(relativeCoords);
     }
 
+    /**
+     * Converts board coordinates to all entity location numbers at that hex.
+     * Returns all floors (locations) that exist at the given coordinates.
+     *
+     * @param coords the board coordinates to convert
+     * @return list of all location numbers at these coords (one per floor)
+     */
+    private List<Integer> coordsToLocations(Coords coords) {
+        CubeCoords relativeCoords = boardToRelative(coords);
+        if (relativeCoords == null) {
+            return List.of();
+        }
+
+        // Find all locations that map to these relative coords
+        List<Integer> locations = new ArrayList<>();
+        for (Map.Entry<Integer, CubeCoords> entry : locationToRelativeCoordsMap.entrySet()) {
+            if (entry.getValue().equals(relativeCoords)) {
+                locations.add(entry.getKey());
+            }
+        }
+
+        return locations;
+    }
+
     @Override
     public Coords getWeaponFiringPosition(WeaponMounted weapon) {
         if (weapon == null) {
@@ -789,6 +813,20 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         return Entity.ETYPE_BUILDING_ENTITY;
     }
 
+
+    private void setInternalFromHex() {
+
+    }
+
+    @Override
+    public int getInternalForReal(int loc) {
+        if (locationToRelativeCoordsMap.containsKey(loc)) {
+            CubeCoords relativeCoords = locationToRelativeCoordsMap.get(loc);
+            return getInternalBuilding().getPhaseCF(relativeCoords);
+        }
+        return 0;
+    }
+
     /**
      * Returns the amount of armor in the location specified, or IArmorState.ARMOR_NA, or IArmorState.ARMOR_DESTROYED.
      *
@@ -797,7 +835,53 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     @Override
     public int getArmor(int loc, boolean rear) {
+        if (locationToRelativeCoordsMap.containsKey(loc)) {
+            CubeCoords relativeCoords = locationToRelativeCoordsMap.get(loc);
+            return getInternalBuilding().getArmor(relativeCoords);
+        }
         return IArmorState.ARMOR_NA;
+    }
+
+    /**
+     * Private method to set armor for both the entity and the building simultaneously.
+     * Ensures entity armor and building armor stay synchronized.
+     *
+     * @param armor the armor value to set
+     * @param loc the location number
+     */
+    private void setArmorInternal(int armor, int loc) {
+        if (locationToRelativeCoordsMap.containsKey(loc)) {
+            CubeCoords relativeCoords = locationToRelativeCoordsMap.get(loc);
+            // Set building armor
+            building.setArmor(armor, relativeCoords);
+        }
+        // Set entity armor
+        super.setArmor(armor, loc, false);
+    }
+
+    /**
+     * Private method to set internal structure/CF for both the entity and the building simultaneously.
+     * Ensures entity internal and building CF stay synchronized.
+     *
+     * @param internal the internal/CF value to set
+     * @param loc the location number
+     */
+    private void setInternalInternal(int internal, int loc) {
+        if (locationToRelativeCoordsMap.containsKey(loc)) {
+            CubeCoords relativeCoords = locationToRelativeCoordsMap.get(loc);
+            // Set building CF
+            building.setPhaseCF(internal, relativeCoords);
+        }
+        // Set entity internal directly (no 3-parameter version exists)
+        super.setInternal(internal, loc);
+    }
+
+    /**
+     * Override to keep entity internal and building CF synchronized.
+     */
+    @Override
+    public void setInternal(int val, int loc) {
+        setInternalInternal(val, loc);
     }
 
     @Override
@@ -889,12 +973,20 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
 
     @Override
     public void setPhaseCF(int cf, Coords coords) {
-        building.setPhaseCF(cf, boardToRelative(coords));
+        // Set internal structure for all locations (floors) at this hex
+        // The private method will handle setting both building CF and entity internal
+        for (Integer location : coordsToLocations(coords)) {
+            setInternalInternal(cf, location);
+        }
     }
 
     @Override
     public void setArmor(int a, Coords coords) {
-        building.setArmor(a, boardToRelative(coords));
+        // Set armor for all locations (floors) at this hex
+        // The private method will handle setting both building armor and entity armor
+        for (Integer location : coordsToLocations(coords)) {
+            setArmorInternal(a, location);
+        }
     }
 
     @Override

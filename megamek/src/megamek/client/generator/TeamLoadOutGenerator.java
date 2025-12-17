@@ -42,7 +42,6 @@ import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import megamek.client.ratgenerator.AvailabilityRating;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ui.dialogs.unitSelectorDialogs.AbstractUnitSelectorDialog;
 import megamek.common.SimpleTechLevel;
@@ -85,7 +84,7 @@ public class TeamLoadOutGenerator {
     private static ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 
     // region Constants
-    // YAML file contains three sections:
+    // YAML file contains munition weights, override values, prohibited ammo types, and various settings
     public static final String LOAD_OUT_SETTINGS_PATH = "mmconf" + File.separator + "munitionLoadoutSettings.yaml";
     public static LinkedHashMap<String, Object> weightMap = new LinkedHashMap<String, Object>();
 
@@ -125,6 +124,7 @@ public class TeamLoadOutGenerator {
           "AlamoMissile Ammo"));
 
     public static final ArrayList<String> ANTI_INF_MUNITIONS = new ArrayList<>(List.of("Inferno",
+          "Inferno-IV",
           "Fragmentation",
           "Flechette",
           "Fuel-Air",
@@ -134,26 +134,35 @@ public class TeamLoadOutGenerator {
           "ClusterBomb",
           "HEBomb",
           "AB",
-          "AP"));
+          "AP",
+          "IIW"));
 
     public static final ArrayList<String> ANTI_BA_MUNITIONS = new ArrayList<>(List.of("Inferno",
+          "Inferno-IV",
           "Fuel-Air",
           "Tandem-Charge",
           "Acid",
           "FABombSmall Ammo",
-          "HEBomb"));
+          "HEBomb",
+          "IIW",
+          "IMP"));
 
     public static final ArrayList<String> HEAT_MUNITIONS = new ArrayList<>(List.of("Inferno",
           "Incendiary",
-          "InfernoBomb"));
+          "InfernoBomb",
+          "Inferno-IV",
+          "IIW",
+          "IMP"));
 
     public static final ArrayList<String> ILLUMINATION_MUNITIONS = new ArrayList<>(List.of("Illumination",
           "Tracer",
           "Inferno",
+          "Inferno-IV",
           "Incendiary",
           "Flare",
           "FL",
-          "InfernoBomb"));
+          "InfernoBomb",
+          "IIW"));
 
     public static final ArrayList<String> UTILITY_MUNITIONS = new ArrayList<>(List.of("Illumination",
           "Smoke",
@@ -168,23 +177,21 @@ public class TeamLoadOutGenerator {
           "Thunder-Vibrabomb",
           "Thunder-Inferno",
           "Flare",
+          "Thunder Vibrabomb IV",
           "ThunderBomb",
           "TAGBomb",
           "TorpedoBomb",
-          "ASEWMissile Ammo"));
+          "ASEWMissile Ammo",
+          "IMP"));
 
     // Only artillery utility munitions!
     public static final ArrayList<String> ARTILLERY_UTILITY_MUNITIONS = new ArrayList<>(List.of("Illumination",
           "Smoke",
           "SM",
           "Laser Inhibiting",
-          "Thunder",
           "FASCAM",
-          "Thunder-Active",
-          "Thunder-Augmented",
-          "Thunder-Vibrabomb",
-          "Thunder-Inferno",
-          "Flare"
+          "Flare",
+          "Thunder Vibrabomb IV"
           ));
 
     // Guided munitions come in two main flavors
@@ -299,49 +306,49 @@ public class TeamLoadOutGenerator {
      * Relative weight distribution of general purpose external ordnance choices
      */
     private static final BombLoadout normalBombLoad = new BombLoadout() {{
-        put(BombTypeEnum.HE, castPropertyInt("normalBombLoad_HE", 40));
-        put(BombTypeEnum.LG, castPropertyInt("normalBombLoad_LG", 5));
-        put(BombTypeEnum.CLUSTER, castPropertyInt("normalBombLoad_CLUSTER", 30));
-        put(BombTypeEnum.INFERNO, castPropertyInt("normalBombLoad_INFERNO", 15));
-        put(BombTypeEnum.THUNDER, castPropertyInt("normalBombLoad_THUNDER", 10));
+        put(BombTypeEnum.HE, castPropertyInt("Defaults.Bombs.normalBombLoad_HE", 40));
+        put(BombTypeEnum.LG, castPropertyInt("Defaults.Bombs.normalBombLoad_LG", 5));
+        put(BombTypeEnum.CLUSTER, castPropertyInt("Defaults.Bombs.normalBombLoad_CLUSTER", 30));
+        put(BombTypeEnum.INFERNO, castPropertyInt("Defaults.Bombs.normalBombLoad_INFERNO", 15));
+        put(BombTypeEnum.THUNDER, castPropertyInt("Defaults.Bombs.normalBombLoad_THUNDER", 10));
     }};
 
     /**
      * Relative weight distribution of external ordnance choices for use against Meks
      */
     private static final BombLoadout antiMekBombLoad = new BombLoadout() {{
-        put(BombTypeEnum.HE, castPropertyInt("antiMekBombLoad_HE", 55));
-        put(BombTypeEnum.LG, castPropertyInt("antiMekBombLoad_LG", 15));
-        put(BombTypeEnum.INFERNO, castPropertyInt("antiMekBombLoad_INFERNO", 10));
-        put(BombTypeEnum.THUNDER, castPropertyInt("antiMekBombLoad_THUNDER", 10));
-        put(BombTypeEnum.HOMING, castPropertyInt("antiMekBombLoad_HOMING", 10));
+        put(BombTypeEnum.HE, castPropertyInt("Defaults.Bombs.antiMekBombLoad_HE", 55));
+        put(BombTypeEnum.LG, castPropertyInt("Defaults.Bombs.antiMekBombLoad_LG", 15));
+        put(BombTypeEnum.INFERNO, castPropertyInt("Defaults.Bombs.antiMekBombLoad_INFERNO", 10));
+        put(BombTypeEnum.THUNDER, castPropertyInt("Defaults.Bombs.antiMekBombLoad_THUNDER", 10));
+        put(BombTypeEnum.HOMING, castPropertyInt("Defaults.Bombs.antiMekBombLoad_HOMING", 10));
     }};
 
     /**
      * Relative weight distribution of external ordnance choices for use against ground vehicles and infantry
      */
     private static final BombLoadout antiConvBombLoad = new BombLoadout() {{
-        put(BombTypeEnum.CLUSTER, castPropertyInt("antiConvBombLoad_CLUSTER", 50));
-        put(BombTypeEnum.INFERNO, castPropertyInt("antiConvBombLoad_INFERNO", 40));
-        put(BombTypeEnum.THUNDER, castPropertyInt("antiConvBombLoad_THUNDER", 8));
-        put(BombTypeEnum.FAE_SMALL, castPropertyInt("antiConvBombLoad_FAE_SMALL", 2));
+        put(BombTypeEnum.CLUSTER, castPropertyInt("Defaults.Bombs.antiConvBombLoad_CLUSTER", 50));
+        put(BombTypeEnum.INFERNO, castPropertyInt("Defaults.Bombs.antiConvBombLoad_INFERNO", 40));
+        put(BombTypeEnum.THUNDER, castPropertyInt("Defaults.Bombs.antiConvBombLoad_THUNDER", 8));
+        put(BombTypeEnum.FAE_SMALL, castPropertyInt("Defaults.Bombs.antiConvBombLoad_FAE_SMALL", 2));
     }};
 
     /**
      * Relative weight distribution of external ordnance choices for providing artillery support
      */
     private static final BombLoadout standoffBombLoad = new BombLoadout() {{
-        put(BombTypeEnum.ARROW, castPropertyInt("standoffBombLoad_ARROW", 40));
-        put(BombTypeEnum.HOMING, castPropertyInt("standoffBombLoad_HOMING", 60));
+        put(BombTypeEnum.ARROW, castPropertyInt("Defaults.Bombs.standoffBombLoad_ARROW", 40));
+        put(BombTypeEnum.HOMING, castPropertyInt("Defaults.Bombs.standoffBombLoad_HOMING", 60));
     }};
 
     /**
      * Relative weight distribution of external ordnance choices for attacking static targets
      */
     private static final BombLoadout strikeBombLoad = new BombLoadout() {{
-        put(BombTypeEnum.LG, castPropertyInt("strikeBombLoad_LG", 45));
-        put(BombTypeEnum.HOMING, castPropertyInt("strikeBombLoad_HOMING", 25));
-        put(BombTypeEnum.HE, castPropertyInt("strikeBombLoad_HE", 30));
+        put(BombTypeEnum.LG, castPropertyInt("Defaults.Bombs.strikeBombLoad_LG", 45));
+        put(BombTypeEnum.HOMING, castPropertyInt("Defaults.Bombs.strikeBombLoad_HOMING", 25));
+        put(BombTypeEnum.HE, castPropertyInt("Defaults.Bombs.strikeBombLoad_HE", 30));
     }};
 
     /**
@@ -349,8 +356,8 @@ public class TeamLoadOutGenerator {
      * selection.
      */
     private static final BombLoadout lowTechBombLoad = new BombLoadout() {{
-        put(BombTypeEnum.HE, castPropertyInt("lowTechBombLoad_HE", 35));
-        put(BombTypeEnum.RL, castPropertyInt("lowTechBombLoad_RL", 65));
+        put(BombTypeEnum.HE, castPropertyInt("Defaults.Bombs.lowTechBombLoad_HE", 35));
+        put(BombTypeEnum.RL, castPropertyInt("Defaults.Bombs.lowTechBombLoad_RL", 65));
     }};
 
     /**
@@ -377,20 +384,20 @@ public class TeamLoadOutGenerator {
      * External ordnance choices for air-to-air combat
      */
     private static final BombLoadout antiAirBombLoad = new BombLoadout() {{
-        put(BombTypeEnum.RL, castPropertyInt("antiAirBombLoad_RL", 40));
-        put(BombTypeEnum.LAA, castPropertyInt("antiAirBombLoad_LAA", 40));
-        put(BombTypeEnum.AAA, castPropertyInt("antiAirBombLoad_AAA", 15));
-        put(BombTypeEnum.AS, castPropertyInt("antiAirBombLoad_AS", 4));
-        put(BombTypeEnum.ASEW, castPropertyInt("antiAirBombLoad_ASEW", 1));
+        put(BombTypeEnum.RL, castPropertyInt("Defaults.Bombs.antiAirBombLoad_RL", 40));
+        put(BombTypeEnum.LAA, castPropertyInt("Defaults.Bombs.antiAirBombLoad_LAA", 40));
+        put(BombTypeEnum.AAA, castPropertyInt("Defaults.Bombs.antiAirBombLoad_AAA", 15));
+        put(BombTypeEnum.AS, castPropertyInt("Defaults.Bombs.antiAirBombLoad_AS", 4));
+        put(BombTypeEnum.ASEW, castPropertyInt("Defaults.Bombs.antiAirBombLoad_ASEW", 1));
     }};
 
     /**
      * External ordnance choices for attacking DropShips and other large craft
      */
     private static final BombLoadout antiShipBombLoad = new BombLoadout() {{
-        put(BombTypeEnum.AAA, castPropertyInt("antiShipBombLoad_AAA", 50));
-        put(BombTypeEnum.AS, castPropertyInt("antiShipBombLoad_AS", 35));
-        put(BombTypeEnum.ASEW, castPropertyInt("antiShipBombLoad_ASEW", 15));
+        put(BombTypeEnum.AAA, castPropertyInt("Defaults.Bombs.antiShipBombLoad_AAA", 50));
+        put(BombTypeEnum.AS, castPropertyInt("Defaults.Bombs.antiShipBombLoad_AS", 35));
+        put(BombTypeEnum.ASEW, castPropertyInt("Defaults.Bombs.antiShipBombLoad_ASEW", 15));
     }};
 
     /**
@@ -804,9 +811,10 @@ public class TeamLoadOutGenerator {
             // Simpler tech is more common; give more bins for common munitions than for rare
             TechAdvancement techAdvancement = exemplar.getTechAdvancement();
             AvailabilityValue techAvailability = exemplar.calcYearAvailability(year, faction.isClan(), faction);
-            int taMultiplier = castPropertyInt("techRatingFactor", 1) * (6 - techAdvancement.getTechRating().getIndex());
+            int taMultiplier =
+                  castPropertyInt("Defaults.Factors.techRatingFactor", 1) * (6 - techAdvancement.getTechRating().getIndex());
             // More available tech is also more common
-            taMultiplier *= castPropertyInt("techAvailFactor", 1) * (8 - techAvailability.getIndex());
+            taMultiplier *= castPropertyInt("Defaults.Factors.techAvailFactor", 1) * (8 - techAvailability.getIndex());
             count = count * taMultiplier;
         }
 
@@ -1798,8 +1806,9 @@ public class TeamLoadOutGenerator {
         }
 
         // Some bombers may not be loaded; calculate percentage of total to equip
-        int maxBombers = Math.min((int) Math.ceil(((castPropertyInt("percentBombersToEquipMin", 40) +
-              Compute.randomInt(castPropertyInt("percentBombersToEquipRange",
+        int maxBombers = Math.min((int) Math.ceil(((castPropertyInt(
+              "Defaults.Bombs.percentBombersToEquipMin", 40) +
+              Compute.randomInt(castPropertyInt("Defaults.Bombs.percentBombersToEquipRange",
                     60))) / 100.0) * bomberList.size()), bomberList.size());
         int numBombers = 0;
 
@@ -1825,30 +1834,30 @@ public class TeamLoadOutGenerator {
 
             // Some fighters on ground attack may be flying air cover rather than strictly air-to-ground
             boolean isCAP = !hasGroundTargets ||
-                  (Compute.d6() <= castPropertyInt("fightersLoadForCAPRollTargetThreshold", 1));
+                  (Compute.d6() <= castPropertyInt("Defaults.Bombs.fightersLoadForCAPRollTargetThreshold", 1));
 
             // Set minimum thrust values, with lower minimums for unarmed and ground attack, and use remaining thrust
             // to limit hard points
             if (isCAP) {
                 minThrust = isUnarmed ?
-                      castPropertyInt("fighterCAPMinUnarmedSafeThrustValue", 2) :
+                      castPropertyInt("Defaults.Bombs.fighterCAPMinUnarmedSafeThrustValue", 2) :
                       ((int) Math.ceil(curBomber.getWalkMP() /
                             castPropertyDouble(
                                   "fighterCAPMinArmedSafeThrustFractionDivisor",
                                   2.0)));
             } else {
                 minThrust = isUnarmed ?
-                      castPropertyInt("bomberMinUnarmedSafeThrustValue", 2) :
-                      castPropertyInt("bomberMinArmedSafeThrustValue", 3);
+                      castPropertyInt("Defaults.Bombs.bomberMinUnarmedSafeThrustValue", 2) :
+                      castPropertyInt("Defaults.Bombs.bomberMinArmedSafeThrustValue", 3);
             }
             maxLoad = Math.min((int) Math.floor(curBomber.getWeight() /
-                        castPropertyDouble("maxBomberLoadFactorDivisor", 5.0)),
-                  (curBomber.getWalkMP() - minThrust) * castPropertyInt("maxBomberLoadThrustDiffFactor", 5));
+                        castPropertyDouble("Defaults.Bombs.maxBomberLoadFactorDivisor", 5.0)),
+                  (curBomber.getWalkMP() - minThrust) * castPropertyInt("Defaults.Bombs.maxBomberLoadThrustDiffFactor", 5));
 
             // Get a random percentage (default 40 ~ 90) of the maximum bomb load for armed entities
             if (!isUnarmed) {
-                maxLoad = (int) Math.ceil((castPropertyInt("maxPercentBomberLoadToEquipMin", 50) +
-                      Compute.randomInt(castPropertyInt("maxPercentBomberLoadToEquipRange",
+                maxLoad = (int) Math.ceil((castPropertyInt("Defaults.Bombs.maxPercentBomberLoadToEquipMin", 50) +
+                      Compute.randomInt(castPropertyInt("Defaults.Bombs.maxPercentBomberLoadToEquipRange",
                             40))) * maxLoad / 100.0);
             }
 
@@ -1890,7 +1899,7 @@ public class TeamLoadOutGenerator {
           boolean forceHasGuided) {
         // Load ordnance onto units. If there is guided ordnance present then randomly add some TAG pods to those
         // without the guided ordnance.
-        int tagCount = Math.min(bomberList.size(), Compute.randomInt(castPropertyInt("bombersToAddTagMaxCount", 3)));
+        int tagCount = Math.min(bomberList.size(), Compute.randomInt(castPropertyInt("Defaults.Bombs.bombersToAddTagMaxCount", 3)));
         for (int i = 0; i < bomberList.size(); i++) {
             Entity curBomber = bomberList.get(i);
 
@@ -1899,9 +1908,11 @@ public class TeamLoadOutGenerator {
             // Don't combine guided ordnance with external TAG
             if (forceHasGuided && tagCount > 0) {
                 int maxLoadForTagger = Math.min((int) Math.floor(curBomber.getWeight() /
-                            castPropertyDouble("maxBomberLoadFactorDivisor",
+                            castPropertyDouble(
+                                  "Defaults.Bombs.maxBomberLoadFactorDivisor",
                                   5.0)),
-                      (curBomber.getWalkMP() - 2) * castPropertyInt("maxBomberLoadThrustDiffFactor", 5));
+                      (curBomber.getWalkMP() - 2) * castPropertyInt(
+                            "Defaults.Bombs.maxBomberLoadThrustDiffFactor", 5));
                 if (addExternalTAG(generatedBombs, true, maxLoadForTagger)) {
                     tagCount--;
                 }
@@ -1965,7 +1976,8 @@ public class TeamLoadOutGenerator {
 
             // Weighted random selection
             completeWeight = mapWeights.stream().mapToInt(curWeight -> curWeight).asDoubleStream().sum();
-            randomThreshold = (Compute.randomInt(castPropertyInt("bomberRandomThresholdMaxPercent", 100)) / 100.0) *
+            randomThreshold = (Compute.randomInt(castPropertyInt(
+                  "Defaults.Bombs.bomberRandomThresholdMaxPercent", 100)) / 100.0) *
                   completeWeight;
             for (int i = 0; i < mapNames.size(); i++) {
                 countWeight += Math.max(mapWeights.get(i), 1.0);
@@ -2012,8 +2024,10 @@ public class TeamLoadOutGenerator {
 
             // Air-to-air loadouts are more limited, just use explicit random selection
             if (!isPirate) {
-                if (Compute.randomInt(castPropertyInt("fighterCAPRandomPercentageRange", 100)) >
-                      castPropertyInt("fighterCAPAntiShipLoadOutRandomPercentageMax", 20)) {
+                if (Compute.randomInt(castPropertyInt(
+                      "Defaults.Bombs.fighterCAPRandomPercentageRange", 100)) >
+                      castPropertyInt(
+                            "Defaults.Bombs.fighterCAPAntiShipLoadOutRandomPercentageMax", 20)) {
                     bombMap = antiAirBombLoad;
                 } else {
                     bombMap = antiShipBombLoad;
@@ -2086,10 +2100,11 @@ public class TeamLoadOutGenerator {
 
         if (!ordnanceIDs.isEmpty() && !ordnanceRandomWeights.isEmpty() && completeWeight != 0) {
             for (int curLoad = 0;
-                  curLoad < bombUnits && loopSafety < castPropertyInt("maxBombApplicationLoopCount", 10); ) {
+                  curLoad < bombUnits && loopSafety < castPropertyInt("Defaults.Bombs.maxBombApplicationLoopCount", 10); ) {
 
                 // Randomly get the ordnance type
-                randomThreshold = (Compute.randomInt(castPropertyInt("maxBombOrdnanceWeightPercentThreshold", 100)) /
+                randomThreshold = (Compute.randomInt(
+                      castPropertyInt("Defaults.Bombs.maxBombOrdnanceWeightPercentThreshold", 100)) /
                       100.0) * completeWeight;
                 countWeight = 0.0;
                 for (int i = 0; i < ordnanceIDs.size(); i++) {

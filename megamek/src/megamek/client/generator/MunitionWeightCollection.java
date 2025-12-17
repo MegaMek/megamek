@@ -139,19 +139,6 @@ class MunitionWeightCollection {
     // Section: initializing weights
 
     /**
-     * Iterate over all listed munitions for the Weapon type and set the default weights
-     * @param munitionsList
-     * @return
-     */
-    private static HashMap<String, Double> initializeWeaponWeights(List<String> munitionsList) {
-        HashMap<String, Double> weights = new HashMap<>();
-        for (String name : munitionsList) {
-            weights.put(name, getPropDouble("Defaults.Munitions.Weight", 1.0));
-        }
-        return weights;
-    }
-
-    /**
      *
      * @param weapon        Weapon type name, matches YAML Defaults.Munitions.* keys
      * @param factionName   The Faction for which this weight collection will be generated, or "IS" or "Clan"
@@ -283,7 +270,7 @@ class MunitionWeightCollection {
             modifyMatchingWeights(mapTypeToWeights.get(weaponType),
                   TeamLoadOutGenerator.ARTILLERY_UTILITY_MUNITIONS,
                   getPropDouble("Defaults.Factors.decreaseWeightFactor", 0.5),
-                  getPropDouble("Defaults.Factors.decreaseWeightDecrement", 0.0));
+                  getPropDouble("Defaults.Factors.decreaseWeightDecrement", -1.0));
         }
     }
 

@@ -1,23 +1,44 @@
-### Ammo types
+######## Munition Loadout Settings ########
+
+### This section defines prohibited munitions.
+### Any munition type listed here will be removed from consideration (after weight adjustment and supply calculations)
+### Prohibitions apply equally to all factions and all munition types.
+### E.g. adding "  - Smoke" would prevent SRM, LRM, and various Artillery bins from being loaded with Smoke ammo.
 Prohibited:
   # Prohibited ammo will never be used by any faction.  Entries are indented one level and start with a hyphen:
   # - Tandem-Charge
   # - AlamoMissile Ammo
   # - Davey Crockett-M
+
+### This section defines override weights, which are applied after all other calculations but before supply checks.
+### To create an override,
 Overrides:
   # Overrides will replace final generated values in the configurator.
+  # A negative value works like a Prohibited entry (above) but provides more granular control; instead of
+  # all weapons and factions, a single faction's use of   # one munition type for a single weapon class can be
+  # effected here.
   # These apply to the generated weights within TeamLoadOutGenerator, not to the base weights in
   # MunitionWeightCollection.
-  # E.g. to force IS teams to always value Dead-Fire at weight 4.0, ignoring utility calculations:
+  # Example 1) to force IS teams to always value LRM Dead-Fire at weight 4.0, ignoring utility calculations:
   # Munitions:
-  #   Dead-Fire:
-  #     IS: 4.0
+  #   LRM:
+  #     Dead-Fire:
+  #       IS: 4.0
+  #
+  # Example 2) to force Clan Ghost Bear to never use ATM HE munitions:
+  # Munitions:
+  #  ATM:
+  #    HE:
+  #      Clan:
+  #        CGB: -1.0
   Munitions:
   Bombs:
   Factors:
 
+### Sets the default starting selection weights, bomb configuration thresholds, and adjustment factors for all
+### munitions currently known to the autoconfiguration tool "Team Loadout Generator".
 Defaults:
-  # Default starting values
+  # Default Munit starting values
   Munitions:
     # Default weights of all munitions; increase or decrease to change relative weights prior to
     # unit- and map-related autoconfiguration.  Utility scores will be adjusted from these defaults depending
@@ -367,15 +388,66 @@ Defaults:
         IS: 1.0
         Clan: 1.0
 
-    # Currently only used for nuclear munitions; other bomb settings live in the following section
+    # Currently unused but included for completeness and future functionality.
     Bomb:
-      Davy Crockett-M:
-        IS: 1.0
-        Clan: 1.0
       AlamoMissile Ammo:
         IS: 1.0
         Clan: 1.0
+      ASMissile Ammo:
+        IS: 1.0
+        Clan: 1.0
+      TAGBomb:
+        IS: 1.0
+        Clan: 1.0
+      LGBomb:
+        IS: 1.0
+        Clan: 1.0
+      RL-P 10 Ammo (Bomb):
+        IS: 1.0
+        Clan: 1.0
+      InfernoBomb:
+        IS: 1.0
+        Clan: 1.0
+      ASEWMissile Ammo:
+        IS: 1.0
+        Clan: 1.0
+      ClusterBomb:
+        IS: 1.0
+        Clan: 1.0
+      TorpedoBomb:
+        IS: 1.0
+        Clan: 1.0
+      RL 10 Ammo (Bomb):
+        IS: 1.0
+        Clan: 1.0
+      ArrowIVMissile Ammo:
+        IS: 1.0
+        Clan: 1.0
+      ThunderBomb:
+        IS: 1.0
+        Clan: 1.0
+      AAAMissile Ammo:
+        IS: 1.0
+        Clan: 1.0
+      FABombLarge Ammo:
+        IS: 1.0
+        Clan: 1.0
+      HEBomb:
+        IS: 1.0
+        Clan: 1.0
+      ArrowIVHomingMissile Ammo:
+        IS: 1.0
+        Clan: 1.0
+      LAAMissile Ammo:
+        IS: 1.0
+        Clan: 1.0
+      FABombSmall Ammo:
+        IS: 1.0
+        Clan: 1.0
 
+
+  ### This section controls automatic selection and assignment of bomb munitions to Aerospace Fighters and
+  ### Conventional Fighters
   Bombs:
     # These values control the loadout spread, types, and percentages of various bomb roles and munition types
     MapGroundSpreadNormal: 6
@@ -425,7 +497,7 @@ Defaults:
     pirateAntiBombLoad_RL: 60
     pirateAntiBombLoad_LAA: 30
     pirateAntiBombLoad_AAA: 10
-    # Sets the minimum + (0 ~ N) range of bomber units to equip.
+    # Sets the minimum + (0 ~ N) range of bomber units in a force that will be equipped.
     percentBombersToEquipMin: 40
     percentBombersToEquipRange: 60
     # For each Aerospace unit, if 1d6 is equal or below threshold, equip for CAP
@@ -452,9 +524,9 @@ Defaults:
     RandomReplaceRating2PlusThreshold: 25
     RandomReplaceRating1PlusThreshold: 40
     RandomReplaceRating0PlusThreshold: 80
+
+  ### These values adjust how munition categories are valued by various triggers and are used by the MunitionTree class
   Factors:
-    # These values adjust how munition categories are valued by various triggers and are used by the MunitionTree class
-    #
     # Decrease count-reducing ammo wight factor if own team: enemy team count < this factor
     mtReducingAmmoReduceIfUnderFactor: 2.0
     # Increase count-reducing ammo weight factor if own team: enemy team count >= this factor

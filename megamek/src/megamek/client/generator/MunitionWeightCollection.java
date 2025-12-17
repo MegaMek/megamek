@@ -272,7 +272,7 @@ class MunitionWeightCollection {
     public void increaseArtilleryUtilityMunitions() {
         for (String weaponType: List.of("Long Tom", "Sniper", "Thumper")) {
             modifyMatchingWeights(mapTypeToWeights.get(weaponType),
-                  TeamLoadOutGenerator.UTILITY_MUNITIONS,
+                  TeamLoadOutGenerator.ARTILLERY_UTILITY_MUNITIONS,
                   getPropDouble("Defaults.Factors.increaseWeightFactor", 2.0),
                   getPropDouble("Defaults.Factors.increaseWeightDecrement", 1.0));
         }
@@ -281,7 +281,7 @@ class MunitionWeightCollection {
     public void decreaseArtilleryUtilityMunitions() {
         for (String weaponType: List.of("Long Tom", "Sniper", "Thumper")) {
             modifyMatchingWeights(mapTypeToWeights.get(weaponType),
-                  TeamLoadOutGenerator.UTILITY_MUNITIONS,
+                  TeamLoadOutGenerator.ARTILLERY_UTILITY_MUNITIONS,
                   getPropDouble("Defaults.Factors.decreaseWeightFactor", 0.5),
                   getPropDouble("Defaults.Factors.decreaseWeightDecrement", 0.0));
         }

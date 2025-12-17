@@ -42,6 +42,7 @@ import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import megamek.client.ratgenerator.AvailabilityRating;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ui.dialogs.unitSelectorDialogs.AbstractUnitSelectorDialog;
 import megamek.common.SimpleTechLevel;
@@ -51,6 +52,7 @@ import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.containers.MunitionTree;
+import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
@@ -170,6 +172,20 @@ public class TeamLoadOutGenerator {
           "TAGBomb",
           "TorpedoBomb",
           "ASEWMissile Ammo"));
+
+    // Only artillery utility munitions!
+    public static final ArrayList<String> ARTILLERY_UTILITY_MUNITIONS = new ArrayList<>(List.of("Illumination",
+          "Smoke",
+          "SM",
+          "Laser Inhibiting",
+          "Thunder",
+          "FASCAM",
+          "Thunder-Active",
+          "Thunder-Augmented",
+          "Thunder-Vibrabomb",
+          "Thunder-Inferno",
+          "Flare"
+          ));
 
     // Guided munitions come in two main flavors
     public static final ArrayList<String> GUIDED_MUNITIONS = new ArrayList<>(List.of("Semi-Guided",
@@ -676,17 +692,19 @@ public class TeamLoadOutGenerator {
     }
 
     /**
+     * Creates a lookup table of weapon system type -> munition type -> available bins, for the average force
      *
-     allowedYear = gameOptions.intOption(OptionsConstants.ALLOWED_YEAR);
-     gameTechLevel = TechConstants.getSimpleLevel(gameOptions.stringOption(OptionsConstants.ALLOWED_TECH_LEVEL));
-     legalLevel = SimpleTechLevel.getGameTechLevel(game);
-     eraBasedTechLevel = gameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED);
-     advAeroRules = gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_ARTILLERY_MUNITIONS);
-     showExtinct = gameOptions.booleanOption((OptionsConstants.ALLOWED_SHOW_EXTINCT));
-     *
-     * @param faction
-     * @param dateRange
-     * @return
+     * @param types         The set of all equipment types within which to search for AmmoTypes
+     * @param faction       Two-letter (MM) faction code of the force we are va
+     * @param year          Year in which the game will take place, for availability checks
+     * @param techLevel     Int representation of the tech level
+     * @param legalLevel    SimpleTechLevel representing the allowed technology for the game
+     * @param allowMixed    Whether all munitions are considered mixed tech for this game
+     * @param eraBased      Use era-based (year-based) validity checks, allowing some leeway on intro years
+     * @param advancedAero  Determines whether advanced aero munitions are available
+     * @param showExtinct   Flag setting whether extinct munitions should be considered available
+     * @param allowNukes    Set it to true, I dare you.
+     * @return  HashMap containing per-weapon entries, that contain per-munition entries of "bin counts"
      */
     public static HashMap<String, Object> generateValidMunitionsForFactionAndEra(
           List<EquipmentType> types,
@@ -781,16 +799,41 @@ public class TeamLoadOutGenerator {
         // Is the ammo even legal for this combination of faction, era, tech level?
         if (checkLegality(exemplar, faction.getCodeMM(), techBase, allowMixed, year, legalLevel, eraBased,
               showExtinct, allowNukes)) {
-            count = 1;
+            count = castPropertyInt("Defaults.Factors.defaultBinCount", 1);
 
-            // Simpler tech is more common
+            // Simpler tech is more common; give more bins for common munitions than for rare
             TechAdvancement techAdvancement = exemplar.getTechAdvancement();
-            int taMultiplier = (6 - techAdvancement.getTechRating().getIndex());
+            AvailabilityValue techAvailability = exemplar.calcYearAvailability(year, faction.isClan(), faction);
+            int taMultiplier = castPropertyInt("techRatingFactor", 1) * (6 - techAdvancement.getTechRating().getIndex());
+            // More available tech is also more common
+            taMultiplier *= castPropertyInt("techAvailFactor", 1) * (8 - techAvailability.getIndex());
             count = count * taMultiplier;
         }
 
         return count;
     }
+
+    /**
+     * Scale all bins in a munitions availability map by a factor
+     * @param availMap      An already-constructed munitions availability map
+     * @param factor        The value to multiply the existing bin counts by.
+     */
+    protected static void scaleAvailabilityMap(HashMap<String, Object> availMap, double factor) {
+        // Traverse all listed weapon types
+        for (Map.Entry<String, Object> entry : availMap.entrySet()) {
+            // Get the munition name : bin count sub-map for each
+            HashMap<String, Integer> entryMap = (HashMap<String, Integer>) entry.getValue();
+            // Update all the entries.  Anything 0 or lower will stay 0 or lower, so this won't change unavailable
+            // munitions to available.
+            for (String key : entryMap.keySet()) {
+                // No scaling of MAX_VALUE entries like "Standard"
+                if (entryMap.get(key) != Integer.MAX_VALUE) {
+                    entryMap.put(key, (int) (entryMap.get(key) * factor));
+                }
+            }
+        }
+    }
+
     // endregion generateValidMunitionsForFactionAndEra
 
     // region generateParameters
@@ -1297,7 +1340,7 @@ public class TeamLoadOutGenerator {
             for (String munition: weights.keySet()) {
                 String basePath = String.format("%s.%s.%s", weaponType, munition, (clan)? "Clan" : "IS");
                 String factionPath = String.format("%s.%s", basePath, reconfigurationParameters.friendlyFaction);
-                if (prohibited.contains(munition)) {
+                if (prohibited != null && prohibited.contains(munition)) {
                     // Impossible to use
                     weights.put(munition, 0.0);
                 } else {
@@ -1395,7 +1438,21 @@ public class TeamLoadOutGenerator {
         if (availMap == null) {
             availMap = generateValidMunitionsForFactionAndEra(faction);
         }
-        // TODO: Multiply availMap values here, where entity count and faction ratings are available
+
+        // Increase or reduce availability of limited munitions depending on the total force count and faction quality
+        // Min and max factor are restricted by Defaults.Factors values from YAML.
+        double factor = Math.min(
+              castPropertyDouble("Defaults.Factors.maximumAvailFactor", 2.0),
+              Math.max(
+                    castPropertyDouble("Defaults.Factors.minimumAvailFactor", 0.25),
+                    (entities.size() / castPropertyDouble("Defaults.Factors.defaultForceSize", 36.0)) *
+                        (
+                              castPropertyDouble("Defaults.Factors.qualityRatingMultiplier", 1.0) *
+                              (reconfigurationParameters.friendlyQuality + 1.0) / 6.0
+                        )
+              )
+        );
+        scaleAvailabilityMap(availMap, factor);
 
         // For Pirate forces, assume fewer rounds per bin at lower quality levels, minimum 20%. If fill ratio is
         // already set, leave it.
@@ -1586,18 +1643,22 @@ public class TeamLoadOutGenerator {
             // If "Random", choose a random ammo type. Availability will be checked later.
             // If not trueRandom, only select from munitions that deal damage
 
+            String lookup = "";
             boolean random = priorities.get(i).contains("Random");
             String binType = (random) ? getRandomBin(binName, trueRandom) : priorities.get(i);
             Mounted<AmmoType> bin = binList.get(0);
             AmmoType desired;
+            boolean available = false;
 
             // Load matching AmmoType
             if (binType.toLowerCase().contains("standard")) {
+                lookup = "Standard";
                 desired = (AmmoType) EquipmentType.get(techBase + " " + binName + " " + "Ammo");
                 if (desired == null) {
                     // Some ammo, like AC/XX ammo, is named funny
                     desired = (AmmoType) EquipmentType.get(techBase + " Ammo " + binName);
                 }
+
             } else {
                 // Get available munitions
                 Vector<AmmoType> vAllTypes = AmmoType.getMunitionsFor(bin.getType().getAmmoType());
@@ -1610,12 +1671,26 @@ public class TeamLoadOutGenerator {
                       .filter(m -> m.getInternalName().startsWith(techBase) &&
                             m.getBaseName().contains(binName) &&
                             m.getName().contains(binType))
-                      .filter(d -> checkLegality(d, faction, techBase, e.isMixedTech()))
                       .findFirst()
                       .orElse(null);
+                lookup = binType;
             }
 
-            if (desired == null) {
+            // Does the lookup to see how many bins of the munition are available, and _if_
+            // bins are available, remove one.
+            for (String key: availMap.keySet()) {
+                if (binName.contains(key)) {
+                    HashMap<String, Integer> availInts = (HashMap<String, Integer>) availMap.getOrDefault(key, null);
+                    available = (desired != null) && (availInts != null) && availInts.containsKey(lookup) &&
+                          availInts.get(lookup) > 0;
+                    if (available) {
+                        availInts.put(lookup, availInts.get(lookup) - 1);
+                        break;
+                    }
+                }
+            }
+
+            if (desired == null || !available) {
                 // Couldn't find a bin, move on to the next priority.
                 // Update default idx if we're currently setting the default
                 defaultIdx = (i == defaultIdx) ? defaultIdx + 1 : defaultIdx;

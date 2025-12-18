@@ -1755,6 +1755,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISImprovedSensors());
         EquipmentType.addType(MiscType.createCLImprovedSensors());
         EquipmentType.addType(MiscType.createISBALightActiveProbe());
+        EquipmentType.addType(MiscType.createCLBALightActiveProbe());
         EquipmentType.addType(MiscType.createISBARemoteSensorDispenser());
         EquipmentType.addType(MiscType.createBACuttingTorch());
         EquipmentType.addType(MiscType.createISBASpaceOperationsAdaptation());
@@ -10289,8 +10290,8 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Active Probe (Light)";
         misc.setInternalName(Sensor.IS_BA_LIGHT_AP);
-        misc.addLookupName(Sensor.CL_BA_LIGHT_AP);
         misc.addLookupName("ISBAActiveProbe");
+        misc.addLookupName("IS BA Light Active Probe");
         misc.tonnage = 0.25;
         misc.criticalSlots = 2;
         misc.cost = 50000;
@@ -10301,13 +10302,38 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "252, TM";
-        misc.techAdvancement.setTechBase(TechBase.ALL)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(DATE_NONE, DATE_NONE, 3050, DATE_NONE, DATE_NONE)
-              .setISApproximate(false, false, false, false, false)
+              .setISApproximate(false, false, false, false, false);
+        return misc;
+    }
+
+    public static MiscType createCLBALightActiveProbe() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Active Probe (Light)";
+        misc.setInternalName(Sensor.CL_BA_LIGHT_AP);
+        misc.addLookupName("CLBAActiveProbe");
+        misc.addLookupName("Clan BA Light Active Probe");
+        misc.tonnage = 0.15;
+        misc.criticalSlots = 1;
+        misc.cost = 50000;
+        misc.flags = misc.flags.or(F_BAP)
+              .or(F_BA_EQUIPMENT)
+              .andNot(F_MEK_EQUIPMENT)
+              .andNot(F_TANK_EQUIPMENT)
+              .andNot(F_FIGHTER_EQUIPMENT);
+        misc.bv = 0;
+        misc.rulesRefs = "348, TM";
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
+              .setIntroLevel(false)
+              .setUnofficial(false)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setClanAdvancement(2898, 2900, 3050, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.CSJ)

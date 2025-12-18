@@ -1307,9 +1307,11 @@ public class Tank extends Entity {
             prd.addModifier(1, "thin snow");
         }
 
-        // VDNI bonus?
+        // VDNI bonus? (BVDNI does NOT get piloting bonus due to "neuro-lag" per IO pg 71)
         if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
             prd.addModifier(-1, "VDNI");
+        } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
+            prd.addModifier(0, "BVDNI (no piloting bonus)");
         }
 
         if (hasModularArmor()) {

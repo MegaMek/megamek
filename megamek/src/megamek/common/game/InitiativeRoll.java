@@ -59,7 +59,7 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
     private final Vector<Integer> rolls = new Vector<>();
     private final Vector<Integer> originalRolls = new Vector<>();
     private final Vector<Boolean> wasRollReplaced = new Vector<>();
-    private final Vector<Integer> bonuses = new Vector<>();
+    private final Vector<InitiativeBonusBreakdown> bonuses = new Vector<>();
 
     public InitiativeRoll() {
 
@@ -72,13 +72,29 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
         wasRollReplaced.removeAllElements();
     }
 
-    public void addRoll(int bonus, String initiativeAptitudeSPA) {
+    /**
+     * Adds a new initiative roll with a detailed bonus breakdown.
+     *
+     * @param breakdown             The breakdown of all bonus components
+     * @param initiativeAptitudeSPA The initiative aptitude SPA (Combat Sense or Combat Paralysis), or empty string
+     */
+    public void addRoll(InitiativeBonusBreakdown breakdown, String initiativeAptitudeSPA) {
         int roll = getInitiativeRoll(initiativeAptitudeSPA);
 
         rolls.addElement(roll);
         originalRolls.addElement(roll);
-        bonuses.addElement(bonus);
+        bonuses.addElement(breakdown);
         wasRollReplaced.addElement(Boolean.FALSE);
+    }
+
+    /**
+     * Adds a new initiative roll with a single bonus value (for backwards compatibility).
+     *
+     * @param bonus                 The total bonus value
+     * @param initiativeAptitudeSPA The initiative aptitude SPA (Combat Sense or Combat Paralysis), or empty string
+     */
+    public void addRoll(int bonus, String initiativeAptitudeSPA) {
+        addRoll(InitiativeBonusBreakdown.fromTotal(bonus), initiativeAptitudeSPA);
     }
 
     /**
@@ -87,20 +103,33 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
     public void observerRoll() {
         rolls.addElement(-1);
         originalRolls.addElement(-1);
-        bonuses.addElement(0);
+        bonuses.addElement(InitiativeBonusBreakdown.zero());
         wasRollReplaced.addElement(Boolean.FALSE);
     }
 
     /**
      * Replace the previous init roll with a new one, and make a note that it was replaced. Used for Tactical Genius
      * special pilot ability (lvl 3).
+     *
+     * @param breakdown The breakdown of all bonus components
+     * @param initiativeAptitudeSPA The initiative aptitude SPA (Combat Sense or Combat Paralysis), or empty string
      */
-    public void replaceRoll(int bonus, String initiativeAptitudeSPA) {
+    public void replaceRoll(InitiativeBonusBreakdown breakdown, String initiativeAptitudeSPA) {
         int roll = getInitiativeRoll(initiativeAptitudeSPA);
 
         rolls.setElementAt(roll, size() - 1);
-        bonuses.setElementAt(bonus, size() - 1);
+        bonuses.setElementAt(breakdown, size() - 1);
         wasRollReplaced.setElementAt(Boolean.TRUE, size() - 1);
+    }
+
+    /**
+     * Replace the previous init roll with a new one (for backwards compatibility).
+     *
+     * @param bonus                 The total bonus value
+     * @param initiativeAptitudeSPA The initiative aptitude SPA (Combat Sense or Combat Paralysis), or empty string
+     */
+    public void replaceRoll(int bonus, String initiativeAptitudeSPA) {
+        replaceRoll(InitiativeBonusBreakdown.fromTotal(bonus), initiativeAptitudeSPA);
     }
 
     private int getInitiativeRoll(String initiativeAptitudeSPA) {
@@ -127,7 +156,7 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
     }
 
     public int getRoll(int index) {
-        return rolls.elementAt(index) + bonuses.elementAt(index);
+        return rolls.elementAt(index) + bonuses.elementAt(index).total();
     }
 
     /**
@@ -171,28 +200,46 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
 
         boolean tacticalGenius = false;
         for (int i = 0; i < rolls.size(); i++) {
-            Integer r = rolls.elementAt(i);
-            Integer o = originalRolls.elementAt(i);
-            Integer b = bonuses.elementAt(i);
-            int t = r + b;
-            int to = o + b;
+            Integer roll = rolls.elementAt(i);
+            Integer originalRoll = originalRolls.elementAt(i);
+            InitiativeBonusBreakdown breakdown = bonuses.elementAt(i);
+            int bonusTotal = breakdown.total();
+            int total = roll + bonusTotal;
+            int originalTotal = originalRoll + bonusTotal;
+
+            String breakdownStr = breakdown.toBreakdownString();
 
             if (wasRollReplaced.elementAt(i)) {
-                stringBuilder.append(to)
+                // Tactical Genius: show original roll then replacement
+                stringBuilder.append(originalTotal)
                       .append("[")
-                      .append(o)
+                      .append(originalRoll)
                       .append("+")
-                      .append(b)
-                      .append("](")
-                      .append(t)
+                      .append(bonusTotal);
+                if (bonusTotal != 0) {
+                    stringBuilder.append(" (").append(breakdownStr).append(")");
+                }
+                stringBuilder.append("](")
+                      .append(total)
                       .append("[")
-                      .append(r)
+                      .append(roll)
                       .append("+")
-                      .append(b)
-                      .append("])");
+                      .append(bonusTotal);
+                if (bonusTotal != 0) {
+                    stringBuilder.append(" (").append(breakdownStr).append(")");
+                }
+                stringBuilder.append("])");
                 tacticalGenius = true;
             } else {
-                stringBuilder.append(t).append("[").append(r).append("+").append(b).append("]");
+                stringBuilder.append(total)
+                      .append("[")
+                      .append(roll)
+                      .append("+")
+                      .append(bonusTotal);
+                if (bonusTotal != 0) {
+                    stringBuilder.append(" (").append(breakdownStr).append(")");
+                }
+                stringBuilder.append("]");
             }
 
             if (i != rolls.size() - 1) {

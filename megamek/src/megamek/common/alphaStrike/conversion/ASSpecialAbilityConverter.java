@@ -150,7 +150,7 @@ public class ASSpecialAbilityConverter {
             assign(misc, PRB);
         } else if (miscType.isAnyOf(Sensor.CL_IMPROVED, Sensor.IS_IMPROVED)) {
             assign(misc, RCN);
-        } else if (miscType.isAnyOf(Sensor.LIGHT_AP, Sensor.IS_BA_LIGHT_AP)) {
+        } else if (miscType.isAnyOf(Sensor.LIGHT_AP, Sensor.IS_BA_LIGHT_AP, Sensor.CL_BA_LIGHT_AP)) {
             assign(misc, LPRB);
         } else if (miscType.isAnyOf(Sensor.BLOODHOUND)) {
             assign(misc, BH);

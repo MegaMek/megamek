@@ -147,6 +147,7 @@
     <selfPreservationIndex>10</selfPreservationIndex>
     <herdMentalityIndex>4</herdMentalityIndex>
     <braveryIndex>8</braveryIndex>
+      <hiddenUnitRevealIndex>2</hiddenUnitRevealIndex>
     <verbosity>WARNING</verbosity>
     <strategicBuildingTargets />
   </behavior>
@@ -162,6 +163,7 @@
     <selfPreservationIndex>5</selfPreservationIndex>
     <herdMentalityIndex>5</herdMentalityIndex>
     <braveryIndex>5</braveryIndex>
+      <hiddenUnitRevealIndex>5</hiddenUnitRevealIndex>
     <verbosity>WARNING</verbosity>
     <strategicBuildingTargets />
   </behavior>
@@ -192,6 +194,7 @@
     <selfPreservationIndex>10</selfPreservationIndex>
     <herdMentalityIndex>8</herdMentalityIndex>
     <braveryIndex>2</braveryIndex>
+      <hiddenUnitRevealIndex>1</hiddenUnitRevealIndex>
     <verbosity>WARNING</verbosity>
     <strategicBuildingTargets />
   </behavior>

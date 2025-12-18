@@ -1,0 +1,607 @@
+######## Munition Loadout Settings ########
+
+### This section defines prohibited munitions.
+### Any munition type listed here will be removed from consideration (after weight adjustment and supply calculations)
+### Prohibitions apply equally to all factions and all munition types.
+### E.g. adding "  - Smoke" would prevent SRM, LRM, and various Artillery bins from being loaded with Smoke ammo.
+Prohibited:
+  # Prohibited ammo will never be used by any faction.  Entries are indented one level and start with a hyphen:
+  # - Tandem-Charge
+  # - AlamoMissile Ammo
+  # - Davey Crockett-M
+
+### This section defines override weights, which are applied after all other calculations but before supply checks.
+### To create an override,
+Overrides:
+  # Overrides will replace final generated values in the configurator.
+  # A negative value works like a Prohibited entry (above) but provides more granular control; instead of
+  # all weapons and factions, a single faction's use of   # one munition type for a single weapon class can be
+  # effected here.
+  # These apply to the generated weights within TeamLoadOutGenerator, not to the base weights in
+  # MunitionWeightCollection.
+  # Example 1) to force IS teams to always value LRM Dead-Fire at weight 4.0, ignoring utility calculations:
+  # Munitions:
+  #   LRM:
+  #     Dead-Fire:
+  #       IS: 4.0
+  #
+  # Example 2) to force Clan Ghost Bear to never use ATM HE munitions:
+  # Munitions:
+  #  ATM:
+  #    HE:
+  #      Clan:
+  #        CGB: -1.0
+  Munitions:
+  Bombs:
+  Factors:
+
+### Sets the default starting selection weights, bomb configuration thresholds, and adjustment factors for all
+### munitions currently known to the autoconfiguration tool "Team Loadout Generator".
+Defaults:
+  # Default Munit starting values
+  Munitions:
+    # Default weights of all munitions; increase or decrease to change relative weights prior to
+    # unit- and map-related autoconfiguration.  Utility scores will be adjusted from these defaults depending
+    # on the scenario parameters.
+    # Undefined values get the default value, below:
+    Weight: 0.0
+    LRM:
+      Dead-Fire:
+        IS: 3.0
+        Clan: 1.0
+      Standard:
+        IS: 2.0
+        Clan: 2.0
+      Swarm-I:
+        IS: 1.0
+        Clan: 1.0
+      Swarm:
+        IS: 1.0
+        Clan: 1.0
+      Heat-Seeking:
+        IS: 1.0
+        Clan: 1.0
+      Semi-guided:
+        IS: 1.0
+        Clan: 1.0
+      Artemis-capable:
+        # Never weight Artemis munitions above 0; they are assigned to Artemis-compatible launchers automatically
+        IS: -1.0
+        Clan: -1.0
+      Narc-capable:
+        IS: 1.0
+        Clan: 1.0
+      Follow The Leader:
+        IS: 1.0
+        Clan: 1.0
+      Fragmentation:
+        IS: 0.5
+        Clan: 0.5
+      Thunder:
+        IS: 1.0
+        Clan: 1.0
+      Thunder-Active:
+        IS: 1.0
+        Clan: 1.0
+      Thunder-Augmented:
+        IS: 1.0
+        Clan: 1.0
+      Thunder-Vibrabomb:
+        IS: 1.0
+        Clan: 1.0
+      Thunder-Inferno:
+        IS: 1.0
+        Clan: 1.0
+      Anti-TSM:
+        IS:
+          # If IS or Clan is followed by a further level, any faction not explicitly listed must use the
+          # "Any" value, and "Any" must be present (unless every possible faction code is explicitly listed)
+          Any: 0.0
+          FS: 1.0
+        Clan: 0.0
+      Listen-Kill:
+        IS: 1.0
+        Clan: 1.0
+      Smoke:
+        IS: 1.0
+        Clan: 1.0
+      Mine Clearance:
+        IS: 1.0
+        Clan: 1.0
+      Anti-Radiation:
+        IS: 1.0
+        Clan: 1.0
+
+    SRM:
+      Dead-Fire:
+        IS: 3.0
+        Clan: 1.0
+      Standard:
+        IS: 2.0
+        Clan: 2.0
+      Tandem-Charge:
+        IS: 1.0
+        Clan: 1.0
+      Inferno:
+        IS: 1.0
+        Clan: 1.0
+      Heat-Seeking:
+        IS: 1.0
+        Clan: 1.0
+      Artemis-capable:
+        # Never weight Artemis munitions above 0; they are assigned to Artemis-compatible launchers automatically
+        IS: -1.0
+        Clan: -1.0
+      Narc-capable:
+        IS: 1.0
+        Clan: 1.0
+      Fragmentation:
+        IS: 0.5
+        Clan: 0.5
+      Acid:
+        IS: 1.0
+        Clan: 1.0
+      Anti-TSM:
+        IS:
+          # If IS or Clan is followed by a further level, any faction not explicitly listed must use the
+          # "Any" value, and "Any" must be present (unless every possible faction code is explicitly listed)
+          Any: 0.0
+          FS: 1.0
+        Clan: 0.0
+      Listen-Kill:
+        IS: 1.0
+        Clan: 1.0
+      Mine Clearance:
+        IS: 1.0
+        Clan: 1.0
+      Smoke:
+        IS: 1.0
+        Clan: 1.0
+      Anti-Radiation:
+        IS: 1.0
+        Clan: 1.0
+
+    AC:
+      Precision:
+        IS: 1.0
+        Clan: 1.0
+      Standard:
+        IS: 2.0
+        Clan: 2.0
+      Armor-Piercing:
+        IS: 1.0
+        Clan: 1.0
+      Caseless:
+        IS: 1.0
+        Clan: 1.0
+      Flak:
+        IS: 1.0
+        Clan: 1.0
+      Tracer:
+        IS: 1.0
+        Clan: 1.0
+      Flechette:
+        IS: 0.5
+        Clan: 0.5
+      Armor-Piercing Playtest:
+        IS: 1.0
+        Clan: 1.0
+      Precision Playtest:
+        IS: 1.0
+        Clan: 1.0
+
+    Arrow IV:
+      Fuel-Air:
+        IS: 1.0
+        Clan: 1.0
+      Standard:
+        IS: 2.0
+        Clan: 2.0
+      ADA:
+        IS: 1.0
+        Clan: 1.0
+      Cluster:
+        IS: 1.0
+        Clan: 1.0
+      Inferno-IV:
+        IS: 1.0
+        Clan: 1.0
+      Homing:
+        IS: 1.0
+        Clan: 1.0
+      Thunder:
+        IS: 1.0
+        Clan: 1.0
+      Thunder Vibrabomb-IV:
+        IS: 1.0
+        Clan: 1.0
+      Illumination:
+        IS: 1.0
+        Clan: 1.0
+      Smoke:
+        IS: 1.0
+        Clan: 1.0
+      Laser Inhibiting:
+        IS: 1.0
+        Clan: 1.0
+      Davy Crockett-M:
+        IS: 1.0
+        Clan: 1.0
+
+    Long Tom:
+      Fuel-Air:
+        IS: 1.0
+        Clan: 1.0
+      Standard:
+        IS: 2.0
+        Clan: 2.0
+      Cluster:
+        IS: 1.0
+        Clan: 1.0
+      Copperhead:
+        IS: 1.0
+        Clan: 1.0
+      FASCAM:
+        IS: 1.0
+        Clan: 1.0
+      Flechette:
+        IS: 0.5
+        Clan: 0.5
+      Illumination:
+        IS: 1.0
+        Clan: 1.0
+      Smoke:
+        IS: 1.0
+        Clan: 1.0
+      Davy Crockett-M:
+        IS: 1.0
+        Clan: 1.0
+
+    Sniper:
+      Fuel-Air:
+        IS: 1.0
+        Clan: 1.0
+      Standard:
+        IS: 2.0
+        Clan: 2.0
+      Cluster:
+        IS: 1.0
+        Clan: 1.0
+      Copperhead:
+        IS: 1.0
+        Clan: 1.0
+      FASCAM:
+        IS: 1.0
+        Clan: 1.0
+      Flechette:
+        IS: 0.5
+        Clan: 0.5
+      Illumination:
+        IS: 1.0
+        Clan: 1.0
+      Smoke:
+        IS: 1.0
+        Clan: 1.0
+
+    Thumper:
+      Fuel-Air:
+        IS: 1.0
+        Clan: 1.0
+      Standard:
+        IS: 2.0
+        Clan: 2.0
+      Cluster:
+        IS: 1.0
+        Clan: 1.0
+      Copperhead:
+        IS: 1.0
+        Clan: 1.0
+      FASCAM:
+        IS: 1.0
+        Clan: 1.0
+      Flechette:
+        IS: 0.5
+        Clan: 0.5
+      Illumination:
+        IS: 1.0
+        Clan: 1.0
+      Smoke:
+        IS: 1.0
+        Clan: 1.0
+
+    Long Tom Cannon:
+      Fuel-Air:
+        IS: 1.0
+        Clan: 1.0
+      Standard:
+        IS: 2.0
+        Clan: 2.0
+
+    Sniper Cannon:
+      Fuel-Air:
+        IS: 1.0
+        Clan: 1.0
+      Standard:
+        IS: 2.0
+        Clan: 2.0
+
+    Thumper Cannon:
+      Fuel-Air:
+        IS: 1.0
+        Clan: 1.0
+      Standard:
+        IS: 2.0
+        Clan: 2.0
+
+    ATM:
+      Standard:
+        Clan: 1.0
+      ER:
+        Clan: 2.0
+      HE:
+        Clan: 2.0
+
+    iATM:
+      Standard:
+        Clan: 1.0
+      ER:
+        Clan: 2.0
+      HE:
+        Clan: 2.0
+      IMP:
+        Clan: 1.0
+      IIW:
+        Clan: 1.0
+
+    # Mek Mortars specifically, but our Mek Mortar ammo doesn't use the word "Mek" anywhere
+    Mortar:
+      # Shaped-charge, standard ammo
+      SC:
+        IS: 2.0
+        Clan: 2.0
+      # Semi-guided
+      SG:
+        IS: 1.0
+        Clan: 1.0
+      # Anti-personnel
+      AP:
+        IS: 1.0
+        Clan: 1.0
+      # Air-burst
+      AB:
+        IS: 1.0
+        Clan: 1.0
+      # Flare
+      FL:
+        IS: 1.0
+        Clan: 1.0
+      # Smoke
+      SM:
+        IS: 1.0
+        Clan: 1.0
+
+    Narc:
+      Narc Explosive:
+        IS: 1.0
+        Clan: 1.0
+      Standard:
+        IS: 1.0
+        Clan: 1.0
+
+    # Currently unused but included for completeness and future functionality.
+    Bomb:
+      AlamoMissile Ammo:
+        IS: 1.0
+        Clan: 1.0
+      ASMissile Ammo:
+        IS: 1.0
+        Clan: 1.0
+      TAGBomb:
+        IS: 1.0
+        Clan: 1.0
+      LGBomb:
+        IS: 1.0
+        Clan: 1.0
+      RL-P 10 Ammo (Bomb):
+        IS: 1.0
+        Clan: 1.0
+      InfernoBomb:
+        IS: 1.0
+        Clan: 1.0
+      ASEWMissile Ammo:
+        IS: 1.0
+        Clan: 1.0
+      ClusterBomb:
+        IS: 1.0
+        Clan: 1.0
+      TorpedoBomb:
+        IS: 1.0
+        Clan: 1.0
+      RL 10 Ammo (Bomb):
+        IS: 1.0
+        Clan: 1.0
+      ArrowIVMissile Ammo:
+        IS: 1.0
+        Clan: 1.0
+      ThunderBomb:
+        IS: 1.0
+        Clan: 1.0
+      AAAMissile Ammo:
+        IS: 1.0
+        Clan: 1.0
+      FABombLarge Ammo:
+        IS: 1.0
+        Clan: 1.0
+      HEBomb:
+        IS: 1.0
+        Clan: 1.0
+      ArrowIVHomingMissile Ammo:
+        IS: 1.0
+        Clan: 1.0
+      LAAMissile Ammo:
+        IS: 1.0
+        Clan: 1.0
+      FABombSmall Ammo:
+        IS: 1.0
+        Clan: 1.0
+
+
+  ### This section controls automatic selection and assignment of bomb munitions to Aerospace Fighters and
+  ### Conventional Fighters
+  Bombs:
+    # These values control the loadout spread, types, and percentages of various bomb roles and munition types
+    MapGroundSpreadNormal: 6
+    MapGroundSpreadAnti-Mek: 3
+    MapGroundSpreadAnti-conventional: 2
+    MapGroundSpreadStandoff: 1
+    MapGroundSpreadStrike: 2
+    MapPirateGroundSpreadNormal: 7
+    MapPirateGroundSpreadFirestorm: 3
+    normalBombLoad_HE: 40
+    normalBombLoad_LG: 5
+    normalBombLoad_CLUSTER: 30
+    normalBombLoad_INFERNO: 15
+    normalBombLoad_THUNDER: 10
+    antiMekBombLoad_HE: 55
+    antiMekBombLoad_LG: 15
+    antiMekBombLoad_INFERNO: 10
+    antiMekBombLoad_THUNDER: 10
+    antiMekBombLoad_HOMING: 10
+    antiConvBombLoad_CLUSTER: 50
+    antiConvBombLoad_INFERNO: 40
+    antiConvBombLoad_THUNDER: 8
+    antiConvBombLoad_FAE_SMALL: 8
+    standoffBombLoad_ARROW: 40
+    standoffBombLoad_HOMING: 60
+    strikeBombLoad_LG: 45
+    strikeBombLoad_HOMING: 25
+    strikeBombLoad_HE: 30
+    lowTechBombLoad_HE: 35
+    lowTechBombLoad_RL: 65
+    pirateBombLoad_HE: 7
+    pirateBombLoad_RL: 45
+    pirateBombLoad_INFERNO: 35
+    pirateBombLoad_CLUSTER: 5
+    pirateBombLoad_FAE_SMALL: 6
+    pirateBombLoad_FAE_LARGE: 2
+    pirateFirestormBombLoad_INFERNO: 60
+    pirateFirestormBombLoad_FAE_SMALL: 30
+    pirateFirestormBombLoad_FAE_LARGE: 10
+    antiAirBombLoad_RL: 40
+    antiAirBombLoad_LAA: 40
+    antiAirBombLoad_AAA: 15
+    antiAirBombLoad_AS: 4
+    antiAirBombLoad_ASEW: 1
+    antiShipBombLoad_AAA: 50
+    antiShipBombLoad_AS: 35
+    antiShipBombLoad_ASEW: 15
+    pirateAntiBombLoad_RL: 60
+    pirateAntiBombLoad_LAA: 30
+    pirateAntiBombLoad_AAA: 10
+    # Sets the minimum + (0 ~ N) range of bomber units in a force that will be equipped.
+    percentBombersToEquipMin: 40
+    percentBombersToEquipRange: 60
+    # For each Aerospace unit, if 1d6 is equal or below threshold, equip for CAP
+    fightersLoadForCAPRollTargetThreshold: 1
+    bomberMinUnarmedSafeThrustValue: 2
+    bomberMinArmedSafeThrustValue: 3
+    fighterCAPMinUnarmedSafeThrustValue: 2
+    fighterCAPMinArmedSafeThrustFractionDivisor: 2.0
+    maxBomberLoadFactorDivisor: 5.0
+    maxBomberLoadThrustDiffFactor: 5
+    maxPercentBomberLoadToEquipMin: 50
+    maxPercentBomberLoadToEquipRange: 40
+    bombersToAddTagMaxCount: 3
+    bomberRandomThresholdMaxPercent: 100
+    fighterCAPRandomPercentageRange: 100
+    fighterCAPAntiShipLoadOutRandomPercentageMax: 20
+    # If a munition must be replaced, range and threshold of RL vs HE
+    ReplacementIntRange: 2
+    ReplacementRLThreshold: 0
+    maxBombApplicationLoopCount: 10
+    maxBombOrdnanceWeightPercentThreshold: 100
+    RandomReplaceRating4PlusThreshold: 5
+    RandomReplaceRating3PlusThreshold: 10
+    RandomReplaceRating2PlusThreshold: 25
+    RandomReplaceRating1PlusThreshold: 40
+    RandomReplaceRating0PlusThreshold: 80
+
+  ### These values adjust how munition categories are valued by various triggers and are used by the MunitionTree class
+  Factors:
+    # Decrease count-reducing ammo wight factor if own team: enemy team count < this factor
+    mtReducingAmmoReduceIfUnderFactor: 2.0
+    # Increase count-reducing ammo weight factor if own team: enemy team count >= this factor
+    mtReducingAmmoIncreaseIfOverFactor: 3.0
+    # Min number of bombers to cause Flak munition weight increase (default is 1 or more)
+    mtFlakMinBombersExceedThreshold: 0.0
+    # If enemy force is 1/<this value> fliers of any kind, weight Flak munitions higher
+    mtFlakEnemyFliersFractionDivisor: 4.0
+    # If enemy force is 1/<this value> fast movers, weight precision-increasing munitions higher
+    mtPrecisionAmmoFastEnemyFractionDivisor: 4.0
+    # If number of enemy units with advanced armor types exceeds this, weight high-powered munitions (TC, AP) higher
+    mtHPAmmoAdvArmorEnemiesExceedThreshold: 0.0
+    # If enemy force is 1/<this value> fireproof units, reduce heat- and fire-based munition weight
+    mtFireproofMaxEnemyFractionDivisor: 4.0
+    # If enemy force is 1/<this value> infantry units, increase anti-infantry munition weight
+    mtInfantryEnemyExceedsFractionDivisor: 4.0
+    # If enemy force is 1/<this value> vehicles, increase heat- and fire-producing munition weight
+    mtVeeEnemyExceedsFractionDivisor: 4.0
+    # If enemy force is 1/<this value> BA units, increase AE, AP, TC, and heat/fire munitions (mod fireproof)
+    mtBAEnemyExceedsFractionDivisor: 4.0
+    # If enemy force contains more than this number of ECM units, weight seeking munitions up and guided down
+    mtSeekingAmmoEnemyECMExceedThreshold: 1.0
+    # If friendly forces' TAG count exceeds this threshold, weight guided munitions higher
+    mtGuidedAmmoFriendlyTAGThreshold: 1.0
+    # If friendly forces' NARC count exceeds this threshold, weight guided munitions higher
+    mtGuidedAmmoFriendlyNARCThreshold: 1.0
+    # If friendly force is 1/<this value> "missile boats", weight guided munitions higher
+    mtGuidedAmmoFriendlyMissileBoatFractionDivisor: 3.0
+    # If off-board artillery units do not exceed this count, reduce weight of "utility" munitions (smoke, mines, flares)
+    mtUtilityAmmoOffBoardUnitsThreshold: 2.0
+    # If friendly forces: enemy forces does not exceed this fraction, reduce weight of "utility" munitions
+    mtUtilityAmmoFriendlyVsEnemyFractionDivisor: 1.0
+    # If enemy force is 1/<this value> "energy boats", increase heat-producing munition weight
+    mtEnergyBoatEnemyFractionDivisor: 4.0
+    # If enemy TSM-equipped units exceed this count, increase heat-seeking munition weight
+    mtSeekingAmmoEnemyTSMExceedThreshold: 1.0
+    # Weight cut-off beneath which to ignore munitions (final weights below this will never be equipped)
+    mtMunitionWeightThreshold: 0.0
+
+    ### Factors controlling how many bins of each munition type will be generated in the availabilityMap
+    # Generally, default bin count is 1 * (6 - tech rating) * (8 - availability rating), so only 1 bin
+    # of Tech Rating E, Availability Rating X ammo would be available for a default force size.
+    #
+    # Default count of bins for a munition
+    defaultBinCount: 1
+    # Factor to multiply bin tech rating increase by (normally 1 per rating drop)
+    techRatingFactor: 1
+    # Factor to multiply bin availability rating increase by (normally 1 per rating drop)
+    techAvailFactor: 1
+    # How many units is the generated set of alternate munitions meant to supply?
+    defaultForceSize: 36
+    # Quality Rating multiplier: default 1.0 means a rank 5 unit gets 100% of bin count; rank 2 gets 50%, rank
+    # 0 gets 16.6%.
+    qualityRatingMultiplier: 1.0
+    # Minimum factor to apply to availabilityMap values (the factor will not go below this value):
+    minimumAvailFactor: 0.25
+    # Maximum factor to apply to availabilityMap values (the factor will not go above this value):
+    maximumAvailFactor: 2.0
+
+    ### These factors determine how far up and down an "increase" or "decrease" step actually moves the weight
+    # of a munition type.  The default values increase a weight by (2.0 x weight) + 1, and decrease by
+    # (0.5 * weight) - 1.  Munitions whose weights equal or are below the weight threshold (above) after
+    # utility calculations will be ignored.
+    increaseWeightFactor: 2.0
+    increaseWeightIncrement: 1.0
+    decreaseWeightFactor: 0.5
+    decreaseWeightDecrement: -1.0
+
+    ### These factors determine how Pirates and Rebels are penalized for their low quality
+    # Pirates and Rebels get ammo bins filled at random ratios -
+    # Min(maxAllowed, Max(minAllowed, random/rangeDivisor + quality/qualityDivisor))
+    # E.g. the defaults give a range of 20% to 100%, with Quality Rating 0 giving ~20%
+    # and Rating 5 giving ~75% on average
+    pirateMaxAllowedBinFillRatio: 1.0
+    pirateMinAllowedBinFillRatio: 0.2
+    pirateRandomRangeDivisor: 4.0
+    pirateQualityDivisor: 8.0

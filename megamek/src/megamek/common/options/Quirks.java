@@ -115,9 +115,6 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, QUIRK_POS_UBIQUITOUS_IS, false);
         addOption(posQuirk, QUIRK_POS_UBIQUITOUS_CLAN, false);
         addOption(posQuirk, QUIRK_POS_VAR_RNG_TARG, false);
-        // Legacy Variable Range Targeting quirks - kept for backward compatibility
-        addOption(posQuirk, QUIRK_POS_VAR_RNG_TARG_L, false);
-        addOption(posQuirk, QUIRK_POS_VAR_RNG_TARG_S, false);
         addOption(posQuirk, QUIRK_POS_VESTIGIAL_HANDS_LA, false);
         addOption(posQuirk, QUIRK_POS_VESTIGIAL_HANDS_RA, false);
         addOption(posQuirk, QUIRK_POS_VTOL_ROTOR_COAXIAL, false);
@@ -218,9 +215,7 @@ public class Quirks extends AbstractOptions {
         String qName = quirk.getName();
 
         // Variable Range Targeting cannot be combined with Improved Targeting quirks (BMM pg. 86)
-        if (qName.equals(QUIRK_POS_VAR_RNG_TARG) ||
-              qName.equals(QUIRK_POS_VAR_RNG_TARG_L) ||
-              qName.equals(QUIRK_POS_VAR_RNG_TARG_S)) {
+        if (qName.equals(QUIRK_POS_VAR_RNG_TARG)) {
             if (en.hasQuirk(QUIRK_POS_IMP_TARG_S) ||
                   en.hasQuirk(QUIRK_POS_IMP_TARG_M) ||
                   en.hasQuirk(QUIRK_POS_IMP_TARG_L)) {
@@ -232,9 +227,7 @@ public class Quirks extends AbstractOptions {
         if (qName.equals(QUIRK_POS_IMP_TARG_S) ||
               qName.equals(QUIRK_POS_IMP_TARG_M) ||
               qName.equals(QUIRK_POS_IMP_TARG_L)) {
-            if (en.hasQuirk(QUIRK_POS_VAR_RNG_TARG) ||
-                  en.hasQuirk(QUIRK_POS_VAR_RNG_TARG_L) ||
-                  en.hasQuirk(QUIRK_POS_VAR_RNG_TARG_S)) {
+            if (en.hasQuirk(QUIRK_POS_VAR_RNG_TARG)) {
                 return false;
             }
         }

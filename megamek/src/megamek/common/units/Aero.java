@@ -185,6 +185,9 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     // track leaving the ground map
     private OffBoardDirection flyingOff = OffBoardDirection.NONE;
 
+    // track altitude when climbing out (leaving map vertically at altitude 10)
+    private int exitAltitude = 0;
+
     /**
      * Track how much altitude has been lost this turn. This is important for properly making weapon attacks, so
      * WeaponAttackActions knows what the altitude was before the attack happened, since the altitude lose is applied
@@ -1162,7 +1165,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         // Reset usedInternalBombs
         setUsedInternalBombs(0);
 
-        // Reset flying off dir
+        // Reset flying off direction (exitAltitude is preserved for returning units
+        // and cleared in DeploymentProcessor when deployed)
         flyingOff = OffBoardDirection.NONE;
     }
 
@@ -3109,5 +3113,15 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public OffBoardDirection getFlyingOffDirection() {
         return this.flyingOff;
+    }
+
+    @Override
+    public int getExitAltitude() {
+        return exitAltitude;
+    }
+
+    @Override
+    public void setExitAltitude(int altitude) {
+        this.exitAltitude = altitude;
     }
 }

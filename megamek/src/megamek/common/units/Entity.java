@@ -901,6 +901,19 @@ public abstract class Entity extends TurnOrdered
      */
     protected int consecutiveRHSUses = 0;
 
+    /**
+     * Tracks whether the radical heat sink was actually used (processed in heat phase) last turn. This is needed
+     * because the equipment mode persists until newRound(), so we can't rely on hasActivatedRadicalHS() to determine if
+     * RHS was used in the previous turn.
+     */
+    protected boolean usedRHSLastTurn = false;
+
+    /**
+     * Tracks whether the RHS consecutive uses counter increased last turn. Used to properly decrement when
+     * transitioning from using to not using RHS, similar to how MASC handles its failure level.
+     */
+    protected boolean rhsWentUp = false;
+
     private final Set<Integer> attackedByThisTurn = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final Set<Integer> groundAttackedByThisTurn = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
@@ -6524,29 +6537,20 @@ public abstract class Entity extends TurnOrdered
     //region Variable Range Targeting (BMM pg. 86)
 
     /**
-     * Checks if this entity has the Variable Range Targeting quirk. Supports both the new unified quirk and legacy
-     * quirks for backward compatibility.
+     * Checks if this entity has the Variable Range Targeting quirk.
      *
      * @return true if this entity has Variable Range Targeting capability
      */
     public boolean hasVariableRangeTargeting() {
-        return hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG) ||
-              hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L) ||
-              hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S);
+        return hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG);
     }
 
     /**
-     * Returns the current Variable Range Targeting mode. For legacy quirks, the mode is determined by which quirk is
-     * set.
+     * Returns the current Variable Range Targeting mode.
      *
      * @return the current VariableRangeTargetingMode
      */
     public VariableRangeTargetingMode getVariableRangeTargetingMode() {
-        // Legacy quirk support: if using old SHORT quirk, return SHORT mode
-        if (hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S) &&
-              !hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG)) {
-            return VariableRangeTargetingMode.SHORT;
-        }
         // Handle null from old save files that don't have this field
         if (variableRangeTargetingMode == null) {
             return VariableRangeTargetingMode.LONG;
@@ -7211,11 +7215,24 @@ public abstract class Entity extends TurnOrdered
         // Reset TSEMP firing flag
         setFiredTsempThisTurn(false);
 
-        // Decrement the number of consecutive turns if not used last turn
-        if (!hasActivatedRadicalHS()) {
+        // Update consecutive RHS uses based on last turn's usage
+        // This follows the same pattern as MASC/Supercharger to properly handle the "cooling down" mechanic
+        if (hasUsedRHSLastTurn()) {
+            // RHS was used last turn - the counter was already incremented in HeatResolver
+            rhsWentUp = true;
+        } else {
+            // RHS was not used last turn - decrement the counter
             setConsecutiveRHSUses(Math.max(0, getConsecutiveRHSUses() - 1));
+            // If the counter went up last turn (from using RHS), decrement again
+            // This compensates for the increment that happened when RHS was used
+            if (rhsWentUp) {
+                setConsecutiveRHSUses(Math.max(0, getConsecutiveRHSUses() - 1));
+                rhsWentUp = false;
+            }
         }
-        // Reset used RHS flag
+        // Reset RHS tracking flag for the new turn
+        setUsedRHSLastTurn(false);
+        // Reset RHS mode
         deactivateRadicalHS();
 
         clearAttackedByThisTurn();
@@ -14765,12 +14782,31 @@ public abstract class Entity extends TurnOrdered
         for (QuirkEntry quirkEntry : quirks) {
             // If the quirk doesn't have a location, then it is a unit quirk, not a weapon quirk.
             if (StringUtility.isNullOrBlank(quirkEntry.location())) {
+                // Migrate legacy Variable Range Targeting quirks to the unified quirk
+                String quirkName = quirkEntry.getQuirk();
+                // These string literals are intentionally hardcoded for backward compatibility
+                // with old save files that contain these deprecated quirk names
+                boolean isLegacyVrtShort = "variable_range_short".equals(quirkName);
+                boolean isLegacyVrtLong = "variable_range_long".equals(quirkName);
+                if (isLegacyVrtShort || isLegacyVrtLong) {
+                    quirkName = OptionsConstants.QUIRK_POS_VAR_RNG_TARG;
+                    LOGGER.info("Migrating legacy quirk '{}' to '{}' for {} {}",
+                          quirkEntry.getQuirk(), quirkName, getChassis(), getModel());
+                }
+
                 // Activate the unit quirk.
-                IOption option = getQuirks().getOption(quirkEntry.getQuirk());
+                IOption option = getQuirks().getOption(quirkName);
                 if (option == null) {
                     LOGGER.warn("{} failed to load quirk for {} {} - Invalid quirk!", quirkEntry, getChassis(),
                           getModel());
                     continue;
+                }
+
+                // Set the Variable Range Targeting mode based on which legacy quirk was used
+                if (isLegacyVrtShort) {
+                    setVariableRangeTargetingMode(VariableRangeTargetingMode.SHORT);
+                } else if (isLegacyVrtLong) {
+                    setVariableRangeTargetingMode(VariableRangeTargetingMode.LONG);
                 }
                 // Handle quirks with values (e.g., obsolete:2750 or obsolete:2950,3146)
                 if (quirkEntry.hasValue()) {
@@ -15239,13 +15275,27 @@ public abstract class Entity extends TurnOrdered
     }
 
     public void deactivateRadicalHS() {
-        for (MiscMounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
-                m.setMode("Off");
+        for (MiscMounted miscEquipment : getMisc()) {
+            if (miscEquipment.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+                miscEquipment.setMode(Weapon.MODE_AMS_OFF);
                 // Can only have one radical heat sink
                 break;
             }
         }
+    }
+
+    public void activateRadicalHS() {
+        for (MiscMounted miscEquipment : getMisc()) {
+            if (miscEquipment.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+                miscEquipment.setMode(Weapon.MODE_AMS_ON);
+                // Can only have one radical heat sink
+                break;
+            }
+        }
+    }
+
+    public boolean hasWorkingRadicalHS() {
+        return hasWorkingMisc(MiscType.F_RADICAL_HEATSINK);
     }
 
     public int getConsecutiveRHSUses() {
@@ -15262,6 +15312,18 @@ public abstract class Entity extends TurnOrdered
 
     public void setHasDamagedRHS(boolean hasDamagedRHS) {
         this.hasDamagedRHS = hasDamagedRHS;
+    }
+
+    public boolean hasUsedRHSLastTurn() {
+        return usedRHSLastTurn;
+    }
+
+    public void setUsedRHSLastTurn(boolean usedRHSLastTurn) {
+        this.usedRHSLastTurn = usedRHSLastTurn;
+    }
+
+    public boolean hasRHSWentUp() {
+        return rhsWentUp;
     }
 
     public void addAttackedByThisTurn(int entityId) {

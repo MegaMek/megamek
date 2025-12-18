@@ -911,6 +911,15 @@ public class AreaEffectHelper {
         r.add(damage);
         vDesc.addElement(r);
 
+        // Reveal hidden entity caught in the blast (per TW pg. 259)
+        if (entity.isHidden()) {
+            entity.setHidden(false);
+            Report revealReport = new Report(9963);
+            revealReport.subject = entity.getId();
+            revealReport.addDesc(entity);
+            vDesc.addElement(revealReport);
+        }
+
         while (damage > 0) {
             int cluster = Math.min(clusterAmt, damage);
             if (entity instanceof Infantry) {

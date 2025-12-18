@@ -67,6 +67,7 @@ import megamek.common.actions.DisengageAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FindClubAction;
 import megamek.common.actions.SearchlightAttackAction;
+import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
@@ -968,8 +969,16 @@ public class Princess extends BotClient {
             }
 
             if (shooter.isHidden()) {
-                skipFiring = true;
-                LOGGER.info("Hidden unit skips firing.");
+                skipFiring = !shouldRevealHiddenUnit(shooter);
+                if (skipFiring) {
+                    LOGGER.info("Hidden unit {} remains concealed.", shooter.getDisplayName());
+                } else {
+                    // Reveal the unit before firing - per hidden unit rules,
+                    // a unit must reveal itself to attack
+                    shooter.setHidden(false);
+                    sendUpdateEntity(shooter);
+                    LOGGER.info("Hidden unit {} reveals to engage targets.", shooter.getDisplayName());
+                }
             }
 
             // calculating a firing plan is somewhat expensive, so
@@ -992,6 +1001,16 @@ public class Princess extends BotClient {
                     LOGGER.debug("{} - Detailed Best Firing Plan: {}",
                           shooter.getDisplayName(),
                           plan.getDebugDescription(true));
+
+                    // Log twist/facing diagnostic info
+                    LOGGER.info("{} - Twist/Facing: planTwist={}, currentFacing={}, secondaryFacing={}, " +
+                                "canChangeSecondaryFacing={}, alreadyTwisted={}",
+                          shooter.getDisplayName(),
+                          plan.getTwist(),
+                          shooter.getFacing(),
+                          shooter.getSecondaryFacing(),
+                          shooter.canChangeSecondaryFacing(),
+                          shooter.getAlreadyTwisted());
 
                     // Consider making an aimed shot if the target is shut down or the attacker has
                     // a targeting computer. Alternatively, consider using the called shots optional
@@ -1097,6 +1116,18 @@ public class Princess extends BotClient {
                     EntityAction spotAction = getFireControl(shooter).getSpotAction(plan, shooter, fireControlState);
                     if (spotAction != null) {
                         actions.add(spotAction);
+                    }
+
+                    // Log actions being sent, especially any twist action
+                    for (EntityAction action : actions) {
+                        if (action instanceof TorsoTwistAction tta) {
+                            LOGGER.info("{} - Sending TorsoTwistAction: newFacing={}",
+                                  shooter.getDisplayName(), tta.getFacing());
+                        }
+                    }
+                    if (plan.getTwist() != 0 && actions.stream().noneMatch(a -> a instanceof TorsoTwistAction)) {
+                        LOGGER.warn("{} - Plan has twist={} but NO TorsoTwistAction in actions!",
+                              shooter.getDisplayName(), plan.getTwist());
                     }
 
                     sendAttackData(shooter.getId(), actions);
@@ -3962,5 +3993,76 @@ public class Princess extends BotClient {
         }
 
         return (double) favorableOutcomes / totalOutcomes;
+    }
+
+    /**
+     * Determines whether a hidden unit should reveal itself to fire. Evaluates the potential firing opportunity against
+     * the reveal threshold from behavior settings. Higher thresholds require better opportunities.
+     *
+     * @param shooter The hidden unit considering whether to reveal
+     *
+     * @return true if the unit should reveal and fire, false to stay hidden
+     */
+    private boolean shouldRevealHiddenUnit(Entity shooter) {
+        final double revealThreshold = getBehaviorSettings().getHiddenUnitRevealValue();
+
+        // Index 0 means never reveal
+        if (revealThreshold == 0.0) {
+            LOGGER.debug("Hidden unit {} has reveal threshold 0 - staying hidden.",
+                  shooter.getDisplayName());
+            return false;
+        }
+
+        // Index 10 means always reveal if any target exists
+        if (revealThreshold == Double.MAX_VALUE) {
+            LOGGER.debug("Hidden unit {} has reveal threshold MAX - checking for any targets.",
+                  shooter.getDisplayName());
+            return hasAnyValidTarget(shooter);
+        }
+
+        // Calculate the best potential firing plan for evaluation
+        final Map<WeaponMounted, Double> ammoConservation = calcAmmoConservation(shooter);
+        final FiringPlan plan = getFireControl(shooter).getBestFiringPlan(
+              shooter, getHonorUtil(), game, ammoConservation);
+
+        if (plan == null || plan.isEmpty() || plan.getExpectedDamage() <= 0) {
+            LOGGER.debug("Hidden unit {} has no valid firing plan - staying hidden.",
+                  shooter.getDisplayName());
+            return false;
+        }
+
+        // Calculate reveal decision
+        // Decision formula: reveal if (expected damage / self-preservation factor) >= threshold
+        // Higher self-preservation = need more damage to justify reveal
+        // Higher threshold = more conservative about revealing
+        double expectedDamage = plan.getExpectedDamage();
+        double selfPreservation = getBehaviorSettings().getSelfPreservationValue();
+        double revealScore = expectedDamage / selfPreservation;
+
+        LOGGER.debug("Hidden unit {} reveal evaluation: expectedDamage={}, selfPreservation={}, " +
+                    "revealScore={}, threshold={}",
+              shooter.getDisplayName(), expectedDamage, selfPreservation, revealScore, revealThreshold);
+
+        // Log twist/facing info for debugging arc issues
+        LOGGER.debug("Hidden unit {} firing plan requires twist={}, shooter facing={}, secondaryFacing={}, " +
+                    "canChangeSecondaryFacing={}",
+              shooter.getDisplayName(), plan.getTwist(), shooter.getFacing(), shooter.getSecondaryFacing(),
+              shooter.canChangeSecondaryFacing());
+
+        return revealScore >= revealThreshold;
+    }
+
+    /**
+     * Checks if there are any valid enemy targets the shooter could potentially hit. Used for the "always reveal"
+     * setting (index 10).
+     *
+     * @param shooter The entity checking for targets
+     *
+     * @return true if there are valid targets, false otherwise
+     */
+    private boolean hasAnyValidTarget(Entity shooter) {
+        List<Targetable> targets = FireControl.getAllTargetableEnemyEntities(
+              getLocalPlayer(), getGame(), getFireControlState());
+        return !targets.isEmpty();
     }
 }

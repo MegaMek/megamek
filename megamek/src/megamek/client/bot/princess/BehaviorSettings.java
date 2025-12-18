@@ -125,6 +125,22 @@ public class BehaviorSettings implements Serializable {
           1.8,
           2.0 };
 
+    // Hidden unit reveal thresholds - higher index = more willing to reveal
+    // Values represent minimum damage ratio to justify revealing
+    static final double[] HIDDEN_REVEAL_VALUES = {
+          0.0,    // 0: Never reveal (current behavior)
+          0.5,    // 1: Very conservative
+          0.75,   // 2: Conservative
+          1.0,    // 3: Cautious
+          1.25,   // 4: Moderate-conservative
+          1.5,    // 5: Moderate (default)
+          2.0,    // 6: Moderate-aggressive
+          2.5,    // 7: Aggressive
+          3.0,    // 8: Very aggressive
+          4.0,    // 9: Reckless
+          Double.MAX_VALUE  // 10: Always reveal if any damage possible
+    };
+
     public static final int MAX_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING = 12;
     public static final int MIN_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING = 1;
     public static final int DEFAULT_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING = 4;
@@ -146,6 +162,7 @@ public class BehaviorSettings implements Serializable {
     private final Set<Integer> priorityUnitTargets = new HashSet<>(); // What units do I especially want to blow up?
     private int herdMentalityIndex = 5; // How close do I want to stick to my teammates?
     private int braveryIndex = 5; // How quickly will I try to escape once damaged?
+    private int hiddenUnitRevealIndex = 5; // How willing to reveal hidden units to fire?
     private int antiCrowding = 0; // How much do I want to avoid crowding my teammates?
     private int favorHigherTMM = 0; // How much do I want to favor moving in my turn?
     private int numberOfEnemiesToConsiderFacing = DEFAULT_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING; // How many enemies do I want to consider when calculating facing?
@@ -174,6 +191,7 @@ public class BehaviorSettings implements Serializable {
         copy.setDescription(getDescription());
         copy.setFallShameIndex(getFallShameIndex());
         copy.setBraveryIndex(getBraveryIndex());
+        copy.setHiddenUnitRevealIndex(getHiddenUnitRevealIndex());
         copy.setHerdMentalityIndex(getHerdMentalityIndex());
         copy.setHyperAggressionIndex(getHyperAggressionIndex());
         copy.setSelfPreservationIndex(getSelfPreservationIndex());
@@ -503,6 +521,57 @@ public class BehaviorSettings implements Serializable {
     public void setBraveryIndex(final String index) throws PrincessException {
         try {
             setBraveryIndex(Integer.parseInt(index));
+        } catch (final NumberFormatException ex) {
+            throw new PrincessException(ex);
+        }
+    }
+
+    /**
+     * How willing am I to reveal hidden units to fire?
+     *
+     * @return Index of the current hidden unit reveal value.
+     */
+    public int getHiddenUnitRevealIndex() {
+        return hiddenUnitRevealIndex;
+    }
+
+    /**
+     * How willing am I to reveal hidden units to fire?
+     *
+     * @return Current hidden unit reveal threshold value.
+     */
+    public double getHiddenUnitRevealValue() {
+        return getHiddenUnitRevealValue(hiddenUnitRevealIndex);
+    }
+
+    /**
+     * How willing am I to reveal hidden units to fire?
+     *
+     * @param index The index [0-10] of the hidden unit reveal value desired.
+     *
+     * @return The hidden unit reveal threshold at the specified index.
+     */
+    public double getHiddenUnitRevealValue(int index) {
+        return HIDDEN_REVEAL_VALUES[validateIndex(index)];
+    }
+
+    /**
+     * How willing am I to reveal hidden units to fire?
+     *
+     * @param index The index [0-10] of the hidden unit reveal value to be used.
+     */
+    public void setHiddenUnitRevealIndex(final int index) {
+        this.hiddenUnitRevealIndex = validateIndex(index);
+    }
+
+    /**
+     * How willing am I to reveal hidden units to fire?
+     *
+     * @param index The index ["0"-"10"] of the hidden unit reveal value to be used.
+     */
+    public void setHiddenUnitRevealIndex(final String index) throws PrincessException {
+        try {
+            setHiddenUnitRevealIndex(Integer.parseInt(index));
         } catch (final NumberFormatException ex) {
             throw new PrincessException(ex);
         }
@@ -898,6 +967,8 @@ public class BehaviorSettings implements Serializable {
                 setHerdMentalityIndex(child.getTextContent());
             } else if ("braveryIndex".equalsIgnoreCase(child.getNodeName())) {
                 setBraveryIndex(child.getTextContent());
+            } else if ("hiddenUnitRevealIndex".equalsIgnoreCase(child.getNodeName())) {
+                setHiddenUnitRevealIndex(child.getTextContent());
             } else if ("antiCrowding".equalsIgnoreCase(child.getNodeName())) {
                 setAntiCrowding(child.getTextContent());
             } else if ("favorHigherTMM".equalsIgnoreCase(child.getNodeName())) {
@@ -993,6 +1064,10 @@ public class BehaviorSettings implements Serializable {
             braveryNode.setTextContent("" + getBraveryIndex());
             behavior.appendChild(braveryNode);
 
+            final Element hiddenUnitRevealNode = doc.createElement("hiddenUnitRevealIndex");
+            hiddenUnitRevealNode.setTextContent("" + getHiddenUnitRevealIndex());
+            behavior.appendChild(hiddenUnitRevealNode);
+
             final Element antiCrowdingNode = doc.createElement("antiCrowding");
             antiCrowdingNode.setTextContent("" + getAntiCrowding());
             behavior.appendChild(antiCrowdingNode);
@@ -1069,6 +1144,8 @@ public class BehaviorSettings implements Serializable {
         out.append("\n\t Fall Shame: ").append(getFallShameIndex()).append(":")
               .append(getFallShameValue(getFallShameIndex()));
         out.append("\n\t Bravery: ").append(getBraveryIndex()).append(":").append(getBraveryValue(getBraveryIndex()));
+        out.append("\n\t Hidden Unit Reveal: ").append(getHiddenUnitRevealIndex()).append(":")
+              .append(getHiddenUnitRevealValue(getHiddenUnitRevealIndex()));
         out.append("\n\t AntiCrowding: ").append(getAntiCrowding());
         out.append("\n\t FavorHigherTMM: ").append(getFavorHigherTMM());
         out.append("\n\t NumberOfEnemiesToConsiderFacing: ").append(getNumberOfEnemiesToConsiderFacing());
@@ -1107,6 +1184,8 @@ public class BehaviorSettings implements Serializable {
         if (autoFlee != that.autoFlee) {
             return false;
         } else if (braveryIndex != that.braveryIndex) {
+            return false;
+        } else if (hiddenUnitRevealIndex != that.hiddenUnitRevealIndex) {
             return false;
         } else if (fallShameIndex != that.fallShameIndex) {
             return false;
@@ -1167,6 +1246,7 @@ public class BehaviorSettings implements Serializable {
         result = 31 * result + allowFacingTolerance;
         result = 31 * result + herdMentalityIndex;
         result = 31 * result + braveryIndex;
+        result = 31 * result + hiddenUnitRevealIndex;
         result = 31 * result + (exclusiveHerding ? 1 : 0);
         result = 31 * result + (iAmAPirate ? 1 : 0);
         result = 31 * result + (experimental ? 1 : 0);

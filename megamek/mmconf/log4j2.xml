@@ -58,7 +58,7 @@
     </Appenders>
 
     <Loggers>
-        <Logger name="megamek.client.bot" level="error" additivity="false">
+        <Logger name="megamek.client.bot" level="debug" additivity="false">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />
         </Logger>

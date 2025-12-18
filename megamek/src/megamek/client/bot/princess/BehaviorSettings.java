@@ -126,7 +126,7 @@ public class BehaviorSettings implements Serializable {
           2.0 };
 
     // Hidden unit reveal thresholds - higher index = more willing to reveal
-    // Values represent minimum damage ratio to justify revealing
+    // Values represent minimum (expectedDamage / selfPreservation) ratio to justify revealing
     static final double[] HIDDEN_REVEAL_VALUES = {
           0.0,    // 0: Never reveal (current behavior)
           0.5,    // 1: Very conservative
@@ -138,7 +138,7 @@ public class BehaviorSettings implements Serializable {
           2.5,    // 7: Aggressive
           3.0,    // 8: Very aggressive
           4.0,    // 9: Reckless
-          Double.MAX_VALUE  // 10: Always reveal if any damage possible
+          Double.MAX_VALUE  // 10: Always reveal if any targets exist
     };
 
     public static final int MAX_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING = 12;

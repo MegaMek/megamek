@@ -1003,7 +1003,7 @@ public class Princess extends BotClient {
                           plan.getDebugDescription(true));
 
                     // Log twist/facing diagnostic info
-                    LOGGER.info("{} - Twist/Facing: planTwist={}, currentFacing={}, secondaryFacing={}, " +
+                    LOGGER.debug("{} - Twist/Facing: planTwist={}, currentFacing={}, secondaryFacing={}, " +
                                 "canChangeSecondaryFacing={}, alreadyTwisted={}",
                           shooter.getDisplayName(),
                           plan.getTwist(),
@@ -1121,7 +1121,7 @@ public class Princess extends BotClient {
                     // Log actions being sent, especially any twist action
                     for (EntityAction action : actions) {
                         if (action instanceof TorsoTwistAction tta) {
-                            LOGGER.info("{} - Sending TorsoTwistAction: newFacing={}",
+                            LOGGER.debug("{} - Sending TorsoTwistAction: newFacing={}",
                                   shooter.getDisplayName(), tta.getFacing());
                         }
                     }
@@ -4017,7 +4017,7 @@ public class Princess extends BotClient {
         if (revealThreshold == Double.MAX_VALUE) {
             LOGGER.debug("Hidden unit {} has reveal threshold MAX - checking for any targets.",
                   shooter.getDisplayName());
-            return hasAnyValidTarget(shooter);
+            return hasAnyValidTarget();
         }
 
         // Calculate the best potential firing plan for evaluation
@@ -4053,14 +4053,12 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Checks if there are any valid enemy targets the shooter could potentially hit. Used for the "always reveal"
+     * Checks if there are any valid enemy targets on the battlefield. Used for the "always reveal"
      * setting (index 10).
-     *
-     * @param shooter The entity checking for targets
      *
      * @return true if there are valid targets, false otherwise
      */
-    private boolean hasAnyValidTarget(Entity shooter) {
+    private boolean hasAnyValidTarget() {
         List<Targetable> targets = FireControl.getAllTargetableEnemyEntities(
               getLocalPlayer(), getGame(), getFireControlState());
         return !targets.isEmpty();

@@ -40,16 +40,7 @@ import static megamek.codeUtilities.MathUtility.clamp;
 
 import java.util.*;
 
-import megamek.client.ui.Messages;
-import megamek.common.CriticalSlot;
-import megamek.common.ECMInfo;
-import megamek.common.Hex;
-import megamek.common.LosEffects;
-import megamek.common.MMRandom;
-import megamek.common.RangeType;
-import megamek.common.Report;
-import megamek.common.TagInfo;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;

@@ -44,8 +44,11 @@ import java.util.stream.Collectors;
 import megamek.client.ui.util.PlayerColour;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
+import megamek.common.compute.ComputeECM;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
+import megamek.common.equipment.MiscType;
+import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.game.InGameObject;
 import megamek.common.hexArea.BorderHexArea;
@@ -56,6 +59,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.turns.TurnOrdered;
 import megamek.common.units.Entity;
 import megamek.common.units.MekWarrior;
+import megamek.logging.MMLogger;
 
 /**
  * Represents a player in the game.
@@ -69,6 +73,7 @@ public final class Player extends TurnOrdered {
     //region Variable Declarations
     @Serial
     private static final long serialVersionUID = 6828849559007455761L;
+    private static final MMLogger LOGGER = MMLogger.create(Player.class);
 
     public static final int PLAYER_NONE = -1;
     public static final int TEAM_NONE = 0;
@@ -653,6 +658,112 @@ public final class Player extends TurnOrdered {
     }
 
     /**
+     * @return the best HQ initiative bonus from this player's units (TacOps Mobile HQs option)
+     */
+    public int getHQInitBonus() {
+        if (game == null) {
+            return 0;
+        }
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_MOBILE_HQS)) {
+            return 0;
+        }
+
+        int bonus = 0;
+        for (InGameObject object : game.getInGameObjects()) {
+            if (object instanceof Entity entity && entity.getOwner().equals(this)) {
+                bonus = Math.max(entity.getHQIniBonus(), bonus);
+            }
+        }
+        return bonus;
+    }
+
+    /**
+     * @return the best quirk initiative bonus from this player's units
+     */
+    public int getQuirkInitBonus() {
+        if (game == null) {
+            return 0;
+        }
+
+        int bonus = 0;
+        for (InGameObject object : game.getInGameObjects()) {
+            if (object instanceof Entity entity && entity.getOwner().equals(this)) {
+                bonus = Math.max(bonus, entity.getQuirkIniBonus());
+            }
+        }
+        return bonus;
+    }
+
+    /**
+     * @return the name of the quirk providing the best initiative bonus, or null if none
+     */
+    public String getQuirkInitBonusName() {
+        if (game == null) {
+            return null;
+        }
+
+        int bestBonus = 0;
+        String bestQuirkName = null;
+        for (InGameObject object : game.getInGameObjects()) {
+            if (object instanceof Entity entity && entity.getOwner().equals(this)) {
+                int entityBonus = entity.getQuirkIniBonus();
+                if (entityBonus > bestBonus) {
+                    bestBonus = entityBonus;
+                    // Determine which quirk is providing the bonus
+                    if (entity.hasQuirk(OptionsConstants.QUIRK_POS_BATTLE_COMP)) {
+                        bestQuirkName = "Battle Computer";
+                    } else if (entity.hasQuirk(OptionsConstants.QUIRK_POS_COMMAND_MEK)) {
+                        bestQuirkName = "Command Mek";
+                    }
+                }
+            }
+        }
+        return bestQuirkName;
+    }
+
+    /**
+     * @return the best command console/tech officer initiative bonus from this player's units (+2)
+     */
+    public int getCommandConsoleBonus() {
+        if (game == null) {
+            return 0;
+        }
+
+        for (InGameObject object : game.getInGameObjects()) {
+            if (object instanceof Entity entity && entity.getOwner().equals(this)) {
+                if (isActiveForCommandBonus(entity)) {
+                    if (entity.hasCommandConsoleBonus() || entity.getCrew().hasActiveTechOfficer()) {
+                        return 2;
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * @return the best crew command skill initiative bonus from this player's units (RPG option)
+     */
+    public int getCrewCommandBonus() {
+        if (game == null) {
+            return 0;
+        }
+        if (!game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
+            return 0;
+        }
+
+        int bonus = 0;
+        for (InGameObject object : game.getInGameObjects()) {
+            if (object instanceof Entity entity && entity.getOwner().equals(this)) {
+                if (isActiveForCommandBonus(entity)) {
+                    bonus = Math.max(bonus, entity.getCrew().getCommandBonus());
+                }
+            }
+        }
+        return bonus;
+    }
+
+    /**
      * @return the bonus to this player's initiative rolls for the highest value initiative (i.e. the 'commander')
      */
     public int getOverallCommandBonus() {
@@ -689,12 +800,7 @@ public final class Player extends TurnOrdered {
     public int getIndividualCommandBonus(Entity entity, boolean useCommandInit) {
         int bonus = 0;
         // Only consider this during normal rounds when unit is deployed on board, or about to deploy this round.
-        if (!entity.isDestroyed() &&
-              entity.getCrew().isActive() &&
-              !entity.isCaptured() &&
-              !(entity instanceof MekWarrior) &&
-              (entity.isDeployed() && !entity.isOffBoard()) ||
-              (entity.getDeployRound() == (game.getCurrentRound() + 1))) {
+        if (isActiveForCommandBonus(entity)) {
             if (useCommandInit) {
                 bonus = entity.getCrew().getCommandBonus();
             }
@@ -706,6 +812,139 @@ public final class Player extends TurnOrdered {
             }
         }
         return bonus;
+    }
+
+    /**
+     * Calculate the Triple-Core Processor initiative bonus for this player's force. Per IO pg 81, a TCP-implanted
+     * warrior with VDNI/BVDNI provides: - +2 base initiative bonus - +1 additional if unit has CCM, C3/C3i, or >3 tons
+     * communications equipment - -1 if unit is shutdown or ECM-affected (unless unit has own ECM for counter-ECM)
+     *
+     * @return The TCP initiative bonus from the best qualifying entity
+     */
+    public int getTCPInitBonus() {
+        if (game == null) {
+            LOGGER.debug("TCP: game is null for player {}", name);
+            return 0;
+        }
+
+        LOGGER.debug("TCP: Checking for player {} in round {}", name, game.getCurrentRound());
+
+        int bestBonus = 0;
+        for (InGameObject object : game.getInGameObjects()) {
+            if (!(object instanceof Entity entity)) {
+                continue;
+            }
+            if (!entity.getOwner().equals(this)) {
+                continue;
+            }
+            // Must be deployed and on-board, OR about to deploy next round
+            // Uses same pattern as getCommandConsoleBonus() and getCrewCommandBonus()
+            if (entity.isDestroyed()) {
+                LOGGER.debug("TCP: {} skipped - destroyed", entity.getDisplayName());
+                continue;
+            }
+            boolean eligibleForBonus = (entity.isDeployed() && !entity.isOffBoard()) ||
+                  (entity.getDeployRound() == (game.getCurrentRound() + 1));
+            if (!eligibleForBonus) {
+                LOGGER.debug("TCP: {} skipped - not deployed or deploying next round", entity.getDisplayName());
+                continue;
+            }
+            // Must have TCP + VDNI/BVDNI
+            if (!entity.hasAbility(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR)) {
+                LOGGER.debug("TCP: {} skipped - no TCP implant", entity.getDisplayName());
+                continue;
+            }
+            if (!entity.hasAbility(OptionsConstants.MD_VDNI)
+                  && !entity.hasAbility(OptionsConstants.MD_BVDNI)) {
+                LOGGER.debug("TCP: {} skipped - no VDNI/BVDNI", entity.getDisplayName());
+                continue;
+            }
+            // Crew must be active
+            if (entity.getCrew() == null || !entity.getCrew().isActive()) {
+                LOGGER.debug("TCP: {} skipped - crew not active", entity.getDisplayName());
+                continue;
+            }
+
+            // Base +2 bonus
+            int bonus = 2;
+
+            // +1 for Cockpit Command Module, C3/C3i, or >3 tons communications equipment
+            if (hasTCPCommandEquipment(entity)) {
+                bonus += 1;
+            }
+
+            // Per Xotl ruling: negative modifiers stack cumulatively
+            // -1 if shutdown
+            if (entity.isShutDown()) {
+                bonus -= 1;
+            }
+            // -1 if ECM-affected, unless unit has own ECM (counter-ECM per IO pg 81)
+            if (isEntityECMAffected(entity) && !entity.hasECM()) {
+                bonus -= 1;
+            }
+            // -1 if EMI conditions are active (global effect, can't be countered)
+            if (game instanceof Game twGame && twGame.getPlanetaryConditions().getEMI().isEMI()) {
+                bonus -= 1;
+            }
+
+            LOGGER.debug("TCP: {} qualifies with bonus {} (deployed={}, deployRound={})",
+                  entity.getDisplayName(), bonus, entity.isDeployed(), entity.getDeployRound());
+            bestBonus = Math.max(bestBonus, bonus);
+        }
+        LOGGER.debug("TCP: Final TCP bonus for player {}: {}", name, bestBonus);
+        return bestBonus;
+    }
+
+    /**
+     * Check if an entity has command equipment that qualifies for TCP +1 initiative bonus. This includes: Cockpit
+     * Command Module, C3/C3i systems, or >3 tons of communications equipment.
+     */
+    private boolean hasTCPCommandEquipment(Entity entity) {
+        // Cockpit Command Module
+        if (entity.hasCommandConsoleBonus()) {
+            return true;
+        }
+
+        // C3 or C3i system
+        if (entity.hasAnyC3System()) {
+            return true;
+        }
+
+        // More than 3 tons of communications equipment
+        double commsTonnage = 0;
+        for (var m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+                commsTonnage += m.getTonnage();
+            }
+        }
+        return commsTonnage > 3;
+    }
+
+    /**
+     * Check if an entity is affected by hostile ECM for TCP initiative penalty purposes.
+     */
+    private boolean isEntityECMAffected(Entity entity) {
+        if (entity.getPosition() == null) {
+            return false;
+        }
+        return ComputeECM.isAffectedByECM(entity, entity.getPosition(), entity.getPosition());
+    }
+
+    /**
+     * Checks if an entity is active and available for command bonus purposes. Entity must be not destroyed, have active
+     * crew, not captured, not an ejected pilot, and either deployed on-board or deploying next round.
+     *
+     * @param entity the entity to check
+     *
+     * @return true if the entity can provide command bonuses
+     */
+    private boolean isActiveForCommandBonus(Entity entity) {
+        boolean isAlive = !entity.isDestroyed() && entity.getCrew().isActive() && !entity.isCaptured();
+        boolean isNotEjectedPilot = !(entity instanceof MekWarrior);
+        boolean isDeployedOnBoard = entity.isDeployed() && !entity.isOffBoard();
+        boolean isDeployingNextRound = entity.getDeployRound() == (game.getCurrentRound() + 1);
+
+        return isAlive && isNotEjectedPilot && (isDeployedOnBoard || isDeployingNextRound);
     }
 
     public String getColorForPlayer() {

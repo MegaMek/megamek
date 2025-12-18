@@ -299,6 +299,7 @@ public class TWDamageManager implements IDamageManager {
         boolean isFerroFibrousTarget = false;
         boolean wasDamageIS = false;
         boolean tookInternalDamage = damageIS;
+        boolean tookAnyDamage = damage > 0; // Track if any damage was applied for Proto DNI feedback
         Hex te_hex = null;
 
         boolean hardenedArmor = ((entity instanceof Mek) || (entity instanceof Tank)) &&
@@ -1941,10 +1942,12 @@ public class TWDamageManager implements IDamageManager {
         // Vehicles get feedback on specific critical hits only (handled in applyTankCritical).
         // Fighters get feedback on any critical hit (handled in applyAeroCritical).
         // Battle Armor gets no feedback at all.
+        // Proto DNI takes precedence and handles its own feedback separately.
         if (tookInternalDamage &&
               (entity instanceof Mek) &&
               entity.hasAbility(OptionsConstants.MD_VDNI) &&
               !entity.hasAbility(OptionsConstants.MD_BVDNI) &&
+              !entity.hasAbility(OptionsConstants.MD_PROTO_DNI) &&
               !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
             Report.addNewline(reportVec);
             Roll diceRoll = Compute.rollD6(2);
@@ -1972,6 +1975,31 @@ public class TWDamageManager implements IDamageManager {
             report.addDesc(entity);
             report.indent(2);
             reportVec.add(report);
+        }
+
+        // Prototype DNI feedback on ANY damage (IO pg 83)
+        // TN 6 for armor-only hits, TN 8 for internal damage or critical hits
+        // Only applies to BattleMeks (not IndustrialMeks)
+        if (tookAnyDamage &&
+              (entity instanceof Mek) &&
+              !entity.isIndustrialMek() &&
+              entity.hasAbility(OptionsConstants.MD_PROTO_DNI) &&
+              !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+            Report.addNewline(reportVec);
+            Roll diceRoll = Compute.rollD6(2);
+            int targetNumber = tookInternalDamage ? 8 : 6;
+            report = new Report(3589);
+            report.subject = entity.getId();
+            report.indent(2);  // Indent BEFORE addDesc to suppress unit icon
+            report.addDesc(entity);
+            report.add(targetNumber - 1); // Display as "needs X or less"
+            report.add(diceRoll);
+            report.choose(diceRoll.getIntValue() >= targetNumber);
+            reportVec.add(report);
+
+            if (diceRoll.getIntValue() >= targetNumber) {
+                reportVec.addAll(manager.damageCrew(entity, 1));
+            }
         }
 
         // TacOps p.78 Ammo booms can hurt other units in same and adjacent hexes

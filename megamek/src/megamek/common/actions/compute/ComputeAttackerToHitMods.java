@@ -398,10 +398,13 @@ public class ComputeAttackerToHitMods {
 
         // Prototype DNI gives -2 gunnery (IO pg 83)
         // VDNI/BVDNI gives -1 gunnery (IO pg 71)
-        // Check Proto DNI first as it's more powerful and shouldn't stack with VDNI
+        // Check Proto DNI first as it's more powerful and shouldn't stack with VDNI/BVDNI
+        // Check BVDNI before VDNI since pilots with BVDNI also have VDNI
         if (attacker.hasAbility(OptionsConstants.MD_PROTO_DNI)) {
             toHit.addModifier(-2, Messages.getString("WeaponAttackAction.ProtoDni"));
-        } else if (attacker.hasAbility(OptionsConstants.MD_VDNI) || attacker.hasAbility(OptionsConstants.MD_BVDNI)) {
+        } else if (attacker.hasAbility(OptionsConstants.MD_BVDNI)) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Bvdni"));
+        } else if (attacker.hasAbility(OptionsConstants.MD_VDNI)) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Vdni"));
         }
 

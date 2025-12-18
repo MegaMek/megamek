@@ -594,8 +594,8 @@ public class CustomMekDialog extends AbstractButtonDialog
     }
 
     /**
-     * Checks if the given option name is a Direct Neural Interface type.
-     * VDNI, BVDNI, and Proto DNI are mutually exclusive.
+     * Checks if the given option name is a Direct Neural Interface type. VDNI, BVDNI, and Proto DNI are mutually
+     * exclusive.
      */
     private boolean isDniOption(String optionName) {
         return optionName.equals(OptionsConstants.MD_VDNI)

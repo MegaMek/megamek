@@ -48,6 +48,7 @@ import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.bot.princess.coverage.Builder;
+import megamek.client.bot.princess.geometry.CoordFacingCombo;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.panels.phaseDisplay.TowLinkWarning;
 import megamek.codeUtilities.MathUtility;
@@ -81,6 +82,7 @@ import megamek.common.board.ElevationOption;
 import megamek.common.compute.Compute;
 import megamek.common.containers.PlayerIDAndList;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.GamePhase;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentMode;
@@ -4309,5 +4311,248 @@ public class Princess extends BotClient {
             Entity entity = game.getEntity(entry.getKey());
             return entity == null || !entity.isHidden();
         });
+    }
+
+    // ==================== Hidden Unit Repositioning ====================
+
+    /**
+     * Threshold multiplier for repositioning decision. Hidden unit will reveal to move if the expected damage from the
+     * best reposition location is at least this many times better than current position damage.
+     */
+    private static final double REPOSITION_DAMAGE_THRESHOLD = 2.0;
+
+    /**
+     * Evaluates whether hidden units should reveal and reposition for better firing opportunities. Called during
+     * PREMOVEMENT phase. If a hidden unit would have significantly better damage output from a different position, mark
+     * it to reveal at the start of movement phase.
+     */
+    @Override
+    protected void evaluateHiddenUnitRepositioning() {
+        // Only evaluate if hidden units game option is enabled
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
+            return;
+        }
+
+        List<Entity> enemies = getEnemyEntities();
+        if (enemies.isEmpty()) {
+            LOGGER.debug("No enemies visible - skipping hidden unit reposition evaluation");
+            return;
+        }
+
+        for (Entity entity : getEntitiesOwned()) {
+            if (!entity.isHidden()) {
+                continue;
+            }
+
+            // Skip if reveal threshold is "never reveal" (index 0)
+            double revealThreshold = getBehaviorSettings().getHiddenUnitRevealValue();
+            if (revealThreshold == 0.0) {
+                continue;
+            }
+
+            evaluateHiddenUnitForRepositioning(entity, enemies);
+        }
+    }
+
+    /**
+     * Evaluates a single hidden unit to determine if it should reveal and reposition.
+     *
+     * @param entity  The hidden unit to evaluate
+     * @param enemies List of visible enemy entities
+     */
+    private void evaluateHiddenUnitForRepositioning(Entity entity, List<Entity> enemies) {
+        // Calculate current position damage
+        double currentDamage = calculateDamageFromCurrentPosition(entity);
+
+        // Generate candidate reposition locations
+        List<CoordFacingCombo> candidates = generateRepositionCandidates(entity, enemies);
+
+        if (candidates.isEmpty()) {
+            LOGGER.debug("Hidden unit {} has no reposition candidates", entity.getDisplayName());
+            return;
+        }
+
+        // Find the best reposition damage
+        double bestRepositionDamage = 0;
+        CoordFacingCombo bestPosition = null;
+
+        for (CoordFacingCombo candidate : candidates) {
+            double damage = calculateDamageFromHypotheticalPosition(entity, candidate, enemies);
+            if (damage > bestRepositionDamage) {
+                bestRepositionDamage = damage;
+                bestPosition = candidate;
+            }
+        }
+
+        LOGGER.debug("Hidden unit {} reposition evaluation: currentDamage={}, bestRepositionDamage={}, " +
+                    "threshold={}, bestPosition={}",
+              entity.getDisplayName(),
+              String.format("%.2f", currentDamage),
+              String.format("%.2f", bestRepositionDamage),
+              REPOSITION_DAMAGE_THRESHOLD,
+              bestPosition != null ? bestPosition.getCoords() : "none");
+
+        // Decision: reveal if repositioning gives significantly better damage
+        if (bestRepositionDamage > currentDamage * REPOSITION_DAMAGE_THRESHOLD) {
+            LOGGER.info("Hidden unit {} will reveal to reposition: {} -> {} (damage: {} -> {})",
+                  entity.getDisplayName(),
+                  entity.getPosition(),
+                  bestPosition != null ? bestPosition.getCoords() : "unknown",
+                  String.format("%.1f", currentDamage),
+                  String.format("%.1f", bestRepositionDamage));
+
+            // Mark unit to reveal at start of movement phase
+            sendActivateHidden(entity.getId(), GamePhase.MOVEMENT);
+        }
+    }
+
+    /**
+     * Calculates expected damage from the unit's current position using torso twist if needed.
+     *
+     * @param entity The entity to evaluate
+     *
+     * @return Expected damage from current position
+     */
+    private double calculateDamageFromCurrentPosition(Entity entity) {
+        final Map<WeaponMounted, Double> ammoConservation = calcAmmoConservation(entity);
+        final FiringPlan plan = getFireControl(entity).getBestFiringPlan(
+              entity, getHonorUtil(), game, ammoConservation);
+
+        if (plan == null || plan.isEmpty()) {
+            return 0;
+        }
+        return plan.getExpectedDamage();
+    }
+
+    /**
+     * Generates candidate positions for a hidden unit to reposition to. Focuses on positions that would improve firing
+     * angles toward enemies.
+     *
+     * @param entity  The hidden unit
+     * @param enemies List of enemy entities to consider
+     *
+     * @return List of candidate positions with facings
+     */
+    private List<CoordFacingCombo> generateRepositionCandidates(Entity entity, List<Entity> enemies) {
+        List<CoordFacingCombo> candidates = new ArrayList<>();
+
+        // Get movement range - use walk MP for conservative estimate
+        int movementRange = entity.getWalkMP();
+        if (movementRange <= 0) {
+            return candidates;
+        }
+
+        // Cap the search range to avoid too many candidates
+        int searchRange = Math.min(movementRange, 6);
+
+        Coords currentPos = entity.getPosition();
+        if (currentPos == null) {
+            return candidates;
+        }
+
+        // Find enemy concentration center for facing calculation
+        Coords enemyCenter = calculateEnemyCenter(enemies);
+
+        // Generate positions within movement range
+        for (int radius = 1; radius <= searchRange; radius++) {
+            for (int dir = 0; dir < 6; dir++) {
+                Coords candidate = currentPos.translated(dir, radius);
+
+                // Skip if off board or impassable
+                if (!game.getBoard().contains(candidate)) {
+                    continue;
+                }
+                Hex hex = game.getBoard().getHex(candidate);
+                if (hex == null || hex.containsTerrain(Terrains.IMPASSABLE)) {
+                    continue;
+                }
+
+                // Calculate facing toward enemy center
+                int facingToEnemy = currentPos.direction(enemyCenter);
+
+                // Add candidate with facing toward enemies
+                candidates.add(CoordFacingCombo.createCoordFacingCombo(candidate, facingToEnemy));
+
+                // Also try adjacent facings for flexibility
+                candidates.add(CoordFacingCombo.createCoordFacingCombo(candidate, (facingToEnemy + 1) % 6));
+                candidates.add(CoordFacingCombo.createCoordFacingCombo(candidate, (facingToEnemy + 5) % 6));
+            }
+        }
+
+        return candidates;
+    }
+
+    /**
+     * Calculates the center of mass of enemy positions.
+     *
+     * @param enemies List of enemy entities
+     *
+     * @return Coords representing the center of enemy positions
+     */
+    private Coords calculateEnemyCenter(List<Entity> enemies) {
+        if (enemies.isEmpty()) {
+            return new Coords(0, 0);
+        }
+
+        int totalX = 0;
+        int totalY = 0;
+        int count = 0;
+
+        for (Entity enemy : enemies) {
+            if (enemy.getPosition() != null) {
+                totalX += enemy.getPosition().getX();
+                totalY += enemy.getPosition().getY();
+                count++;
+            }
+        }
+
+        if (count == 0) {
+            return new Coords(0, 0);
+        }
+
+        return new Coords(totalX / count, totalY / count);
+    }
+
+    /**
+     * Calculates expected damage from a hypothetical position against all enemies.
+     *
+     * @param entity   The entity to evaluate
+     * @param position The hypothetical position and facing
+     * @param enemies  List of enemy entities
+     *
+     * @return Expected damage from the hypothetical position
+     */
+    private double calculateDamageFromHypotheticalPosition(Entity entity, CoordFacingCombo position,
+          List<Entity> enemies) {
+        double maxDamage = 0;
+
+        // Create hypothetical entity state at the new position
+        EntityState hypotheticalState = new EntityState(entity, position);
+
+        for (Entity enemy : enemies) {
+            if (enemy.getPosition() == null || enemy.isDestroyed()) {
+                continue;
+            }
+
+            try {
+                // Build firing plan parameters for this hypothetical situation
+                FiringPlanCalculationParameters guess = new Builder()
+                      .buildGuess(entity, hypotheticalState, enemy, null,
+                            (entity.getHeatCapacity() - entity.getHeat()) + 5, null);
+
+                FiringPlan plan = getFireControl(entity).determineBestFiringPlan(guess);
+                if (plan != null) {
+                    double damage = plan.getExpectedDamage();
+                    if (damage > maxDamage) {
+                        maxDamage = damage;
+                    }
+                }
+            } catch (Exception e) {
+                LOGGER.debug("Error calculating hypothetical damage for {} at {}: {}",
+                      entity.getDisplayName(), position.getCoords(), e.getMessage());
+            }
+        }
+
+        return maxDamage;
     }
 }

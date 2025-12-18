@@ -204,6 +204,11 @@ public class Princess extends BotClient {
     private final ConcurrentHashMap<Integer, Double> damageMap = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Integer, Integer> teamTagTargetsMap = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Map.Entry<Integer, Coords>, List<WeaponMounted>> incomingGuidablesMap = new ConcurrentHashMap<>();
+    /**
+     * Tracks expected damage history for hidden units to analyze firing opportunity trends. Maps entity ID to list of
+     * (round, expectedDamage) pairs for trend analysis.
+     */
+    private final Map<Integer, List<double[]>> hiddenUnitDamageHistory = new ConcurrentHashMap<>();
     private final Set<Coords> strategicBuildingTargets = new HashSet<>();
     private boolean fallBack = false;
     private final ChatProcessor chatProcessor = new ChatProcessor();
@@ -928,6 +933,16 @@ public class Princess extends BotClient {
 
     @Override
     protected void calculateFiringTurn() {
+        // Log visible enemies at start of firing phase
+        List<Entity> enemies = getEnemyEntities();
+        if (!enemies.isEmpty()) {
+            LOGGER.debug("Firing phase - {} visible enemies: {}",
+                  enemies.size(),
+                  enemies.stream().map(Entity::getDisplayName).collect(java.util.stream.Collectors.joining(", ")));
+        } else {
+            LOGGER.debug("Firing phase - no visible enemies detected");
+        }
+
         final Entity shooter;
         try {
             // get the first entity that can act this turn make sure weapons
@@ -4004,44 +4019,63 @@ public class Princess extends BotClient {
      * @return true if the unit should reveal and fire, false to stay hidden
      */
     private boolean shouldRevealHiddenUnit(Entity shooter) {
-        final double revealThreshold = getBehaviorSettings().getHiddenUnitRevealValue();
+        final double baseThreshold = getBehaviorSettings().getHiddenUnitRevealValue();
 
         // Index 0 means never reveal
-        if (revealThreshold == 0.0) {
+        if (baseThreshold == 0.0) {
             LOGGER.debug("Hidden unit {} has reveal threshold 0 - staying hidden.",
                   shooter.getDisplayName());
             return false;
         }
 
         // Index 10 means always reveal if any target exists
-        if (revealThreshold == Double.MAX_VALUE) {
+        if (baseThreshold == Double.MAX_VALUE) {
             LOGGER.debug("Hidden unit {} has reveal threshold MAX - checking for any targets.",
                   shooter.getDisplayName());
             return hasAnyValidTarget();
         }
 
-        // Calculate the best potential firing plan for evaluation
+        // Calculate the best potential firing plan for evaluation (do this first for trend tracking)
         final Map<WeaponMounted, Double> ammoConservation = calcAmmoConservation(shooter);
         final FiringPlan plan = getFireControl(shooter).getBestFiringPlan(
               shooter, getHonorUtil(), game, ammoConservation);
 
-        if (plan == null || plan.isEmpty() || plan.getExpectedDamage() <= 0) {
+        double expectedDamage = (plan != null && !plan.isEmpty()) ? plan.getExpectedDamage() : 0;
+
+        // Record expected damage for trend analysis (even if 0, to track when targets leave)
+        recordHiddenUnitDamage(shooter.getId(), expectedDamage);
+
+        if (plan == null || plan.isEmpty() || expectedDamage <= 0) {
             LOGGER.debug("Hidden unit {} has no valid firing plan - staying hidden.",
                   shooter.getDisplayName());
             return false;
         }
 
+        // Apply unit type multiplier - infantry/BA are better suited for spotting
+        double unitTypeMultiplier = calculateUnitTypeThresholdMultiplier(shooter);
+
+        // Apply spotter value multiplier - if friendlies have indirect fire, we're more valuable as spotter
+        double spotterValueMultiplier = calculateSpotterValueMultiplier(shooter);
+
+        // Apply damage trend multiplier - accounts for whether opportunity is improving or declining
+        double trendMultiplier = calculateDamageTrendMultiplier(shooter.getId(), expectedDamage);
+
+        // Calculate effective threshold with all multipliers applied
+        double effectiveThreshold = baseThreshold * unitTypeMultiplier * spotterValueMultiplier * trendMultiplier;
+
         // Calculate reveal decision
         // Decision formula: reveal if (expected damage / self-preservation factor) >= threshold
         // Higher self-preservation = need more damage to justify reveal
         // Higher threshold = more conservative about revealing
-        double expectedDamage = plan.getExpectedDamage();
         double selfPreservation = getBehaviorSettings().getSelfPreservationValue();
         double revealScore = expectedDamage / selfPreservation;
 
         LOGGER.debug("Hidden unit {} reveal evaluation: expectedDamage={}, selfPreservation={}, " +
-                    "revealScore={}, threshold={}",
-              shooter.getDisplayName(), expectedDamage, selfPreservation, revealScore, revealThreshold);
+                    "revealScore={}, baseThreshold={}, unitTypeMultiplier={}, spotterValueMultiplier={}, " +
+                    "trendMultiplier={}, effectiveThreshold={}",
+              shooter.getDisplayName(), String.format("%.2f", expectedDamage), selfPreservation,
+              String.format("%.4f", revealScore), baseThreshold, unitTypeMultiplier, spotterValueMultiplier,
+              trendMultiplier, String.format("%.4f", effectiveThreshold));
 
         // Log twist/facing info for debugging arc issues
         LOGGER.debug("Hidden unit {} firing plan requires twist={}, shooter facing={}, secondaryFacing={}, " +
@@ -4049,7 +4083,7 @@ public class Princess extends BotClient {
               shooter.getDisplayName(), plan.getTwist(), shooter.getFacing(), shooter.getSecondaryFacing(),
               shooter.canChangeSecondaryFacing());
 
-        return revealScore >= revealThreshold;
+        return revealScore >= effectiveThreshold;
     }
 
     /**
@@ -4062,5 +4096,218 @@ public class Princess extends BotClient {
         List<Targetable> targets = FireControl.getAllTargetableEnemyEntities(
               getLocalPlayer(), getGame(), getFireControlState());
         return !targets.isEmpty();
+    }
+
+    /**
+     * Calculates the threshold multiplier based on unit type. Infantry and Battle Armor have higher thresholds (harder
+     * to reveal) because they have limited range and are better suited for spotting roles.
+     *
+     * @param entity The entity to check
+     *
+     * @return The threshold multiplier (1.0 = no change, higher = harder to reveal)
+     */
+    private double calculateUnitTypeThresholdMultiplier(Entity entity) {
+        // Conventional infantry (not Battle Armor, not MekWarrior) - much higher threshold
+        if (entity.hasETypeFlag(Entity.ETYPE_INFANTRY)
+              && !entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
+              && !entity.hasETypeFlag(Entity.ETYPE_MEKWARRIOR)) {
+            return 3.0;
+        }
+
+        // Battle Armor - moderately higher threshold
+        if (entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)) {
+            return 1.5;
+        }
+
+        // All other unit types - no change
+        return 1.0;
+    }
+
+    /**
+     * Calculates the spotter value multiplier for hidden unit reveal decision. If the hidden unit can see targets AND
+     * friendly units have indirect fire capability, the hidden unit is more valuable as a spotter, so we increase the
+     * reveal threshold.
+     *
+     * @param shooter The hidden unit considering revealing
+     *
+     * @return The spotter value multiplier (1.0 = no spotter value, 1.5 = valuable as spotter)
+     */
+    private double calculateSpotterValueMultiplier(Entity shooter) {
+        // First check: can this unit spot? (not sprinting, not evading, etc.)
+        if (!shooter.canSpot()) {
+            return 1.0;
+        }
+
+        // Second check: are there any targets this unit can see?
+        List<Targetable> visibleTargets = getVisibleTargetsForSpotter(shooter);
+        if (visibleTargets.isEmpty()) {
+            return 1.0;
+        }
+
+        // Third check: do any friendly units have indirect fire capability?
+        boolean friendlyHasIndirectFire = hasFriendlyIndirectFireCapability(shooter);
+        if (!friendlyHasIndirectFire) {
+            return 1.0;
+        }
+
+        LOGGER.debug("Hidden unit {} has spotter value: can see {} targets and friendly units have indirect fire",
+              shooter.getDisplayName(), visibleTargets.size());
+
+        // This unit is valuable as a spotter - increase reveal threshold
+        return 1.5;
+    }
+
+    /**
+     * Gets targets visible to the potential spotter (for spotter value calculation). Only includes ground targets in
+     * LOS.
+     *
+     * @param spotter The entity checking for visible targets
+     *
+     * @return List of visible targets
+     */
+    private List<Targetable> getVisibleTargetsForSpotter(Entity spotter) {
+        List<Targetable> visibleTargets = new ArrayList<>();
+        List<Targetable> allTargets = FireControl.getAllTargetableEnemyEntities(
+              getLocalPlayer(), getGame(), getFireControlState());
+
+        for (Targetable target : allTargets) {
+            // Skip airborne targets (can't spot them for LRM indirect fire)
+            if (target.isAirborne()) {
+                continue;
+            }
+
+            // Check LOS
+            LosEffects effects = LosEffects.calculateLOS(game, spotter, target);
+            if (effects.canSee()) {
+                visibleTargets.add(target);
+            }
+        }
+
+        return visibleTargets;
+    }
+
+    /**
+     * Checks if any friendly unit (excluding the specified shooter) has indirect fire capability.
+     *
+     * @param excludeEntity Entity to exclude from the check (typically the hidden unit itself)
+     *
+     * @return true if at least one friendly unit can use indirect fire
+     */
+    private boolean hasFriendlyIndirectFireCapability(Entity excludeEntity) {
+        FireControl fireControl = getFireControl(excludeEntity);
+
+        for (Entity friendly : getEntitiesOwned()) {
+            if (friendly.equals(excludeEntity)) {
+                continue;
+            }
+
+            // Skip destroyed or off-board units
+            if (friendly.isDestroyed() || friendly.isOffBoard()) {
+                continue;
+            }
+
+            // Use existing infrastructure to check for indirect fire capability
+            if (fireControl.entityCanIndirectFireMissile(getFireControlState(), friendly)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Records the expected damage for a hidden unit this round for trend analysis.
+     *
+     * @param entityId       The entity ID of the hidden unit
+     * @param expectedDamage The expected damage calculated this round
+     */
+    private void recordHiddenUnitDamage(int entityId, double expectedDamage) {
+        int currentRound = game.getCurrentRound();
+        hiddenUnitDamageHistory.computeIfAbsent(entityId, k -> new ArrayList<>())
+              .add(new double[] { currentRound, expectedDamage });
+
+        // Keep only last 7 rounds of history
+        List<double[]> history = hiddenUnitDamageHistory.get(entityId);
+        while (history.size() > 7) {
+            history.remove(0);
+        }
+    }
+
+    /**
+     * Analyzes the damage trend for a hidden unit and returns a multiplier for the reveal threshold. A declining trend
+     * (past peak) makes it easier to reveal (lower multiplier). An increasing trend makes it harder to reveal (higher
+     * multiplier) to wait for better opportunity.
+     *
+     * @param entityId              The entity ID of the hidden unit
+     * @param currentExpectedDamage The expected damage calculated this round
+     *
+     * @return Threshold multiplier: less than 1.0 = easier to reveal, greater than 1.0 = harder to reveal
+     */
+    private double calculateDamageTrendMultiplier(int entityId, double currentExpectedDamage) {
+        List<double[]> history = hiddenUnitDamageHistory.get(entityId);
+
+        // Need at least 3 data points for trend analysis
+        if (history == null || history.size() < 3) {
+            return 1.0;
+        }
+
+        // Find the peak damage in history
+        double peakDamage = 0;
+        int peakIndex = 0;
+        for (int i = 0; i < history.size(); i++) {
+            if (history.get(i)[1] > peakDamage) {
+                peakDamage = history.get(i)[1];
+                peakIndex = i;
+            }
+        }
+
+        // Calculate recent trend (last 3 values)
+        int size = history.size();
+        double oldest = history.get(size - 3)[1];
+        double middle = history.get(size - 2)[1];
+        double newest = history.get(size - 1)[1];
+
+        // Determine trend direction
+        boolean increasingTrend = newest > middle && middle > oldest;
+        boolean decreasingTrend = newest < middle && middle < oldest;
+        boolean atOrNearPeak = peakIndex >= size - 2;  // Peak was in last 2 rounds
+
+        // Calculate how close current damage is to peak (as percentage)
+        double peakRatio = peakDamage > 0 ? currentExpectedDamage / peakDamage : 0;
+
+        LOGGER.debug("Hidden unit damage trend: history size={}, peak={}, current={}, peakRatio={}, " +
+                    "increasing={}, decreasing={}, atPeak={}",
+              size, String.format("%.1f", peakDamage), String.format("%.1f", currentExpectedDamage),
+              String.format("%.2f", peakRatio), increasingTrend, decreasingTrend, atOrNearPeak);
+
+        // Apply multipliers based on trend
+        if (atOrNearPeak && peakRatio >= 0.9) {
+            // At or near peak - good time to reveal, make it easier
+            return 0.75;
+        } else if (decreasingTrend && peakRatio < 0.7) {
+            // Past peak and declining significantly - missed best opportunity but still consider revealing
+            // Make it slightly easier since waiting longer won't help
+            return 0.85;
+        } else if (increasingTrend && peakRatio < 0.6) {
+            // Still climbing toward peak - wait for better opportunity
+            return 1.25;
+        } else if (increasingTrend && peakRatio >= 0.6) {
+            // Climbing and getting close to good damage - slight wait
+            return 1.1;
+        }
+
+        // Flat or unclear trend - no adjustment
+        return 1.0;
+    }
+
+    /**
+     * Cleans up damage history for units that are no longer hidden or no longer exist. Should be called periodically to
+     * prevent memory leaks.
+     */
+    void cleanupHiddenUnitDamageHistory() {
+        hiddenUnitDamageHistory.entrySet().removeIf(entry -> {
+            Entity entity = game.getEntity(entry.getKey());
+            return entity == null || !entity.isHidden();
+        });
     }
 }

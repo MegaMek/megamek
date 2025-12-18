@@ -462,6 +462,8 @@ public abstract class Entity extends TurnOrdered
     public int damageThisRound;
     public int engineHitsThisPhase;
     public boolean rolledForEngineExplosion = false; // So that we don't roll twice in one round
+    public boolean reportedVDNIFeedbackThisPhase = false; // BA VDNI/BVDNI feedback already shown this phase
+    public boolean baVDNINeedsFeedbackMessage = false; // BA took crit, needs feedback message at end of attack
     public boolean dodging;
     public boolean reckless;
     private boolean evading = false;
@@ -6090,13 +6092,15 @@ public abstract class Entity extends TurnOrdered
                 }
                 if ((m.getType()).getInternalName().equals(Sensor.CLAN_AP) ||
                       (m.getType()).getInternalName().equals(Sensor.WATCHDOG) ||
-                      (m.getType()).getInternalName().equals(Sensor.NOVA)) {
+                      (m.getType()).getInternalName().equals(Sensor.NOVA) ||
+                      (m.getType()).getInternalName().equals(Sensor.CL_BA_LIGHT_AP)) {
                     return 5 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
-                if ((m.getType()).getInternalName().equals(Sensor.LIGHT_AP) ||
-                      (m.getType().getInternalName().equals(Sensor.CL_BA_LIGHT_AP)) ||
-                      (m.getType().getInternalName().equals(Sensor.IS_BA_LIGHT_AP))) {
+                if ((m.getType()).getInternalName().equals(Sensor.LIGHT_AP)) {
                     return 3 + cyberProbeBonus + quirkBonus + spaBonus;
+                }
+                if ((m.getType()).getInternalName().equals(Sensor.IS_BA_LIGHT_AP)) {
+                    return 4 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
                 if (m.getType().getInternalName().equals(Sensor.IS_IMPROVED) ||
                       (m.getType().getInternalName().equals(Sensor.CL_IMPROVED))) {

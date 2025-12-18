@@ -1320,14 +1320,16 @@ public abstract class BVCalculator {
             piloting = Math.max(0, piloting - 1);
             pilotModifiers.add("Comm. Implant");
         }
+        // VDNI: -1 Gunnery, -1 Piloting for Meks, Vehicles, Fighters, BA (IO pg 71)
+        // Note: BVDNI implies VDNI, so check VDNI && !BVDNI to avoid double-counting
         if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI) &&
-              entity.hasMisc(MiscType.F_BATTLEMEK_NIU)) {
+              !entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
             piloting = Math.max(0, piloting - 1);
             gunnery = Math.max(0, gunnery - 1);
             pilotModifiers.add("VDNI");
         }
-        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI) &&
-              entity.hasMisc(MiscType.F_BATTLEMEK_NIU)) {
+        // BVDNI: -1 Gunnery only (no piloting bonus due to "neuro-lag") (IO pg 71)
+        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
             gunnery = Math.max(0, gunnery - 1);
             pilotModifiers.add("Buf. VDNI");
         }
@@ -1393,7 +1395,7 @@ public abstract class BVCalculator {
         boolean hasGuided = false;
 
         for (Entity otherEntity : entity.getGame().getEntitiesVector()) {
-            if ((otherEntity == entity) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
+            if ((otherEntity.getOwner() == null) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
                 continue;
             }
             for (Mounted<?> mounted : otherEntity.getAmmo()) {

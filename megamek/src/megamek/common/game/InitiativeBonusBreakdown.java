@@ -43,15 +43,15 @@ import megamek.client.ui.Messages;
  * Tracks the breakdown of initiative bonus components for display purposes. This allows the initiative report to show
  * what contributes to the total bonus (e.g., HQ bonus, TCP implant, quirks, etc.) rather than just a single number.
  *
- * @param hq Mobile HQ bonus (TacOps option)
- * @param quirk Quirk bonus (e.g., Improved Communications)
- * @param quirkName Name of the quirk providing the bonus (e.g., "Command Mek", "Battle Computer")
- * @param console Command console or tech officer bonus (+2)
- * @param crewCommand Crew command skill bonus (RPG option)
- * @param tcp Triple Core Processor implant bonus
- * @param constant Player's constant init bonus
+ * @param hq           Mobile HQ bonus (TacOps option)
+ * @param quirk        Quirk bonus (e.g., Improved Communications)
+ * @param quirkName    Name of the quirk providing the bonus (e.g., "Command Mek", "Battle Computer")
+ * @param console      Command console or tech officer bonus (+2)
+ * @param crewCommand  Crew command skill bonus (RPG option)
+ * @param tcp          Triple Core Processor implant bonus
+ * @param constant     Player's constant init bonus
  * @param compensation Initiative compensation bonus
- * @param crew Individual crew init bonus (for individual initiative mode)
+ * @param crew         Individual crew init bonus (for individual initiative mode)
  *
  * @since 2025-12-15
  */
@@ -123,10 +123,10 @@ public record InitiativeBonusBreakdown(
     }
 
     /**
-     * Returns a formatted string showing all bonus components, e.g., "+3 TCP, +1 Command Mek".
-     * Components are sorted from highest to lowest value, so the applied positive modifier
-     * (the highest one) appears first. When multiple positive modifiers exist, appends
-     * "(using highest modifier only)" to clarify that only the highest positive is applied.
+     * Returns a formatted string showing all bonus components, e.g., "+3 TCP, +1 Command Mek". Components are sorted
+     * from highest to lowest value, so the applied positive modifier (the highest one) appears first. When multiple
+     * positive modifiers exist, appends "(using highest modifier only)" to clarify that only the highest positive is
+     * applied.
      *
      * @return A formatted breakdown string, or "0" if no components have values
      */

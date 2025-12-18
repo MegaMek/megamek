@@ -203,9 +203,8 @@ public class PunchAttackAction extends PhysicalAttackAction {
         // See BMM 7th Printing, Physical Attacks and Prone 'Mechs
         if ((target instanceof Entity) && ((Entity) target).isProne()) {
             int attackerLevel = attHex.getLevel() + ae.getElevation();
-            int targetLevel = targHex.getLevel() + target.getElevation();
-            if (targetLevel != attackerLevel + 1) {
-                return "Prone 'Mechs can only be punched if one level higher";
+            if (targetElevation != attackerLevel + 1) {
+                return Messages.getString("PhysicalAttackAction.ProneMekPunch");
             }
         }
 

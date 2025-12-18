@@ -278,7 +278,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         if ((target instanceof Entity) && ((Entity) target).isProne()) {
             if (targetElevation != attackerElevation) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                      "Prone 'Mechs can only be kicked if at the same level");
+                      Messages.getString("PhysicalAttackAction.ProneMekKick"));
             }
         }
 

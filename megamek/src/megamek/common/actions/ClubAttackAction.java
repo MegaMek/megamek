@@ -506,7 +506,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         if ((target instanceof Entity) && ((Entity) target).isProne()) {
             if (targetElevation != attackerElevation + 1) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                      "Prone 'Mechs can only be clubbed if one level higher");
+                      Messages.getString("PhysicalAttackAction.ProneMekClub"));
             }
         }
 

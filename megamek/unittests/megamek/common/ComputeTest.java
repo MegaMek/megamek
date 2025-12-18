@@ -35,6 +35,7 @@ package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -50,6 +51,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
@@ -57,11 +59,14 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Crew;
+import megamek.common.units.CrewType;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
+import megamek.common.units.TripodMek;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -481,5 +486,201 @@ class ComputeTest {
         faller.setWeight(weight);
 
         assertEquals(expectedDamage, Compute.getAccidentalFallFromAboveDamageFor(faller, elevation));
+    }
+
+    // Section: Tripod Prone Firing Modifiers (TacOps rules)
+
+    TripodMek createTripodMek(String chassis, String model, int cockpitType) {
+        TripodMek tripod = new TripodMek(Mek.GYRO_STANDARD, cockpitType);
+        tripod.setGame(game);
+        tripod.setChassis(chassis);
+        tripod.setModel(model);
+        tripod.setWeight(75.0);
+
+        // Initialize armor and internal structure for all locations
+        tripod.initializeArmor(10, Mek.LOC_HEAD);
+        tripod.initializeArmor(30, Mek.LOC_CENTER_TORSO);
+        tripod.initializeArmor(20, Mek.LOC_RIGHT_TORSO);
+        tripod.initializeArmor(20, Mek.LOC_LEFT_TORSO);
+        tripod.initializeArmor(15, Mek.LOC_RIGHT_ARM);
+        tripod.initializeArmor(15, Mek.LOC_LEFT_ARM);
+        tripod.initializeArmor(20, Mek.LOC_RIGHT_LEG);
+        tripod.initializeArmor(20, Mek.LOC_LEFT_LEG);
+        tripod.initializeArmor(20, Mek.LOC_CENTER_LEG);
+
+        tripod.setArmor(10, Mek.LOC_CENTER_TORSO, true); // rear armor
+
+        tripod.initializeInternal(3, Mek.LOC_HEAD);
+        tripod.initializeInternal(25, Mek.LOC_CENTER_TORSO);
+        tripod.initializeInternal(17, Mek.LOC_RIGHT_TORSO);
+        tripod.initializeInternal(17, Mek.LOC_LEFT_TORSO);
+        tripod.initializeInternal(12, Mek.LOC_RIGHT_ARM);
+        tripod.initializeInternal(12, Mek.LOC_LEFT_ARM);
+        tripod.initializeInternal(17, Mek.LOC_RIGHT_LEG);
+        tripod.initializeInternal(17, Mek.LOC_LEFT_LEG);
+        tripod.initializeInternal(17, Mek.LOC_CENTER_LEG);
+
+        return tripod;
+    }
+
+    @Test
+    void healthyTripodProneFiringModifierPlusOne() throws LocationFullException {
+        // Healthy tripod (all 3 legs, no hip damage) receives +1 modifier per TacOps
+        TripodMek tripod = createTripodMek("Ares", "ARS-V1", Mek.COCKPIT_STANDARD);
+        tripod.setOwnerId(player1.getId());
+        tripod.setId(1);
+        tripod.setProne(true);
+
+        // Add a weapon to center torso (valid location for prone firing)
+        WeaponType mediumLaser = (WeaponType) EquipmentType.get("ISMediumLaser");
+        tripod.addEquipment(mediumLaser, Mek.LOC_CENTER_TORSO);
+        int weaponId = tripod.getEquipmentNum(tripod.getWeaponList().get(0));
+
+        ToHitData mods = Compute.getProneMods(game, tripod, weaponId);
+
+        assertNotNull(mods, "Mods should not be null for healthy prone tripod");
+        assertEquals(1, mods.getValue(), "Healthy tripod should have +1 prone modifier");
+    }
+
+    @Test
+    void healthyTripodWithDualCockpitAndGunnerProneFiringModifierZero() throws LocationFullException {
+        // Healthy tripod with dual cockpit and dedicated gunner receives +0 modifier
+        TripodMek tripod = createTripodMek("Ares", "ARS-V1", Mek.COCKPIT_DUAL);
+        tripod.setOwnerId(player1.getId());
+        tripod.setId(1);
+        tripod.setProne(true);
+
+        // Dual cockpit sets up a crew with pilot and gunner positions
+        // Verify crew is set up correctly for dedicated gunner
+        Crew dualCrew = new Crew(CrewType.DUAL);
+        tripod.setCrew(dualCrew);
+
+        // Add a weapon to center torso (valid location for prone firing)
+        WeaponType mediumLaser = (WeaponType) EquipmentType.get("ISMediumLaser");
+        tripod.addEquipment(mediumLaser, Mek.LOC_CENTER_TORSO);
+        int weaponId = tripod.getEquipmentNum(tripod.getWeaponList().get(0));
+
+        ToHitData mods = Compute.getProneMods(game, tripod, weaponId);
+
+        assertNotNull(mods, "Mods should not be null for prone tripod with dual cockpit");
+        assertEquals(0, mods.getValue(), "Healthy tripod with dual cockpit and gunner should have +0 prone modifier");
+    }
+
+    @Test
+    void damagedTripodWithHipCritProneFiringModifierPlusTwo() throws LocationFullException {
+        // Damaged tripod (hip crit) reverts to standard +2 modifier
+        TripodMek tripod = createTripodMek("Ares", "ARS-V1", Mek.COCKPIT_STANDARD);
+        tripod.setOwnerId(player1.getId());
+        tripod.setId(1);
+        tripod.setProne(true);
+
+        // Damage the hip actuator on center leg (slot 0 is the hip)
+        // setDestroyed is required to make the slot non-operational for getGoodCriticalSlots
+        CriticalSlot hipSlot = tripod.getCritical(Mek.LOC_CENTER_LEG, 0);
+        assertNotNull(hipSlot, "Hip slot should exist");
+        hipSlot.setDestroyed(true);
+
+        // Verify hip crit is detected
+        assertTrue(tripod.hasHipCrit(), "Tripod should have hip crit");
+
+        // Add a weapon to center torso (valid location for prone firing)
+        WeaponType mediumLaser = (WeaponType) EquipmentType.get("ISMediumLaser");
+        tripod.addEquipment(mediumLaser, Mek.LOC_CENTER_TORSO);
+        int weaponId = tripod.getEquipmentNum(tripod.getWeaponList().get(0));
+
+        ToHitData mods = Compute.getProneMods(game, tripod, weaponId);
+
+        assertNotNull(mods, "Mods should not be null for damaged prone tripod");
+        assertEquals(2, mods.getValue(), "Damaged tripod (hip crit) should have +2 prone modifier");
+    }
+
+    @Test
+    void damagedTripodWithDestroyedLegProneFiringModifierPlusTwo() throws LocationFullException {
+        // Damaged tripod (lost leg) reverts to standard +2 modifier
+        TripodMek tripod = createTripodMek("Ares", "ARS-V1", Mek.COCKPIT_STANDARD);
+        tripod.setOwnerId(player1.getId());
+        tripod.setId(1);
+        tripod.setProne(true);
+
+        // Destroy the center leg by setting internal to ARMOR_DESTROYED
+        // (destroyLocation uses ARMOR_DOOMED which requires applyDamage to transition)
+        tripod.setInternal(IArmorState.ARMOR_DESTROYED, Mek.LOC_CENTER_LEG);
+
+        // Verify leg is destroyed
+        assertTrue(tripod.isLocationBad(Mek.LOC_CENTER_LEG), "Center leg should be destroyed");
+        assertEquals(1, tripod.countBadLegs(), "Tripod should have 1 bad leg");
+
+        // Add a weapon to center torso (valid location for prone firing)
+        WeaponType mediumLaser = (WeaponType) EquipmentType.get("ISMediumLaser");
+        tripod.addEquipment(mediumLaser, Mek.LOC_CENTER_TORSO);
+        int weaponId = tripod.getEquipmentNum(tripod.getWeaponList().get(0));
+
+        ToHitData mods = Compute.getProneMods(game, tripod, weaponId);
+
+        assertNotNull(mods, "Mods should not be null for damaged prone tripod");
+        assertEquals(2, mods.getValue(), "Damaged tripod (lost leg) should have +2 prone modifier");
+    }
+
+    @Test
+    void tripodProneLegWeaponCannotFire() throws LocationFullException {
+        // Leg-mounted weapons cannot fire when prone
+        TripodMek tripod = createTripodMek("Ares", "ARS-V1", Mek.COCKPIT_STANDARD);
+        tripod.setOwnerId(player1.getId());
+        tripod.setId(1);
+        tripod.setProne(true);
+
+        // Add a weapon to center leg (invalid location for prone firing)
+        WeaponType mediumLaser = (WeaponType) EquipmentType.get("ISMediumLaser");
+        tripod.addEquipment(mediumLaser, Mek.LOC_CENTER_LEG);
+        int weaponId = tripod.getEquipmentNum(tripod.getWeaponList().get(0));
+
+        ToHitData mods = Compute.getProneMods(game, tripod, weaponId);
+
+        assertNotNull(mods, "Mods should not be null for leg weapon on prone tripod");
+        assertEquals(TargetRoll.IMPOSSIBLE,
+              mods.getValue(),
+              "Leg-mounted weapon should be impossible to fire when prone");
+    }
+
+    @Test
+    void tripodProneLeftLegWeaponCannotFire() throws LocationFullException {
+        // Left leg-mounted weapons cannot fire when prone
+        TripodMek tripod = createTripodMek("Ares", "ARS-V1", Mek.COCKPIT_STANDARD);
+        tripod.setOwnerId(player1.getId());
+        tripod.setId(1);
+        tripod.setProne(true);
+
+        // Add a weapon to left leg (invalid location for prone firing)
+        WeaponType mediumLaser = (WeaponType) EquipmentType.get("ISMediumLaser");
+        tripod.addEquipment(mediumLaser, Mek.LOC_LEFT_LEG);
+        int weaponId = tripod.getEquipmentNum(tripod.getWeaponList().get(0));
+
+        ToHitData mods = Compute.getProneMods(game, tripod, weaponId);
+
+        assertNotNull(mods, "Mods should not be null for left leg weapon on prone tripod");
+        assertEquals(TargetRoll.IMPOSSIBLE,
+              mods.getValue(),
+              "Left leg-mounted weapon should be impossible to fire when prone");
+    }
+
+    @Test
+    void tripodProneRightLegWeaponCannotFire() throws LocationFullException {
+        // Right leg-mounted weapons cannot fire when prone
+        TripodMek tripod = createTripodMek("Ares", "ARS-V1", Mek.COCKPIT_STANDARD);
+        tripod.setOwnerId(player1.getId());
+        tripod.setId(1);
+        tripod.setProne(true);
+
+        // Add a weapon to right leg (invalid location for prone firing)
+        WeaponType mediumLaser = (WeaponType) EquipmentType.get("ISMediumLaser");
+        tripod.addEquipment(mediumLaser, Mek.LOC_RIGHT_LEG);
+        int weaponId = tripod.getEquipmentNum(tripod.getWeaponList().get(0));
+
+        ToHitData mods = Compute.getProneMods(game, tripod, weaponId);
+
+        assertNotNull(mods, "Mods should not be null for right leg weapon on prone tripod");
+        assertEquals(TargetRoll.IMPOSSIBLE,
+              mods.getValue(),
+              "Right leg-mounted weapon should be impossible to fire when prone");
     }
 }

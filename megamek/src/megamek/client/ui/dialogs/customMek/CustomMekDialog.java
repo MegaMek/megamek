@@ -522,6 +522,32 @@ public class CustomMekDialog extends AbstractButtonDialog
                   Messages.getString("CustomMekDialog.GasEffuserOnlyOneTitle"),
                   JOptionPane.WARNING_MESSAGE);
         }
+
+        // DNI types are mutually exclusive - can only have one of VDNI, BVDNI, or Proto DNI
+        if (state && isDniOption(option.getName())) {
+            deselectOtherDniOptions(comp);
+        }
+
+        // Proto DNI is BattleMek only (IO pg 83)
+        if (state && option.getName().equals(OptionsConstants.MD_PROTO_DNI)
+              && !isValidForProtoDni(entity)) {
+            comp.setSelected(false);
+            JOptionPane.showMessageDialog(this,
+                  Messages.getString("CustomMekDialog.ProtoDniBattleMekOnly"),
+                  Messages.getString("CustomMekDialog.ProtoDniBattleMekOnlyTitle"),
+                  JOptionPane.WARNING_MESSAGE);
+        }
+
+        // VDNI/BVDNI valid for BM, IM, BA, CV, SV, AF, CF (IO pg 71)
+        if (state && (option.getName().equals(OptionsConstants.MD_VDNI)
+              || option.getName().equals(OptionsConstants.MD_BVDNI))
+              && !isValidForVdni(entity)) {
+            comp.setSelected(false);
+            JOptionPane.showMessageDialog(this,
+                  Messages.getString("CustomMekDialog.VdniInvalidUnitType"),
+                  Messages.getString("CustomMekDialog.VdniInvalidUnitTypeTitle"),
+                  JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     /**
@@ -565,6 +591,50 @@ public class CustomMekDialog extends AbstractButtonDialog
             }
         }
         return false;
+    }
+
+    /**
+     * Checks if the given option name is a Direct Neural Interface type.
+     * VDNI, BVDNI, and Proto DNI are mutually exclusive.
+     */
+    private boolean isDniOption(String optionName) {
+        return optionName.equals(OptionsConstants.MD_VDNI)
+              || optionName.equals(OptionsConstants.MD_BVDNI)
+              || optionName.equals(OptionsConstants.MD_PROTO_DNI);
+    }
+
+    /**
+     * Deselects other DNI options when one is selected (they are mutually exclusive).
+     */
+    private void deselectOtherDniOptions(DialogOptionComponentYPanel selectedComp) {
+        for (DialogOptionComponentYPanel optComp : optionComps) {
+            if (optComp == selectedComp) {
+                continue;
+            }
+            if (isDniOption(optComp.getOption().getName())
+                  && Boolean.TRUE.equals(optComp.getValue())) {
+                optComp.setSelected(false);
+            }
+        }
+    }
+
+    /**
+     * Checks if entity is valid for Proto DNI (BattleMek only, not IndustrialMek).
+     */
+    private boolean isValidForProtoDni(Entity entity) {
+        return entity.isMek() && !entity.isIndustrialMek();
+    }
+
+    /**
+     * Checks if entity is valid for VDNI/BVDNI (BM, IM, BA, CV, SV, AF, CF).
+     */
+    private boolean isValidForVdni(Entity entity) {
+        return entity.isMek()
+              || entity.isBattleArmor()
+              || entity.isCombatVehicle()
+              || entity.isSupportVehicle()
+              || entity.isAerospaceFighter()
+              || entity.isConventionalFighter();
     }
 
     @Override

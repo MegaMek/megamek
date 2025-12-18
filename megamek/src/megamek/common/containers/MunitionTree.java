@@ -106,6 +106,8 @@ public class MunitionTree {
           "Precision Playtest"));
 
     public static final List<String> ATM_MUNITION_NAMES = new ArrayList<>(List.of("HE", "ER", "Standard"));
+    public static final List<String> iATM_MUNITION_NAMES = new ArrayList<>(List.of("HE", "ER", "Standard", "IIW",
+          "IMP"));
 
     public static final List<String> ARROW_MUNITION_NAMES = new ArrayList<>(List.of("Fuel-Air",
           "Standard",
@@ -132,12 +134,12 @@ public class MunitionTree {
 
     public static final List<String> ARTILLERY_CANNON_MUNITION_NAMES = new ArrayList<>(List.of("Fuel-Air", "Standard"));
 
-    public static final List<String> MEK_MORTAR_MUNITION_NAMES = new ArrayList<>(List.of("Standard",
-          "Semi-Guided",
-          "Anti-personnel",
-          "Airburst",
-          "Flare",
-          "Smoke"));
+    public static final List<String> MORTAR_MUNITION_NAMES = new ArrayList<>(List.of("SC",
+          "SG",
+          "AP",
+          "AB",
+          "FL",
+          "SM"));
 
     public static final List<String> NARC_MUNITION_NAMES = new ArrayList<>(List.of("Narc Explosive", "Standard"));
 

@@ -755,6 +755,21 @@ public class EquipmentType implements ITechnology {
         return EquipmentType.lookupHash.get(key.toLowerCase());
     }
 
+    /**
+     * Add a way to find if a given equipment type matches a particular string in _any_ of its names
+     * (Case sensitive)
+     * @param name
+     * @return
+     */
+    public boolean matchesName(String name) {
+        for (String s : namesVector) {
+            if (s.contains(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Enumeration<String> getNames() {
         return namesVector.elements();
     }

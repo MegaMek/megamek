@@ -459,13 +459,13 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
                       entityArrayList,
                       "");
                 resetBombChoices(clientGUI, lobby.game(), entityArrayList);
-                tlg.reconfigureEntities(entityArrayList, faction, munitionTree, reconfigurationParameters);
+                tlg.reconfigureEntities(entityArrayList, faction, munitionTree, reconfigurationParameters, null);
                 reconfigured = true;
                 break;
             case LMP_RANDOM_CONFIG:
                 munitionTree = TeamLoadOutGenerator.generateRandomizedMT();
                 resetBombChoices(clientGUI, lobby.game(), entityArrayList);
-                tlg.reconfigureEntities(entityArrayList, faction, munitionTree, reconfigurationParameters);
+                tlg.reconfigureEntities(entityArrayList, faction, munitionTree, reconfigurationParameters, null);
                 reconfigured = true;
                 break;
             case LMP_SAVE_CONFIG:
@@ -477,7 +477,7 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
                 if (null != munitionTree) {
                     // Apply to entities
                     resetBombChoices(clientGUI, lobby.game(), entityArrayList);
-                    tlg.reconfigureEntities(entityArrayList, faction, munitionTree, reconfigurationParameters);
+                    tlg.reconfigureEntities(entityArrayList, faction, munitionTree, reconfigurationParameters, null);
                     reconfigured = true;
                 }
                 break;

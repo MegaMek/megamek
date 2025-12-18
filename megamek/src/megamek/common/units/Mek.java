@@ -3358,13 +3358,18 @@ public abstract class Mek extends Entity {
             roll.addModifier(-1, "Enhanced Imaging");
         }
 
-        // VDNI bonus?
-        if (hasAbility(OptionsConstants.MD_VDNI)
+        // Prototype DNI gives -3 piloting (IO pg 83)
+        // VDNI gives -1 piloting (IO pg 71) - BVDNI does NOT get piloting bonus
+        // Check Proto DNI first as it's more powerful
+        if (hasAbility(OptionsConstants.MD_PROTO_DNI)) {
+            roll.addModifier(-3, "Prototype DNI");
+        } else if (hasAbility(OptionsConstants.MD_VDNI)
               && !hasAbility(OptionsConstants.MD_BVDNI)) {
             roll.addModifier(-1, "VDNI");
         }
 
         // Small/torso-mounted cockpit penalty?
+        // BVDNI negates small cockpit penalty, but Proto DNI does not
         if (((getCockpitType() == Mek.COCKPIT_SMALL) || (getCockpitType() == Mek.COCKPIT_SMALL_COMMAND_CONSOLE))
               && (!hasAbility(OptionsConstants.MD_BVDNI)
               && !hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT))) {

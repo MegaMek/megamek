@@ -298,6 +298,7 @@ public class TWDamageManager implements IDamageManager {
         boolean isFerroFibrousTarget = false;
         boolean wasDamageIS = false;
         boolean tookInternalDamage = damageIS;
+        boolean tookAnyDamage = damage > 0; // Track if any damage was applied for Proto DNI feedback
         Hex te_hex = null;
 
         boolean hardenedArmor = ((entity instanceof Mek) || (entity instanceof Tank)) &&
@@ -1951,6 +1952,30 @@ public class TWDamageManager implements IDamageManager {
             reportVec.add(report);
 
             if (diceRoll.getIntValue() >= 8) {
+                reportVec.addAll(manager.damageCrew(entity, 1));
+            }
+        }
+
+        // Prototype DNI feedback on ANY damage (IO pg 83)
+        // TN 6 for armor-only hits, TN 8 for internal damage or critical hits
+        // Only applies to Meks
+        if (tookAnyDamage &&
+              (entity instanceof Mek) &&
+              entity.hasAbility(OptionsConstants.MD_PROTO_DNI) &&
+              !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+            Report.addNewline(reportVec);
+            Roll diceRoll = Compute.rollD6(2);
+            int targetNumber = tookInternalDamage ? 8 : 6;
+            report = new Report(3589);
+            report.subject = entity.getId();
+            report.indent(2);  // Indent BEFORE addDesc to suppress unit icon
+            report.addDesc(entity);
+            report.add(targetNumber - 1); // Display as "needs X or less"
+            report.add(diceRoll);
+            report.choose(diceRoll.getIntValue() >= targetNumber);
+            reportVec.add(report);
+
+            if (diceRoll.getIntValue() >= targetNumber) {
                 reportVec.addAll(manager.damageCrew(entity, 1));
             }
         }

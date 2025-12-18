@@ -51,6 +51,7 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 
 import megamek.SuiteConstants;
+import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.battleArmor.BattleArmorHandles;
@@ -3362,7 +3363,7 @@ public abstract class Mek extends Entity {
         // VDNI gives -1 piloting (IO pg 71) - BVDNI does NOT get piloting bonus
         // Check Proto DNI first as it's more powerful
         if (hasAbility(OptionsConstants.MD_PROTO_DNI)) {
-            roll.addModifier(-3, "Prototype DNI");
+            roll.addModifier(-3, Messages.getString("PilotingRoll.ProtoDni"));
         } else if (hasAbility(OptionsConstants.MD_VDNI)
               && !hasAbility(OptionsConstants.MD_BVDNI)) {
             roll.addModifier(-1, "VDNI");

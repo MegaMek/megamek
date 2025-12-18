@@ -1935,10 +1935,12 @@ public class TWDamageManager implements IDamageManager {
             }
         }
 
-        // if using VDNI (but not buffered), check for damage on an internal hit
+        // if using VDNI (but not buffered or Proto DNI), check for damage on an internal hit
+        // Proto DNI takes precedence and handles its own feedback
         if (tookInternalDamage &&
               entity.hasAbility(OptionsConstants.MD_VDNI) &&
               !entity.hasAbility(OptionsConstants.MD_BVDNI) &&
+              !entity.hasAbility(OptionsConstants.MD_PROTO_DNI) &&
               !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
             Report.addNewline(reportVec);
             Roll diceRoll = Compute.rollD6(2);
@@ -1958,9 +1960,10 @@ public class TWDamageManager implements IDamageManager {
 
         // Prototype DNI feedback on ANY damage (IO pg 83)
         // TN 6 for armor-only hits, TN 8 for internal damage or critical hits
-        // Only applies to Meks
+        // Only applies to BattleMeks (not IndustrialMeks)
         if (tookAnyDamage &&
               (entity instanceof Mek) &&
+              !entity.isIndustrialMek() &&
               entity.hasAbility(OptionsConstants.MD_PROTO_DNI) &&
               !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
             Report.addNewline(reportVec);

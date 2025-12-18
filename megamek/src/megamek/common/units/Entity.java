@@ -6240,7 +6240,7 @@ public abstract class Entity extends TurnOrdered
 
         // More than 3 tons of communications equipment
         double commsTonnage = 0;
-        for (var mounted : getMisc()) {
+        for (MiscMounted mounted : getMisc()) {
             if (mounted.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
                 commsTonnage += mounted.getTonnage();
             }

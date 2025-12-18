@@ -37,22 +37,34 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.client.ui.Messages;
+
 /**
  * Tracks the breakdown of initiative bonus components for display purposes. This allows the initiative report to show
  * what contributes to the total bonus (e.g., HQ bonus, TCP implant, quirks, etc.) rather than just a single number.
  *
+ * @param hq Mobile HQ bonus (TacOps option)
+ * @param quirk Quirk bonus (e.g., Improved Communications)
+ * @param quirkName Name of the quirk providing the bonus (e.g., "Command Mek", "Battle Computer")
+ * @param console Command console or tech officer bonus (+2)
+ * @param crewCommand Crew command skill bonus (RPG option)
+ * @param tcp Triple Core Processor implant bonus
+ * @param constant Player's constant init bonus
+ * @param compensation Initiative compensation bonus
+ * @param crew Individual crew init bonus (for individual initiative mode)
+ *
  * @since 2025-12-15
  */
 public record InitiativeBonusBreakdown(
-      int hq,           // Mobile HQ bonus (TacOps option)
-      int quirk,        // Quirk bonus (e.g., Improved Communications)
-      String quirkName, // Name of the quirk providing the bonus (e.g., "Command Mek", "Battle Computer")
-      int console,      // Command console or tech officer bonus (+2)
-      int crewCommand,  // Crew command skill bonus (RPG option)
-      int tcp,          // Triple Core Processor implant bonus
-      int constant,     // Player's constant init bonus
-      int compensation, // Initiative compensation bonus
-      int crew          // Individual crew init bonus (for individual initiative mode)
+      int hq,
+      int quirk,
+      String quirkName,
+      int console,
+      int crewCommand,
+      int tcp,
+      int constant,
+      int compensation,
+      int crew
 ) implements Serializable {
     @Serial
     private static final long serialVersionUID = 3L;
@@ -125,40 +137,42 @@ public record InitiativeBonusBreakdown(
 
         if (hq != 0) {
             components.add(new int[] { hq, components.size() });
-            labels.add("HQ");
+            labels.add(Messages.getString("InitiativeBonusBreakdown.HQ"));
         }
         if (quirk != 0) {
             components.add(new int[] { quirk, components.size() });
-            String quirkLabel = (quirkName != null && !quirkName.isEmpty()) ? quirkName : "Quirk";
+            String quirkLabel = (quirkName != null && !quirkName.isEmpty())
+                  ? quirkName
+                  : Messages.getString("InitiativeBonusBreakdown.Quirk");
             labels.add(quirkLabel);
         }
         if (console != 0) {
             components.add(new int[] { console, components.size() });
-            labels.add("Console");
+            labels.add(Messages.getString("InitiativeBonusBreakdown.Console"));
         }
         if (crewCommand != 0) {
             components.add(new int[] { crewCommand, components.size() });
-            labels.add("Cmd");
+            labels.add(Messages.getString("InitiativeBonusBreakdown.Cmd"));
         }
         if (tcp != 0) {
             components.add(new int[] { tcp, components.size() });
-            labels.add("TCP");
+            labels.add(Messages.getString("InitiativeBonusBreakdown.TCP"));
         }
         if (constant != 0) {
             components.add(new int[] { constant, components.size() });
-            labels.add("Base");
+            labels.add(Messages.getString("InitiativeBonusBreakdown.Base"));
         }
         if (compensation != 0) {
             components.add(new int[] { compensation, components.size() });
-            labels.add("Comp");
+            labels.add(Messages.getString("InitiativeBonusBreakdown.Comp"));
         }
         if (crew != 0) {
             components.add(new int[] { crew, components.size() });
-            labels.add("Crew");
+            labels.add(Messages.getString("InitiativeBonusBreakdown.Crew"));
         }
 
         if (components.isEmpty()) {
-            return "0";
+            return Messages.getString("InitiativeBonusBreakdown.Zero");
         }
 
         // Sort by value descending (highest first)
@@ -189,7 +203,7 @@ public record InitiativeBonusBreakdown(
 
         String result = String.join(", ", parts);
         if (positiveCount > 1) {
-            result += " (using highest modifier only)";
+            result += " " + Messages.getString("InitiativeBonusBreakdown.HighestModifierOnly");
         }
         return result;
     }
@@ -210,12 +224,25 @@ public record InitiativeBonusBreakdown(
      * applies) are applied by {@link #total()} when calculating the actual initiative bonus.
      */
     public InitiativeBonusBreakdown add(InitiativeBonusBreakdown other) {
-        // Use the quirk name from whichever has the higher quirk bonus
-        String combinedQuirkName = this.quirk >= other.quirk ? this.quirkName : other.quirkName;
+        // For quirk bonus, keep the higher value and its associated name (don't sum).
+        // Quirks are positive bonuses that don't stack, so summing would be misleading.
+        int combinedQuirk;
+        String combinedQuirkName;
+        if (this.quirk > other.quirk) {
+            combinedQuirk = this.quirk;
+            combinedQuirkName = this.quirkName;
+        } else if (other.quirk > this.quirk) {
+            combinedQuirk = other.quirk;
+            combinedQuirkName = other.quirkName;
+        } else {
+            // Equal quirk values - prefer non-null name
+            combinedQuirk = this.quirk;
+            combinedQuirkName = (this.quirkName != null) ? this.quirkName : other.quirkName;
+        }
 
         return new InitiativeBonusBreakdown(
               this.hq + other.hq,
-              this.quirk + other.quirk,
+              combinedQuirk,
               combinedQuirkName,
               this.console + other.console,
               this.crewCommand + other.crewCommand,

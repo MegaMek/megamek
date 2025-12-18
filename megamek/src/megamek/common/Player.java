@@ -731,12 +731,7 @@ public final class Player extends TurnOrdered {
 
         for (InGameObject object : game.getInGameObjects()) {
             if (object instanceof Entity entity && entity.getOwner().equals(this)) {
-                if (!entity.isDestroyed() &&
-                      entity.getCrew().isActive() &&
-                      !entity.isCaptured() &&
-                      !(entity instanceof MekWarrior) &&
-                      ((entity.isDeployed() && !entity.isOffBoard()) ||
-                            (entity.getDeployRound() == (game.getCurrentRound() + 1)))) {
+                if (isActiveForCommandBonus(entity)) {
                     if (entity.hasCommandConsoleBonus() || entity.getCrew().hasActiveTechOfficer()) {
                         return 2;
                     }
@@ -760,12 +755,7 @@ public final class Player extends TurnOrdered {
         int bonus = 0;
         for (InGameObject object : game.getInGameObjects()) {
             if (object instanceof Entity entity && entity.getOwner().equals(this)) {
-                if (!entity.isDestroyed() &&
-                      entity.getCrew().isActive() &&
-                      !entity.isCaptured() &&
-                      !(entity instanceof MekWarrior) &&
-                      ((entity.isDeployed() && !entity.isOffBoard()) ||
-                            (entity.getDeployRound() == (game.getCurrentRound() + 1)))) {
+                if (isActiveForCommandBonus(entity)) {
                     bonus = Math.max(bonus, entity.getCrew().getCommandBonus());
                 }
             }
@@ -810,12 +800,7 @@ public final class Player extends TurnOrdered {
     public int getIndividualCommandBonus(Entity entity, boolean useCommandInit) {
         int bonus = 0;
         // Only consider this during normal rounds when unit is deployed on board, or about to deploy this round.
-        if (!entity.isDestroyed() &&
-              entity.getCrew().isActive() &&
-              !entity.isCaptured() &&
-              !(entity instanceof MekWarrior) &&
-              (entity.isDeployed() && !entity.isOffBoard()) ||
-              (entity.getDeployRound() == (game.getCurrentRound() + 1))) {
+        if (isActiveForCommandBonus(entity)) {
             if (useCommandInit) {
                 bonus = entity.getCrew().getCommandBonus();
             }
@@ -943,6 +928,23 @@ public final class Player extends TurnOrdered {
             return false;
         }
         return ComputeECM.isAffectedByECM(entity, entity.getPosition(), entity.getPosition());
+    }
+
+    /**
+     * Checks if an entity is active and available for command bonus purposes. Entity must be not destroyed, have active
+     * crew, not captured, not an ejected pilot, and either deployed on-board or deploying next round.
+     *
+     * @param entity the entity to check
+     *
+     * @return true if the entity can provide command bonuses
+     */
+    private boolean isActiveForCommandBonus(Entity entity) {
+        boolean isAlive = !entity.isDestroyed() && entity.getCrew().isActive() && !entity.isCaptured();
+        boolean isNotEjectedPilot = !(entity instanceof MekWarrior);
+        boolean isDeployedOnBoard = entity.isDeployed() && !entity.isOffBoard();
+        boolean isDeployingNextRound = entity.getDeployRound() == (game.getCurrentRound() + 1);
+
+        return isAlive && isNotEjectedPilot && (isDeployedOnBoard || isDeployingNextRound);
     }
 
     public String getColorForPlayer() {

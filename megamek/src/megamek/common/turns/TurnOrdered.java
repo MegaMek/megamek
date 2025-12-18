@@ -441,9 +441,12 @@ public abstract class TurnOrdered implements ITurnOrdered {
                     final Player player = entity.getOwner();
                     if (player != null) {
                         // Break down individual initiative bonuses by source
+                        int hqBonus = 0;
                         int consoleBonus = 0;
                         int crewCommandBonus = 0;
                         int tcpBonus = 0;
+                        int quirkBonus = 0;
+                        String quirkName = null;
                         int crewBonus = entity.getCrew().getInitBonus();
 
                         // Check if entity is valid for command bonuses
@@ -453,6 +456,12 @@ public abstract class TurnOrdered implements ITurnOrdered {
                               !(entity instanceof MekWarrior) &&
                               ((entity.isDeployed() && !entity.isOffBoard()) ||
                                     (entity.getDeployRound() == (entity.getGame().getCurrentRound() + 1)))) {
+                            // Mobile HQ bonus (TacOps option)
+                            if (entity.getGame()
+                                  .getOptions()
+                                  .booleanOption(OptionsConstants.ADVANCED_TAC_OPS_MOBILE_HQS)) {
+                                hqBonus = entity.getHQIniBonus();
+                            }
                             // Command console / tech officer bonus
                             if (entity.hasCommandConsoleBonus() || entity.getCrew().hasActiveTechOfficer()) {
                                 consoleBonus = 2;
@@ -463,17 +472,28 @@ public abstract class TurnOrdered implements ITurnOrdered {
                             }
                             // TCP + VDNI/BVDNI initiative bonus (IO pg 81)
                             tcpBonus = entity.getTCPInitiativeBonus();
+                            // Quirk bonuses (Battle Computer +2, Command Mek +1)
+                            quirkBonus = entity.getQuirkIniBonus();
+                            if (quirkBonus > 0) {
+                                if (entity.hasQuirk(OptionsConstants.QUIRK_POS_BATTLE_COMP)) {
+                                    quirkName = "Battle Computer";
+                                } else if (entity.hasQuirk(OptionsConstants.QUIRK_POS_COMMAND_MEK)) {
+                                    quirkName = "Command Mek";
+                                }
+                            }
                         }
 
+                        // Note: Compensation bonus is 0 for individual initiative - streak compensation
+                        // is tracked at Player/Team level, not per-entity
                         breakdown = new InitiativeBonusBreakdown(
-                              0,  // hq
-                              0,  // quirk
-                              null,  // quirkName
+                              hqBonus,
+                              quirkBonus,
+                              quirkName,
                               consoleBonus,
                               crewCommandBonus,
                               tcpBonus,
-                              0,  // constant
-                              0,  // compensation
+                              0,  // constant (player-level bonus, not applicable to individual entities)
+                              0,  // compensation (tracked at Player/Team level for streak-breaking)
                               crewBonus
                         );
 

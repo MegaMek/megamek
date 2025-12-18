@@ -1393,7 +1393,7 @@ public abstract class BVCalculator {
         boolean hasGuided = false;
 
         for (Entity otherEntity : entity.getGame().getEntitiesVector()) {
-            if ((otherEntity == entity) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
+            if (otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
                 continue;
             }
             for (Mounted<?> mounted : otherEntity.getAmmo()) {

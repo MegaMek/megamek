@@ -65,7 +65,7 @@
         <Logger name="BotLogger" level="info" additivity="false">
             <AppenderRef ref="BotLog" />
         </Logger>
-        <Logger name="megamek" level="debug" additivity="false">
+        <Logger name="megamek" level="error" additivity="false">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />
             <AppenderRef ref="MegaMekLog" />

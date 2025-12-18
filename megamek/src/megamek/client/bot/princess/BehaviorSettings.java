@@ -128,7 +128,7 @@ public class BehaviorSettings implements Serializable {
     // Hidden unit reveal thresholds - higher index = more willing to reveal
     // Values represent minimum (expectedDamage / selfPreservation) ratio to justify revealing
     static final double[] HIDDEN_REVEAL_VALUES = {
-          0.0,    // 0: Never reveal (current behavior)
+          0.0,    // 0: Never reveal
           0.5,    // 1: Very conservative
           0.75,   // 2: Conservative
           1.0,    // 3: Cautious

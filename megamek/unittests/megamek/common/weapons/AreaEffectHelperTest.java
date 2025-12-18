@@ -38,6 +38,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -45,12 +48,16 @@ import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 import megamek.client.Client;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.common.Hex;
+import megamek.common.HitData;
 import megamek.common.Player;
+import megamek.common.Report;
 import megamek.common.Team;
+import megamek.common.ToHitData;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.AmmoType;
@@ -59,10 +66,13 @@ import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Crew;
+import megamek.common.units.Entity;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.common.weapons.handlers.AreaEffectHelper;
 import megamek.common.weapons.handlers.DamageFalloff;
+import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -322,5 +332,74 @@ class AreaEffectHelperTest {
         }
     }
 
+    /**
+     * Helper to create a mock entity with all the stubbing needed for Report.addDesc()
+     */
+    private Entity createMockEntityForReports(boolean isHidden) {
+        Entity entity = mock(Entity.class);
+        when(entity.getId()).thenReturn(1);
+        when(entity.isHidden()).thenReturn(isHidden);
+        when(entity.isDoomed()).thenReturn(true); // End damage loop immediately
+        when(entity.hasUndamagedCriticalSlots()).thenReturn(false);
+
+        // For Report.addDesc()
+        when(entity.getShortName()).thenReturn("Test Unit");
+        when(entity.getOwner()).thenReturn(null);
+        Crew mockCrew = mock(Crew.class);
+        when(mockCrew.getSize()).thenReturn(1);
+        when(mockCrew.getNickname()).thenReturn("");
+        when(entity.getCrew()).thenReturn(mockCrew);
+
+        // For damage application
+        HitData mockHit = new HitData(0);
+        when(entity.rollHitLocation(anyInt(), anyInt())).thenReturn(mockHit);
+        when(entity.sideTable(any(Coords.class))).thenReturn(ToHitData.SIDE_FRONT);
+
+        return entity;
+    }
+
+    @Test
+    void testExplosionRevealsHiddenUnit() {
+        // Setup: Create a mock hidden entity
+        Entity hiddenUnit = createMockEntityForReports(true);
+
+        // Mock game manager
+        TWGameManager mockGameManager = mock(TWGameManager.class);
+        when(mockGameManager.damageEntity(any(), any(), anyInt(), anyBoolean(), any(), anyBoolean(), anyBoolean()))
+              .thenReturn(new Vector<>());
+
+        Vector<Report> reports = new Vector<>();
+        Coords position = new Coords(5, 5);
+
+        // Act: Apply explosion damage
+        AreaEffectHelper.applyExplosionClusterDamageToEntity(
+              hiddenUnit, 10, 5, position, reports, mockGameManager);
+
+        // Assert: Reveal report (9963) should be generated
+        boolean hasRevealReport = reports.stream().anyMatch(r -> r.messageId == 9963);
+        assertTrue(hasRevealReport, "Should generate reveal report (9963) for hidden unit");
+    }
+
+    @Test
+    void testExplosionDoesNotGenerateRevealReportForVisibleUnit() {
+        // Setup: Create a mock non-hidden entity
+        Entity visibleUnit = createMockEntityForReports(false);
+
+        // Mock game manager
+        TWGameManager mockGameManager = mock(TWGameManager.class);
+        when(mockGameManager.damageEntity(any(), any(), anyInt(), anyBoolean(), any(), anyBoolean(), anyBoolean()))
+              .thenReturn(new Vector<>());
+
+        Vector<Report> reports = new Vector<>();
+        Coords position = new Coords(5, 5);
+
+        // Act: Apply explosion damage
+        AreaEffectHelper.applyExplosionClusterDamageToEntity(
+              visibleUnit, 10, 5, position, reports, mockGameManager);
+
+        // Assert: No reveal report should be generated for already-visible unit
+        boolean hasRevealReport = reports.stream().anyMatch(r -> r.messageId == 9963);
+        assertFalse(hasRevealReport, "Should not generate reveal report for visible unit");
+    }
 
 }

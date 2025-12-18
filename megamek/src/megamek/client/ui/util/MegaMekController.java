@@ -90,8 +90,8 @@ public class MegaMekController implements KeyEventDispatcher {
     /** Reference to MegaMekGUI for post-unlaunch callbacks (e.g., load game from lobby). */
     public MegaMekGUI megaMekGUI = null;
 
-    /** Action to run after unlaunch completes (e.g., trigger load game dialog). */
-    private Runnable postUnlaunchAction = null;
+    /** Action to run after unlaunch completes (e.g., trigger load game dialog). Must be volatile for thread visibility. */
+    private volatile Runnable postUnlaunchAction = null;
 
     /** Maps a key code to a command string. */
     protected Set<KeyCommandBind> keyCmdSet;

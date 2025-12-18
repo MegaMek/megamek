@@ -786,7 +786,7 @@ public class ClientGUI extends AbstractClientGUI
         // Show file chooser first (before closing lobby)
         JFileChooser fileChooser = new JFileChooser(MMConstants.SAVEGAME_DIR);
         fileChooser.setDialogTitle(Messages.getString("MegaMek.SaveGameDialog.title"));
-        fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+        fileChooser.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File f) {
                 return f.getName().endsWith(MMConstants.SAVE_FILE_EXT)

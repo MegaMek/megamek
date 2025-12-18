@@ -6136,6 +6136,8 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Returns whether this entity has a Targeting Computer that is in aimed shot mode.
+     * This also returns true for Triple-Core Processor + VDNI/BVDNI combinations,
+     * which grant aimed shot capability as if equipped with a Targeting Computer.
      */
     public boolean hasAimModeTargComp() {
         if (hasActiveEiCockpit()) {
@@ -6147,12 +6149,116 @@ public abstract class Entity extends TurnOrdered
                 return true;
             }
         }
+        // TCP + VDNI/BVDNI grants aimed shot capability for Meks, vehicles, and aerospace
+        if (hasTCPAimedShotCapability()) {
+            return true;
+        }
         for (MiscMounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_TARGETING_COMPUTER) && m.curMode().equals("Aimed shot")) {
                 return !m.isInoperable();
             }
         }
         return false;
+    }
+
+    /**
+     * Returns whether this entity has Triple-Core Processor aimed shot capability. Per IO pg 81, MechWarriors, vehicle
+     * commanders, and fighter pilots with TCP and VDNI/BVDNI may execute aimed shots as if equipped with a Targeting
+     * Computer.
+     *
+     * @return true if TCP + VDNI/BVDNI is active and unit type qualifies
+     */
+    public boolean hasTCPAimedShotCapability() {
+        if (crew == null) {
+            return false;
+        }
+        boolean hasTCP = hasAbility(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR);
+        boolean hasVdni = hasAbility(OptionsConstants.MD_VDNI)
+              || hasAbility(OptionsConstants.MD_BVDNI);
+        if (!hasTCP || !hasVdni) {
+            return false;
+        }
+        // Only MechWarriors, vehicle commanders, and fighter pilots qualify
+        // Use isFighter() to include both Aerospace and Conventional Fighters per IO pg 81
+        return isMek() || isCombatVehicle() || isFighter();
+    }
+
+    /**
+     * Returns the TCP initiative bonus for this entity. Per IO pg 81, MekWarriors, vehicle commanders, and fighter
+     * pilots with TCP and VDNI/BVDNI provide a +2 initiative modifier to their force's side. This bonus can be modified
+     * by command equipment (+1), shutdown (-1), ECM (-1), or EMI (-1).
+     * <p>
+     * This method is primarily used for Individual Initiative mode where each entity rolls separately.
+     *
+     * @return The TCP initiative bonus (0 if entity doesn't qualify)
+     */
+    public int getTCPInitiativeBonus() {
+        if (crew == null || !crew.isActive()) {
+            return 0;
+        }
+        // Must have TCP + VDNI/BVDNI
+        boolean hasTCP = hasAbility(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR);
+        boolean hasVdni = hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI);
+        if (!hasTCP || !hasVdni) {
+            return 0;
+        }
+        // Only Meks, combat vehicles, and fighters qualify
+        if (!isMek() && !isCombatVehicle() && !isFighter()) {
+            return 0;
+        }
+
+        // Base +2 bonus
+        int bonus = 2;
+
+        // +1 for Cockpit Command Module, C3/C3i, or >3 tons communications equipment
+        if (hasTCPCommandEquipment()) {
+            bonus += 1;
+        }
+
+        // Per Xotl ruling: negative modifiers stack cumulatively
+        // -1 if shutdown
+        if (isShutDown()) {
+            bonus -= 1;
+        }
+        // -1 if ECM-affected, unless unit has own ECM (counter-ECM per IO pg 81)
+        if (getPosition() != null
+              && ComputeECM.isAffectedByECM(this, getPosition(), getPosition())
+              && !hasECM()) {
+            bonus -= 1;
+        }
+        // -1 if EMI conditions are active (global effect, can't be countered)
+        if (game != null && game.getPlanetaryConditions().getEMI().isEMI()) {
+            bonus -= 1;
+        }
+
+        return bonus;
+    }
+
+    /**
+     * Check if this entity has command equipment that qualifies for TCP +1 initiative bonus. This includes: Cockpit
+     * Command Module, C3/C3i systems, or more than 3 tons of communications equipment.
+     *
+     * @return true if entity has qualifying command equipment
+     */
+    private boolean hasTCPCommandEquipment() {
+        // Cockpit Command Module
+        if (hasCommandConsoleBonus()) {
+            return true;
+        }
+
+        // C3 or C3i system
+        if (hasAnyC3System()) {
+            return true;
+        }
+
+        // More than 3 tons of communications equipment
+        double commsTonnage = 0;
+        for (MiscMounted mounted : getMisc()) {
+            if (mounted.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+                commsTonnage += mounted.getTonnage();
+            }
+        }
+        return commsTonnage > 3;
     }
 
     /**

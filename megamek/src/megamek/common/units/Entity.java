@@ -9604,6 +9604,10 @@ public abstract class Entity extends TurnOrdered
                   (amounted.getHittableShotsLeft() > 0)) {
                 found = true;
             }
+            // Incendiary mixed LRM checks for heat-induced explosions as Inferno (TO:AUE pg 181)
+            if (amounted.isIncendiaryMixed() && (amounted.getHittableShotsLeft() > 0)) {
+                found = true;
+            }
         }
         return found;
     }

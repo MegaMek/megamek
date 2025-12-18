@@ -3454,7 +3454,8 @@ public class AmmoType extends EquipmentType {
         // TODO Mag Pulse see IO pg 62
         munitions.add(ARAD_MUNITION_MUTATOR);
         munitions.add(FOLLOW_THE_LEADER_MUNITION_MUTATOR);
-        munitions.add(INCENDIARY_LRM_MUNITION_MUTATOR);
+        // Incendiary LRM is not a standalone munition type - it's mixed via checkbox in Configure Equipment
+        // See Mounted.isIncendiaryMixed() and LRMHandler (TO:AUE pg 181)
         munitions.add(HEAT_SEEKING_MUNITION_MUTATOR);
         munitions.add(SEMI_GUIDED_MUNITION_MUTATOR);
         munitions.add(SMOKE_MUNITION_MUTATOR);
@@ -3489,7 +3490,7 @@ public class AmmoType extends EquipmentType {
         // TODO Mag Pulse see IO pg 62
         munitions.add(CLAN_ARAD_MUNITION_MUTATOR);
         munitions.add(CLAN_FOLLOW_THE_LEADER_MUNITION_MUTATOR);
-        munitions.add(INCENDIARY_LRM_MUNITION_MUTATOR);
+        // Incendiary LRM is not a standalone munition type - it's mixed via checkbox
         munitions.add(CLAN_HEAT_SEEKING_MUNITIONS_MUTATOR);
         munitions.add(CLAN_SEMI_GUIDED);
         munitions.add(CLAN_SMOKE_STANDARD_MUNITION_MUTATOR);

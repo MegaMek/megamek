@@ -78,6 +78,10 @@ public class MunitionChoicePanel extends JPanel {
 
     JCheckBox chHotLoad = new JCheckBox();
 
+    JLabel labIncendiaryMixed = new JLabel(Messages.getString("CustomMekDialog.incendiaryMixed"));
+
+    JCheckBox chIncendiaryMixed = new JCheckBox();
+
     public MunitionChoicePanel(AmmoMounted ammoMounted, ArrayList<AmmoType> vTypes,
           List<WeaponAmmoChoicePanel> weaponAmmoChoicePanels, Entity entity, Game game) {
         ammoTypes = vTypes;
@@ -192,6 +196,24 @@ public class MunitionChoicePanel extends JPanel {
             add(labHotLoad, GBC.std());
             add(chHotLoad, GBC.eol());
         }
+
+        // Incendiary mixed option for LRM-compatible ammo (TO:AUE pg 181)
+        if (isLrmCompatibleAmmo(ammoType)) {
+            chIncendiaryMixed.setSelected(this.ammoMounted.isIncendiaryMixed());
+            add(labIncendiaryMixed, GBC.std());
+            add(chIncendiaryMixed, GBC.eol());
+        }
+    }
+
+    /**
+     * Checks if the ammo type is compatible with incendiary mixing. Per TO:AUE pg 181, incendiary rounds can be mixed
+     * with LRM ammo types.
+     */
+    private boolean isLrmCompatibleAmmo(AmmoType ammoType) {
+        AmmoType.AmmoTypeEnum type = ammoType.getAmmoType();
+        return type == AmmoType.AmmoTypeEnum.LRM ||
+              type == AmmoType.AmmoTypeEnum.MML ||
+              type == AmmoType.AmmoTypeEnum.NLRM;
     }
 
     public void applyChoice() {
@@ -225,6 +247,11 @@ public class MunitionChoicePanel extends JPanel {
                     }
                 }
             }
+        }
+
+        // Apply incendiary mixed setting for LRM-compatible ammo
+        if (isLrmCompatibleAmmo(ammoType)) {
+            ammoMounted.setIncendiaryMixed(chIncendiaryMixed.isSelected());
         }
     }
 

@@ -54,6 +54,7 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
@@ -76,6 +77,44 @@ public class LRMHandler extends MissileWeaponHandler {
           throws EntityLoadingException {
         super(t, w, g, m);
         nSalvoBonus = salvoMod;
+    }
+
+    /**
+     * Checks if the ammo is mixed with incendiary rounds. Per TO:AUE pg 181, incendiary rounds can be mixed with LRM
+     * ammo at 1 in 5 missiles.
+     *
+     * @return true if the ammo has incendiary mixing enabled
+     */
+    protected boolean isIncendiaryMixed() {
+        return ammo != null && ammo.isIncendiaryMixed();
+    }
+
+    /**
+     * Returns the number of incendiary missiles in a mixed salvo. Per TO:AUE pg 181, 1 in 5 missiles are incendiary
+     * (minimum 1).
+     *
+     * @return the number of incendiary missiles
+     */
+    protected int getIncendiaryMissileCount() {
+        if (!isIncendiaryMixed()) {
+            return 0;
+        }
+        return (int) Math.ceil(weaponType.getRackSize() / 5.0);
+    }
+
+    /**
+     * Returns the effective rack size after removing incendiary missiles. Per TO:AUE pg 181, 1 in 5 missiles are
+     * incendiary, reducing the damage-dealing missiles.
+     *
+     * @return the effective rack size for damage calculation
+     */
+    protected int getEffectiveRackSize() {
+        int baseRackSize = weaponType.getRackSize();
+        if (!isIncendiaryMixed()) {
+            return baseRackSize;
+        }
+        int incendiaryCount = getIncendiaryMissileCount();
+        return Math.max(1, baseRackSize - incendiaryCount);
     }
 
     @Override
@@ -111,6 +150,9 @@ public class LRMHandler extends MissileWeaponHandler {
 
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
+        // Use effective rack size (reduced by 20% when incendiary mixed)
+        int effectiveRackSize = getEffectiveRackSize();
+
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
         if (target.isConventionalInfantry()) {
@@ -118,19 +160,21 @@ public class LRMHandler extends MissileWeaponHandler {
                 bSalvo = true;
                 Report r = new Report(3325);
                 r.subject = subjectId;
-                r.add(weaponType.getRackSize()
+                r.add(effectiveRackSize
                       * ((BattleArmor) attackingEntity).getShootingStrength());
                 r.add(sSalvoType);
                 r.add(toHit.getTableDesc());
                 vPhaseReport.add(r);
+                addIncendiaryMixedReport(vPhaseReport);
                 return ((BattleArmor) attackingEntity).getShootingStrength();
             }
             Report r = new Report(3326);
             r.newlines = 0;
             r.subject = subjectId;
-            r.add(weaponType.getRackSize());
+            r.add(effectiveRackSize);
             r.add(sSalvoType);
             vPhaseReport.add(r);
+            addIncendiaryMixedReport(vPhaseReport);
             return 1;
         }
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
@@ -269,7 +313,8 @@ public class LRMHandler extends MissileWeaponHandler {
             nMissilesModifier -= (int) Math.floor(getAeroSanityAMSHitsMod());
         }
 
-        int rackSize = weaponType.getRackSize();
+        // Use effective rack size (already calculated at method start)
+        int rackSize = effectiveRackSize;
         boolean minRangeELRMAttack = false;
 
         // ELRMs only hit with half their rack size rounded up at minimum range.
@@ -328,11 +373,72 @@ public class LRMHandler extends MissileWeaponHandler {
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
             }
+            // Add incendiary mixed indicator
+            addIncendiaryMixedReport(vPhaseReport);
         }
         Report r = new Report(3345);
         r.subject = subjectId;
         vPhaseReport.addElement(r);
         bSalvo = true;
         return missilesHit;
+    }
+
+    /**
+     * Adds a report indicating incendiary missiles are mixed with the salvo. Per TO:AUE pg 181, shows "X of Y are
+     * incendiary".
+     *
+     * @param vPhaseReport the report vector to add to
+     */
+    protected void addIncendiaryMixedReport(Vector<Report> vPhaseReport) {
+        if (!isIncendiaryMixed()) {
+            return;
+        }
+        Report r = new Report(3327);
+        r.subject = subjectId;
+        r.add(getIncendiaryMissileCount());
+        r.add(weaponType.getRackSize());
+        r.newlines = 0;
+        vPhaseReport.addElement(r);
+    }
+
+    @Override
+    protected int calcDamagePerHit() {
+        // For infantry targets with incendiary mixed, apply +1 damage per 5 missiles bonus
+        if (isIncendiaryMixed() && target.isConventionalInfantry()) {
+            int effectiveRack = getEffectiveRackSize();
+            // Calculate bonus: +1 per 5 missiles (round up) from incendiary portion
+            int bonusDamage = (int) Math.ceil(effectiveRack / 5.0);
+
+            // Get base infantry damage
+            double toReturn = Compute.directBlowInfantryDamage(
+                  effectiveRack, bDirect ? toHit.getMoS() / 3 : 0,
+                  weaponType.getInfantryDamageClass(),
+                  ((Infantry) target).isMechanized(),
+                  toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
+
+            // Add incendiary bonus damage and report it
+            toReturn += bonusDamage;
+            Report r = new Report(3328);
+            r.subject = subjectId;
+            r.add(bonusDamage);
+            calcDmgPerHitReport.addElement(r);
+
+            toReturn = applyGlancingBlowModifier(toReturn, false);
+            return (int) toReturn;
+        }
+
+        // Battle Armor also gets bonus damage when incendiary mixed
+        if (isIncendiaryMixed() && target instanceof BattleArmor) {
+            int effectiveRack = getEffectiveRackSize();
+            int bonusDamage = (int) Math.ceil(effectiveRack / 5.0);
+            Report r = new Report(3328);
+            r.subject = subjectId;
+            r.add(bonusDamage);
+            calcDmgPerHitReport.addElement(r);
+            return 1 + bonusDamage;
+        }
+
+        // Standard damage for non-infantry or non-incendiary
+        return super.calcDamagePerHit();
     }
 }

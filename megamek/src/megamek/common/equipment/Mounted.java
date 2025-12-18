@@ -83,6 +83,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private boolean tsempDowntime = false; // Needed for "every other turn" TSEMP.
     private boolean rapidFire = false; // MGs in rapid-fire mode
     private boolean hotLoaded = false; // Hot loading for ammoType
+    private boolean incendiaryMixed = false; // LRM ammo mixed with incendiary rounds (TO:AUE pg 181)
     private boolean repairable = true; // can the equipment mounted here be
     // repaired
     // PLAYTEST3 entries
@@ -955,6 +956,59 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             }
         }
 
+    }
+
+    /**
+     * Checks if this LRM ammo is mixed with incendiary rounds. Per TO:AUE pg 181, incendiary rounds can be mixed with
+     * other LRM ammo types at a rate of 1 in 5 missiles.
+     *
+     * @return true if ammo is mixed with incendiary rounds
+     */
+    public boolean isIncendiaryMixed() {
+        if (getType() instanceof WeaponType) {
+            Mounted<?> link = getLinked();
+            if ((link == null) || !(link.getType() instanceof AmmoType)) {
+                return false;
+            }
+            return link.incendiaryMixed;
+        }
+
+        if (getType() instanceof AmmoType) {
+            return incendiaryMixed;
+        }
+
+        return false;
+    }
+
+    /**
+     * Sets whether this LRM ammo is mixed with incendiary rounds. Per TO:AUE pg 181, incendiary rounds can be mixed
+     * with other LRM ammo types.
+     *
+     * @param mixed true to mix with incendiary rounds
+     */
+    public void setIncendiaryMixed(boolean mixed) {
+        if (getType() instanceof WeaponType) {
+            Mounted<?> link = getLinked();
+            if ((link == null) || !(link.getType() instanceof AmmoType)) {
+                return;
+            }
+            AmmoType ammoType = (AmmoType) link.getType();
+            // Only allow for LRM-compatible ammo types
+            if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM ||
+                  ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML ||
+                  ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) {
+                link.incendiaryMixed = mixed;
+            }
+        }
+        if (getType() instanceof AmmoType) {
+            AmmoType ammoType = (AmmoType) getType();
+            // Only allow for LRM-compatible ammo types
+            if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM ||
+                  ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML ||
+                  ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) {
+                incendiaryMixed = mixed;
+            }
+        }
     }
 
     /** Returns true when m is a PPC Capacitor and not destroyed. */

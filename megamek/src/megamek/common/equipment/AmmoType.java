@@ -3659,6 +3659,9 @@ public class AmmoType extends EquipmentType {
         munitions.add(CLAN_COOLANT_MUNITION_MUTATOR_FOR_HEAVY_FLAMER);
         AmmoType.createMunitions(clanHeavyFlamerAmmos, munitions);
 
+        // Create incendiary variants of all LRM-compatible ammo types (TO:AUE pg 181)
+        createIncendiaryVariants();
+
         // cache types that share a launcher for load out purposes
         for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes();
               equipmentTypes.hasMoreElements(); ) {
@@ -3682,6 +3685,127 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.addType(mutator.createMunitionType(base));
             }
         }
+    }
+
+    /**
+     * Creates incendiary variants of all LRM-compatible ammo types. Per TO:AUE pg 181, incendiary rounds can be mixed
+     * with any LRM ammo. This creates distinct ammo types for MekHQ inventory tracking. Called after all standard
+     * munition variants are created.
+     */
+    private static void createIncendiaryVariants() {
+        List<AmmoType> incendiaryVariants = new ArrayList<>();
+
+        for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements(); ) {
+            EquipmentType et = e.nextElement();
+            if (!(et instanceof AmmoType ammo)) {
+                continue;
+            }
+
+            // Only LRM-compatible types (LRM, LRM_IMP, MML, NLRM)
+            AmmoTypeEnum type = ammo.getAmmoType();
+            if (type != AmmoTypeEnum.LRM && type != AmmoTypeEnum.LRM_IMP &&
+                  type != AmmoTypeEnum.MML && type != AmmoTypeEnum.NLRM) {
+                continue;
+            }
+
+            // Skip if already has incendiary (avoid duplicates)
+            if (ammo.getMunitionType().contains(Munitions.M_INCENDIARY_LRM)) {
+                continue;
+            }
+
+            // For MML, only create incendiary variants of LRM-mode ammo
+            if (type == AmmoTypeEnum.MML && !ammo.hasFlag(F_MML_LRM)) {
+                continue;
+            }
+
+            // Create incendiary variant
+            AmmoType incendiary = createIncendiaryVariant(ammo);
+            if (incendiary != null) {
+                incendiaryVariants.add(incendiary);
+            }
+        }
+
+        // Register all incendiary variants
+        for (AmmoType variant : incendiaryVariants) {
+            EquipmentType.addType(variant);
+        }
+    }
+
+    /**
+     * Creates an incendiary variant of the given LRM-compatible ammo type. Per TO:AUE pg 181, incendiary rounds are
+     * mixed with LRM ammo at 1:5 ratio.
+     *
+     * @param base The base ammo type to create an incendiary variant of
+     *
+     * @return The new incendiary variant ammo type
+     */
+    private static AmmoType createIncendiaryVariant(AmmoType base) {
+        AmmoType incendiary = new AmmoType();
+
+        // Build names with " Incendiary" suffix
+        // Follow the pattern from MunitionMutator for LRM/MML/NLRM types
+        StringBuilder nameBuf = new StringBuilder(base.name);
+        int index = base.name.lastIndexOf("Ammo");
+        if (index > 0) {
+            nameBuf.insert(index, " ");
+            nameBuf.insert(index, "Incendiary");
+        } else {
+            nameBuf.append(" Incendiary");
+        }
+        incendiary.name = nameBuf.toString();
+
+        incendiary.shortName = base.shortName + " Incendiary";
+        incendiary.setInternalName(base.getInternalName() + " Incendiary");
+        incendiary.subMunitionName = "Incendiary";
+
+        // Add all base lookup names with " Incendiary" suffix
+        incendiary.addToEnd(base, " Incendiary");
+
+        // Copy base reference
+        incendiary.base = (base.base != null) ? base.base : base;
+
+        // Copy tonnage (critical for ammo compatibility)
+        incendiary.setTonnage(base.getTonnage(null));
+
+        // Copy numeric properties
+        incendiary.damagePerShot = base.damagePerShot;
+        incendiary.rackSize = base.rackSize;
+        incendiary.ammoType = base.ammoType;
+        incendiary.shots = base.shots;
+        incendiary.kgPerShot = base.kgPerShot;
+        incendiary.flags = base.flags;
+        incendiary.hittable = base.hittable;
+        incendiary.explosive = base.explosive;
+        incendiary.toHitModifier = base.toHitModifier;
+
+        // Copy modes if base has them (e.g., HotLoad)
+        if (base.getModesCount() > 0) {
+            List<String> modeNames = new ArrayList<>();
+            Enumeration<EquipmentMode> modes = base.getModes();
+            while (modes.hasMoreElements()) {
+                modeNames.add(modes.nextElement().getName());
+            }
+            incendiary.setModes(modeNames.toArray(new String[0]));
+        }
+
+        // Add M_INCENDIARY_LRM to existing munition types
+        incendiary.munitionType = EnumSet.copyOf(base.getMunitionType());
+        incendiary.munitionType.add(Munitions.M_INCENDIARY_LRM);
+
+        // Apply 1.5x cost multiplier per TO:AUE pg 181
+        incendiary.cost = base.cost * 1.5;
+        incendiary.bv = base.bv;
+
+        // Copy tech advancement from the incendiary mutator
+        incendiary.techAdvancement = new TechAdvancement(INCENDIARY_LRM_MUNITION_MUTATOR.techAdvancement);
+        // Use the higher tech level between base and incendiary
+        incendiary.techAdvancement.setStaticTechLevel(SimpleTechLevel.max(
+              INCENDIARY_LRM_MUNITION_MUTATOR.techAdvancement.getStaticTechLevel(),
+              base.techAdvancement.getStaticTechLevel()));
+
+        incendiary.rulesRefs = "181, TO:AUE";
+
+        return incendiary;
     }
 
     // Anti-Missile Ammo

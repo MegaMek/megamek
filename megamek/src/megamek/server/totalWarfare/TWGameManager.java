@@ -25641,7 +25641,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (mounted.getType() instanceof AmmoType ammoType) {
                     boolean isInfernoType = ammoType.getMunitionType().contains(Munitions.M_INFERNO) ||
                           ammoType.getMunitionType().contains(Munitions.M_IATM_IIW) ||
-                          mounted.isIncendiaryMixed();
+                          ammoType.getMunitionType().contains(Munitions.M_INCENDIARY_LRM);
                     if (!ammoType.isExplosive(mounted) || !isInfernoType) {
                         continue;
                     }

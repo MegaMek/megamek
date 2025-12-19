@@ -53,7 +53,9 @@ import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
@@ -83,10 +85,21 @@ public class LRMHandler extends MissileWeaponHandler {
      * Checks if the ammo is mixed with incendiary rounds. Per TO:AUE pg 181, incendiary rounds can be mixed with LRM
      * ammo at 1 in 5 missiles.
      *
-     * @return true if the ammo has incendiary mixing enabled
+     * @return true if the ammo has incendiary munition type
      */
     protected boolean isIncendiaryMixed() {
-        return ammo != null && ammo.isIncendiaryMixed();
+        if (ammo == null) {
+            return false;
+        }
+        AmmoType ammoType = ammo.getType();
+        if (!ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_LRM)) {
+            return false;
+        }
+        // For MML, incendiary only applies in LRM mode
+        if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML) {
+            return ammoType.hasFlag(AmmoType.F_MML_LRM);
+        }
+        return true;
     }
 
     /**
@@ -440,5 +453,113 @@ public class LRMHandler extends MissileWeaponHandler {
 
         // Standard damage for non-infantry or non-incendiary
         return super.calcDamagePerHit();
+    }
+
+    /**
+     * Returns the fire target number modifier for incendiary LRM. Per TO:AUE pg 181, incendiary rounds apply a -4
+     * modifier to fire ignition rolls.
+     *
+     * @return TargetRoll with -4 modifier if incendiary mixed, or the weapon's standard fire TN
+     */
+    protected TargetRoll getIncendiaryFireTN() {
+        if (isIncendiaryMixed()) {
+            return new TargetRoll(-4, "Incendiary LRM");
+        }
+        return new TargetRoll(weaponType.getFireTN(), weaponType.getName());
+    }
+
+    @Override
+    protected void handleIgnitionDamage(Vector<Report> vPhaseReport, IBuilding bldg, int hits) {
+        if (!bSalvo) {
+            // hits!
+            Report r = new Report(2270);
+            r.subject = subjectId;
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+        }
+
+        TargetRoll targetRoll = getIncendiaryFireTN();
+        if (targetRoll.getValue() != TargetRoll.IMPOSSIBLE) {
+            Report.addNewline(vPhaseReport);
+            gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, false, false,
+                  targetRoll, true, -1, vPhaseReport);
+        }
+    }
+
+    @Override
+    protected void handleClearDamage(Vector<Report> vPhaseReport, IBuilding bldg, int nDamage) {
+        if (!bSalvo) {
+            // hits!
+            Report r = new Report(2270);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+        }
+        // report that damage was "applied" to terrain
+        Report r = new Report(3385);
+        r.indent(2);
+        r.subject = subjectId;
+        r.add(nDamage);
+        vPhaseReport.addElement(r);
+
+        // Per TO:AUE pg 181, incendiary LRM applies -4 modifier to fire ignition
+        TargetRoll targetRoll = getIncendiaryFireTN();
+
+        // Try to ignite the hex (buildings handled separately)
+        if ((bldg != null)
+              && gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, false,
+              false,
+              targetRoll, 5,
+              vPhaseReport)) {
+            return;
+        }
+
+        // Try to clear the hex
+        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), target.getBoardId(),
+              nDamage, subjectId);
+        if (!clearReports.isEmpty()) {
+            vPhaseReport.lastElement().newlines = 0;
+        }
+        vPhaseReport.addAll(clearReports);
+    }
+
+    @Override
+    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, IBuilding bldg, int hits,
+          int nCluster, int bldgAbsorbs) {
+        // Apply standard entity damage first
+        super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
+
+        // Per TO:AUE pg 181, incendiary missiles attempt to ignite the target hex
+        if (isIncendiaryMixed() && !bMissed) {
+            tryIncendiaryIgnition(vPhaseReport);
+        }
+    }
+
+    @Override
+    protected void handleBuildingDamage(Vector<Report> vPhaseReport, IBuilding bldg, int nDamage, Coords coords) {
+        // Apply standard building damage first
+        super.handleBuildingDamage(vPhaseReport, bldg, nDamage, coords);
+
+        // Per TO:AUE pg 181, incendiary missiles attempt to ignite buildings
+        if (isIncendiaryMixed() && !bMissed) {
+            tryIncendiaryIgnition(vPhaseReport);
+        }
+    }
+
+    /**
+     * Attempts to ignite the target hex with incendiary missiles. Per TO:AUE pg 181, incendiary LRM rounds apply -4 to
+     * fire ignition rolls.
+     *
+     * @param vPhaseReport the report vector to add results to
+     */
+    protected void tryIncendiaryIgnition(Vector<Report> vPhaseReport) {
+        TargetRoll targetRoll = getIncendiaryFireTN();
+        if (targetRoll.getValue() != TargetRoll.IMPOSSIBLE) {
+            Report r = new Report(3329);
+            r.subject = subjectId;
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+            gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, false, false,
+                  targetRoll, true, -1, vPhaseReport);
+        }
     }
 }

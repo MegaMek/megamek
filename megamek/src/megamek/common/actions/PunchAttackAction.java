@@ -199,6 +199,15 @@ public class PunchAttackAction extends PhysicalAttackAction {
             return "Target elevation not in range";
         }
 
+        // Prone 'Mechs can only be punched if they are one level higher than the attacker
+        // See BMM 7th Printing, Physical Attacks and Prone 'Mechs
+        if ((target instanceof Entity) && ((Entity) target).isProne()) {
+            int attackerLevel = attHex.getLevel() + ae.getElevation();
+            if (targetElevation != attackerLevel + 1) {
+                return Messages.getString("PhysicalAttackAction.ProneMekPunch");
+            }
+        }
+
         // Cannot punch with an arm that has an active shield on it.
         if (ae.hasActiveShield(armLoc)) {
             return "Cannot punch with shield in active mode";

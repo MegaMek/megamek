@@ -254,6 +254,16 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
         entity.setFacing(nFacing);
         entity.setSecondaryFacing(nFacing);
 
+        // For returning climb out units, restore the exit altitude
+        // (entity was not never deployed if returning from off-map)
+        if (!entity.wasNeverDeployed() && entity instanceof IAero aeroReturning) {
+            int exitAlt = aeroReturning.getExitAltitude();
+            if (exitAlt > 0) {
+                elevation = exitAlt;
+                aeroReturning.setExitAltitude(0);  // Clear after use
+            }
+        }
+
         // entity.isAero will check if a unit is a LAM in Fighter mode
         if (entity instanceof IAero aero && entity.isAero()) {
             entity.setAltitude(elevation);

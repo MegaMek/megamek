@@ -462,6 +462,8 @@ public abstract class Entity extends TurnOrdered
     public int damageThisRound;
     public int engineHitsThisPhase;
     public boolean rolledForEngineExplosion = false; // So that we don't roll twice in one round
+    public boolean reportedVDNIFeedbackThisPhase = false; // BA VDNI/BVDNI feedback already shown this phase
+    public boolean baVDNINeedsFeedbackMessage = false; // BA took crit, needs feedback message at end of attack
     public boolean dodging;
     public boolean reckless;
     private boolean evading = false;
@@ -900,6 +902,19 @@ public abstract class Entity extends TurnOrdered
      * Keeps track of the number of consecutive turns a radical heat sink has been used.
      */
     protected int consecutiveRHSUses = 0;
+
+    /**
+     * Tracks whether the radical heat sink was actually used (processed in heat phase) last turn. This is needed
+     * because the equipment mode persists until newRound(), so we can't rely on hasActivatedRadicalHS() to determine if
+     * RHS was used in the previous turn.
+     */
+    protected boolean usedRHSLastTurn = false;
+
+    /**
+     * Tracks whether the RHS consecutive uses counter increased last turn. Used to properly decrement when
+     * transitioning from using to not using RHS, similar to how MASC handles its failure level.
+     */
+    protected boolean rhsWentUp = false;
 
     private final Set<Integer> attackedByThisTurn = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final Set<Integer> groundAttackedByThisTurn = Collections.newSetFromMap(new ConcurrentHashMap<>());
@@ -6095,13 +6110,15 @@ public abstract class Entity extends TurnOrdered
                 }
                 if ((m.getType()).getInternalName().equals(Sensor.CLAN_AP) ||
                       (m.getType()).getInternalName().equals(Sensor.WATCHDOG) ||
-                      (m.getType()).getInternalName().equals(Sensor.NOVA)) {
+                      (m.getType()).getInternalName().equals(Sensor.NOVA) ||
+                      (m.getType()).getInternalName().equals(Sensor.CL_BA_LIGHT_AP)) {
                     return 5 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
-                if ((m.getType()).getInternalName().equals(Sensor.LIGHT_AP) ||
-                      (m.getType().getInternalName().equals(Sensor.CL_BA_LIGHT_AP)) ||
-                      (m.getType().getInternalName().equals(Sensor.IS_BA_LIGHT_AP))) {
+                if ((m.getType()).getInternalName().equals(Sensor.LIGHT_AP)) {
                     return 3 + cyberProbeBonus + quirkBonus + spaBonus;
+                }
+                if ((m.getType()).getInternalName().equals(Sensor.IS_BA_LIGHT_AP)) {
+                    return 4 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
                 if (m.getType().getInternalName().equals(Sensor.IS_IMPROVED) ||
                       (m.getType().getInternalName().equals(Sensor.CL_IMPROVED))) {
@@ -6141,6 +6158,8 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Returns whether this entity has a Targeting Computer that is in aimed shot mode.
+     * This also returns true for Triple-Core Processor + VDNI/BVDNI combinations,
+     * which grant aimed shot capability as if equipped with a Targeting Computer.
      */
     public boolean hasAimModeTargComp() {
         if (hasActiveEiCockpit()) {
@@ -6152,12 +6171,116 @@ public abstract class Entity extends TurnOrdered
                 return true;
             }
         }
+        // TCP + VDNI/BVDNI grants aimed shot capability for Meks, vehicles, and aerospace
+        if (hasTCPAimedShotCapability()) {
+            return true;
+        }
         for (MiscMounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_TARGETING_COMPUTER) && m.curMode().equals("Aimed shot")) {
                 return !m.isInoperable();
             }
         }
         return false;
+    }
+
+    /**
+     * Returns whether this entity has Triple-Core Processor aimed shot capability. Per IO pg 81, MechWarriors, vehicle
+     * commanders, and fighter pilots with TCP and VDNI/BVDNI may execute aimed shots as if equipped with a Targeting
+     * Computer.
+     *
+     * @return true if TCP + VDNI/BVDNI is active and unit type qualifies
+     */
+    public boolean hasTCPAimedShotCapability() {
+        if (crew == null) {
+            return false;
+        }
+        boolean hasTCP = hasAbility(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR);
+        boolean hasVdni = hasAbility(OptionsConstants.MD_VDNI)
+              || hasAbility(OptionsConstants.MD_BVDNI);
+        if (!hasTCP || !hasVdni) {
+            return false;
+        }
+        // Only MechWarriors, vehicle commanders, and fighter pilots qualify
+        // Use isFighter() to include both Aerospace and Conventional Fighters per IO pg 81
+        return isMek() || isCombatVehicle() || isFighter();
+    }
+
+    /**
+     * Returns the TCP initiative bonus for this entity. Per IO pg 81, MekWarriors, vehicle commanders, and fighter
+     * pilots with TCP and VDNI/BVDNI provide a +2 initiative modifier to their force's side. This bonus can be modified
+     * by command equipment (+1), shutdown (-1), ECM (-1), or EMI (-1).
+     * <p>
+     * This method is primarily used for Individual Initiative mode where each entity rolls separately.
+     *
+     * @return The TCP initiative bonus (0 if entity doesn't qualify)
+     */
+    public int getTCPInitiativeBonus() {
+        if (crew == null || !crew.isActive()) {
+            return 0;
+        }
+        // Must have TCP + VDNI/BVDNI
+        boolean hasTCP = hasAbility(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR);
+        boolean hasVdni = hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI);
+        if (!hasTCP || !hasVdni) {
+            return 0;
+        }
+        // Only Meks, combat vehicles, and fighters qualify
+        if (!isMek() && !isCombatVehicle() && !isFighter()) {
+            return 0;
+        }
+
+        // Base +2 bonus
+        int bonus = 2;
+
+        // +1 for Cockpit Command Module, C3/C3i, or >3 tons communications equipment
+        if (hasTCPCommandEquipment()) {
+            bonus += 1;
+        }
+
+        // Per Xotl ruling: negative modifiers stack cumulatively
+        // -1 if shutdown
+        if (isShutDown()) {
+            bonus -= 1;
+        }
+        // -1 if ECM-affected, unless unit has own ECM (counter-ECM per IO pg 81)
+        if (getPosition() != null
+              && ComputeECM.isAffectedByECM(this, getPosition(), getPosition())
+              && !hasECM()) {
+            bonus -= 1;
+        }
+        // -1 if EMI conditions are active (global effect, can't be countered)
+        if (game != null && game.getPlanetaryConditions().getEMI().isEMI()) {
+            bonus -= 1;
+        }
+
+        return bonus;
+    }
+
+    /**
+     * Check if this entity has command equipment that qualifies for TCP +1 initiative bonus. This includes: Cockpit
+     * Command Module, C3/C3i systems, or more than 3 tons of communications equipment.
+     *
+     * @return true if entity has qualifying command equipment
+     */
+    private boolean hasTCPCommandEquipment() {
+        // Cockpit Command Module
+        if (hasCommandConsoleBonus()) {
+            return true;
+        }
+
+        // C3 or C3i system
+        if (hasAnyC3System()) {
+            return true;
+        }
+
+        // More than 3 tons of communications equipment
+        double commsTonnage = 0;
+        for (MiscMounted mounted : getMisc()) {
+            if (mounted.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+                commsTonnage += mounted.getTonnage();
+            }
+        }
+        return commsTonnage > 3;
     }
 
     /**
@@ -6436,29 +6559,20 @@ public abstract class Entity extends TurnOrdered
     //region Variable Range Targeting (BMM pg. 86)
 
     /**
-     * Checks if this entity has the Variable Range Targeting quirk. Supports both the new unified quirk and legacy
-     * quirks for backward compatibility.
+     * Checks if this entity has the Variable Range Targeting quirk.
      *
      * @return true if this entity has Variable Range Targeting capability
      */
     public boolean hasVariableRangeTargeting() {
-        return hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG) ||
-              hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L) ||
-              hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S);
+        return hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG);
     }
 
     /**
-     * Returns the current Variable Range Targeting mode. For legacy quirks, the mode is determined by which quirk is
-     * set.
+     * Returns the current Variable Range Targeting mode.
      *
      * @return the current VariableRangeTargetingMode
      */
     public VariableRangeTargetingMode getVariableRangeTargetingMode() {
-        // Legacy quirk support: if using old SHORT quirk, return SHORT mode
-        if (hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S) &&
-              !hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG)) {
-            return VariableRangeTargetingMode.SHORT;
-        }
         // Handle null from old save files that don't have this field
         if (variableRangeTargetingMode == null) {
             return VariableRangeTargetingMode.LONG;
@@ -7123,11 +7237,24 @@ public abstract class Entity extends TurnOrdered
         // Reset TSEMP firing flag
         setFiredTsempThisTurn(false);
 
-        // Decrement the number of consecutive turns if not used last turn
-        if (!hasActivatedRadicalHS()) {
+        // Update consecutive RHS uses based on last turn's usage
+        // This follows the same pattern as MASC/Supercharger to properly handle the "cooling down" mechanic
+        if (hasUsedRHSLastTurn()) {
+            // RHS was used last turn - the counter was already incremented in HeatResolver
+            rhsWentUp = true;
+        } else {
+            // RHS was not used last turn - decrement the counter
             setConsecutiveRHSUses(Math.max(0, getConsecutiveRHSUses() - 1));
+            // If the counter went up last turn (from using RHS), decrement again
+            // This compensates for the increment that happened when RHS was used
+            if (rhsWentUp) {
+                setConsecutiveRHSUses(Math.max(0, getConsecutiveRHSUses() - 1));
+                rhsWentUp = false;
+            }
         }
-        // Reset used RHS flag
+        // Reset RHS tracking flag for the new turn
+        setUsedRHSLastTurn(false);
+        // Reset RHS mode
         deactivateRadicalHS();
 
         clearAttackedByThisTurn();
@@ -14677,12 +14804,31 @@ public abstract class Entity extends TurnOrdered
         for (QuirkEntry quirkEntry : quirks) {
             // If the quirk doesn't have a location, then it is a unit quirk, not a weapon quirk.
             if (StringUtility.isNullOrBlank(quirkEntry.location())) {
+                // Migrate legacy Variable Range Targeting quirks to the unified quirk
+                String quirkName = quirkEntry.getQuirk();
+                // These string literals are intentionally hardcoded for backward compatibility
+                // with old save files that contain these deprecated quirk names
+                boolean isLegacyVrtShort = "variable_range_short".equals(quirkName);
+                boolean isLegacyVrtLong = "variable_range_long".equals(quirkName);
+                if (isLegacyVrtShort || isLegacyVrtLong) {
+                    quirkName = OptionsConstants.QUIRK_POS_VAR_RNG_TARG;
+                    LOGGER.info("Migrating legacy quirk '{}' to '{}' for {} {}",
+                          quirkEntry.getQuirk(), quirkName, getChassis(), getModel());
+                }
+
                 // Activate the unit quirk.
-                IOption option = getQuirks().getOption(quirkEntry.getQuirk());
+                IOption option = getQuirks().getOption(quirkName);
                 if (option == null) {
                     LOGGER.warn("{} failed to load quirk for {} {} - Invalid quirk!", quirkEntry, getChassis(),
                           getModel());
                     continue;
+                }
+
+                // Set the Variable Range Targeting mode based on which legacy quirk was used
+                if (isLegacyVrtShort) {
+                    setVariableRangeTargetingMode(VariableRangeTargetingMode.SHORT);
+                } else if (isLegacyVrtLong) {
+                    setVariableRangeTargetingMode(VariableRangeTargetingMode.LONG);
                 }
                 // Handle quirks with values (e.g., obsolete:2750 or obsolete:2950,3146)
                 if (quirkEntry.hasValue()) {
@@ -15151,13 +15297,27 @@ public abstract class Entity extends TurnOrdered
     }
 
     public void deactivateRadicalHS() {
-        for (MiscMounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
-                m.setMode("Off");
+        for (MiscMounted miscEquipment : getMisc()) {
+            if (miscEquipment.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+                miscEquipment.setMode(Weapon.MODE_AMS_OFF);
                 // Can only have one radical heat sink
                 break;
             }
         }
+    }
+
+    public void activateRadicalHS() {
+        for (MiscMounted miscEquipment : getMisc()) {
+            if (miscEquipment.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+                miscEquipment.setMode(Weapon.MODE_AMS_ON);
+                // Can only have one radical heat sink
+                break;
+            }
+        }
+    }
+
+    public boolean hasWorkingRadicalHS() {
+        return hasWorkingMisc(MiscType.F_RADICAL_HEATSINK);
     }
 
     public int getConsecutiveRHSUses() {
@@ -15174,6 +15334,18 @@ public abstract class Entity extends TurnOrdered
 
     public void setHasDamagedRHS(boolean hasDamagedRHS) {
         this.hasDamagedRHS = hasDamagedRHS;
+    }
+
+    public boolean hasUsedRHSLastTurn() {
+        return usedRHSLastTurn;
+    }
+
+    public void setUsedRHSLastTurn(boolean usedRHSLastTurn) {
+        this.usedRHSLastTurn = usedRHSLastTurn;
+    }
+
+    public boolean hasRHSWentUp() {
+        return rhsWentUp;
     }
 
     public void addAttackedByThisTurn(int entityId) {

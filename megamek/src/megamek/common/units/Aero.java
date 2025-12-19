@@ -185,6 +185,9 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     // track leaving the ground map
     private OffBoardDirection flyingOff = OffBoardDirection.NONE;
 
+    // track altitude when climbing out (leaving map vertically at altitude 10)
+    private int exitAltitude = 0;
+
     /**
      * Track how much altitude has been lost this turn. This is important for properly making weapon attacks, so
      * WeaponAttackActions knows what the altitude was before the attack happened, since the altitude lose is applied
@@ -1162,7 +1165,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         // Reset usedInternalBombs
         setUsedInternalBombs(0);
 
-        // Reset flying off dir
+        // Reset flying off direction (exitAltitude is preserved for returning units
+        // and cleared in DeploymentProcessor when deployed)
         flyingOff = OffBoardDirection.NONE;
     }
 
@@ -1533,16 +1537,20 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         if (hasModularArmor()) {
             prd.addModifier(1, "Modular Armor");
         }
-        // VDNI bonus?
+        // VDNI bonus? (BVDNI does NOT get piloting bonus due to "neuro-lag" per IO pg 71)
         if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
             prd.addModifier(-1, "VDNI");
+        } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
+            prd.addModifier(0, "BVDNI (no piloting bonus)");
         }
 
         // Small/torso-mounted cockpit penalty?
-        if ((getCockpitType() == Aero.COCKPIT_SMALL) &&
-              !hasAbility(OptionsConstants.MD_BVDNI) &&
-              !hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {
-            prd.addModifier(1, "Small Cockpit");
+        if (getCockpitType() == Aero.COCKPIT_SMALL) {
+            if (hasAbility(OptionsConstants.MD_BVDNI)) {
+                prd.addModifier(0, "Small Cockpit (negated by BVDNI)");
+            } else if (!hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {
+                prd.addModifier(1, "Small Cockpit");
+            }
         }
 
         // quirks?
@@ -3109,5 +3117,15 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public OffBoardDirection getFlyingOffDirection() {
         return this.flyingOff;
+    }
+
+    @Override
+    public int getExitAltitude() {
+        return exitAltitude;
+    }
+
+    @Override
+    public void setExitAltitude(int altitude) {
+        this.exitAltitude = altitude;
     }
 }

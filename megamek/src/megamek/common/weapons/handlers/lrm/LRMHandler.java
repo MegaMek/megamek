@@ -431,6 +431,12 @@ public class LRMHandler extends MissileWeaponHandler {
 
             // Add incendiary bonus damage and report it
             toReturn += bonusDamage;
+
+            // Set the previous report to not add a newline so incendiary bonus appears inline
+            if (!calcDmgPerHitReport.isEmpty()) {
+                calcDmgPerHitReport.lastElement().newlines = 0;
+            }
+
             Report r = new Report(3328);
             r.subject = subjectId;
             r.add(bonusDamage);

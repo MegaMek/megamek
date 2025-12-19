@@ -3742,24 +3742,24 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createIncendiaryVariant(AmmoType base) {
         AmmoType incendiary = new AmmoType();
 
-        // Build names with " Incendiary" suffix
+        // Build names with " w/ Incendiary" suffix
         // Follow the pattern from MunitionMutator for LRM/MML/NLRM types
         StringBuilder nameBuf = new StringBuilder(base.name);
         int index = base.name.lastIndexOf("Ammo");
         if (index > 0) {
             nameBuf.insert(index, " ");
-            nameBuf.insert(index, "Incendiary");
+            nameBuf.insert(index, "w/ Incendiary");
         } else {
-            nameBuf.append(" Incendiary");
+            nameBuf.append(" w/ Incendiary");
         }
         incendiary.name = nameBuf.toString();
 
-        incendiary.shortName = base.shortName + " Incendiary";
-        incendiary.setInternalName(base.getInternalName() + " Incendiary");
-        incendiary.subMunitionName = "Incendiary";
+        incendiary.shortName = base.shortName + " w/ Incendiary";
+        incendiary.setInternalName(base.getInternalName() + " w/ Incendiary");
+        incendiary.subMunitionName = "w/ Incendiary";
 
-        // Add all base lookup names with " Incendiary" suffix
-        incendiary.addToEnd(base, " Incendiary");
+        // Add all base lookup names with " w/ Incendiary" suffix
+        incendiary.addToEnd(base, " w/ Incendiary");
 
         // Copy base reference
         incendiary.base = (base.base != null) ? base.base : base;

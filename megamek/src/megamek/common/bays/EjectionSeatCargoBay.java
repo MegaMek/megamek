@@ -71,7 +71,7 @@ public final class EjectionSeatCargoBay extends StandardSeatCargoBay {
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         return "Ejection Seats";
     }
 

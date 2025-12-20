@@ -476,8 +476,9 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
 
         // check facing
+        // Tripods can only club targets in front arc per IO:AE p.158
         int clubArc;
-        if (bothArms) {
+        if (bothArms || ae.isTripodMek()) {
             clubArc = Compute.ARC_FORWARD;
         } else {
             if (club.getLocation() == Mek.LOC_LEFT_ARM) {
@@ -498,6 +499,15 @@ public class ClubAttackAction extends PhysicalAttackAction {
         // can't club while prone
         if (ae.isProne()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
+        }
+
+        // Prone 'Mechs can only be clubbed if they are one level higher than the attacker
+        // See BMM 7th Printing, Physical Attacks and Prone 'Mechs
+        if ((target instanceof Entity) && ((Entity) target).isProne()) {
+            if (targetElevation != attackerElevation + 1) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                      Messages.getString("PhysicalAttackAction.ProneMekClub"));
+            }
         }
 
         // Attacks against adjacent buildings automatically hit.

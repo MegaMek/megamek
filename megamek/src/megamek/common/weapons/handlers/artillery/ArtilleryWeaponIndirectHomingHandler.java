@@ -353,6 +353,8 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
      * Find the tagged entity for this attack Uses a CFR to let the player choose from eligible TAG
      */
     public void convertHomingShotToEntityTarget() throws InvalidPacketDataException {
+        LOGGER.debug("convertHomingShotToEntityTarget: processing homing shot for attacker {}",
+              attackingEntity != null ? attackingEntity.getDisplayName() : "null");
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) weaponAttackAction;
 
         final Coords tc = target.getPosition();
@@ -383,6 +385,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             }
         }
 
+        LOGGER.debug("convertHomingShotToEntityTarget: found {} allowed TAG targets", allowed.size());
         if (allowed.isEmpty()) {
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "no targets tagged this turn");
             return;
@@ -394,14 +397,14 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             newTarget = ti.target;
             if (!ti.missed && (newTarget != null)) {
                 v.add(ti);
-                LOGGER.debug(new StringBuilder("Found valid TAG on target ")
-                      .append(ti.target.getDisplayName()).append("; Range to original target is ")
-                      .append(tc.distance(ti.target.getPosition())));
+                LOGGER.debug("Found valid TAG on target {}; Range to original target is {}",
+                      ti.target.getDisplayName(), tc.distance(ti.target.getPosition()));
             }
         }
 
         Objects.requireNonNull(newTarget);
         if (v.isEmpty()) {
+            LOGGER.debug("convertHomingShotToEntityTarget: all TAGs missed");
             aaa.setTargetId(newTarget.getId());
             aaa.setTargetType(newTarget.getTargetType());
             target = newTarget;
@@ -418,6 +421,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                 allowed.add(ti);
             }
         }
+        LOGGER.debug("convertHomingShotToEntityTarget: {} TAGs within homing radius", allowed.size());
         if (allowed.isEmpty()) {
             aaa.setTargetId(newTarget.getId());
             aaa.setTargetType(newTarget.getTargetType());
@@ -426,6 +430,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                   "no tag in 8 hex radius of target hex");
         } else if (allowed.size() == 1) {
             // Just use target 0...
+            LOGGER.debug("convertHomingShotToEntityTarget: single target, auto-selecting");
             newTarget = allowed.get(0).target;
             target = newTarget;
             aaa.setTargetId(target.getId());
@@ -433,6 +438,8 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             toHit = new ToHitData(4, Messages.getString("ArtilleryIndirectHomingHandler.HomingArtyMissChance"));
         } else {
             // The player gets to select the target
+            LOGGER.debug("convertHomingShotToEntityTarget: {} targets available, requesting player selection",
+                  allowed.size());
             List<Integer> targetIds = new ArrayList<>();
             List<Integer> targetTypes = new ArrayList<>();
             for (TagInfo target : allowed) {
@@ -440,6 +447,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                 targetTypes.add(target.target.getTargetType());
             }
             int choice = gameManager.processTAGTargetCFR(attackingEntity.getOwnerId(), targetIds, targetTypes);
+            LOGGER.debug("convertHomingShotToEntityTarget: player selected target index {}", choice);
             newTarget = allowed.get(choice).target;
             target = newTarget;
             aaa.setTargetId(target.getId());

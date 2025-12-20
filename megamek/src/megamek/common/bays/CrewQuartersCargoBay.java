@@ -105,7 +105,7 @@ public final class CrewQuartersCargoBay extends Bay {
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         return "Crew Quarters";
     }
 

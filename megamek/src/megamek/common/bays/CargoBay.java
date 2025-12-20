@@ -104,7 +104,7 @@ public final class CargoBay extends Bay implements InfantryTransporter {
     }
 
     @Override
-    public String getType() {
+    public String getTransporterType() {
         return "Cargo";
     }
 

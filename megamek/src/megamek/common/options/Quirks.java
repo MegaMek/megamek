@@ -114,8 +114,7 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, QUIRK_POS_TRAILER_HITCH, false);
         addOption(posQuirk, QUIRK_POS_UBIQUITOUS_IS, false);
         addOption(posQuirk, QUIRK_POS_UBIQUITOUS_CLAN, false);
-        addOption(posQuirk, QUIRK_POS_VAR_RNG_TARG_L, false);
-        addOption(posQuirk, QUIRK_POS_VAR_RNG_TARG_S, false);
+        addOption(posQuirk, QUIRK_POS_VAR_RNG_TARG, false);
         addOption(posQuirk, QUIRK_POS_VESTIGIAL_HANDS_LA, false);
         addOption(posQuirk, QUIRK_POS_VESTIGIAL_HANDS_RA, false);
         addOption(posQuirk, QUIRK_POS_VTOL_ROTOR_COAXIAL, false);
@@ -150,7 +149,9 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, QUIRK_NEG_NO_EJECT, false);
         addOption(negQuirk, QUIRK_NEG_NO_TWIST, false);
         addOption(negQuirk, QUIRK_NEG_NON_STANDARD, false);
-        addOption(negQuirk, QUIRK_NEG_OBSOLETE, false);
+        addOption(negQuirk,
+                QUIRK_NEG_OBSOLETE,
+                ""); // Comma-separated years: "obsoleteYear,reintroYear,obsoleteYear2,..."
         addOption(negQuirk, QUIRK_NEG_POOR_LIFE_SUPPORT, false);
         addOption(negQuirk, QUIRK_NEG_POOR_PERFORMANCE, false);
         addOption(negQuirk, QUIRK_NEG_POOR_SEALING, false);
@@ -191,7 +192,19 @@ public class Quirks extends AbstractOptions {
 
     /** @return A list of unit quirks that are active in this Quirks object. */
     public List<IOption> activeQuirks() {
-        return getOptionsList().stream().filter(IOption::booleanValue).collect(toList());
+        return getOptionsList().stream().filter(this::isQuirkActive).collect(toList());
+    }
+
+    /**
+     * Checks if a quirk is active. Boolean quirks are active if true, string quirks (like obsolete) are active if they
+     * have a non-empty value.
+     */
+    private boolean isQuirkActive(IOption quirk) {
+        if (quirk.getType() == IOption.STRING) {
+            String value = quirk.stringValue();
+            return value != null && !value.isEmpty();
+        }
+        return quirk.booleanValue();
     }
 
     public static boolean isQuirkDisallowed(IOption quirk, Entity en) {
@@ -200,6 +213,24 @@ public class Quirks extends AbstractOptions {
 
     public static boolean isQuirkLegalFor(IOption quirk, Entity en) {
         String qName = quirk.getName();
+
+        // Variable Range Targeting cannot be combined with Improved Targeting quirks (BMM pg. 86)
+        if (qName.equals(QUIRK_POS_VAR_RNG_TARG)) {
+            if (en.hasQuirk(QUIRK_POS_IMP_TARG_S) ||
+                  en.hasQuirk(QUIRK_POS_IMP_TARG_M) ||
+                  en.hasQuirk(QUIRK_POS_IMP_TARG_L)) {
+                return false;
+            }
+        }
+
+        // Improved Targeting cannot be combined with Variable Range Targeting (BMM pg. 86)
+        if (qName.equals(QUIRK_POS_IMP_TARG_S) ||
+              qName.equals(QUIRK_POS_IMP_TARG_M) ||
+              qName.equals(QUIRK_POS_IMP_TARG_L)) {
+            if (en.hasQuirk(QUIRK_POS_VAR_RNG_TARG)) {
+                return false;
+            }
+        }
 
         if (qName.equals(QUIRK_NEG_GAS_HOG)) {
             return en.hasEngine() &&
@@ -233,9 +264,9 @@ public class Quirks extends AbstractOptions {
                 return quirk.isAnyOf(
                       QUIRK_POS_ANTI_AIR, QUIRK_POS_IMP_COM, QUIRK_POS_IMPROVED_SENSORS,
                       QUIRK_POS_IMP_TARG_S, QUIRK_POS_IMP_TARG_M, QUIRK_POS_IMP_TARG_L,
-                      QUIRK_POS_LOW_PROFILE, QUIRK_NEG_POOR_SEALING, QUIRK_NEG_POOR_TARG_M,
-                      QUIRK_NEG_EM_INTERFERENCE_WHOLE, QUIRK_NEG_POOR_TARG_S, QUIRK_NEG_POOR_TARG_L,
-                      QUIRK_NEG_POOR_WORK, QUIRK_NEG_SENSOR_GHOSTS);
+                      QUIRK_POS_LOW_PROFILE, QUIRK_NEG_OBSOLETE, QUIRK_NEG_POOR_SEALING,
+                      QUIRK_NEG_POOR_TARG_S, QUIRK_NEG_POOR_TARG_M, QUIRK_NEG_POOR_TARG_L,
+                      QUIRK_NEG_EM_INTERFERENCE_WHOLE, QUIRK_NEG_POOR_WORK, QUIRK_NEG_SENSOR_GHOSTS);
             }
 
             return switch (qName) {
@@ -252,8 +283,9 @@ public class Quirks extends AbstractOptions {
                       QUIRK_POS_IMP_TARG_S, QUIRK_POS_SEARCHLIGHT,
                       QUIRK_POS_IMP_TARG_M, QUIRK_POS_IMP_TARG_L, QUIRK_POS_LOW_PROFILE,
                       QUIRK_NEG_BAD_REP_IS, QUIRK_NEG_BAD_REP_CLAN, QUIRK_NEG_DIFFICULT_MAINTAIN,
-                      QUIRK_NEG_NON_STANDARD, QUIRK_NEG_POOR_PERFORMANCE, QUIRK_NEG_POOR_SEALING,
-                      QUIRK_NEG_HARD_PILOT, QUIRK_NEG_POOR_TARG_S, QUIRK_NEG_POOR_TARG_M, QUIRK_NEG_POOR_TARG_L,
+                      QUIRK_NEG_NON_STANDARD, QUIRK_NEG_OBSOLETE, QUIRK_NEG_POOR_PERFORMANCE,
+                      QUIRK_NEG_POOR_SEALING, QUIRK_NEG_HARD_PILOT, QUIRK_NEG_POOR_TARG_S,
+                      QUIRK_NEG_POOR_TARG_M, QUIRK_NEG_POOR_TARG_L,
                       QUIRK_NEG_POOR_WORK, QUIRK_NEG_PROTOTYPE, QUIRK_NEG_SENSOR_GHOSTS,
                       QUIRK_POS_UBIQUITOUS_IS, QUIRK_POS_UBIQUITOUS_CLAN);
             };

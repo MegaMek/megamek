@@ -38,7 +38,12 @@ import java.util.Map;
 
 // --- Tech Rating Enum ---
 public enum TechRating {
-    A(0, "A"), B(1, "B"), C(2, "C"), D(3, "D"), E(4, "E"), F(5, "F");
+    A(0, "A"),
+    B(1, "B"),
+    C(2, "C"),
+    D(3, "D"),
+    E(4, "E"),
+    F(5, "F");
 
     private final int index;
     private final String name;
@@ -61,10 +66,31 @@ public enum TechRating {
 
     public String getName() {return name;}
 
+    /**
+     * Determines whether this {@link TechRating} represents a higher technological level than the specified rating.
+     *
+     * <p>The comparison is based on the internal {@code index} value; a larger index indicates a more advanced
+     * rating.</p>
+     *
+     * @param other the {@link TechRating} to compare against
+     *
+     * @return {@code true} if this rating is strictly higher than {@code other}
+     */
     public boolean isBetterThan(TechRating other) {
         return this.index > other.index;
     }
 
+    /**
+     * Determines whether this {@link TechRating} represents a technological level that is greater than or equal to the
+     * specified rating.
+     *
+     * <p>The comparison is based on the internal {@code index} value; a larger or equal index indicates an
+     * equivalent or more advanced rating.</p>
+     *
+     * @param other the {@link TechRating} to compare against
+     *
+     * @return {@code true} if this rating is greater than or equal to {@code other}
+     */
     public boolean isBetterOrEqualThan(TechRating other) {
         return this.index >= other.index;
     }

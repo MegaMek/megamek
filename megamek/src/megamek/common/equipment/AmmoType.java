@@ -690,7 +690,7 @@ public class AmmoType extends EquipmentType {
           "368, TO");
 
     private static final MunitionMutator ARAD_MUNITION_MUTATOR = new MunitionMutator("Anti-Radiation",
-          2,
+          1,
           Munitions.M_ARAD,
           new TechAdvancement(TechBase.IS).setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.F)
@@ -861,7 +861,7 @@ public class AmmoType extends EquipmentType {
 
     private static final MunitionMutator CLAN_ARAD_MUNITION_MUTATOR = new MunitionMutator(
           "(Clan) Anti-Radiation",
-          2,
+          1,
           Munitions.M_ARAD,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
@@ -1064,7 +1064,7 @@ public class AmmoType extends EquipmentType {
           "208, TM");
 
     // PLAYTEST3 AP ammo new weight
-    private static final MunitionMutator ARMOR_PIERCING_PLAYTEST_MUNITION_MUTATOR = new MunitionMutator("Armor" 
+    private static final MunitionMutator ARMOR_PIERCING_PLAYTEST_MUNITION_MUTATOR = new MunitionMutator("Armor"
           + "-Piercing Playtest",
           (5.0/3),
           Munitions.M_ARMOR_PIERCING_PLAYTEST,
@@ -1078,9 +1078,26 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "208, TM");
-    
+
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
     private static final MunitionMutator CASELESS_MUNITION_MUTATOR = new MunitionMutator("Caseless",
+          1,
+          Munitions.M_CASELESS,
+          new TechAdvancement(TechBase.ALL).setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
+                .setISAdvancement(DATE_NONE, 3056, 3079, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setClanAdvancement(DATE_NONE, DATE_NONE, 3109, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false)
+                .setPrototypeFactions(Faction.FS, Faction.LC)
+                .setProductionFactions(Faction.FS)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),
+          "352, TO");
+
+    // PLAYTEST3 RAC can now use caseless.
+    private static final MunitionMutator PLAYTEST_CASELESS_MUNITION_MUTATOR = new MunitionMutator("Playtest Caseless",
           1,
           Munitions.M_CASELESS,
           new TechAdvancement(TechBase.ALL).setIntroLevel(false)
@@ -1393,7 +1410,7 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "356, TO");
 
-    private static final MunitionMutator THUNDER_VOBRABOMB_IV_MUNITION_MUTATOR = new MunitionMutator(
+    private static final MunitionMutator THUNDER_VIBRABOMB_IV_MUNITION_MUTATOR = new MunitionMutator(
           "Thunder Vibrabomb-IV",
           1,
           Munitions.M_VIBRABOMB_IV,
@@ -2558,6 +2575,7 @@ public class AmmoType extends EquipmentType {
         ArrayList<AmmoType> clanLrmAmmos = new ArrayList<>();
         ArrayList<AmmoType> enhancedLRMAmmos = new ArrayList<>(26);
         ArrayList<AmmoType> acAmmos = new ArrayList<>(4);
+        ArrayList<AmmoType> racAmmos = new ArrayList<>(4);
         ArrayList<AmmoType> arrowAmmos = new ArrayList<>(4);
         ArrayList<AmmoType> protoArrowAmmos = new ArrayList<>(4);
         ArrayList<AmmoType> clanArrowAmmos = new ArrayList<>(4);
@@ -2602,8 +2620,8 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(base);
         EquipmentType.addType(AmmoType.createISMGAmmo());
         EquipmentType.addType(AmmoType.createISMGAmmoHalf());
-        base = AmmoType.createISAC2Ammo();
 
+        base = AmmoType.createISAC2Ammo();
         acAmmos.add(base);
         EquipmentType.addType(base);
         base = AmmoType.createISAC5Ammo();
@@ -2615,8 +2633,8 @@ public class AmmoType extends EquipmentType {
         base = AmmoType.createISAC20Ammo();
         acAmmos.add(base);
         EquipmentType.addType(base);
-        base = AmmoType.createISLRM5Ammo();
 
+        base = AmmoType.createISLRM5Ammo();
         lrmAmmos.add(base);
         EquipmentType.addType(base);
         base = AmmoType.createISLRM10Ammo();
@@ -2725,10 +2743,21 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISTHBUltra2Ammo());
         EquipmentType.addType(AmmoType.createISTHBUltra10Ammo());
         EquipmentType.addType(AmmoType.createISTHBUltra20Ammo());
-        EquipmentType.addType(AmmoType.createISRotary2Ammo());
-        EquipmentType.addType(AmmoType.createISRotary5Ammo());
-        EquipmentType.addType(AmmoType.createISRotary10Ammo());
-        EquipmentType.addType(AmmoType.createISRotary20Ammo());
+
+        // PLAYTEST3 Caseless RAC ammo
+        base = AmmoType.createISRotary2Ammo();
+        racAmmos.add(base);
+        EquipmentType.addType(base);
+        base = AmmoType.createISRotary5Ammo();
+        racAmmos.add(base);
+        EquipmentType.addType(base);
+        base = AmmoType.createISRotary10Ammo();
+        racAmmos.add(base);
+        EquipmentType.addType(base);
+        base = AmmoType.createISRotary20Ammo();
+        racAmmos.add(base);
+        EquipmentType.addType(base);
+
         EquipmentType.addType(AmmoType.createISGaussAmmo());
         EquipmentType.addType(AmmoType.createISLTGaussAmmo());
         EquipmentType.addType(AmmoType.createISHVGaussAmmo());
@@ -3526,6 +3555,11 @@ public class AmmoType extends EquipmentType {
         munitions.add(TRACER_MUNITION_MUTATOR);
         AmmoType.createMunitions(acAmmos, munitions);
 
+        // PLAYTEST create the munition types for RAC rounds.
+        munitions.clear();
+        munitions.add(PLAYTEST_CASELESS_MUNITION_MUTATOR);
+        AmmoType.createMunitions(racAmmos, munitions);
+
         // Create the munition types for Clan Improved AC rounds. Since Improved AC go
         // extinct the ammo will as well.
         munitions.clear();
@@ -3558,7 +3592,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(LASER_INHIBITING_MUNITION_MUTATOR);
         munitions.add(SMOKE_MUNITION_MUTATOR_FOR_ARROW);
         munitions.add(THUNDER_FASCAM_MUNITION_MUTATOR);
-        munitions.add(THUNDER_VOBRABOMB_IV_MUNITION_MUTATOR);
+        munitions.add(THUNDER_VIBRABOMB_IV_MUNITION_MUTATOR);
         munitions.add(DAVY_CROCKETT_M_MUNITION_MUTATOR);
         munitions.add(FUEL_AIR_MUNITION_MUTATOR);
         AmmoType.createMunitions(arrowAmmos, munitions);
@@ -15731,6 +15765,7 @@ public class AmmoType extends EquipmentType {
                 case AC_PRIMITIVE:
                 case LAC:
                 case AC_IMP:
+                case AC_ROTARY:
                 case PAC:
                     // Add the munition name to the beginning of the display name.
                     nameBuf = new StringBuilder(name);
@@ -16221,6 +16256,17 @@ public class AmmoType extends EquipmentType {
                   (munition.getAmmoType() == AmmoTypeEnum.FLUID_GUN)) &&
                   (munition.getMunitionType().contains(Munitions.M_COOLANT))) {
                 cost = 3000;
+            }
+
+            if (((munition.getAmmoType() == AmmoTypeEnum.LRM) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.LRM_IMP) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.MML) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.SRM) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.SRM_IMP) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.NLRM)) &&
+                  (munition.getMunitionType().contains(Munitions.M_ARAD))) {
+                bv *= 1.3;
+                cost *= 3.0;
             }
 
             // Account for floating point imprecision

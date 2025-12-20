@@ -65,6 +65,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.EntitySelector;
+import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.ArtilleryHandlerHelper;
 import megamek.common.weapons.handlers.AmmoBayWeaponHandler;
@@ -262,10 +263,18 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         if (null != bestSpotter) {
             int foMod = 0;
             if (bestSpotter.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
-                foMod = -1;
+                foMod = -2;
+            }
+            // Comm implant bonus only applies to non-infantry spotters
+            // Boosted comm implant provides same benefit as regular comm implant
+            int commImplantMod = 0;
+            if (!(bestSpotter instanceof Infantry) &&
+                  (bestSpotter.hasAbility(OptionsConstants.MD_COMM_IMPLANT) ||
+                        bestSpotter.hasAbility(OptionsConstants.MD_BOOST_COMM_IMPLANT))) {
+                commImplantMod = -1;
             }
             int mod = (bestSpotter.getCrew().getGunnery() - 4) / 2;
-            mod += foMod;
+            mod += foMod + commImplantMod;
             toHit.addModifier(mod, "Spotting modifier");
         }
 
@@ -287,6 +296,13 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 if (attackingEntity.aTracker.getModifier(weapon, targetPos) != TargetRoll.AUTOMATIC_SUCCESS) {
                     if (bestSpotter.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
                         attackingEntity.aTracker.setSpotterHasForwardObs(true);
+                    }
+                    // Comm implant bonus only applies to non-infantry spotters
+                    // Boosted comm implant provides same benefit as regular comm implant
+                    if (!(bestSpotter instanceof Infantry) &&
+                          (bestSpotter.hasAbility(OptionsConstants.MD_COMM_IMPLANT) ||
+                                bestSpotter.hasAbility(OptionsConstants.MD_BOOST_COMM_IMPLANT))) {
+                        attackingEntity.aTracker.setSpotterHasCommImplant(true);
                     }
                     attackingEntity.aTracker.setModifier(attackingEntity.aTracker.getModifier(weapon, targetPos) - 1,
                           targetPos);

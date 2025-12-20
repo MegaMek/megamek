@@ -133,7 +133,6 @@ import megamek.common.weapons.bombs.BombISRL10;
 import megamek.common.weapons.bombs.clan.CLAAAMissileWeapon;
 import megamek.common.weapons.bombs.clan.CLASEWMissileWeapon;
 import megamek.common.weapons.bombs.clan.CLASMissileWeapon;
-import megamek.common.weapons.bombs.clan.CLBombTAG;
 import megamek.common.weapons.bombs.clan.CLLAAMissileWeapon;
 import megamek.common.weapons.bombs.innerSphere.ISAAAMissileWeapon;
 import megamek.common.weapons.bombs.innerSphere.ISASEWMissileWeapon;
@@ -232,6 +231,8 @@ public abstract class Entity extends TurnOrdered
     public static final long ETYPE_AEROSPACE_FIGHTER = 1L << 28;
 
     public static final long ETYPE_HANDHELD_WEAPON = 1L << 29;
+
+    public static final long ETYPE_BUILDING_ENTITY = 1L << 30;
 
     public static final int BLOOD_STALKER_TARGET_CLEARED = -2;
 
@@ -461,6 +462,8 @@ public abstract class Entity extends TurnOrdered
     public int damageThisRound;
     public int engineHitsThisPhase;
     public boolean rolledForEngineExplosion = false; // So that we don't roll twice in one round
+    public boolean reportedVDNIFeedbackThisPhase = false; // BA VDNI/BVDNI feedback already shown this phase
+    public boolean baVDNINeedsFeedbackMessage = false; // BA took crit, needs feedback message at end of attack
     public boolean dodging;
     public boolean reckless;
     private boolean evading = false;
@@ -511,6 +514,17 @@ public abstract class Entity extends TurnOrdered
     private String c3MasterIsUUID = null;
     private final String[] c3iUUIDs = new String[MAX_C3i_NODES];
     private final String[] NC3UUIDs = new String[MAX_C3i_NODES];
+
+    /**
+     * Current Variable Range Targeting mode (BMM pg. 86). Determines whether unit gets bonus at short range (SHORT
+     * mode) or long range (LONG mode).
+     */
+    private VariableRangeTargetingMode variableRangeTargetingMode = VariableRangeTargetingMode.LONG;
+
+    /**
+     * Pending Variable Range Targeting mode to be applied at start of next round. null means no change pending.
+     */
+    private VariableRangeTargetingMode pendingVariableRangeTargetingMode = null;
 
     protected int structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
     protected int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
@@ -888,6 +902,19 @@ public abstract class Entity extends TurnOrdered
      * Keeps track of the number of consecutive turns a radical heat sink has been used.
      */
     protected int consecutiveRHSUses = 0;
+
+    /**
+     * Tracks whether the radical heat sink was actually used (processed in heat phase) last turn. This is needed
+     * because the equipment mode persists until newRound(), so we can't rely on hasActivatedRadicalHS() to determine if
+     * RHS was used in the previous turn.
+     */
+    protected boolean usedRHSLastTurn = false;
+
+    /**
+     * Tracks whether the RHS consecutive uses counter increased last turn. Used to properly decrement when
+     * transitioning from using to not using RHS, similar to how MASC handles its failure level.
+     */
+    protected boolean rhsWentUp = false;
 
     private final Set<Integer> attackedByThisTurn = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final Set<Integer> groundAttackedByThisTurn = Collections.newSetFromMap(new ConcurrentHashMap<>());
@@ -2241,7 +2268,7 @@ public abstract class Entity extends TurnOrdered
         if (next == null) {
             return retVal;
         }
-        if (isAero()) {
+        if (isAero() && isAirborne()) {
             return retVal;
         }
 
@@ -2647,6 +2674,18 @@ public abstract class Entity extends TurnOrdered
             }
             // can move on the ground unless its underwater
             if (assumedAlt == hex.floor()) {
+                // Check bridge clearance - can only be at floor if entity fits under bridge
+                // TO:AR 115: "a unit may enter a bridge hex and be considered underneath
+                // the bridge, provided the level of the underlying hex plus the height
+                // of the unit is equal to or less than the level of the bridge"
+                if (hex.containsTerrain(Terrains.BRIDGE)) {
+                    int bridgeElev = hex.terrainLevel(Terrains.BRIDGE_ELEV);
+                    // Entity fits under if: elevation + height + 1 <= bridge elevation
+                    // (matches VTOL check logic at lines 2599-2602)
+                    if (assumedElevation + height() + 1 > bridgeElev) {
+                        return false;  // Can't fit under bridge, floor is invalid
+                    }
+                }
                 return true;
             }
 
@@ -3194,7 +3233,7 @@ public abstract class Entity extends TurnOrdered
                 if (externalCargo.canLoad(cargoEntity)) {
                     // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly
                     //  load into that transporter.
-                    locationMap.put(transporter.getType() + " " + getTransports().indexOf(transporter),
+                    locationMap.put(transporter.getTransporterType() + " " + getTransports().indexOf(transporter),
                           Integer.MAX_VALUE - getTransports().indexOf(transporter));
 
                 }
@@ -3226,7 +3265,9 @@ public abstract class Entity extends TurnOrdered
                   && !externalCargo.getCarryables().isEmpty()) {
                 // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly load into
                 //  that transporter.
-                locationMap.put(transporter.getType() + " " + externalCargo.getCarryables().get(0).toString(),
+                locationMap.put(transporter.getTransporterType() + " " + externalCargo.getCarryables()
+                            .get(0)
+                            .toString(),
                       Integer.MAX_VALUE - getTransports().indexOf(transporter));
 
             }
@@ -4932,7 +4973,6 @@ public abstract class Entity extends TurnOrdered
               (m.getType() instanceof CLLAAMissileWeapon) ||
               (m.getType() instanceof BombArrowIV)
               /* || m.getType() instanceof CLBombArrowIV */ ||
-              (m.getType() instanceof CLBombTAG) ||
               (m.getType() instanceof ISBombTAG) ||
               (m.getType() instanceof BombISRL10) ||
               (m.getType() instanceof AlamoMissileWeapon));
@@ -4949,7 +4989,6 @@ public abstract class Entity extends TurnOrdered
               (m.getType() instanceof CLLAAMissileWeapon) ||
               (m.getType() instanceof BombArrowIV)
               /* || m.getType() instanceof CLBombArrowIV */ ||
-              (m.getType() instanceof CLBombTAG) ||
               (m.getType() instanceof ISBombTAG) ||
               (m.getType() instanceof BombISRL10) ||
               (m.getType() instanceof AlamoMissileWeapon));
@@ -5959,12 +5998,16 @@ public abstract class Entity extends TurnOrdered
             }
         }
 
-        // check for Manei Domini implants
-        if (((hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO) ||
-              hasAbility(OptionsConstants.MD_CYBER_IMP_VISUAL) ||
-              hasAbility(OptionsConstants.MD_MM_IMPLANTS)) && isConventionalInfantry()) ||
-              (hasAbility(OptionsConstants.MD_MM_IMPLANTS) &&
-                    (hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI)))) {
+        // Sensory implants: IR/EM optical OR enhanced audio = 2-hex active probe (infantry only)
+        // Benefits don't stack - having both still only gives one probe
+        // MM/Enhanced MM implants also provide probe capability for infantry or for units with VDNI/BVDNI
+        boolean hasMmImplants = hasAbility(OptionsConstants.MD_MM_IMPLANTS)
+              || hasAbility(OptionsConstants.MD_ENH_MM_IMPLANTS);
+        if (((hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO)
+              || hasAbility(OptionsConstants.MD_CYBER_IMP_VISUAL)
+              || hasMmImplants) && isConventionalInfantry())
+              || (hasMmImplants
+              && (hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI)))) {
             return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
         }
         // check for quirk
@@ -5990,13 +6033,33 @@ public abstract class Entity extends TurnOrdered
         if (conditions.getEMI().isEMI() || isShutDown()) {
             return Entity.NONE;
         }
-        // check for Manei Domini implants
-        int cyberBonus = 0;
-        if (((hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO) || hasAbility(OptionsConstants.MD_MM_IMPLANTS)) ||
-              hasAbility(OptionsConstants.MD_CYBER_IMP_VISUAL) && isConventionalInfantry()) ||
-              (hasAbility(OptionsConstants.MD_MM_IMPLANTS) &&
-                    (hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI)))) {
-            cyberBonus = 2;
+        // Sensory implants provide active probe capability:
+        // - Basic implants (audio/visual): 2-hex probe for infantry only
+        // - MM implants: 2-hex probe for infantry, or non-infantry with VDNI/BVDNI; +1 to existing BAP
+        // - Enhanced MM implants: 3-hex probe for infantry, or non-infantry with VDNI/BVDNI; +2 to existing BAP
+        // Benefits don't stack within category
+        boolean hasMmImplants = hasAbility(OptionsConstants.MD_MM_IMPLANTS)
+              || hasAbility(OptionsConstants.MD_ENH_MM_IMPLANTS);
+        boolean hasEnhancedMm = hasAbility(OptionsConstants.MD_ENH_MM_IMPLANTS);
+        boolean hasBasicImplants = hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO)
+              || hasAbility(OptionsConstants.MD_CYBER_IMP_VISUAL);
+        boolean hasVdni = hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI);
+
+        // Check if sensory implants are active (infantry, or non-infantry with VDNI for MM implants)
+        boolean sensoryImplantsActive = ((hasBasicImplants || hasMmImplants) && isConventionalInfantry())
+              || (hasMmImplants && hasVdni);
+
+        // Base probe range from implants alone (no BAP): Enhanced=3, others=2
+        int cyberBaseProbe = sensoryImplantsActive ? (hasEnhancedMm ? 3 : 2) : 0;
+        // Bonus to existing BAP range: Enhanced=+2, MM=+1, basic=0
+        int cyberProbeBonus = 0;
+        if (sensoryImplantsActive) {
+            if (hasEnhancedMm) {
+                cyberProbeBonus = 2;
+            } else if (hasMmImplants) {
+                cyberProbeBonus = 1;
+            }
+            // Basic implants (audio/visual) don't add to existing BAP range
         }
 
         // check for quirks
@@ -6025,28 +6088,31 @@ public abstract class Entity extends TurnOrdered
                 }
 
                 if (m.getName().equals("Bloodhound Active Probe (THB)") || m.getName().equals(Sensor.BAP)) {
-                    return 8 + cyberBonus + quirkBonus + spaBonus;
+                    return 8 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
                 if ((m.getType()).getInternalName().equals(Sensor.CLAN_AP) ||
                       (m.getType()).getInternalName().equals(Sensor.WATCHDOG) ||
-                      (m.getType()).getInternalName().equals(Sensor.NOVA)) {
-                    return 5 + cyberBonus + quirkBonus + spaBonus;
+                      (m.getType()).getInternalName().equals(Sensor.NOVA) ||
+                      (m.getType()).getInternalName().equals(Sensor.CL_BA_LIGHT_AP)) {
+                    return 5 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
-                if ((m.getType()).getInternalName().equals(Sensor.LIGHT_AP) ||
-                      (m.getType().getInternalName().equals(Sensor.CL_BA_LIGHT_AP)) ||
-                      (m.getType().getInternalName().equals(Sensor.IS_BA_LIGHT_AP))) {
-                    return 3 + cyberBonus + quirkBonus + spaBonus;
+                if ((m.getType()).getInternalName().equals(Sensor.LIGHT_AP)) {
+                    return 3 + cyberProbeBonus + quirkBonus + spaBonus;
+                }
+                if ((m.getType()).getInternalName().equals(Sensor.IS_BA_LIGHT_AP)) {
+                    return 4 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
                 if (m.getType().getInternalName().equals(Sensor.IS_IMPROVED) ||
                       (m.getType().getInternalName().equals(Sensor.CL_IMPROVED))) {
-                    return 2 + cyberBonus + quirkBonus + spaBonus;
+                    return 2 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
-                return 4 + cyberBonus + quirkBonus + spaBonus;// everything else should be
+                return 4 + cyberProbeBonus + quirkBonus + spaBonus;// everything else should be
                 // range 4
             }
         }
-        if ((cyberBonus + quirkBonus + spaBonus) > 0) {
-            return cyberBonus + quirkBonus + spaBonus;
+        // No BAP equipped - return base probe from implants/quirks/SPA
+        if ((cyberBaseProbe + quirkBonus + spaBonus) > 0) {
+            return cyberBaseProbe + quirkBonus + spaBonus;
         }
 
         return Entity.NONE;
@@ -6074,6 +6140,8 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Returns whether this entity has a Targeting Computer that is in aimed shot mode.
+     * This also returns true for Triple-Core Processor + VDNI/BVDNI combinations,
+     * which grant aimed shot capability as if equipped with a Targeting Computer.
      */
     public boolean hasAimModeTargComp() {
         if (hasActiveEiCockpit()) {
@@ -6085,12 +6153,116 @@ public abstract class Entity extends TurnOrdered
                 return true;
             }
         }
+        // TCP + VDNI/BVDNI grants aimed shot capability for Meks, vehicles, and aerospace
+        if (hasTCPAimedShotCapability()) {
+            return true;
+        }
         for (MiscMounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_TARGETING_COMPUTER) && m.curMode().equals("Aimed shot")) {
                 return !m.isInoperable();
             }
         }
         return false;
+    }
+
+    /**
+     * Returns whether this entity has Triple-Core Processor aimed shot capability. Per IO pg 81, MechWarriors, vehicle
+     * commanders, and fighter pilots with TCP and VDNI/BVDNI may execute aimed shots as if equipped with a Targeting
+     * Computer.
+     *
+     * @return true if TCP + VDNI/BVDNI is active and unit type qualifies
+     */
+    public boolean hasTCPAimedShotCapability() {
+        if (crew == null) {
+            return false;
+        }
+        boolean hasTCP = hasAbility(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR);
+        boolean hasVdni = hasAbility(OptionsConstants.MD_VDNI)
+              || hasAbility(OptionsConstants.MD_BVDNI);
+        if (!hasTCP || !hasVdni) {
+            return false;
+        }
+        // Only MechWarriors, vehicle commanders, and fighter pilots qualify
+        // Use isFighter() to include both Aerospace and Conventional Fighters per IO pg 81
+        return isMek() || isCombatVehicle() || isFighter();
+    }
+
+    /**
+     * Returns the TCP initiative bonus for this entity. Per IO pg 81, MekWarriors, vehicle commanders, and fighter
+     * pilots with TCP and VDNI/BVDNI provide a +2 initiative modifier to their force's side. This bonus can be modified
+     * by command equipment (+1), shutdown (-1), ECM (-1), or EMI (-1).
+     * <p>
+     * This method is primarily used for Individual Initiative mode where each entity rolls separately.
+     *
+     * @return The TCP initiative bonus (0 if entity doesn't qualify)
+     */
+    public int getTCPInitiativeBonus() {
+        if (crew == null || !crew.isActive()) {
+            return 0;
+        }
+        // Must have TCP + VDNI/BVDNI
+        boolean hasTCP = hasAbility(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR);
+        boolean hasVdni = hasAbility(OptionsConstants.MD_VDNI) || hasAbility(OptionsConstants.MD_BVDNI);
+        if (!hasTCP || !hasVdni) {
+            return 0;
+        }
+        // Only Meks, combat vehicles, and fighters qualify
+        if (!isMek() && !isCombatVehicle() && !isFighter()) {
+            return 0;
+        }
+
+        // Base +2 bonus
+        int bonus = 2;
+
+        // +1 for Cockpit Command Module, C3/C3i, or >3 tons communications equipment
+        if (hasTCPCommandEquipment()) {
+            bonus += 1;
+        }
+
+        // Per Xotl ruling: negative modifiers stack cumulatively
+        // -1 if shutdown
+        if (isShutDown()) {
+            bonus -= 1;
+        }
+        // -1 if ECM-affected, unless unit has own ECM (counter-ECM per IO pg 81)
+        if (getPosition() != null
+              && ComputeECM.isAffectedByECM(this, getPosition(), getPosition())
+              && !hasECM()) {
+            bonus -= 1;
+        }
+        // -1 if EMI conditions are active (global effect, can't be countered)
+        if (game != null && game.getPlanetaryConditions().getEMI().isEMI()) {
+            bonus -= 1;
+        }
+
+        return bonus;
+    }
+
+    /**
+     * Check if this entity has command equipment that qualifies for TCP +1 initiative bonus. This includes: Cockpit
+     * Command Module, C3/C3i systems, or more than 3 tons of communications equipment.
+     *
+     * @return true if entity has qualifying command equipment
+     */
+    private boolean hasTCPCommandEquipment() {
+        // Cockpit Command Module
+        if (hasCommandConsoleBonus()) {
+            return true;
+        }
+
+        // C3 or C3i system
+        if (hasAnyC3System()) {
+            return true;
+        }
+
+        // More than 3 tons of communications equipment
+        double commsTonnage = 0;
+        for (MiscMounted mounted : getMisc()) {
+            if (mounted.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+                commsTonnage += mounted.getTonnage();
+            }
+        }
+        return commsTonnage > 3;
     }
 
     /**
@@ -6234,8 +6406,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return True if this unit has an active Nova CEWS that can communicate.
-     *         Returns false if the unit is shutdown, off board, or the Nova CEWS is inoperable/offline.
+     * @return True if this unit has an active Nova CEWS that can communicate. Returns false if the unit is shutdown,
+     *       off board, or the Nova CEWS is inoperable/offline.
      */
     public boolean hasActiveNovaCEWS() {
         if (isShutDown() || isOffBoard()) {
@@ -6249,7 +6421,7 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * @return True if this unit has a Nova CEWS that can network (not destroyed/breached, not shutdown, not offboard).
-     *         Does NOT check ECM mode - networking works regardless of Off/ECM mode setting.
+     *       Does NOT check ECM mode - networking works regardless of Off/ECM mode setting.
      */
     public boolean hasNovaCEWS() {
         if (isShutDown() || isOffBoard()) {
@@ -6279,13 +6451,8 @@ public abstract class Entity extends TurnOrdered
                 return true;
             }
         }
-        // check for Manei Domini implants
-        return (this instanceof Infantry) &&
-              (null != crew)
-              // Fix for Bug Report #1194
-              &&
-              hasAbility(OptionsConstants.MD_ENH_MM_IMPLANTS) &&
-              hasAbility(OptionsConstants.MD_BOOST_COMM_IMPLANT);
+        // Boosted Comm Implant grants C3i access for any unit (pilots/crew/troops)
+        return (null != crew) && hasAbility(OptionsConstants.MD_BOOST_COMM_IMPLANT);
     }
 
     /**
@@ -6331,11 +6498,9 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Applies pending Nova CEWS network ID change at the start of a new round.
-     * Clears the pending change after applying it.
-     * Always clears the Nova CEWS UUID array when network changes to prevent stale UUIDs
-     * from causing unintended network connections during wireC3().
-     * Note: Nova CEWS shares UUID array infrastructure with Naval C3 (NC3).
+     * Applies pending Nova CEWS network ID change at the start of a new round. Clears the pending change after applying
+     * it. Always clears the Nova CEWS UUID array when network changes to prevent stale UUIDs from causing unintended
+     * network connections during wireC3(). Note: Nova CEWS shares UUID array infrastructure with Naval C3 (NC3).
      */
     public void newRoundNovaNetSwitch() {
         if (hasNovaCEWS() && (newC3NetIdString != null)) {
@@ -6372,6 +6537,72 @@ public abstract class Entity extends TurnOrdered
         // Returns null when no change is pending (simple return avoids side effects - see commit 8d2cd0d011)
         return newC3NetIdString;
     }
+
+    //region Variable Range Targeting (BMM pg. 86)
+
+    /**
+     * Checks if this entity has the Variable Range Targeting quirk.
+     *
+     * @return true if this entity has Variable Range Targeting capability
+     */
+    public boolean hasVariableRangeTargeting() {
+        return hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG);
+    }
+
+    /**
+     * Returns the current Variable Range Targeting mode.
+     *
+     * @return the current VariableRangeTargetingMode
+     */
+    public VariableRangeTargetingMode getVariableRangeTargetingMode() {
+        // Handle null from old save files that don't have this field
+        if (variableRangeTargetingMode == null) {
+            return VariableRangeTargetingMode.LONG;
+        }
+        return variableRangeTargetingMode;
+    }
+
+    /**
+     * Sets the current Variable Range Targeting mode. Only applies to units with the new unified Variable Range
+     * Targeting quirk.
+     *
+     * @param mode the new VariableRangeTargetingMode
+     */
+    public void setVariableRangeTargetingMode(VariableRangeTargetingMode mode) {
+        if (mode != null) {
+            variableRangeTargetingMode = mode;
+        }
+    }
+
+    /**
+     * Returns the pending Variable Range Targeting mode to be applied next round.
+     *
+     * @return the pending mode, or null if no change is pending
+     */
+    public VariableRangeTargetingMode getPendingVariableRangeTargetingMode() {
+        return pendingVariableRangeTargetingMode;
+    }
+
+    /**
+     * Sets the pending Variable Range Targeting mode to be applied at the start of the next round.
+     *
+     * @param mode the mode to apply next round, or null to cancel pending change
+     */
+    public void setPendingVariableRangeTargetingMode(VariableRangeTargetingMode mode) {
+        pendingVariableRangeTargetingMode = mode;
+    }
+
+    /**
+     * Applies pending Variable Range Targeting mode change at the start of a new round. Called from newRound().
+     */
+    public void newRoundVariableRangeSwitch() {
+        if (hasVariableRangeTargeting() && (pendingVariableRangeTargetingMode != null)) {
+            variableRangeTargetingMode = pendingVariableRangeTargetingMode;
+            pendingVariableRangeTargetingMode = null;
+        }
+    }
+
+    //endregion Variable Range Targeting
 
     public void setC3NetId(Entity e) {
         if ((e == null) || isEnemyOf(e)) {
@@ -6881,6 +7112,7 @@ public abstract class Entity extends TurnOrdered
         }
 
         newRoundNovaNetSwitch();
+        newRoundVariableRangeSwitch();
         doNewRoundIMP();
 
         // reset hexes passed through
@@ -6987,11 +7219,24 @@ public abstract class Entity extends TurnOrdered
         // Reset TSEMP firing flag
         setFiredTsempThisTurn(false);
 
-        // Decrement the number of consecutive turns if not used last turn
-        if (!hasActivatedRadicalHS()) {
+        // Update consecutive RHS uses based on last turn's usage
+        // This follows the same pattern as MASC/Supercharger to properly handle the "cooling down" mechanic
+        if (hasUsedRHSLastTurn()) {
+            // RHS was used last turn - the counter was already incremented in HeatResolver
+            rhsWentUp = true;
+        } else {
+            // RHS was not used last turn - decrement the counter
             setConsecutiveRHSUses(Math.max(0, getConsecutiveRHSUses() - 1));
+            // If the counter went up last turn (from using RHS), decrement again
+            // This compensates for the increment that happened when RHS was used
+            if (rhsWentUp) {
+                setConsecutiveRHSUses(Math.max(0, getConsecutiveRHSUses() - 1));
+                rhsWentUp = false;
+            }
         }
-        // Reset used RHS flag
+        // Reset RHS tracking flag for the new turn
+        setUsedRHSLastTurn(false);
+        // Reset RHS mode
         deactivateRadicalHS();
 
         clearAttackedByThisTurn();
@@ -8347,7 +8592,7 @@ public abstract class Entity extends TurnOrdered
         if (rv > 1) {
             IBuilding bldgEntered;
             bldgEntered = board.getBuildingAt(curPos);
-            if (bldgEntered.getType() == BuildingType.WALL) {
+            if (bldgEntered.getBuildingType() == BuildingType.WALL) {
                 return 4;
             }
         }
@@ -8395,7 +8640,7 @@ public abstract class Entity extends TurnOrdered
             desc = why + " ";
         }
 
-        switch (bldg.getType()) {
+        switch (bldg.getBuildingType()) {
             case LIGHT:
                 desc = "Light";
                 break;
@@ -8885,7 +9130,7 @@ public abstract class Entity extends TurnOrdered
             Bay chosenBay = potential.elementAt(Compute.randomInt(potential.size()));
             chosenBay.destroyDoor();
             chosenBay.resetDoors();
-            bayType = String.format("%s bay #%s", chosenBay.getType(), chosenBay.getBayNumber());
+            bayType = String.format("%s bay #%s", chosenBay.getTransporterType(), chosenBay.getBayNumber());
         }
 
         return bayType;
@@ -8928,6 +9173,14 @@ public abstract class Entity extends TurnOrdered
 
     public void pickUp(MekWarrior mw) {
         pickedUpMekWarriors.addElement(mw.getId());
+    }
+
+    /**
+     *  Clear the Vector of picked-up MekWarrior IDs so that MegaMek issue #3191 does not recur.
+     *  Called when units are initially added to the game (as they should have no carried pilots then).
+     */
+    public void resetPickedUpMekWarriors() {
+        pickedUpMekWarriors.clear();
     }
 
     /**
@@ -10900,12 +11153,8 @@ public abstract class Entity extends TurnOrdered
         if (hasQuirk(OptionsConstants.QUIRK_NEG_POOR_TARG_S)) {
             mod++;
         }
-        if (hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L)) {
-            mod++;
-        }
-        if (hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S)) {
-            mod--;
-        }
+        // Note: Variable Range Targeting modifier is applied separately in Compute.java
+        // to ensure it appears as a distinct line item in the to-hit breakdown
         return mod;
     }
 
@@ -10940,13 +11189,32 @@ public abstract class Entity extends TurnOrdered
         if (hasQuirk(OptionsConstants.QUIRK_NEG_POOR_TARG_L)) {
             mod++;
         }
-        if (hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L)) {
-            mod--;
-        }
-        if (hasQuirk(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S)) {
-            mod++;
-        }
+        // Note: Variable Range Targeting modifier is applied separately in Compute.java
+        // to ensure it appears as a distinct line item in the to-hit breakdown
         return mod;
+    }
+
+    /**
+     * Returns the Variable Range Targeting modifier for the specified range type. Used by Compute.java to add a
+     * separate line item in the to-hit breakdown.
+     *
+     * @param rangeType the range type constant from {@link RangeType}
+     *
+     * @return the modifier value, or 0 if the entity doesn't have Variable Range Targeting or the range type doesn't
+     *       apply
+     */
+    public int getVariableRangeTargetingModifier(int rangeType) {
+        if (!hasVariableRangeTargeting()) {
+            return 0;
+        }
+        VariableRangeTargetingMode mode = getVariableRangeTargetingMode();
+        if ((rangeType == RangeType.RANGE_SHORT) || (rangeType == RangeType.RANGE_MINIMUM)) {
+            return mode.getShortRangeModifier();
+        } else if (rangeType == RangeType.RANGE_LONG) {
+            return mode.getLongRangeModifier();
+        }
+        // Medium, Extreme, and LOS ranges are not affected
+        return 0;
     }
 
     public int getExtremeRangeModifier() {
@@ -13057,6 +13325,170 @@ public abstract class Entity extends TurnOrdered
         return quirks.booleanOption(name);
     }
 
+    /**
+     * Gets the obsolete quirk value as a raw string.
+     * Format is comma-separated years: "obsoleteYear,reintroYear,obsoleteYear2,reintroYear2,..."
+     *
+     * @return The raw obsolete quirk string, or empty string if not set
+     */
+    public String getObsoleteQuirkValue() {
+        IOption option = quirks.getOption(OptionsConstants.QUIRK_NEG_OBSOLETE);
+        if (option == null) {
+            return "";
+        }
+        String value = option.stringValue();
+        return value != null ? value : "";
+    }
+
+    /** Marker value for legacy obsolete quirk with unknown year */
+    public static final String OBSOLETE_UNKNOWN_MARKER = "unknown";
+
+    /**
+     * Parses the obsolete quirk value into a list of years.
+     * Format: "obsoleteYear,reintroYear,obsoleteYear2,..." where pairs define obsolete periods.
+     *
+     * @return List of years parsed from the obsolete quirk, empty list if not set or if set to "unknown"
+     */
+    public List<Integer> getObsoleteYears() {
+        String value = getObsoleteQuirkValue();
+        if (value.isEmpty() || OBSOLETE_UNKNOWN_MARKER.equalsIgnoreCase(value)) {
+            return new ArrayList<>();
+        }
+
+        List<Integer> years = new ArrayList<>();
+        String[] parts = value.split(",");
+        for (String part : parts) {
+            try {
+                years.add(Integer.parseInt(part.trim()));
+            } catch (NumberFormatException e) {
+                LOGGER.warn("Invalid year in obsolete quirk for {} {}: {}", getChassis(), getModel(), part);
+            }
+        }
+        return years;
+    }
+
+    /**
+     * Checks if this unit has the Obsolete quirk set, regardless of whether the year is known. Use this to check if the
+     * quirk is active. Use isObsoleteInYear() to check if the unit is obsolete at a specific year.
+     *
+     * @return true if the Obsolete quirk is set (even if year is unknown)
+     */
+    public boolean hasObsoleteQuirk() {
+        String value = getObsoleteQuirkValue();
+        return !value.isEmpty();
+    }
+
+    /**
+     * Gets the first year when production of this obsolete unit ceased.
+     * Kept for backward compatibility - use isObsoleteInYear() for full cycle support.
+     *
+     * @return The first year production ceased, or 0 if the unit doesn't have the Obsolete quirk
+     */
+    public int getObsoleteYear() {
+        List<Integer> years = getObsoleteYears();
+        return years.isEmpty() ? 0 : years.get(0);
+    }
+
+    /**
+     * Checks if the unit is obsolete in a given year. Handles multiple obsolete/reintroduction cycles. Format:
+     * "2950,3146,3200" means obsolete 2950-3145, available 3146-3199, obsolete 3200+
+     *
+     * @param checkYear The year to check
+     *
+     * @return true if the unit is obsolete in that year
+     */
+    public boolean isObsoleteInYear(int checkYear) {
+        List<Integer> years = getObsoleteYears();
+        if (years.isEmpty()) {
+            return false;
+        }
+
+        // Process pairs: obsoleteYear, reintroYear, obsoleteYear2, reintroYear2, ...
+        boolean obsolete = false;
+        for (int i = 0; i < years.size(); i++) {
+            int year = years.get(i);
+            if (i % 2 == 0) {
+                // Obsolete year
+                if (checkYear >= year) {
+                    obsolete = true;
+                }
+            } else {
+                // Reintroduction year
+                if (checkYear >= year) {
+                    obsolete = false;
+                }
+            }
+        }
+        return obsolete;
+    }
+
+    /**
+     * Gets the most recent obsolete period start year that applies to the given year. Used for calculating repair
+     * modifiers based on how long the unit has been obsolete.
+     *
+     * @param checkYear The year to check
+     *
+     * @return The start year of the current obsolete period, or 0 if not obsolete
+     */
+    public int getObsoleteYearForModifiers(int checkYear) {
+        List<Integer> years = getObsoleteYears();
+        if (years.isEmpty()) {
+            return 0;
+        }
+
+        int currentObsoleteStart = 0;
+        for (int i = 0; i < years.size(); i++) {
+            int year = years.get(i);
+            if (i % 2 == 0) {
+                // Obsolete year
+                if (checkYear >= year) {
+                    currentObsoleteStart = year;
+                }
+            } else {
+                // Reintroduction year
+                if (checkYear >= year) {
+                    currentObsoleteStart = 0;
+                }
+            }
+        }
+        return currentObsoleteStart;
+    }
+
+    /**
+     * Calculates the repair/parts target number modifier for an obsolete unit.
+     * Per the rules: +1 TN per 15 years after production ceased, maximum +5.
+     *
+     * @param gameYear The current game year
+     * @return The TN modifier (0 to +5), or 0 if not obsolete
+     */
+    public int getObsoleteRepairModifier(int gameYear) {
+        int obsoleteYear = getObsoleteYearForModifiers(gameYear);
+        if (obsoleteYear <= 0) {
+            return 0;
+        }
+        int yearsObsolete = gameYear - obsoleteYear;
+        int modifier = yearsObsolete / 15;
+        return Math.min(modifier, 5);
+    }
+
+    /**
+     * Calculates the resale price modifier for an obsolete unit.
+     * Per the rules: -10% per 20 years after production ceased, minimum 50%.
+     *
+     * @param gameYear The current game year
+     * @return The resale multiplier (0.5 to 1.0), or 1.0 if not obsolete
+     */
+    public double getObsoleteResaleModifier(int gameYear) {
+        int obsoleteYear = getObsoleteYearForModifiers(gameYear);
+        if (obsoleteYear <= 0) {
+            return 1.0;
+        }
+        int yearsObsolete = gameYear - obsoleteYear;
+        int reductions = yearsObsolete / 20;
+        double modifier = 1.0 - (reductions * 0.10);
+        return Math.max(modifier, 0.5);
+    }
+
     public PartialRepairs getPartialRepairs() {
         return partReps;
     }
@@ -14359,16 +14791,79 @@ public abstract class Entity extends TurnOrdered
         for (QuirkEntry quirkEntry : quirks) {
             // If the quirk doesn't have a location, then it is a unit quirk, not a weapon quirk.
             if (StringUtility.isNullOrBlank(quirkEntry.location())) {
+                // Migrate legacy Variable Range Targeting quirks to the unified quirk
+                String quirkName = quirkEntry.getQuirk();
+                // These string literals are intentionally hardcoded for backward compatibility
+                // with old save files that contain these deprecated quirk names
+                boolean isLegacyVrtShort = "variable_range_short".equals(quirkName);
+                boolean isLegacyVrtLong = "variable_range_long".equals(quirkName);
+                if (isLegacyVrtShort || isLegacyVrtLong) {
+                    quirkName = OptionsConstants.QUIRK_POS_VAR_RNG_TARG;
+                    LOGGER.info("Migrating legacy quirk '{}' to '{}' for {} {}",
+                          quirkEntry.getQuirk(), quirkName, getChassis(), getModel());
+                }
+
                 // Activate the unit quirk.
-                if (getQuirks().getOption(quirkEntry.getQuirk()) == null) {
+                IOption option = getQuirks().getOption(quirkName);
+                if (option == null) {
                     LOGGER.warn("{} failed to load quirk for {} {} - Invalid quirk!", quirkEntry, getChassis(),
                           getModel());
                     continue;
                 }
-                getQuirks().getOption(quirkEntry.getQuirk()).setValue(true);
+
+                // Set the Variable Range Targeting mode based on which legacy quirk was used
+                if (isLegacyVrtShort) {
+                    setVariableRangeTargetingMode(VariableRangeTargetingMode.SHORT);
+                } else if (isLegacyVrtLong) {
+                    setVariableRangeTargetingMode(VariableRangeTargetingMode.LONG);
+                }
+                // Handle quirks with values (e.g., obsolete:2750 or obsolete:2950,3146)
+                if (quirkEntry.hasValue()) {
+                    if (option.getType() == IOption.INTEGER) {
+                        try {
+                            option.setValue(Integer.parseInt(quirkEntry.value()));
+                        } catch (NumberFormatException e) {
+                            LOGGER.warn("{} failed to parse quirk value for {} {} - Invalid number: {}",
+                                  quirkEntry, getChassis(), getModel(), quirkEntry.value());
+                        }
+                    } else if (option.getType() == IOption.STRING) {
+                        option.setValue(quirkEntry.value());
+                    } else {
+                        // For other quirks with values, store as string
+                        option.setValue(quirkEntry.value());
+                    }
+                } else {
+                    // No value provided - handle based on option type
+                    if (option.getType() == IOption.BOOLEAN) {
+                        option.setValue(true);
+                    } else if (option.getType() == IOption.INTEGER) {
+                        // Old unit files may have integer quirks without values - use default
+                        LOGGER.warn("Quirk {} for {} {} has no value, using default",
+                              quirkEntry.getQuirk(), getChassis(), getModel());
+                        option.setValue(option.getDefault());
+                    } else if (option.getType() == IOption.STRING) {
+                        // Handle backward compatibility for old boolean-style obsolete quirk
+                        if (OptionsConstants.QUIRK_NEG_OBSOLETE.equals(quirkEntry.getQuirk())) {
+                            // Old format: just "obsolete" with no value means unit is obsolete
+                            // but we don't know when. Set to "unknown" as a marker value.
+                            // This marks the quirk as active but won't add invalid extinction dates.
+                            LOGGER.info("Legacy obsolete quirk found for {} {} - converting to 'unknown' marker",
+                                  getChassis(), getModel());
+                            option.setValue("unknown");
+                        } else {
+                            option.setValue("");
+                        }
+                    }
+                }
             } else {
                 assignWeaponQuirk(quirkEntry);
             }
+        }
+
+        // After loading quirks, check if the Obsolete quirk was loaded and update tech advancement
+        List<Integer> obsoleteYears = getObsoleteYears();
+        if (!obsoleteYears.isEmpty()) {
+            compositeTechLevel.setObsoleteYears(obsoleteYears);
         }
     }
 
@@ -14538,6 +15033,8 @@ public abstract class Entity extends TurnOrdered
             return "ProtoMek";
         } else if ((typeId & ETYPE_HANDHELD_WEAPON) == ETYPE_HANDHELD_WEAPON) {
             return "Handheld Weapon";
+        } else if ((typeId & ETYPE_BUILDING_ENTITY) == ETYPE_BUILDING_ENTITY) {
+            return "Building Entity";
         } else {
             return "Unknown";
         }
@@ -14609,6 +15106,8 @@ public abstract class Entity extends TurnOrdered
             return "Tank";
         } else if ((typeId & ETYPE_HANDHELD_WEAPON) == ETYPE_HANDHELD_WEAPON) {
             return "Handheld Weapon";
+        } else if ((typeId & ETYPE_BUILDING_ENTITY) == ETYPE_BUILDING_ENTITY) {
+            return "Building Entity";
         } else {
             return "Unknown";
         }
@@ -14785,13 +15284,27 @@ public abstract class Entity extends TurnOrdered
     }
 
     public void deactivateRadicalHS() {
-        for (MiscMounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
-                m.setMode("Off");
+        for (MiscMounted miscEquipment : getMisc()) {
+            if (miscEquipment.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+                miscEquipment.setMode(Weapon.MODE_AMS_OFF);
                 // Can only have one radical heat sink
                 break;
             }
         }
+    }
+
+    public void activateRadicalHS() {
+        for (MiscMounted miscEquipment : getMisc()) {
+            if (miscEquipment.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+                miscEquipment.setMode(Weapon.MODE_AMS_ON);
+                // Can only have one radical heat sink
+                break;
+            }
+        }
+    }
+
+    public boolean hasWorkingRadicalHS() {
+        return hasWorkingMisc(MiscType.F_RADICAL_HEATSINK);
     }
 
     public int getConsecutiveRHSUses() {
@@ -14808,6 +15321,18 @@ public abstract class Entity extends TurnOrdered
 
     public void setHasDamagedRHS(boolean hasDamagedRHS) {
         this.hasDamagedRHS = hasDamagedRHS;
+    }
+
+    public boolean hasUsedRHSLastTurn() {
+        return usedRHSLastTurn;
+    }
+
+    public void setUsedRHSLastTurn(boolean usedRHSLastTurn) {
+        this.usedRHSLastTurn = usedRHSLastTurn;
+    }
+
+    public boolean hasRHSWentUp() {
+        return rhsWentUp;
     }
 
     public void addAttackedByThisTurn(int entityId) {
@@ -16152,6 +16677,7 @@ public abstract class Entity extends TurnOrdered
      */
     @Override
     public boolean damage(double amount) {
+
         return false;
     }
 

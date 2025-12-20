@@ -59,6 +59,7 @@ import megamek.common.event.board.BoardEvent;
 import megamek.common.event.board.BoardListener;
 import megamek.common.hexArea.HexArea;
 import megamek.common.loaders.MapSettings;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.BuildingTerrain;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
@@ -359,13 +360,7 @@ public class Board implements Serializable {
                         try {
                             IBuilding bldg = new BuildingTerrain(coords, this, Terrains.BUILDING,
                                   BasementType.getType(curHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
-                            buildings.addElement(bldg);
-
-                            // Each building will identify the hexes it covers.
-                            Enumeration<Coords> iter = bldg.getCoords();
-                            while (iter.hasMoreElements()) {
-                                bldgByCoords.put(iter.nextElement(), bldg);
-                            }
+                            addBuildingToBoard(bldg);
                         } catch (IllegalArgumentException exception) {
                             // Log the error and remove the building from the board.
                             if (errors == null) {
@@ -386,13 +381,7 @@ public class Board implements Serializable {
                         try {
                             int magnitude = curHex.getTerrain(Terrains.FUEL_TANK_MAGN).getLevel();
                             FuelTank bldg = new FuelTank(coords, this, Terrains.FUEL_TANK, magnitude);
-                            buildings.addElement(bldg);
-
-                            // Each building will identify the hexes it covers.
-                            Enumeration<Coords> iter = bldg.getCoords();
-                            while (iter.hasMoreElements()) {
-                                bldgByCoords.put(iter.nextElement(), bldg);
-                            }
+                            addBuildingToBoard(bldg);
                         } catch (IllegalArgumentException exception) {
                             // Log the error and remove the fuel tank from the board.
                             if (errors == null) {
@@ -412,13 +401,7 @@ public class Board implements Serializable {
                         // Nope. Try to create an object for the new building.
                         try {
                             IBuilding bldg = new BuildingTerrain(coords, this, Terrains.BRIDGE, BasementType.NONE);
-                            buildings.addElement(bldg);
-
-                            // Each building will identify the hexes it covers.
-                            Enumeration<Coords> iter = bldg.getCoords();
-                            while (iter.hasMoreElements()) {
-                                bldgByCoords.put(iter.nextElement(), bldg);
-                            }
+                            addBuildingToBoard(bldg);
                         } catch (IllegalArgumentException exception) {
                             // Log the error and remove the bridge from the board.
                             if (errors == null) {
@@ -1446,7 +1429,7 @@ public class Board implements Serializable {
 
         // Add rubble terrain that matches the building type.
         if (type > 0) {
-            int rubbleLevel = bldg.getType().getTypeValue();
+            int rubbleLevel = bldg.getBuildingType().getTypeValue();
             curHex.addTerrain(new Terrain(Terrains.RUBBLE, rubbleLevel));
         }
 
@@ -2145,5 +2128,20 @@ public class Board implements Serializable {
     @Override
     public String toString() {
         return "[Board-%s] (%s) %dx%d".formatted(boardType, mapName, width, height);
+    }
+
+    /**
+     * Add a building and all of its coordinates to the board. {@link BuildingTerrain} should be added when
+     * initializing, this method is public so {@link AbstractBuildingEntity} can register buildings when deploying buildings.
+     * @param bldg {@link IBuilding} to add to the board
+     */
+    public void addBuildingToBoard(IBuilding bldg) {
+        buildings.addElement(bldg);
+
+        // Each building will identify the hexes it covers.
+        Enumeration<Coords> iter = bldg.getCoords();
+        while (iter.hasMoreElements()) {
+            bldgByCoords.put(iter.nextElement(), bldg);
+        }
     }
 }

@@ -468,6 +468,11 @@ public class MovePath implements Cloneable, Serializable {
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             return;
         }
+        // can't do anything after unloading except unloading again
+        if (contains(MoveStepType.UNLOAD) && !(getLastStep().getType() == MoveStepType.UNLOAD)) {
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            return;
+        }
 
         // check for illegal jumps
         if ((start == null) || (land == null)) {
@@ -483,6 +488,22 @@ public class MovePath implements Cloneable, Serializable {
                 int distance = start.distance(land);
 
                 if (step.isThisStepBackwards() || (step.getDistance() > distance)) {
+                    step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                    return;
+                }
+            }
+        }
+
+        // Check if jumping entity has enough MPs to reach building elevation
+        if (isJumping() && !(entity instanceof Infantry)) {
+            Hex destHex = game.getBoard(step.getBoardId()).getHex(step.getPosition());
+            int building = destHex.terrainLevel(Terrains.BLDG_ELEV);
+            if (building > 0) {
+                int maxElevation = (entity.getJumpMP() +
+                      entity.getElevation() +
+                      game.getBoard(entity.getBoardId()).getHex(entity.getPosition()).getLevel()) -
+                      destHex.getLevel();
+                if (building > maxElevation) {
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
                     return;
                 }

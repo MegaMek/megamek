@@ -776,7 +776,8 @@ class PrincessTest {
         tank.setCrew(crew);
         crew.setDead(true);
         assertTrue(tank.isPermanentlyImmobilized(true));
-        assertTrue(tank.isCrippled());
+        // Per TW Errata v11.01 p.54, immobilized units are NOT automatically crippled
+        assertFalse(tank.isCrippled());
         assertFalse(tank.isShutDown());
         assertFalse(tank.isDoomed());
         assertTrue(mockPrincess.shouldAbandon(tank));
@@ -791,7 +792,8 @@ class PrincessTest {
         tank.setOriginalWalkMP(4);
         tank.setMotiveDamage(4);
         assertTrue(tank.isPermanentlyImmobilized(true));
-        assertTrue(tank.isCrippled());
+        // Per TW Errata v11.01 p.54, immobilized units are NOT automatically crippled
+        assertFalse(tank.isCrippled());
         assertFalse(tank.isShutDown());
         assertFalse(tank.isDoomed());
         assertTrue(mockPrincess.shouldAbandon(tank));
@@ -829,7 +831,8 @@ class PrincessTest {
         vtol.setCrew(crew);
 
         assertTrue(vtol.isPermanentlyImmobilized(true));
-        assertTrue(vtol.isCrippled());
+        // Per TW Errata v11.01 p.54, immobilized units are NOT automatically crippled
+        assertFalse(vtol.isCrippled());
         assertFalse(vtol.isShutDown());
         assertFalse(vtol.isDoomed());
         assertTrue(mockPrincess.shouldAbandon(vtol));

@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers.capitalMissile;
 
+import static java.lang.Math.floor;
+
 import java.io.Serial;
 import java.util.Vector;
 
@@ -448,7 +450,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
 
         // we default to direct fire weapons for anti-infantry damage
         if (bDirect) {
-            toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0), toReturn * 2);
+            toReturn = Math.min(toReturn + (int) floor(toHit.getMoS() / 3.0), toReturn * 2);
         }
 
         toReturn = applyGlancingBlowModifier(toReturn, false);

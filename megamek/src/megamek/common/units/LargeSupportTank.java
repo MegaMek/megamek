@@ -391,9 +391,6 @@ public class LargeSupportTank extends SupportTank {
         } else if ((getArmor(LOC_REAR) < 1) && (getOArmor(LOC_REAR) > 0)) {
             LOGGER.debug("{} CRIPPLED: Rear armor destroyed.", getDisplayName());
             return true;
-        } else if (isPermanentlyImmobilized(checkCrew)) {
-            LOGGER.debug("{} CRIPPLED: Immobilized.", getDisplayName());
-            return true;
         }
 
         // If this is not a military vehicle, we don't need to do a weapon check.

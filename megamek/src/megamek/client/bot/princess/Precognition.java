@@ -224,6 +224,9 @@ public class Precognition implements Runnable {
                     var changedHexes = (Map<BoardLocation, Hex>) c.getObject(0);
                     game.getBoards().values().forEach(board -> board.setHexes(changedHexes));
                     break;
+                case BLDG_ADD:
+                    receiveBuildingAdd(c);
+                    break;
                 case BLDG_UPDATE:
                     receiveBuildingUpdate(c);
                     break;
@@ -838,6 +841,12 @@ public class Precognition implements Runnable {
 
         if (!newMines.isEmpty()) {
             getGame().resetMinefieldDensity(newMines);
+        }
+    }
+
+    private void receiveBuildingAdd(Packet packet) throws InvalidPacketDataException {
+        for (IBuilding building : (List<IBuilding>) packet.getObject(0)) {
+            game.getBoard(building.getBoardId()).addBuildingToBoard(building);
         }
     }
 

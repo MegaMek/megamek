@@ -1310,41 +1310,23 @@ public class BattleArmor extends Infantry {
 
     /**
      * return if this BA has fire-resistant armor
-     *
      */
     public boolean isFireResistant() {
-        for (Mounted<?> equip : getMisc()) {
-            if (equip.getType().hasFlag(MiscType.F_FIRE_RESISTANT)) {
-                return true;
-            }
-        }
-        return false;
+        return getArmorType(LOC_TROOPER_1) == EquipmentType.T_ARMOR_BA_FIRE_RESIST;
     }
 
     /**
      * return if this BA has laser reflective armor
-     *
      */
     public boolean isReflective() {
-        for (Mounted<?> equip : getMisc()) {
-            if (equip.getType().hasFlag(MiscType.F_REFLECTIVE)) {
-                return true;
-            }
-        }
-        return false;
+        return getArmorType(LOC_TROOPER_1) == EquipmentType.T_ARMOR_BA_REFLECTIVE;
     }
 
     /**
      * return if this BA has reactive armor
-     *
      */
     public boolean isReactive() {
-        for (Mounted<?> equip : getMisc()) {
-            if (equip.getType().hasFlag(MiscType.F_REACTIVE)) {
-                return true;
-            }
-        }
-        return false;
+        return getArmorType(LOC_TROOPER_1) == EquipmentType.T_ARMOR_BA_REACTIVE;
     }
 
     /**

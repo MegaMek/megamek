@@ -58,7 +58,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.Jumpship;
-import megamek.common.units.NavalRepairFacility;
 import megamek.common.units.Warship;
 import megamek.common.util.RoundWeight;
 import megamek.common.util.StringUtil;
@@ -963,26 +962,19 @@ public class TestAdvancedAerospace extends TestAero {
         boolean legal = true;
 
         Set<Integer> facings = new HashSet<>();
-        int repairCount = 0;
         for (Bay bay : vessel.getTransportBays()) {
             if (bay.hardpointCost() > 0) {
                 if ((bay.getFacing() < 0) || (bay.getFacing() >= Warship.LOC_LBS)) {
-                    buffer.append(bay.getType()).append(" is not assigned a legal armor facing.\n");
+                    buffer.append(bay.getTransporterType()).append(" is not assigned a legal armor facing.\n");
                     legal = false;
                 } else if (facings.contains(bay.getFacing())) {
                     buffer.append("Exceeds maximum of one repair facility or drop shuttle bay per armor facing.\n");
                     legal = false;
                 }
                 facings.add(bay.getFacing());
-                if (bay instanceof NavalRepairFacility) {
-                    repairCount++;
-                }
             }
         }
-        if ((repairCount > 1) && !vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
-            buffer.append("Only a space station may mount multiple naval repair facilities.\n");
-            legal = false;
-        }
+
 
         return legal;
     }

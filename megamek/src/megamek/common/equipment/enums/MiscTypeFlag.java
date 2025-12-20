@@ -337,5 +337,5 @@ public enum MiscTypeFlag implements EquipmentFlag {
     F_CHAIN_DRAPE_PONCHO,
 
     F_WEAPON_ENHANCEMENT,
-
+    F_POWER_GENERATOR,
 }

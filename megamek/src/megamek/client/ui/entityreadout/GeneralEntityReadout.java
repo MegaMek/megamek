@@ -477,7 +477,7 @@ class GeneralEntityReadout implements EntityReadout {
             tpTable.addRow(new ToolTippedElement(
                         Messages.getString("MekView.Extinct"),
                         Messages.getString("MekView.Extinct.tooltip")),
-                  new DateRangeElement(entity.getExtinctionRange()));
+                  new DateRangeElement(entity.getExtinctionRange(), true));
         }
         result.add(new PlainLine());
         result.add(tpTable);

@@ -178,8 +178,12 @@ public class StreakHandler extends MissileWeaponHandler {
             if (weaponType.hasFlag(WeaponType.F_ONE_SHOT)) {
                 weapon.setFired(true);
             }
-            setDone();
         }
+
+        // Always mark weapon as used even if lock-on fails. Per official ruling,
+        // attempting to fire a Streak counts as "firing" for physical attack restrictions.
+        // See: https://battletech.com/forums/index.php?topic=34443.msg803644#msg803644
+        setDone();
     }
 
     @Override

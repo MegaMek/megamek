@@ -582,8 +582,16 @@ public class MoveStep implements Serializable {
                     default -> setElevation(subDepth);
                 }
             }
-            if (climbMode() && (maxElevation >= hex.terrainLevel(Terrains.BRIDGE_ELEV))) {
-                setElevation(Math.max(getElevation(), hex.terrainLevel(Terrains.BRIDGE_ELEV)));
+            // Handle bridge elevation for jumping
+            if (hex.containsTerrain(Terrains.BRIDGE)) {
+                int bridgeElev = hex.terrainLevel(Terrains.BRIDGE_ELEV);
+                if (climbMode() && (maxElevation >= bridgeElev)) {
+                    // Climb mode ON - go onto bridge if reachable
+                    setElevation(Math.max(getElevation(), bridgeElev));
+                } else if (!entity.isElevationValid(getElevation(), hex)) {
+                    // Can't fit under bridge - force onto bridge (TO:AR 115)
+                    setElevation(bridgeElev);
+                }
             }
         } else {
             IBuilding bld = game.getBoard(boardId).getBuildingAt(getPosition());
@@ -602,7 +610,7 @@ public class MoveStep implements Serializable {
                     maxElevation++;
                 }
 
-                if (bld.getType() == BuildingType.WALL) {
+                if (bld.getBuildingType() == BuildingType.WALL) {
                     if (maxElevation >= hex.terrainLevel(Terrains.BLDG_ELEV)) {
                         setElevation(Math.max(getElevation(), hex.terrainLevel(Terrains.BLDG_ELEV)));
                     } else {
@@ -2317,6 +2325,26 @@ public class MoveStep implements Serializable {
             }
         }
 
+        // Handle loading steps for various unit types.
+        // Eventually MoveStepType.LOAD will get a target and position passed to it, so we will always load the right
+        // entities in the right order, and from the right place.
+        if (stepType == MoveStepType.LOAD) {
+            if (entity instanceof Aero) {
+                movementType = EntityMovementType.MOVE_NONE;
+            } else {
+                if (isFirstStep()) {
+                    if (getMpUsed() <= cachedEntityState.getRunMP()) {
+                        movementType = EntityMovementType.MOVE_RUN;
+                        if (getMpUsed() <= cachedEntityState.getWalkMP()) {
+                            movementType = EntityMovementType.MOVE_WALK;
+                        }
+                    }
+                } else {
+                    movementType = prev.getMovementType(false);
+                }
+            }
+        }
+
         // Is the entity trying to drop a trailer?
         if (stepType == MoveStepType.DISCONNECT) {
 
@@ -2396,7 +2424,7 @@ public class MoveStep implements Serializable {
         }
 
         // do not allow to move onto a bridge if there's no exit in lastPos's
-        // direction, unless jumping
+        // direction, unless jumping or already at/above bridge level
         if (!isFirstStep() &&
               !curPos.equals(lastPos) &&
               climbMode &&
@@ -2405,6 +2433,19 @@ public class MoveStep implements Serializable {
               (movementType != EntityMovementType.MOVE_JUMP) &&
               game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.BRIDGE) &&
               !game.getBoard(boardId).getHex(curPos).containsTerrainExit(Terrains.BRIDGE, curPos.direction(lastPos)) &&
+              (getElevation() < game.getBoard(boardId).getHex(curPos).terrainLevel(Terrains.BRIDGE_ELEV)) &&
+              (getElevation() + entity.getHeight() >=
+                    game.getBoard(boardId).getHex(curPos).terrainLevel(Terrains.BRIDGE_ELEV))) {
+            movementType = EntityMovementType.MOVE_ILLEGAL;
+        }
+
+        // Walking under a bridge: check if entity fits (TO:AR 115)
+        // If entity is under the bridge and can't fit, move is illegal (unless jumping)
+        if (!isFirstStep() &&
+              !curPos.equals(lastPos) &&
+              (movementType != EntityMovementType.MOVE_JUMP) &&
+              game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.BRIDGE) &&
+              (getElevation() < game.getBoard(boardId).getHex(curPos).terrainLevel(Terrains.BRIDGE_ELEV)) &&
               (getElevation() + entity.getHeight() >=
                     game.getBoard(boardId).getHex(curPos).terrainLevel(Terrains.BRIDGE_ELEV))) {
             movementType = EntityMovementType.MOVE_ILLEGAL;
@@ -2416,6 +2457,31 @@ public class MoveStep implements Serializable {
               climbMode &&
               game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.BUILDING)) {
             movementType = EntityMovementType.MOVE_ILLEGAL;
+        }
+
+        // Check elevation change when climbing onto a building
+        if (climbMode && !isJumping()) {
+            Hex curHex = game.getBoard(boardId).getHex(curPos);
+            if (curHex.containsTerrain(Terrains.BUILDING)) {
+                Hex prevHex = game.getBoard(boardId).getHex(lastPos);
+                // Check if we're climbing from outside/below onto the building top
+                if (!prevHex.containsTerrain(Terrains.BUILDING) ||
+                    prevHex.terrainLevel(Terrains.BLDG_ELEV) < curHex.terrainLevel(Terrains.BLDG_ELEV)) {
+                    int prevAbsoluteElev = prevHex.getLevel() + prev.getElevation();
+                    int curAbsoluteElev = curHex.getLevel() + getElevation();
+                    int elevChange = curAbsoluteElev - prevAbsoluteElev;
+
+                    int maxAllowed = entity.getMaxElevationChange();
+                    // Infantry changing terrain levels can exceed their normal max by 1
+                    if (entity instanceof Infantry && curHex.getLevel() != prevHex.getLevel()) {
+                        maxAllowed += 1;
+                    }
+
+                    if (elevChange > maxAllowed) {
+                        movementType = EntityMovementType.MOVE_ILLEGAL;
+                    }
+                }
+            }
         }
 
         // TO p.325 - Mine dispensers
@@ -2470,8 +2536,10 @@ public class MoveStep implements Serializable {
         }
 
         // check if this movement is illegal for reasons other than points
+        // Only a CHAFF step or another unloading step can follow an existing unloading step
         if (!isMovementPossible(game, lastPos, prev.getElevation(), cachedEntityState) ||
-              (isUnloaded && type != MoveStepType.CHAFF)) {
+              (isUnloaded && !(type == MoveStepType.CHAFF || type == MoveStepType.UNLOAD))
+        ) {
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
@@ -2849,7 +2917,7 @@ public class MoveStep implements Serializable {
             if (!isInfantry && !isSuperHeavyMek) {
                 if (!isProto) {
                     // non-ProtoMeks pay extra according to the building type
-                    mp += bldg.getType().getTypeValue();
+                    mp += bldg.getBuildingType().getTypeValue();
                     if (bldg.getBldgClass() == IBuilding.HANGAR) {
                         mp--;
                     }
@@ -2973,7 +3041,10 @@ public class MoveStep implements Serializable {
         IBuilding bld = game.getBoard(boardId).getBuildingAt(dest);
 
         final int destAlt;
-        if (bld != null && getEntity().getElevation() == 0 && climbMode) {
+        // For buildings (but NOT bridges), when entering from ground level in climbMode,
+        // use floor elevation. Bridges should use the bridge elevation instead.
+        if (bld != null && getEntity().getElevation() == 0 && climbMode
+              && !destHex.containsTerrain(Terrains.BRIDGE)) {
             destAlt = destHex.floor();
         } else {
             destAlt = elevation + destHex.getLevel();
@@ -2994,7 +3065,7 @@ public class MoveStep implements Serializable {
                   .getLevel()) -
                   hex.getLevel();
 
-            if ((bld.getType() == BuildingType.WALL) && (maxElevation < hex.terrainLevel(Terrains.BLDG_ELEV))) {
+            if ((bld.getBuildingType() == BuildingType.WALL) && (maxElevation < hex.terrainLevel(Terrains.BLDG_ELEV))) {
                 return false;
             }
 
@@ -3044,10 +3115,12 @@ public class MoveStep implements Serializable {
         }
 
         // The entity is trying to load. Check for a valid move.
+        // In the future, we need to record the target of a LOAD step in the same way we do UNLOAD targets, and
+        // remove the loop below completely.
         if (type == MoveStepType.LOAD) {
             // Find the unit being loaded.
             Entity other = null;
-            Iterator<Entity> entities = game.getEntities(src);
+            Iterator<Entity> entities = game.getEntities(Compute.getLoadableCoords(entity, src, boardId));
             while (entities.hasNext()) {
 
                 // Is the other unit friendly and not the current entity?
@@ -3056,12 +3129,12 @@ public class MoveStep implements Serializable {
 
                     // The moving unit should be able to load the other unit.
                     if (!entity.canLoad(other, true, getElevation())) {
-                        return false;
+                        continue;
                     }
 
                     // The other unit should be able to have a turn.
                     if (!other.isLoadableThisTurn()) {
-                        return false;
+                        continue;
                     }
 
                     // We can stop looking.

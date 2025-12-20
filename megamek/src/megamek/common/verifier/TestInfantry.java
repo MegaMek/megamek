@@ -226,6 +226,13 @@ public class TestInfantry extends TestEntity {
             correct = false;
         }
 
+        // Dermal Armor and Dermal Camo Armor are mutually exclusive
+        if (inf.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
+              && inf.hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)) {
+            buff.append("Dermal Armor and Dermal Camo Armor are mutually exclusive!\n");
+            correct = false;
+        }
+
         if (infantry.hasFieldWeapon()) {
             // These tests include field artillery
             Mounted<?> firstFieldGun = infantry.originalFieldWeapons().get(0);

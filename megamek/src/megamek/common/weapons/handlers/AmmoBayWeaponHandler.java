@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers;
 
+import static java.lang.Math.floor;
+
 import java.io.Serial;
 
 import megamek.common.RangeType;
@@ -86,14 +88,14 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
             AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
             if (null == bayWAmmo || bayWAmmo.getUsableShotsLeft() < 1) {
                 // try loading something else
-                attackingEntity.loadWeaponWithSameAmmo(bayW);
+                weaponEntity.loadWeaponWithSameAmmo(bayW);
                 bayWAmmo = bayW.getLinkedAmmo();
             }
             if (!bayW.isBreached()
                   && !bayW.isDestroyed()
                   && !bayW.isJammed()
                   && bayWAmmo != null
-                  && attackingEntity.getTotalAmmoOfType(bayWAmmo.getType()) >= bayW.getCurrentShots()) {
+                  && weaponEntity.getTotalAmmoOfType(bayWAmmo.getType()) >= bayW.getCurrentShots()) {
                 WeaponType bayWType = bayW.getType();
                 // need to cycle through weapons and add av
                 double current_av = 0;
@@ -118,7 +120,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                         if (null == bayWAmmo
                               || bayWAmmo.getUsableShotsLeft() < 1) {
                             // try loading something else
-                            attackingEntity.loadWeaponWithSameAmmo(bayW);
+                            weaponEntity.loadWeaponWithSameAmmo(bayW);
                             bayWAmmo = bayW.getLinkedAmmo();
                         }
                         if (null != bayWAmmo) {
@@ -129,7 +131,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
             }
         }
         if (bDirect) {
-            av = Math.min(av + (toHit.getMoS() / 3.0), av * 2);
+            av = Math.min(av + (int) floor(toHit.getMoS() / 3.0), av * 2);
         }
         av = applyGlancingBlowModifier(av, false);
         av = (int) Math.floor(getBracketingMultiplier() * av);

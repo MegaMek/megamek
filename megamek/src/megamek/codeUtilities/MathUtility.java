@@ -157,7 +157,7 @@ public class MathUtility {
     /**
      * Calculates a Gaussian-weighted average from a list of integer values.
      *
-     * <p>This method computes a “soft” average that down-weights statistical outliers using a Gaussian
+     * <p>This method computes a "soft" average that down-weights statistical outliers using a Gaussian
      * (normal-distribution) weighting function. This is useful when a handful of extreme values should not influence
      * the final result as strongly as values clustered near the center of the distribution.</p>
      *
@@ -482,7 +482,7 @@ public class MathUtility {
      *
      * @return The <code>double</code> value or defaultValue.
      */
-    public static double parseDouble(final String value, double defaultValue) {
+    public static Double parseDouble(final String value, Double defaultValue) {
         if (value == null || value.isEmpty()) {
             return defaultValue;
         }
@@ -497,7 +497,7 @@ public class MathUtility {
 
     /**
      * Parses the provided string into a double. If parsing fails, a default value of 0.0 is returned. This method
-     * delegates to {@link #parseDouble(String, double)} with a default value.
+     * delegates to {@link #parseDouble(String, Double)} with a default value.
      *
      * @param value the string to parse. Can be a numeric string or {@code null}.
      *

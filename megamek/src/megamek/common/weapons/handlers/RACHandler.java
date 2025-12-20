@@ -40,8 +40,12 @@ import java.util.Vector;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.Roll;
 import megamek.common.units.Entity;
 import megamek.common.weapons.Weapon;
 import megamek.server.totalWarfare.TWGameManager;
@@ -96,6 +100,29 @@ public class RACHandler extends UltraWeaponHandler {
                 break;
         }
 
+        // PLAYTEST3 Caseless ammo support for RAC
+        // Will potentially explode when rolling a 2. Can still jam if not blowing up.
+        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            if ((roll.getIntValue() <= 2) && !attackingEntity.isConventionalInfantry()
+                && ammoType.getMunitionType().contains(AmmoType.Munitions.M_CASELESS)) {
+                Roll diceRoll = Compute.rollD6(2);
+
+                Report r = new Report(3164);
+                r.subject = subjectId;
+                r.add(diceRoll);
+
+                if (diceRoll.getIntValue() >= 8) {
+                    // Round explodes destroying weapon
+                    weapon.setDestroyed(true);
+                    r.choose(false);
+                } else {
+                    // Just a jam
+                    jams = true;
+                    r.choose(true);
+                }
+                vPhaseReport.addElement(r);
+            }
+        }
         if (jams) {
             Report r = new Report(3160);
             r.subject = subjectId;
@@ -103,7 +130,7 @@ public class RACHandler extends UltraWeaponHandler {
             vPhaseReport.addElement(r);
             weapon.setJammed(true);
         }
-
+        
         return false;
     }
 

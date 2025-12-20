@@ -58,15 +58,17 @@ public class UnitType {
     public static final int WARSHIP = 13;
     public static final int SPACE_STATION = 14;
     public static final int HANDHELD_WEAPON = 15;
+    public static final int MOBILE_STRUCTURE = 16;
+    public static final int ADVANCED_BUILDING = 17;
     // IMPORTANT: AERO must be the last unit type for advanced search to work,
     // unless you are adding a new unit type which like Aero should be excluded from search.
     // In that case add an exception for it in the definition of unitTypeModel in AbstractUnitSelectorDialog.java
-    public static final int AERO = 16; // Non-differentiated Aerospace, like Escape Pods / Lifeboats
+    public static final int AERO = 18; // Non-differentiated Aerospace, like Escape Pods / Lifeboats
 
     private static final String[] names = { "Mek", "Tank", "BattleArmor", "Infantry", "ProtoMek", "VTOL", "Naval",
                                             "Gun Emplacement", "Conventional Fighter", "AeroSpaceFighter",
                                             "Small Craft", "Dropship", "Jumpship", "Warship", "Space Station",
-                                            "Handheld Weapon", "Aero" };
+                                            "Handheld Weapon", "Mobile Structure", "Advanced Building", "Aero" };
 
     public static final int SIZE = names.length;
 

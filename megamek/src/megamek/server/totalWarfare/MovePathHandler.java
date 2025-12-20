@@ -1367,7 +1367,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // next clause).
                     if ((dist == 0) && !continueTurnFromPBS &&
                           (Compute.stackingViolation(getGame(), this.entity,
-                              step.getPosition(), null, this.entity.climbMode(), false
+                                step.getPosition(), null, this.entity.climbMode(), false
                           ) != null)
                     ) {
                         // Attempting to move into hex of a hidden unit detects the unit
@@ -1434,8 +1434,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         // and the revealed hidden unit has not already made a pointblank shot this turn.
                     } else if (
                           (dist <= 1) && !hiddenEntity.madePointblankShot() &&
-                          ((!this.entity.isAirborne() && md.isEndStep(step)) ||
-                                (this.entity.isAirborne() && (dist == ((this.entity.getBAPRange() > 0) ? 1 : 0))))
+                                ((!this.entity.isAirborne() && md.isEndStep(step)) ||
+                                      (this.entity.isAirborne() && (dist == ((this.entity.getBAPRange() > 0) ? 1 : 0))))
                     ) {
                         // Hidden unit should always be revealed as the PBS trigger _is_ getting revealed.
                         hiddenEntity.setHidden(false);
@@ -2010,7 +2010,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                     report = new Report(9390);
                                     report.subject = entity.getId();
                                     report.indent(1);
-                                    report.add(currentBay.getType());
+                                    report.add(currentBay.getTransporterType());
                                     addReport(report);
                                     cbBay.destroyDoorNext();
                                 }
@@ -3019,44 +3019,53 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // Handle loading units.
             if (step.getType() == MoveStepType.LOAD) {
 
-                // Find the unit being loaded.
+                // Find the unit being loaded.  We will _try_ to use the one selected by the player.
+                Targetable target = step.getTarget(getGame());
                 Entity loaded = null;
-                Iterator<Entity> entities = getGame().getEntities(curPos);
-                while (entities.hasNext()) {
+                if (target != null) {
+                    // Load designated target entity; checks should have already been done in UI.
+                    loaded = (Entity) target;
+                } else {
+                    // Randomly select a likely-looking entity from those in the allowed loading area
+                    Iterator<Entity> entities = getGame().getEntities(
+                          Compute.getLoadableCoords(entity, curPos, curBoardId)
+                    );
+                    while (entities.hasNext()) {
 
-                    // Is the other unit friendly and not the current entity?
-                    loaded = entities.next();
+                        // Is the other unit friendly and not the current entity?
+                        loaded = entities.next();
 
-                    // This should never ever happen, but just in case...
-                    if (loaded == null) {
-                        continue;
-                    }
-
-                    if (!entity.isEnemyOf(loaded) && !entity.equals(loaded)) {
-                        // The moving unit should be able to load the other
-                        // unit and the other should be able to have a turn.
-                        if (!entity.canLoad(loaded) || !loaded.isLoadableThisTurn()) {
-                            // Something is fishy in Denmark.
-                            logger.error("{} can not load {}", entity.getShortName(), loaded.getShortName());
-                            loaded = null;
-                        } else {
-                            // Have the deployed unit load the indicated unit.
-                            gameManager.loadUnit(entity, loaded, loaded.getTargetBay());
-
-                            // Stop looking.
-                            break;
+                        // This should never ever happen, but just in case...
+                        if (loaded == null) {
+                            continue;
                         }
 
-                    } else {
-                        // Nope. Discard it.
-                        loaded = null;
-                    }
+                        if (!entity.isEnemyOf(loaded) && !entity.equals(loaded)) {
+                            // The moving unit should be able to load the other
+                            // unit and the other should be able to have a turn.
+                            break;
 
-                } // Handle the next entity in this hex.
+                        } else {
+                            // Nope. Discard it.
+                            loaded = null;
+                        }
+
+                    } // Move to the next entity in the loading area.
+                }
 
                 // We were supposed to find someone to load.
                 if (loaded == null) {
                     logger.error("Could not find unit for {} to load in {}", entity.getShortName(), curPos);
+                } else {
+                    // We did!  But things might have changed since choosing them.  Double-check validity.
+                    if (!entity.canLoad(loaded) || !loaded.isLoadableThisTurn()) {
+                        // Something is fishy in Denmark.
+                        logger.error("{} can not load {}", entity.getShortName(), loaded.getShortName());
+                        loaded = null;
+                    } else {
+                        // Have the deployed unit load the indicated unit.
+                        gameManager.loadUnit(entity, loaded, loaded.getTargetBay());
+                    }
                 }
 
             } // End STEP_LOAD
@@ -3108,7 +3117,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             report = new Report(9390);
                             report.subject = entity.getId();
                             report.indent(1);
-                            report.add(currentBay.getType());
+                            report.add(currentBay.getTransporterType());
                             addReport(report);
                             currentBay.destroyDoorNext();
                         }
@@ -3294,10 +3303,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 Bay currentBay = (unloaded instanceof Entity ulEntity) ? entity.getBay(ulEntity) : null;
                 Coords unloadPos = curPos;
                 int unloadFacing = curFacing;
+
+                // If the step has a targetPosition, use that
                 if (null != step.getTargetPosition()) {
                     unloadPos = step.getTargetPosition();
                     unloadFacing = curPos.direction(unloadPos);
                 }
+
                 if (!gameManager.unloadUnit(entity, unloaded, unloadPos, unloadFacing,
                       step.getElevation())) {
                     logger.error("Server was told to unload {} from {} into {}",
@@ -3313,6 +3325,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     report.add(unloadPos.toFriendlyString());
                     addReport(report);
                 }
+
                 // some additional stuff to take care of for small
                 // craft/DropShip unloading
                 if ((entity instanceof SmallCraft) && (unloaded instanceof Entity)) {
@@ -3322,7 +3335,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         report = new Report(9390);
                         report.subject = entity.getId();
                         report.indent(1);
-                        report.add(currentBay.getType());
+                        report.add(currentBay.getTransporterType());
                         addReport(report);
                         currentBay.destroyDoorNext();
                     }
@@ -3654,9 +3667,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
     /**
      * Wrapper for processPointblankShotCFR with packet error handling and consolidated reports
-     * @param step          MoveStep to prompt for a PBS
-     * @param hiddenEntity  Candidate to fire PBS
-     * @return  Vector<Report> collection of reports; caller responsible for displaying these.
+     *
+     * @param step         MoveStep to prompt for a PBS
+     * @param hiddenEntity Candidate to fire PBS
+     *
+     * @return Vector<Report> collection of reports; caller responsible for displaying these.
      */
     protected Vector<Report> processPossiblePBS(MoveStep step, Entity hiddenEntity) {
         Vector<Report> pbsReports = new Vector<>();

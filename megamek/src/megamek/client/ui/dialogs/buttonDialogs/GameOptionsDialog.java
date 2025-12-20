@@ -280,6 +280,19 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
             }
         }
+
+        // Initialize dependent options: Climb Out requires Return Flyover
+        boolean returnFlyoverEnabled = options.getOption(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER)
+              .booleanValue();
+        List<DialogOptionComponentYPanel> climbOutComps = optionComps.get(OptionsConstants.ADVANCED_AERO_RULES_CLIMB_OUT);
+        if (climbOutComps != null) {
+            for (DialogOptionComponentYPanel comp : climbOutComps) {
+                comp.setEditable(returnFlyoverEnabled);
+                if (!returnFlyoverEnabled) {
+                    comp.setSelected(false);
+                }
+            }
+        }
     }
 
     /** Returns true when the given Option should never show in the dialog. */
@@ -716,6 +729,15 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                     if (ent instanceof Tank) {
                         ((Tank) ent).setBAGrabBars();
                     }
+                }
+            }
+        }
+        if (option.getName().equals(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER)) {
+            comps = optionComps.get(OptionsConstants.ADVANCED_AERO_RULES_CLIMB_OUT);
+            for (DialogOptionComponentYPanel comp_i : comps) {
+                comp_i.setEditable(state);
+                if (!state) {
+                    comp_i.setSelected(false);
                 }
             }
         }

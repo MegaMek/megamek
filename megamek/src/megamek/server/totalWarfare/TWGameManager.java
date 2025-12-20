@@ -68,6 +68,7 @@ import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.MoveStepType;
+import megamek.common.enums.VariableRangeTargetingMode;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.equipment.*;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
@@ -829,6 +830,9 @@ public class TWGameManager extends AbstractGameManager {
                 case ENTITY_NOVA_NETWORK_CHANGE:
                     receiveEntityNovaNetworkModeChange(packet, connId);
                     break;
+                case ENTITY_VARIABLE_RANGE_MODE_CHANGE:
+                    receiveEntityVariableRangeModeChange(packet, connId);
+                    break;
                 case ENTITY_MOUNTED_FACING_CHANGE:
                     receiveEntityMountedFacingChange(packet, connId);
                     break;
@@ -1097,6 +1101,8 @@ public class TWGameManager extends AbstractGameManager {
             entity.damageThisPhase = 0;
             entity.engineHitsThisPhase = 0;
             entity.rolledForEngineExplosion = false;
+            entity.reportedVDNIFeedbackThisPhase = false;
+            entity.baVDNINeedsFeedbackMessage = false;
             entity.dodging = false;
             entity.setShutDownThisPhase(false);
             entity.setStartupThisPhase(false);
@@ -4233,7 +4239,7 @@ public class TWGameManager extends AbstractGameManager {
             if (nextHex.containsTerrain(Terrains.BLDG_ELEV)) {
                 IBuilding bldg = board.getBuildingAt(nextPos);
 
-                if (bldg.getType() == BuildingType.WALL) {
+                if (bldg.getBuildingType() == BuildingType.WALL) {
                     crashedIntoTerrain = true;
                 }
 
@@ -4274,7 +4280,7 @@ public class TWGameManager extends AbstractGameManager {
                     // If you crash into a wall you want to stop in the hex
                     // before the wall not in the wall
                     // Like a building.
-                    if (bldg.getType() == BuildingType.WALL) {
+                    if (bldg.getBuildingType() == BuildingType.WALL) {
                         r = new Report(2047);
                     } else if (bldg.getBldgClass() == IBuilding.GUN_EMPLACEMENT) {
                         r = new Report(2049);
@@ -4309,7 +4315,7 @@ public class TWGameManager extends AbstractGameManager {
                         // If you crash into a wall you want to stop in the hex
                         // before the wall not in the wall
                         // Like a building.
-                        if (bldg.getType() == BuildingType.WALL) {
+                        if (bldg.getBuildingType() == BuildingType.WALL) {
                             addReport(destroyEntity(entity, "crashed into a wall"));
                             break;
                         }
@@ -5366,7 +5372,7 @@ public class TWGameManager extends AbstractGameManager {
             int direction = entity.getFacing();
             // first check for buildings
             IBuilding bldg = game.getBoard(entity.getBoardId()).getBuildingAt(hitCoords);
-            if ((null != bldg) && (bldg.getType() == BuildingType.HARDENED)) {
+            if ((null != bldg) && (bldg.getBuildingType() == BuildingType.HARDENED)) {
                 crash_damage *= 2;
             }
             if (null != bldg) {
@@ -5654,8 +5660,25 @@ public class TWGameManager extends AbstractGameManager {
         Vector<Report> vReport = new Vector<>();
         Report r;
 
-        OffBoardDirection fleeDirection = calculateEdge(movePath.getFinalCoords(), movePath.getFinalBoardId());
-        String retreatEdge = setRetreatEdge(entity, fleeDirection);
+        // For climb out (vertical exit at altitude 10), the client sets startingPos and exitAltitude.
+        // Climb out units with START_ANY can return anywhere on the map.
+        OffBoardDirection fleeDirection;
+        String retreatEdge;
+        IAero aeroUnit = entity.isAero() ? (IAero) entity : null;
+        boolean isClimbOut = (aeroUnit != null) && (aeroUnit.getExitAltitude() > 0);
+
+        if (isClimbOut && entity.getStartingPos() == Board.START_ANY) {
+            // Climb out to return anywhere - don't overwrite START_ANY with setRetreatEdge
+            fleeDirection = OffBoardDirection.NONE;
+            retreatEdge = "Above";
+        } else if (isClimbOut) {
+            // Climb out with specific edge selected
+            fleeDirection = OffBoardDirection.fromBoardStart(entity.getStartingPos());
+            retreatEdge = setRetreatEdge(entity, fleeDirection);
+        } else {
+            fleeDirection = calculateEdge(movePath.getFinalCoords(), movePath.getFinalBoardId());
+            retreatEdge = setRetreatEdge(entity, fleeDirection);
+        }
 
         // Aerospace that fly off to return in a later round must be handled
         // at the end of the round, but set some state here for simplicity
@@ -6173,16 +6196,15 @@ public class TWGameManager extends AbstractGameManager {
                 if (cfrType != null) {
                     // Make sure we got the right type of response
                     if (!cfrType.isCFRHiddenPBS()) {
-                        LOGGER.error("Expected a CFR_HIDDEN_PBS CFR packet, received: {}", cfrType);
+                        // Re-queue packet for other handlers - don't discard it
+                        cfrPacketQueue.add(rp);
                         continue;
                     }
                 }
                 // Check packet came from right ID
                 if (rp.getConnectionId() != hidden.getOwnerId()) {
-                    LOGGER.error(
-                          "Expected a CFR_HIDDEN_PBS CFR packet from player {}, but instead it came from player {}",
-                          hidden.getOwnerId(),
-                          rp.getConnectionId());
+                    // Re-queue packet for other handlers - don't discard it
+                    cfrPacketQueue.add(rp);
                     continue;
                 }
                 // First packet indicates whether the PBS is taken or declined
@@ -6273,6 +6295,7 @@ public class TWGameManager extends AbstractGameManager {
 
     public int processTeleguidedMissileCFR(int playerId, List<Integer> targetIds, List<Integer> toHitValues)
           throws InvalidPacketDataException {
+        LOGGER.debug("processTeleguidedMissileCFR: playerId={}, targetCount={}", playerId, targetIds.size());
         sendTeleguidedMissileCFR(playerId, targetIds, toHitValues);
         while (true) {
             synchronized (cfrPacketQueue) {
@@ -6281,6 +6304,7 @@ public class TWGameManager extends AbstractGameManager {
                         cfrPacketQueue.wait();
                     }
                 } catch (InterruptedException e) {
+                    LOGGER.debug("processTeleguidedMissileCFR: interrupted while waiting for response");
                     return 0;
                 }
 
@@ -6289,24 +6313,28 @@ public class TWGameManager extends AbstractGameManager {
                 final PacketCommand cfrType = rp.getPacket().getPacketCommand(0);
                 // Make sure we got the right type of response
                 if (cfrType != null && !cfrType.isCFRTeleguidedTarget()) {
-                    LOGGER.error("Expected a CFR_TELEGUIDED_TARGET CFR packet, received: {}", cfrType);
+                    // Re-queue packet for other handlers - don't discard it
+                    LOGGER.trace("processTeleguidedMissileCFR: re-queuing mismatched packet type {}", cfrType);
+                    cfrPacketQueue.add(rp);
                     continue;
                 }
                 // Check packet came from right ID
                 if (rp.getConnectionId() != playerId) {
-                    LOGGER.error(
-                          "Expected a CFR_TELEGUIDED_TARGET CFR packet from player {}, but instead it came from player {}",
-                          playerId,
-                          rp.getConnectionId());
+                    // Re-queue packet for other handlers - don't discard it
+                    LOGGER.trace("processTeleguidedMissileCFR: re-queuing packet from wrong player {}", rp.getConnectionId());
+                    cfrPacketQueue.add(rp);
                     continue;
                 }
-                return (int) rp.getPacket().data()[1];
+                int result = (int) rp.getPacket().data()[1];
+                LOGGER.debug("processTeleguidedMissileCFR: received response, selected target index {}", result);
+                return result;
             }
         }
     }
 
     public int processTAGTargetCFR(int playerId, List<Integer> targetIds, List<Integer> targetTypes)
           throws InvalidPacketDataException {
+        LOGGER.debug("processTAGTargetCFR: playerId={}, targetCount={}", playerId, targetIds.size());
         sendTAGTargetCFR(playerId, targetIds, targetTypes);
         while (true) {
             synchronized (cfrPacketQueue) {
@@ -6315,6 +6343,7 @@ public class TWGameManager extends AbstractGameManager {
                         cfrPacketQueue.wait();
                     }
                 } catch (InterruptedException e) {
+                    LOGGER.debug("processTAGTargetCFR: interrupted while waiting for response");
                     return 0;
                 }
                 // Get the packet, if there's something to get
@@ -6322,18 +6351,21 @@ public class TWGameManager extends AbstractGameManager {
                 final PacketCommand cfrType = rp.getPacket().getPacketCommand(0);
                 // Make sure we got the right type of response
                 if (cfrType != null && !cfrType.isCFRTagTarget()) {
-                    LOGGER.error("Expected a CFR_TAG_TARGET CFR packet, received: {}", cfrType);
+                    // Re-queue packet for other handlers - don't discard it
+                    LOGGER.trace("processTAGTargetCFR: re-queuing mismatched packet type {}", cfrType);
+                    cfrPacketQueue.add(rp);
                     continue;
                 }
                 // Check packet came from right ID
                 if (rp.getConnectionId() != playerId) {
-                    LOGGER.error(
-                          "Expected a CFR_TAG_TARGET CFR packet from player {} but instead it came from player {}",
-                          playerId,
-                          rp.getConnectionId());
+                    // Re-queue packet for other handlers - don't discard it
+                    LOGGER.trace("processTAGTargetCFR: re-queuing packet from wrong player {}", rp.getConnectionId());
+                    cfrPacketQueue.add(rp);
                     continue;
                 }
-                return (int) rp.getPacket().data()[1];
+                int result = (int) rp.getPacket().data()[1];
+                LOGGER.debug("processTAGTargetCFR: received response, selected target index {}", result);
+                return result;
             }
         }
     }
@@ -7491,6 +7523,13 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 if (entity.hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
                     target += 2;
+                }
+                // Comm implant makes it easier for infantry to avoid mines
+                // Boosted comm implant provides same benefit as regular comm implant
+                if ((entity instanceof Infantry) &&
+                      (entity.hasAbility(OptionsConstants.MD_COMM_IMPLANT) ||
+                            entity.hasAbility(OptionsConstants.MD_BOOST_COMM_IMPLANT))) {
+                    target += 1;
                 }
                 if ((entity.getMovementMode() == EntityMovementMode.HOVER) ||
                       (entity.getMovementMode() == EntityMovementMode.WIGE)) {
@@ -9731,9 +9770,14 @@ public class TWGameManager extends AbstractGameManager {
                     });
                     Vector<Integer> spotterIds = new Vector<>();
                     while (spotters.hasNext()) {
-                        Integer id = spotters.next().getId();
+                        Entity spotter = spotters.next();
+                        Integer id = spotter.getId();
                         spotterIds.addElement(id);
+                        LOGGER.debug("Artillery attack declaration: found spotter {} (id={})",
+                              spotter.getDisplayName(), id);
                     }
+                    LOGGER.debug("Artillery attack declaration: setting {} spotters on action",
+                          spotterIds.size());
                     aaa.setSpotterIds(spotterIds);
                 }
             }
@@ -10994,7 +11038,7 @@ public class TWGameManager extends AbstractGameManager {
         // building modifiers
         IBuilding bldg = game.getBuildingAt(c, boardId).orElse(null);
         if (null != bldg) {
-            nTargetRoll.addModifier(bldg.getType().getTypeValue() - 3, "building");
+            nTargetRoll.addModifier(bldg.getBuildingType().getTypeValue() - 3, "building");
         }
 
         // add in any modifiers for planetary conditions
@@ -12809,6 +12853,164 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Handle a pheromone gas attack (IO pg 79). Conventional Infantry with Gas Effuser (Pheromone) implant releases
+     * pheromone gas to impair enemy conventional infantry. On success, target suffers +1 to-hit on all actions for the
+     * remainder of the scenario.
+     */
+    private void resolvePheromoneAttack(PhysicalResult physicalResult, int lastEntityId) {
+        final PheromoneAttackAction pheromoneAttackAction = (PheromoneAttackAction) physicalResult.aaa;
+        final Entity attackingEntity = game.getEntity(pheromoneAttackAction.getEntityId());
+
+        if (attackingEntity == null) {
+            LOGGER.error("Attacking entity is null for Pheromone Attack");
+            return;
+        }
+
+        // Get ToHitData and roll from the PhysicalResult
+        final ToHitData toHit = physicalResult.toHit;
+        int rollValue = physicalResult.roll.getIntValue();
+
+        // Get target entity
+        final Entity targetEntity = game.getEntity(pheromoneAttackAction.getTargetId());
+        Report report;
+
+        if (lastEntityId != pheromoneAttackAction.getEntityId()) {
+            // Who is making the attack
+            report = new Report(4005);
+            report.subject = attackingEntity.getId();
+            report.addDesc(attackingEntity);
+            addReport(report);
+        }
+
+        // Report the pheromone attack attempt
+        report = new Report(4550);
+        report.subject = attackingEntity.getId();
+        report.indent();
+        report.addDesc(targetEntity);
+        report.newlines = 0;
+        addReport(report);
+
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
+            report = new Report(4551);
+            report.subject = attackingEntity.getId();
+            report.add(toHit.getDesc());
+            addReport(report);
+            return;
+        }
+
+        // Report the roll
+        report = new Report(4025);
+        report.subject = attackingEntity.getId();
+        report.add(toHit);
+        report.add(physicalResult.roll);
+        report.newlines = 0;
+        addReport(report);
+
+        // Check hit
+        if (rollValue < toHit.getValue()) {
+            // Miss
+            report = new Report(4552);
+            report.subject = attackingEntity.getId();
+            addReport(report);
+            return;
+        }
+
+        // Hit! Apply pheromone impairment
+        if ((targetEntity instanceof Infantry targetInfantry)) {
+            targetInfantry.setPheromoneImpaired(true);
+
+            // Report hit with flavor text
+            report = new Report(4553);
+            report.subject = attackingEntity.getId();
+            report.addDesc(targetEntity);
+            addReport(report);
+        }
+        addNewLines();
+    }
+
+    /**
+     * Handle a toxin gas attack (IO pg 79). Conventional Infantry with Gas Effuser (Toxin) implant releases toxin gas
+     * to damage enemy conventional infantry. On success, target takes 0.25 damage per attacking trooper.
+     */
+    private void resolveToxinAttack(PhysicalResult physicalResult, int lastEntityId) {
+        final ToxinAttackAction toxinAttackAction = (ToxinAttackAction) physicalResult.aaa;
+        final Entity attackingEntity = game.getEntity(toxinAttackAction.getEntityId());
+
+        if (attackingEntity == null) {
+            LOGGER.error("Attacking entity is null for Toxin Attack");
+            return;
+        }
+
+        // Get ToHitData, damage, and roll from the PhysicalResult
+        final ToHitData toHit = physicalResult.toHit;
+        int damage = physicalResult.damage;
+        int rollValue = physicalResult.roll.getIntValue();
+
+        // Get target entity
+        final Entity targetEntity = game.getEntity(toxinAttackAction.getTargetId());
+        Report report;
+
+        if (lastEntityId != toxinAttackAction.getEntityId()) {
+            // Who is making the attack
+            report = new Report(4005);
+            report.subject = attackingEntity.getId();
+            report.addDesc(attackingEntity);
+            addReport(report);
+        }
+
+        // Report the toxin attack attempt
+        report = new Report(4560);
+        report.subject = attackingEntity.getId();
+        report.indent();
+        report.addDesc(targetEntity);
+        report.newlines = 0;
+        addReport(report);
+
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
+            report = new Report(4561);
+            report.subject = attackingEntity.getId();
+            report.add(toHit.getDesc());
+            addReport(report);
+            return;
+        }
+
+        // Report the roll
+        report = new Report(4025);
+        report.subject = attackingEntity.getId();
+        report.add(toHit);
+        report.add(physicalResult.roll);
+        report.newlines = 0;
+        addReport(report);
+
+        // Check hit
+        if (rollValue < toHit.getValue()) {
+            // Miss
+            report = new Report(4562);
+            report.subject = attackingEntity.getId();
+            addReport(report);
+            return;
+        }
+
+        // Hit! Apply toxin damage
+        if (targetEntity != null) {
+            // Report hit with flavor text
+            report = new Report(4563);
+            report.subject = attackingEntity.getId();
+            report.addDesc(targetEntity);
+            report.add(damage);
+            addReport(report);
+
+            // Apply damage to conventional infantry
+            // Toxin gas is area-effect - no terrain modifiers (IO pg 79)
+            HitData hit = targetEntity.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+            hit.setIgnoreInfantryDoubleDamage(true);
+            addReport(damageEntity(targetEntity, hit, damage));
+        }
+        addNewLines();
+    }
+
+    /**
      * Handle a club attack
      */
     private void resolveClubAttack(PhysicalResult pr, int lastEntityId) {
@@ -14565,7 +14767,6 @@ public class TWGameManager extends AbstractGameManager {
 
         r = new Report(4230);
         r.subject = te.getId();
-        r.addDesc(te);
         r.add(damage);
         r.add(toHit.getTableDesc());
         r.indent();
@@ -14734,7 +14935,6 @@ public class TWGameManager extends AbstractGameManager {
         r = new Report(4230);
         if (te != null) {
             r.subject = te.getId();
-            r.addDesc(te);
         } else {
             r.subject = ae.getId();
         }
@@ -15292,7 +15492,6 @@ public class TWGameManager extends AbstractGameManager {
             r = new Report(4230);
             if (targetEntity != null) {
                 r.subject = targetEntity.getId();
-                r.addDesc(targetEntity);
             } else {
                 r.subject = ae.getId();
             }
@@ -16739,7 +16938,7 @@ public class TWGameManager extends AbstractGameManager {
                 r = new Report(2285);
                 r.indent();
                 r.subject = e.getId();
-                r.add(target);
+                r.add(target.getDesc());
                 vReport.add(r);
                 for (int j = 0; j < rolls.size(); j++) {
                     PilotingRollData modifier = rolls.elementAt(j);
@@ -17388,12 +17587,14 @@ public class TWGameManager extends AbstractGameManager {
             }
             IAero ship = (IAero) en;
             int damage = ship.getCurrentDamage();
+            // Per SO p.116: "+1 for every full 2 points over the Fatal Threshold"
             double divisor = 2.0;
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
                 divisor = 20.0;
             }
             if (damage >= ship.getFatalThresh()) {
                 int roll = Compute.d6(2) + (int) Math.floor((damage - ship.getFatalThresh()) / divisor);
+                // Per SO p.116: "On a result of 10+, the fighter is considered destroyed"
                 if (roll > 9) {
                     // Lets auto-eject if we can!
                     if (ship instanceof LandAirMek lam) {
@@ -18931,11 +19132,16 @@ public class TWGameManager extends AbstractGameManager {
             vDesc.addAll(applyEquipmentCritical(en, loc, cs, secondaryEffects));
         } // End crit-on-equipment-slot
 
-        // if using buffered VDNI then a possible pilot hit
-        if (en.hasAbility(OptionsConstants.MD_BVDNI) && !en.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+        // BVDNI critical hit feedback - Meks and Vehicles only (IO pg 71)
+        // Per BVDNI rules: "Fighters and battle armor operated via buffered VDNI do not have
+        // to check for feedback damage at all."
+        if (en.hasAbility(OptionsConstants.MD_BVDNI) &&
+              !en.hasAbility(OptionsConstants.MD_PAIN_SHUNT) &&
+              !(en instanceof Aero) &&
+              !(en instanceof BattleArmor)) {
             Report.addNewline(vDesc);
             Roll diceRoll = Compute.rollD6(2);
-            r = new Report(3580);
+            r = new Report(3584);
             r.subject = en.getId();
             r.addDesc(en);
             r.add(7);
@@ -18946,6 +19152,17 @@ public class TWGameManager extends AbstractGameManager {
             if (diceRoll.getIntValue() >= 8) {
                 vDesc.addAll(damageCrew(en, 1));
             }
+        } else if (en.hasAbility(OptionsConstants.MD_BVDNI) &&
+              en.hasAbility(OptionsConstants.MD_PAIN_SHUNT) &&
+              !(en instanceof Aero) &&
+              !(en instanceof BattleArmor)) {
+            // Pain Shunt blocks BVDNI feedback - show message for clarity
+            Report.addNewline(vDesc);
+            r = new Report(3585);
+            r.subject = en.getId();
+            r.addDesc(en);
+            r.indent(2);
+            vDesc.add(r);
         }
 
         // Return the results of the damage.
@@ -19046,7 +19263,9 @@ public class TWGameManager extends AbstractGameManager {
         if (((secondaryEffects && eqType.isExplosive(mounted)) ||
               mounted.isHotLoaded() ||
               (mounted.hasChargedCapacitor() != 0)) && !hitBefore) {
-            reports.addAll(explodeEquipment(en, loc, mounted));
+            // Hot-loaded launchers must override the explosive check since the launcher itself
+            // isn't inherently explosive, but hot-loaded ammo makes it explode on crit (TO p.102-103)
+            reports.addAll(explodeEquipment(en, loc, mounted, mounted.isHotLoaded()));
         }
 
         // Make sure that ammo in this slot is exhausted.
@@ -19622,7 +19841,8 @@ public class TWGameManager extends AbstractGameManager {
             case Aero.CRIT_CREW:
                 // pilot hit
                 r = new Report(6650);
-                if (aero.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
+                if (aero.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
+                      || aero.hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)) {
                     r = new Report(6651);
                     r.subject = aero.getId();
                     reports.add(r);
@@ -20149,6 +20369,55 @@ public class TWGameManager extends AbstractGameManager {
                 reports.add(r);
                 break;
         }
+
+        // VDNI fighter critical hit feedback (IO pg 71)
+        // Per VDNI rules: "For Fighters: Every time a fighter takes a critical hit, make a
+        // feedback roll (2D6, TN 8+). On a failed roll, the pilot suffers 1 point of damage."
+        // BVDNI fighters get NO feedback at all per rules.
+        // Important: Only trigger on actual critical hits, not when threshold/SI damage rolls
+        // resulted in no effect (CRIT_NONE).
+        if (cs.getIndex() != Aero.CRIT_NONE &&
+              aero.isFighter() &&
+              aero.hasAbility(OptionsConstants.MD_VDNI) &&
+              !aero.hasAbility(OptionsConstants.MD_BVDNI) &&
+              !aero.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+            Report.addNewline(reports);
+            Roll diceRoll = Compute.rollD6(2);
+            r = new Report(3580);
+            r.subject = aero.getId();
+            r.addDesc(aero);
+            r.add(7);
+            r.add(diceRoll);
+            r.choose(diceRoll.getIntValue() >= 8);
+            r.indent(2);
+            reports.add(r);
+            if (diceRoll.getIntValue() >= 8) {
+                reports.addAll(damageCrew(aero, 1));
+            }
+        } else if (cs.getIndex() != Aero.CRIT_NONE &&
+              aero.isFighter() &&
+              aero.hasAbility(OptionsConstants.MD_VDNI) &&
+              !aero.hasAbility(OptionsConstants.MD_BVDNI) &&
+              aero.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+            // Pain Shunt blocks VDNI feedback - show message for clarity
+            Report.addNewline(reports);
+            r = new Report(3585);
+            r.subject = aero.getId();
+            r.addDesc(aero);
+            r.indent(2);
+            reports.add(r);
+        } else if (cs.getIndex() != Aero.CRIT_NONE &&
+              aero.isFighter() &&
+              aero.hasAbility(OptionsConstants.MD_BVDNI)) {
+            // BVDNI fighters are immune to critical hit feedback - show message for clarity
+            Report.addNewline(reports);
+            r = new Report(3583);
+            r.subject = aero.getId();
+            r.addDesc(aero);
+            r.indent(2);
+            reports.add(r);
+        }
+
         return reports;
     }
 
@@ -20508,12 +20777,26 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 break;
             case Tank.CRIT_COMMANDER:
-                if (tank.hasAbility(OptionsConstants.MD_VDNI) || tank.hasAbility(OptionsConstants.MD_BVDNI)) {
-                    r = new Report(6191);
+                // VDNI vehicles get 1 damage on Commander critical (IO pg 71)
+                if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                      !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
+                      !tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+                    r = new Report(3587);
                     r.subject = tank.getId();
+                    r.addDesc(tank);
                     reports.add(r);
                     reports.addAll(damageCrew(tank, 1));
+                } else if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                      !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
+                      tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+                    // Pain Shunt blocks VDNI feedback, falls through to crew stunned
+                    r = new Report(3585);
+                    r.subject = tank.getId();
+                    r.addDesc(tank);
+                    reports.add(r);
                 } else {
+                    // Normal commander hit handling (applies to BVDNI and non-implant pilots)
+                    // BVDNI pilots also get generic feedback from applyCriticalHit
                     if (tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT) && !tank.isCommanderHitPS()) {
                         r = new Report(6606);
                         r.subject = tank.getId();
@@ -20534,14 +20817,26 @@ public class TWGameManager extends AbstractGameManager {
                 // fall through here, because effects of crew stunned also
                 // apply
             case Tank.CRIT_CREW_STUNNED:
-                if (tank.hasAbility(OptionsConstants.MD_VDNI) || tank.hasAbility(OptionsConstants.MD_BVDNI)) {
-                    r = new Report(6191);
+                // VDNI vehicles get 1 damage on Crew Stunned critical (IO pg 71)
+                if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                      !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
+                      !tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+                    r = new Report(3587);
                     r.subject = tank.getId();
+                    r.addDesc(tank);
                     reports.add(r);
                     reports.addAll(damageCrew(tank, 1));
+                } else if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                      !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
+                      tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+                    // Pain Shunt blocks VDNI feedback (no message - may have been shown by Commander fall-through)
                 } else {
-                    if (tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT) ||
-                          tank.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
+                    // Normal crew stunned handling (applies to BVDNI and non-implant pilots)
+                    // BVDNI pilots also get generic feedback from applyCriticalHit
+                    if (tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)
+                          || tank.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
+                          || tank.hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)
+                          || tank.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
                         r = new Report(6186);
                     } else {
                         tank.stunCrew();
@@ -20553,12 +20848,26 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 break;
             case Tank.CRIT_DRIVER:
-                if (tank.hasAbility(OptionsConstants.MD_VDNI) || tank.hasAbility(OptionsConstants.MD_BVDNI)) {
-                    r = new Report(6191);
+                // VDNI vehicles get 1 damage on Driver critical (IO pg 71)
+                if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                      !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
+                      !tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+                    r = new Report(3587);
                     r.subject = tank.getId();
+                    r.addDesc(tank);
                     reports.add(r);
                     reports.addAll(damageCrew(tank, 1));
+                } else if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                      !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
+                      tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+                    // Pain Shunt blocks VDNI feedback
+                    r = new Report(3585);
+                    r.subject = tank.getId();
+                    r.addDesc(tank);
+                    reports.add(r);
                 } else {
+                    // Normal driver hit handling (applies to BVDNI and non-implant pilots)
+                    // BVDNI pilots also get generic feedback from applyCriticalHit
                     if (tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT) && !tank.isDriverHitPS()) {
                         r = new Report(6601);
                         r.subject = tank.getId();
@@ -20573,12 +20882,30 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 break;
             case Tank.CRIT_CREW_KILLED:
-                if (tank.hasAbility(OptionsConstants.MD_VDNI) || tank.hasAbility(OptionsConstants.MD_BVDNI)) {
-                    r = new Report(6191);
+                // VDNI Crew Killed kills the pilot outright (IO pg 71)
+                if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                      !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
+                      !tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+                    r = new Report(3588);
                     r.subject = tank.getId();
+                    r.addDesc(tank);
                     reports.add(r);
-                    reports.addAll(damageCrew(tank, 1));
+                    tank.getCrew().setDoomed(true);
+                    if (tank.isAirborneVTOLorWIGE()) {
+                        reports.addAll(crashVTOLorWiGE(tank));
+                    }
+                } else if (tank.hasAbility(OptionsConstants.MD_VDNI) &&
+                      !tank.hasAbility(OptionsConstants.MD_BVDNI) &&
+                      tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+                    // Pain Shunt blocks VDNI feedback
+                    r = new Report(3585);
+                    r.subject = tank.getId();
+                    r.addDesc(tank);
+                    reports.add(r);
                 } else {
+                    // Normal crew killed handling (applies to BVDNI and non-implant pilots)
+                    // BVDNI pilots also get generic feedback from applyCriticalHit, but the
+                    // base critical effect (crew death) still applies
                     if (tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT) && !tank.isCrewHitPS()) {
                         r = new Report(6191);
                         r.subject = tank.getId();
@@ -23288,7 +23615,21 @@ public class TWGameManager extends AbstractGameManager {
     private Vector<Report> checkPilotAvoidFallDamage(Entity entity, int fallHeight, PilotingRollData roll) {
         Vector<Report> reports = new Vector<>();
 
-        if (entity.hasAbility(OptionsConstants.MD_DERMAL_ARMOR) || entity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+        if (entity.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
+              || entity.hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR)
+              || entity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+            // Report fall damage prevented for each crew member
+            for (int pos = 0; pos < entity.getCrew().getSlotCount(); pos++) {
+                if (entity.getCrew().isMissing(pos) || entity.getCrew().isDead(pos)) {
+                    continue;
+                }
+                Report r = new Report(2328);
+                r.subject = entity.getId();
+                r.add(entity.getCrew().getCrewType().getRoleName(pos));
+                r.addDesc(entity);
+                r.add(entity.getCrew().getName(pos));
+                reports.add(r);
+            }
             return reports;
         }
         // we want to be able to avoid pilot damage even when it was
@@ -24392,7 +24733,10 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
 
-            // If we're adding a ProtoMek, calculate it's unit number.
+            // Remove any carried pilot IDs (does not apply to other carried entities)
+            entity.resetPickedUpMekWarriors();
+
+            // If we're adding a ProtoMek, calculate its unit number.
             if (entity instanceof ProtoMek) {
                 // How many ProtoMeks does the player already have?
                 int numPlayerProtoMeks = game.getSelectedEntityCount(new EntitySelector() {
@@ -24937,6 +25281,34 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Receive and process a Variable Range Targeting mode change packet (BMM pg. 86). Sets the pending mode on the
+     * entity, which will be applied at the start of the next round.
+     *
+     * @param packet    the packet to be processed
+     * @param connIndex the id for connection that received the packet
+     */
+    private void receiveEntityVariableRangeModeChange(Packet packet, int connIndex) {
+        try {
+            int entityId = packet.getIntValue(0);
+            VariableRangeTargetingMode mode = (VariableRangeTargetingMode) packet.getObject(1);
+            Entity entity = game.getEntity(entityId);
+
+            if (entity == null || entity.getOwner() != game.getPlayer(connIndex)) {
+                return;
+            }
+
+            if (!entity.hasVariableRangeTargeting()) {
+                return;
+            }
+
+            entity.setPendingVariableRangeTargetingMode(mode);
+            entityUpdate(entityId);
+        } catch (Exception ex) {
+            LOGGER.error("Error processing Variable Range Targeting mode change", ex);
+        }
+    }
+
+    /**
      * receive and process an entity mounted facing change packet
      *
      * @param c         the packet to be processed
@@ -25361,7 +25733,7 @@ public class TWGameManager extends AbstractGameManager {
                         sb.append(entity.getNC3NextUUIDAsString(i)).append(", ");
                     }
                     LOGGER.debug("[SERVER] createFullEntitiesPacket: Entity {} ({}), c3NetIdString: {}, NC3UUIDs: [{}]",
-                        entity.getId(), entity.getShortName(), entity.getC3NetId(), sb.toString());
+                          entity.getId(), entity.getShortName(), entity.getC3NetId(), sb.toString());
                 }
             }
         }
@@ -25883,7 +26255,7 @@ public class TWGameManager extends AbstractGameManager {
                 // Infantry and Battle armor take different amounts of damage
                 // then Meks and vehicles.
                 if (entity instanceof Infantry) {
-                    damage = bldg.getType().getTypeValue() + 1;
+                    damage = bldg.getBuildingType().getTypeValue() + 1;
                 }
                 // It is possible that the unit takes no damage.
                 if (damage == 0) {
@@ -25987,7 +26359,7 @@ public class TWGameManager extends AbstractGameManager {
             final Coords coords = entity.getPosition();
 
             // If the entity is infantry in the affected hex?
-            if ((entity instanceof Infantry) && bldg.isIn(coords) && coords.equals(hexCoords)) {
+            if (coords != null && (entity instanceof Infantry) && coords.equals(hexCoords)) {
                 // Is the entity is inside the building
                 // (instead of just on top of it)?
                 if (Compute.isInBuilding(game, entity, coords)) {
@@ -26069,6 +26441,17 @@ public class TWGameManager extends AbstractGameManager {
     public boolean checkForCollapse(IBuilding bldg, Coords coords, boolean checkBecauseOfDamage,
           Vector<Report> vPhaseReport) {
         return buildingCollapseHandler.checkForCollapse(bldg, coords, checkBecauseOfDamage, vPhaseReport);
+    }
+
+    /**
+     * Tell the clients to add new buildings to the board.
+     *
+     * @param buildings - a <code>Vector</code> of <code>Building</code>s that need to be added.
+     *
+     * @return a <code>Packet</code> for the command.
+     */
+    private Packet createAddBuildingPacket(Vector<IBuilding> buildings) {
+        return new Packet(PacketCommand.BLDG_ADD, buildings);
     }
 
     /**
@@ -26289,7 +26672,7 @@ public class TWGameManager extends AbstractGameManager {
                         vPhaseReport.addAll(vRep);
                         return vPhaseReport;
                     }
-                    if (bldg.getType() == BuildingType.WALL) {
+                    if (bldg.getBuildingType() == BuildingType.WALL) {
                         r = new Report(3442);
                     } else {
                         r = new Report(3440);
@@ -26486,7 +26869,7 @@ public class TWGameManager extends AbstractGameManager {
                     vDesc.addAll(vRep);
                     return mainPhaseReport;
                 }
-                if (bldg.getType() == BuildingType.WALL) {
+                if (bldg.getBuildingType() == BuildingType.WALL) {
                     r = new Report(3442);
                 } else {
                     r = new Report(3440);
@@ -26522,6 +26905,10 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         return vDesc;
+    }
+
+    public void sendNewBuildings(Vector<IBuilding> buildings) {
+        send(createAddBuildingPacket(buildings));
     }
 
     public void sendChangedBuildings(Vector<IBuilding> buildings) {
@@ -26876,6 +27263,12 @@ public class TWGameManager extends AbstractGameManager {
         } else if (aaa instanceof BAVibroClawAttackAction baVibroClawAttackAction) {
             toHit = baVibroClawAttackAction.toHit(game);
             damage = BAVibroClawAttackAction.getDamageFor(ae);
+        } else if (aaa instanceof PheromoneAttackAction pheromoneAttackAction) {
+            toHit = pheromoneAttackAction.toHit(game);
+            damage = 0; // Pheromone attack causes no damage, only impairment
+        } else if (aaa instanceof ToxinAttackAction toxinAttackAction) {
+            toHit = toxinAttackAction.toHit(game);
+            damage = ToxinAttackAction.getDamageFor((Infantry) ae);
         }
         pr.toHit = toHit;
         pr.damage = damage;
@@ -26963,6 +27356,12 @@ public class TWGameManager extends AbstractGameManager {
             cen = aaa.getEntityId();
         } else if (aaa instanceof BAVibroClawAttackAction) {
             resolveBAVibroClawAttack(pr, cen);
+            cen = aaa.getEntityId();
+        } else if (aaa instanceof PheromoneAttackAction) {
+            resolvePheromoneAttack(pr, cen);
+            cen = aaa.getEntityId();
+        } else if (aaa instanceof ToxinAttackAction) {
+            resolveToxinAttack(pr, cen);
             cen = aaa.getEntityId();
         } else {
             LOGGER.error("Unknown attack action declared.");
@@ -28755,7 +29154,7 @@ public class TWGameManager extends AbstractGameManager {
 
                     if (isFuelAirBomb) {
                         // light buildings take 1.5x damage from fuel-air bombs
-                        if (bldg.getType() == BuildingType.LIGHT) {
+                        if (bldg.getBuildingType() == BuildingType.LIGHT) {
                             buildingDamage = (int) Math.ceil(buildingDamage * 1.5);
 
                             r = new Report(9991);
@@ -29151,7 +29550,9 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Phase-agnostic attack handler that returns a Vector of reports generated from its handled attacks.
-     * @param pointblankShot    should attacks be handled as PBS?  Changes some report verbiage.
+     *
+     * @param pointblankShot should attacks be handled as PBS?  Changes some report verbiage.
+     *
      * @return Vector           reports (caller is responsible for displaying)
      */
     private Vector<Report> handleAttacks(boolean pointblankShot) {
@@ -29233,6 +29634,20 @@ public class TWGameManager extends AbstractGameManager {
         // resolve standard to capital one more time
         handleAttackReports.addAll(checkFatalThresholds(lastAttackerId, lastAttackerId));
         Report.addNewline(handleAttackReports);
+
+        // BA VDNI/BVDNI immunity feedback - print at end of all attacks (IO pg 71)
+        for (Entity entity : game.getEntitiesVector()) {
+            if (entity.baVDNINeedsFeedbackMessage) {
+                r = new Report(3586);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                r.indent(2);
+                handleAttackReports.addElement(r);
+                entity.baVDNINeedsFeedbackMessage = false;
+                entity.reportedVDNIFeedbackThisPhase = true;
+            }
+        }
+
         // addReport(handleAttackReports);
         // HACK, but anything else seems to run into weird problems.
         game.setAttacksVector(keptAttacks);

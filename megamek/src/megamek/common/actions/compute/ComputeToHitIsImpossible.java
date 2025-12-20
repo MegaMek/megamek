@@ -927,13 +927,11 @@ class ComputeToHitIsImpossible {
                     }
                 }
 
-                // Only direct-fire energy weapons can strafe
-                //FIXME we have different checks for this in FiringDisplay, here and in MML for some table
+                // Only direct-fire energy weapons that don't use ammo can strafe
+                // Plasma weapons are excluded because they use ammo (risk of explosion from ground fire)
                 boolean isDirectFireEnergy = (weaponType.hasFlag(WeaponType.F_DIRECT_FIRE) &&
                       (weaponType.hasFlag(WeaponType.F_LASER) ||
-                            weaponType.hasFlag(WeaponType.F_PPC) ||
-                            weaponType.hasFlag(WeaponType.F_PLASMA) ||
-                            weaponType.hasFlag(WeaponType.F_PLASMA_MFUK))) ||
+                            weaponType.hasFlag(WeaponType.F_PPC))) ||
                       weaponType.hasFlag(WeaponType.F_FLAMER);
                 // Note: flamers are direct fire energy, but don't have the flag,
                 // so they won't work with targeting computers

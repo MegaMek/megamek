@@ -501,6 +501,15 @@ public class ClubAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
         }
 
+        // Prone 'Mechs can only be clubbed if they are one level higher than the attacker
+        // See BMM 7th Printing, Physical Attacks and Prone 'Mechs
+        if ((target instanceof Entity) && ((Entity) target).isProne()) {
+            if (targetElevation != attackerElevation + 1) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                      Messages.getString("PhysicalAttackAction.ProneMekClub"));
+            }
+        }
+
         // Attacks against adjacent buildings automatically hit.
         if ((target.getTargetType() == Targetable.TYPE_BUILDING)
               || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)

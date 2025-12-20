@@ -620,10 +620,11 @@ public class VTOL extends Tank implements IBomber {
             prd.addModifier(3, "flight stabiliser damaged");
         }
 
-        // VDNI bonus?
-        if (hasAbility(OptionsConstants.MD_VDNI)
-              && !hasAbility(OptionsConstants.MD_BVDNI)) {
+        // VDNI bonus? (BVDNI does NOT get piloting bonus due to "neuro-lag" per IO pg 71)
+        if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
             prd.addModifier(-1, "VDNI");
+        } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
+            prd.addModifier(0, "BVDNI (no piloting bonus)");
         }
 
         return prd;

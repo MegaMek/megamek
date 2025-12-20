@@ -3360,21 +3360,25 @@ public abstract class Mek extends Entity {
         }
 
         // Prototype DNI gives -3 piloting (IO pg 83)
-        // VDNI gives -1 piloting (IO pg 71) - BVDNI does NOT get piloting bonus
+        // VDNI gives -1 piloting (IO pg 71) - BVDNI does NOT get piloting bonus due to "neuro-lag"
         // Check Proto DNI first as it's more powerful
         if (hasAbility(OptionsConstants.MD_PROTO_DNI)) {
             roll.addModifier(-3, Messages.getString("PilotingRoll.ProtoDni"));
         } else if (hasAbility(OptionsConstants.MD_VDNI)
               && !hasAbility(OptionsConstants.MD_BVDNI)) {
             roll.addModifier(-1, "VDNI");
+        } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
+            roll.addModifier(0, "BVDNI (no piloting bonus)");
         }
 
         // Small/torso-mounted cockpit penalty?
         // BVDNI negates small cockpit penalty, but Proto DNI does not
-        if (((getCockpitType() == Mek.COCKPIT_SMALL) || (getCockpitType() == Mek.COCKPIT_SMALL_COMMAND_CONSOLE))
-              && (!hasAbility(OptionsConstants.MD_BVDNI)
-              && !hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT))) {
-            roll.addModifier(1, "Small Cockpit");
+        if ((getCockpitType() == Mek.COCKPIT_SMALL) || (getCockpitType() == Mek.COCKPIT_SMALL_COMMAND_CONSOLE)) {
+            if (hasAbility(OptionsConstants.MD_BVDNI)) {
+                roll.addModifier(0, "Small Cockpit (negated by BVDNI)");
+            } else if (!hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {
+                roll.addModifier(1, "Small Cockpit");
+            }
         } else if (getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
             roll.addModifier(1, "Torso-Mounted Cockpit");
             int sensorHits = getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM,

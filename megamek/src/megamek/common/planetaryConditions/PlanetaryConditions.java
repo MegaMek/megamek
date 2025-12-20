@@ -620,8 +620,8 @@ public class PlanetaryConditions implements Serializable {
 
         // anything else is infantry
 
-        // Beyond altitude 9, Aerospace can't see. No need to repeat this test.
-        if (isAero && (en.getAltitude() > 9)) {
+        // Beyond altitude 9, on ground maps, Aerospace can't see. No need to repeat this test.
+        if (isAero && en.isAirborneAeroOnGroundMap() && (en.getAltitude() > 9)) {
             return 0;
         }
 

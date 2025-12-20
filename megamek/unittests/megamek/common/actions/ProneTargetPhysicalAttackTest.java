@@ -40,17 +40,17 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for physical attack restrictions against prone 'Mechs per BMM 7th Printing.
+ * Tests for physical attack restrictions against prone 'Meks per BMM 7th Printing.
  *
- * <p>Per the BattleMech Manual (7th Printing), the only physical attacks that can be made
- * against a prone 'Mech are kicks and death from above (DFA). However, if the prone 'Mech is one level higher than the
+ * <p>Per BMM (7th Printing), the only physical attacks that can be made
+ * against a prone 'Mek are kicks and death from above (DFA). However, if the prone 'Mek is one level higher than the
  * attacker, punch, club, and physical weapon attacks are also allowed.
  *
- * <h2>Physical Attacks Against Prone 'Mechs - Different Levels Table:</h2>
+ * <h2>Physical Attacks Against Prone 'Meks - Different Levels Table:</h2>
  * <ul>
  *   <li>Same level: Kick, DFA only</li>
- *   <li>Prone 'Mech 1 level higher: Club, DFA, Physical Weapon, Punch</li>
- *   <li>Prone 'Mech 1 level lower: DFA only</li>
+ *   <li>Prone 'Mek 1 level higher: Club, DFA, Physical Weapon, Punch</li>
+ *   <li>Prone 'Mek 1 level lower: DFA only</li>
  * </ul>
  *
  * <p>Full integration testing is performed via manual in-game testing as the physical attack
@@ -104,7 +104,7 @@ public class ProneTargetPhysicalAttackTest {
         @DisplayName("Different Levels Table - Prone 1 level higher allows punch/club")
         void proneOneLevelHigherAllowsPunchAndClub() {
             // Documentation: Per BMM 7th Printing Different Levels Table
-            // "Prone 'Mech 1 level higher: Club, DFA, Physical Weapon, Punch"
+            // "Prone 'Mek 1 level higher: Club, DFA, Physical Weapon, Punch"
             int attackerLevel = 0;
             int proneTargetOneLevelHigher = 1;
 
@@ -128,7 +128,7 @@ public class ProneTargetPhysicalAttackTest {
         @DisplayName("Different Levels Table - Same level allows kick against prone")
         void sameLevelAllowsKick() {
             // Documentation: Per BMM 7th Printing
-            // "Death from above and kick attacks may be made against a prone 'Mech"
+            // "Death from above and kick attacks may be made against a prone 'Mek"
             int attackerLevel = 0;
             int targetLevel = 0;
 
@@ -140,7 +140,7 @@ public class ProneTargetPhysicalAttackTest {
         @DisplayName("Different Levels Table - Prone 1 level lower blocks kick")
         void proneOneLevelLowerBlocksKick() {
             // Documentation: Per BMM 7th Printing Different Levels Table
-            // "Prone 'Mech 1 level lower: DFA"
+            // "Prone 'Mek 1 level lower: DFA"
             // No kick allowed
             int attackerLevel = 1;
             int proneTargetOneLevelLower = 0;
@@ -153,7 +153,7 @@ public class ProneTargetPhysicalAttackTest {
         @DisplayName("Different Levels Table - Prone 1 level higher blocks kick")
         void proneOneLevelHigherBlocksKick() {
             // Documentation: Per BMM 7th Printing Different Levels Table
-            // "Prone 'Mech 1 level higher: Club, DFA, Physical Weapon, Punch"
+            // "Prone 'Mek 1 level higher: Club, DFA, Physical Weapon, Punch"
             // Kick is NOT in the list, so it should be blocked
             int attackerLevel = 0;
             int proneTargetOneLevelHigher = 1;

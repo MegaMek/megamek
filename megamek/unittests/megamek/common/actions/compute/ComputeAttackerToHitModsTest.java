@@ -62,14 +62,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 /**
- * Tests for mode conversion to-hit modifiers.
+ * Tests for {@link ComputeAttackerToHitMods#compileAttackerToHitMods}.
  * <p>
- * Per IO:AE p.101, LAMs suffer +3 to-hit when converting between modes. Per TM, QuadVees suffer +3 to-hit when
- * converting between modes.
- *
- * @see ComputeAttackerToHitMods#compileAttackerToHitMods
+ * This class contains tests for various attacker to-hit modifiers including mode conversion
+ * penalties for LAMs and QuadVees.
  */
-class ConversionToHitModsTest {
+class ComputeAttackerToHitModsTest {
 
     private Game mockGame;
     private GameOptions mockOptions;
@@ -133,6 +131,11 @@ class ConversionToHitModsTest {
         }
     }
 
+    /**
+     * Tests for LAM mode conversion to-hit penalty.
+     * <p>
+     * Per IO:AE p.101, LAMs suffer +3 to-hit when converting between modes.
+     */
     @Nested
     @DisplayName("LAM Conversion Penalty Tests")
     class LamConversionTests {
@@ -165,6 +168,11 @@ class ConversionToHitModsTest {
         }
     }
 
+    /**
+     * Tests for QuadVee mode conversion to-hit penalty.
+     * <p>
+     * Per TM, QuadVees suffer +3 to-hit when converting between modes.
+     */
     @Nested
     @DisplayName("QuadVee Conversion Penalty Tests")
     class QuadVeeConversionTests {

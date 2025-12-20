@@ -609,7 +609,8 @@ public class FighterSquadron extends AeroSpaceFighter {
             BombTypeEnum bombType = entry.getKey();
             int count = entry.getValue();
 
-            if (!bombType.isAllowedByGameOptions(game.getOptions())) {
+            // Skip bombs not allowed by game options (if game is available)
+            if ((game != null) && !bombType.isAllowedByGameOptions(game.getOptions())) {
                 continue;
             }
 
@@ -883,6 +884,30 @@ public class FighterSquadron extends AeroSpaceFighter {
     @Override
     public boolean isCapitalScale() {
         return true;
+    }
+
+    /**
+     * Overrides Aero's isDmgHeavy to properly reflect squadron damage state. A squadron is considered heavily damaged
+     * if a majority of its active fighters are heavily damaged.
+     *
+     * @return true if the squadron should be considered heavily damaged
+     */
+    @Override
+    public boolean isDmgHeavy() {
+        List<Entity> activeFighters = getActiveSubEntities();
+        if (activeFighters.isEmpty()) {
+            return true;
+        }
+
+        int heavilyDamagedCount = 0;
+        for (Entity fighter : activeFighters) {
+            if (fighter.isDmgHeavy()) {
+                heavilyDamagedCount++;
+            }
+        }
+
+        // Squadron is heavily damaged if majority of fighters are
+        return heavilyDamagedCount > activeFighters.size() / 2;
     }
 
     /**

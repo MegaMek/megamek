@@ -9626,7 +9626,6 @@ public abstract class Entity extends TurnOrdered
             done = true;
         } else {
             loadedThisTurn = true;
-            deployed = false;
         }
     }
 

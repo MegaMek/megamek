@@ -213,35 +213,27 @@ public class WeaponHandler implements AttackHandler, Serializable {
             WeaponAttackAction prevAttack = attackHandler.getWeaponAttackAction();
             if (prevAttack.getEntityId() == entity.getId()) {
                 WeaponMounted prevWeapon = (WeaponMounted) entity.getEquipment(prevAttack.getWeaponId());
-                if (prevWeapon == null) {
-                    continue;
-                }
                 if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_HEAT_BY_BAY)) {
                     totalHeat += prevWeapon.getHeatByBay();
                 } else {
                     boolean rearMount = prevWeapon.isRearMounted();
                     int loc = prevWeapon.getLocation();
 
-                    // Bounds check for location index - skip if invalid
-                    if ((loc < 0) || (loc >= entity.locations())) {
-                        continue;
-                    }
-
                     // create an array of booleans of locations
-                    boolean[] usedFrontArc = new boolean[entity.locations()];
-                    boolean[] usedRearArc = new boolean[entity.locations()];
-                    for (int i = 0; i < entity.locations(); i++) {
+                    boolean[] usedFrontArc = new boolean[weaponEntity.locations()];
+                    boolean[] usedRearArc = new boolean[weaponEntity.locations()];
+                    for (int i = 0; i < weaponEntity.locations(); i++) {
                         usedFrontArc[i] = false;
                         usedRearArc[i] = false;
                     }
                     if (!rearMount) {
                         if (!usedFrontArc[loc]) {
-                            totalHeat += entity.getHeatInArc(loc, rearMount);
+                            totalHeat += weaponEntity.getHeatInArc(loc, rearMount);
                             usedFrontArc[loc] = true;
                         }
                     } else {
                         if (!usedRearArc[loc]) {
-                            totalHeat += entity.getHeatInArc(loc, rearMount);
+                            totalHeat += weaponEntity.getHeatInArc(loc, rearMount);
                             usedRearArc[loc] = true;
                         }
                     }

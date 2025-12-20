@@ -789,16 +789,6 @@ public class FighterSquadron extends AeroSpaceFighter {
         return new Vector<>(getSubEntities());
     }
 
-    /**
-     * Returns the number of fighters in this squadron. Unlike getSubEntities().size(), this works without requiring
-     * game lookup, making it safe to use in the lobby before game is fully initialized.
-     *
-     * @return the number of fighters in this squadron
-     */
-    public int getFighterCount() {
-        return fighters.size();
-    }
-
     @Override
     public String getUnusedString() {
         return " - " + (getMaxSize() - fighters.size()) + " units";

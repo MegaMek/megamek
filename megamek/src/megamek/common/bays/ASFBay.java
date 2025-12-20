@@ -88,8 +88,7 @@ public final class ASFBay extends AbstractSmallCraftASFBay {
         boolean loadableFighter = unit.isFighter() && !(unit instanceof FighterSquadron);
         boolean loadableLAM = (unit instanceof LandAirMek) && (unit.getConversionMode()
               == LandAirMek.CONV_MODE_FIGHTER);
-        boolean loadableSquadron = (unit instanceof FighterSquadron)
-              && (getUnused() >= ((FighterSquadron) unit).getFighterCount());
+        boolean loadableSquadron = (unit instanceof FighterSquadron) && (getUnused() >= unit.getSubEntities().size());
         return (getUnused() >= 1) && (availableRecoverySlots() >= 1)
               && (loadableFighter || loadableLAM || loadableSquadron);
     }

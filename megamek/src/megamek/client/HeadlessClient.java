@@ -41,7 +41,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-import megamek.client.ui.Messages;
 import megamek.common.Player;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityListFile;
@@ -53,16 +52,13 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 /**
  * This class is instantiated for the player. It allows to communicate with the server with no GUI attached.
  *
  * @author Luana Coppio
  */
 public class HeadlessClient extends Client {
-    private final static MMLogger logger = MMLogger.create(HeadlessClient.class);
+    private final static MMLogger LOGGER = MMLogger.create(HeadlessClient.class);
     protected static final ClientPreferences PREFERENCES = PreferenceManager.getClientPreferences();
 
     private boolean sendDoneOnVictoryAutomatically = true;
@@ -106,7 +102,7 @@ public class HeadlessClient extends Client {
                             // noinspection ResultOfMethodCallIgnored
                             logDir.mkdir();
                         } catch (SecurityException ex) {
-                            logger.error(ex, "Failed to create log directory");
+                            LOGGER.error(ex, "Failed to create log directory");
                             return;
                         }
                     }
@@ -119,7 +115,7 @@ public class HeadlessClient extends Client {
                         // Save the destroyed entities to the file.
                         EntityListFile.saveTo(unitFile, destroyed);
                     } catch (IOException ex) {
-                        logger.error(ex, "Failed to save entity list file");
+                        LOGGER.error(ex, "Failed to save entity list file");
                     }
                 }
                 saveVictoryList();
@@ -153,9 +149,10 @@ public class HeadlessClient extends Client {
             try {
                 unitFile = new File(unitFile.getCanonicalPath() + CG_FILE_EXTENSION_MUL);
             } catch (Exception ignored) {
-                // nothing needs to be done here
+                LOGGER.error("Could not set proper extension for file path.");
                 return;
             }
+        }
 
 
             // What bot was this player? We need it to get the propper salvage MUL, just in case
@@ -168,9 +165,8 @@ public class HeadlessClient extends Client {
                     // Save the player's entities to the file.
                     EntityListFile.saveTo(unitFile, this, botPlayer);
                 } catch (Exception ex) {
-                    logger.error(ex, "saveVictoryList");
+                    LOGGER.error(ex, "saveVictoryList");
                 }
             }
         }
-    }
 }

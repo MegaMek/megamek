@@ -4283,6 +4283,11 @@ public class Compute {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity targetedEntity = (Entity) target;
 
+            // Beyond altitude 8, on ground maps, aerospace can't spot ground units
+            if (attackingEntity.isAirborneAeroOnGroundMap() && (attackingEntity.getAltitude() > 8) && !target.isAirborne()) {
+                visualRange = 0;
+            }
+
             // check for camo and null sig on the target
             if (targetedEntity.isVoidSigActive()) {
                 visualRange = visualRange / 4;

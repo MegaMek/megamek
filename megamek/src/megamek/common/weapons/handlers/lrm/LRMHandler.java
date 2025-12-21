@@ -419,8 +419,8 @@ public class LRMHandler extends MissileWeaponHandler {
         // For infantry targets with incendiary mixed, apply +1 damage per 5 missiles bonus
         if (isIncendiaryMixed() && target.isConventionalInfantry()) {
             int effectiveRack = getEffectiveRackSize();
-            // Calculate bonus: +1 per 5 missiles (round up) from incendiary portion
-            int bonusDamage = (int) Math.ceil(effectiveRack / 5.0);
+            // Calculate bonus: +1 per 5 missiles in the volley (round up), per TO:AUE pg 181
+            int bonusDamage = getIncendiaryMissileCount();
 
             // Get base infantry damage
             double toReturn = Compute.directBlowInfantryDamage(
@@ -448,8 +448,8 @@ public class LRMHandler extends MissileWeaponHandler {
 
         // Battle Armor also gets bonus damage when incendiary mixed
         if (isIncendiaryMixed() && target instanceof BattleArmor) {
-            int effectiveRack = getEffectiveRackSize();
-            int bonusDamage = (int) Math.ceil(effectiveRack / 5.0);
+            // Calculate bonus: +1 per 5 missiles in the volley (round up), per TO:AUE pg 181
+            int bonusDamage = getIncendiaryMissileCount();
             Report r = new Report(3328);
             r.subject = subjectId;
             r.add(bonusDamage);

@@ -42,11 +42,9 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
-import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeECM;
 import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
@@ -209,89 +207,5 @@ public class StreakHandler extends MissileWeaponHandler {
     protected boolean handleSpecialMiss(Entity entityTarget, boolean bldgDamagedOnMiss,
           IBuilding bldg, Vector<Report> vPhaseReport) {
         return false;
-    }
-
-    /**
-     * Checks if the ammo is mixed with incendiary rounds. Per TO:AUE pg 181, incendiary rounds can be mixed with LRM
-     * ammo.
-     *
-     * @return true if the ammo has incendiary munition type
-     */
-    protected boolean isIncendiaryMixed() {
-        if (ammo == null) {
-            return false;
-        }
-        AmmoType ammoType = ammo.getType();
-        return ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_LRM);
-    }
-
-    @Override
-    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, IBuilding bldg, int hits,
-          int nCluster, int bldgAbsorbs) {
-        super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
-
-        // Per TO:AUE pg 181, incendiary missiles attempt to ignite the target hex
-        if (isIncendiaryMixed() && !bMissed) {
-            tryIncendiaryIgnition(vPhaseReport);
-        }
-    }
-
-    @Override
-    protected void handleBuildingDamage(Vector<Report> vPhaseReport, IBuilding bldg, int nDamage, Coords coords) {
-        super.handleBuildingDamage(vPhaseReport, bldg, nDamage, coords);
-
-        // Per TO:AUE pg 181, incendiary missiles attempt to ignite buildings
-        if (isIncendiaryMixed() && !bMissed) {
-            tryIncendiaryIgnition(vPhaseReport);
-        }
-    }
-
-    @Override
-    protected void handleClearDamage(Vector<Report> vPhaseReport, IBuilding bldg, int nDamage) {
-        if (!bSalvo) {
-            Report r = new Report(2270);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-        }
-        Report r = new Report(3385);
-        r.indent(2);
-        r.subject = subjectId;
-        r.add(nDamage);
-        vPhaseReport.addElement(r);
-
-        // Per TO:AUE pg 181, incendiary LRM applies -4 modifier to fire ignition
-        TargetRoll targetRoll = isIncendiaryMixed()
-              ? new TargetRoll(-4, "Incendiary LRM")
-              : new TargetRoll(weaponType.getFireTN(), weaponType.getName());
-
-        if ((bldg != null)
-              && gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, false,
-              false, targetRoll, 5, vPhaseReport)) {
-            return;
-        }
-
-        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), target.getBoardId(),
-              nDamage, subjectId);
-        if (!clearReports.isEmpty()) {
-            vPhaseReport.lastElement().newlines = 0;
-        }
-        vPhaseReport.addAll(clearReports);
-    }
-
-    /**
-     * Attempts to ignite the target hex with incendiary missiles.
-     *
-     * @param vPhaseReport the report vector to add results to
-     */
-    protected void tryIncendiaryIgnition(Vector<Report> vPhaseReport) {
-        TargetRoll targetRoll = new TargetRoll(-4, "Incendiary LRM");
-        if (targetRoll.getValue() != TargetRoll.IMPOSSIBLE) {
-            Report r = new Report(3329);
-            r.subject = subjectId;
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
-            gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, false, false,
-                  targetRoll, true, -1, vPhaseReport);
-        }
     }
 }

@@ -392,8 +392,8 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                 return null;
             }
 
-            // Note: Incendiary LRM is now handled via isIncendiaryMixed() on the Mounted object,
-            // not as a separate munition type
+            // Note: Incendiary LRM effects are handled in LRMHandler.isIncendiaryMixed()
+            // which checks if ammo has M_INCENDIARY_LRM munition type
         }
 
         if (AmmoType.canDeliverMinefield(newAmmoType) &&

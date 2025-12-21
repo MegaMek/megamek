@@ -38,7 +38,6 @@ import static megamek.common.compute.Compute.d6;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.VolatileImage;
@@ -60,6 +59,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
@@ -237,6 +237,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
     public void createController() {
         controller = new MegaMekController();
+        controller.megaMekGUI = this;
         KeyboardFocusManager keyboardFocusManager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         keyboardFocusManager.addKeyEventDispatcher(controller);
         KeyBindParser.parseKeyBindings(controller);
@@ -663,8 +664,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
 
         if (saveGameFile != null && !server.loadGame(saveGameFile)) {
-            LOGGER.errorDialog(Messages.getFormattedString("MegaMek.LoadGameAlert.message",
-                  saveGameFile.getAbsolutePath()), Messages.getString("MegaMek.LoadGameAlert.title"));
+            LOGGER.errorDialog(Messages.getString("MegaMek.LoadGameAlert.title"),
+                  Messages.getFormattedString("MegaMek.LoadGameAlert.message", saveGameFile.getAbsolutePath()));
             server.die();
             server = null;
             return false;
@@ -940,6 +941,26 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         if (!file.exists() || !file.canRead()) {
             JOptionPane.showMessageDialog(frame,
                   Messages.getFormattedString("MegaMek.LoadGameAlert.message", file.getAbsolutePath()),
+                  Messages.getString("MegaMek.LoadGameAlert.title"),
+                  JOptionPane.ERROR_MESSAGE);
+            frame.setVisible(true);
+            return;
+        }
+
+        startHost("", 0, false, "", null, file, PreferenceManager.getClientPreferences().getLastPlayerName());
+    }
+
+    /**
+     * Loads a specific save game file without showing the HostDialog. Used when loading from the lobby where server
+     * settings are not needed.
+     *
+     * @param file The save game file to load
+     */
+    public void loadGameFile(File file) {
+        if (file == null || !file.exists() || !file.canRead()) {
+            JOptionPane.showMessageDialog(frame,
+                  Messages.getFormattedString("MegaMek.LoadGameAlert.message",
+                        file != null ? file.getAbsolutePath() : "null"),
                   Messages.getString("MegaMek.LoadGameAlert.title"),
                   JOptionPane.ERROR_MESSAGE);
             frame.setVisible(true);
@@ -1229,6 +1250,12 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
         // show menu frame
         frame.setVisible(true);
+
+        // Check for post-unlaunch action (e.g., load game from lobby)
+        Runnable postAction = controller.consumePostUnlaunchAction();
+        if (postAction != null) {
+            SwingUtilities.invokeLater(postAction);
+        }
 
         // just to free some memory
         client = null;

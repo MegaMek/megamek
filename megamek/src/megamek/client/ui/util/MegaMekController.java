@@ -49,6 +49,7 @@ import java.util.function.Supplier;
 import megamek.client.ui.boardeditor.BoardEditorPanel;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.IClientGUI;
+import megamek.client.ui.clientGUI.MegaMekGUI;
 
 /**
  * This class implements a KeyEventDispatcher, which handles all generated KeyEvents. If the KeyEvent corresponds to a
@@ -85,6 +86,12 @@ public class MegaMekController implements KeyEventDispatcher {
 
     public BoardEditorPanel boardEditor = null;
     public IClientGUI clientGUI = null;
+
+    /** Reference to MegaMekGUI for post-unlaunch callbacks (e.g., load game from lobby). */
+    public MegaMekGUI megaMekGUI = null;
+
+    /** Action to run after unlaunch completes (e.g., trigger load game dialog). Must be volatile for thread visibility. */
+    private volatile Runnable postUnlaunchAction = null;
 
     /** Maps a key code to a command string. */
     protected Set<KeyCommandBind> keyCmdSet;
@@ -321,6 +328,26 @@ public class MegaMekController implements KeyEventDispatcher {
     /** Set whether key presses should be ignored or not. */
     public void setIgnoreKeyPresses(boolean ignoreKeyPresses) {
         this.ignoreKeyPresses = ignoreKeyPresses;
+    }
+
+    /**
+     * Sets an action to be executed after unlaunch completes. Used by ClientGUI to trigger load game from the lobby.
+     *
+     * @param action The action to run after unlaunch, or null to clear
+     */
+    public void setPostUnlaunchAction(Runnable action) {
+        this.postUnlaunchAction = action;
+    }
+
+    /**
+     * Gets and clears the post-unlaunch action. The action is cleared after retrieval to prevent re-execution.
+     *
+     * @return The action to run, or null if none set
+     */
+    public Runnable consumePostUnlaunchAction() {
+        Runnable action = postUnlaunchAction;
+        postUnlaunchAction = null;
+        return action;
     }
 
 }

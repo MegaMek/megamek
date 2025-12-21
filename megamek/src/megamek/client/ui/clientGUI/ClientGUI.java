@@ -764,6 +764,62 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
+     * Shows a confirmation dialog when attempting to load a game from the lobby.
+     *
+     * @return true if the user confirms, false otherwise
+     */
+    private boolean confirmLoadFromLobby() {
+        int result = JOptionPane.showConfirmDialog(
+              frame,
+              Messages.getString("ClientGUI.LoadFromLobby.message"),
+              Messages.getString("ClientGUI.LoadFromLobby.title"),
+              JOptionPane.YES_NO_OPTION,
+              JOptionPane.WARNING_MESSAGE
+        );
+        return result == JOptionPane.YES_OPTION;
+    }
+
+    /**
+     * Handles loading a game from the lobby. Shows file chooser first, then confirms disconnect, then loads directly.
+     */
+    private void loadGameFromLobby() {
+        // Show file chooser first (before closing lobby)
+        JFileChooser fileChooser = new JFileChooser(MMConstants.SAVEGAME_DIR);
+        fileChooser.setDialogTitle(Messages.getString("MegaMek.SaveGameDialog.title"));
+        fileChooser.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return f.getName().endsWith(MMConstants.SAVE_FILE_EXT)
+                      || f.getName().endsWith(MMConstants.SAVE_FILE_GZ_EXT)
+                      || f.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "Savegames";
+            }
+        });
+
+        int returnVal = fileChooser.showOpenDialog(frame);
+        if (returnVal != JFileChooser.APPROVE_OPTION || fileChooser.getSelectedFile() == null) {
+            return;
+        }
+
+        File selectedFile = fileChooser.getSelectedFile();
+
+        // Now confirm disconnect
+        if (!confirmLoadFromLobby()) {
+            return;
+        }
+
+        // Close lobby and load the selected file directly (skip HostDialog)
+        controller.setPostUnlaunchAction(() ->
+              controller.megaMekGUI.loadGameFile(selectedFile));
+        setDisconnectQuietly(true);
+        die();
+    }
+
+    /**
      * Called when the user selects the "Help->Contents" menu item.
      * <p>
      * This method can be called by subclasses.
@@ -938,6 +994,16 @@ public class ClientGUI extends AbstractClientGUI
                     client.sendChat(CG_CHAT_COMMAND_SAVE + " " + filename);
                 }
                 ignoreHotKeys = false;
+                break;
+            case FILE_GAME_LOAD:
+                loadGameFromLobby();
+                break;
+            case FILE_GAME_QUICK_LOAD:
+                if (confirmLoadFromLobby()) {
+                    controller.setPostUnlaunchAction(() -> controller.megaMekGUI.quickLoadGame());
+                    setDisconnectQuietly(true);
+                    die();
+                }
                 break;
             case HELP_ABOUT:
                 showAbout();

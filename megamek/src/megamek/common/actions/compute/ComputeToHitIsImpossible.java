@@ -927,8 +927,9 @@ class ComputeToHitIsImpossible {
                     }
                 }
 
-                // Only direct-fire energy weapons that don't use ammo can strafe
-                // Plasma weapons are excluded because they use ammo (risk of explosion from ground fire)
+                // Per TW p. 243: "The unit may fire one, some, or all of its non-ammo-dependent
+                // direct-fire energy and pulse weapons when strafing."
+                // This excludes plasma weapons since they require ammo.
                 boolean isDirectFireEnergy = (weaponType.hasFlag(WeaponType.F_DIRECT_FIRE) &&
                       (weaponType.hasFlag(WeaponType.F_LASER) ||
                             weaponType.hasFlag(WeaponType.F_PPC))) ||

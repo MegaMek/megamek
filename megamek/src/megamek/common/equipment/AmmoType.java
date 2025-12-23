@@ -1674,7 +1674,7 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(Faction.TH)
                 .setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
-          "355, TO");
+          "169, TO:AUE");
 
     private static final MunitionMutator FLECHETTE_ARTY_MUNITION_MUTATOR = new MunitionMutator("Flechette",
           1,

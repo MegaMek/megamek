@@ -2131,7 +2131,7 @@ public class TWDamageManager implements IDamageManager {
             Report targetReport = new Report(4583);
             targetReport.subject = target.getId();
             targetReport.indent(2);
-            targetReport.addDesc(target);
+            targetReport.add(target.getDisplayName());
             targetReport.add(damage);
             reports.add(targetReport);
 

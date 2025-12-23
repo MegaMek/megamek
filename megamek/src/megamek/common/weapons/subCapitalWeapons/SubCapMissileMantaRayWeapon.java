@@ -77,7 +77,7 @@ public class SubCapMissileMantaRayWeapon extends SubCapMissileWeapon {
         this.shortAV = 5;
         this.missileArmor = 50;
         this.maxRange = WeaponType.RANGE_SHORT;
-        rulesRefs = "345, TO";
+        rulesRefs = "156, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)

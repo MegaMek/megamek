@@ -68,7 +68,7 @@ public class ISMekMortar4 extends MekMortarWeapon {
         criticalSlots = 3;
         tonnage = 7;
         cost = 32000;
-        rulesRefs = "324, TO";
+        rulesRefs = "136, TO:AUE";
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

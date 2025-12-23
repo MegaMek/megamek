@@ -4355,6 +4355,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 2;
         misc.svSlots = 1;
         misc.cost = 750000;
+        misc.rulesRefs = "133, TW";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         // December 2021 - Errata request to change common date
         misc.flags = misc.flags.or(F_C3I)

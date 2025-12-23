@@ -97,7 +97,7 @@ public class ISSilverBulletGauss extends GaussWeapon {
         flags = flags.or(F_NO_AIM).andNot(F_DIRECT_FIRE);
         atClass = CLASS_LBX_AC;
         explosionDamage = 20;
-        rulesRefs = "314, TO";
+        rulesRefs = "127, TO:AUE";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)

@@ -340,7 +340,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 57;
         bomb.cost = 9000;
-        bomb.rulesRefs = "357, TO";
+        bomb.rulesRefs = "169, TO:AUE";
         bomb.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -372,7 +372,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 114;
         bomb.cost = 15000;
-        bomb.rulesRefs = "358, TO";
+        bomb.rulesRefs = "170, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         bomb.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
@@ -404,7 +404,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 75;
         bomb.cost = 20000;
-        bomb.rulesRefs = "358, TO";
+        bomb.rulesRefs = "170, TO:AUE";
         bomb.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -439,7 +439,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 30;
         bomb.cost = 3000;
-        bomb.rulesRefs = "358, TO";
+        bomb.rulesRefs = "171, TO:AUE";
         bomb.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -474,7 +474,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 34;
         bomb.cost = 2000;
-        bomb.rulesRefs = "359, TO";
+        bomb.rulesRefs = "171, TO:AUE";
         bomb.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -614,7 +614,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 16;
         bomb.cost = 6000;
-        bomb.rulesRefs = "359, TO";
+        bomb.rulesRefs = "171, TO:AUE";
         bomb.techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(false).setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
@@ -676,7 +676,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 17;
         bomb.cost = 6000;
-        bomb.rulesRefs = "359, TO";
+        bomb.rulesRefs = "171, TO:AUE";
         bomb.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -825,7 +825,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 10;
         bomb.cost = 7000;
-        bomb.rulesRefs = "360, TO";
+        bomb.rulesRefs = "172, TO:AUE";
         bomb.techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(false).setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)

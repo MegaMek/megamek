@@ -72,7 +72,7 @@ public class CLBAFlamerHeavy extends BAFlamerWeapon {
         cost = 11250;
         flags = flags.or(F_FLAMER).or(F_ENERGY).or(F_BA_WEAPON)
               .or(F_BURST_FIRE).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        rulesRefs = "312, TO";
+        rulesRefs = "124, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false).setUnofficial(false).setTechRating(TechRating.C)

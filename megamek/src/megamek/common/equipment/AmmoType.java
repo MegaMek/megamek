@@ -12602,7 +12602,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 6;
         ammo.cost = 100000;
-
+        ammo.rulesRefs = "110, TO:AUE";
         ammo.techAdvancement.setTechBase(TechBase.IS);
         ammo.techAdvancement.setISAdvancement(3072, DATE_NONE, DATE_NONE);
         ammo.techAdvancement.setTechRating(TechRating.E);
@@ -15039,7 +15039,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 37;
         ammo.cost = 30000;
-
+        ammo.rulesRefs = "Unofficial";
         ammo.techAdvancement.setTechBase(TechBase.IS);
         ammo.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3067);
         ammo.techAdvancement.setTechRating(TechRating.E);
@@ -15063,7 +15063,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 59;
         ammo.cost = 80000;
-
+        ammo.rulesRefs = "Unofficial";
         ammo.techAdvancement.setTechBase(TechBase.IS);
         ammo.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3067);
         ammo.techAdvancement.setTechRating(TechRating.E);

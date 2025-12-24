@@ -162,6 +162,11 @@ public class ComputeAttackerToHitMods {
             toHit.addModifier(+3, Messages.getString("WeaponAttackAction.QuadVeeConverting"));
         }
 
+        // LAM converting to a new mode (IO:AE p.101)
+        if (attacker instanceof LandAirMek && attacker.isConvertingNow()) {
+            toHit.addModifier(+3, Messages.getString("WeaponAttackAction.LAMConverting"));
+        }
+
         // we are bracing
         if ((weapon != null) && attacker.isBracing() && (attacker.braceLocation() == weapon.getLocation())) {
             toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Bracing"));

@@ -68,7 +68,7 @@ public class ISNarcPrototype extends NarcWeapon {
         this.bv = 15;
         this.cost = 300000;
         flags = flags.or(F_PROTOTYPE);
-        rulesRefs = "71, IO";
+        rulesRefs = "66, IO:AE";
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

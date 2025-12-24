@@ -87,7 +87,7 @@ public class ISERLaserLargePrototype extends LaserWeapon {
         criticalSlots = 2;
         bv = 136;
         cost = 600000;
-        rulesRefs = "103, IO";
+        rulesRefs = "97, IO:AE";
         flags = flags.or(F_PROTOTYPE);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)

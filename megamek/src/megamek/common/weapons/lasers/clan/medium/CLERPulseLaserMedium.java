@@ -76,7 +76,7 @@ public class CLERPulseLaserMedium extends PulseLaserWeapon {
         criticalSlots = 2;
         bv = 117;
         cost = 150000;
-        rulesRefs = "320, TO";
+        rulesRefs = "132, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)

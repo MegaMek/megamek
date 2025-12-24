@@ -69,7 +69,7 @@ public class ISBAAPDS extends Weapon {
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 50000;
-        rulesRefs = "91, IO";
+        rulesRefs = "85, IO:AE";
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

@@ -212,6 +212,25 @@ public class BuildingEntity extends AbstractBuildingEntity {
         return 0;
     }
 
+    @Override
+    public void performManualStartup() {
+        if (hasPower()) {
+            super.performManualStartup();
+        }
+    }
+
+    /**
+     * Applies any damage that the entity has suffered. When anything gets hit it is simply marked as "hit" but does not
+     * stop working until this is called.
+     */
+    @Override
+    public void applyDamage() {
+        super.applyDamage();
+        if (!hasPower()) {
+            setShutDown(true);
+        }
+    }
+
     /**
      * A {@link BuildingEntity} needs power to function.
      *

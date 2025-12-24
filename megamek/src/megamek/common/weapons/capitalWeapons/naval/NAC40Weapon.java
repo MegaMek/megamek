@@ -68,7 +68,7 @@ public class NAC40Weapon extends NavalACWeapon {
         this.shortAV = 40;
         this.medAV = 40;
         this.maxRange = RANGE_MED;
-        rulesRefs = "331, TO";
+        rulesRefs = "143, TO:AUE";
         techAdvancement
               .setTechBase(TechBase.ALL)
               .setIntroLevel(false)

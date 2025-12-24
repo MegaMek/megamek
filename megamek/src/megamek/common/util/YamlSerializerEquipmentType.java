@@ -44,6 +44,7 @@ import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
 
+import megamek.common.RulesRef;
 import megamek.common.TechAdvancement;
 import megamek.common.TechAdvancement.AdvancementPhase;
 import megamek.common.enums.AvailabilityValue;
@@ -103,7 +104,12 @@ public class YamlSerializerEquipmentType {
 
         YamlEncDec.addPropIfNotEmpty(data, "shortName", equipment.getShortName());
         YamlEncDec.addPropIfNotEmpty(data, "sortingName", equipment.getSortingName());
-        YamlEncDec.addPropIfNotEmpty(data, "rulesRefs", equipment.getRulesRefs());
+
+        // Serialize rules references in structured format
+        List<RulesRef> rulesRefs = equipment.getParsedRulesRefs();
+        if (!rulesRefs.isEmpty()) {
+            data.put("rulesRefs", RulesRef.toMapList(rulesRefs));
+        }
 
         addAliases(data, equipment);
     }

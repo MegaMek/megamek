@@ -48,6 +48,7 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 
 import megamek.common.RangeType;
+import megamek.common.RulesRef;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.TechConstants;
@@ -217,6 +218,11 @@ public class EquipmentType implements ITechnology {
      */
     protected String rulesRefs = "";
 
+    /**
+     * Parsed rules references, cached for performance. Transient because it can be reconstructed from rulesRefs.
+     */
+    private transient List<RulesRef> parsedRulesRefs = null;
+
     /** Creates new EquipmentType */
     public EquipmentType() {
         // default constructor
@@ -272,6 +278,19 @@ public class EquipmentType implements ITechnology {
 
     public String getRulesRefs() {
         return rulesRefs;
+    }
+
+    /**
+     * Returns the parsed rules references for this equipment. The references are
+     * parsed from the legacy rulesRefs string on first access and cached.
+     *
+     * @return A list of structured RulesRef objects (may be empty, never null)
+     */
+    public List<RulesRef> getParsedRulesRefs() {
+        if (parsedRulesRefs == null) {
+            parsedRulesRefs = RulesRef.parseMultiple(rulesRefs);
+        }
+        return parsedRulesRefs;
     }
 
     public Map<Integer, Integer> getTechLevels() {

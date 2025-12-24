@@ -40,6 +40,7 @@ import java.util.Collections;
 import java.util.List;
 
 import megamek.client.ui.Messages;
+import megamek.common.RulesRef;
 import megamek.common.bays.Bay;
 import megamek.common.enums.TechBase;
 import megamek.common.equipment.*;
@@ -300,6 +301,50 @@ final class ReadoutUtils {
         }
 
         return transportsList;
+    }
+
+    /**
+     * Creates a list of ViewElements for displaying the rules references of an equipment type. Each RulesRef is
+     * rendered as a RulesRefLine, which may include a hyperlink to the Master Unit List if the associated SourceBook is
+     * found.
+     *
+     * @param equipmentType The equipment type to get rules references for
+     *
+     * @return A list of ViewElements representing the rules references (may be empty)
+     */
+    static List<ViewElement> createRulesRefElements(EquipmentType equipmentType) {
+        List<RulesRef> rulesRefs = equipmentType.getParsedRulesRefs();
+        if (rulesRefs.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<ViewElement> result = new ArrayList<>();
+        for (RulesRef ref : rulesRefs) {
+            result.add(new RulesRefLine(ref));
+        }
+        return result;
+    }
+
+    /**
+     * Creates an ItemList ViewElement containing all rules references for an equipment type. Useful for displaying in a
+     * labeled section.
+     *
+     * @param equipmentType The equipment type to get rules references for
+     * @param label         The label for the item list (e.g., "Rules References")
+     *
+     * @return An ItemList with the rules references, or an EmptyElement if none exist
+     */
+    static ViewElement createRulesRefList(EquipmentType equipmentType, String label) {
+        List<RulesRef> rulesRefs = equipmentType.getParsedRulesRefs();
+        if (rulesRefs.isEmpty()) {
+            return new EmptyElement();
+        }
+
+        ItemList list = new ItemList(label);
+        for (RulesRef ref : rulesRefs) {
+            list.addItem(new RulesRefLine(ref));
+        }
+        return list;
     }
 
     private ReadoutUtils() {}

@@ -32,16 +32,19 @@
  */
 package megamek.common;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import megamek.logging.MMLogger;
 
 /**
  * This class manages sourcebook information, usually loaded from the data/sourcebooks folder. Sourcebooks are not
@@ -49,7 +52,12 @@ import java.util.Optional;
  */
 public class SourceBooks {
 
+    private static final MMLogger LOGGER = MMLogger.create(SourceBooks.class);
     private static final String SOURCEBOOKS_PATH = "data/sourcebooks";
+
+    // Cache for abbreviation -> filename mapping (built lazily, shared across instances)
+    private static Map<String, String> abbreviationIndex = null;
+    private static final Object INDEX_LOCK = new Object();
 
     private final ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
     private final File baseDirectory;
@@ -130,6 +138,118 @@ public class SourceBooks {
             filename += ".yaml";
         }
         return filename;
+    }
+
+    /**
+     * Finds a sourcebook by its abbreviation. This method handles common variations in abbreviation format (spaces,
+     * ampersands, case differences).
+     *
+     * <p>Examples of abbreviations that will be matched:
+     * <ul>
+     *     <li>"TM" matches TechManual</li>
+     *     <li>"TO: AU&amp;E" matches Tactical Operations: Advanced Units and Equipment</li>
+     *     <li>"IO" matches Interstellar Operations (if YAML file exists)</li>
+     * </ul>
+     *
+     * @param abbreviation The book abbreviation to search for
+     *
+     * @return The SourceBook if found, empty otherwise
+     */
+    public Optional<SourceBook> findByAbbreviation(String abbreviation) {
+        if ((abbreviation == null) || abbreviation.isBlank()) {
+            return Optional.empty();
+        }
+
+        ensureAbbrevIndexBuilt();
+
+        String normalizedSearch = normalizeAbbrev(abbreviation);
+        String filename = abbreviationIndex.get(normalizedSearch);
+
+        if (filename != null) {
+            return loadSourceBook(filename);
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Ensures the abbreviation index is built. This loads all sourcebook YAML files to extract their abbreviations. The
+     * index is cached statically to avoid rebuilding on each lookup.
+     */
+    private void ensureAbbrevIndexBuilt() {
+        synchronized (INDEX_LOCK) {
+            if (abbreviationIndex == null) {
+                buildAbbrevIndex();
+            }
+        }
+    }
+
+    /**
+     * Builds the abbreviation index by loading all sourcebook files and mapping their normalized abbreviations to
+     * filenames.
+     */
+    private void buildAbbrevIndex() {
+        abbreviationIndex = new HashMap<>();
+
+        List<String> availableBooks = availableSourcebooks();
+        for (String filename : availableBooks) {
+            try {
+                Optional<SourceBook> book = loadSourceBook(filename);
+                if (book.isPresent() && (book.get().getAbbrev() != null)) {
+                    String normalizedAbbrev = normalizeAbbrev(book.get().getAbbrev());
+                    abbreviationIndex.put(normalizedAbbrev, filename);
+                    LOGGER.trace("Indexed sourcebook: {} -> {}", normalizedAbbrev, filename);
+                }
+            } catch (Exception e) {
+                LOGGER.warn("Failed to index sourcebook: {}", filename);
+            }
+        }
+
+        LOGGER.debug("Built sourcebook abbreviation index with {} entries", abbreviationIndex.size());
+    }
+
+    /**
+     * Normalizes an abbreviation for consistent matching. This handles common variations in how abbreviations are
+     * written.
+     *
+     * <p>Normalization rules:
+     * <ul>
+     *     <li>Convert to lowercase</li>
+     *     <li>Remove all spaces</li>
+     *     <li>Remove ampersands (&amp;)</li>
+     *     <li>Trim whitespace</li>
+     * </ul>
+     *
+     * <p>Examples:
+     * <ul>
+     *     <li>"TO: AU&amp;E" becomes "to:aue"</li>
+     *     <li>"TM" becomes "tm"</li>
+     *     <li>"TO:AUE" becomes "to:aue"</li>
+     * </ul>
+     *
+     * @param abbreviation The abbreviation to normalize
+     *
+     * @return The normalized abbreviation
+     */
+    private String normalizeAbbrev(String abbreviation) {
+        if (abbreviation == null) {
+            return "";
+        }
+        return abbreviation
+                .toLowerCase()
+                .replace(" ", "")
+                .replace("&", "")
+                .trim();
+    }
+
+    /**
+     * Clears the cached abbreviation index. This is primarily useful for testing or when sourcebook files have been
+     * modified.
+     */
+    public static void clearAbbrevIndex() {
+        synchronized (INDEX_LOCK) {
+            abbreviationIndex = null;
+        }
     }
 
 }

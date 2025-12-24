@@ -1,0 +1,64 @@
+# Sample Equipment Definition with Structured Rules References
+# This file demonstrates the new rulesRefs format for equipment definitions.
+#
+# The rulesRefs field now supports a structured format with:
+#   - page: The page number or range (e.g., "205" or "204-206")
+#   - book: The book abbreviation (e.g., "TM", "TO: AU&E")
+#   - text: (Optional) The actual rules text for quick reference
+#
+# The system also maintains backward compatibility with the legacy format:
+#   rulesRefs: "205, TM"
+
+version: "1.0"
+
+# Example 1: Medium Laser with single rules reference
+id: ISMediumLaser
+name: Medium Laser
+shortName: Med Laser
+rulesRefs:
+  - page: "227"
+    book: "TM"
+
+# Example 2: Equipment with multiple rules references
+id: CLERMediumLaser
+name: ER Medium Laser
+shortName: ER Med Laser
+rulesRefs:
+  - page: "226"
+    book: "TM"
+  - page: "96"
+    book: "TO: AU&E"
+
+# Example 3: Equipment with rules text included
+id: CLTargetingComputer
+name: Targeting Computer
+shortName: TC
+rulesRefs:
+  - page: "238"
+    book: "TM"
+    text: >
+      A targeting computer (TC) is a specialized computer that interfaces
+      directly with a unit's weapons systems. When a TC is installed, it
+      provides a -1 modifier to the to-hit number for all direct-fire
+      ballistic and energy weapons linked to it.
+
+# Example 4: Equipment with page range
+id: ISStreakSRM6
+name: Streak SRM 6
+shortName: SSRM 6
+rulesRefs:
+  - page: "229-230"
+    book: "TM"
+  - page: "105"
+    book: "TO: AU&E"
+    text: >
+      Streak SRM launchers only fire when a target lock is achieved.
+      If the lock fails, no ammunition is expended.
+
+# Legacy format (still supported for backward compatibility)
+# id: ISMediumLaser
+# name: Medium Laser
+# rulesRefs: "227, TM"
+
+# Multiple refs in legacy format
+# rulesRefs: "227, TM; 96, TO: AU&E"

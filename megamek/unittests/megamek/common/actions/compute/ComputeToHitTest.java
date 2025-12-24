@@ -38,9 +38,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -63,6 +65,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.BipedMek;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.Crew;
@@ -71,13 +74,15 @@ import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Targetable;
-import megamek.server.totalWarfare.BuildingCollapseHandler;
+import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
+import java.util.Vector;
 
 /**
  * Tests for {@link ComputeToHit#toHitCalc(Game, int, Targetable, int, int, AimingMode, boolean, boolean, Targetable, Targetable, boolean, boolean, java.util.List, boolean, int, int)}
@@ -89,16 +94,7 @@ public class ComputeToHitTest extends GameBoardTestCase {
 
     private static String LOS_BLOCKED_BY_TERRAIN = "LOS blocked by terrain.";
 
-    private static GameOptions mockGameOptions;
-    private static Team team1;
-    private static Team team2;
-    private static Player player1;
-    private static Player player2;
-    private static WeaponType mediumLaserType;
-    private Game game;
-
-    static {
-        initializeBoard("03_BY_05_CENTER_HILLS", """
+    private static final String BOARD_03_BY_05_CENTER_HILLS_DATA = """
               size 3 5
               hex 0101 0 "" ""
               hex 0201 0 "" ""
@@ -115,9 +111,9 @@ public class ComputeToHitTest extends GameBoardTestCase {
               hex 0105 0 "" ""
               hex 0205 0 "" ""
               hex 0305 0 "" ""
-              end""");
+              end""";
 
-        initializeBoard("03_BY_05_FLAT", """
+    private static final String BOARD_03_BY_05_FLAT_DATA = """
               size 3 5
               hex 0101 0 "" ""
               hex 0201 0 "" ""
@@ -134,7 +130,20 @@ public class ComputeToHitTest extends GameBoardTestCase {
               hex 0105 0 "" ""
               hex 0205 0 "" ""
               hex 0305 0 "" ""
-              end""");
+              end""";
+
+    private static TWGameManager mockGameManager;
+    private static GameOptions mockGameOptions;
+    private static Team team1;
+    private static Team team2;
+    private static Player player1;
+    private static Player player2;
+    private static WeaponType mediumLaserType;
+    private Game game;
+
+    static {
+        initializeBoard("03_BY_05_CENTER_HILLS", BOARD_03_BY_05_CENTER_HILLS_DATA);
+        initializeBoard("03_BY_05_FLAT", BOARD_03_BY_05_FLAT_DATA);
     }
 
     Mek createMek(String chassis, String model, String crewName) {
@@ -205,7 +214,9 @@ public class ComputeToHitTest extends GameBoardTestCase {
         buildingEntity.setModel(model);
 
         // Building is 4 levels tall (0-3)
-        buildingEntity.getInternalBuilding().setBuildingHeight(4);
+        buildingEntity.getInternalBuilding().setBuildingHeight(4); // 0205 (center)
+
+        buildingEntity.getInternalBuilding().addHex(CubeCoords.ZERO, 40, 10, null, false);
 
         // Add 6 hexes: 3 in row 0X04 (front) and 3 in row 0X05 (back)
         // Using CubeCoords relative to building center at 0205 (Coords 1, 4)
@@ -216,7 +227,6 @@ public class ComputeToHitTest extends GameBoardTestCase {
 
         // Row 0X05: hexes 0105, 0205, 0305 relative to center at 0205
         buildingEntity.getInternalBuilding().addHex(new CubeCoords(-1.0, 0, 1.0), 40, 10, null, false);  // 0105
-        buildingEntity.getInternalBuilding().addHex(CubeCoords.ZERO, 40, 10, null, false);                // 0205 (center)
         buildingEntity.getInternalBuilding().addHex(new CubeCoords(1.0, -1.0, 0), 40, 10, null, false);  // 0305
 
         buildingEntity.refreshLocations();
@@ -246,6 +256,11 @@ public class ComputeToHitTest extends GameBoardTestCase {
         team2.addPlayer(player2);
 
         mediumLaserType = (WeaponType) EquipmentType.get("ISMediumLaser");
+
+        // Mock game manager so it doesn't try networking
+        mockGameManager = mock(TWGameManager.class);
+        doNothing().when(mockGameManager).sendNewBuildings(any());
+        doNothing().when(mockGameManager).sendChangedHex(any(Coords.class), anyInt());
     }
 
     @BeforeEach
@@ -275,13 +290,15 @@ public class ComputeToHitTest extends GameBoardTestCase {
         @Nested
         @DisplayName("Hill Terrain Tests")
         class HillTerrainTests {
-            Entity attacker;
+            AbstractBuildingEntity attacker;
             Entity targetEntity;
             Targetable target;
             WeaponMounted mediumLaser;
 
             @BeforeEach
             void beforeEach() {
+                // Re-initialize board to ensure fresh state for each test
+                initializeBoard("03_BY_05_CENTER_HILLS", BOARD_03_BY_05_CENTER_HILLS_DATA);
                 setBoard("03_BY_05_CENTER_HILLS");
 
                 // Create BuildingEntity attacker with IS Medium Laser
@@ -289,6 +306,7 @@ public class ComputeToHitTest extends GameBoardTestCase {
                 attacker.setOwnerId(player1.getId());
                 attacker.setId(1);
                 attacker.setPosition(new Coords(1, 4));
+                attacker.updateBuildingEntityHexes(getBoard("03_BY_05_CENTER_HILLS").getBoardId(), mockGameManager);
 
                 // Create target Mek
                 targetEntity = createMek("Target", "TGT-2", "Bob");
@@ -633,19 +651,22 @@ public class ComputeToHitTest extends GameBoardTestCase {
 
             @BeforeEach
             void beforeEach() {
+                // Re-initialize board to ensure fresh state for each test
+                initializeBoard("03_BY_05_FLAT", BOARD_03_BY_05_FLAT_DATA);
                 setBoard("03_BY_05_FLAT");
 
                 // Create 6-hex BuildingEntity (4 levels tall) at rows 0X04 and 0X05
                 attacker = createSixHexBuildingEntity("Fort", "FRT-1", "Alice");
                 attacker.setOwnerId(player1.getId());
                 attacker.setId(1);
-                attacker.setPosition(new Coords(1, 4)); // Center of building at 0205
+                attacker.setPosition(new Coords(1, 3)); // Center of building at 0204
+                attacker.updateBuildingEntityHexes(getBoard("03_BY_05_FLAT").getBoardId(), mockGameManager);
 
                 // Create target Mek in front of building
                 targetEntity = createMek("Target", "TGT-2", "Bob");
                 targetEntity.setOwnerId(player2.getId());
                 targetEntity.setId(2);
-                targetEntity.setPosition(new Coords(1, 0)); // At 0201
+                targetEntity.setPosition(new Coords(0, 0)); // At 0101
 
                 target = targetEntity;
 
@@ -654,11 +675,10 @@ public class ComputeToHitTest extends GameBoardTestCase {
             }
 
             @Test
-            @DisplayName("Turret on roof of 0104 can attack Mek at 0201")
-            @Disabled
+            @DisplayName("Turret on roof of 0104 can attack Mek at 0101")
             void testRoofTurret_0104_CanAttack() throws LocationFullException {
                 // Weapon at level 3 (roof) in hex 0104
-                // Target at hex 0201
+                // Target at hex 0101
                 // Expected: CLEAR (firing from roof over intervening hexes)
                 mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
                       attacker.getLocationFromAbbr("LVL 3 0104"));
@@ -683,11 +703,10 @@ public class ComputeToHitTest extends GameBoardTestCase {
             }
 
             @Test
-            @DisplayName("Turret in 0105 cannot attack Mek at 0201 - blocked by building hex 0104")
-            @Disabled
+            @DisplayName("Turret in 0105 cannot attack Mek at 0101 - blocked by building hex 0104")
             void testRearTurret_0105_Blocked() throws LocationFullException {
                 // Weapon at level 3 (roof) in hex 0105 (rear row)
-                // Target at hex 0201
+                // Target at hex 0101
                 // Expected: BLOCKED (building hex 0104 is in the way)
                 mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
                       attacker.getLocationFromAbbr("LVL 3 0105"));
@@ -709,6 +728,42 @@ public class ComputeToHitTest extends GameBoardTestCase {
                             + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
                             .collect(java.util.stream.Collectors.joining(", ")));
                 assertTrue(result.cannotSucceed(), "Shot should NOT succeed when blocked by building");
+            }
+
+            @Test
+            @DisplayName("Turret in 0105 CAN attack Mek at 0101 after destroying building hex 0104")
+            void testRearTurret_0105_NotBlocked_AfterBuildingDestroyed() throws LocationFullException {
+                // Weapon at level 3 (roof) in hex 0105 (rear row)
+                // Target at hex 0101
+                // Destroy building hex 0104 first
+                // Expected: NOT BLOCKED (building hex 0104 is destroyed)
+
+                // Collapse the building hex at 0104
+                Coords hex0104Coords = new Coords(0, 3);
+                int buildingHeight = attacker.getHeight(hex0104Coords);
+                attacker.collapseFloorsOnHex(hex0104Coords, buildingHeight);
+                game.getBoard().collapseBuilding(hex0104Coords);
+
+                mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
+                      attacker.getLocationFromAbbr("LVL 3 0105"));
+                mediumLaser.setMekTurretMounted(true);
+
+                ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
+                      mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
+                      false, false, null, null, false, false, null, false,
+                      WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+
+                assertNotNull(result, "ToHitData should not be null");
+                var modifiers = result.getModifiers();
+                var blockingModifier = modifiers.stream()
+                      .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
+                      .findFirst();
+
+                assertFalse(blockingModifier.isPresent(),
+                      "LOS should NOT be BLOCKED - building hex 0104 was destroyed. Modifiers: "
+                            + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
+                            .collect(java.util.stream.Collectors.joining(", ")));
+                assertFalse(result.cannotSucceed(), "Shot SHOULD succeed after building destroyed");
             }
         }
     }

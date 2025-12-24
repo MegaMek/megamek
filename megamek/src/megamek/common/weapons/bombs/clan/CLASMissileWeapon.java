@@ -85,7 +85,7 @@ public class CLASMissileWeapon extends ThunderboltWeapon {
         ammoType = AmmoType.AmmoTypeEnum.AS_MISSILE;
         capital = false;
         this.missileArmor = 30;
-        rulesRefs = "358, TO";
+        rulesRefs = "170, TO:AUE";
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

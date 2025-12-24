@@ -84,7 +84,7 @@ public class ISGaussRiflePrototype extends GaussWeapon {
         tankSlots = 1;
         flags = flags.or(F_PROTOTYPE);
         explosionDamage = 20;
-        rulesRefs = "71, IO";
+        rulesRefs = "66, IO:AE";
         techAdvancement
               .setTechBase(TechBase.IS)
               .setIntroLevel(false)

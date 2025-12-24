@@ -74,7 +74,7 @@ public class CLUAC2Prototype extends CLPrototypeUACWeapon {
         maxRange = RANGE_EXT;
         explosionDamage = damage;
         flags = flags.or(F_PROTOTYPE);
-        rulesRefs = "97, IO";
+        rulesRefs = "92, IO:AE";
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

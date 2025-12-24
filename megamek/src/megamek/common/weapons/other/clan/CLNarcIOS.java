@@ -67,7 +67,7 @@ public class CLNarcIOS extends NarcWeapon {
         flags = flags.or(F_ONE_SHOT).andNot(F_PROTO_WEAPON);
         bv = 6;
         cost = 100000;
-        rulesRefs = "327, TO";
+        rulesRefs = "139, TO:AUE";
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

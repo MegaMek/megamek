@@ -80,7 +80,7 @@ public class ISHeavyFlamer extends VehicleFlamerWeapon {
         atClass = CLASS_POINT_DEFENSE;
         flags = flags.or(WeaponType.F_AERO_WEAPON).or(WeaponType.F_MEK_WEAPON)
               .or(WeaponType.F_TANK_WEAPON);
-        rulesRefs = "312, TO";
+        rulesRefs = "124, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)

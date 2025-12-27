@@ -501,8 +501,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         boardValidate.setEnabled(isBoardEditor);
         boardResize.setEnabled(isBoardEditor);
         boardSourceFile.setEnabled(isBoardEditor);
-        gameQLoad.setEnabled(isMainMenu);
-        gameLoad.setEnabled(isMainMenu);
+        gameQLoad.setEnabled(isMainMenu || isLobby);
+        gameLoad.setEnabled(isMainMenu || isLobby);
         gameStart.setEnabled(isMainMenu);
         gameConnect.setEnabled(isMainMenu);
 

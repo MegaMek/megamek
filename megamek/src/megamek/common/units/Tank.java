@@ -943,6 +943,11 @@ public class Tank extends Entity {
         immobilized |= markForImmobilize;
 
         // Towed trailers need to use the values of the tractor, or they return Immobile due to 0 MP...
+        // Skip tractor lookup if not in a game (e.g., during MUL parsing)
+        if (game == null) {
+            return;
+        }
+
         Entity tractor = game.getEntity(getTractor());
         if (isTrailer()
               && (getTractor() != Entity.NONE)

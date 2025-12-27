@@ -75,7 +75,7 @@ public class CLERLaserSmallPrototype extends LaserWeapon {
         shortAV = 3;
         maxRange = RANGE_SHORT;
         flags = flags.or(F_PROTOTYPE).andNot(F_PROTO_WEAPON);
-        rulesRefs = "97, IO";
+        rulesRefs = "91, IO:AE";
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

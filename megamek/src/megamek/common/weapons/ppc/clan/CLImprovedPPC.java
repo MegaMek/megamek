@@ -78,7 +78,7 @@ public class CLImprovedPPC extends PPCWeapon {
         maxRange = RANGE_MED;
         // with a capacitor
         explosive = true;
-        rulesRefs = "95, IO";
+        rulesRefs = "89, IO:AE";
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X)
               .setClanAdvancement(2819, 2820, DATE_NONE, 2832, 3080)

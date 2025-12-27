@@ -71,7 +71,7 @@ public class MassDriverHeavy extends MassDriverWeapon {
         this.shortAV = 140;
         this.medAV = 140;
         this.longAV = 140;
-        rulesRefs = "323, TO";
+        rulesRefs = "135, TO:AUE";
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
               .setISAdvancement(2715, DATE_NONE, DATE_NONE, 2855, 3066)

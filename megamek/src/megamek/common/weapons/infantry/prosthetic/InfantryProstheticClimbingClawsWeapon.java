@@ -63,7 +63,7 @@ public class InfantryProstheticClimbingClawsWeapon extends InfantryWeapon {
         // TODO Add game rules IO pg 84
         infantryDamage = 0.02;
         infantryRange = 0;
-        rulesRefs = "84, IO";
+        rulesRefs = "78, IO:AE";
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

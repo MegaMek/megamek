@@ -166,10 +166,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
     }
 
     void processMovement() {
-        logger.info("[ELEVATOR] MovePathHandler.processMovement: ENTRY - entity={}, pathLength={}, mpUsed={}",
+        logger.debug("[ELEVATOR] MovePathHandler.processMovement: ENTRY - entity={}, pathLength={}, mpUsed={}",
               entity.getDisplayName(), md.length(), md.getMpUsed());
         for (MoveStep step : md.getStepVector()) {
-            logger.info("[ELEVATOR]   Step: type={}, elevation={}, position={}",
+            logger.debug("[ELEVATOR]   Step: type={}, elevation={}, position={}",
                   step.getType(), step.getElevation(), step.getPosition());
         }
         if (md.getMpUsed() > 0) {
@@ -2453,7 +2453,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 if (elevator != null) {
                     // Move the platform to the entity's new elevation
                     elevator.setPlatformLevel(curElevation);
-                    logger.info("[ELEVATOR] MovePathHandler: Updated platform to level {} for {}",
+                    logger.debug("[ELEVATOR] MovePathHandler: Updated platform to level {} for {}",
                           curElevation, entity.getDisplayName());
                     // Send the updated elevator state to all clients
                     gameManager.sendIndustrialElevatorUpdate();
@@ -2518,7 +2518,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 elevatorReport.add(direction);
                 elevatorReport.add(curElevation);
                 addReport(elevatorReport);
-                logger.info("[ELEVATOR] MovePathHandler: Added report 5299 for {} moving {} to level {}",
+                logger.debug("[ELEVATOR] MovePathHandler: Added report 5299 for {} moving {} to level {}",
                       entity.getDisplayName(), direction, curElevation);
             }
 

@@ -2400,7 +2400,7 @@ public class TWGameManager extends AbstractGameManager {
      * positions).
      */
     private void initializeIndustrialElevators() {
-        LOGGER.info("[ELEVATOR] TWGameManager.initializeIndustrialElevators: Starting initialization");
+        LOGGER.debug("[ELEVATOR] TWGameManager.initializeIndustrialElevators: Starting initialization");
 
         // Skip if elevators already exist to preserve platform positions
         if (!game.getIndustrialElevators().isEmpty()) {
@@ -2412,7 +2412,7 @@ public class TWGameManager extends AbstractGameManager {
 
         for (DynamicTerrainProcessor processor : terrainProcessors) {
             if (processor instanceof IndustrialElevatorProcessor elevatorProcessor) {
-                LOGGER.info("[ELEVATOR] TWGameManager.initializeIndustrialElevators: Found IndustrialElevatorProcessor");
+                LOGGER.debug("[ELEVATOR] TWGameManager.initializeIndustrialElevators: Found IndustrialElevatorProcessor");
                 elevatorProcessor.initializeElevators();
                 LOGGER.info(
                       "[ELEVATOR] TWGameManager.initializeIndustrialElevators: After initializeElevators, elevator count={}",
@@ -2421,7 +2421,7 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             }
         }
-        LOGGER.info("[ELEVATOR] TWGameManager.initializeIndustrialElevators: Complete, elevator count={}",
+        LOGGER.debug("[ELEVATOR] TWGameManager.initializeIndustrialElevators: Complete, elevator count={}",
               game.getIndustrialElevators().size());
     }
 
@@ -29993,10 +29993,10 @@ public class TWGameManager extends AbstractGameManager {
      */
     public void sendIndustrialElevatorUpdate() {
         Collection<IndustrialElevator> elevators = game.getIndustrialElevators();
-        LOGGER.info("[ELEVATOR] TWGameManager.sendIndustrialElevatorUpdate: Sending {} elevators to clients",
+        LOGGER.debug("[ELEVATOR] TWGameManager.sendIndustrialElevatorUpdate: Sending {} elevators to clients",
               elevators.size());
         for (IndustrialElevator elevator : elevators) {
-            LOGGER.info("[ELEVATOR]   - {}", elevator);
+            LOGGER.debug("[ELEVATOR]   - {}", elevator);
         }
         send(new Packet(PacketCommand.UPDATE_INDUSTRIAL_ELEVATORS, new ArrayList<>(elevators)));
     }

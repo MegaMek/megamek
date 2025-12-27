@@ -74,7 +74,7 @@ class ElevatorAscendStep implements PhasePass {
         moveStep.setRunProhibited(true);
         // Set movement type to WALK (elevator use is walking movement)
         moveStep.setMovementType(EntityMovementType.MOVE_WALK);
-        LOGGER.info(
+        LOGGER.debug(
               "[ELEVATOR] ElevatorAscendStep.preCompilation: entity={}, oldElevation={}, newElevation={}, position={}, movementType={}",
               entity.getDisplayName(),
               oldElevation,

@@ -3518,10 +3518,10 @@ public class MoveStep implements Serializable {
         }
         // Industrial elevator movement validation
         if ((type == MoveStepType.ELEVATOR_ASCEND) || (type == MoveStepType.ELEVATOR_DESCEND)) {
-            LOGGER.info("[ELEVATOR] MoveStep.isMovementPossible: Checking {} at {}, srcEl={}", type, src, srcEl);
+            LOGGER.debug("[ELEVATOR] MoveStep.isMovementPossible: Checking {} at {}, srcEl={}", type, src, srcEl);
             // Must be in a hex with an industrial elevator
             if (!srcHex.containsTerrain(Terrains.INDUSTRIAL_ELEVATOR)) {
-                LOGGER.info("[ELEVATOR] MoveStep.isMovementPossible: FAILED - No INDUSTRIAL_ELEVATOR terrain at {}",
+                LOGGER.debug("[ELEVATOR] MoveStep.isMovementPossible: FAILED - No INDUSTRIAL_ELEVATOR terrain at {}",
                       src);
                 return false;
             }
@@ -3529,19 +3529,19 @@ public class MoveStep implements Serializable {
             BoardLocation elevatorLocation = BoardLocation.of(src, boardId);
             IndustrialElevator elevator = game.getIndustrialElevator(elevatorLocation);
             if (elevator == null) {
-                LOGGER.info("[ELEVATOR] MoveStep.isMovementPossible: FAILED - No elevator object for location {}",
+                LOGGER.debug("[ELEVATOR] MoveStep.isMovementPossible: FAILED - No elevator object for location {}",
                       elevatorLocation);
                 return false;
             }
-            LOGGER.info("[ELEVATOR] MoveStep.isMovementPossible: Found elevator {}", elevator);
+            LOGGER.debug("[ELEVATOR] MoveStep.isMovementPossible: Found elevator {}", elevator);
             // Elevator must be functional
             if (!elevator.isFunctional()) {
-                LOGGER.info("[ELEVATOR] MoveStep.isMovementPossible: FAILED - Elevator not functional");
+                LOGGER.debug("[ELEVATOR] MoveStep.isMovementPossible: FAILED - Elevator not functional");
                 return false;
             }
             // Platform must be at the unit's current level
             if (elevator.getPlatformLevel() != srcEl) {
-                LOGGER.info("[ELEVATOR] MoveStep.isMovementPossible: FAILED - Platform at {} but srcEl={}",
+                LOGGER.debug("[ELEVATOR] MoveStep.isMovementPossible: FAILED - Platform at {} but srcEl={}",
                       elevator.getPlatformLevel(),
                       srcEl);
                 return false;
@@ -3551,11 +3551,11 @@ public class MoveStep implements Serializable {
                   ? srcEl + 1
                   : srcEl - 1;
             if (targetElevation > elevator.getShaftTop() || targetElevation < elevator.getShaftBottom()) {
-                LOGGER.info("[ELEVATOR] MoveStep.isMovementPossible: FAILED - Target {} outside shaft [{}, {}]",
+                LOGGER.debug("[ELEVATOR] MoveStep.isMovementPossible: FAILED - Target {} outside shaft [{}, {}]",
                       targetElevation, elevator.getShaftBottom(), elevator.getShaftTop());
                 return false;
             }
-            LOGGER.info("[ELEVATOR] MoveStep.isMovementPossible: SUCCESS - Elevator move valid to level {}",
+            LOGGER.debug("[ELEVATOR] MoveStep.isMovementPossible: SUCCESS - Elevator move valid to level {}",
                   targetElevation);
             return true;  // Elevator validation complete, skip normal elevation checks
         }

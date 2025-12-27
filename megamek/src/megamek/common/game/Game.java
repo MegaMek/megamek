@@ -41,6 +41,7 @@ import static megamek.common.options.OptionsConstants.ATOW_COMBAT_SENSE;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import megamek.MMConstants;
@@ -199,7 +200,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private final List<SmokeCloud> smokeCloudList = new CopyOnWriteArrayList<>();
 
     // industrial elevators (player-controlled)
-    private final Map<BoardLocation, IndustrialElevator> industrialElevators = new HashMap<>();
+    private final Map<BoardLocation, IndustrialElevator> industrialElevators = new ConcurrentHashMap<>();
 
     /**
      * Stores princess behaviors for game factions. It does not indicate that a faction is currently played by a bot,

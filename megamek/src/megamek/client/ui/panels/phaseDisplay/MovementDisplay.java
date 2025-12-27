@@ -2313,7 +2313,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private synchronized void updateElevatorButtons() {
         final Entity currentEntity = currentEntity();
         if (currentEntity == null || cmd == null) {
-            LOGGER.info("[ELEVATOR] updateElevatorButtons: No entity or cmd, disabling buttons");
+            LOGGER.debug("[ELEVATOR] updateElevatorButtons: No entity or cmd, disabling buttons");
             setElevatorUpEnabled(false);
             setElevatorDownEnabled(false);
             return;
@@ -2321,7 +2321,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // Airborne entities can't use elevators
         if (currentEntity.isAirborne()) {
-            LOGGER.info("[ELEVATOR] updateElevatorButtons: Entity airborne, disabling buttons");
+            LOGGER.debug("[ELEVATOR] updateElevatorButtons: Entity airborne, disabling buttons");
             setElevatorUpEnabled(false);
             setElevatorDownEnabled(false);
             return;
@@ -2331,11 +2331,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
         int finalBoardId = cmd.getFinalBoardId();
         int finalElevation = cmd.getFinalElevation();
 
-        LOGGER.info("[ELEVATOR] updateElevatorButtons: entity={}, finalPos={}, finalBoardId={}, finalElevation={}",
+        LOGGER.debug("[ELEVATOR] updateElevatorButtons: entity={}, finalPos={}, finalBoardId={}, finalElevation={}",
               currentEntity.getDisplayName(), finalPos, finalBoardId, finalElevation);
 
         if (finalPos == null) {
-            LOGGER.info("[ELEVATOR] updateElevatorButtons: No finalPos, disabling buttons");
+            LOGGER.debug("[ELEVATOR] updateElevatorButtons: No finalPos, disabling buttons");
             setElevatorUpEnabled(false);
             setElevatorDownEnabled(false);
             return;
@@ -2356,7 +2356,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         BoardLocation location = BoardLocation.of(finalPos, finalBoardId);
         IndustrialElevator elevator = game.getIndustrialElevator(location);
 
-        LOGGER.info("[ELEVATOR] updateElevatorButtons: Looking for elevator at {}, found: {}",
+        LOGGER.debug("[ELEVATOR] updateElevatorButtons: Looking for elevator at {}, found: {}",
               location, elevator);
 
         if (elevator == null || !elevator.isFunctional() || !elevator.isPlatformAt(finalElevation)) {
@@ -5449,17 +5449,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
             addStepToMovePath(MoveStepType.DOWN);
         } else if (actionCmd.equals(MoveCommand.MOVE_ELEVATOR_UP.getCmd())) {
             Entity currentEntity = currentEntity();
-            LOGGER.info("[ELEVATOR] MovementDisplay: Elevator UP button clicked for entity {}",
+            LOGGER.debug("[ELEVATOR] MovementDisplay: Elevator UP button clicked for entity {}",
                   (currentEntity != null ? currentEntity.getDisplayName() : "null"));
             addStepToMovePath(MoveStepType.ELEVATOR_ASCEND);
-            LOGGER.info("[ELEVATOR] MovementDisplay: After adding ELEVATOR_ASCEND step, path length={}, lastStep={}",
+            LOGGER.debug("[ELEVATOR] MovementDisplay: After adding ELEVATOR_ASCEND step, path length={}, lastStep={}",
                   cmd.length(), (cmd.getLastStep() != null ? cmd.getLastStep().getType() : "null"));
         } else if (actionCmd.equals(MoveCommand.MOVE_ELEVATOR_DOWN.getCmd())) {
             Entity currentEntity = currentEntity();
-            LOGGER.info("[ELEVATOR] MovementDisplay: Elevator DOWN button clicked for entity {}",
+            LOGGER.debug("[ELEVATOR] MovementDisplay: Elevator DOWN button clicked for entity {}",
                   (currentEntity != null ? currentEntity.getDisplayName() : "null"));
             addStepToMovePath(MoveStepType.ELEVATOR_DESCEND);
-            LOGGER.info("[ELEVATOR] MovementDisplay: After adding ELEVATOR_DESCEND step, path length={}, lastStep={}",
+            LOGGER.debug("[ELEVATOR] MovementDisplay: After adding ELEVATOR_DESCEND step, path length={}, lastStep={}",
                   cmd.length(), (cmd.getLastStep() != null ? cmd.getLastStep().getType() : "null"));
         } else if (actionCmd.equals(MoveCommand.MOVE_CLIMB_MODE.getCmd())) {
             MoveStep ms = cmd.getLastStep();

@@ -110,7 +110,7 @@ public class IndustrialElevatorProcessor extends DynamicTerrainProcessor {
      * movement).
      */
     public void initializeElevators() {
-        LOGGER.info("[ELEVATOR] IndustrialElevatorProcessor.initializeElevators: Starting, initialized={}",
+        LOGGER.debug("[ELEVATOR] IndustrialElevatorProcessor.initializeElevators: Starting, initialized={}",
               initialized);
         Game game = gameManager.getGame();
 
@@ -120,7 +120,7 @@ public class IndustrialElevatorProcessor extends DynamicTerrainProcessor {
                   "[ELEVATOR] IndustrialElevatorProcessor.initializeElevators: Elevators already exist ({}), preserving state",
                   game.getIndustrialElevators().size());
             for (IndustrialElevator elevator : game.getIndustrialElevators()) {
-                LOGGER.info("[ELEVATOR]   - {} platform at level {}",
+                LOGGER.debug("[ELEVATOR]   - {} platform at level {}",
                       elevator.getLocation(),
                       elevator.getPlatformLevel());
             }
@@ -163,7 +163,7 @@ public class IndustrialElevatorProcessor extends DynamicTerrainProcessor {
                 }
             }
         }
-        LOGGER.info("[ELEVATOR] IndustrialElevatorProcessor.initializeElevators: Complete, found {} elevators",
+        LOGGER.debug("[ELEVATOR] IndustrialElevatorProcessor.initializeElevators: Complete, found {} elevators",
               elevatorCount);
     }
 

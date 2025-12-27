@@ -34,9 +34,9 @@ package megamek.common;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
@@ -97,13 +97,17 @@ public class IndustrialElevator implements Serializable {
      * @param capacityTons Maximum cargo capacity in tons
      */
     public IndustrialElevator(BoardLocation location, int shaftBottom, int shaftTop, int capacityTons) {
+        if (shaftBottom > shaftTop) {
+            throw new IllegalArgumentException(
+                  "shaftBottom (" + shaftBottom + ") must be <= shaftTop (" + shaftTop + ")");
+        }
         this.location = location;
         this.shaftBottom = shaftBottom;
         this.shaftTop = shaftTop;
         this.capacityTons = capacityTons;
         this.platformLevel = shaftTop; // Platform starts at top (entry level)
         this.functional = true;
-        this.callQueue = new ArrayList<>();
+        this.callQueue = new CopyOnWriteArrayList<>();
     }
 
     /**

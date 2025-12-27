@@ -676,16 +676,16 @@ public class Client extends AbstractClient {
     @SuppressWarnings("unchecked")
     protected void receiveUpdateIndustrialElevators(Packet packet) {
         Object data = packet.getObject(0);
-        LOGGER.info("[ELEVATOR] Client.receiveUpdateIndustrialElevators: Received packet, data type={}",
+        LOGGER.debug("[ELEVATOR] Client.receiveUpdateIndustrialElevators: Received packet, data type={}",
               (data != null ? data.getClass().getName() : "null"));
         if (data instanceof Collection) {
             Collection<IndustrialElevator> elevators = (Collection<IndustrialElevator>) data;
-            LOGGER.info("[ELEVATOR] Client.receiveUpdateIndustrialElevators: Setting {} elevators", elevators.size());
+            LOGGER.debug("[ELEVATOR] Client.receiveUpdateIndustrialElevators: Setting {} elevators", elevators.size());
             for (IndustrialElevator elevator : elevators) {
-                LOGGER.info("[ELEVATOR]   - {}", elevator);
+                LOGGER.debug("[ELEVATOR]   - {}", elevator);
             }
             game.setIndustrialElevators(elevators);
-            LOGGER.info("[ELEVATOR] Client.receiveUpdateIndustrialElevators: After set, game has {} elevators",
+            LOGGER.debug("[ELEVATOR] Client.receiveUpdateIndustrialElevators: After set, game has {} elevators",
                   game.getIndustrialElevators().size());
         }
     }

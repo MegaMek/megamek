@@ -116,7 +116,7 @@ public class IndustrialElevator implements Serializable {
      * Terrain encoding:
      * <ul>
      *   <li>level = shaft bottom elevation</li>
-     *   <li>exits = (shaftTop << 8) | capacityTens</li>
+     *   <li>exits = (shaftTop &lt;&lt; 8) | capacityTens</li>
      * </ul>
      *
      * @param location The hex location

@@ -93,7 +93,7 @@ public class ISPulseLaserMediumPrototype extends PulseLaserWeapon {
         criticalSlots = 1;
         bv = 43;
         cost = 300000;
-        rulesRefs = "71, IO";
+        rulesRefs = "67, IO:AE";
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

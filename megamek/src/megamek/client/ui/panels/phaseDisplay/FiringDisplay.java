@@ -1196,9 +1196,12 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         // check if we now shoot at a target in the front arc and previously
         // shot a target in side/rear arc that then was primary target
         // if so, ask and tell the user that to-hits will change
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_FORCED_PRIMARY_TARGETS)
-              && (currentEntity() instanceof Mek) || (currentEntity() instanceof Tank)
-              || (currentEntity() instanceof ProtoMek)) {
+        // Skip this check during strafing since strafing attacks multiple hexes, not a single target
+        // Also skip for LAMs in aero mode since they use aero arc rules, not Mek arc rules
+        if (!isStrafing
+              && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_FORCED_PRIMARY_TARGETS)
+              && ((currentEntity() instanceof Mek mek && !mek.isAero()) || (currentEntity() instanceof Tank)
+              || (currentEntity() instanceof ProtoMek))) {
             EntityAction lastAction = null;
             try {
                 lastAction = attacks.lastElement();
@@ -2370,7 +2373,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     private List<Coords> getStrafingCoords(Coords center) {
         Entity strafingAero = currentEntity();
 
-        if (!(strafingAero instanceof Aero)) {
+        if ((strafingAero == null) || !strafingAero.isAero()) {
             return Collections.emptyList();
         }
 

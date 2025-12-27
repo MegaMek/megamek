@@ -83,7 +83,7 @@ public class CLLAAMissileWeapon extends ThunderboltWeapon {
         this.ammoType = AmmoType.AmmoTypeEnum.LAA_MISSILE;
         this.capital = false;
         this.missileArmor = 6;
-        rulesRefs = "359, TO";
+        rulesRefs = "171, TO:AUE";
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

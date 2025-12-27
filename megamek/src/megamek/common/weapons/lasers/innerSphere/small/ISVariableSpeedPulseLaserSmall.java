@@ -81,7 +81,7 @@ public class ISVariableSpeedPulseLaserSmall extends VariableSpeedPulseLaserWeapo
         cost = 60000;
         shortAV = 4;
         maxRange = RANGE_SHORT;
-        rulesRefs = "321, TO";
+        rulesRefs = "133, TO:AUE";
         //Nov 22 - CGL requested we move to Standard for Simple Tech Level 
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)

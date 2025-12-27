@@ -172,6 +172,16 @@ public class InfantryBVCalculator extends BVCalculator {
                   "= +" + formatForReport(tsmBonus));
         }
 
+        // Explosive Suicide Implant: +0.12 per trooper to Weapon Battle Value (IO pg 83)
+        // Only applies to conventional infantry
+        if (infantry.isConventionalInfantry() && infantry.hasAbility(OptionsConstants.MD_SUICIDE_IMPLANTS)) {
+            double suicideImplantBonus = troopers * 0.12;
+            offensiveValue += suicideImplantBonus;
+            bvReport.addLine(Messages.getString("BV.SuicideImplant"),
+                  troopers + " x 0.12",
+                  "= +" + formatForReport(suicideImplantBonus));
+        }
+
         bvReport.startTentativeSection();
         bvReport.addLine("Field Guns:", "", "");
         Predicate<Mounted<?>> weaponFilter = m -> countAsOffensiveWeapon(m)

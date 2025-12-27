@@ -39,6 +39,8 @@ package megamek.common.weapons;
  */
 public enum DamageType {
     NONE, FRAGMENTATION, FLECHETTE, ACID, INCENDIARY, INFERNO, IGNORE_PASSENGER,
-    ANTI_TSM, ANTI_INFANTRY, NAIL_RIVET, NONPENETRATING, CRASH
+    ANTI_TSM, ANTI_INFANTRY, NAIL_RIVET, NONPENETRATING, CRASH,
+    /** Damage from suicide implant reactive detonation - prevents recursive triggering */
+    SUICIDE_IMPLANT_REACTION
 }
 

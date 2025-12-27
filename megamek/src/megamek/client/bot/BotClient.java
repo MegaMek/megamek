@@ -451,6 +451,10 @@ public abstract class BotClient extends Client {
                 case DEPLOYMENT:
                     initialize();
                     break;
+                case PREMOVEMENT:
+                    evaluateHiddenUnitRepositioning();
+                    sendDone(true);
+                    break;
                 case MOVEMENT:
                     /*
                      * Do not uncomment this. It is so that bots stick around till end of game
@@ -520,6 +524,14 @@ public abstract class BotClient extends Client {
     }
 
     protected abstract void postMovementProcessing();
+
+    /**
+     * Evaluates whether hidden units should reveal to reposition for better firing opportunities. Override in
+     * subclasses to implement intelligent hidden unit repositioning. Default implementation does nothing.
+     */
+    protected void evaluateHiddenUnitRepositioning() {
+        // Default implementation - subclasses can override
+    }
 
     private void runEndGame() {
         // Make a list of the player's living units.
